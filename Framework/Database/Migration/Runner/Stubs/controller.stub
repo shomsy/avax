@@ -1,0 +1,127 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{namespace}};
+
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+/**
+ * {{ControllerName}} Controller
+ *
+ * RESTful Controller for managing resources.
+ */
+class {{ControllerName}}
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return ResponseInterface
+     */
+    public function index(): ResponseInterface
+    {
+        // Fetch all resources (dummy example data)
+        $data = [
+            ['id' => 1, 'name' => 'Resource 1'],
+            ['id' => 2, 'name' => 'Resource 2'],
+        ];
+
+        // Return Blade view with data
+        return view('resources.index', compact('data'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return ResponseInterface
+     */
+    public function create(): ResponseInterface
+    {
+        // Return Blade view for the create form
+        return view('resources.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
+    public function store(ServerRequestInterface $request): ResponseInterface
+    {
+        $data = $request->getParsedBody();
+
+        // Store the resource (dummy logic)
+        // Example: Save to database
+
+        // Redirect to index with success message
+        return response(302, ['Location' => route('resources.index')])
+            ->withHeader('X-Message', 'Resource created successfully.');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @return ResponseInterface
+     */
+    public function show(int $id): ResponseInterface
+    {
+        // Fetch the resource (dummy example data)
+        $resource = ['id' => $id, 'name' => 'Resource ' . $id];
+
+        // Return Blade view with resource data
+        return view('resources.show', compact('resource'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     * @return ResponseInterface
+     */
+    public function edit(int $id): ResponseInterface
+    {
+        // Fetch the resource (dummy example data)
+        $resource = ['id' => $id, 'name' => 'Resource ' . $id];
+
+        // Return Blade view for the edit form
+        return view('resources.edit', compact('resource'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param ServerRequestInterface $request
+     * @param int $id
+     * @return ResponseInterface
+     */
+    public function update(ServerRequestInterface $request, int $id): ResponseInterface
+    {
+        $data = $request->getParsedBody();
+
+        // Update the resource (dummy logic)
+        // Example: Update in database
+
+        // Redirect to show page with success message
+        return response(302, ['Location' => route('resources.show', ['id' => $id])])
+            ->withHeader('X-Message', 'Resource updated successfully.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     * @return ResponseInterface
+     */
+    public function destroy(int $id): ResponseInterface
+    {
+        // Delete the resource (dummy logic)
+        // Example: Remove from database
+
+        // Redirect to index with success message
+        return response(302, ['Location' => route('resources.index')])
+            ->withHeader('X-Message', 'Resource deleted successfully.');
+    }
+}

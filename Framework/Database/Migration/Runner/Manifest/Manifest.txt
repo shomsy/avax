@@ -1,0 +1,647 @@
+=== DTO/CreateManifestEntryDTO.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\Migration\Runner\Manifest\DTO;
+
+use DateTimeImmutable;
+use Gemini\DataHandling\Validation\Attributes\Rules\Required;
+
+/**
+ * DTO for creating a manifest entry.
+ */
+final readonly class CreateManifestEntryDTO
+{
+    #[Required]
+    public string            $migration;
+
+    #[Required]
+    public string            $file;
+
+    #[Required]
+    public string            $status;
+
+    #[Required]
+    public string            $hash;
+
+    public string|null       $batch;
+
+    public string|null       $executed_at;
+
+    public string|null       $rolled_back_at;
+
+    public string|null       $tenant_id;
+
+    public array             $tags;
+
+    public array             $logs;
+
+    #[Required]
+    public DateTimeImmutable $created_at;
+
+    public function __construct(
+        string            $migration,
+        string            $file,
+        string            $status,
+        string            $hash,
+        string|null       $batch,
+        string|null       $executed_at,
+        string|null       $rolled_back_at,
+        string|null       $tenant_id,
+        array             $tags,
+        array             $logs,
+        DateTimeImmutable $created_at,
+    ) {
+        $this->migration      = $migration;
+        $this->file           = $file;
+        $this->status         = $status;
+        $this->hash           = $hash;
+        $this->batch          = $batch;
+        $this->executed_at    = $executed_at;
+        $this->rolled_back_at = $rolled_back_at;
+        $this->tenant_id      = $tenant_id;
+        $this->tags           = $tags;
+        $this->logs           = $logs;
+        $this->created_at     = $created_at;
+    }
+
+    /**
+     * Converts DTO to array for storage.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray() : array
+    {
+        return [
+            'migration'      => $this->migration,
+            'file'           => $this->file,
+            'status'         => $this->status,
+            'hash'           => $this->hash,
+            'batch'          => $this->batch,
+            'executed_at'    => $this->executed_at,
+            'rolled_back_at' => $this->rolled_back_at,
+            'tenant_id'      => $this->tenant_id,
+            'tags'           => $this->tags,
+            'logs'           => $this->logs,
+            'created_at'     => $this->created_at->format(DATE_ATOM),
+        ];
+    }
+}
+
+=== ManifestDBInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\Migration\Runner\Manifest;
+
+/**
+ * Represents the persistence contract for migration manifest entries.
+ *
+ * This interface defines the repository contract for managing migration manifest records
+ * in a persistence store. It follows the Repository Pattern from DDD and ensures
+ * a consistent way to handle migration metadata across different storage implementations.
+ *
+ * @package Gemini\Database\Migration\Runner\Manifest
+ */
+interface ManifestDBInterface
+{
+    /**
+     * Persists a new migration manifest entry to the storage.
+     *
+     * This method is responsible for creating a new record in the persistence layer.
+     * It encapsulates the storage-specific implementation details while maintaining
+     * a consistent interface for manifest entry creation.
+     *
+     * @param array<string, mixed> $data The manifest entry data to persist
+     *
+     * @return array<string, mixed> The persisted manifest entry with any storage-generated metadata
+     *
+     * @throws \SleekDB\Exceptions\IOException When storage operation fails
+     * @throws \SleekDB\Exceptions\InvalidArgumentException When provided data is invalid
+     * @throws \SleekDB\Exceptions\JsonException When JSON serialization fails
+     * @throws \SleekDB\Exceptions\IdNotAllowedException When ID field conflicts occur
+     */
+    public function insert(array $data) : array;
+
+    /**
+     * Retrieves manifest entries matching specified criteria.
+     *
+     * Implements specification pattern for flexible querying of manifest entries.
+     * Supports complex query conditions while abstracting storage-specific query syntax.
+     *
+     * @param array<int, array<string|array>> $conditions Query specifications for filtering entries
+     *
+     * @return array<int, array<string, mixed>> Collection of manifest entries matching the conditions
+     *
+     * @throws \SleekDB\Exceptions\IOException When storage read operation fails
+     * @throws \SleekDB\Exceptions\InvalidArgumentException When query conditions are invalid
+     */
+    public function find(array $conditions) : array;
+
+    /**
+     * Retrieves all manifest entries from the storage.
+     *
+     * Provides a way to access the complete migration history. Use with caution
+     * in large datasets as it may impact performance.
+     *
+     * @return array<int, array<string, mixed>> Complete collection of manifest entries
+     *
+     * @throws \SleekDB\Exceptions\IOException When storage read operation fails
+     * @throws \SleekDB\Exceptions\InvalidArgumentException When internal query fails
+     */
+    public function findAll() : array;
+
+    /**
+     * Updates existing manifest entries matching the specified criteria.
+     *
+     * Supports atomic updates of manifest entries based on matching conditions.
+     * Implements bulk update capability for efficient batch processing.
+     *
+     * @param array<int, array<string|array>> $conditions Specifications for identifying entries to update
+     * @param array<string, mixed>            $newData    Updated data to apply to matching entries
+     *
+     * @throws \SleekDB\Exceptions\IOException When storage operation fails
+     * @throws \SleekDB\Exceptions\InvalidArgumentException When conditions or data are invalid
+     */
+    public function update(array $conditions, array $newData) : void;
+}
+=== ManifestDB.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\Migration\Runner\Manifest;
+
+use SleekDB\Store;
+
+/**
+ * Concrete implementation of ManifestDBInterface using SleekDB.
+ *
+ * @final
+ */
+final class ManifestDB implements ManifestDBInterface
+{
+    /**
+     * The underlying SleekDB store instance.
+     *
+     * @var Store
+     */
+    private Store $store;
+
+    /**
+     * ManifestDB constructor.
+     *
+     * @param string $storagePath Path where a manifest database is located.
+     *
+     * @throws \SleekDB\Exceptions\InvalidConfigurationException
+     * @throws \SleekDB\Exceptions\InvalidArgumentException
+     * @throws \SleekDB\Exceptions\IOException
+     */
+    public function __construct(string $storagePath)
+    {
+        $this->store = new Store(
+            storeName   : 'manifest',
+            databasePath: $storagePath
+        );
+    }
+
+    /**
+     * Insert a new manifest record.
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     * @throws \SleekDB\Exceptions\IOException
+     * @throws \SleekDB\Exceptions\IdNotAllowedException
+     * @throws \SleekDB\Exceptions\InvalidArgumentException
+     * @throws \SleekDB\Exceptions\JsonException
+     */
+    public function insert(array $data) : array
+    {
+        return $this->store->insert($data);
+    }
+
+    /**
+     * Find manifest records matching given conditions.
+     *
+     * @param array<int, array<string, mixed>> $conditions
+     *
+     * @return array<int, array<string, mixed>>
+     * @throws \SleekDB\Exceptions\IOException
+     * @throws \SleekDB\Exceptions\InvalidArgumentException
+     */
+    public function find(array $conditions) : array
+    {
+        return $this->store->findBy($conditions);
+    }
+
+    /**
+     * Retrieve all manifest records.
+     *
+     * @return array<int, array<string, mixed>>
+     * @throws \SleekDB\Exceptions\IOException
+     * @throws \SleekDB\Exceptions\InvalidArgumentException
+     */
+    public function findAll() : array
+    {
+        return $this->store->findAll();
+    }
+
+    /**
+     * Update manifest records matching conditions.
+     *
+     * @param array<int, array<string, mixed>> $conditions
+     * @param array<string, mixed>             $newData
+     *
+     * @return void
+     * @throws \SleekDB\Exceptions\IOException
+     * @throws \SleekDB\Exceptions\InvalidArgumentException
+     */
+    public function update(array $conditions, array $newData) : void
+    {
+        $this->store
+            ->createQueryBuilder()
+            ->where($conditions)
+            ->getQuery()
+            ->update($newData);
+    }
+}
+
+=== ManifestStoreInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\Migration\Runner\Manifest;
+
+use Gemini\Database\Migration\Runner\Manifest\DTO\CreateManifestEntryDTO;
+
+/**
+ * Defines the contract for managing migration manifest entries in the application.
+ *
+ * This service interface abstracts the business operations for migration manifest management,
+ * providing a clean boundary between the domain logic and persistence layer. It follows
+ * the Service Pattern from DDD to encapsulate complex migration tracking operations.
+ *
+ * @package Gemini\Database\Migration\Runner\Manifest
+ */
+interface ManifestStoreInterface
+{
+    /**
+     * Creates a new migration manifest entry in the store.
+     *
+     * Processes and validates the migration entry data through a DTO before persistence.
+     * Ensures data integrity and consistent state transitions for new migrations.
+     *
+     * @param CreateManifestEntryDTO $dto Value object containing validated migration entry data
+     *
+     * @throws \SleekDB\Exceptions\IOException When a storage operation fails
+     * @throws \SleekDB\Exceptions\InvalidArgumentException When entry data is invalid
+     */
+    public function createEntry(CreateManifestEntryDTO $dto) : void;
+
+    /**
+     * Retrieves all migration manifest entries from the store.
+     *
+     * Provides a complete view of the migration history for audit and management purposes.
+     * Results are ordered by creation timestamp to maintain execution sequence.
+     *
+     * @return array<int, array<string, mixed>> Collection of all migration manifest entries
+     *
+     * @throws \SleekDB\Exceptions\IOException When retrieval operation fails
+     */
+    public function fetchAll() : array;
+
+    /**
+     * Retrieves all pending migrations that haven't been executed.
+     *
+     * Identifies migrations that need to be processed in the next migration run.
+     * Filters entries based on execution status and ordering constraints.
+     *
+     * @return array<int, array<string, mixed>> Collection of pending migration entries
+     *
+     * @throws \SleekDB\Exceptions\IOException When the query operation fails
+     */
+    public function findPending() : array;
+
+    /**
+     * Performs rollback operations for migrations in a specific batch.
+     *
+     * Manages the state transition of migrations during a rollback process.
+     * Updates manifest entries to reflect rollback status and timing.
+     *
+     * @param string $batch Identifier for the batch of migrations to rollback
+     *
+     * @throws \SleekDB\Exceptions\IOException When the rollback operation fails
+     * @throws \SleekDB\Exceptions\InvalidArgumentException When batch identifier is invalid
+     */
+    public function rollbackBatch(string $batch) : void;
+
+    /**
+     * Locates a specific migration entry by its unique name.
+     *
+     * Provides direct access to individual migration metadata for verification
+     * and state management purposes.
+     *
+     * @param string $migrationName Unique identifier/name of the migration
+     *
+     * @return array<string, mixed>|null Migration entry if found, null otherwise
+     *
+     * @throws \SleekDB\Exceptions\IOException When lookup operation fails
+     */
+    public function findByMigrationName(string $migrationName) : array|null;
+}
+=== ManifestStore.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\Migration\Runner\Manifest;
+
+use DateTimeImmutable;
+use Gemini\Database\Migration\Runner\Manifest\DTO\CreateManifestEntryDTO;
+
+/**
+ * Service that manages manifest operations.
+ */
+final readonly class ManifestStore implements ManifestStoreInterface
+{
+    public function __construct(private ManifestDBInterface $db) {}
+
+    /**
+     * @throws \SleekDB\Exceptions\IOException
+     * @throws \SleekDB\Exceptions\JsonException
+     * @throws \SleekDB\Exceptions\IdNotAllowedException
+     * @throws \SleekDB\Exceptions\InvalidArgumentException
+     */
+    public function createEntry(CreateManifestEntryDTO $dto) : void
+    {
+        $this->db->insert($dto->toArray());
+    }
+
+    /**
+     * @throws \SleekDB\Exceptions\IOException
+     * @throws \SleekDB\Exceptions\InvalidArgumentException
+     */
+    public function fetchAll() : array
+    {
+        return $this->db->findAll();
+    }
+
+    /**
+     * @throws \SleekDB\Exceptions\InvalidArgumentException
+     * @throws \SleekDB\Exceptions\IOException
+     */
+    public function findPending() : array
+    {
+        return $this->db->find(
+            [
+                ['status', '=', 'pending'],
+            ]
+        );
+    }
+
+    public function rollbackBatch(string $batch) : void
+    {
+        $this->db->update(
+            [['batch', '=', $batch]],
+            ['status' => 'rolled_back', 'rolled_back_at' => (new DateTimeImmutable())->format(DATE_ATOM)]
+        );
+    }
+
+    /**
+     * @throws \SleekDB\Exceptions\InvalidArgumentException
+     * @throws \SleekDB\Exceptions\IOException
+     */
+    public function findByMigrationName(string $migrationName) : array|null
+    {
+        $found = $this->db->find(
+            [
+                ['migration', '=', $migrationName],
+            ]
+        );
+
+        return $found[0] ?? null;
+    }
+}
+=== MigrationManifestEntry.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\Migration\Runner\Manifest;
+
+use DateTimeImmutable;
+use Gemini\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use Gemini\DataHandling\Validation\Attributes\Rules\ArrayType;
+use Gemini\DataHandling\Validation\Attributes\Rules\DateFormat;
+use Gemini\DataHandling\Validation\Attributes\Rules\Required;
+use Gemini\DataHandling\Validation\Attributes\Rules\StringType;
+
+/**
+ * Represents an immutable manifest entry for database migrations within the system.
+ *
+ * This Value Object encapsulates all metadata related to a single database migration,
+ * including its execution status, timing information, and associated metadata. It follows
+ * the immutability principle to ensure data consistency throughout the migration process.
+ *
+ * @package Gemini\Database\Migration\Runner\Manifest
+ * @final   This class is immutable and must not be extended to maintain invariants
+ */
+final class MigrationManifestEntry extends AbstractDTO
+{
+    /**
+     * The unique identifier/name of the migration.
+     *
+     * @var string Represents the unique name used to identify this migration
+     */
+    #[Required]
+    #[StringType]
+    public string $migrationName;
+
+    /**
+     * The physical file name containing the migration code.
+     *
+     * @var string The actual filename on the filesystem containing migration logic
+     */
+    #[Required]
+    #[StringType]
+    public string $fileName;
+
+    /**
+     * Current status of the migration (e.g., 'pending', 'executed', 'failed').
+     *
+     * @var string Indicates the current state of migration execution
+     */
+    #[Required]
+    #[StringType]
+    public string $status;
+
+    /**
+     * Cryptographic hash of the migration content for integrity verification.
+     *
+     * @var string SHA-256 hash (or similar) of the migration file content
+     */
+    #[Required]
+    #[StringType]
+    public string $hash;
+
+    /**
+     * Optional batch identifier grouping related migrations.
+     *
+     * @var string|null Identifier for grouping migrations in execution batches
+     */
+    public string|null $batch = null;
+
+    /**
+     * Timestamp when the migration was successfully executed.
+     *
+     * @var string|null ISO-8601 formatted datetime string of execution
+     */
+    public string|null $executedAt = null;
+
+    /**
+     * Timestamp when the migration was rolled back.
+     *
+     * @var string|null ISO-8601 formatted datetime string of rollback
+     */
+    public string|null $rolledBackAt = null;
+
+    /**
+     * Optional tenant identifier for multi-tenant environments.
+     *
+     * @var string|null Unique identifier of the tenant this migration applies to
+     */
+    public string|null $tenantId = null;
+
+    /**
+     * Collection of tags for migration categorization and filtering.
+     *
+     * @var array<string> List of tags associated with this migration
+     */
+    #[ArrayType]
+    public array $tags = [];
+
+    /**
+     * Execution logs and debug information.
+     *
+     * @var array<string, mixed> Collection of log entries related to migration execution
+     */
+    #[ArrayType]
+    public array $logs = [];
+
+    /**
+     * Timestamp when this manifest entry was created.
+     *
+     * @var DateTimeImmutable Immutable datetime representing creation timestamp
+     */
+    #[Required]
+    #[DateFormat('Y-m-d H:i:s')]
+    public DateTimeImmutable $createdAt;
+}
+=== MigrationManifestService.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\Migration\Runner\Manifest;
+
+use SleekDB\Store;
+
+/**
+ * Service for managing the Migration Manifest entries.
+ *
+ * Handles creation, retrieval, updating, and validation of migration metadata.
+ *
+ * @package Gemini\Database\Migration\Runner\Manifest
+ *
+ * @final   This class is immutable and must not be extended.
+ */
+final class MigrationManifestService
+{
+    /**
+     * SleekDB Store instance for Manifest storage.
+     *
+     * @var Store
+     */
+    private Store $store;
+
+    /**
+     * Constructor.
+     *
+     * Initializes the SleekDB Store directly.
+     *
+     * @param string $manifestPath Absolute path to the manifest storage directory.
+     *
+     * @throws \SleekDB\Exceptions\IOException
+     * @throws \SleekDB\Exceptions\InvalidArgumentException
+     * @throws \SleekDB\Exceptions\InvalidConfigurationException
+     */
+    public function __construct(string $manifestPath)
+    {
+        $this->store = new Store(
+            storeName    : 'manifest',
+            databasePath : $manifestPath,
+            configuration: ['auto_cache' => true]
+        );
+    }
+
+    /**
+     * Creates a new Manifest entry.
+     *
+     * @param MigrationManifestEntry $entry Data Transfer Object representing the migration manifest.
+     *
+     * @return void
+     * @throws \SleekDB\Exceptions\IOException
+     * @throws \SleekDB\Exceptions\IdNotAllowedException
+     * @throws \SleekDB\Exceptions\InvalidArgumentException
+     * @throws \SleekDB\Exceptions\JsonException
+     */
+    public function createEntry(MigrationManifestEntry $entry) : void
+    {
+        $this->store->insert(
+            [
+                'migration'      => $entry->migrationName,
+                'file'           => $entry->fileName,
+                'status'         => $entry->status,
+                'hash'           => $entry->hash,
+                'batch'          => $entry->batch,
+                'executed_at'    => $entry->executedAt,
+                'rolled_back_at' => $entry->rolledBackAt,
+                'tenant_id'      => $entry->tenantId,
+                'tags'           => $entry->tags,
+                'logs'           => $entry->logs,
+                'created_at'     => $entry->createdAt->format(DATE_ATOM),
+            ]
+        );
+    }
+
+    /**
+     * Retrieves all Manifest entries.
+     *
+     * @return array<int, array<string, mixed>> List of all migration manifest entries.
+     */
+    public function all() : array
+    {
+        return $this->store->fetch();
+    }
+
+    /**
+     * Finds a specific migration entry by its migration name.
+     *
+     * @param string $migrationName Logical name of the migration.
+     *
+     * @return array<string, mixed>|null The matching manifest entry or null if not found.
+     */
+    public function find(string $migrationName) : array|null
+    {
+        $result = $this->store
+            ->where('migration', '=', $migrationName)
+            ->fetch();
+
+        return $result[0] ?? null;
+    }
+}
+

@@ -1,0 +1,66 @@
+{
+  "autoload": {
+    "psr-4": {
+      "Domain\\": "Domain/",
+      "Application\\": "Application/",
+      "Infrastructure\\": "Infrastructure/",
+      "Presentation\\": "Presentation/",
+      "Gemini\\": "Infrastructure/Framework/"
+    }
+  },
+  "require-dev": {
+    "nunomaduro/phpinsights": "^2.11",
+    "rector/rector": "^1.2",
+    "laravel/pint": "^1.16",
+    "barryvdh/laravel-ide-helper": "^3.1",
+    "friendsofphp/php-cs-fixer": "^3.63",
+    "squizlabs/php_codesniffer": "^3.7",
+    "qossmic/deptrac": "^2.0",
+    "tracy/tracy": "^2.3",
+    "swoole/ide-helper": "^5.1"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "phpstan/extension-installer": false
+    }
+  },
+  "require": {
+    "ext-pdo": "*",
+    "vlucas/phpdotenv": "^5.6",
+    "guzzlehttp/guzzle": "^7.9",
+    "rector/type-perfect": "^0.1.8",
+    "symfony/var-dumper": "^7.1",
+    "spatie/ignition": "^1.15",
+    "meridius/yadup": "^1.1",
+    "ext-simplexml": "*",
+    "psr/log": "^3.0",
+    "ext-fileinfo": "*",
+    "firebase/php-jwt": "^6.10",
+    "eftec/bladeone": "^4.16",
+    "ramsey/uuid": "^4.7",
+    "jenssegers/blade": "^2.0",
+    "clickfwd/yoyo": "^0.2.0",
+    "illuminate/view": "11.7.0",
+    "sentry/sentry": "^4.10",
+    "amphp/amp": "^3.0",
+    "amphp/parallel-functions": "^2.0",
+    "ext-curl": "*",
+    "wyndow/fuzzywuzzy": "^0.6.0",
+    "rakibtg/sleekdb": "^2.15"
+  },
+  "scripts": {
+    "analyse": [
+      "composer insights",
+      "composer rector"
+    ],
+    "fix": [
+      "composer fix-rector"
+    ],
+    "rector": "php vendor/bin/rector",
+    "fix-insights": "php vendor/bin/phpinsights analyse --fix",
+    "fix-rector": "php vendor/bin/rector",
+    "fix-pint": "php vendor/bin/pint",
+    "pint": "php vendor/bin/pint"
+  }
+}

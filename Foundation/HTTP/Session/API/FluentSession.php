@@ -9,6 +9,7 @@ use Avax\HTTP\Session\Actions\StoreValue;
 use Avax\HTTP\Session\Core\SessionContext;
 use Avax\HTTP\Session\Features\Crypto\Actions\DecryptValue;
 use Avax\HTTP\Session\Features\Crypto\Actions\EncryptValue;
+use Avax\HTTP\Session\Features\Events\SessionEventBus;
 use Avax\HTTP\Session\Features\TTL\Actions\CheckExpiration;
 use Avax\HTTP\Session\Features\TTL\Actions\SetTTL;
 use Avax\HTTP\Session\Storage\SessionStore;
@@ -29,6 +30,7 @@ use Stringable;
  * - Immutability: Each method returns a new instance.
  * - Fluent API: Natural language method chaining.
  * - Context Preservation: Configuration is carried through the chain.
+ * - Clean DI: All dependencies injected, no service locator.
  *
  * Usage:
  *   Session::scope('cart')
@@ -43,12 +45,16 @@ final readonly class FluentSession implements Stringable
     /**
      * FluentSession Constructor.
      *
-     * @param SessionStore   $store   The session storage backend.
-     * @param SessionContext $context The contextual configuration.
+     * @param SessionStore        $store     The session storage backend.
+     * @param SessionContext      $context   The contextual configuration.
+     * @param EncrypterInterface  $encrypter The encryption service.
+     * @param SessionEventBus     $eventBus  The event bus for observability.
      */
     public function __construct(
         private SessionStore $store,
-        private SessionContext $context
+        private SessionContext $context,
+        private EncrypterInterface $encrypter,
+        private SessionEventBus $eventBus
     ) {}
 
     /**
@@ -66,7 +72,9 @@ final readonly class FluentSession implements Stringable
         // Clone context with encryption enabled.
         return new self(
             store: $this->store,
-            context: $this->context->secure()
+            context: $this->context->secure(),
+            encrypter: $this->encrypter,
+            eventBus: $this->eventBus
         );
     }
 
@@ -88,7 +96,9 @@ final readonly class FluentSession implements Stringable
         // Clone context with TTL set.
         return new self(
             store: $this->store,
-            context: $this->context->withTTL($seconds)
+            context: $this->context->withTTL($seconds),
+            encrypter: $this->encrypter,
+            eventBus: $this->eventBus
         );
     }
 
@@ -107,7 +117,9 @@ final readonly class FluentSession implements Stringable
         // Clone context with new namespace.
         return new self(
             store: $this->store,
-            context: $this->context->forNamespace($namespace)
+            context: $this->context->forNamespace($namespace),
+            encrypter: $this->encrypter,
+            eventBus: $this->eventBus
         );
     }
 
@@ -126,11 +138,8 @@ final readonly class FluentSession implements Stringable
      */
     public function store(string $key, mixed $value): void
     {
-        // Get encrypter from container.
-        $encrypter = app(EncrypterInterface::class);
-
-        // Create actions.
-        $encryptAction = new EncryptValue($encrypter);
+        // Create actions with injected dependencies.
+        $encryptAction = new EncryptValue($this->encrypter);
         $ttlAction = new SetTTL($this->store);
 
         // Delegate to StoreValue action.
@@ -138,7 +147,8 @@ final readonly class FluentSession implements Stringable
             store: $this->store,
             context: $this->context,
             encryptor: $encryptAction,
-            ttlSetter: $ttlAction
+            ttlSetter: $ttlAction,
+            eventBus: $this->eventBus
         );
 
         $action->execute(key: $key, value: $value);
@@ -159,11 +169,8 @@ final readonly class FluentSession implements Stringable
      */
     public function retrieve(string $key, mixed $default = null): mixed
     {
-        // Get encrypter from container.
-        $encrypter = app(EncrypterInterface::class);
-
-        // Create actions.
-        $decryptAction = new DecryptValue($encrypter);
+        // Create actions with injected dependencies.
+        $decryptAction = new DecryptValue($this->encrypter);
         $ttlChecker = new CheckExpiration($this->store);
 
         // Delegate to RetrieveValue action.

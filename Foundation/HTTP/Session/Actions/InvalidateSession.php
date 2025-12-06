@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Actions;
 
+use Avax\HTTP\Session\Features\Events\Events\SessionInvalidatedEvent;
+use Avax\HTTP\Session\Features\Events\SessionEventBus;
 use Avax\HTTP\Session\Storage\SessionStore;
 
 /**
@@ -18,11 +20,11 @@ use Avax\HTTP\Session\Storage\SessionStore;
  *
  * Enterprise Rules:
  * - Security: Always regenerates ID to prevent session fixation attacks.
- * - Audit: Logs invalidation for security monitoring.
+ * - Audit: Emits events for security monitoring.
  * - Idempotent: Safe to call multiple times.
  *
  * Usage:
- *   $action = new InvalidateSession($store);
+ *   $action = new InvalidateSession($store, $eventBus);
  *   $action->execute();
  *
  * Common Use Cases:
@@ -37,10 +39,12 @@ final readonly class InvalidateSession
     /**
      * InvalidateSession Constructor.
      *
-     * @param SessionStore $store The session storage backend.
+     * @param SessionStore    $store    The session storage backend.
+     * @param SessionEventBus $eventBus The event bus for observability.
      */
     public function __construct(
-        private SessionStore $store
+        private SessionStore $store,
+        private SessionEventBus $eventBus
     ) {}
 
     /**
@@ -50,7 +54,7 @@ final readonly class InvalidateSession
      * 1. Captures current session ID for logging
      * 2. Flushes all session data
      * 3. Regenerates session ID
-     * 4. Logs the invalidation event
+     * 4. Dispatches event for audit
      *
      * Security Note:
      * - Regenerating the ID prevents session fixation attacks.
@@ -70,15 +74,9 @@ final readonly class InvalidateSession
         // This prevents session fixation attacks.
         $this->store->regenerateId(deleteOldSession: true);
 
-        // Log session invalidation for security audit trail.
-        logger()?->info(
-            message: 'Session invalidated successfully',
-            context: [
-                'old_session_id' => $oldSessionId,
-                'new_session_id' => $this->store->getId(),
-                'action' => 'InvalidateSession',
-                'security_event' => true,
-            ]
+        // Dispatch event for security audit trail.
+        $this->eventBus->dispatch(
+            SessionInvalidatedEvent::create($oldSessionId, $this->store->getId())
         );
     }
 }

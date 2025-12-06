@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Actions;
 
+use Avax\HTTP\Session\Features\Events\Events\SessionStartedEvent;
+use Avax\HTTP\Session\Features\Events\SessionEventBus;
 use Avax\HTTP\Session\Storage\SessionStore;
 
 /**
@@ -17,10 +19,10 @@ use Avax\HTTP\Session\Storage\SessionStore;
  * Enterprise Rules:
  * - Idempotent: Starting an already-started session is safe (no-op).
  * - Security: Validates session configuration before initialization.
- * - Logging: Emits structured logs for audit trails.
+ * - Observability: Emits events for audit trails.
  *
  * Usage:
- *   $action = new StartSession($store);
+ *   $action = new StartSession($store, $eventBus);
  *   $action->execute();
  *
  * @package Avax\HTTP\Session\Actions
@@ -30,10 +32,12 @@ final readonly class StartSession
     /**
      * StartSession Constructor.
      *
-     * @param SessionStore $store The session storage backend.
+     * @param SessionStore    $store    The session storage backend.
+     * @param SessionEventBus $eventBus The event bus for observability.
      */
     public function __construct(
-        private SessionStore $store
+        private SessionStore $store,
+        private SessionEventBus $eventBus
     ) {}
 
     /**
@@ -59,13 +63,9 @@ final readonly class StartSession
         // Delegate session initialization to the storage backend.
         $this->store->start();
 
-        // Log session start for audit trail.
-        logger()?->info(
-            message: 'Session started successfully',
-            context: [
-                'session_id' => $this->store->getId(),
-                'action' => 'StartSession',
-            ]
+        // Dispatch event for observability.
+        $this->eventBus->dispatch(
+            SessionStartedEvent::create($this->store->getId())
         );
     }
 }

@@ -6,6 +6,8 @@ namespace Avax\HTTP\Session\Actions;
 
 use Avax\HTTP\Session\Core\SessionContext;
 use Avax\HTTP\Session\Features\Crypto\Actions\EncryptValue;
+use Avax\HTTP\Session\Features\Events\Events\SessionValueStoredEvent;
+use Avax\HTTP\Session\Features\Events\SessionEventBus;
 use Avax\HTTP\Session\Features\TTL\Actions\SetTTL;
 use Avax\HTTP\Session\Storage\SessionStore;
 
@@ -26,7 +28,7 @@ use Avax\HTTP\Session\Storage\SessionStore;
  * - Atomicity: Storage is atomic (all-or-nothing).
  *
  * Usage:
- *   $action = new StoreValue($store, $context, $encryptor, $ttlManager);
+ *   $action = new StoreValue($store, $context, $encryptor, $ttlManager, $eventBus);
  *   $action->execute('user_id', 123);
  *
  * @package Avax\HTTP\Session\Actions
@@ -40,12 +42,14 @@ final readonly class StoreValue
      * @param SessionContext  $context   The contextual configuration (namespace, TTL, encryption).
      * @param EncryptValue    $encryptor Action for encrypting values.
      * @param SetTTL          $ttlSetter Action for setting TTL metadata.
+     * @param SessionEventBus $eventBus  The event bus for observability.
      */
     public function __construct(
         private SessionStore $store,
         private SessionContext $context,
         private EncryptValue $encryptor,
-        private SetTTL $ttlSetter
+        private SetTTL $ttlSetter,
+        private SessionEventBus $eventBus
     ) {}
 
     /**
@@ -98,16 +102,14 @@ final readonly class StoreValue
             );
         }
 
-        // Log the storage operation for audit trail.
-        logger()?->debug(
-            message: 'Session value stored',
-            context: [
-                'key' => $resolvedKey,
-                'encrypted' => $this->context->secure,
-                'ttl' => $this->context->ttl,
-                'namespace' => $this->context->namespace,
-                'action' => 'StoreValue',
-            ]
+        // Dispatch event for observability.
+        $this->eventBus->dispatch(
+            SessionValueStoredEvent::create(
+                key: $resolvedKey,
+                encrypted: $this->context->secure,
+                ttl: $this->context->ttl,
+                namespace: $this->context->namespace
+            )
         );
     }
 

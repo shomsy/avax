@@ -5,22 +5,38 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session;
 
 use Avax\Facade\BaseFacade;
-use Avax\HTTP\Session\Contracts\SessionBuilderInterface;
-use Avax\HTTP\Session\Contracts\SessionManagerInterface;
+use Avax\HTTP\Session\API\FluentSession;
+use Avax\HTTP\Session\API\SessionManager;
 
 /**
- * @method static SessionBuilderInterface for (string $namespace)
- * @method static SessionBuilderInterface builder()
+ * Session Facade
+ *
+ * Provides static access to the SessionManager.
+ *
+ * Usage:
+ *   Session::scope('cart')->store('items', [1, 2, 3]);
+ *   Session::flash('success', 'Saved!');
+ *   Session::remember('user', fn() => User::find($id));
+ *
+ * @method static SessionManager start()
+ * @method static FluentSession scope(string $namespace)
+ * @method static FluentSession in(string $namespace)
+ * @method static FluentSession temporary(int $seconds)
+ * @method static FluentSession builder()
+ * @method static void flash(string $key, mixed $value, string $type = 'info')
+ * @method static mixed remember(string $key, \Closure $callback)
  * @method static void put(string $key, mixed $value)
  * @method static mixed get(string $key, mixed $default = null)
  * @method static bool has(string $key)
  * @method static void delete(string $key)
- * @method static void reset()
+ * @method static array all()
+ * @method static void invalidate()
+ * @method static void regenerate(bool $deleteOldSession = true)
+ * @method static string id()
  *
- * @see SessionManagerInterface
- * @see SessionBuilderInterface
+ * @see SessionManager
  */
 final class Session extends BaseFacade
 {
-    protected static string $accessor = SessionManagerInterface::class;
+    protected static string $accessor = SessionManager::class;
 }

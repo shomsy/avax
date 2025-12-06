@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Infrastructure\Config\Service;
 
-use Gemini\Config\Architecture\DDD\AppPath;
-use Gemini\Config\Configurator\AppConfigurator;
-use Gemini\Config\Configurator\ConfiguratorInterface;
+use Avax\Config\Architecture\DDD\AppPath;
+use Avax\Config\Configurator\AppConfigurator;
+use Avax\Config\Configurator\ConfiguratorInterface;
 
 final class Config extends AppConfigurator implements ConfiguratorInterface
 {

@@ -1,0 +1,4279 @@
+=== Bootstrap/RouteBootstrapper.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Bootstrap;
+
+use FilesystemIterator;
+use Gemini\Config\Architecture\DDD\AppPath;
+use Gemini\HTTP\Router\Cache\RouteCacheLoader;
+use Gemini\HTTP\Router\Routing\HttpRequestRouter;
+use Gemini\HTTP\Router\Support\RouteCollector;
+use Psr\Log\LoggerInterface;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RuntimeException;
+use SplFileInfo;
+use Throwable;
+
+/**
+ * Handles the bootstrapping of application routes.
+ *
+ * Responsibilities:
+ * - Ensure routes are loaded efficiently and securely.
+ * - Load routes from cache, if available, for improved performance.
+ * - Fallback to loading routes from disk-based DSL/closure definitions.
+ * - Support error handling, logging, and other critical processes.
+ *
+ * This class emphasizes secure, clean, and efficient route bootstrapping.
+ */
+final readonly class RouteBootstrapper
+{
+    /**
+     * @var RouteCacheLoader  $routeCacheLoader  Handles route caching operations.
+     * @var HttpRequestRouter $httpRequestRouter Responsible for registering and managing application routes.
+     * @var LoggerInterface   $logger            Logs important messages and errors.
+     */
+    public function __construct(
+        private RouteCacheLoader  $routeCacheLoader,
+        private HttpRequestRouter $httpRequestRouter,
+        private LoggerInterface   $logger,
+    ) {}
+
+    /**
+     * Bootstraps application routes.
+     *
+     * - Attempts to load routes from the cache file if available.
+     * - Falls back to loading routes from disk files if the cache is absent or outdated.
+     * - Always loads closure-based routes directly from disk to ensure runtime correctness.
+     *
+     * @throws Throwable Any exception encountered during route bootstrapping is logged and re-thrown.
+     */
+    public function bootstrap() : void
+    {
+        // Retrieve the paths for route cache and routes directory.
+        $cachePath  = AppPath::ROUTE_CACHE_PATH->get();
+        $routesPath = AppPath::ROUTES_PATH->get();
+
+        try {
+            // Check if the cache file exists and is valid, load routes from it if true.
+            if ($this->isCacheAvailable(cachePath: $cachePath)) {
+                $this->loadRoutesFromCache(cachePath: $cachePath);
+            } else {
+                // Otherwise, load routes from disk and generate a new cache file.
+                $this->loadRoutesFromDiskAndCache(routesPath: $routesPath, cachePath: $cachePath);
+            }
+
+            // Load closure-based routes from disk even if cache was used.
+            $this->loadClosureRoutesFromDisk(routesPath: $routesPath);
+        } catch (Throwable $exception) {
+            // Handle and log critical errors during route setup, then re-throw the exception.
+            $this->handleCriticalError(exception: $exception, cachePath: $cachePath, routesPath: $routesPath);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Validates the availability of the route cache file.
+     *
+     * @param string $cachePath Absolute path of the cache file.
+     *
+     * @return bool Returns true if the cache file exists and is readable.
+     */
+    private function isCacheAvailable(string $cachePath) : bool
+    {
+        return is_file($cachePath) && is_readable($cachePath);
+    }
+
+    /**
+     * Loads routes from the cache file.
+     *
+     * @param string $cachePath Path to the route cache file.
+     */
+    private function loadRoutesFromCache(string $cachePath) : void
+    {
+        // Use the route cache loader to load cached routes.
+        $this->routeCacheLoader->load(cachePath: $cachePath);
+
+        // Log the successful loading of cached routes.
+        $this->logger->info(message: '✅ Route cache loaded.', context: ['cache' => $cachePath]);
+    }
+
+    /**
+     * Loads routes from disk and generates a new cache file for future use.
+     *
+     * @param string $routesPath Path to the directory containing route definition files.
+     * @param string $cachePath  Path to where the new cache file should be written.
+     */
+    private function loadRoutesFromDiskAndCache(string $routesPath, string $cachePath) : void
+    {
+        // Load routes from disk-based files.
+        $this->loadRoutesFromDisk(baseDir: $routesPath);
+
+        // Write the loaded routes to a cache file.
+        $this->routeCacheLoader->write(cachePath: $cachePath);
+
+        // Log the creation of a new route cache.
+        $this->logger->info(message: '📦 Route cache created from disk.', context: [
+            'source' => $routesPath,
+            'cache'  => $cachePath,
+        ]);
+    }
+
+    /**
+     * Loads and registers routes from disk route definition files.
+     *
+     * - Iterates over disk route files and registers their routes with the router.
+     * - Clears any existing buffered route definitions prior to registration.
+     * - Registers the fallback route, if it exists.
+     *
+     * @param string $baseDir Base directory containing route definition files.
+     */
+    private function loadRoutesFromDisk(string $baseDir) : void
+    {
+        // Reset the route collector to ensure no stale routes remain in memory.
+        RouteCollector::reset();
+
+        // Iterate through all route files in the base directory.
+        foreach ($this->getRouteFilesFromDirectory(baseDir: $baseDir) as $file) {
+            $this->processRouteFile(file: $file);
+        }
+
+        // Register any fallback route defined during route processing.
+        $this->registerFallbackRoute();
+    }
+
+    /**
+     * Retrieves all `.routes.php` files recursively from the specified directory.
+     *
+     * @param string $baseDir Directory to search for route files.
+     *
+     * @return list<SplFileInfo> A list of route files (instances of `SplFileInfo`).
+     * @throws RuntimeException Thrown if the directory is inaccessible or unreadable.
+     */
+    private function getRouteFilesFromDirectory(string $baseDir) : array
+    {
+        // Ensure the provided directory exists and is readable.
+        if (! is_dir($baseDir) || ! is_readable($baseDir)) {
+            throw new RuntimeException(message: "Routes directory '{$baseDir}' is not accessible or readable.");
+        }
+
+        // Create a recursive iterator to find all files within the route directory.
+        $iterator = new RecursiveIteratorIterator(
+            iterator: new RecursiveDirectoryIterator(
+                          directory: $baseDir,
+                          flags    : FilesystemIterator::SKIP_DOTS
+                      )
+        );
+
+        // Filter and return files that end with `.routes.php`, or just 'routes.php'
+        $routeFiles = array_filter(
+            array   : iterator_to_array($iterator),
+            callback: static fn(SplFileInfo $file) : bool => $file->isFile()
+                                                             && $file->isReadable()
+                                                             && preg_match(
+                                                                 '/\.routes\.php$|^routes\.php$/',
+                                                                 $file->getFilename()
+                                                             )
+        );
+
+        // Ensure a returned array is indexed sequentially
+        return array_values($routeFiles); // Avoids gaps in array keys
+
+
+    }
+
+    /**
+     * Processes a route file and registers all contained routes with the router.
+     *
+     * @param SplFileInfo $file Route file to process.
+     */
+    private function processRouteFile(SplFileInfo $file) : void
+    {
+        // Include the route file to evaluate its contents in the current context.
+        require $file->getPathname();
+
+        // Flush buffered routes from the collector and register them with the router.
+        foreach (RouteCollector::flushBuffered() as $routeBuilder) {
+            $this->httpRequestRouter->registerRoute(
+                method       : $routeBuilder->method,
+                path         : $routeBuilder->path,
+                action       : $routeBuilder->action,
+                middleware   : $routeBuilder->middleware,
+                name         : $routeBuilder->name,
+                constraints  : $routeBuilder->constraints,
+                defaults     : $routeBuilder->defaults,
+                domain       : $routeBuilder->domain,
+                attributes   : $routeBuilder->attributes,
+                authorization: $routeBuilder->authorization,
+            );
+        }
+    }
+
+    /**
+     * Registers a fallback route if one is defined within `RouteCollector`.
+     */
+    private function registerFallbackRoute() : void
+    {
+        // Check if a fallback route exists in the collector.
+        $fallback = RouteCollector::getFallback();
+
+        // If a fallback route exists, register it with the router.
+        if ($fallback !== null) {
+            $this->httpRequestRouter->fallback(handler: $fallback);
+        }
+    }
+
+    /**
+     * Loads and registers closure-based routes directly from disk.
+     *
+     * @param string $routesPath Path to the directory containing route definition files.
+     */
+    private function loadClosureRoutesFromDisk(string $routesPath) : void
+    {
+        // Reuse the `loadRoutesFromDisk` method to handle closure-based route files.
+        $this->loadRoutesFromDisk(baseDir: $routesPath);
+
+        // Log the successful loading of closure-based routes.
+        $this->logger->info(message: '🔁 Closure-based routes loaded from disk.', context: [
+            'directory' => $routesPath,
+        ]);
+    }
+
+    /**
+     * Handles critical errors encountered during route bootstrapping.
+     *
+     * - Logs the exception and its context to assist debugging.
+     *
+     * @param Throwable $exception  Exception encountered.
+     * @param string    $cachePath  Path to the route cache file.
+     * @param string    $routesPath Path to the directory containing route files.
+     */
+    private function handleCriticalError(Throwable $exception, string $cachePath, string $routesPath) : void
+    {
+        $this->logger->critical(message: '🔥 Route bootstrap failed.', context: [
+            'exception'  => $exception->getMessage(),
+            'trace'      => $exception->getTraceAsString(),
+            'cache_path' => $cachePath,
+            'routes_dir' => $routesPath,
+        ]);
+    }
+}
+=== Cache/RouteCacheCompiler.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Cache;
+
+use Gemini\HTTP\Router\Support\RouteCollector;
+use Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException;
+use RuntimeException;
+use SplFileInfo;
+
+/**
+ * A service responsible for compiling application routes into a single cache file.
+ * This compiler improves performance by preloading all the route definitions
+ * during runtime instead of dynamically loading them.
+ *
+ * Supports the serialization of Closure-based route actions using Laravel\SerializableClosure.
+ */
+final readonly class RouteCacheCompiler
+{
+    /**
+     * Compiles route files from a specific directory into a unified PHP cache file.
+     *
+     * This process consists of discovering route definition files (`*.routes.php`),
+     * invoking all buffered route builders, serializing binding logic, and finally
+     * writing the compiled routes in a compact serialized format for subsequent execution.
+     *
+     * @param string $directory  The absolute path to the directory containing `*.routes.php` files.
+     * @param string $outputFile The absolute file path where the compiled routes cache will be stored.
+     *
+     * @return void
+     *
+     * @throws RuntimeException                   Thrown in cases where route compilation fails
+     *                                            (e.g., no routes are defined, or file I/O fails).
+     * @throws PhpVersionNotSupportedException    Thrown when the PHP version does not support
+     *                                            Closure serialization methods used.
+     */
+    public function compile(string $directory, string $outputFile) : void
+    {
+        // Initialize an empty array to hold serialized routes.
+        $routes = [];
+
+        // Iterate over every route file within the provided directory.
+        foreach ($this->getRouteFilesFromDirectory(baseDir: $directory) as $file) {
+            // Evaluate the route definition file to register its routes with the collector.
+            require $file->getPathname();
+
+            // Retrieve and flush buffered RouteBuilder instances from the RouteCollector.
+            $builders = RouteCollector::flushBuffered();
+
+            // If no builders are registered, skip this file.
+            if (empty($builders)) {
+                continue;
+            }
+
+            // Traverse each RouteBuilder, compiling their route definitions.
+            foreach ($builders as $builder) {
+                // Compile each route into a directive that also serializes the action logic.
+                foreach ($builder->build() as $route) {
+                    // Serialize the route after preparing it with a serialized action.
+                    $routes[] = serialize($route->withSerializedAction());
+                }
+            }
+        }
+
+        // If no routes have been registered across any of the files, throw an exception.
+        if (empty($routes)) {
+            throw new RuntimeException(message: 'No routes were registered. Check your route files.');
+        }
+
+        // Generate the content for the PHP cache file containing all compiled routes.
+        $cacheContent = $this->generateCacheFileContent(serializedRoutes: $routes);
+
+        // Attempt to write the generated cache content to the specified output file.
+        if (! file_put_contents($outputFile, $cacheContent)) {
+            throw new RuntimeException(message: "Failed to write route cache to: {$outputFile}");
+        }
+    }
+
+    /**
+     * Discovers all route definition files within the provided directory.
+     *
+     * This method searches for files matching the naming pattern `*.routes.php`
+     * and converts their file paths into SplFileInfo objects for further processing.
+     *
+     * @param string $baseDir The base directory path in which to scan for route definition files.
+     *
+     * @return list<SplFileInfo> A list of SplFileInfo objects representing discovered route files.
+     *
+     * @throws RuntimeException Thrown when the directory is inaccessible or unreadable.
+     */
+    private function getRouteFilesFromDirectory(string $baseDir) : array
+    {
+        // Verify that the provided base directory is both accessible and readable.
+        if (! is_dir($baseDir) || ! is_readable($baseDir)) {
+            throw new RuntimeException(message: "Routes directory '{$baseDir}' is not accessible.");
+        }
+
+        // Use glob to find all PHP files adhering to the "*.routes.php" pattern.
+        $files = glob("{$baseDir}/*.routes.php");
+
+        // Convert each file path into an SplFileInfo instance and return the resulting array.
+        return array_map(
+            static fn(string $path) => new SplFileInfo(filename: $path),
+            $files ?: [] // Default to an empty array if no files match.
+        );
+    }
+
+    /**
+     * Generates the PHP code to be written in the cache file.
+     *
+     * Given an array of serialized route definitions, this method composes the final
+     * PHP content that will be saved. The resulting file contains an associative array
+     * with each serialized route deserialized at runtime upon inclusion.
+     *
+     * @param array<string> $serializedRoutes A list of serialized route definitions.
+     *
+     * @return string The resultant PHP file's content as a string.
+     */
+    private function generateCacheFileContent(array $serializedRoutes) : string
+    {
+        // Start the creation of cache content with a PHP opening tag and comments.
+        $code = "<?php\n\n/** Auto-generated route cache. Do not edit manually. */\n\nreturn [\n";
+
+        // Append each serialized route using unserialize function calls.
+        foreach ($serializedRoutes as $route) {
+            // Escape single quotes to ensure code safety within double-quote strings.
+            $escaped = str_replace("'", "\\'", $route);
+
+            // Append the unserialized route definition to the array.
+            $code .= "    unserialize('{$escaped}'),\n";
+        }
+
+        // Close the array and return the complete PHP content as a string.
+        $code .= "];\n";
+
+        return $code;
+    }
+}
+=== Cache/RouteCacheLoader.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Cache;
+
+use Gemini\Facade\Facades\Storage;
+use Gemini\HTTP\Router\Router;
+use Gemini\HTTP\Router\Routing\RouteDefinition;
+use RuntimeException;
+
+final class RouteCacheLoader
+{
+    public function __construct(
+        private readonly Router $router
+    ) {}
+
+    /**
+     * Loads route definitions from serialized cache and registers them into the router.
+     *
+     * @param string $cachePath
+     *
+     * @throws RuntimeException
+     */
+    public function load(string $cachePath) : void
+    {
+        if (! Storage::exists(path: $cachePath)) {
+            throw new RuntimeException(message: "Route cache file not found: {$cachePath}");
+        }
+
+        /** @var array<RouteDefinition> $routes */
+        $routes = require $cachePath;
+
+        if (! is_array($routes)) {
+            throw new RuntimeException(message: "Invalid route cache: must be an array.");
+        }
+
+        foreach ($routes as $definition) {
+            if (! $definition instanceof RouteDefinition) {
+                throw new RuntimeException(message: "Invalid route in cache.");
+            }
+
+            $this->router->registerRouteFromCache(definition: $definition);
+        }
+    }
+
+    /**
+     * Writes the current route definitions to a serialized cache file.
+     *
+     * @param string $cachePath
+     *
+     * @throws RuntimeException
+     */
+    public function write(string $cachePath) : void
+    {
+        $directory = dirname($cachePath);
+
+        $this->ensureDirectoryIsWritable(directory: $directory);
+
+        $routeDefinitions = $this->router->allRoutes();
+
+        $flattenedRoutes = array_merge(...array_values($routeDefinitions));
+
+        // 🧼 Remove any route that uses a Closure action
+        $serializableRoutes = array_filter(
+            $flattenedRoutes,
+            static fn(RouteDefinition $route) : bool => ! $route->usesClosure()
+        );
+
+        $exported = var_export($serializableRoutes, true);
+        $hash     = sha1($exported);
+        $content  = "<?php\n\n/** Auto-generated route cache [sha1: {$hash}]. Do not edit manually. */\n\nreturn {$exported};\n";
+
+        if (! Storage::write(path: $cachePath, content: $content)) {
+            throw new RuntimeException(message: "Failed to write route cache to: {$cachePath}");
+        }
+    }
+
+
+    /**
+     * Ensures the cache directory is writable.
+     *
+     * @param string $directory
+     *
+     * @throws RuntimeException
+     */
+    private function ensureDirectoryIsWritable(string $directory) : void
+    {
+        if (! Storage::exists(path: $directory) && ! Storage::createDirectory(directory: $directory)) {
+            throw new RuntimeException(message: "Cannot create route cache directory: {$directory}");
+        }
+
+        if (! Storage::isWritable(path: $directory)) {
+            throw new RuntimeException(message: "Route cache directory is not writable: {$directory}");
+        }
+    }
+}
+
+=== Exceptions/UnresolvableMiddlewareException.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Exceptions;
+
+use RuntimeException;
+
+/**
+ * This exception is thrown when middleware cannot be resolved.
+ *
+ * @package Gemini\HTTP\Router\Exceptions
+ *
+ * @see     RuntimeException
+ *
+ * Typical use case:
+ * - This exception may be thrown during runtime when middleware identified
+ *   by name, configuration, or parameters cannot be instantiated or located.
+ *
+ * Design Considerations:
+ * - This is part of the overall exception hierarchy, promoting better error
+ *   differentiation and allowing targeted exception handling.
+ */
+class UnresolvableMiddlewareException extends RuntimeException
+{
+    // This class does not currently declare any properties or methods of its own.
+    // It serves as a lightweight way to provide a specific exception type
+    // for middleware resolution issues while retaining other features of RuntimeException.
+}
+=== HttpMethod.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router;
+
+/**
+ * Enum representing HTTP methods.
+ *
+ * This provides a type-safe representation of allowed HTTP methods
+ * for routing and validation purposes.
+ */
+enum HttpMethod: string
+{
+    case GET     = 'GET';
+
+    case POST    = 'POST';
+
+    case PUT     = 'PUT';
+
+    case DELETE  = 'DELETE';
+
+    case PATCH   = 'PATCH';
+
+    case OPTIONS = 'OPTIONS';
+
+    case HEAD    = 'HEAD';
+
+    /**
+     * Validates if a given string matches a valid HTTP method.
+     *
+     * @param string $method The HTTP method to validate.
+     *
+     * @return bool True if valid, false otherwise.
+     */
+    public static function isValid(string $method) : bool
+    {
+        return in_array(strtoupper($method), array_column(self::cases(), 'value'), true);
+    }
+
+    /**
+     * Returns a list of all HTTP methods as strings.
+     *
+     * @return array<string>
+     */
+    public static function list() : array
+    {
+        return array_map(static fn(HttpMethod $method) => $method->value, self::cases());
+    }
+}
+=== Kernel/RouterKernel.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Kernel;
+
+use Gemini\HTTP\Request\Request;
+use Gemini\HTTP\Router\Routing\HttpRequestRouter;
+use Gemini\HTTP\Router\Routing\RouteDefinition;
+use Gemini\HTTP\Router\Routing\RoutePipelineFactory;
+use Gemini\HTTP\Router\Support\HeadRequestFallback;
+use Psr\Http\Message\ResponseInterface;
+
+/**
+ * Class RouterKernel
+ *
+ * This class is the main entry point of the router kernel, providing a clean,
+ * domain-oriented design for HTTP request handling. It resolves routes,
+ * applies middleware, and dispatches the request pipeline to produce an HTTP response.
+ *
+ * The class is marked as `readonly` to ensure that injected dependencies
+ * and their state remain immutable, strictly adhering to DDD principles.
+ */
+final readonly class RouterKernel
+{
+    /**
+     * Constructor initializes the core dependencies for the routing kernel.
+     *
+     * @param HttpRequestRouter    $httpRequestRouter   Responsible for resolving HTTP routes.
+     * @param RoutePipelineFactory $pipelineFactory     Creates pipelines to process route handling.
+     * @param HeadRequestFallback  $headRequestFallback Provides fallback processing for HEAD requests.
+     */
+    public function __construct(
+        private HttpRequestRouter    $httpRequestRouter,
+        private RoutePipelineFactory $pipelineFactory,
+        private HeadRequestFallback  $headRequestFallback
+    ) {}
+
+    /**
+     * Handles an incoming HTTP request by resolving the corresponding route,
+     * applying middleware, and processing the pipeline.
+     *
+     * @param Request $request The HTTP request to be processed.
+     *
+     * @return ResponseInterface The HTTP response produced after processing.
+     *
+     * @throws \ReflectionException Signals issues with runtime reflection in the pipeline processing.
+     * @throws \Psr\Container\ContainerExceptionInterface Indicates a container-related error occurred.
+     * @throws \Psr\Container\NotFoundExceptionInterface Indicates a requested service was not found.
+     */
+    public function handle(Request $request) : ResponseInterface
+    {
+        // Apply fallback logic for HEAD requests, converting them to GET if needed.
+        $request = $this->headRequestFallback->resolve($request);
+
+        // Resolve the current request into a matching route definition.
+        $route = $this->httpRequestRouter->resolve($request);
+
+        // Inject route parameters and defaults into the request as attributes.
+        $request = $this->injectRouteAttributes($request, $route);
+
+        // Create a middleware pipeline based on the resolved route.
+        $pipeline = $this->pipelineFactory->create($route);
+
+        // Process the pipeline and dispatch the final response.
+        return $pipeline->dispatch($request);
+    }
+
+    /**
+     * Injects route parameters and default values into the request as attributes.
+     *
+     * This method ensures the request contains all the attributes defined
+     * in the route and sets default values where attributes are missing.
+     *
+     * @param Request         $request The current HTTP request.
+     * @param RouteDefinition $route   The route definition containing parameters and defaults.
+     *
+     * @return Request A new request object with the injected attributes.
+     */
+    private function injectRouteAttributes(Request $request, RouteDefinition $route) : Request
+    {
+        // Inject route parameters as attributes into the request.
+        foreach ($route->parameters as $key => $value) {
+            $request = $request->withAttribute($key, $value);
+        }
+
+        // Inject default values for attributes that are not already set in the request.
+        foreach ($route->defaults as $key => $value) {
+            if ($request->getAttribute($key) === null) {
+                $request = $request->withAttribute($key, $value);
+            }
+        }
+
+        // Return a modified request containing all the injected attributes.
+        return $request;
+    }
+}
+=== RouterInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router;
+
+use Gemini\HTTP\Request\Request;
+use Gemini\HTTP\Router\Routing\RouteRegistrarProxy;
+use Psr\Http\Message\ResponseInterface;
+
+/**
+ * Interface RouterInterface
+ *
+ * Provides a contract for a router implementation that handles HTTP route
+ * registration and resolution while enabling fallback and fluent style registration methods.
+ */
+interface RouterInterface
+{
+    /**
+     * Registers a GET route.
+     *
+     * @param string                $path   The URL path for the route.
+     * @param callable|array|string $action The action to be called when the route matches.
+     *                                      Can be a callable, an array (e.g., controller and method), or a string
+     *                                      (e.g., controller@method).
+     *
+     * @return RouteRegistrarProxy Returns a proxy for chaining extra route configurations.
+     */
+    public function get(string $path, callable|array|string $action) : RouteRegistrarProxy;
+
+    /**
+     * Registers a POST route.
+     *
+     * @param string                $path   The URL path for the route.
+     * @param callable|array|string $action The action to be handled when the route matches.
+     *
+     * @return RouteRegistrarProxy A proxy for fluent method chaining.
+     */
+    public function post(string $path, callable|array|string $action) : RouteRegistrarProxy;
+
+    /**
+     * Registers a PUT route.
+     *
+     * @param string                $path   The URL path for the route.
+     * @param callable|array|string $action The action to be executed on matching the route.
+     *
+     * @return RouteRegistrarProxy A proxy object for fluent route customization.
+     */
+    public function put(string $path, callable|array|string $action) : RouteRegistrarProxy;
+
+    /**
+     * Registers a PATCH route.
+     *
+     * @param string                $path   The URL path for the route.
+     * @param callable|array|string $action The action to be processed when the route matches.
+     *
+     * @return RouteRegistrarProxy Returns a proxy for additional route configuration.
+     */
+    public function patch(string $path, callable|array|string $action) : RouteRegistrarProxy;
+
+    /**
+     * Registers a DELETE route.
+     *
+     * @param string                $path   The URL path for the route.
+     * @param callable|array|string $action The action to be applied when the route matches.
+     *
+     * @return RouteRegistrarProxy A proxy object for chaining route details.
+     */
+    public function delete(string $path, callable|array|string $action) : RouteRegistrarProxy;
+
+    /**
+     * Registers an OPTIONS route.
+     *
+     * @param string                $path   The URL path for the route.
+     * @param callable|array|string $action The action handling the route on match.
+     *
+     * @return RouteRegistrarProxy RouteRegistrarProxy for additional route setups.
+     */
+    public function options(string $path, callable|array|string $action) : RouteRegistrarProxy;
+
+    /**
+     * Registers a HEAD route.
+     *
+     * @param string                $path   The URL path for the route.
+     * @param callable|array|string $action The action performed when the route matches.
+     *
+     * @return RouteRegistrarProxy An object for further configuration of the route.
+     */
+    public function head(string $path, callable|array|string $action) : RouteRegistrarProxy;
+
+    /**
+     * Registers the same action for all HTTP methods.
+     *
+     * @param string                $path   The URL path for the route.
+     * @param callable|array|string $action The action to be executed for any HTTP method.
+     *
+     * @return RouteRegistrarProxy[] Array of proxies, each corresponding to the registered method.
+     */
+    public function any(string $path, callable|array|string $action) : array;
+
+    /**
+     * Sets a fallback route to be executed if no other routes match.
+     *
+     * @param callable|array|string $handler The fallback handler to be called when no route matches the request.
+     */
+    public function fallback(callable|array|string $handler) : void;
+
+    /**
+     * Resolves an incoming request into a response.
+     *
+     * @param Request $request The current HTTP request to be resolved.
+     *
+     * @return ResponseInterface The PSR-7 compliant response for the resolved request.
+     */
+    public function resolve(Request $request) : ResponseInterface;
+}
+=== Router.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router;
+
+use Closure;
+use Gemini\HTTP\Dispatcher\ControllerDispatcher;
+use Gemini\HTTP\Request\Request;
+use Gemini\HTTP\Router\Kernel\RouterKernel;
+use Gemini\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
+use Gemini\HTTP\Router\Routing\HttpRequestRouter;
+use Gemini\HTTP\Router\Routing\RouteBuilder;
+use Gemini\HTTP\Router\Routing\RouteDefinition;
+use Gemini\HTTP\Router\Routing\RouteGroupAttributesConfigurator;
+use Gemini\HTTP\Router\Routing\RouteGroupContext;
+use Gemini\HTTP\Router\Routing\RouteGroupStack;
+use Gemini\HTTP\Router\Routing\RouteRegistrarProxy;
+use Gemini\HTTP\Router\Support\RouteCollector;
+use LogicException;
+use Psr\Http\Message\ResponseInterface;
+
+/**
+ * Central Router facade.
+ *
+ * Acts as the primary route registration and resolution interface.
+ * Delegates resolution to RouterKernel and registration via RouteBuilder DSL.
+ */
+final class Router implements RouterInterface
+{
+    /**
+     * The fallback handler to be used if no other handler is available.
+     *
+     * @var mixed|null This can be null or any object that implements the necessary handler interface.
+     */
+    private Closure|null $fallbackHandler = null;
+
+    /**
+     * Initializes a new instance of the class with the provided dependencies.
+     *
+     * @param HttpRequestRouter $httpRequestRouter The HTTP request router instance to be injected.
+     * @param RouterKernel      $kernel            The kernel instance to manage routing logic.
+     */
+    public function __construct(
+        private readonly HttpRequestRouter $httpRequestRouter,
+        private readonly RouterKernel      $kernel,
+    ) {}
+
+    /**
+     * Registers a GET route.
+     */
+    public function get(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(
+            method: HttpMethod::GET->value,
+            path  : $path,
+            action: $action
+        );
+    }
+
+    /**
+     * Internal route registration via RouteBuilder.
+     */
+    private function register(string $method, string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        // Define the route using a builder pattern.
+        // `RouteBuilder::make` creates a new instance of the RouteBuilder class
+        // by specifying the HTTP method and the URI path.
+        $builder = RouteBuilder::make(
+            method: $method, // The HTTP method (e.g., GET, POST, PUT).
+            path  : $path      // The URI path defining the route (e.g., `/users`, `/posts/{id}`).
+        );
+
+        // Define the action (e.g., controller or callable) to handle the route's behavior.
+        // The action can be a callable, array-based controller reference, or string representation.
+        $builder->action(
+            action: $action // The action that will be invoked when the route is matched.
+        );
+
+        // 🔁 Collect the defined route for later usage.
+        // Adds the `RouteBuilder` instance to the `RouteCollector` for later bootstrapping,
+        // middleware applications, or cache compilation for performance optimization.
+        RouteCollector::add(builder: $builder);
+
+        // Return a proxy to handle registration for the associated HTTP request router.
+        // The `RouteRegistrarProxy` will be used to facilitate the registration of
+        // the newly defined route and allow for advanced handling or configurations.
+        return new RouteRegistrarProxy(
+            router : $this->httpRequestRouter,
+            // The HTTP router responsible for routing requests to corresponding actions.
+            builder: $builder                  // The route builder containing the route's definition and metadata.
+        );
+    }
+
+    /**
+     * Registers a POST route.
+     */
+    public function post(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(
+            method: HttpMethod::POST->value,
+            path  : $path,
+            action: $action
+        );
+    }
+
+    /**
+     * Registers a PUT route.
+     */
+    public function put(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(
+            method: HttpMethod::PUT->value,
+            path  : $path,
+            action: $action
+        );
+    }
+
+    /**
+     * Registers a PATCH route.
+     */
+    public function patch(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(
+            method: HttpMethod::PATCH->value,
+            path  : $path,
+            action: $action
+        );
+    }
+
+    /**
+     * Registers a DELETE route.
+     */
+    public function delete(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(
+            method: HttpMethod::DELETE->value,
+            path  : $path,
+            action: $action
+        );
+    }
+
+    /**
+     * Registers a HEAD route.
+     */
+    public function head(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(
+            method: HttpMethod::HEAD->value,
+            path  : $path,
+            action: $action
+        );
+    }
+
+    /**
+     * Registers an OPTIONS route.
+     */
+    public function options(string $path, callable|array|string $action) : RouteRegistrarProxy
+    {
+        return $this->register(
+            method: HttpMethod::OPTIONS->value,
+            path  : $path,
+            action: $action
+        );
+    }
+
+    /**
+     * Registers the same action for all HTTP methods.
+     *
+     * @return RouteRegistrarProxy[]
+     */
+    public function any(string $path, callable|array|string $action) : array
+    {
+        $proxies = [];
+
+        foreach (HttpMethod::cases() as $method) {
+            $proxies[] = $this->register(
+                method: $method->value,
+                path  : $path,
+                action: $action
+            );
+        }
+
+        return $proxies;
+    }
+
+    /**
+     * Resolves the given request and returns the appropriate response.
+     *
+     * @param Request $request The incoming request to be handled.
+     *
+     * @return ResponseInterface The response generated by the kernel or the fallback handler.
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \ReflectionException
+     */
+    public function resolve(Request $request) : ResponseInterface
+    {
+        /**
+         * Handles the incoming HTTP request using the primary kernel.
+         * If no route is found, and a fallback handler is defined, it delegates to the fallback.
+         * Otherwise, it throws an exception indicating no route match.
+         *
+         * @param Request $request The incoming HTTP request object to be processed.
+         *
+         * @return ResponseInterface The HTTP response generated by either the kernel or the fallback handler.
+         * @throws RouteNotFoundException If no route is matched and no fallback handler exists.
+         *
+         */
+        try {
+            // Use the kernel's responsibility to handle the incoming HTTP request by delegating it to
+            // its `handle` method. This internally resolves the matched route, applies middleware,
+            // dispatches the associated action, and returns an appropriate response.
+            return $this->kernel->handle(request: $request);
+        } catch (RouteNotFoundException) {
+            // Check if a fallback handler is defined within the current context. This determines
+            // whether an alternate mechanism to process unmatched requests is available.
+            if ($this->fallbackHandler !== null) {
+                // Invoke the fallback handler with the incoming request to return an alternative
+                // response. This can allow the system to gracefully degrade behavior where routes
+                // are not available.
+                return call_user_func($this->fallbackHandler, $request);
+            }
+
+            // If no fallback handler is defined, explicitly throw a `RouteNotFoundException` with
+            // a clear message to indicate the failure in routing and lack of fallback resolution.
+            throw new RouteNotFoundException(
+                message: "No route matched and no fallback defined."
+            );
+        }
+    }
+
+    /**
+     * Defines a fallback route.
+     *
+     * @param callable|array|string $handler
+     */
+    public function fallback(callable|array|string $handler) : void
+    {
+        if (is_callable($handler)) {
+            $this->fallbackHandler = $handler;
+        } elseif (is_array($handler) || is_string($handler)) {
+            $this->fallbackHandler = static function (Request $request) use ($handler) : ResponseInterface {
+                /** @var ControllerDispatcher $dispatcher */
+                $dispatcher = app(abstract: ControllerDispatcher::class);
+
+                return $dispatcher->dispatch(
+                    action : $handler,
+                    request: $request
+                );
+            };
+        }
+    }
+
+    /**
+     * Registers a route using the given route definition from the cache.
+     *
+     * @param RouteDefinition $definition The route definition to be registered.
+     *
+     * @return void
+     */
+    public function registerRouteFromCache(RouteDefinition $definition) : void
+    {
+        // Adds the provided route definition to the HTTP request router.
+        $this->httpRequestRouter->add(route: $definition);
+    }
+
+    /**
+     * Retrieves a route by its name from the HTTP request router.
+     *
+     * @param string $name The name of the route to retrieve.
+     *
+     * @return RouteDefinition The route definition associated with the specified name.
+     */
+    public function getRouteByName(string $name) : RouteDefinition
+    {
+        // Returns the route with the specified name from the HTTP request router.
+        return $this->httpRequestRouter->getByName(name: $name);
+    }
+
+    /**
+     * Retrieves the currently injected HTTP request router object.
+     *
+     * @return HttpRequestRouter The injected HTTP request router instance.
+     */
+    public function getHttpRouter() : HttpRequestRouter
+    {
+        // Returns the currently injected HTTP request router object.
+        return $this->httpRequestRouter;
+    }
+
+    /**
+     * Returns all registered route definitions.
+     *
+     * @return array<string, RouteDefinition[]>
+     */
+    public function allRoutes() : array
+    {
+        return $this->httpRequestRouter->allRoutes();
+    }
+
+    /**
+     * Assigns a name prefix to the current route group.
+     *
+     * @param string $prefix The prefix to be added to the name of routes in the current group.
+     *
+     * @return self Provides fluent chaining of methods.
+     * @throws LogicException If called outside the scope of a route group.
+     *
+     */
+    public function name(string $prefix) : self
+    {
+        // Retrieve the current route group context from the route group stack.
+        $context = RouteGroupStack::current();
+
+        // Throw an exception if the method is called outside of a group context.
+        if ($context === null) {
+            throw new LogicException(
+                message: 'Cannot call ->name() outside of a route group context.'
+            );
+        }
+
+        // Set the provided name prefix on the current route group context.
+        $context->setNamePrefix(prefix: $prefix);
+
+        // Return the current instance for method chaining.
+        return $this;
+    }
+
+    /**
+     * Assigns a domain constraint to the routes within the current group.
+     *
+     * @param string $domain The domain constraint to associate with the current route group.
+     *
+     * @return self Provides fluent chaining of methods.
+     */
+    public function domain(string $domain) : self
+    {
+        // Set the domain configuration for the current route group if available.
+        RouteGroupStack::current()?->setDomain($domain);
+
+        // Return the current instance for method chaining.
+        return $this;
+    }
+
+    /**
+     * Configures an authorization policy for routes in the current group.
+     *
+     * @param string $policy The policy to enforce on the current route group.
+     *
+     * @return self Provides fluent chaining of methods.
+     */
+    public function authorize(string $policy) : self
+    {
+        // Set the authorization policy for the current route group if available.
+        RouteGroupStack::current()?->setAuthorization($policy);
+
+        // Return the current instance for method chaining.
+        return $this;
+    }
+
+    /**
+     * Defines a group of routes with shared attributes and configurations.
+     *
+     * This method allows developers to group routing logic together under a common context,
+     * such as a shared URL prefix, middleware, authorization, or domain. The grouping
+     * is facilitated by a `RouteGroupContext` instance that encapsulates these shared attributes.
+     *
+     * It uses a stack to manage nested route groups, enabling hierarchical routing setups.
+     *
+     * @param array   $attributes  An associative array of attributes that define the route group's configuration.
+     *                             Allowed attributes are:
+     *                             - `prefix` (string): Prepends a common URI segment to all routes in the group.
+     *                             - `middleware` (array): Adds an array of middleware to all routes in the group.
+     *                             - `domain` (string): Defines a domain scope for the routes in the group.
+     *                             - `name` (string): Adds a name prefix for all route names in this group.
+     *                             - `authorize` (string): Defines an authorization scope for the group.
+     * @param Closure $callback    A closure responsible for defining the grouped routes.
+     *
+     * @return void
+     */
+    public function group(array $attributes, Closure $callback) : void
+    {
+        $context = new RouteGroupContext();
+
+        /**
+         * Create a new instance of RouteGroupAttributesConfigurator to configure routing attributes for a group.
+         *
+         * An associative array of group-level attributes and configurations.
+         *
+         * Expected attributes can include:
+         * - `prefix`: URI prefix for the route group. (string)
+         * - `name`: Name prefix for the route group. (string)
+         * - `domain`: The domain constraint for the group. (string)
+         * - `authorize`: Authorization-related information for the group. (string)
+         * - `middleware`: Middleware(s) applicable to the entire group. (string|array<string>)
+         *
+         * This array acts as the primary source of group-level contextual information.
+         *
+         * @var array<string, mixed> $attributes
+         *
+         *
+         * The routing context that will be configured with the provided attributes.
+         *
+         * This encapsulated group-level configuration for routes, ensuring each group
+         * inherits consistent behavior in a decoupled, reusable manner (aligned with DDD style).
+         *
+         * @var RouteGroupContext    $context
+         *
+         */
+        (new RouteGroupAttributesConfigurator())->apply(
+            attributes: $attributes,
+            context   : $context
+        );
+
+        // Push the created context onto the routing stack, indicating the start of a new route group.
+        RouteGroupStack::push($context);
+
+        try {
+            // Invoke the provided callback, passing the current instance to define the group's routes.
+            $callback($this);
+        } finally {
+            // Pop the context from the stack, signaling the end of the current route group.
+            RouteGroupStack::pop();
+        }
+    }
+
+    /**
+     * Sets a prefix for all routes defined within the current route group.
+     *
+     * @param string $prefix The prefix to be prepended to the URI of all routes in the group.
+     *
+     * @return self Provides fluent chaining of methods.
+     */
+    public function prefix(string $prefix) : self
+    {
+        // Assign the URI prefix to the current route group if the context is active.
+        RouteGroupStack::current()?->setPrefix(prefix: $prefix);
+
+        // Return the current instance for method chaining.
+        return $this;
+    }
+
+    /**
+     * Registers a new array of middleware to the current route group stack.
+     *
+     * Leverages RouteGroupStack to add the provided middleware collection for
+     * the currently active route group if it exists.
+     *
+     * @param array $middleware An array of middleware classes or callables to be added.
+     *
+     * @return self Allows method chaining by returning the same instance of MiddlewareManager.
+     */
+    public function middleware(array $middleware) : self
+    {
+        // Retrieve the current route group stack if available, and add the middleware to it.
+        RouteGroupStack::current()?->addMiddleware($middleware);
+
+        // Enable method chaining by returning the current object instance.
+        return $this;
+    }
+
+    /**
+     * Adds parameter constraints (regex patterns) to the current route group context.
+     * These constraints act as validation rules for route parameters within the group.
+     *
+     * Example:
+     * ```php
+     * $routeGroup->where(['id' => '\d+', 'slug' => '[a-z\-]+']);
+     * ```
+     *
+     * @param array<string, string> $constraints A key-value array where the key is the parameter name,
+     *                                           and the value is a regex pattern to validate the parameter.
+     *
+     * @return self Returns the current instance for fluent method chaining.
+     */
+    public function where(array $constraints) : self
+    {
+        // Retrieve the current route group from the stack and
+        // add the specified parameter constraints.
+        RouteGroupStack::current()?->addConstraints($constraints);
+
+        // Return the current instance for further modifications.
+        return $this;
+    }
+
+    /**
+     * Defines default parameter values for the current route group context.
+     * These defaults will be applied if a parameter is not explicitly provided in the URL.
+     *
+     * Example:
+     * ```
+     * $routeGroup->defaults(['locale' => 'en', 'timezone' => 'UTC']);
+     * ```
+     *
+     * @param array<string, mixed> $defaults A key-value array where the key is the parameter name,
+     *                                       and the value is the default value for the parameter.
+     *
+     * @return self Returns the current instance for fluent method chaining.
+     */
+    public function defaults(array $defaults) : self
+    {
+        // Retrieve the current route group from the stack and
+        // add the specified default parameter values.
+        RouteGroupStack::current()?->addDefaults($defaults);
+
+        // Return the current instance for further modifications.
+        return $this;
+    }
+
+    /**
+     * Attaches arbitrary route-level metadata to the current route group context.
+     * Metadata can be informational or directive, to influence routing behavior or store extra data.
+     *
+     * Example:
+     * ```
+     * $routeGroup->attributes(['middleware' => 'auth', 'role' => 'admin']);
+     * ```
+     *
+     * @param array<string, mixed> $attributes A key-value array of metadata attributes.
+     *
+     * @return self Returns the current instance for fluent method chaining.
+     */
+    public function attributes(array $attributes) : self
+    {
+        // Retrieve the current route group from the stack and
+        // add the specified metadata attributes.
+        RouteGroupStack::current()?->addAttributes($attributes);
+
+        // Return the current instance for further modifications.
+        return $this;
+    }
+}
+
+=== Routing/Exceptions/InvalidRouteException.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing\Exceptions;
+
+use InvalidArgumentException;
+use Throwable;
+
+/**
+ * Thrown when a route definition is malformed or unsafe.
+ *
+ * Used for path errors, constraint syntax issues, or unsupported parameter configurations.
+ */
+final class InvalidRouteException extends InvalidArgumentException
+{
+    /**
+     * Default constructor for direct string messages.
+     *
+     * @param string          $message  Error message.
+     * @param int             $code     Error code (optional).
+     * @param \Throwable|null $previous Chained exception (optional).
+     */
+    public function __construct(string $message = '', int $code = 0, Throwable|null $previous = null)
+    {
+        parent::__construct(message: $message, code: $code, previous: $previous);
+    }
+
+    /**
+     * Creates an exception for a malformed route path.
+     *
+     * @param string $path The invalid route path.
+     *
+     * @return self
+     */
+    public static function forPath(string $path) : self
+    {
+        return new self(
+            message: sprintf(
+                         'Invalid route path provided: "%s". Path must begin with "/" and contain valid segments.',
+                         $path
+                     )
+        );
+    }
+
+    /**
+     * Creates an exception for a constraint regex that failed to compile.
+     *
+     * @param string $parameter Parameter name.
+     * @param string $pattern   Invalid regex pattern.
+     *
+     * @return self
+     */
+    public static function forConstraint(string $parameter, string $pattern) : self
+    {
+        return new self(
+            message: sprintf('Invalid regex constraint for parameter "%s": "%s"', $parameter, $pattern)
+        );
+    }
+
+    /**
+     * Creates an exception for wildcard misuse in route patterns.
+     *
+     * @param string $path The full route path.
+     *
+     * @return self
+     */
+    public static function forInvalidWildcardUsage(string $path) : self
+    {
+        return new self(
+            message: sprintf(
+                         'Invalid wildcard usage: wildcards must appear only once and at the end. Path: "%s"',
+                         $path
+                     )
+        );
+    }
+}
+
+=== Routing/Exceptions/InvalidRouteGroupFileException.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing\Exceptions;
+
+use RuntimeException;
+use Throwable;
+
+/**
+ * Raised when a route group file fails to return a valid RouteGroupBuilder.
+ */
+final class InvalidRouteGroupFileException extends RuntimeException
+{
+    public function __construct(string $message, Throwable|null $previous = null)
+    {
+        parent::__construct($message, previous: $previous);
+    }
+}
+
+=== Routing/Exceptions/RouteNotFoundException.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing\Exceptions;
+
+use RuntimeException;
+
+/**
+ * Thrown when no route matches the incoming request.
+ */
+final class RouteNotFoundException extends RuntimeException
+{
+    /**
+     * Factory for standard 404 message.
+     *
+     * @param string $method HTTP method used.
+     * @param string $path   URI path attempted.
+     *
+     * @return static
+     */
+    public static function for(string $method, string $path) : self
+    {
+        return new self(
+            message: sprintf('No route found for [%s] %s', strtoupper($method), $path),
+            code   : 404
+        );
+    }
+}
+
+=== Routing/Exceptions/UnauthorizedException.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing\Exceptions;
+
+use RuntimeException;
+
+/**
+ * Thrown when a route explicitly defines an authorization requirement
+ * that the request does not fulfill.
+ */
+final class UnauthorizedException extends RuntimeException
+{
+    public static function because(string $reason = 'Access denied.') : self
+    {
+        return new self($reason);
+    }
+}
+
+=== Routing/HttpRequestRouter.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing;
+
+use Gemini\HTTP\Request\Request;
+use Gemini\HTTP\Router\Routing\Exceptions\InvalidRouteException;
+use Gemini\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
+use Gemini\HTTP\Router\Support\DomainPatternCompiler;
+use Gemini\HTTP\Router\Validation\RouteConstraintValidator;
+
+/**
+ * Handles HTTP request routing by matching registered routes to incoming requests.
+ *
+ * Fully supports:
+ * - HTTP method-based route matching
+ * - Named route support
+ * - Prefix grouping
+ * - Domain-aware routes
+ * - Parameter constraints (via regex)
+ * - Optional and wildcard path segments
+ * - Route defaults for missing parameters
+ * - Middleware and authorization metadata
+ *
+ * @internal This class acts as the internal route resolution engine.
+ */
+final class HttpRequestRouter
+{
+    /**
+     * All registered routes, grouped by HTTP method.
+     *
+     * @var array<string, RouteDefinition[]>
+     */
+    private array $routes = [];
+
+    /**
+     * Current prefix (used for nested route groups).
+     */
+    private string $currentPrefix = '';
+
+    /**
+     * A map of named routes for reverse routing.
+     *
+     * @var array<string, RouteDefinition>
+     */
+    private array $namedRoutes = [];
+
+    /**
+     * Constructor for initializing the class with a RouteConstraintValidator.
+     *
+     * @param RouteConstraintValidator $constraintValidator The route constraint validator instance.
+     */
+    public function __construct(private readonly RouteConstraintValidator $constraintValidator) {}
+
+    /**
+     * Sets the current prefix for subsequent routes.
+     *
+     * @param string $prefix URI path prefix (without trailing slash).
+     */
+    public function setPrefix(string $prefix) : void
+    {
+        $this->currentPrefix = rtrim($prefix, '/');
+    }
+
+    /**
+     * Clears any existing prefix used for route groupings.
+     */
+    public function clearPrefix() : void
+    {
+        $this->currentPrefix = '';
+    }
+
+    /**
+     * Registers all routes defined in a RouteGroupBuilder instance.
+     *
+     * @param RouteGroupBuilder $group
+     *
+     * @return void
+     */
+    public function registerGroup(RouteGroupBuilder $group) : void
+    {
+        foreach ($group->build() as $route) {
+            $this->registerRoute(
+                method       : $route->method,
+                path         : $route->path,
+                action       : $route->action,
+                middleware   : $route->middleware,
+                name         : $route->name,
+                constraints  : $route->constraints,
+                defaults     : $route->defaults,
+                domain       : $route->domain,
+                attributes   : $route->attributes,
+                authorization: $route->authorization
+            );
+        }
+    }
+
+    /**
+     * Registers a route to the internal route collection.
+     *
+     * @param string                $method        HTTP method (GET, POST, etc.)
+     * @param string                $path          Route path (e.g. /users/{id})
+     * @param callable|array|string $action        Route handler (controller, callable, etc.)
+     * @param array<string>         $middleware    Middleware stack
+     * @param string|null           $name          Optional route name
+     * @param array<string, string> $constraints   Param constraints via regex
+     * @param array<string, string> $defaults      Default values for optional parameters
+     * @param string|null           $domain        Optional domain pattern (e.g. admin.{org}.com)
+     * @param array<string, mixed>  $attributes    Arbitrary metadata for the route
+     * @param string|null           $authorization Authorization policy key (optional)
+     *
+     * @throws InvalidRouteException If the path is invalid.
+     */
+    public function registerRoute(
+        string                $method,
+        string                $path,
+        callable|array|string $action,
+        array|null            $middleware = null,
+        string|null           $name = null,
+        array|null            $constraints = null,
+        array|null            $defaults = null,
+        string|null           $domain = null,
+        array|null            $attributes = null,
+        string|null           $authorization = null
+    ) : void {
+        $this->validateRoutePath(path: $path);
+
+        $route = new RouteDefinition(
+            method       : strtoupper($method),
+            path         : $this->applyPrefix(path: $path),
+            action       : $action,
+            middleware   : $middleware ?? [],
+            name         : $name ?? '',
+            constraints  : $constraints ?? [],
+            defaults     : $defaults ?? [],
+            domain       : $domain,
+            attributes   : $attributes ?? [],
+            authorization: $authorization
+        );
+
+        $this->routes[$route->method][] = $route;
+        if (! empty($route->name)) {
+            $this->namedRoutes[$route->name] = $route;
+        }
+    }
+
+    /**
+     * Validates that a route path begins with a slash and is not empty.
+     *
+     * @param string $path
+     *
+     * @throws InvalidRouteException
+     */
+    private function validateRoutePath(string $path) : void
+    {
+        if (empty($path) || ! str_starts_with($path, '/')) {
+            throw new InvalidRouteException(message: 'Route path must start with a "/" and cannot be empty.');
+        }
+    }
+
+    /**
+     * Applies the currently active prefix to a path.
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    private function applyPrefix(string $path) : string
+    {
+        return $this->currentPrefix . $path;
+    }
+
+    /**
+     * Resolves the given HTTP request and determines the corresponding route definition.
+     *
+     * @param Request $request The HTTP request to resolve, containing method, URI, and other details.
+     *
+     * @return RouteDefinition The resolved route definition that matches the request.
+     * @throws RouteNotFoundException If no matching route is found.
+     */
+    public function resolve(Request $request) : RouteDefinition
+    {
+        // Retrieve the HTTP method of the request, convert it to uppercase for consistency.
+        $method = strtoupper($request->getMethod());
+
+        // Retrieve the URI path of the request to determine the path being accessed.
+        $uriPath = $request->getUri()->getPath();
+
+        // Retrieve the host (domain name) from the request URI.
+        $host = $request->getUri()->getHost();
+
+        // Iterate over all registered routes corresponding to the HTTP method of the request.
+        foreach ($this->routes[$method] ?? [] as $route) {
+            // If the route specifies a domain and the domain does not match the current host, skip this route.
+            if ($route->domain !== null) {
+                $compiled = DomainPatternCompiler::compile($route->domain);
+                if (! DomainPatternCompiler::match($host, $compiled)) {
+                    continue;
+                }
+            }
+
+            // Compile the route's path into a regex pattern, taking into account any constraints defined.
+            $pattern = $this->compileRoutePattern(
+                template   : $route->path,       // The route path (e.g., "/users/{id}").
+                constraints: $route->constraints // Route parameter constraints (e.g., regex for {id}).
+            );
+
+            // Check if the requested URI path matches the compiled route pattern.
+            if (preg_match($pattern, $uriPath, $matches)) {
+                // Extract any parameters captured from the regex match (e.g., {id} = 123).
+                $parameters = $this->extractParameters(matches: $matches);
+
+                // Apply default route parameters and merge them with extracted parameters into the request object.
+                $request = $this->applyRouteDefaults(
+                    request   : $request,
+                    defaults  : $route->defaults,   // Default values (e.g., {lang} = "en" if not provided).
+                    parameters: $parameters         // Extracted parameters from the request URI path.
+                );
+
+                // Calls the validate method of the RouteConstraintValidator instance.
+                // This method ensures that all route parameter values in the request
+                // comply with the regex constraints defined in the RouteDefinition.
+                $this->constraintValidator->validate(route: $route, request: $request);
+
+                // 🧠 Return the same object, but bind modified request
+                return new RouteDefinition(
+                    method       : $route->method,
+                    path         : $route->path,
+                    action       : $route->action,
+                    middleware   : $route->middleware,
+                    name         : $route->name,
+                    constraints  : $route->constraints,
+                    defaults     : $route->defaults,
+                    domain       : $route->domain,
+                    attributes   : $route->attributes,
+                    authorization: $route->authorization,
+                    parameters   : $parameters
+                );
+            }
+        }
+
+        throw RouteNotFoundException::for(method: $method, path: $uriPath);
+    }
+
+    /**
+     * Builds a route-matching regular expression from a route path template.
+     *
+     * Supports:
+     * - Required parameters: `/users/{id}`
+     * - Optional segments:   `/users/{id?}`
+     * - Wildcard catch-all:  `/files/{path*}`
+     *
+     * @param string               $template
+     * @param array<string,string> $constraints
+     *
+     * @return string Regex pattern.
+     */
+    private function compileRoutePattern(string $template, array $constraints = []) : string
+    {
+        return '#^' . preg_replace_callback(
+                pattern : '/\{(\w+)([?*]?)}/',
+                callback: static function (array $match) use ($constraints) : string {
+                    [$param, $modifier] = [$match[1], $match[2]];
+                    $pattern = $constraints[$param] ?? '[^/]+';
+
+                    return match ($modifier) {
+                        '?'     => '(?:/(?P<' . $param . '>' . $pattern . '))?',
+                        '*'     => '(?P<' . $param . '>.*)',
+                        default => '(?P<' . $param . '>' . $pattern . ')'
+                    };
+                },
+                subject : $template
+            ) . '$#';
+    }
+
+    /**
+     * Filters out numeric keys from regex match results to isolate named route parameters.
+     *
+     * @param array $matches Regex matches from `preg_match`.
+     *
+     * @return array<string, string>
+     */
+    private function extractParameters(array $matches) : array
+    {
+        return array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
+     * Applies both resolved route parameters and default values to the request object.
+     *
+     * @param Request              $request
+     * @param array<string,string> $defaults
+     * @param array<string,string> $parameters
+     *
+     * @return Request
+     */
+    private function applyRouteDefaults(Request $request, array $defaults, array $parameters) : Request
+    {
+        foreach ($parameters as $key => $value) {
+            $request = $request->withAttribute(name: $key, value: $value);
+        }
+
+        foreach ($defaults as $key => $default) {
+            if ($request->getAttribute(name: $key) === null) {
+                $request = $request->withAttribute(name: $key, value: $default);
+            }
+        }
+
+        return $request;
+    }
+
+    /**
+     * Retrieves all registered routes.
+     *
+     * @return array<string, RouteDefinition[]>
+     */
+    public function allRoutes() : array
+    {
+        return $this->routes;
+    }
+
+    /**
+     * Directly adds a compiled route definition to the router's table.
+     * This bypasses validation and is used by the RouteCacheLoader.
+     *
+     * @param RouteDefinition $route The precompiled route to register.
+     */
+    public function add(RouteDefinition $route) : void
+    {
+        $method = strtoupper($route->method);
+
+        if (! array_key_exists($method, $this->routes)) {
+            $this->routes[$method] = [];
+        }
+
+        $this->routes[$method][$route->path] = $route;
+    }
+
+    /**
+     * Retrieves a route by its unique name.
+     *
+     * @param string $name The name of the route.
+     *
+     * @return RouteDefinition
+     *
+     * @throws RouteNotFoundException
+     */
+    public function getByName(string $name) : RouteDefinition
+    {
+        if (! isset($this->namedRoutes[$name])) {
+            throw new RouteNotFoundException(message: "Named route [{$name}] not found.");
+        }
+
+        return $this->namedRoutes[$name];
+    }
+
+    /**
+     * Checks if a named route exists.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasNamedRoute(string $name) : bool
+    {
+        return isset($this->namedRoutes[$name]);
+    }
+
+    /**
+     * Sets the fallback handler to be used when no route matches.
+     *
+     * @param callable|array|string $handler
+     *
+     * @return void
+     */
+    public function fallback(callable|array|string $handler) : void
+    {
+        $this->registerRoute(
+            method: 'ANY',
+            path  : '__fallback__',
+            action: $handler,
+            name  : '__router.fallback'
+        );
+    }
+}
+
+=== Routing/RouteBuilder.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing;
+
+use Gemini\HTTP\Router\HttpMethod;
+use InvalidArgumentException;
+
+/**
+ * Builds fluent-style HTTP route declarations for Gemini's router.
+ *
+ * Supports:
+ * - Route prefixing and naming
+ * - Middleware stacking
+ * - Domain and authorization constraints
+ * - Parameter constraints, defaults, and metadata
+ * - Clean Architecture-aligned route definitions
+ *
+ * This class acts as a DSL-style immutable builder that produces `RouteDefinition` objects.
+ */
+final class RouteBuilder
+{
+    /** @var string HTTP method (GET, POST, etc.) */
+    public readonly string $method;
+
+    /** @var string The route URI path (e.g., /users/{id}) */
+    public string $path;
+
+    /** @var string|null Optional name for the route (used for reverse routing) */
+    public string|null $name = null;
+
+    /** @var array List of middleware to apply to the route */
+    public array $middleware = [];
+
+    /** @var callable|array|string|null The route's action target (controller, callable, etc.) */
+    public mixed $action = null;
+
+    /** @var array<string, string> Regex constraints for route parameters */
+    public array $constraints = [];
+
+    /** @var array<string, string> Default values for optional parameters */
+    public array $defaults = [];
+
+    /** @var string|null Optional domain constraint (e.g., admin.{org}.com) */
+    public string|null $domain = null;
+
+    /** @var array<string, mixed> Custom metadata attached to the route */
+    public array $attributes = [];
+
+    /** @var string|null Optional authorization policy identifier */
+    public string|null $authorization = null;
+
+    /**
+     * Private constructor. Use RouteBuilder::make() instead.
+     *
+     * @param string $method HTTP method (GET, POST, etc.)
+     * @param string $path   URI path starting with /
+     *
+     * @throws InvalidArgumentException
+     */
+    private function __construct(string $method, string $path)
+    {
+        $this->validateMethod(method: $method);
+        $this->validatePath(path: $path);
+
+        $this->method = strtoupper($method);
+        $this->path   = $path;
+    }
+
+    /**
+     * Validates that the HTTP method is allowed.
+     *
+     * @param string $method
+     *
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    private function validateMethod(string $method) : void
+    {
+        if (! HttpMethod::isValid(method: $method)) {
+            throw new InvalidArgumentException(message: "Invalid HTTP method: {$method}");
+        }
+    }
+
+    /**
+     * Validates that the route path format is acceptable.
+     *
+     * @param string $path
+     *
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    private function validatePath(string $path) : void
+    {
+        if (! preg_match(pattern: '#^/[\w\-/{}]*$#', subject: $path)) {
+            throw new InvalidArgumentException(message: "Invalid route path: {$path}");
+        }
+    }
+
+    /**
+     * Static factory to initialize a RouteBuilder.
+     *
+     * @param string $method
+     * @param string $path
+     *
+     * @return self
+     */
+    public static function make(string $method, string $path) : self
+    {
+        $builder = new self(method: $method, path: $path);
+
+        return RouteGroupStack::apply(builder: $builder);
+    }
+
+
+    /**
+     * Gets the route name.
+     *
+     * @return string|null
+     */
+    public function getName() : string|null
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string|null $name
+     *
+     * @return RouteBuilder
+     */
+    public function setName(?string $name) : RouteBuilder
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Gets the middleware stack.
+     *
+     * @return array
+     */
+    public function getMiddleware() : array
+    {
+        return $this->middleware;
+    }
+
+    /**
+     * @param array $middleware
+     *
+     * @return RouteBuilder
+     */
+    public function setMiddleware(array $middleware) : RouteBuilder
+    {
+        $this->middleware = $middleware;
+
+        return $this;
+    }
+
+    /**
+     * Gets the route action.
+     *
+     * @return callable|array|string|null
+     */
+    public function getAction() : callable|array|string|null
+    {
+        return $this->action;
+    }
+
+    /**
+     * @param mixed $action
+     *
+     * @return RouteBuilder
+     */
+    public function setAction(mixed $action) : RouteBuilder
+    {
+        $this->action = $action;
+
+        return $this;
+    }
+
+    /**
+     * Gets parameter constraints.
+     *
+     * @return array<string, string>
+     */
+    public function getConstraints() : array
+    {
+        return $this->constraints;
+    }
+
+    /**
+     * @param array $constraints
+     *
+     * @return RouteBuilder
+     */
+    public function setConstraints(array $constraints) : RouteBuilder
+    {
+        $this->constraints = $constraints;
+
+        return $this;
+    }
+
+    /**
+     * Gets default values for parameters.
+     *
+     * @return array<string, string>
+     */
+    public function getDefaults() : array
+    {
+        return $this->defaults;
+    }
+
+    /**
+     * @param array $defaults
+     *
+     * @return RouteBuilder
+     */
+    public function setDefaults(array $defaults) : RouteBuilder
+    {
+        $this->defaults = $defaults;
+
+        return $this;
+    }
+
+    /**
+     * Gets the domain constraint, if any.
+     *
+     * @return string|null
+     */
+    public function getDomain() : string|null
+    {
+        return $this->domain;
+    }
+
+    /**
+     * @param string|null $domain
+     *
+     * @return RouteBuilder
+     */
+    public function setDomain(?string $domain) : RouteBuilder
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
+    /**
+     * Gets custom route attributes.
+     *
+     * @return array<string, mixed>
+     */
+    public function getAttributes() : array
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * @param array $attributes
+     *
+     * @return RouteBuilder
+     */
+    public function setAttributes(array $attributes) : RouteBuilder
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAuthorization() : ?string
+    {
+        return $this->authorization;
+    }
+
+
+    /**
+     * @param string|null $authorization
+     *
+     * @return RouteBuilder
+     */
+    public function setAuthorization(?string $authorization) : RouteBuilder
+    {
+        $this->authorization = $authorization;
+
+        return $this;
+    }
+
+    /**
+     * Sets the route name.
+     *
+     * @param string $name
+     *
+     * @return self
+     */
+    public function name(string $name) : self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    // region: Validation
+
+    /**
+     * Sets the action target of the route.
+     *
+     * @param callable|array|string $action
+     *
+     * @return self
+     */
+    public function action(callable|array|string $action) : self
+    {
+        $this->action = $action;
+
+        return $this;
+    }
+
+    /**
+     * Shortcut for setting a controller and method.
+     *
+     * @param string $controller
+     * @param string $method
+     *
+     * @return self
+     */
+    public function controller(string $controller, string $method = 'index') : self
+    {
+        $this->action = [$controller, $method];
+
+        return $this;
+    }
+
+    /**
+     * Attaches middleware to the route.
+     *
+     * @param array $middleware
+     *
+     * @return self
+     */
+    public function middleware(array $middleware) : self
+    {
+        $this->middleware = $middleware;
+
+        return $this;
+    }
+
+    /**
+     * Assigns default values for optional route parameters.
+     *
+     * @param array<string, string> $defaults
+     *
+     * @return self
+     */
+    public function defaults(array $defaults) : self
+    {
+        $this->defaults = $defaults;
+
+        return $this;
+    }
+
+    /**
+     * Assigns a domain pattern to the route.
+     *
+     * @param string $domain
+     *
+     * @return self
+     */
+    public function withDomain(string $domain) : self
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
+    /**
+     * Attaches custom metadata (attributes) to the route.
+     *
+     * @param array<string, mixed> $attributes
+     *
+     * @return self
+     */
+    public function attributes(array $attributes) : self
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    /**
+     * Specifies an authorization policy identifier.
+     *
+     * @param string $policy
+     *
+     * @return self
+     */
+    public function withAuthorization(string $policy) : self
+    {
+        $this->authorization = $policy;
+
+        return $this;
+    }
+
+    /**
+     * Adds multiple route parameter constraints using regex.
+     *
+     * @param array<string, string> $constraints
+     *
+     * @return self
+     * @throws InvalidArgumentException
+     */
+    public function whereIn(array $constraints) : self
+    {
+        foreach ($constraints as $param => $pattern) {
+            $this->where(parameter: $param, pattern: $pattern);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Adds a single route parameter constraint using regex.
+     *
+     * @param string $parameter
+     * @param string $pattern
+     *
+     * @return self
+     * @throws InvalidArgumentException
+     */
+    public function where(string $parameter, string $pattern) : self
+    {
+        $this->validateConstraintPattern(pattern: $pattern);
+
+        $this->constraints[$parameter] = $pattern;
+
+        return $this;
+    }
+
+    /**
+     * Ensures that the regex constraint is syntactically valid.
+     *
+     * @param string $pattern
+     *
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    private function validateConstraintPattern(string $pattern) : void
+    {
+        if (@preg_match(pattern: "/{$pattern}/", subject: '') === false) {
+            throw new InvalidArgumentException(message: "Invalid constraint regex: {$pattern}");
+        }
+    }
+
+    /**
+     * Finalizes and compiles the route definition.
+     *
+     * @return RouteDefinition
+     */
+    public function build() : RouteDefinition
+    {
+        return new RouteDefinition(
+            method       : $this->method,
+            path         : $this->path,
+            action       : $this->action,
+            middleware   : $this->middleware,
+            name         : $this->name ?? '',
+            constraints  : $this->constraints,
+            defaults     : $this->defaults,
+            domain       : $this->domain,
+            attributes   : $this->attributes,
+            authorization: $this->authorization
+        );
+    }
+
+    /**
+     * Specifies a policy for route-level authorization.
+     *
+     * @param string $policy The authorization policy identifier.
+     *
+     * @return self
+     */
+    public function authorize(string $policy) : self
+    {
+        $this->authorization = $policy;
+
+        return $this;
+    }
+
+    /**
+     * Gets the HTTP method.
+     *
+     * @return string
+     */
+    public function getMethod() : string
+    {
+        return $this->method;
+    }
+
+    /**
+     * Gets the path for the route.
+     *
+     * @return string
+     */
+    public function getPath() : string
+    {
+        return $this->path;
+    }
+
+}
+
+=== Routing/RouteDefinition.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing;
+
+use Closure;
+use Gemini\HTTP\Router\HttpMethod;
+use InvalidArgumentException;
+use Laravel\SerializableClosure\SerializableClosure;
+
+/**
+ * Immutable data structure representing a registered HTTP route.
+ *
+ * Supports serializable closures via Laravel\SerializableClosure.
+ */
+final readonly class RouteDefinition
+{
+    /**
+     * Constructor for initializing route details.
+     *
+     * @param string      $method        The HTTP method (e.g., GET, POST) for the route.
+     * @param string      $path          The URI path for the route.
+     * @param mixed       $action        The action or callback associated with the route.
+     * @param array       $middleware    An array of middleware to be applied to the route.
+     * @param string      $name          The name of the route, optional.
+     * @param array       $constraints   An array of constraints for the route parameters.
+     * @param array       $defaults      An array of default values for route parameters.
+     * @param string|null $domain        The domain name associated with the route, optional.
+     * @param array       $attributes    Additional attributes for the route.
+     * @param string|null $authorization The authorization key or identifier for the route, optional.
+     * @param array       $parameters    An array of parameters to be passed to the route, optional.
+     *
+     * @return void
+     */
+    public function __construct(
+        public string      $method,
+        public string      $path,
+        public mixed       $action,
+        public array       $middleware = [],
+        public string      $name = '',
+        public array       $constraints = [],
+        public array       $defaults = [],
+        public string|null $domain = null,
+        public array       $attributes = [],
+        public string|null $authorization = null,
+        public array       $parameters = []
+    ) {
+        $this->validateMethod(method: $method);
+        $this->validatePath(path: $path);
+        $this->validateConstraints(constraints: $constraints);
+    }
+
+    /**
+     * Validates the HTTP method against supported ones.
+     *
+     * @throws InvalidArgumentException
+     */
+    private function validateMethod(string $method) : void
+    {
+        if (! HttpMethod::isValid(method: $method)) {
+            throw new InvalidArgumentException(message: sprintf('Invalid HTTP method: %s', $method));
+        }
+    }
+
+    /**
+     * Validates the route path format.
+     *
+     * @throws InvalidArgumentException
+     */
+    private function validatePath(string $path) : void
+    {
+        if (! preg_match(pattern: '#^/[\w\-/{}]*$#', subject: $path)) {
+            throw new InvalidArgumentException(message: sprintf('Invalid route path: %s', $path));
+        }
+    }
+
+    /**
+     * Validates all regex constraints.
+     *
+     * @throws InvalidArgumentException
+     */
+    private function validateConstraints(array $constraints) : void
+    {
+        foreach ($constraints as $pattern) {
+            if (@preg_match('/' . $pattern . '/', '') === false) {
+                throw new InvalidArgumentException(message: sprintf('Invalid regex constraint: %s', $pattern));
+            }
+        }
+    }
+
+    public static function __set_state(array $properties) : self
+    {
+        return new self(
+            method       : $properties['method'],
+            path         : $properties['path'],
+            action       : $properties['action'],
+            middleware   : $properties['middleware'],
+            name         : $properties['name'],
+            constraints  : $properties['constraints'],
+            defaults     : $properties['defaults'],
+            domain       : $properties['domain'],
+            attributes   : $properties['attributes'],
+            authorization: $properties['authorization'],
+            parameters   : $properties['parameters'] ?? []
+        );
+    }
+
+
+    /**
+     * Returns a copy of the route with the action wrapped in a SerializableClosure (if needed).
+     *
+     * @return self
+     * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
+     * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
+     */
+    public function withSerializedAction() : self
+    {
+        $action = $this->action instanceof Closure
+            ? new SerializableClosure($this->action)
+            : $this->action;
+
+        return new self(
+            method       : $this->method,
+            path         : $this->path,
+            action       : $action,
+            middleware   : $this->middleware,
+            name         : $this->name,
+            constraints  : $this->constraints,
+            defaults     : $this->defaults,
+            domain       : $this->domain,
+            attributes   : $this->attributes,
+            authorization: $this->authorization
+        );
+    }
+
+    /**
+     * Returns a copy of the route with the action unwrapped (if it's a SerializableClosure).
+     *
+     * @return self
+     * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
+     * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
+     */
+    public function withUnserializedAction() : self
+    {
+        $action = $this->action instanceof SerializableClosure
+            ? $this->action->getClosure()
+            : $this->action;
+
+        return new self(
+            method       : $this->method,
+            path         : $this->path,
+            action       : $action,
+            middleware   : $this->middleware,
+            name         : $this->name,
+            constraints  : $this->constraints,
+            defaults     : $this->defaults,
+            domain       : $this->domain,
+            attributes   : $this->attributes,
+            authorization: $this->authorization
+        );
+    }
+
+    /**
+     * Checks if the given parameter has a constraint.
+     */
+    public function hasConstraint(string $parameter) : bool
+    {
+        return array_key_exists($parameter, $this->constraints);
+    }
+
+    /**
+     * Returns the regex constraint for a route parameter.
+     */
+    public function getConstraint(string $parameter) : string|null
+    {
+        return $this->constraints[$parameter] ?? null;
+    }
+
+    public function usesClosure() : bool
+    {
+        return $this->action instanceof Closure;
+    }
+}
+
+=== Routing/RouteGroupAttributesConfigurator.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing;
+
+use InvalidArgumentException;
+
+/**
+ * The `RouteGroupAttributesConfigurator` class is responsible for configuring
+ * a route group context by applying a set of attributes like prefix, middleware,
+ * domain, and more.
+ *
+ * This class uses the Strategy design pattern to map each attribute to its
+ * respective handler, ensuring extensibility and separation of responsibilities.
+ */
+final class RouteGroupAttributesConfigurator
+{
+    /**
+     * Map of supported route group attributes and their respective handlers,
+     * defined as callable strategies. Each attributes key maps to a closure/function
+     * that modifies the `RouteGroupContext`.
+     *
+     * @var array<string, callable(RouteGroupContext, mixed): void> A map of attribute keys and their handlers.
+     */
+    private array $strategies;
+
+    /**
+     * Constructor of the class.
+     *
+     * Initializes the mapping of available attribute handlers (`$strategies`) with
+     * their processing logic defined as closures. Using constructor promotion for
+     * a lean and expressive instantiation process.
+     */
+    public function __construct()
+    {
+        // Initializes the strategy map with closures for each supported attribute:
+        $this->strategies = [
+            /**
+             * Strategy for handling 'prefix' - converts the value to a string
+             * and applies it as a prefix to the route group context.
+             */
+            'prefix'     => fn(RouteGroupContext $context, mixed $value) => $context->setPrefix((string) $value),
+
+            /**
+             * Strategy for handling 'middleware' - converts the value to an array
+             * and appends the middleware to the route group context.
+             */
+            'middleware' => fn(RouteGroupContext $context, mixed $value) => $context->addMiddleware(
+                (array) $value
+            ),
+
+            /**
+             * Strategy for handling 'domain' - converts the value to a string
+             * and sets it as the domain for the route group context.
+             */
+            'domain'     => fn(RouteGroupContext $context, mixed $value) => $context->setDomain((string) $value),
+
+            /**
+             * Strategy for handling 'name' - converts the value to a string
+             * and applies it as a prefix to the names of route group context
+             * names.
+             */
+            'name'       => fn(RouteGroupContext $context, mixed $value) => $context->setNamePrefix(
+                (string) $value
+            ),
+
+            /**
+             * Strategy for handling 'authorize' - converts the value to a string
+             * and sets it as authorization for the route group context.
+             */
+            'authorize'  => fn(RouteGroupContext $context, mixed $value) => $context->setAuthorization(
+                (string) $value
+            ),
+
+            // Additional attribute types can be added here following the same pattern, maintaining extensibility.
+        ];
+    }
+
+    /**
+     * Applies the provided attributes to the given route group context.
+     *
+     * Iterates through each key-value pair of attributes, validates the key
+     * against the supported strategies, and applies the corresponding
+     * handler to modify the `RouteGroupContext`.
+     *
+     * @param array<string, mixed> $attributes A map of attributes to be configured for the route group context (e.g.,
+     *                                         'prefix' => '/api').
+     * @param RouteGroupContext    $context    The route group context where the attributes will be applied.
+     *
+     * @throws InvalidArgumentException If an attribute key is not recognized or unsupported.
+     */
+    public function apply(array $attributes, RouteGroupContext $context) : void
+    {
+        // Iterate over each key-value pair of attributes.
+        foreach ($attributes as $attribute => $value) {
+            // Check if the attribute is supported by existing strategies.
+            if (! isset($this->strategies[$attribute])) {
+                // If not supported, throw an exception to enforce proper usage.
+                throw new InvalidArgumentException(
+                    sprintf('Unsupported route group attribute: %s', $attribute)
+                );
+            }
+
+            // Execute the corresponding strategy using a callable, passing in
+            // the target context and the attribute value.
+            ($this->strategies[$attribute])($context, $value);
+        }
+    }
+}
+=== Routing/RouteGroupBuilder.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing;
+
+use Closure;
+use Gemini\HTTP\Router\HttpMethod;
+use InvalidArgumentException;
+use RuntimeException;
+
+/**
+ * Builder class for defining grouped routes in a fluent, immutable way.
+ *
+ * Supports:
+ * - Prefix inheritance
+ * - Shared middleware
+ * - Domain pattern binding
+ * - Route-level authorization
+ * - Group composition via callback (closure nesting)
+ */
+final readonly class RouteGroupBuilder
+{
+    /**
+     * @param string|null    $prefix
+     * @param array<string>  $middleware
+     * @param string|null    $domain
+     * @param string|null    $authorization
+     * @param RouteBuilder[] $routes
+     */
+    private function __construct(
+        private string|null $prefix = null,
+        private array       $middleware = [],
+        private string|null $domain = null,
+        private string|null $authorization = null,
+        private array       $routes = []
+    ) {}
+
+    /**
+     * Factory method to create a new, empty RouteGroup instance.
+     *
+     * @return self A new RouteGroup object representing a blank, default group.
+     */
+    public static function create() : self
+    {
+        // Create and return a new RouteGroup instance with default settings.
+        return new self();
+    }
+
+    /**
+     * Creates a new RouteGroup with a specified prefix.
+     *
+     * @param string $prefix The prefix to apply to all routes in the group.
+     *
+     * @return self A new RouteGroup object with the specified prefix.
+     */
+    public function withPrefix(string $prefix) : self
+    {
+        // Creates a new immutable route group with the modified prefix.
+        return new self(
+            prefix       : rtrim($prefix, '/'), // Ensure no trailing slash on the prefix.
+            middleware   : $this->middleware, // Reuse the existing middleware.
+            domain       : $this->domain, // Keep the existing domain value.
+            authorization: $this->authorization, // Maintain the same authorization.
+            routes       : $this->routes // Carry over the existing routes.
+        );
+    }
+
+    /**
+     * Adds middleware to this group's middleware stack.
+     * The middleware list is merged with any existing middlewares.
+     *
+     * @param array<string> $middleware A list of middleware to add to the group.
+     *
+     * @return self A new RouteGroup object with the updated middleware stack.
+     */
+    public function withMiddleware(array $middleware) : self
+    {
+        // Create a new immutable instance with the combined middleware.
+        return new self(
+            prefix       : $this->prefix, // Retain the existing route prefix.
+            middleware   : array_merge($this->middleware, $middleware), // Merge old and new middleware.
+            domain       : $this->domain, // Keep the existing domain restriction.
+            authorization: $this->authorization, // Maintain the same authorization.
+            routes       : $this->routes // Preserve the existing group routes.
+        );
+    }
+
+    /**
+     * Defines an authorization policy for all routes in this group.
+     *
+     * @param string $policy The name of the authorization policy to apply.
+     *
+     * @return self A new RouteGroup object with the specified authorization policy.
+     */
+    public function withAuthorization(string $policy) : self
+    {
+        // Create a new immutable instance with the updated authorization policy.
+        return new self(
+            prefix       : $this->prefix, // Reuse the existing route prefix.
+            middleware   : $this->middleware, // Retain the middleware stack.
+            domain       : $this->domain, // Keep the domain restriction as is.
+            authorization: $policy, // Apply the new authorization policy.
+            routes       : $this->routes // Carry over the route definitions.
+        );
+    }
+
+    /**
+     * Adds one or more routes via closure DSL.
+     *
+     * Example:
+     * ```
+     * ->withRoutes(fn(RouteGroupBuilder $g) => $g
+     *      ->addRoute(...)->addRoute(...)
+     * )
+     * ```
+     */
+    public function withRoutes(Closure $callback) : self
+    {
+        // Invoke the callback, passing a cloned instance of the current object ($this).
+        // This allows the callback to define routes within its own scope without altering the original object.
+        $nested = $callback(clone $this);
+
+        // Check if the result of the callback is an instance of the current class (RouteGroupBuilder).
+        // If not, throw a RuntimeException to ensure the callback strictly returns a valid RouteGroupBuilder instance.
+        if (! $nested instanceof self) {
+            throw new RuntimeException(message: 'Callback to withRoutes() must return a RouteGroupBuilder instance.');
+        }
+
+        // Return a new instance of the RouteGroupBuilder class,
+        // preserving the prefix, middleware, domain, and authorization of the current instance.
+        // For routes, merge the routes from the current instance ($this->routes) with those from the nested instance ($nested->routes).
+        // The new instance represents the combined state of the current and nested route group builders.
+        return new self(
+            prefix       : $this->prefix,        // Maintain the prefix of the current route group.
+            middleware   : $this->middleware,    // Maintain the middleware of the current route group.
+            domain       : $this->domain,        // Maintain the domain of the current route group.
+            authorization: $this->authorization, // Maintain the authorization policies of the current route group.
+            routes       : [...$this->routes, ...$nested->routes] // Merge the existing and nested routes.
+        );
+    }
+
+    /**
+     * Adds a single route to the group.
+     *
+     * @param string                $method HTTP verb
+     * @param string                $path   Route path
+     * @param callable|array|string $action Target controller or callable
+     *
+     * @return self
+     */
+    public function addRoute(string $method, string $path, callable|array|string $action) : self
+    {
+        // Validate if the provided HTTP method is valid using the HttpMethod enumeration.
+        // Throw an exception if the HTTP method is invalid.
+        if (! HttpMethod::isValid(method: $method)) {
+            throw new InvalidArgumentException(message: "Invalid HTTP method: {$method}");
+        }
+
+        // Create a new RouteBuilder instance with the validated HTTP method and the prefixed path.
+        // Assign the provided action (e.g., controller method or callback) to the route.
+        // Assign middleware (e.g., authentication, logging) to the route.
+        $route = RouteBuilder::make(
+            method: $method,
+            path  : $this->applyPrefix($path)
+
+        )
+            ->action(action: $action)
+            ->middleware(middleware: $this->middleware);
+
+        // Add a domain to the route if a specific domain is defined.
+        if ($this->domain !== null) {
+            $route = $route->withDomain(domain: $this->domain);
+        }
+
+        // Assign an authorization policy to the route if one is provided.
+        if ($this->authorization !== null) {
+            $route = $route->authorize(policy: $this->authorization);
+        }
+
+        // Create a new instance of the current class, extending the existing routes
+        // with the newly configured route, and preserving other properties like
+        // prefix, middleware, domain, and authorization.
+        return new self(
+        // Maintain the current URL prefix for the routes.
+            prefix       : $this->prefix,
+            // Maintain the current list of middleware.
+            middleware   : $this->middleware,
+            // Maintain the current domain (if any).
+            domain       : $this->domain,
+            // Maintain the current authorization policy (if any).
+            authorization: $this->authorization,
+            // Append the newly configured route to the list of existing routes.
+            routes       : [...$this->routes, $route]
+        );
+    }
+
+    /**
+     * Factory method to create a new instance of the RouteGroupBuilder class.
+     *
+     * This method acts as the default entry point for creating a new route group object.
+     * It ensures a clean, well-defined instantiation process that allows for method chaining
+     * and controlled manipulation of routes and associated properties like middleware,
+     * authorization, and prefix. Ideal for managing route groups in scalable applications.
+     *
+     * @return self Returns a new instance of the RouteGroupBuilder class.
+     */
+    public static function make() : self
+    {
+        // Instantiate and return a new RouteGroupBuilder with default values.
+        return new self();
+    }
+
+
+    /**
+     * Applies the group prefix to a given path.
+     *
+     * This method is responsible for ensuring that routes within a group
+     * are correctly prefixed. If no prefix is defined (i.e., `$prefix` is null),
+     * it returns the provided path as-is. Otherwise, it joins the prefix and path
+     * with a single forward slash (`/`) to preserve uniformity in URL structure.
+     *
+     * @param string $path The specific route path to which the prefix should be applied.
+     *
+     * @return string The modified path with the applied prefix, or the original path if no prefix is set.
+     */
+    private function applyPrefix(string $path) : string
+    {
+        // Check if the `prefix` property is null (no prefix defined).
+        // If null, simply return the provided path without any modifications.
+        if ($this->prefix === null) {
+            return $path;
+        }
+
+        // Append the given path to the prefix while managing slash consistency.
+        // - Use `rtrim` to strip any trailing slashes from the prefix.
+        // - Use `ltrim` to remove any leading slashes from the provided path.
+        // - This ensures a single forward slash (`/`) separates the prefix and path.
+        return rtrim($this->prefix, '/') . '/' . ltrim($path, '/');
+    }
+
+
+    /**
+     * Sets a domain constraint for all routes in the group.
+     *
+     * This method is part of the fluent API for configuring route groups.
+     * It allows you to specify that all routes in the group should apply
+     * to a specific domain. This is useful for implementing multi-tenant
+     * architectures, subdomain routing, or domain-specific behavior.
+     *
+     * @param string $domain The domain constraint to be applied to the routes
+     *                       within this group.
+     *
+     * @return self Returns a new instance of the `RouteGroupBuilder` class
+     *              with the specified domain applied, ensuring immutability.
+     */
+    public function withDomain(string $domain) : self
+    {
+        // Create and return a new instance of the RouteGroupBuilder class
+        // with the updated domain while preserving all other properties.
+        return new self(
+            prefix       : $this->prefix,        // Keep the current route prefix.
+            middleware   : $this->middleware,    // Retain the middleware stack.
+            domain       : $domain,              // Set the new domain constraint.
+            authorization: $this->authorization, // Retain the authorization policy.
+            routes       : $this->routes         // Retain the existing routes.
+        );
+    }
+
+    /**
+     * Builds all defined routes.
+     *
+     * Converts the routes defined within the `RouteGroupBuilder` to their
+     * respective `RouteDefinition` objects by invoking their `build()`
+     * methods. This allows the route definitions to be finalized and used
+     * by the routing system.
+     *
+     * This method adheres to the principle of immutability by performing its
+     * operations without modifying the internal state of the `RouteGroupBuilder`.
+     * This makes the function predictable and side effect free.
+     *
+     * @return RouteDefinition[] An array of `RouteDefinition` instances,
+     *                           representing the fully finalized routes
+     *                           within this route group.
+     */
+    public function build() : array
+    {
+        // Use array_map to iterate over the list of routes and
+        // invoke the `build()` method on each `RouteBuilder` instance.
+        // This results in an array where every route is now a finalized
+        // `RouteDefinition` object.
+        return array_map(
+            static fn(RouteBuilder $r) => $r->build(), // Transform RouteBuilder into RouteDefinition.
+            $this->routes                // The array of RouteBuilder instances to process.
+        );
+    }
+
+    /**
+     * Internal helper method to apply the group’s prefix to a given path.
+     *
+     * This function ensures that all paths defined in the route group are
+     * consistent and properly prefixed. For instance, if the group has a prefix
+     * like `/admin`, each route within it will start with `/admin`.
+     *
+     * - If no prefix is set (`$this->prefix` is null), the method simply returns the original path.
+     * - Otherwise, it concatenates the prefix to the given path string.
+     *
+     * This approach adheres to clean code principles by isolating this functionality
+     * within a private helper, ensuring the prefix logic remains reusable and easily testable.
+     *
+     * @param string $path The original route path to be prefixed.
+     *
+     * @return string Returns the prefixed path, or the original if no prefix is defined.
+     */
+    private function prefixed(string $path) : string
+    {
+        // Check if the prefix is not set; if null, return the path as is.
+        if ($this->prefix === null) {
+            return $path;
+        }
+
+        // Concatenate the prefix with the provided path and return it.
+        return $this->prefix . $path;
+    }
+}
+
+=== Routing/RouteGroupContext.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing;
+
+/**
+ * Represents a context for grouping multiple routes with shared properties.
+ *
+ * This class is utilized to apply shared configurations such as prefixes, middleware,
+ * domain, and authorization to a group of routes in a router.
+ *
+ * @package Gemini\HTTP\Router\Routing
+ */
+final class RouteGroupContext
+{
+    /**
+     * Prefix for naming routes within this group.
+     *
+     * This property is prepended to all route names in the group,
+     * providing a consistent and unique identifier structure.
+     *
+     * @var string|null
+     */
+    public string|null $namePrefix  = null;
+
+    public array       $constraints = [];
+
+    public array       $defaults    = [];
+
+    public array       $attributes  = [];
+
+    /**
+     * Constructor for initializing the RouteGroupContext with optional settings.
+     *
+     * @param string|null $prefix        The path prefix to be applied to all routes in the group.
+     * @param array|null  $middleware    A list of middleware classes to be applied to routes in the group.
+     * @param string|null $domain        The domain constraint to be applied to all routes in the group.
+     * @param string|null $authorization The authorization policy applied to all routes in the group.
+     */
+    public function __construct(
+        public string|null $prefix = null,
+        public array|null  $middleware = null,
+        public string|null $domain = null,
+        public string|null $authorization = null,
+    ) {}
+
+    /**
+     * Sets a name prefix for the route group.
+     *
+     * Route names within this group will be prefixed with the provided value.
+     * Trailing dots are ensured to maintain a proper naming convention.
+     *
+     * @param string $prefix The prefix to apply to the route names.
+     *
+     * @return void
+     */
+    public function setNamePrefix(string $prefix) : void
+    {
+        $this->namePrefix = rtrim($prefix, '.') . '.';
+    }
+
+    /**
+     * Apply the defined customizations to the given `RouteBuilder`.
+     *
+     * The method modifies the `RouteBuilder` in place by:
+     * - Prepending the configured `$prefix` to the route's path.
+     * - Merging middleware, constraints, defaults, and attributes with the builder's existing properties.
+     * - Assigning a custom domain and authorization, if specified.
+     * - Applying a name prefix for route naming conventions.
+     *
+     * @param RouteBuilder $builder The route builder instance to be customized.
+     *
+     * @return RouteBuilder Returns the modified route builder instance.
+     */
+    public function applyTo(RouteBuilder $builder) : RouteBuilder
+    {
+        // If a prefix is defined, prepend it to the route's existing path.
+        if ($this->prefix !== null) {
+            $builder->path = rtrim($this->prefix, '/') . $builder->path;
+        }
+
+        // If middleware is defined, merge it with the existing middleware stack.
+        if (! empty($this->middleware)) {
+            $builder->middleware = array_merge($builder->middleware, $this->middleware);
+        }
+
+        // If a domain is set, replace the builder's existing domain with the configured one.
+        if ($this->domain !== null) {
+            $builder->domain = $this->domain;
+        }
+
+        // If an authorization configuration exists, assign it to the builder.
+        if ($this->authorization !== null) {
+            $builder->authorization = $this->authorization;
+        }
+
+        // Merge the defined constraints with the builder's existing constraints.
+        if (! empty($this->constraints)) {
+            $builder->constraints = array_merge($builder->constraints, $this->constraints);
+        }
+
+        // Merge the defined defaults with the builder's existing default values.
+        if (! empty($this->defaults)) {
+            $builder->defaults = array_merge($builder->defaults, $this->defaults);
+        }
+
+        // Merge the defined attributes with the builder's existing attributes.
+        if (! empty($this->attributes)) {
+            $builder->attributes = array_merge($builder->attributes, $this->attributes);
+        }
+
+        // If a name prefix is defined, apply it to the route's name, maintaining naming conventions.
+        if ($this->namePrefix !== null && $builder->name !== null) {
+            $builder->name = $this->namePrefix . $builder->name;
+        }
+
+        // Return the modified RouteBuilder instance.
+        return $builder;
+    }
+
+
+    /**
+     * Sets the path prefix for the current route group.
+     *
+     * This path prefix provides a structured namespace for all routes
+     * within the group, ensuring a logical URL hierarchy.
+     *
+     * @param string $prefix The route path prefix, typically a non-empty string.
+     *                       For example: "api/v1" or "admin".
+     *
+     * @return void
+     */
+    public function setPrefix(string $prefix) : void
+    {
+        // Normalize the prefix by trimming trailing slashes to prevent
+        // issues with inconsistent path generation.
+        $this->prefix = rtrim($prefix, '/');
+    }
+
+    /**
+     * Adds additional middleware to the group context.
+     *
+     * This method allows appending new middleware handlers onto the
+     * existing middleware stack to provide a flexible, composable
+     * routing pipeline.
+     *
+     * @param array $middleware A list of middleware to add, each represented
+     *                          typically as a callable or handler class name.
+     *
+     * @return void
+     */
+    public function addMiddleware(array $middleware) : void
+    {
+        // Initialize middleware stack if not set.
+        $this->middleware ??= [];
+
+        // Merge the new middleware with the existing stack, ensuring the existing
+        // middleware and new handlers are preserved.
+        $this->middleware = array_merge($this->middleware, $middleware);
+    }
+
+    /**
+     * Sets the domain constraint for all routes in the group.
+     *
+     * This domain constraint ensures that the routes in the group
+     * are only accessible from a specific domain.
+     *
+     * @param string $domain The domain to apply to the route group.
+     *
+     * @return void
+     */
+    public function setDomain(string $domain) : void
+    {
+        $this->domain = $domain;
+    }
+
+    /**
+     * Sets the authorization policy for all routes in the group.
+     *
+     * This policy defines the access control handling for the routes
+     * making it a critical part of securing route groups.
+     *
+     * @param string $authorization The authorization policy identifier or configuration.
+     *
+     * @return void
+     */
+    public function setAuthorization(string $authorization) : void
+    {
+        $this->authorization = $authorization;
+    }
+
+    /**
+     * Adds default values to this route group context.
+     *
+     * Defaults are used to fill in missing values for route parameters
+     * when they are not explicitly provided in the request.
+     *
+     * @param array<string, mixed> $defaults Key-value pairs of default values to add.
+     *
+     * @return void
+     */
+    public function addDefaults(array $defaults) : void
+    {
+        // Merge the new defaults into the existing defaults
+        $this->defaults = array_merge($this->defaults, $defaults);
+    }
+
+    /**
+     * Adds attributes to the route group context.
+     *
+     * Attributes are useful for providing metadata or additional
+     * information for routing, middleware, or custom processing logic.
+     *
+     * @param array<string, mixed> $attributes Key-value pairs of attributes to add.
+     *
+     * @return void
+     */
+    public function addAttributes(array $attributes) : void
+    {
+        // Merge the new attributes into the existing attributes
+        $this->attributes = array_merge($this->attributes, $attributes);
+    }
+
+    /**
+     * Adds parameter constraints (regex patterns) to the route group context.
+     *
+     * These constraints will be merged and applied to all routes within the group.
+     *
+     * @param array<string, string> $constraints Parameter name to regex mapping.
+     *
+     * @return void
+     */
+    public function addConstraints(array $constraints) : void
+    {
+        $this->constraints = array_merge($this->constraints, $constraints);
+    }
+
+}
+=== Routing/RouteGroupRegistrar.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing;
+
+use CallbackFilterIterator;
+use FilesystemIterator;
+use Gemini\HTTP\Router\Router;
+use LogicException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RuntimeException;
+use SplFileInfo;
+use Throwable;
+
+final class RouteGroupRegistrar
+{
+    /**
+     * Recursively loads and registers all route definition files from a given base directory.
+     *
+     * Each route file should use `$router = app(Router::class);` to register routes directly.
+     *
+     * @param string $baseDir
+     *
+     * @throws LogicException
+     */
+    public function registerFromDirectory(string $baseDir) : void
+    {
+        $this->ensureDirectoryIsValid(baseDir: $baseDir);
+
+        $iterator = new RecursiveIteratorIterator(
+            iterator: new RecursiveDirectoryIterator(directory: $baseDir, flags: FilesystemIterator::SKIP_DOTS)
+        );
+
+        $files = iterator_to_array(
+            new CallbackFilterIterator(
+                iterator: $iterator,
+                callback: static fn(SplFileInfo $file) => $file->isFile() && $file->getExtension() === 'php'
+            )
+        );
+
+        foreach ($files as $file) {
+            $router = app(abstract: Router::class);
+
+            try {
+                (static function () use ($file, $router) {
+                    require $file->getPathname();
+                })();
+
+                $buffered = Router::flushBuffered();
+
+                if (empty($buffered)) {
+                    echo "⚠️  [{$file->getFilename()}] did not register any routes.\n";
+                    continue;
+                }
+
+                foreach ($buffered as $builder) {
+                    $router->registerRoute($builder);
+                }
+            } catch (Throwable $e) {
+                throw new RuntimeException(
+                    message : "Failed to load route file [{$file->getFilename()}]: {$e->getMessage()}",
+                    code    : 0,
+                    previous: $e
+                );
+            }
+        }
+    }
+
+    /**
+     * Ensures the routes directory exists and is readable.
+     *
+     * @param string $baseDir
+     *
+     * @throws LogicException
+     */
+    private function ensureDirectoryIsValid(string $baseDir) : void
+    {
+        if (! is_dir($baseDir) || ! is_readable($baseDir)) {
+            throw new LogicException(message: "Routes directory '{$baseDir}' does not exist or is not readable.");
+        }
+    }
+}
+
+=== Routing/RouteGroupStack.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing;
+
+/**
+ * A class representing a stack-based storage for managing route group contexts.
+ *
+ * This stack allows you to maintain the state of nested route group configurations
+ * while routing requests. It provides the ability to push a new context to the stack,
+ * pop the latest context, or retrieve the current (top-most) context.
+ *
+ * The class is implemented as a static utility to maintain a global stateful behavior
+ * for managing `RouteGroupContext`.
+ */
+final class RouteGroupStack
+{
+    /**
+     * Static stack containing the list of RouteGroupContext instances.
+     *
+     * @var RouteGroupContext[] Stack of route group contexts for managing
+     *                          nested routing configurations.
+     */
+    private static array $stack = [];
+
+    /**
+     * Contains an internal list of mapped constraints for the current route group.
+     *
+     * @var array<string, mixed> Associative array where keys represent constraint
+     *                           identifiers (e.g., parameter names or attributes),
+     *                           and values represent the corresponding constraint
+     *                           values or callable validators applied during route
+     *                           matching logic.
+     */
+    private array $constraints = [];
+
+    /**
+     * Pushes a new RouteGroupContext onto the stack.
+     *
+     * This method represents entering a new route group context in the routing lifecycle.
+     *
+     * @param RouteGroupContext $group The context to be added to the stack.
+     *
+     * @return void
+     */
+    public static function push(RouteGroupContext $group) : void
+    {
+        // Append the provided RouteGroupContext onto the stack.
+        self::$stack[] = $group;
+    }
+
+    /**
+     * Pops the most recently added RouteGroupContext from the stack.
+     *
+     * This method represents exiting the current route group context in the routing lifecycle.
+     *
+     * @return void
+     */
+    public static function pop() : void
+    {
+        // Remove the most recent context from the stack.
+        array_pop(self::$stack);
+    }
+
+    /**
+     * This is a stateless utility method that applies context-specific configuration
+     * to a given RouteBuilder instance. This method uses the current application
+     * context to dynamically alter the behavior of the routing builder.
+     *
+     * Example usage:
+     *
+     * ```
+     * $builder = AppRouter::apply($builder);
+     * ```
+     *
+     * @param RouteBuilder $builder Instance of the RouteBuilder object to be configured.
+     *
+     * @return RouteBuilder Returns the original RouteBuilder instance, potentially
+     *                      altered by the context, or returns it unmodified if no context exists.
+     */
+    public static function apply(RouteBuilder $builder) : RouteBuilder
+    {
+        // Get the current application context, which encapsulates dynamic state or configuration.
+        $context = self::current();
+
+        // If the $context instance exists, apply the context-specific modifications
+        // to the provided RouteBuilder ($builder). If no context is available, return
+        // the unmodified $builder instance.
+        return $context?->applyTo($builder) ?? $builder;
+    }
+
+    /**
+     * Retrieves the current (top-most) RouteGroupContext from the stack.
+     *
+     * The top-most context refers to the one most recently added via `push`.
+     * If the stack is empty, this method will return `null`.
+     *
+     * @return RouteGroupContext|null The current context or `null` if the stack is empty.
+     */
+    public static function current() : RouteGroupContext|null
+    {
+        // Get the last context from the stack without removing it.
+        return end(self::$stack) ?: null;
+    }
+
+    /**
+     * Adds a set of parameter constraints to the current route group configuration.
+     *
+     * This method is used to define validation constraints or patterns for parameters
+     * within the current routing scope. These constraints are later applied during
+     * route matching to ensure the parameters satisfy the defined rules.
+     *
+     * Example usage:
+     * ```
+     * $routeGroup->addConstraints([
+     *     'id' => '\d+',
+     *     'slug' => '[a-z0-9-]+',
+     * ]);
+     * ```
+     *
+     * @param array<string, mixed> $constraints An associative array of constraints where the keys
+     *                                          represent parameter names (e.g., 'id', 'slug') and
+     *                                          the values represent the constraint patterns or
+     *                                          validation rules (e.g., regex or callbacks).
+     *
+     * @return void This method does not return a value.
+     */
+    public function addConstraints(array $constraints) : void
+    {
+        // Iterate over the provided associative array of constraints.
+        foreach ($constraints as $param => $pattern) {
+            // Add or update the constraint for the specified parameter name ($param).
+            // Each constraint pattern is stored in the $constraints property for later use.
+            $this->constraints[$param] = $pattern;
+        }
+    }
+
+    /**
+     * Retrieves the constraints associated with this route group.
+     *
+     * Constraints are applied to routes contained within the group and serve
+     * as a configuration mechanism for managing shared logic or rules that
+     * affect grouped routes.
+     *
+     * The constraints are returned as-is (no deep or defensive copy is made), so external
+     * modifications to the returned array may inadvertently affect the state of the object.
+     * Use caution when manipulating the returned array directly.
+     *
+     * @return array The array of constraints associated with this route group.
+     */
+    public function getConstraints() : array
+    {
+        // Return the array of constraints currently associated with this route group.
+        return $this->constraints;
+    }
+}
+=== Routing/RoutePipelineFactory.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing;
+
+use Gemini\Container\Contracts\ContainerInterface;
+use Gemini\HTTP\Dispatcher\ControllerDispatcher;
+use Gemini\HTTP\Middleware\MiddlewareResolver;
+
+/**
+ * Factory class that constructs and initializes a complete route pipeline for dispatch.
+ *
+ * The `RoutePipelineFactory` is a fundamental part of request handling. It integrates
+ * the resolved middleware, the routing definitions, and dependencies like the controller
+ * dispatcher and IoC container to create a fully prepared route execution pipeline.
+ */
+final readonly class RoutePipelineFactory
+{
+    /**
+     * Constructor for the RoutePipelineFactory.
+     *
+     * This method leverages the constructor promotion feature in PHP to simplify property initialization.
+     * The dependencies required for constructing a route pipeline—IoC
+     * container, controller dispatcher, and middleware resolver—are injected via the constructor.
+     *
+     * @param ContainerInterface   $container          The application container for managing services.
+     * @param ControllerDispatcher $dispatcher         The dispatcher responsible for managing controller execution.
+     * @param MiddlewareResolver   $middlewareResolver Middleware resolver for resolving middleware definitions.
+     */
+    public function __construct(
+        private ContainerInterface   $container,
+        private ControllerDispatcher $dispatcher,
+        private MiddlewareResolver   $middlewareResolver,
+    ) {}
+
+    /**
+     * Factory method for creating a fully resolved route pipeline.
+     *
+     * This method uses the provided route definition to fetch middleware, resolve their instances
+     * using the MiddlewareResolver, and then constructs a new RoutePipeline. The pipeline
+     * is configured with middleware and is ready for dispatch.
+     *
+     * @param RouteDefinition $route The route definition, containing route-specific information such as middleware.
+     *
+     * @return RoutePipeline A fully constructed pipeline configured with resolved middleware.
+     */
+    public function create(RouteDefinition $route) : RoutePipeline
+    {
+        // Resolving middleware definitions from the route into callable middleware instances.
+        $resolvedMiddleware = $this->middlewareResolver->resolve($route->middleware);
+
+        // Constructing a new RoutePipeline with the resolved dependencies and injecting middleware.
+        // This step prepares the pipeline to handle HTTP requests for the given route.
+        return (new RoutePipeline(
+            route     : $route,       // Injecting the route definition into the pipeline.
+            dispatcher: $this->dispatcher, // Injecting the dispatcher for controller execution.
+            container : $this->container  // Injecting the IoC container for dependency resolution.
+        ))->through(middleware: $resolvedMiddleware); // Configuring the pipeline with the resolved middleware.
+    }
+}
+=== Routing/RoutePipeline.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing;
+
+use Closure;
+use Gemini\Auth\Interface\HTTP\Middleware\AuthorizeMiddleware;
+use Gemini\Container\Contracts\ContainerInterface;
+use Gemini\HTTP\Dispatcher\ControllerDispatcher;
+use Gemini\HTTP\Request\Request;
+use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
+
+/**
+ * Class RoutePipeline
+ *
+ * Manages the execution pipeline for handling incoming HTTP requests
+ * through applied middleware, optional route stages, and finally dispatching
+ * the matched route action to the appropriate controller.
+ *
+ * Responsibilities:
+ * - Applies middleware and route-specific stages (e.g., logging, tracing).
+ * - Injects route-level authorization middleware when necessary.
+ * - Provides a fluent API for pipeline configuration.
+ */
+final class RoutePipeline
+{
+    /**
+     * List of middleware to be applied in the processing pipeline.
+     *
+     * @var array<string|class-string>
+     */
+    private array $middleware = [];
+
+    /**
+     * Optional predefined stages (e.g., for logging, tracing) to augment the pipeline.
+     *
+     * @var array<class-string<RouteStage>>
+     */
+    private array $stages = [];
+
+    /**
+     * Constructor
+     *
+     * Initializes the pipeline using the provided route definition and dispatcher.
+     *
+     * @param RouteDefinition      $route      The route definition to bind to the pipeline.
+     * @param ControllerDispatcher $dispatcher Handles the final dispatching of the controller action.
+     */
+    public function __construct(
+        private readonly RouteDefinition      $route,
+        private readonly ControllerDispatcher $dispatcher,
+        private readonly ContainerInterface   $container
+    ) {}
+
+    /**
+     * Factory method for constructing the pipeline instance
+     * with the route and dispatcher, promoting fluent API usage.
+     *
+     * @param RouteDefinition      $route      The route definition to be handled.
+     * @param ControllerDispatcher $dispatcher Used to invoke controller methods.
+     *
+     * @return self                        A new instance of RoutePipeline.
+     */
+    public static function for(
+        RouteDefinition      $route,
+        ControllerDispatcher $dispatcher,
+        ContainerInterface   $container
+    ) : self {
+        return new self(
+            route     : $route,
+            dispatcher: $dispatcher,
+            container : $container
+        );
+    }
+
+    /**
+     * Adds middleware to the processing pipeline.
+     *
+     * Allows dynamic insertion of middleware for the current route processing.
+     *
+     * @param array<string|class-string> $middleware Array of middleware class names or middleware identifiers.
+     *
+     * @return self The current instance, for fluent API usage.
+     */
+    public function through(array $middleware) : self
+    {
+        $this->middleware = $middleware;
+
+        return $this;
+    }
+
+    /**
+     * Adds optional stages to the processing pipeline.
+     *
+     * Stages add auxiliary functionality to the route processing, like logging
+     * or telemetry tracking, without interfering with core middleware logic.
+     *
+     * @param array<class-string<RouteStage>> $stages List of stage class names.
+     *
+     * @return self The current instance, for fluent API chaining.
+     */
+    public function stages(array $stages) : self
+    {
+        $this->stages = $stages;
+
+        return $this;
+    }
+
+    /**
+     * Dispatches a request through the pipeline.
+     *
+     * The dispatch process follows these steps:
+     * - Optionally injects authorization middleware if the route requires it.
+     * - Builds the middleware pipeline, including optional stages.
+     * - Executes the pipeline, ultimately invoking the associated route action.
+     *
+     * @param Request $request The current HTTP request to process.
+     *
+     * @return ResponseInterface The final HTTP response from the dispatched route.
+     *
+     * @throws \ReflectionException                     If reflection fails during middleware creation.
+     * @throws \Psr\Container\ContainerExceptionInterface If the DI container encounters an issue.
+     * @throws \Psr\Container\NotFoundExceptionInterface  If a middleware class cannot be resolved.
+     */
+    public function dispatch(Request $request) : ResponseInterface
+    {
+        // Inject route authorization into the request if a policy is defined.
+        if ($this->route->authorization !== null) {
+            // Attach the authorization policy as a request attribute.
+            $request = $request->withAttribute(name: 'route:authorization', value: $this->route->authorization);
+
+            // Prepend the authorization middleware to the pipeline.
+            array_unshift($this->middleware, AuthorizeMiddleware::class);
+        }
+
+        // Define the core execution logic for the pipeline - dispatching the route's action.
+        $core = fn(Request $request) : ResponseInterface => $this->dispatcher->dispatch(
+            action : $this->route->action,
+            request: $request
+        );
+
+        // Combine stages and middleware into a unified processing pipeline.
+        $pipeline = array_merge($this->stages, $this->middleware);
+
+        // Reduce the middleware and stages into a single processing stack (chain of responsibility).
+        $stack = array_reduce(
+        // Reverse the pipeline to ensure middleware are applied in the correct order.
+            array_reverse($pipeline),
+            // Accumulate middleware execution into the next stack function.
+            fn(Closure $next, string $class) => function (Request $request) use (
+                $class,
+                $next
+            ) : ResponseInterface {
+                // Resolve the middleware or stage instance from the container.
+                $instance = $this->container->get($class);
+
+                // Ensure the middleware or stage has a `handle()` method.
+                if (! method_exists($instance, 'handle')) {
+                    throw new RuntimeException(
+                        message: "Middleware or stage [{$class}] must have a handle() method."
+                    );
+                }
+
+                // Call the middleware or stage's handle method, passing the request and next closure.
+                return $instance->handle($request, $next);
+            },
+            // Start from the core action dispatcher.
+            $core
+        );
+
+        // Execute the complete middleware stack with the initial request.
+        return $stack($request);
+    }
+}
+=== Routing/RouteRegistrarProxy.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing;
+
+/**
+ * Proxy that wraps a RouteBuilder and lazily registers the route
+ * only once it's finalized (via name(), build(), or register()).
+ *
+ * Promotes clean chaining via fluent DSL.
+ */
+final class RouteRegistrarProxy
+{
+    private readonly RouteBuilder      $builder;
+
+    private readonly HttpRequestRouter $router;
+
+    private bool                       $registered = false;
+
+    /**
+     * Initializes proxy with Router and Builder.
+     *
+     * @param HttpRequestRouter $router
+     * @param RouteBuilder      $builder
+     */
+    public function __construct(HttpRequestRouter $router, RouteBuilder $builder)
+    {
+        $this->router  = $router;
+        $this->builder = $builder;
+    }
+
+    /**
+     * Assigns a route name and triggers registration.
+     *
+     * @param string $name
+     *
+     * @return self
+     */
+    public function name(string $name) : self
+    {
+        $this->builder->name($name);
+
+        return $this->register();
+    }
+
+    /**
+     * Explicitly triggers registration (if not already).
+     *
+     * @return self
+     */
+    public function register() : self
+    {
+        if (! $this->registered) {
+            $definition = $this->builder->build();
+
+            $this->router->registerRoute(
+                method       : $definition->method,
+                path         : $definition->path,
+                action       : $definition->action,
+                middleware   : $definition->middleware,
+                name         : $definition->name,
+                constraints  : $definition->constraints,
+                defaults     : $definition->defaults,
+                domain       : $definition->domain,
+                attributes   : $definition->attributes,
+                authorization: $definition->authorization
+            );
+
+            $this->registered = true;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Finalizes and returns the RouteDefinition (registers first).
+     *
+     * @return RouteDefinition
+     */
+    public function build() : RouteDefinition
+    {
+        $this->register();
+
+        return $this->builder->build();
+    }
+
+    /**
+     * Adds a single route parameter constraint.
+     */
+    public function where(string $param, string $pattern) : self
+    {
+        $this->builder->where($param, $pattern);
+
+        return $this;
+    }
+
+    /**
+     * Adds multiple constraints.
+     */
+    public function whereIn(array $constraints) : self
+    {
+        $this->builder->whereIn($constraints);
+
+        return $this;
+    }
+
+    /**
+     * Defines default values for parameters.
+     */
+    public function defaults(array $defaults) : self
+    {
+        $this->builder->defaults($defaults);
+
+        return $this;
+    }
+
+    /**
+     * Defines custom route metadata.
+     */
+    public function attributes(array $attributes) : self
+    {
+        $this->builder->attributes($attributes);
+
+        return $this;
+    }
+
+    /**
+     * Attaches middleware to the route.
+     */
+    public function middleware(array $middleware) : self
+    {
+        $this->builder->middleware($middleware);
+
+        return $this;
+    }
+
+    /**
+     * Sets the authorization policy.
+     */
+    public function authorize(string $policy) : self
+    {
+        $this->builder->authorize($policy);
+
+        return $this;
+    }
+
+    /**
+     * Sets the controller + method for the route.
+     */
+    public function controller(string $controller, string $method = 'index') : self
+    {
+        $this->builder->controller($controller, $method);
+
+        return $this;
+    }
+
+    /**
+     * Sets the action callback or controller.
+     */
+    public function action(callable|array|string $action) : self
+    {
+        $this->builder->action($action);
+
+        return $this;
+    }
+}
+
+=== Routing/RouteStage.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Routing;
+
+use Closure;
+use Gemini\HTTP\Request\Request;
+use Psr\Http\Message\ResponseInterface;
+
+interface RouteStage
+{
+    /**
+     * Executes logic before the next pipeline stage.
+     *
+     * @param Request                             $request
+     * @param Closure(Request): ResponseInterface $next
+     *
+     * @return ResponseInterface
+     */
+    public function handle(Request $request, Closure $next) : ResponseInterface;
+}
+=== Support/DomainPatternCompiler.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Support;
+
+/**
+ * Class DomainPatternCompiler
+ *
+ * Provides methods for compiling dynamic domain patterns into regular expressions
+ * and matching incoming host strings against compiled patterns.
+ *
+ * This utility is often used in routing systems to handle dynamic subdomains
+ * or structured domain hierarchies.
+ */
+final class DomainPatternCompiler
+{
+    /**
+     * Compiles a domain pattern string into a corresponding regular expression
+     * to facilitate dynamic domain matching.
+     *
+     * Dynamic patterns are denoted using placeholders, e.g., `{account}.example.com`,
+     * where `{account}` can match any subdomain name.
+     *
+     * @param string $pattern The domain pattern string to compile.
+     *                        Placeholders should be wrapped in curly braces, e.g., `{name}`.
+     *
+     * @return string The compiled regular expression string, ready for use in pattern matching.
+     *                Example: `{account}.example.com` becomes `/^(?P<account>[\w\-.]+)\.example\.com$/i`.
+     */
+    public static function compile(string $pattern) : string
+    {
+        // Escape all special characters in the input domain pattern to ensure regex safety.
+        $escaped = preg_quote($pattern, delimiter: '/');
+
+        // Transform placeholders (e.g., `{account}`) into named capturing groups in the regex pattern.
+        // - \w matches word characters (a-z, A-Z, 0-9, and underscore).
+        // - \- and \. Allow hyphen or dot in the subdomain portion.
+        // Example: `{account}` becomes `(?P<account>[\w\-\.]+)`.
+        $regex = preg_replace_callback(
+            pattern : '/\\{(\w+)}/',
+            // Matches `{placeholder_name}` where placeholders are word characters.
+            callback: static fn(array $match) : string => '(?P<' . $match[1] . '>[\w\-\.]+)',
+            // Replace it with a named group.
+            subject : $escaped // Apply on the escaped string.
+        );
+
+        // Wrap the generated regex in delimiters, enforce case-insensitivity, and ensure it matches the full string.
+        return '/^' . $regex . '$/i';
+    }
+
+    /**
+     * Matches a host string against a precompiled domain regular expression.
+     *
+     * This method is used to determine if an incoming host (e.g., `x.example.com`) aligns
+     * with the compiled domain pattern (e.g., `/^(?P<account>[\w\-\.]+)\.example\.com$/i`).
+     *
+     * @param string $host     The incoming host string to evaluate (e.g., `foo.example.com`).
+     * @param string $compiled The precompiled domain regex (result from `compile`).
+     *
+     * @return bool Returns `true` if the host matches the regex, `false` otherwise.
+     */
+    public static function match(string $host, string $compiled) : bool
+    {
+        // Use preg_match to check if the host matches the compiled domain pattern.
+        // Casting to boolean simplifies the return value to true/false.
+        return (bool) preg_match($compiled, $host);
+    }
+}
+=== Support/HeadRequestFallback.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Support;
+
+use Gemini\HTTP\Request\Request;
+use Gemini\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
+use Gemini\HTTP\Router\Routing\HttpRequestRouter;
+
+/**
+ * Provides fallback logic for HEAD → GET requests.
+ *
+ * If a HEAD route is not defined, attempts to resolve the corresponding GET route.
+ */
+final class HeadRequestFallback
+{
+    public function __construct(
+        private readonly HttpRequestRouter $router
+    ) {}
+
+    /**
+     * Resolves the request, falling back from HEAD to GET if needed.
+     *
+     * @param Request $request Incoming HTTP request.
+     *
+     * @return \Gemini\HTTP\Request\Request
+     *
+     */
+    public function resolve(Request $request) : Request
+    {
+        if ($request->getMethod() !== 'HEAD') {
+            return $request;
+        }
+
+        try {
+            $this->router->resolve(request: $request);
+        } catch (RouteNotFoundException) {
+            // Attempt GET route fallback
+            $request = $request->withMethod(method: 'GET');
+        }
+
+        return $request;
+    }
+}
+
+=== Support/RouteCollector.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Support;
+
+use Gemini\HTTP\Router\Routing\RouteBuilder;
+use LogicException;
+
+/**
+ * Class RouteCollector
+ *
+ * Provides a temporary in-memory registry for storing route configurations (via `RouteBuilder` instances)
+ * during application initialization phases, such as bootstrapping, cache compilation,
+ * or CLI-based route inspection.
+ *
+ * This class is designed for temporary usage and does not handle runtime route resolution.
+ * It serves only as an internal tool for assembling and managing router-related data.
+ */
+final class RouteCollector
+{
+    /**
+     * @var list<RouteBuilder> $bufferedRoutes
+     *
+     * Buffers all the route definitions provided during application initialization.
+     * This buffer is emptied after flushing or resetting, maintaining the ephemeral nature of this class.
+     */
+    private static array $bufferedRoutes = [];
+
+    /**
+     * @var callable|array|string|null $fallback
+     *
+     * Defines the fallback handler for unmatched routes.
+     * This handler is called at runtime when no route matches are found.
+     * Accepts `callable`, an array (controller-action pair), or a string (class or function name).
+     */
+    private static mixed $fallback = null;
+
+    /**
+     * Registers a RouteBuilder into the internal buffered routes registry.
+     *
+     * RouteBuilder instances are used to encapsulate route definitions and related metadata.
+     *
+     * @param RouteBuilder $builder The RouteBuilder instance to buffer.
+     *
+     * @return void
+     */
+    public static function add(RouteBuilder $builder) : void
+    {
+        // Add the provided RouteBuilder instance to the buffered routes list.
+        self::$bufferedRoutes[] = $builder;
+    }
+
+    /**
+     * Returns all buffered RouteBuilder instances and clears the buffer.
+     *
+     * This method is essential during cache compilation or inspection tasks,
+     * where it retrieves and empties the stored entries for processing downstream.
+     *
+     * @return list<RouteBuilder> A list of buffered RouteBuilder instances.
+     */
+    public static function flushBuffered() : array
+    {
+        // Assign the current buffer to a temporary variable for returning.
+        $routes = self::$bufferedRoutes;
+
+        // Clear the buffered routes to ensure the collector is reset post-flush.
+        self::$bufferedRoutes = [];
+
+        // Return the temporary stash of routes.
+        return $routes;
+    }
+
+    /**
+     * Defines a fallback handler for unmatched routes.
+     *
+     * This operation is important and enforces a single fallback definition.
+     * Calling this method multiple times will result in an exception if the fallback is already defined.
+     *
+     * @param callable|array|string $handler A handler for unmatched routes. This can be:
+     *                                       - A `callable` (e.g., closure, function),
+     *                                       - A controller-action pair array (e.g., [Controller::class, 'method']),
+     *                                       - A string (e.g., fully qualified class name or function).
+     *
+     * @return void
+     * @throws LogicException If a fallback handler has already been set.
+     *
+     */
+    public static function fallback(callable|array|string $handler) : void
+    {
+        // Prevent overriding an existing fallback handler by throwing an exception.
+        if (self::$fallback !== null) {
+            throw new LogicException(message: 'Fallback route handler has already been defined.');
+        }
+
+        // Set the fallback handler.
+        self::$fallback = $handler;
+    }
+
+    /**
+     * Retrieves the currently set fallback handler.
+     *
+     * This method is designed to allow downstream consumers to inspect the state
+     * of the collector for unmatched route handling.
+     *
+     * @return callable|array|string|null The fallback handler, or null if none is set.
+     */
+    public static function getFallback() : callable|array|string|null
+    {
+        // Return the current fallback handler.
+        return self::$fallback;
+    }
+
+    /**
+     * Clears the currently set fallback handler.
+     *
+     * This method ensures a clean state, consistent with the stateless purpose of the collector.
+     *
+     * @return void
+     */
+    public static function clearFallback() : void
+    {
+        // Reset the fallback handler to null.
+        self::$fallback = null;
+    }
+
+    /**
+     * Checks whether the collector contains any buffered RouteBuilder instances.
+     *
+     * This method helps optimize workflows or conditional operations during bootstrap or cache validation.
+     *
+     * @return bool True if there are buffered routes, false otherwise.
+     */
+    public static function hasRoutes() : bool
+    {
+        // Return true if the bufferedRoutes array is not empty.
+        return ! empty(self::$bufferedRoutes);
+    }
+
+    /**
+     * Resets the entire collector to a clean state.
+     *
+     * This method clears all buffered routes and removes the fallback handler, ensuring no side effects or
+     * lingering state between bootstrap cycles or application contexts.
+     *
+     * @return void
+     */
+    public static function reset() : void
+    {
+        // Clear the buffered routes.
+        self::$bufferedRoutes = [];
+        // Reset the fallback handler to null.
+        self::$fallback = null;
+    }
+}
+=== Validation/RouteConstraintValidator.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Router\Validation;
+
+use Gemini\HTTP\Request\Request;
+use Gemini\HTTP\Router\Routing\RouteDefinition;
+use RuntimeException;
+
+/**
+ * Validates route parameter values against registered regex constraints.
+ */
+final class RouteConstraintValidator
+{
+    /**
+     * Validates the route parameter constraints against the actual request attributes.
+     *
+     * @param RouteDefinition $route   The route being validated.
+     * @param Request         $request The current HTTP request.
+     *
+     * @return void
+     *
+     * @throws RuntimeException If any constraint fails.
+     */
+    public function validate(RouteDefinition $route, Request $request) : void
+    {
+        foreach ($route->constraints as $param => $pattern) {
+            $value = $request->getAttribute(name: $param);
+
+            if (! is_string($value) && ! is_numeric($value)) {
+                continue;
+            }
+
+            if (@preg_match(pattern: $pattern, subject: (string) $value) !== 1) {
+                throw new RuntimeException(
+                    message: sprintf('Route parameter "%s" failed constraint "%s"', $param, $pattern)
+                );
+            }
+        }
+    }
+}
+
+=== web.php ===
+<?php
+
+declare(strict_types=1);
+
+use Gemini\Facade\Facades\Route;
+
+Route::get(path: '/', action: static fn() : string => 'Welcome to the homepage!')->name('test-route');
+
+
+//Route::get(
+//    path  : '/login',
+//    action: [AuthenticationController::class, 'index'],
+//    name  : 'auth.login.form',
+//);
+//
+//Route::post(
+//    path  : '/login',
+//    action: [AuthenticationController::class, 'login'],
+//    name  : 'auth.login',
+//);
+//
+//Route::get(
+//    '/test-blade',
+//    static function () {
+//        $users = [];
+//        dd($users);
+//
+//        return view(template: 'auth.login', data: $users);
+//    },
+//);
+//
+//Route::post(
+//    path  : '/tesst',
+//    action: [HealthCheckController::class, 'testRTGApi'],
+//);
+

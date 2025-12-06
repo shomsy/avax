@@ -8,14 +8,14 @@ declare(strict_types=1);
 // It is designed to prevent malicious activities such as CSRF attacks by verifying that the
 // CSRF token submitted with the request matches the token stored in the user's session.
 // If the token is missing or invalid, the request is rejected to protect the application.
-use Gemini\Auth\Interface\HTTP\Middleware\AuthenticationMiddleware;
-use Gemini\HTTP\Middleware\CorsMiddleware;
-use Gemini\HTTP\Middleware\ExceptionHandlerMiddleware;
-use Gemini\HTTP\Middleware\JsonResponseMiddleware;
-use Gemini\HTTP\Middleware\RateLimiterMiddleware;
-use Gemini\HTTP\Middleware\RequestLoggerMiddleware;
-use Gemini\HTTP\Middleware\SecurityHeadersMiddleware;
-use Gemini\HTTP\Middleware\SessionLifecycleMiddleware;
+use Avax\Auth\Interface\HTTP\Middleware\AuthenticationMiddleware;
+use Avax\HTTP\Middleware\CorsMiddleware;
+use Avax\HTTP\Middleware\ExceptionHandlerMiddleware;
+use Avax\HTTP\Middleware\JsonResponseMiddleware;
+use Avax\HTTP\Middleware\RateLimiterMiddleware;
+use Avax\HTTP\Middleware\RequestLoggerMiddleware;
+use Avax\HTTP\Middleware\SecurityHeadersMiddleware;
+use Avax\HTTP\Middleware\SessionLifecycleMiddleware;
 use Presentation\HTTP\Middleware\OfficeIpRestrictionMiddleware;
 
 return [

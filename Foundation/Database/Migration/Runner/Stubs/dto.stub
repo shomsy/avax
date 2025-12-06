@@ -1,0 +1,16 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{Namespace}};
+
+use Gemini\DataHandling\ObjectHandling\DTO\AbstractDTO;
+
+/**
+ * Data Transfer Object for {{DTOName}}.
+ */
+final class {{DTOName}} extends AbstractDTO
+{
+{{Properties}}
+
+}

@@ -1,0 +1,2304 @@
+=== Collections/BaseCollection.php ===
+<?php
+
+/** @noinspection PhpMemberCanBePulledUpInspection */
+
+declare(strict_types=1);
+
+namespace Gemini\DataHandling\ObjectHandling\Collections;
+
+use ArrayIterator;
+use Closure;
+use Traversable;
+
+/**
+ * BaseCollection provides an abstract foundation for collections,
+ * handling core functionalities and item storage while leaving specific collection behaviors to subclasses.
+ *
+ * This class is designed to be extended, providing common methods
+ * that can be used by all types of collections.
+ */
+abstract class BaseCollection implements CollectionInterface
+{
+    /**
+     * @var array Holds the items of the collection.
+     * Using a protected array allows subclasses to access and manipulate the stored items directly.
+     */
+    protected array $items = [];
+
+    /**
+     * BaseCollection constructor.
+     * Initializes the collection with the provided items.
+     *
+     * By accepting any iterable type, this constructor ensures flexibility in initializing the collection.
+     *
+     * @param iterable $items Initial items to populate the collection.
+     */
+    public function __construct(iterable $items = [])
+    {
+        $this->setItems(items: $this->convertToArray(items: $items));
+    }
+
+    /**
+     * Convert various types of inputs to an array.
+     *
+     * Ensures compatibility regardless of the input type,
+     * whether it's an instance of self, Traversable, or an array.
+     *
+     * @param mixed $items The items to convert.
+     *
+     * @return array The converted array.
+     */
+    public function convertToArray(mixed $items) : array
+    {
+        if ($items instanceof self) {
+            return $items->all();
+        }
+
+        if ($items instanceof Traversable) {
+            return iterator_to_array($items);
+        }
+
+        return (array) $items;
+    }
+
+    /**
+     * Retrieve all items in the collection.
+     *
+     * Provides a consistent way to access all the items stored in the collection.
+     *
+     * @return array The entire collection as an array.
+     */
+    public function all() : array
+    {
+        return $this->getItems();
+    }
+
+    /**
+     * Abstract method to retrieve the internal items.
+     * To be implemented by subclasses.
+     *
+     * Forces each subclass to define how items should be retrieved,
+     * allowing for flexibility in different types of collections.
+     *
+     * @return array The items in the collection.
+     */
+    abstract public function getItems() : array;
+
+    /**
+     * Abstract method to set the internal items.
+     * To be implemented by subclasses.
+     *
+     * Ensures that subclasses handle the specific logic for setting the items,
+     * which can vary based on the type of collection.
+     *
+     * @param array $items The items to set.
+     *
+     * @return static This collection instance.
+     */
+    abstract public function setItems(array $items) : static;
+
+    /**
+     * Get an iterator for the collection.
+     *
+     * Supports iteration over the collection using foreach.
+     *
+     * @return Traversable An iterator over the items.
+     */
+    public function getIterator() : Traversable
+    {
+        return new ArrayIterator(array: $this->getItems());
+    }
+
+    /**
+     * Get the count of items in the collection.
+     *
+     * Provides a quick way to determine how many items are currently in the collection.
+     *
+     * @return int The number of items.
+     */
+    public function count() : int
+    {
+        return count($this->getItems());
+    }
+
+    /**
+     * Convert the collection to an array for JSON serialization.
+     *
+     * Ensures that when the collection is JSON-encoded, it gets correctly represented as an array.
+     *
+     * @return array Data ready for JSON serialization.
+     */
+    public function jsonSerialize() : array
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * Recursively converts nested collections to arrays.
+     *
+     * Handles nested collections to ensure they are also converted to arrays,
+     * preserving the structure when serialized or manipulated.
+     *
+     * @return array The collection items as an array.
+     */
+    public function toArray() : array
+    {
+        return array_map(fn($item) => $item instanceof self ? $item->toArray() : $item, $this->getItems());
+    }
+
+    // Abstract methods to be implemented by subclasses for specific functionalities
+
+    /**
+     * Append an item to the collection.
+     *
+     * @param mixed $value The value to append.
+     *
+     * @return static This collection instance, enabling method chaining.
+     */
+    abstract public function append(mixed $value) : static;
+
+    /**
+     * Prepend an item to the collection.
+     *
+     * @param mixed $value The value to prepend.
+     *
+     * @return static This collection instance, enabling method chaining.
+     */
+    abstract public function prepend(mixed $value) : static;
+
+    /**
+     * Merge another collection or an array of items into this collection.
+     *
+     * @param array|CollectionInterface $items The items to merge.
+     *
+     * @return static This collection instance, enabling method chaining.
+     */
+    abstract public function merge(array|CollectionInterface $items) : static;
+
+    /**
+     * Invoke the provided callback with the collection instance.
+     * This allows operations to be performed on the collection within the callback.
+     *
+     * @param Closure $callback The callback to invoke.
+     *
+     * @return static This collection instance, enabling method chaining.
+     */
+    abstract public function tap(Closure $callback) : static;
+}
+
+=== Collections/CollectionInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\DataHandling\ObjectHandling\Collections;
+
+use ArrayAccess;
+use Closure;
+use Countable;
+use IteratorAggregate;
+use JsonSerializable;
+
+/**
+ * CollectionInterface serves as a contract for collection operations that
+ * supports various interfaces such as Countable, ArrayAccess, IteratorAggregate,
+ * and JsonSerializable. This ensures a standardized way to manipulate
+ * collections across the application.
+ */
+interface CollectionInterface extends Countable, ArrayAccess, IteratorAggregate, JsonSerializable
+{
+    /**
+     * Retrieve all items in the collection.
+     *
+     * @return array All items in the collection.
+     */
+    public function all() : array;
+
+    /**
+     * Append an item to the collection.
+     *
+     * @param mixed $value The value to append.
+     *
+     * @return static This collection instance, enabling method chaining.
+     */
+    public function append(mixed $value) : static;
+
+    /**
+     * Prepend an item to the collection.
+     *
+     * @param mixed $value The value to prepend.
+     *
+     * @return static This collection instance, enabling method chaining.
+     */
+    public function prepend(mixed $value) : static;
+
+    /**
+     * Merge another collection or an array of items into this collection.
+     *
+     * @param array|self $items The items to merge.
+     *
+     * @return static This collection instance, enabling method chaining.
+     */
+    public function merge(array|self $items) : static;
+
+    /**
+     * Invoke the provided callback with the collection instance.
+     * This allows operations to be performed on the collection within the callback.
+     *
+     * @param Closure $callback The callback to invoke.
+     *
+     * @return static This collection instance, enabling method chaining.
+     */
+    public function tap(Closure $callback) : static;
+
+    /**
+     * Convert the collection to an array.
+     *
+     * @return array The collection items as an array.
+     */
+    public function toArray() : array;
+
+    /**
+     * Get the count of items in the collection.
+     *
+     * @return int The number of items.
+     */
+    public function count() : int;
+
+    /**
+     * Convert various types of inputs to an array.
+     * This accommodates different forms of collection items.
+     *
+     * @param mixed $items The items to convert.
+     *
+     * @return array The converted array.
+     */
+    public function convertToArray(mixed $items) : array;
+
+    /**
+     * Find the first item in the collection where a given key has a specific value.
+     *
+     * @param string $key   The key to search for.
+     * @param mixed  $value The value of the key.
+     *
+     * @return mixed The first item matching the criteria.
+     */
+    public function firstWhere(string $key, mixed $value) : mixed;
+
+    /**
+     * Find the maximum value of a given key in the collection.
+     *
+     * @param string|null $key The key to search by. Defaults to null for the whole item.
+     *
+     * @return mixed The maximum value.
+     */
+    public function max(string|null $key = null) : mixed;
+
+    /**
+     * Find the minimum value of a given key in the collection.
+     *
+     * @param string|null $key The key to search by. Defaults to null for the whole item.
+     *
+     * @return mixed The minimum value.
+     */
+    public function min(string|null $key = null) : mixed;
+
+    /**
+     * Calculate the mode (most frequent value) for a given key in the collection.
+     *
+     * @param string|null $key The key to search by. Defaults to null for determining mode of the whole item.
+     *
+     * @return string|int|null The mode value, or null if no mode is found.
+     */
+    public function mode(string|null $key = null) : string|int|null;
+
+    /**
+     * Count items in the collection based on the given closure.
+     *
+     * @param Closure $callback The closure to determine the count criteria.
+     *
+     * @return static The collection instance, enabling method chaining.
+     */
+    public function countBy(Closure $callback) : static;
+}
+
+=== Collections/Collection.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\DataHandling\ObjectHandling\Collections;
+
+use ArrayIterator;
+use Closure;
+use Gemini\DataHandling\ArrayHandling\Traits\AbstractDependenciesTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\AggregationTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\ArrayAccessTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\ArrayConversionTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\CollectionWalkthroughTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\ConditionalsTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\DebugTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\LazyEvaluationTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\MacrosTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\ManageItemsTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\MetaInfoTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\OrderManipulationTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\PartitioningTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\SetOperationsTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\SortOperationsTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\StructureConversionTrait;
+use Gemini\DataHandling\ArrayHandling\Traits\TransformationTrait;
+use Traversable;
+
+/**
+ * Collection class providing utilities for array manipulations.
+ * Combines traits to enable sorting, filtering, partitioning, and more.
+ */
+class Collection extends BaseCollection implements CollectionInterface
+{
+    use AbstractDependenciesTrait;
+    use AggregationTrait;
+    use ArrayAccessTrait;
+    use ArrayConversionTrait;
+    use CollectionWalkthroughTrait;
+    use ConditionalsTrait;
+    use DebugTrait;
+    use LazyEvaluationTrait;
+    use MacrosTrait;
+    use ManageItemsTrait;
+    use MetaInfoTrait;
+    use OrderManipulationTrait;
+    use PartitioningTrait;
+    use SetOperationsTrait;
+    use SortOperationsTrait;
+    use StructureConversionTrait;
+    use TransformationTrait;
+
+    /**
+     * Internal storage for collection items specific to Collection.
+     */
+    protected array $elements = [];
+
+    /**
+     * Collection constructor.
+     *
+     * Initializes the collection with an optional set of items.
+     *
+     * @param iterable $items Initial set of items to populate the collection.
+     */
+    public function __construct(iterable $items = [])
+    {
+        parent::__construct(items: $items);
+        $this->setItems(items: $this->convertToArray(items: $items));
+    }
+
+    /**
+     * Set the internal elements array.
+     *
+     * @param array $items The items to set.
+     *
+     * @return static This collection instance.
+     */
+    public function setItems(iterable $items) : static
+    {
+        $this->elements = $items;
+
+        return $this;
+    }
+
+    /**
+     * Invokes a callback on the collection and returns the collection itself.
+     *
+     * Useful for debugging and inspection without altering chainability.
+     *
+     * @param Closure $callback The callback to execute.
+     *
+     * @return static The current collection instance for method chaining.
+     */
+    public function tap(Closure $callback) : static
+    {
+        $callback($this);
+
+        return $this;
+    }
+
+    /**
+     * Retrieves the first item that matches a given key-value pair.
+     *
+     * @param string $key   The key to search for.
+     * @param mixed  $value The value to compare against.
+     *
+     * @return mixed|null The first matching item or null if not found.
+     */
+    public function firstWhere(string $key, mixed $value) : mixed
+    {
+        foreach ($this->getItems() as $item) {
+            if (($item[$key] ?? null) === $value) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the internal elements array.
+     *
+     * @return array The elements in the collection.
+     */
+    public function getItems() : array
+    {
+        return $this->elements;
+    }
+
+    /**
+     * Determine the maximum value in the collection for a specific key.
+     *
+     * @param string|null $key The key to consider.
+     *
+     * @return mixed The maximum value or null if the collection is empty.
+     */
+    public function max(string|null $key = null) : mixed
+    {
+        return max(
+            array_map(
+                static fn($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
+                $this->getItems(),
+            ),
+        );
+    }
+
+    /**
+     * Determine the minimum value in the collection for a specific key.
+     *
+     * @param string|null $key The key to consider.
+     *
+     * @return mixed The minimum value or null if the collection is empty.
+     */
+    public function min(string|null $key = null) : mixed
+    {
+        return min(
+            array_map(
+                static fn($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
+                $this->getItems(),
+            ),
+        );
+    }
+
+    /**
+     * Determine the mode (most frequent value) in the collection for a specific key.
+     *
+     * @param string|null $key The key to consider.
+     *
+     * @return string|int|null The mode or null if the collection is empty.
+     */
+    public function mode(string|null $key = null) : string|int|null
+    {
+        $counts = array_count_values(
+            array_map(
+                static fn($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
+                $this->getItems(),
+            ),
+        );
+        arsort($counts);
+
+        return array_key_first($counts);
+    }
+
+    /**
+     * Count items in the collection based on a given callback.
+     *
+     * @param Closure $callback The callback to determine the key for counting.
+     *
+     * @return static A new collection containing count values.
+     */
+    public function countBy(Closure $callback) : static
+    {
+        $counts = [];
+        foreach ($this->getItems() as $item) {
+            $key          = $callback($item);
+            $counts[$key] = ($counts[$key] ?? 0) + 1;
+        }
+
+        return new static($counts);
+    }
+
+    /**
+     * Appends a value to the end of the collection.
+     *
+     * @param mixed $value The value to append.
+     *
+     * @return static The current collection instance for method chaining.
+     */
+    public function append(mixed $value) : static
+    {
+        $this->elements[] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Prepends a value to the beginning of the collection.
+     *
+     * @param mixed $value The value to prepend.
+     *
+     * @return static The current collection instance for method chaining.
+     */
+    public function prepend(mixed $value) : static
+    {
+        array_unshift($this->elements, $value);
+
+        return $this;
+    }
+
+    /**
+     * Merges the collection with another collection or array.
+     *
+     * Supports merging arrays or other collections seamlessly.
+     *
+     * @param CollectionInterface|array $items The items to merge.
+     *
+     * @return static The current collection instance for method chaining.
+     */
+    public function merge(CollectionInterface|array $items) : static
+    {
+        $mergedItems = array_merge($this->getItems(), is_array($items) ? $items : $items->all());
+        $this->setItems(items: $mergedItems);
+
+        return $this;
+    }
+
+    /**
+     * Returns the count of items in the collection.
+     *
+     * @return int The number of items in the collection.
+     */
+    public function count() : int
+    {
+        return count($this->getItems());
+    }
+
+    /**
+     * Returns an iterator for the collection.
+     *
+     * @return Traversable An iterator for the items.
+     */
+    public function getIterator() : Traversable
+    {
+        return new ArrayIterator($this->getItems());
+    }
+}
+
+=== Collections/Exceptions/ItemNotFoundException.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\DataHandling\ObjectHandling\Collections\Exceptions;
+
+use Exception;
+
+/**
+ * Exception thrown when a specified item is not found in the collection.
+ *
+ * This exception is used to signal cases where an operation expected a specific
+ * item to be available in the collection, but it wasn't found. It simplifies
+ * error handling across the application by providing a specific exception type
+ * for missing items, allowing for cleaner and more specific catch blocks.
+ */
+class ItemNotFoundException extends Exception
+{
+    /**
+     * The default exception message indicating the item was not found.
+     *
+     * This message is pre-set to provide a consistent error message throughout
+     * the application whenever an item is missing from a collection, avoiding
+     * the need to define a message each time this exception is thrown.
+     *
+     * @var string
+     */
+    protected $message = 'The specified item was not found in the collection.';
+}
+
+=== Collections/LazyCollection.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\DataHandling\ObjectHandling\Collections;
+
+use Gemini\DataHandling\ArrayHandling\Traits\LazyEvaluationTrait;
+use Closure;
+use Traversable;
+
+/**
+ * Class LazyCollection
+ *
+ * This class represents a collection with lazy evaluation, where items are generated on the fly.
+ * The primary benefit is memory efficiency, especially for large datasets.
+ */
+class LazyCollection extends Collection
+{
+    use LazyEvaluationTrait;
+
+    /**
+     * LazyCollection constructor.
+     *
+     * @param Closure $generator A generator function to build the collection lazily.
+     */
+    public function __construct(protected Closure $generator)
+    {
+        parent::__construct();
+    }
+
+    /**
+     * Retrieve all items in the collection as an array.
+     *
+     * Converts the lazy-loaded items into a straightforward array.
+     *
+     * @return array The entire collection as an array.
+     */
+    public function all() : array
+    {
+        return iterator_to_array($this->getIterator());
+    }
+
+    /**
+     * Get an iterator for the collection.
+     *
+     * This method facilitates the lazy evaluation by returning the generator.
+     *
+     * @return Traversable The generator yielding items of the collection.
+     */
+    public function getIterator() : Traversable
+    {
+        return ($this->generator)();
+    }
+
+    /**
+     * Get every nth item in the collection.
+     *
+     * This method is useful for scenarios where sampling at regular intervals is required.
+     *
+     * @param int $step The interval at which items are retrieved.
+     *
+     * @return static A new lazy collection containing every nth item.
+     */
+    public function nth(int $step) : static
+    {
+        return new static(generator: function () use ($step) {
+            $index = 0;
+            foreach ($this->getIterator() as $item) {
+                if ($index++ % $step === 0) {
+                    yield $item;
+                }
+            }
+        });
+    }
+
+    /**
+     * Take items from the collection while the callback returns true.
+     *
+     * This allows conditional data processing where items are taken as long as a condition holds.
+     *
+     * @param Closure $callback The condition used to continue taking items.
+     *
+     * @return static A new lazy collection containing items while the callback returns true.
+     */
+    public function takeWhile(Closure $callback) : static
+    {
+        return new static(generator: function () use ($callback) {
+            foreach ($this->getIterator() as $item) {
+                if (! $callback($item)) {
+                    break;
+                }
+
+                yield $item;
+            }
+        });
+    }
+}
+
+=== DTO/AbstractDTO.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\DataHandling\ObjectHandling\DTO;
+
+use Gemini\DataHandling\ObjectHandling\DTO\Traits\CastsTypes;
+use Gemini\DataHandling\ObjectHandling\DTO\Traits\HandlesAttributes;
+use Gemini\DataHandling\ObjectHandling\DTO\Traits\HandlesHydration;
+use Gemini\DataHandling\ObjectHandling\DTO\Traits\InspectsProperties;
+use Gemini\DataHandling\ObjectHandling\DTO\Traits\Serialization;
+
+/**
+ * Base abstract class for Data Transfer Objects (DTOs).
+ *
+ * This class provides the foundational structure for Data Transfer Objects within the application.
+ * It is responsible for implementing shared behavior and logic such as:
+ *
+ * - Hydration from associative arrays.
+ * - Property casting based on defined types.
+ * - Attribute handling and lifecycle interactions.
+ * - Inspection of available properties.
+ * - Efficient serialization for DTO representations.
+ *
+ * The use of traits ensures a modular and reusable design, promoting separation of concerns.
+ */
+abstract class AbstractDTO
+{
+    /**
+     * Include the `HandlesHydration` trait.
+     *
+     * Provides functionality for mapping external data (like arrays) into object properties.
+     */
+    use HandlesHydration;
+
+    /**
+     * Include the `CastsTypes` trait.
+     *
+     * Enables strict casting of properties into specified types, ensuring type safety when working
+     * with data.
+     */
+    use CastsTypes;
+
+    /**
+     * Include the `HandlesAttributes` trait.
+     *
+     * Adds methods to manipulate and interact with internal object attributes dynamically.
+     */
+    use HandlesAttributes;
+
+    /**
+     * Include the `InspectsProperties` trait.
+     *
+     * Adds utilities to inspect the state of object properties during runtime, allowing access to
+     * their metadata or dynamic availability checks.
+     */
+    use InspectsProperties;
+
+    /**
+     * Include the `Serialization` trait.
+     *
+     * Defines methods for serializing and deserializing object data to formats like arrays or JSON,
+     * ensuring compatibility with external systems.
+     */
+    use Serialization;
+
+    /**
+     * Constructor with array hydration capability.
+     *
+     * Constructs a new instance of the Data Transfer Object (DTO) from an array of data.
+     * This constructor leverages the `HandlesHydration` trait to populate DTO properties
+     * with data provided in the array.
+     *
+     * @param array $data The associative array containing the initial properties of the DTO.
+     *
+     * @throws \ReflectionException If reflection fails to evaluate class or property metadata during hydration.
+     */
+    public function __construct(array $data)
+    {
+        // Hydrate the object with the given data array.
+        $this->hydrateFrom($data);
+    }
+}
+=== DTO/DTOValidationException.php ===
+<?php
+
+declare(strict_types=1); // Strict type declarations to enforce type safety and ensure predictable behavior of code.
+
+namespace Gemini\DataHandling\ObjectHandling\DTO;
+
+use InvalidArgumentException;
+
+/**
+ * DTOValidationException
+ *
+ * This final exception class is specifically designed to encapsulate multiple
+ * validation errors when dealing with Data Transfer Objects (DTOs).
+ *
+ * As part of Domain-Driven Design (DDD), this exception helps to clearly define
+ * validation-related errors, thereby enhancing the domain layer's adherence to constraints
+ * and encapsulating the behavior required to handle such errors.
+ *
+ * Extends:
+ *  - InvalidArgumentException: This base exception aligns with the concept of invalid
+ *    arguments being passed to a DTO during validation, enhancing semantic meaning.
+ */
+final class DTOValidationException extends InvalidArgumentException
+{
+    /**
+     * A collection of validation errors.
+     *
+     * This property holds an associative array containing validation error messages,
+     * where the key represents the invalid field name, and the value represents
+     * the reason or detailed validation error message.
+     *
+     * The `readonly` contract ensures immutability of this object property after construction,
+     * adhering to clean code principles for simple and predictable objects.
+     *
+     * @var array<string, string> An associative array where the keys are field names,
+     *                            and the values are validation error messages.
+     */
+    public readonly array $errors;
+
+    /**
+     * Constructs a new DTOValidationException.
+     *
+     * Leverages constructor promotion for leaner and more expressive class construction
+     * while ensuring appropriate validation messages and errors are encapsulated.
+     *
+     * @param string                $message A detailed exception message providing context about the DTO validation
+     *                                       failure.
+     * @param array<string, string> $errors  Associative array of validation errors, with keys as field names
+     *                                       and values as corresponding messages explaining the validation failure.
+     */
+    public function __construct(
+        string $message,
+        array  $errors,
+    ) {
+        // Call the parent class constructor to initialize the exception with the given message.
+        parent::__construct(message: $message);
+
+        // Initialize the errors property, ensuring necessary validation details are captured.
+        $this->errors = $errors;
+    }
+
+    /**
+     * Retrieves the collection of validation errors.
+     *
+     * This method provides read-only access to the `errors` property containing detailed
+     * validation error information for the failed DTO attributes or fields.
+     *
+     * Keeping this method focused and simple aligns with the principles of clean code
+     * by facilitating immutability and enforcing predictable behavior.
+     *
+     * @return array<string, string> Returns an associative array of validation errors, where the
+     *                               keys represent the invalid fields or attributes, and the values
+     *                               detail the validation issues.
+     */
+    public function getErrors() : array
+    {
+        // Return the immutably defined validation error details to the caller.
+        return $this->errors;
+    }
+}
+=== DTO/Support/PropertyMetadata.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\DataHandling\ObjectHandling\DTO\Support;
+
+use ReflectionAttribute;
+use ReflectionProperty;
+
+final class PropertyMetadata
+{
+    public function __construct(
+        public readonly string             $name,
+        public readonly ReflectionProperty $property,
+        /** @var array<ReflectionAttribute> */
+        public readonly array              $attributes,
+    ) {}
+
+    /**
+     * Checks whether the property has an explicit type.
+     */
+    public function isTyped() : bool
+    {
+        return $this->property->hasType();
+    }
+
+    /**
+     * Checks whether the property is nullable.
+     */
+    public function isNullable() : bool
+    {
+        $type = $this->property->getType();
+
+        return $type?->allowsNull() ?? true;
+    }
+
+    /**
+     * Returns true if at least one attribute matches the given FQCN (case-sensitive).
+     */
+    public function hasAttribute(string $fqcn) : bool
+    {
+        return $this->property->getAttributes($fqcn) !== [];
+    }
+
+    /**
+     * Instantiates all attributes.
+     *
+     * @return object[] List of attribute instances.
+     */
+    public function instantiateAttributes() : array
+    {
+        return array_map(
+            static fn(ReflectionAttribute $attr) => $attr->newInstance(),
+            $this->attributes
+        );
+    }
+}
+
+=== DTO/Support/Reflector.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\DataHandling\ObjectHandling\DTO\Support;
+
+use Gemini\DataHandling\ObjectHandling\DTO\DTOValidationException;
+use Gemini\DataHandling\ObjectHandling\DTO\Traits\CastsTypes;
+use Gemini\DataHandling\ObjectHandling\DTO\Traits\HandlesAttributes;
+use Gemini\DataHandling\ObjectHandling\DTO\Traits\InspectsProperties;
+use Gemini\DataHandling\ObjectHandling\DTO\Traits\Serialization;
+use InvalidArgumentException;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionProperty;
+use Throwable;
+
+/**
+ * A utility class for handling deep reflection-based operations on DTOs.
+ *
+ * This class provides functionality for manipulating, inspecting, and hydrating
+ * Data Transfer Objects (DTOs) through reflection, while maintaining domain and type safety.
+ *
+ * ### Key Responsibilities:
+ * - Hydration of DTO properties with strict validation and error reporting.
+ * - Reflection and inspection of public properties and their metadata.
+ * - Handling complex business rules through attributes and type casting.
+ *
+ * @final This class is immutable in its implementation and should not be extended.
+ */
+final class Reflector
+{
+    /**
+     * Use traits that modularize reflection-based behaviors.
+     * - `InspectsProperties`: Adds the ability to inspect DTO object's properties.
+     * - `CastsTypes`: Handles casting raw values to expected types as part of hydration.
+     * - `HandlesAttributes`: Processes and applies custom attribute-based rules on properties.
+     * - `Serialization`: Offers serialization support for the DTO.
+     */
+    use InspectsProperties;
+    use CastsTypes;
+    use HandlesAttributes;
+    use Serialization;
+
+    /**
+     * The target object being reflected and operated on.
+     *
+     * This object is the primary reference for all reflection-based operations
+     * such as property inspection, hydration, and serialization.
+     *
+     * @var object The DTO or object being managed by this reflector.
+     */
+    private object $target;
+
+    /**
+     * Constructs a Reflector instance and initializes it with a target object.
+     *
+     * Follows constructor promotion for lean and expressive initialization.
+     *
+     * @param object $target The target object for reflection and operations.
+     */
+    public function __construct(object $target)
+    {
+        $this->target = $target;
+    }
+
+    /**
+     * Creates a Reflector instance for a specific object instance.
+     *
+     * This factory method enables a fluent and semantic API for initializing
+     * a Reflector from an existing object.
+     *
+     * @param object $instance The object instance being wrapped by the reflector.
+     *
+     * @return self Returns a new Reflector instance.
+     */
+    public static function fromInstance(object $instance) : self
+    {
+        return new self(target: $instance);
+    }
+
+    /**
+     * Creates a Reflector instance for a given class name.
+     *
+     * Uses `ReflectionClass` to instantiate the object without calling its constructor,
+     * allowing flexibility for reflection-based object construction and hydration.
+     *
+     * @param string $className The fully qualified class name of the target object.
+     *
+     * @return self Returns a new Reflector instance wrapping the created object.
+     * @throws ReflectionException If the provided class does not exist or cannot be instantiated.
+     *
+     */
+    public static function fromClass(string $className) : self
+    {
+        return new self(target: (new ReflectionClass(objectOrClass: $className))->newInstanceWithoutConstructor());
+    }
+
+    /**
+     * Hydrates the target object with the provided raw data.
+     *
+     * Iterates over the public properties of the target object and applies the
+     * given raw data to each property. Attributes and type safety rules are
+     * respected during the process, ensuring that all DTO constraints are enforced.
+     *
+     * @param array<string, mixed> $data An associative array mapping property names
+     *                                   to their corresponding values.
+     *
+     * @throws DTOValidationException If hydration fails due to validation or type casting errors.
+     * @throws ReflectionException    If reflection operations encounter an issue.
+     */
+    public function hydrate(array $data) : void
+    {
+        // Initialize an empty array to collect errors during the hydration process.
+        $errors = [];
+
+        // Iterate through all public fields of the target object.
+        foreach ($this->reflectPublicFields() as $meta) {
+            try {
+                // Attempt to hydrate the given field using the metadata and data provided.
+                $this->hydrateField(
+                    name      : $meta->name,
+                    property  : $meta->property,
+                    attributes: $meta->attributes,
+                    data      : $data
+                );
+            } catch (Throwable $exception) {
+                // Capture and format any errors that occur during hydration.
+                $errors[$meta->name] = $this->formatHydrationError(
+                    fieldName: $meta->name,
+                    exception: $exception
+                );
+            }
+        }
+
+        // If any errors occurred during hydration, throw a validation exception.
+        if (! empty($errors)) {
+            throw new DTOValidationException(
+                message: 'DTO hydration failed.',
+                errors : $errors
+            );
+        }
+    }
+
+    /**
+     * Populates a specific field of the target object with a value from the data array.
+     *
+     * The method validates the presence of the field in the raw data, handles type casting,
+     * and applies any field-specific attributes before assigning the final value.
+     *
+     * @param string             $name       The name of the property being hydrated.
+     * @param ReflectionProperty $property   The reflection of the target property.
+     * @param array              $attributes An array of attributes applied to the property.
+     * @param array              $data       The raw input data used for hydration.
+     */
+    private function hydrateField(
+        string             $name,
+        ReflectionProperty $property,
+        array              $attributes,
+        array              $data
+    ) : void {
+        // If the field is not present in the data array, handle it as missing.
+        if (! array_key_exists($name, $data)) {
+            $this->handleMissingField(name: $name, property: $property);
+
+            return;
+        }
+
+        // Extract the raw value corresponding to the field.
+        $rawValue = $data[$name];
+
+        // Cast the raw value to the expected type of the property.
+        $resolvedValue = $this->castToExpectedType(property: $property, value: $rawValue);
+
+        // Apply attribute-specific rules or transformations to the field value.
+        $resolvedValue = $this->applyFieldAttributes(
+            fieldName : $name,
+            value     : $resolvedValue,
+            attributes: $attributes
+        );
+
+        // Assign the resolved value to the corresponding property of the target object.
+        $this->target->{$name} = $resolvedValue;
+    }
+
+    /**
+     * Handles cases where required data for a field is missing.
+     *
+     * This method sets default values or null based on the property's attributes
+     * or throws an exception if the property is mandatory and cannot be resolved.
+     *
+     * @param string             $name     The name of the missing property.
+     * @param ReflectionProperty $property The reflection of the target property.
+     *
+     * @throws InvalidArgumentException If no suitable value is found for the missing property.
+     */
+    private function handleMissingField(string $name, ReflectionProperty $property) : void
+    {
+        // If the property is nullable, assign a null value to the field.
+        if ($this->isPropertyNullable(property: $property)) {
+            $this->target->{$name} = null;
+
+            return;
+        }
+
+        // If the property has a default value, assign it to the field.
+        if ($property->hasDefaultValue()) {
+            $this->target->{$name} = $property->getDefaultValue();
+
+            return;
+        }
+
+        // Throw an exception when no suitable value is available for the property.
+        throw new InvalidArgumentException(message: "Missing required field: {$name}");
+    }
+
+    /**
+     * Formats detailed error messages for failed hydration of a single field.
+     *
+     * @param string    $fieldName The name of the field where hydration failed.
+     * @param Throwable $exception The exception that occurred during hydration.
+     *
+     * @return string Returns a string describing the error with the field's name and exception message.
+     */
+    private function formatHydrationError(string $fieldName, Throwable $exception) : string
+    {
+        return sprintf(
+            '%s → Field "%s": %s',
+            $this->target::class,
+            $fieldName,
+            $exception->getMessage()
+        );
+    }
+
+    /**
+     * Retrieves the target object being operated on by the Reflector.
+     *
+     * @return object The target object.
+     */
+    public function getTarget() : object
+    {
+        return $this->target;
+    }
+
+    /**
+     * Converts the public properties of a target object into a schema-friendly array format.
+     *
+     * This method inspects the metadata of all public fields in the object,
+     * including property type, nullability, and attributes,
+     * and formats this data into an array representation.
+     *
+     * @return array An array representing the schema of the object's public fields.
+     * @throws \ReflectionException If reflection operations encounter an error.
+     */
+    public function toSchema() : array
+    {
+        // Apply a transformation to each metadata entry from reflectPublicFields().
+        // The resulting array will contain a schema representation for each public property.
+        return array_map(
+            fn($meta) => [
+                // Add the property name to the schema array.
+                'name'       => $meta->name,
+
+                // Add the property type to the schema array. If no type is defined, default to 'mixed'.
+                'type'       => $meta->property->getType()?->getName() ?? 'mixed',
+
+                // Add the nullability information of the property to the schema array.
+                'nullable'   => $meta->isNullable(),
+
+                // Map the attributes of the property to their names and add them to the schema array.
+                'attributes' => array_map(fn($a) => $a->getName(), $meta->attributes),
+            ],
+
+            // Retrieve metadata for all public fields of the target object.
+            // Metadata includes details about the properties of the object being reflected.
+            $this->reflectPublicFields()
+        );
+    }
+}
+=== DTO/Traits/CastsTypes.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\DataHandling\ObjectHandling\DTO\Traits;
+
+use BackedEnum;
+use Gemini\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use InvalidArgumentException;
+use ReflectionIntersectionType;
+use ReflectionNamedType;
+use ReflectionProperty;
+use ReflectionUnionType;
+
+/**
+ * Trait CastsTypes
+ *
+ * This trait provides sophisticated value-casting mechanisms
+ * to enable flexible and reliable data transfer object (DTO) hydration.
+ *
+ * Supports:
+ * - Nested DTO instances
+ * - Arrays of DTOs (DTO[])
+ * - Backed Enums
+ * - Primitive type fallback pass through
+ *
+ * Uses strict type checking and powerful casting techniques
+ * to resolve property type constraints dynamically.
+ */
+trait CastsTypes
+{
+    /**
+     * Provides a public entry point to the internal casting mechanism.
+     *
+     * @param ReflectionProperty $property The property to cast the value for.
+     * @param mixed              $value    The raw value to be casted.
+     *
+     * @return mixed The casted value matching the expected type of the property.
+     */
+    public function castTo(ReflectionProperty $property, mixed $value) : mixed
+    {
+        // Delegates to the internal casting method.
+        return $this->castToExpectedType($property, $value);
+    }
+
+    /**
+     * Dynamically dispatches value casting logic based on the property's type metadata.
+     *
+     * Uses `match` to select the appropriate casting method:
+     * - DTO detection
+     * - Array of DTOs detection
+     * - Backed Enums detection
+     *
+     * Falls back to the raw value if no special handling is needed.
+     *
+     * @param ReflectionProperty $property The property to cast the value for.
+     * @param mixed              $value    The raw value to be casted.
+     *
+     * @return mixed The casted value (or the original value if no special casting is applied).
+     */
+    protected function castToExpectedType(ReflectionProperty $property, mixed $value) : mixed
+    {
+        return match (true) {
+            $this->isDTOType($property)    => $this->castToDTO($property, $value),
+            $this->isDTOArray($property)   => $this->castToDTOArray($property, $value),
+            $this->isBackedEnum($property) => $this->castToEnum($property, $value),
+            default                        => $value,
+        };
+    }
+
+    /**
+     * Checks if the given property is a subclass of the current DTO base class.
+     *
+     * @param ReflectionProperty $property The property to inspect.
+     *
+     * @return bool `true` if the property maps to a DTO class, `false` otherwise.
+     */
+    protected function isDTOType(ReflectionProperty $property) : bool
+    {
+        $type = $this->resolvePropertyType($property);
+
+        return $type !== null && is_subclass_of($type, AbstractDTO::class);
+    }
+
+    /**
+     * Resolves the fully qualified class name or built-in type of a property.
+     *
+     * Prioritizes class names over scalars when multiple union types are present.
+     *
+     * @param ReflectionProperty $property The property for which to determine the type.
+     *
+     * @return string|null The resolved class or scalar type name, or null if unavailable.
+     */
+    protected function resolvePropertyType(ReflectionProperty $property) : string|null
+    {
+        $type = $property->getType();
+
+        // If no type is declared, return null
+        if ($type === null) {
+            return null;
+        }
+
+        // Handle single-named types directly
+        if ($type instanceof ReflectionNamedType) {
+            return $type->getName();
+        }
+
+        // Handle union types (e.g., string|int|EnumType)
+        if ($type instanceof ReflectionUnionType) {
+            // Extract only named types excluding null/mixed/etc.
+            $types = array_filter(
+                $type->getTypes(),
+                fn($t) => $t instanceof ReflectionNamedType && $t->getName() !== 'null'
+            );
+
+            // Prioritize classes (DTO/Enum) over scalar primitives
+            usort(
+                $types,
+                fn(ReflectionNamedType $a, ReflectionNamedType $b) : int => class_exists(
+                                                                                $b->getName()
+                                                                            ) <=> class_exists($a->getName())
+            );
+
+            return $types[0]?->getName();
+        }
+
+        // Handle intersection types (PHP 8.2+)
+        if ($type instanceof ReflectionIntersectionType) {
+            foreach ($type->getTypes() as $named) {
+                if ($named instanceof ReflectionNamedType) {
+                    return $named->getName();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Casts a given value to a DTO instance.
+     *
+     * Initializes a new DTO instance by passing a normalized array of values to its constructor.
+     *
+     * @param ReflectionProperty $property The property to cast the value for.
+     * @param mixed              $value    The raw value to be casted.
+     *
+     * @return object A new DTO instance based on the resolved class type.
+     *
+     * @throws InvalidArgumentException If the resolved class is invalid or not a DTO.
+     */
+    protected function castToDTO(ReflectionProperty $property, mixed $value) : object
+    {
+        $class = $this->resolvePropertyType($property);
+        $this->assertDTOClass($class, $property);
+
+        // Instantiate the DTO using the normalized array of input data.
+        return new $class($this->normalizeToArray($value));
+    }
+
+    /**
+     * Validates whether the given class is a valid subclass of the DTO base class.
+     *
+     * @param string|null        $class    The class name to validate.
+     * @param ReflectionProperty $property The property for which the class is being validated.
+     *
+     * @throws InvalidArgumentException If the class is not a valid DTO.
+     */
+    protected function assertDTOClass(string|null $class, ReflectionProperty $property) : void
+    {
+        if ($class === null || ! class_exists($class) || ! is_subclass_of($class, AbstractDTO::class)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    "Invalid DTO class '%s' for property '%s'.",
+                    $class ?? 'null',
+                    $property->getName()
+                )
+            );
+        }
+    }
+
+    /**
+     * Normalizes a mixed input value into an array.
+     *
+     * Ensures that values can be safely passed as an array during DTO instantiation.
+     *
+     * @param mixed $value The raw input value.
+     *
+     * @return array The normalized array representation of the input.
+     */
+    protected function normalizeToArray(mixed $value) : array
+    {
+        return is_array($value) ? $value : (array) $value;
+    }
+
+    /**
+     * Checks if the given property corresponds to an array of DTO instances.
+     *
+     * Determines this by analyzing the type information and optional metadata
+     * from PHPDoc annotations or attributes.
+     *
+     * @param ReflectionProperty $property The property to inspect.
+     *
+     * @return bool `true` if the property is an array of DTOs, `false` otherwise.
+     */
+    protected function isDTOArray(ReflectionProperty $property) : bool
+    {
+        return $this->resolvePropertyType($property) === 'array'
+               && $this->resolveDTOClassFromAnnotationsOrAttributes($property) !== null;
+    }
+
+    /**
+     * Resolves the class name of the DTO from either PHP attributes or @param ReflectionProperty $property The
+     * property for which to resolve the class.
+     *
+     * @return string|null The fully qualified class name of the DTO, or `null` if not found.
+     * "@var annotations"
+     *
+     */
+    protected function resolveDTOClassFromAnnotationsOrAttributes(ReflectionProperty $property) : string|null
+    {
+        // Check for attributes first.
+        foreach ($property->getAttributes() as $attribute) {
+            $instance = $attribute->newInstance();
+            if (method_exists($instance, 'of')) {
+                return $instance->of();
+            }
+        }
+
+        // Fallback to PHPDoc annotations.
+        $doc = $property->getDocComment();
+        if ($doc && preg_match('/@var\s+([\w\\\\]+)\[\]/', $doc, $matches)) {
+            return ltrim($matches[1], '\\');
+        }
+
+        return null;
+    }
+
+    /**
+     * Casts a given value to an array of DTO instances.
+     *
+     * Iterates over the input array and creates a new DTO instance for each element.
+     *
+     * @param ReflectionProperty $property The property to cast the value for.
+     * @param mixed              $value    The raw value (array) to be casted.
+     *
+     * @return array An array of DTO instances.
+     *
+     * @throws InvalidArgumentException If the DTO class is invalid.
+     */
+    protected function castToDTOArray(ReflectionProperty $property, mixed $value) : array
+    {
+        $class = $this->resolveDTOClassFromAnnotationsOrAttributes($property);
+        $this->assertDTOClass($class, $property);
+
+        // Map each array element to a new DTO instance.
+        return array_map(
+            fn($item) => new $class($this->normalizeToArray($item)),
+            is_array($value) ? $value : []
+        );
+    }
+
+    /**
+     * Checks if the given property maps to a backed enum.
+     *
+     * @param ReflectionProperty $property The property to inspect.
+     *
+     * @return bool `true` if the property type is a subclass of `BackedEnum`, `false` otherwise.
+     */
+    protected function isBackedEnum(ReflectionProperty $property) : bool
+    {
+        $type = $this->resolvePropertyType($property);
+
+        return $type !== null
+               && enum_exists($type)
+               && is_subclass_of($type, BackedEnum::class);
+    }
+
+    /**
+     * Casts a scalar value to its corresponding backed enum instance.
+     *
+     * @param ReflectionProperty $property The property to cast the value for.
+     * @param mixed              $value    The raw scalar value to be converted.
+     *
+     * @return BackedEnum The enum instance corresponding to the given value.
+     *
+     * @throws InvalidArgumentException If the provided value does not match a valid enum case.
+     */
+    protected function castToEnum(ReflectionProperty $property, mixed $value) : BackedEnum|string|null
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $type = $this->resolvePropertyType($property);
+        $this->assertEnumClass($type, $property);
+
+        /** @var class-string<BackedEnum> $type */
+        if ($value instanceof $type) {
+            return $value;
+        }
+
+        $enum = $type::tryFrom($value);
+
+        if (! $enum) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    "Invalid enum value '%s' for '%s' on property '%s'. Valid: [%s]",
+                    is_scalar($value) ? $value : gettype($value),
+                    $type,
+                    $property->getName(),
+                    implode(', ', array_map(static fn($case) => $case->value, $type::cases()))
+                )
+            );
+        }
+
+        return $enum;
+    }
+
+
+    /**
+     * Asserts that the given type is a valid backed enum class.
+     *
+     * @param string|null        $class    The class name to validate.
+     * @param ReflectionProperty $property The property for which the enum is being validated.
+     *
+     * @throws InvalidArgumentException If the class is not a valid backed enum.
+     */
+    protected function assertEnumClass(string|null $class, ReflectionProperty $property) : void
+    {
+        if ($class === null || ! enum_exists($class) || ! is_subclass_of($class, BackedEnum::class)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    "Invalid enum type '%s' for property '%s'. Must be a backed enum.",
+                    $class ?? 'null',
+                    $property->getName()
+                )
+            );
+        }
+    }
+}
+=== DTO/Traits/HandlesAttributes.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\DataHandling\ObjectHandling\DTO\Traits;
+
+use InvalidArgumentException;
+use ReflectionAttribute;
+use Throwable;
+
+/**
+ * Trait HandlesAttributes
+ *
+ * **Purpose**: This trait provides reusable functionality to apply transformations
+ * and validations to object fields via custom attributes. It centralizes attribute
+ * handling logic for better maintainability and reusability.
+ *
+ * **Context in DDD**: Designed for entities or value objects that require attribute-driven
+ * field transformations and validations, fostering clean and declarative object definitions.
+ *
+ * **Key Features**:
+ * - Instantiation of attributes.
+ * - Transformation of field values using attribute logic.
+ * - Validation of field values against attribute-defined rules.
+ */
+trait HandlesAttributes
+{
+    /**
+     * Applies the given attributes to modify and/or validate the value of a field.
+     * Each attribute may define transformation (`apply`) logic or validation (`validate`) logic.
+     *
+     * **Usage in DDD**: Enables well-encapsulated validation and behavior adjustments
+     * directly linked to the domain model's field attributes.
+     *
+     * @param string                $fieldName  The name of the field currently being processed.
+     * @param mixed                 $value      The current value of the field, passed by reference for in-place
+     *                                          updates.
+     * @param ReflectionAttribute[] $attributes A collection of `ReflectionAttribute` instances to apply.
+     *
+     * @return mixed
+     *
+     */
+    protected function applyFieldAttributes(string $fieldName, mixed &$value, array $attributes) : mixed
+    {
+        // Iterate over all attributes associated with the field.
+        foreach ($attributes as $attribute) {
+            // Instantiate the attribute into a usable object.
+            $instance = $this->instantiateAttribute($attribute);
+
+            // Apply transformation logic if the attribute defines the `apply` method.
+            if (method_exists($instance, 'apply')) {
+                $value = $this->applyAttribute(instance: $instance, value: $value, fieldName: $fieldName);
+            }
+
+            // Perform validation if the attribute defines the `validate` method.
+            if (method_exists($instance, 'validate')) {
+                $this->validateAttribute(instance: $instance, value: $value, fieldName: $fieldName);
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Instantiates an attribute safely and ensures its validity for further processing.
+     *
+     * **Delegated Responsibility**: Verifies the integrity of an attribute's instantiation,
+     * ensuring downstream logic (like `apply` or `validate`) receives a valid object.
+     *
+     * @param ReflectionAttribute $attribute The `ReflectionAttribute` instance to instantiate.
+     *
+     * @return object The instantiated attribute object, ready for application.
+     *
+     * @throws InvalidArgumentException If attribute instantiation fails due to invalid parameters
+     *                                  or a runtime exception.
+     */
+    private function instantiateAttribute(ReflectionAttribute $attribute) : object
+    {
+        try {
+            // Create an instance of the attribute dynamically.
+            return $attribute->newInstance();
+        } catch (Throwable $e) {
+            // Throw a developer-friendly error with contextual information.
+            throw new InvalidArgumentException(
+                message : sprintf(
+                              'Failed to instantiate attribute of type "%s": %s',
+                              $attribute->getName(),
+                              $e->getMessage()
+                          ),
+                code    : 422, // Exception code (standardized as 0 for consistent exception chaining).
+                previous: $e // Preserve the original exception for backtrace details.
+            );
+        }
+    }
+
+    /**
+     * Applies the transformation logic defined by the `apply` method of an attribute.
+     *
+     * **Domain Use Case**: Alters the field value as determined by attribute-specific
+     * transformation rules, enriching the domain model with declarative behavior logic.
+     *
+     * @param object $instance  The instantiated attribute object with the `apply` method.
+     * @param mixed  $value     The current field value to be transformed.
+     * @param string $fieldName The name of the field to provide context in case of errors.
+     *
+     * @return mixed The transformed value after applying the attribute's logic.
+     *
+     * @throws InvalidArgumentException If the `apply` method fails or is improperly implemented.
+     */
+    private function applyAttribute(object $instance, mixed $value, string $fieldName) : mixed
+    {
+        try {
+            // Invoke the attribute's `apply` method and return the modified value.
+            return $instance->apply($value);
+        } catch (Throwable $e) {
+            // Throw an exception with clear diagnostic information.
+            throw new InvalidArgumentException(
+                message : sprintf(
+                              'The "apply" method of attribute "%s" failed for field "%s": %s',
+                              $instance::class,
+                              $fieldName,
+                              $e->getMessage()
+                          ),
+                code    : 422, // Exception code to maintain consistent exception hierarchy.
+                previous: $e // Preserve chained exception details for diagnosis.
+            );
+        }
+    }
+
+    /**
+     * Validates a value against the rules defined by an attribute's `validate` method.
+     *
+     * **Domain Implication**: Ensures that field values adhere to domain-driven constraints encapsulated
+     * by attributes, supporting robust domain model invariants.
+     *
+     * @param object $instance  The instantiated attribute object with validation capability.
+     * @param mixed  $value     The current field value to be validated.
+     * @param string $fieldName The name of the field being validated for error reporting.
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException If validation rules are violated or improperly implemented.
+     */
+    private function validateAttribute(object $instance, mixed $value, string $fieldName) : void
+    {
+        try {
+            // Invoke the attribute's `validate` method to perform validation checks.
+            $instance->validate($value, $fieldName);
+        } catch (Throwable $e) {
+            // Throw informative validation exceptions to aid debugging.
+            throw new InvalidArgumentException(
+                message : sprintf(
+                              'Validation failed for field "%s" with attribute "%s": %s',
+                              $fieldName,
+                              $instance::class,
+                              $e->getMessage()
+                          ),
+                code    : 422, // Maintain consistent exception codes.
+                previous: $e // Include original exception for additional debug trace.
+            );
+        }
+    }
+}
+=== DTO/Traits/HandlesHydration.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\DataHandling\ObjectHandling\DTO\Traits;
+
+use Gemini\DataHandling\ObjectHandling\DTO\DTOValidationException;
+use InvalidArgumentException;
+use ReflectionProperty;
+use Throwable;
+
+/**
+ * The `HandlesHydration` trait provides advanced hydration logic for DTO objects.
+ *
+ * It operates by using reflection to dynamically populate object properties with
+ * provided raw data while performing type casting, validation, and handling attributes.
+ * This ensures that the hydrated object adheres to the defined structure and constraints.
+ */
+trait HandlesHydration
+{
+    /**
+     * Method responsible for dynamic hydration of the object with raw input data.
+     *
+     * The method processes each public field of the DTO using reflection, applying
+     * type validation, attribute-based transformations, and error handling for invalid data.
+     *
+     * @param array<string, mixed> $data An associative array of input data for hydration,
+     *                                   where keys correspond to public property names
+     *                                   and values represent their respective input values.
+     *
+     * @throws DTOValidationException Thrown if one or more fields fail validation during hydration.
+     * @throws \ReflectionException   Raised when an error occurs in accessing reflective metadata for the class.
+     */
+    public function hydrateFrom(array $data) : void
+    {
+        $errors = [];
+
+        foreach ($this->reflectPublicFields() as $meta) {
+            try {
+                $this->hydrateField(
+                    name      : $meta->name,
+                    property  : $meta->property,
+                    attributes: $meta->attributes,
+                    data      : $data
+                );
+            } catch (Throwable $e) {
+                $errors[$meta->name] = $this->formatHydrationError(
+                    fieldName: $meta->name,
+                    e        : $e
+                );
+            }
+        }
+
+        if (! empty($errors)) {
+            logger()->warning(
+                message: 'DTO hydration failed.',
+                context: ['errors' => $errors]
+            );
+
+            throw new DTOValidationException(
+                message: 'DTO hydration failed.',
+                errors : $errors
+            );
+        }
+    }
+
+    /**
+     * Hydrates a single field of the DTO by casting, validating, and assigning the value.
+     *
+     * @param string             $name
+     * @param ReflectionProperty $property
+     * @param array              $attributes
+     * @param array              $data
+     */
+    protected function hydrateField(
+        string             $name,
+        ReflectionProperty $property,
+        array              $attributes,
+        array              $data
+    ) : void {
+        if (! array_key_exists($name, $data)) {
+            $this->handleMissingField(name: $name, property: $property);
+
+            return;
+        }
+
+        $rawValue = $data[$name];
+
+        // 🔁 STEP 1: Type casting FIRST
+        $resolvedValue = $this->castToExpectedType(
+            property: $property,
+            value   : $rawValue
+        );
+
+        // ✅ STEP 2: Validate AFTER casting
+        $this->validateField(
+            fieldName : $name,
+            value     : $resolvedValue,
+            attributes: $attributes
+        );
+
+        // ✅ STEP 3: Set property after validation
+        $this->$name = $resolvedValue;
+    }
+
+    /**
+     * Handles scenarios where a field is missing during hydration by
+     * either assigning a default value, setting it to `null` if nullable,
+     * or throwing an exception for required fields.
+     *
+     * @param string             $name      The name of the missing property in the DTO.
+     * @param ReflectionProperty $property  Reflective metadata for the missing property,
+     *                                      used to inspect its type and default value.
+     *
+     * @throws InvalidArgumentException If the field is required but no value or default is provided.
+     */
+    protected function handleMissingField(string $name, ReflectionProperty $property) : void
+    {
+        // Check if the property explicitly allows null values using type reflection.
+        if ($this->isPropertyNullable(property: $property)) {
+            // Assign null to the property if it is nullable.
+            $this->$name = null;
+
+            return;
+        }
+
+        // Check if the property has a default value defined in the class.
+        if ($property->hasDefaultValue()) {
+            // Retrieve and assign the default value to the property if available.
+            $this->$name = $property->getDefaultValue();
+
+            return;
+        }
+
+        // Log a warning indicating that a required field is missing during hydration.
+        logger()->warning(
+            message: 'Missing required field: ' . $name, // Descriptive message for the log entry.
+            context: ['class' => static::class] // Include the class name for debugging context.
+        );
+
+        // Throw an exception if the field is required and no value or default is provided.
+        throw new InvalidArgumentException(
+            message: "Missing required field: {$name}" // Provide a clear error message.
+        );
+    }
+
+    /**
+     * Validates the resolved value with all assigned attributes.
+     *
+     * @param string $fieldName
+     * @param mixed  $value
+     * @param array  $attributes
+     */
+    private function validateField(string $fieldName, mixed $value, array $attributes) : void
+    {
+        foreach ($attributes as $attribute) {
+            if (method_exists($attribute, 'validate')) {
+                $attribute->validate(
+                    value   : $value,
+                    property: $fieldName
+                );
+            }
+        }
+    }
+
+    /**
+     * Formats a hydration error for detailed exception reporting.
+     *
+     * @param string    $fieldName
+     * @param Throwable $e
+     *
+     * @return string
+     */
+    private function formatHydrationError(string $fieldName, Throwable $e) : string
+    {
+        return sprintf(
+            '%s → Field "%s": %s',
+            static::class,
+            $fieldName,
+            $e->getMessage()
+        );
+    }
+}
+
+=== DTO/Traits/InspectsProperties.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\DataHandling\ObjectHandling\DTO\Traits;
+
+use Gemini\DataHandling\ObjectHandling\DTO\Support\PropertyMetadata;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionProperty;
+
+/**
+ * Trait InspectsProperties
+ *
+ * Provides a set of metadata reflection utilities for Data Transfer Objects (DTOs),
+ * enabling efficient and consistent introspection of public properties.
+ *
+ * Key features:
+ * - Caches reflection metadata per class for optimized performance.
+ * - Supplies structured metadata constructs (`PropertyMetadata`), making them reusable across the application.
+ * - Supports property-level logic that promotes composition, testability, and maintainability.
+ */
+trait InspectsProperties
+{
+    /**
+     * @var array<class-string, PropertyMetadata[]> Stores cached metadata for each class.
+     *                                              This cache prevents redundant reflection calls, thereby improving
+     *                                              performance.
+     */
+    private static array $metadataCache = [];
+
+    /**
+     * Queries and retrieves metadata for a specific property of the DTO by its name.
+     *
+     * @param string $name The name of the property for which metadata is being retrieved.
+     *
+     * @return PropertyMetadata|null The structured metadata for the given property, or `null`
+     *                               if the property does not exist or is inaccessible.
+     *
+     * @throws ReflectionException If there are issues during reflection (e.g., invalid class or property access).
+     */
+    protected function reflectField(string $name) : PropertyMetadata|null
+    {
+        // Iterate through all public property metadata; match the target property by name
+        foreach ($this->reflectPublicFields() as $metadata) {
+            if ($metadata->name === $name) {
+                // Return the matched metadata if found
+                return $metadata;
+            }
+        }
+
+        // Return null if the property is not found
+        return null;
+    }
+
+    /**
+     * Retrieves metadata for all publicly accessible properties of the current DTO class.
+     *
+     * @return PropertyMetadata[] An array of `PropertyMetadata` instances, representing all metadata
+     *                            for the public properties of the DTO.
+     *
+     * @throws ReflectionException If reflection fails during metadata construction.
+     */
+    protected function reflectPublicFields() : array
+    {
+        // Use the static class name as a reference for caching
+        $class = static::class;
+
+        // Attempt to retrieve cached metadata or lazily generate it if unavailable
+        return self::$metadataCache[$class] ??= $this->buildMetadataFor(class: $class);
+    }
+
+    /**
+     * Dynamically builds and caches property metadata for a given class.
+     *
+     * This provides efficient inspection of all public properties and ensures a reusable
+     * metadata structure for future operations like validation or serialization.
+     *
+     * @param class-string $class The fully qualified name of the class whose properties will be inspected.
+     *
+     * @return PropertyMetadata[] An array of `PropertyMetadata` objects, one for each public property of the class.
+     *
+     * @throws ReflectionException If the class cannot be reflected upon (e.g., invalid class name).
+     */
+    private function buildMetadataFor(string $class) : array
+    {
+        // Initialize a ReflectionClass instance to inspect the class structure
+        $reflection = new ReflectionClass(objectOrClass: $class);
+
+        // Use an array mapping function to convert ReflectionProperty instances to PropertyMetadata objects
+        return array_map(
+            static fn(ReflectionProperty $property) : PropertyMetadata => new PropertyMetadata(
+                name      : $property->getName(),       // Assign the property name
+                property  : $property,             // Embed the ReflectionProperty instance
+                attributes: $property->getAttributes() // Extract any PHP attributes applied to the property
+            ),
+            $reflection->getProperties(filter: ReflectionProperty::IS_PUBLIC) // Focus only on public properties
+        );
+    }
+
+    /**
+     * Determines whether a given property allows null values.
+     *
+     * This function is useful for validation or type safety checks where
+     * nullable types impact business logic.
+     *
+     * @param ReflectionProperty $property The property to evaluate.
+     *
+     * @return bool Returns `true` if the property allows null values; otherwise, `false`.
+     */
+    protected function isPropertyNullable(ReflectionProperty $property) : bool
+    {
+        // Retrieve the property type and check if it explicitly allows null values
+        $type = $property->getType();
+
+        // Return true if the type allows null, or if no type is defined
+        return $type?->allowsNull() ?? true;
+    }
+
+    /**
+     * Checks if a specific attribute has been applied to a property.
+     *
+     * This method supports reflection-based checks for attributes, enabling flexible configuration
+     * and behavior customization driven by annotations or metadata.
+     *
+     * @param ReflectionProperty $property     The property to check for attributes.
+     * @param class-string       $attributeFqn The fully qualified name of the attribute class to look for.
+     *
+     * @return bool `true` if the property has been annotated with the given attribute; `false` otherwise.
+     */
+    protected function hasAttribute(ReflectionProperty $property, string $attributeFqn) : bool
+    {
+        // Use the ReflectionProperty API to fetch attributes by their fully qualified name
+        return ! empty($property->getAttributes(name: $attributeFqn));
+    }
+
+    /**
+     * Retrieves the first resolved attribute instance of a given type on a property.
+     *
+     * @param ReflectionProperty $property     The property to inspect. Represents a class property.
+     *                                         Provides metadata about its type, visibility, and attributes.
+     * @param class-string       $attributeFqn Fully qualified class name (FQN) of the attribute.
+     *                                         Used to look up the attribute on the property.
+     *
+     * @return object|null The resolved attribute instance, or null if the attribute is not present on the property.
+     *                     This ensures type-safe use of specific attributes in further logic.
+     */
+    protected function getAttribute(ReflectionProperty $property, string $attributeFqn) : ?object
+    {
+        // Retrieve all attributes that match the given fully qualified name on the property.
+        $attributes = $property->getAttributes(name: $attributeFqn);
+
+        // If no attributes of the provided class type are present, immediately return null.
+        if (empty($attributes)) {
+            return null;
+        }
+
+        // Instantiate and return the first attribute instance found. Assumes resolving the attribute is lightweight.
+        return $attributes[0]->newInstance();
+    }
+
+    /**
+     * Checks if the property has at least one attribute from a given list.
+     *
+     * Designed to optimize lookups when validating if a property contains any of several related attributes.
+     *
+     * @param ReflectionProperty $property The property to inspect. Provides introspection features
+     *                                     for examining attribute metadata and existence.
+     * @param string[]           $fqns     A list of fully qualified attribute class names (FQNs) to check against.
+     *                                     Each entry should be a valid class-string.
+     *
+     * @return bool True if at least one of the specified attributes is defined on the property,
+     *              otherwise false.
+     */
+    protected function hasAnyAttribute(ReflectionProperty $property, array $fqns) : bool
+    {
+        // Iterate through the provided list of attribute FQNs.
+        foreach ($fqns as $attributeFqn) {
+            // Check if any attributes matching the current FQN exist on the property.
+            if (! empty($property->getAttributes(name: $attributeFqn))) {
+                // Return true immediately if at least one attribute is found.
+                return true;
+            }
+        }
+
+        // Return false if no matching attributes exist for any provided FQN.
+        return false;
+    }
+}
+=== DTO/Traits/Serialization.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\DataHandling\ObjectHandling\DTO\Traits;
+
+use BackedEnum;
+use DateTimeInterface;
+use Gemini\DataHandling\Validation\Attributes\Hidden;
+use JsonException;
+use JsonSerializable;
+use ReflectionException;
+use ReflectionProperty;
+use stdClass;
+use Traversable;
+
+/**
+ * Trait Serialization
+ *
+ * Provides recursive, flexible serialization capabilities for Data Transfer Objects (DTO).
+ * Includes support for:
+ * - JSON serialization with optional formatting.
+ * - Recursive normalization of nested data structures.
+ * - Handling of custom types such as enums, dates, and objects.
+ * - Filtering of fields using #[Hidden] attributes.
+ *
+ * Designed to integrate seamlessly with Domain-Driven Design (DDD) practices.
+ */
+trait Serialization
+{
+    /**
+     * Converts the DTO to a JSON string representation.
+     * Useful for logging or debugging purposes.
+     *
+     * @return string The JSON representation of the DTO.
+     * @throws JsonException|ReflectionException If an error occurs during encoding.
+     */
+    public function __toString() : string
+    {
+        return $this->toJson(flags: JSON_PRETTY_PRINT); // Beautify JSON output for readability.
+    }
+
+    /**
+     * Encodes the DTO to a JSON string with optional flags and encoding depth.
+     *
+     * @param int|null $flags Optional JSON encoding flags (e.g., JSON_PRETTY_PRINT).
+     * @param int      $depth Maximum depth for JSON serialization to prevent infinite recursion.
+     *
+     * @return string The JSON-encoded string representation of the DTO.
+     * @throws JsonException|ReflectionException If JSON encoding fails.
+     */
+    public function toJson(int|null $flags = null, int $depth = 512) : string
+    {
+        $flags ??= 0; // Default to no flags if none provided.
+
+        return json_encode($this->toArray(), $flags | JSON_THROW_ON_ERROR, $depth); // Encode object as JSON.
+    }
+
+    /**
+     * Converts the DTO into an associative array representation.
+     * Recurses through nested properties and filters hidden fields if configured.
+     *
+     * @param int|null $depth         Maximum recursion depth, null for unlimited depth.
+     * @param bool     $excludeHidden Whether to exclude fields marked with #[Hidden] attribute.
+     *
+     * @return array<string, mixed> The DTO as an associative array.
+     * @throws ReflectionException
+     */
+    public function toArray(int|null $depth = null, bool $excludeHidden = true) : array
+    {
+        // Normalize and filter object properties depending on the excludeHidden flag.
+        return $this->normalizeValue(
+            value: $excludeHidden
+                       ? $this->filterHiddenFields(get_object_vars($this)) // Filter hidden fields.
+                       : get_object_vars($this),
+            depth: $depth
+        );
+    }
+
+    /**
+     * Recursively normalizes a given value into a JSON-safe structure.
+     * Supports enums, date objects, JSON-serializable objects, arrays, and iterables.
+     *
+     * @param mixed    $value Any value to normalize.
+     * @param int|null $depth Maximum depth for recursion, null for unlimited depth.
+     *
+     * @return mixed The normalized, JSON-serializable value.
+     * @throws ReflectionException
+     */
+    protected function normalizeValue(mixed $value, int|null $depth = null) : mixed
+    {
+        // Return early if recursion depth has reached zero.
+        if ($depth === 0) {
+            return null; // Prevent infinite recursion.
+        }
+
+        // Match on specific value types and normalize accordingly.
+        return match (true) {
+            $value instanceof self              => $value->toArray(
+                depth: $depth !== null ? $depth - 1 : null
+            ), // Normalize nested DTO objects recursively.
+            $value instanceof BackedEnum        => $value->value, // Return enum value.
+            $value instanceof DateTimeInterface => $value->format(
+                format: DATE_ATOM
+            ), // Format dates as ISO 8601 strings.
+            $value instanceof JsonSerializable  => $value->jsonSerialize(), // Serialize JSON-serializable objects.
+            $value instanceof Traversable       => array_map(
+            // Convert iterable objects to arrays and normalize their items.
+                fn($item) => $this->normalizeValue(value: $item, depth: $depth !== null ? $depth - 1 : null),
+                iterator_to_array($value)
+            ),
+            is_array($value)                    => array_map(
+            // Normalize and recurse through array elements.
+                fn($item) => $this->normalizeValue(value: $item, depth: $depth !== null ? $depth - 1 : null),
+                $value
+            ),
+            is_object($value) && method_exists(
+                $value,
+                '__toString'
+            )                                   => (string) $value, // Convert objects with __toString to strings.
+            is_object(
+                $value
+            )                                   => (array) $value, // Fallback: convert objects to arrays.
+            default                             => $value, // Default case: return the value as-is.
+        };
+    }
+
+    /**
+     * Implements the JsonSerializable interface by converting the DTO to an array.
+     *
+     * @return mixed A JSON-serializable representation of the DTO.
+     */
+    public function jsonSerialize() : mixed
+    {
+        return $this->toArray(); // Re-use the toArray method for serialization.
+    }
+
+    /**
+     * Filters out fields marked with the #[Hidden] attribute from an array of properties.
+     *
+     * @param array<string, mixed> $properties The properties to be filtered.
+     *
+     * @return array<string, mixed> A filtered associative array of properties.
+     * @throws ReflectionException If reflection fails while accessing class properties.
+     */
+    protected function filterHiddenFields(array $properties) : array
+    {
+        foreach ($this->reflectPublicFields() as $meta) {
+            if ($this->shouldHideField(property: $meta->property)) {
+                unset($properties[$meta->name]); // Remove fields marked as hidden.
+            }
+        }
+
+        return $properties;
+    }
+
+    /**
+     * Determines whether a given property should be hidden based on the #[Hidden] attribute.
+     * Can be extended to provide more sophisticated filtering logic.
+     *
+     * @param ReflectionProperty $property The property to evaluate.
+     *
+     * @return bool True if the property should be hidden, false otherwise.
+     */
+    protected function shouldHideField(ReflectionProperty $property) : bool
+    {
+        // Check whether the property has the #[Hidden] attribute.
+        return $this->hasAttribute(property: $property, attributeFqn: Hidden::class);
+    }
+
+    /**
+     * Converts the DTO into a flat array with all its properties.
+     * Does not normalize or filter hidden fields.
+     *
+     * @return array<string, mixed> A flat array of the DTO properties.
+     */
+    public function toFlatArray() : array
+    {
+        return get_object_vars($this); // Return an associative array of all object properties.
+    }
+
+    /**
+     * Converts the DTO into an instance of stdClass for compatibility with generic object types.
+     *
+     * @return stdClass The DTO represented as a standard class object.
+     * @throws JsonException If the DTO cannot be encoded into JSON.
+     */
+    public function toStdClass() : stdClass
+    {
+        return json_decode(
+            json       : $this->toJson(), // Serialize DTO as JSON.
+            associative: false, // Decode JSON as an object, not an array.
+            depth      : 512, // Maximum decoding depth.
+            flags      : JSON_THROW_ON_ERROR // Throw exceptions on JSON decoding errors.
+        );
+    }
+}

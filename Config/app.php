@@ -18,7 +18,7 @@ return [
         'Repositories' => 'Infrastructure/Repositories',
         'Services'     => 'Infrastructure/Services',
         'Controllers'  => 'Presentation/HTTP/Controllers',
-        'Stubs'        => 'Infrastructure/Framework/Database/Migration/Stubs',
+        'Stubs'        => 'Infrastructure/Foundation/Database/Migration/Stubs',
     ],
 
     'filePermissions' => 0666,

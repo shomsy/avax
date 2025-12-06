@@ -1,0 +1,75 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{Namespace}};
+
+use Gemini\Database\Migration\Design\Table\Table;
+use Gemini\Database\Migration\Runner\Migration;
+use Gemini\Database\Migration\Runner\Exception\MigrationException;
+
+/**
+ * Database Migration Implementation for {{TableName}} Entity.
+ *
+ * This class represents a concrete database migration strategy implementing the schema
+ * modifications for the {{TableName}} bounded context. It follows immutable design
+ * principles and provides declarative schema definitions.
+ *
+ * @package {{Namespace}}
+ * @final This class is not designed for inheritance
+ * @readonly Ensures immutability of the migration definition
+ * @version 1.0.0
+ * @since PHP 8.3
+ *
+ * @template-implements Migration
+ */
+final readonly class {{MigrationName}} extends Migration
+{
+    /**
+     * Executes the forward migration operation.
+     *
+     * Implements the schema creation logic using a fluent DSL pattern.
+     * Creates the {{TableName}} table with defined columns and constraints.
+     *
+     * @return void
+     * @throws MigrationException When schema creation fails
+     *
+     * @api
+     */
+    protected function up(): void
+    {
+        // Instantiate schema creation using fluent builder pattern
+        $this->schemaBuilder->create(
+            table: '{{TableName}}', // Named argument for better code clarity
+            callback: function (Table $table): void {
+                {{Fields}}
+
+                // Adds standardized timestamp columns for entity lifecycle tracking
+                $table->timestamps();
+            }
+        );
+
+        // Provide feedback for migration execution monitoring
+        $this->schemaBuilder->output("🏗️ Table '{{TableName}}' created successfully.");
+    }
+
+    /**
+     * Executes the rollback migration operation.
+     *
+     * Implements the schema rollback logic by removing the {{TableName}} table
+     * and all its associated constraints and indexes.
+     *
+     * @return void
+     * @throws MigrationException When schema rollback fails
+     *
+     * @api
+     */
+    protected function down(): void
+    {
+        // Execute table removal using schema builder
+        $this->schemaBuilder->drop(table: '{{TableName}}');
+
+        // Provide feedback for rollback execution monitoring
+       $this->schemaBuilder->output("🗑️ Table '{{TableName}}' dropped successfully.");
+    }
+}

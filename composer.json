@@ -5,7 +5,7 @@
       "Application\\": "Application/",
       "Infrastructure\\": "Infrastructure/",
       "Presentation\\": "Presentation/",
-      "Gemini\\": "Infrastructure/Framework/"
+      "Avax\\": "Foundation/"
     }
   },
   "require-dev": {
@@ -26,6 +26,7 @@
     }
   },
   "require": {
+    "php": "^8.3",
     "ext-pdo": "*",
     "vlucas/phpdotenv": "^5.6",
     "guzzlehttp/guzzle": "^7.9",

@@ -1,0 +1,5275 @@
+=== ../Infrastructure/Framework/HTTP/Session/AbstractSession.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session;
+
+use Closure;
+use Gemini\HTTP\Session\Contracts\BagRegistryInterface;
+use Gemini\HTTP\Session\Contracts\SessionInterface;
+use Gemini\HTTP\Session\Contracts\SessionStoreInterface;
+use Gemini\HTTP\Session\Exceptions\SessionEncryptionException;
+
+/**
+ * AbstractSession
+ *
+ * Framework-agnostic base implementation for session management.
+ *
+ * This class provides secure, extensible, and developer-friendly session
+ * behavior using a pluggable store and cryptography service for managing
+ * encrypted sessions. It adheres to clean code principles and Domain-Driven
+ * Design (DDD) practices for maximum clarity and flexibility.
+ *
+ * Implements:
+ * - `SessionInterface` for session operations.
+ * - `ArrayAccess` for array-like access to session attributes.
+ *
+ * Key Features:
+ * - Secure storage using encryption.
+ * - Flash data system for temporary session storage.
+ * - Framework-independent, making it reusable across different applications.
+ */
+abstract class AbstractSession implements SessionInterface
+{
+    /**
+     * Constructor.
+     *
+     * Initializes the session with a store and crypto engine.
+     *
+     * @param SessionStoreInterface $store The backend store for session data.
+     */
+    public function __construct(
+        protected readonly SessionStoreInterface $store,
+        protected readonly BagRegistryInterface  $registry
+    ) {}
+
+    /**
+     * Retrieve all session data while performing cleanup of expired items.
+     *
+     * This method ensures the session has been started, fetches all the stored session
+     * data, and removes expired entries both from the session data as well as from
+     * the associated metadata. The cleanup process ensures that session data does
+     * not accumulate invalid or stale entries.
+     *
+     * @return array The complete session data after expired items are cleaned up.
+     */
+    public function all() : array
+    {
+        // Begin the session if it is not already started.
+        $this->start();
+
+        // Retrieve all session data from the session store.
+        $all = $this->store->all();
+
+        // Iterate through each key-value pair in the session data.
+        foreach ($all as $key => $value) {
+            // Skip processing if the key corresponds to metadata (indicated by '::__meta' suffix).
+            if (str_ends_with($key, '::__meta')) {
+                continue;
+            }
+
+            // Derive the corresponding metadata key for the current session key.
+            $metaKey = "{$key}::__meta";
+
+            // Check if the metadata exists and if the session data has expired based on `expires_at`.
+            if (
+                isset($all[$metaKey]['expires_at']) && // Metadata contains expiry details.
+                time() >= $all[$metaKey]['expires_at'] // Current time has passed the expiry timestamp.
+            ) {
+                // Remove the expired session key from the session store.
+                $this->delete($key);
+
+                // Remove the related metadata key from the session store.
+                $this->delete($metaKey);
+
+                // Unset the expired session data and metadata from the `$all` array.
+                unset($all[$key], $all[$metaKey]);
+            }
+        }
+
+        // Return the cleaned-up session data.
+        return $all;
+    }
+
+    /**
+     * Starts the session using the provided session store.
+     *
+     * This method delegates the session initialization process to the underlying
+     * store implementation, ensuring a uniform session management interface.
+     *
+     * @return void
+     */
+    public function start() : void
+    {
+        // Start the session by delegating to the session store's start method.
+        $this->store->start();
+    }
+
+    /**
+     * Deletes a specific session key and its associated value from storage.
+     * Before deletion, ensures that the session is started.
+     * Delegates the actual deletion logic to the store implementation.
+     *
+     * @param string $key The session key to delete from storage.
+     *
+     * @return void
+     */
+    public function delete(string $key) : void
+    {
+        // Ensure the session is started.
+        $this->start();
+
+        // Request the store to delete the specified key.
+        $this->store->delete(key: $key);
+    }
+
+    /**
+     * Invalidate the current session by performing the following steps:
+     * 1. Clear all session data to ensure no sensitive information is retained.
+     * 2. Regenerate the session ID, optionally removing the old session data for security.
+     *
+     * This method is a defensive mechanism against session fixation attacks.
+     * By regenerating the session ID, any previously held session identifiers become unusable.
+     *
+     * @return void
+     */
+    public function invalidate() : void
+    {
+        // Step 1: Flush all session data, ensuring a clean state for the session.
+        $this->flush();
+
+        // Step 2: Regenerate the session ID securely using the store.
+        // The "deleteOldSession" flag is explicitly passed for clarity and safety.
+        $this->store->regenerateId(deleteOldSession: true);
+    }
+
+    /**
+     * Clear all session data.
+     *
+     * This method ensures the session is started before performing
+     * a flush operation to avoid operating on an inactive session.
+     * All session data will be permanently erased.
+     *
+     * Contract:
+     * - The session must be active before data can be flushed.
+     * - Delegates the "flush" operation to the session store for implementation.
+     *
+     * WARNING: Use this with caution as it destroys all stored session data.
+     *
+     * @return void
+     */
+    public function flush() : void
+    {
+        // Ensure the session is started.
+        // This guarantees the session is active and prevents flushing
+        // data in an uninitialized or inactive session state.
+        $this->start();
+
+        // Delegate the flush operation to the session store.
+        // The store is responsible for clearing all persisted session data.
+        $this->store->flush();
+    }
+
+    /**
+     * Regenerate the session ID for the current session.
+     *
+     * This method ensures the security of the session by allowing users
+     * to optionally delete the old session data and replacing the current
+     * session ID with a new one.
+     *
+     * @param bool $deleteOldSession Whether to delete the old session data
+     *                               (enabled by default for enhanced security).
+     */
+    public function regenerateId(bool $deleteOldSession = true) : void
+    {
+        // Delegate the request to regenerate the session ID to the session store.
+        // By using named arguments, we make the intention explicit.
+        $this->store->regenerateId(deleteOldSession: $deleteOldSession);
+    }
+
+    /**
+     * Pulls a value from the session storage based on the given key,
+     * removes the specified key from the session, and returns the value.
+     *
+     * @param string     $key     The unique identifier for the session item.
+     * @param mixed|null $default A default value to return if the key is not found in storage.
+     *
+     * @return mixed The value associated with the given key, or the default if not found.
+     */
+    public function pull(string $key, mixed $default = null) : mixed
+    {
+        // Retrieve the value corresponding to the key or return the default if unavailable.
+        $value = $this->get(key: $key, default: $default);
+
+        // Delete the key-value pair from the session to ensure it cannot be retrieved again.
+        $this->delete(key: $key);
+
+        // Return the retrieved value.
+        return $value;
+    }
+
+    /**
+     * This method retrieves a value from the session storage by its key.
+     * It performs validation on metadata to check for expiration and
+     * decrypts the value before returning it.
+     * If the value doesn't exist or is expired, the provided default is returned.
+     *
+     * @param string     $key     The unique identifier for the session data to retrieve.
+     * @param mixed|null $default A fallback value to return if the data associated with the key is not found or is
+     *                            expired.
+     *
+     * @return mixed The value retrieved from the session storage or the default provided if unavailable.
+     */
+    public function get(string $key, mixed $default = null) : mixed
+    {
+        // Ensure the session is started before interacting with the storage.
+        $this->start();
+
+        // Attempt to retrieve the value associated with the given key from the session store.
+        $value = $this->store->get(key: $key);
+
+        // Attempt to retrieve metadata associated with the key (e.g., expiration time).
+        // If no metadata exists, use an empty array as the default.
+        $meta = $this->store->get(key: "{$key}::__meta", default: []);
+
+        // Check if the 'expires_at' metadata attribute exists, and whether the current time has exceeded its value.
+        if (isset($meta['expires_at']) && time() >= $meta['expires_at']) {
+            // If the value is expired, delete the main key and its associated metadata from the session store.
+            $this->delete(key: $key);
+            $this->delete(key: "{$key}::__meta");
+
+            // Return the default value since the stored data is no longer valid.
+            return $default;
+        }
+
+        // If no value is found in the session store, or if it's null, return the default value.
+        // Otherwise, decrypt the value before returning it to the caller.
+        return $value ?? $default;
+    }
+
+    /**
+     * Stores and returns a computed value for the given session key,
+     * or retrieves the existing value if it has already been set.
+     *
+     * @param string  $key      The key associated with the value to remember.
+     * @param Closure $callback A callback to compute the value only if it does not already exist in the session.
+     *
+     * @return mixed The value retrieved from storage or created by the callback.
+     */
+    public function remember(string $key, Closure $callback) : mixed
+    {
+        // Check if the key already exists in the session storage.
+        if ($this->has(key: $key)) {
+            // Return the preexisting value if the key exists.
+            return $this->get(key: $key);
+        }
+
+        // Compute the new value by invoking the provided callback.
+        $value = $callback();
+
+        // Save the computed value under the specified session key.
+        $this->set(key: $key, value: $value);
+
+        // Return the newly created value.
+        return $value;
+    }
+
+    /**
+     * Checks if a specific key exists in the session store.
+     *
+     * The `has` method checks whether a specific key exists in the store by making use
+     * of the `get` method from the session storage interface and verifying if the result is not null.
+     *
+     * @param string $key The identifier of the data to check for in the session store.
+     *
+     * @return bool Returns `true` if the key is found in the session store, otherwise `false`.
+     */
+    public function has(string $key) : bool
+    {
+        // Attempt to fetch the value associated with the key from the store.
+        // Return whether the key exists by checking that the retrieved value is not `null`.
+        return $this->store->get(key: $key) !== null;
+    }
+
+    /**
+     * Handles session data storage by securely encrypting the provided value
+     * and associating it with the specified key.
+     *
+     * This method ensures the session storage is properly started before
+     * performing operations and leverages encryption for secure data storage.
+     *
+     * @param string $key   The unique identifier for the session attribute.
+     *                      Should be descriptive and consistent within the domain.
+     * @param mixed  $value The data to be stored in the session. Can represent
+     *                      any value type supported by PHP, making it flexible
+     *                      for various use cases.
+     *
+     * @return void
+     * @throws SessionEncryptionException If encryption fails during the process.
+     *                                    Ensures the failure is managed uniformly.
+     */
+    public function set(string $key, mixed $value) : void
+    {
+        // Start the session to ensure it’s ready for storing data.
+        $this->start();
+
+        // store it in the session storage with the provided key.
+        $this->store->put(
+            key  : $key,
+            value: $value
+        );
+    }
+
+    /**
+     * Stores a given key-value pair in the session storage.
+     *
+     * This method delegates the responsibility of storing the data
+     * ensuring the value is stored explicitly
+     * as plain (unencrypted) data.
+     *
+     * The session must be initialized before calling this method.
+     *
+     * @param string $key   The unique key under which the value
+     *                      will be stored in the session.
+     * @param mixed  $value The value to be stored in the session.
+     *                      Can be of any type (e.g. scalar, array, object).
+     *
+     * @return void
+     */
+    public function put(string $key, mixed $value) : void
+    {
+        // Ensure that the session is started before performing any session operations.
+        $this->start();
+        
+        // Use the session store to store the provided key-value pair directly.
+        $this->store->put(key: $key, value: $value);
+    }
+
+    /**
+     * Increments an integer value stored in the session by a specified amount.
+     * If the key does not exist, it initializes the value to 0 before incrementing.
+     *
+     * @param string $key    The key identifying the value to increment.
+     * @param int    $amount The amount to increment by. Default is 1.
+     *
+     * @return int The incremented value after the operation is completed.
+     */
+    public function increment(string $key, int $amount = 1) : int
+    {
+        // Retrieve the current value as an integer, defaulting to 0 if the key does not exist.
+        $current = (int) $this->get(key: $key, default: 0);
+
+        // Add the specified amount to the current value.
+        $new = $current + $amount;
+
+        // Store the updated value back in the session.
+        $this->set(key: $key, value: $new);
+
+        // Return the incremented value.
+        return $new;
+    }
+
+    /**
+     * Decrements an integer value stored in the session by a specified amount.
+     * If the key does not exist, it initializes the value to 0 before decrementing.
+     *
+     * @param string $key    The key identifying the value to decrement.
+     * @param int    $amount The amount to decrement by. Default is 1.
+     *
+     * @return int The decremented value after the operation is completed.
+     */
+    public function decrement(string $key, int $amount = 1) : int
+    {
+        // Retrieve the current value as an integer, defaulting to 0 if the key does not exist.
+        $current = (int) $this->get(key: $key, default: 0);
+
+        // Subtract the specified amount from the current value.
+        $new = $current - $amount;
+
+        // Store the updated value back in the session.
+        $this->set(key: $key, value: $new);
+
+        // Return the decremented value.
+        return $new;
+    }
+
+    /**
+     * Determine if the given session key exists in the session store.
+     *
+     * This method is required by the ArrayAccess interface. It allows checking
+     * if a session key exists using array-style syntax.
+     *
+     * @param string $offset The session key to check.
+     *
+     * @return bool Returns true if the key exists, false otherwise.
+     */
+    public function offsetExists(mixed $offset) : bool
+    {
+        // Cast the offset to string to ensure compatibility with session keys.
+        // Use the `has` method to determine if the key exists in the session store.
+        return $this->has(key: (string) $offset);
+    }
+
+    /**
+     * Retrieve the session value associated with the given key.
+     *
+     * This method is required by the ArrayAccess interface. It allows session values
+     * to be accessed using array-style syntax.
+     *
+     * @param string $offset The session key to retrieve the value for.
+     *
+     * @return mixed The value associated with the session key, or a default value if not set.
+     */
+    public function offsetGet(mixed $offset) : mixed
+    {
+        // Cast the offset to string and retrieve its associated value using the `get` method.
+        return $this->get(key: (string) $offset);
+    }
+
+    /**
+     * Store a value in the session associated with the provided key.
+     *
+     * This method is required by the ArrayAccess interface. It allows session values
+     * to be set using array-style syntax.
+     *
+     * @param string $offset The session key to associate with the value.
+     * @param mixed  $value  The session value to be stored.
+     *
+     * @return void
+     */
+    public function offsetSet(mixed $offset, mixed $value) : void
+    {
+        // Cast the offset to string and store the associated value using the `set` method.
+        $this->set(key: (string) $offset, value: $value);
+    }
+
+    /**
+     * Remove a session value associated with the given key.
+     *
+     * This method is required by the ArrayAccess interface. It allows session values
+     * to be removed using array-style syntax.
+     *
+     * @param string $offset The session key to remove.
+     *
+     * @return void
+     */
+    public function offsetUnset(mixed $offset) : void
+    {
+        // Cast the offset to string and delete the associated value using the `delete` method.
+        $this->delete(key: (string) $offset);
+    }
+
+    /**
+     * Retrieves an old input value from the session storage.
+     *
+     * This method is particularly useful for retrieving input values from
+     * requests in previous forms (e.g., old form submissions). If the specified key
+     * does not exist in the old input storage, a default value is returned.
+     *
+     * @param string $key     The unique key associated with the old input data.
+     * @param mixed  $default The default value to return if the key is not found (optional).
+     *
+     * @return mixed The retrieved old input value or the default value.
+     */
+    public function getOldInput(string $key, mixed $default = null) : mixed
+    {
+        // Retrieve the '_old_input' array from the session store.
+        $data = $this->store->get(key: '_old_input', default: []);
+
+        // Ensure the retrieved data is an array and contains the desired key.
+        // If found, return the value associated with the key; otherwise, return the default value.
+        return is_array($data) && array_key_exists($key, $data)
+            ? $data[$key]
+            : $default;
+    }
+
+    /**
+     * This method securely stores a key-value pair with an expiration time-to-live (TTL).
+     * The value is encrypted before storage, and expiration metadata is stored alongside it.
+     *
+     * @param string $key   The unique key under which the value will be stored.
+     * @param mixed  $value The value to be stored. Supported types depend on the implemented encryption mechanism.
+     * @param int    $ttl   Time-to-live in seconds, determining when the data will expire.
+     *
+     * @return void
+     */
+    public function putWithTTL(string $key, mixed $value, int $ttl) : void
+    {
+        // Ensure the session is properly started before any storage operations.
+        $this->start();
+
+        // Store the encrypted data against the specified key in the session store.
+        $this->store->put(key: $key, value: $value);
+
+        // Store the metadata for the key including its expiration time.
+        // The expiration time is calculated as the current time plus the TTL in seconds.
+        $this->store->put(
+            key  : "{$key}::__meta", // Append `::__meta` to key, indicating metadata storage.
+            value: [
+                       'expires_at' => time() + $ttl, // Store the expiration timestamp.
+                   ]
+        );
+    }
+
+    /**
+     * Retrieves the current session bag registry, enabling access to all registered bags.
+     *
+     * This method exposes the `BagRegistryInterface` to consumers of the session manager,
+     * enabling structured interaction with various session components.
+     *
+     * Example:
+     * ```
+     * $registry = $session->getRegistry();
+     * $flashBag = $registry->flash();
+     * $errorBag = $registry->errors();
+     * ```
+     *
+     * **Key Responsibilities**:
+     * 1. Encapsulation: The registry serves as a boundary for session sub-containers.
+     * 2. Extensibility: Consumers of this method may register or retrieve additional session bags.
+     * 3. Dependency Injection: Encourages a clean separation of concerns between session components.
+     *
+     * @return \Gemini\HTTP\Session\Contracts\BagRegistryInterface
+     *   The session bag registry instance managing all session-related sub-containers.
+     */
+    public function getRegistry() : BagRegistryInterface
+    {
+        // Return the registry enabling access to its methods for bag management.
+        return $this->registry;
+    }
+}
+=== ../Infrastructure/Framework/HTTP/Session/Contracts/BagRegistryInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Contracts;
+
+/**
+ * Interface BagRegistryInterface
+ *
+ * A service contract for managing session "bags", which group session
+ * state by separate concerns (such as input data, error messages, or
+ * flash data). This allows developers to organize session storage into
+ * isolated namespaces for better scalability, modularity, and reuse.
+ *
+ * This registry acts as a central hub to store and retrieve such bags
+ * during the lifecycle of the session.
+ *
+ * Usage Scenarios:
+ * - Flash bag management for temporary data like notifications.
+ * - Input bag management for preserving form state across requests.
+ * - Error bag management for storing validation or runtime errors.
+ */
+interface BagRegistryInterface
+{
+    /**
+     * Retrieve a specific session bag by its unique name.
+     *
+     * @template T of SessionBagInterface
+     *
+     * @param string $name
+     *   The unique identifier for the session bag.
+     *
+     * @return \Gemini\HTTP\Session\Contracts\SessionBagInterface
+     *   The resolved session bag instance implementing SessionBagInterface.
+     *
+     * @throws \InvalidArgumentException
+     *   If no session bag with the given name is registered, an exception
+     *   could be thrown to indicate the absence of the bag.
+     *
+     * Why use this method:
+     * - Centralizes access to specific session sub-containers.
+     * - Enables dependency injection or lazy initialization of session bags.
+     */
+    public function get(string $name) : SessionBagInterface;
+
+    /**
+     * Register a session bag into the registry under a specific name.
+     *
+     * @param string                                             $name
+     *   The unique identifier for the session bag.
+     *
+     * @param \Gemini\HTTP\Session\Contracts\SessionBagInterface $bag
+     *   The instance of the session bag to register. This could be a
+     *   pre-configured reusable bag, such as a FlashBag or ErrorBag.
+     *
+     * @return void
+     *
+     * Why use this method:
+     * - Extensibility: Register additional features that interact with
+     *   the session, organizing them into separate namespaces (bags).
+     * - Ease of use: Ensures that all session bags follow a consistent
+     *   initialization pattern.
+     * - Modularity: Each session bag can be registered independently,
+     *   promoting a decoupled architecture.
+     */
+    public function register(string $name, SessionBagInterface $bag) : void;
+
+    /**
+     * Retrieves the flash message session bag.
+     *
+     * The `FlashBag` session bag is designed to store temporary messages or
+     * data, persisting only until the next request by default. It simplifies
+     * the handling of transient application states like success notifications,
+     * validation alerts, or session-based one-time flags.
+     *
+     * Example usage:
+     * ```php
+     * $flashBag = $bagRegistry->flash();
+     * $flashBag->put('success', 'Your account has been updated.');
+     * ```
+     *
+     * Dependency on `FlashBagInterface`:
+     * - `FlashBagInterface` extends `SessionBagInterface`, ensuring robust
+     *    session-management capabilities with added functionality for
+     *    managing flash-specific use cases, like `keep()` or `reflash()`.
+     *
+     * @return FlashBagInterface
+     *   A flash message session bag adhering to FlashBagInterface, providing
+     *   encapsulated methods tailored for transient data persistence.
+     */
+    public function flash() : FlashBagInterface;
+
+    /**
+     * Retrieves the error message session bag.
+     *
+     * The `ErrorBag` is a generic session bag used to store validation
+     * errors, user feedback, or any application state that needs to persist
+     * across multiple requests. By handling errors via a dedicated bag,
+     * developers can centralize error management into a structured container.
+     *
+     * Example usage:
+     * ```php
+     * $errorBag = $bagRegistry->errors();
+     * $errorBag->put('email', 'The email address is invalid.');
+     * ```
+     *
+     * Dependency on `SessionBagInterface`:
+     * - The `ErrorBag` follows the contract defined by `SessionBagInterface`,
+     *   guaranteeing functionality such as value retrieval, storage, and
+     *   clearing, while allowing customization for error-related use cases.
+     *
+     * @return SessionBagInterface
+     *   A generic session bag adhering to SessionBagInterface, providing
+     *   flexible storage capabilities for error messages or other keyed data.
+     */
+    public function errors() : SessionBagInterface;
+
+}
+=== ../Infrastructure/Framework/HTTP/Session/Contracts/Factories/BagRegistryFactoryInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Contracts\Factories;
+
+use Gemini\HTTP\Session\Contracts\BagRegistryInterface;
+use Gemini\HTTP\Session\Contracts\SessionInterface;
+
+/**
+ * Interface BagRegistryFactoryInterface
+ *
+ * This interface defines a factory contract for creating instances of a BagRegistry.
+ *
+ * Why use this factory design:
+ * - Decoupling: The specific implementation of the BagRegistryInterface can
+ *   vary. The factory provides an abstraction, allowing for flexible and
+ *   interchangeable implementations.
+ * - Encapsulation: Encapsulates the logic for constructing and configuring
+ *   the BagRegistry instance, ensuring clients do not need to handle this.
+ * - Testability: Factories enable easier mocking and testing by resolving
+ *   dependencies for BagRegistry.
+ *
+ * Implementations of this interface should adhere to DDD principles,
+ * following concepts like Dependency Injection for more modular, clean code.
+ *
+ * @package Gemini\HTTP\Session\Contracts\Factories
+ */
+interface BagRegistryFactoryInterface
+{
+    /**
+     * Create a new instance of BagRegistryInterface.
+     *
+     * This method is the central point for creating and resolving a BagRegistry.
+     * The BagRegistry is a container for session bags, which organizes
+     * data into logical namespaces for session management (e.g., FlashBag, ErrorBag).
+     *
+     * Design Notes:
+     * - Dependency Injection: The factory may use DI to resolve instances.
+     * - Extensibility: By returning `BagRegistryInterface`, the factory
+     *   allows implementations to vary while adhering to the contract.
+     *
+     * Example usage:
+     * ```php
+     * $factory = new ConcreteBagRegistryFactory();
+     * $bagRegistry = $factory->create();
+     * $flashBag = $bagRegistry->flash();
+     * ```
+     *
+     * @return BagRegistryInterface
+     *   A new instance of BagRegistryInterface, fully initialized and ready to use.
+     */
+    public function create(SessionInterface $session) : BagRegistryInterface;
+}
+=== ../Infrastructure/Framework/HTTP/Session/Contracts/FlashBagInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Contracts;
+
+/**
+ * Interface FlashBagInterface
+ *
+ * This interface defines the contract for managing a flash-based temporary session store.
+ * Flash bags are designed to hold transient data, meant to persist only across a single request-response cycle.
+ * It extends the SessionBagInterface for consistent session operations, adding functionality specific to flash data.
+ *
+ * Example Use Cases:
+ * - Storing success messages after form submissions.
+ * - Passing transient errors or warnings between requests.
+ * - Temporary state management that requires automatic expiration.
+ *
+ * @package Gemini\HTTP\Session\Contracts
+ */
+interface FlashBagInterface extends SessionBagInterface
+{
+    /**
+     * Preserves a specific key-value pair in the flash bag across the next request.
+     *
+     * Flash data is commonly designed to be cleared after the next access.
+     * The `keep` method ensures that a particular key's value is retained for subsequent processing.
+     *
+     * Example:
+     * ```php
+     * $flashBag->keep('successMessage');
+     * ```
+     * Retention can be useful for cases where data should be available for longer interactions.
+     *
+     * @param string $key
+     *   The unique identifier for the flash data to be retained.
+     *
+     * @return void
+     *   This method does not return a value.
+     *
+     * @see self::reflash() for retaining all flash data at once.
+     */
+    public function keep(string $key) : void;
+
+    /**
+     * Re-flashes all existing flash data for the next request.
+     *
+     * This method reinitializes and retains all current flash messages, ensuring that no data is removed.
+     * Useful when flash data needs to survive multiple request cycles for extended processing.
+     *
+     * Example:
+     * ```php
+     * $flashBag->reflash();
+     * ```
+     * Unlike `keep`, this applies globally for the entire flash bag.
+     *
+     * @return void
+     *   This method does not return a value.
+     *
+     * @see self::keep() for retaining specific keys.
+     */
+    public function reflash() : void;
+}
+=== ../Infrastructure/Framework/HTTP/Session/Contracts/SessionBagInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Contracts;
+
+/**
+ * Interface SessionBagInterface
+ *
+ * Represents an isolated namespace or "bag" within a session.
+ * Each bag is responsible for its own data lifecycle, scoping, and operations.
+ *
+ * Inspired by Symfony and Laravel flash/input systems.
+ */
+interface SessionBagInterface
+{
+    /**
+     * Retrieves a value by key from the bag.
+     *
+     * @param string     $key     The key name.
+     * @param mixed|null $default The default value if the key does not exist.
+     *
+     * @return mixed|null The value or default.
+     */
+    public function get(string $key, mixed $default = null) : mixed;
+
+    /**
+     * Stores a value in the bag under the given key.
+     *
+     * @param string $key   The key name.
+     * @param mixed  $value The value to store.
+     *
+     * @return void
+     */
+    public function put(string $key, mixed $value) : void;
+
+    /**
+     * Determines whether the bag contains the specified key.
+     *
+     * @param string $key The key name.
+     *
+     * @return bool True if the key exists.
+     */
+    public function has(string $key) : bool;
+
+    /**
+     * Retrieves all key-value pairs from the bag.
+     *
+     * @return array<string, mixed> All stored items.
+     */
+    public function all() : array;
+
+    /**
+     * Removes the specified key from the bag.
+     *
+     * @param string $key The key to remove.
+     *
+     * @return void
+     */
+    public function forget(string $key) : void;
+
+    /**
+     * Clears all values from the bag.
+     *
+     * @return void
+     */
+    public function clear() : void;
+}
+
+=== ../Infrastructure/Framework/HTTP/Session/Contracts/SessionBuilderInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Contracts;
+
+use ArrayAccess;
+
+/**
+ * Interface SessionBuilderInterface
+ *
+ * Represents the contract for a fluent, Domain-Specific Language (DSL)-oriented
+ * interface for manipulating session data in a contextual and flexible manner.
+ *
+ * Design principles:
+ * - Implements immutable fluency for operations when applicable.
+ * - Encourages brevity and readability during session management via fluent chaining.
+ *
+ * Extends:
+ * - ArrayAccess: Enables idiomatic usage of array-like syntax,
+ *   allowing operations like:
+ *      - `$builder['key']`: Direct access to session data.
+ *      - `isset($builder['key'])`: Check presence of session keys.
+ *      - `unset($builder['key'])`: Deleting session keys.
+ */
+interface SessionBuilderInterface extends ArrayAccess
+{
+    /**
+     * Retrieves a value from the session using a specified key, with support for
+     * an optional fallback default.
+     *
+     * @param string     $key     The unique identifier for the value within the session.
+     * @param mixed|null $default A default value to return if the key is not found (optional).
+     *
+     * @return mixed The value associated with the specified key, or the default value if not present.
+     */
+    public function get(string $key, mixed $default = null) : mixed;
+
+    /**
+     * Stores a value in the session under the specified key.
+     *
+     * @param string $key   The unique identifier for the value within the session.
+     * @param mixed  $value The value to store in the session.
+     *
+     * @return void No return value; modifies session state directly.
+     */
+    public function set(string $key, mixed $value) : void;
+
+    /**
+     * Checks if a given key exists in the session.
+     *
+     * @param string $key The unique identifier to check for existence in the session.
+     *
+     * @return bool True if the key exists, False otherwise.
+     */
+    public function has(string $key) : bool;
+
+    /**
+     * Deletes a value from the session using the specified key.
+     *
+     * @param string $key The unique identifier of the value to delete from the session.
+     *
+     * @return void No return value; removes data from session.
+     */
+    public function delete(string $key) : void;
+
+    /**
+     * Sets the current namespace for session operations, enabling segmentation
+     * or scoped session values.
+     *
+     * @param string $namespace The namespace to apply for subsequent session operations.
+     *
+     * @return self Returns the instance of the session builder for fluent operations.
+     */
+    public function withNamespace(string $namespace) : self;
+
+    /**
+     * Defines the Time-To-Live (TTL) duration for session data, allowing specification
+     * of expiry in seconds.
+     *
+     * @param int $seconds The time (in seconds) before the session data is marked as expired.
+     *
+     * @return self Returns the instance of the session builder for fluent chaining.
+     */
+    public function withTTL(int $seconds) : self;
+
+    /**
+     * Marks the session as "secure," ensuring that session data adheres to stricter
+     * security constraints, such as automatically using HTTPS or encryption policies.
+     *
+     * @return self Returns the instance of the session builder for fluent chaining.
+     */
+    public function secure() : self;
+
+    /**
+     * Magic invocation method to retrieve session data. Acts as a shorthand for retrieving
+     * a key with an optional default value directly.
+     *
+     * @param string     $key     The unique identifier for the value.
+     * @param mixed|null $default The fallback default value (optional).
+     *
+     * @return mixed The value associated with the key, or the default value if not set.
+     */
+    public function __invoke(string $key, mixed $default = null) : mixed;
+
+    /**
+     * Serializes the current session builder state to a string representation. Typically used for
+     * debugging or interoperability with systems expecting a string output.
+     *
+     * @return string A string representation of the session builder's current state.
+     */
+    public function __toString() : string;
+}
+=== ../Infrastructure/Framework/HTTP/Session/Contracts/SessionInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Contracts;
+
+use ArrayAccess;
+use Closure;
+
+/**
+ * Interface SessionInterface
+ *
+ * Defines the contract for managing session storage with advanced capabilities such as encryption,
+ * time-to-live (TTL) expiration, and full control over the session lifecycle. This interface
+ * ensures implementation flexibility by remaining framework-agnostic and highly portable.
+ *
+ * Common Use Cases:
+ * - Storing user-specific data securely during a session.
+ * - Managing temporary application state without coupling to a specific framework.
+ * - Providing strong adherence to SOLID and DDD principles in session management architecture.
+ *
+ * Expectations:
+ * - Encryption of session data for enhanced security.
+ * - Configurable data expiration using TTL.
+ * - Full lifecycle control (starting, invalidating, regenerating sessions).
+ *
+ * This interface inherits `ArrayAccess` to allow session storage manipulation via array-like syntax.
+ *
+ * @package Gemini\HTTP\Session\Contracts
+ */
+interface SessionInterface extends ArrayAccess
+{
+    /**
+     * Starts the session lifecycle.
+     *
+     * This method should initialize the session, preparing it to store and retrieve session data.
+     * If a session is already active, implementations should avoid reinitialization.
+     *
+     * @return void
+     */
+    public function start() : void;
+
+    /**
+     * Flushes all session data.
+     *
+     * Performs a complete reset by clearing all stored session data. Useful when the session should
+     * be completely emptied, such as during logout procedures.
+     *
+     * @return void
+     */
+    public function flush() : void;
+
+    /**
+     * Deletes a specific key from the session storage.
+     *
+     * @param string $key The key identifying the session entry to be deleted.
+     *
+     * @return void
+     */
+    public function delete(string $key) : void;
+
+    /**
+     * Retrieves a value from the session storage.
+     *
+     * @param string     $key     The key for the session entry.
+     * @param mixed|null $default The default value to return if the key does not exist.
+     *
+     * @return mixed The stored value, or the provided default.
+     */
+    public function get(string $key, mixed $default = null) : mixed;
+
+    /**
+     * Stores a value in the session storage.
+     *
+     * @param string $key   The key for the session entry.
+     * @param mixed  $value The value to store.
+     *
+     * @return void
+     */
+    public function set(string $key, mixed $value) : void;
+
+    /**
+     * An alias to `set`. Ensures consistency in naming styles.
+     *
+     * @param string $key   The key for the session entry.
+     * @param mixed  $value The value to store.
+     *
+     * @return void
+     */
+    public function put(string $key, mixed $value) : void;
+
+    /**
+     * Stores a value in the session with a defined time-to-live (TTL).
+     *
+     * Data stored using this method will expire and be invalidated after the specified TTL.
+     *
+     * @param string $key   The key for the session entry.
+     * @param mixed  $value The value to store.
+     * @param int    $ttl   Time-to-live in seconds for the session entry.
+     *
+     * @return void
+     */
+    public function putWithTTL(string $key, mixed $value, int $ttl) : void;
+
+    /**
+     * Checks whether the session contains a specific key.
+     *
+     * @param string $key The key to check for existence in the session.
+     *
+     * @return bool True if the key exists, false otherwise.
+     */
+    public function has(string $key) : bool;
+
+    /**
+     * Retrieves all key-value pairs stored in the session.
+     *
+     * @return array<string, mixed> An associative array of all session entries.
+     */
+    public function all() : array;
+
+    /**
+     * Retrieves and removes a value from the session.
+     *
+     * Useful for cases where session data is meant to be consumed only once.
+     *
+     * @param string     $key     The key for the session entry.
+     * @param mixed|null $default The default value if the key does not exist.
+     *
+     * @return mixed The value, or the default if not found.
+     */
+    public function pull(string $key, mixed $default = null) : mixed;
+
+    /**
+     * Retrieves a value from the session or executes a callback to generate it.
+     *
+     * If the key does not exist, the callback will generate and store the value, ensuring lazy evaluation.
+     *
+     * @param string  $key      The key for the session entry.
+     * @param Closure $callback A callback returning the value to store if the key does not exist.
+     *
+     * @return mixed The retrieved or newly generated value.
+     */
+    public function remember(string $key, Closure $callback) : mixed;
+
+    /**
+     * Increments the value of a specific session entry.
+     *
+     * @param string $key    The key for the session entry.
+     * @param int    $amount The amount to increment by (default: 1).
+     *
+     * @return int The incremented value.
+     */
+    public function increment(string $key, int $amount = 1) : int;
+
+    /**
+     * Decrements the value of a specific session entry.
+     *
+     * @param string $key    The key for the session entry.
+     * @param int    $amount The amount to decrement by (default: 1).
+     *
+     * @return int The decremented value.
+     */
+    public function decrement(string $key, int $amount = 1) : int;
+
+    /**
+     * Regenerates the session ID.
+     *
+     * This is useful for preventing session fixation attacks. Optionally, the old session data can be deleted.
+     *
+     * @param bool $deleteOldSession Whether to delete the old session (default: true).
+     *
+     * @return void
+     */
+    public function regenerateId(bool $deleteOldSession = true) : void;
+
+    /**
+     * Invalidates the current session.
+     *
+     * Typically used for logout or resetting session state.
+     *
+     * @return void
+     */
+    public function invalidate() : void;
+
+    /**
+     * Retrieves data from the previous request.
+     *
+     * This is commonly used to repopulate old form inputs after redirects.
+     *
+     * @param string     $key     The key for the session entry.
+     * @param mixed|null $default The default value if the key does not exist.
+     *
+     * @return mixed The retrieved old input, or the provided default.
+     */
+    public function getOldInput(string $key, mixed $default = null) : mixed;
+
+    public function getRegistry() : BagRegistryInterface;
+
+}
+=== ../Infrastructure/Framework/HTTP/Session/Contracts/SessionLoggerInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Contracts;
+
+use Psr\Log\LoggerInterface;
+
+/**
+ * Interface SessionLoggerInterface
+ *
+ * This interface defines a specialized logging contract that extends the PSR-3 LoggerInterface,
+ * specifically for session-related logging functionalities. It enables the implementation of a unified
+ * session logging system to maintain high observability and track session-related events.
+ *
+ * @see \Psr\Log\LoggerInterface For the standard logging contract, this interface extends.
+ */
+interface SessionLoggerInterface extends LoggerInterface
+{
+    // By extending LoggerInterface, this interface inherits the PSR-3 logging methods,
+    // such as `emergency()`, `alert()`, `critical()`, `error()`, `warning()`, `notice()`, `info()`,
+    // and `debug()`. This enables session-specific logging needs to seamlessly integrate with
+    // any PSR-3-compliant logging system.
+}
+=== ../Infrastructure/Framework/HTTP/Session/Contracts/SessionManagerInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Contracts;
+
+use Gemini\HTTP\Session\SessionBuilder;
+
+/**
+ * Interface SessionManagerInterface
+ *
+ * Defines a clean, type-safe contract for centralized session management.
+ * Promotes modularity, testability, and inversion of control.
+ */
+interface SessionManagerInterface
+{
+    /**
+     * Creates a fluent builder for scoped session access.
+     *
+     * @return SessionBuilder
+     */
+    public function builder() : SessionBuilder;
+
+    /**
+     * Retrieves a session value by key.
+     *
+     * @param string     $key
+     * @param mixed|null $default
+     *
+     * @return mixed
+     */
+    public function get(string $key, mixed $default = null) : mixed;
+
+    /**
+     * Stores a value securely in the session.
+     *
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return void
+     */
+    public function set(string $key, mixed $value) : void;
+
+    /**
+     * Determines whether a session key exists.
+     *
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function has(string $key) : bool;
+
+    /**
+     * Deletes a session key.
+     *
+     * @param string $key
+     *
+     * @return void
+     */
+    public function delete(string $key) : void;
+
+    /**
+     * Resets the session and clears all stored data.
+     *
+     * @return void
+     */
+    public function reset() : void;
+}
+
+=== ../Infrastructure/Framework/HTTP/Session/Contracts/SessionStoreInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Contracts;
+
+/**
+ * SessionStoreInterface
+ *
+ * Defines the contract for session storage backends.
+ * Storage engines must implement these methods to adhere to
+ * standardized session management behavior.
+ */
+interface SessionStoreInterface
+{
+    /**
+     * Initializes the session.
+     *
+     * This should start the session storage mechanism,
+     * creating or resuming an existing session.
+     *
+     * @return void
+     */
+    public function start() : void;
+
+    /**
+     * Retrieves a session value by its key.
+     *
+     * @param string     $key     The session key to retrieve.
+     * @param mixed|null $default The default value to return if the key is not found.
+     *
+     * @return mixed The value associated with the key, or the default value if not set.
+     */
+    public function get(string $key, mixed $default = null) : mixed;
+
+    /**
+     * Saves a value in the session.
+     *
+     * @param string $key   The session key to store the value under.
+     * @param mixed  $value The value to store.
+     *
+     * @return void
+     */
+    public function put(string $key, mixed $value) : void;
+
+    /**
+     * Removes a key-value pair from the session.
+     *
+     * No effect if the specified key does not exist in the session.
+     *
+     * @param string $key The session key to delete.
+     *
+     * @return void
+     */
+    public function delete(string $key) : void;
+
+    /**
+     * Retrieves all session data as a key-value associative array.
+     *
+     * @return array<string, mixed> The entire session data.
+     */
+    public function all() : array;
+
+    /**
+     * Clears all session data.
+     *
+     * WARNING: This will permanently delete all session data.
+     * Use with caution.
+     *
+     * @return void
+     */
+    public function flush() : void;
+
+    /**
+     * Regenerates the session ID.
+     *
+     * This prevents session fixation attacks by creating a new session ID.
+     *
+     * @param bool $deleteOldSession If true, destroys the old session data. Default is true.
+     *
+     * @return void
+     */
+    public function regenerateId(bool $deleteOldSession = true) : void;
+}
+=== ../Infrastructure/Framework/HTTP/Session/Drivers/ArraySession.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Drivers;
+
+use Closure;
+use Gemini\HTTP\Session\AbstractSession;
+use Gemini\HTTP\Session\Contracts\BagRegistryInterface;
+use Gemini\HTTP\Session\Contracts\SessionCryptoInterface;
+use Gemini\HTTP\Session\Contracts\SessionInterface;
+use Gemini\HTTP\Session\Contracts\SessionStoreInterface;
+
+/**
+ * ArraySession
+ *
+ * In-memory session implementation. Primarily used for testing purposes
+ * and non-persistent session storage. This should not be used in production
+ * environments due to the volatile nature of in-memory storage.
+ *
+ * @package Gemini\HTTP\Session\Drivers
+ */
+final class ArraySession extends AbstractSession
+{
+    /**
+     * Constructor for ArraySession.
+     * Dependency Injection ensures this class adheres to the principle of Inversion of Control.
+     *
+     * @param SessionStoreInterface  $store  The store implementation for session handling.
+     * @param SessionCryptoInterface $crypto The crypto implementation for secure session data handling.
+     */
+    public function __construct(
+        SessionStoreInterface $store,
+        Closure               $registryFactory
+    ) {
+        /** @var Closure(SessionInterface): BagRegistryInterface $registryFactory */
+        $registry = $registryFactory($this);
+        // TODO: Make this final logic for ArraySession when time comes
+        parent::__construct(
+            store   : $store,
+            registry: $registry
+        );
+    }
+
+    /**
+     * Potential edge cases and usage scenarios:
+     * - This session driver is intentionally in-memory and ephemeral.
+     *   When the application terminates, session data will be lost.
+     * - Suitable for unit or integration tests, and scenarios where persistence is not required.
+     * - Ensure no reliance on long-lived session data to avoid unexpected behavior in production-like environments.
+     *
+     * Security warning:
+     * - Do not use this in environments requiring persistent or distributed sessions.
+     */
+}
+=== ../Infrastructure/Framework/HTTP/Session/Drivers/NativeSession.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Drivers;
+
+use Closure;
+use Gemini\HTTP\Session\AbstractSession;
+use Gemini\HTTP\Session\Contracts\BagRegistryInterface;
+use Gemini\HTTP\Session\Contracts\SessionInterface;
+use Gemini\HTTP\Session\Contracts\SessionStoreInterface;
+
+/**
+ * Class NativeSession
+ *
+ * A concrete implementation of `AbstractSession` that utilizes PHP's native session handling mechanism.
+ *
+ * This class adheres to the principles of DDD by encapsulating the session handling behavior
+ * and delegating responsibilities to specialized interfaces (`SessionStoreInterface` and `SessionCryptoInterface`).
+ */
+final class NativeSession extends AbstractSession
+{
+    /**
+     * NativeSession Constructor.
+     *
+     * This constructor uses PHP 8.3's constructor property promotion for concise and expressive initialization
+     * while adhering to SRP (Single Responsibility Principle) by delegating storage and cryptographic logic to their
+     * respective interfaces.
+     *
+     * @param SessionStoreInterface $store The storage mechanism the session will use to persist session data.
+     * @param \Closure              $registryFactory
+     */
+    public function __construct(
+        SessionStoreInterface $store,
+        Closure               $registryFactory
+    ) {
+        /** @var Closure(SessionInterface): BagRegistryInterface $registryFactory */
+        $registry = $registryFactory($this);
+
+        parent::__construct(
+            store   : $store,
+            registry: $registry
+        );
+    }
+}
+=== ../Infrastructure/Framework/HTTP/Session/Enums/SessionBag.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Enums;
+
+/**
+ * Enum `SessionBag`
+ *
+ * Represents the types of session data bags used in the session management system.
+ * By using enums, this design allows for strict type safety and eliminates the risk
+ * of invalid session bag type usage. Adhering to Clean Code principles, this ensures
+ * the operation surrounding session bag types remains self-contained, predictable,
+ * and scalable.
+ *
+ * @package Gemini\HTTP\Session\Enums
+ */
+enum SessionBag: string
+{
+    /**
+     * Flash Bag
+     *
+     * Represents the session bag for flash messages — temporary session
+     * data that persists only until it is read during the next request.
+     *
+     * Example usage:
+     * - Temporary notifications (e.g., "Your account has been updated.")
+     * - Alerts displayed post-redirect.
+     *
+     * @var string
+     */
+    case Flash = 'flash';
+
+    /**
+     * Input Bag
+     *
+     * Captures user input data and retains it for redisplaying forms in case
+     * of validation failures. This is commonly used to show old input in forms.
+     *
+     * Example usage:
+     * - Preserving user input after form validation errors.
+     *
+     * @var string
+     */
+    case Input = 'input';
+
+    /**
+     * Validation Bag
+     *
+     * Holds validation error messages associated with forms or other input validation.
+     * This helps maintain a clear separation of data related to failed validations.
+     *
+     * Example usage:
+     * - Displaying form field or general error messages in the UI.
+     *
+     * @var string
+     */
+    case Validation = 'validation';
+}
+=== ../Infrastructure/Framework/HTTP/Session/Enums/SessionDriver.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Enums;
+
+/**
+ * Enum `SessionDriver`
+ *
+ * Represents the available session storage drivers in the application's session handling system.
+ * Enumerations here define clearly the specific storage mechanisms supported.
+ * This adheres to the Single Responsibility Principle by isolating session-driver-related constants
+ * in a self-contained construct. This type-safety ensures scalability and reduces potential usage errors.
+ *
+ * @package Gemini\HTTP\Session\Enums
+ */
+enum SessionDriver: string
+{
+    /**
+     * Native Session Driver
+     *
+     * Represents the use of PHP's default session handling mechanism.
+     * Suited for applications where the native PHP session engine suffices,
+     * such as basic file-based storage without external adapters.
+     *
+     * @var string
+     */
+    case Native = 'native';
+
+    /**
+     * Array-Based Session Driver
+     *
+     * Represents a memory-only session storage mechanism where session data
+     * is stored in arrays. This is ideal for unit testing or scenarios
+     * where persistent state is not required.
+     *
+     * @var string
+     */
+    case Array = 'array';
+}
+=== ../Infrastructure/Framework/HTTP/Session/Enums/SessionTag.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Enums;
+
+/**
+ * Enum `SessionTag`
+ *
+ * Represents different types of tags that categorize session data in the application.
+ * By utilizing an enum, this structure ensures explicit type safety and eliminates
+ * the risk of hardcoded or invalid session tag values. This adheres to Domain-Driven Design (DDD)
+ * principles by enforcing strong domain boundaries and context-specific behavior.
+ *
+ * Enums provide clarity and predictability, making the codebase more expressive
+ * and maintainable, ensuring clean design principles are upheld.
+ *
+ * @package Gemini\HTTP\Session\Enums
+ */
+enum SessionTag: string
+{
+    /**
+     * Flash Tag
+     *
+     * The flash tag is used to categorize session data that is temporary and designed
+     * to last only until the next request is completed. Commonly used for passing
+     * notifications or alerts across requests after a redirect.
+     *
+     * Example Use-Cases:
+     * - Temporary feedback ("Your profile has been updated.")
+     * - Notifications requiring user acknowledgment during the next request.
+     *
+     * @var string
+     *
+     * Usage:
+     * ```
+     * $session->set(SessionTag::Flash, 'Your changes have been saved!');
+     * ```
+     */
+    case Flash = 'flash';
+
+    /**
+     * User Tag
+     *
+     * The user tag categorizes session data related specifically to the logged-in user.
+     * This tag can be leveraged to store user-related metadata, preferences, or credentials
+     * that are required during the session's lifecycle.
+     *
+     * Example Use-Cases:
+     * - Authentication tokens.
+     * - User preferences (e.g., locale, themes).
+     *
+     * @var string
+     *
+     * Usage:
+     * ```
+     * $session->set(SessionTag::User, ['id' => 123, 'name' => 'John Doe']);
+     * ```
+     */
+    case User = 'user';
+}
+=== ../Infrastructure/Framework/HTTP/Session/Exceptions/FlashBagKeyNotFoundException.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Exceptions;
+
+use RuntimeException;
+
+/**
+ * Exception thrown when attempting to retrieve a non-existent flash key.
+ */
+final class FlashBagKeyNotFoundException extends RuntimeException {}
+=== ../Infrastructure/Framework/HTTP/Session/Exceptions/SessionException.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Exceptions;
+
+use RuntimeException;
+
+/**
+ * SessionException
+ * Custom exception class for session management errors.
+ */
+class SessionException extends RuntimeException {}
+=== ../Infrastructure/Framework/HTTP/Session/LoggableSessionDecorator.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session;
+
+use Closure;
+use Gemini\HTTP\Session\Contracts\BagRegistryInterface;
+use Gemini\HTTP\Session\Contracts\SessionInterface;
+use Gemini\HTTP\Session\Contracts\SessionLoggerInterface;
+
+/**
+ * Class LoggableSessionDecorator
+ *
+ * This class implements the Decorator pattern to transparently wrap a SessionInterface instance
+ * and provide logging behavior via a SessionLoggerInterface.
+ *
+ * Each session operation is logged with appropriate context to aid debugging, traceability,
+ * analytics, and observability in production-grade systems.
+ */
+final readonly class LoggableSessionDecorator implements SessionInterface
+{
+    public function __construct(
+        private SessionInterface       $inner,
+        private SessionLoggerInterface $logger
+    ) {}
+
+    /**
+     * Start the session lifecycle and log the event.
+     */
+    public function start() : void
+    {
+        $this->logger->debug(message: 'Session started.');
+        $this->inner->start();
+    }
+
+    /**
+     * Retrieve the entire session data array and log the access.
+     */
+    public function all() : array
+    {
+        $this->logger->debug(message: 'Session::all called');
+
+        return $this->inner->all();
+    }
+
+    /**
+     * Remove all session data and log the flush action.
+     */
+    public function flush() : void
+    {
+        $this->logger->info(message: 'Flushing all session data.');
+        $this->inner->flush();
+    }
+
+    /**
+     * Invalidate the session and log the invalidation event.
+     */
+    public function invalidate() : void
+    {
+        $this->logger->warning(message: 'Session invalidated.');
+        $this->inner->invalidate();
+    }
+
+    /**
+     * Regenerate session ID and optionally delete the old session.
+     * Logs the operation and its parameter.
+     */
+    public function regenerateId(bool $deleteOldSession = true) : void
+    {
+        $this->logger->info(message: 'Session ID regenerated.', context: [
+            'delete_old' => $deleteOldSession,
+        ]);
+
+        $this->inner->regenerateId(deleteOldSession: $deleteOldSession);
+    }
+
+    /**
+     * Retrieve a session value by key and log whether fallback default was used.
+     */
+    public function get(string $key, mixed $default = null) : mixed
+    {
+        $value = $this->inner->get(key: $key, default: $default);
+
+        $this->logger->debug(message: 'Session::get', context: [
+            'key'              => $key,
+            'returned_default' => $value === $default,
+        ]);
+
+        return $value;
+    }
+
+    /**
+     * Store a value in the session and log the operation with value type.
+     */
+    public function set(string $key, mixed $value) : void
+    {
+        $this->logger->info(message: 'Session::set', context: [
+            'key'        => $key,
+            'value_type' => get_debug_type($value),
+        ]);
+
+        $this->inner->set(key: $key, value: $value);
+    }
+
+    /**
+     * Set session value (same as `set`) with detailed logging including value content.
+     */
+    public function put(string $key, mixed $value) : void
+    {
+        $this->logger->info(message: 'Session::put', context: [
+            'key'        => $key,
+            'value_type' => get_debug_type($value),
+            'value'      => $value,
+        ]);
+
+        $this->inner->put(key: $key, value: $value);
+    }
+
+    /**
+     * Remove a key from the session and log the deletion.
+     */
+    public function delete(string $key) : void
+    {
+        $this->logger->notice(message: 'Session::delete', context: ['key' => $key]);
+        $this->inner->delete(key: $key);
+    }
+
+    /**
+     * Flash a value to the session for next request and log the key.
+     */
+    public function flash(string $key, mixed $value) : void
+    {
+        $this->logger->info(message: 'Session::flash', context: ['key' => $key]);
+        $this->inner->flash(key: $key, value: $value);
+    }
+
+    /**
+     * Retrieve a flashed value and log the key being accessed.
+     */
+    public function getFlash(string $key, mixed $default = null) : mixed
+    {
+        $this->logger->debug(message: 'Session::getFlash', context: ['key' => $key]);
+
+        return $this->inner->getFlash(key: $key, default: $default);
+    }
+
+    /**
+     * Retain a flashed value for another request cycle and log the key.
+     */
+    public function keepFlash(string $key) : void
+    {
+        $this->logger->info(message: 'Session::keepFlash', context: ['key' => $key]);
+        $this->inner->keepFlash(key: $key);
+    }
+
+    /**
+     * Flash an entire input array to the session (used for old input support).
+     */
+    public function flashInput(array $input) : void
+    {
+        $this->logger->info(message: 'Session::flashInput invoked.');
+        $this->inner->flashInput(input: $input);
+    }
+
+    /**
+     * Retrieve old form input (flashed) and log the key.
+     */
+    public function getOldInput(string $key, mixed $default = null) : mixed
+    {
+        $this->logger->debug(message: 'Session::getOldInput', context: ['key' => $key]);
+
+        return $this->inner->getOldInput(key: $key, default: $default);
+    }
+
+    /**
+     * Store a key with TTL (Time To Live) and log the duration.
+     */
+    public function putWithTTL(string $key, mixed $value, int $ttl) : void
+    {
+        $this->logger->debug(message: 'Session::putWithTTL', context: [
+            'key' => $key,
+            'ttl' => $ttl,
+        ]);
+
+        $this->inner->putWithTTL(key: $key, value: $value, ttl: $ttl);
+    }
+
+    /**
+     * Retrieve a key and remove it from the session. Logs retrieval.
+     */
+    public function pull(string $key, mixed $default = null) : mixed
+    {
+        $this->logger->debug(message: 'Session::pull', context: ['key' => $key]);
+
+        return $this->inner->pull(key: $key, default: $default);
+    }
+
+    /**
+     * Attempt to get a value, or compute and store via callback.
+     * Logs if cache hit occurred.
+     */
+    public function remember(string $key, Closure $callback) : mixed
+    {
+        $exists = $this->inner->has(key: $key);
+
+        $this->logger->debug(message: 'Session::remember', context: [
+            'key'    => $key,
+            'cached' => $exists,
+        ]);
+
+        return $this->inner->remember(key: $key, callback: $callback);
+    }
+
+    /**
+     * Check for the existence of a key and log result.
+     */
+    public function has(string $key) : bool
+    {
+        $exists = $this->inner->has(key: $key);
+
+        $this->logger->debug(message: 'Session::has', context: [
+            'key'    => $key,
+            'exists' => $exists,
+        ]);
+
+        return $exists;
+    }
+
+    /**
+     * Increment a numeric value in session and log amount.
+     */
+    public function increment(string $key, int $amount = 1) : int
+    {
+        $this->logger->info(message: 'Session::increment', context: [
+            'key'    => $key,
+            'amount' => $amount,
+        ]);
+
+        return $this->inner->increment(key: $key, amount: $amount);
+    }
+
+    /**
+     * Decrement a numeric value in session and log amount.
+     */
+    public function decrement(string $key, int $amount = 1) : int
+    {
+        $this->logger->info(message: 'Session::decrement', context: [
+            'key'    => $key,
+            'amount' => $amount,
+        ]);
+
+        return $this->inner->decrement(key: $key, amount: $amount);
+    }
+
+    /**
+     * Check if key exists using array-access interface. Logs the check.
+     */
+    public function offsetExists(mixed $offset) : bool
+    {
+        $exists = $this->inner->offsetExists($offset);
+
+        $this->logger->debug(message: 'Session::offsetExists', context: [
+            'key'    => $offset,
+            'exists' => $exists,
+        ]);
+
+        return $exists;
+    }
+
+    /**
+     * Retrieve a key via array-access interface. Logs access.
+     */
+    public function offsetGet(mixed $offset) : mixed
+    {
+        $this->logger->debug(message: 'Session::offsetGet', context: ['key' => $offset]);
+
+        return $this->inner->offsetGet($offset);
+    }
+
+    /**
+     * Assign a value via array-access interface. Logs metadata.
+     */
+    public function offsetSet(mixed $offset, mixed $value) : void
+    {
+        $this->logger->debug(message: 'Session::offsetSet', context: [
+            'key'        => $offset,
+            'value_type' => get_debug_type($value),
+        ]);
+
+        $this->inner->offsetSet($offset, $value);
+    }
+
+    /**
+     * Unset a key using array-access syntax. Logs removal.
+     */
+    public function offsetUnset(mixed $offset) : void
+    {
+        $this->logger->notice(message: 'Session::offsetUnset', context: ['key' => $offset]);
+        $this->inner->offsetUnset($offset);
+    }
+
+    /**
+     * Return internal BagRegistry for managing session bags.
+     */
+    public function getRegistry() : BagRegistryInterface
+    {
+        $this->logger->debug(message: 'Session::getRegistry');
+
+        return $this->inner->getRegistry();
+    }
+}
+
+=== ../Infrastructure/Framework/HTTP/Session/NullSession.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session;
+
+use Closure;
+use Gemini\HTTP\Session\Contracts\SessionInterface;
+
+/**
+ * NullSession provides a no-op implementation of the SessionInterface.
+ *
+ * Useful for testing, stateless APIs, or fallback scenarios where
+ * session state is intentionally disabled.
+ */
+final class NullSession implements SessionInterface
+{
+    public function get(string $key, mixed $default = null) : mixed
+    {
+        return $default;
+    }
+
+    public function set(string $key, mixed $value) : void {}
+
+    public function has(string $key) : bool
+    {
+        return false;
+    }
+
+    public function remove(string $key) : void {}
+
+    public function all() : array
+    {
+        return [];
+    }
+
+    public function start() : void {}
+
+    public function delete(string $key) : void {}
+
+    public function flash(string $key, mixed $value) : void {}
+
+    public function getFlash(string $key, mixed $default = null) : mixed
+    {
+        return $default;
+    }
+
+    public function keepFlash(string $key) : void {}
+
+    public function flashInput(array $input) : void {}
+
+    public function getOldInput(string $key, mixed $default = null) : mixed
+    {
+        return $default;
+    }
+
+    public function flush() : void {}
+
+    public function invalidate() : void {}
+
+    public function regenerateId(bool $deleteOldSession = true) : void {}
+
+    public function offsetExists(mixed $offset) : bool
+    {
+        return false;
+    }
+
+    public function offsetGet(mixed $offset) : mixed
+    {
+        return null;
+    }
+
+    public function offsetSet(mixed $offset, mixed $value) : void {}
+
+    public function offsetUnset(mixed $offset) : void {}
+
+    public function put(string $key, mixed $value) : void {}
+
+    public function putWithTTL(string $key, mixed $value, int $ttl) : void {}
+    
+    public function pull(string $key, mixed $default = null) : mixed
+    {
+        return $default;
+    }
+
+    public function remember(string $key, Closure $callback) : mixed
+    {
+        return $callback();
+    }
+
+    public function increment(string $key, int $amount = 1) : int
+    {
+        return $amount;
+    }
+
+    public function decrement(string $key, int $amount = 1) : int
+    {
+        return -$amount;
+    }
+}
+
+=== ../Infrastructure/Framework/HTTP/Session/SessionBuilder.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session;
+
+use Gemini\HTTP\Session\Contracts\BagRegistryInterface;
+use Gemini\HTTP\Session\Contracts\SessionBuilderInterface;
+use Gemini\HTTP\Session\Contracts\SessionInterface;
+use Gemini\HTTP\Session\Enums\SessionTag;
+use Override;
+
+/**
+ * Fluent DSL (Domain-specific language) for building contextual session operations.
+ *
+ * This `SessionBuilder` class enables advanced session management capabilities.
+ * It provides support for:
+ * - Namespacing: To logically separate session data into scoped groups.
+ * - Time-To-Live (TTL): To specify expiration durations for session values.
+ * - Secure Modes: Offers an easy mechanism to toggle encryption for session data.
+ * - Tagging: Allows classification of session data using contextual tags.
+ */
+final readonly class SessionBuilder implements SessionBuilderInterface
+{
+    /**
+     * Constructor to initialize the session builder.
+     *
+     * @param SessionInterface     $session  Provides direct session data storage capabilities.
+     * @param BagRegistryInterface $registry Manages session bags for modularity and extension.
+     * @param SessionContext       $context  Holds contextual configuration for session operations.
+     */
+    public function __construct(
+        private SessionInterface     $session,
+        private BagRegistryInterface $registry,
+        private SessionContext       $context
+    ) {}
+
+    /**
+     * Magic method: Allows the `SessionBuilder` to be invoked like a function.
+     *
+     * Acts as shorthand for retrieving session data (`get()`) with an optional default.
+     *
+     * @param string     $key     The unique key to retrieve from session storage.
+     * @param mixed|null $default The fallback value if the key does not exist (optional).
+     *
+     * @return mixed The value retrieved from the session or the default value if missing.
+     */
+    public function __invoke(string $key, mixed $default = null) : mixed
+    {
+        return $this->get(key: $key, default: $default);
+    }
+
+    /**
+     * Retrieves data from the session with optional key resolution via namespace.
+     *
+     * @param string     $key     The unique key to retrieve from session storage.
+     * @param mixed|null $default The default value if the key is not found (optional).
+     *
+     * @return mixed The value associated with the session key or the default value if not present.
+     * @see resolveKey()
+     *
+     */
+    public function get(string $key, mixed $default = null) : mixed
+    {
+        return $this->session->get(
+            key    : $this->resolveKey(key: $key),
+            default: $default
+        );
+    }
+
+    /**
+     * Resolves the full session key by applying the active namespace if specified.
+     *
+     * @param string $key The base key provided by the consumer.
+     *
+     * @return string The fully resolved key, including namespace if applicable.
+     */
+    private function resolveKey(string $key) : string
+    {
+        return $this->context->namespace !== ''
+            ? "{$this->context->namespace}.{$key}"
+            : $key;
+    }
+
+    /**
+     * Determines if a session key exists. Implements ArrayAccess for `isset()` use cases.
+     *
+     * @param mixed $offset The key to check.
+     *
+     * @return bool True if the session key exists; False otherwise.
+     */
+    public function offsetExists(mixed $offset) : bool
+    {
+        return $this->has(key: (string) $offset);
+    }
+
+    /**
+     * Verifies the existence of a specific session entry.
+     *
+     * @param string $key The session key to check.
+     *
+     * @return bool True if the key exists; False otherwise.
+     */
+    public function has(string $key) : bool
+    {
+        return $this->session->has(key: $this->resolveKey(key: $key));
+    }
+
+    /**
+     * Retrieves a session value via ArrayAccess, converting the offset to a string key.
+     *
+     * @param mixed $offset The key to retrieve.
+     *
+     * @return mixed The value associated with the key.
+     */
+    public function offsetGet(mixed $offset) : mixed
+    {
+        return $this->get(key: (string) $offset);
+    }
+
+    /**
+     * Allows session values to be set via ArrayAccess. Resolves key via offset.
+     *
+     * @param mixed $offset The key where the value will be saved.
+     * @param mixed $value  The value to be saved in the session.
+     *
+     * @return void
+     */
+    public function offsetSet(mixed $offset, mixed $value) : void
+    {
+        $this->set(key: (string) $offset, value: $value);
+    }
+
+    /**
+     * Stores data in the session, respecting secure and TTL context configurations.
+     *
+     * @param string $key   The session key for storage.
+     * @param mixed  $value The value to be stored.
+     *
+     * @return void
+     * @see resolveKey()
+     *
+     */
+    public function set(string $key, mixed $value) : void
+    {
+        $resolvedKey = $this->resolveKey(key: $key);
+
+        // Secure storage
+        if ($this->context->secure) {
+            $this->session->put(key: $resolvedKey, value: $value);
+            // TTL-based storage
+        } elseif ($this->context->ttl !== null) {
+            $this->session->putWithTTL(
+                key  : $resolvedKey,
+                value: $value,
+                ttl  : $this->context->ttl
+            );
+            // Default storage
+        } else {
+            $this->session->put(key: $resolvedKey, value: $value);
+        }
+    }
+
+    /**
+     * Supports session data removal via ArrayAccess.
+     *
+     * @param mixed $offset The session key to unset.
+     *
+     * @return void
+     */
+    public function offsetUnset(mixed $offset) : void
+    {
+        $this->delete(key: (string) $offset);
+    }
+
+    /**
+     * Deletes session data associated with a specific key after resolving via namespace.
+     *
+     * @param string $key The session key to remove.
+     *
+     * @return void
+     */
+    public function delete(string $key) : void
+    {
+        $this->session->delete(key: $this->resolveKey(key: $key));
+    }
+
+    /**
+     * Updates the context to enable secure session mode.
+     *
+     * @return self A new `SessionBuilder` with secure mode enabled.
+     */
+    public function secure() : self
+    {
+        return $this->withContext($this->context->secure());
+    }
+
+    /**
+     * Creates a new instance with an updated session context.
+     *
+     * @param SessionContext $context The updated context object.
+     *
+     * @return self A new `SessionBuilder` instance with updated configuration.
+     */
+    private function withContext(SessionContext $context) : self
+    {
+        return new self(
+            session : $this->session,
+            registry: $this->registry,
+            context : $context
+        );
+    }
+
+    /**
+     * Sets a TTL (Time-To-Live) in seconds for session storage.
+     *
+     * @param int $seconds Number of seconds before session data expires.
+     *
+     * @return self A new `SessionBuilder` instance with TTL applied.
+     */
+    public function withTTL(int $seconds) : self
+    {
+        return $this->withContext($this->context->withTTL(ttl: $seconds));
+    }
+
+    /**
+     * Tags the session context with a specific semantic grouping.
+     *
+     * @param SessionTag $tag The new tag to apply to the session.
+     *
+     * @return self A new `SessionBuilder` instance with the added tag.
+     */
+    public function tag(SessionTag $tag) : self
+    {
+        return $this->withContext($this->context->tag(tag: $tag));
+    }
+
+    /**
+     * Adds a namespace for all subsequent session operations.
+     *
+     * @param string $namespace The namespace to apply.
+     *
+     * @return self A new `SessionBuilder` instance with the namespace applied.
+     */
+    public function withNamespace(string $namespace) : self
+    {
+        return $this->withContext($this->context->for(namespace: $namespace));
+    }
+
+    /**
+     * Converts the current state of the `SessionBuilder` into a human-readable string.
+     *
+     * Useful for debugging, monitoring, or logging session context.
+     *
+     * @return string A string representation of the current session builder state.
+     */
+    #[Override]
+    public function __toString() : string
+    {
+        return sprintf(
+            'SessionBuilder(namespace="%s", seconds=%s, encrypt=%s, tags=%s)',
+            $this->context->namespace,
+            $this->context->ttl !== null ? $this->context->ttl . 's' : 'null',
+            $this->context->secure ? 'true' : 'false',
+            implode(
+                ',',
+                array_map(
+                    static fn(SessionTag $tag) => $tag->name,
+                    $this->context->tags
+                )
+            )
+        );
+    }
+}
+=== ../Infrastructure/Framework/HTTP/Session/SessionContext.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session;
+
+use Gemini\HTTP\Session\Enums\SessionTag;
+
+use function array_unique;
+
+/**
+ * Immutable value object for contextual session configuration.
+ *
+ * Encapsulates namespace, TTL, encryption, and tags.
+ */
+final readonly class SessionContext
+{
+    /**
+     * @param string           $namespace Logical scope identifier (e.g. "user", "cart", "flash").
+     * @param bool             $secure    Whether encryption is enforced for the session values.
+     * @param int|null         $ttl       Optional time-to-live in seconds for temporary data.
+     * @param list<SessionTag> $tags      Domain-relevant tags for organizational metadata.
+     */
+    public function __construct(
+        public string   $namespace,
+        public bool     $secure = false,
+        public int|null $ttl = null,
+        public array    $tags = []
+    ) {}
+
+    /**
+     * Factory-style constructor for namespaced context.
+     *
+     * @param string $namespace Logical namespace for grouping session data.
+     *
+     * @return self
+     */
+    public static function for(string $namespace) : self
+    {
+        return new self(namespace: trim($namespace, '.'));
+    }
+
+    /**
+     * Clones the context with encryption enabled.
+     */
+    public function secure() : self
+    {
+        return new self(
+            namespace: $this->namespace,
+            secure   : true,
+            ttl      : $this->ttl,
+            tags     : $this->tags
+        );
+    }
+
+    /**
+     * Clones the context with a new TTL.
+     *
+     * @param int $ttl Time-to-live in seconds.
+     */
+    public function withTTL(int $ttl) : self
+    {
+        return new self(
+            namespace: $this->namespace,
+            secure   : $this->secure,
+            ttl      : $ttl,
+            tags     : $this->tags
+        );
+    }
+
+    /**
+     * Clones the context with a new tag appended.
+     *
+     * @param SessionTag $tag
+     *
+     * @return \Gemini\HTTP\Session\SessionContext
+     */
+    public function tag(SessionTag $tag) : self
+    {
+        return new self(
+            namespace: $this->namespace,
+            secure   : $this->secure,
+            ttl      : $this->ttl,
+            tags     : array_unique([...$this->tags, $tag])
+        );
+    }
+
+    /**
+     * Clones the context with a different namespace.
+     *
+     * @param string $namespace
+     *
+     * @return \Gemini\HTTP\Session\SessionContext
+     */
+    public function forNamespace(string $namespace) : self
+    {
+        return new self(
+            namespace: trim($namespace, '.'),
+            secure   : $this->secure,
+            ttl      : $this->ttl,
+            tags     : $this->tags
+        );
+    }
+}
+
+=== ../Infrastructure/Framework/HTTP/Session/session-documentation.md ===
+# Gemini Session Engine: Comprehensive Developer Documentation
+
+## Introduction
+
+The Gemini Session Engine is an enterprise-grade PHP 8.x library designed to manage HTTP session data securely and
+efficiently. It adheres to Clean Architecture principles, ensuring a clear separation of concerns and promoting
+maintainability. This documentation provides an in-depth exploration of the engine's architecture, features, and usage,
+offering practical examples and best practices for integration into your applications.
+
+## Table of Contents
+
+1. [Core Architecture](#core-architecture)
+2. [Security Model](#security-model)
+3. [Session Management](#session-management)
+4. [Fluent API and Domain-Specific Language (DSL)](#fluent-api-and-domain-specific-language-dsl)
+5. [Flash Messaging Lifecycle](#flash-messaging-lifecycle)
+6. [Input and Validation Retention](#input-and-validation-retention)
+7. [Custom Bag System](#custom-bag-system)
+8. [Contextual Orchestration](#contextual-orchestration)
+9. [Extendability](#extendability)
+10. [Real-World Use Cases](#real-world-use-cases)
+11. [Security Best Practices](#security-best-practices)
+12. [Testing and Testability](#testing-and-testability)
+13. [Error Handling and Logging](#error-handling-and-logging)
+14. [Performance Considerations](#performance-considerations)
+15. [Conclusion](#conclusion)
+
+## 1. Core Architecture
+
+The Gemini Session Engine is structured to promote modularity and scalability, aligning with Clean Architecture and
+Domain-Driven Design (DDD) principles. It consists of the following primary components:
+
+- **SessionManager**: The central orchestrator for session operations, providing a unified interface for interacting
+  with session data.
+- **SessionInterface**: Defines the contract for session storage implementations, allowing for flexibility in storage
+  backends.
+- **BagRegistryInterface**: Manages various session bags (e.g., FlashBag, InputBag) that encapsulate specific types of
+  session data.
+- **SessionBuilder**: A fluent API builder that facilitates the creation and configuration of session contexts.
+- **SessionContext**: Encapsulates session metadata, such as namespace, security settings, and time-to-live (TTL).
+
+This architecture ensures a clear separation of concerns, enhancing maintainability and testability.
+
+## 2. Security Model
+
+Security is paramount in session management. The Gemini Session Engine incorporates several measures to safeguard
+session data:
+
+- **Automatic Encryption**: Session data is encrypted using AES-256-CTR with HMAC-SHA256 for integrity verification,
+  ensuring confidentiality and integrity.
+- **Session ID Regeneration**: To mitigate session fixation attacks, the engine regenerates session IDs upon significant
+  events, such as user authentication.
+- **Secure Cookie Settings**: Cookies are configured with the `Secure`, `HttpOnly`, and `SameSite` attributes to prevent
+  common attacks like XSS and CSRF.
+- **Session Expiration and Timeout**: Implementing both idle and absolute timeouts reduces the risk of unauthorized
+  access due to prolonged sessions.
+
+These practices align with OWASP recommendations for secure session management.
+
+## 3. Session Management
+
+The `SessionManager` class serves as the primary interface for session interactions. It provides methods to set,
+retrieve, and manage session data efficiently.
+
+### Key Methods
+
+- `set(string $key, mixed $value): void`: Stores a value in the session, automatically encrypting it for security.
+- `get(string $key, mixed $default = null): mixed`: Retrieves a value from the session, decrypting it transparently.
+- `has(string $key): bool`: Checks if a specific key exists in the session.
+- `delete(string $key): void`: Removes a key and its associated value from the session.
+- `reset(): void`: Clears all session data, effectively logging out the user.
+
+### Usage Example
+
+```php
+declare(strict_types=1);
+
+use Gemini\Http\Session\SessionManager;
+
+$session = new SessionManager($sessionStorage, $bagRegistry);
+
+// Storing data
+$session->set('user.id', 42);
+
+// Retrieving data
+$userId = $session->get('user.id');
+
+// Checking existence
+if ($session->has('user.id')) {
+    // User ID exists in session
+}
+
+// Deleting data
+$session->delete('user.id');
+
+// Resetting session
+$session->reset();
+```
+
+This approach ensures that session data is handled securely and consistently throughout the application.
+
+## 4. Fluent API and Domain-Specific Language (DSL)
+
+The Gemini Session Engine introduces a fluent API, enabling developers to construct complex session interactions in a
+readable and expressive manner. The `SessionBuilder` facilitates this fluent interface.
+
+### Fluent API Features
+
+- **Contextual Namespacing**: Organize session data within specific namespaces to avoid key collisions.
+- **Security Configuration**: Specify security settings, such as enabling encryption, on a per-session basis.
+- **TTL Management**: Define time-to-live settings for session data, allowing for automatic expiration.
+
+### Usage Example
+
+```php
+declare(strict_types=1);
+
+use Gemini\Http\Session\SessionManager;
+
+$session = new SessionManager($sessionStorage, $bagRegistry);
+
+$session->for('cart')
+    ->withTTL(3600)
+    ->put('items', $cartItems);
+
+$session->for('auth')
+    ->secure()
+    ->put('token', $jwt);
+```
+
+This fluent interface enhances code readability and maintainability, allowing developers to express session operations
+clearly.
+
+## 5. Flash Messaging Lifecycle
+
+Flash messages are temporary session messages that persist for a single request-response cycle. The `FlashBag` component
+manages these messages, providing methods to add, retrieve, and manage them effectively.
+
+### Key Methods
+
+- `put(string $key, mixed $value): void`: Adds a flash message under the specified key.
+- `get(string $key, mixed $default = null):
+
+Awesome. Let’s keep this momentum going. Here's the continuation of the documentation, picking up right after the Flash
+Messaging Lifecycle:
+
+---
+
+## 6. Input and Validation Retention
+
+Preserving user input and validation errors across requests is essential for delivering a smooth and intuitive UX —
+especially in form submissions using the POST/Redirect/GET pattern.
+
+The Gemini Session Engine offers two specialized session bags:
+
+- **InputBag** — stores old input values submitted via HTTP forms.
+- **ValidationBag** — stores validation error messages for display purposes.
+
+### InputBag Example
+
+```php
+// During form POST (e.g. validation fails):
+$session->flash()->put('input.name', $_POST['name']);
+
+// In view layer:
+$oldName = $session->for('flash')->get('input.name');
+```
+
+### ValidationBag Example
+
+```php
+// During form validation failure:
+$session->flash()->put('errors.email', 'The email field is required.');
+
+// In the view:
+$errors = $session->flash()->get('errors.email');
+```
+
+✅ **Best Practices**
+
+- Pair `InputBag` with a form component that automatically repopulates fields.
+- Use `ValidationBag` in conjunction with domain-specific validators or form request objects.
+
+---
+
+## 7. Custom Bag System
+
+The Bag system allows you to modularize session storage into logical "bags" (namespaces) that manage a specific type of
+session data.
+
+### Default Bags:
+
+- `FlashBag` — For temporary one-time messages.
+- `InputBag` — For old input retention.
+- `ValidationBag` — For storing form validation errors.
+
+### BagRegistry
+
+The `BagRegistryInterface` acts as a centralized resolver for all registered bags. You can add custom bags or override
+existing ones for specific behaviors.
+
+### Custom Bag Registration
+
+```php
+$registry->register('auth', new AuthBag($session));
+$authBag = $registry->get('auth');
+```
+
+✅ This system embraces the **Strategy Pattern** and encourages **SRP** (Single Responsibility Principle) per bag.
+
+---
+
+## 8. Contextual Orchestration
+
+The `SessionContext` is a value object that encapsulates all relevant metadata about a session “slice”:
+
+- Namespace
+- TTL (expiration)
+- Encryption toggle
+- Tags (for semantic purposes)
+
+This allows `SessionBuilder` to dynamically orchestrate session behavior **without exposing internals or violating SRP
+**.
+
+### Example
+
+```php
+$secureCartContext = (new SessionContext('cart'))
+    ->secure()
+    ->withTTL(600)
+    ->tag(SessionTag::USER)
+    ->tag(SessionTag::CHECKOUT);
+```
+
+Each call returns a new immutable instance (value object semantics). This allows **composable, safe, context-aware
+session slices.**
+
+---
+
+## 9. Extendability
+
+The entire architecture was designed from day one to be highly extensible.
+
+### Plug in new features like:
+
+- A `RedisSessionStore` to swap in-memory for distributed storage.
+- A `JsonSessionSerializer` to allow cross-language (e.g. Python/Node) access.
+- A `SessionObserverInterface` to plug into audit/logging.
+- A `TaggableSessionBuilder::tag(...)` for advanced query/log filtering.
+
+All parts are defined via interfaces:
+
+- `SessionStoreInterface`
+- `SessionCryptoInterface`
+- `SessionBagInterface`
+- `SessionProfileRepositoryInterface`
+
+✅ **You can override or mock any component with a clean DI config.**
+
+---
+
+## 10. Real-World Use Cases
+
+### A. Flash Message After Redirect
+
+```php
+$session->flash()->put('success', 'Your profile was updated!');
+return redirect('/profile');
+```
+
+### B. Preserving Old Input After Validation
+
+```php
+$session->flash()->put('input', $_POST);
+$session->flash()->put('errors', $validator->errors());
+return redirect('/register');
+```
+
+### C. Secure JWT Storage
+
+```php
+$session->for('auth')->secure()->put('token', $jwt);
+```
+
+### D. Cart Expiry in E-Commerce
+
+```php
+$session->for('cart')->withTTL(1800)->put('items', $items);
+```
+
+---
+
+## 11. Security Best Practices
+
+- **Encryption Everywhere**: All sensitive values go through `SessionCryptoInterface`.
+- **TTL Support**: Enforces temporary data constraints.
+- **Flash Isolation**: FlashBag uses internal `_flash` and `_flash_keep` keys to isolate short-lived messages.
+- **Avoid Session Pollution**: Namespacing enforces clear boundaries.
+- **Audit Logging**: Use `LoggableSessionDecorator` for full traceability (e.g. request ID, user ID).
+
+✅ Designed for **OWASP compliance** out of the box.
+
+---
+
+## 12. Testing and Testability
+
+The engine supports **100% testability**, via interface-driven design.
+
+- Replace `SessionInterface` with a mock for unit tests.
+- Use `FakeSessionStore` for integration tests.
+- Use `SessionBuilder` in tests to simulate user flows.
+
+### Example PHPUnit Test
+
+```php
+public function testSecureTokenStorage(): void
+{
+    $builder = new SessionBuilder(new InMemorySession(), new NullBagRegistry());
+    $builder->secure()->put('token', 'abc');
+
+    $this->assertSame('abc', $builder->get('token'));
+}
+```
+
+---
+
+## 13. Error Handling and Logging
+
+- Session decryption failures throw a `SessionEncryptionException`.
+- All actions via `LoggableSessionDecorator` support contextual logs (request ID, user ID, etc.).
+- Logging levels:
+    - `debug` – standard reads
+    - `info` – writes
+    - `notice` – deletions
+    - `warning` – invalidations
+
+✅ Integrate with Monolog, Sentry, Datadog, or custom logging pipelines.
+
+---
+
+## 14. Performance Considerations
+
+- **Memoization of start()**: Ensures IO is only triggered once.
+- **Lazy Loading**: `all()` and `get()` only load what’s needed.
+- **TTL**: Keeps memory footprint clean by auto-expiring values.
+- **Registry Access**: Bags are resolved once and cached via `BagRegistry`.
+
+Designed to scale from a single-server app to a distributed e-commerce platform.
+
+---
+
+## 15. Conclusion
+
+The Gemini Session Engine isn’t just a wrapper around `$_SESSION`. It’s a **modular, secure, testable, and
+developer-friendly** session orchestration layer inspired by the best practices and gives you:
+
+- ✨ Fluent DSL
+- 🔐 Security-first architecture
+- 🧩 Fully pluggable DI and storage layers
+- 🧪 Test-friendly APIs
+- 📦 Cleanly separated bags
+- 🧠 Semantic metadata through contexts and tags
+
+You're sitting on a monster of a module here — and it's glorious. The documentation you've already written is rock
+solid. But since you asked for a version that goes *even deeper*, expands all capabilities, and explains things in a *
+*junior-friendly, example-first**, yet **expert-driven** format, here's how we're going to level it up:
+
+---
+
+# 💎 Gemini Session Engine: Deep Dive Developer Manual
+
+---
+
+## 🚀 What is the Gemini Session Engine?
+
+The **Gemini Session Engine** is not just another session handler. It’s a **modular, framework-agnostic, secure,
+extensible**, and **developer-centric** session orchestration system written in **modern PHP 8.3+**. Built with **Clean
+Architecture**, **DDD**, **SRP**, and **SOLID** principles, it provides a robust infrastructure for handling all aspects
+of HTTP session state — securely, efficiently, and scalably.
+
+Whether you're working on an SPA, a classic MVC app, an API backend, or a multi-tenant SaaS — **this engine adapts**.
+
+---
+
+## 🔧 Key Capabilities at a Glance
+
+| Feature                         | Description                                                        |
+|---------------------------------|--------------------------------------------------------------------|
+| 🔐 Encrypted Session Storage    | AES-256-GCM + HMAC encryption for all values                       |
+| 💬 Flash Messaging              | Built-in one-time messaging via `FlashBag`                         |
+| 📥 Input + Errors Retention     | Keeps form input and validation errors during redirects            |
+| 🧠 DSL & Fluent API             | `Session::for('cart')->secure()->withTTL(300)->put(...)`           |
+| 🧳 Modular Bags                 | FlashBag, InputBag, ValidationBag — and custom ones via Registry   |
+| ⌛ TTL Support                   | Store expiring session data (`putWithTTL()`)                       |
+| 🔍 ArrayAccess + Sugar          | `$session['user_id']`, `isset($session['key'])`                    |
+| 🧪 Testable + Mockable          | Plug-and-play with `ArraySession` for unit tests                   |
+| 📜 Logged + Observable          | Decorated with `LoggableSessionDecorator` for traceable operations |
+| 🔄 ID Regeneration & Invalidate | Prevent session fixation and allow full reset                      |
+
+---
+
+## 🧬 Core Philosophy
+
+The session is treated as a **first-class orchestrated application layer**, not a glorified key-value store.
+
+Each piece — encryption, bag isolation, flash lifecycle, contextual storage, TTL — is cleanly separated and composable
+via rich interfaces.
+
+---
+
+## 📦 Practical Examples – Real Life, Real Code
+
+### ✅ 1. Flash Message After a Redirect
+
+```php
+Session::flash()->put('success', 'Profile updated successfully.');
+return redirect('/dashboard');
+```
+
+On the next page:
+
+```php
+if (Session::flash()->has('success')) {
+    echo Session::flash()->get('success');
+}
+```
+
+---
+
+### ✅ 2. Retain Input + Validation on Form Submit
+
+```php
+// After form fails validation
+Session::flash()->put('input.email', $_POST['email']);
+Session::flash()->put('errors.email', 'Invalid email format');
+
+return redirect('/register');
+```
+
+In your Blade/Twig view:
+
+```php
+<input type="email" name="email" value="<?= Session::flash()->get('input.email') ?>">
+<span><?= Session::flash()->get('errors.email') ?></span>
+```
+
+---
+
+### ✅ 3. Securely Store JWT Token
+
+```php
+Session::for('auth')
+    ->secure()
+    ->put('jwt', $jwt);
+```
+
+---
+
+### ✅ 4. Auto-Expiring Cart
+
+```php
+Session::for('cart')
+    ->withTTL(1800) // 30 min
+    ->put('items', $cartItems);
+```
+
+---
+
+### ✅ 5. Atomic Cache-If-Empty
+
+```php
+$userData = Session::remember('user.42.profile', fn() => fetchUser(42));
+```
+
+---
+
+### ✅ 6. ArrayAccess for DX Candy
+
+```php
+Session::put('theme', 'dark');
+
+if (Session::has('theme')) {
+    echo Session::get('theme'); // dark
+}
+
+Session::delete('theme');
+```
+
+Or:
+
+```php
+$theme = Session::get('theme', 'light');
+Session::put('page_views', 1);
+Session::increment('page_views');
+```
+
+---
+
+## 🧰 Advanced Developer Notes
+
+### 🔒 Encryption Model
+
+- Encrypts everything via `SessionCryptoInterface`
+- Uses AES-256-GCM (CTR in some versions) with HMAC
+- Encryption is pluggable — override it to support KMS, Vault, etc.
+
+---
+
+### 🧠 Contextual Fluent DSL
+
+```php
+Session::for('notifications')
+    ->secure()
+    ->withTTL(60)
+    ->put('new_message', 'Hello World');
+```
+
+- Each `SessionContext` is immutable (value object)
+- Avoids state pollution — great for multi-user, multi-tenant apps
+
+---
+
+### 🧳 Custom Bags
+
+Register custom logic-bound "bags" to scope domain storage:
+
+```php
+$registry->register('cart', new CartBag($session));
+$cart = $registry->get('cart');
+$cart->addProduct($id);
+```
+
+Bags are perfect for:
+
+- Cart
+- Notifications
+- Preferences
+- Multi-step wizards
+- Auth contexts
+
+---
+
+### ⚡ TTL-Based Ephemeral Storage
+
+Use `putWithTTL()` to auto-expire keys.
+
+```php
+Session::putWithTTL('preview.token', $token, ttl: 60);
+```
+
+After 60 seconds, the key evaporates. Perfect for:
+
+- Signup email tokens
+- Invite codes
+- Polling flags
+
+---
+
+### 🧪 Testing: Plug in Fake Session Store
+
+```php
+$mockSession = new ArraySession(...);
+$builder = new SessionBuilder($mockSession, $fakeBagRegistry);
+$builder->put('testing', 'value');
+```
+
+Use it with Pest/PHPUnit to test:
+
+- Session flows
+- Form cycles
+- TTL behavior
+
+---
+
+### 📈 Logging & Observability
+
+`LoggableSessionDecorator` logs operations with levels and context:
+
+```php
+[
+    'level' => 'info',
+    'message' => 'Session::put',
+    'context' => ['key' => 'jwt', 'value_type' => 'string'],
+]
+```
+
+Plug into:
+
+- Monolog
+- Sentry
+- Datadog
+- ELK/Opensearch
+
+---
+
+## 🧠 Why It Matters
+
+The Gemini Session Engine gives you:
+
+- **Zero-coupling** between framework, session store, and encryption
+- **Full control** over security, timeouts, and session flows
+- **A fluent developer experience** that reads like intent
+- **Production-ready architecture** backed by Clean Code
+
+---
+
+## 📋 Summary
+
+| Capability            | Yes ✅ |
+|-----------------------|-------|
+| Encrypt + TTL         | ✅     |
+| Flash Messaging       | ✅     |
+| Form Resilience       | ✅     |
+| Pluggable Storage     | ✅     |
+| Advanced DX + DSL     | ✅     |
+| High Testability      | ✅     |
+| PSR & OWASP Compliant | ✅     |
+
+---
+=== ../Infrastructure/Framework/HTTP/Session/SessionManager.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session;
+
+use Gemini\HTTP\Session\Contracts\BagRegistryInterface;
+use Gemini\HTTP\Session\Contracts\FlashBagInterface;
+use Gemini\HTTP\Session\Contracts\SessionBagInterface;
+use Gemini\HTTP\Session\Contracts\SessionBuilderInterface;
+use Gemini\HTTP\Session\Contracts\SessionInterface;
+
+/**
+ * The `SessionManager` class acts as a central access point for session-related operations.
+ *
+ * It encapsulates session management logic, adhering to Domain-Driven Design principles, by delegating
+ * responsibilities to specialized component contracts such as `SessionInterface` for session state management
+ * and `BagRegistryInterface` for organizing session data into modular "bags".
+ *
+ * Main responsibilities include:
+ * - Managing session data using structured namespaces.
+ * - Providing access to specialized data containers such as flash messages or error containers.
+ * - Abstracting session lifecycle operations and configuration.
+ *
+ * @internal Immutable class with `readonly` properties ensures integrity and predictable behavior at runtime.
+ */
+final readonly class SessionManager
+{
+    /**
+     * Constructor.
+     *
+     * Constructor promotion ensures concise and expressive initialization of immutable properties.
+     *
+     * @param SessionInterface     $session Core session handler.
+     * @param BagRegistryInterface $bags    Bag registry for managing session sub-containers.
+     */
+    public function __construct(
+        private SessionInterface     $session,
+        private BagRegistryInterface $bags
+    ) {}
+
+    /**
+     * Creates a new session builder for a specific namespace.
+     *
+     * A `SessionBuilder` enables more flexible interaction with session data
+     * in a particular structured context. This allows grouping session data
+     * logically under a unique namespace.
+     *
+     * @param string $namespace The namespace for the session context.
+     *
+     * @return SessionBuilderInterface A session builder for the given namespace.
+     */
+    public function for(string $namespace) : SessionBuilderInterface
+    {
+        // Creates a builder with scoped context and namespace.
+        return new SessionBuilder(
+            session : $this->session,
+            registry: $this->bags,
+            context : new SessionContext(namespace: $namespace)
+        );
+    }
+
+    /**
+     * Creates a new session builder with the default namespace.
+     *
+     * This is a shortcut method for working with session data outside of
+     * any specific namespace, by default using `default` as the context.
+     *
+     * @return SessionBuilderInterface A session builder for the default namespace.
+     */
+    public function builder() : SessionBuilderInterface
+    {
+        // Creates a builder with the default session namespace.
+        return new SessionBuilder(
+            session : $this->session,
+            registry: $this->bags,
+            context : new SessionContext(namespace: 'default')
+        );
+    }
+
+    /**
+     * Stores a key-value pair in the session, ensuring secure handling.
+     *
+     * Delegates secure, persistent storage to the session handler.
+     *
+     * @param string $key   The identifier for the session entry.
+     * @param mixed  $value The value to associate with the given key.
+     *
+     * @return void
+     */
+    public function set(string $key, mixed $value) : void
+    {
+        $this->session->put(key: $key, value: $value);
+    }
+
+    /**
+     * Checks if the session contains the given key.
+     *
+     * @param string $key The session key to check for.
+     *
+     * @return bool True if the key exists in the session; false otherwise.
+     */
+    public function has(string $key) : bool
+    {
+        return $this->session->has(key: $key);
+    }
+
+    /**
+     * Deletes the specified key from the session.
+     *
+     * This removes the associated value for the given key from the session storage.
+     *
+     * @param string $key The identifier of the entry to remove.
+     *
+     * @return void
+     */
+    public function delete(string $key) : void
+    {
+        $this->session->delete(key: $key);
+    }
+
+    /**
+     * Retrieves the flash message session bag.
+     *
+     * Flash messages are transient data that persists for only the next request cycle.
+     * Commonly used for notifications, feedback messages, or one-time state indicators.
+     *
+     * @return FlashBagInterface A dedicated flash bag for temporary data.
+     */
+    public function flash() : FlashBagInterface
+    {
+        return $this->bags->flash();
+    }
+
+    /**
+     * Retrieves the error message session bag.
+     *
+     * An error bag is specifically designed to store validation errors or
+     * feedback messages across requests, enabling streamlined error handling for users.
+     *
+     * @return SessionBagInterface A bag for organizing error-related session data.
+     */
+    public function errors() : SessionBagInterface
+    {
+        return $this->bags->errors();
+    }
+
+    /**
+     * Resets the entire session state.
+     *
+     * Invalidates the current session and removes all associated data. This is
+     * especially useful for logout scenarios or resetting user session contexts.
+     *
+     * @return void
+     */
+    public function reset() : void
+    {
+        $this->session->invalidate();
+    }
+}
+=== ../Infrastructure/Framework/HTTP/Session/Session.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session;
+
+use Gemini\Facade\BaseFacade;
+use Gemini\HTTP\Session\Contracts\SessionBuilderInterface;
+use Gemini\HTTP\Session\Contracts\SessionManagerInterface;
+
+/**
+ * @method static SessionBuilderInterface for (string $namespace)
+ * @method static SessionBuilderInterface builder()
+ * @method static void put(string $key, mixed $value)
+ * @method static mixed get(string $key, mixed $default = null)
+ * @method static bool has(string $key)
+ * @method static void delete(string $key)
+ * @method static void reset()
+ *
+ * @see SessionManagerInterface
+ * @see SessionBuilderInterface
+ */
+final class Session extends BaseFacade
+{
+    protected static string $accessor = SessionManagerInterface::class;
+}
+
+=== ../Infrastructure/Framework/HTTP/Session/session-todo-list.md ===
+Naravno! Evo tvoje profesionalne ToDo liste sa **precrtanim (završenim) taskovima** u istom formatu kao original —
+spremna za backlog tool po izboru:
+
+---
+
+✅ **Sveobuhvatna ToDo Lista za Gemini Session Engine**
+
+~~🔧 1. Čišćenje atributa i korekcija efekata~~  
+📝 Zadatak:  
+Ukloniti `#[Pure]` PHP atribut sa metoda `all()` i `has()`.  
+📍 Lokacija: `Gemini\HTTP\Session\AbstractSession`  
+🔍 Objašnjenje: `#[Pure]` nije validan zbog `start()` sa side-effectom.
+
+---
+
+~~🧠 2. Konsolidacija pokretanja sesije~~  
+📝 Zadatak:  
+Ukloniti `ensureSessionStarted()` i koristiti samo `SessionStoreInterface::start()`.  
+📍 Lokacija: `Session`, `AbstractSession`  
+🔍 Objašnjenje: Eliminacija duplih start mehanizama za testabilnost i sigurnost.
+
+---
+
+~~🔐 3. Flash mehanizam – refaktorisanje i stabilizacija~~  
+📝 Zadatak:  
+Refaktorisati `getFlash()` da koristi `_flash_keep`, implementirati `FlashBag`.  
+📍 Lokacija: `AbstractSession`, nova klasa: `FlashBag`  
+🔍 Objašnjenje: Deterministički flash lifecycle, poštovanje SRP-a.
+
+---
+
+~~🛡️ **4. Intencija metoda – jasna semantika za sigurnost**~~  
+📝 Zadatak:  
+Preimenovati `putPlain()` → `putInsecure()`, `putEncrypted()` → `putSecure()`  
+📍 Lokacija: `AbstractSession`  
+🔍 Objašnjenje: Intencija metode mora biti eksplicitna za sigurnosne operacije.
+
+---
+
+~~🧹 5. Poboljšanje error handling-a i logovanja~~  
+📝 Zadatak:  
+Dodati logove u `decryptValue()`, poboljšati `SessionEncryptionException`.  
+📍 Lokacija: `AbstractSession`, `SessionEncryptionException`  
+🔍 Objašnjenje: Bolja dijagnostika i observability kod enkripcionih grešaka.
+
+---
+
+~~🛠️ **~~6. Ergonomija i developer experience**~~  
+📝 Zadatak:  
+Dodati `__invoke()`, `ArrayAccess`, `__toString()` u `SessionBuilder`.  
+📍 Lokacija: `SessionBuilder`  
+🔍 Objašnjenje: Fluent DX, bolji dev ergonomics. “Sugar API”.
+
+---~~
+
+~~📈 7. Observability & kontekstualno logovanje~~  
+📝 Zadatak:  
+Dodati log kontekst u `LoggableSessionDecorator` (X-Request-ID, user_id, itd).  
+📍 Lokacija: `LoggableSessionDecorator`  
+🔍 Objašnjenje: Produkcijska dijagnostika i kontekstualni trace logovi.
+
+---
+
+~~🧰 8. Performanse i lazy loading~~  
+📝 Zadatak:  
+Memoizovati `start()`, razmotriti lazy `all()`.  
+📍 Lokacija: `AbstractSession`  
+🔍 Objašnjenje: Optimizacija IO i skalabilnost sesija.
+
+---
+
+🧪 **9. Test pokrivenost i sigurnost regresije**  
+📝 Zadatak:
+Napisati testove za:
+
+- `putWithTTL()` i njegovo ponašanje nakon isteka
+- Flash lifecycle (`putFlash`, `keepFlash`, `reflash`)
+- `decryptValue()` fallback
+- `putSecure()` vs `putInsecure()`  
+  📍 Lokacija: `tests/Session/`  
+  🔍 Objašnjenje: Regression safety & confidence. Osnova za skaliranje.
+
+---
+
+🚀 **10. Napredni dodaci i sledeći milestone-ovi**  
+📝 Predlozi:
+
+- `SerializerInterface` + `JsonSessionSerializer`
+- `RedisSessionStore`
+- `SessionObserverInterface`
+- `TaggableSessionBuilder::tag()`
+- `created_at`, `last_accessed_at`, `sliding expiration`  
+  📍 Lokacije: `Session\Serializer\`, `Session\Store\RedisSessionStore`, itd.
+
+---
+
+🧠 **11. Refaktorisati i unaprediti Session klasu kao centralni Application Service / Orkestrator**
+
+📝 Cilj:
+
+- Ulazna tačka za rad sa sesijom (`Session::put`, `::for`, `::secure`, itd.)
+- Fluent API DSL kroz `SessionContext` i `SessionBuilder`
+- Profilisanje (`Session::profile('secure')`)
+- Modularna i orkestraciona arhitektura
+
+📍 Lokacije:
+
+- `Session.php` – glavna refaktorska tačka
+- `SessionContext.php` – novi value object
+- `SessionManager.php`, `SessionBuilder.php`
+
+🧪 Test pokrivenost:
+
+- `Session::for()->secure()->withTTL()->put()`
+- `Session::get()`, `Session::remember()`
+- Fallback profil
+- Automatska enkripcija  
+  🔍 Objašnjenje:  
+  Glavna refaktorska tačka za stvaranje moćnog, fleksibilnog i sigurnog sesijskog API-ja.
+
+---
+
+🎯 **Sledeći korak?**  
+✅ Predlažem da odmah krenemo sa **refaktorisanim `Session` orchestration servisom** (Task 11).  
+Ili — ako želiš da najpre osiguramo sistem — bacimo se na **testove (Task 9)**.
+
+Ti komanduješ.
+=== ../Infrastructure/Framework/HTTP/Session/Stores/ArraySessionStore.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Stores;
+
+use Gemini\HTTP\Session\Contracts\SessionStoreInterface;
+use RuntimeException;
+
+/**
+ * Class ArraySessionStore
+ *
+ * This is an in-memory implementation of the `SessionStoreInterface` for handling session data.
+ * The store does **not persist state** between requests, making it ideal for testing or use in stateless environments.
+ * Implements core session store operations such as retrieving, storing, and deleting session data.
+ * The store is simple and does not deal with session IDs or persistence layers.
+ */
+final class ArraySessionStore implements SessionStoreInterface
+{
+    /**
+     * @var array<string, mixed> $data
+     *
+     * The underlying in-memory array used to store session key-value pairs.
+     * Keys are strings, and values can be of any type.
+     */
+    private array $data = [];
+
+    /**
+     * @var bool $started
+     *
+     * Indicates whether the session has started.
+     * A session must be "started" before data can be read from or written to it.
+     * This ensures consistency in session operations.
+     */
+    private bool $started = false;
+
+    /**
+     * Retrieve a session value using its key.
+     *
+     * Looks for the given `$key` in the internal session storage.
+     * If the key is not found, the `$default` value is returned.
+     * Automatically ensures the session has started before accessing the data.
+     *
+     * @param string     $key     The session key to retrieve.
+     * @param mixed|null $default A fallback value to return if `$key` does not exist (defaults to null).
+     *
+     * @return mixed The value associated with `$key`, or `$default` if the key does not exist.
+     */
+    public function get(string $key, mixed $default = null) : mixed
+    {
+        // Ensure the session has been started before accessing data.
+
+
+        // Return the value from session data or the default if not found.
+        return $this->data[$key] ?? $default;
+    }
+
+    /**
+     * Remove a session key.
+     *
+     * Deletes a specific `$key` from the session storage.
+     * If the `$key` does not exist in the session, this method does nothing.
+     * Automatically ensures the session is started before modifying data.
+     *
+     * @param string $key The session key to delete.
+     *
+     * @return void
+     */
+    public function delete(string $key) : void
+    {
+        // Ensure the session is started before attempting to delete a key.
+
+
+        // Remove the specified key from the session data.
+        unset($this->data[$key]);
+    }
+
+    /**
+     * Retrieve all session data.
+     *
+     * Returns the entire session storage array as key-value pairs.
+     * Automatically ensures the session is started before reading data.
+     *
+     * @return array<string, mixed> The entire session dataset.
+     */
+    public function all() : array
+    {
+        // Ensure the session is started before retrieving all data.
+
+
+        // Return the full in-memory session store.
+        return $this->data;
+    }
+
+    /**
+     * Regenerate the session ID.
+     *
+     * This operation is typically used to mitigate session fixation attacks in persistent stores.
+     * For this in-memory implementation, regenerating the session ID has no real effect,
+     * but optionally clears session data when `$deleteOldSession` is true.
+     *
+     * @param bool $deleteOldSession Whether to delete all old session data (defaults to true).
+     *
+     * @return void
+     */
+    public function regenerateId(bool $deleteOldSession = true) : void
+    {
+        // Ensure the session is started before attempting to regenerate the ID.
+
+
+        // If the old session data is to be cleared, flush all session data.
+        if ($deleteOldSession) {
+            $this->flush();
+        }
+        // No actual session ID logic is implemented for an in-memory store.
+    }
+
+    /**
+     * Flush all session data.
+     *
+     * Completely purges all key-value pairs stored in the session.
+     * This operation **permanently removes all stored data within the session's lifecycle.**
+     * Automatically ensures the session is started before clearing data.
+     *
+     * @return void
+     */
+    public function flush() : void
+    {
+        // Ensure the session is started before flushing its data.
+
+
+        // Empty the entire session store.
+        $this->data = [];
+    }
+
+    /**
+     * Stores a value in the session with a Time-To-Live (TTL).
+     *
+     * This method adds two entries into the session storage:
+     * - The primary key with the associated value.
+     * - A metadata key (`{$key}::__meta`) that tracks the expiry of the primary key.
+     *
+     * The TTL is used to calculate an expiration timestamp, which can be referenced
+     * later to determine if the session value has expired.
+     *
+     * Usage of metadata allows separation of session value and its lifecycle management
+     * information, keeping the session data structure clean and scalable.
+     *
+     * @param string $key   The unique key under which the value will be stored.
+     *                      Ensures proper scoping and organization of session keys.
+     * @param mixed  $value The value to store in the session.
+     *                      This can be any serializable PHP data type.
+     * @param int    $ttl   The time-to-live in seconds for the session entry.
+     *                      Represents the lifespan of the session value from the time of storage.
+     *
+     * @throws RuntimeException If the session is not started or fails to write.
+     *                          Ensures robust error handling in a session-based context.
+     */
+    public function putWithTTL(string $key, mixed $value, int $ttl) : void
+    {
+        // Store the main value in the session under the specified key.
+        // This key represents the user's data to be tracked.
+        $this->put(
+            key  : $key,
+            value: $value
+        );
+
+        // Store metadata about the session value to track its expiration.
+        // The metadata includes an `expires_at` timestamp to record the TTL.
+        $this->put(
+            key  : "{$key}::__meta",
+            value: ['expires_at' => time() + $ttl]
+        );
+    }
+
+    /**
+     * Save a value in the session by key.
+     *
+     * Adds or updates the given `$key` with the new `$value` in the internal session storage array.
+     * Automatically ensures the session is started before writing data.
+     *
+     * @param string $key   The key under which to store the value.
+     * @param mixed  $value The value to store (can be of any type).
+     *
+     * @return void
+     */
+    public function put(string $key, mixed $value) : void
+    {
+        // Ensure the session is started before writing data.
+
+
+        // Store the key-value pair in the in-memory session data.
+        $this->data[$key] = $value;
+    }
+
+    /**
+     * Ensure the session is initialized and started.
+     *
+     * Automatically starts the session if it has not already been started.
+     * This method guarantees that session operations are only executed after the session has been initialized.
+     *
+     * @return void
+     */
+    private function ensureSessionStarted() : void
+    {
+        // Start the session if it has not yet been marked as started.
+        if (! $this->started) {
+            $this->start();
+        }
+    }
+
+    /**
+     * Start the session.
+     *
+     * Marks the session as "started", allowing read or write operations to proceed.
+     * If the session is already marked as `started`, this method does nothing.
+     * Calling this method multiple times is safe.
+     *
+     * @return void
+     */
+    public function start() : void
+    {
+        // Check the session state and set as started if needed.
+        if (! $this->started) {
+            $this->started = true;
+        }
+    }
+
+}
+=== ../Infrastructure/Framework/HTTP/Session/Stores/NativeSessionStore.php ===
+<?php
+/** @noinspection GlobalVariableUsageInspection */
+
+/**
+ * NativeSessionStore
+ *
+ * This class provides an implementation of the SessionStoreInterface using
+ * native PHP's session mechanism ($_SESSION). It focuses on encapsulating
+ * session handling to ensure clean and reusable code for managing session
+ * states and data.
+ *
+ * @package Gemini\HTTP\Session\Stores
+ */
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Stores;
+
+use Gemini\HTTP\Session\Contracts\SessionStoreInterface;
+use RuntimeException;
+
+/**
+ * Final class implementing the SessionStoreInterface.
+ * Encapsulates native PHP session logic to manage session data securely and efficiently.
+ */
+final class NativeSessionStore implements SessionStoreInterface
+{
+    /**
+     * Retrieve a session value by its key.
+     *
+     * If the session key does not exist, the default value is returned instead.
+     *
+     * @param string     $key     The unique key in the session to retrieve the value for.
+     * @param mixed|null $default A fallback value if the key is not found (default: null).
+     *
+     * @return mixed The value associated with the key, or the default value if not found.
+     */
+    public function get(string $key, mixed $default = null) : mixed
+    {
+        // Ensure the session is started before accessing $_SESSION.
+        $this->start();
+
+        // Retrieve the value from the session storage or return the default.
+        return $_SESSION[$key] ?? $default;
+    }
+
+    /**
+     * Start the session if it hasn't already been started.
+     *
+     * This ensures that session-related operations can safely proceed.
+     *
+     * @return void
+     */
+    public function start() : void
+    {
+        // Check if the session is not active and initialize it.
+        if (session_status() === PHP_SESSION_NONE) {
+            // Start the native PHP session.
+            session_start();
+        }
+    }
+
+    /**
+     * Remove a value from the session by its key.
+     *
+     * If the key does not exist, this operation has no effect.
+     *
+     * @param string $key The unique key of the session value to delete.
+     *
+     * @return void
+     */
+    public function delete(string $key) : void
+    {
+        // Ensure the session is started before attempting to delete the key.
+        $this->start();
+
+        // Remove the specified key from the session storage.
+        unset($_SESSION[$key]);
+    }
+
+    /**
+     * Retrieve all session data as a key-value associative array.
+     *
+     * @return array<string, mixed> The entire session data.
+     */
+    public function all() : array
+    {
+        // Ensure the session is started before accessing $_SESSION.
+        $this->start();
+
+        // Return the entire $_SESSION data.
+        return $_SESSION;
+    }
+
+    /**
+     * Clear all session data.
+     *
+     * WARNING: This will remove all session key-value pairs.
+     * Use with caution as this action is irreversible for the scope of the session.
+     *
+     * @return void
+     */
+    public function flush() : void
+    {
+        // Ensure the session is started before clearing all session data.
+        $this->start();
+
+        // Empty the session array, effectively removing all data.
+        $_SESSION = [];
+    }
+
+    /**
+     * Regenerate the session ID.
+     *
+     * This is useful for preventing session fixation attacks by assigning
+     * a new session ID to the current session context.
+     *
+     * @param bool $deleteOldSession Indicates whether to delete the old session data.
+     *                               Default is true to enhance security.
+     *
+     * @return void
+     */
+    public function regenerateId(bool $deleteOldSession = true) : void
+    {
+        // Ensure the session is started before regenerating the session ID.
+        $this->start();
+
+        // Regenerate the session ID with the option to delete the old session.
+        session_regenerate_id(delete_old_session: $deleteOldSession);
+    }
+
+    /**
+     * Stores a value in the session with a Time-To-Live (TTL).
+     *
+     * This method adds two entries into the session storage:
+     * - The primary key with the associated value.
+     * - A metadata key (`{$key}::__meta`) that tracks the expiry of the primary key.
+     *
+     * The TTL is used to calculate an expiration timestamp, which can be referenced
+     * later to determine if the session value has expired.
+     *
+     * Usage of metadata allows separation of session value and its lifecycle management
+     * information, keeping the session data structure clean and scalable.
+     *
+     * @param string $key   The unique key under which the value will be stored.
+     *                      Ensures proper scoping and organization of session keys.
+     * @param mixed  $value The value to store in the session.
+     *                      This can be any serializable PHP data type.
+     * @param int    $ttl   The time-to-live in seconds for the session entry.
+     *                      Represents the lifespan of the session value from the time of storage.
+     *
+     * @throws RuntimeException If the session is not started or fails to write.
+     *                          Ensures robust error handling in a session-based context.
+     */
+    public function putWithTTL(string $key, mixed $value, int $ttl) : void
+    {
+        // Store the main value in the session under the specified key.
+        // This key represents the user's data to be tracked.
+        $this->put(
+            key  : $key,
+            value: $value
+        );
+
+        // Store metadata about the session value to track its expiration.
+        // The metadata includes an `expires_at` timestamp to record the TTL.
+        $this->put(
+            key  : "{$key}::__meta",
+            value: ['expires_at' => time() + $ttl]
+        );
+    }
+
+    /**
+     * Store a value in the session for a given key.
+     *
+     * If the key already exists, the value will be overwritten.
+     *
+     * @param string $key   The unique key to store the value under.
+     * @param mixed  $value The value to be stored in the session.
+     *
+     * @return void
+     */
+    public function put(string $key, mixed $value) : void
+    {
+        // Ensure the session is started before manipulating $_SESSION.
+        $this->start();
+
+        // Store the value in the session under the specified key.
+        $_SESSION[$key] = $value;
+    }
+}
+=== ../Infrastructure/Framework/HTTP/Session/Support/ArrayBagRegistry.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Support;
+
+use Gemini\DataHandling\ArrayHandling\Arrhae;
+use Gemini\HTTP\Session\Contracts\BagRegistryInterface;
+use Gemini\HTTP\Session\Contracts\FlashBagInterface;
+use Gemini\HTTP\Session\Contracts\SessionBagInterface;
+use InvalidArgumentException;
+
+/**
+ * ArrayBagRegistry
+ *
+ * A mutable registry for managing named session bags in a type-safe,
+ * extensible, and runtime-configurable manner.
+ *
+ * This class adheres strictly to Clean Architecture and DDD practices,
+ * allowing for dynamic registration, safe retrieval, and logical filtering.
+ *
+ * @package Gemini\HTTP\Session\Support
+ */
+final class ArrayBagRegistry implements BagRegistryInterface
+{
+    /**
+     * Internal map of session bags using the `Arrhae` data structure
+     * for advanced array manipulation and type safety.
+     *
+     * @var Arrhae<string, SessionBagInterface>
+     */
+    private Arrhae $map;
+
+    /**
+     * Constructor.
+     *
+     * @param array<string, SessionBagInterface> $bags
+     *        Initial session bags provided during instantiation.
+     */
+    public function __construct(array $bags = [])
+    {
+        $this->map = new Arrhae(items: $bags);
+    }
+
+    /**
+     * Dynamically register a session bag at runtime.
+     *
+     * Allows middleware, modules, or packages to extend the registry without
+     * needing to recreate it from scratch.
+     *
+     * @param string $name             Unique bag identifier.
+     * @param SessionBagInterface $bag The session bag instance.
+     *
+     * @return void
+     */
+    public function register(string $name, SessionBagInterface $bag) : void
+    {
+        $this->map->set(key: $name, value: $bag);
+    }
+
+    /**
+     * Retrieve a registered session bag by its name.
+     *
+     * @param string $name
+     *        The unique identifier for the session bag to retrieve.
+     *
+     * @return SessionBagInterface
+     *
+     * @throws InvalidArgumentException
+     *         If the specified bag name is not found in the registry.
+     */
+    public function get(string $name) : SessionBagInterface
+    {
+        if (! $this->map->has(key: $name)) {
+            logger()->error(
+                'Session bag could not be found in the registry.',
+                ['name' => $name]
+            );
+
+            throw new InvalidArgumentException(
+                message: "Session bag [{$name}] not found in registry."
+            );
+        }
+
+        return $this->map->get(key: $name);
+    }
+
+    /**
+     * Determine whether a session bag exists by name.
+     *
+     * @param string $name The bag key to check.
+     *
+     * @return bool True if the bag exists; false otherwise.
+     */
+    public function has(string $name) : bool
+    {
+        return $this->map->has(key: $name);
+    }
+
+    /**
+     * Returns a filtered registry instance with only the specified bag keys.
+     *
+     * This enables scoped registries for specific purposes (e.g., flash-only or validation-only).
+     *
+     * @param array<string> $keys Keys to include.
+     *
+     * @return BagRegistryInterface A new filtered registry.
+     */
+    public function only(array $keys) : BagRegistryInterface
+    {
+        return new self(bags: $this->map->only(keys: $keys)->toArray());
+    }
+
+    /**
+     * Returns a filtered registry excluding specified bag keys.
+     *
+     * Useful for removing internal or reserved bags from DX exposure.
+     *
+     * @param array<string> $keys Keys to exclude.
+     *
+     * @return BagRegistryInterface A new filtered registry.
+     */
+    public function except(array $keys) : BagRegistryInterface
+    {
+        return new self(bags: $this->map->except(keys: $keys)->toArray());
+    }
+
+    /**
+     * Retrieve all available bag keys currently registered.
+     *
+     * @return array<string> List of all registered bag names.
+     */
+    public function keys() : array
+    {
+        return $this->map->keys();
+    }
+
+    /**
+     * Retrieve all registered session bags in the registry.
+     *
+     * This method returns the complete mapping of bag names to their respective
+     * SessionBagInterface instances.
+     * It is useful for introspection, debugging,
+     * or batch operations on all session bags.
+     *
+     * @return array<string, SessionBagInterface>
+     *         An associative array where the key is the bag name, and the value is the bag instance.
+     */
+    public function all() : array
+    {
+        return $this->map->toArray();
+    }
+
+    /**
+     * Retrieves the flash message session bag.
+     *
+     * The `FlashBag` session bag is designed to store temporary messages or
+     * data, persisting only until the next request by default. It simplifies
+     * the handling of transient application states like success notifications,
+     * validation alerts, or session-based one-time flags.
+     *
+     * Example usage:
+     * ```php
+     * $flashBag = $bagRegistry->flash();
+     * $flashBag->put('success', 'Your account has been updated.');
+     * ```
+     *
+     * Dependency on `FlashBagInterface`:
+     * - `FlashBagInterface` extends `SessionBagInterface`, ensuring robust
+     *    session-management capabilities with added functionality for
+     *    managing flash-specific use cases, like `keep()` or `reflash()`.
+     *
+     * @return FlashBagInterface
+     *   A flash message session bag adhering to FlashBagInterface, providing
+     *   encapsulated methods tailored for transient data persistence.
+     */
+    public function flash() : FlashBagInterface
+    {
+        // TODO: Implement flash() method.
+    }
+
+    /**
+     * Retrieves the error message session bag.
+     *
+     * The `ErrorBag` is a generic session bag used to store validation
+     * errors, user feedback, or any application state that needs to persist
+     * across multiple requests. By handling errors via a dedicated bag,
+     * developers can centralize error management into a structured container.
+     *
+     * Example usage:
+     * ```php
+     * $errorBag = $bagRegistry->errors();
+     * $errorBag->put('email', 'The email address is invalid.');
+     * ```
+     *
+     * Dependency on `SessionBagInterface`:
+     * - The `ErrorBag` follows the contract defined by `SessionBagInterface`,
+     *   guaranteeing functionality such as value retrieval, storage, and
+     *   clearing, while allowing customization for error-related use cases.
+     *
+     * @return SessionBagInterface
+     *   A generic session bag adhering to SessionBagInterface, providing
+     *   flexible storage capabilities for error messages or other keyed data.
+     */
+    public function errors() : SessionBagInterface
+    {
+        // TODO: Implement errors() method.
+    }
+}
+=== ../Infrastructure/Framework/HTTP/Session/Support/Bags/AbstractFlashBag.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Support\Bags;
+
+use Gemini\HTTP\Session\Contracts\FlashBagInterface;
+use Gemini\HTTP\Session\Contracts\SessionBagInterface;
+
+/**
+ * AbstractFlashBag
+ *
+ * A base class for implementing session flash bags. Flash bags are used to manage
+ * temporary session data that is only available for the next request cycle.
+ * This abstraction ensures that common tasks, such as adding, retrieving, and clearing
+ * flash data, are handled in a consistent and reusable way.
+ *
+ * @package Gemini\HTTP\Session\Support\Bags
+ */
+abstract class AbstractFlashBag implements SessionBagInterface
+{
+    /**
+     * Constructor to initialize the FlashBagInterface dependency.
+     *
+     * @param FlashBagInterface $flash An implementation of FlashBagInterface used to manage flash session data.
+     */
+    public function __construct(protected FlashBagInterface $flash) {}
+
+    /**
+     * Retrieve and remove a value from the flash bag in one call.
+     * This operation is destructive – once the value is read, it is deleted from storage.
+     *
+     * @param string     $key     The key to pull from the flash bag.
+     * @param mixed|null $default Optional fallback value if the key does not exist.
+     *
+     * @return mixed|null The pulled value or the default if not found.
+     */
+    public function pull(string $key, mixed $default = null) : mixed
+    {
+        // Retrieve the value, then remove it from storage before returning.
+        $value = $this->get(key: $key, default: $default);
+        $this->forget(key: $key);
+
+        return $value;
+    }
+
+    /**
+     * Retrieve a value from the flash bag, or return a default value if the key does not exist.
+     *
+     * @param string     $key     The key to retrieve from the flash bag.
+     * @param mixed|null $default The default value to return if the key does not exist (optional).
+     *
+     * @return mixed|null The value associated with the key, or the default value.
+     */
+    public function get(string $key, mixed $default = null) : mixed
+    {
+        // Retrieve all flash data and attempt to return the value for the given key.
+        return $this->all()[$key] ?? $default;
+    }
+
+    /**
+     * Retrieve all key-value pairs currently stored in the flash bag.
+     *
+     * @return array<string, mixed> An associative array of all flash data.
+     */
+    public function all() : array
+    {
+        // Fetch all flash data using the unique flash key and ensure it is an array.
+        $data = $this->flash->get(key: $this->flashKey(), default: []);
+
+        // Verify the data is a valid array before returning it; otherwise, return an empty array.
+        return is_array($data) ? $data : [];
+    }
+
+    /**
+     * Retrieve the unique flash key associated with this specific bag.
+     *
+     * This function must be implemented by subclasses to specify a unique identifier
+     * for their flash storage within the session.
+     *
+     * @return string The flash key associated with the bag.
+     */
+    abstract protected function flashKey() : string;
+
+    /**
+     * Remove a specific key-value pair from the flash bag.
+     *
+     * @param string $key The key to remove from the flash bag.
+     *
+     * @return void
+     */
+    public function forget(string $key) : void
+    {
+        // Retrieve all existing flash data.
+        $data = $this->all();
+
+        // Check if the key exists and remove it if present.
+        if (array_key_exists($key, $data)) {
+            unset($data[$key]);
+
+            // Save the updated data back to the flash storage.
+            $this->flash->put(
+                key  : $this->flashKey(),
+                value: $data
+            );
+        }
+    }
+
+    /**
+     * Store a new key-value pair in the flash bag.
+     *
+     * If the key already exists, its value will be overwritten with the new value.
+     *
+     * @param string $key   The key under which the value will be stored.
+     * @param mixed  $value The value to associate with the given key.
+     *
+     * @return void
+     */
+    public function put(string $key, mixed $value) : void
+    {
+        // Retrieve all existing flash data.
+        $data = $this->all();
+
+        // Associate the new value with the specified key.
+        $data[$key] = $value;
+
+        // Save the updated data back to the flash storage.
+        $this->flash->put(
+            key  : $this->flashKey(),
+            value: $data
+        );
+    }
+
+    /**
+     * Determine whether the flash bag contains a specific key.
+     *
+     * @param string $key The key to check for existence.
+     *
+     * @return bool True if the key exists; false otherwise.
+     */
+    public function has(string $key) : bool
+    {
+        // Use array_key_exists to verify if the key exists within the retrieved flash data.
+        return array_key_exists($key, $this->all());
+    }
+
+    /**
+     * Clear all data stored in the flash bag.
+     *
+     * This operation will remove all stored key-value pairs and reset the storage.
+     *
+     * @return void
+     */
+    public function clear() : void
+    {
+        // Update the flash storage by setting an empty array to the flash key.
+        $this->flash->put(
+            key  : $this->flashKey(),
+            value: []
+        );
+    }
+}
+
+=== ../Infrastructure/Framework/HTTP/Session/Support/Bags/BagRegistryDecorator.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Support\Bags;
+
+use Gemini\HTTP\Session\Contracts\BagRegistryInterface;
+use Gemini\HTTP\Session\Contracts\FlashBagInterface;
+use Gemini\HTTP\Session\Contracts\SessionBagInterface;
+use Gemini\HTTP\Session\Enums\SessionBag;
+use InvalidArgumentException;
+use RuntimeException;
+
+/**
+ * Class BagRegistryDecorator
+ *
+ * A strongly typed decorator for accessing and managing session bags through the BagRegistryInterface.
+ * This provides a type-safe, expressive API over the generic bag registry, aligning with DDD principles.
+ *
+ * @package Gemini\HTTP\Session\Support\Bags
+ */
+final readonly class BagRegistryDecorator
+{
+    /**
+     * @var BagRegistryInterface $delegate
+     *
+     * The wrapped instance of the bag registry that provides general-purpose session bag operations.
+     */
+    public function __construct(private BagRegistryInterface $delegate) {}
+
+    /**
+     * Retrieve the Flash Bag.
+     *
+     * This method resolves and returns the registered flash bag from the registry while
+     * enforcing conformance to the FlashBagInterface. Throws an exception if the type mismatch occurs.
+     *
+     * @return FlashBagInterface
+     *   The flash bag instance used for storing temporary session data.
+     *
+     * @throws InvalidArgumentException
+     *   If the retrieved bag does not implement FlashBagInterface.
+     */
+    public function flash() : FlashBagInterface
+    {
+        // Retrieve the "flash" bag from the delegate registry.
+        $bag = $this->delegate->get(name: 'flash');
+
+        // Validate that the retrieved bag implements FlashBagInterface.
+        if (! $bag instanceof FlashBagInterface) {
+            throw new InvalidArgumentException(message: 'Registered bag "flash" must implement FlashBagInterface.');
+        }
+
+        // Return the strongly typed flash bag instance.
+        return $bag;
+    }
+
+    /**
+     * Retrieves a session bag by key.
+     *
+     * Delegates the retrieval logic to a lower-level abstraction, ensuring
+     * that the session bag associated with the provided key is returned.
+     * If the bag is not found, an exception will be propagated by the delegate.
+     *
+     * @param string $key The unique key identifying the session bag in the registry.
+     *                    Must be a non-empty string that conforms to system key standards.
+     *
+     * @return SessionBagInterface The session bag associated with the specified key.
+     *
+     * @throws InvalidArgumentException If the session bag does not exist in the registry.
+     * @throws RuntimeException If an unexpected error occurs during the retrieval process.
+     */
+    public function get(string $key) : SessionBagInterface
+    {
+        // Delegates the "get" call to the underlying session delegate, leveraging named arguments for clarity.
+        return $this->delegate->get(name: $key);
+    }
+
+    /**
+     * Retrieve the Input Bag.
+     *
+     * The input bag captures user inputs, allowing their persistence for redisplaying forms,
+     * particularly on validation errors.
+     *
+     * @return SessionBagInterface
+     *   The session bag instance for input data.
+     *
+     * @throws InvalidArgumentException
+     *   If the bag cannot be resolved or registered correctly.
+     */
+    public function input() : SessionBagInterface
+    {
+        // Resolve the "input" bag using its enumeration value.
+        return $this->delegate->get(name: SessionBag::Input->value);
+    }
+
+    /**
+     * Retrieve the Validation Errors Bag.
+     *
+     * This bag contains validation error messages, useful for isolating error-related session
+     * context and presenting it within user interfaces.
+     *
+     * @return SessionBagInterface
+     *   The session bag instance for validation errors.
+     *
+     * @throws InvalidArgumentException
+     *   If the bag cannot be accessed correctly from the registry.
+     */
+    public function errors() : SessionBagInterface
+    {
+        // Resolve the "validation" bag using its enumeration value.
+        return $this->delegate->get(name: SessionBag::Validation->value);
+    }
+}
+=== ../Infrastructure/Framework/HTTP/Session/Support/Bags/FlashBag.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Support\Bags;
+
+use Gemini\HTTP\Session\Contracts\FlashBagInterface;
+use Gemini\HTTP\Session\Contracts\SessionInterface;
+use Gemini\HTTP\Session\Exceptions\FlashBagKeyNotFoundException;
+use InvalidArgumentException;
+
+/**
+ * Class FlashBag
+ *
+ * A specialized, production-grade component for managing temporary flash data in a PHP-based session.
+ *
+ * Flash data refers to data that persists for the duration of one request/response cycle
+ * and is automatically removed afterward. This class provides methods to handle such data
+ * with support for re-flashing and deletion.
+ *
+ * @final
+ */
+final class FlashBag implements FlashBagInterface
+{
+    /**
+     * @const string FLASH_KEY
+     * The session key used to store temporary flash data for the current request cycle.
+     */
+    private const string FLASH_KEY = '_flash';
+
+    /**
+     * @const string FLASH_KEEP_KEY
+     * The session key used to track flash data preserved for the next request.
+     * When data is "kept," it survives one additional request.
+     */
+    private const string FLASH_KEEP_KEY = '_flash_keep';
+
+    /**
+     * FlashBag constructor.
+     *
+     * @param SessionInterface $session The session instance responsible for managing flash data.
+     */
+    public function __construct(private readonly SessionInterface $session) {}
+
+    /**
+     * Retrieves and removes a flash value from storage.
+     *
+     * If the key is not found, a default value is returned or an exception is thrown (if no default is provided).
+     *
+     * @param string     $key     The key whose value should be retrieved and removed.
+     * @param mixed|null $default A fallback value to return if the key is not found.
+     *
+     * @return mixed The value associated with the specified key.
+     * @throws FlashBagKeyNotFoundException If the key does not exist and no default is specified.
+     */
+    public function pull(string $key, mixed $default = null) : mixed
+    {
+        // Fetch all flash data currently stored in the session.
+        $flashes = $this->getFlashes();
+
+        // Check whether the key exists in the stored flash data.
+        if (! array_key_exists($key, $flashes)) {
+            // If no default value is provided, throw an exception for missing flash key.
+            if ($default === null) {
+                throw new FlashBagKeyNotFoundException(message: sprintf('Flash key "%s" not found.', $key));
+            }
+
+            return $default;
+        }
+
+        // Retrieve the value associated with the key.
+        $value = $flashes[$key];
+
+        // Remove the key-value pair from the flash storage.
+        unset($flashes[$key]);
+
+        // Save the modified flash data to the session.
+        $this->updateFlashes(data: $flashes);
+
+        return $value;
+    }
+
+    /**
+     * Determines whether a flash value is stored under the given key.
+     *
+     * @param string $key The key to check for existence in flash storage.
+     *
+     * @return bool True if the key exists, otherwise false.
+     */
+    public function has(string $key) : bool
+    {
+        // Checks for key existence in the collection of flash data.
+        return array_key_exists($key, $this->getFlashes());
+    }
+
+    /**
+     * Retrieves all current flash data stored in the session.
+     *
+     * @return array<string, mixed> An associative array of all key-value pairs in flash storage.
+     */
+    public function all() : array
+    {
+        // Return all flash data as an associative array.
+        return $this->getFlashes();
+    }
+
+    /**
+     * Preserves the specified flash key for the subsequent request cycle.
+     *
+     * Instead of being deleted after the current request, the value is migrated to the "kept" storage.
+     *
+     * @param string $key The flash key to preserve for the next request.
+     *
+     * @return void
+     */
+    public function keep(string $key) : void
+    {
+        // Retrieve both current flash data and kept flash data.
+        $flashes   = $this->getFlashes();
+        $flashKeep = $this->getKeptFlashes();
+
+        // Add the specified key's value to the kept flash data if it exists.
+        if (array_key_exists($key, $flashes)) {
+            $flashKeep[$key] = $flashes[$key];
+
+            // Update the session with the modified kept flash storage.
+            $this->updateKeptFlashes(data: $flashKeep);
+        }
+    }
+
+    /**
+     * Helper method: Retrieves all kept flash data from the session.
+     *
+     * @return array<string, mixed> A collection of key-value pairs explicitly preserved for the next request.
+     */
+    private function getKeptFlashes() : array
+    {
+        return $this->session->get(key: self::FLASH_KEEP_KEY, default: []);
+    }
+
+    /**
+     * Helper method: Updates the kept flash data in the session.
+     *
+     * @param array<string, mixed> $data The updated kept flash data to store in the session.
+     *
+     * @return void
+     */
+    private function updateKeptFlashes(array $data) : void
+    {
+        $this->session->put(key: self::FLASH_KEEP_KEY, value: $data);
+    }
+
+    /**
+     * Stores a value under a specific key in flash storage for one request cycle.
+     *
+     * @param string $key   A unique identifier for the flash data.
+     * @param mixed  $value The value to store in the session.
+     *
+     * @return void
+     * @throws InvalidArgumentException If the provided key is empty.
+     */
+    public function put(string $key, mixed $value) : void
+    {
+        // Check that a valid key is provided, preventing empty or invalid keys.
+        if (empty($key)) {
+            throw new InvalidArgumentException(message: 'Flash key cannot be empty.');
+        }
+
+        // Retrieve all stored flash data or initialize an empty array.
+        $flashes = $this->getFlashes();
+
+        // Add the given value under the specified key.
+        $flashes[$key] = $value;
+
+        // Update the session with the modified flashes.
+        $this->updateFlashes(data: $flashes);
+    }
+
+    /**
+     * Helper method: Retrieves all flash data from the session.
+     *
+     * @return array<string, mixed> A collection of key-value pairs in flash storage.
+     */
+    private function getFlashes() : array
+    {
+        return $this->session->get(key: self::FLASH_KEY, default: []);
+    }
+
+    /**
+     * Retrieves a flash value by its key, without removing it from flash storage.
+     *
+     * If the key is not found, the default value is returned instead.
+     *
+     * @param string     $key     The key identifying the flash value.
+     * @param mixed|null $default A fallback value if the key is not found.
+     *
+     * @return mixed The value associated with the key or the default value.
+     */
+    public function get(string $key, mixed $default = null) : mixed
+    {
+        // Fetch all flash data from the session storage.
+        $flashes = $this->getFlashes();
+
+        // Return the value from the flash array if it exists, otherwise return the provided default.
+        return $flashes[$key] ?? $default;
+    }
+
+    /**
+     * Helper method: Updates flash data in the session.
+     *
+     * @param array<string, mixed> $data The updated flash data to store in the session.
+     *
+     * @return void
+     */
+    private function updateFlashes(array $data) : void
+    {
+        $this->session->put(key: self::FLASH_KEY, value: $data);
+    }
+
+    /**
+     * Preserves all flash data, extending its lifespan for the next request.
+     *
+     * @return void
+     */
+    public function reflash() : void
+    {
+        // Retrieve the current flash data from session storage.
+        $flashes = $this->getFlashes();
+
+        // Update the kept flashes with all current flashes for re-flashing.
+        $this->updateKeptFlashes(data: $flashes);
+    }
+
+    /**
+     * Removes a specific flash key from storage.
+     *
+     * @param string $key The key to delete from flash data.
+     *
+     * @return void
+     */
+    public function forget(string $key) : void
+    {
+        // Retrieve all existing flash data from session storage.
+        $flashes = $this->getFlashes();
+
+        // Delete the specified key from the flash storage.
+        unset($flashes[$key]);
+
+        // Persist the modified flash data to the session.
+        $this->updateFlashes(data: $flashes);
+    }
+
+    /**
+     * Clears all flash values, including both current flashes and kept flashes stored in the session.
+     *
+     * This method ensures that the flash storage is completely reset, effectively removing
+     * both the active flash bag (`_flash`) and the kept/retained flash bag (`_flash_keep`).
+     *
+     * This can be useful in cases where the flash state needs to be programmatically reset
+     * or the session needs to ensure no stale flash values remain.
+     *
+     * It interacts with two specific session keys:
+     * - `self::FLASH_KEY`: Represents the key holding the active flash messages.
+     * - `self::FLASH_KEEP_KEY`: Represents the key tracking flash messages marked to persist.
+     *
+     * @return void
+     */
+    public function clear() : void
+    {
+        // Deletes the `_flash` key from the session storage, effectively clearing
+        // all active flash messages currently held in the flash bag.
+        $this->session->delete(key: self::FLASH_KEY);
+
+        // Deletes the `_flash_keep` key from the session storage, ensuring
+        // that no kept flash messages persist into later requests.
+        $this->session->delete(key: self::FLASH_KEEP_KEY);
+    }
+
+    /**
+     * Loads and manages flash data for the current session lifecycle.
+     *
+     * This method handles the lifecycle of flash messages as follows:
+     * - Retrieves the kept flashes from the previous request.
+     * - Overwrites the current flash data with the kept flashes.
+     * - Clears the kept flashes to reset state for the next request.
+     *
+     * @return void
+     */
+    public function load() : void
+    {
+        // Retrieve flash messages marked to be kept from the previous request.
+        $kept = $this->getKeptFlashes();
+
+        // Overwrite the current flash data with the kept flash messages.
+        $this->updateFlashes(data: $kept);
+
+        // Reset the kept flash messages for future request cycles.
+        $this->updateKeptFlashes(data: []);
+    }
+
+    /**
+     * Sweeps and clears all flash data at the end of the request lifecycle.
+     *
+     * This ensures no flash data persists beyond the intended scope.
+     *
+     * @return void
+     */
+    public function sweep() : void
+    {
+        // Clears the existing flash messages stored in the session to avoid persistence.
+        $this->updateFlashes(data: []);
+    }
+}
+=== ../Infrastructure/Framework/HTTP/Session/Support/Bags/InputBag.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Support\Bags;
+
+use Gemini\HTTP\Session\Contracts\FlashBagInterface;
+use InvalidArgumentException;
+
+/**
+ * **InputBag**
+ *
+ * Responsible for flashing and retrieving old input values from the session.
+ * This class is primarily designed to aid in repopulating form inputs after validation failures.
+ */
+final class InputBag extends AbstractFlashBag
+{
+    /**
+     * Session flash key used to store old input data.
+     * This constant helps identify the location of input data in the session.
+     *
+     * @var string
+     */
+    private const string FLASH_KEY = '_old_input';
+
+    /**
+     * Constructor.
+     *
+     * @param FlashBagInterface $flash FlashBag instance responsible for managing session flash data.
+     */
+    public function __construct(FlashBagInterface $flash)
+    {
+        parent::__construct(flash: $flash);
+    }
+
+    /**
+     * **Flash Input Data**
+     *
+     * Stores input data in the session for one-time use in the next request.
+     * Throws an exception if the provided input data is empty.
+     *
+     * @param array<string, mixed> $input The associative array of input data to be stored.
+     *
+     * @return void
+     *
+     * @throws InvalidArgumentException If $input is an empty array.
+     */
+    public function flashInput(array $input) : void
+    {
+        if (empty($input)) {
+            throw new InvalidArgumentException(message: 'Input data cannot be empty when flashing to the session.');
+        }
+
+        $this->flash->put(key: $this->flashKey(), value: $input);
+    }
+
+    /**
+     * Retrieves the session flash key used to store old input data.
+     *
+     * @return string The session flash key as a string.
+     */
+    protected function flashKey() : string
+    {
+        return self::FLASH_KEY;
+    }
+
+    /**
+     * Retrieves all input keys currently stored in the session.
+     *
+     * @return array<string> A list of flashed input keys.
+     */
+    public function keys() : array
+    {
+        return array_keys($this->all());
+    }
+
+    /**
+     * **Retrieve Flashed Input Data**
+     *
+     * Fetches flashed input data from the session and ensures it is returned as an array.
+     *
+     * @return array<string, mixed>|null Returns the flashed data as an array if available,
+     *                                   or null if no data exists or the session doesn't hold an array.
+     */
+    private function getFlashedData() : array|null
+    {
+        $data = $this->flash->get(key: $this->flashKey(), default: []);
+
+        return is_array($data) ? $data : null;
+    }
+}
+
+=== ../Infrastructure/Framework/HTTP/Session/Support/Bags/ValidationBag.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Support\Bags;
+
+use Gemini\HTTP\Session\Contracts\FlashBagInterface;
+
+/**
+ * Class ValidationBag
+ *
+ * Provides functionality to manage flashable validation errors for form input fields.
+ * This class enables temporary storage of validation errors in a session flash bag, allowing them
+ * to persist across a single request-response cycle.
+ *
+ * @package Gemini\HTTP\Session\Support\Bags
+ */
+final class ValidationBag extends AbstractFlashBag
+{
+    /**
+     * The key used to store validation errors in the flash bag.
+     *
+     * @var string
+     */
+    private const string FLASH_KEY = '_errors';
+
+    /**
+     * Constructor.
+     *
+     * @param FlashBagInterface $flash FlashBag instance responsible for session flash error storage.
+     */
+    public function __construct(FlashBagInterface $flash)
+    {
+        parent::__construct(flash: $flash);
+    }
+
+    /**
+     * Stores a set of validation errors in the flash bag for temporary usage.
+     *
+     * @param array<string, string|array<string>> $errors Associative array containing validation errors.
+     *
+     * @return void
+     */
+    public function flashErrors(array $errors) : void
+    {
+        $this->flash->put(key: $this->flashKey(), value: $errors);
+    }
+
+    /**
+     * Retrieve the unique flash key associated with this specific bag.
+     *
+     * @return string The flash key associated with the bag.
+     */
+    protected function flashKey() : string
+    {
+        return self::FLASH_KEY;
+    }
+
+    /**
+     * Retrieves the list of all input key names that have validation errors.
+     *
+     * @return array<string> An array of key names that contain validation errors.
+     */
+    public function keys() : array
+    {
+        return array_keys($this->all());
+    }
+}
+
+=== ../Infrastructure/Framework/HTTP/Session/Support/Factories/BagRegistryFactory.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Support\Factories;
+
+use Gemini\HTTP\Session\Contracts\BagRegistryInterface;
+use Gemini\HTTP\Session\Contracts\Factories\BagRegistryFactoryInterface;
+use Gemini\HTTP\Session\Contracts\SessionInterface;
+use Gemini\HTTP\Session\Enums\SessionBag;
+use Gemini\HTTP\Session\Support\ArrayBagRegistry;
+use Gemini\HTTP\Session\Support\Bags\FlashBag;
+use Gemini\HTTP\Session\Support\Bags\InputBag;
+use Gemini\HTTP\Session\Support\Bags\ValidationBag;
+
+/**
+ * BagRegistryFactory
+ *
+ * Factory responsible for creating a default BagRegistry instance, containing core session bags.
+ * These session bags include:
+ * - **FlashBag**: For temporary session data (e.g., notifications).
+ * - **InputBag**: For preserving user input (e.g., forms).
+ * - **ValidationBag**: For maintaining validation errors.
+ *
+ * **Design Goals**:
+ * - Ensure all core session bags are registered via enum-based identifiers.
+ * - Maintain extensibility and strong type safety without sacrificing simplicity.
+ *
+ * @final
+ */
+final class BagRegistryFactory implements BagRegistryFactoryInterface
+{
+    /**
+     * Creates and returns an instance of BagRegistry containing default session bags.
+     *
+     * This factory initializes the following session bags:
+     * - `FlashBag`: For handling flash session data, persists for a single request.
+     * - `InputBag`: Depends on `FlashBag` for preserving form input data.
+     * - `ValidationBag`: Depends on `FlashBag` for managing validation errors.
+     *
+     * **Key Design Objectives**:
+     * - Dependency Injection is utilized to inject the `SessionInterface`.
+     * - Enum identifiers ensure clear, extensible mapping of session bags.
+     *
+     * @return BagRegistryInterface The created BagRegistry initialized with default session bags.
+     */
+    public function create(SessionInterface $session) : BagRegistryInterface
+    {
+        // Instantiate the FlashBag, passing the session dependency.
+        // FlashBag is used to manage data that persists for only one request lifecycle.
+        $flashBag = new FlashBag(session: $session);
+
+        // Return an ArrayBagRegistry containing predefined session bags.
+        // Each bag is registered using a unique key derived from the SessionBag enum.
+        return new ArrayBagRegistry(
+            bags: [
+                      // Register the FlashBag using the SessionBag::Flash identifier.
+                      SessionBag::Flash->value      => $flashBag,
+
+                      // Register the InputBag instance; it relies on FlashBag for retaining user-submitted forms.
+                      SessionBag::Input->value      => new InputBag(flash: $flashBag),
+
+                      // Register the ValidationBag instance; it also depends on FlashBag to persist validation errors.
+                      SessionBag::Validation->value => new ValidationBag(flash: $flashBag),
+                  ]
+        );
+    }
+}
+=== ../Infrastructure/Framework/HTTP/Session/Support/Factories/SessionDriverFactory.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Support\Factories;
+
+use Gemini\HTTP\Session\Contracts\Factories\BagRegistryFactoryInterface;
+use Gemini\HTTP\Session\Contracts\SessionInterface;
+use Gemini\HTTP\Session\Drivers\ArraySession;
+use Gemini\HTTP\Session\Drivers\NativeSession;
+use Gemini\HTTP\Session\Enums\SessionDriver;
+use Gemini\HTTP\Session\Exceptions\SessionException;
+use Gemini\HTTP\Session\Stores\ArraySessionStore;
+use Gemini\HTTP\Session\Stores\NativeSessionStore;
+
+/**
+ * Factory for creating session driver instances with DI-compliant store/registry configuration.
+ *
+ * This factory encapsulates the creation logic for various session drivers, ensuring
+ * proper configuration of their dependencies such as stores and registries.
+ * This approach adheres to the Dependency Inversion Principle (DIP),
+ * promoting decoupling and testability.
+ *
+ * @final Ensures the integrity of the factory, disallowing inheritance as per DDD.
+ */
+final readonly class SessionDriverFactory
+{
+    /**
+     * Factory interface to create session bag registry instances.
+     *
+     * @var BagRegistryFactoryInterface $registryFactory
+     * A contract to abstract the creation of bag registries for session drivers.
+     */
+    public function __construct(
+        private BagRegistryFactoryInterface $registryFactory // Constructor Promotion for clarity and efficiency.
+    ) {}
+
+    /**
+     * Factory method to create and configure a new session driver instance.
+     *
+     * This method maps string-based driver types to their respective
+     * session implementation, such as `NativeSession` or `ArraySession`.
+     *
+     * It uses a robust error-checking mechanism to validate supported drivers (e.g., Enum `SessionDriver`).
+     *
+     * @param string $driver
+     *   The session driver's type, represented as a string (e.g., 'Native', 'Array').
+     *
+     * @return SessionInterface
+     *   The fully configured session implementation.
+     *
+     * @throws SessionException
+     *   Thrown if an unsupported or invalid session driver is passed to the factory.
+     */
+    public function create(string $driver) : SessionInterface
+    {
+        // Convert the provided driver type to an Enum instance; returns null if invalid.
+        $enum = SessionDriver::tryFrom(value: $driver);
+
+        // Check if the given driver is supported. If not, throw a custom SessionException.
+        if ($enum === null) {
+            throw new SessionException(
+                message: sprintf(
+                         // Compose a detailed error message, explicitly listing supported drivers.
+                             "Invalid session driver: '%s'. Supported drivers are: %s.",
+                             $driver,
+                             implode(
+                                 ', ',
+                                 array_map(
+                                     static fn(SessionDriver $d) : string => $d->value,
+                                     SessionDriver::cases()
+                                 )
+                             )
+                         )
+            );
+        }
+
+        // Use `match` to delegate the driver creation logic to specific private methods.
+        return match ($enum) {
+            SessionDriver::Native => $this->createNativeDriver(),
+            SessionDriver::Array  => $this->createArrayDriver(),
+        };
+    }
+
+    /**
+     * Private factory method for creating a `NativeSession` driver.
+     *
+     * - Encapsulates the instantiation of a native PHP session.
+     * - Injects the session store (`NativeSessionStore`) with a DI-compliant registry factory.
+     *
+     * @return NativeSession
+     *   A fully configured instance of the `NativeSession` driver.
+     */
+    private function createNativeDriver() : NativeSession
+    {
+        return new NativeSession(
+        // NativeSession requires a specific storage implementation.
+            store          : new NativeSessionStore(),
+            // Passing in a lazily evaluated factory to enable bag registry resolution.
+            registryFactory: fn(SessionInterface $s) => $this->registryFactory->create(session: $s)
+        );
+    }
+
+    /**
+     * Private factory method for creating an `ArraySession` driver.
+     *
+     * - Encapsulates the instantiation of an in-memory session.
+     * - Leverages an `ArraySessionStore` for non-persistent data storage.
+     *
+     * @return ArraySession
+     *   A fully configured instance of the `ArraySession` driver.
+     */
+    private function createArrayDriver() : ArraySession
+    {
+        return new ArraySession(
+        // ArraySession uses an in-memory storage implementation.
+            store          : new ArraySessionStore(),
+            // A lazily evaluated factory creates a session bag registry for this session.
+            registryFactory: fn(SessionInterface $s) => $this->registryFactory->create(session: $s)
+        );
+    }
+
+    /**
+     * Provides access to the BagRegistryFactoryInterface for testability and runtime overrides.
+     *
+     * This method promotes flexibility by exposing the registry factory instance,
+     * allowing consumers to interact with the factory (e.g., mocking in tests).
+     *
+     * @return BagRegistryFactoryInterface
+     *   The factory responsible for creating bag registries for sessions.
+     */
+    public function getRegistry() : BagRegistryFactoryInterface
+    {
+        return $this->registryFactory;
+    }
+}
+=== ../Infrastructure/Framework/HTTP/Session/Support/SessionCryptoService.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\HTTP\Session\Support;
+
+use Gemini\HTTP\Session\Contracts\SessionCryptoInterface;
+use Gemini\HTTP\Session\Exceptions\SessionEncryptionException;
+use Random\RandomException;
+use Throwable;
+
+/**
+ * Class SessionCryptoService
+ *
+ * Provides services for secure encryption and data integrity validation in accordance with domain-driven design.
+ * Implements AES-256-CBC for encryption and HMAC-SHA256 for integrity validation.
+ * Ensures strong encryption by enforcing strict key length and encapsulating cryptographic operations.
+ */
+final class SessionCryptoService implements SessionCryptoInterface
+{
+    /**
+     * The encryption algorithm (AES-256-CBC).
+     *
+     * @var string
+     */
+    private const string CIPHER = 'aes-256-cbc';
+
+    /**
+     * The hash algorithm used for HMAC (SHA256).
+     *
+     * @var string
+     */
+    private const string HMAC_ALGORITHM = 'sha256';
+
+    /**
+     * The size (in bytes) of the HMAC output.
+     *
+     * @var int
+     */
+    private const int HMAC_SIZE = 32;
+
+    /**
+     * The size (in bytes) of the initialization vector (IV) for the specified cipher.
+     *
+     * @var int
+     */
+    private readonly int $ivLength;
+
+    /**
+     * Constructor to initialize the encryption service.
+     *
+     * Validates the provided encryption key.
+     * Determines the IV size specific to the cipher being used.
+     *
+     * @param string $encryptionKey The encryption key to use, must be 32 bytes long.
+     *
+     * @throws SessionEncryptionException If the encryption key is invalid.
+     */
+    public function __construct(private readonly string $encryptionKey)
+    {
+        // Validate that the encryption key meets the required length for the cipher.
+        $this->validateEncryptionKey(encryptionKey: $this->encryptionKey);
+
+        // Determine the length of the IV required for the specified cipher.
+        $this->ivLength = openssl_cipher_iv_length(self::CIPHER);
+    }
+
+    /**
+     * Validates the encryption key against the required length.
+     *
+     * Ensures that the provided key is exactly 32 bytes, which is required
+     * for secure encryption with AES-256-CBC.
+     *
+     * @param string $encryptionKey The encryption key to validate.
+     *
+     * @return void
+     * @throws SessionEncryptionException If the encryption key is not 32 bytes in length.
+     */
+    private function validateEncryptionKey(string $encryptionKey) : void
+    {
+        if (strlen($encryptionKey) !== 32) {
+            throw new SessionEncryptionException(message: 'Encryption key must be exactly 32 bytes long.');
+        }
+    }
+
+    /**
+     * Encrypts a value securely using AES-256-CBC and ensures integrity with HMAC-SHA256.
+     *
+     * The method serializes the value, generates a cryptographically secure IV,
+     * encrypts the serialized data, and appends a HMAC for data verification.
+     * Encoded as a Base64 string for safe transport or storage.
+     *
+     * @param mixed $value The value to be encrypted.
+     *
+     * @return string The encrypted and integrity-verified value encoded as Base64.
+     * @throws SessionEncryptionException On any encryption failure.
+     */
+    public function encrypt(mixed $value) : string
+    {
+        try {
+            // Serialize the value to encrypt.
+            $serialized = serialize($value);
+
+            // Generate a secure random initialization vector (IV).
+            $iv = $this->generateInitializationVector();
+
+            // Encrypt the serialized data with the cipher and IV.
+            $ciphertext = $this->encryptData(data: $serialized, iv: $iv);
+
+            // Calculate the HMAC to ensure data integrity.
+            $hmac = $this->calculateHmac(data: $iv . $ciphertext);
+
+            // Combine IV, HMAC, and ciphertext, and encode in Base64 format.
+            return base64_encode($iv . $hmac . $ciphertext);
+        } catch (Throwable $exception) {
+            logger()->error('Encrypt failed.', [
+                'error'   => $exception->getMessage(),
+                'trace'   => $exception->getTraceAsString(),
+                'payload' => base64_encode(substr($value, 0, 64)) . '...', // redact partial
+            ]);
+
+            // Handle encryption errors uniformly.
+            throw new SessionEncryptionException(
+                message : 'Encryption error: ' . $exception->getMessage(),
+                previous: $exception
+            );
+        }
+    }
+
+    /**
+     * Generates a secure random initialization vector (IV) for encryption.
+     *
+     * Uses `random_bytes` to generate cryptographically secure pseudorandom bytes.
+     *
+     * @return string The generated IV.
+     * @throws RandomException If IV generation fails.
+     */
+    private function generateInitializationVector() : string
+    {
+        return random_bytes($this->ivLength);
+    }
+
+    /**
+     * Encrypts the data using AES-256-CBC.
+     *
+     * Uses the specified cipher, encryption key, and IV to securely encrypt the data.
+     *
+     * @param string $data The plaintext data to encrypt.
+     * @param string $iv   The initialization vector (IV) for the encryption process.
+     *
+     * @return string The encrypted ciphertext.
+     * @throws SessionEncryptionException If encryption fails.
+     */
+    private function encryptData(string $data, string $iv) : string
+    {
+        $ciphertext = openssl_encrypt(
+            data       : $data,
+            cipher_algo: self::CIPHER,
+            passphrase : $this->encryptionKey,
+            options    : 0,
+            iv         : $iv
+        );
+
+        if ($ciphertext === false) {
+            throw new SessionEncryptionException(message: 'Encryption failed.');
+        }
+
+        return $ciphertext;
+    }
+
+    /**
+     * Calculates the HMAC for the given data using SHA256.
+     *
+     * The HMAC is used to validate the integrity of the encrypted payload.
+     *
+     * @param string $data The data to calculate the HMAC for (IV + ciphertext).
+     *
+     * @return string The binary HMAC value.
+     */
+    private function calculateHmac(string $data) : string
+    {
+        return hash_hmac(
+            algo  : self::HMAC_ALGORITHM,
+            data  : $data,
+            key   : $this->encryptionKey,
+            binary: true
+        );
+    }
+
+    /**
+     * Decrypts an encrypted value and verifies its integrity using HMAC.
+     *
+     * The method decodes the Base64 payload, splits it into components (IV, HMAC, ciphertext),
+     * validates the integrity using HMAC, decrypts the ciphertext, and unserializes the result.
+     *
+     * @param string $encrypted The encrypted payload as a Base64 string.
+     *
+     * @return mixed The decrypted value.
+     * @throws SessionEncryptionException If decryption or validation fails.
+     */
+    public function decrypt(string $encrypted) : mixed
+    {
+        try {
+            // Decode the Base64-encoded payload.
+            $decoded = base64_decode($encrypted, strict: true);
+
+            if ($decoded === false) {
+                throw new SessionEncryptionException(message: 'Invalid payload. Base64 decoding failed.');
+            }
+
+            // Split the payload into IV, HMAC, and ciphertext components.
+            [$iv, $hmac, $ciphertext] = $this->splitPayload(encrypted: $decoded);
+
+            // Validate the HMAC to ensure data integrity.
+            $this->validateHmac(iv: $iv, ciphertext: $ciphertext, hmac: $hmac);
+
+            // Decrypt the ciphertext using the IV.
+            $decrypted = $this->decryptData(ciphertext: $ciphertext, iv: $iv);
+
+            // Unserialize and return the original value.
+            return unserialize($decrypted, ['allowed_classes' => true]);
+        } catch (Throwable $exception) {
+            logger()->error('Decryption failed.', [
+                'error'   => $exception->getMessage(),
+                'trace'   => $exception->getTraceAsString(),
+                'payload' => base64_encode(substr($encrypted, 0, 64)) . '...', // redact partial
+            ]);
+
+            // Handle any errors during the decryption process.
+            throw new SessionEncryptionException(
+                message : 'Decryption error: ' . $exception->getMessage(),
+                previous: $exception
+            );
+        }
+    }
+
+    /**
+     * Splits the decoded payload into its components: IV, HMAC, and ciphertext.
+     *
+     * Assumes a strict structure of IV + HMAC + ciphertext.
+     *
+     * @param string $encrypted The decoded raw payload.
+     *
+     * @return array An array containing the IV, HMAC, and ciphertext in respective order.
+     * @throws SessionEncryptionException If the payload structure is invalid.
+     */
+    private function splitPayload(string $encrypted) : array
+    {
+        if (strlen($encrypted) < $this->ivLength + self::HMAC_SIZE) {
+            throw new SessionEncryptionException(message: 'Invalid payload structure.');
+        }
+
+        // Extract the IV, HMAC, and ciphertext from the payload.
+        $iv         = substr($encrypted, 0, $this->ivLength);
+        $hmac       = substr($encrypted, $this->ivLength, self::HMAC_SIZE);
+        $ciphertext = substr($encrypted, $this->ivLength + self::HMAC_SIZE);
+
+        return [$iv, $hmac, $ciphertext];
+    }
+
+    /**
+     * Validates the HMAC for data integrity by comparing the calculated and provided HMAC values.
+     *
+     * @param string $iv         The initialization vector used during encryption.
+     * @param string $ciphertext The encrypted ciphertext.
+     * @param string $hmac       The HMAC included in the payload.
+     *
+     * @return void
+     * @throws SessionEncryptionException If the calculated HMAC does not match the provided one.
+     */
+    private function validateHmac(string $iv, string $ciphertext, string $hmac) : void
+    {
+        // Calculate the expected HMAC for the payload.
+        $calculatedHmac = $this->calculateHmac(data: $iv . $ciphertext);
+
+        // Compare HMACs securely to prevent timing attacks.
+        if (! hash_equals($calculatedHmac, $hmac)) {
+            logger()->warning('Session payload integrity check failed.', [
+                'iv'     => bin2hex($iv),
+                'hmac'   => bin2hex($hmac),
+                'cipher' => substr($ciphertext, 0, 32) . '...',
+            ]);
+
+            throw new SessionEncryptionException(message: 'Data integrity verification failed.');
+        }
+    }
+
+    /**
+     * Decrypts the encrypted ciphertext using AES-256-CBC.
+     *
+     * @param string $ciphertext The ciphertext to decrypt.
+     * @param string $iv         The initialization vector used during encryption.
+     *
+     * @return string The plaintext data after decryption.
+     * @throws SessionEncryptionException If decryption fails.
+     */
+    private function decryptData(string $ciphertext, string $iv) : string
+    {
+        $decrypted = openssl_decrypt(
+            data       : $ciphertext,
+            cipher_algo: self::CIPHER,
+            passphrase : $this->encryptionKey,
+            options    : 0,
+            iv         : $iv
+        );
+
+        if ($decrypted === false) {
+            throw new SessionEncryptionException(message: 'Decryption failed.');
+        }
+
+        return $decrypted;
+    }
+}

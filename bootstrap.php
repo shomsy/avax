@@ -3,7 +3,7 @@
 /** @noinspection PhpUnhandledExceptionInspection */
 declare(strict_types=1);
 
-use Gemini\Container\Containers\DependencyInjector;
+use Avax\Container\Containers\DependencyInjector;
 
 require_once __DIR__ . '/vendor/autoload.php';
 

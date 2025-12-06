@@ -1,0 +1,32 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{Namespace}};
+
+use Psr\Log\LoggerInterface;
+
+/**
+ * Service for {{ServiceName}}.
+ */
+final class {{ServiceName}}
+{
+    public function __construct(private LoggerInterface $logger) {}
+
+    public function execute(array $input): array
+    {
+        $this->logger->info("Executing service logic for {{ServiceName}}.", ['input' => $input]);
+
+        try {
+            return $this->processLogic($input);
+        } catch (\Throwable $exception) {
+            $this->logger->error("Execution failed for {{ServiceName}}.", ['error' => $exception->getMessage()]);
+            throw new \RuntimeException("Failed to execute service logic.", 0, $exception);
+        }
+    }
+
+    private function processLogic(array $input): array
+    {
+        return ['status' => 'success', 'processed_data' => $input];
+    }
+}

@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{Namespace}};
+
+use Gemini\Database\QueryBuilder\QueryBuilder;
+
+/**
+ * Entity class with QueryBuilder integration for {{EntityName}}.
+ */
+class {{EntityName}} extends QueryBuilder
+{
+    /**
+     * Table name associated with the entity.
+     */
+    protected string $tableName = '{{TableName}}';
+
+{{QueryMethods}}
+}

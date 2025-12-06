@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Gemini\Config\Architecture\DDD\AppPath;
+use Avax\Config\Architecture\DDD\AppPath;
 
 return [
     'default' => env(key: 'FILESYSTEM_DISK', default: 'local'),

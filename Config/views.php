@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Infrastructure\Config;
 
-use Gemini\Config\Architecture\DDD\AppPath;
+use Avax\Config\Architecture\DDD\AppPath;
 
 /**
  * Configuration array for paths used within the infrastructure.

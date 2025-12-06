@@ -1,0 +1,3348 @@
+=== BaseQueryBuilder.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder;
+
+use Gemini\Database\DatabaseConnection;
+use Gemini\Database\QueryBuilder\Exception\QueryBuilderException;
+use Gemini\Database\QueryBuilder\Traits\BaseQueryBuilderTrait;
+use InvalidArgumentException;
+use PDO;
+use Psr\Log\LoggerInterface;
+
+/**
+ * **BaseQueryBuilder**
+ *
+ * A **robust and extendable** base class for query builders, handling:
+ * - 🔌 **Database connection management**
+ * - 🏗 **Unit of Work for transactional operations**
+ * - 📌 **Table name handling**
+ * - ♻ **Reusable query logic for child classes**
+ *
+ * ### **Key Features**
+ * - ✅ Centralized database connection logic.
+ * - ✅ Ensures consistency across different query builders.
+ * - ✅ Provides a **foundation** for extending advanced query-building capabilities.
+ *
+ * 🏗 **Design Principles:**
+ * - **Separation of Concerns (SoC)** → Keeps query execution separate from the logic that builds queries.
+ * - **Extensibility** → Child classes (e.g., `QueryBuilder`) can extend this for additional functionality.
+ * - **Reusability** → Common logic (transactions, caching, joins, etc.) lives here.
+ *
+ * 🚀 **Usage Example:**
+ * ```
+ * class QueryBuilder extends BaseQueryBuilder
+ * {
+ *     // Custom query logic specific to QueryBuilder
+ * }
+ * ```
+ */
+abstract class BaseQueryBuilder
+{
+    use BaseQueryBuilderTrait;
+
+    /**
+     * The table name for the query.
+     */
+    protected string|null $tableName = null;
+
+    /**
+     * Initializes the query builder with a database connection, unit of work, and logger.
+     */
+    public function __construct(
+        public readonly DatabaseConnection $databaseConnection,
+        public readonly UnitOfWork         $unitOfWork,
+        public readonly LoggerInterface    $logger
+    ) {}
+
+    /**
+     * Retrieves the table name for the query.
+     *
+     * @throws QueryBuilderException If the table name is not set.
+     */
+    public function getTableName() : string
+    {
+        return $this->tableName ?? throw new QueryBuilderException(message: 'Table name is not set.');
+    }
+
+    /**
+     * Sets the table name for the query.
+     *
+     * @throws QueryBuilderException If the table name is empty or invalid.
+     */
+    public function table(string $tableName) : static
+    {
+        // Trim any leading or trailing whitespace from the `$tableName` value.
+        $tableName = trim($tableName);
+
+        // Validate the table name format (OWASP Recommendation ✅)
+        if ($tableName === '' || ! preg_match('/^[a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)?$/', $tableName)) {
+            throw new QueryBuilderException(message: 'Invalid table name format.');
+        }
+
+        $this->tableName = $tableName;
+
+        return $this;
+    }
+
+    /**
+     * Quotes a table or column name safely.
+     *
+     * The provided code first checks if the identifier (`$name`) is already wrapped with the given quoting character
+     * (`$quoteChar`) at both the start and end; if so, the identifier is returned as-is. If not, it sanitizes the
+     * identifier by stripping away characters that are not letters, digits, underscores, dollar signs, dots, or
+     * Unicode characters in the allowed range, ensuring only valid characters remain. If the sanitized result is
+     * empty, it throws an exception indicating the identifier is invalid or empty. Finally, it returns the sanitized
+     * identifier wrapped with the specified quoting character, ensuring the identifier is securely escaped for use,
+     * such as in SQL queries.
+     */
+    protected function quoteIdentifier(string $name) : string
+    {
+        // Validate the column name to ensure it contains only safe characters (a-z, A-Z, 0-9, _).
+        $this->validateColumnName(name: $name);
+
+        // Retrieve the database driver's name (e.g., mysql, pgsql, sqlite) from the active connection.
+        $driver = $this->getConnection()->getAttribute(attribute: PDO::ATTR_DRIVER_NAME);
+
+        // Determine the proper quoting characters based on the database driver.
+        $quoteChars = match ($driver) {
+            // PostgreSQL and SQLite use double quotes for identifiers.
+            'pgsql', 'sqlite' => ['"', '"'],
+            // MySQL uses backticks for identifiers.
+            'mysql'           => ['`', '`'],
+            // SQL Server uses square brackets for identifiers.
+            'sqlsrv'          => ['[', ']'],
+            // Default fallback to double quotes if the driver is unknown.
+            default           => ['"', '"'],
+        };
+
+        // Destructure the opening and closing quote characters from the determined array.
+        [$openQuote, $closeQuote] = $quoteChars;
+
+        // Split the column name by dots (.) to handle cases like schema.table or table.column.
+        $parts = explode('.', $name);
+
+        // Quote and sanitize each part of the split name (e.g., schema or table names).
+        $quotedParts = array_map(static function ($part) use ($openQuote, $closeQuote) {
+            // If the part is already properly quoted with the correct opening and closing quotes, leave it unchanged.
+            if (
+                str_starts_with($part, $openQuote)
+                && str_ends_with($part, $closeQuote)
+            ) {
+                return $part;
+            }
+
+            // Sanitize the part, allowing only alphanumeric characters, underscores, and multibyte characters.
+            $sanitized = preg_replace('/[^a-zA-Z0-9_$\x80-\xFF]/u', '', $part);
+            // Validate that the sanitized part is not empty after cleaning.
+            if (empty($sanitized)) {
+                throw new InvalidArgumentException(message: "Invalid identifier segment: '$part'");
+            }
+
+            // Return the properly quoted and sanitized identifier part.
+            return $openQuote . $sanitized . $closeQuote;
+        }, $parts);
+
+        // Combine the quoted and sanitized parts back into a single string separated by dots (schema.table format).
+        return implode('.', $quotedParts);
+    }
+
+    /**
+     * Validates a column name to prevent SQL injection.
+     */
+    protected function validateColumnName(string $name) : void
+    {
+        if (! preg_match('/^[a-zA-Z0-9_]+$/', $name)) {
+            throw new InvalidArgumentException(message: "Invalid column name: {$name}");
+        }
+    }
+
+    /**
+     * Retrieves the active database connection.
+     */
+    public function getConnection() : PDO
+    {
+        return $this->databaseConnection->getConnection();
+    }
+}
+
+=== Enums/QueryBuilderEnum.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder\Enums;
+
+/**
+ * Enumeration of query builder types and supported database drivers.
+ *
+ * Technical Description:
+ * - Defines constants for different types of query operations.
+ * - Includes supported database drivers.
+ * - Provides utility methods for validation and retrieval of all available types.
+ *
+ * Business Description:
+ * - Ensures consistency in query type definitions across the application.
+ * - Prevents errors by validating query types and database drivers.
+ */
+enum QueryBuilderEnum: string
+{
+    /** Query Types */
+    case QUERY_TYPE_SELECT         = 'SELECT';
+
+    case QUERY_TYPE_INSERT         = 'INSERT';
+
+    case QUERY_TYPE_UPDATE         = 'UPDATE';
+
+    case QUERY_TYPE_DELETE         = 'DELETE';
+
+    case QUERY_TYPE_UPSERT         = 'UPSERT';
+
+    case QUERY_TYPE_SOFT_DELETE    = 'SOFT DELETE';
+
+    case QUERY_TYPE_RESTORE        = 'RESTORE';
+
+    case QUERY_TYPE_TRUNCATE       = 'TRUNCATE';
+
+    case QUERY_TYPE_CASCADE_DELETE = 'CASCADE DELETE';
+
+    case QUERY_TYPE_DELETE_JOIN    = 'DELETE JOIN';
+
+    /** Database Drivers */
+    case DRIVER_MYSQL  = 'mysql';
+
+    case DRIVER_PGSQL  = 'pgsql';
+
+    case DRIVER_SQLITE = 'sqlite';
+
+    case DRIVER_MSSQL  = 'sqlsrv';
+
+    case DRIVER_ORACLE = 'oci';
+
+    /**
+     * Checks if the provided string is a valid query type.
+     *
+     * @param string $queryType The query type to validate.
+     *
+     * @return bool Returns true if the provided query type is valid; otherwise, false.
+     */
+    public static function isValidQueryType(string $queryType) : bool
+    {
+        return in_array(strtoupper($queryType), self::queryTypes(), true);
+    }
+
+    /**
+     * Returns all possible query types as an array of strings.
+     *
+     * @return array An array containing all query types as strings.
+     */
+    public static function queryTypes() : array
+    {
+        return [
+            self::QUERY_TYPE_SELECT->value,
+            self::QUERY_TYPE_INSERT->value,
+            self::QUERY_TYPE_UPDATE->value,
+            self::QUERY_TYPE_DELETE->value,
+            self::QUERY_TYPE_UPSERT->value,
+            self::QUERY_TYPE_SOFT_DELETE->value,
+            self::QUERY_TYPE_RESTORE->value,
+            self::QUERY_TYPE_TRUNCATE->value,
+            self::QUERY_TYPE_CASCADE_DELETE->value,
+            self::QUERY_TYPE_DELETE_JOIN->value,
+        ];
+    }
+
+    /**
+     * Checks if the provided string is a valid database driver.
+     *
+     * @param string $driver The database driver to validate.
+     *
+     * @return bool Returns true if the provided driver is valid; otherwise, false.
+     */
+    public static function isValidDriver(string $driver) : bool
+    {
+        return in_array(strtolower($driver), self::drivers(), true);
+    }
+
+    /**
+     * Returns all possible database drivers as an array of strings.
+     *
+     * @return array An array containing all supported database drivers.
+     */
+    public static function drivers() : array
+    {
+        return [
+            self::DRIVER_MYSQL->value,
+            self::DRIVER_PGSQL->value,
+            self::DRIVER_SQLITE->value,
+            self::DRIVER_MSSQL->value,
+            self::DRIVER_ORACLE->value,
+        ];
+    }
+}
+
+=== Exception/QueryBuilderException.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder\Exception;
+
+use Exception;
+use Throwable;
+
+class QueryBuilderException extends Exception
+{
+    public function __construct(
+        string         $message = "",
+        int            $code = 500,
+        Throwable|null $previous = null
+    ) {
+        parent::__construct($message, $code, $previous);
+    }
+}
+=== QueryBuilder.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder;
+
+use Gemini\Database\QueryBuilder\Enums\QueryBuilderEnum;
+use Gemini\Database\QueryBuilder\Exception\QueryBuilderException;
+use Gemini\Database\QueryBuilder\Traits\InsertUpdateTrait;
+use Gemini\Database\QueryBuilder\Traits\JoinClauseBuilderTrait;
+use Gemini\Database\QueryBuilder\Traits\OrderByAndGroupByBuilderTrait;
+use Gemini\Database\QueryBuilder\Traits\SelectQueryTrait;
+use Gemini\Database\QueryBuilder\Traits\SoftDeleteAndDeleteTrait;
+use Gemini\Database\QueryBuilder\Traits\WhereTrait;
+use Gemini\DataHandling\ArrayHandling\Arrhae;
+use PDO;
+use PDOException;
+use PDOStatement;
+
+/**
+ * **QueryBuilder**
+ *
+ * A **robust and flexible SQL query builder** providing a fluent interface for constructing
+ * and executing SQL queries dynamically.
+ *
+ * ✅ **Key Features**
+ * - **Fluent API** → Allows chaining of query methods.
+ * - **Fully Prepared Queries** → Prevents SQL injection.
+ * - **Supports Transactions** → Uses **Unit of Work**.
+ * - **Advanced Query Optimization** → Caching, indexing recommendations.
+ * - **Comprehensive SQL Support** → SELECT, INSERT, UPDATE, DELETE, JOINs, WHERE, GROUP BY, ORDER BY, etc.
+ *
+ * 🚀 **Usage Example**
+ * ```
+ * $users = $queryBuilder->table('users')
+ *     ->where('status', 'active')
+ *     ->orderBy('created_at', 'DESC')
+ *     ->limit(10)
+ *     ->get();
+ * ```
+ */
+class QueryBuilder extends BaseQueryBuilder
+{
+    use SelectQueryTrait;
+    use InsertUpdateTrait;
+    use SoftDeleteAndDeleteTrait;
+    use WhereTrait;
+    use JoinClauseBuilderTrait;
+    use OrderByAndGroupByBuilderTrait;
+
+    /**
+     * Sets the LIMIT value for the SELECT query.
+     *
+     * @param int $limit Maximum number of rows to retrieve.
+     *
+     * @return static
+     *
+     * @throws QueryBuilderException
+     */
+    public function limit(int $limit) : static
+    {
+        if ($limit < 0) {
+            throw new QueryBuilderException(message: 'Limit must be a non-negative integer.');
+        }
+
+        $this->limit = $limit;
+
+        return $this;
+    }
+
+    /**
+     * Sets the OFFSET value for the SELECT query.
+     *
+     * @param int $offset Number of rows to skip.
+     *
+     * @return static
+     *
+     * @throws QueryBuilderException
+     */
+    public function offset(int $offset) : static
+    {
+        if ($offset < 0) {
+            throw new QueryBuilderException(message: 'Offset must be a non-negative integer.');
+        }
+
+        $this->offset = $offset;
+
+        return $this;
+    }
+
+    /**
+     * Registers a query for **deferred execution** using Unit of Work.
+     *
+     * ✅ **Best Practices**
+     * - **Batch Queries** → Reduces database calls.
+     * - **Ensures Atomicity** → All queries execute in **one transaction**.
+     *
+     * @param QueryBuilderEnum $operation  The type of query operation.
+     * @param PDOStatement     $statement  The prepared statement.
+     * @param array            $parameters Query parameters.
+     *
+     * @return static Returns the current instance.
+     */
+    public function registerQueryInUnitOfWork(
+        QueryBuilderEnum $operation,
+        PDOStatement     $statement,
+        array            $parameters = []
+    ) : static {
+        $this
+            ->getUnitOfWork()
+            ->registerQuery(
+                operation : $operation,
+                statement : $statement,
+                pdo       : $this->getConnection(),
+                parameters: $parameters,
+            );
+
+        return $this;
+    }
+
+    /**
+     * Executes all **deferred queries** stored in the Unit of Work.
+     *
+     * ✅ **Why This?**
+     * - **Batch execution for better performance**.
+     * - **Ensures ACID compliance** (All-or-Nothing Transactions).
+     *
+     * @return Arrhae The results of executed queries.
+     *
+     * @throws QueryBuilderException If the transaction fails.
+     */
+    public function flush() : Arrhae
+    {
+        return $this->getUnitOfWork()->flush();
+    }
+
+    /**
+     * Enables **DISTINCT** in queries.
+     *
+     * ✅ **Why?**
+     * - Ensures that only **unique** results are returned.
+     *
+     * @return static Returns the current instance.
+     */
+    public function distinct() : static
+    {
+        $this->distinct = true;
+
+        return $this;
+    }
+
+    /**
+     * Switches the query to use the **read** database connection.
+     *
+     * ✅ **Why?**
+     * - **Optimized for Performance** → **Read operations** should not use the **write connection**.
+     *
+     * @return static Returns the current instance.
+     */
+    public function useReadConnection() : static
+    {
+        $this->useReadConnection = true;
+
+        return $this;
+    }
+
+    /**
+     * Checks if a record exists in the database.
+     *
+     * ✅ **Why?**
+     * - **Efficient Existence Check** → Uses `LIMIT 1` for **fast lookups**.
+     *
+     * @return bool Returns `true` if the record exists, otherwise `false`.
+     *
+     * @throws QueryBuilderException If execution fails.
+     */
+    public function exists() : bool
+    {
+        try {
+            $stmt = $this->getConnection()->prepare(query: $this->buildSelectQuery() . ' LIMIT 1');
+            $stmt->execute(params: $this->getParameters());
+
+            return (bool) $stmt->fetch(mode: PDO::FETCH_ASSOC);
+        } catch (PDOException $exception) {
+            throw new QueryBuilderException(
+                message: "Failed to check if record exists: " . $exception->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Executes the current query.
+     *
+     * ✅ **Why This Approach?**
+     * - **Ensures Safe Execution** → Always uses **prepared statements**.
+     * - **Centralized Query Execution** → All query execution **happens here**.
+     *
+     * @return array The query results.
+     *
+     * @throws QueryBuilderException If execution fails.
+     */
+    public function execute() : array
+    {
+        // Dynamically build the SQL query
+        $query = $this->buildSelectQuery();
+
+        // Get a PDO connection
+        $pdo = $this->getConnection();
+
+        // Prepare the statement (Prevents SQL Injection ✅)
+        $stmt = $pdo->prepare(query: $query);
+
+        try {
+            // Execute with bound parameters
+            $stmt->execute($this->getParameters());
+        } catch (PDOException $exception) {
+            throw new QueryBuilderException(
+                message : "Query execution failed: " . $exception->getMessage(),
+                previous: $exception
+            );
+        }
+
+        return $stmt->fetchAll(mode: PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Retrieves the first result from the query execution.
+     *
+     * This method is useful for retrieving a single record from the database without iterating
+     * over the entire result set. It supports extracting specific columns using **dot notation**
+     * or applying a **callback function** to the first item.
+     *
+     * 🔥 **Key Features:**
+     * - **Retrieves a single record** → Returns the first row from the result set.
+     * - **Supports dot notation (`.`)** → Fetch nested values like `'address.city'`.
+     * - **Supports Closure transformation** → Modify the result dynamically.
+     * - **Returns a default value** → If no record is found, fallback to a default.
+     *
+     * ---
+     * ✅ **Basic Usage**
+     * ```
+     * $user = QueryBuilder::table('users')->where('status', 'active')->first();
+     * echo $user['name']; // Outputs: "John Doe"
+     * ```
+     *
+     * ---
+     * ✅ **Extracting a Single Column**
+     * ```
+     * $email = QueryBuilder::table('users')->first('email', 'No email found');
+     * echo $email; // Outputs: "user@example.com"
+     * ```
+     *
+     * ---
+     * ✅ **Using Dot Notation for Nested Values**
+     * ```
+     * $city = QueryBuilder::table('users')->first('address.city', 'Unknown');
+     * echo $city; // Outputs: "New York"
+     * ```
+     *
+     * ---
+     * ✅ **Applying a Callback Function**
+     * ```
+     * $userName = QueryBuilder::table('users')->first(fn($user) => strtoupper($user['name']));
+     * echo $userName; // Outputs: "JOHN DOE"
+     * ```
+     *
+     * ---
+     * ✅ **Handling Empty Results Gracefully**
+     * ```
+     * $user = QueryBuilder::table('users')->where('id', 9999)->first();
+     * if (!$user) {
+     *     echo "User not found.";
+     * }
+     * ```
+     *
+     * ---
+     * ✅ **Combining `first()` with `get()` for More Flexibility**
+     * ```
+     * $users = QueryBuilder::table('users')->where('status', 'active')->get();
+     *
+     * if (!$users->isEmpty()) {
+     *     echo "First active user: " . $users->first('name');
+     * } else {
+     *     echo "No active users found.";
+     * }
+     * ```
+     *
+     * ---
+     * @param string|int|Closure|null $key      Optional. The key to extract using **dot notation** or a **Closure**.
+     *                                          If `null`, returns the entire first row.
+     * @param mixed                   $default  The default value to return if the key does not exist or no record is
+     *                                          found.
+     *
+     * @return mixed The **first record**, the **extracted key's value**, the **result of a Closure**, or `$default` if
+     *               empty.
+     */
+    public function first() : ?array
+    {
+        // Ensure the query fetches only one result
+        $this->limit = 1;
+
+        // Execute the query and retrieve results
+        $results = $this->get();
+
+        // Return the first record, or `null` if none found
+        return $results->isEmpty() ? null : $results->first();
+    }
+
+
+    /**
+     * Drops the specified table if it exists.
+     *
+     * ✅ **Why?**
+     * - **Safe Drop** → Prevents errors if the table doesn't exist.
+     *
+     * @return static Returns the current instance.
+     *
+     * @throws QueryBuilderException If the table name is missing.
+     */
+    public function drop() : static
+    {
+        if (! isset($this->tableName)) {
+            throw new QueryBuilderException(message: "Table name is required to drop a table.");
+        }
+
+        return $this->raw(sql: "DROP TABLE IF EXISTS `{$this->tableName}`");
+    }
+
+    /**
+     * Executes a raw SQL query **with parameter binding**.
+     *
+     * ✅ **Why?**
+     * - **Safe Execution** → Always **prepared & parameterized**.
+     *
+     * @param string $sql        The raw SQL query.
+     * @param array  $parameters Query parameters.
+     *
+     * @return static Returns the current instance.
+     *
+     * @throws QueryBuilderException If execution fails.
+     */
+    public function raw(string $sql, array $parameters = []) : static
+    {
+        try {
+            $stmt = $this->getConnection()->prepare(query: $sql);
+            $stmt->execute(params: $parameters);
+
+            return $this;
+        } catch (PDOException $exception) {
+            throw new QueryBuilderException(
+                message: "Failed to execute raw query: " . $exception->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Specifies the columns to be selected in the query.
+     *
+     * 🏆 **Key Features:**
+     * - ✅ Allows dynamic selection of specific columns.
+     * - ✅ Defaults to `SELECT *` if no columns are provided.
+     * - ✅ Prevents SQL injection via strict column name validation.
+     * - ✅ Ensures **readability & maintainability** through a fluent interface.
+     *
+     * 🔥 **Why This Matters?**
+     * - Explicit column selection **reduces database load** and improves performance.
+     * - Ensuring valid column names prevents **SQL injection** attacks.
+     * - Defaults to `SELECT *` when called without arguments for flexibility.
+     *
+     * ---
+     * 📌 **Usage Example**
+     * ```
+     * $users = $queryBuilder->table('users')
+     *     ->select() // Defaults to SELECT *
+     *     ->where('status', 'active')
+     *     ->get();
+     * ```
+     * ---
+     *
+     * @param string ...$columns The column names to be retrieved from the database.
+     *
+     * @return static Returns the current instance to allow method chaining.
+     */
+    public function select(string ...$columns) : static
+    {
+        // 🏗 If no columns are provided, default to '*'
+        $this->columns = empty($columns) ? ['*'] : $columns;
+
+        // 🔍 Validate column names (if columns are explicitly provided)
+        foreach ($this->columns as $column) {
+            $this->validateColumnName(name: $column);
+        }
+
+        return $this;
+    }
+
+}
+
+=== Traits/BaseQueryBuilderTrait.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder\Traits;
+
+/**
+ * **BaseQueryBuilderTrait**
+ *
+ * ✅ **Purpose:**
+ * This trait acts as a **"Master Trait"**, grouping all essential traits required for a powerful, scalable,
+ * and efficient **SQL Query Builder**.
+ *
+ * 🏗 **Design Goals:**
+ * - Centralized management of all reusable query-related traits.
+ * - Enables **modular, reusable, and maintainable** code structure.
+ * - Ensures the **Single Responsibility Principle (SRP)** by keeping logic in separate traits.
+ * - Provides a **clean and organized** way to extend the QueryBuilder functionality.
+ *
+ * 🛠 **Key Features (Grouped Traits):**
+ * - **🔄 Database Transactions** → `DatabaseTransactionTrait`
+ * - **📌 Identity Map Pattern** → `IdentityMapTrait`
+ * - **📝 INSERT, UPDATE, UPSERT** → `InsertUpdateTrait`
+ * - **🔗 JOIN Clause Handling** → `JoinClauseBuilderTrait`
+ * - **📊 ORDER BY, GROUP BY, HAVING** → `OrderByAndGroupByBuilderTrait`
+ * - **🧩 Unit of Work Pattern** → `ProvidesUnitOfWork`
+ * - **⚡ Query Optimization & Indexing** → `QueryOptimizationTrait`
+ * - **🔍 SELECT Queries, Caching & Pagination** → `SelectQueryTrait`
+ * - **🗑 Soft Deletes & Data Deletion** → `SoftDeleteAndDeleteTrait`
+ * - **🔎 WHERE Clause Handling** → `WhereTrait`
+ *
+ * 🏆 **Benefits of Using This Trait:**
+ * - **Single inclusion point** for all QueryBuilder functionality.
+ * - **Avoids trait conflicts** by defining method precedence (if needed).
+ * - **Easier to maintain** when adding or modifying traits.
+ * - **Improves testability** by ensuring well-structured, isolated functionalities.
+ *
+ * 🚀 **Usage Example in QueryBuilder Class:**
+ * ```
+ * class QueryBuilder
+ * {
+ *     use BaseQueryBuilderTrait;
+ *
+ *     // Additional QueryBuilder logic...
+ * }
+ * ```
+ */
+trait BaseQueryBuilderTrait
+{
+    use DatabaseTransactionTrait;
+    use IdentityMapTrait;
+    use InsertUpdateTrait;
+    use JoinClauseBuilderTrait;
+    use OrderByAndGroupByBuilderTrait;
+    use ProvidesUnitOfWork;
+    use QueryOptimizationTrait;
+    use SelectQueryTrait;
+    use SoftDeleteAndDeleteTrait;
+    use WhereTrait;
+    use SchemaQueryBuilderTrait;
+}
+
+=== Traits/DatabaseTransactionTrait.php ===
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Trait DatabaseTransactionTrait
+ *
+ * Provides utility methods for handling database transactions, supporting both
+ * standard and nested transactions through savepoints. Ensures robust error handling
+ * by rolling back appropriately in case of failures and logging transaction errors.
+ *
+ * Applicable to classes managing a PDO-based database connection and requiring
+ * transactional operations.
+ */
+
+namespace Gemini\Database\QueryBuilder\Traits;
+
+use Exception;
+use Gemini\Database\QueryBuilder\Exception\QueryBuilderException;
+use PDO;
+
+/**
+ * Provides functionality for managing database transactions,
+ * including support for nested transactions using savepoints.
+ */
+trait DatabaseTransactionTrait
+{
+    private const string SAVEPOINT_PREFIX = 'SAVEPOINT_';
+
+    /**
+     * Runs a series of database operations within a single transaction.
+     *
+     * Supports nested transactions using SAVEPOINTS.
+     * If any operation fails, it rolls back to the last savepoint or the main transaction.
+     *
+     * @param callable $operations A callable that contains the operations to be performed within the transaction.
+     *
+     * @throws Exception If any operation fails, an exception is thrown, and the transaction is rolled back.
+     */
+    public function transaction(callable $operations) : void
+    {
+        $pdo = $this->getDatabaseConnection();
+        $isNested = $pdo->inTransaction();
+
+        if ($isNested) {
+            $savepoint = $this->createSavepoint(pdo: $pdo);
+        } else {
+            $this->beginTransaction();
+        }
+
+        try {
+            $operations(); // Execute the operations
+            $isNested ? $this->releaseSavepoint(pdo: $pdo, savepoint: $savepoint) : $this->commit();
+        } catch (Exception $exception) {
+            $isNested ? $this->rollbackToSavepoint(pdo: $pdo, savepoint: $savepoint) : $this->rollbackTransaction();
+            $this->logTransactionError(exception: $exception);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Gets the current database connection.
+     */
+    public function getDatabaseConnection() : PDO
+    {
+        return $this->databaseConnection->getConnection();
+    }
+
+    /**
+     * Creates a savepoint for nested transactions.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    private function createSavepoint(PDO $pdo) : string
+    {
+        $savepoint = self::SAVEPOINT_PREFIX . uniqid();
+
+        $quotedSavepoint = $pdo->quote(string: $savepoint);
+
+        if ($quotedSavepoint === false) {
+            throw new QueryBuilderException(message: "PDO::quote() failed to quote the savepoint name.");
+        }
+
+        $pdo->exec(statement: "SAVEPOINT " . $quotedSavepoint);
+
+        return $savepoint;
+    }
+
+
+    /**
+     * Begins a new transaction on the current database connection.
+     * If a transaction is already active, it does nothing.
+     */
+    public function beginTransaction() : void
+    {
+        $pdo = $this->getDatabaseConnection();
+        if (! $pdo->inTransaction()) {
+            $pdo->beginTransaction();
+        }
+    }
+
+    /**
+     * Releases a savepoint for nested transactions.
+     */
+    private function releaseSavepoint(PDO $pdo, string $savepoint) : void
+    {
+        $stmt = $pdo->prepare(query: "RELEASE SAVEPOINT :savepoint");
+        $stmt->execute(params: ['savepoint' => $savepoint]);
+    }
+
+    /**
+     * Commits the current database transaction.
+     */
+    public function commit() : void
+    {
+        $pdo = $this->getDatabaseConnection();
+        if ($pdo->inTransaction()) {
+            $pdo->commit();
+        }
+    }
+
+    /**
+     * Rolls back to a savepoint in nested transactions.
+     */
+    private function rollbackToSavepoint(PDO $pdo, string $savepoint) : void
+    {
+        $stmt = $pdo->prepare(query: "ROLLBACK TO SAVEPOINT :savepoint");
+        $stmt->execute(params: ['savepoint' => $savepoint]);
+    }
+
+    /**
+     * Rolls back the current database transaction.
+     */
+    public function rollbackTransaction() : void
+    {
+        $pdo = $this->getDatabaseConnection();
+        if ($pdo->inTransaction()) {
+            try {
+                $pdo->rollBack();
+            } catch (Exception $e) {
+                $this->logger->error(message: 'Rollback failed: ' . $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * Logs transaction-related errors.
+     */
+    private function logTransactionError(Exception $exception) : void
+    {
+        $this->logger->error(
+            message: 'Transaction failed: ' . $exception->getMessage(),
+            context: ['exception' => $exception]
+        );
+    }
+}
+=== Traits/IdentityMapTrait.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder\Traits;
+
+use Gemini\Database\QueryBuilder\Exception\QueryBuilderException;
+
+/**
+ * **IdentityMapTrait**
+ *
+ * Implements the **Identity Map** pattern to cache and retrieve objects
+ * within a single database transaction or request lifecycle.
+ *
+ * 🏆 **Benefits:**
+ * - ✅ **Prevents redundant queries** by storing retrieved data in memory.
+ * - ✅ **Ensures consistency** by always returning the same instance of an entity.
+ * - ✅ **Improves performance** by reducing database hits.
+ * - ✅ **Supports cache integrations** (Redis, APCu, etc.).
+ */
+trait IdentityMapTrait
+{
+    /**
+     * Stores cached entities, indexed by their unique keys.
+     *
+     * @var array<string,|null mixed>
+     */
+    private readonly array|null $identityMap;
+
+    /**
+     * Adds an entity to the identity map.
+     *
+     * If an entity with the same key already exists, it will be **overwritten**.
+     *
+     * @param string $key   The unique identifier for the entity.
+     * @param mixed  $value The entity data to be stored.
+     */
+    public function addToIdentityMap(string $key, mixed $value) : void
+    {
+        $this->identityMap[$key] = $value;
+    }
+
+    /**
+     * Retrieves an entity from the identity map by its key.
+     *
+     * @param string $key The unique identifier of the entity.
+     *
+     * @return mixed|null The stored entity if found, otherwise `null`.
+     */
+    public function getFromIdentityMap(string $key) : mixed
+    {
+        return $this->identityMap[$key] ?? null;
+    }
+
+    /**
+     * Checks if an entity exists in the identity map.
+     *
+     * @param string $key The unique identifier of the entity.
+     *
+     * @return bool Returns `true` if the entity exists, otherwise `false`.
+     */
+    public function hasInIdentityMap(string $key) : bool
+    {
+        return array_key_exists($key, $this->identityMap);
+    }
+
+    /**
+     * Removes an entity from the identity map.
+     *
+     * @param string $key The unique identifier of the entity.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function removeFromIdentityMap(string $key) : void
+    {
+        if (! array_key_exists($key, $this->identityMap)) {
+            throw new QueryBuilderException(message: "Cannot remove entity: Key '{$key}' not found in Identity Map.");
+        }
+
+        unset($this->identityMap[$key]);
+    }
+
+    /**
+     * Clears all stored entities from the identity map.
+     */
+    public function clearIdentityMap() : void
+    {
+        $this->identityMap = [];
+    }
+}
+
+=== Traits/InsertUpdateTrait.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder\Traits;
+
+use Gemini\Database\QueryBuilder\Enums\QueryBuilderEnum;
+use Gemini\Database\QueryBuilder\Exception\QueryBuilderException;
+use PDO;
+
+/**
+ * **InsertUpdateTrait**
+ *
+ * Provides transactional `INSERT`, `UPDATE`, `BATCH INSERT`, and `UPSERT` operations,
+ * while integrating a **Unit of Work** mechanism to delay execution until explicitly flushed.
+ *
+ * **Security Enhancements:**
+ * - 🛡️ **Prevents SQL Injection** with strict parameter binding.
+ * - 🔒 **Ensures transactional integrity** for batch operations.
+ * - 🚀 **Optimized for large datasets** (batch inserts split into smaller transactions).
+ */
+trait InsertUpdateTrait
+{
+    /**
+     * Inserts multiple rows of data into the database in batches.
+     *
+     * This method takes an array of rows, splits them into smaller chunks, and executes
+     * batch insert queries to optimize a database writes. It uses parameterized queries
+     * to prevent SQL injection and works on tables with the structure defined by the
+     * QueryBuilder instance.
+     *
+     * @param array $rows An array where each element is an associative array representing a row
+     *                    to be inserted. Each row must contain the same keys, which correspond
+     *                    to the column names in the database table.
+     *
+     * @return static Returns the current instance of the QueryBuilder to enable method chaining.
+     *
+     * @throws QueryBuilderException Throws an exception if the input array of rows is empty.
+     */
+    public function batchInsert(array $rows) : static
+    {
+        // Check if the input array of rows is empty
+        if (empty($rows)) {
+            // Throw a custom exception if no data is provided for the batch insert
+            throw new QueryBuilderException(message: 'No data provided for batch insert.');
+        }
+
+        // Get the database connection instance (PDO)
+        $pdo = $this->getConnection();
+        // Disable emulation of prepared statements to improve security and prevent SQL injection
+        $pdo->setAttribute(attribute: PDO::ATTR_EMULATE_PREPARES, value: false); // 🛡️ Prevents SQL Injection
+
+        // Extract the column names from the first row of the input data
+        $columns = array_keys($rows[0]);
+        // Create a comma-separated list of column names for the SQL statement
+        $columnsList = implode(', ', $columns);
+
+        // Split the input data into smaller chunks, with each chunk containing up to 500 rows
+        $chunks = array_chunk($rows, 500); // ✅ Splits into batches of 500 rows
+
+        // Iterate over each chunk of data
+        foreach ($chunks as $chunk) {
+            // Initialize an array to store SQL placeholders for the values
+            $placeholders = [];
+            // Initialize an array to store the query parameters
+            $parameters = [];
+
+            // Iterate over each row in the current chunk
+            foreach ($chunk as $index => $row) {
+                // Generate placeholders for the current row's values using the column names and row index
+                $rowPlaceholders = array_map(static fn($key) => ":{$key}_{$index}", $columns);
+                // Combine the placeholders into a parenthesized string and add to the placeholders array
+                $placeholders[] = '(' . implode(', ', $rowPlaceholders) . ')';
+                // Map the row values to their corresponding placeholders
+                foreach ($row as $key => $value) {
+                    $parameters["{$key}_{$index}"] = $value;
+                }
+            }
+
+            // Generate the SQL query for inserting the current chunk of data
+            $sql = sprintf(
+                'INSERT INTO %s (%s) VALUES %s',
+                $this->getTableName(),      // Get the table name from the QueryBuilder instance
+                $columnsList,              // The list of columns to insert data into
+                implode(', ', $placeholders) // Comma-separated list of placeholders for all rows
+            );
+
+            // Prepare the SQL statement to be executed
+            $statement = $pdo->prepare(query: $sql);
+            // Execute the prepared statement with the mapped parameters
+            $this->registerQueryInUnitOfWork(
+                operation : QueryBuilderEnum::QUERY_TYPE_INSERT,
+                statement : $statement,
+                parameters: $parameters
+            );
+        }
+
+        // Return the current QueryBuilder instance to support method chaining
+        return $this;
+    }
+
+    /**
+     * Performs an upsert operation, inserting a record if it does not exist,
+     * or updating the specified columns if a duplicate key is found.
+     *
+     * The method supports MySQL's `ON DUPLICATE KEY UPDATE` or PostgreSQL's
+     * `ON CONFLICT DO UPDATE` based on the database driver.
+     * Uses parameterized queries to enhance security and **prevent SQL injection**.
+     *
+     * @param array $values        The dataset to be inserted. Keys are column names and values are their respective
+     *                             values.
+     * @param array $updateColumns The column names to be updated in case of a duplicate key or conflict.
+     *
+     * @return static The current instance for method chaining.
+     * @throws QueryBuilderException If no data is provided or if required arrays are empty.
+     *
+     */
+    public function upsert(array $values, array $updateColumns) : static
+    {
+        // Check if the `$values` array or `$updateColumns` array is empty.
+        // If either is empty, throw a custom `QueryBuilderException` since there is no data to perform an upsert operation.
+        if (empty($values) || empty($updateColumns)) {
+            throw new QueryBuilderException(message: 'No data provided for upsert.');
+        }
+
+        // Retrieve the PDO database connection using the `getConnection` method.
+        $pdo = $this->getConnection();
+
+        // Set the PDO attribute to disable emulated prepared statements.
+        // This improves security by preventing SQL injection attacks.
+        $pdo->setAttribute(attribute: PDO::ATTR_EMULATE_PREPARES, value: false); // 🛡️ Prevents SQL Injection
+
+        // Create a comma-separated string of column names from the keys of the `$values` array.
+        $columns = implode(', ', array_keys($values));
+
+        // Create a comma-separated string of placeholders (e.g., `:column_name`) for prepared statements.
+        $placeholders = implode(', ', array_map(static fn($key) => ":{$key}", array_keys($values)));
+
+        // Create a comma-separated string of `column = :update_column` pairs for the ON DUPLICATE KEY UPDATE clause.
+        $updates = implode(', ', array_map(static fn($col) => "{$col} = :update_{$col}", $updateColumns));
+
+        // MySQL uses "ON DUPLICATE KEY UPDATE", while PostgreSQL uses "ON CONFLICT (...) DO UPDATE".
+        // The query is dynamically adjusted based on the database driver.
+        $sql = sprintf(
+            'INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s',
+            $this->getTableName(), // Get the table name from the class property or throw if not set.
+            $columns,              // Columns to insert data into.
+            $placeholders,         // Placeholders for prepared statement values.
+            $updates               // Update statement for duplicate key cases.
+        );
+
+        // Check if the current database driver is PostgreSQL using the PDO driver name.
+        if ($pdo->getAttribute(attribute: PDO::ATTR_DRIVER_NAME) === QueryBuilderEnum::DRIVER_PGSQL->value) {
+            // Create a comma-separated string of columns used in PostgreSQL's ON CONFLICT clause.
+            $conflictColumns = implode(', ', $updateColumns);
+            // Construct the SQL query string for PostgreSQL's INSERT INTO ... ON CONFLICT ... DO UPDATE statement.
+            $sql = sprintf(
+                'INSERT INTO %s (%s) VALUES (%s) ON CONFLICT (%s) DO UPDATE SET %s',
+                $this->getTableName(),  // Get the table name from the class property or throw if not set.
+                $columns,               // Columns to insert data into.
+                $placeholders,          // Placeholders for prepared statement values.
+                $conflictColumns,       // Columns to check for conflicts.
+                $updates                // Update statement for conflict cases.
+            );
+        }
+
+        // Prepare the SQL statement using the PDO `prepare` method.
+        // This step ensures the query is safe to execute and supports parameterized values for security.
+        $statement = $pdo->prepare(query: $sql);
+
+        // ❗ This registers the query with the Unit of Work system, so it will be executed in a controlled batch during flush().
+        // The type of operation is specified as an enum value representing the "INSERT" query type.
+        $this->registerQueryInUnitOfWork(
+            operation : QueryBuilderEnum::QUERY_TYPE_INSERT,
+            statement : $statement,
+            parameters: $values // The array of parameters to bind to the statement for execution.
+        );
+
+        // Return the current object instance, allowing method chaining.
+        return $this;
+    }
+
+    /**
+     * Inserts a single row into the database.
+     *
+     * Uses a prepared statement with parameterized queries to prevent SQL injection.
+     *
+     * @param array $parameters The key-value pairs representing column names and their respective values to be
+     *                          inserted.
+     *
+     * @return static Returns the current instance for method chaining after a successful insert.
+     *
+     * @throws QueryBuilderException If no data is provided for the insert operation.
+     */
+    public function insert(array $parameters) : static
+    {
+        // Check if the provided parameters are empty, throw exception if true
+        if (empty($parameters)) {
+            throw new QueryBuilderException(message: 'No data provided for insert.');
+        }
+
+        // Retrieve the PDO database connection object
+        $pdo = $this->getConnection();
+
+        // Disable PDO's emulated prepared statements to prevent SQL Injection
+        $pdo->setAttribute(attribute: PDO::ATTR_EMULATE_PREPARES, value: false); // 🛡️ Prevents SQL Injection
+
+        // Create a comma-separated list of column names from the parameter keys
+        $columns = implode(', ', array_keys($parameters));
+
+        // Create a comma-separated list of named placeholders corresponding to the parameter keys
+        $placeholders = implode(', ', array_map(static fn($key) => ":{$key}", array_keys($parameters)));
+
+        // Build the SQL query for inserting data into the table
+        $sql = sprintf('INSERT INTO %s (%s) VALUES (%s)', $this->getTableName(), $columns, $placeholders);
+
+        // Prepare the SQL query using the PDO connection
+        $statement = $pdo->prepare(query: $sql);
+
+        // Register the query in the unit of work for consistency and potential deferred execution
+        $this->registerQueryInUnitOfWork(
+            operation : QueryBuilderEnum::QUERY_TYPE_INSERT,
+            statement : $statement,
+            parameters: $parameters
+        );
+
+        // Return the current instance for method chaining
+        return $this;
+    }
+
+    /**
+     * Performs an update operation on records that match the specified conditions.
+     *
+     * Uses parameterized queries to **prevent SQL injection**. Both the updated data
+     * and the conditions must be provided to ensure a valid operation.
+     *
+     * @param array $values     The data to update with column-value pairs.
+     * @param array $conditions The conditions to determine which records to update.
+     *
+     * @return static Returns the current instance for method chaining.
+     * @throws QueryBuilderException If no data or conditions are provided.
+     *
+     */
+    public function update(array $values, array $conditions) : static
+    {
+        // Check if either the update data ($values) or the conditions ($conditions) are empty.
+        // If either is empty, throw a QueryBuilderException to ensure both are provided.
+        if (empty($values) || empty($conditions)) {
+            throw new QueryBuilderException(message: 'No data or conditions provided for update.');
+        }
+
+        // Obtain the database connection using the `getConnection` method.
+        // This ensures we have access to the database with a valid PDO instance.
+        $pdo = $this->getConnection();
+
+        // Set the PDO attribute to disable emulated prepared statements.
+        // 🛡️ This strengthens security by preventing SQL injection attacks.
+        $pdo->setAttribute(attribute: PDO::ATTR_EMULATE_PREPARES, value: false);
+
+        // Use array mapping to construct the `SET` portion of the SQL statement.
+        // Each `SET` clause follows the format "column = :set_column".
+        $setClauses = implode(', ', array_map(static fn($col) => "{$col} = :set_{$col}", array_keys($values)));
+
+        // Use array mapping to construct the `WHERE` portion of the SQL statement.
+        // Each condition in `WHERE` follows the format "column = :where_column".
+        $whereClauses = implode(
+            ' AND ',
+            array_map(static fn($col) => "{$col} = :where_{$col}", array_keys($conditions))
+        );
+
+        // Create the final SQL query string using the table name, `SET` clauses, and `WHERE` clauses.
+        // This forms a valid SQL UPDATE query.
+        $sql = sprintf('UPDATE %s SET %s WHERE %s', $this->getTableName(), $setClauses, $whereClauses);
+
+        // Prepare the SQL statement using the PDO instance.
+        // This allows binding parameters securely before executing the query.
+        $statement = $pdo->prepare(query: $sql);
+
+        // Initialize an empty array to hold all parameters for the prepared statement.
+        $parameters = [];
+
+        // Populate the $parameters array for the `SET` part of the SQL query.
+        // Prefix each key in $values with "set_" to match the placeholders in the query.
+        foreach ($values as $key => $value) {
+            $parameters["set_{$key}"] = $value;
+        }
+
+        // Populate the $parameters array for the `WHERE` part of the SQL query.
+        // Prefix each key in $conditions with "where_" to match the placeholders in the query.
+        foreach ($conditions as $key => $value) {
+            $parameters["where_{$key}"] = $value;
+        }
+
+        // Registers a query with the Unit of Work, specifying it as an UPDATE operation.
+        // The `QueryBuilderEnum::QUERY_TYPE_UPDATE` indicates the type of a query being performed.
+        $this->registerQueryInUnitOfWork(
+            operation : QueryBuilderEnum::QUERY_TYPE_UPDATE, // Specifies the type of query as an 'UPDATE' operation.
+            statement : $statement, // Passes the prepared PDO statement to be executed.
+            parameters: $parameters // Provides the parameters for the query, likely used for a prepared statement binding.
+        );
+
+        // Return the current instance, allowing method chaining if needed.
+        return $this;
+    }
+}
+
+=== Traits/JoinClauseBuilderTrait.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder\Traits;
+
+use Gemini\Database\QueryBuilder\Exception\QueryBuilderException;
+
+/**
+ * **JoinClauseBuilderTrait**
+ *
+ * Handles SQL JOIN clauses, supporting INNER, LEFT, RIGHT, FULL, CROSS, NATURAL, and SELF joins.
+ *
+ * **Security Enhancements:**
+ * - 🛡️ **Prevents SQL Injection** by sanitizing table and column names.
+ * - 🔍 **Ensures JOIN conditions are valid** before appending them.
+ * - 🔒 **Forces table and alias validation** to avoid SQL tampering.
+ */
+trait JoinClauseBuilderTrait
+{
+    private array $joinClauses = [];
+
+    /**
+     * Builds the SQL JOIN clauses as a concatenated string.
+     */
+    public function buildJoins() : string
+    {
+        return empty($this->joinClauses) ? '' : ' ' . implode(' ', $this->joinClauses);
+    }
+
+    /**
+     * Resets all JOIN clauses.
+     */
+    public function resetJoins() : static
+    {
+        $this->joinClauses = [];
+
+        return $this;
+    }
+
+    /**
+     * Adds a LEFT JOIN clause.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function leftJoin(string $table, string $first, string $operator, string $second) : static
+    {
+        return $this->join(
+            table     : $table,
+            alias     : null,
+            conditions: [
+                            $this->quoteIdentifier(name: $first) . " {$operator} " . $this->quoteIdentifier(
+                                name: $second
+                            ),
+                        ],
+            type      : 'LEFT JOIN'
+        );
+    }
+
+    /**
+     * Adds a JOIN clause with an optional alias and multiple conditions.
+     *
+     * @throws QueryBuilderException
+     */
+    public function join(string $table, string|null $alias, array|string $conditions, string $type = 'JOIN') : static
+    {
+        $tableWithAlias = $alias ? sprintf(
+            '%s AS %s',
+            $this->quoteIdentifier(name: $table),
+            $this->quoteIdentifier(name: $alias)
+        ) : $this->quoteIdentifier(name: $table);
+
+        // Ensure conditions are valid
+        if (is_array($conditions)) {
+            $conditionString = implode(' AND ', array_map(static fn($condition) => trim($condition), $conditions));
+        } else {
+            $conditionString = trim($conditions);
+        }
+
+        if (empty($table) || empty($conditionString)) {
+            throw new QueryBuilderException(message: 'Invalid JOIN statement: table name and conditions are required.');
+        }
+
+        $this->joinClauses[] = sprintf('%s %s ON %s', strtoupper($type), $tableWithAlias, $conditionString);
+
+        return $this;
+    }
+
+    /**
+     * Adds a RIGHT JOIN clause.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function rightJoin(string $table, string $first, string $operator, string $second) : static
+    {
+        return $this->join(
+            table     : $table,
+            alias     : null,
+            conditions: [
+                            $this->quoteIdentifier(name: $first) . " {$operator} " . $this->quoteIdentifier(
+                                name: $second
+                            ),
+                        ],
+            type      : 'RIGHT JOIN'
+        );
+    }
+
+    /**
+     * Adds a FULL OUTER JOIN clause.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function fullOuterJoin(string $table, string $first, string $operator, string $second) : static
+    {
+        return $this->join(
+            table     : $table,
+            alias     : null,
+            conditions: [
+                            $this->quoteIdentifier(name: $first) . " {$operator} " . $this->quoteIdentifier(
+                                name: $second
+                            ),
+                        ],
+            type      : 'FULL OUTER JOIN'
+        );
+    }
+
+    /**
+     * Adds a CROSS JOIN clause.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function crossJoin(string $table) : static
+    {
+        if (empty($table)) {
+            throw new QueryBuilderException(message: 'Invalid CROSS JOIN: table name cannot be empty.');
+        }
+
+        $this->joinClauses[] = sprintf('CROSS JOIN %s', $this->quoteIdentifier(name: $table));
+
+        return $this;
+    }
+
+    /**
+     * Adds a NATURAL JOIN clause.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function naturalJoin(string $table) : static
+    {
+        if (empty($table)) {
+            throw new QueryBuilderException(message: 'Invalid NATURAL JOIN: table name cannot be empty.');
+        }
+
+        $this->joinClauses[] = sprintf('NATURAL JOIN %s', $this->quoteIdentifier(name: $table));
+
+        return $this;
+    }
+
+    /**
+     * Adds a SELF JOIN clause (join on the same table using an alias).
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function selfJoin(string $table, string $alias, string $first, string $operator, string $second) : static
+    {
+        return $this->join(
+            table     : $table,
+            alias     : $alias,
+            conditions: [$this->quoteIdentifier(name: $first) . " {$operator} " . $this->quoteIdentifier(name: $second)]
+        );
+    }
+
+    /**
+     * Adds a JOIN clause with an alias for the table.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function joinWithAlias(
+        string $table,
+        string $alias,
+        string $first,
+        string $operator,
+        string $second,
+        string $type = 'JOIN'
+    ) : static {
+        return $this->join(
+            table     : $table,
+            alias     : $alias,
+            conditions: [
+                            $this->quoteIdentifier(name: $first) . " {$operator} " . $this->quoteIdentifier(
+                                name: $second
+                            ),
+                        ],
+            type      : $type
+        );
+    }
+
+    /**
+     * Adds a JOIN clause using raw SQL.
+     *
+     * ⚠️ **Warning:** Using raw SQL can expose your query to SQL injection risks.
+     * Ensure that `$rawSql` is properly sanitized before passing it.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function joinRaw(string $rawSql) : static
+    {
+        if (empty($rawSql)) {
+            throw new QueryBuilderException(message: 'Invalid JOIN RAW: SQL statement cannot be empty.');
+        }
+
+        $this->joinClauses[] = $rawSql;
+
+        return $this;
+    }
+
+    /**
+     * Adds a JOIN clause with multiple conditions.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function joinWithConditions(
+        string      $table,
+        string|null $alias,
+        array       $conditions,
+        string      $type = 'JOIN'
+    ) : static {
+        return $this->join(
+            table     : $table,
+            alias     : $alias,
+            conditions: $conditions,
+            type      : $type
+        );
+    }
+}
+
+=== Traits/OrderByAndGroupByBuilderTrait.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder\Traits;
+
+use Gemini\Database\QueryBuilder\BaseQueryBuilder;
+use Gemini\Database\QueryBuilder\QueryBuilder;
+use InvalidArgumentException;
+use PDO;
+
+/**
+ * Trait OrderByAndGroupByBuilderTrait
+ *
+ * Handles SQL ORDER BY, GROUP BY, and HAVING clauses using a fluent interface.
+ *
+ * ✅ OWASP Security: Prevents SQL Injection via safe query-building practices.
+ * ✅ Strict Input Validation: Ensures only valid column names and values are accepted.
+ */
+trait OrderByAndGroupByBuilderTrait
+{
+    /**
+     * Prefix used for placeholders in query building or other similar operations.
+     */
+    private const string PLACEHOLDER_PREFIX = 'orderByField_';
+
+    /**
+     * Stores ORDER BY clauses.
+     */
+    private array $orderByClauses = [];
+
+    /**
+     * Stores GROUP BY clauses.
+     */
+    private array $groupByClauses = [];
+
+    /**
+     * Stores HAVING clauses.
+     */
+    private array $havingClauses = [];
+
+    /**
+     * Stores bound parameters for safe query execution.
+     */
+    private array $boundParameters = [];
+
+    /**
+     * Resets all ORDER BY, GROUP BY, and HAVING clauses.
+     */
+    public function resetClauses() : self
+    {
+        $this->orderByClauses  = [];
+        $this->groupByClauses  = [];
+        $this->havingClauses   = [];
+        $this->boundParameters = [];
+
+        return $this;
+    }
+
+    /**
+     * Adds an ORDER BY clause.
+     *
+     */
+    public function orderBy(string $column, string $direction = 'ASC') : self
+    {
+        // Validate the column name to ensure it only contains valid characters (alphanumeric and underscores)
+        $this->validateColumnName(name: $column);
+
+        // Convert the order direction (ASC/DESC) to uppercase for consistent comparison
+        $direction = strtoupper($direction);
+
+        // Check whether the provided direction is valid (ASC or DESC)
+        // If the direction is invalid, throw an exception with an appropriate error message
+        if (! in_array($direction, ['ASC', 'DESC'], true)) {
+            throw new InvalidArgumentException(message: 'Invalid ORDER BY direction. Use "ASC" or "DESC".');
+        }
+
+        // Append the valid ORDER BY clause to the array of clauses
+        // The column name is safely enclosed using quoteIdentifier for preventing SQL injection
+        $this->orderByClauses[] = sprintf('%s %s', $this->quoteIdentifier(name: $column), $direction);
+
+        // Return the current instance to allow method chaining
+        return $this;
+    }
+
+    /**
+     * Adds an ORDER BY FIELD() clause for custom sorting.
+     *
+     */
+    public function orderByField(string $column, array $values) : self
+    {
+        // Validate the column name to ensure it contains only alphanumeric characters and underscores
+        $this->validateColumnName(name: $column);
+
+        // Check if the input array of values is empty, and throw an exception if it is
+        if (empty($values)) {
+            throw new InvalidArgumentException(message: 'OrderByField requires a non-empty array of values.');
+        }
+
+        // Generate a set of placeholders and their corresponding bindings for the passed values
+        $placeholdersWithBindings = $this->generatePlaceholdersWithBindings(values: $values);
+
+        // Add an `ORDER BY FIELD` clause to the list of order clauses
+        // The `FIELD` SQL function matches the column value to the provided list of placeholders
+        $this->orderByClauses[] = sprintf(
+            'FIELD(%s, %s)',
+            // Sanitize and properly quote the column name according to the database driver
+            $this->quoteIdentifier(name: $column),
+            // Create a comma-separated list of placeholders (keys from the bindings array)
+            implode(', ', array_keys($placeholdersWithBindings)) // Extract only keys for SQL placeholders
+        );
+
+        // Merge the generated parameter bindings with any previously existing bound parameters
+        $this->boundParameters = array_merge($this->boundParameters, $placeholdersWithBindings);
+
+        // Return the current instance to allow method chaining
+        return $this;
+    }
+
+    /**
+     * Generates a set of placeholders with corresponding value bindings
+     * for use in a prepared SQL statement.
+     *
+     * @param array $values The array of values to create placeholders for.
+     *
+     * @return array An associative array where keys are placeholder names
+     *               and values are the corresponding data from the input array.
+     */
+    private function generatePlaceholdersWithBindings(array $values) : array
+    {
+        // Initialize an array to hold the placeholder-value bindings
+        $bindings = [];
+
+        // Loop through each value in the provided array, with its index
+        foreach ($values as $index => $value) {
+            // Create a unique placeholder name using a prefix and the current index
+            $placeholderName = ':' . self::PLACEHOLDER_PREFIX . $index;
+
+            // Map the placeholder name to its corresponding value from the input
+            $bindings[$placeholderName] = $value;
+        }
+
+        // Return the associative array of placeholders and their corresponding values
+        return $bindings;
+    }
+
+    /**
+     * Adds an ORDER BY RAND() clause for random ordering.
+     */
+    public function orderByRand() : self
+    {
+        $this->orderByClauses[] = 'RAND()';
+
+        return $this;
+    }
+
+    /**
+     * Adds a GROUP BY clause.
+     *
+     */
+    public function groupBy(string $column) : self
+    {
+        $this->validateColumnName(name: $column);
+        $this->groupByClauses[] = $this->quoteIdentifier(name: $column);
+
+        return $this;
+    }
+
+    /**
+     * Adds a HAVING clause with **secure parameter binding**.
+     *
+     */
+    public function having(string $column, string $operator, mixed $value) : self
+    {
+        // Validate the column name to ensure it contains only alphanumeric characters and underscores.
+        $this->validateColumnName(name: $column);
+
+        // Check if the operator provided is valid by comparing it against the list of allowed operators.
+        // If the operator is not valid, throw an InvalidArgumentException.
+        if (! in_array($operator, ['=', '!=', '<', '>', '<=', '>=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN'], true)) {
+            throw new InvalidArgumentException(message: 'Invalid HAVING operator.');
+        }
+
+        // Create a parameter placeholder by replacing periods in the column name with underscores.
+        // The placeholder is prefixed with ":having_".
+        $placeholder = sprintf(':having_%s', str_replace('.', '_', $column));
+
+        // Build the HAVING clause using the quoted column name, the operator, and the placeholder.
+        // Add the resulting clause to the `havingClauses` array.
+        $this->havingClauses[] = sprintf('%s %s %s', $this->quoteIdentifier(name: $column), $operator, $placeholder);
+
+        // Store the actual value of the parameter in the `boundParameters` array, keyed by the placeholder.
+        // This helps ensure the value is safely bound to the statement later during query execution.
+        $this->boundParameters[$placeholder] = $value;
+
+        // Return the current object to allow method chaining.
+        return $this;
+    }
+
+    /**
+     * Modifies the query to sort the results in random order, using the appropriate SQL function based on the database
+     * driver.
+     *
+     * @return BaseQueryBuilder|QueryBuilder|OrderByAndGroupByBuilderTrait Returns applied.
+     */
+    public function inRandomOrder() : self
+    {
+        // Retrieve the name of the database driver (e.g., 'mysql', 'pgsql') from the current connection.
+        // This is done by accessing the PDO::ATTR_DRIVER_NAME attribute of the PDO connection object.
+        $driver = $this->getConnection()->getAttribute(attribute: PDO::ATTR_DRIVER_NAME);
+
+        // Add a clause to the `orderByClauses` array based on the database driver.
+        // For PostgreSQL ('pgsql'), use `RANDOM()`; for other database drivers, use `RAND()`.
+        $this->orderByClauses[] = match ($driver) {
+            'pgsql' => 'RANDOM()', // If the database driver is Postgres, use the `RANDOM()` function for random ordering.
+            default => 'RAND()',   // For other database drivers (e.g., MySQL), use the `RAND()` function for random ordering.
+        };
+
+        // Return the current object instance to allow method chaining.
+        return $this;
+    }
+
+    /**
+     * Builds the ORDER BY clause.
+     */
+    public function buildOrderBy() : string
+    {
+        return empty($this->orderByClauses) ? '' : ' ORDER BY ' . implode(', ', $this->orderByClauses);
+    }
+
+    /**
+     * Builds the GROUP BY and HAVING clauses.
+     */
+    public function buildGroupByAndHaving() : string
+    {
+        $sql = '';
+
+        if (! empty($this->groupByClauses)) {
+            $sql .= ' GROUP BY ' . implode(', ', $this->groupByClauses);
+        }
+
+        if (! empty($this->havingClauses)) {
+            $sql .= ' HAVING ' . implode(' AND ', $this->havingClauses);
+        }
+
+        return $sql;
+    }
+
+    /**
+     * **Retrieves bound parameters** for safe query execution.
+     */
+    public function getBoundParameters() : array
+    {
+        return $this->boundParameters;
+    }
+}
+
+=== Traits/ProvidesUnitOfWork.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder\Traits;
+
+use Gemini\Database\QueryBuilder\Exception\QueryBuilderException;
+use Gemini\Database\QueryBuilder\UnitOfWork;
+
+/**
+ * Trait ProvidesUnitOfWork
+ *
+ * Ensures that any class using this trait has access to a UnitOfWork instance.
+ */
+trait ProvidesUnitOfWork
+{
+    /**
+     * Retrieves the UnitOfWork instance.
+     *
+     * @return UnitOfWork The Unit of Work instance.
+     * @throws QueryBuilderException
+     */
+    protected function getUnitOfWork() : UnitOfWork
+    {
+        if (! isset($this->unitOfWork) || ! $this->unitOfWork instanceof UnitOfWork) {
+            // Check if the `unitOfWork` property is either not set or is not an instance of the `UnitOfWork` class.
+            // If this condition is true, throw a `QueryBuilderException` with a descriptive message.
+            throw new QueryBuilderException(message: "UnitOfWork is not set in the class using this trait.");
+        }
+        if (! method_exists($this, 'getTableName')) {
+            // Check if the class using this trait does not define the `getTableName` method.
+            // If the `getTableName` method doesn't exist, throw a `QueryBuilderException` with an appropriate message.
+            throw new QueryBuilderException(message: "getTableName() is not set in the class using this trait.");
+        }
+
+        // If both checks pass (i.e., `unitOfWork` is set and is an instance of `UnitOfWork`, and `getTableName()` exists),
+        // return the `unitOfWork` property, which is expected to handle database query registration and execution.
+        return $this->unitOfWork;
+    }
+}
+
+=== Traits/QueryOptimizationTrait.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder\Traits;
+
+/**
+ * Trait QueryOptimizationTrait
+ *
+ * Provides query optimization strategies, including **indexing recommendations** and **performance insights**.
+ *
+ * ✅ Implements **OWASP security best practices** to prevent SQL injection.
+ * ✅ Uses **PSR-3 Logging** instead of direct output.
+ * ✅ Ensures **strict input validation** for indexing recommendations.
+ */
+trait QueryOptimizationTrait
+{
+    /**
+     * @var array<string> Stores WHERE clauses for analysis.
+     */
+    private array $whereClauses = [];
+
+    /**
+     * Displays recommendations for indexing based on WHERE clauses.
+     *
+     * ✅ Uses structured **PSR-3 logging** instead of `echo`.
+     * ✅ Ensures **strict column name validation** to prevent SQL injection.
+     */
+    public function showIndexingRecommendations() : void
+    {
+        $recommendations = $this->recommendIndexes();
+
+        if (empty($recommendations)) {
+            $this->logger->info(message: "🔍 No indexing recommendations. Your query is already optimized. 🚀");
+        } else {
+            $message = "⚡ Recommended columns for indexing: " . implode(', ', $recommendations);
+            $this->logger->info(message: $message);
+
+            foreach ($recommendations as $column) {
+                $this->logger->info(message: "📌 Consider: CREATE INDEX idx_{$column} ON your_table({$column});");
+            }
+        }
+    }
+
+    /**
+     * Analyzes WHERE conditions and suggests which columns should be indexed.
+     *
+     * ✅ **Prevents SQL injection** via strict column validation.
+     * ✅ **Ensures best performance** by avoiding unnecessary recommendations.
+     *
+     * @return array<int, string> List of recommended columns for indexing.
+     */
+    public function recommendIndexes() : array
+    {
+        if (empty($this->whereClauses)) {
+            return [];
+        }
+
+        $indexes = [];
+
+        foreach ($this->whereClauses as $clause) {
+            // Extract column names from WHERE conditions.
+            if (preg_match('/^([a-zA-Z0-9_]+)\s*(=|LIKE|IN|>|<|>=|<=)/', $clause, $matches)) {
+                $column = $matches[1];
+
+                // Validate column name before adding to recommendations.
+                if ($this->isValidColumnName(column: $column) && ! in_array($column, $indexes, true)) {
+                    $indexes[] = $column;
+                }
+            }
+        }
+
+        return $indexes;
+    }
+
+    /**
+     * Validates a column name against SQL injection risks.
+     *
+     * ✅ Ensures column names are safe before they are used in SQL statements.
+     */
+    private function isValidColumnName(string $column) : bool
+    {
+        return preg_match('/^[a-zA-Z0-9_]+$/', $column) === 1;
+    }
+}
+
+=== Traits/SchemaQueryBuilderTrait.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder\Traits;
+
+use Exception;
+use Gemini\Database\QueryBuilder\Exception\QueryBuilderException;
+
+/**
+ * **SchemaQueryBuilderTrait**
+ *
+ * Secure **Schema Management API** for QueryBuilder.
+ *
+ * ✅ **Features:**
+ * - **Database Operations:** Create, Drop, Switch
+ * - **Table Operations:** Rename, Drop, Exists Checks
+ * - **OWASP Security:** Prevents **SQL Injection** & **Malicious Schema Manipulation**
+ * - **Idempotency Checks:** Avoids unnecessary operations
+ */
+trait SchemaQueryBuilderTrait
+{
+    /**
+     * **Switches to a different database** (if it exists).
+     *
+     * @param string $database The database name to switch to.
+     *
+     * @throws QueryBuilderException If the database does not exist.
+     * @throws \Random\RandomException
+     */
+    public function useDatabase(string $database) : void
+    {
+        $this->validateDatabaseName(database: $database);
+
+        if (! $this->databaseExists(database: $database)) {
+            throw new QueryBuilderException(message: "Cannot switch: Database '{$database}' does not exist.");
+        }
+
+        try {
+            $this->raw(sql: "USE {$this->quoteIdentifier(name:$database)}")->execute();
+        } catch (Exception $e) {
+            throw new QueryBuilderException(
+                message: "Failed to switch to database '{$database}'", code: 0, previous: $e
+            );
+        }
+    }
+
+    /**
+     * **Validates a database name against OWASP recommendations.**
+     *
+     * @param string $database The database name to validate.
+     *
+     * @throws QueryBuilderException If the name is invalid.
+     */
+    private function validateDatabaseName(string $database) : void
+    {
+        if (! preg_match('/^[a-zA-Z0-9_]+$/', $database)) {
+            throw new QueryBuilderException(message: "Invalid database name: '{$database}'");
+        }
+    }
+
+    /**
+     * **Checks if a database exists.**
+     *
+     * @param string $database The database name.
+     *
+     * @return bool True if the database exists, otherwise false.
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Random\RandomException
+     */
+    public function databaseExists(string $database) : bool
+    {
+        $this->validateDatabaseName(database: $database);
+
+        return $this
+            ->table(tableName: 'information_schema.SCHEMATA')
+            ->where(column: 'SCHEMA_NAME', value: $database)
+            ->exists();
+    }
+
+    /**
+     * **Creates a new database** (if it does not exist).
+     *
+     * @param string $database The database name.
+     *
+     * @throws QueryBuilderException If creation fails.
+     * @throws \Random\RandomException
+     */
+    public function createDatabase(string $database) : void
+    {
+        $this->validateDatabaseName(database: $database);
+
+        if ($this->databaseExists(database: $database)) {
+            throw new QueryBuilderException(message: "Database '{$database}' already exists.");
+        }
+
+        try {
+            $this->raw(sql: "CREATE DATABASE {$this->quoteIdentifier(name:$database)}")->execute();
+        } catch (Exception $e) {
+            throw new QueryBuilderException(message: "Failed to create database '{$database}'", code: 0, previous: $e);
+        }
+    }
+
+    /**
+     * **Drops an existing database** (if it exists).
+     *
+     * @param string $database The database name.
+     *
+     * @throws QueryBuilderException If deletion fails.
+     * @throws \Random\RandomException
+     */
+    public function dropDatabase(string $database) : void
+    {
+        $this->validateDatabaseName(database: $database);
+
+        if (! $this->databaseExists(database: $database)) {
+            throw new QueryBuilderException(message: "Cannot drop: Database '{$database}' does not exist.");
+        }
+
+        try {
+            $this->raw(sql: "DROP DATABASE IF EXISTS {$this->quoteIdentifier(name:$database)}")->execute();
+        } catch (Exception $e) {
+            throw new QueryBuilderException(message: "Failed to drop database '{$database}'", code: 0, previous: $e);
+        }
+    }
+
+    /**
+     * **Renames an existing table** (if it exists).
+     *
+     * @param string $oldName The current table name.
+     * @param string $newName The new table name.
+     *
+     * @throws QueryBuilderException If renaming fails.
+     * @throws \Random\RandomException
+     * @throws \Random\RandomException
+     */
+    public function renameTable(string $oldName, string $newName) : void
+    {
+        $this->validateTableName(table: $oldName);
+        $this->validateTableName(table: $newName);
+
+        if (! $this->tableExists(table: $oldName)) {
+            throw new QueryBuilderException(message: "Cannot rename: Table '{$oldName}' does not exist.");
+        }
+
+        if ($this->tableExists(table: $newName)) {
+            throw new QueryBuilderException(message: "Cannot rename: Table '{$newName}' already exists.");
+        }
+
+        try {
+            $this->raw(
+                sql: "RENAME TABLE {$this->quoteIdentifier(name:$oldName)} TO {$this->quoteIdentifier(name:$newName)}"
+            )->execute();
+        } catch (Exception $e) {
+            throw new QueryBuilderException(message: "Failed to rename table '{$oldName}'", code: 0, previous: $e);
+        }
+    }
+
+    /**
+     * **Validates a table name against OWASP recommendations.**
+     *
+     * @param string $table The table name to validate.
+     *
+     * @throws QueryBuilderException If the name is invalid.
+     */
+    private function validateTableName(string $table) : void
+    {
+        if (! preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
+            throw new QueryBuilderException(message: "Invalid table name: '{$table}'");
+        }
+    }
+
+    /**
+     * **Checks if a table exists in the current database.**
+     *
+     * @param string $table The table name.
+     *
+     * @return bool True if the table exists, otherwise false.
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Random\RandomException
+     */
+    public function tableExists(string $table) : bool
+    {
+        $this->validateTableName(table: $table);
+
+        return $this
+            ->table(tableName: 'information_schema.tables')
+            ->where(column: 'table_schema', value: $this->raw(sql: 'DATABASE()'))
+            ->where(column: 'table_name', value: $table)
+            ->exists();
+    }
+
+    /**
+     * **Drops a table** (if it exists).
+     *
+     * @param string $table The table name.
+     *
+     * @throws QueryBuilderException If deletion fails.
+     * @throws \Random\RandomException
+     */
+    public function dropTable(string $table) : void
+    {
+        $this->validateTableName(table: $table);
+
+        if (! $this->tableExists(table: $table)) {
+            throw new QueryBuilderException(message: "Cannot drop: Table '{$table}' does not exist.");
+        }
+
+        try {
+            $this->raw(sql: "DROP TABLE IF EXISTS {$this->quoteIdentifier(name:$table)}")->execute();
+        } catch (Exception $e) {
+            throw new QueryBuilderException(message: "Failed to drop table '{$table}'", code: 0, previous: $e);
+        }
+    }
+}
+
+=== Traits/SelectQueryTrait.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder\Traits;
+
+use Gemini\Database\QueryBuilder\Enums\QueryBuilderEnum;
+use Gemini\Database\QueryBuilder\Exception\QueryBuilderException;
+use Gemini\DataHandling\ArrayHandling\Arrhae;
+use JsonException;
+use PDO;
+use PDOException;
+use PDOStatement;
+use Psr\SimpleCache\CacheInterface;
+
+/**
+ * Trait SelectQueryTrait
+ *
+ * Provides functionality for handling SELECT queries, including:
+ * - 🔥 Built-in caching (In-Memory + External Cache)
+ * - 🚀 Query performance optimization
+ * - 📌 Pagination & indexing
+ * - 💾 Hybrid cache system with cache invalidation
+ */
+trait SelectQueryTrait
+{
+    protected bool                $distinct          = false;
+
+    protected string|null         $windowFunction    = null;
+
+    protected array               $columns           = [];
+
+    protected string|null         $lockMode          = null;
+
+    protected int|null            $limit             = null;
+
+    protected int|null            $offset            = null;
+
+    protected bool                $cacheEnabled      = false;
+
+    protected int                 $cacheTTL          = 300;
+
+    protected CacheInterface|null $cache             = null;
+
+    protected string|null         $indexHint         = null;
+
+    protected bool|null           $useReadConnection = false;
+
+    protected string|null         $noLock            = null;
+
+    /**
+     * Retrieves query results, supporting UnitOfWork if needed.
+     *
+     * @param bool $addToUnitOfWork If true, query will be deferred for execution.
+     *
+     * @return static|Arrhae The query results.
+     * @throws QueryBuilderException
+     * @throws JsonException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function get(bool $addToUnitOfWork = false) : static|Arrhae
+    {
+        if ($this->cacheEnabled && ($cached = $this->fetchFromCache())) {
+            return new Arrhae(items: $cached);
+        }
+
+        $query = $this->buildSelectQuery();
+        $pdo   = $this->getDatabaseConnection();
+        $stmt  = $pdo->prepare(query: $query);
+
+        if ($addToUnitOfWork) {
+            $this
+                ->getUnitOfWork()
+                ->registerQuery(
+                    operation : QueryBuilderEnum::QUERY_TYPE_SELECT,
+                    statement : $stmt,
+                    parameters: $this->getParameters()
+                );
+
+            return $this;
+        }
+
+        return $this->executeQuery(stmt: $stmt);
+    }
+
+    /**
+     * Attempts to retrieve a cached result.
+     *
+     * @throws QueryBuilderException|\JsonException|\Psr\SimpleCache\InvalidArgumentException
+     */
+    private function fetchFromCache() : array|null
+    {
+        if (! $this->cache || ! $this->cacheEnabled) {
+            return null;
+        }
+
+        $key = $this->generateCacheKey();
+
+        return $this->cache->has(key: $key) ? $this->cache->get(key: $key) : null;
+    }
+
+    /**
+     * Generates a unique cache key for the query.
+     *
+     * This function generates a unique cache key for an SQL `SELECT` query to reduce redundancy in repeated database
+     * queries. It combines the generated query (from the `buildSelectQuery` method) and its parameters (from
+     * `getParameters`) into a JSON format, using specific encoding options to ensure readability and
+     * accuracy. The resulting JSON string is then hashed using the `xxh128` algorithm, which is fast and efficient,
+     * and the generated hash is used as a unique cache identifier with the prefix `'query:'`. This method plays a
+     * crucial role in implementing query caching, optimizing application performance, and reducing the number of
+     * database calls.
+     *
+     * @throws QueryBuilderException|JsonException
+     */
+    private function generateCacheKey() : string
+    {
+        return 'query:' . hash(
+                'xxh128',
+                json_encode(
+                    [
+                        'query'      => $this->buildSelectQuery(),
+                        'parameters' => $this->getParameters(),
+                    ],
+                    JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+                )
+            );
+    }
+
+    /**
+     * Generates the SELECT query string.
+     *
+     * @throws QueryBuilderException
+     */
+    private function buildSelectQuery() : string
+    {
+        return implode(
+            ' ',
+            array_filter(
+                [
+                    // Build the SELECT clause of the SQL query (e.g., "SELECT column1, column2").
+                    $this->buildSelectClause(),
+
+                    // Build the FROM clause of the SQL query (e.g., "FROM table_name").
+                    $this->buildFromClause(),
+
+                    // Build the JOIN clauses for the query, if any (e.g., "LEFT JOIN tableB ON ...").
+                    $this->buildJoins(),
+
+                    // Build the WHERE clause for the query, defining specific conditions (e.g., "WHERE column = value").
+                    $this->buildWhereClauses(),
+
+                    // Build the GROUP BY clause and HAVING condition for the query (e.g., "GROUP BY column HAVING COUNT(*) > 1").
+                    $this->buildGroupByAndHaving(),
+
+                    // Build the ORDER BY clause to sort the query results (e.g., "ORDER BY column ASC/DESC").
+                    $this->buildOrderBy(),
+
+                    // Build the LIMIT and OFFSET clauses to restrict the number of rows returned and set an offset (e.g., "LIMIT 10 OFFSET 20").
+                    $this->buildLimitOffsetClause(),
+
+                    // Lock mode (optional) used for concurrency (e.g., "FOR UPDATE" or "LOCK IN SHARE MODE").
+                    $this->lockMode,
+
+                    // Boolean property indicating whether a "NOLOCK" option should be added (used in specific database systems).
+                    $this->noLock,
+                ]
+            )
+        );
+    }
+
+    /**
+     * Builds the SELECT clause.
+     */
+    private function buildSelectClause() : string
+    {
+        // Initialize the $columns array with 'DISTINCT' if the $this->distinct property is true,
+        // otherwise, start with an empty array.
+        $columns = $this->distinct ? ['DISTINCT'] : [];
+
+        // Merge the current $columns array with $this->columns. If $this->columns is empty
+        // or null, use ['*'] as the default (to select all columns).
+        $columns = array_merge($columns, $this->columns ?: ['*']);
+
+        // If the $this->windowFunction property is set (not null or falsy), append its
+        // value to the $columns array. This is typically used for specialized SQL
+        // window functions like ROW_NUMBER() or RANK().
+        if ($this->windowFunction) {
+            $columns[] = $this->windowFunction;
+        }
+
+        // Join all the elements of the $columns array into a comma-separated string
+        // and prepend it with 'SELECT'. This constructs the final SQL SELECT clause.
+        return 'SELECT ' . implode(', ', $columns);
+    }
+
+    /**
+     * Builds the FROM clause.
+     *
+     * @throws QueryBuilderException
+     */
+    private function buildFromClause() : string
+    {
+        // Fetch the table name using `getTableName` and sanitize/quote it with `quoteIdentifier`.
+        $table = $this->quoteIdentifier(name: $this->getTableName());
+
+        // Check if the sanitized/quoted table name is empty.
+        // Throws a `QueryBuilderException` if the table name is not provided.
+        if (empty($table)) {
+            throw new QueryBuilderException(message: 'Table name is required.');
+        }
+
+        // Return a string combining the SQL "FROM" clause and the quoted table name.
+        return 'FROM ' . $table;
+    }
+
+    /**
+     * Builds the LIMIT and OFFSET clauses.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    private function buildLimitOffsetClause() : string|null
+    {
+        if ($this->limit !== null && $this->limit < 0) {
+            // If the $limit property is set (not null) and its value is less than 0,
+            // this indicates an invalid value since a limit must be non-negative.
+            // A QueryBuilderException is thrown to prevent invalid SQL queries.
+            throw new QueryBuilderException(message: 'Limit must be a non-negative integer.');
+        }
+
+        if ($this->offset !== null && $this->offset < 0) {
+            // If the $offset property is set (not null) and its value is less than 0,
+            // this indicates an invalid value since an offset must be non-negative.
+            // A QueryBuilderException is thrown similarly to the limit check above.
+            throw new QueryBuilderException(message: 'Offset must be a non-negative integer.');
+        }
+
+        return implode(
+            ' ', // The delimiter used to concatenate the resulting parts of the SQL clause.
+            array_filter(
+                [
+                    // If $this->limit is set (not null), a "LIMIT" clause is constructed as a string
+                    // containing the value of the $this->limit property. Otherwise, null is returned.
+                    $this->limit !== null ? "LIMIT {$this->limit}" : null,
+
+                    // Similarly, if $this->offset is set (not null), an "OFFSET" clause is constructed
+                    // as a string containing the value of the $this->offset property.
+                    // Otherwise, null is returned.
+                    $this->offset !== null ? "OFFSET {$this->offset}" : null,
+                ]
+            )
+        // The `array_filter()` function is used to remove null values from the array.
+        // This prevents unnecessary spaces or invalid SQL fragments if no limit or offset is set.
+        );
+    }
+
+    /**
+     * Executes the SELECT query and caches the result if enabled.
+     *
+     * @throws QueryBuilderException|JsonException|\Psr\SimpleCache\InvalidArgumentException
+     */
+    private function executeQuery(PDOStatement $stmt) : Arrhae
+    {
+        try {
+            // Attempts to execute the prepared SQL statement with the query parameters
+            // `getParameters()` presumably returns an array of parameters for the query.
+            $stmt->execute(params: $this->getParameters());
+        } catch (PDOException $exception) {
+            // If an exception occurs during query execution, a custom `QueryBuilderException` is thrown.
+            // It includes details about the error, such as the exception message and the executed SQL query.
+            throw new QueryBuilderException(message: 'Query execution failed.', previous: $exception);
+        }
+
+        // Wraps the result of the executed query in an `Arrhae` object.
+        // `fetchAll` retrieves the data from the query as an associative array.
+        $result = new Arrhae(items: $stmt->fetchAll(mode: PDO::FETCH_ASSOC));
+
+        if ($this->cacheEnabled) { // Checks if caching is enabled before proceeding.
+            // Stores the query results in the cache.
+            // `generateCacheKey()` generates a unique key for the query for identification in the cache.
+            // `toArray()` converts the `Arrhae` object back to a standard array for caching purposes.
+            $this->cache->set(
+                key  : $this->generateCacheKey(), // Unique key identifying the cached data.
+                value: $result->toArray(),        // The query result data is cached as a plain array.
+                ttl  : $this->cacheTTL            // Time-to-live for the cache item (defaults to 300 seconds).
+            );
+        }
+
+        // Returns the wrapped query result (`Arrhae` object) to the caller.
+        return $result;
+    }
+}
+
+=== Traits/SoftDeleteAndDeleteTrait.php ===
+<?php
+/** @noinspection SqlWithoutWhere */
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder\Traits;
+
+use DateTime;
+use Gemini\Database\QueryBuilder\Enums\QueryBuilderEnum;
+
+/**
+ * Trait SoftDeleteAndDeleteTrait
+ *
+ * Provides functionality for managing soft and permanent deletes, including:
+ * - Soft delete support with timestamp tracking.
+ * - Restore functionality for soft-deleted records.
+ * - Permanent delete operations.
+ * - Cascading delete operations across related tables.
+ * - DELETE JOIN operations for multi-table deletions.
+ * - Table truncation support.
+ *
+ * Implements the **Unit of Work** pattern to defer execution of delete-related operations
+ * until explicitly committed.
+ */
+trait SoftDeleteAndDeleteTrait
+{
+    /**
+     * Indicates whether soft delete functionality is enabled.
+     */
+    private bool $softDeletes = false;
+
+    /**
+     * Indicates whether to include soft-deleted records in queries.
+     */
+    private bool $withTrashed = false;
+
+    /**
+     * Indicates whether to retrieve only soft-deleted records.
+     */
+    private bool $onlyTrashed = false;
+
+    /**
+     * The name of the column used for soft deletes.
+     */
+    private string $deletedColumn = 'deleted_at';
+
+    /**
+     * Enables soft deletes and optionally sets the column used for soft deletion timestamps.
+     */
+    public function enableSoftDeletes(bool $softDeletes, string|null $deletedColumn = null) : static
+    {
+        $this->softDeletes = $softDeletes;
+        if ($deletedColumn !== null) {
+            $this->deletedColumn = $deletedColumn;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Includes soft-deleted records in queries.
+     */
+    public function withTrashed() : static
+    {
+        $this->withTrashed = true;
+        $this->onlyTrashed = false;
+
+        return $this;
+    }
+
+    /**
+     * Restricts queries to only soft-deleted records.
+     */
+    public function onlyTrashed() : static
+    {
+        $this->onlyTrashed = true;
+        $this->withTrashed = false;
+
+        return $this;
+    }
+
+    /**
+     * Resets filters applied for soft delete queries.
+     */
+    public function resetSoftDeleteFilters() : static
+    {
+        $this->withTrashed = false;
+        $this->onlyTrashed = false;
+
+        return $this;
+    }
+
+    /**
+     * Applies soft delete conditions to queries.
+     */
+    public function applySoftDeleteConditions() : string
+    {
+        if (! $this->softDeletes) {
+            return '';
+        }
+
+        return match (true) {
+            $this->onlyTrashed   => sprintf(' AND %s IS NOT NULL', $this->deletedColumn),
+            ! $this->withTrashed => sprintf(' AND %s IS NULL', $this->deletedColumn),
+            default              => '',
+        };
+    }
+
+    /**
+     * Marks records as soft deleted by setting the deleted timestamp.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function softDelete() : static
+    {
+        return $this->registerForUnitOfWork(
+            sql       : 'UPDATE ' . $this->getTableName() .
+                        ' SET ' . $this->deletedColumn . ' = :deleted_at ' . $this->buildWhereClauses(),
+            parameters: [':deleted_at' => (new DateTime())->format('Y-m-d H:i:s')],
+            operation : QueryBuilderEnum::QUERY_TYPE_SOFT_DELETE
+        );
+    }
+
+    /**
+     * Registers an operation for deferred execution using the Unit of Work pattern.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    private function registerForUnitOfWork(string $sql, array $parameters, QueryBuilderEnum $operation) : static
+    {
+        $pdo       = $this->getConnection();
+        $statement = $pdo->prepare($sql);
+
+        $this
+            ->getUnitOfWork()
+            ->registerQuery(
+                operation : $operation,
+                statement : $statement,
+                parameters: $parameters
+            );
+
+        return $this;
+    }
+
+
+    /**
+     * Restores soft-deleted records by setting the deleted timestamp to NULL.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function restore() : static
+    {
+        return $this->registerForUnitOfWork(
+            sql       : 'UPDATE ' . $this->getTableName() .
+                        ' SET ' . $this->deletedColumn . ' = NULL ' . $this->buildWhereClauses(),
+            parameters: [],
+            operation : QueryBuilderEnum::QUERY_TYPE_RESTORE
+        );
+    }
+
+    /**
+     * Permanently deletes records without applying soft deletes.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function forceDelete() : static
+    {
+        return $this->delete();
+    }
+
+    /**
+     * Registers a delete operation in the Unit of Work queue.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function delete() : static
+    {
+        return $this->registerForUnitOfWork(
+            sql       : 'DELETE FROM ' . $this->getTableName() . ' ' . $this->buildWhereClauses(),
+            parameters: [],
+            operation : QueryBuilderEnum::QUERY_TYPE_DELETE
+        );
+    }
+
+    /**
+     * Registers a cascading delete operation for related tables.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function cascadeDelete(array $relatedTables) : static
+    {
+        foreach ($relatedTables as $table) {
+            $this->registerForUnitOfWork(
+                sql       : 'DELETE FROM ' . $table . ' ' . $this->buildWhereClauses(),
+                parameters: [],
+                operation : QueryBuilderEnum::QUERY_TYPE_CASCADE_DELETE
+            );
+        }
+
+        return $this->delete();
+    }
+
+    /**
+     * Registers a DELETE JOIN operation in Unit of Work.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function deleteJoin(string $joinTable, string $joinCondition) : static
+    {
+        return $this->registerForUnitOfWork(
+            sql       : sprintf(
+                            'DELETE %s FROM %s INNER JOIN %s ON %s %s',
+                            $this->getTableName(),
+                            $this->getTableName(),
+                            $joinTable,
+                            $joinCondition,
+                            $this->buildWhereClauses()
+                        ),
+            parameters: [],
+            operation : QueryBuilderEnum::QUERY_TYPE_DELETE_JOIN
+        );
+    }
+
+    /**
+     * Registers a truncate operation in Unit of Work.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function truncate() : static
+    {
+        return $this->registerForUnitOfWork(
+            sql       : 'TRUNCATE TABLE ' . $this->getTableName(),
+            parameters: [],
+            operation : QueryBuilderEnum::QUERY_TYPE_TRUNCATE
+        );
+    }
+}
+
+=== Traits/WhereTrait.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder\Traits;
+
+use Gemini\Database\QueryBuilder\Exception\QueryBuilderException;
+use InvalidArgumentException;
+use PDO;
+
+/**
+ * Trait WhereTrait
+ *
+ * Provides fluent and expressive methods for dynamically building SQL `WHERE` clauses.
+ *
+ * **Key Features:**
+ * ✅ Supports both simple (`where()`) and advanced (`whereIs()`) conditions.
+ * ✅ Prevents SQL Injection via strict column validation & parameterized queries.
+ * ✅ Implements `WHERE IN`, `WHERE JSON_CONTAINS`, `FULLTEXT SEARCH`, and date-based filtering.
+ * ✅ Optimized for MySQL and PostgreSQL compatibility.
+ *
+ */
+trait WhereTrait
+{
+    /**
+     * Stores bound parameters for prepared statements.
+     *
+     * @var array<string, mixed>
+     */
+    private array $parameters = [];
+
+    /**
+     * Stores `WHERE` clause conditions.
+     *
+     * @var array<string>
+     */
+    private array $whereClauses = [];
+
+    /**
+     * Adds a `WHERE` condition with a default `=` operator.
+     *
+     * @throws \Random\RandomException
+     */
+    public function where(string $column, mixed $value) : static
+    {
+        return $this->whereIs(column: $column, operator: '=', value: $value);
+    }
+
+    /**
+     * Adds a safe and sanitized WHERE condition to the query with specified comparison operator.
+     *
+     * This method implements a secure way to add WHERE clauses by:
+     * - Validating column names against SQL injection
+     * - Supporting NULL value comparisons with proper IS NULL syntax
+     * - Using a allowlist of allowed SQL operators
+     * - Implementing parameterized queries for values
+     *
+     * @param string $column   The database column name to compare (unquoted)
+     * @param string $operator The comparison operator (=,=, <>, >, <, >=, <=, LIKE, NOT LIKE, IN, NOT IN)
+     * @param mixed  $value    The value to compare against, null supported
+     *
+     * @return static Returns $this for method chaining
+     * @throws \Random\RandomException   When secure parameter key generation fails
+     *
+     * @throws InvalidArgumentException When an invalid operator or column name is provided
+     */
+    public function whereIs(string $column, string $operator, mixed $value) : static
+    {
+        // Ensure the column name contains only alphanumeric characters and underscores for SQL injection prevention
+        $this->validateColumnName(name: $column);
+
+        // Get database-specific quoted identifier for the column name to prevent SQL injection
+        $quotedColumn = $this->quoteIdentifier(name: $column);
+
+        // Special handling for NULL comparisons to use proper SQL syntax (IS NULL, IS NOT NULL)
+        if ($value === null) {
+            if ($operator === '=') {
+                $this->whereClauses[] = sprintf('%s IS NULL', $quotedColumn);
+            } elseif ($operator === '!=') {
+                $this->whereClauses[] = sprintf('%s IS NOT NULL', $quotedColumn);
+            } else {
+                throw new InvalidArgumentException(
+                    message: "Invalid operator for NULL comparison: {$operator}"
+                );
+            }
+
+            return $this;
+        }
+
+        // Define allowed SQL operators to prevent SQL injection via operator
+        $supportedOperators = [
+            '=',
+            '!=',
+            '<>',
+            '>',
+            '<',
+            '>=',
+            '<=',
+            'LIKE',
+            'NOT LIKE',
+            'IN',
+            'NOT IN',
+        ];
+
+        // Validate that only whitelisted operators are used
+        if (! in_array($operator, $supportedOperators, true)) {
+            throw new InvalidArgumentException(
+                message: "Unsupported operator: {$operator}"
+            );
+        }
+
+        // Create a unique parameter key for safe value binding
+        $paramKey = $this->generateParamKey(column: $column);
+
+        // Build and store the WHERE clause with parameterized value
+        $this->whereClauses[]        = sprintf('%s %s :%s', $quotedColumn, $operator, $paramKey);
+        $this->parameters[$paramKey] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Generates a unique parameter key to prevent conflicts.
+     *
+     * @throws \Random\RandomException
+     */
+    private function generateParamKey(string $column) : string
+    {
+        return $column . '_' . bin2hex(random_bytes(4)); // ✅ Secure random key
+    }
+
+    /**
+     * Adds a `WHERE IN` condition.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function whereIn(string $column, array $values) : static
+    {
+        if (empty($values)) {
+            throw new QueryBuilderException(message: 'The `IN` clause requires a non-empty array.');
+        }
+
+        return $this->prepareInClause(column: $column, values: $values, not: false);
+    }
+
+    /**
+     * Prepares a safe `IN` clause using parameterized queries.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    private function prepareInClause(string $column, array $values, bool $not) : static
+    {
+        $this->validateColumnName(name: $column);
+        $column = $this->quoteIdentifier(name: $column);
+
+        if (empty($values)) {
+            throw new QueryBuilderException(message: "IN clause requires a non-empty array.");
+        }
+
+        $placeholders = [];
+        foreach ($values as $index => $value) {
+            $paramKey                    = "{$column}_{$index}";
+            $placeholders[]              = ":{$paramKey}";
+            $this->parameters[$paramKey] = $value;
+        }
+
+        $operator             = $not ? 'NOT IN' : 'IN';
+        $this->whereClauses[] = sprintf('%s %s (%s)', $column, $operator, implode(', ', $placeholders));
+
+        return $this;
+    }
+
+    /**
+     * Adds a `WHERE NOT IN` condition.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException
+     */
+    public function whereNotIn(string $column, array $values) : static
+    {
+        return $this->prepareInClause(column: $column, values: $values, not: true);
+    }
+
+    /**
+     * Adds a `WHERE IS NULL` condition.
+     */
+    public function whereNull(string $column) : static
+    {
+        $this->validateColumnName(name: $column);
+        $column               = $this->quoteIdentifier(name: $column);
+        $this->whereClauses[] = sprintf('%s IS NULL', $column);
+
+        return $this;
+    }
+
+    /**
+     * Adds a `WHERE IS NOT NULL` condition.
+     */
+    public function whereNotNull(string $column) : static
+    {
+        $this->validateColumnName(name: $column);
+        $column               = $this->quoteIdentifier(name: $column);
+        $this->whereClauses[] = sprintf('%s IS NOT NULL', $column);
+
+        return $this;
+    }
+
+    /**
+     * Adds an `OR WHERE` condition.
+     *
+     * @throws \Random\RandomException
+     */
+    public function orWhere(string $column, mixed $value) : static
+    {
+        return $this->orWhereIs(column: $column, operator: '=', value: $value);
+    }
+
+    /**
+     * Adds an `OR WHERE` condition with a specified operator.
+     *
+     * @throws \Random\RandomException
+     */
+    public function orWhereIs(string $column, string $operator, mixed $value) : static
+    {
+        $this->validateColumnName(name: $column);
+
+        $paramKey                    = $this->generateParamKey(column: $column);
+        $this->whereClauses[]        = sprintf('OR %s %s :%s', $column, $operator, $paramKey);
+        $this->parameters[$paramKey] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Adds a `WHERE` condition that compares two columns.
+     *
+     */
+    public function whereColumn(string $first, string $operator, string $second) : static
+    {
+        // Quote the identifier of the first column name to ensure it's safely encapsulated for SQL.
+        // This prevents SQL injection by wrapping column names in suitable quotation marks.
+        $first = $this->quoteIdentifier(name: $first);
+
+        // Quote the identifier of the second column name, ensuring it's properly escaped for SQL.
+        $second = $this->quoteIdentifier(name: $second);
+
+        // Validate the provided operator to ensure that it's one of the acceptable SQL operators.
+        // If invalid, an exception is thrown to prevent dangerous or malformed queries.
+        if (! in_array($operator, ['=', '!=', '<', '>', '<=', '>='], true)) {
+            throw new InvalidArgumentException(message: 'Invalid SQL operator.');
+        }
+
+        // Format and store the WHERE clause in the internal array of conditions (`whereClauses`).
+        // The sprintf() is used for consistent and safe concatenation of identifiers and operators.
+        $this->whereClauses[] = sprintf('%s %s %s', $first, $operator, $second);
+
+        // Return the current object instance to facilitate method chaining (e.g., add multiple WHERE clauses).
+        return $this;
+    }
+
+    /**
+     * Adds an `OR WHERE` condition that compares two columns.
+     */
+    public function orWhereColumn(string $first, string $second, string $operator = '=') : static
+    {
+        $this->whereClauses[] = sprintf('OR %s %s %s', $first, $operator, $second);
+
+        return $this;
+    }
+
+    /**
+     * Adds a raw SQL expression as a WHERE clause to the query.
+     *
+     * @param string $sql      The raw SQL string representing the WHERE condition. It must only contain
+     *                         valid characters (letters, numbers, underscores, parentheses, dots, commas,
+     *                         asterisks, and spaces).
+     * @param array  $bindings An associative array of parameter bindings where keys represent parameter
+     *                         placeholders and values represent their corresponding values.
+     *
+     * @return static The current instance for method chaining.
+     * @throws InvalidArgumentException If the provided SQL string contains invalid characters.
+     */
+    public function whereRaw(string $sql, array $bindings = []) : static
+    {
+        // Check if the provided SQL string contains a semicolon `;` or a double dash `--`.
+        // These characters could indicate SQL injection risks or usage of raw SQL features like comments.
+        if (str_contains($sql, ';') || str_contains($sql, '--')) {
+            // If the string contains either of the above, throw an exception.
+            // The exception message states that raw SQL must not include semicolons or comments.
+            throw new InvalidArgumentException(message: 'Raw SQL must not contain semicolons or comments.');
+        }
+
+        // Adds the validated SQL string wrapped in parentheses to the `whereClauses` array.
+        // The array collects raw SQL expressions for WHERE clauses.
+        $this->whereClauses[] = "({$sql})";
+
+        // Iterates over the provided bindings array (key-value pairs), where keys represent
+        // parameter placeholders and values represent their corresponding values. These key-value pairs
+        // are added to the `parameters` array, which stores all query parameter bindings.
+        foreach ($bindings as $key => $value) {
+            $this->parameters[$key] = $value;
+        }
+
+        // Returns the instance of the object to allow method chaining.
+        return $this;
+    }
+
+    /**
+     * Adds a `WHERE JSON_CONTAINS` condition for JSON column filtering.
+     *
+     * @throws \Random\RandomException
+     * @throws \JsonException
+     */
+    public function whereJsonContains(string $column, mixed $value) : static
+    {
+        $this->validateColumnName(name: $column);
+        $column = $this->quoteIdentifier(name: $column);
+
+        if (! is_array($value) && ! is_object($value)) {
+            throw new InvalidArgumentException(message: "Invalid JSON value. Must be array or object.");
+        }
+
+        $paramKey                    = $this->generateParamKey(column: $column);
+        $this->whereClauses[]        = "JSON_CONTAINS({$column}, :{$paramKey})";
+        $this->parameters[$paramKey] = json_encode($value, JSON_THROW_ON_ERROR);
+
+        return $this;
+    }
+
+    /**
+     * Adds a full-text search condition.
+     */
+    public function whereFullText(string $column, string $value) : static
+    {
+        $this->whereClauses[] = sprintf('MATCH(%s) AGAINST (?)', $column);
+        $this->parameters[]   = $value;
+
+        return $this;
+    }
+
+    /**
+     * Adds a condition to filter records for today.
+     */
+    public function whereToday(string $column) : static
+    {
+        $this->whereClauses[] = sprintf('DATE(%s) = CURDATE()', $column);
+
+        return $this;
+    }
+
+    /**
+     * Adds a condition to filter past records.
+     */
+    public function wherePast(string $column) : static
+    {
+        $this->whereClauses[] = sprintf('%s < NOW()', $column);
+
+        return $this;
+    }
+
+    /**
+     * Adds a condition to filter future records.
+     */
+    public function whereFuture(string $column) : static
+    {
+        $this->whereClauses[] = sprintf('%s > NOW()', $column);
+
+        return $this;
+    }
+
+    /**
+     * Orders the query results in random order for items matching a specific condition.
+     *
+     * @return static Returns the current instance with a random ordering applied to the query.
+     */
+    public function whereInRandomOrder() : static
+    {
+        return $this->orderByRandom();
+    }
+
+    /**
+     * Orders the results randomly.
+     *
+     * @return static The current query instance with a random ordering applied.
+     */
+    public function orderByRandom() : static
+    {
+        // Retrieve the PDO database connection.
+        $pdo = $this->getConnection();
+
+        // Determine the appropriate random ordering function based on the database driver.
+        // Use 'RANDOM()' for PostgreSQL and 'RAND()' for other databases.
+        $orderBy = ($pdo->getAttribute(attribute: PDO::ATTR_DRIVER_NAME) === 'pgsql') ? 'RANDOM()' : 'RAND()';
+
+        // Append the random ordering clause to the list of "ORDER BY" clauses.
+        $this->orderByClauses[] = $orderBy;
+
+        // Return the current instance to enable method chaining.
+        return $this;
+    }
+
+    /**
+     * Builds the `WHERE` clause string.
+     */
+    public function buildWhereClauses() : string
+    {
+        return empty($this->whereClauses) ? '' : ' WHERE ' . implode(' AND ', $this->whereClauses);
+    }
+
+    /**
+     * Retrieves all bound parameters.
+     */
+    public function getParameters() : array
+    {
+        return $this->parameters;
+    }
+
+
+    /**
+     * Adds a "BETWEEN" condition to the SQL where clause for filtering results within a specified range.
+     *
+     * @param string $column The name of the column to apply the "BETWEEN" condition.
+     * @param mixed  $start  The starting value of the range.
+     * @param mixed  $end    The ending value of the range.
+     * @param bool   $not    Indicates whether to negate the condition, resulting in "NOT BETWEEN".
+     *
+     * @return static Returns the current instance to allow method chaining.
+     * @throws \Random\RandomException
+     * @throws \Random\RandomException
+     */
+    public function whereBetween(string $column, mixed $start, mixed $end, bool $not = false) : static
+    {
+        // Validates that the column name contains only allowed characters (alphanumeric and underscores).
+        $this->validateColumnName(name: $column);
+
+        // Quotes the column name to safely use it in SQL queries, preventing SQL injection or reserved word conflicts.
+        $column = $this->quoteIdentifier(name: $column);
+
+        // Generates a unique parameter key for the start value of the "BETWEEN" condition.
+        $paramStart = $this->generateParamKey(column: $column . '_start');
+
+        // Generates a unique parameter key for the end value of the "BETWEEN" condition.
+        $paramEnd = $this->generateParamKey(column: $column . '_end');
+
+        // Assigns the start value to the `parameters` array using the generated key.
+        $this->parameters[$paramStart] = $start;
+
+        // Assigns the end value to the `parameters` array using the generated key.
+        $this->parameters[$paramEnd] = $end;
+
+        // Chooses the appropriate SQL operator based on the `$not` flag (either "BETWEEN" or "NOT BETWEEN").
+        $operator = $not ? 'NOT BETWEEN' : 'BETWEEN';
+
+        // Builds the SQL where clause for the "BETWEEN" condition and adds it to the list of where clauses.
+        $this->whereClauses[] = sprintf('%s %s :%s AND :%s', $column, $operator, $paramStart, $paramEnd);
+
+        // Returns the current instance to allow method chaining.
+        return $this;
+    }
+
+
+    /**
+     * Resets all `WHERE` conditions and parameters.
+     */
+    public function resetWhereConditions() : static
+    {
+        $this->whereClauses = [];
+        $this->parameters   = [];
+
+        return $this;
+    }
+}
+
+=== UnitOfWork.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Gemini\Database\QueryBuilder;
+
+use Exception;
+use Gemini\Database\DatabaseConnection;
+use Gemini\Database\QueryBuilder\Enums\QueryBuilderEnum;
+use Gemini\Database\QueryBuilder\Exception\QueryBuilderException;
+use Gemini\DataHandling\ArrayHandling\Arrhae;
+use PDO;
+use PDOException;
+use PDOStatement;
+
+/**
+ * **UnitOfWork**
+ *
+ * Implements the **Unit of Work** pattern to manage database operations within a single transaction.
+ *
+ * This service allows multiple **INSERT, UPDATE, DELETE, and SELECT** queries to be queued
+ * and executed in a single batch transaction, improving **data consistency** and **performance**.
+ *
+ * ## **Key Features**
+ * - 🏗 **Batch Execution:** Defers multiple queries and executes them in a single transaction.
+ * - 🔄 **Atomic Transactions:** Ensures all queries succeed or the transaction rolls back.
+ * - 🚀 **Performance Optimization:** Reduces the number of database connections per request.
+ * - ✅ **Consistency:** Guarantees that queries are executed in a controlled order.
+ *
+ * **🚀 Example Usage:**
+ * ```
+ * $unitOfWork->registerQuery(QueryBuilderEnum::QUERY_TYPE_INSERT, $stmt, $params);
+ * $results = $unitOfWork->flush(); // Executes all registered queries in a transaction
+ * ```
+ *
+ * @package Gemini\Database\QueryBuilder
+ */
+class UnitOfWork
+{
+    /**
+     * Stores all queries scheduled for deferred execution.
+     *
+     * @var array<int, array{operation: QueryBuilderEnum, statement: PDOStatement, parameters: array}>
+     */
+    private array $unitOfWorkQueue = [];
+
+    /**
+     * UnitOfWork constructor.
+     *
+     * @param DatabaseConnection $databaseConnection The database connection manager.
+     */
+    public function __construct(private readonly DatabaseConnection $databaseConnection) {}
+
+    /**
+     * Registers a database query for deferred execution.
+     *
+     * Queries added here will be executed when `flush()` is called.
+     *
+     * @param QueryBuilderEnum $operation  The type of database operation (INSERT, UPDATE, DELETE, SELECT).
+     * @param PDOStatement     $statement  The prepared PDO statement.
+     * @param array            $parameters Optional parameters for the query.
+     *
+     * @throws QueryBuilderException If the query string is empty.
+     */
+    public function registerQuery(
+        QueryBuilderEnum $operation,
+        PDOStatement     $statement,
+        PDO              $pdo,
+        array            $parameters = [],
+    ) : void {
+        if (empty(trim($statement->queryString))) {
+            throw new QueryBuilderException(message: "Cannot register an empty query in Unit of Work.");
+        }
+
+        $this->unitOfWorkQueue[] = compact('operation', 'statement', 'parameters', 'pdo');
+    }
+
+    /**
+     * Executes all registered queries within a **single database transaction**.
+     *
+     * If an error occurs, all changes are rolled back to maintain **data consistency**.
+     *
+     * @return Arrhae Collection of query execution results.
+     *
+     * @throws QueryBuilderException If the transaction fails.
+     */
+    public function flush() : Arrhae
+    {
+        if (empty($this->unitOfWorkQueue)) {
+            return new Arrhae(items: []);
+        }
+
+        $pdo = $this->databaseConnection->getConnection();
+        $pdo->beginTransaction();
+        $results = [];
+
+        try {
+            foreach ($this->unitOfWorkQueue as $query) {
+                $results[] = $this->executeQuery(unitOfWork: $query);
+            }
+            $pdo->commit();
+        } catch (PDOException|Exception $exception) {
+            $pdo->rollBack();
+            $this->unitOfWorkQueue = [];
+            throw new QueryBuilderException(message: "Transaction failed in UnitOfWork: " . $exception->getMessage());
+        }
+
+        // Clear queue after successful execution.
+        $this->unitOfWorkQueue = [];
+
+        // Flatten the result structure if only a single query was executed.
+        // This improves downstream readability and avoids unnecessary array nesting.
+        if (count($results) === 1) {
+            return new Arrhae(items: $results[0]);
+        }
+
+        // For multiple queries, wrap results under a 'batch' key to preserve structure.
+        // Consumers can detect batch mode via Arrhae::isBatch().
+        return new Arrhae(items: ['batch' => $results]);
+    }
+
+    /**
+     * Executes a single query from the Unit of Work queue.
+     *
+     * If the query is an INSERT, returns both the affected rows and the last insert ID.
+     *
+     * @param array{operation: QueryBuilderEnum, statement: PDOStatement, parameters: array} $unitOfWork
+     *     The queued query operation details.
+     *
+     * @return array Structured result containing affected_rows and optionally lastInsertId.
+     *
+     * @throws \Gemini\Database\QueryBuilder\Exception\QueryBuilderException When the execution of the query fails.
+     */
+    private function executeQuery(array $unitOfWork) : array
+    {
+        /** @var PDOStatement $statement */
+        $statement  = $unitOfWork['statement'];
+        $parameters = $unitOfWork['parameters'] ?? [];
+        $operation  = $unitOfWork['operation'];
+        $pdo        = $unitOfWork['pdo'];
+
+        try {
+            $statement->execute($parameters);
+
+            $result = ['affected_rows' => $statement->rowCount()];
+
+            if ($operation === QueryBuilderEnum::QUERY_TYPE_INSERT) {
+                $result['lastInsertId'] = (int) $pdo->lastInsertId();
+
+                ddx($pdo->lastInsertId());
+                $result['lastInsertId'] = (int) $pdo->lastInsertId();
+            }
+
+            return $result;
+        } catch (PDOException $exception) {
+            throw new QueryBuilderException(
+                message: "Error executing query: " . $exception->getMessage(), code: 0, previous: $exception
+            );
+        }
+    }
+}
+

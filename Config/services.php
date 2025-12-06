@@ -3,20 +3,20 @@
 declare(strict_types=1);
 
 use Application\Providers\AppServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\AuthenticationServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\BootstrapServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\CommandServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\ConfigurationServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\DatabaseServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\FilesystemServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\HttpClientServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\HTTPServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\LoggingServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\MiddlewareServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\RouterServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\SecurityServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\SessionServiceProvider;
-use Gemini\Container\ServiceProviders\Providers\ViewServiceProvider;
+use Avax\Container\ServiceProviders\Providers\AuthenticationServiceProvider;
+use Avax\Container\ServiceProviders\Providers\BootstrapServiceProvider;
+use Avax\Container\ServiceProviders\Providers\CommandServiceProvider;
+use Avax\Container\ServiceProviders\Providers\ConfigurationServiceProvider;
+use Avax\Container\ServiceProviders\Providers\DatabaseServiceProvider;
+use Avax\Container\ServiceProviders\Providers\FilesystemServiceProvider;
+use Avax\Container\ServiceProviders\Providers\HttpClientServiceProvider;
+use Avax\Container\ServiceProviders\Providers\HTTPServiceProvider;
+use Avax\Container\ServiceProviders\Providers\LoggingServiceProvider;
+use Avax\Container\ServiceProviders\Providers\MiddlewareServiceProvider;
+use Avax\Container\ServiceProviders\Providers\RouterServiceProvider;
+use Avax\Container\ServiceProviders\Providers\SecurityServiceProvider;
+use Avax\Container\ServiceProviders\Providers\SessionServiceProvider;
+use Avax\Container\ServiceProviders\Providers\ViewServiceProvider;
 
 return [
     // Core configurations should be registered first

@@ -10,6 +10,7 @@ use Avax\HTTP\Session\Actions\StoreValue;
 use Avax\HTTP\Session\Core\SessionContext;
 use Avax\HTTP\Session\Features\Crypto\Actions\DecryptValue;
 use Avax\HTTP\Session\Features\Crypto\Actions\EncryptValue;
+use Avax\HTTP\Session\Features\Events\SessionEventBus;
 use Avax\HTTP\Session\Features\TTL\Actions\CheckExpiration;
 use Avax\HTTP\Session\Features\TTL\Actions\SetTTL;
 use Avax\HTTP\Session\Storage\SessionStore;
@@ -30,6 +31,7 @@ use Stringable;
  * - Immutability: Each method returns a new instance.
  * - Fluent API: Natural language method chaining.
  * - Context Preservation: Configuration is carried through the chain.
+ * - Clean DI: All dependencies injected, no service locator.
  *
  * Usage:
  *   Session::scope('cart')
@@ -44,12 +46,16 @@ final readonly class FluentSession implements Stringable
     /**
      * FluentSession Constructor.
      *
-     * @param SessionStore   $store   The session storage backend.
-     * @param SessionContext $context The contextual configuration.
+     * @param SessionStore        $store     The session storage backend.
+     * @param SessionContext      $context   The contextual configuration.
+     * @param EncrypterInterface  $encrypter The encryption service.
+     * @param SessionEventBus     $eventBus  The event bus for observability.
      */
     public function __construct(
         private SessionStore $store,
-        private SessionContext $context
+        private SessionContext $context,
+        private EncrypterInterface $encrypter,
+        private SessionEventBus $eventBus
     ) {}
 
     /**
@@ -67,7 +73,9 @@ final readonly class FluentSession implements Stringable
         // Clone context with encryption enabled.
         return new self(
             store: $this->store,
-            context: $this->context->secure()
+            context: $this->context->secure(),
+            encrypter: $this->encrypter,
+            eventBus: $this->eventBus
         );
     }
 
@@ -89,7 +97,9 @@ final readonly class FluentSession implements Stringable
         // Clone context with TTL set.
         return new self(
             store: $this->store,
-            context: $this->context->withTTL($seconds)
+            context: $this->context->withTTL($seconds),
+            encrypter: $this->encrypter,
+            eventBus: $this->eventBus
         );
     }
 
@@ -108,7 +118,9 @@ final readonly class FluentSession implements Stringable
         // Clone context with new namespace.
         return new self(
             store: $this->store,
-            context: $this->context->forNamespace($namespace)
+            context: $this->context->forNamespace($namespace),
+            encrypter: $this->encrypter,
+            eventBus: $this->eventBus
         );
     }
 
@@ -127,11 +139,8 @@ final readonly class FluentSession implements Stringable
      */
     public function store(string $key, mixed $value): void
     {
-        // Get encrypter from container.
-        $encrypter = app(EncrypterInterface::class);
-
-        // Create actions.
-        $encryptAction = new EncryptValue($encrypter);
+        // Create actions with injected dependencies.
+        $encryptAction = new EncryptValue($this->encrypter);
         $ttlAction = new SetTTL($this->store);
 
         // Delegate to StoreValue action.
@@ -139,7 +148,8 @@ final readonly class FluentSession implements Stringable
             store: $this->store,
             context: $this->context,
             encryptor: $encryptAction,
-            ttlSetter: $ttlAction
+            ttlSetter: $ttlAction,
+            eventBus: $this->eventBus
         );
 
         $action->execute(key: $key, value: $value);
@@ -160,11 +170,8 @@ final readonly class FluentSession implements Stringable
      */
     public function retrieve(string $key, mixed $default = null): mixed
     {
-        // Get encrypter from container.
-        $encrypter = app(EncrypterInterface::class);
-
-        // Create actions.
-        $decryptAction = new DecryptValue($encrypter);
+        // Create actions with injected dependencies.
+        $decryptAction = new DecryptValue($this->encrypter);
         $ttlChecker = new CheckExpiration($this->store);
 
         // Delegate to RetrieveValue action.
@@ -630,6 +637,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Actions;
 
+use Avax\HTTP\Session\Features\Events\Events\SessionInvalidatedEvent;
+use Avax\HTTP\Session\Features\Events\SessionEventBus;
 use Avax\HTTP\Session\Storage\SessionStore;
 
 /**
@@ -644,11 +653,11 @@ use Avax\HTTP\Session\Storage\SessionStore;
  *
  * Enterprise Rules:
  * - Security: Always regenerates ID to prevent session fixation attacks.
- * - Audit: Logs invalidation for security monitoring.
+ * - Audit: Emits events for security monitoring.
  * - Idempotent: Safe to call multiple times.
  *
  * Usage:
- *   $action = new InvalidateSession($store);
+ *   $action = new InvalidateSession($store, $eventBus);
  *   $action->execute();
  *
  * Common Use Cases:
@@ -663,10 +672,12 @@ final readonly class InvalidateSession
     /**
      * InvalidateSession Constructor.
      *
-     * @param SessionStore $store The session storage backend.
+     * @param SessionStore    $store    The session storage backend.
+     * @param SessionEventBus $eventBus The event bus for observability.
      */
     public function __construct(
-        private SessionStore $store
+        private SessionStore $store,
+        private SessionEventBus $eventBus
     ) {}
 
     /**
@@ -676,7 +687,7 @@ final readonly class InvalidateSession
      * 1. Captures current session ID for logging
      * 2. Flushes all session data
      * 3. Regenerates session ID
-     * 4. Logs the invalidation event
+     * 4. Dispatches event for audit
      *
      * Security Note:
      * - Regenerating the ID prevents session fixation attacks.
@@ -696,15 +707,9 @@ final readonly class InvalidateSession
         // This prevents session fixation attacks.
         $this->store->regenerateId(deleteOldSession: true);
 
-        // Log session invalidation for security audit trail.
-        logger()?->info(
-            message: 'Session invalidated successfully',
-            context: [
-                'old_session_id' => $oldSessionId,
-                'new_session_id' => $this->store->getId(),
-                'action' => 'InvalidateSession',
-                'security_event' => true,
-            ]
+        // Dispatch event for security audit trail.
+        $this->eventBus->dispatch(
+            SessionInvalidatedEvent::create($oldSessionId, $this->store->getId())
         );
     }
 }
@@ -946,6 +951,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Actions;
 
+use Avax\HTTP\Session\Features\Events\Events\SessionStartedEvent;
+use Avax\HTTP\Session\Features\Events\SessionEventBus;
 use Avax\HTTP\Session\Storage\SessionStore;
 
 /**
@@ -959,10 +966,10 @@ use Avax\HTTP\Session\Storage\SessionStore;
  * Enterprise Rules:
  * - Idempotent: Starting an already-started session is safe (no-op).
  * - Security: Validates session configuration before initialization.
- * - Logging: Emits structured logs for audit trails.
+ * - Observability: Emits events for audit trails.
  *
  * Usage:
- *   $action = new StartSession($store);
+ *   $action = new StartSession($store, $eventBus);
  *   $action->execute();
  *
  * @package Avax\HTTP\Session\Actions
@@ -972,10 +979,12 @@ final readonly class StartSession
     /**
      * StartSession Constructor.
      *
-     * @param SessionStore $store The session storage backend.
+     * @param SessionStore    $store    The session storage backend.
+     * @param SessionEventBus $eventBus The event bus for observability.
      */
     public function __construct(
-        private SessionStore $store
+        private SessionStore $store,
+        private SessionEventBus $eventBus
     ) {}
 
     /**
@@ -1001,13 +1010,9 @@ final readonly class StartSession
         // Delegate session initialization to the storage backend.
         $this->store->start();
 
-        // Log session start for audit trail.
-        logger()?->info(
-            message: 'Session started successfully',
-            context: [
-                'session_id' => $this->store->getId(),
-                'action' => 'StartSession',
-            ]
+        // Dispatch event for observability.
+        $this->eventBus->dispatch(
+            SessionStartedEvent::create($this->store->getId())
         );
     }
 }
@@ -1021,6 +1026,8 @@ namespace Avax\HTTP\Session\Actions;
 
 use Avax\HTTP\Session\Core\SessionContext;
 use Avax\HTTP\Session\Features\Crypto\Actions\EncryptValue;
+use Avax\HTTP\Session\Features\Events\Events\SessionValueStoredEvent;
+use Avax\HTTP\Session\Features\Events\SessionEventBus;
 use Avax\HTTP\Session\Features\TTL\Actions\SetTTL;
 use Avax\HTTP\Session\Storage\SessionStore;
 
@@ -1041,7 +1048,7 @@ use Avax\HTTP\Session\Storage\SessionStore;
  * - Atomicity: Storage is atomic (all-or-nothing).
  *
  * Usage:
- *   $action = new StoreValue($store, $context, $encryptor, $ttlManager);
+ *   $action = new StoreValue($store, $context, $encryptor, $ttlManager, $eventBus);
  *   $action->execute('user_id', 123);
  *
  * @package Avax\HTTP\Session\Actions
@@ -1055,12 +1062,14 @@ final readonly class StoreValue
      * @param SessionContext  $context   The contextual configuration (namespace, TTL, encryption).
      * @param EncryptValue    $encryptor Action for encrypting values.
      * @param SetTTL          $ttlSetter Action for setting TTL metadata.
+     * @param SessionEventBus $eventBus  The event bus for observability.
      */
     public function __construct(
         private SessionStore $store,
         private SessionContext $context,
         private EncryptValue $encryptor,
-        private SetTTL $ttlSetter
+        private SetTTL $ttlSetter,
+        private SessionEventBus $eventBus
     ) {}
 
     /**
@@ -1113,16 +1122,14 @@ final readonly class StoreValue
             );
         }
 
-        // Log the storage operation for audit trail.
-        logger()?->debug(
-            message: 'Session value stored',
-            context: [
-                'key' => $resolvedKey,
-                'encrypted' => $this->context->secure,
-                'ttl' => $this->context->ttl,
-                'namespace' => $this->context->namespace,
-                'action' => 'StoreValue',
-            ]
+        // Dispatch event for observability.
+        $this->eventBus->dispatch(
+            SessionValueStoredEvent::create(
+                key: $resolvedKey,
+                encrypted: $this->context->secure,
+                ttl: $this->context->ttl,
+                namespace: $this->context->namespace
+            )
         );
     }
 
@@ -1501,6 +1508,108 @@ final readonly class SessionData
     }
 }
 
+=== Core/SessionMeta.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Session\Core;
+
+/**
+ * SessionMeta Value Object
+ *
+ * Immutable metadata for session values.
+ *
+ * This VO encapsulates all metadata associated with a session value,
+ * keeping it separate from the actual data and enabling clean queries.
+ *
+ * Enterprise Rules:
+ * - Immutability: Once created, cannot be modified.
+ * - Namespace: Uses `_meta.*` prefix to avoid pollution.
+ * - Type Safety: Strict typing throughout.
+ *
+ * Usage:
+ *   $meta = new SessionMeta(encrypted: true, expiresAt: time() + 3600);
+ *   $metaKey = SessionMeta::keyFor('user_token');
+ *
+ * @package Avax\HTTP\Session\Core
+ */
+final readonly class SessionMeta
+{
+    /**
+     * SessionMeta Constructor.
+     *
+     * @param bool     $encrypted Whether the value is encrypted.
+     * @param int|null $expiresAt Unix timestamp when value expires.
+     * @param array<string> $tags      Semantic tags for categorization.
+     * @param array<string, mixed> $custom    Custom metadata.
+     */
+    public function __construct(
+        public bool $encrypted = false,
+        public int|null $expiresAt = null,
+        public array $tags = [],
+        public array $custom = []
+    ) {}
+
+    /**
+     * Get the meta key for a given session key.
+     *
+     * @param string $key The session key.
+     *
+     * @return string The meta key.
+     */
+    public static function keyFor(string $key): string
+    {
+        return "_meta.{$key}";
+    }
+
+    /**
+     * Check if value has expired.
+     *
+     * @return bool True if expired.
+     */
+    public function isExpired(): bool
+    {
+        if ($this->expiresAt === null) {
+            return false;
+        }
+
+        return time() >= $this->expiresAt;
+    }
+
+    /**
+     * Convert to array for storage.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'encrypted' => $this->encrypted,
+            'expires_at' => $this->expiresAt,
+            'tags' => $this->tags,
+            'custom' => $this->custom,
+        ];
+    }
+
+    /**
+     * Create from array.
+     *
+     * @param array<string, mixed> $data The array data.
+     *
+     * @return self
+     */
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            encrypted: $data['encrypted'] ?? false,
+            expiresAt: $data['expires_at'] ?? null,
+            tags: $data['tags'] ?? [],
+            custom: $data['custom'] ?? []
+        );
+    }
+}
+
 === Enums/SessionBag.php ===
 <?php
 
@@ -1873,6 +1982,403 @@ final readonly class EncryptValue
             );
         }
     }
+}
+
+=== Features/Events/Adapters/InMemoryEventBus.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Session\Features\Events\Adapters;
+
+use Avax\HTTP\Session\Features\Events\SessionEvent;
+use Avax\HTTP\Session\Features\Events\SessionEventBus;
+
+/**
+ * InMemoryEventBus
+ *
+ * In-memory implementation of SessionEventBus.
+ *
+ * This adapter stores listeners in memory and dispatches events
+ * synchronously. Perfect for development, testing, and simple applications.
+ *
+ * Enterprise Rules:
+ * - Synchronous: Events dispatched immediately.
+ * - Type-safe: Listeners receive specific event types.
+ * - Testable: Easy to verify event dispatching.
+ *
+ * Usage:
+ *   $bus = new InMemoryEventBus();
+ *   $bus->listen(SessionStartedEvent::class, fn($e) => logger()->info($e->toArray()));
+ *   $bus->dispatch(SessionStartedEvent::create('abc123'));
+ *
+ * @package Avax\HTTP\Session\Features\Events\Adapters
+ */
+final class InMemoryEventBus implements SessionEventBus
+{
+    /**
+     * Registered event listeners.
+     *
+     * @var array<string, array<callable>>
+     */
+    private array $listeners = [];
+
+    /**
+     * Register a listener for a specific event type.
+     *
+     * @param string   $eventClass The event class name.
+     * @param callable $listener   The listener callback.
+     *
+     * @return void
+     */
+    public function listen(string $eventClass, callable $listener): void
+    {
+        // Initialize listeners array for this event type if not exists.
+        if (!isset($this->listeners[$eventClass])) {
+            $this->listeners[$eventClass] = [];
+        }
+
+        // Add listener to the list.
+        $this->listeners[$eventClass][] = $listener;
+    }
+
+    /**
+     * Dispatch a session event.
+     *
+     * Notifies all registered listeners for this event type.
+     *
+     * @param SessionEvent $event The event to dispatch.
+     *
+     * @return void
+     */
+    public function dispatch(SessionEvent $event): void
+    {
+        // Get event class name.
+        $eventClass = $event::class;
+
+        // Check if there are listeners for this event type.
+        if (!isset($this->listeners[$eventClass])) {
+            return;
+        }
+
+        // Call each listener with the event.
+        foreach ($this->listeners[$eventClass] as $listener) {
+            $listener($event);
+        }
+    }
+
+    /**
+     * Remove all listeners for a specific event type.
+     *
+     * @param string $eventClass The event class name.
+     *
+     * @return void
+     */
+    public function forget(string $eventClass): void
+    {
+        unset($this->listeners[$eventClass]);
+    }
+
+    /**
+     * Remove all listeners.
+     *
+     * @return void
+     */
+    public function flush(): void
+    {
+        $this->listeners = [];
+    }
+}
+
+=== Features/Events/Adapters/LoggingEventBus.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Session\Features\Events\Adapters;
+
+use Avax\HTTP\Session\Features\Events\SessionEvent;
+use Avax\HTTP\Session\Features\Events\SessionEventBus;
+
+/**
+ * LoggingEventBus
+ *
+ * EventBus adapter that logs all events.
+ *
+ * This adapter wraps another EventBus and logs all dispatched events
+ * using the application logger. Perfect for debugging and audit trails.
+ *
+ * Enterprise Rules:
+ * - Decorator pattern: Wraps another EventBus.
+ * - Logging: All events logged for observability.
+ * - Pass-through: Delegates to wrapped bus.
+ *
+ * Usage:
+ *   $bus = new LoggingEventBus(new InMemoryEventBus());
+ *
+ * @package Avax\HTTP\Session\Features\Events\Adapters
+ */
+final readonly class LoggingEventBus implements SessionEventBus
+{
+    /**
+     * LoggingEventBus Constructor.
+     *
+     * @param SessionEventBus $innerBus The wrapped event bus.
+     */
+    public function __construct(
+        private SessionEventBus $innerBus
+    ) {}
+
+    /**
+     * Dispatch a session event.
+     *
+     * Logs the event and delegates to the inner bus.
+     *
+     * @param SessionEvent $event The event to dispatch.
+     *
+     * @return void
+     */
+    public function dispatch(SessionEvent $event): void
+    {
+        // Log the event if logger is available.
+        logger()?->debug(
+            message: 'Session event dispatched',
+            context: $event->toArray()
+        );
+
+        // Delegate to inner bus.
+        $this->innerBus->dispatch($event);
+    }
+}
+
+=== Features/Events/Events/SessionInvalidatedEvent.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Session\Features\Events\Events;
+
+use Avax\HTTP\Session\Features\Events\SessionEvent;
+use DateTimeImmutable;
+
+/**
+ * SessionInvalidatedEvent
+ *
+ * Dispatched when a session is invalidated/destroyed.
+ *
+ * @package Avax\HTTP\Session\Features\Events\Events
+ */
+final readonly class SessionInvalidatedEvent extends SessionEvent
+{
+    /**
+     * Create a new SessionInvalidatedEvent.
+     *
+     * @param string $oldSessionId The old session ID.
+     * @param string $newSessionId The new session ID.
+     *
+     * @return self
+     */
+    public static function create(string $oldSessionId, string $newSessionId): self
+    {
+        return new self(
+            action: 'InvalidateSession',
+            context: [
+                'old_session_id' => $oldSessionId,
+                'new_session_id' => $newSessionId,
+                'security_event' => true,
+            ],
+            occurredAt: new DateTimeImmutable()
+        );
+    }
+}
+
+=== Features/Events/Events/SessionStartedEvent.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Session\Features\Events\Events;
+
+use Avax\HTTP\Session\Features\Events\SessionEvent;
+use DateTimeImmutable;
+
+/**
+ * SessionStartedEvent
+ *
+ * Dispatched when a session is successfully started.
+ *
+ * @package Avax\HTTP\Session\Features\Events\Events
+ */
+final readonly class SessionStartedEvent extends SessionEvent
+{
+    /**
+     * Create a new SessionStartedEvent.
+     *
+     * @param string $sessionId The session identifier.
+     *
+     * @return self
+     */
+    public static function create(string $sessionId): self
+    {
+        return new self(
+            action: 'StartSession',
+            context: ['session_id' => $sessionId],
+            occurredAt: new DateTimeImmutable()
+        );
+    }
+}
+
+=== Features/Events/Events/SessionValueStoredEvent.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Session\Features\Events\Events;
+
+use Avax\HTTP\Session\Features\Events\SessionEvent;
+use DateTimeImmutable;
+
+/**
+ * SessionValueStoredEvent
+ *
+ * Dispatched when a value is stored in the session.
+ *
+ * @package Avax\HTTP\Session\Features\Events\Events
+ */
+final readonly class SessionValueStoredEvent extends SessionEvent
+{
+    /**
+     * Create a new SessionValueStoredEvent.
+     *
+     * @param string   $key       The storage key.
+     * @param bool     $encrypted Whether the value was encrypted.
+     * @param int|null $ttl       TTL in seconds if set.
+     * @param string   $namespace The namespace.
+     *
+     * @return self
+     */
+    public static function create(
+        string $key,
+        bool $encrypted,
+        int|null $ttl,
+        string $namespace
+    ): self {
+        return new self(
+            action: 'StoreValue',
+            context: [
+                'key' => $key,
+                'encrypted' => $encrypted,
+                'ttl' => $ttl,
+                'namespace' => $namespace,
+            ],
+            occurredAt: new DateTimeImmutable()
+        );
+    }
+}
+
+=== Features/Events/SessionEvent.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Session\Features\Events;
+
+use DateTimeImmutable;
+
+/**
+ * SessionEvent Base Class
+ *
+ * Abstract base for all session-related events.
+ *
+ * This class provides common structure for events, ensuring
+ * consistency across the event system.
+ *
+ * Enterprise Rules:
+ * - Immutability: Events are readonly value objects.
+ * - Timestamp: All events have occurrence time.
+ * - Context: Rich contextual data for observability.
+ *
+ * @package Avax\HTTP\Session\Features\Events
+ */
+abstract readonly class SessionEvent
+{
+    /**
+     * SessionEvent Constructor.
+     *
+     * @param string            $action     The action that triggered the event.
+     * @param array<string, mixed> $context    Contextual data about the event.
+     * @param DateTimeImmutable $occurredAt When the event occurred.
+     */
+    public function __construct(
+        public string $action,
+        public array $context,
+        public DateTimeImmutable $occurredAt
+    ) {}
+
+    /**
+     * Get event name.
+     *
+     * @return string The event class name.
+     */
+    public function getName(): string
+    {
+        return static::class;
+    }
+
+    /**
+     * Convert to array for serialization.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'event' => $this->getName(),
+            'action' => $this->action,
+            'context' => $this->context,
+            'occurred_at' => $this->occurredAt->format('Y-m-d H:i:s'),
+        ];
+    }
+}
+
+=== Features/Events/SessionEventBus.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Session\Features\Events;
+
+/**
+ * SessionEventBus Interface
+ *
+ * Contract for dispatching session-related events.
+ *
+ * This interface enables observability, audit logging, and plugin
+ * integrations without hard-coding dependencies on specific loggers
+ * or monitoring systems.
+ *
+ * Enterprise Rules:
+ * - Decoupling: No direct logger dependencies in domain code.
+ * - Extensibility: Multiple listeners can subscribe to events.
+ * - Testability: Easy to mock for testing.
+ *
+ * Usage:
+ *   $eventBus->dispatch(new SessionStartedEvent(...));
+ *
+ * @package Avax\HTTP\Session\Features\Events
+ */
+interface SessionEventBus
+{
+    /**
+     * Dispatch a session event.
+     *
+     * Notifies all registered listeners about the event.
+     *
+     * @param SessionEvent $event The event to dispatch.
+     *
+     * @return void
+     */
+    public function dispatch(SessionEvent $event): void;
 }
 
 === Features/Flash/Actions/AddFlash.php ===
@@ -2415,6 +2921,155 @@ final readonly class FlashMessage
             type: $data['type'] ?? 'info'
         );
     }
+}
+
+=== Features/Policy/Policies/MaxIdlePolicy.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Session\Features\Policy\Policies;
+
+use Avax\HTTP\Session\Core\SessionContext;
+use Avax\HTTP\Session\Features\Policy\SessionPolicyInterface;
+
+final readonly class MaxIdlePolicy implements SessionPolicyInterface
+{
+    public function __construct(private int $maxIdleSeconds) {}
+
+    public function validate(SessionContext $context): bool
+    {
+        $idle = time() - ($context->custom['last_active_at'] ?? time());
+        return $idle <= $this->maxIdleSeconds;
+    }
+
+    public function getMessage(): string
+    {
+        return "Session idle time exceeded {$this->maxIdleSeconds} seconds";
+    }
+}
+
+=== Features/Policy/Policies/MaxLifetimePolicy.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Session\Features\Policy\Policies;
+
+use Avax\HTTP\Session\Core\SessionContext;
+use Avax\HTTP\Session\Features\Policy\SessionPolicyInterface;
+
+final readonly class MaxLifetimePolicy implements SessionPolicyInterface
+{
+    public function __construct(private int $maxLifetimeSeconds) {}
+
+    public function validate(SessionContext $context): bool
+    {
+        $lifetime = time() - ($context->custom['created_at'] ?? time());
+        return $lifetime <= $this->maxLifetimeSeconds;
+    }
+
+    public function getMessage(): string
+    {
+        return "Session lifetime exceeded {$this->maxLifetimeSeconds} seconds";
+    }
+}
+
+=== Features/Policy/Policies/SecureOnlyPolicy.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Session\Features\Policy\Policies;
+
+use Avax\HTTP\Session\Core\SessionContext;
+use Avax\HTTP\Session\Features\Policy\SessionPolicyInterface;
+
+final readonly class SecureOnlyPolicy implements SessionPolicyInterface
+{
+    public function validate(SessionContext $context): bool
+    {
+        return $context->secure === true;
+    }
+
+    public function getMessage(): string
+    {
+        return "Session must use secure (encrypted) transport";
+    }
+}
+
+=== Features/Policy/SessionPolicyEnforcer.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Session\Features\Policy;
+
+use Avax\HTTP\Session\Core\SessionContext;
+use Avax\HTTP\Session\Exceptions\SessionException;
+
+final class SessionPolicyEnforcer
+{
+    /** @var array<SessionPolicyInterface> */
+    private array $policies = [];
+
+    public function addPolicy(SessionPolicyInterface $policy): self
+    {
+        $this->policies[] = $policy;
+        return $this;
+    }
+
+    public function enforce(SessionContext $context): void
+    {
+        foreach ($this->policies as $policy) {
+            if (!$policy->validate($context)) {
+                throw new SessionException($policy->getMessage());
+            }
+        }
+    }
+}
+
+=== Features/Policy/SessionPolicyInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\HTTP\Session\Features\Policy;
+
+use Avax\HTTP\Session\Core\SessionContext;
+
+/**
+ * SessionPolicyInterface
+ *
+ * Contract for session security and compliance policies.
+ *
+ * Policies validate session behavior and enforce rules like
+ * max idle time, max lifetime, secure transport requirements, etc.
+ *
+ * Enterprise Rules:
+ * - Validation: Each policy validates one aspect.
+ * - Composability: Multiple policies can be combined.
+ * - Clear messaging: Violations have descriptive messages.
+ *
+ * @package Avax\HTTP\Session\Features\Policy
+ */
+interface SessionPolicyInterface
+{
+    /**
+     * Validate the session context against this policy.
+     *
+     * @param SessionContext $context The session context to validate.
+     *
+     * @return bool True if valid, false if policy is violated.
+     */
+    public function validate(SessionContext $context): bool;
+
+    /**
+     * Get the policy violation message.
+     *
+     * @return string Descriptive message explaining the policy.
+     */
+    public function getMessage(): string;
 }
 
 === Features/TTL/Actions/CheckExpiration.php ===

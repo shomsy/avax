@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="components">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/redis.zip!/" />
+      <root url="jar://$PROJECT_DIR$/docker.zip!/" />
+      <root url="jar://$PROJECT_DIR$/reverse-proxy.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

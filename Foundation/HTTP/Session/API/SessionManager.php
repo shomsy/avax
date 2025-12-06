@@ -288,25 +288,6 @@ final readonly class SessionManager
      *
      * This is a security-critical operation that clears all data
      * and regenerates the session ID.
-     *
-     * Example:
-     *   Session::invalidate(); // On logout
-     *
-     * @return void
-     */
-    public function invalidate(): void
-    {
-        // Delegate to InvalidateSession action.
-        $action = new InvalidateSession($this->store);
-        $action->execute();
-    }
-
-    /**
-     * Regenerate the session ID.
-     *
-     * Security measure to prevent session fixation attacks.
-     *
-     * Example:
      *   Session::regenerate(); // After login
      *
      * @param bool $deleteOldSession Whether to destroy old session data.

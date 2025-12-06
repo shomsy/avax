@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\Contracts;
 
 use Avax\Auth\Contracts\CredentialsInterface;
-use Avax\Auth\Contracts\Identity\Subject\UserInterface;
+use Avax\Auth\Contracts\UserInterface;
 
 /**
  * IdentityInterface defines the basic contract for authentication mechanisms.
@@ -21,7 +21,7 @@ interface IdentityInterface
      *
      * @return bool True on successful authentication, false otherwise.
      */
-    public function attempt(CredentialsInterface $credentials) : bool;
+    public function attempt(CredentialsInterface $credentials): bool;
 
     /**
      * Retrieve the currently authenticated user.
@@ -29,18 +29,18 @@ interface IdentityInterface
      *
      * @return UserInterface|null The authenticated user, or null if no user is authenticated.
      */
-    public function user() : UserInterface|null;
+    public function user(): UserInterface|null;
 
     /**
      * Log out the currently authenticated user.
      * This should invalidate the current session or token.
      */
-    public function logout() : void;
+    public function logout(): void;
 
     /**
      * Check if a user is currently authenticated.
      *
      * @return bool True if a user is authenticated, otherwise false.
      */
-    public function check() : bool;
+    public function check(): bool;
 }

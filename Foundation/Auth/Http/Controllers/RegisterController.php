@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\Http\Controllers;
 
 use Avax\Auth\Actions\Register;
-use Avax\Auth\Data\RegistrationData;
+use Avax\Auth\Data\RegistrationDTO;
 use Avax\Exceptions\ValidationException;
 use Avax\HTTP\Request\Request;
 use Psr\Http\Message\ResponseInterface;
@@ -17,7 +17,7 @@ final readonly class RegisterController
     public function register(Request $request): ResponseInterface
     {
         try {
-            $data = new RegistrationData(data: $request->allInputs());
+            $data = new RegistrationDTO(data: $request->allInputs());
             $user = $this->registerAction->execute($data);
 
             return response()->send(

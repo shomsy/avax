@@ -1,6 +1,8 @@
+<?php
+
 namespace Avax\Auth\Contracts;
 
-use Avax\Auth\Contracts\Identity\Subject\UserInterface;
+use Avax\Auth\Contracts\UserInterface;
 use Avax\Auth\Data\Credentials;
 
 /**

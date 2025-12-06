@@ -6,7 +6,7 @@ namespace Avax\Auth\Http\Controllers;
 
 use Avax\Auth\Authenticator;
 use Avax\Auth\Data\Credentials;
-use Avax\Auth\Data\RegistrationData; // Unused here, but ensuring namespace visibility
+use Avax\Auth\Data\RegistrationDTO; // Unused here, but ensuring namespace visibility
 use Avax\Auth\Adapters\RateLimiter;
 use Avax\Auth\Exceptions\AuthFailed;
 use Avax\Exceptions\ValidationException;

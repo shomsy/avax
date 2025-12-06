@@ -8,7 +8,7 @@ use Avax\Auth\Contracts\CredentialsInterface;
 use Avax\Auth\Contracts\RoleInterface;
 use Avax\Auth\Contracts\UserInterface;
 use Avax\Auth\Contracts\UserSourceInterface;
-use Avax\Auth\Data\RegistrationData;
+use Avax\Auth\Data\RegistrationDTO;
 use Avax\Auth\Adapters\PasswordHasher;
 use Avax\Database\QueryBuilder\QueryBuilder;
 
@@ -110,15 +110,15 @@ readonly class UserDataSource implements UserSourceInterface
      *
      * @throws \Exception
      */
-    public function createUser(RegistrationData $registrationData) : UserInterface
+    public function createUser(RegistrationDTO $RegistrationDTO) : UserInterface
     {
         $userData = [
-            'first_name' => $registrationData->first_name,
-            'last_name'  => $registrationData->last_name,
-            'username'   => $registrationData->username,
-            'email'      => $registrationData->email,
-            'password'   => $this->passwordHasher->hash($registrationData->password),
-            'is_admin'   => (int) $registrationData->is_admin,
+            'first_name' => $RegistrationDTO->first_name,
+            'last_name'  => $RegistrationDTO->last_name,
+            'username'   => $RegistrationDTO->username,
+            'email'      => $RegistrationDTO->email,
+            'password'   => $this->passwordHasher->hash($RegistrationDTO->password),
+            'is_admin'   => (int) $RegistrationDTO->is_admin,
         ];
 
         logger(message: 'Creating user with data:', context: $userData);

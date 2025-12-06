@@ -6,7 +6,7 @@ namespace Avax\Auth\Contracts;
 
 use Avax\Auth\Contracts\CredentialsInterface;
 use Avax\Auth\Contracts\UserInterface;
-use Avax\Auth\Data\RegistrationData;
+use Avax\Auth\Data\RegistrationDTO;
 
 /**
  * Interface for a user provider that
@@ -46,7 +46,7 @@ interface UserSourceInterface
      * Creates a new user based on the provided registration data.
      *
      */
-    public function createUser(RegistrationData $registrationData) : UserInterface;
+    public function createUser(RegistrationDTO $RegistrationDTO) : UserInterface;
 
     /**
      * Update an existing user with the provided data.

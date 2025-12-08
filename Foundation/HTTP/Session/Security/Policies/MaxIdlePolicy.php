@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Security\Policies;
 
+use RuntimeException;
+
 /**
  * MaxIdlePolicy - Session Idle Timeout Policy
  *
@@ -42,7 +44,7 @@ final class MaxIdlePolicy implements PolicyInterface
         $idleTime = time() - $lastActivity;
 
         if ($idleTime > $this->maxIdleSeconds) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf(
                     'Session expired due to inactivity. Idle for %d seconds (max: %d).',
                     $idleTime,

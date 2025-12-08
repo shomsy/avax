@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Features;
 
-use Avax\HTTP\Session\Contracts\Storage\Store;
 use Avax\HTTP\Session\Contracts\FeatureInterface;
+use Avax\HTTP\Session\Contracts\Storage\Store;
 
 /**
  * Snapshots - Session State Snapshot Manager

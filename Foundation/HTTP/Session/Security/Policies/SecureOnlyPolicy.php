@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Security\Policies;
 
+use RuntimeException;
+
 /**
  * SecureOnlyPolicy - HTTPS-Only Session Policy
  *
@@ -27,7 +29,7 @@ final class SecureOnlyPolicy implements PolicyInterface
         $isSecure = ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 
         if (! $isSecure) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'Session access requires HTTPS connection for security.'
             );
         }

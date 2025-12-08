@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Foundation\HTTP\Session\Features;
 
-use Redis;
 use DateTimeImmutable;
+use Redis;
 
 /**
  * RateLimiterFeature

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session\Security\Crypto;
 
 use Avax\HTTP\Session\Contracts\Security\Encrypter;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * OpenSSLEncrypter - Production-Grade AES-256-GCM Encryption
@@ -43,7 +45,7 @@ final class OpenSSLEncrypter implements Encrypter
     )
     {
         if (strlen($key) !== 32) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Encryption key must be exactly 32 bytes for AES-256'
             );
         }
@@ -73,7 +75,7 @@ final class OpenSSLEncrypter implements Encrypter
         );
 
         if ($ciphertext === false) {
-            throw new \RuntimeException('Encryption failed');
+            throw new RuntimeException('Encryption failed');
         }
 
         // Package: IV + Tag + Ciphertext (all binary)
@@ -92,7 +94,7 @@ final class OpenSSLEncrypter implements Encrypter
         $package = base64_decode($payload, true);
 
         if ($package === false || strlen($package) < (self::IV_LENGTH + self::TAG_LENGTH)) {
-            throw new \RuntimeException('Invalid encrypted payload');
+            throw new RuntimeException('Invalid encrypted payload');
         }
 
         // Unpack: IV + Tag + Ciphertext
@@ -112,7 +114,7 @@ final class OpenSSLEncrypter implements Encrypter
 
         if ($plaintext === false) {
             // Tampering detected or invalid key
-            throw new \RuntimeException('Decryption failed - possible tampering detected');
+            throw new RuntimeException('Decryption failed - possible tampering detected');
         }
 
         return unserialize($plaintext);

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Security;
 
+use InvalidArgumentException;
+
 /**
  * CookieManager - Centralized Cookie Policy Enforcement
  *
@@ -40,14 +42,14 @@ final readonly class CookieManager
     {
         // Validate SameSite
         if (! in_array($sameSite, ['Lax', 'Strict', 'None'], true)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 "Invalid SameSite value: {$sameSite}. Must be 'Lax', 'Strict', or 'None'."
             );
         }
 
         // SameSite=None requires Secure flag
         if ($sameSite === 'None' && ! $secure) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'SameSite=None requires Secure flag to be true (HTTPS only).'
             );
         }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session\Security;
 
 use Avax\HTTP\Session\Contracts\Storage\Store;
+use RuntimeException;
 
 /**
  * CsrfToken - CSRF Token Management
@@ -36,18 +37,19 @@ final class CsrfToken
     ) {}
 
     /**
-     * Generate a new CSRF token.
+     * Verify token or throw exception.
      *
-     * Stores token in session for verification.
+     * @param string $providedToken Token to verify.
      *
-     * @return string Hex-encoded token.
+     * @return void
+     *
+     * @throws \RuntimeException If token invalid.
      */
-    public function generate() : string
+    public function verifyOrFail(string $providedToken) : void
     {
-        $token = bin2hex(random_bytes(self::TOKEN_LENGTH));
-        $this->store->put(self::TOKEN_KEY, $token);
-
-        return $token;
+        if (! $this->verify($providedToken)) {
+            throw new RuntimeException('CSRF token mismatch - possible CSRF attack');
+        }
     }
 
     /**
@@ -71,22 +73,6 @@ final class CsrfToken
     }
 
     /**
-     * Verify token or throw exception.
-     *
-     * @param string $providedToken Token to verify.
-     *
-     * @return void
-     *
-     * @throws \RuntimeException If token invalid.
-     */
-    public function verifyOrFail(string $providedToken) : void
-    {
-        if (! $this->verify($providedToken)) {
-            throw new \RuntimeException('CSRF token mismatch - possible CSRF attack');
-        }
-    }
-
-    /**
      * Get current token (generate if missing).
      *
      * @return string Current token.
@@ -98,6 +84,21 @@ final class CsrfToken
         if ($token === null) {
             return $this->generate();
         }
+
+        return $token;
+    }
+
+    /**
+     * Generate a new CSRF token.
+     *
+     * Stores token in session for verification.
+     *
+     * @return string Hex-encoded token.
+     */
+    public function generate() : string
+    {
+        $token = bin2hex(random_bytes(self::TOKEN_LENGTH));
+        $this->store->put(self::TOKEN_KEY, $token);
 
         return $token;
     }

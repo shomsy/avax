@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Security\Policies;
 
+use RuntimeException;
+
 /**
  * MaxLifetimePolicy - Session Maximum Lifetime Policy
  *
@@ -42,7 +44,7 @@ final class MaxLifetimePolicy implements PolicyInterface
         $lifetime = time() - $createdAt;
 
         if ($lifetime > $this->maxLifetimeSeconds) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf(
                     'Session expired (max lifetime). Active for %d seconds (max: %d).',
                     $lifetime,

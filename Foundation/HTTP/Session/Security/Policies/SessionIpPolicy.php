@@ -64,14 +64,6 @@ final class SessionIpPolicy implements PolicyInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getName() : string
-    {
-        return $this->strictMode ? 'ip_binding_strict' : 'ip_binding_relaxed';
-    }
-
-    /**
      * Check if two IPs are in the same /24 subnet.
      *
      * @param string $ip1 First IP.
@@ -88,5 +80,13 @@ final class SessionIpPolicy implements PolicyInterface
         return $parts1[0] === $parts2[0]
             && $parts1[1] === $parts2[1]
             && $parts1[2] === $parts2[2];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName() : string
+    {
+        return $this->strictMode ? 'ip_binding_strict' : 'ip_binding_relaxed';
     }
 }

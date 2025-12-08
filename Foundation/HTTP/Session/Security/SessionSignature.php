@@ -21,19 +21,6 @@ final class SessionSignature
     private const ALGO = 'sha256';
 
     /**
-     * Sign session data with HMAC.
-     *
-     * @param string $data Session data to sign.
-     * @param string $key  Secret signing key.
-     *
-     * @return string HMAC signature (hex).
-     */
-    public static function sign(string $data, string $key) : string
-    {
-        return hash_hmac(self::ALGO, $data, $key);
-    }
-
-    /**
      * Verify HMAC signature.
      *
      * Uses constant-time comparison to prevent timing attacks.
@@ -49,5 +36,18 @@ final class SessionSignature
         $expectedSignature = self::sign($data, $key);
 
         return hash_equals($expectedSignature, $signature);
+    }
+
+    /**
+     * Sign session data with HMAC.
+     *
+     * @param string $data Session data to sign.
+     * @param string $key  Secret signing key.
+     *
+     * @return string HMAC signature (hex).
+     */
+    public static function sign(string $data, string $key) : string
+    {
+        return hash_hmac(self::ALGO, $data, $key);
     }
 }

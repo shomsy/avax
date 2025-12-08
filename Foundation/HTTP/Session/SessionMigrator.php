@@ -5,124 +5,128 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session;
 
 use Avax\HTTP\Session\Contracts\Storage\Store;
+use Throwable;
 
 class SessionMigrator
 {
     private Store $sourceStore;
     private Store $destinationStore;
-    private int $batchSize;
-    private array $migrationStats = [
-        'total' => 0,
-        'migrated' => 0,
-        'failed' => 0,
-        'errors' => []
-    ];
+    private int   $batchSize;
+    private array $migrationStats
+        = [
+            'total'    => 0,
+            'migrated' => 0,
+            'failed'   => 0,
+            'errors'   => []
+        ];
 
     public function __construct(
         Store $sourceStore,
         Store $destinationStore,
-        int $batchSize = 1000
-    ) {
-        $this->sourceStore = $sourceStore;
+        int   $batchSize = 1000
+    )
+    {
+        $this->sourceStore      = $sourceStore;
         $this->destinationStore = $destinationStore;
-        $this->batchSize = max(1, $batchSize);
+        $this->batchSize        = max(1, $batchSize);
     }
 
-    public function migrate(callable $progressCallback = null): array
+    public function migrate(callable $progressCallback = null) : array
     {
         $this->resetStats();
-        
+
         try {
             // Get all session data from source
-            $sessionData = $this->sourceStore->all();
+            $sessionData                   = $this->sourceStore->all();
             $this->migrationStats['total'] = count($sessionData);
-            
-            $batch = [];
+
+            $batch      = [];
             $batchCount = 0;
-            
+
             foreach ($sessionData as $sessionId => $data) {
                 try {
                     $batch[$sessionId] = $data;
                     $batchCount++;
-                    
+
                     if ($batchCount >= $this->batchSize) {
                         $this->migrateBatch($batch);
-                        $batch = [];
+                        $batch      = [];
                         $batchCount = 0;
-                        
+
                         if (is_callable($progressCallback)) {
                             $progressCallback($this->migrationStats);
                         }
                     }
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     $this->handleMigrationError($sessionId, $e);
                 }
             }
-            
+
             // Migrate any remaining items in the last batch
-            if (!empty($batch)) {
+            if (! empty($batch)) {
                 $this->migrateBatch($batch);
             }
-            
+
             return $this->migrationStats;
-            
-        } catch (\Throwable $e) {
+
+        } catch (Throwable $e) {
             $this->migrationStats['errors'][] = [
-                'type' => 'global',
+                'type'    => 'global',
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace'   => $e->getTraceAsString()
             ];
+
             return $this->migrationStats;
         }
     }
 
-    private function migrateBatch(array $batch): void
+    private function resetStats() : void
+    {
+        $this->migrationStats = [
+            'total'    => 0,
+            'migrated' => 0,
+            'failed'   => 0,
+            'errors'   => []
+        ];
+    }
+
+    private function migrateBatch(array $batch) : void
     {
         foreach ($batch as $sessionId => $data) {
             try {
                 $this->destinationStore->put($sessionId, $data);
                 $this->migrationStats['migrated']++;
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->handleMigrationError($sessionId, $e);
             }
         }
     }
 
-    private function handleMigrationError(string $sessionId, \Throwable $e): void
+    private function handleMigrationError(string $sessionId, Throwable $e) : void
     {
         $this->migrationStats['failed']++;
         $this->migrationStats['errors'][] = [
             'session_id' => $sessionId,
-            'message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
+            'message'    => $e->getMessage(),
+            'trace'      => $e->getTraceAsString()
         ];
     }
 
-    private function resetStats(): void
+    public function verifyMigration() : bool
     {
-        $this->migrationStats = [
-            'total' => 0,
-            'migrated' => 0,
-            'failed' => 0,
-            'errors' => []
-        ];
-    }
-
-    public function verifyMigration(): bool
-    {
-        $sourceData = $this->sourceStore->all();
+        $sourceData      = $this->sourceStore->all();
         $destinationData = $this->destinationStore->all();
-        
+
         if (count($sourceData) !== count($destinationData)) {
             return false;
         }
-        
+
         foreach ($sourceData as $key => $value) {
-            if (!isset($destinationData[$key]) || $destinationData[$key] !== $value) {
+            if (! isset($destinationData[$key]) || $destinationData[$key] !== $value) {
                 return false;
             }
         }
-        
+
         return true;
     }
 }

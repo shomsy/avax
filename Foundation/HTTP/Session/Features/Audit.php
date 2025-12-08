@@ -39,6 +39,15 @@ final class Audit implements FeatureInterface
     ) {}
 
     /**
+     * {@inheritdoc}
+     */
+    public function boot() : void
+    {
+        $this->enabled = true;
+        $this->record('audit_enabled');
+    }
+
+    /**
      * Record an audit event.
      *
      * @param string               $event Event name (e.g., 'stored', 'retrieved', 'deleted').
@@ -77,15 +86,6 @@ final class Audit implements FeatureInterface
 
         // Fallback to error_log
         error_log($message);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function boot() : void
-    {
-        $this->enabled = true;
-        $this->record('audit_enabled');
     }
 
     /**

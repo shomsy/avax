@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Security;
 
+use RuntimeException;
+
 /**
  * KeyManager - Encryption Key Management
  *
@@ -23,6 +25,33 @@ namespace Avax\HTTP\Session\Security;
 final class KeyManager
 {
     /**
+     * Generate a new random key.
+     *
+     * Helper method for key generation (use offline).
+     *
+     * @return string Hex-encoded 32-byte key.
+     */
+    public static function generateKey() : string
+    {
+        return bin2hex(random_bytes(32));
+    }
+
+    /**
+     * Get all keys (active + rotated).
+     *
+     * Useful for decryption attempts with multiple keys.
+     *
+     * @return array<string> All available keys.
+     */
+    public function getAllKeys() : array
+    {
+        return array_merge(
+            [$this->getActiveKey()],
+            $this->getPreviousKeys()
+        );
+    }
+
+    /**
      * Get the active encryption key.
      *
      * @return string Active key (32 bytes).
@@ -34,7 +63,7 @@ final class KeyManager
         $key = getenv('SESSION_KEY_ACTIVE');
 
         if ($key === false || $key === '') {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'SESSION_KEY_ACTIVE environment variable not set'
             );
         }
@@ -43,7 +72,7 @@ final class KeyManager
         $binaryKey = hex2bin($key);
 
         if ($binaryKey === false || strlen($binaryKey) !== 32) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'SESSION_KEY_ACTIVE must be 64 hex characters (32 bytes)'
             );
         }
@@ -79,32 +108,5 @@ final class KeyManager
         }
 
         return $binaryKeys;
-    }
-
-    /**
-     * Get all keys (active + rotated).
-     *
-     * Useful for decryption attempts with multiple keys.
-     *
-     * @return array<string> All available keys.
-     */
-    public function getAllKeys() : array
-    {
-        return array_merge(
-            [$this->getActiveKey()],
-            $this->getPreviousKeys()
-        );
-    }
-
-    /**
-     * Generate a new random key.
-     *
-     * Helper method for key generation (use offline).
-     *
-     * @return string Hex-encoded 32-byte key.
-     */
-    public static function generateKey() : string
-    {
-        return bin2hex(random_bytes(32));
     }
 }

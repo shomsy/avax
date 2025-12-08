@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Features;
 
-use Avax\HTTP\Session\Contracts\Storage\Store;
 use Avax\HTTP\Session\Contracts\FeatureInterface;
+use Avax\HTTP\Session\Contracts\Storage\Store;
+use Override;
 
 /**
  * Flash - Flash Messages Feature
@@ -53,6 +54,19 @@ final class Flash implements FeatureInterface
     }
 
     /**
+     * Add a flash message.
+     *
+     * @param string $key     The message key.
+     * @param string $message The message.
+     *
+     * @return void
+     */
+    public function add(string $key, string $message) : void
+    {
+        $this->store->put(self::PREFIX . $key, $message);
+    }
+
+    /**
      * Add an error message.
      *
      * @param string $message The message.
@@ -86,19 +100,6 @@ final class Flash implements FeatureInterface
     public function info(string $message) : void
     {
         $this->add('info', $message);
-    }
-
-    /**
-     * Add a flash message.
-     *
-     * @param string $key     The message key.
-     * @param string $message The message.
-     *
-     * @return void
-     */
-    public function add(string $key, string $message) : void
-    {
-        $this->store->put(self::PREFIX . $key, $message);
     }
 
     /**
@@ -150,6 +151,27 @@ final class Flash implements FeatureInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    #[Override]
+    public function boot() : void
+    {
+        // Flash messages are lazy-loaded, no boot logic needed
+        $this->enabled = true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    #[Override]
+    public function terminate() : void
+    {
+        // Clear all flash messages on session termination
+        $this->clear();
+        $this->enabled = false;
+    }
+
+    /**
      * Clear all flash messages.
      *
      * @return void
@@ -168,28 +190,7 @@ final class Flash implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    #[\Override]
-    public function boot() : void
-    {
-        // Flash messages are lazy-loaded, no boot logic needed
-        $this->enabled = true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    #[\Override]
-    public function terminate() : void
-    {
-        // Clear all flash messages on session termination
-        $this->clear();
-        $this->enabled = false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    #[\Override]
+    #[Override]
     public function getName() : string
     {
         return 'flash';
@@ -198,7 +199,7 @@ final class Flash implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    #[\Override]
+    #[Override]
     public function isEnabled() : bool
     {
         return $this->enabled;

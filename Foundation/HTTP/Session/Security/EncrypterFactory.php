@@ -6,6 +6,8 @@ namespace Avax\HTTP\Session\Security;
 
 use Avax\HTTP\Session\Contracts\Security\Encrypter;
 use Avax\HTTP\Session\Security\Crypto\OpenSSLEncrypter;
+use Exception;
+use RuntimeException;
 
 /**
  * EncrypterFactory - Encrypter with Key Management
@@ -32,18 +34,6 @@ final class EncrypterFactory
     }
 
     /**
-     * Create encrypter with active key.
-     *
-     * @return Encrypter Encrypter instance.
-     */
-    public function create() : Encrypter
-    {
-        $activeKey = $this->keyManager->getActiveKey();
-
-        return new OpenSSLEncrypter($activeKey);
-    }
-
-    /**
      * Encrypt with active key.
      *
      * @param mixed $value Value to encrypt.
@@ -53,6 +43,18 @@ final class EncrypterFactory
     public function encrypt(mixed $value) : string
     {
         return $this->create()->encrypt($value);
+    }
+
+    /**
+     * Create encrypter with active key.
+     *
+     * @return Encrypter Encrypter instance.
+     */
+    public function create() : Encrypter
+    {
+        $activeKey = $this->keyManager->getActiveKey();
+
+        return new OpenSSLEncrypter($activeKey);
     }
 
     /**
@@ -76,14 +78,14 @@ final class EncrypterFactory
                 $encrypter = new OpenSSLEncrypter($key);
 
                 return $encrypter->decrypt($payload);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Try next key
                 continue;
             }
         }
 
         // All keys failed
-        throw new \RuntimeException(
+        throw new RuntimeException(
             'Decryption failed with all known keys - possible tampering or key mismatch'
         );
     }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Security;
 
+use RuntimeException;
+
 /**
  * SessionIdValidator - Session ID Entropy Validation
  *
@@ -23,6 +25,22 @@ final class SessionIdValidator
     private const MIN_LENGTH = 32;  // 128 bits in hex
 
     /**
+     * Validate current session ID.
+     *
+     * @return bool True if current session ID is valid.
+     */
+    public static function validateCurrent() : bool
+    {
+        $sessionId = session_id();
+
+        if (empty($sessionId)) {
+            throw new RuntimeException('No active session to validate');
+        }
+
+        return self::validate($sessionId);
+    }
+
+    /**
      * Validate session ID entropy.
      *
      * @param string $sessionId Session ID to validate.
@@ -35,7 +53,7 @@ final class SessionIdValidator
     {
         // Check minimum length (128 bits)
         if (strlen($sessionId) < self::MIN_LENGTH) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf(
                     'Session ID entropy too low: %d chars (minimum %d)',
                     strlen($sessionId),
@@ -46,30 +64,14 @@ final class SessionIdValidator
 
         // Check for pattern repetition (basic randomness test)
         if (preg_match('/^(.)\1+$/', $sessionId)) {
-            throw new \RuntimeException('Session ID lacks randomness - repetitive pattern detected');
+            throw new RuntimeException('Session ID lacks randomness - repetitive pattern detected');
         }
 
         // Check for sequential patterns
         if (preg_match('/01234|12345|23456|abcde|bcdef/', $sessionId)) {
-            throw new \RuntimeException('Session ID lacks randomness - sequential pattern detected');
+            throw new RuntimeException('Session ID lacks randomness - sequential pattern detected');
         }
 
         return true;
-    }
-
-    /**
-     * Validate current session ID.
-     *
-     * @return bool True if current session ID is valid.
-     */
-    public static function validateCurrent() : bool
-    {
-        $sessionId = session_id();
-
-        if (empty($sessionId)) {
-            throw new \RuntimeException('No active session to validate');
-        }
-
-        return self::validate($sessionId);
     }
 }

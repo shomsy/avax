@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Storage;
 
-use Avax\HTTP\Session\Contracts\Storage\Store;
-
 /**
  * ArrayStore - In-Memory Session Storage
  *

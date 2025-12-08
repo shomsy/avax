@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Security\Policies;
 
+use Exception;
+use InvalidArgumentException;
+use RuntimeException;
+
 /**
  * CompositePolicy - Composite Policy Pattern
  *
@@ -60,6 +64,20 @@ final class CompositePolicy implements PolicyInterface
     }
 
     /**
+     * Add a child policy.
+     *
+     * @param PolicyInterface $policy Policy to add.
+     *
+     * @return self Fluent interface.
+     */
+    public function add(PolicyInterface $policy) : self
+    {
+        $this->policies[] = $policy;
+
+        return $this;
+    }
+
+    /**
      * Create composite with ALL mode (AND logic).
      *
      * All policies must pass.
@@ -105,20 +123,6 @@ final class CompositePolicy implements PolicyInterface
     }
 
     /**
-     * Add a child policy.
-     *
-     * @param PolicyInterface $policy Policy to add.
-     *
-     * @return self Fluent interface.
-     */
-    public function add(PolicyInterface $policy) : self
-    {
-        $this->policies[] = $policy;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function enforce(array $data) : void
@@ -131,7 +135,7 @@ final class CompositePolicy implements PolicyInterface
             self::MODE_ALL  => $this->enforceAll($data),
             self::MODE_ANY  => $this->enforceAny($data),
             self::MODE_NONE => $this->enforceNone($data),
-            default         => throw new \InvalidArgumentException("Invalid mode: {$this->mode}")
+            default         => throw new InvalidArgumentException("Invalid mode: {$this->mode}")
         };
     }
 
@@ -150,7 +154,7 @@ final class CompositePolicy implements PolicyInterface
         foreach ($this->policies as $policy) {
             try {
                 $policy->enforce($data);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $failures[] = sprintf(
                     '%s: %s',
                     $policy->getName(),
@@ -160,7 +164,7 @@ final class CompositePolicy implements PolicyInterface
         }
 
         if (! empty($failures)) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf(
                     'Composite policy "%s" failed (ALL mode): %s',
                     $this->name,
@@ -168,6 +172,14 @@ final class CompositePolicy implements PolicyInterface
                 )
             );
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName() : string
+    {
+        return $this->name;
     }
 
     /**
@@ -187,7 +199,7 @@ final class CompositePolicy implements PolicyInterface
                 $policy->enforce($data);
 
                 return; // At least one passed, success!
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $failures[] = sprintf(
                     '%s: %s',
                     $policy->getName(),
@@ -197,7 +209,7 @@ final class CompositePolicy implements PolicyInterface
         }
 
         // All policies failed
-        throw new \RuntimeException(
+        throw new RuntimeException(
             sprintf(
                 'Composite policy "%s" failed (ANY mode): All child policies failed: %s',
                 $this->name,
@@ -221,28 +233,20 @@ final class CompositePolicy implements PolicyInterface
                 $policy->enforce($data);
 
                 // Policy passed, but we wanted it to fail
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     sprintf(
                         'Composite policy "%s" failed (NONE mode): Policy "%s" should have failed but passed',
                         $this->name,
                         $policy->getName()
                     )
                 );
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Policy failed, which is what we wanted (continue)
                 continue;
             }
         }
 
         // All policies failed, which is what we wanted (success)
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName() : string
-    {
-        return $this->name;
     }
 
     /**

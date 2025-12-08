@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Exceptions;
 
+use RuntimeException;
+
 /**
  * RegistryException - Session Registry Errors
  *
@@ -19,7 +21,7 @@ namespace Avax\HTTP\Session\Exceptions;
  *
  * @package Avax\HTTP\Session\Exceptions
  */
-class RegistryException extends \RuntimeException
+class RegistryException extends RuntimeException
 {
     /**
      * Create exception for session not found.

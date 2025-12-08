@@ -45,20 +45,6 @@ final class SessionConsumer
     ) {}
 
     /**
-     * Set TTL for all operations in this consumer context.
-     *
-     * @param int $seconds Time-to-live in seconds.
-     *
-     * @return self Fluent interface.
-     */
-    public function ttl(int $seconds) : self
-    {
-        $this->ttl = $seconds;
-
-        return $this;
-    }
-
-    /**
      * Enable auto-encryption for all operations in this consumer context.
      *
      * @return self Fluent interface.
@@ -86,6 +72,24 @@ final class SessionConsumer
             value: $value,
             ttl  : $this->ttl
         );
+    }
+
+    /**
+     * Build scoped key with namespace and security suffix.
+     *
+     * @param string $key The base key.
+     *
+     * @return string The scoped key.
+     */
+    private function buildKey(string $key) : string
+    {
+        $scopedKey = "{$this->namespace}.{$key}";
+
+        if ($this->secure) {
+            $scopedKey .= '_secure';
+        }
+
+        return $scopedKey;
     }
 
     /**
@@ -169,21 +173,17 @@ final class SessionConsumer
     }
 
     /**
-     * Build scoped key with namespace and security suffix.
+     * Set TTL for all operations in this consumer context.
      *
-     * @param string $key The base key.
+     * @param int $seconds Time-to-live in seconds.
      *
-     * @return string The scoped key.
+     * @return self Fluent interface.
      */
-    private function buildKey(string $key) : string
+    public function ttl(int $seconds) : self
     {
-        $scopedKey = "{$this->namespace}.{$key}";
+        $this->ttl = $seconds;
 
-        if ($this->secure) {
-            $scopedKey .= '_secure';
-        }
-
-        return $scopedKey;
+        return $this;
     }
 
     /**

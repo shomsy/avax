@@ -27,7 +27,7 @@ use Avax\Support\Facades\Facade;
  * @method static void forget(string $key)
  * @method static array all()
  * @method static void flush()
- * @method static SessionConsumer for (string $context)
+ * @method static SessionConsumer for(string $context)
  * @method static SessionConsumer scope(string $namespace)
  * @method static Flash flash()
  * @method static Events events()

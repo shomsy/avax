@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session\Security;
 
 use Avax\HTTP\Session\Security\Policies\PolicyInterface;
+use Exception;
 
 /**
  * PolicyEnforcer - Policy Enforcement Service
@@ -37,18 +38,6 @@ final class PolicyEnforcer
     }
 
     /**
-     * Register a policy.
-     *
-     * @param PolicyInterface $policy The policy.
-     *
-     * @return void
-     */
-    public function register(PolicyInterface $policy) : void
-    {
-        $this->policies[] = $policy;
-    }
-
-    /**
      * Register multiple policies at once.
      *
      * @param array<PolicyInterface> $policies Policies to register.
@@ -60,6 +49,18 @@ final class PolicyEnforcer
         foreach ($policies as $policy) {
             $this->register($policy);
         }
+    }
+
+    /**
+     * Register a policy.
+     *
+     * @param PolicyInterface $policy The policy.
+     *
+     * @return void
+     */
+    public function register(PolicyInterface $policy) : void
+    {
+        $this->policies[] = $policy;
     }
 
     /**
@@ -77,7 +78,7 @@ final class PolicyEnforcer
         foreach ($this->policies as $policy) {
             try {
                 $policy->enforce($data);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // AUDIT: Log security violation
                 if ($this->audit !== null) {
                     $this->audit->record('policy_violation', [

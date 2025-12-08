@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session\Security\Policies;
 
 use Avax\HTTP\Session\Contracts\Security\ServerContext;
-use Avax\HTTP\Session\Security\NativeServerContext;
 use Avax\HTTP\Session\Exceptions\PolicyViolationException;
+use Avax\HTTP\Session\Security\NativeServerContext;
 
 /**
  * CrossAgentPolicy - User Agent Consistency Policy

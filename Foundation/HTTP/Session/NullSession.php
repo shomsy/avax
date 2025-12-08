@@ -7,6 +7,7 @@ namespace Avax\HTTP\Session;
 use Avax\HTTP\Session\Contracts\SessionInterface;
 use Avax\HTTP\Session\Features\Events;
 use Avax\HTTP\Session\Features\Flash;
+use Avax\HTTP\Session\Storage\ArrayStore;
 
 /**
  * NullSession
@@ -66,7 +67,7 @@ final class NullSession implements SessionInterface
     public function flash() : Flash
     {
         // Safe default flash that uses in-memory store
-        return new Flash(new \Avax\HTTP\Session\Storage\ArrayStore());
+        return new Flash(new ArrayStore());
     }
 
     public function events() : Events

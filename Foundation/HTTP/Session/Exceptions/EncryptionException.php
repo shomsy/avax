@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Exceptions;
 
+use RuntimeException;
+
 /**
  * EncryptionException - Encryption/Decryption Errors
  *
@@ -19,7 +21,7 @@ namespace Avax\HTTP\Session\Exceptions;
  *
  * @package Avax\HTTP\Session\Exceptions
  */
-class EncryptionException extends \RuntimeException
+class EncryptionException extends RuntimeException
 {
     /**
      * Create exception for missing encryption key.

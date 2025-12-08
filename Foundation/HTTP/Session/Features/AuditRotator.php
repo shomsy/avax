@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Features;
 
+use Exception;
+
 /**
  * AuditRotator - Log Rotation and Size Management
  *
@@ -47,19 +49,27 @@ final class AuditRotator
     ) {}
 
     /**
-     * Check if rotation is needed.
+     * Force rotation regardless of size.
      *
-     * @return bool True if log should be rotated.
+     * Useful for time-based rotation (daily, weekly, etc).
+     *
+     * @return bool True on success.
      */
-    public function shouldRotate() : bool
+    public function forceRotate() : bool
     {
         if (! file_exists($this->logPath)) {
             return false;
         }
 
-        $size = filesize($this->logPath);
+        // Temporarily set max size to 0 to force rotation
+        $originalMaxSize = $this->maxSize;
+        $this->maxSize   = 0;
 
-        return $size >= $this->maxSize;
+        $result = $this->rotate();
+
+        $this->maxSize = $originalMaxSize;
+
+        return $result;
     }
 
     /**
@@ -95,7 +105,7 @@ final class AuditRotator
             $this->cleanupOldLogs();
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log("Log rotation failed: " . $e->getMessage());
 
             return false;
@@ -103,27 +113,19 @@ final class AuditRotator
     }
 
     /**
-     * Force rotation regardless of size.
+     * Check if rotation is needed.
      *
-     * Useful for time-based rotation (daily, weekly, etc).
-     *
-     * @return bool True on success.
+     * @return bool True if log should be rotated.
      */
-    public function forceRotate() : bool
+    public function shouldRotate() : bool
     {
         if (! file_exists($this->logPath)) {
             return false;
         }
 
-        // Temporarily set max size to 0 to force rotation
-        $originalMaxSize = $this->maxSize;
-        $this->maxSize   = 0;
+        $size = filesize($this->logPath);
 
-        $result = $this->rotate();
-
-        $this->maxSize = $originalMaxSize;
-
-        return $result;
+        return $size >= $this->maxSize;
     }
 
     /**
@@ -204,86 +206,6 @@ final class AuditRotator
     }
 
     /**
-     * Get current log file size.
-     *
-     * @return int Size in bytes, or 0 if file doesn't exist.
-     */
-    public function getCurrentSize() : int
-    {
-        if (! file_exists($this->logPath)) {
-            return 0;
-        }
-
-        return filesize($this->logPath);
-    }
-
-    /**
-     * Get human-readable current size.
-     *
-     * @return string Size with unit (e.g., "5.2 MB").
-     */
-    public function getCurrentSizeFormatted() : string
-    {
-        return $this->formatBytes($this->getCurrentSize());
-    }
-
-    /**
-     * Get list of all rotated log files.
-     *
-     * @return array<string> List of file paths.
-     */
-    public function getRotatedLogs() : array
-    {
-        $logs = [];
-
-        for ($i = 1; $i <= $this->maxFiles + 10; $i++) {
-            foreach ([$this->logPath . '.' . $i, $this->logPath . '.' . $i . '.gz'] as $path) {
-                if (file_exists($path)) {
-                    $logs[] = $path;
-                }
-            }
-        }
-
-        return $logs;
-    }
-
-    /**
-     * Get total size of all log files (current + rotated).
-     *
-     * @return int Total size in bytes.
-     */
-    public function getTotalSize() : int
-    {
-        $total = $this->getCurrentSize();
-
-        foreach ($this->getRotatedLogs() as $path) {
-            $total += filesize($path);
-        }
-
-        return $total;
-    }
-
-    /**
-     * Format bytes to human-readable string.
-     *
-     * @param int $bytes Bytes.
-     *
-     * @return string Formatted string.
-     */
-    private function formatBytes(int $bytes) : string
-    {
-        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        $i     = 0;
-
-        while ($bytes >= 1024 && $i < count($units) - 1) {
-            $bytes /= 1024;
-            $i++;
-        }
-
-        return round($bytes, 2) . ' ' . $units[$i];
-    }
-
-    /**
      * Set maximum file size.
      *
      * @param int $bytes Size in bytes.
@@ -341,5 +263,85 @@ final class AuditRotator
             'total_size'    => $this->formatBytes($this->getTotalSize()),
             'rotated_count' => count($this->getRotatedLogs()),
         ];
+    }
+
+    /**
+     * Format bytes to human-readable string.
+     *
+     * @param int $bytes Bytes.
+     *
+     * @return string Formatted string.
+     */
+    private function formatBytes(int $bytes) : string
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $i     = 0;
+
+        while ($bytes >= 1024 && $i < count($units) - 1) {
+            $bytes /= 1024;
+            $i++;
+        }
+
+        return round($bytes, 2) . ' ' . $units[$i];
+    }
+
+    /**
+     * Get human-readable current size.
+     *
+     * @return string Size with unit (e.g., "5.2 MB").
+     */
+    public function getCurrentSizeFormatted() : string
+    {
+        return $this->formatBytes($this->getCurrentSize());
+    }
+
+    /**
+     * Get current log file size.
+     *
+     * @return int Size in bytes, or 0 if file doesn't exist.
+     */
+    public function getCurrentSize() : int
+    {
+        if (! file_exists($this->logPath)) {
+            return 0;
+        }
+
+        return filesize($this->logPath);
+    }
+
+    /**
+     * Get total size of all log files (current + rotated).
+     *
+     * @return int Total size in bytes.
+     */
+    public function getTotalSize() : int
+    {
+        $total = $this->getCurrentSize();
+
+        foreach ($this->getRotatedLogs() as $path) {
+            $total += filesize($path);
+        }
+
+        return $total;
+    }
+
+    /**
+     * Get list of all rotated log files.
+     *
+     * @return array<string> List of file paths.
+     */
+    public function getRotatedLogs() : array
+    {
+        $logs = [];
+
+        for ($i = 1; $i <= $this->maxFiles + 10; $i++) {
+            foreach ([$this->logPath . '.' . $i, $this->logPath . '.' . $i . '.gz'] as $path) {
+                if (file_exists($path)) {
+                    $logs[] = $path;
+                }
+            }
+        }
+
+        return $logs;
     }
 }

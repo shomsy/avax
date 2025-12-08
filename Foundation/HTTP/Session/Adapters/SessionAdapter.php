@@ -19,7 +19,7 @@ use Avax\HTTP\Session\Security\CookieManager;
  *
  * @package Avax\HTTP\Session\Adapters
  */
-final readonly class SessionAdapter
+final class SessionAdapter
 {
     /**
      * SessionAdapter Constructor.
@@ -59,26 +59,6 @@ final readonly class SessionAdapter
     }
 
     /**
-     * Regenerate session ID.
-     *
-     * OWASP ASVS 3.2.1 Compliant
-     *
-     * Prevents session fixation attacks.
-     *
-     * @param bool $deleteOldSession Delete old session data.
-     *
-     * @return bool True on success.
-     */
-    public function regenerateId(bool $deleteOldSession = true) : bool
-    {
-        if (! $this->isActive()) {
-            return false;
-        }
-
-        return session_regenerate_id($deleteOldSession);
-    }
-
-    /**
      * Get current session ID.
      *
      * @return string Session ID.
@@ -104,16 +84,6 @@ final readonly class SessionAdapter
         session_id($id);
 
         return true;
-    }
-
-    /**
-     * Get session name.
-     *
-     * @return string Session name.
-     */
-    public function getName() : string
-    {
-        return session_name();
     }
 
     /**
@@ -164,6 +134,16 @@ final readonly class SessionAdapter
     public function deleteCookie() : bool
     {
         return $this->cookieManager->delete($this->getName());
+    }
+
+    /**
+     * Get session name.
+     *
+     * @return string Session name.
+     */
+    public function getName() : string
+    {
+        return session_name();
     }
 
     /**
@@ -271,16 +251,6 @@ final readonly class SessionAdapter
     }
 
     /**
-     * Unset all session variables.
-     *
-     * @return void
-     */
-    public function unsetAll() : void
-    {
-        $_SESSION = [];
-    }
-
-    /**
      * Get cookie manager.
      *
      * @return CookieManager Cookie manager instance.
@@ -303,5 +273,35 @@ final readonly class SessionAdapter
             $this->unsetAll();
             $this->regenerateId();
         }
+    }
+
+    /**
+     * Unset all session variables.
+     *
+     * @return void
+     */
+    public function unsetAll() : void
+    {
+        $_SESSION = [];
+    }
+
+    /**
+     * Regenerate session ID.
+     *
+     * OWASP ASVS 3.2.1 Compliant
+     *
+     * Prevents session fixation attacks.
+     *
+     * @param bool $deleteOldSession Delete old session data.
+     *
+     * @return bool True on success.
+     */
+    public function regenerateId(bool $deleteOldSession = true) : bool
+    {
+        if (! $this->isActive()) {
+            return false;
+        }
+
+        return session_regenerate_id($deleteOldSession);
     }
 }

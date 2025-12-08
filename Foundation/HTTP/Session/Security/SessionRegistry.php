@@ -58,20 +58,6 @@ final class SessionRegistry
     }
 
     /**
-     * Get all active sessions for a user.
-     *
-     * @param string $userId User identifier.
-     *
-     * @return array<string, array> Session ID => metadata.
-     */
-    public function getActiveSessions(string $userId) : array
-    {
-        $key = self::REGISTRY_PREFIX . $userId;
-
-        return $this->store->get(key: $key, default: []);
-    }
-
-    /**
      * Terminate all other sessions except current.
      *
      * Useful for "single device" enforcement.
@@ -101,27 +87,17 @@ final class SessionRegistry
     }
 
     /**
-     * Terminate a specific session.
+     * Get all active sessions for a user.
      *
-     * @param string $userId    User identifier.
-     * @param string $sessionId Session ID to terminate.
+     * @param string $userId User identifier.
      *
-     * @return bool True if session was found and terminated.
+     * @return array<string, array> Session ID => metadata.
      */
-    public function terminateSession(string $userId, string $sessionId) : bool
+    public function getActiveSessions(string $userId) : array
     {
-        $sessions = $this->getActiveSessions($userId);
-
-        if (! isset($sessions[$sessionId])) {
-            return false;
-        }
-
-        unset($sessions[$sessionId]);
-
         $key = self::REGISTRY_PREFIX . $userId;
-        $this->store->put(key: $key, value: $sessions);
 
-        return true;
+        return $this->store->get(key: $key, default: []);
     }
 
     /**
@@ -159,38 +135,6 @@ final class SessionRegistry
         return count($sessions) >= $limit;
     }
 
-    // ========================================
-    // REVOCATION LIST (OWASP ASVS 3.3.8)
-    // ========================================
-
-    /**
-     * Add a session to revocation list.
-     *
-     * Revoked sessions cannot be used anymore, even if valid.
-     * Useful for:
-     * - Forced logout
-     * - Security breaches
-     * - Password changes
-     * - Privilege changes
-     *
-     * @param string $sessionId Session ID to revoke.
-     * @param string $reason    Revocation reason.
-     *
-     * @return void
-     */
-    public function revoke(string $sessionId, string $reason = 'manual_revocation') : void
-    {
-        $key     = self::REGISTRY_PREFIX . 'revoked';
-        $revoked = $this->store->get(key: $key, default: []);
-
-        $revoked[$sessionId] = [
-            'revoked_at' => time(),
-            'reason'     => $reason,
-        ];
-
-        $this->store->put(key: $key, value: $revoked);
-    }
-
     /**
      * Check if a session is revoked.
      *
@@ -205,6 +149,10 @@ final class SessionRegistry
 
         return isset($revoked[$sessionId]);
     }
+
+    // ========================================
+    // REVOCATION LIST (OWASP ASVS 3.3.8)
+    // ========================================
 
     /**
      * Get revocation details for a session.
@@ -249,6 +197,34 @@ final class SessionRegistry
         $this->store->delete(key: $key);
 
         return $count;
+    }
+
+    /**
+     * Add a session to revocation list.
+     *
+     * Revoked sessions cannot be used anymore, even if valid.
+     * Useful for:
+     * - Forced logout
+     * - Security breaches
+     * - Password changes
+     * - Privilege changes
+     *
+     * @param string $sessionId Session ID to revoke.
+     * @param string $reason    Revocation reason.
+     *
+     * @return void
+     */
+    public function revoke(string $sessionId, string $reason = 'manual_revocation') : void
+    {
+        $key     = self::REGISTRY_PREFIX . 'revoked';
+        $revoked = $this->store->get(key: $key, default: []);
+
+        $revoked[$sessionId] = [
+            'revoked_at' => time(),
+            'reason'     => $reason,
+        ];
+
+        $this->store->put(key: $key, value: $revoked);
     }
 
     /**
@@ -303,6 +279,16 @@ final class SessionRegistry
     }
 
     /**
+     * Count total revoked sessions.
+     *
+     * @return int Count.
+     */
+    public function countRevoked() : int
+    {
+        return count($this->getAllRevoked());
+    }
+
+    /**
      * Get all revoked sessions.
      *
      * @return array<string, array> Session ID => revocation data.
@@ -313,20 +299,6 @@ final class SessionRegistry
 
         return $this->store->get(key: $key, default: []);
     }
-
-    /**
-     * Count total revoked sessions.
-     *
-     * @return int Count.
-     */
-    public function countRevoked() : int
-    {
-        return count($this->getAllRevoked());
-    }
-
-    // ========================================
-    // DEVICE MANAGEMENT
-    // ========================================
 
     /**
      * Get sessions grouped by device/user agent.
@@ -347,6 +319,10 @@ final class SessionRegistry
 
         return $byDevice;
     }
+
+    // ========================================
+    // DEVICE MANAGEMENT
+    // ========================================
 
     /**
      * Terminate all sessions from a specific device.
@@ -369,5 +345,29 @@ final class SessionRegistry
         }
 
         return $terminated;
+    }
+
+    /**
+     * Terminate a specific session.
+     *
+     * @param string $userId    User identifier.
+     * @param string $sessionId Session ID to terminate.
+     *
+     * @return bool True if session was found and terminated.
+     */
+    public function terminateSession(string $userId, string $sessionId) : bool
+    {
+        $sessions = $this->getActiveSessions($userId);
+
+        if (! isset($sessions[$sessionId])) {
+            return false;
+        }
+
+        unset($sessions[$sessionId]);
+
+        $key = self::REGISTRY_PREFIX . $userId;
+        $this->store->put(key: $key, value: $sessions);
+
+        return true;
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session\Security;
 
 use Avax\HTTP\Session\Contracts\Storage\Store;
+use RuntimeException;
 
 /**
  * SessionNonce - Replay Attack Prevention
@@ -48,6 +49,24 @@ final class SessionNonce
     }
 
     /**
+     * Verify nonce or throw exception.
+     *
+     * @param string $providedNonce Nonce to verify.
+     *
+     * @return void
+     *
+     * @throws \RuntimeException If nonce invalid.
+     */
+    public function verifyOrFail(string $providedNonce) : void
+    {
+        if (! $this->verify($providedNonce)) {
+            throw new RuntimeException(
+                'Invalid or missing nonce - potential replay attack detected'
+            );
+        }
+    }
+
+    /**
      * Verify and consume a nonce.
      *
      * Nonce is deleted after verification (single-use).
@@ -69,24 +88,6 @@ final class SessionNonce
 
         // Constant-time comparison
         return hash_equals($storedNonce, $providedNonce);
-    }
-
-    /**
-     * Verify nonce or throw exception.
-     *
-     * @param string $providedNonce Nonce to verify.
-     *
-     * @return void
-     *
-     * @throws \RuntimeException If nonce invalid.
-     */
-    public function verifyOrFail(string $providedNonce) : void
-    {
-        if (! $this->verify($providedNonce)) {
-            throw new \RuntimeException(
-                'Invalid or missing nonce - potential replay attack detected'
-            );
-        }
     }
 
     /**
@@ -128,6 +129,26 @@ final class SessionNonce
     }
 
     /**
+     * Verify per-request nonce or throw exception.
+     *
+     * @param string $action        Action identifier.
+     * @param string $providedNonce Nonce to verify.
+     * @param int    $maxAge        Maximum age in seconds.
+     *
+     * @return void
+     *
+     * @throws \RuntimeException If nonce invalid or expired.
+     */
+    public function verifyForRequestOrFail(string $action, string $providedNonce, int $maxAge = 300) : void
+    {
+        if (! $this->verifyForRequest($action, $providedNonce, $maxAge)) {
+            throw new RuntimeException(
+                "Invalid or expired nonce for action '{$action}' - potential replay attack detected"
+            );
+        }
+    }
+
+    /**
      * Verify and consume a per-request nonce.
      *
      * @param string $action        Action identifier.
@@ -157,26 +178,6 @@ final class SessionNonce
 
         // Constant-time comparison
         return hash_equals($stored['nonce'], $providedNonce);
-    }
-
-    /**
-     * Verify per-request nonce or throw exception.
-     *
-     * @param string $action        Action identifier.
-     * @param string $providedNonce Nonce to verify.
-     * @param int    $maxAge        Maximum age in seconds.
-     *
-     * @return void
-     *
-     * @throws \RuntimeException If nonce invalid or expired.
-     */
-    public function verifyForRequestOrFail(string $action, string $providedNonce, int $maxAge = 300) : void
-    {
-        if (! $this->verifyForRequest($action, $providedNonce, $maxAge)) {
-            throw new \RuntimeException(
-                "Invalid or expired nonce for action '{$action}' - potential replay attack detected"
-            );
-        }
     }
 
     /**

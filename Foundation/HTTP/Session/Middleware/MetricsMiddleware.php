@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
 
 /**
  * MetricsMiddleware
@@ -38,7 +39,7 @@ final class MetricsMiddleware implements MiddlewareInterface
             $this->metrics->increment('session_ops_total');
 
             return $response;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->metrics->increment('session_errors_total');
             throw $e;
         }

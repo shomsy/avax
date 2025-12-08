@@ -42,19 +42,6 @@ final class Events implements FeatureInterface
     private bool $enabled = true;
 
     /**
-     * Register an event listener.
-     *
-     * @param string   $event    The event name.
-     * @param callable $callback The callback.
-     *
-     * @return void
-     */
-    public function listen(string $event, callable $callback) : void
-    {
-        $this->listeners[$event][] = $callback;
-    }
-
-    /**
      * Register a one-time event listener.
      *
      * Listener will be automatically removed after first dispatch.
@@ -92,6 +79,19 @@ final class Events implements FeatureInterface
             $this->listeners[$event],
             fn($listener) => $listener !== $callback
         );
+    }
+
+    /**
+     * Register an event listener.
+     *
+     * @param string   $event    The event name.
+     * @param callable $callback The callback.
+     *
+     * @return void
+     */
+    public function listen(string $event, callable $callback) : void
+    {
+        $this->listeners[$event][] = $callback;
     }
 
     /**

@@ -25,16 +25,6 @@ abstract class AbstractStore implements Store
     /**
      * {@inheritdoc}
      */
-    abstract public function get(string $key, mixed $default = null) : mixed;
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function put(string $key, mixed $value) : void;
-
-    /**
-     * {@inheritdoc}
-     */
     public function has(string $key) : bool
     {
         return $this->get($key) !== null;
@@ -43,17 +33,7 @@ abstract class AbstractStore implements Store
     /**
      * {@inheritdoc}
      */
-    abstract public function delete(string $key) : void;
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function all() : array;
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function flush() : void;
+    abstract public function get(string $key, mixed $default = null) : mixed;
 
     /**
      * Get and remove a value in one operation.
@@ -75,6 +55,24 @@ abstract class AbstractStore implements Store
     }
 
     /**
+     * {@inheritdoc}
+     */
+    abstract public function delete(string $key) : void;
+
+    /**
+     * Decrement a numeric value.
+     *
+     * @param string $key   The key.
+     * @param int    $value Amount to decrement (default: 1).
+     *
+     * @return int New value.
+     */
+    public function decrement(string $key, int $value = 1) : int
+    {
+        return $this->increment($key, -$value);
+    }
+
+    /**
      * Increment a numeric value.
      *
      * @param string $key   The key.
@@ -92,17 +90,9 @@ abstract class AbstractStore implements Store
     }
 
     /**
-     * Decrement a numeric value.
-     *
-     * @param string $key   The key.
-     * @param int    $value Amount to decrement (default: 1).
-     *
-     * @return int New value.
+     * {@inheritdoc}
      */
-    public function decrement(string $key, int $value = 1) : int
-    {
-        return $this->increment($key, -$value);
-    }
+    abstract public function put(string $key, mixed $value) : void;
 
     /**
      * Check if store is empty.
@@ -113,6 +103,11 @@ abstract class AbstractStore implements Store
     {
         return empty($this->all());
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function all() : array;
 
     /**
      * Get number of stored items.
@@ -133,6 +128,11 @@ abstract class AbstractStore implements Store
     {
         $this->flush();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function flush() : void;
 
     /**
      * Store multiple key-value pairs.

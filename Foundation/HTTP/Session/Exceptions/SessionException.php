@@ -7,7 +7,10 @@ namespace Avax\HTTP\Session\Exceptions;
 use RuntimeException;
 
 /**
- * SessionException
- * Custom exception class for session management errors.
+ * SessionException - Base Exception
+ *
+ * Base exception for all session-related errors.
+ *
+ * @package Avax\HTTP\Session\Exceptions
  */
 class SessionException extends RuntimeException {}

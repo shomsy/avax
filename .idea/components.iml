@@ -8,6 +8,8 @@
       <sourceFolder url="file://$MODULE_DIR$/Infrastructure" isTestSource="false" packagePrefix="Infrastructure\" />
       <sourceFolder url="file://$MODULE_DIR$/Infrastructure/Framework" isTestSource="false" packagePrefix="Gemini\" />
       <sourceFolder url="file://$MODULE_DIR$/Presentation" isTestSource="false" packagePrefix="Presentation\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation" isTestSource="false" packagePrefix="Avax\" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

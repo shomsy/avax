@@ -28,7 +28,7 @@ class EncryptionException extends \RuntimeException
      *
      * @return self
      */
-    public static function keyMissing(string $keyName = 'default'): self
+    public static function keyMissing(string $keyName = 'default') : self
     {
         return new self(
             "Encryption key '{$keyName}' is missing or not configured. " .
@@ -43,7 +43,7 @@ class EncryptionException extends \RuntimeException
      *
      * @return self
      */
-    public static function invalidKey(string $reason): self
+    public static function invalidKey(string $reason) : self
     {
         return new self("Invalid encryption key: {$reason}");
     }
@@ -55,7 +55,7 @@ class EncryptionException extends \RuntimeException
      *
      * @return self
      */
-    public static function encryptionFailed(string $reason = 'unknown'): self
+    public static function encryptionFailed(string $reason = 'unknown') : self
     {
         return new self("Encryption failed: {$reason}");
     }
@@ -67,7 +67,7 @@ class EncryptionException extends \RuntimeException
      *
      * @return self
      */
-    public static function decryptionFailed(string $reason = 'unknown'): self
+    public static function decryptionFailed(string $reason = 'unknown') : self
     {
         return new self("Decryption failed: {$reason}");
     }
@@ -77,7 +77,7 @@ class EncryptionException extends \RuntimeException
      *
      * @return self
      */
-    public static function tagVerificationFailed(): self
+    public static function tagVerificationFailed() : self
     {
         return new self(
             "Authentication tag verification failed. " .
@@ -92,7 +92,7 @@ class EncryptionException extends \RuntimeException
      *
      * @return self
      */
-    public static function invalidFormat(string $expected): self
+    public static function invalidFormat(string $expected) : self
     {
         return new self("Invalid ciphertext format. Expected: {$expected}");
     }
@@ -104,7 +104,7 @@ class EncryptionException extends \RuntimeException
      *
      * @return self
      */
-    public static function unsupportedCipher(string $cipher): self
+    public static function unsupportedCipher(string $cipher) : self
     {
         return new self("Unsupported cipher: {$cipher}");
     }
@@ -116,7 +116,7 @@ class EncryptionException extends \RuntimeException
      *
      * @return self
      */
-    public static function keyRotationFailed(string $reason): self
+    public static function keyRotationFailed(string $reason) : self
     {
         return new self("Key rotation failed: {$reason}");
     }

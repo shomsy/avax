@@ -197,7 +197,7 @@ class InMemoryCache implements CacheInterface
     /**
      * Calculates the expiration timestamp.
      */
-    private function calculateExpirationTime(int|DateInterval|null $ttl) : ?int
+    private function calculateExpirationTime(int|DateInterval|null $ttl) : int|null
     {
         if ($ttl === null) {
             return null;

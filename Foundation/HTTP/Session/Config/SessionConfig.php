@@ -8,16 +8,16 @@ namespace Avax\HTTP\Session\Config;
  * SessionConfig - Configuration Value Object
  *
  * Immutable configuration for SessionManager initialization.
- * 
+ *
  * Provides clean, readable configuration without constructor parameter soup.
- * 
+ *
  * @example
  *   $config = new SessionConfig(
  *       ttl: 3600,
  *       secure: true,
  *       encryptionKey: 'secret'
  *   );
- *   
+ *
  *   $session = new SessionManager($store, $config);
  *
  * @package Avax\HTTP\Session
@@ -32,9 +32,9 @@ final readonly class SessionConfig
      * @param string|null $encryptionKey Encryption key for secure values.
      */
     public function __construct(
-        public ?int $ttl = null,
-        public bool $secure = false,
-        public ?string $encryptionKey = null
+        public int|null    $ttl = null,
+        public bool        $secure = false,
+        public string|null $encryptionKey = null
     ) {}
 
     /**
@@ -42,7 +42,7 @@ final readonly class SessionConfig
      *
      * @return self
      */
-    public static function default(): self
+    public static function default() : self
     {
         return new self();
     }
@@ -54,7 +54,7 @@ final readonly class SessionConfig
      *
      * @return self
      */
-    public static function secure(string $encryptionKey): self
+    public static function secure(string $encryptionKey) : self
     {
         return new self(secure: true, encryptionKey: $encryptionKey);
     }
@@ -66,7 +66,7 @@ final readonly class SessionConfig
      *
      * @return self
      */
-    public static function temporary(int $ttl): self
+    public static function temporary(int $ttl) : self
     {
         return new self(ttl: $ttl);
     }

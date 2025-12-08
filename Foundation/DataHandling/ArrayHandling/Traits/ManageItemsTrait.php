@@ -272,7 +272,7 @@ trait ManageItemsTrait
      * // $sliced contains ['banana', 'cherry', 'date']
      * ```
      */
-    public function slice(int $offset, ?int $length = null) : static
+    public function slice(int $offset, int|null $length = null) : static
     {
         if ($offset < 0) {
             throw new InvalidArgumentException(message: 'Offset cannot be negative.');

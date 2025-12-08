@@ -58,7 +58,7 @@ trait StringManipulationTrait
      * $uppercased = $arrh->uppercase();
      * // ['APPLE', 'BANANA']
      */
-    public function uppercase(?string $key = null) : static
+    public function uppercase(string|null $key = null) : static
     {
         return $this->processItems(callback: fn(string $value) : string => strtoupper($value), key: $key);
     }
@@ -71,7 +71,7 @@ trait StringManipulationTrait
      *
      * @return static A new Arrhae instance with processed items.
      */
-    private function processItems(callable $callback, ?string $key = null) : static
+    private function processItems(callable $callback, string|null $key = null) : static
     {
         return $this->map(callback: function ($item) use ($callback, $key) {
             if ($key !== null && is_array($item) && isset($item[$key]) && is_string($item[$key])) {
@@ -100,7 +100,7 @@ trait StringManipulationTrait
      * $lowercased = $arrh->lowercase();
      * // ['apple', 'banana']
      */
-    public function lowercase(?string $key = null) : static
+    public function lowercase(string|null $key = null) : static
     {
         return $this->processItems(callback: fn(string $value) : string => strtolower($value), key: $key);
     }
@@ -117,7 +117,7 @@ trait StringManipulationTrait
      * $titlecased = $arrh->title();
      * // ['Hello World', 'Php Is Great']
      */
-    public function title(?string $key = null) : static
+    public function title(string|null $key = null) : static
     {
         return $this->processItems(callback: fn(string $value) : string => ucwords(strtolower($value)), key: $key);
     }
@@ -135,7 +135,7 @@ trait StringManipulationTrait
      * $trimmed = $arrh->trim();
      * // ['apple', 'banana', 'cherry']
      */
-    public function trim(string $characters = self::DEFAULT_TRIM_CHARACTERS, ?string $key = null) : static
+    public function trim(string $characters = self::DEFAULT_TRIM_CHARACTERS, string|null $key = null) : static
     {
         return $this->processItems(callback: fn(string $value) : string => trim($value, $characters), key: $key);
     }
@@ -152,7 +152,7 @@ trait StringManipulationTrait
      * $camelCased = $arrh->camelCase();
      * // ['helloWorld', 'phpIsGreat', 'convertThis']
      */
-    public function camelCase(?string $key = null) : static
+    public function camelCase(string|null $key = null) : static
     {
         return $this->processItems(
             callback: fn(string $value) : string => lcfirst(

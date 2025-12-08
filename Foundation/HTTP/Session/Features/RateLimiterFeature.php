@@ -20,18 +20,18 @@ final class RateLimiterFeature
     private array $localCache = [];
 
     public function __construct(
-        private readonly ?Redis $redis = null,
-        private readonly int $limit = 100,
-        private readonly int $windowSeconds = 60
+        private readonly Redis|null $redis = null,
+        private readonly int        $limit = 100,
+        private readonly int        $windowSeconds = 60
     ) {}
 
-    public function allow(string $key): bool
+    public function allow(string $key) : bool
     {
         $now = time();
 
         if ($this->redis) {
             $bucket = sprintf('ratelimit:%s', $key);
-            $count = $this->redis->incr($bucket);
+            $count  = $this->redis->incr($bucket);
 
             if ($count === 1) {
                 $this->redis->expire($bucket, $this->windowSeconds);
@@ -43,7 +43,7 @@ final class RateLimiterFeature
         // In-memory fallback
         $window = (int) floor($now / $this->windowSeconds);
 
-        if (!isset($this->localCache[$key])) {
+        if (! isset($this->localCache[$key])) {
             $this->localCache[$key] = ['count' => 0, 'window' => $window];
         }
 
@@ -56,10 +56,11 @@ final class RateLimiterFeature
         return $this->localCache[$key]['count'] <= $this->limit;
     }
 
-    public function getResetTime(string $key): DateTimeImmutable
+    public function getResetTime(string $key) : DateTimeImmutable
     {
-        $now = time();
+        $now   = time();
         $reset = $now + $this->windowSeconds;
+
         return new DateTimeImmutable("@{$reset}");
     }
 }

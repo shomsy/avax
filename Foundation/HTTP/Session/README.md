@@ -157,12 +157,12 @@ V3/
 
 ### Design Principles
 
-| Principle | Implementation |
-|-----------|----------------|
-| **Low Coupling** | SessionManager doesn't know Store type |
-| **High Cohesion** | Each class has single responsibility |
-| **Smart Defaults** | 90% use cases work out-of-the-box |
-| **Lazy Loading** | Flash/Events created only when needed |
+| Principle          | Implementation                         |
+|--------------------|----------------------------------------|
+| **Low Coupling**   | SessionManager doesn't know Store type |
+| **High Cohesion**  | Each class has single responsibility   |
+| **Smart Defaults** | 90% use cases work out-of-the-box      |
+| **Lazy Loading**   | Flash/Events created only when needed  |
 
 ---
 
@@ -271,14 +271,14 @@ $session->flush();
 
 ## 📊 Performance
 
-| Operation | Complexity | Notes |
-|-----------|-----------|-------|
-| `put()` | O(1) | Direct store write |
-| `get()` | O(1) | Direct store read |
-| `has()` | O(1) | Direct store check |
-| `scope()` | O(1) | Creates builder |
-| `flash()` | O(1) | Lazy-loaded |
-| `events()` | O(1) | Lazy-loaded |
+| Operation  | Complexity | Notes              |
+|------------|------------|--------------------|
+| `put()`    | O(1)       | Direct store write |
+| `get()`    | O(1)       | Direct store read  |
+| `has()`    | O(1)       | Direct store check |
+| `scope()`  | O(1)       | Creates builder    |
+| `flash()`  | O(1)       | Lazy-loaded        |
+| `events()` | O(1)       | Lazy-loaded        |
 
 **Benchmark**: < 1ms average per operation on modern hardware.
 
@@ -319,52 +319,52 @@ $session = new SessionManager(new RedisStore($redis));
 
 ### SessionManager
 
-| Method | Description |
-|--------|-------------|
-| `put(string $key, mixed $value, ?int $ttl = null): void` | Store value |
-| `get(string $key, mixed $default = null): mixed` | Retrieve value |
-| `has(string $key): bool` | Check existence |
-| `forget(string $key): void` | Remove value |
-| `all(): array` | Get all data |
-| `flush(): void` | Clear all data |
-| `scope(string $namespace): SessionScope` | Create scoped session |
-| `flash(): Flash` | Access flash messages |
-| `events(): Events` | Access event dispatcher |
-| `remember(string $key, callable $callback, ?int $ttl = null): mixed` | Remember pattern |
-| `temporary(int $seconds): SessionScope` | Temporary scoped session |
+| Method                                                               | Description              |
+|----------------------------------------------------------------------|--------------------------|
+| `put(string $key, mixed $value, ?int $ttl = null): void`             | Store value              |
+| `get(string $key, mixed $default = null): mixed`                     | Retrieve value           |
+| `has(string $key): bool`                                             | Check existence          |
+| `forget(string $key): void`                                          | Remove value             |
+| `all(): array`                                                       | Get all data             |
+| `flush(): void`                                                      | Clear all data           |
+| `scope(string $namespace): SessionScope`                             | Create scoped session    |
+| `flash(): Flash`                                                     | Access flash messages    |
+| `events(): Events`                                                   | Access event dispatcher  |
+| `remember(string $key, callable $callback, ?int $ttl = null): mixed` | Remember pattern         |
+| `temporary(int $seconds): SessionScope`                              | Temporary scoped session |
 
 ### SessionScope
 
-| Method | Description |
-|--------|-------------|
-| `ttl(int $seconds): self` | Set TTL |
-| `secure(): self` | Enable encryption |
-| `put(string $key, mixed $value): void` | Store in scope |
+| Method                                           | Description         |
+|--------------------------------------------------|---------------------|
+| `ttl(int $seconds): self`                        | Set TTL             |
+| `secure(): self`                                 | Enable encryption   |
+| `put(string $key, mixed $value): void`           | Store in scope      |
 | `get(string $key, mixed $default = null): mixed` | Retrieve from scope |
-| `has(string $key): bool` | Check in scope |
-| `forget(string $key): void` | Remove from scope |
+| `has(string $key): bool`                         | Check in scope      |
+| `forget(string $key): void`                      | Remove from scope   |
 
 ### Flash
 
-| Method | Description |
-|--------|-------------|
-| `success(string $message): void` | Add success message |
-| `error(string $message): void` | Add error message |
-| `warning(string $message): void` | Add warning message |
-| `info(string $message): void` | Add info message |
-| `add(string $key, string $message): void` | Add custom message |
+| Method                                               | Description            |
+|------------------------------------------------------|------------------------|
+| `success(string $message): void`                     | Add success message    |
+| `error(string $message): void`                       | Add error message      |
+| `warning(string $message): void`                     | Add warning message    |
+| `info(string $message): void`                        | Add info message       |
+| `add(string $key, string $message): void`            | Add custom message     |
 | `get(string $key, ?string $default = null): ?string` | Get and remove message |
-| `has(string $key): bool` | Check message |
-| `clear(): void` | Clear all messages |
+| `has(string $key): bool`                             | Check message          |
+| `clear(): void`                                      | Clear all messages     |
 
 ### Events
 
-| Method | Description |
-|--------|-------------|
-| `listen(string $event, callable $callback): void` | Register listener |
-| `once(string $event, callable $callback): void` | One-time listener |
-| `removeListener(string $event, callable $callback): void` | Remove listener |
-| `dispatch(string $event, array $data = []): void` | Dispatch event |
+| Method                                                    | Description       |
+|-----------------------------------------------------------|-------------------|
+| `listen(string $event, callable $callback): void`         | Register listener |
+| `once(string $event, callable $callback): void`           | One-time listener |
+| `removeListener(string $event, callable $callback): void` | Remove listener   |
+| `dispatch(string $event, array $data = []): void`         | Dispatch event    |
 
 ---
 

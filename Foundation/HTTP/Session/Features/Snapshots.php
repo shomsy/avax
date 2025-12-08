@@ -41,12 +41,12 @@ final class Snapshots implements FeatureInterface
      *
      * @return void
      */
-    public function snapshot(string $name, array $data): void
+    public function snapshot(string $name, array $data) : void
     {
         $this->snapshots[$name] = serialize([
-            'data' => $data,
+            'data'      => $data,
             'timestamp' => time(),
-            'name' => $name,
+            'name'      => $name,
         ]);
     }
 
@@ -57,9 +57,9 @@ final class Snapshots implements FeatureInterface
      *
      * @return array<string, mixed>|null Session data or null if snapshot doesn't exist.
      */
-    public function restore(string $name): ?array
+    public function restore(string $name) : array|null
     {
-        if (!isset($this->snapshots[$name])) {
+        if (! isset($this->snapshots[$name])) {
             return null;
         }
 
@@ -75,7 +75,7 @@ final class Snapshots implements FeatureInterface
      *
      * @return bool True if snapshot exists.
      */
-    public function has(string $name): bool
+    public function has(string $name) : bool
     {
         return isset($this->snapshots[$name]);
     }
@@ -87,7 +87,7 @@ final class Snapshots implements FeatureInterface
      *
      * @return void
      */
-    public function delete(string $name): void
+    public function delete(string $name) : void
     {
         unset($this->snapshots[$name]);
     }
@@ -97,7 +97,7 @@ final class Snapshots implements FeatureInterface
      *
      * @return array<int, string> List of snapshot names.
      */
-    public function all(): array
+    public function all() : array
     {
         return array_keys($this->snapshots);
     }
@@ -112,7 +112,7 @@ final class Snapshots implements FeatureInterface
      *
      * @return void
      */
-    public function saveTo(Store $store, string $key = '_snapshots'): void
+    public function saveTo(Store $store, string $key = '_snapshots') : void
     {
         $store->put($key, $this->snapshots);
     }
@@ -127,7 +127,7 @@ final class Snapshots implements FeatureInterface
      *
      * @return void
      */
-    public function loadFrom(Store $store, string $key = '_snapshots'): void
+    public function loadFrom(Store $store, string $key = '_snapshots') : void
     {
         $snapshots = $store->get($key, []);
 
@@ -139,7 +139,7 @@ final class Snapshots implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function boot(): void
+    public function boot() : void
     {
         // Snapshots are ready on construction
         $this->enabled = true;
@@ -148,17 +148,17 @@ final class Snapshots implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function terminate(): void
+    public function terminate() : void
     {
         // Clear all snapshots on termination
         $this->snapshots = [];
-        $this->enabled = false;
+        $this->enabled   = false;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    public function getName() : string
     {
         return 'snapshots';
     }
@@ -166,7 +166,7 @@ final class Snapshots implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function isEnabled(): bool
+    public function isEnabled() : bool
     {
         return $this->enabled;
     }

@@ -11,12 +11,12 @@ use Avax\HTTP\Session\Contracts\Storage\Store;
  *
  * In-memory storage for testing and development.
  * Data is lost after request ends.
- * 
+ *
  * Perfect for:
  * - Unit tests
  * - Development/debugging
  * - Isolated test scenarios
- * 
+ *
  * @package Avax\HTTP\Session
  */
 final class ArrayStore extends AbstractStore
@@ -29,7 +29,7 @@ final class ArrayStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null) : mixed
     {
         return $this->data[$key] ?? $default;
     }
@@ -37,7 +37,7 @@ final class ArrayStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function put(string $key, mixed $value): void
+    public function put(string $key, mixed $value) : void
     {
         $this->data[$key] = $value;
     }
@@ -45,7 +45,7 @@ final class ArrayStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function has(string $key): bool
+    public function has(string $key) : bool
     {
         return isset($this->data[$key]);
     }
@@ -53,7 +53,7 @@ final class ArrayStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function delete(string $key): void
+    public function delete(string $key) : void
     {
         unset($this->data[$key]);
     }
@@ -61,7 +61,7 @@ final class ArrayStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function all(): array
+    public function all() : array
     {
         return $this->data;
     }
@@ -69,7 +69,7 @@ final class ArrayStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function flush(): void
+    public function flush() : void
     {
         $this->data = [];
     }

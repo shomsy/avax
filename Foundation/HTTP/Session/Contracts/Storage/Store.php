@@ -8,7 +8,7 @@ namespace Avax\HTTP\Session\Contracts\Storage;
  * Store Interface - Storage Abstraction
  *
  * Minimal contract for session persistence.
- * 
+ *
  * Implementations:
  * - NativeStore: PHP native sessions
  * - ArrayStore: In-memory (for testing)
@@ -27,7 +27,7 @@ interface Store
      *
      * @return mixed The value or default.
      */
-    public function get(string $key, mixed $default = null): mixed;
+    public function get(string $key, mixed $default = null) : mixed;
 
     /**
      * Store a value.
@@ -37,7 +37,7 @@ interface Store
      *
      * @return void
      */
-    public function put(string $key, mixed $value): void;
+    public function put(string $key, mixed $value) : void;
 
     /**
      * Check if key exists.
@@ -46,7 +46,7 @@ interface Store
      *
      * @return bool True if exists.
      */
-    public function has(string $key): bool;
+    public function has(string $key) : bool;
 
     /**
      * Delete a value.
@@ -55,19 +55,19 @@ interface Store
      *
      * @return void
      */
-    public function delete(string $key): void;
+    public function delete(string $key) : void;
 
     /**
      * Get all data.
      *
      * @return array<string, mixed> All data.
      */
-    public function all(): array;
+    public function all() : array;
 
     /**
      * Clear all data.
      *
      * @return void
      */
-    public function flush(): void;
+    public function flush() : void;
 }

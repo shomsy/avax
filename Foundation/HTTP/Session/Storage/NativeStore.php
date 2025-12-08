@@ -10,10 +10,10 @@ use Avax\HTTP\Session\Contracts\Storage\Store;
  * NativeStore - PHP Native Session Storage
  *
  * Production-ready implementation using PHP's native session functions.
- * 
+ *
  * Features:
  * - Auto-starts session if not started
- * - Error handling for session_start failures  
+ * - Error handling for session_start failures
  * - Thread-safe operations
  * - Persistent across requests
  * - OWASP ASVS 3.3.1 compliant cookie security
@@ -26,18 +26,14 @@ final class NativeStore extends AbstractStore
      * NativeStore Constructor.
      *
      * Auto-starts session with OWASP-compliant security settings.
-     * 
+     *
      * @throws \RuntimeException If session cannot be started.
      */
-    public function __construct()
+    public function __construct(private readonly \Avax\HTTP\Session\Security\CookieManager|null $cookieManager = null)
     {
         if (session_status() === PHP_SESSION_NONE) {
-            // OWASP ASVS 3.3.1: Secure Cookie Attributes
-            session_set_cookie_params([
-                'secure' => true,         // HTTPS only
-                'httponly' => true,       // No JavaScript access (XSS protection)
-                'samesite' => 'Strict',   // CSRF protection
-            ]);
+            // Apply cookie policy before starting the session
+            $this->cookieManager?->configureSessionCookie();
 
             // Additional security hardening
             ini_set('session.cookie_secure', '1');
@@ -46,7 +42,7 @@ final class NativeStore extends AbstractStore
             ini_set('session.use_strict_mode', '1');  // Reject uninitialized session IDs
             ini_set('session.use_only_cookies', '1'); // No URL-based session IDs
 
-            if (!@session_start()) {
+            if (! @session_start()) {
                 throw new \RuntimeException('Failed to start native PHP session');
             }
         }
@@ -55,7 +51,7 @@ final class NativeStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null) : mixed
     {
         return $_SESSION[$key] ?? $default;
     }
@@ -63,7 +59,7 @@ final class NativeStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function put(string $key, mixed $value): void
+    public function put(string $key, mixed $value) : void
     {
         $_SESSION[$key] = $value;
     }
@@ -71,7 +67,7 @@ final class NativeStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function has(string $key): bool
+    public function has(string $key) : bool
     {
         return isset($_SESSION[$key]);
     }
@@ -79,7 +75,7 @@ final class NativeStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function delete(string $key): void
+    public function delete(string $key) : void
     {
         unset($_SESSION[$key]);
     }
@@ -87,7 +83,7 @@ final class NativeStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function all(): array
+    public function all() : array
     {
         return $_SESSION;
     }
@@ -95,7 +91,7 @@ final class NativeStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function flush(): void
+    public function flush() : void
     {
         $_SESSION = [];
     }

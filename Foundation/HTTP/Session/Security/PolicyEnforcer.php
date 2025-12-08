@@ -11,7 +11,7 @@ use Avax\HTTP\Session\Security\Policies\PolicyInterface;
  *
  * Centralized service for enforcing session security policies.
  * Reduces SessionProvider complexity.
- * 
+ *
  * @package Avax\HTTP\Session\Security
  */
 final class PolicyEnforcer
@@ -43,7 +43,7 @@ final class PolicyEnforcer
      *
      * @return void
      */
-    public function register(PolicyInterface $policy): void
+    public function register(PolicyInterface $policy) : void
     {
         $this->policies[] = $policy;
     }
@@ -55,7 +55,7 @@ final class PolicyEnforcer
      *
      * @return void
      */
-    public function registerMany(array $policies): void
+    public function registerMany(array $policies) : void
     {
         foreach ($policies as $policy) {
             $this->register($policy);
@@ -72,7 +72,7 @@ final class PolicyEnforcer
      * @return void
      * @throws \RuntimeException If any policy is violated.
      */
-    public function enforce(array $data): void
+    public function enforce(array $data) : void
     {
         foreach ($this->policies as $policy) {
             try {
@@ -97,7 +97,7 @@ final class PolicyEnforcer
      *
      * @return array<PolicyInterface> Policies.
      */
-    public function getPolicies(): array
+    public function getPolicies() : array
     {
         return $this->policies;
     }

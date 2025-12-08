@@ -5,17 +5,13 @@ declare(strict_types=1);
 namespace Avax\Container\ServiceProviders\Providers;
 
 use Avax\Container\ServiceProviders\ServiceProvider;
-use Avax\HTTP\Session\Contracts\{Factories\BagRegistryFactoryInterface,
-    SessionBuilderInterface,
-    SessionInterface,
-    SessionManagerInterface,
-    SessionStoreInterface};
-use Avax\HTTP\Session\Drivers\NativeSession;
-use Avax\HTTP\Session\SessionBuilder;
-use Avax\HTTP\Session\SessionContext;
-use Avax\HTTP\Session\SessionManager;
-use Avax\HTTP\Session\Stores\NativeSessionStore;
-use Avax\HTTP\Session\Support\Factories\BagRegistryFactory;
+use Avax\HTTP\Session\Contracts\SessionInterface;
+use Avax\HTTP\Session\Contracts\SessionContract;
+use Avax\HTTP\Session\Contracts\Storage\Store;
+use Avax\HTTP\Session\Providers\SessionProvider;
+use Avax\HTTP\Session\Security\CookieManager;
+use Avax\HTTP\Session\Adapters\SessionAdapter;
+use Avax\HTTP\Session\Storage\NativeStore;
 
 final class SessionServiceProvider extends ServiceProvider
 {
@@ -24,50 +20,44 @@ final class SessionServiceProvider extends ServiceProvider
      */
     public function register() : void
     {
-        $this->bindSingleton(abstract: SessionStoreInterface::class, concrete: NativeSessionStore::class);
-        $this->bindSingleton(abstract: BagRegistryFactoryInterface::class, concrete: BagRegistryFactory::class);
+        $this->dependencyInjector->singleton(
+            abstract: CookieManager::class,
+            concrete: static fn() => CookieManager::strict()
+        );
 
-        // Main SessionInterface (deferred registry via closure)
-        $this->dependencyInjector->bind(
+        $this->dependencyInjector->singleton(
+            abstract: SessionAdapter::class,
+            concrete: fn() => new SessionAdapter(
+                cookieManager: $this->dependencyInjector->get(id: CookieManager::class)
+            )
+        );
+
+        $this->dependencyInjector->singleton(
+            abstract: Store::class,
+            concrete: fn() => new NativeStore(
+                cookieManager: $this->dependencyInjector->get(id: CookieManager::class)
+            )
+        );
+
+        $this->dependencyInjector->singleton(
+            abstract: SessionProvider::class,
+            concrete: fn() => new SessionProvider(
+                store         : $this->dependencyInjector->get(id: Store::class),
+                cookieManager : $this->dependencyInjector->get(id: CookieManager::class),
+                sessionAdapter: $this->dependencyInjector->get(id: SessionAdapter::class)
+            )
+        );
+
+        // Bind contracts/aliases
+        $this->dependencyInjector->singleton(
             abstract: SessionInterface::class,
-            concrete: static fn($c) => new NativeSession(
-                store          : $c->get(SessionStoreInterface::class),
-                registryFactory: static fn(SessionInterface $session) => $c
-                    ->get(BagRegistryFactoryInterface::class)
-                    ->create($session)
-            )
-        );
-
-        // Use session->getRegistry() directly wherever needed
-        $this->dependencyInjector->singleton(
-            abstract: SessionBuilderInterface::class,
-            concrete: fn() => new SessionBuilder(
-                session : $this->resolve(abstract: SessionInterface::class),
-                registry: $this->resolve(abstract: SessionInterface::class)->getRegistry(),
-                context : new SessionContext(namespace: 'default')
-            )
+            concrete: fn() => $this->dependencyInjector->get(id: SessionProvider::class)
         );
 
         $this->dependencyInjector->singleton(
-            abstract: SessionManagerInterface::class,
-            concrete: fn() => new SessionManager(
-                session: $this->resolve(abstract: SessionInterface::class),
-                bags   : $this->resolve(abstract: SessionInterface::class)->getRegistry()
-            )
+            abstract: SessionContract::class,
+            concrete: fn() => $this->dependencyInjector->get(id: SessionProvider::class)
         );
-    }
-
-    private function bindSingleton(string $abstract, string $concrete) : void
-    {
-        $this->dependencyInjector->singleton(
-            abstract: $abstract,
-            concrete: static fn() => new $concrete()
-        );
-    }
-
-    private function resolve(string $abstract) : mixed
-    {
-        return $this->dependencyInjector->get(id: $abstract);
     }
 
     public function boot() : void {}

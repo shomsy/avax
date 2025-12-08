@@ -22,14 +22,14 @@ final class UriBuilder extends BaseUri implements UriInterface
     private QueryParams $queryParams;
 
     public function __construct(
-        string  $scheme = '',
-        string  $host = '',
-        string  $path = '/',
-        ?int    $port = null,
-        string  $query = '',
-        string  $fragment = '',
-        string  $user = '',
-        ?string $password = null
+        string      $scheme = '',
+        string      $host = '',
+        string      $path = '/',
+        int|null    $port = null,
+        string      $query = '',
+        string      $fragment = '',
+        string      $user = '',
+        string|null $password = null
     ) {
         parent::__construct(
             scheme  : (string) new Scheme(scheme: $scheme),

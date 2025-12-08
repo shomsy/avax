@@ -32,8 +32,8 @@ namespace Avax\HTTP\Session\Security\Policies;
  */
 final class CompositePolicy implements PolicyInterface
 {
-    public const MODE_ALL = 'all';
-    public const MODE_ANY = 'any';
+    public const MODE_ALL  = 'all';
+    public const MODE_ANY  = 'any';
     public const MODE_NONE = 'none';
 
     /**
@@ -44,15 +44,16 @@ final class CompositePolicy implements PolicyInterface
     /**
      * CompositePolicy Constructor.
      *
-     * @param array<PolicyInterface> $policies    Child policies.
-     * @param string                 $mode        Execution mode (all|any|none).
-     * @param string                 $name        Policy name.
+     * @param array<PolicyInterface> $policies Child policies.
+     * @param string                 $mode     Execution mode (all|any|none).
+     * @param string                 $name     Policy name.
      */
     public function __construct(
-        array $policies = [],
+        array          $policies = [],
         private string $mode = self::MODE_ALL,
         private string $name = 'composite'
-    ) {
+    )
+    {
         foreach ($policies as $policy) {
             $this->add($policy);
         }
@@ -68,7 +69,7 @@ final class CompositePolicy implements PolicyInterface
      *
      * @return self
      */
-    public static function all(array $policies, string $name = 'composite_all'): self
+    public static function all(array $policies, string $name = 'composite_all') : self
     {
         return new self($policies, self::MODE_ALL, $name);
     }
@@ -83,7 +84,7 @@ final class CompositePolicy implements PolicyInterface
      *
      * @return self
      */
-    public static function any(array $policies, string $name = 'composite_any'): self
+    public static function any(array $policies, string $name = 'composite_any') : self
     {
         return new self($policies, self::MODE_ANY, $name);
     }
@@ -98,7 +99,7 @@ final class CompositePolicy implements PolicyInterface
      *
      * @return self
      */
-    public static function none(array $policies, string $name = 'composite_none'): self
+    public static function none(array $policies, string $name = 'composite_none') : self
     {
         return new self($policies, self::MODE_NONE, $name);
     }
@@ -110,26 +111,27 @@ final class CompositePolicy implements PolicyInterface
      *
      * @return self Fluent interface.
      */
-    public function add(PolicyInterface $policy): self
+    public function add(PolicyInterface $policy) : self
     {
         $this->policies[] = $policy;
+
         return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function enforce(array $data): void
+    public function enforce(array $data) : void
     {
         if (empty($this->policies)) {
             return; // No policies to enforce
         }
 
         match ($this->mode) {
-            self::MODE_ALL => $this->enforceAll($data),
-            self::MODE_ANY => $this->enforceAny($data),
+            self::MODE_ALL  => $this->enforceAll($data),
+            self::MODE_ANY  => $this->enforceAny($data),
             self::MODE_NONE => $this->enforceNone($data),
-            default => throw new \InvalidArgumentException("Invalid mode: {$this->mode}")
+            default         => throw new \InvalidArgumentException("Invalid mode: {$this->mode}")
         };
     }
 
@@ -141,7 +143,7 @@ final class CompositePolicy implements PolicyInterface
      * @return void
      * @throws \RuntimeException If any policy fails.
      */
-    private function enforceAll(array $data): void
+    private function enforceAll(array $data) : void
     {
         $failures = [];
 
@@ -157,7 +159,7 @@ final class CompositePolicy implements PolicyInterface
             }
         }
 
-        if (!empty($failures)) {
+        if (! empty($failures)) {
             throw new \RuntimeException(
                 sprintf(
                     'Composite policy "%s" failed (ALL mode): %s',
@@ -176,13 +178,14 @@ final class CompositePolicy implements PolicyInterface
      * @return void
      * @throws \RuntimeException If all policies fail.
      */
-    private function enforceAny(array $data): void
+    private function enforceAny(array $data) : void
     {
         $failures = [];
 
         foreach ($this->policies as $policy) {
             try {
                 $policy->enforce($data);
+
                 return; // At least one passed, success!
             } catch (\Exception $e) {
                 $failures[] = sprintf(
@@ -211,7 +214,7 @@ final class CompositePolicy implements PolicyInterface
      * @return void
      * @throws \RuntimeException If any policy passes.
      */
-    private function enforceNone(array $data): void
+    private function enforceNone(array $data) : void
     {
         foreach ($this->policies as $policy) {
             try {
@@ -237,7 +240,7 @@ final class CompositePolicy implements PolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    public function getName() : string
     {
         return $this->name;
     }
@@ -247,7 +250,7 @@ final class CompositePolicy implements PolicyInterface
      *
      * @return array<PolicyInterface> Child policies.
      */
-    public function getPolicies(): array
+    public function getPolicies() : array
     {
         return $this->policies;
     }
@@ -257,7 +260,7 @@ final class CompositePolicy implements PolicyInterface
      *
      * @return string Mode (all|any|none).
      */
-    public function getMode(): string
+    public function getMode() : string
     {
         return $this->mode;
     }
@@ -267,7 +270,7 @@ final class CompositePolicy implements PolicyInterface
      *
      * @return bool True if no child policies.
      */
-    public function isEmpty(): bool
+    public function isEmpty() : bool
     {
         return empty($this->policies);
     }
@@ -277,7 +280,7 @@ final class CompositePolicy implements PolicyInterface
      *
      * @return int Count.
      */
-    public function count(): int
+    public function count() : int
     {
         return count($this->policies);
     }

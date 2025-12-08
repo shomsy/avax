@@ -39,9 +39,10 @@ final class Key implements \Stringable
      * @param string|null $namespace Optional namespace (prefix).
      */
     private function __construct(
-        private string $name,
-        private ?string $namespace = null
-    ) {
+        private string  $name,
+        private string|null $namespace = null
+    )
+    {
         $this->validate();
     }
 
@@ -53,7 +54,7 @@ final class Key implements \Stringable
      *
      * @return self
      */
-    public static function make(string $name, ?string $namespace = null): self
+    public static function make(string $name, string|null $namespace = null) : self
     {
         return new self($name, $namespace);
     }
@@ -68,9 +69,9 @@ final class Key implements \Stringable
      *
      * @return self
      */
-    public static function secure(string $name, ?string $namespace = null): self
+    public static function secure(string $name, string|null $namespace = null) : self
     {
-        if (!str_ends_with($name, '_secure')) {
+        if (! str_ends_with($name, '_secure')) {
             $name .= '_secure';
         }
 
@@ -85,7 +86,7 @@ final class Key implements \Stringable
      *
      * @return self
      */
-    public static function temporary(string $name, ?string $namespace = null): self
+    public static function temporary(string $name, string|null $namespace = null) : self
     {
         return new self($name, $namespace);
     }
@@ -97,7 +98,7 @@ final class Key implements \Stringable
      *
      * @return self
      */
-    public static function flash(string $type): self
+    public static function flash(string $type) : self
     {
         return new self($type, '_flash');
     }
@@ -107,7 +108,7 @@ final class Key implements \Stringable
      *
      * @return self
      */
-    public static function csrf(): self
+    public static function csrf() : self
     {
         return new self('token', '_csrf');
     }
@@ -119,9 +120,10 @@ final class Key implements \Stringable
      *
      * @return self
      */
-    public static function nonce(?string $action = null): self
+    public static function nonce(string|null $action = null) : self
     {
         $name = $action ?? 'default';
+
         return new self($name, '_nonce');
     }
 
@@ -132,7 +134,7 @@ final class Key implements \Stringable
      *
      * @return self
      */
-    public static function snapshot(string $name): self
+    public static function snapshot(string $name) : self
     {
         return new self($name, '_snapshot');
     }
@@ -144,7 +146,7 @@ final class Key implements \Stringable
      *
      * @return self
      */
-    public static function registry(string $userId): self
+    public static function registry(string $userId) : self
     {
         return new self($userId, '_registry');
     }
@@ -156,7 +158,7 @@ final class Key implements \Stringable
      *
      * @throws \InvalidArgumentException If key is invalid.
      */
-    private function validate(): void
+    private function validate() : void
     {
         // Check empty
         if (empty($this->name)) {
@@ -184,7 +186,7 @@ final class Key implements \Stringable
      *
      * @return bool True if reserved.
      */
-    public function isReserved(): bool
+    public function isReserved() : bool
     {
         if ($this->namespace === null) {
             return false;
@@ -198,7 +200,7 @@ final class Key implements \Stringable
      *
      * @return bool True if secure.
      */
-    public function isSecure(): bool
+    public function isSecure() : bool
     {
         return str_ends_with($this->name, '_secure');
     }
@@ -208,7 +210,7 @@ final class Key implements \Stringable
      *
      * @return string Key name.
      */
-    public function getName(): string
+    public function getName() : string
     {
         return $this->name;
     }
@@ -218,7 +220,7 @@ final class Key implements \Stringable
      *
      * @return string|null Namespace or null.
      */
-    public function getNamespace(): ?string
+    public function getNamespace() : string|null
     {
         return $this->namespace;
     }
@@ -228,7 +230,7 @@ final class Key implements \Stringable
      *
      * @return string Full key.
      */
-    public function toString(): string
+    public function toString() : string
     {
         if ($this->namespace === null) {
             return $this->name;
@@ -242,7 +244,7 @@ final class Key implements \Stringable
      *
      * @return string Full key.
      */
-    public function __toString(): string
+    public function __toString() : string
     {
         return $this->toString();
     }
@@ -254,7 +256,7 @@ final class Key implements \Stringable
      *
      * @return bool True if equal.
      */
-    public function equals(Key $other): bool
+    public function equals(Key $other) : bool
     {
         return $this->toString() === $other->toString();
     }
@@ -266,7 +268,7 @@ final class Key implements \Stringable
      *
      * @return self New key instance.
      */
-    public function withNamespace(string $namespace): self
+    public function withNamespace(string $namespace) : self
     {
         return new self($this->name, $namespace);
     }
@@ -276,7 +278,7 @@ final class Key implements \Stringable
      *
      * @return self New key instance.
      */
-    public function withoutNamespace(): self
+    public function withoutNamespace() : self
     {
         return new self($this->name, null);
     }
@@ -286,7 +288,7 @@ final class Key implements \Stringable
      *
      * @return self TTL meta key.
      */
-    public function toTtlKey(): self
+    public function toTtlKey() : self
     {
         return new self($this->toString(), '_ttl');
     }
@@ -296,7 +298,7 @@ final class Key implements \Stringable
      *
      * @return bool True if TTL key.
      */
-    public function isTtlKey(): bool
+    public function isTtlKey() : bool
     {
         return $this->namespace === '_ttl';
     }
@@ -308,7 +310,7 @@ final class Key implements \Stringable
      *
      * @return self Key instance.
      */
-    public static function parse(string $keyString): self
+    public static function parse(string $keyString) : self
     {
         $parts = explode('.', $keyString, 2);
 
@@ -322,12 +324,12 @@ final class Key implements \Stringable
     /**
      * Create multiple keys from array.
      *
-     * @param array<string> $names Key names.
+     * @param array<string> $names     Key names.
      * @param string|null   $namespace Optional namespace for all keys.
      *
      * @return array<self> Array of Key instances.
      */
-    public static function many(array $names, ?string $namespace = null): array
+    public static function many(array $names, string|null $namespace = null) : array
     {
         return array_map(
             fn($name) => new self($name, $namespace),
@@ -340,7 +342,7 @@ final class Key implements \Stringable
      *
      * @return string Hash.
      */
-    public function hash(): string
+    public function hash() : string
     {
         return md5($this->toString());
     }
@@ -352,9 +354,10 @@ final class Key implements \Stringable
      *
      * @return bool True if matches.
      */
-    public function matches(string $pattern): bool
+    public function matches(string $pattern) : bool
     {
         $regex = '/^' . str_replace('*', '.*', preg_quote($pattern, '/')) . '$/';
+
         return preg_match($regex, $this->toString()) === 1;
     }
 
@@ -363,7 +366,7 @@ final class Key implements \Stringable
      *
      * @return array<string> Reserved prefixes.
      */
-    public static function getReservedPrefixes(): array
+    public static function getReservedPrefixes() : array
     {
         return self::RESERVED_PREFIXES;
     }
@@ -373,13 +376,13 @@ final class Key implements \Stringable
      *
      * @return array<string, mixed> JSON data.
      */
-    public function jsonSerialize(): array
+    public function jsonSerialize() : array
     {
         return [
-            'name' => $this->name,
-            'namespace' => $this->namespace,
-            'full' => $this->toString(),
-            'is_secure' => $this->isSecure(),
+            'name'        => $this->name,
+            'namespace'   => $this->namespace,
+            'full'        => $this->toString(),
+            'is_secure'   => $this->isSecure(),
             'is_reserved' => $this->isReserved(),
         ];
     }

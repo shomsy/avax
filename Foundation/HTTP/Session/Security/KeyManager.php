@@ -8,16 +8,16 @@ namespace Avax\HTTP\Session\Security;
  * KeyManager - Encryption Key Management
  *
  * OWASP ASVS 3.1.1 & 3.1.2 Compliant
- * 
+ *
  * Manages encryption keys with rotation support.
  * Allows seamless key rotation without invalidating existing sessions.
- * 
+ *
  * Keys are loaded from environment variables for security.
- * 
+ *
  * Environment Variables:
  * - SESSION_KEY_ACTIVE: Current encryption key (32 bytes hex)
  * - SESSION_KEY_ROTATED: Comma-separated previous keys (optional)
- * 
+ *
  * @package Avax\HTTP\Session\Security
  */
 final class KeyManager
@@ -26,10 +26,10 @@ final class KeyManager
      * Get the active encryption key.
      *
      * @return string Active key (32 bytes).
-     * 
+     *
      * @throws \RuntimeException If key not configured.
      */
-    public function getActiveKey(): string
+    public function getActiveKey() : string
     {
         $key = getenv('SESSION_KEY_ACTIVE');
 
@@ -58,7 +58,7 @@ final class KeyManager
      *
      * @return array<string> Array of previous keys (32 bytes each).
      */
-    public function getPreviousKeys(): array
+    public function getPreviousKeys() : array
     {
         $keysString = getenv('SESSION_KEY_ROTATED');
 
@@ -66,11 +66,11 @@ final class KeyManager
             return [];
         }
 
-        $hexKeys = explode(',', $keysString);
+        $hexKeys    = explode(',', $keysString);
         $binaryKeys = [];
 
         foreach ($hexKeys as $hexKey) {
-            $hexKey = trim($hexKey);
+            $hexKey    = trim($hexKey);
             $binaryKey = hex2bin($hexKey);
 
             if ($binaryKey !== false && strlen($binaryKey) === 32) {
@@ -88,7 +88,7 @@ final class KeyManager
      *
      * @return array<string> All available keys.
      */
-    public function getAllKeys(): array
+    public function getAllKeys() : array
     {
         return array_merge(
             [$this->getActiveKey()],
@@ -103,7 +103,7 @@ final class KeyManager
      *
      * @return string Hex-encoded 32-byte key.
      */
-    public static function generateKey(): string
+    public static function generateKey() : string
     {
         return bin2hex(random_bytes(32));
     }

@@ -26,7 +26,7 @@ final class MetricsMiddleware implements MiddlewareInterface
         private readonly MetricCollector $metrics
     ) {}
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         $start = microtime(true);
 

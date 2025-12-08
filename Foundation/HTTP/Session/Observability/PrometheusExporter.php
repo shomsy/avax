@@ -17,10 +17,10 @@ final readonly class PrometheusExporter
         private MetricCollector $collector
     ) {}
 
-    public function render(): string
+    public function render() : string
     {
         $metrics = $this->collector->export();
-        $lines = [];
+        $lines   = [];
 
         foreach ($metrics as $name => $value) {
             $lines[] = sprintf('# TYPE %s gauge', $name);

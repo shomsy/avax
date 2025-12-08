@@ -11,7 +11,7 @@ final readonly class GetUser
 {
     public function __construct(private IdentityInterface $identity) {}
 
-    public function execute(): ?UserInterface
+    public function execute(): UserInterface|null
     {
         return $this->identity->user();
     }

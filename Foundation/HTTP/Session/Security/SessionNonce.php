@@ -10,18 +10,18 @@ use Avax\HTTP\Session\Contracts\Storage\Store;
  * SessionNonce - Replay Attack Prevention
  *
  * OWASP ASVS 3.3.4 Compliant
- * 
+ *
  * Generates and validates single-use tokens (nonces) to prevent
  * replay attacks on critical state-changing operations.
- * 
+ *
  * Nonces are cryptographically secure random values.
- * 
+ *
  * @package Avax\HTTP\Session\Security
  */
 final class SessionNonce
 {
-    private const NONCE_KEY = '_nonce';
-    private const NONCE_LENGTH = 16; // 128 bits
+    private const string NONCE_KEY    = '_nonce';
+    private const int    NONCE_LENGTH = 16; // 128 bits
 
     /**
      * SessionNonce Constructor.
@@ -39,10 +39,11 @@ final class SessionNonce
      *
      * @return string Hex-encoded nonce.
      */
-    public function generate(): string
+    public function generate() : string
     {
         $nonce = bin2hex(random_bytes(self::NONCE_LENGTH));
-        $this->store->put(self::NONCE_KEY, $nonce);
+        $this->store->put(key: self::NONCE_KEY, value: $nonce);
+
         return $nonce;
     }
 
@@ -55,16 +56,16 @@ final class SessionNonce
      *
      * @return bool True if nonce is valid.
      */
-    public function verify(string $providedNonce): bool
+    public function verify(string $providedNonce) : bool
     {
-        $storedNonce = $this->store->get(self::NONCE_KEY);
+        $storedNonce = $this->store->get(key: self::NONCE_KEY);
 
         if ($storedNonce === null) {
             return false; // No nonce stored
         }
 
         // Consume nonce (delete it)
-        $this->store->delete(self::NONCE_KEY);
+        $this->store->delete(key: self::NONCE_KEY);
 
         // Constant-time comparison
         return hash_equals($storedNonce, $providedNonce);
@@ -76,12 +77,12 @@ final class SessionNonce
      * @param string $providedNonce Nonce to verify.
      *
      * @return void
-     * 
+     *
      * @throws \RuntimeException If nonce invalid.
      */
-    public function verifyOrFail(string $providedNonce): void
+    public function verifyOrFail(string $providedNonce) : void
     {
-        if (!$this->verify($providedNonce)) {
+        if (! $this->verify($providedNonce)) {
             throw new \RuntimeException(
                 'Invalid or missing nonce - potential replay attack detected'
             );
@@ -93,9 +94,9 @@ final class SessionNonce
      *
      * @return bool True if nonce present.
      */
-    public function exists(): bool
+    public function exists() : bool
     {
-        return $this->store->has(self::NONCE_KEY);
+        return $this->store->has(key: self::NONCE_KEY);
     }
 
     // ========================================
@@ -112,15 +113,15 @@ final class SessionNonce
      *
      * @return string Hex-encoded nonce.
      */
-    public function generateForRequest(string $action): string
+    public function generateForRequest(string $action) : string
     {
         $nonce = bin2hex(random_bytes(self::NONCE_LENGTH));
-        $key = self::NONCE_KEY . ".{$action}";
+        $key   = self::NONCE_KEY . ".{$action}";
 
-        $this->store->put($key, [
-            'nonce' => $nonce,
+        $this->store->put(key: $key, value: [
+            'nonce'      => $nonce,
             'created_at' => time(),
-            'action' => $action,
+            'action'     => $action,
         ]);
 
         return $nonce;
@@ -135,10 +136,10 @@ final class SessionNonce
      *
      * @return bool True if valid.
      */
-    public function verifyForRequest(string $action, string $providedNonce, int $maxAge = 300): bool
+    public function verifyForRequest(string $action, string $providedNonce, int $maxAge = 300) : bool
     {
-        $key = self::NONCE_KEY . ".{$action}";
-        $stored = $this->store->get($key);
+        $key    = self::NONCE_KEY . ".{$action}";
+        $stored = $this->store->get(key: $key);
 
         if ($stored === null) {
             return false; // No nonce for this action
@@ -146,12 +147,13 @@ final class SessionNonce
 
         // Check expiration
         if (time() - $stored['created_at'] > $maxAge) {
-            $this->store->delete($key);
+            $this->store->delete(key: $key);
+
             return false; // Expired
         }
 
         // Consume nonce (delete it)
-        $this->store->delete($key);
+        $this->store->delete(key: $key);
 
         // Constant-time comparison
         return hash_equals($stored['nonce'], $providedNonce);
@@ -168,9 +170,9 @@ final class SessionNonce
      *
      * @throws \RuntimeException If nonce invalid or expired.
      */
-    public function verifyForRequestOrFail(string $action, string $providedNonce, int $maxAge = 300): void
+    public function verifyForRequestOrFail(string $action, string $providedNonce, int $maxAge = 300) : void
     {
-        if (!$this->verifyForRequest($action, $providedNonce, $maxAge)) {
+        if (! $this->verifyForRequest($action, $providedNonce, $maxAge)) {
             throw new \RuntimeException(
                 "Invalid or expired nonce for action '{$action}' - potential replay attack detected"
             );
@@ -182,13 +184,13 @@ final class SessionNonce
      *
      * @return void
      */
-    public function clearAllRequests(): void
+    public function clearAllRequests() : void
     {
         $all = $this->store->all();
 
         foreach (array_keys($all) as $key) {
             if (str_starts_with($key, self::NONCE_KEY . '.')) {
-                $this->store->delete($key);
+                $this->store->delete(key: $key);
             }
         }
     }
@@ -200,14 +202,14 @@ final class SessionNonce
      *
      * @return array<string, array> Action => nonce data.
      */
-    public function getActiveRequests(): array
+    public function getActiveRequests() : array
     {
-        $all = $this->store->all();
+        $all    = $this->store->all();
         $nonces = [];
 
         foreach ($all as $key => $value) {
             if (str_starts_with($key, self::NONCE_KEY . '.') && is_array($value)) {
-                $action = substr($key, strlen(self::NONCE_KEY) + 1);
+                $action          = substr($key, strlen(self::NONCE_KEY) + 1);
                 $nonces[$action] = $value;
             }
         }

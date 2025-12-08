@@ -7,20 +7,28 @@ namespace Avax\HTTP\Session\Storage;
 // PSR-16 Simple Cache Interface
 // Note: Install psr/simple-cache via composer for production use
 // This is a fallback stub for development without the package
-if (!interface_exists(\Psr\SimpleCache\CacheInterface::class)) {
+if (! interface_exists(\Psr\SimpleCache\CacheInterface::class)) {
     /**
      * Stub interface for PSR-16 CacheInterface.
      * Install psr/simple-cache package for production use.
      */
-    interface CacheInterface {
-        public function get(string $key, mixed $default = null): mixed;
-        public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool;
-        public function delete(string $key): bool;
-        public function clear(): bool;
-        public function getMultiple(iterable $keys, mixed $default = null): iterable;
-        public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool;
-        public function deleteMultiple(iterable $keys): bool;
-        public function has(string $key): bool;
+    interface CacheInterface
+    {
+        public function get(string $key, mixed $default = null) : mixed;
+
+        public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null) : bool;
+
+        public function delete(string $key) : bool;
+
+        public function clear() : bool;
+
+        public function getMultiple(iterable $keys, mixed $default = null) : iterable;
+
+        public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null) : bool;
+
+        public function deleteMultiple(iterable $keys) : bool;
+
+        public function has(string $key) : bool;
     }
 }
 
@@ -52,20 +60,20 @@ final class Psr16CacheAdapter extends AbstractStore
     /**
      * Psr16CacheAdapter Constructor.
      *
-     * @param object|CacheInterface $cache    PSR-16 cache instance.
-     * @param string                $prefix   Key prefix for namespacing (default: 'session_').
-     * @param int|null              $ttl      Default TTL in seconds (null = no expiration).
+     * @param object|CacheInterface $cache  PSR-16 cache instance.
+     * @param string                $prefix Key prefix for namespacing (default: 'session_').
+     * @param int|null              $ttl    Default TTL in seconds (null = no expiration).
      */
     public function __construct(
         private object $cache,
         private string $prefix = 'session_',
-        private ?int $ttl = null
+        private int|null $ttl = null
     ) {}
 
     /**
      * {@inheritdoc}
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null) : mixed
     {
         return $this->cache->get($this->prefixKey($key), $default);
     }
@@ -73,7 +81,7 @@ final class Psr16CacheAdapter extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function put(string $key, mixed $value): void
+    public function put(string $key, mixed $value) : void
     {
         $this->cache->set($this->prefixKey($key), $value, $this->ttl);
     }
@@ -81,7 +89,7 @@ final class Psr16CacheAdapter extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function has(string $key): bool
+    public function has(string $key) : bool
     {
         return $this->cache->has($this->prefixKey($key));
     }
@@ -89,7 +97,7 @@ final class Psr16CacheAdapter extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function delete(string $key): void
+    public function delete(string $key) : void
     {
         $this->cache->delete($this->prefixKey($key));
     }
@@ -97,7 +105,7 @@ final class Psr16CacheAdapter extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function all(): array
+    public function all() : array
     {
         // PSR-16 doesn't support "get all keys"
         // We maintain a meta key to track all session keys
@@ -117,7 +125,7 @@ final class Psr16CacheAdapter extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function flush(): void
+    public function flush() : void
     {
         $keys = $this->cache->get($this->prefixKey('_keys'), []);
 
@@ -136,11 +144,11 @@ final class Psr16CacheAdapter extends AbstractStore
      *
      * @return void
      */
-    public function putWithTracking(string $key, mixed $value): void
+    public function putWithTracking(string $key, mixed $value) : void
     {
         // Track this key
         $keys = $this->cache->get($this->prefixKey('_keys'), []);
-        if (!in_array($key, $keys, true)) {
+        if (! in_array($key, $keys, true)) {
             $keys[] = $key;
             $this->cache->set($this->prefixKey('_keys'), $keys);
         }
@@ -156,7 +164,7 @@ final class Psr16CacheAdapter extends AbstractStore
      *
      * @return void
      */
-    public function deleteWithTracking(string $key): void
+    public function deleteWithTracking(string $key) : void
     {
         // Untrack this key
         $keys = $this->cache->get($this->prefixKey('_keys'), []);
@@ -174,7 +182,7 @@ final class Psr16CacheAdapter extends AbstractStore
      *
      * @return string Prefixed key.
      */
-    private function prefixKey(string $key): string
+    private function prefixKey(string $key) : string
     {
         return $this->prefix . $key;
     }
@@ -186,7 +194,7 @@ final class Psr16CacheAdapter extends AbstractStore
      *
      * @return void
      */
-    public function setDefaultTtl(?int $ttl): void
+    public function setDefaultTtl(int|null $ttl) : void
     {
         $this->ttl = $ttl;
     }
@@ -196,7 +204,7 @@ final class Psr16CacheAdapter extends AbstractStore
      *
      * @return object Cache instance.
      */
-    public function getCache(): object
+    public function getCache() : object
     {
         return $this->cache;
     }
@@ -209,7 +217,7 @@ final class Psr16CacheAdapter extends AbstractStore
      *
      * @return void
      */
-    public function putManyWithTtl(array $values, ?int $ttl = null): void
+    public function putManyWithTtl(array $values, int|null $ttl = null) : void
     {
         $prefixed = [];
         foreach ($values as $key => $value) {
@@ -227,15 +235,15 @@ final class Psr16CacheAdapter extends AbstractStore
      *
      * @return array<string, mixed> Key-value pairs.
      */
-    public function getMany(array $keys, mixed $default = null): array
+    public function getMany(array $keys, mixed $default = null) : array
     {
         $prefixed = array_map(fn($k) => $this->prefixKey($k), $keys);
-        $values = $this->cache->getMultiple($prefixed, $default);
+        $values   = $this->cache->getMultiple($prefixed, $default);
 
         // Remove prefix from keys
         $result = [];
         foreach ($values as $prefixedKey => $value) {
-            $originalKey = substr($prefixedKey, strlen($this->prefix));
+            $originalKey          = substr($prefixedKey, strlen($this->prefix));
             $result[$originalKey] = $value;
         }
 
@@ -249,7 +257,7 @@ final class Psr16CacheAdapter extends AbstractStore
      *
      * @return void
      */
-    public function deleteMany(array $keys): void
+    public function deleteMany(array $keys) : void
     {
         $prefixed = array_map(fn($k) => $this->prefixKey($k), $keys);
         $this->cache->deleteMultiple($prefixed);
@@ -262,7 +270,7 @@ final class Psr16CacheAdapter extends AbstractStore
      *
      * @return void
      */
-    public function clearEntireCache(): void
+    public function clearEntireCache() : void
     {
         $this->cache->clear();
     }

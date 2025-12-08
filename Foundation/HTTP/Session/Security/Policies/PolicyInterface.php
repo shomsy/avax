@@ -9,7 +9,7 @@ namespace Avax\HTTP\Session\Security\Policies;
  *
  * Defines the contract for session security policies.
  * Policies are enforced before each session operation.
- * 
+ *
  * @package Avax\HTTP\Session\Policies
  */
 interface PolicyInterface
@@ -22,12 +22,12 @@ interface PolicyInterface
      * @return void
      * @throws \RuntimeException If policy is violated.
      */
-    public function enforce(array $data): void;
+    public function enforce(array $data) : void;
 
     /**
      * Get the policy name.
      *
      * @return string The policy identifier.
      */
-    public function getName(): string;
+    public function getName() : string;
 }

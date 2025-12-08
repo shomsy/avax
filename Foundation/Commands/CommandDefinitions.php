@@ -15,7 +15,7 @@ use Avax\Database\Migration\Runner\Commands\MigrateRollbackCommand;
 
 class CommandDefinitions
 {
-    public static function getCommandByAlias(string $alias) : ?array
+    public static function getCommandByAlias(string $alias) : array|null
     {
         foreach (self::getAllCommands() as $name => $details) {
             if ($name === $alias || ($details['alias'] ?? null) === $alias) {

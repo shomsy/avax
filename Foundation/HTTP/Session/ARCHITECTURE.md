@@ -386,7 +386,9 @@ $container->singleton(SessionProvider::class, function($c) {
 ## 🎯 SOLID Principles Compliance
 
 ### Single Responsibility Principle (SRP)
+
 ✅ Svaka klasa ima jednu odgovornost:
+
 - `SessionProvider` → Orchestration
 - `CookieManager` → Cookie security
 - `EncrypterFactory` → Encryption
@@ -394,26 +396,34 @@ $container->singleton(SessionProvider::class, function($c) {
 - `SessionAdapter` → Native PHP abstraction
 
 ### Open/Closed Principle (OCP)
+
 ✅ Proširivo bez modifikacije:
+
 - Novi Store-ovi implementiraju `Store` interface
 - Novi Policy-ji implementiraju `PolicyInterface`
 - Novi Feature-i implementiraju `FeatureInterface`
 - `CompositePolicy` omogućava kompoziciju
 
 ### Liskov Substitution Principle (LSP)
+
 ✅ Sve implementacije su zamenjive:
+
 - `NativeStore`, `ArrayStore`, `Psr16CacheAdapter` → sve implementiraju `Store`
 - `OpenSSLEncrypter`, `NullEncrypter` → obe implementiraju `Encrypter`
 
 ### Interface Segregation Principle (ISP)
+
 ✅ Interfejsi su fokusirani:
+
 - `Store` → samo storage operacije
 - `Encrypter` → samo encrypt/decrypt
 - `FeatureInterface` → samo lifecycle
 - `PolicyInterface` → samo enforce
 
 ### Dependency Inversion Principle (DIP)
+
 ✅ Zavisnosti su inverzne:
+
 - `SessionProvider` zavisi od `Store` interface, ne od konkretne implementacije
 - `SessionProvider` zavisi od `Encrypter` interface
 - Sve zavisnosti su injected, ne hard-coded
@@ -453,15 +463,15 @@ $container->singleton(SessionProvider::class, function($c) {
 
 ## 🏆 Architecture Quality Score
 
-| Aspect              | Score | Notes                                    |
-| ------------------- | ----- | ---------------------------------------- |
-| Layer Separation    | 10/10 | Perfect Clean Architecture compliance    |
-| Dependency Flow     | 10/10 | All dependencies point inward            |
-| SOLID Compliance    | 10/10 | All 5 principles followed                |
-| Testability         | 10/10 | Full DI, all dependencies mockable       |
-| Extensibility       | 10/10 | Open for extension via interfaces        |
-| Maintainability     | 10/10 | Clear responsibilities, low coupling     |
-| Security by Design  | 10/10 | Security integrated at architecture level|
+| Aspect             | Score | Notes                                     |
+|--------------------|-------|-------------------------------------------|
+| Layer Separation   | 10/10 | Perfect Clean Architecture compliance     |
+| Dependency Flow    | 10/10 | All dependencies point inward             |
+| SOLID Compliance   | 10/10 | All 5 principles followed                 |
+| Testability        | 10/10 | Full DI, all dependencies mockable        |
+| Extensibility      | 10/10 | Open for extension via interfaces         |
+| Maintainability    | 10/10 | Clear responsibilities, low coupling      |
+| Security by Design | 10/10 | Security integrated at architecture level |
 
 **Overall Architecture Score: 10/10** 🏆
 

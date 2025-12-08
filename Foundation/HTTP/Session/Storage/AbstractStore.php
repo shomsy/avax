@@ -25,17 +25,17 @@ abstract class AbstractStore implements Store
     /**
      * {@inheritdoc}
      */
-    abstract public function get(string $key, mixed $default = null): mixed;
+    abstract public function get(string $key, mixed $default = null) : mixed;
 
     /**
      * {@inheritdoc}
      */
-    abstract public function put(string $key, mixed $value): void;
+    abstract public function put(string $key, mixed $value) : void;
 
     /**
      * {@inheritdoc}
      */
-    public function has(string $key): bool
+    public function has(string $key) : bool
     {
         return $this->get($key) !== null;
     }
@@ -43,17 +43,17 @@ abstract class AbstractStore implements Store
     /**
      * {@inheritdoc}
      */
-    abstract public function delete(string $key): void;
+    abstract public function delete(string $key) : void;
 
     /**
      * {@inheritdoc}
      */
-    abstract public function all(): array;
+    abstract public function all() : array;
 
     /**
      * {@inheritdoc}
      */
-    abstract public function flush(): void;
+    abstract public function flush() : void;
 
     /**
      * Get and remove a value in one operation.
@@ -63,7 +63,7 @@ abstract class AbstractStore implements Store
      *
      * @return mixed The value or default.
      */
-    public function pull(string $key, mixed $default = null): mixed
+    public function pull(string $key, mixed $default = null) : mixed
     {
         $value = $this->get($key, $default);
 
@@ -82,10 +82,10 @@ abstract class AbstractStore implements Store
      *
      * @return int New value.
      */
-    public function increment(string $key, int $value = 1): int
+    public function increment(string $key, int $value = 1) : int
     {
         $current = (int) $this->get($key, 0);
-        $new = $current + $value;
+        $new     = $current + $value;
         $this->put($key, $new);
 
         return $new;
@@ -99,7 +99,7 @@ abstract class AbstractStore implements Store
      *
      * @return int New value.
      */
-    public function decrement(string $key, int $value = 1): int
+    public function decrement(string $key, int $value = 1) : int
     {
         return $this->increment($key, -$value);
     }
@@ -109,7 +109,7 @@ abstract class AbstractStore implements Store
      *
      * @return bool True if no data stored.
      */
-    public function isEmpty(): bool
+    public function isEmpty() : bool
     {
         return empty($this->all());
     }
@@ -119,7 +119,7 @@ abstract class AbstractStore implements Store
      *
      * @return int Item count.
      */
-    public function count(): int
+    public function count() : int
     {
         return count($this->all());
     }
@@ -129,7 +129,7 @@ abstract class AbstractStore implements Store
      *
      * @return void
      */
-    public function clear(): void
+    public function clear() : void
     {
         $this->flush();
     }
@@ -141,7 +141,7 @@ abstract class AbstractStore implements Store
      *
      * @return void
      */
-    public function putMany(array $values): void
+    public function putMany(array $values) : void
     {
         foreach ($values as $key => $value) {
             $this->put($key, $value);
@@ -155,7 +155,7 @@ abstract class AbstractStore implements Store
      *
      * @return void
      */
-    public function deleteMany(array $keys): void
+    public function deleteMany(array $keys) : void
     {
         foreach ($keys as $key) {
             $this->delete($key);

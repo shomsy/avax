@@ -296,7 +296,7 @@ class QueryBuilder extends BaseQueryBuilder
      * @return mixed The **first record**, the **extracted key's value**, the **result of a Closure**, or `$default` if
      *               empty.
      */
-    public function first() : ?array
+    public function first() : array|null
     {
         // Ensure the query fetches only one result
         $this->limit = 1;

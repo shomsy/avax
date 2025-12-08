@@ -8,14 +8,14 @@ namespace Avax\HTTP\Session\Security;
  * SessionIdValidator - Session ID Entropy Validation
  *
  * OWASP ASVS 3.2.2 Compliant
- * 
+ *
  * Validates session ID quality to ensure cryptographic strength.
- * 
+ *
  * Requirements:
  * - Minimum 128 bits entropy (32 hex chars)
  * - Cryptographically secure randomness
  * - No pattern repetition
- * 
+ *
  * @package Avax\HTTP\Session\Security
  */
 final class SessionIdValidator
@@ -28,10 +28,10 @@ final class SessionIdValidator
      * @param string $sessionId Session ID to validate.
      *
      * @return bool True if valid.
-     * 
+     *
      * @throws \RuntimeException If session ID quality insufficient.
      */
-    public static function validate(string $sessionId): bool
+    public static function validate(string $sessionId) : bool
     {
         // Check minimum length (128 bits)
         if (strlen($sessionId) < self::MIN_LENGTH) {
@@ -62,7 +62,7 @@ final class SessionIdValidator
      *
      * @return bool True if current session ID is valid.
      */
-    public static function validateCurrent(): bool
+    public static function validateCurrent() : bool
     {
         $sessionId = session_id();
 

@@ -10,20 +10,20 @@ use Avax\HTTP\Session\Contracts\Storage\Store;
  * CsrfToken - CSRF Token Management
  *
  * OWASP ASVS 4.2.2 Compliant
- * 
+ *
  * Session-bound CSRF token generation and verification.
- * 
+ *
  * Features:
  * - Cryptographically secure tokens
  * - Session-bound (invalidated on logout)
  * - Constant-time comparison
  * - Automatic rotation
- * 
+ *
  * @package Avax\HTTP\Session\Security
  */
 final class CsrfToken
 {
-    private const TOKEN_KEY = '_csrf_token';
+    private const TOKEN_KEY    = '_csrf_token';
     private const TOKEN_LENGTH = 32;  // 256 bits
 
     /**
@@ -42,10 +42,11 @@ final class CsrfToken
      *
      * @return string Hex-encoded token.
      */
-    public function generate(): string
+    public function generate() : string
     {
         $token = bin2hex(random_bytes(self::TOKEN_LENGTH));
         $this->store->put(self::TOKEN_KEY, $token);
+
         return $token;
     }
 
@@ -58,7 +59,7 @@ final class CsrfToken
      *
      * @return bool True if valid.
      */
-    public function verify(string $providedToken): bool
+    public function verify(string $providedToken) : bool
     {
         $storedToken = $this->store->get(self::TOKEN_KEY);
 
@@ -75,12 +76,12 @@ final class CsrfToken
      * @param string $providedToken Token to verify.
      *
      * @return void
-     * 
+     *
      * @throws \RuntimeException If token invalid.
      */
-    public function verifyOrFail(string $providedToken): void
+    public function verifyOrFail(string $providedToken) : void
     {
-        if (!$this->verify($providedToken)) {
+        if (! $this->verify($providedToken)) {
             throw new \RuntimeException('CSRF token mismatch - possible CSRF attack');
         }
     }
@@ -90,7 +91,7 @@ final class CsrfToken
      *
      * @return string Current token.
      */
-    public function getToken(): string
+    public function getToken() : string
     {
         $token = $this->store->get(self::TOKEN_KEY);
 
@@ -108,7 +109,7 @@ final class CsrfToken
      *
      * @return string New token.
      */
-    public function rotate(): string
+    public function rotate() : string
     {
         return $this->generate();
     }
@@ -120,7 +121,7 @@ final class CsrfToken
      *
      * @return void
      */
-    public function clear(): void
+    public function clear() : void
     {
         $this->store->delete(self::TOKEN_KEY);
     }

@@ -10,21 +10,21 @@ use Avax\HTTP\Session\Contracts\Storage\Store;
  * SessionRegistry - Multi-Device Session Control
  *
  * OWASP ASVS 3.3.8 Compliant
- * 
+ *
  * Tracks and manages concurrent sessions per user.
  * Prevents session sharing and enables single-device enforcement.
- * 
+ *
  * Features:
  * - Track multiple sessions per user
  * - Terminate other sessions on new login
  * - Concurrent session limit enforcement
  * - Session metadata tracking (IP, user agent, timestamp)
- * 
+ *
  * @package Avax\HTTP\Session\Security
  */
 final class SessionRegistry
 {
-    private const REGISTRY_PREFIX = '_registry_';
+    private const string REGISTRY_PREFIX = '_registry_';
 
     /**
      * SessionRegistry Constructor.
@@ -44,17 +44,17 @@ final class SessionRegistry
      *
      * @return void
      */
-    public function register(string $userId, string $sessionId, array $metadata = []): void
+    public function register(string $userId, string $sessionId, array $metadata = []) : void
     {
-        $key = self::REGISTRY_PREFIX . $userId;
-        $sessions = $this->store->get($key, []);
+        $key      = self::REGISTRY_PREFIX . $userId;
+        $sessions = $this->store->get(key: $key, default: []);
 
         $sessions[$sessionId] = array_merge($metadata, [
-            'created_at' => time(),
+            'created_at'    => time(),
             'last_activity' => time(),
         ]);
 
-        $this->store->put($key, $sessions);
+        $this->store->put(key: $key, value: $sessions);
     }
 
     /**
@@ -64,10 +64,11 @@ final class SessionRegistry
      *
      * @return array<string, array> Session ID => metadata.
      */
-    public function getActiveSessions(string $userId): array
+    public function getActiveSessions(string $userId) : array
     {
         $key = self::REGISTRY_PREFIX . $userId;
-        return $this->store->get($key, []);
+
+        return $this->store->get(key: $key, default: []);
     }
 
     /**
@@ -80,9 +81,9 @@ final class SessionRegistry
      *
      * @return int Number of terminated sessions.
      */
-    public function terminateOtherSessions(string $userId, string $exceptSessionId): int
+    public function terminateOtherSessions(string $userId, string $exceptSessionId) : int
     {
-        $sessions = $this->getActiveSessions($userId);
+        $sessions   = $this->getActiveSessions($userId);
         $terminated = 0;
 
         foreach ($sessions as $sessionId => $metadata) {
@@ -94,7 +95,7 @@ final class SessionRegistry
         }
 
         $key = self::REGISTRY_PREFIX . $userId;
-        $this->store->put($key, $sessions);
+        $this->store->put(key: $key, value: $sessions);
 
         return $terminated;
     }
@@ -107,18 +108,18 @@ final class SessionRegistry
      *
      * @return bool True if session was found and terminated.
      */
-    public function terminateSession(string $userId, string $sessionId): bool
+    public function terminateSession(string $userId, string $sessionId) : bool
     {
         $sessions = $this->getActiveSessions($userId);
 
-        if (!isset($sessions[$sessionId])) {
+        if (! isset($sessions[$sessionId])) {
             return false;
         }
 
         unset($sessions[$sessionId]);
 
         $key = self::REGISTRY_PREFIX . $userId;
-        $this->store->put($key, $sessions);
+        $this->store->put(key: $key, value: $sessions);
 
         return true;
     }
@@ -131,7 +132,7 @@ final class SessionRegistry
      *
      * @return void
      */
-    public function updateActivity(string $userId, string $sessionId): void
+    public function updateActivity(string $userId, string $sessionId) : void
     {
         $sessions = $this->getActiveSessions($userId);
 
@@ -139,7 +140,7 @@ final class SessionRegistry
             $sessions[$sessionId]['last_activity'] = time();
 
             $key = self::REGISTRY_PREFIX . $userId;
-            $this->store->put($key, $sessions);
+            $this->store->put(key: $key, value: $sessions);
         }
     }
 
@@ -151,9 +152,10 @@ final class SessionRegistry
      *
      * @return bool True if limit exceeded.
      */
-    public function hasExceededLimit(string $userId, int $limit): bool
+    public function hasExceededLimit(string $userId, int $limit) : bool
     {
         $sessions = $this->getActiveSessions($userId);
+
         return count($sessions) >= $limit;
     }
 
@@ -176,17 +178,17 @@ final class SessionRegistry
      *
      * @return void
      */
-    public function revoke(string $sessionId, string $reason = 'manual_revocation'): void
+    public function revoke(string $sessionId, string $reason = 'manual_revocation') : void
     {
-        $key = self::REGISTRY_PREFIX . 'revoked';
-        $revoked = $this->store->get($key, []);
+        $key     = self::REGISTRY_PREFIX . 'revoked';
+        $revoked = $this->store->get(key: $key, default: []);
 
         $revoked[$sessionId] = [
             'revoked_at' => time(),
-            'reason' => $reason,
+            'reason'     => $reason,
         ];
 
-        $this->store->put($key, $revoked);
+        $this->store->put(key: $key, value: $revoked);
     }
 
     /**
@@ -196,10 +198,10 @@ final class SessionRegistry
      *
      * @return bool True if revoked.
      */
-    public function isRevoked(string $sessionId): bool
+    public function isRevoked(string $sessionId) : bool
     {
-        $key = self::REGISTRY_PREFIX . 'revoked';
-        $revoked = $this->store->get($key, []);
+        $key     = self::REGISTRY_PREFIX . 'revoked';
+        $revoked = $this->store->get(key: $key, default: []);
 
         return isset($revoked[$sessionId]);
     }
@@ -211,10 +213,10 @@ final class SessionRegistry
      *
      * @return array|null Revocation details or null.
      */
-    public function getRevocationDetails(string $sessionId): ?array
+    public function getRevocationDetails(string $sessionId) : array|null
     {
-        $key = self::REGISTRY_PREFIX . 'revoked';
-        $revoked = $this->store->get($key, []);
+        $key     = self::REGISTRY_PREFIX . 'revoked';
+        $revoked = $this->store->get(key: $key, default: []);
 
         return $revoked[$sessionId] ?? null;
     }
@@ -232,10 +234,10 @@ final class SessionRegistry
      *
      * @return int Number of sessions revoked.
      */
-    public function revokeAllForUser(string $userId, string $reason = 'user_revocation'): int
+    public function revokeAllForUser(string $userId, string $reason = 'user_revocation') : int
     {
         $sessions = $this->getActiveSessions($userId);
-        $count = 0;
+        $count    = 0;
 
         foreach (array_keys($sessions) as $sessionId) {
             $this->revoke($sessionId, $reason);
@@ -244,7 +246,7 @@ final class SessionRegistry
 
         // Also clear active sessions
         $key = self::REGISTRY_PREFIX . $userId;
-        $this->store->delete($key);
+        $this->store->delete(key: $key);
 
         return $count;
     }
@@ -258,17 +260,17 @@ final class SessionRegistry
      *
      * @return bool True if was revoked and now removed.
      */
-    public function unrevoke(string $sessionId): bool
+    public function unrevoke(string $sessionId) : bool
     {
-        $key = self::REGISTRY_PREFIX . 'revoked';
-        $revoked = $this->store->get($key, []);
+        $key     = self::REGISTRY_PREFIX . 'revoked';
+        $revoked = $this->store->get(key: $key, default: []);
 
-        if (!isset($revoked[$sessionId])) {
+        if (! isset($revoked[$sessionId])) {
             return false;
         }
 
         unset($revoked[$sessionId]);
-        $this->store->put($key, $revoked);
+        $this->store->put(key: $key, value: $revoked);
 
         return true;
     }
@@ -282,9 +284,9 @@ final class SessionRegistry
      *
      * @return int Number of cleared revocations.
      */
-    public function clearOldRevocations(int $maxAge = 2592000): int
+    public function clearOldRevocations(int $maxAge = 2592000) : int
     {
-        $key = self::REGISTRY_PREFIX . 'revoked';
+        $key     = self::REGISTRY_PREFIX . 'revoked';
         $revoked = $this->store->get($key, []);
         $cleared = 0;
 
@@ -295,7 +297,7 @@ final class SessionRegistry
             }
         }
 
-        $this->store->put($key, $revoked);
+        $this->store->put(key: $key, value: $revoked);
 
         return $cleared;
     }
@@ -305,10 +307,11 @@ final class SessionRegistry
      *
      * @return array<string, array> Session ID => revocation data.
      */
-    public function getAllRevoked(): array
+    public function getAllRevoked() : array
     {
         $key = self::REGISTRY_PREFIX . 'revoked';
-        return $this->store->get($key, []);
+
+        return $this->store->get(key: $key, default: []);
     }
 
     /**
@@ -316,7 +319,7 @@ final class SessionRegistry
      *
      * @return int Count.
      */
-    public function countRevoked(): int
+    public function countRevoked() : int
     {
         return count($this->getAllRevoked());
     }
@@ -332,13 +335,13 @@ final class SessionRegistry
      *
      * @return array<string, array> Device fingerprint => sessions.
      */
-    public function getSessionsByDevice(string $userId): array
+    public function getSessionsByDevice(string $userId) : array
     {
         $sessions = $this->getActiveSessions($userId);
         $byDevice = [];
 
         foreach ($sessions as $sessionId => $metadata) {
-            $fingerprint = $metadata['user_agent'] ?? 'unknown';
+            $fingerprint              = $metadata['user_agent'] ?? 'unknown';
             $byDevice[$fingerprint][] = array_merge(['session_id' => $sessionId], $metadata);
         }
 
@@ -348,14 +351,14 @@ final class SessionRegistry
     /**
      * Terminate all sessions from a specific device.
      *
-     * @param string $userId      User identifier.
-     * @param string $userAgent   User agent string to match.
+     * @param string $userId    User identifier.
+     * @param string $userAgent User agent string to match.
      *
      * @return int Number of terminated sessions.
      */
-    public function terminateDevice(string $userId, string $userAgent): int
+    public function terminateDevice(string $userId, string $userAgent) : int
     {
-        $sessions = $this->getActiveSessions($userId);
+        $sessions   = $this->getActiveSessions($userId);
         $terminated = 0;
 
         foreach ($sessions as $sessionId => $metadata) {

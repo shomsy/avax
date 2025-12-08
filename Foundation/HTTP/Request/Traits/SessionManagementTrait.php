@@ -84,7 +84,7 @@ trait SessionManagementTrait
      */
     public function getFlash(string $key, mixed $default = null) : mixed
     {
-        return $this->session->getFlash(key: $key) ?? $default;
+        return $this->session->flash()->get($key, $default) ?? $default;
     }
 
     /**

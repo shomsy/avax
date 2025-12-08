@@ -49,7 +49,7 @@ final class Events implements FeatureInterface
      *
      * @return void
      */
-    public function listen(string $event, callable $callback): void
+    public function listen(string $event, callable $callback) : void
     {
         $this->listeners[$event][] = $callback;
     }
@@ -64,7 +64,7 @@ final class Events implements FeatureInterface
      *
      * @return void
      */
-    public function once(string $event, callable $callback): void
+    public function once(string $event, callable $callback) : void
     {
         $wrapper = function ($data) use ($event, $callback, &$wrapper) {
             $callback($data);
@@ -82,9 +82,9 @@ final class Events implements FeatureInterface
      *
      * @return void
      */
-    public function removeListener(string $event, callable $callback): void
+    public function removeListener(string $event, callable $callback) : void
     {
-        if (!isset($this->listeners[$event])) {
+        if (! isset($this->listeners[$event])) {
             return;
         }
 
@@ -102,9 +102,9 @@ final class Events implements FeatureInterface
      *
      * @return void
      */
-    public function dispatch(string $event, array $data = []): void
+    public function dispatch(string $event, array $data = []) : void
     {
-        if (!isset($this->listeners[$event])) {
+        if (! isset($this->listeners[$event])) {
             return;
         }
 
@@ -116,7 +116,7 @@ final class Events implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function boot(): void
+    public function boot() : void
     {
         // Events are ready on construction
         $this->enabled = true;
@@ -125,17 +125,17 @@ final class Events implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function terminate(): void
+    public function terminate() : void
     {
         // Clear all listeners on termination
         $this->listeners = [];
-        $this->enabled = false;
+        $this->enabled   = false;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    public function getName() : string
     {
         return 'events';
     }
@@ -143,7 +143,7 @@ final class Events implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function isEnabled(): bool
+    public function isEnabled() : bool
     {
         return $this->enabled;
     }

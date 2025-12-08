@@ -8,11 +8,11 @@ namespace Avax\HTTP\Session\Exceptions;
  * EncryptionKeyMissingException
  *
  * Thrown when encryption is required but no key is configured.
- * 
+ *
  * Use Case:
  * - Attempting to store _secure suffixed keys without encryption key
  * - Using secure() scope without encryption key
- * 
+ *
  * @example
  *   try {
  *       $session->put('token_secure', 'value');
@@ -29,11 +29,11 @@ final class EncryptionKeyMissingException extends SessionException
      *
      * @return self
      */
-    public static function create(): self
+    public static function create() : self
     {
         return new self(
             'Encryption key is required for secure session values. ' .
-                'Set encryption key in SessionConfig or SessionManager constructor.'
+            'Set encryption key in SessionConfig or SessionManager constructor.'
         );
     }
 }

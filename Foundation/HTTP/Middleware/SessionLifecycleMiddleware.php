@@ -28,10 +28,8 @@ final readonly class SessionLifecycleMiddleware
 
     public function handle(RequestInterface $request, callable $next) : ResponseInterface
     {
-        $bags = $this->session->getRegistry();
-
+        // Ensure PHP session is started with the configured cookie policy.
         $this->session->start();
-        $bags->get('flash')->load();
 
         $response = $next($request);
 
@@ -44,8 +42,6 @@ final readonly class SessionLifecycleMiddleware
                 body   : 'Middleware chain did not return a valid ResponseInterface.'
             );
         }
-
-        $bags->get('flash')->sweep();
 
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_write_close();

@@ -9,7 +9,7 @@ namespace Avax\HTTP\Session\Security\Policies;
  *
  * Enforces maximum idle time for sessions. If session is inactive
  * longer than the configured period, policy violation is triggered.
- * 
+ *
  * @package Avax\HTTP\Session\Policies
  */
 final class MaxIdlePolicy implements PolicyInterface
@@ -31,7 +31,7 @@ final class MaxIdlePolicy implements PolicyInterface
      * @return void
      * @throws \RuntimeException If session is idle too long.
      */
-    public function enforce(array $data): void
+    public function enforce(array $data) : void
     {
         $lastActivity = $data['_last_activity'] ?? null;
 
@@ -57,7 +57,7 @@ final class MaxIdlePolicy implements PolicyInterface
      *
      * @return string Policy identifier.
      */
-    public function getName(): string
+    public function getName() : string
     {
         return 'max_idle';
     }

@@ -8,12 +8,12 @@ namespace Avax\HTTP\Session\Exceptions;
  * ExpiredSessionException
  *
  * Thrown when attempting to access an expired session value.
- * 
+ *
  * Use Case:
  * - TTL-based expiration
  * - Policy-based expiration
  * - Manual expiration checks
- * 
+ *
  * @example
  *   try {
  *       $value = $session->get('key');
@@ -32,7 +32,7 @@ final class ExpiredSessionException extends SessionException
      *
      * @return self
      */
-    public static function forKey(string $key): self
+    public static function forKey(string $key) : self
     {
         return new self("Session key '{$key}' has expired");
     }

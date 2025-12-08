@@ -9,7 +9,7 @@ namespace Avax\HTTP\Session\Contracts\Security;
  *
  * Abstraction for accessing server variables.
  * Enables testability by decoupling from $_SERVER superglobal.
- * 
+ *
  * @package Avax\HTTP\Session\Contracts\Security
  */
 interface ServerContext
@@ -19,19 +19,19 @@ interface ServerContext
      *
      * @return string User agent.
      */
-    public function getUserAgent(): string;
+    public function getUserAgent() : string;
 
     /**
      * Check if connection is secure (HTTPS).
      *
      * @return bool True if HTTPS.
      */
-    public function isSecure(): bool;
+    public function isSecure() : bool;
 
     /**
      * Get client IP address.
      *
      * @return string IP address.
      */
-    public function getClientIp(): string;
+    public function getClientIp() : string;
 }

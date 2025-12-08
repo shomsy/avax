@@ -31,7 +31,7 @@ interface AuthInterface
      *
      * @return UserInterface|null
      */
-    public function user(): ?UserInterface;
+    public function user(): UserInterface|null;
 
     /**
      * Check if the user is authenticated.

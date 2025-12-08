@@ -11,10 +11,10 @@ use Avax\HTTP\Session\Security\Crypto\OpenSSLEncrypter;
  * EncrypterFactory - Encrypter with Key Management
  *
  * OWASP ASVS 3.1.3 Compliant
- * 
+ *
  * Integrates KeyManager with encryption operations.
  * Supports key rotation by attempting decryption with all known keys.
- * 
+ *
  * @package Avax\HTTP\Session\Security
  */
 final class EncrypterFactory
@@ -26,7 +26,7 @@ final class EncrypterFactory
      *
      * @param KeyManager|null $keyManager Key manager (optional, creates default).
      */
-    public function __construct(?KeyManager $keyManager = null)
+    public function __construct(KeyManager|null $keyManager = null)
     {
         $this->keyManager = $keyManager ?? new KeyManager();
     }
@@ -36,9 +36,10 @@ final class EncrypterFactory
      *
      * @return Encrypter Encrypter instance.
      */
-    public function create(): Encrypter
+    public function create() : Encrypter
     {
         $activeKey = $this->keyManager->getActiveKey();
+
         return new OpenSSLEncrypter($activeKey);
     }
 
@@ -49,7 +50,7 @@ final class EncrypterFactory
      *
      * @return string Encrypted payload.
      */
-    public function encrypt(mixed $value): string
+    public function encrypt(mixed $value) : string
     {
         return $this->create()->encrypt($value);
     }
@@ -63,16 +64,17 @@ final class EncrypterFactory
      * @param string $payload Encrypted payload.
      *
      * @return mixed Decrypted value.
-     * 
+     *
      * @throws \RuntimeException If decryption fails with all keys.
      */
-    public function decrypt(string $payload): mixed
+    public function decrypt(string $payload) : mixed
     {
         $allKeys = $this->keyManager->getAllKeys();
 
         foreach ($allKeys as $key) {
             try {
                 $encrypter = new OpenSSLEncrypter($key);
+
                 return $encrypter->decrypt($payload);
             } catch (\Exception $e) {
                 // Try next key

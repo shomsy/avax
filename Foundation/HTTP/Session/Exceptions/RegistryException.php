@@ -28,7 +28,7 @@ class RegistryException extends \RuntimeException
      *
      * @return self
      */
-    public static function sessionNotFound(string $sessionId): self
+    public static function sessionNotFound(string $sessionId) : self
     {
         return new self("Session '{$sessionId}' not found in registry.");
     }
@@ -40,7 +40,7 @@ class RegistryException extends \RuntimeException
      *
      * @return self
      */
-    public static function sessionAlreadyRegistered(string $sessionId): self
+    public static function sessionAlreadyRegistered(string $sessionId) : self
     {
         return new self("Session '{$sessionId}' is already registered.");
     }
@@ -48,13 +48,13 @@ class RegistryException extends \RuntimeException
     /**
      * Create exception for concurrent session limit exceeded.
      *
-     * @param string $userId User identifier.
-     * @param int    $limit  Maximum allowed sessions.
+     * @param string $userId  User identifier.
+     * @param int    $limit   Maximum allowed sessions.
      * @param int    $current Current session count.
      *
      * @return self
      */
-    public static function concurrentLimitExceeded(string $userId, int $limit, int $current): self
+    public static function concurrentLimitExceeded(string $userId, int $limit, int $current) : self
     {
         return new self(
             "User '{$userId}' has exceeded concurrent session limit. " .
@@ -70,7 +70,7 @@ class RegistryException extends \RuntimeException
      *
      * @return self
      */
-    public static function sessionRevoked(string $sessionId, string $reason): self
+    public static function sessionRevoked(string $sessionId, string $reason) : self
     {
         return new self(
             "Session '{$sessionId}' has been revoked. Reason: {$reason}"
@@ -85,7 +85,7 @@ class RegistryException extends \RuntimeException
      *
      * @return self
      */
-    public static function revocationFailed(string $sessionId, string $reason): self
+    public static function revocationFailed(string $sessionId, string $reason) : self
     {
         return new self("Failed to revoke session '{$sessionId}': {$reason}");
     }
@@ -98,7 +98,7 @@ class RegistryException extends \RuntimeException
      *
      * @return self
      */
-    public static function deviceNotFound(string $userId, string $userAgent): self
+    public static function deviceNotFound(string $userId, string $userAgent) : self
     {
         return new self(
             "No sessions found for user '{$userId}' with device '{$userAgent}'."
@@ -113,7 +113,7 @@ class RegistryException extends \RuntimeException
      *
      * @return self
      */
-    public static function invalidMetadata(string $sessionId, string $reason): self
+    public static function invalidMetadata(string $sessionId, string $reason) : self
     {
         return new self("Invalid metadata for session '{$sessionId}': {$reason}");
     }
@@ -126,7 +126,7 @@ class RegistryException extends \RuntimeException
      *
      * @return self
      */
-    public static function storageFailed(string $operation, string $reason): self
+    public static function storageFailed(string $operation, string $reason) : self
     {
         return new self("Registry storage operation '{$operation}' failed: {$reason}");
     }

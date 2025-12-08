@@ -129,7 +129,7 @@ final class RouteBuilder
      *
      * @return RouteBuilder
      */
-    public function setName(?string $name) : RouteBuilder
+    public function setName(string|null $name) : RouteBuilder
     {
         $this->name = $name;
 
@@ -239,7 +239,7 @@ final class RouteBuilder
      *
      * @return RouteBuilder
      */
-    public function setDomain(?string $domain) : RouteBuilder
+    public function setDomain(string|null $domain) : RouteBuilder
     {
         $this->domain = $domain;
 
@@ -271,7 +271,7 @@ final class RouteBuilder
     /**
      * @return string|null
      */
-    public function getAuthorization() : ?string
+    public function getAuthorization() : string|null
     {
         return $this->authorization;
     }
@@ -282,7 +282,7 @@ final class RouteBuilder
      *
      * @return RouteBuilder
      */
-    public function setAuthorization(?string $authorization) : RouteBuilder
+    public function setAuthorization(string|null $authorization) : RouteBuilder
     {
         $this->authorization = $authorization;
 

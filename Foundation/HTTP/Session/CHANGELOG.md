@@ -22,10 +22,10 @@ Complete implementation of OWASP ASVS 3.x security requirements.
 - `Security/Policies/SessionIpPolicy.php` - IP binding for hijacking detection
 - `Security/EncrypterFactory.php` - KeyManager integration with rotation
 - `Providers/SessionProvider.php` - 4 critical OWASP methods:
-  - `terminate()` - Secure session cleanup (ASVS 3.2.3)
-  - `login()` - Auto ID regeneration on authentication (ASVS 3.2.1)
-  - `elevatePrivileges()` - Auto regeneration on privilege change (ASVS 3.2.1)
-  - `regenerateId()` - Manual session ID regeneration (ASVS 3.2.1)
+    - `terminate()` - Secure session cleanup (ASVS 3.2.3)
+    - `login()` - Auto ID regeneration on authentication (ASVS 3.2.1)
+    - `elevatePrivileges()` - Auto regeneration on privilege change (ASVS 3.2.1)
+    - `regenerateId()` - Manual session ID regeneration (ASVS 3.2.1)
 
 #### **Phase 3: Enterprise Extras**
 

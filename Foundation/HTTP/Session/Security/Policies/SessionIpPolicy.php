@@ -10,14 +10,14 @@ use Avax\HTTP\Session\Exceptions\PolicyViolationException;
  * SessionIpPolicy - IP Address Binding Policy
  *
  * OWASP ASVS 3.4.1 Compliant
- * 
+ *
  * Binds sessions to client IP address to detect session hijacking.
  * Supports both strict mode (exact match) and relaxed mode (subnet match).
- * 
+ *
  * Security Trade-offs:
  * - Strict: More secure, but breaks with mobile networks (IP changes)
  * - Relaxed: Less secure, but handles legitimate IP changes
- * 
+ *
  * @package Avax\HTTP\Session\Security\Policies
  */
 final class SessionIpPolicy implements PolicyInterface
@@ -34,9 +34,9 @@ final class SessionIpPolicy implements PolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function enforce(array $data): void
+    public function enforce(array $data) : void
     {
-        $storedIp = $data['_client_ip'] ?? null;
+        $storedIp  = $data['_client_ip'] ?? null;
         $currentIp = $_SERVER['REMOTE_ADDR'] ?? '';
 
         // First time - no stored IP yet
@@ -54,7 +54,7 @@ final class SessionIpPolicy implements PolicyInterface
             }
         } else {
             // Relaxed: Same /24 subnet
-            if (!$this->isSameSubnet($storedIp, $currentIp)) {
+            if (! $this->isSameSubnet($storedIp, $currentIp)) {
                 throw PolicyViolationException::forPolicy(
                     'ip_binding_relaxed',
                     'IP subnet mismatch - possible session hijacking'
@@ -66,7 +66,7 @@ final class SessionIpPolicy implements PolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    public function getName() : string
     {
         return $this->strictMode ? 'ip_binding_strict' : 'ip_binding_relaxed';
     }
@@ -79,7 +79,7 @@ final class SessionIpPolicy implements PolicyInterface
      *
      * @return bool True if same subnet.
      */
-    private function isSameSubnet(string $ip1, string $ip2): bool
+    private function isSameSubnet(string $ip1, string $ip2) : bool
     {
         $parts1 = explode('.', $ip1);
         $parts2 = explode('.', $ip2);

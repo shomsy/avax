@@ -17,26 +17,26 @@ final class SessionVersioning
 {
     private array $versions = [];
 
-    public function createSnapshot(array $data): string
+    public function createSnapshot(array $data) : string
     {
-        $versionId = bin2hex(random_bytes(8));
+        $versionId                  = bin2hex(random_bytes(8));
         $this->versions[$versionId] = [
             'timestamp' => new DateTimeImmutable(),
-            'data' => $data
+            'data'      => $data
         ];
 
         return $versionId;
     }
 
-    public function restoreSnapshot(string $versionId): ?array
+    public function restoreSnapshot(string $versionId) : array|null
     {
         return $this->versions[$versionId]['data'] ?? null;
     }
 
-    public function listVersions(): array
+    public function listVersions() : array
     {
         return array_map(
-            fn ($v) => $v['timestamp']->format(DATE_ATOM),
+            fn($v) => $v['timestamp']->format(DATE_ATOM),
             $this->versions
         );
     }

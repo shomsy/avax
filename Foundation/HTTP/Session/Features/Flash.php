@@ -28,7 +28,7 @@ use Avax\HTTP\Session\Contracts\FeatureInterface;
  */
 final class Flash implements FeatureInterface
 {
-    private const PREFIX = '_flash.';
+    private const string PREFIX = '_flash.';
     private bool $enabled = true;
 
     /**
@@ -47,7 +47,7 @@ final class Flash implements FeatureInterface
      *
      * @return void
      */
-    public function success(string $message): void
+    public function success(string $message) : void
     {
         $this->add('success', $message);
     }
@@ -59,7 +59,7 @@ final class Flash implements FeatureInterface
      *
      * @return void
      */
-    public function error(string $message): void
+    public function error(string $message) : void
     {
         $this->add('error', $message);
     }
@@ -71,7 +71,7 @@ final class Flash implements FeatureInterface
      *
      * @return void
      */
-    public function warning(string $message): void
+    public function warning(string $message) : void
     {
         $this->add('warning', $message);
     }
@@ -83,7 +83,7 @@ final class Flash implements FeatureInterface
      *
      * @return void
      */
-    public function info(string $message): void
+    public function info(string $message) : void
     {
         $this->add('info', $message);
     }
@@ -96,7 +96,7 @@ final class Flash implements FeatureInterface
      *
      * @return void
      */
-    public function add(string $key, string $message): void
+    public function add(string $key, string $message) : void
     {
         $this->store->put(self::PREFIX . $key, $message);
     }
@@ -109,10 +109,10 @@ final class Flash implements FeatureInterface
      *
      * @return string|null The message or default.
      */
-    public function get(string $key, ?string $default = null): ?string
+    public function get(string $key, string|null $default = null) : string|null
     {
         $flashKey = self::PREFIX . $key;
-        $message = $this->store->get($flashKey, $default);
+        $message  = $this->store->get($flashKey, $default);
 
         if ($message !== $default) {
             $this->store->delete($flashKey);
@@ -128,7 +128,7 @@ final class Flash implements FeatureInterface
      *
      * @return bool True if exists.
      */
-    public function has(string $key): bool
+    public function has(string $key) : bool
     {
         return $this->store->has(self::PREFIX . $key);
     }
@@ -144,7 +144,7 @@ final class Flash implements FeatureInterface
      *
      * @return void
      */
-    public function now(string $key, string $message): void
+    public function now(string $key, string $message) : void
     {
         $this->add("now.{$key}", $message);
     }
@@ -154,7 +154,7 @@ final class Flash implements FeatureInterface
      *
      * @return void
      */
-    public function clear(): void
+    public function clear() : void
     {
         $all = $this->store->all();
 
@@ -168,7 +168,8 @@ final class Flash implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function boot(): void
+    #[\Override]
+    public function boot() : void
     {
         // Flash messages are lazy-loaded, no boot logic needed
         $this->enabled = true;
@@ -177,7 +178,8 @@ final class Flash implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function terminate(): void
+    #[\Override]
+    public function terminate() : void
     {
         // Clear all flash messages on session termination
         $this->clear();
@@ -187,7 +189,8 @@ final class Flash implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    #[\Override]
+    public function getName() : string
     {
         return 'flash';
     }
@@ -195,7 +198,8 @@ final class Flash implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function isEnabled(): bool
+    #[\Override]
+    public function isEnabled() : bool
     {
         return $this->enabled;
     }

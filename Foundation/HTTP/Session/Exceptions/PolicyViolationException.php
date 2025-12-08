@@ -8,13 +8,13 @@ namespace Avax\HTTP\Session\Exceptions;
  * PolicyViolationException
  *
  * Thrown when a session policy is violated.
- * 
+ *
  * Use Cases:
  * - MaxIdlePolicy timeout
  * - MaxLifetimePolicy exceeded
  * - SecureOnlyPolicy HTTPS requirement
  * - CrossAgentPolicy user agent mismatch
- * 
+ *
  * @example
  *   try {
  *       $session->put('key', 'value');
@@ -34,7 +34,7 @@ final class PolicyViolationException extends SessionException
      *
      * @return self
      */
-    public static function forPolicy(string $policyName, string $reason): self
+    public static function forPolicy(string $policyName, string $reason) : self
     {
         return new self(
             sprintf('Policy violation [%s]: %s', $policyName, $reason)

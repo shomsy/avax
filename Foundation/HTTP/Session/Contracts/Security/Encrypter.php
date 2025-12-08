@@ -9,11 +9,11 @@ namespace Avax\HTTP\Session\Contracts\Security;
  *
  * Defines the contract for session value encryption/decryption.
  * Enables flexible crypto implementations (OpenSSL, Sodium, etc.).
- * 
+ *
  * @example
  *   $encrypted = $encrypter->encrypt('sensitive-data');
  *   $decrypted = $encrypter->decrypt($encrypted);
- * 
+ *
  * @package Avax\HTTP\Session\Contracts
  */
 interface Encrypter
@@ -25,7 +25,7 @@ interface Encrypter
      *
      * @return string The encrypted value.
      */
-    public function encrypt(mixed $value): string;
+    public function encrypt(mixed $value) : string;
 
     /**
      * Decrypt a value.
@@ -35,5 +35,5 @@ interface Encrypter
      * @return mixed The decrypted value.
      * @throws \RuntimeException If decryption fails.
      */
-    public function decrypt(string $encrypted): mixed;
+    public function decrypt(string $encrypted) : mixed;
 }

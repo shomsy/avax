@@ -66,7 +66,7 @@ trait UriValidationTrait
         return rawurlencode($fragment);
     }
 
-    public function validatePort(?int $port, string $scheme) : ?int
+    public function validatePort(int|null $port, string $scheme) : int|null
     {
         if ($port === null) {
             return null;

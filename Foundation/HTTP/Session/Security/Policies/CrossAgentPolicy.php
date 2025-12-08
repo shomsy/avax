@@ -13,9 +13,9 @@ use Avax\HTTP\Session\Exceptions\PolicyViolationException;
  *
  * Detects session hijacking by comparing User-Agent strings.
  * If User-Agent changes during session lifetime, policy is violated.
- * 
+ *
  * Uses ServerContext for testability.
- * 
+ *
  * @package Avax\HTTP\Session\Security\Policies
  */
 final class CrossAgentPolicy implements PolicyInterface
@@ -26,17 +26,18 @@ final class CrossAgentPolicy implements PolicyInterface
      * @param ServerContext|null $serverContext Server context (default: native).
      */
     public function __construct(
-        private ?ServerContext $serverContext = null
-    ) {
+        private ServerContext|null $serverContext = null
+    )
+    {
         $this->serverContext ??= new NativeServerContext();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function enforce(array $data): void
+    public function enforce(array $data) : void
     {
-        $storedAgent = $data['_user_agent'] ?? null;
+        $storedAgent  = $data['_user_agent'] ?? null;
         $currentAgent = $this->serverContext->getUserAgent();
 
         // First time - store current agent
@@ -56,7 +57,7 @@ final class CrossAgentPolicy implements PolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    public function getName() : string
     {
         return 'cross_agent';
     }

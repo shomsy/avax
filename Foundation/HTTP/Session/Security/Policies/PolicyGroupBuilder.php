@@ -35,12 +35,12 @@ final class PolicyGroupBuilder
     /**
      * @var CompositePolicy|null Root composite policy
      */
-    private ?CompositePolicy $root = null;
+    private CompositePolicy|null $root = null;
 
     /**
      * @var CompositePolicy|null Current working composite
      */
-    private ?CompositePolicy $current = null;
+    private CompositePolicy|null $current = null;
 
     /**
      * @var array<CompositePolicy> Stack for nested groups
@@ -60,7 +60,7 @@ final class PolicyGroupBuilder
      *
      * @return self
      */
-    public static function create(): self
+    public static function create() : self
     {
         return new self();
     }
@@ -74,7 +74,7 @@ final class PolicyGroupBuilder
      *
      * @return self Fluent interface.
      */
-    public function requireAll(string $name = 'require_all'): self
+    public function requireAll(string $name = 'require_all') : self
     {
         return $this->startGroup(CompositePolicy::MODE_ALL, $name);
     }
@@ -88,7 +88,7 @@ final class PolicyGroupBuilder
      *
      * @return self Fluent interface.
      */
-    public function requireAny(string $name = 'require_any'): self
+    public function requireAny(string $name = 'require_any') : self
     {
         return $this->startGroup(CompositePolicy::MODE_ANY, $name);
     }
@@ -102,7 +102,7 @@ final class PolicyGroupBuilder
      *
      * @return self Fluent interface.
      */
-    public function requireNone(string $name = 'require_none'): self
+    public function requireNone(string $name = 'require_none') : self
     {
         return $this->startGroup(CompositePolicy::MODE_NONE, $name);
     }
@@ -114,13 +114,14 @@ final class PolicyGroupBuilder
      *
      * @return self Fluent interface.
      */
-    public function add(PolicyInterface $policy): self
+    public function add(PolicyInterface $policy) : self
     {
         if ($this->current === null) {
             throw new \RuntimeException('No active group. Call requireAll(), requireAny(), or requireNone() first.');
         }
 
         $this->current->add($policy);
+
         return $this;
     }
 
@@ -131,7 +132,7 @@ final class PolicyGroupBuilder
      *
      * @return self Fluent interface.
      */
-    public function maxIdle(int $seconds): self
+    public function maxIdle(int $seconds) : self
     {
         return $this->add(new MaxIdlePolicy($seconds));
     }
@@ -143,7 +144,7 @@ final class PolicyGroupBuilder
      *
      * @return self Fluent interface.
      */
-    public function maxLifetime(int $seconds): self
+    public function maxLifetime(int $seconds) : self
     {
         return $this->add(new MaxLifetimePolicy($seconds));
     }
@@ -153,7 +154,7 @@ final class PolicyGroupBuilder
      *
      * @return self Fluent interface.
      */
-    public function secureOnly(): self
+    public function secureOnly() : self
     {
         return $this->add(new SecureOnlyPolicy());
     }
@@ -165,7 +166,7 @@ final class PolicyGroupBuilder
      *
      * @return self Fluent interface.
      */
-    public function ipBinding(bool $strict = true): self
+    public function ipBinding(bool $strict = true) : self
     {
         return $this->add(new SessionIpPolicy($strict));
     }
@@ -175,7 +176,7 @@ final class PolicyGroupBuilder
      *
      * @return self Fluent interface.
      */
-    public function userAgentBinding(): self
+    public function userAgentBinding() : self
     {
         return $this->add(new CrossAgentPolicy());
     }
@@ -185,13 +186,14 @@ final class PolicyGroupBuilder
      *
      * @return self Fluent interface.
      */
-    public function endGroup(): self
+    public function endGroup() : self
     {
         if (empty($this->stack)) {
             throw new \RuntimeException('No group to end. Already at root level.');
         }
 
         $this->current = array_pop($this->stack);
+
         return $this;
     }
 
@@ -200,7 +202,7 @@ final class PolicyGroupBuilder
      *
      * @return PolicyInterface|CompositePolicy Built policy.
      */
-    public function build(): PolicyInterface|CompositePolicy
+    public function build() : PolicyInterface|CompositePolicy
     {
         if ($this->root === null) {
             throw new \RuntimeException('No policies configured. Use requireAll(), requireAny(), or requireNone() to start.');
@@ -221,7 +223,7 @@ final class PolicyGroupBuilder
      *
      * @return array<PolicyInterface> Policies.
      */
-    public function buildAsArray(): array
+    public function buildAsArray() : array
     {
         $policy = $this->build();
 
@@ -240,13 +242,13 @@ final class PolicyGroupBuilder
      *
      * @return self Fluent interface.
      */
-    private function startGroup(string $mode, string $name): self
+    private function startGroup(string $mode, string $name) : self
     {
         $composite = new CompositePolicy([], $mode, $name);
 
         if ($this->root === null) {
             // First group becomes root
-            $this->root = $composite;
+            $this->root    = $composite;
             $this->current = $composite;
         } else {
             // Nested group
@@ -279,15 +281,15 @@ final class PolicyGroupBuilder
      *
      * @return PolicyInterface Built policy.
      */
-    public static function securityHardened(): PolicyInterface
+    public static function securityHardened() : PolicyInterface
     {
         return self::create()
             ->requireAll('security_hardened')
-                ->maxIdle(900)              // 15 minutes
-                ->maxLifetime(28800)        // 8 hours
-                ->secureOnly()
-                ->ipBinding(strict: true)
-                ->userAgentBinding()
+            ->maxIdle(900)              // 15 minutes
+            ->maxLifetime(28800)        // 8 hours
+            ->secureOnly()
+            ->ipBinding(strict: true)
+            ->userAgentBinding()
             ->build();
     }
 
@@ -302,14 +304,14 @@ final class PolicyGroupBuilder
      *
      * @return PolicyInterface Built policy.
      */
-    public static function balanced(): PolicyInterface
+    public static function balanced() : PolicyInterface
     {
         return self::create()
             ->requireAll('balanced')
-                ->maxIdle(1800)             // 30 minutes
-                ->maxLifetime(86400)        // 24 hours
-                ->secureOnly()
-                ->ipBinding(strict: false)
+            ->maxIdle(1800)             // 30 minutes
+            ->maxLifetime(86400)        // 24 hours
+            ->secureOnly()
+            ->ipBinding(strict: false)
             ->build();
     }
 
@@ -322,12 +324,12 @@ final class PolicyGroupBuilder
      *
      * @return PolicyInterface Built policy.
      */
-    public static function development(): PolicyInterface
+    public static function development() : PolicyInterface
     {
         return self::create()
             ->requireAll('development')
-                ->maxIdle(7200)             // 2 hours
-                ->maxLifetime(604800)       // 7 days
+            ->maxIdle(7200)             // 2 hours
+            ->maxLifetime(604800)       // 7 days
             ->build();
     }
 }

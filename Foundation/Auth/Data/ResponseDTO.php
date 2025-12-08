@@ -27,5 +27,5 @@ class ResponseDTO extends AbstractDTO
      * AccessControl roles.
      * @var array<string, mixed>|null
      */
-    public ?array $roles = null;
+    public array|null $roles = null;
 }

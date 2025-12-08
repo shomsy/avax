@@ -9,7 +9,7 @@ namespace Avax\HTTP\Session\Security\Policies;
  *
  * Enforces absolute maximum lifetime for sessions regardless of activity.
  * Once session reaches max lifetime, it must be terminated.
- * 
+ *
  * @package Avax\HTTP\Session\Policies
  */
 final class MaxLifetimePolicy implements PolicyInterface
@@ -31,7 +31,7 @@ final class MaxLifetimePolicy implements PolicyInterface
      * @return void
      * @throws \RuntimeException If session exceeded max lifetime.
      */
-    public function enforce(array $data): void
+    public function enforce(array $data) : void
     {
         $createdAt = $data['_created_at'] ?? null;
 
@@ -57,7 +57,7 @@ final class MaxLifetimePolicy implements PolicyInterface
      *
      * @return string Policy identifier.
      */
-    public function getName(): string
+    public function getName() : string
     {
         return 'max_lifetime';
     }

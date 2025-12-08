@@ -9,17 +9,17 @@ namespace Avax\HTTP\Session\Providers;
  *
  * Represents a contextual, purpose-specific consumer of the SessionProvider.
  * Created via $session->for($context) or $session->scope($context).
- * 
+ *
  * Provider-Consumer Pattern:
  * - SessionProvider = Provider (aggregate root, lifecycle management)
  * - SessionConsumer = Consumer (contextual DSL adapter)
- * 
+ *
  * Features:
  * - Namespace isolation (e.g., 'cart', 'user', 'admin')
  * - TTL configuration
  * - Auto-encryption via secure() method
  * - Chainable fluent API
- * 
+ *
  * @example
  *   $session->for('cart')
  *       ->secure()
@@ -30,8 +30,8 @@ namespace Avax\HTTP\Session\Providers;
  */
 final class SessionConsumer
 {
-    private ?int $ttl = null;
-    private bool $secure = false;
+    private int|null $ttl    = null;
+    private bool     $secure = false;
 
     /**
      * SessionConsumer Constructor.
@@ -40,7 +40,7 @@ final class SessionConsumer
      * @param SessionProvider $provider  The session provider.
      */
     public function __construct(
-        private string $namespace,
+        private string          $namespace,
         private SessionProvider $provider
     ) {}
 
@@ -51,9 +51,10 @@ final class SessionConsumer
      *
      * @return self Fluent interface.
      */
-    public function ttl(int $seconds): self
+    public function ttl(int $seconds) : self
     {
         $this->ttl = $seconds;
+
         return $this;
     }
 
@@ -62,9 +63,10 @@ final class SessionConsumer
      *
      * @return self Fluent interface.
      */
-    public function secure(): self
+    public function secure() : self
     {
         $this->secure = true;
+
         return $this;
     }
 
@@ -76,10 +78,14 @@ final class SessionConsumer
      *
      * @return void
      */
-    public function put(string $key, mixed $value): void
+    public function put(string $key, mixed $value) : void
     {
         $scopedKey = $this->buildKey($key);
-        $this->provider->put($scopedKey, $value, $this->ttl);
+        $this->provider->put(
+            key  : $scopedKey,
+            value: $value,
+            ttl  : $this->ttl
+        );
     }
 
     /**
@@ -90,10 +96,14 @@ final class SessionConsumer
      *
      * @return mixed The retrieved value or default.
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null) : mixed
     {
         $scopedKey = $this->buildKey($key);
-        return $this->provider->get($scopedKey, $default);
+
+        return $this->provider->get(
+            key    : $scopedKey,
+            default: $default
+        );
     }
 
     /**
@@ -103,10 +113,11 @@ final class SessionConsumer
      *
      * @return bool True if key exists.
      */
-    public function has(string $key): bool
+    public function has(string $key) : bool
     {
         $scopedKey = $this->buildKey($key);
-        return $this->provider->has($scopedKey);
+
+        return $this->provider->has(key: $scopedKey);
     }
 
     /**
@@ -116,10 +127,10 @@ final class SessionConsumer
      *
      * @return void
      */
-    public function forget(string $key): void
+    public function forget(string $key) : void
     {
         $scopedKey = $this->buildKey($key);
-        $this->provider->forget($scopedKey);
+        $this->provider->forget(key: $scopedKey);
     }
 
     /**
@@ -132,10 +143,15 @@ final class SessionConsumer
      *
      * @return mixed The cached or generated value.
      */
-    public function remember(string $key, callable $callback): mixed
+    public function remember(string $key, callable $callback) : mixed
     {
         $scopedKey = $this->buildKey($key);
-        return $this->provider->remember($scopedKey, $callback, $this->ttl);
+
+        return $this->provider->remember(
+            key     : $scopedKey,
+            callback: $callback,
+            ttl     : $this->ttl
+        );
     }
 
     /**
@@ -147,7 +163,7 @@ final class SessionConsumer
      *
      * @return self Consumer with TTL configured.
      */
-    public function temporary(int $seconds): self
+    public function temporary(int $seconds) : self
     {
         return $this->ttl($seconds);
     }
@@ -159,7 +175,7 @@ final class SessionConsumer
      *
      * @return string The scoped key.
      */
-    private function buildKey(string $key): string
+    private function buildKey(string $key) : string
     {
         $scopedKey = "{$this->namespace}.{$key}";
 
@@ -175,7 +191,7 @@ final class SessionConsumer
      *
      * @return string Debug representation.
      */
-    public function __toString(): string
+    public function __toString() : string
     {
         return sprintf(
             'SessionConsumer(%s, secure=%s, ttl=%s)',

@@ -19,16 +19,15 @@ use Avax\HTTP\Session\Security\CookieManager;
  *
  * @package Avax\HTTP\Session\Adapters
  */
-final class SessionAdapter
+final readonly class SessionAdapter
 {
     /**
      * SessionAdapter Constructor.
      *
      * @param CookieManager|null $cookieManager Cookie manager for secure cookies.
      */
-    public function __construct(
-        private ?CookieManager $cookieManager = null
-    ) {
+    public function __construct(private CookieManager|null $cookieManager = null)
+    {
         $this->cookieManager ??= CookieManager::lax();
     }
 
@@ -37,7 +36,7 @@ final class SessionAdapter
      *
      * @return bool True on success.
      */
-    public function start(): bool
+    public function start() : bool
     {
         if ($this->isActive()) {
             return true;
@@ -54,7 +53,7 @@ final class SessionAdapter
      *
      * @return bool True if session is active.
      */
-    public function isActive(): bool
+    public function isActive() : bool
     {
         return session_status() === PHP_SESSION_ACTIVE;
     }
@@ -70,9 +69,9 @@ final class SessionAdapter
      *
      * @return bool True on success.
      */
-    public function regenerateId(bool $deleteOldSession = true): bool
+    public function regenerateId(bool $deleteOldSession = true) : bool
     {
-        if (!$this->isActive()) {
+        if (! $this->isActive()) {
             return false;
         }
 
@@ -84,7 +83,7 @@ final class SessionAdapter
      *
      * @return string Session ID.
      */
-    public function getId(): string
+    public function getId() : string
     {
         return session_id();
     }
@@ -96,13 +95,14 @@ final class SessionAdapter
      *
      * @return bool True on success.
      */
-    public function setId(string $id): bool
+    public function setId(string $id) : bool
     {
         if ($this->isActive()) {
             return false; // Cannot change ID of active session
         }
 
         session_id($id);
+
         return true;
     }
 
@@ -111,7 +111,7 @@ final class SessionAdapter
      *
      * @return string Session name.
      */
-    public function getName(): string
+    public function getName() : string
     {
         return session_name();
     }
@@ -123,7 +123,7 @@ final class SessionAdapter
      *
      * @return string Previous session name.
      */
-    public function setName(string $name): string
+    public function setName(string $name) : string
     {
         return session_name($name);
     }
@@ -140,9 +140,9 @@ final class SessionAdapter
      *
      * @return bool True on success.
      */
-    public function destroy(): bool
+    public function destroy() : bool
     {
-        if (!$this->isActive()) {
+        if (! $this->isActive()) {
             return false;
         }
 
@@ -161,7 +161,7 @@ final class SessionAdapter
      *
      * @return bool True on success.
      */
-    public function deleteCookie(): bool
+    public function deleteCookie() : bool
     {
         return $this->cookieManager->delete($this->getName());
     }
@@ -171,9 +171,9 @@ final class SessionAdapter
      *
      * @return bool True on success.
      */
-    public function write(): bool
+    public function write() : bool
     {
-        if (!$this->isActive()) {
+        if (! $this->isActive()) {
             return false;
         }
 
@@ -185,9 +185,9 @@ final class SessionAdapter
      *
      * @return bool True on success.
      */
-    public function abort(): bool
+    public function abort() : bool
     {
-        if (!$this->isActive()) {
+        if (! $this->isActive()) {
             return false;
         }
 
@@ -199,7 +199,7 @@ final class SessionAdapter
      *
      * @return int|false Number of deleted sessions or false on failure.
      */
-    public function gc(): int|false
+    public function gc() : int|false
     {
         return session_gc();
     }
@@ -211,7 +211,7 @@ final class SessionAdapter
      *
      * @return string Previous save path.
      */
-    public function setSavePath(string $path): string
+    public function setSavePath(string $path) : string
     {
         return session_save_path($path);
     }
@@ -221,7 +221,7 @@ final class SessionAdapter
      *
      * @return string Save path.
      */
-    public function getSavePath(): string
+    public function getSavePath() : string
     {
         return session_save_path();
     }
@@ -231,7 +231,7 @@ final class SessionAdapter
      *
      * @return string Module name (e.g., 'files', 'redis').
      */
-    public function getModuleName(): string
+    public function getModuleName() : string
     {
         return session_module_name();
     }
@@ -243,7 +243,7 @@ final class SessionAdapter
      *
      * @return string Previous module name.
      */
-    public function setModuleName(string $module): string
+    public function setModuleName(string $module) : string
     {
         return session_module_name($module);
     }
@@ -253,7 +253,7 @@ final class SessionAdapter
      *
      * @return string Cache limiter.
      */
-    public function getCacheLimiter(): string
+    public function getCacheLimiter() : string
     {
         return session_cache_limiter();
     }
@@ -265,7 +265,7 @@ final class SessionAdapter
      *
      * @return string Previous cache limiter.
      */
-    public function setCacheLimiter(string $limiter): string
+    public function setCacheLimiter(string $limiter) : string
     {
         return session_cache_limiter($limiter);
     }
@@ -275,7 +275,7 @@ final class SessionAdapter
      *
      * @return void
      */
-    public function unsetAll(): void
+    public function unsetAll() : void
     {
         $_SESSION = [];
     }
@@ -285,7 +285,7 @@ final class SessionAdapter
      *
      * @return CookieManager Cookie manager instance.
      */
-    public function getCookieManager(): CookieManager
+    public function getCookieManager() : CookieManager
     {
         return $this->cookieManager;
     }
@@ -297,7 +297,7 @@ final class SessionAdapter
      *
      * @return void
      */
-    public function reset(): void
+    public function reset() : void
     {
         if ($this->isActive()) {
             $this->unsetAll();

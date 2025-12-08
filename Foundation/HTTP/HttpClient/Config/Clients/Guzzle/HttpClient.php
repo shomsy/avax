@@ -225,7 +225,7 @@ final readonly class HttpClient implements ClientInterface
      *
      * @return mixed
      */
-    public function getConfig(?string $option = null)
+    public function getConfig(string|null $option = null)
     {
         return $this->guzzleClient->getConfig($option);
     }

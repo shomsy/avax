@@ -34,8 +34,8 @@ final class Audit implements FeatureInterface
      * @param object|null $logger  Optional PSR-3 compatible logger.
      */
     public function __construct(
-        private ?string $logPath = null,
-        private ?object $logger = null
+        private string|null $logPath = null,
+        private object|null $logger = null
     ) {}
 
     /**
@@ -46,11 +46,11 @@ final class Audit implements FeatureInterface
      *
      * @return void
      */
-    public function record(string $event, array $data = []): void
+    public function record(string $event, array $data = []) : void
     {
-        $timestamp = date('c');
+        $timestamp  = date('c');
         $eventUpper = strtoupper($event);
-        $context = empty($data) ? '' : ' ' . json_encode($data);
+        $context    = empty($data) ? '' : ' ' . json_encode($data);
 
         $message = sprintf(
             "[%s] SESSION_%s%s",
@@ -62,14 +62,16 @@ final class Audit implements FeatureInterface
         // PSR-3 logger takes priority
         if ($this->logger !== null && method_exists($this->logger, 'info')) {
             $this->logger->info($message, $data);
+
             return;
         }
 
         // File logging with error handling
         if ($this->logPath !== null) {
-            if (!@file_put_contents($this->logPath, $message . "\n", FILE_APPEND)) {
+            if (! @file_put_contents($this->logPath, $message . "\n", FILE_APPEND)) {
                 error_log("Failed to write session audit log to {$this->logPath}");
             }
+
             return;
         }
 
@@ -80,7 +82,7 @@ final class Audit implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function boot(): void
+    public function boot() : void
     {
         $this->enabled = true;
         $this->record('audit_enabled');
@@ -89,7 +91,7 @@ final class Audit implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function terminate(): void
+    public function terminate() : void
     {
         $this->record('audit_terminated');
         $this->enabled = false;
@@ -98,7 +100,7 @@ final class Audit implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    public function getName() : string
     {
         return 'audit';
     }
@@ -106,7 +108,7 @@ final class Audit implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function isEnabled(): bool
+    public function isEnabled() : bool
     {
         return $this->enabled;
     }

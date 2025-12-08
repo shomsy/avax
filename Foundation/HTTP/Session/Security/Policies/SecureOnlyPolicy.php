@@ -9,7 +9,7 @@ namespace Avax\HTTP\Session\Security\Policies;
  *
  * Enforces that session operations only occur over HTTPS.
  * Prevents session hijacking over insecure connections.
- * 
+ *
  * @package Avax\HTTP\Session\Policies
  */
 final class SecureOnlyPolicy implements PolicyInterface
@@ -22,11 +22,11 @@ final class SecureOnlyPolicy implements PolicyInterface
      * @return void
      * @throws \RuntimeException If connection is not HTTPS.
      */
-    public function enforce(array $data): void
+    public function enforce(array $data) : void
     {
-        $isSecure = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+        $isSecure = ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 
-        if (!$isSecure) {
+        if (! $isSecure) {
             throw new \RuntimeException(
                 'Session access requires HTTPS connection for security.'
             );
@@ -38,7 +38,7 @@ final class SecureOnlyPolicy implements PolicyInterface
      *
      * @return string Policy identifier.
      */
-    public function getName(): string
+    public function getName() : string
     {
         return 'secure_only';
     }

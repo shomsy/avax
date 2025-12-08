@@ -5,7 +5,8 @@
 # ⚙️ **SESSION ROADMAP V2 — “From Engine to Framework”**
 
 Tvoj trenutni Session je već foundation-grade.
-Sada ćemo ga podići na sledeći nivo — da postane **full domain subsystem**, spreman za enterprise integracije i DDD modularnost.
+Sada ćemo ga podići na sledeći nivo — da postane **full domain subsystem**, spreman za enterprise integracije i DDD
+modularnost.
 
 Plan je podeljen u **5 faza**, svaka Feature-Sliced i Pragmatic.
 
@@ -20,8 +21,8 @@ Plan je podeljen u **5 faza**, svaka Feature-Sliced i Pragmatic.
 
 1. **Refaktoriši `AbstractSession` → `BaseSession`**
 
-   * Ukloni “utility overload”: izdvoj `TTLBehavior`, `CryptoBehavior`, `FlashBehavior`.
-   * `BaseSession` treba da zna samo: `start`, `set`, `get`, `delete`, `flush`, `id`.
+    * Ukloni “utility overload”: izdvoj `TTLBehavior`, `CryptoBehavior`, `FlashBehavior`.
+    * `BaseSession` treba da zna samo: `start`, `set`, `get`, `delete`, `flush`, `id`.
 
 2. **Dodaj “SessionContext” value object**
 
@@ -51,8 +52,8 @@ Plan je podeljen u **5 faza**, svaka Feature-Sliced i Pragmatic.
 
 4. **Builder unifikacija**
 
-   * `SessionBuilder` postaje ulazna tačka za sve konfiguracije (driver, ttl, secure, crypto).
-   * Omogućava “builder chaining” za nove feature-e.
+    * `SessionBuilder` postaje ulazna tačka za sve konfiguracije (driver, ttl, secure, crypto).
+    * Omogućava “builder chaining” za nove feature-e.
 
 ---
 
@@ -163,14 +164,15 @@ $session->restore($snapshot);
 # ✅ **SESSION EVOLUTION – SUMMARY**
 
 | Faza | Naziv                  | Ključni efekat                   |
-| ---- | ---------------------- | -------------------------------- |
+|------|------------------------|----------------------------------|
 | 1    | Core Refinement        | Manji, čvršći, crypto-ready base |
 | 2    | TTL Feature Slice      | Modularni expiration sistem      |
 | 3    | Policy System          | Security i compliance sloj       |
 | 4    | Event System           | Observability i telemetry hooks  |
 | 5    | Persistence & Snapshot | Rollback i distributed state     |
 
-🚀 Nakon ovoga tvoj `Session` postaje **foundation-level subsystem** koji može samostalno živeti kao PSR-biblioteka, framework plugin, ili cloud-ready service.
+🚀 Nakon ovoga tvoj `Session` postaje **foundation-level subsystem** koji može samostalno živeti kao PSR-biblioteka,
+framework plugin, ili cloud-ready service.
 
 ---
 
@@ -307,7 +309,8 @@ Ti pišeš **jezgro jezika za session i state menadžment**.
 
 ---
 
-Želiš da pređemo odmah na **Faza 2 – TTL Feature Slice** i da ti generišem kompletne PHP fajlove (`TTLManagerInterface`, `TouchTTL`, `InMemoryTTLManager`, i kako se integriše u BaseSession`)?
+Želiš da pređemo odmah na **Faza 2 – TTL Feature Slice** i da ti generišem kompletne PHP fajlove (`TTLManagerInterface`,
+`TouchTTL`, `InMemoryTTLManager`, i kako se integriše u BaseSession`)?
 
 🎯 Hotkeys
 

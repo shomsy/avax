@@ -11,12 +11,12 @@ use Avax\HTTP\Session\Contracts\Storage\Store;
  *
  * Dummy storage that discards all data.
  * Useful for dry-run mode or testing without side effects.
- * 
+ *
  * Use Cases:
  * - Performance testing (no I/O overhead)
  * - Dry-run scenarios
  * - Feature flags (disabled state)
- * 
+ *
  * @package Avax\HTTP\Session
  */
 final class NullStore extends AbstractStore
@@ -24,7 +24,7 @@ final class NullStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null) : mixed
     {
         return $default;
     }
@@ -32,7 +32,7 @@ final class NullStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function put(string $key, mixed $value): void
+    public function put(string $key, mixed $value) : void
     {
         // No-op
     }
@@ -40,7 +40,7 @@ final class NullStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function has(string $key): bool
+    public function has(string $key) : bool
     {
         return false;
     }
@@ -48,7 +48,7 @@ final class NullStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function delete(string $key): void
+    public function delete(string $key) : void
     {
         // No-op
     }
@@ -56,7 +56,7 @@ final class NullStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function all(): array
+    public function all() : array
     {
         return [];
     }
@@ -64,7 +64,7 @@ final class NullStore extends AbstractStore
     /**
      * {@inheritdoc}
      */
-    public function flush(): void
+    public function flush() : void
     {
         // No-op
     }

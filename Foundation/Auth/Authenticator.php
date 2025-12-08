@@ -31,7 +31,7 @@ final readonly class Authenticator implements AuthInterface
         $this->logoutAction->execute();
     }
 
-    public function user(): ?UserInterface
+    public function user(): UserInterface|null
     {
         return $this->getUserAction->execute();
     }

@@ -145,7 +145,7 @@ trait InspectsProperties
      * @return object|null The resolved attribute instance, or null if the attribute is not present on the property.
      *                     This ensures type-safe use of specific attributes in further logic.
      */
-    protected function getAttribute(ReflectionProperty $property, string $attributeFqn) : ?object
+    protected function getAttribute(ReflectionProperty $property, string $attributeFqn) : object|null
     {
         // Retrieve all attributes that match the given fully qualified name on the property.
         $attributes = $property->getAttributes(name: $attributeFqn);

@@ -27,7 +27,7 @@ interface FeatureInterface
      *
      * @return void
      */
-    public function boot(): void;
+    public function boot() : void;
 
     /**
      * Terminate the feature.
@@ -37,19 +37,19 @@ interface FeatureInterface
      *
      * @return void
      */
-    public function terminate(): void;
+    public function terminate() : void;
 
     /**
      * Get feature name.
      *
      * @return string Feature identifier.
      */
-    public function getName(): string;
+    public function getName() : string;
 
     /**
      * Check if feature is enabled.
      *
      * @return bool True if feature is active.
      */
-    public function isEnabled(): bool;
+    public function isEnabled() : bool;
 }

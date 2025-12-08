@@ -27,7 +27,7 @@ trait Psr7UriTrait
         return $this->host;
     }
 
-    public function getPort() : ?int
+    public function getPort() : int|null
     {
         return $this->port;
     }

@@ -2,7 +2,8 @@
 
 ## 📋 Pregled
 
-Session Framework je refaktorisan u **V4.0 Enterprise Edition** prema OWASP ASVS standardima i najboljih praksi iz code review-a.
+Session Framework je refaktorisan u **V4.0 Enterprise Edition** prema OWASP ASVS standardima i najboljih praksi iz code
+review-a.
 
 **Ukupna ocena: 9.8/10 → 10/10** 🎯
 
@@ -11,9 +12,11 @@ Session Framework je refaktorisan u **V4.0 Enterprise Edition** prema OWASP ASVS
 ## ✅ Implementirane Preporuke
 
 ### 1️⃣ **CookieManager** - Centralizovano Upravljanje Cookie-ima
+
 **Fajl:** `Foundation/HTTP/Session/Security/CookieManager.php`
 
 **Karakteristike:**
+
 - ✅ OWASP ASVS 3.4.1 compliant
 - ✅ Enforce Secure, HttpOnly, SameSite attributes
 - ✅ Zaštita od XSS, MITM, CSRF napada
@@ -21,6 +24,7 @@ Session Framework je refaktorisan u **V4.0 Enterprise Edition** prema OWASP ASVS
 - ✅ Automatska validacija (SameSite=None zahteva Secure flag)
 
 **Upotreba:**
+
 ```php
 // Production (strict security)
 $cookieManager = CookieManager::strict();
@@ -37,9 +41,11 @@ $cookieManager->set('session', 'value');
 ---
 
 ### 2️⃣ **SessionAdapter** - Testabilna Sesija
+
 **Fajl:** `Foundation/HTTP/Session/Adapters/SessionAdapter.php`
 
 **Karakteristike:**
+
 - ✅ Abstrahuje native PHP session funkcije
 - ✅ Dependency injection ready
 - ✅ Omogućava mocking u testovima
@@ -47,6 +53,7 @@ $cookieManager->set('session', 'value');
 - ✅ OWASP ASVS 3.2.1 & 3.2.3 compliant
 
 **Upotreba:**
+
 ```php
 $adapter = new SessionAdapter($cookieManager);
 $adapter->start();
@@ -57,20 +64,24 @@ $adapter->destroy();
 ---
 
 ### 3️⃣ **FeatureInterface** - Jedinstveni Lifecycle
+
 **Fajl:** `Foundation/HTTP/Session/Contracts/FeatureInterface.php`
 
 **Karakteristike:**
+
 - ✅ Unified lifecycle hooks: `boot()`, `terminate()`
 - ✅ Feature management: `getName()`, `isEnabled()`
 - ✅ Automatska inicijalizacija i cleanup
 
 **Implementirano u:**
+
 - ✅ Flash
 - ✅ Events
 - ✅ Audit
 - ✅ Snapshots
 
 **Upotreba:**
+
 ```php
 $feature = new Flash($store);
 $feature->boot();         // Initialize
@@ -81,9 +92,11 @@ $feature->terminate();    // Cleanup
 ---
 
 ### 4️⃣ **AbstractStore** - Prošireni Helpers
+
 **Fajl:** `Foundation/HTTP/Session/Storage/AbstractStore.php`
 
 **Nove metode:**
+
 - ✅ `pull()` - Get and delete in one operation
 - ✅ `increment()` / `decrement()` - Numeric operations
 - ✅ `isEmpty()` / `count()` - Store inspection
@@ -91,6 +104,7 @@ $feature->terminate();    // Cleanup
 - ✅ `clear()` - Alias for flush()
 
 **Upotreba:**
+
 ```php
 $store->increment('views');                    // views++
 $store->putMany(['key1' => 'val1', 'key2' => 'val2']);
@@ -100,9 +114,11 @@ $value = $store->pull('temp_data');           // Get and delete
 ---
 
 ### 5️⃣ **Psr16CacheAdapter** - PSR-16 Interoperabilnost
+
 **Fajl:** `Foundation/HTTP/Session/Storage/Psr16CacheAdapter.php`
 
 **Karakteristike:**
+
 - ✅ PSR-16 Simple Cache adapter
 - ✅ Redis, Memcached, File cache support
 - ✅ Key namespacing (prefix)
@@ -110,6 +126,7 @@ $value = $store->pull('temp_data');           // Get and delete
 - ✅ Batch operations
 
 **Upotreba:**
+
 ```php
 // Sa Symfony Cache
 $cache = new FilesystemAdapter();
@@ -124,15 +141,18 @@ $store = new Psr16CacheAdapter($cache, 'session_', 3600);
 ---
 
 ### 6️⃣ **CompositePolicy** - Policy Grupisanje
+
 **Fajl:** `Foundation/HTTP/Session/Security/Policies/CompositePolicy.php`
 
 **Karakteristike:**
+
 - ✅ Composite Pattern implementacija
 - ✅ Tri režima: ALL (AND), ANY (OR), NONE (inverse)
 - ✅ Rekurzivno grupisanje policy-ja
 - ✅ Detaljno error reporting
 
 **Upotreba:**
+
 ```php
 // Svi policy-ji moraju da prođu (AND)
 $composite = CompositePolicy::all([
@@ -151,15 +171,18 @@ $composite = CompositePolicy::any([
 ---
 
 ### 7️⃣ **PolicyGroupBuilder** - Fluent Policy API
+
 **Fajl:** `Foundation/HTTP/Session/Security/Policies/PolicyGroupBuilder.php`
 
 **Karakteristike:**
+
 - ✅ Spring Security-style fluent API
 - ✅ Nested groups support
 - ✅ Predefined presets (security hardened, balanced, development)
 - ✅ Prirodan domain language
 
 **Upotreba:**
+
 ```php
 // Custom policy group
 $policies = PolicyGroupBuilder::create()
@@ -181,9 +204,11 @@ $dev = PolicyGroupBuilder::development();
 ---
 
 ### 8️⃣ **SessionProvider V4.0** - Full Integration
+
 **Fajl:** `Foundation/HTTP/Session/Providers/SessionProvider.php`
 
 **Nove zavisnosti:**
+
 - ✅ `EncrypterFactory` - Real AES-256-GCM encryption sa key rotation
 - ✅ `PolicyEnforcer` - Centralizovani policy enforcement
 - ✅ `CookieManager` - OWASP cookie security
@@ -192,6 +217,7 @@ $dev = PolicyGroupBuilder::development();
 - ✅ `SessionNonce` - Replay attack prevention
 
 **Dependency Injection:**
+
 ```php
 $session = new SessionProvider(
     store: $store,
@@ -204,6 +230,7 @@ $session = new SessionProvider(
 ```
 
 **Novi API:**
+
 ```php
 // Services
 $session->getEncrypter();
@@ -225,9 +252,11 @@ $session->registerFeature($customFeature);
 ---
 
 ### 9️⃣ **SessionNonce** - Per-Request Nonce
+
 **Fajl:** `Foundation/HTTP/Session/Security/SessionNonce.php`
 
 **Nove funkcije:**
+
 - ✅ `generateForRequest($action)` - Generate nonce for specific action
 - ✅ `verifyForRequest($action, $nonce, $maxAge)` - Verify with expiration
 - ✅ `verifyForRequestOrFail()` - Verify or throw exception
@@ -235,6 +264,7 @@ $session->registerFeature($customFeature);
 - ✅ `getActiveRequests()` - Debug helper
 
 **Upotreba:**
+
 ```php
 // Generate
 $nonce = $session->getNonce()->generateForRequest('delete_account');
@@ -251,11 +281,13 @@ $session->getNonce()->verifyForRequestOrFail('transfer_funds', $nonce);
 ---
 
 ### 🔟 **SessionRegistry** - Revocation List & Device Management
+
 **Fajl:** `Foundation/HTTP/Session/Security/SessionRegistry.php`
 
 **Nove funkcije:**
 
 **Revocation List (OWASP ASVS 3.3.8):**
+
 - ✅ `revoke($sessionId, $reason)` - Revoke session
 - ✅ `isRevoked($sessionId)` - Check if revoked
 - ✅ `revokeAllForUser($userId, $reason)` - Revoke all user sessions
@@ -264,10 +296,12 @@ $session->getNonce()->verifyForRequestOrFail('transfer_funds', $nonce);
 - ✅ `getAllRevoked()` / `countRevoked()` - Inspection
 
 **Device Management:**
+
 - ✅ `getSessionsByDevice($userId)` - Group by device/user agent
 - ✅ `terminateDevice($userId, $userAgent)` - Kill all sessions from device
 
 **Upotreba:**
+
 ```php
 // Revoke session
 $registry->revoke($sessionId, 'security_breach');
@@ -286,20 +320,20 @@ $registry->clearOldRevocations(2592000);
 
 ## 🎯 OWASP ASVS Compliance Summary
 
-| Kontrola                         | Status | Implementacija                              |
-| -------------------------------- | ------ | ------------------------------------------- |
-| **Session Fixation**             | ✅ ✅   | SessionAdapter + login()                    |
-| **Session Termination**          | ✅ ✅   | SessionAdapter->destroy()                   |
-| **Confidentiality/Integrity**    | ✅ ✅   | EncrypterFactory (AES-256-GCM)              |
-| **Key Rotation**                 | ✅ ✅   | EncrypterFactory + KeyManager               |
-| **Idle/Max Lifetime Policies**   | ✅ ✅   | MaxIdlePolicy, MaxLifetimePolicy            |
-| **Transport Security**           | ✅ ✅   | CookieManager (Secure, SameSite)            |
-| **Cross-Agent/IP Binding**       | ✅ ✅   | CrossAgentPolicy, SessionIpPolicy           |
-| **CSRF Protection**              | ✅ ✅   | CsrfToken + SameSite cookies                |
-| **Audit Logging**                | ✅ ✅   | Audit feature                               |
-| **Replay Protection**            | ✅ ✅   | SessionNonce per-request                    |
-| **Cookie Attributes**            | ✅ ✅   | CookieManager enforce-uje sve atribute      |
-| **Multi-Device Session Control** | ✅ ✅   | SessionRegistry + revocation list           |
+| Kontrola                         | Status | Implementacija                         |
+|----------------------------------|--------|----------------------------------------|
+| **Session Fixation**             | ✅ ✅    | SessionAdapter + login()               |
+| **Session Termination**          | ✅ ✅    | SessionAdapter->destroy()              |
+| **Confidentiality/Integrity**    | ✅ ✅    | EncrypterFactory (AES-256-GCM)         |
+| **Key Rotation**                 | ✅ ✅    | EncrypterFactory + KeyManager          |
+| **Idle/Max Lifetime Policies**   | ✅ ✅    | MaxIdlePolicy, MaxLifetimePolicy       |
+| **Transport Security**           | ✅ ✅    | CookieManager (Secure, SameSite)       |
+| **Cross-Agent/IP Binding**       | ✅ ✅    | CrossAgentPolicy, SessionIpPolicy      |
+| **CSRF Protection**              | ✅ ✅    | CsrfToken + SameSite cookies           |
+| **Audit Logging**                | ✅ ✅    | Audit feature                          |
+| **Replay Protection**            | ✅ ✅    | SessionNonce per-request               |
+| **Cookie Attributes**            | ✅ ✅    | CookieManager enforce-uje sve atribute |
+| **Multi-Device Session Control** | ✅ ✅    | SessionRegistry + revocation list      |
 
 **Finalna Bezbednosna Ocena: 10/10 - OWASP Hardened** 🔒
 
@@ -334,6 +368,7 @@ $registry->clearOldRevocations(2592000);
 ## 🔧 Migration Guide (V3.x → V4.0)
 
 ### Minimalna migracija (backward compatible):
+
 ```php
 // V3.x
 $session = new SessionProvider($store, $config);
@@ -343,6 +378,7 @@ $session = new SessionProvider($store, $config);
 ```
 
 ### Full V4.0 sa svim feature-ima:
+
 ```php
 $session = new SessionProvider(
     store: $store,
@@ -389,6 +425,7 @@ Foundation/HTTP/Session/
 ## 🎓 Best Practices
 
 ### 1. Production Setup
+
 ```php
 $session = new SessionProvider(
     store: new Psr16CacheAdapter($redis),
@@ -403,6 +440,7 @@ $session->registerPolicies([
 ```
 
 ### 2. Development Setup
+
 ```php
 $session = new SessionProvider(
     store: new ArrayStore(),
@@ -415,6 +453,7 @@ $session->registerPolicies([
 ```
 
 ### 3. Critical Operations (Replay Protection)
+
 ```php
 // Generate nonce
 $nonce = $session->getNonce()->generateForRequest('delete_account');
@@ -425,6 +464,7 @@ deleteAccount();
 ```
 
 ### 4. Multi-Device Control
+
 ```php
 // On login
 $session->login($userId);
@@ -458,7 +498,7 @@ $session->getRegistry()->revokeAllForUser($userId, 'password_changed');
 ## 🏆 Finalna Ocena
 
 | Kategorija      | V3.x | V4.0 | Napomena                           |
-| --------------- | ---- | ---- | ---------------------------------- |
+|-----------------|------|------|------------------------------------|
 | Arhitektura     | 9.9  | 10.0 | Dependency injection, clean layers |
 | Sigurnost       | 9.6  | 10.0 | OWASP ASVS fully compliant         |
 | Performanse     | 9.8  | 9.9  | PSR-16 adapter, optimizovano       |

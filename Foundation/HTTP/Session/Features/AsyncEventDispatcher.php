@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Features;
 
+use Exception;
+use InvalidArgumentException;
+
 /**
  * AsyncEventDispatcher - Asynchronous Event Dispatcher
  *
@@ -40,10 +43,10 @@ namespace Avax\HTTP\Session\Features;
  */
 final class AsyncEventDispatcher
 {
-    public const MODE_SYNC         = 'sync';
-    public const MODE_ASYNC_MEMORY = 'async_memory';
-    public const MODE_ASYNC_FILE   = 'async_file';
-    public const MODE_ASYNC_REDIS  = 'async_redis';
+    public const string MODE_SYNC         = 'sync';
+    public const string MODE_ASYNC_MEMORY = 'async_memory';
+    public const string MODE_ASYNC_FILE   = 'async_file';
+    public const string MODE_ASYNC_REDIS  = 'async_redis';
 
     /**
      * @var array<string, array<callable>> Event listeners
@@ -73,23 +76,64 @@ final class AsyncEventDispatcher
     /**
      * AsyncEventDispatcher Constructor.
      *
-     * @param string      $mode      Dispatch mode (sync|async_memory|async_file|async_redis).
+     * @param string|null $mode      Dispatch mode (sync|async_memory|async_file|async_redis).
      * @param string|null $queuePath Queue file path (for async_file mode).
      * @param object|null $redis     Redis instance (for async_redis mode).
      */
     public function __construct(
-        private string      $mode = self::MODE_SYNC,
-        private string|null $queuePath = null,
-        private object|null $redis = null
+        private string|null          $mode = null,
+        private readonly string|null $queuePath = null,
+        private readonly object|null $redis = null
     )
     {
+        $this->mode ??= self::MODE_SYNC;
         if ($mode === self::MODE_ASYNC_FILE && $queuePath === null) {
-            throw new \InvalidArgumentException('Queue path required for async_file mode');
+            throw new InvalidArgumentException(message: 'Queue path required for async_file mode');
         }
 
-        if ($mode === self::MODE_ASYNC_REDIS && $redis === null) {
-            throw new \InvalidArgumentException('Redis instance required for async_redis mode');
+        if ($this->mode === self::MODE_ASYNC_REDIS && $this->redis === null) {
+            throw new InvalidArgumentException(message: 'Redis instance required for async_redis mode');
         }
+    }
+
+    /**
+     * Register a one-time listener.
+     *
+     * @param string   $event    Event name.
+     * @param callable $callback Callback function.
+     *
+     * @return self Fluent interface.
+     */
+    public function once(string $event, callable $callback) : self
+    {
+        $wrapper = function (array $data) use ($callback, $event, &$wrapper) {
+            $callback($data);
+            $this->removeListener(event: $event, callback: $wrapper);
+        };
+
+        return $this->listen(event: $event, callback: $wrapper);
+    }
+
+    /**
+     * Remove a specific listener.
+     *
+     * @param string   $event    Event name.
+     * @param callable $callback Callback to remove.
+     *
+     * @return self Fluent interface.
+     */
+    public function removeListener(string $event, callable $callback) : self
+    {
+        if (! isset($this->listeners[$event])) {
+            return $this;
+        }
+
+        $this->listeners[$event] = array_filter(
+            array   : $this->listeners[$event],
+            callback: static fn($listener) => $listener !== $callback
+        );
+
+        return $this;
     }
 
     /**
@@ -112,46 +156,6 @@ final class AsyncEventDispatcher
     }
 
     /**
-     * Register a one-time listener.
-     *
-     * @param string   $event    Event name.
-     * @param callable $callback Callback function.
-     *
-     * @return self Fluent interface.
-     */
-    public function once(string $event, callable $callback) : self
-    {
-        $wrapper = function (array $data) use ($event, $callback, &$wrapper) {
-            $callback($data);
-            $this->removeListener($event, $wrapper);
-        };
-
-        return $this->listen($event, $wrapper);
-    }
-
-    /**
-     * Remove a specific listener.
-     *
-     * @param string   $event    Event name.
-     * @param callable $callback Callback to remove.
-     *
-     * @return self Fluent interface.
-     */
-    public function removeListener(string $event, callable $callback) : self
-    {
-        if (! isset($this->listeners[$event])) {
-            return $this;
-        }
-
-        $this->listeners[$event] = array_filter(
-            $this->listeners[$event],
-            fn($listener) => $listener !== $callback
-        );
-
-        return $this;
-    }
-
-    /**
      * Dispatch an event.
      *
      * Behavior depends on mode:
@@ -168,11 +172,11 @@ final class AsyncEventDispatcher
     public function dispatch(string $event, array $data = []) : void
     {
         match ($this->mode) {
-            self::MODE_SYNC         => $this->dispatchSync($event, $data),
-            self::MODE_ASYNC_MEMORY => $this->dispatchAsyncMemory($event, $data),
-            self::MODE_ASYNC_FILE   => $this->dispatchAsyncFile($event, $data),
-            self::MODE_ASYNC_REDIS  => $this->dispatchAsyncRedis($event, $data),
-            default                 => throw new \InvalidArgumentException("Invalid mode: {$this->mode}")
+            self::MODE_SYNC         => $this->dispatchSync(event: $event, data: $data),
+            self::MODE_ASYNC_MEMORY => $this->dispatchAsyncMemory(event: $event, data: $data),
+            self::MODE_ASYNC_FILE   => $this->dispatchAsyncFile(event: $event, data: $data),
+            self::MODE_ASYNC_REDIS  => $this->dispatchAsyncRedis(event: $event, data: $data),
+            default                 => throw new InvalidArgumentException(message: "Invalid mode: {$this->mode}")
         };
     }
 
@@ -193,8 +197,8 @@ final class AsyncEventDispatcher
         foreach ($this->listeners[$event] as $callback) {
             try {
                 $callback($data);
-            } catch (\Exception $e) {
-                error_log("Event listener error [{$event}]: " . $e->getMessage());
+            } catch (Exception $e) {
+                error_log(message: "Event listener error [{$event}]: " . $e->getMessage());
             }
         }
     }
@@ -210,18 +214,18 @@ final class AsyncEventDispatcher
     private function dispatchAsyncMemory(string $event, array $data) : void
     {
         // Check queue size limit
-        if (count($this->queue) >= $this->maxQueueSize) {
-            error_log("Event queue full, dropping event: {$event}");
+        if (count(value: $this->queue) >= $this->maxQueueSize) {
+            error_log(message: "Event queue full, dropping event: {$event}");
 
             return;
         }
 
         // Add to queue
-        $this->queue[] = ['event' => $event, 'data' => $data];
+        $this->queue[] = compact('event', 'data');
 
         // Register shutdown handler (once)
         if (! $this->shutdownRegistered) {
-            register_shutdown_function([$this, 'processQueue']);
+            register_shutdown_function(callback: [$this, 'processQueue']);
             $this->shutdownRegistered = true;
         }
     }
@@ -236,13 +240,13 @@ final class AsyncEventDispatcher
      */
     private function dispatchAsyncFile(string $event, array $data) : void
     {
-        $payload = json_encode(['event' => $event, 'data' => $data, 'timestamp' => time()]);
+        $payload = json_encode(value: ['event' => $event, 'data' => $data, 'timestamp' => time()]);
 
         // Append to queue file (atomic)
         file_put_contents(
-            $this->queuePath,
-            $payload . PHP_EOL,
-            FILE_APPEND | LOCK_EX
+            filename: $this->queuePath,
+            data    : $payload . PHP_EOL,
+            flags   : FILE_APPEND | LOCK_EX
         );
     }
 
@@ -256,7 +260,7 @@ final class AsyncEventDispatcher
      */
     private function dispatchAsyncRedis(string $event, array $data) : void
     {
-        $payload = json_encode(['event' => $event, 'data' => $data, 'timestamp' => time()]);
+        $payload = json_encode(value: ['event' => $event, 'data' => $data, 'timestamp' => time()]);
 
         // Push to Redis list
         $this->redis->rPush('session:events', $payload);
@@ -274,11 +278,11 @@ final class AsyncEventDispatcher
         }
 
         // Process in batches
-        $batches = array_chunk($this->queue, $this->batchSize);
+        $batches = array_chunk(array: $this->queue, length: $this->batchSize);
 
         foreach ($batches as $batch) {
             foreach ($batch as $item) {
-                $this->dispatchSync($item['event'], $item['data']);
+                $this->dispatchSync(event: $item['event'], data: $item['data']);
             }
         }
 
@@ -297,43 +301,43 @@ final class AsyncEventDispatcher
      */
     public function processFileQueue(int $limit = 0) : int
     {
-        if (! file_exists($this->queuePath)) {
+        if (! file_exists(filename: $this->queuePath)) {
             return 0;
         }
 
-        $handle = fopen($this->queuePath, 'r+');
+        $handle = fopen(filename: $this->queuePath, mode: 'r+');
         if (! $handle) {
             return 0;
         }
 
         // Lock file
-        flock($handle, LOCK_EX);
+        flock(stream: $handle, operation: LOCK_EX);
 
         $processed = 0;
         $remaining = [];
 
-        while (($line = fgets($handle)) !== false) {
+        while (($line = fgets(stream: $handle)) !== false) {
             if ($limit > 0 && $processed >= $limit) {
                 $remaining[] = $line;
                 continue;
             }
 
-            $item = json_decode(trim($line), true);
+            $item = json_decode(json: trim(string: $line), associative: true);
             if ($item && isset($item['event'], $item['data'])) {
-                $this->dispatchSync($item['event'], $item['data']);
+                $this->dispatchSync(event: $item['event'], data: $item['data']);
                 $processed++;
             }
         }
 
         // Rewrite file with remaining events
-        ftruncate($handle, 0);
-        rewind($handle);
+        ftruncate(stream: $handle, size: 0);
+        rewind(stream: $handle);
         foreach ($remaining as $line) {
-            fwrite($handle, $line);
+            fwrite(stream: $handle, data: $line);
         }
 
-        flock($handle, LOCK_UN);
-        fclose($handle);
+        flock(stream: $handle, operation: LOCK_UN);
+        fclose(stream: $handle);
 
         return $processed;
     }
@@ -355,9 +359,9 @@ final class AsyncEventDispatcher
                 break;
             }
 
-            $item = json_decode($payload, true);
+            $item = json_decode(json: $payload, associative: true);
             if ($item && isset($item['event'], $item['data'])) {
-                $this->dispatchSync($item['event'], $item['data']);
+                $this->dispatchSync(event: $item['event'], data: $item['data']);
                 $processed++;
             }
         }
@@ -373,7 +377,7 @@ final class AsyncEventDispatcher
     public function getQueueSize() : int
     {
         return match ($this->mode) {
-            self::MODE_ASYNC_MEMORY => count($this->queue),
+            self::MODE_ASYNC_MEMORY => count(value: $this->queue),
             self::MODE_ASYNC_FILE   => $this->getFileQueueSize(),
             self::MODE_ASYNC_REDIS  => $this->getRedisQueueSize(),
             default                 => 0
@@ -387,11 +391,11 @@ final class AsyncEventDispatcher
      */
     private function getFileQueueSize() : int
     {
-        if (! file_exists($this->queuePath)) {
+        if (! file_exists(filename: $this->queuePath)) {
             return 0;
         }
 
-        return count(file($this->queuePath));
+        return count(value: file(filename: $this->queuePath));
     }
 
     /**

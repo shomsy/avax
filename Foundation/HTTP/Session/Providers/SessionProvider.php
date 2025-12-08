@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Providers;
 
+use Avax\HTTP\Session\Adapters\SessionAdapter;
 use Avax\HTTP\Session\Config\SessionConfig;
+use Avax\HTTP\Session\Contracts\FeatureInterface;
 use Avax\HTTP\Session\Contracts\SessionContract;
 use Avax\HTTP\Session\Contracts\SessionInterface;
 use Avax\HTTP\Session\Contracts\Storage\Store;
-use Avax\HTTP\Session\Security\EncrypterFactory;
-use Avax\HTTP\Session\Security\PolicyEnforcer;
+use Avax\HTTP\Session\Features\{Audit, Events, Flash, Snapshots};
 use Avax\HTTP\Session\Security\CookieManager;
-use Avax\HTTP\Session\Security\SessionRegistry;
-use Avax\HTTP\Session\Security\SessionNonce;
-use Avax\HTTP\Session\Adapters\SessionAdapter;
+use Avax\HTTP\Session\Security\EncrypterFactory;
 use Avax\HTTP\Session\Security\Policies\PolicyInterface;
-use Avax\HTTP\Session\Contracts\FeatureInterface;
-use Avax\HTTP\Session\Features\{Flash, Events, Audit, Snapshots};
+use Avax\HTTP\Session\Security\PolicyEnforcer;
+use Avax\HTTP\Session\Security\SessionNonce;
+use Avax\HTTP\Session\Security\SessionRegistry;
+use Override;
+use SensitiveParameter;
 
 /**
  * SessionProvider - Enterprise Session Provider V4.0
@@ -84,8 +86,8 @@ final class SessionProvider implements SessionContract, SessionInterface
     private Audit|null           $audit     = null;
     private Snapshots|null       $snapshots = null;
     private EncrypterFactory     $encrypter;
-    private PolicyEnforcer   $policyEnforcer;
-    private CookieManager    $cookieManager;
+    private PolicyEnforcer       $policyEnforcer;
+    private CookieManager        $cookieManager;
     private SessionAdapter       $sessionAdapter;
     private SessionRegistry|null $registry  = null;
     private SessionNonce|null    $nonce     = null;
@@ -106,12 +108,12 @@ final class SessionProvider implements SessionContract, SessionInterface
      * @param SessionAdapter|null   $sessionAdapter Optional session adapter.
      */
     public function __construct(
-        private Store         $store,
-        SessionConfig|null    $config = null,
-        EncrypterFactory|null $encrypter = null,
-        PolicyEnforcer|null   $policyEnforcer = null,
-        CookieManager|null    $cookieManager = null,
-        SessionAdapter|null   $sessionAdapter = null
+        private Store                             $store,
+        SessionConfig|null                        $config = null,
+        EncrypterFactory|null                     $encrypter = null,
+        PolicyEnforcer|null                       $policyEnforcer = null,
+        CookieManager|null                        $cookieManager = null,
+        #[SensitiveParameter] SessionAdapter|null $sessionAdapter = null
     )
     {
         $config ??= SessionConfig::default();
@@ -120,163 +122,12 @@ final class SessionProvider implements SessionContract, SessionInterface
         $this->encrypter      = $encrypter ?? new EncrypterFactory();
         $this->policyEnforcer = $policyEnforcer ?? new PolicyEnforcer();
         $this->cookieManager  = $cookieManager ?? CookieManager::lax();
-        $this->sessionAdapter = $sessionAdapter ?? new SessionAdapter($this->cookieManager);
+        $this->sessionAdapter = $sessionAdapter ?? new SessionAdapter(cookieManager: $this->cookieManager);
     }
 
     // ========================================
     // CORE OPERATIONS
     // ========================================
-
-    /**
-     * Store a value in the session.
-     *
-     * Smart Conventions:
-     * - Keys ending with '_secure' are auto-encrypted (via EncrypterFactory)
-     * - TTL parameter sets automatic expiration
-     * - Policy enforcement (via PolicyEnforcer)
-     * - Audit logging (if enabled)
-     *
-     * @param string   $key   The session key.
-     * @param mixed    $value The value to store.
-     * @param int|null $ttl   Optional time-to-live in seconds.
-     *
-     * @return void
-     */
-    #[\Override]
-    public function put(string $key, mixed $value, int|null $ttl = null) : void
-    {
-        // Enforce policies before write (delegated to PolicyEnforcer)
-        $this->policyEnforcer->enforce(data: $this->all());
-
-        // Auto-encrypt if key ends with '_secure' (using EncrypterFactory)
-        if (str_ends_with($key, '_secure')) {
-            $value = $this->encrypter->encrypt(value: $value);
-        }
-
-        $this->store->put(key: $key, value: $value);
-
-        // Auto-TTL if specified
-        if ($ttl !== null) {
-            $this->store->put(
-                key  : "_ttl.{$key}",
-                value: time() + $ttl
-            );
-        }
-
-        // Audit logging
-        $this->audit?->record('stored', ['key' => $key, 'ttl' => $ttl]);
-
-        // Dispatch event if events enabled
-        $this->events?->dispatch('stored', ['key' => $key, 'ttl' => $ttl]);
-    }
-
-    /**
-     * Retrieve a value from the session.
-     *
-     * Smart Conventions:
-     * - Auto-checks TTL expiration
-     * - Auto-decrypts '_secure' suffixed keys (via EncrypterFactory)
-     * - Policy enforcement (via PolicyEnforcer)
-     *
-     * @param string $key     The session key.
-     * @param mixed  $default Default value if key doesn't exist.
-     *
-     * @return mixed The retrieved value or default.
-     */
-    #[\Override]
-    public function get(string $key, mixed $default = null) : mixed
-    {
-        // Enforce policies before read (delegated to PolicyEnforcer)
-        $this->policyEnforcer->enforce(data: $this->all());
-
-        // Check TTL expiration first
-        if ($this->isExpired(key: $key)) {
-            $this->forget(key: $key);
-
-            return $default;
-        }
-
-        $value = $this->store->get(key: $key, default: $default);
-
-        // Auto-decrypt if encrypted (using EncrypterFactory with key rotation)
-        if (str_ends_with($key, '_secure') && $value !== $default) {
-            $value = $this->encrypter->decrypt(payload: $value);
-        }
-
-        // Audit logging
-        $this->audit?->record('retrieved', ['key' => $key]);
-
-        return $value;
-    }
-
-    /**
-     * Check if a key exists in the session.
-     *
-     * @param string $key The session key.
-     *
-     * @return bool True if key exists and not expired.
-     */
-    #[\Override]
-    public function has(string $key) : bool
-    {
-        if ($this->isExpired(key: $key)) {
-            $this->forget(key: $key);
-
-            return false;
-        }
-
-        return $this->store->has(key: $key);
-    }
-
-    /**
-     * Remove a value from the session.
-     *
-     * Also removes associated TTL metadata.
-     *
-     * @param string $key The session key.
-     *
-     * @return void
-     */
-    #[\Override]
-    public function forget(string $key) : void
-    {
-        $this->store->delete(key: $key);
-        $this->store->delete(key: "_ttl.{$key}");
-
-        // Audit logging
-        $this->audit?->record('deleted', ['key' => $key]);
-
-        // Dispatch event
-        $this->events?->dispatch('deleted', ['key' => $key]);
-    }
-
-    /**
-     * Get all session data.
-     *
-     * @return array<string, mixed> All session data.
-     */
-    #[\Override]
-    public function all() : array
-    {
-        return $this->store->all();
-    }
-
-    /**
-     * Clear all session data.
-     *
-     * @return void
-     */
-    #[\Override]
-    public function flush() : void
-    {
-        $this->store->flush();
-
-        // Audit logging
-        $this->audit?->record('flushed');
-
-        // Dispatch event
-        $this->events?->dispatch('flushed');
-    }
 
     /**
      * Terminate session securely.
@@ -295,11 +146,11 @@ final class SessionProvider implements SessionContract, SessionInterface
      *
      * @return void
      */
-    #[\Override]
+    #[Override]
     public function terminate(string $reason = 'logout') : void
     {
         // Audit logging
-        $this->audit?->record('session_terminated', ['reason' => $reason]);
+        $this->audit?->record(event: 'session_terminated', data: compact(var_name: 'reason'));
 
         // Terminate all features
         $this->terminateFeatures();
@@ -309,6 +160,37 @@ final class SessionProvider implements SessionContract, SessionInterface
 
         // Destroy server-side session (via SessionAdapter)
         $this->sessionAdapter->destroy();
+    }
+
+    /**
+     * Terminate all registered features.
+     *
+     * @return void
+     */
+    private function terminateFeatures() : void
+    {
+        foreach ($this->features as $feature) {
+            if ($feature instanceof FeatureInterface) {
+                $feature->terminate();
+            }
+        }
+    }
+
+    /**
+     * Clear all session data.
+     *
+     * @return void
+     */
+    #[Override]
+    public function flush() : void
+    {
+        $this->store->flush();
+
+        // Audit logging
+        $this->audit?->record(event: 'flushed');
+
+        // Dispatch event
+        $this->events?->dispatch(event: 'flushed');
     }
 
     /**
@@ -323,7 +205,7 @@ final class SessionProvider implements SessionContract, SessionInterface
      *
      * @return void
      */
-    #[\Override]
+    #[Override]
     public function login(string $userId) : void
     {
         // CRITICAL: Regenerate ID before setting user data (via SessionAdapter)
@@ -346,7 +228,95 @@ final class SessionProvider implements SessionContract, SessionInterface
         }
 
         // Audit
-        $this->audit?->record('session_login', ['user_id' => $userId]);
+        $this->audit?->record(event: 'session_login', data: ['user_id' => $userId]);
+    }
+
+    /**
+     * Regenerate session ID.
+     *
+     * OWASP ASVS 3.2.1 Compliant
+     *
+     * Prevents session fixation attacks.
+     * Delegated to SessionAdapter for testability.
+     *
+     * @param bool $deleteOldSession Delete old session data.
+     *
+     * @return void
+     */
+    #[Override]
+    public function regenerateId(bool $deleteOldSession = true) : void
+    {
+        $this->sessionAdapter->regenerateId(deleteOldSession: $deleteOldSession);
+
+        // Audit
+        $this->audit?->record(event: 'session_regenerated');
+    }
+
+    /**
+     * Store a value in the session.
+     *
+     * Smart Conventions:
+     * - Keys ending with '_secure' are auto-encrypted (via EncrypterFactory)
+     * - TTL parameter sets automatic expiration
+     * - Policy enforcement (via PolicyEnforcer)
+     * - Audit logging (if enabled)
+     *
+     * @param string   $key   The session key.
+     * @param mixed    $value The value to store.
+     * @param int|null $ttl   Optional time-to-live in seconds.
+     *
+     * @return void
+     */
+    #[Override]
+    public function put(string $key, mixed $value, int|null $ttl = null) : void
+    {
+        // Enforce policies before write (delegated to PolicyEnforcer)
+        $this->policyEnforcer->enforce(data: $this->all());
+
+        // Auto-encrypt if key ends with '_secure' (using EncrypterFactory)
+        if (str_ends_with(haystack: $key, needle: '_secure')) {
+            $value = $this->encrypter->encrypt(value: $value);
+        }
+
+        $this->store->put(key: $key, value: $value);
+
+        // Auto-TTL if specified
+        if ($ttl !== null) {
+            $this->store->put(
+                key  : "_ttl.{$key}",
+                value: time() + $ttl
+            );
+        }
+
+        // Audit logging
+        $this->audit?->record(event: 'stored', data: compact('key', 'ttl'));
+
+        // Dispatch event if events enabled
+        $this->events?->dispatch(event: 'stored', data: compact('key', 'ttl'));
+    }
+
+    /**
+     * Get all session data.
+     *
+     * @return array<string, mixed> All session data.
+     */
+    #[Override]
+    public function all() : array
+    {
+        return $this->store->all();
+    }
+
+    /**
+     * Get current session ID.
+     *
+     * Delegated to SessionAdapter.
+     *
+     * @return string Session ID.
+     */
+    #[Override]
+    public function getId() : string
+    {
+        return $this->sessionAdapter->getId();
     }
 
     /**
@@ -369,74 +339,62 @@ final class SessionProvider implements SessionContract, SessionInterface
         $this->put(key: '_privilege_elevation_time', value: time());
 
         // Audit
-        $this->audit?->record('privilege_elevation', ['roles' => $newRoles]);
-    }
-
-    /**
-     * Regenerate session ID.
-     *
-     * OWASP ASVS 3.2.1 Compliant
-     *
-     * Prevents session fixation attacks.
-     * Delegated to SessionAdapter for testability.
-     *
-     * @param bool $deleteOldSession Delete old session data.
-     *
-     * @return void
-     */
-    #[\Override]
-    public function regenerateId(bool $deleteOldSession = true) : void
-    {
-        $this->sessionAdapter->regenerateId(deleteOldSession: $deleteOldSession);
-
-        // Audit
-        $this->audit?->record('session_regenerated');
-    }
-
-    /**
-     * Get current session ID.
-     *
-     * Delegated to SessionAdapter.
-     *
-     * @return string Session ID.
-     */
-    #[\Override]
-    public function getId() : string
-    {
-        return $this->sessionAdapter->getId();
+        $this->audit?->record(event: 'privilege_elevation', data: ['roles' => $newRoles]);
     }
 
     /**
      * Alias for put() to ease transition from the old API.
      */
-    #[\Override]
+    #[Override]
     public function set(string $key, mixed $value, int|null $ttl = null) : void
     {
-        $this->put($key, $value, $ttl);
+        $this->put(key: $key, value: $value, ttl: $ttl);
     }
 
     /**
      * Alias for forget() to ease transition from the old API.
      */
-    #[\Override]
-    public function delete(string $key) : void
-    {
-        $this->forget($key);
-    }
-
-    /**
-     * Alias for forget() to ease transition from the old API.
-     */
-    #[\Override]
+    #[Override]
     public function remove(string $key) : void
     {
-        $this->forget($key);
+        $this->forget(key: $key);
+    }
+
+    /**
+     * Remove a value from the session.
+     *
+     * Also removes associated TTL metadata.
+     *
+     * @param string $key The session key.
+     *
+     * @return void
+     */
+    #[Override]
+    public function forget(string $key) : void
+    {
+        $this->store->delete(key: $key);
+        $this->store->delete(key: "_ttl.{$key}");
+
+        // Audit logging
+        $this->audit?->record(event: 'deleted', data: compact(var_name: 'key'));
+
+        // Dispatch event
+        $this->events?->dispatch(event: 'deleted', data: compact(var_name: 'key'));
+    }
+
+    /**
+     * Alias for forget() to ease transition from the old API.
+     */
+    #[Override]
+    public function delete(string $key) : void
+    {
+        $this->forget(key: $key);
     }
 
     /**
      * Start session (idempotent) through the adapter.
      */
-    #[\Override]
+    #[Override]
     public function start() : bool
     {
         return $this->sessionAdapter->start();
@@ -445,9 +403,48 @@ final class SessionProvider implements SessionContract, SessionInterface
     /**
      * Proxy flash getter for convenience.
      */
-    public function getFlash(string $key, mixed $default = null) : mixed
+    public function getFlash(string $key, mixed $default = null) : string|null
     {
-        return $this->flash()->get($key, $default);
+        return $this->flash()->get(key: $key, default: $default);
+    }
+
+    /**
+     * Retrieve a value from the session.
+     *
+     * Smart Conventions:
+     * - Auto-checks TTL expiration
+     * - Auto-decrypts '_secure' suffixed keys (via EncrypterFactory)
+     * - Policy enforcement (via PolicyEnforcer)
+     *
+     * @param string $key     The session key.
+     * @param mixed  $default Default value if key doesn't exist.
+     *
+     * @return mixed The retrieved value or default.
+     */
+    #[Override]
+    public function get(string $key, mixed $default = null) : mixed
+    {
+        // Enforce policies before read (delegated to PolicyEnforcer)
+        $this->policyEnforcer->enforce(data: $this->all());
+
+        // Check TTL expiration first
+        if ($this->isExpired(key: $key)) {
+            $this->forget(key: $key);
+
+            return $default;
+        }
+
+        $value = $this->store->get(key: $key, default: $default);
+
+        // Auto-decrypt if encrypted (using EncrypterFactory with key rotation)
+        if (str_ends_with(haystack: $key, needle: '_secure') && $value !== $default) {
+            $value = $this->encrypter->decrypt(payload: $value);
+        }
+
+        // Audit logging
+        $this->audit?->record(event: 'retrieved', data: compact(var_name: 'key'));
+
+        return $value;
     }
 
     // ========================================
@@ -455,21 +452,34 @@ final class SessionProvider implements SessionContract, SessionInterface
     // ========================================
 
     /**
-     * Create a contextual session consumer (Natural DSL).
+     * Check if a key has expired.
      *
-     * This is the natural, domain-oriented method for creating
-     * session consumers. Reads like: "for this context...".
+     * @param string $key The session key.
      *
-     * @param string $context The consumer context.
+     * @return bool True if expired.
+     */
+    private function isExpired(string $key) : bool
+    {
+        $expiry = $this->store->get(key: "_ttl.{$key}");
+
+        return $expiry !== null && time() > $expiry;
+    }
+
+    /**
+     * Access flash messages feature.
      *
-     * @return SessionConsumer Consumer for contextual operations.
+     * Lazy-loaded on first access.
+     *
+     * @return Flash Flash messages manager.
      * @example
-     *   $session->for('cart')->secure()->put('items', $items);
+     *   $session->flash()->success('Saved!');
+     *   $message = $session->flash()->get('success');
      *
      */
-    public function for(string $context) : SessionConsumer
+    #[Override]
+    public function flash() : Flash
     {
-        return new SessionConsumer($context, $this);
+        return $this->flash ??= new Flash(store: $this->store);
     }
 
     /**
@@ -486,25 +496,30 @@ final class SessionProvider implements SessionContract, SessionInterface
      */
     public function scope(string $namespace) : SessionConsumer
     {
-        return $this->for($namespace);
+        return $this->for(context: $namespace);
     }
 
     /**
-     * Access flash messages feature.
+     * Create a contextual session consumer (Natural DSL).
      *
-     * Lazy-loaded on first access.
+     * This is the natural, domain-oriented method for creating
+     * session consumers. Reads like: "for this context...".
      *
-     * @return Flash Flash messages manager.
+     * @param string $context The consumer context.
+     *
+     * @return SessionConsumer Consumer for contextual operations.
      * @example
-     *   $session->flash()->success('Saved!');
-     *   $message = $session->flash()->get('success');
+     *   $session->for('cart')->secure()->put('items', $items);
      *
      */
-    #[\Override]
-    public function flash() : Flash
+    public function for(string $context) : SessionConsumer
     {
-        return $this->flash ??= new Flash($this->store);
+        return new SessionConsumer(namespace: $context, provider: $this);
     }
+
+    // ========================================
+    // POLICY SYSTEM
+    // ========================================
 
     /**
      * Access events feature.
@@ -516,15 +531,11 @@ final class SessionProvider implements SessionContract, SessionInterface
      *   $session->events()->listen('stored', fn($data) => logger()->info($data));
      *
      */
-    #[\Override]
+    #[Override]
     public function events() : Events
     {
         return $this->events ??= new Events();
     }
-
-    // ========================================
-    // POLICY SYSTEM
-    // ========================================
 
     /**
      * Register a session policy.
@@ -542,10 +553,14 @@ final class SessionProvider implements SessionContract, SessionInterface
      */
     public function registerPolicy(PolicyInterface $policy) : self
     {
-        $this->policyEnforcer->register($policy);
+        $this->policyEnforcer->register(policy: $policy);
 
         return $this;
     }
+
+    // ========================================
+    // AUDIT SYSTEM
+    // ========================================
 
     /**
      * Register multiple policies at once.
@@ -556,14 +571,10 @@ final class SessionProvider implements SessionContract, SessionInterface
      */
     public function registerPolicies(array $policies) : self
     {
-        $this->policyEnforcer->registerMany($policies);
+        $this->policyEnforcer->registerMany(policies: $policies);
 
         return $this;
     }
-
-    // ========================================
-    // AUDIT SYSTEM
-    // ========================================
 
     /**
      * Get audit instance (if enabled).
@@ -574,6 +585,10 @@ final class SessionProvider implements SessionContract, SessionInterface
     {
         return $this->audit;
     }
+
+    // ========================================
+    // SNAPSHOT SYSTEM
+    // ========================================
 
     /**
      * Enable audit logging.
@@ -587,25 +602,9 @@ final class SessionProvider implements SessionContract, SessionInterface
      */
     public function enableAudit(string|null $path = null) : self
     {
-        $this->audit = new Audit($path);
+        $this->audit = new Audit(logPath: $path);
 
         return $this;
-    }
-
-    // ========================================
-    // SNAPSHOT SYSTEM
-    // ========================================
-
-    /**
-     * Access snapshots feature.
-     *
-     * Lazy-loaded on first access.
-     *
-     * @return Snapshots Snapshot manager.
-     */
-    public function snapshots() : Snapshots
-    {
-        return $this->snapshots ??= new Snapshots();
     }
 
     /**
@@ -626,8 +625,24 @@ final class SessionProvider implements SessionContract, SessionInterface
         );
 
         // Audit logging
-        $this->audit?->record('snapshot', ['name' => $name]);
+        $this->audit?->record(event: 'snapshot', data: compact(var_name: 'name'));
     }
+
+    /**
+     * Access snapshots feature.
+     *
+     * Lazy-loaded on first access.
+     *
+     * @return Snapshots Snapshot manager.
+     */
+    public function snapshots() : Snapshots
+    {
+        return $this->snapshots ??= new Snapshots();
+    }
+
+    // ========================================
+    // SMART HELPERS
+    // ========================================
 
     /**
      * Restore session state from a snapshot.
@@ -654,12 +669,8 @@ final class SessionProvider implements SessionContract, SessionInterface
         }
 
         // Audit logging
-        $this->audit?->record('restored', ['name' => $name]);
+        $this->audit?->record(event: 'restored', data: compact(var_name: 'name'));
     }
-
-    // ========================================
-    // SMART HELPERS
-    // ========================================
 
     /**
      * Remember pattern - lazy evaluation with caching.
@@ -675,7 +686,7 @@ final class SessionProvider implements SessionContract, SessionInterface
      *   $user = $session->remember('current_user', fn() => User::find($id));
      *
      */
-    #[\Override]
+    #[Override]
     public function remember(string $key, callable $callback, int|null $ttl = null) : mixed
     {
         if ($this->has(key: $key)) {
@@ -687,6 +698,33 @@ final class SessionProvider implements SessionContract, SessionInterface
 
         return $value;
     }
+
+    // ========================================
+    // INTERNAL HELPERS
+    // ========================================
+
+    /**
+     * Check if a key exists in the session.
+     *
+     * @param string $key The session key.
+     *
+     * @return bool True if key exists and not expired.
+     */
+    #[Override]
+    public function has(string $key) : bool
+    {
+        if ($this->isExpired(key: $key)) {
+            $this->forget(key: $key);
+
+            return false;
+        }
+
+        return $this->store->has(key: $key);
+    }
+
+    // ========================================
+    // SERVICE ACCESSORS
+    // ========================================
 
     /**
      * Create a temporary session consumer.
@@ -702,30 +740,8 @@ final class SessionProvider implements SessionContract, SessionInterface
      */
     public function temporary(int $seconds) : SessionConsumer
     {
-        return $this->for('temp')->ttl($seconds);
+        return $this->for(context: 'temp')->ttl(seconds: $seconds);
     }
-
-    // ========================================
-    // INTERNAL HELPERS
-    // ========================================
-
-    /**
-     * Check if a key has expired.
-     *
-     * @param string $key The session key.
-     *
-     * @return bool True if expired.
-     */
-    private function isExpired(string $key) : bool
-    {
-        $expiry = $this->store->get(key: "_ttl.{$key}");
-
-        return $expiry !== null && time() > $expiry;
-    }
-
-    // ========================================
-    // SERVICE ACCESSORS
-    // ========================================
 
     /**
      * Get EncrypterFactory instance.
@@ -784,7 +800,7 @@ final class SessionProvider implements SessionContract, SessionInterface
      */
     public function enableRegistry() : self
     {
-        $this->registry = new SessionRegistry($this->store);
+        $this->registry = new SessionRegistry(store: $this->store);
 
         return $this;
     }
@@ -799,6 +815,10 @@ final class SessionProvider implements SessionContract, SessionInterface
         return $this->nonce;
     }
 
+    // ========================================
+    // FEATURE LIFECYCLE MANAGEMENT
+    // ========================================
+
     /**
      * Enable SessionNonce for replay attack prevention.
      *
@@ -806,41 +826,9 @@ final class SessionProvider implements SessionContract, SessionInterface
      */
     public function enableNonce() : self
     {
-        $this->nonce = new SessionNonce($this->store);
+        $this->nonce = new SessionNonce(store: $this->store);
 
         return $this;
-    }
-
-    // ========================================
-    // FEATURE LIFECYCLE MANAGEMENT
-    // ========================================
-
-    /**
-     * Boot all registered features.
-     *
-     * @return void
-     */
-    private function bootFeatures() : void
-    {
-        foreach ($this->features as $feature) {
-            if ($feature instanceof FeatureInterface) {
-                $feature->boot();
-            }
-        }
-    }
-
-    /**
-     * Terminate all registered features.
-     *
-     * @return void
-     */
-    private function terminateFeatures() : void
-    {
-        foreach ($this->features as $feature) {
-            if ($feature instanceof FeatureInterface) {
-                $feature->terminate();
-            }
-        }
     }
 
     /**
@@ -856,5 +844,19 @@ final class SessionProvider implements SessionContract, SessionInterface
         $feature->boot();
 
         return $this;
+    }
+
+    /**
+     * Boot all registered features.
+     *
+     * @return void
+     */
+    private function bootFeatures() : void
+    {
+        foreach ($this->features as $feature) {
+            if ($feature instanceof FeatureInterface) {
+                $feature->boot();
+            }
+        }
     }
 }

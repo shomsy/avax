@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Foundation\HTTP\Session\Observability;
+namespace Avax\Foundation\HTTP\Session\Observability;
 
 /**
  * MetricCollector
  *
  * Simple in-memory metrics collector for Prometheus-compatible exporters.
  *
- * @package Foundation\HTTP\Session\Observability
+ * @package Avax\Foundation\HTTP\Session\Observability
  */
 final class MetricCollector
 {

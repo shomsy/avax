@@ -42,7 +42,7 @@ final class EncrypterFactory
      */
     public function encrypt(mixed $value) : string
     {
-        return $this->create()->encrypt($value);
+        return $this->create()->encrypt(value: $value);
     }
 
     /**
@@ -54,7 +54,7 @@ final class EncrypterFactory
     {
         $activeKey = $this->keyManager->getActiveKey();
 
-        return new OpenSSLEncrypter($activeKey);
+        return new OpenSSLEncrypter(key: $activeKey);
     }
 
     /**
@@ -75,9 +75,9 @@ final class EncrypterFactory
 
         foreach ($allKeys as $key) {
             try {
-                $encrypter = new OpenSSLEncrypter($key);
+                $encrypter = new OpenSSLEncrypter(key: $key);
 
-                return $encrypter->decrypt($payload);
+                return $encrypter->decrypt(payload: $payload);
             } catch (Exception $e) {
                 // Try next key
                 continue;
@@ -86,7 +86,7 @@ final class EncrypterFactory
 
         // All keys failed
         throw new RuntimeException(
-            'Decryption failed with all known keys - possible tampering or key mismatch'
+            message: 'Decryption failed with all known keys - possible tampering or key mismatch'
         );
     }
 }

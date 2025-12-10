@@ -15,6 +15,18 @@
             </GhostTextMetaData>
           </value>
         </entry>
+        <entry key="Da li ti je jasno o cemu se radi u ovoj konverzaciji?">
+          <value>
+            <GhostTextMetaData>
+              <option name="count" value="1.0" />
+              <option name="timestamps">
+                <list>
+                  <option value="1765242349720" />
+                </list>
+              </option>
+            </GhostTextMetaData>
+          </value>
+        </entry>
         <entry key="Da li vidis kod za komponentu Session u Foundation-u?">
           <value>
             <GhostTextMetaData>
@@ -22,6 +34,18 @@
               <option name="timestamps">
                 <list>
                   <option value="1765161009187" />
+                </list>
+              </option>
+            </GhostTextMetaData>
+          </value>
+        </entry>
+        <entry key="Da, ali u posebnom folderu v4, moze? Da ne izgubim trenutne file-ove">
+          <value>
+            <GhostTextMetaData>
+              <option name="count" value="1.0" />
+              <option name="timestamps">
+                <list>
+                  <option value="1765242431193" />
                 </list>
               </option>
             </GhostTextMetaData>

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Foundation\HTTP\Session\Features;
+namespace Avax\HTTP\Session\Features;
 
 use DateTimeImmutable;
 use Redis;
@@ -13,7 +13,7 @@ use Redis;
  * Implements distributed rate limiting using Redis (token bucket algorithm).
  * Fallback to in-memory array for development environments.
  *
- * @package Foundation\HTTP\Session\Features
+ * @package Avax\HTTP\Session\Features
  */
 final class RateLimiterFeature
 {

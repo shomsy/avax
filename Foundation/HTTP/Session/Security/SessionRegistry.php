@@ -5,46 +5,74 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session\Security;
 
 use Avax\HTTP\Session\Contracts\Storage\Store;
+use SensitiveParameter;
 
 /**
- * SessionRegistry - Multi-Device Session Control
+ * 🧠 SessionRegistry — Multi-Device Session Management
  *
- * OWASP ASVS 3.3.8 Compliant
+ * ------------------------------------------------------------------------
+ * THEORY (for dummies):
+ * ------------------------------------------------------------------------
+ * Imagine every user has a small “notebook” 📒 where all their active
+ * sessions are recorded — each page is one device or browser where
+ * they’re currently logged in.
  *
- * Tracks and manages concurrent sessions per user.
- * Prevents session sharing and enables single-device enforcement.
+ * That notebook is the *Session Registry*.
  *
- * Features:
- * - Track multiple sessions per user
- * - Terminate other sessions on new login
- * - Concurrent session limit enforcement
- * - Session metadata tracking (IP, user agent, timestamp)
+ * Its job is to:
+ * - Keep track of all active sessions per user 👤
+ * - Detect if a session is too old or idle ⏳
+ * - Let you force logout from other devices 🪟
+ * - Revoke or block compromised sessions 🚫
  *
- * @package Avax\HTTP\Session\Security
+ * Think of it as your “control room” for all user logins.
+ * ------------------------------------------------------------------------
+ *
+ * 🛡️ Why it exists:
+ * Without a registry, you can’t:
+ * - Prevent stolen tokens from staying valid forever
+ * - Enforce “single-device login” or session limits
+ * - View all devices a user is logged in from
+ * - Revoke access after password change or breach
+ *
+ * This is required by OWASP ASVS 3.3.8 — “Applications must allow
+ * sessions to be revoked and limit concurrent sessions.”
+ *
+ * ------------------------------------------------------------------------
+ * TECHNICAL OVERVIEW:
+ * ------------------------------------------------------------------------
+ * - All data is stored inside your Session Store (FileStore / RedisStore)
+ * - Each user has their own “registry key”: _registry_{userId}
+ * - Each session entry contains metadata like IP, user-agent, timestamps
+ * - A separate “revoked list” stores sessions that are invalid forever
+ *
+ * 💡 Think of it as two tables:
+ *   1️⃣ Active sessions per user
+ *   2️⃣ Revoked (banned) sessions globally
+ * ------------------------------------------------------------------------
  */
 final class SessionRegistry
 {
     private const string REGISTRY_PREFIX = '_registry_';
 
-    /**
-     * SessionRegistry Constructor.
-     *
-     * @param Store $store Session storage backend.
-     */
     public function __construct(
-        private Store $store
+        private readonly Store $store
     ) {}
+
+    // ============================================================
+    // 1️⃣ REGISTRATION — adding new sessions
+    // ============================================================
 
     /**
      * Register a new session for a user.
      *
-     * @param string $userId    User identifier.
-     * @param string $sessionId Session ID.
-     * @param array  $metadata  Optional metadata (IP, user agent, etc).
-     *
-     * @return void
+     * 🧠 What happens:
+     * Every time a user logs in, we record:
+     * - Which session ID they got
+     * - From what IP and device (metadata)
+     * - When it was created
      */
-    public function register(string $userId, string $sessionId, array $metadata = []) : void
+    public function register(string $userId, #[SensitiveParameter] string $sessionId, array $metadata = []) : void
     {
         $key      = self::REGISTRY_PREFIX . $userId;
         $sessions = $this->store->get(key: $key, default: []);
@@ -57,164 +85,144 @@ final class SessionRegistry
         $this->store->put(key: $key, value: $sessions);
     }
 
+    // ============================================================
+    // 2️⃣ ACTIVITY — updating and checking
+    // ============================================================
+
     /**
-     * Terminate all other sessions except current.
+     * Update last activity timestamp.
      *
-     * Useful for "single device" enforcement.
-     *
-     * @param string $userId          User identifier.
-     * @param string $exceptSessionId Current session to preserve.
-     *
-     * @return int Number of terminated sessions.
+     * 💬 Think of this as “heartbeat” — every time user interacts,
+     * we update the time so we know they’re still alive 🫀.
      */
-    public function terminateOtherSessions(string $userId, string $exceptSessionId) : int
+    public function updateActivity(string $userId, #[SensitiveParameter] string $sessionId) : void
+    {
+        $sessions = $this->getActiveSessions($userId);
+        if (! isset($sessions[$sessionId])) {
+            return;
+        }
+
+        $sessions[$sessionId]['last_activity'] = time();
+        $this->store->put(key: self::REGISTRY_PREFIX . $userId, value: $sessions);
+    }
+
+    /**
+     * Retrieve all active sessions for a user.
+     */
+    public function getActiveSessions(string $userId) : array
+    {
+        return $this->store->get(key: self::REGISTRY_PREFIX . $userId, default: []);
+    }
+
+    /**
+     * Get metadata for a specific session.
+     */
+    public function getSessionMetadata(string $userId, #[SensitiveParameter] string $sessionId) : array|null
+    {
+        $sessions = $this->getActiveSessions($userId);
+
+        return $sessions[$sessionId] ?? null;
+    }
+
+    /**
+     * Terminate all sessions except the current one.
+     *
+     * 🧠 Useful when user logs in again and you want
+     * to “kick out” other devices — classic “single device login”.
+     */
+    public function terminateOtherSessions(string $userId, #[SensitiveParameter] string $exceptSessionId) : int
     {
         $sessions   = $this->getActiveSessions($userId);
         $terminated = 0;
 
-        foreach ($sessions as $sessionId => $metadata) {
+        foreach ($sessions as $sessionId => $meta) {
             if ($sessionId !== $exceptSessionId) {
-                // In real implementation, you'd call session_destroy() for each ID
                 unset($sessions[$sessionId]);
                 $terminated++;
             }
         }
 
-        $key = self::REGISTRY_PREFIX . $userId;
-        $this->store->put(key: $key, value: $sessions);
+        $this->store->put(key: self::REGISTRY_PREFIX . $userId, value: $sessions);
+
+        return $terminated;
+    }
+
+    // ============================================================
+    // 3️⃣ TERMINATION — ending sessions
+    // ============================================================
+
+    /**
+     * Terminate one specific session.
+     */
+    public function terminateSession(string $userId, #[SensitiveParameter] string $sessionId) : bool
+    {
+        $sessions = $this->getActiveSessions($userId);
+        if (! isset($sessions[$sessionId])) {
+            return false;
+        }
+
+        unset($sessions[$sessionId]);
+        $this->store->put(key: self::REGISTRY_PREFIX . $userId, value: $sessions);
+
+        return true;
+    }
+
+    /**
+     * Terminate all sessions from a given device / browser.
+     */
+    public function terminateDevice(string $userId, string $userAgent) : int
+    {
+        $sessions   = $this->getActiveSessions($userId);
+        $terminated = 0;
+
+        foreach ($sessions as $id => $meta) {
+            if (($meta['user_agent'] ?? '') === $userAgent) {
+                unset($sessions[$id]);
+                $terminated++;
+            }
+        }
+
+        $this->store->put(key: self::REGISTRY_PREFIX . $userId, value: $sessions);
 
         return $terminated;
     }
 
     /**
-     * Get all active sessions for a user.
+     * Check if user exceeded allowed number of sessions.
      *
-     * @param string $userId User identifier.
-     *
-     * @return array<string, array> Session ID => metadata.
-     */
-    public function getActiveSessions(string $userId) : array
-    {
-        $key = self::REGISTRY_PREFIX . $userId;
-
-        return $this->store->get(key: $key, default: []);
-    }
-
-    /**
-     * Update last activity timestamp for a session.
-     *
-     * @param string $userId    User identifier.
-     * @param string $sessionId Session ID.
-     *
-     * @return void
-     */
-    public function updateActivity(string $userId, string $sessionId) : void
-    {
-        $sessions = $this->getActiveSessions($userId);
-
-        if (isset($sessions[$sessionId])) {
-            $sessions[$sessionId]['last_activity'] = time();
-
-            $key = self::REGISTRY_PREFIX . $userId;
-            $this->store->put(key: $key, value: $sessions);
-        }
-    }
-
-    /**
-     * Check if user has exceeded concurrent session limit.
-     *
-     * @param string $userId User identifier.
-     * @param int    $limit  Maximum allowed concurrent sessions.
-     *
-     * @return bool True if limit exceeded.
+     * Example: allow only 2 devices per account.
      */
     public function hasExceededLimit(string $userId, int $limit) : bool
     {
-        $sessions = $this->getActiveSessions($userId);
-
-        return count($sessions) >= $limit;
+        return $this->countActiveSessions($userId) >= $limit;
     }
 
+    // ============================================================
+    // 4️⃣ LIMITS — enforcing concurrent session limits
+    // ============================================================
+
     /**
-     * Check if a session is revoked.
-     *
-     * @param string $sessionId Session ID to check.
-     *
-     * @return bool True if revoked.
+     * Count how many sessions user currently has.
      */
-    public function isRevoked(string $sessionId) : bool
+    public function countActiveSessions(string $userId) : int
     {
-        $key     = self::REGISTRY_PREFIX . 'revoked';
-        $revoked = $this->store->get(key: $key, default: []);
-
-        return isset($revoked[$sessionId]);
+        return count($this->getActiveSessions($userId));
     }
 
-    // ========================================
-    // REVOCATION LIST (OWASP ASVS 3.3.8)
-    // ========================================
+    // ============================================================
+    // 5️⃣ REVOCATION LIST — permanently blocked sessions
+    // ============================================================
 
     /**
-     * Get revocation details for a session.
+     * Add a session to global revocation list.
      *
-     * @param string $sessionId Session ID.
-     *
-     * @return array|null Revocation details or null.
+     * 💬 Once revoked, a session is forever invalid — even if cookie exists.
+     * Typical use cases:
+     * - Password change
+     * - Security breach
+     * - Manual admin logout
      */
-    public function getRevocationDetails(string $sessionId) : array|null
-    {
-        $key     = self::REGISTRY_PREFIX . 'revoked';
-        $revoked = $this->store->get(key: $key, default: []);
-
-        return $revoked[$sessionId] ?? null;
-    }
-
-    /**
-     * Revoke all sessions for a user.
-     *
-     * Useful for:
-     * - Password changes
-     * - Security breaches
-     * - Account lockout
-     *
-     * @param string $userId User identifier.
-     * @param string $reason Revocation reason.
-     *
-     * @return int Number of sessions revoked.
-     */
-    public function revokeAllForUser(string $userId, string $reason = 'user_revocation') : int
-    {
-        $sessions = $this->getActiveSessions($userId);
-        $count    = 0;
-
-        foreach (array_keys($sessions) as $sessionId) {
-            $this->revoke($sessionId, $reason);
-            $count++;
-        }
-
-        // Also clear active sessions
-        $key = self::REGISTRY_PREFIX . $userId;
-        $this->store->delete(key: $key);
-
-        return $count;
-    }
-
-    /**
-     * Add a session to revocation list.
-     *
-     * Revoked sessions cannot be used anymore, even if valid.
-     * Useful for:
-     * - Forced logout
-     * - Security breaches
-     * - Password changes
-     * - Privilege changes
-     *
-     * @param string $sessionId Session ID to revoke.
-     * @param string $reason    Revocation reason.
-     *
-     * @return void
-     */
-    public function revoke(string $sessionId, string $reason = 'manual_revocation') : void
+    public function revoke(#[SensitiveParameter] string $sessionId, string $reason = 'manual_revocation') : void
     {
         $key     = self::REGISTRY_PREFIX . 'revoked';
         $revoked = $this->store->get(key: $key, default: []);
@@ -228,15 +236,39 @@ final class SessionRegistry
     }
 
     /**
-     * Remove a session from revocation list.
-     *
-     * Use with caution - only for administrative purposes.
-     *
-     * @param string $sessionId Session ID to unrevoke.
-     *
-     * @return bool True if was revoked and now removed.
+     * Check if a session is revoked.
      */
-    public function unrevoke(string $sessionId) : bool
+    public function isRevoked(#[SensitiveParameter] string $sessionId) : bool
+    {
+        return isset($this->getAllRevoked()[$sessionId]);
+    }
+
+    /**
+     * Get the global list of revoked sessions.
+     *
+     * 🧠 Purpose:
+     * Exposes the complete revocation table so higher-level components
+     * (admin panels, audit tools, security dashboards) can inspect which
+     * session IDs are permanently blocked and why.
+     *
+     * 💬 Think of it as:
+     * “Show me the blacklist of all sessions that are not allowed to log in
+     * anymore, regardless of cookie or token state.”
+     *
+     * @return array<string, array{
+     *     revoked_at:int,
+     *     reason:string
+     * }> Map of session ID to revocation metadata.
+     */
+    public function getAllRevoked() : array
+    {
+        return $this->store->get(key: self::REGISTRY_PREFIX . 'revoked', default: []);
+    }
+
+    /**
+     * Remove session from revocation list.
+     */
+    public function unrevoke(#[SensitiveParameter] string $sessionId) : bool
     {
         $key     = self::REGISTRY_PREFIX . 'revoked';
         $revoked = $this->store->get(key: $key, default: []);
@@ -252,23 +284,17 @@ final class SessionRegistry
     }
 
     /**
-     * Clear old revoked sessions.
-     *
-     * Removes revocations older than specified age.
-     *
-     * @param int $maxAge Maximum age in seconds (default: 30 days).
-     *
-     * @return int Number of cleared revocations.
+     * Clear old revoked sessions (default 30 days).
      */
-    public function clearOldRevocations(int $maxAge = 2592000) : int
+    public function clearOldRevocations(int $maxAge = 2_592_000) : int
     {
         $key     = self::REGISTRY_PREFIX . 'revoked';
-        $revoked = $this->store->get($key, []);
+        $revoked = $this->store->get(key: $key, default: []);
         $cleared = 0;
 
-        foreach ($revoked as $sessionId => $data) {
-            if (time() - $data['revoked_at'] > $maxAge) {
-                unset($revoked[$sessionId]);
+        foreach ($revoked as $id => $meta) {
+            if (time() - $meta['revoked_at'] > $maxAge) {
+                unset($revoked[$id]);
                 $cleared++;
             }
         }
@@ -279,9 +305,12 @@ final class SessionRegistry
     }
 
     /**
-     * Count total revoked sessions.
+     * Count the total number of revoked sessions.
      *
-     * @return int Count.
+     * This method inspects the global revocation list and returns
+     * how many session IDs are currently marked as revoked.
+     *
+     * @return int Number of revoked sessions.
      */
     public function countRevoked() : int
     {
@@ -289,85 +318,60 @@ final class SessionRegistry
     }
 
     /**
-     * Get all revoked sessions.
+     * Get detailed revocation metadata for a specific session.
      *
-     * @return array<string, array> Session ID => revocation data.
+     * 🧠 Purpose:
+     * Allows security and audit layers to understand *why* a session was
+     * revoked (e.g. password change, breach response, manual admin action).
+     *
+     * 💬 Think of it as:
+     * “Tell me the story behind this session ID — when it was blocked and for
+     * what reason.”
+     *
+     * @param string $sessionId The session identifier to inspect.
+     *
+     * @return array<string, mixed>|null Revocation metadata or null if not revoked.
      */
-    public function getAllRevoked() : array
+    public function getRevocationDetails(#[SensitiveParameter] string $sessionId) : array|null
     {
-        $key = self::REGISTRY_PREFIX . 'revoked';
+        return $this->getAllRevoked()[$sessionId] ?? null;
+    }
 
-        return $this->store->get(key: $key, default: []);
+    // ============================================================
+    // 6️⃣ MAINTENANCE — cleanup and purge
+    // ============================================================
+
+    /**
+     * Remove all session records for a user — including revoked ones.
+     * Use this when deleting user accounts completely.
+     */
+    public function purgeUser(string $userId) : void
+    {
+        $this->store->delete(self::REGISTRY_PREFIX . $userId);
+
+        $revoked = $this->getAllRevoked();
+        foreach ($revoked as $sid => $meta) {
+            if (($meta['user_id'] ?? null) === $userId) {
+                unset($revoked[$sid]);
+            }
+        }
+
+        $this->store->put(key: self::REGISTRY_PREFIX . 'revoked', value: $revoked);
     }
 
     /**
-     * Get sessions grouped by device/user agent.
-     *
-     * @param string $userId User identifier.
-     *
-     * @return array<string, array> Device fingerprint => sessions.
+     * Group user sessions by device (user-agent).
      */
     public function getSessionsByDevice(string $userId) : array
     {
         $sessions = $this->getActiveSessions($userId);
-        $byDevice = [];
+        $devices  = [];
 
-        foreach ($sessions as $sessionId => $metadata) {
-            $fingerprint              = $metadata['user_agent'] ?? 'unknown';
-            $byDevice[$fingerprint][] = array_merge(['session_id' => $sessionId], $metadata);
+        foreach ($sessions as $sid => $meta) {
+            $fingerprint             = $meta['user_agent'] ?? 'unknown';
+            $devices[$fingerprint][] = ['session_id' => $sid] + $meta;
         }
 
-        return $byDevice;
-    }
-
-    // ========================================
-    // DEVICE MANAGEMENT
-    // ========================================
-
-    /**
-     * Terminate all sessions from a specific device.
-     *
-     * @param string $userId    User identifier.
-     * @param string $userAgent User agent string to match.
-     *
-     * @return int Number of terminated sessions.
-     */
-    public function terminateDevice(string $userId, string $userAgent) : int
-    {
-        $sessions   = $this->getActiveSessions($userId);
-        $terminated = 0;
-
-        foreach ($sessions as $sessionId => $metadata) {
-            if (($metadata['user_agent'] ?? '') === $userAgent) {
-                $this->terminateSession($userId, $sessionId);
-                $terminated++;
-            }
-        }
-
-        return $terminated;
-    }
-
-    /**
-     * Terminate a specific session.
-     *
-     * @param string $userId    User identifier.
-     * @param string $sessionId Session ID to terminate.
-     *
-     * @return bool True if session was found and terminated.
-     */
-    public function terminateSession(string $userId, string $sessionId) : bool
-    {
-        $sessions = $this->getActiveSessions($userId);
-
-        if (! isset($sessions[$sessionId])) {
-            return false;
-        }
-
-        unset($sessions[$sessionId]);
-
-        $key = self::REGISTRY_PREFIX . $userId;
-        $this->store->put(key: $key, value: $sessions);
-
-        return true;
+        return $devices;
     }
 }

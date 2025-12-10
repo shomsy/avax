@@ -33,9 +33,9 @@ abstract class BaseFacade
     {
         $instance = static::resolveFacadeInstance();
 
-        if (! is_callable([$instance, $methodName])) {
+        if (! is_callable(value: [$instance, $methodName])) {
             throw new RuntimeException(
-                sprintf("Method '%s' does not exist or is not callable on the facade '%s'.", $methodName, static::class)
+                message: sprintf("Method '%s' does not exist or is not callable on the facade '%s'.", $methodName, static::class)
             );
         }
 
@@ -53,16 +53,16 @@ abstract class BaseFacade
     {
         if (! isset(static::$accessor) || (static::$accessor === '' || static::$accessor === '0')) {
             throw new RuntimeException(
-                sprintf("The facade '%s' must define a non-empty static accessor property.", static::class)
+                message: sprintf("The facade '%s' must define a non-empty static accessor property.", static::class)
             );
         }
 
         if (! app()->has(static::$accessor)) {
             throw new RuntimeException(
-                sprintf("Service '%s' not found in the container.", static::$accessor)
+                message: sprintf("Service '%s' not found in the container.", static::$accessor)
             );
         }
 
-        return app(static::$accessor);
+        return app(abstract: static::$accessor);
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Foundation\HTTP\Session\Features;
+namespace Avax\HTTP\Session\Features;
 
 use DateTimeImmutable;
 
@@ -11,12 +11,15 @@ use DateTimeImmutable;
  *
  * Manages versioned session snapshots for rollback and audit recovery.
  *
- * @package Foundation\HTTP\Session\Features
+ * @package Avax\HTTP\Session\Features
  */
 final class SessionVersioning
 {
     private array $versions = [];
 
+    /**
+     * @throws \Random\RandomException
+     */
     public function createSnapshot(array $data) : string
     {
         $versionId                  = bin2hex(random_bytes(8));

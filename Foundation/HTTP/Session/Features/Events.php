@@ -53,7 +53,7 @@ final class Events implements FeatureInterface
      */
     public function once(string $event, callable $callback) : void
     {
-        $wrapper = function ($data) use ($event, $callback, &$wrapper) {
+        $wrapper = function ($data) use ($callback, $event, &$wrapper) {
             $callback($data);
             $this->removeListener($event, $wrapper);
         };

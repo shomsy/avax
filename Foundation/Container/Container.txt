@@ -3,10 +3,10 @@
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Attributes;
+namespace Avax\Container\Attributes;
 
-use Gemini\Container\Containers\DependencyInjector;
-use Gemini\Container\Exceptions\InvalidInjectionException;
+use Avax\Container\Containers\DependencyInjector;
+use Avax\Container\Exceptions\InvalidInjectionException;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -113,7 +113,7 @@ final readonly class AttributeInjector
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Attributes;
+namespace Avax\Container\Attributes;
 
 use Attribute;
 
@@ -130,7 +130,7 @@ final readonly class Contextual
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Attributes;
+namespace Avax\Container\Attributes;
 
 use Attribute;
 
@@ -141,7 +141,7 @@ final class Inject {}
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Attributes;
+namespace Avax\Container\Attributes;
 
 use Attribute;
 
@@ -152,7 +152,7 @@ final readonly class Lazy {}
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Attributes;
+namespace Avax\Container\Attributes;
 
 use Attribute;
 
@@ -166,7 +166,7 @@ final readonly class Scope
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Attributes;
+namespace Avax\Container\Attributes;
 
 use Attribute;
 
@@ -177,7 +177,7 @@ final class ServiceProvider {}
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Attributes;
+namespace Avax\Container\Attributes;
 
 use Attribute;
 
@@ -188,7 +188,7 @@ final class Singleton {}
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Attributes;
+namespace Avax\Container\Attributes;
 
 use Attribute;
 
@@ -202,9 +202,9 @@ final readonly class Tag
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Containers;
+namespace Avax\Container\Containers;
 
-use Gemini\Logging\ErrorHandler;
+use Avax\Logging\ErrorHandler;
 use Throwable;
 
 /**
@@ -243,12 +243,12 @@ final readonly class Application
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Containers;
+namespace Avax\Container\Containers;
 
 use Exception;
-use Gemini\Config\Architecture\DDD\AppPath;
-use Gemini\Container\Contracts\ContainerInterface;
-use Gemini\Facade\Facades\Storage;
+use Avax\Config\Architecture\DDD\AppPath;
+use Avax\Container\Contracts\ContainerInterface;
+use Avax\Facade\Facades\Storage;
 use Spatie\Ignition\Ignition;
 
 /**
@@ -275,7 +275,7 @@ readonly class Bootstrapper
     /**
      * Initializes the core components of the application.
      *
-     * This method performs all essential boot-time logic required for the framework to operate:
+     * This method performs all essential boot-time logic required for the Foundation to operate:
      *
      * - Applies hardened session cookie configuration for secure session lifecycle.
      * - Loads environment variables from the configured `.env.php` bootstrap file.
@@ -442,23 +442,23 @@ readonly class Bootstrapper
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Containers;
+namespace Avax\Container\Containers;
 
 use Closure;
-use Gemini\Cache\InMemoryCache;
-use Gemini\Config\Architecture\DDD\AppPath;
-use Gemini\Container\Containers\Proxy\LazyProxy;
-use Gemini\Container\Containers\Registry\Bindings;
-use Gemini\Container\Containers\Registry\Deferred;
-use Gemini\Container\Containers\Registry\Instances;
-use Gemini\Container\Containers\Registry\LifecycleHooks;
-use Gemini\Container\Containers\Registry\ScopedInstances;
-use Gemini\Container\Contracts\ContainerInterface;
-use Gemini\Container\Exceptions\AutoResolveException;
-use Gemini\Container\Exceptions\CircularDependencyException;
-use Gemini\Container\Exceptions\ServiceNotFoundException;
-use Gemini\Container\Exceptions\UnresolvableDependencyException;
-use Gemini\DataHandling\ArrayHandling\Arrhae;
+use Avax\Cache\InMemoryCache;
+use Avax\Config\Architecture\DDD\AppPath;
+use Avax\Container\Containers\Proxy\LazyProxy;
+use Avax\Container\Containers\Registry\Bindings;
+use Avax\Container\Containers\Registry\Deferred;
+use Avax\Container\Containers\Registry\Instances;
+use Avax\Container\Containers\Registry\LifecycleHooks;
+use Avax\Container\Containers\Registry\ScopedInstances;
+use Avax\Container\Contracts\ContainerInterface;
+use Avax\Container\Exceptions\AutoResolveException;
+use Avax\Container\Exceptions\CircularDependencyException;
+use Avax\Container\Exceptions\ServiceNotFoundException;
+use Avax\Container\Exceptions\UnresolvableDependencyException;
+use Avax\DataHandling\ArrayHandling\Arrhae;
 use InvalidArgumentException;
 use League\Container\Exception\ContainerException;
 use ReflectionClass;
@@ -1223,12 +1223,12 @@ final class DependencyInjector implements ContainerInterface
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Containers;
+namespace Avax\Container\Containers;
 
-use Gemini\Exceptions\ValidationException;
-use Gemini\HTTP\Request\Request;
-use Gemini\HTTP\Router\RouterInterface;
-use Gemini\Logging\ErrorHandler;
+use Avax\Exceptions\ValidationException;
+use Avax\HTTP\Request\Request;
+use Avax\HTTP\Router\RouterInterface;
+use Avax\Logging\ErrorHandler;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
@@ -1370,7 +1370,7 @@ final class Kernel
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Containers;
+namespace Avax\Container\Containers;
 
 enum LifecycleHook: string
 {
@@ -1417,10 +1417,10 @@ enum LifecycleHook: string
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Containers\Proxy;
+namespace Avax\Container\Containers\Proxy;
 
 use Closure;
-use Gemini\DataHandling\ArrayHandling\Arrhae;
+use Avax\DataHandling\ArrayHandling\Arrhae;
 
 /**
  * Implements a lazy loading proxy pattern for deferred object initialization.
@@ -1430,11 +1430,13 @@ use Gemini\DataHandling\ArrayHandling\Arrhae;
  * @template T of object
  * @final
  */
-final readonly class LazyProxy
+final class LazyProxy
 {
     /**
      * Metadata container for storing the proxied instance and related information.
      * Using Arrhae for type-safe key-value storage operations.
+     *
+     * @var Arrhae<string, T>
      */
     private Arrhae $meta;
 
@@ -1444,7 +1446,7 @@ final readonly class LazyProxy
      *
      * @param Closure(): T $resolver Factory closure that creates the actual instance when needed
      */
-    public function __construct(private Closure $resolver)
+    public function __construct(private readonly Closure $resolver)
     {
         $this->meta = new Arrhae();
     }
@@ -1514,9 +1516,9 @@ final readonly class LazyProxy
      * Retrieves the proxied instance directly.
      * Note: This method doesn't ensure initialization.
      *
-     * @return T|null The proxied instance if initialized, null otherwise
+     * @return object|null The proxied instance if initialized, null otherwise
      */
-    public function getInstance() : mixed
+    public function getInstance() : object|null
     {
         return $this->meta->get(key: 'instance');
     }
@@ -1526,9 +1528,9 @@ final readonly class LazyProxy
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Containers\Registry;
+namespace Avax\Container\Containers\Registry;
 
-use Gemini\DataHandling\ArrayHandling\Arrhae;
+use Avax\DataHandling\ArrayHandling\Arrhae;
 
 class Bindings extends Arrhae {}
 === Containers/Registry/ChildContainers.php ===
@@ -1536,29 +1538,29 @@ class Bindings extends Arrhae {}
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Containers\Registry;
+namespace Avax\Container\Containers\Registry;
 
-use Gemini\DataHandling\ArrayHandling\Arrhae;
+use Avax\DataHandling\ArrayHandling\Arrhae;
 
 class ChildContainers extends Arrhae {}
-=== Containers/Registry/DeferredContainerRegistry.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Gemini\Container\Containers\Registry;
-
-use Gemini\DataHandling\ArrayHandling\Arrhae;
-
-class Deferred extends Arrhae {}
 === Containers/Registry/Deferred.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Containers\Registry;
+namespace Avax\Container\Containers\Registry;
 
-use Gemini\DataHandling\ArrayHandling\Arrhae;
+use Avax\DataHandling\ArrayHandling\Arrhae;
+
+class Deferred extends Arrhae {}
+=== Containers/Registry/DeferredContainerRegistry.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Container\Containers\Registry;
+
+use Avax\DataHandling\ArrayHandling\Arrhae;
 
 class Deferred extends Arrhae {}
 === Containers/Registry/DependencyGraph.php ===
@@ -1566,9 +1568,9 @@ class Deferred extends Arrhae {}
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Containers\Registry;
+namespace Avax\Container\Containers\Registry;
 
-use Gemini\DataHandling\ArrayHandling\Arrhae;
+use Avax\DataHandling\ArrayHandling\Arrhae;
 
 class DependencyGraph extends Arrhae {}
 === Containers/Registry/Instances.php ===
@@ -1576,9 +1578,9 @@ class DependencyGraph extends Arrhae {}
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Containers\Registry;
+namespace Avax\Container\Containers\Registry;
 
-use Gemini\DataHandling\ArrayHandling\Arrhae;
+use Avax\DataHandling\ArrayHandling\Arrhae;
 
 class Instances extends Arrhae {}
 === Containers/Registry/LifecycleHooks.php ===
@@ -1586,10 +1588,10 @@ class Instances extends Arrhae {}
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Containers\Registry;
+namespace Avax\Container\Containers\Registry;
 
-use Gemini\Container\Containers\LifecycleHook;
-use Gemini\DataHandling\ArrayHandling\Arrhae;
+use Avax\Container\Containers\LifecycleHook;
+use Avax\DataHandling\ArrayHandling\Arrhae;
 
 /**
  * LifecycleHooks
@@ -1666,9 +1668,9 @@ class LifecycleHooks extends Arrhae
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Containers\Registry;
+namespace Avax\Container\Containers\Registry;
 
-use Gemini\DataHandling\ArrayHandling\Arrhae;
+use Avax\DataHandling\ArrayHandling\Arrhae;
 
 /**
  * Manages scoped instance registry within the dependency injection container.
@@ -1709,7 +1711,7 @@ class ScopedInstances extends Arrhae
 <?php
 declare(strict_types=1);
 
-namespace Gemini\Container\Contracts;
+namespace Avax\Container\Contracts;
 
 /**
  * Interface defining the contract for a dependency injection container.
@@ -1774,7 +1776,7 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Exceptions;
+namespace Avax\Container\Exceptions;
 
 use Throwable;
 
@@ -1829,7 +1831,7 @@ class AutoResolveException extends \RuntimeException
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Exceptions;
+namespace Avax\Container\Exceptions;
 
 use ReflectionClass;
 use ReflectionException;
@@ -1914,7 +1916,7 @@ class CircularDependencyException extends RuntimeException
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Exceptions;
+namespace Avax\Container\Exceptions;
 
 /**
  * Thrown when attempting to instantiate a class that is not instantiable.
@@ -1935,15 +1937,15 @@ class ClassNotInstantiableException extends \RuntimeException
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Exceptions;
+namespace Avax\Container\Exceptions;
 
 use Exception;
 
 /**
- * This exception class represents errors specific to the framework's dependency injection container.
+ * This exception class represents errors specific to the Foundation's dependency injection container.
  * Extending from the base Exception class provides a standardized way to handle these errors.
  */
-class FrameworkContainerException extends Exception
+class FoundationContainerException extends Exception
 {
     /**
      * Default error message given when no specific message is provided.
@@ -1951,7 +1953,7 @@ class FrameworkContainerException extends Exception
     private const string DEFAULT_MESSAGE = 'A container exception has occurred.';
 
     /**
-     * Constructs the FrameworkContainerException.
+     * Constructs the FoundationContainerException.
      *
      * @param string         $message  Custom error message that describes the exception.
      * @param int            $code     Optional error code for the exception.
@@ -1969,7 +1971,7 @@ class FrameworkContainerException extends Exception
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Exceptions;
+namespace Avax\Container\Exceptions;
 
 use ReflectionProperty;
 use RuntimeException;
@@ -1981,7 +1983,7 @@ use RuntimeException;
  * a class property. It provides additional context about the problematic property for
  * debugging and resolution purposes.
  *
- * @package Gemini\Container\Exception
+ * @package Avax\Container\Exception
  */
 class InvalidInjectionException extends RuntimeException
 {
@@ -2031,7 +2033,7 @@ class InvalidInjectionException extends RuntimeException
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Exceptions;
+namespace Avax\Container\Exceptions;
 
 use RuntimeException;
 use Throwable;
@@ -2055,7 +2057,7 @@ class ServiceNotFoundException extends RuntimeException
 
 declare(strict_types=1);
 
-namespace Gemini\Container\Exceptions;
+namespace Avax\Container\Exceptions;
 
 /**
  * Thrown when a dependency cannot be resolved due to missing type hints or invalid configuration.
@@ -2079,7 +2081,7 @@ class UnresolvableDependencyException extends \RuntimeException
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Contracts;
+namespace Avax\Container\ServiceProviders\Contracts;
 
 /**
  * ServiceProviderInterface
@@ -2111,144 +2113,86 @@ interface ServiceProviderInterface
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Providers;
+namespace Avax\Container\ServiceProviders\Providers;
 
-
-use Gemini\Auth\Application\Action\LoginAction;
-use Gemini\Auth\Application\Action\LogoutAction;
-use Gemini\Auth\Application\Action\RegisterUserAction;
-use Gemini\Auth\Application\Service\AuthenticationService;
-use Gemini\Auth\Application\UseCase\API\ApiLoginUseCase;
-use Gemini\Auth\Application\UseCase\API\ApiLogoutUseCase;
-use Gemini\Auth\Application\UseCase\API\ApiRegisterUseCase;
-use Gemini\Auth\Application\UseCase\Web\LoginUseCase;
-use Gemini\Auth\Application\UseCase\Web\RetrieveCurrentUserUseCase;
-use Gemini\Auth\Application\UseCases\Web\LogoutUseCase;
-use Gemini\Auth\Application\UseCases\Web\RegisterUseCase;
-use Gemini\Auth\Contracts\AuthenticationServiceInterface;
-use Gemini\Auth\Contracts\CredentialsInterface;
-use Gemini\Auth\Contracts\Identity\IdentityInterface;
-use Gemini\Auth\Contracts\Identity\UserSourceInterface;
-use Gemini\Auth\Domain\ValueObject\Credentials;
-use Gemini\Auth\Infrastructure\Identity\Session\SessionIdentity;
-use Gemini\Auth\Infrastructure\Security\PasswordHasher;
-use Gemini\Auth\Infrastructure\User\DB\User;
-use Gemini\Auth\Interface\HTTP\Middleware\AuthenticationMiddleware;
-use Gemini\Auth\Interface\HTTP\Middleware\PermissionMiddleware;
-use Gemini\Auth\Interface\HTTP\Middleware\RoleMiddleware;
-use Gemini\Container\ServiceProviders\ServiceProvider;
-use Gemini\Database\QueryBuilder\QueryBuilder;
-use Gemini\HTTP\Security\CsrfTokenManager;
+use Avax\Auth\Actions\Check;
+use Avax\Auth\Actions\GetUser;
+use Avax\Auth\Actions\Login;
+use Avax\Auth\Actions\Logout;
+use Avax\Auth\Actions\Register;
+use Avax\Auth\Authenticator;
+use Avax\Auth\Contracts\AuthInterface;
+use Avax\Auth\Contracts\CredentialsInterface;
+use Avax\Auth\Contracts\IdentityInterface;
+use Avax\Auth\Contracts\UserSourceInterface;
+use Avax\Auth\Data\Credentials;
+use Avax\Auth\Http\AccessMiddleware;
+use Avax\Auth\Http\AuthMiddleware;
+use Avax\Auth\Adapters\SessionIdentity;
+use Avax\Auth\Adapters\RateLimiter;
+use Avax\Auth\Adapters\PasswordHasher;
+use Avax\Auth\Adapters\UserDataSource;
+use Avax\Container\ServiceProviders\ServiceProvider;
+use Avax\Database\QueryBuilder\QueryBuilder;
+use Avax\HTTP\Session\Session;
 
 /**
- * Action provider for authentication services.
- *
- * This class handles the registration of dependencies related to the authentication
- * system within the service container. Each dependency is registered as a singleton,
- * meaning the same instance will be reused throughout the application lifecycle.
+ * Provider for Authentication services.
  */
 class AuthenticationServiceProvider extends ServiceProvider
 {
-
     /**
      * Register authentication-related services and their dependencies.
-     *
-     * This method binds various authentication-related classes and interfaces to the service container,
-     * ensuring that they are instantiated properly and are available for dependency injection.
-     *
      */
     public function register() : void
     {
+        // Core Dependencies
         $this->dependencyInjector->singleton(abstract: PasswordHasher::class, concrete: PasswordHasher::class);
         $this->dependencyInjector->singleton(abstract: CredentialsInterface::class, concrete: Credentials::class);
 
-        // Register the UserRegistrationService
+        // Identity Provider
         $this->dependencyInjector->singleton(
-            abstract: RegisterUserAction::class,
-            concrete: fn() => new RegisterUserAction(
+            abstract: IdentityInterface::class,
+            concrete: fn() => new SessionIdentity(
+                session: $this->dependencyInjector->get(Session::class),
                 userProvider: $this->dependencyInjector->get(UserSourceInterface::class)
             )
         );
 
-        // Register the RegisterUseCase
-        $this->dependencyInjector->singleton(
-            abstract: RegisterUseCase::class,
-            concrete: fn() => new RegisterUseCase(
-                registerService: $this->dependencyInjector->get(RegisterUserAction::class)
-            )
-        );
-
-
-        $this->dependencyInjector->singleton(
-            abstract: AuthenticationServiceInterface::class,
-            concrete: fn() => new AuthenticationService(
-                identity: $this->dependencyInjector->get(SessionIdentity::class)
-            )
-        );
-
-
-        $this->dependencyInjector->singleton(abstract: IdentityInterface::class, concrete: fn(
-        ) : SessionIdentity => new SessionIdentity(
-            session     : $this->dependencyInjector->get(id: Session::class),
-            userProvider: $this->dependencyInjector->get(id: User::class)
-        ));
+        // User Data Source
         $this->dependencyInjector->singleton(
             abstract: UserSourceInterface::class,
-            concrete: fn() : User => new User(
-                queryBuilder  : $this->dependencyInjector->get(id: QueryBuilder::class),
+            concrete: fn() => new UserDataSource(
+                queryBuilder: $this->dependencyInjector->get(QueryBuilder::class),
                 passwordHasher: $this->dependencyInjector->get(PasswordHasher::class)
             )
         );
-        $this->dependencyInjector->singleton(
-            abstract: AuthenticationMiddleware::class,
-            concrete: AuthenticationMiddleware::class
-        );
-        $this->dependencyInjector->singleton(
-            abstract: PermissionMiddleware::class,
-            concrete: PermissionMiddleware::class
-        );
-        $this->dependencyInjector->singleton(abstract: RoleMiddleware::class, concrete: RoleMiddleware::class);
-        $this->dependencyInjector->singleton(
-            abstract: ApiLoginUseCase::class,
-            concrete: ApiLoginUseCase::class
-        );
-        $this->dependencyInjector->singleton(abstract: ApiLogoutUseCase::class, concrete: ApiLogoutUseCase::class);
-        $this->dependencyInjector->singleton(abstract: ApiRegisterUseCase::class, concrete: ApiRegisterUseCase::class);
 
+        // Authenticator Orchestrator (The "Facade" impl)
         $this->dependencyInjector->singleton(
-            abstract: LoginUseCase::class,
-            concrete: fn() => new LoginUseCase(
-                loginAction: $this->dependencyInjector->get(LoginAction::class)
+            abstract: AuthInterface::class,
+            concrete: fn() => new Authenticator(
+                loginAction: new Login(identity: $this->dependencyInjector->get(IdentityInterface::class)),
+                logoutAction: new Logout(identity: $this->dependencyInjector->get(IdentityInterface::class)),
+                getUserAction: new GetUser(identity: $this->dependencyInjector->get(IdentityInterface::class)),
+                checkAction: new Check(identity: $this->dependencyInjector->get(IdentityInterface::class))
             )
         );
-        $this->dependencyInjector->singleton(
-            abstract: LogoutAction::class,
-            concrete: fn() => new LogoutAction(
-                authenticationService: $this->dependencyInjector->get(AuthenticationService::class),
-                csrfTokenManager     : $this->dependencyInjector->get(CsrfTokenManager::class)
-            )
-        );
-        $this->dependencyInjector->singleton(
-            abstract: LogoutUseCase::class,
-            concrete: fn() => new LogoutUseCase(
-                logoutService: $this->dependencyInjector->get(LogoutAction::class)
-            )
-        );
-        $this->dependencyInjector->singleton(
-            abstract: RetrieveCurrentUserUseCase::class,
-            concrete: RetrieveCurrentUserUseCase::class
-        );
+
+        // Actions
+        $this->dependencyInjector->singleton(abstract: Register::class, concrete: Register::class);
+
+        // Infrastructure
+        $this->dependencyInjector->singleton(abstract: RateLimiter::class, concrete: RateLimiter::class);
+
+        // Middleware
+        $this->dependencyInjector->singleton(abstract: AuthMiddleware::class, concrete: AuthMiddleware::class);
+        $this->dependencyInjector->singleton(abstract: AccessMiddleware::class, concrete: AccessMiddleware::class);
     }
 
-    /**
-     * Additional bootstrapping logic for authentication services.
-     *
-     * This method can be used to initialize additional configurations or dependencies required
-     * for the authentication services after all services have been registered.
-     */
     public function boot() : void
     {
-        // Additional boot logic for auth services if required
+        // Boot logic
     }
 }
 === ServiceProviders/Providers/BootstrapServiceProvider.php ===
@@ -2256,15 +2200,15 @@ class AuthenticationServiceProvider extends ServiceProvider
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Providers;
+namespace Avax\Container\ServiceProviders\Providers;
 
-use Gemini\Config\Architecture\DDD\AppPath;
-use Gemini\Container\Containers\Application;
-use Gemini\Container\Containers\Bootstrapper;
-use Gemini\Container\Containers\Kernel;
-use Gemini\Container\ServiceProviders\ServiceProvider;
-use Gemini\HTTP\Router\Router;
-use Gemini\Logging\ErrorHandler;
+use Avax\Config\Architecture\DDD\AppPath;
+use Avax\Container\Containers\Application;
+use Avax\Container\Containers\Bootstrapper;
+use Avax\Container\Containers\Kernel;
+use Avax\Container\ServiceProviders\ServiceProvider;
+use Avax\HTTP\Router\Router;
+use Avax\Logging\ErrorHandler;
 
 /**
  * Class BootstrapServiceProvider
@@ -2328,30 +2272,31 @@ class BootstrapServiceProvider extends ServiceProvider
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Providers;
+namespace Avax\Container\ServiceProviders\Providers;
 
-use Gemini\Commands\App\MakeControllerCommand;
-use Gemini\Commands\App\MakeEntityCommand;
-use Gemini\Commands\App\MakeRepositoryCommand;
-use Gemini\Commands\App\MakeServiceCommand;
-use Gemini\Container\ServiceProviders\ServiceProvider;
-use Gemini\Database\Migration\Design\Column\Column;
-use Gemini\Database\Migration\Design\Mapper\FieldToDslMapperInterface;
-use Gemini\Database\Migration\Design\Mapper\FluentFieldToDslMapper;
-use Gemini\Database\Migration\Runner\Commands\{ValidateStubsCommand};
-use Gemini\Database\Migration\Runner\Commands\MakeMigrationCommand;
-use Gemini\Database\Migration\Runner\Generators\{Repository\RepositoryGenerator};
-use Gemini\Database\Migration\Runner\Generators\Controller\ControllerGenerator;
-use Gemini\Database\Migration\Runner\Generators\DTO\DtoGenerator;
-use Gemini\Database\Migration\Runner\Generators\Entity\EntityGenerator;
-use Gemini\Database\Migration\Runner\Generators\Entity\EntityQueryBuilderGenerator;
-use Gemini\Database\Migration\Runner\Generators\Migration\MigrationGenerator;
-use Gemini\Database\Migration\Runner\Generators\Service\ServiceGenerator;
-use Gemini\Database\Migration\Runner\Repository\MigrationRepositoryInterface;
-use Gemini\Database\Migration\Runner\SchemaBuilder;
-use Gemini\Database\Migration\Runner\Service\MigrationService;
-use Gemini\Database\Migration\Runner\Service\MigrationStateManager;
-use Gemini\Database\QueryBuilder\QueryBuilder;
+use Avax\Commands\App\MakeControllerCommand;
+use Avax\Commands\App\MakeEntityCommand;
+use Avax\Commands\App\MakeRepositoryCommand;
+use Avax\Commands\App\MakeServiceCommand;
+use Avax\Container\ServiceProviders\ServiceProvider;
+use Avax\Database\Migration\Design\Column\Column;
+use Avax\Database\Migration\Design\Mapper\FieldToDslMapperInterface;
+use Avax\Database\Migration\Design\Mapper\FluentFieldToDslMapper;
+use Avax\Database\Migration\Runner\Commands\{ValidateStubsCommand};
+use Avax\Database\Migration\Runner\Commands\MakeMigrationCommand;
+use Avax\Database\Migration\Runner\Generators\{Repository\RepositoryGenerator};
+use Avax\Database\Migration\Runner\Generators\Controller\ControllerGenerator;
+use Avax\Database\Migration\Runner\Generators\DTO\DtoGenerator;
+use Avax\Database\Migration\Runner\Generators\Entity\EntityGenerator;
+use Avax\Database\Migration\Runner\Generators\Entity\EntityQueryBuilderGenerator;
+use Avax\Database\Migration\Runner\Generators\Migration\MigrationGenerator;
+use Avax\Database\Migration\Runner\Generators\Service\ServiceGenerator;
+use Avax\Database\Migration\Runner\Manifest\ManifestStoreInterface;
+use Avax\Database\Migration\Runner\Repository\MigrationRepositoryInterface;
+use Avax\Database\Migration\Runner\SchemaBuilder;
+use Avax\Database\Migration\Runner\Service\MigrationExecution;
+use Avax\Database\Migration\Runner\Service\MigrationStateManager;
+use Avax\Database\QueryBuilder\QueryBuilder;
 use Psr\Log\LoggerInterface;
 
 class CommandServiceProvider extends ServiceProvider
@@ -2366,7 +2311,6 @@ class CommandServiceProvider extends ServiceProvider
             concrete: static fn() => new Column()
         );
 
-
         $this->dependencyInjector->singleton(
             abstract: FieldToDslMapperInterface::class,
             concrete: static fn() => new FluentFieldToDslMapper()
@@ -2375,10 +2319,10 @@ class CommandServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: MigrationGenerator::class,
             concrete: fn() => new MigrationGenerator(
-                mapper: $this->dependencyInjector->get(FieldToDslMapperInterface::class)
+                mapper       : $this->dependencyInjector->get(FieldToDslMapperInterface::class),
+                manifestStore: $this->dependencyInjector->get(ManifestStoreInterface::class),
             )
         );
-
 
         $this->dependencyInjector->singleton(
             abstract: EntityGenerator::class,
@@ -2410,25 +2354,25 @@ class CommandServiceProvider extends ServiceProvider
             concrete: static fn() => new ControllerGenerator()
         );
 
-        // Register the MigrationService
+        // Register the MigrationExecution
         $this->dependencyInjector->singleton(
             abstract: MigrationRepositoryInterface::class,
-            concrete: fn() => new MigrationService(
+            concrete: fn() => new MigrationExecution(
                 queryBuilder: $this->dependencyInjector->get(QueryBuilder::class),
                 logger      : $this->dependencyInjector->get(LoggerInterface::class)
             )
         );
 
         $this->dependencyInjector->singleton(
-            abstract: MigrationService::class,
-            concrete: MigrationService::class
+            abstract: MigrationExecution::class,
+            concrete: MigrationExecution::class
         );
 
         // Bind migration state manager
         $this->dependencyInjector->singleton(
             abstract: MigrationStateManager::class,
             concrete: fn() => new MigrationStateManager(
-                migrationRepository: $this->dependencyInjector->get(MigrationService::class),
+                migrationRepository: $this->dependencyInjector->get(MigrationExecution::class),
                 logger             : $this->dependencyInjector->get(LoggerInterface::class)
             )
         );
@@ -2446,14 +2390,14 @@ class CommandServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: MakeMigrationCommand::class,
             concrete: fn() => new MakeMigrationCommand(
-                migrationGenerator:          $this->dependencyInjector->get(MigrationGenerator::class),
-                entityGenerator:             $this->dependencyInjector->get(EntityGenerator::class),
+                migrationGenerator         : $this->dependencyInjector->get(MigrationGenerator::class),
+                entityGenerator            : $this->dependencyInjector->get(EntityGenerator::class),
                 entityQueryBuilderGenerator: $this->dependencyInjector->get(EntityQueryBuilderGenerator::class),
-                dtoGenerator:                $this->dependencyInjector->get(DtoGenerator::class),
-                repositoryGenerator:         $this->dependencyInjector->get(RepositoryGenerator::class),
-                serviceGenerator:            $this->dependencyInjector->get(ServiceGenerator::class),
-                migrationStateManager:       $this->dependencyInjector->get(MigrationStateManager::class),
-                logger:                      $this->dependencyInjector->get(LoggerInterface::class)
+                dtoGenerator               : $this->dependencyInjector->get(DtoGenerator::class),
+                repositoryGenerator        : $this->dependencyInjector->get(RepositoryGenerator::class),
+                serviceGenerator           : $this->dependencyInjector->get(ServiceGenerator::class),
+                migrationStateManager      : $this->dependencyInjector->get(MigrationStateManager::class),
+                logger                     : $this->dependencyInjector->get(LoggerInterface::class)
             )
         );
 
@@ -2513,10 +2457,10 @@ class CommandServiceProvider extends ServiceProvider
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Providers;
+namespace Avax\Container\ServiceProviders\Providers;
 
-use Gemini\Config\Configurator\FileLoader\ConfigFileLoader;
-use Gemini\Container\ServiceProviders\ServiceProvider;
+use Avax\Config\Configurator\FileLoader\ConfigFileLoader;
+use Avax\Container\ServiceProviders\ServiceProvider;
 use Infrastructure\Config\Service\Config;
 
 class ConfigurationServiceProvider extends ServiceProvider
@@ -2559,10 +2503,10 @@ class ConfigurationServiceProvider extends ServiceProvider
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Providers;
+namespace Avax\Container\ServiceProviders\Providers;
 
-use Gemini\Container\ServiceProviders\ServiceProvider;
-use Gemini\Database\{Connection\ConnectionPool, DatabaseConnection, QueryBuilder\QueryBuilder, QueryBuilder\UnitOfWork};
+use Avax\Container\ServiceProviders\ServiceProvider;
+use Avax\Database\{Connection\ConnectionPool, DatabaseConnection, QueryBuilder\QueryBuilder, QueryBuilder\UnitOfWork};
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -2658,21 +2602,54 @@ class DatabaseServiceProvider extends ServiceProvider
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Providers;
+namespace Avax\Container\ServiceProviders\Providers;
 
-use Gemini\Container\ServiceProviders\ServiceProvider;
-use Gemini\Filesystem\Storage\FileStorageInterface;
-use Gemini\Filesystem\Storage\Filesystem;
-use Gemini\Filesystem\Storage\LocalFileStorage;
+use Avax\Container\ServiceProviders\ServiceProvider;
+use Avax\Database\Migration\Runner\Manifest\ManifestDB;
+use Avax\Database\Migration\Runner\Manifest\ManifestDBInterface;
+use Avax\Database\Migration\Runner\Manifest\ManifestStore;
+use Avax\Database\Migration\Runner\Manifest\ManifestStoreInterface;
+use Avax\Filesystem\Storage\FileStorageInterface;
+use Avax\Filesystem\Storage\Filesystem;
+use Avax\Filesystem\Storage\LocalFileStorage;
 
-class FilesystemServiceProvider extends ServiceProvider
+/**
+ * Service Provider responsible for filesystem-related dependency registrations.
+ *
+ * This provider manages the registration of filesystem services and their dependencies,
+ * including local storage implementations, filesystem abstractions, and migration manifest
+ * storage components. It follows the Repository pattern for data access abstraction and
+ * supports the Domain-Driven Design principles through clear boundary definitions.
+ *
+ * @package Avax\Container\ServiceProviders\Providers
+ * @final   This class is not intended for inheritance
+ */
+final class FilesystemServiceProvider extends ServiceProvider
 {
+    /**
+     * Registers filesystem-related services in the dependency injection container.
+     *
+     * This method implements the registration of core filesystem services following
+     * the Interface Segregation Principle (ISP) and Dependency Inversion Principle (DIP).
+     * It establishes the necessary bindings for:
+     * - File storage implementations
+     * - Filesystem abstraction layer
+     * - Migration manifest storage system
+     *
+     * @return void
+     *
+     */
     public function register() : void
     {
-        // Bind FileStorageInterface to its implementation
-        $this->dependencyInjector->singleton(abstract: FileStorageInterface::class, concrete: LocalFileStorage::class);
+        // Bind the file storage interface to its local implementation
+        // This provides the foundational storage capabilities
+        $this->dependencyInjector->singleton(
+            abstract: FileStorageInterface::class,
+            concrete: LocalFileStorage::class
+        );
 
-        // Bind Filesystem class to provide file management functionality
+        // Register the filesystem service with its storage dependency
+        // Creates a new Filesystem instance with proper storage injection
         $this->dependencyInjector->singleton(
             abstract: Filesystem::class,
             concrete: fn() : Filesystem => new Filesystem(
@@ -2680,120 +2657,75 @@ class FilesystemServiceProvider extends ServiceProvider
             )
         );
 
-        // Bind 'Storage' alias to resolve to Filesystem
+        // Establish an alias 'Storage' for easier access to the Filesystem service
+        // This maintains backward compatibility and provides a convenient access point
         $this->dependencyInjector->singleton(
             abstract: 'Storage',
             concrete: fn() : mixed => $this->dependencyInjector->get(
                 id: Filesystem::class
             )
         );
+
+        // Register-manifest-related services for migration tracking
+        $this->registerManifestServices();
     }
 
-    public function boot() : void {}
-}
-
-=== ServiceProviders/Providers/HttpClientServiceProvider.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Gemini\Container\ServiceProviders\Providers;
-
-use Gemini\Container\ServiceProviders\ServiceProvider;
-use Gemini\HTTP\HttpClient\Config\Clients\Guzzle\GuzzleClient;
-use Gemini\HTTP\HttpClient\Config\Clients\Guzzle\HttpClient;
-use Gemini\HTTP\HttpClient\Config\Middleware\Policies\Concrats\RetryPolicyInterface;
-use Gemini\HTTP\HttpClient\Config\Middleware\Policies\ServerErrorRetryPolicy;
-use Gemini\HTTP\HttpClient\Config\Middleware\RetryMiddleware;
-use Gemini\HTTP\Response\ResponseFactory;
-use GuzzleHttp\Client;
-use GuzzleHttp\HandlerStack;
-use Psr\Http\Message\UriInterface;
-use Psr\Log\LoggerInterface;
-
-/**
- * Class HttpClientServiceProvider
- *
- * Registers HTTP client-related services in the container.
- */
-class HttpClientServiceProvider extends ServiceProvider
-{
     /**
-     * Registers the necessary services into the service container.
+     * Registers manifest-related services for migration management.
+     *
+     * Creates and configures the manifest storage system used for tracking
+     * database migrations. This includes both the low-level storage implementation
+     * and the higher-level manifest management interface.
+     *
+     * @return void
+     *
      */
-    public function register() : void
+    private function registerManifestServices() : void
     {
+        // Bind the manifest database interface to its concrete implementation
+        // Configures the storage location for migration manifests
         $this->dependencyInjector->singleton(
-            abstract: RetryPolicyInterface::class,
-            concrete: static fn() : ServerErrorRetryPolicy => new ServerErrorRetryPolicy() // TODO: double check
-        );
-
-        // Register RetryMiddleware
-        $this->dependencyInjector->singleton(
-            abstract: RetryMiddleware::class,
-            concrete: fn() : RetryMiddleware => new RetryMiddleware(
-                logger    : $this->dependencyInjector->get(LoggerInterface::class),
-                maxRetries: 3, // Configurable retry wait time in ms
+            abstract: ManifestDBInterface::class,
+            concrete: static fn() : ManifestDB => new ManifestDB(
+                storagePath: storage_path(path: 'manifest')
             )
         );
 
-        // Register HttpClient
+        // Register the manifest store service with its database dependency
+        // Provides the high-level interface for manifest operations
         $this->dependencyInjector->singleton(
-            abstract: HttpClient::class,
-            concrete: fn() : HttpClient => new HttpClient(
-                retryMiddleware: $this->dependencyInjector->get(RetryMiddleware::class),
-                logger         : $this->dependencyInjector->get(LoggerInterface::class),
-                baseUri        : $this->dependencyInjector->get(UriInterface::class) // Inject base API URL
-            )
-        );
-
-        // Register GuzzleClient
-        $this->dependencyInjector->singleton(
-            abstract: GuzzleClient::class,
-            concrete: fn() : GuzzleClient => new GuzzleClient(
-                httpClient     : $this->dependencyInjector->get(HttpClient::class),
-                dataLogger     : $this->dependencyInjector->get(LoggerInterface::class),
-                responseFactory: $this->dependencyInjector->get(ResponseFactory::class)
-            )
-        );
-
-        // Optional: Register Guzzle HandlerStack
-        $this->dependencyInjector->singleton(
-            abstract: HandlerStack::class,
-            concrete: static fn() : HandlerStack => HandlerStack::create()
-        );
-
-        // Optional: Register Guzzle Client
-        $this->dependencyInjector->singleton(
-            abstract: Client::class,
-            concrete: fn() : Client => new Client(
-                ['handler' => $this->dependencyInjector->get(HandlerStack::class)]
+            abstract: ManifestStoreInterface::class,
+            concrete: fn() : ManifestStore => new ManifestStore(
+                db: $this->dependencyInjector->get(id: ManifestDBInterface::class)
             )
         );
     }
 
     /**
-     * Starts the boot process for the class.
+     * Performs any post-registration boot operations.
+     *
+     * Currently, this method has no implementation as no boot-time operations
+     * are required for filesystem services. Reserved for future use.
+     *
+     * @return void
      */
     public function boot() : void
     {
-        // Optionally add bootstrapping logic if necessary
-        // This could include preloading configurations or resolving dependencies
+        // No boot operations required for filesystem services
     }
 }
-
 === ServiceProviders/Providers/HTTPServiceProvider.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Providers;
+namespace Avax\Container\ServiceProviders\Providers;
 
-use Gemini\Container\ServiceProviders\ServiceProvider;
-use Gemini\HTTP\Request\Request;
-use Gemini\HTTP\Response\Classes\{Response, Stream, StreamFactory};
-use Gemini\HTTP\Response\ResponseFactory;
-use Gemini\HTTP\URI\UriBuilder;
+use Avax\Container\ServiceProviders\ServiceProvider;
+use Avax\HTTP\Request\Request;
+use Avax\HTTP\Response\Classes\{Response, Stream, StreamFactory};
+use Avax\HTTP\Response\ResponseFactory;
+use Avax\HTTP\URI\UriBuilder;
 use Psr\Http\Message\{ResponseFactoryInterface,
     ResponseInterface,
     ServerRequestInterface,
@@ -2894,17 +2826,107 @@ class HTTPServiceProvider extends ServiceProvider
 
 }
 
+=== ServiceProviders/Providers/HttpClientServiceProvider.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Container\ServiceProviders\Providers;
+
+use Avax\Container\ServiceProviders\ServiceProvider;
+use Avax\HTTP\HttpClient\Config\Clients\Guzzle\GuzzleClient;
+use Avax\HTTP\HttpClient\Config\Clients\Guzzle\HttpClient;
+use Avax\HTTP\HttpClient\Config\Middleware\Policies\Concrats\RetryPolicyInterface;
+use Avax\HTTP\HttpClient\Config\Middleware\Policies\ServerErrorRetryPolicy;
+use Avax\HTTP\HttpClient\Config\Middleware\RetryMiddleware;
+use Avax\HTTP\Response\ResponseFactory;
+use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
+use Psr\Http\Message\UriInterface;
+use Psr\Log\LoggerInterface;
+
+/**
+ * Class HttpClientServiceProvider
+ *
+ * Registers HTTP client-related services in the container.
+ */
+class HttpClientServiceProvider extends ServiceProvider
+{
+    /**
+     * Registers the necessary services into the service container.
+     */
+    public function register() : void
+    {
+        $this->dependencyInjector->singleton(
+            abstract: RetryPolicyInterface::class,
+            concrete: static fn() : ServerErrorRetryPolicy => new ServerErrorRetryPolicy() // TODO: double check
+        );
+
+        // Register RetryMiddleware
+        $this->dependencyInjector->singleton(
+            abstract: RetryMiddleware::class,
+            concrete: fn() : RetryMiddleware => new RetryMiddleware(
+                logger    : $this->dependencyInjector->get(LoggerInterface::class),
+                maxRetries: 3, // Configurable retry wait time in ms
+            )
+        );
+
+        // Register HttpClient
+        $this->dependencyInjector->singleton(
+            abstract: HttpClient::class,
+            concrete: fn() : HttpClient => new HttpClient(
+                retryMiddleware: $this->dependencyInjector->get(RetryMiddleware::class),
+                logger         : $this->dependencyInjector->get(LoggerInterface::class),
+                baseUri        : $this->dependencyInjector->get(UriInterface::class) // Inject base API URL
+            )
+        );
+
+        // Register GuzzleClient
+        $this->dependencyInjector->singleton(
+            abstract: GuzzleClient::class,
+            concrete: fn() : GuzzleClient => new GuzzleClient(
+                httpClient     : $this->dependencyInjector->get(HttpClient::class),
+                dataLogger     : $this->dependencyInjector->get(LoggerInterface::class),
+                responseFactory: $this->dependencyInjector->get(ResponseFactory::class)
+            )
+        );
+
+        // Optional: Register Guzzle HandlerStack
+        $this->dependencyInjector->singleton(
+            abstract: HandlerStack::class,
+            concrete: static fn() : HandlerStack => HandlerStack::create()
+        );
+
+        // Optional: Register Guzzle Client
+        $this->dependencyInjector->singleton(
+            abstract: Client::class,
+            concrete: fn() : Client => new Client(
+                ['handler' => $this->dependencyInjector->get(HandlerStack::class)]
+            )
+        );
+    }
+
+    /**
+     * Starts the boot process for the class.
+     */
+    public function boot() : void
+    {
+        // Optionally add bootstrapping logic if necessary
+        // This could include preloading configurations or resolving dependencies
+    }
+}
+
 === ServiceProviders/Providers/LoggingServiceProvider.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Providers;
+namespace Avax\Container\ServiceProviders\Providers;
 
-use Gemini\Container\ServiceProviders\ServiceProvider;
-use Gemini\HTTP\Session\Contracts\SessionLoggerInterface;
-use Gemini\Logging\ErrorHandler;
-use Gemini\Logging\LoggerFactory;
+use Avax\Container\ServiceProviders\ServiceProvider;
+use Avax\HTTP\Session\Contracts\SessionLoggerInterface;
+use Avax\Logging\ErrorHandler;
+use Avax\Logging\LoggerFactory;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
@@ -2967,26 +2989,26 @@ class LoggingServiceProvider extends ServiceProvider
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Providers;
+namespace Avax\Container\ServiceProviders\Providers;
 
-use Gemini\Auth\Interface\HTTP\Middleware\AuthenticationMiddleware;
-use Gemini\Auth\Interface\HTTP\Middleware\PermissionMiddleware;
-use Gemini\Auth\Interface\HTTP\Middleware\RoleMiddleware;
-use Gemini\Config\Architecture\DDD\AppPath;
-use Gemini\Container\ServiceProviders\ServiceProvider;
-use Gemini\HTTP\Middleware\CorsMiddleware;
-use Gemini\HTTP\Middleware\CSRF\CsrfMiddleware;
-use Gemini\HTTP\Middleware\ExceptionHandlerMiddleware;
-use Gemini\HTTP\Middleware\JsonResponseMiddleware;
-use Gemini\HTTP\Middleware\MiddlewareGroupResolver;
-use Gemini\HTTP\Middleware\MiddlewarePipeline;
-use Gemini\HTTP\Middleware\MiddlewarePipelineLogger;
-use Gemini\HTTP\Middleware\MiddlewareResolver;
-use Gemini\HTTP\Middleware\RateLimiterMiddleware;
-use Gemini\HTTP\Middleware\RequestLoggerMiddleware;
-use Gemini\HTTP\Middleware\SecurityHeadersMiddleware;
-use Gemini\HTTP\Middleware\SessionLifecycleMiddleware;
-use Gemini\HTTP\Response\ResponseFactory;
+use Avax\Auth\Interface\HTTP\Middleware\AuthenticationMiddleware;
+use Avax\Auth\Interface\HTTP\Middleware\PermissionMiddleware;
+use Avax\Auth\Interface\HTTP\Middleware\RoleMiddleware;
+use Avax\Config\Architecture\DDD\AppPath;
+use Avax\Container\ServiceProviders\ServiceProvider;
+use Avax\HTTP\Middleware\CorsMiddleware;
+use Avax\HTTP\Middleware\CSRF\CsrfMiddleware;
+use Avax\HTTP\Middleware\ExceptionHandlerMiddleware;
+use Avax\HTTP\Middleware\JsonResponseMiddleware;
+use Avax\HTTP\Middleware\MiddlewareGroupResolver;
+use Avax\HTTP\Middleware\MiddlewarePipeline;
+use Avax\HTTP\Middleware\MiddlewarePipelineLogger;
+use Avax\HTTP\Middleware\MiddlewareResolver;
+use Avax\HTTP\Middleware\RateLimiterMiddleware;
+use Avax\HTTP\Middleware\RequestLoggerMiddleware;
+use Avax\HTTP\Middleware\SecurityHeadersMiddleware;
+use Avax\HTTP\Middleware\SessionLifecycleMiddleware;
+use Avax\HTTP\Response\ResponseFactory;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -3114,22 +3136,22 @@ final class MiddlewareServiceProvider extends ServiceProvider
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Providers;
+namespace Avax\Container\ServiceProviders\Providers;
 
-use Gemini\Container\ServiceProviders\ServiceProvider;
-use Gemini\HTTP\Dispatcher\ControllerDispatcher;
-use Gemini\HTTP\Middleware\MiddlewareResolver;
-use Gemini\HTTP\Router\Bootstrap\RouteBootstrapper;
-use Gemini\HTTP\Router\Cache\RouteCacheCompiler;
-use Gemini\HTTP\Router\Cache\RouteCacheLoader;
-use Gemini\HTTP\Router\Kernel\RouterKernel;
-use Gemini\HTTP\Router\Router;
-use Gemini\HTTP\Router\RouterInterface;
-use Gemini\HTTP\Router\Routing\HttpRequestRouter;
-use Gemini\HTTP\Router\Routing\RouteGroupRegistrar;
-use Gemini\HTTP\Router\Routing\RoutePipelineFactory;
-use Gemini\HTTP\Router\Support\HeadRequestFallback;
-use Gemini\HTTP\Router\Validation\RouteConstraintValidator;
+use Avax\Container\ServiceProviders\ServiceProvider;
+use Avax\HTTP\Dispatcher\ControllerDispatcher;
+use Avax\HTTP\Middleware\MiddlewareResolver;
+use Avax\HTTP\Router\Bootstrap\RouteBootstrapper;
+use Avax\HTTP\Router\Cache\RouteCacheCompiler;
+use Avax\HTTP\Router\Cache\RouteCacheLoader;
+use Avax\HTTP\Router\Kernel\RouterKernel;
+use Avax\HTTP\Router\Router;
+use Avax\HTTP\Router\RouterInterface;
+use Avax\HTTP\Router\Routing\HttpRequestRouter;
+use Avax\HTTP\Router\Routing\RouteGroupRegistrar;
+use Avax\HTTP\Router\Routing\RoutePipelineFactory;
+use Avax\HTTP\Router\Support\HeadRequestFallback;
+use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -3256,13 +3278,13 @@ class RouterServiceProvider extends ServiceProvider
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Providers;
+namespace Avax\Container\ServiceProviders\Providers;
 
-use Gemini\Auth\Application\Service\AccessControl\AccessControlService;
-use Gemini\Auth\Application\Service\RateLimiterService;
-use Gemini\Container\ServiceProviders\ServiceProvider;
-use Gemini\HTTP\Security\CsrfTokenManager;
-use Gemini\HTTP\Session\Contracts\SessionInterface;
+use Avax\Auth\Application\Service\AccessControl\AccessControlService;
+use Avax\Auth\Application\Service\RateLimiterService;
+use Avax\Container\ServiceProviders\ServiceProvider;
+use Avax\HTTP\Security\CsrfTokenManager;
+use Avax\HTTP\Session\Contracts\SessionInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -3320,20 +3342,16 @@ class SecurityServiceProvider extends ServiceProvider
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Providers;
+namespace Avax\Container\ServiceProviders\Providers;
 
-use Gemini\Container\ServiceProviders\ServiceProvider;
-use Gemini\HTTP\Session\Contracts\{Factories\BagRegistryFactoryInterface,
-    SessionBuilderInterface,
-    SessionInterface,
-    SessionManagerInterface,
-    SessionStoreInterface};
-use Gemini\HTTP\Session\Drivers\NativeSession;
-use Gemini\HTTP\Session\SessionBuilder;
-use Gemini\HTTP\Session\SessionContext;
-use Gemini\HTTP\Session\SessionManager;
-use Gemini\HTTP\Session\Stores\NativeSessionStore;
-use Gemini\HTTP\Session\Support\Factories\BagRegistryFactory;
+use Avax\Container\ServiceProviders\ServiceProvider;
+use Avax\HTTP\Session\Contracts\SessionInterface;
+use Avax\HTTP\Session\Contracts\SessionContract;
+use Avax\HTTP\Session\Contracts\Storage\Store;
+use Avax\HTTP\Session\Providers\SessionProvider;
+use Avax\HTTP\Session\Security\CookieManager;
+use Avax\HTTP\Session\Adapters\SessionAdapter;
+use Avax\HTTP\Session\Storage\NativeStore;
 
 final class SessionServiceProvider extends ServiceProvider
 {
@@ -3342,50 +3360,44 @@ final class SessionServiceProvider extends ServiceProvider
      */
     public function register() : void
     {
-        $this->bindSingleton(abstract: SessionStoreInterface::class, concrete: NativeSessionStore::class);
-        $this->bindSingleton(abstract: BagRegistryFactoryInterface::class, concrete: BagRegistryFactory::class);
+        $this->dependencyInjector->singleton(
+            abstract: CookieManager::class,
+            concrete: static fn() => CookieManager::strict()
+        );
 
-        // Main SessionInterface (deferred registry via closure)
-        $this->dependencyInjector->bind(
+        $this->dependencyInjector->singleton(
+            abstract: SessionAdapter::class,
+            concrete: fn() => new SessionAdapter(
+                cookieManager: $this->dependencyInjector->get(id: CookieManager::class)
+            )
+        );
+
+        $this->dependencyInjector->singleton(
+            abstract: Store::class,
+            concrete: fn() => new NativeStore(
+                cookieManager: $this->dependencyInjector->get(id: CookieManager::class)
+            )
+        );
+
+        $this->dependencyInjector->singleton(
+            abstract: SessionProvider::class,
+            concrete: fn() => new SessionProvider(
+                store         : $this->dependencyInjector->get(id: Store::class),
+                cookieManager : $this->dependencyInjector->get(id: CookieManager::class),
+                sessionAdapter: $this->dependencyInjector->get(id: SessionAdapter::class)
+            )
+        );
+
+        // Bind contracts/aliases
+        $this->dependencyInjector->singleton(
             abstract: SessionInterface::class,
-            concrete: static fn($c) => new NativeSession(
-                store          : $c->get(SessionStoreInterface::class),
-                registryFactory: static fn(SessionInterface $session) => $c
-                    ->get(BagRegistryFactoryInterface::class)
-                    ->create($session)
-            )
-        );
-
-        // Use session->getRegistry() directly wherever needed
-        $this->dependencyInjector->singleton(
-            abstract: SessionBuilderInterface::class,
-            concrete: fn() => new SessionBuilder(
-                session : $this->resolve(abstract: SessionInterface::class),
-                registry: $this->resolve(abstract: SessionInterface::class)->getRegistry(),
-                context : new SessionContext(namespace: 'default')
-            )
+            concrete: fn() => $this->dependencyInjector->get(id: SessionProvider::class)
         );
 
         $this->dependencyInjector->singleton(
-            abstract: SessionManagerInterface::class,
-            concrete: fn() => new SessionManager(
-                session: $this->resolve(abstract: SessionInterface::class),
-                bags   : $this->resolve(abstract: SessionInterface::class)->getRegistry()
-            )
+            abstract: SessionContract::class,
+            concrete: fn() => $this->dependencyInjector->get(id: SessionProvider::class)
         );
-    }
-
-    private function bindSingleton(string $abstract, string $concrete) : void
-    {
-        $this->dependencyInjector->singleton(
-            abstract: $abstract,
-            concrete: static fn() => new $concrete()
-        );
-    }
-
-    private function resolve(string $abstract) : mixed
-    {
-        return $this->dependencyInjector->get(id: $abstract);
     }
 
     public function boot() : void {}
@@ -3396,10 +3408,10 @@ final class SessionServiceProvider extends ServiceProvider
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders\Providers;
+namespace Avax\Container\ServiceProviders\Providers;
 
-use Gemini\Container\ServiceProviders\ServiceProvider;
-use Gemini\View\BladeTemplateEngine;
+use Avax\Container\ServiceProviders\ServiceProvider;
+use Avax\View\BladeTemplateEngine;
 use Infrastructure\Config\Service\Config;
 
 class ViewServiceProvider extends ServiceProvider
@@ -3434,10 +3446,10 @@ class ViewServiceProvider extends ServiceProvider
 
 declare(strict_types=1);
 
-namespace Gemini\Container\ServiceProviders;
+namespace Avax\Container\ServiceProviders;
 
-use Gemini\Container\Containers\DependencyInjector;
-use Gemini\Container\ServiceProviders\Contracts\ServiceProviderInterface;
+use Avax\Container\Containers\DependencyInjector;
+use Avax\Container\ServiceProviders\Contracts\ServiceProviderInterface;
 
 /**
  * Class ServiceProvider

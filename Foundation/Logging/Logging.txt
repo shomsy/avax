@@ -1,0 +1,1125 @@
+=== ErrorHandler.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Logging;
+
+use ErrorException;
+use Avax\Exceptions\ValidationException;
+use Avax\HTTP\Response\JsonResponse;
+use JetBrains\PhpStorm\NoReturn;
+use Psr\Log\LoggerInterface;
+use Spatie\Ignition\Ignition;
+use Throwable;
+
+/**
+ * Centralized application error handler.
+ *
+ * Manages exceptions, errors, and shutdown handling consistently across application lifecycle.
+ * Response rendered based on configured EXCEPTION_RESPONSE_FORMAT (.env).
+ */
+final readonly class ErrorHandler
+{
+    /**
+     * Available rendering formats for exceptions.
+     */
+    private const string RENDER_FORMAT_IGNITION = 'ignition';
+
+    private const string RENDER_FORMAT_JSON     = 'json';
+
+    /**
+     * Constructor with property promotion for dependency injection.
+     *
+     * @param LoggerInterface $logger Logger for error logging.
+     */
+    public function __construct(private LoggerInterface $logger) {}
+
+    /**
+     * Initializes global error handling for application.
+     */
+    public function initialize() : void
+    {
+        ob_start();
+        set_exception_handler([$this, 'handle']);
+        set_error_handler([$this, 'convertErrorToException']);
+        register_shutdown_function([$this, 'handleShutdown']);
+        $this->registerCliSignalHandlers();
+    }
+
+    /**
+     * Registers CLI signal handlers for graceful shutdown.
+     */
+    private function registerCliSignalHandlers() : void
+    {
+        if (PHP_SAPI === 'cli' && function_exists('pcntl_signal')) {
+            pcntl_signal(SIGTERM, fn() => $this->exitGracefully(signal: 'SIGTERM'));
+            pcntl_signal(SIGINT, fn() => $this->exitGracefully(signal: 'SIGINT'));
+        }
+    }
+
+    /**
+     * Handles CLI graceful shutdown signals.
+     */
+    #[NoReturn]
+    private function exitGracefully(string $signal) : void
+    {
+        $this->logger->warning(
+            message: "⚠️ {$signal} received – exiting gracefully.",
+            context: ['file' => __FILE__, 'line' => __LINE__]
+        );
+
+        exit(0);
+    }
+
+    /**
+     * Converts PHP errors to ErrorException instances.
+     *
+     * @throws ErrorException
+     */
+    public function convertErrorToException(
+        int    $severity,
+        string $message,
+        string $file,
+        int    $line
+    ) : never {
+        throw new ErrorException(
+            message : $message,
+            code    : 0,
+            severity: $severity,
+            filename: $file,
+            line    : $line
+        );
+    }
+
+    /**
+     * Handles fatal shutdown errors.
+     *
+     * @throws \JsonException
+     */
+    public function handleShutdown() : void
+    {
+        $error = error_get_last();
+
+        if ($error !== null && isset($error['message'], $error['file'], $error['line'])) {
+            $this->logger->error(
+                message: "⚠️ Fatal error: {$error['message']}",
+                context: ['file' => $error['file'], 'line' => $error['line'], 'type' => $error['type'] ?? E_ERROR]
+            );
+
+            $this->handle(
+                throwable: new ErrorException(
+                               message : $error['message'],
+                               code    : 0,
+                               severity: $error['type'] ?? E_ERROR,
+                               filename: $error['file'],
+                               line    : $error['line']
+                           )
+            );
+        }
+    }
+
+    /**
+     * Handles uncaught exceptions globally.
+     *
+     * @throws \JsonException
+     */
+    public function handle(Throwable $throwable) : void
+    {
+        try {
+            $this->report(throwable: $throwable);
+
+            match ($this->renderFormat()) {
+                self::RENDER_FORMAT_JSON => $this->renderJson($throwable),
+                default                  => $this->renderIgnition($throwable)
+            };
+        } catch (Throwable $e) {
+            $this->logger->critical(
+                message: "⚠️ Error handler crashed: {$e->getMessage()}",
+                context: ['file' => $e->getFile(), 'line' => $e->getLine(), 'exception' => $e]
+            );
+
+            echo (new JsonResponse(status: 500, message: 'Internal Server Error'))->toJson();
+        }
+
+        if (ob_get_length() > 0) {
+            ob_end_flush();
+        } elseif (ob_get_status()) {
+            ob_end_clean();
+        }
+    }
+
+    /**
+     * Reports throwable unless explicitly excluded.
+     */
+    private function report(Throwable $throwable) : void
+    {
+        if ($throwable instanceof ValidationException) {
+            return;
+        }
+
+        $this->logger->error(
+            message: $throwable->getMessage(),
+            context: ['file' => $throwable->getFile(), 'line' => $throwable->getLine(), 'exception' => $throwable]
+        );
+    }
+
+    /**
+     * Determines an exception response format based on configuration.
+     */
+    private function renderFormat() : string
+    {
+        return env(key: 'EXCEPTION_RESPONSE_FORMAT', default: self::RENDER_FORMAT_IGNITION);
+    }
+
+    /**
+     * Renders JSON formatted error response.
+     *
+     * @throws \JsonException
+     */
+    private function renderJson(Throwable $throwable) : void
+    {
+        $response = $throwable instanceof ValidationException
+            ? new JsonResponse(status: 422, message: 'Validation failed', data: $throwable->getErrors())
+            : new JsonResponse(status: 500, message: 'An unexpected error occurred');
+
+        if (! headers_sent()) {
+            http_response_code($response->status);
+            header('Content-Type: application/json');
+        }
+
+        echo $response->toJson();
+    }
+
+    /**
+     * Renders Ignition HTML formatted error response.
+     */
+    private function renderIgnition(Throwable $throwable) : void
+    {
+        Ignition::make()
+            ->shouldDisplayException(shouldDisplayException: true)
+            ->setTheme(theme: 'dark')
+            ->register()
+            ->handleException(throwable: $throwable);
+    }
+}
+
+=== ErrorLogger.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Logging;
+
+use Carbon\Carbon;
+use JsonException;
+use Psr\Log\InvalidArgumentException;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
+use Stringable;
+use Throwable;
+
+/**
+ * ✅ Class ErrorLogger
+ *
+ * Implements PSR-3 LoggerInterface for standardized logging.
+ * This logger formats and stores log messages using a LogWriterInterface.
+ *
+ * 🛠 Key Features:
+ * - Structured JSON logging for improved readability
+ * - Automatic exception handling with full stack traces
+ * - Uses PSR-3 log levels with strict validation
+ * - Ensures all logs are properly formatted and easy to debug
+ */
+final readonly class ErrorLogger implements LoggerInterface
+{
+    /**
+     * 🚀 Initializes the logger with a LogWriterInterface instance.
+     *
+     * @param LogWriterInterface $logWriter The log writer responsible for persisting log messages.
+     */
+    public function __construct(private LogWriterInterface $logWriter) {}
+
+    // ✅ All standard PSR-3 log levels, mapped to the central logging function
+
+    /**
+     * 🚨 Logs an EMERGENCY-level message.
+     * 🛑 Used for **critical system failures** where the application is unusable.
+     *
+     * 🔥 **Example Scenarios:**
+     * - Database corruption.
+     * - **System-wide failures** that require **immediate** action.
+     * - Security breaches (e.g., private data leaks).
+     * - Server crashes or complete service downtime.
+     *
+     * ✅ **Best Practices:**
+     * - **Triggers immediate alerts** (e.g., SMS, email, monitoring tools).
+     * - **Used sparingly**—this is the **highest severity level**.
+     *
+     * @param Stringable|string    $message The emergency message.
+     * @param array<string, mixed> $context Additional context for debugging.
+     */
+    public function emergency(Stringable|string $message, array $context = []) : void
+    {
+        $this->callLogMethod(level: LogLevel::EMERGENCY, message: $message, context: $context);
+    }
+
+    /**
+     * 🛠 Central method for logging messages at different levels.
+     * ✅ Reduces code duplication by handling all log levels in a single function.
+     *
+     * @param string               $level   The PSR-3 log level.
+     * @param Stringable|string    $message The log message.
+     * @param array<string, mixed> $context Additional log context.
+     */
+    private function callLogMethod(string $level, Stringable|string $message, array $context = []) : void
+    {
+        $this->log(level: $level, message: $message, context: $context);
+    }
+
+    /**
+     * ✅ Main logging function that:
+     * - Validates the log level
+     * - Formats the log message with timestamp
+     * - Converts exceptions to structured JSON
+     * - Writes the log entry using LogWriterInterface
+     *
+     * @param mixed                $level   The severity level (e.g., LogLevel::ERROR).
+     * @param Stringable|string    $message The log message.
+     * @param array<string, mixed> $context Additional context for debugging.
+     *
+     * @throws InvalidArgumentException If the log level is invalid.
+     */
+    public function log(mixed $level, Stringable|string $message, array $context = []) : void
+    {
+        // 🔍 Validate log level before proceeding
+        if (! $this->isValidLogLevel($level)) {
+            throw new InvalidArgumentException(message: "❌ Invalid log level: {$level}");
+        }
+
+        // 📝 Format the log entry with Belgrade timezone
+        $formattedMessage = sprintf(
+            "[%s] %s %s %s\n",
+            Carbon::now()->setTimezone('Europe/Belgrade')->format('Y-m-d H:i:s'),
+            $this->getLogPrefix($level),
+            (string) $message,
+            $this->formatContext($context)
+        );
+
+        // 📡 Write the log entry to the designated log writer
+        $this->logWriter->write(content: $formattedMessage);
+    }
+
+
+    /**
+     * 🔍 Validates if the provided log level is a valid PSR-3 level.
+     */
+    private function isValidLogLevel(mixed $level) : bool
+    {
+        return is_string($level)
+               && in_array(
+                   $level,
+                   [
+                       LogLevel::EMERGENCY,
+                       LogLevel::ALERT,
+                       LogLevel::CRITICAL,
+                       LogLevel::ERROR,
+                       LogLevel::WARNING,
+                       LogLevel::NOTICE,
+                       LogLevel::INFO,
+                       LogLevel::DEBUG,
+                   ],
+                   true
+               );
+    }
+
+    /**
+     * 🔥 Provides an emoji-based prefix for log levels.
+     * ✅ Improves readability in logs.
+     */
+    private function getLogPrefix(string $level) : string
+    {
+        return match ($level) {
+            LogLevel::EMERGENCY => "🚨 [EMERGENCY]",
+            LogLevel::ALERT     => "🚨 [ALERT]",
+            LogLevel::CRITICAL  => "🔥 [CRITICAL]",
+            LogLevel::ERROR     => "❌ [ERROR]",
+            LogLevel::WARNING   => "⚠️ [WARNING]",
+            LogLevel::NOTICE    => "ℹ️ [NOTICE]",
+            LogLevel::INFO      => "✅ [INFO]",
+            LogLevel::DEBUG     => "🐞 [DEBUG]",
+            default             => "[LOG]",
+        };
+    }
+
+    /**
+     * 📌 Converts log context to structured JSON.
+     * - Handles exceptions and extracts full details.
+     * - Uses `JSON_PRETTY_PRINT` for improved log readability.
+     *
+     * @param array<string, mixed> $context
+     *
+     * @return string JSON encoded context string or fallback JSON on failure.
+     */
+    private function formatContext(array $context) : string
+    {
+        // ✅ Extract full exception details if present
+        if (isset($context['exception']) && $context['exception'] instanceof Throwable) {
+            $exception = $context['exception'];
+
+            $context['exception'] = [
+                'message'  => $exception->getMessage(),
+                'file'     => $exception->getFile(),
+                'line'     => $exception->getLine(),
+                'trace'    => explode("\n", $exception->getTraceAsString()), // Stack trace formatted as an array
+                'code'     => $exception->getPrevious() ? $exception->getPrevious()->getCode() : $exception->getCode(),
+                'previous' => $exception->getPrevious() ? [
+                    'message' => $exception->getPrevious()->getMessage(),
+                    'file'    => $exception->getPrevious()->getFile(),
+                    'line'    => $exception->getPrevious()->getLine(),
+                ] : null,
+            ];
+        }
+
+        try {
+            return json_encode($context, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        } catch (JsonException $e) {
+            return json_encode(['error' => 'Context encoding failed', 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * 🚨 Logs an ALERT-level message.
+     * 🔥 Used for situations that require immediate attention.
+     *
+     * Example: Database connection failures, critical security breaches.
+     *
+     * @param Stringable|string    $message The alert message.
+     * @param array<string, mixed> $context Additional context for debugging.
+     */
+    public function alert(Stringable|string $message, array $context = []) : void
+    {
+        $this->callLogMethod(level: LogLevel::ALERT, message: $message, context: $context);
+    }
+
+    /**
+     * 🔥 Logs a CRITICAL-level message.
+     * ✅ Indicates a severe problem that requires immediate intervention.
+     *
+     * Example: Application component failure, major errors preventing execution.
+     *
+     * @param Stringable|string    $message The critical message.
+     * @param array<string, mixed> $context Additional context for debugging.
+     */
+    public function critical(Stringable|string $message, array $context = []) : void
+    {
+        $this->callLogMethod(level: LogLevel::CRITICAL, message: $message, context: $context);
+    }
+
+    /**
+     * ❌ Logs an ERROR-level message.
+     * ⚠️ Used for runtime errors that must be logged and monitored.
+     *
+     * Example: Exception thrown in production, failed API requests.
+     *
+     * @param Stringable|string    $message The error message.
+     * @param array<string, mixed> $context Additional context for debugging.
+     */
+    public function error(Stringable|string $message, array $context = []) : void
+    {
+        $this->callLogMethod(level: LogLevel::ERROR, message: $message, context: $context);
+    }
+
+    /**
+     * ⚠️ Logs a WARNING-level message.
+     * 🔍 Used for potential issues that should be investigated but are not yet critical.
+     *
+     * Example: Deprecation warnings, retries on failed operations.
+     *
+     * @param Stringable|string    $message The warning message.
+     * @param array<string, mixed> $context Additional context for debugging.
+     */
+    public function warning(Stringable|string $message, array $context = []) : void
+    {
+        $this->callLogMethod(level: LogLevel::WARNING, message: $message, context: $context);
+    }
+
+    /**
+     * ℹ️ Logs a NOTICE-level message.
+     * ✅ Represents normal but significant application events.
+     *
+     * Example: User authentication success, feature usage tracking.
+     *
+     * @param Stringable|string    $message The notice message.
+     * @param array<string, mixed> $context Additional context for debugging.
+     */
+    public function notice(Stringable|string $message, array $context = []) : void
+    {
+        $this->callLogMethod(level: LogLevel::NOTICE, message: $message, context: $context);
+    }
+
+    /**
+     * ✅ Logs an INFO-level message.
+     * 📌 Used for informational messages about system state and expected operations.
+     *
+     * Example: System startup, cron job execution, API call success.
+     *
+     * @param Stringable|string    $message The info message.
+     * @param array<string, mixed> $context Additional context for debugging.
+     */
+    public function info(Stringable|string $message, array $context = []) : void
+    {
+        $this->callLogMethod(level: LogLevel::INFO, message: $message, context: $context);
+    }
+
+    /**
+     * 🐞 Logs a DEBUG-level message.
+     * 🛠 Used for detailed debugging information during development.
+     *
+     * Example: Variable dumps, performance metrics, internal function calls.
+     *
+     * @param Stringable|string    $message The debug message.
+     * @param array<string, mixed> $context Additional context for debugging.
+     */
+    public function debug(Stringable|string $message, array $context = []) : void
+    {
+        $this->callLogMethod(level: LogLevel::DEBUG, message: $message, context: $context);
+    }
+
+}
+
+=== FileLogWriter.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Logging;
+
+use Exception;
+use Avax\Facade\Facades\Storage;
+
+/**
+ * Final class FileLogWriter
+ *
+ * This class implements the LogWriterInterface to write log entries to a file.
+ * It uses the Storage facade to handle filesystem operations and includes a fallback mechanism
+ * if the primary log file path is not accessible.
+ */
+final class FileLogWriter implements LogWriterInterface
+{
+    /**
+     * The fallback path for logging if the primary path is unavailable
+     *
+     * Using a constant for an alternative location ensures logging can still function
+     * even when the specified path encounters issues.
+     *
+     * @var string
+     */
+    private const string FALLBACK_PATH = '/tmp/fallback-log.log';
+
+    /**
+     * Constructor to initialize an instance with a specified file path
+     * and perform initial log file setup.
+     *
+     * @param string $filePath The path to the log file that needs to be initialized.
+     *
+     * @return void
+     */
+    public function __construct(private string $filePath)
+    {
+        $this->initializeLogFile();
+    }
+
+    /**
+     * Initializes the log file by ensuring the directory exists and is writable.
+     *
+     * This method checks and creates the directory if it does not exist.
+     * It switches to a fallback path if the specified path cannot be accessed.
+     */
+    private function initializeLogFile() : void
+    {
+        $directory = dirname(path: $this->filePath);
+        // Attempt to ensure the directory exists or use fallback if creation fails
+        if (! Storage::exists(path: $directory) && ! Storage::createDirectory(directory: $directory)) {
+            $this->filePath = self::FALLBACK_PATH;
+            $this->ensureWritable();
+
+            return;
+        }
+
+        // Set directory permissions to ensure it is writable
+        Storage::setPermissions(path: $directory, permissions: 0755);
+        $this->ensureWritable();
+    }
+
+    /**
+     * Ensures the file is writable, using fallback if necessary.
+     *
+     * This check ensures that writing logs does not fail silently by always
+     * having a writable destination, either the target or fallback file.
+     */
+    private function ensureWritable() : void
+    {
+        if (! Storage::exists(path: $this->filePath) && ! $this->attemptFileCreation()) {
+            $this->filePath = self::FALLBACK_PATH;
+            Storage::write(path: $this->filePath, content: ''); // Create an empty file if it doesn't exist
+        }
+    }
+
+    /**
+     * Attempts to create the file and set appropriate permissions.
+     *
+     * @return bool True if file creation is successful; false otherwise.
+     */
+    private function attemptFileCreation() : bool
+    {
+        Storage::write(path: $this->filePath, content: ''); // Create an empty file
+        Storage::setPermissions(path: $this->filePath, permissions: 0644);
+
+        return Storage::exists(path: $this->filePath);
+    }
+
+    /**
+     * Writes the content to the file. Uses fallback if a primary path fails.
+     *
+     * @param string $content The log entry content to write.
+     */
+    public function write(string $content) : void
+    {
+        try {
+            Storage::write(path: $this->filePath, content: $content . PHP_EOL, append: true);
+        } catch (Exception) {
+            Storage::write(path: self::FALLBACK_PATH, content: $content . PHP_EOL, append: true);
+        }
+    }
+}
+=== GlobalErrorHandlerInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Logging;
+
+use Throwable;
+
+/**
+ * Interface GlobalErrorHandlerInterface
+ *
+ * Defines the contract for global error handling within the application.
+ */
+interface GlobalErrorHandlerInterface
+{
+    /**
+     * Initializes error handling configuration.
+     *
+     * @throws \Exception
+     */
+    public function initialize(): void;
+
+    /**
+     * Handles exceptions and logs the error details.
+     *
+     * @param Throwable $throwable - The exception to handle.
+     *
+     * @throws \Exception
+     */
+    public function handle(Throwable $throwable): void;
+
+    /**
+     * Logs custom messages for debugging.
+     *
+     * @param string $message - Custom message to log.
+     * @param mixed $context - Additional context for the log entry.
+     */
+    public function log(string $message, mixed $context = null): void;
+
+    /**
+     * Dumps variables during development for debugging purposes.
+     *
+     * @param mixed $dumpMe - Variable to dump.
+     */
+    public function dumpIt(mixed $dumpMe): void;
+}
+=== LogInitializer.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Logging;
+
+use Exception;
+use Avax\Config\Architecture\DDD\AppPath;
+use Avax\Facade\Facades\Storage;
+
+/**
+ * Class LogInitializer
+ *
+ * Handles the initialization of the logs' directory.
+ * This includes ensuring that the directory exists, is writable, and has appropriate permissions.
+ * This class is intended to be used at the startup of the application to guarantee
+ * that logging mechanisms have a valid directory to write to.
+ */
+class LogInitializer
+{
+    /** @var string The fallback directory path for logs if the primary path fails */
+    private const string FALLBACK_LOG_PATH = '/tmp';
+
+    /** @var int The default directory permissions for log directories */
+    private const int DEFAULT_PERMISSIONS = 0755;
+
+    /**
+     * Ensures the logs directory exists and is writable.
+     *
+     * This method checks if the primary log path is valid and writable, attempting to create it if it does not exist.
+     * If the primary path is invalid, it falls back to a secondary path. If both fail, an exception is thrown.
+     *
+     * @throws Exception if the directory cannot be created or is not writable.
+     */
+    public static function ensureLogsDirectoryExists() : void
+    {
+        $logPath = AppPath::LOGS_PATH->get();
+        // Try to create or validate the primary log path
+        if (! self::verifyDirectory(path: $logPath)) {
+            $logPath = self::FALLBACK_LOG_PATH;
+
+            // Try the fallback path if primary fails
+            if (! self::verifyDirectory(path: $logPath)) {
+                throw new Exception(
+                    sprintf('Unable to create logs directory at either %s or fallback path.', $logPath)
+                );
+            }
+        }
+    }
+
+    /**
+     * Verifies or creates a writable directory.
+     *
+     * This method attempts to verify if the provided directory path is valid and writable.
+     * If the directory does not exist, it will attempt to create it with default permissions.
+     * It also ensures the directory is writable.
+     * If any step fails, it logs an emergency message.
+     *
+     * @param string $path Path to the directory to verify.
+     *
+     * @return bool True if the directory is writable, false otherwise.
+     */
+    private static function verifyDirectory(string $path) : bool
+    {
+        try {
+            // Check if the path is a directory or attempt to create it
+            if (! Storage::exists(path: $path) && ! Storage::createDirectory(directory: $path)) {
+                return false;
+            }
+
+            // Ensure the directory has the correct permissions
+            Storage::setPermissions(path: $path, permissions: self::DEFAULT_PERMISSIONS);
+
+            return true;
+        } catch (Exception $exception) {
+            // Log an emergency message on failure
+            error_log(
+                sprintf('Failed to initialize log directory at %s: %s', $path, $exception->getMessage()),
+                3,
+                self::FALLBACK_LOG_PATH . '/emergency_log.log'
+            );
+
+            return false;
+        }
+    }
+}
+
+=== LogWriterInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Logging;
+
+/**
+ * Interface LogWriterInterface
+ *
+ * Provides a contract for writing log entries. Implementations can be file-based, database-based, or any other
+ * storage mechanism. This abstraction allows for flexible logging strategies in the application.
+ */
+interface LogWriterInterface
+{
+    /**
+     * Writes a log entry to the defined storage mechanism.
+     *
+     * @param string $content The log entry content to be written.
+     */
+    public function write(string $content) : void;
+}
+
+=== LoggerFactory.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Logging;
+
+use Avax\Config\Architecture\DDD\AppPath;
+use Avax\Logging\Writers\RotatingFileLogWriter;
+use RuntimeException;
+
+/**
+ * LoggerFactory
+ *
+ * An environment-aware and PSR-3-compatible logger factory.
+ *
+ * Creates scoped, rotating file-based loggers based on application
+ * environment and logical "channels" (e.g., error, auth, session).
+ *
+ * Design principles:
+ * - Follows the Factory Pattern for logger creation
+ * - Favors composition (delegates to `RotatingFileLogWriter`)
+ * - Promotes separation of concerns (no writing logic here)
+ * - Prepares loggers for safe use in production, dev, test
+ *
+ * @package Avax\Logging
+ */
+final class LoggerFactory
+{
+    /**
+     * Creates the default global error logger.
+     *
+     * Uses the current application environment (`APP_ENV`) to determine the
+     * base filename of the log, allowing per-environment log separation.
+     *
+     * - `production` → `prod_error-error.log.YYYY-MM-DD`
+     * - `development` → `dev_error-error.log.YYYY-MM-DD`
+     * - fallback → `error-error.log.YYYY-MM-DD`
+     *
+     * @return ErrorLogger The error logger instance, pre-configured with a rotating writer.
+     */
+    public function create() : ErrorLogger
+    {
+        // Get the environment from env()
+        $env = env(key: 'APP_ENV');
+
+        // Determine base name based on environment
+        $baseName = match ($env) {
+            'production'  => 'production-errors',
+            'stage'       => 'stage-errors',
+            'staging'     => 'staging-errors',
+            'development' => 'dev-errors',
+            default       => 'errors',
+        };
+
+        // Delegate to the specific channel-based logger builder
+        return $this->createLoggerFor(channel: "{$baseName}-log");
+    }
+
+    /**
+     * Creates a named logger channel (e.g. "session", "auth", etc.)
+     * Each channel gets its own file, allowing for clean separation of logs.
+     *
+     * - Supports multiple log consumers (e.g., Auth, Session, Queue) with their own files.
+     * - Uses a rotating file log writer (1 file per day).
+     * - Sets timezone for all entries based on `APP_TZ` env or system fallback.
+     *
+     * @param string $channel Name of the channel (used as log file base name).
+     *
+     * @return ErrorLogger A PSR-3-compatible logger instance.
+     */
+    public function createLoggerFor(string $channel) : ErrorLogger
+    {
+        // Resolve a full path based on configured log directory + channel name
+        $path = rtrim(AppPath::LOGS_PATH->get(), '/') . '/' . trim($channel, '/');
+
+        // Ensure the directory is safe to use
+        $this->ensureLogDirectoryIsWritable(logPath: $path);
+
+        // Return the logger instance with a rotating file writer
+        return new ErrorLogger(
+            logWriter: new RotatingFileLogWriter(
+                           baseLogPath: $path,
+                           timezone   : env(
+                                            key    : 'APP_TZ',
+                                            default: date_default_timezone_get()
+                                        )
+                       )
+        );
+    }
+
+    /**
+     * Ensures that the directory for the log file exists and is writable.
+     *
+     * - If the directory does not exist, it is created recursively.
+     * - If the directory exists but is not writable, a RuntimeException is thrown.
+     * - This ensures the system does not silently fail when logging.
+     *
+     * @param string $logPath Full path to the intended log file.
+     *
+     * @throws RuntimeException If a directory is not writable or cannot be created.
+     */
+    private function ensureLogDirectoryIsWritable(string $logPath) : void
+    {
+        // Extract the parent directory from the log file path
+        $dir = dirname(path: $logPath);
+
+        // Attempt to create the directory if it does not exist
+        if (! is_dir($dir) && ! mkdir($dir, 0750, true) && ! is_dir($dir)) {
+            throw new RuntimeException(
+                message: "Failed to create log directory: {$dir}"
+            );
+        }
+
+        // Verify write permission (prevents silent failures or security issues)
+        if (! is_writable($dir)) {
+            throw new RuntimeException(
+                message: "Log directory not writable: {$dir}"
+            );
+        }
+    }
+}
+
+=== Writers/RotatingFileLogWriter.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Logging\Writers;
+
+use Carbon\Carbon;
+use DateTimeZone;
+use Avax\Logging\LogWriterInterface;
+use RuntimeException;
+
+/**
+ * ✅ RotatingFileLogWriter
+ *
+ * Writes log entries to a daily rotated log file based on the current timezone-aware date.
+ * Automatically manages log retention by deleting the oldest files beyond a configurable threshold.
+ *
+ * ✅ Use Cases:
+ * - Structured file logging in production/staging/dev environments.
+ * - Prevents unbounded disk growth with built-in retention.
+ * - Ready for future ingestion by structured log collectors (e.g., ELK, Loki).
+ *
+ * 🧱 Best Practices Followed:
+ * - Safe path resolution & validation
+ * - Immutable config via constructor
+ * - Atomic writes with file locks
+ * - Lazy rotation logic for performance
+ * - PSR-3 compliant output
+ */
+final class RotatingFileLogWriter implements LogWriterInterface
+{
+    /**
+     * Absolute path prefix for log files (e.g., /var/logs/app-error).
+     * The File path is dynamically suffixed with the date.
+     *
+     * @var string
+     */
+    private string $baseLogPath;
+
+    /**
+     * Valid IANA timezone identifier (e.g., Europe/Belgrade).
+     *
+     * @var string
+     */
+    private string $timezone;
+
+    /**
+     * Current date suffix for caching (format: d.m.Y).
+     *
+     * @var string|null
+     */
+    private string|null $cachedDate = null;
+
+    /**
+     * Cached a full path to the log file (rotated daily).
+     *
+     * @var string|null
+     */
+    private string|null $cachedFilePath = null;
+
+    /**
+     * Maximum number of log files to retain (FIFO deletion).
+     * Ensures consistent disk usage over time.
+     *
+     * @readonly
+     */
+    private readonly int $maxLogFiles;
+
+    /**
+     * Constructor.
+     *
+     * @param string      $baseLogPath Base absolute path for log files (no date or extension).
+     * @param string|null $timezone    Optional timezone (default: UTC).
+     * @param int         $maxLogFiles Max number of retained rotated log files.
+     *
+     * @throws RuntimeException If path or timezone are invalid.
+     */
+    public function __construct(
+        string      $baseLogPath,
+        string|null $timezone = null,
+        int         $maxLogFiles = 30
+    ) {
+        // Set the default timezone to 'UTC' if no value is provided for $timezone.
+        $timezone ??= 'UTC';
+
+        // Validate the base log path value to ensure it is not empty and does not contain unsafe segments.
+        $this->validateBaseLogPath(baseLogPath: $baseLogPath);
+
+        // Attempt to resolve the absolute path of the provided base log path. If realpath() fails (e.g.,
+        // if the path does not exist yet), fallback to using the raw $baseLogPath value,
+        // ensuring that it does not end with DIRECTORY_SEPARATOR unnecessarily.
+        $this->baseLogPath = rtrim($baseLogPath, DIRECTORY_SEPARATOR);
+
+        // Check if the provided timezone is valid by ensuring it exists in the list of IANA timezone identifiers.
+        // If it is invalid, throw a RuntimeException with a clear message.
+        if (! in_array($timezone, DateTimeZone::listIdentifiers(), true)) {
+            throw new RuntimeException(message: "Invalid timezone provided: {$timezone}");
+        }
+
+        // Assign the validated timezone to the class property for further use.
+        $this->timezone = $timezone;
+
+        // Set the maximum number of log files that can be rotated before overwriting old ones.
+        $this->maxLogFiles = $maxLogFiles;
+    }
+
+    /**
+     * Validates the base log path before use.
+     *
+     * @param string $baseLogPath
+     *
+     * @throws RuntimeException If a path is unsafe or empty.
+     */
+    private function validateBaseLogPath(string $baseLogPath) : void
+    {
+        if (empty($baseLogPath)) {
+            throw new RuntimeException(message: "Base log path cannot be empty.");
+        }
+
+        if (strpos($baseLogPath, '..') !== false) {
+            throw new RuntimeException(message: "Base log path contains unsafe segments: {$baseLogPath}");
+        }
+    }
+
+    /**
+     * Writes a log entry to the current day's log file (auto-rotated).
+     *
+     * @param string $content The log content (already formatted, e.g., PSR-3).
+     *
+     * @throws RuntimeException If a file cannot be written.
+     */
+    public function write(string $content) : void
+    {
+        // Get the current date and time in the specified timezone, formatted as 'd.m.Y'.
+        $currentDate = Carbon::now()->setTimezone(timeZone: $this->timezone)->format(format: 'd.m.Y');
+
+        // Check if the cached date does not match the current date.
+        if ($this->cachedDate !== $currentDate) {
+            // Update the cached date to the current date.
+            $this->cachedDate = $currentDate;
+
+            // Generate a new log file path using the base log path and the current date.
+            $this->cachedFilePath = "{$this->baseLogPath}-{$currentDate}.log";
+        }
+
+        // Ensure the directory for the log file exists, creating it if necessary.
+        $this->ensureDirectoryExists(directory: dirname($this->cachedFilePath));
+
+        // Rotate old logs if the number of log files exceeds the defined limit.
+        $this->rotateLogs();
+
+        // Append the provided log content to the current log file, creating it if it doesn't exist.
+        $this->appendToFile(filePath: $this->cachedFilePath, content: $content);
+    }
+
+    /**
+     * Ensures the specified directory exists by creating it if it does not exist.
+     * Throws an exception if directory creation fails.
+     *
+     * @param string $directory The path of the directory to ensure exists.
+     *
+     * @return void
+     */
+    private function ensureDirectoryExists(string $directory) : void
+    {
+        if (! is_dir($directory) && ! mkdir($directory, 0775, true) && ! is_dir($directory)) {
+            throw new RuntimeException(message: "Failed to create log directory: {$directory}");
+        }
+    }
+
+    /**
+     * Enforces log file retention by removing log files older than a specified time limit.
+     * This method ensures that the logging directory does not exceed a defined maximum file retention period.
+     * Adheres to best practices such as validating file paths and ensuring atomic operations with `unlink`.
+     *
+     * @param int $maxFileAgeInDays Defaults to 30 days if not specified.
+     *                              Represents the maximum age (in days) for retaining log files.
+     *
+     * @return void
+     */
+    private function rotateLogs(int $maxFileAgeInDays = 30) : void
+    {
+        // Retrieve a list of log files matching the naming convention: `<baseLogPath>-*.log`.
+        // This uses the `glob` function to find all files matching the wildcard pattern.
+        $logFiles = glob("{$this->baseLogPath}-*.log");
+
+        // If the `glob` function fails (returns false), exit early as no files were found to process.
+        if ($logFiles === false) {
+            return;
+        }
+
+        // Get the current Unix timestamp, which represents the current time in seconds since the Unix epoch.
+        $now = time();
+
+        // Calculate the maximum file age in seconds by multiplying the provided days by the number of seconds in a day (86,400).
+        $maxFileAgeInSeconds = $maxFileAgeInDays * 86400;
+
+        // Iterate over each file path returned by `glob`.
+        foreach ($logFiles as $file) {
+            // Skip processing if the current path is not a regular file.
+            // This avoids issues with directories or non-files that may have matched the pattern.
+            if (! is_file($file)) {
+                continue;
+            }
+
+            // Check if the file's modification time exceeds the maximum allowed age.
+            // Compare the current timestamp with the last modification time (`filemtime`).
+            if (($now - filemtime($file)) > $maxFileAgeInSeconds) {
+                // If the file is older than allowed, delete it using the `unlink` function.
+                // The `unlink` function permanently removes the file from the file system.
+                unlink($file);
+            }
+        }
+    }
+
+
+    /**
+     * Appends content to the log file using exclusive lock.
+     *
+     * @param string $filePath Full path to the current log file.
+     * @param string $content  Formatted log content.
+     *
+     * @throws RuntimeException If writing fails.
+     */
+    private function appendToFile(string $filePath, string $content) : void
+    {
+        // Attempting to write content to the specified file.
+        // The filename is provided by the $filePath variable.
+        // The data being written includes the content followed by a new line (PHP_EOL).
+        // The FILE_APPEND flag ensures that the content is appended to the file instead of overwriting it.
+        // The LOCK_EX flag prevents concurrent writes to the file
+        //  by getting an exclusive lock during the writing process.
+        $result = file_put_contents(
+            filename: $filePath,
+            data    : $content . PHP_EOL,
+            flags   : FILE_APPEND | LOCK_EX
+        );
+
+        // Checking if the result of the file_put_contents call is false.
+        // A result of false indicates that an error occurred while trying to write to the file.
+        if ($result === false) {
+            // Throwing a RuntimeException if writing to the file failed.
+            // The exception provides a meaningful error message that includes the filepath for debugging.
+            throw new RuntimeException(message: "Unable to write log entry to file: {$filePath}");
+        }
+    }
+}
+

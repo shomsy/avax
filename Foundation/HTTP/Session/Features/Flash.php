@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session\Features;
 
 use Avax\HTTP\Session\Contracts\FeatureInterface;
-use Avax\HTTP\Session\Contracts\Storage\Store;
+use Avax\HTTP\Session\Data\StoreInterface;
 use Override;
 
 /**
@@ -35,10 +35,10 @@ final class Flash implements FeatureInterface
     /**
      * Flash Constructor.
      *
-     * @param Store $store The storage backend.
+     * @param StoreInterface $store The storage backend.
      */
     public function __construct(
-        private Store $store
+        private StoreInterface $store
     ) {}
 
     /**

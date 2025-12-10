@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Foundation\HTTP\Session\Observability;
+namespace Avax\Foundation\HTTP\Session\Observability;
 
 final class NullCollector implements MetricCollectorInterface
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\HTTP\Session\Observability;
+namespace Avax\Foundation\HTTP\Session\Observability;
 
 /**
  * PrometheusExporter

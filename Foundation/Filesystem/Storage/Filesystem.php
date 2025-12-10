@@ -175,5 +175,15 @@ readonly class Filesystem
         return $this->fileStorage->isWritable(path: $path);
     }
 
-
+    /**
+     * Lists all files within a given directory.
+     *
+     * @param string $directory
+     *
+     * @return array<int, string> List of file paths.
+     */
+    public function listFiles(string $directory) : array
+    {
+        return $this->fileStorage->listFiles(directory: $directory);
+    }
 }

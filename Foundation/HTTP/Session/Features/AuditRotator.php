@@ -42,11 +42,15 @@ final class AuditRotator
      * @param bool   $compress Compress rotated logs (default: true).
      */
     public function __construct(
-        private string $logPath,
-        private int    $maxSize = self::DEFAULT_MAX_SIZE,
-        private int    $maxFiles = self::DEFAULT_MAX_FILES,
-        private bool   $compress = self::DEFAULT_COMPRESS
-    ) {}
+        private string   $logPath,
+        private int|null $maxSize = null,
+        private int|null $maxFiles = null,
+        private bool     $compress = self::DEFAULT_COMPRESS
+    )
+    {
+        $this->maxSize  ??= self::DEFAULT_MAX_SIZE;
+        $this->maxFiles ??= self::DEFAULT_MAX_FILES;
+    }
 
     /**
      * Force rotation regardless of size.
@@ -57,7 +61,7 @@ final class AuditRotator
      */
     public function forceRotate() : bool
     {
-        if (! file_exists($this->logPath)) {
+        if (! file_exists(filename: $this->logPath)) {
             return false;
         }
 
@@ -92,13 +96,13 @@ final class AuditRotator
 
             // Rename current log to .1
             $rotatedPath = $this->logPath . '.1';
-            if (! rename($this->logPath, $rotatedPath)) {
+            if (! rename(from: $this->logPath, to: $rotatedPath)) {
                 return false;
             }
 
             // Compress if enabled
             if ($this->compress) {
-                $this->compressLog($rotatedPath);
+                $this->compressLog(path: $rotatedPath);
             }
 
             // Clean up old logs
@@ -106,7 +110,7 @@ final class AuditRotator
 
             return true;
         } catch (Exception $e) {
-            error_log("Log rotation failed: " . $e->getMessage());
+            error_log(message: "Log rotation failed: " . $e->getMessage());
 
             return false;
         }
@@ -119,11 +123,11 @@ final class AuditRotator
      */
     public function shouldRotate() : bool
     {
-        if (! file_exists($this->logPath)) {
+        if (! file_exists(filename: $this->logPath)) {
             return false;
         }
 
-        $size = filesize($this->logPath);
+        $size = filesize(filename: $this->logPath);
 
         return $size >= $this->maxSize;
     }
@@ -144,9 +148,9 @@ final class AuditRotator
 
             // Check both compressed and uncompressed versions
             foreach ([$oldPath, $oldPath . '.gz'] as $path) {
-                if (file_exists($path)) {
+                if (file_exists(filename: $path)) {
                     $targetPath = ($path === $oldPath) ? $newPath : $newPath . '.gz';
-                    rename($path, $targetPath);
+                    rename(from: $path, to: $targetPath);
                 }
             }
         }
@@ -161,30 +165,26 @@ final class AuditRotator
      */
     private function compressLog(string $path) : bool
     {
-        if (! file_exists($path)) {
+        if (! file_exists(filename: $path)) {
             return false;
         }
 
         $compressedPath = $path . '.gz';
 
         // Read original file
-        $content = file_get_contents($path);
+        $content = file_get_contents(filename: $path);
         if ($content === false) {
             return false;
         }
 
         // Compress and write
-        $compressed = gzencode($content, 9);
-        if ($compressed === false) {
-            return false;
-        }
-
-        if (file_put_contents($compressedPath, $compressed) === false) {
+        $compressed = gzencode(data: $content, level: 9);
+        if ($compressed === false || file_put_contents(filename: $compressedPath, data: $compressed) === false) {
             return false;
         }
 
         // Delete original
-        unlink($path);
+        unlink(filename: $path);
 
         return true;
     }
@@ -198,8 +198,8 @@ final class AuditRotator
     {
         for ($i = $this->maxFiles + 1; $i <= $this->maxFiles + 10; $i++) {
             foreach ([$this->logPath . '.' . $i, $this->logPath . '.' . $i . '.gz'] as $path) {
-                if (file_exists($path)) {
-                    unlink($path);
+                if (file_exists(filename: $path)) {
+                    unlink(filename: $path);
                 }
             }
         }
@@ -256,12 +256,12 @@ final class AuditRotator
     {
         return [
             'log_path'      => $this->logPath,
-            'max_size'      => $this->formatBytes($this->maxSize),
+            'max_size'      => $this->formatBytes(bytes: $this->maxSize),
             'max_files'     => $this->maxFiles,
             'compress'      => $this->compress,
             'current_size'  => $this->getCurrentSizeFormatted(),
-            'total_size'    => $this->formatBytes($this->getTotalSize()),
-            'rotated_count' => count($this->getRotatedLogs()),
+            'total_size'    => $this->formatBytes(bytes: $this->getTotalSize()),
+            'rotated_count' => count(value: $this->getRotatedLogs()),
         ];
     }
 
@@ -277,12 +277,12 @@ final class AuditRotator
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
         $i     = 0;
 
-        while ($bytes >= 1024 && $i < count($units) - 1) {
+        while ($bytes >= 1024 && $i < count(value: $units) - 1) {
             $bytes /= 1024;
             $i++;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round(num: $bytes, precision: 2) . ' ' . $units[$i];
     }
 
     /**
@@ -292,7 +292,7 @@ final class AuditRotator
      */
     public function getCurrentSizeFormatted() : string
     {
-        return $this->formatBytes($this->getCurrentSize());
+        return $this->formatBytes(bytes: $this->getCurrentSize());
     }
 
     /**
@@ -302,11 +302,11 @@ final class AuditRotator
      */
     public function getCurrentSize() : int
     {
-        if (! file_exists($this->logPath)) {
+        if (! file_exists(filename: $this->logPath)) {
             return 0;
         }
 
-        return filesize($this->logPath);
+        return filesize(filename: $this->logPath);
     }
 
     /**
@@ -319,7 +319,7 @@ final class AuditRotator
         $total = $this->getCurrentSize();
 
         foreach ($this->getRotatedLogs() as $path) {
-            $total += filesize($path);
+            $total += filesize(filename: $path);
         }
 
         return $total;
@@ -336,7 +336,7 @@ final class AuditRotator
 
         for ($i = 1; $i <= $this->maxFiles + 10; $i++) {
             foreach ([$this->logPath . '.' . $i, $this->logPath . '.' . $i . '.gz'] as $path) {
-                if (file_exists($path)) {
+                if (file_exists(filename: $path)) {
                     $logs[] = $path;
                 }
             }

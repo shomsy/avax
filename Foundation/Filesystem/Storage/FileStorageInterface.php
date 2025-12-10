@@ -14,6 +14,15 @@ namespace Avax\Filesystem\Storage;
 interface FileStorageInterface
 {
     /**
+     * Lists all files within a given directory.
+     *
+     * @param string $directory
+     *
+     * @return array<int, string> List of file paths.
+     */
+    public function listFiles(string $directory) : array;
+
+    /**
      * Reads the content of a file at the specified path.
      *
      * @param string $path The path to the file.

@@ -4,35 +4,39 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Security;
 
+use Avax\HTTP\Session\Features\Audit;
 use Avax\HTTP\Session\Security\Policies\PolicyInterface;
 use Exception;
 
 /**
- * PolicyEnforcer - Policy Enforcement Service
+ * 🧠 PolicyEnforcer - Centralized Session Policy Enforcement
+ * ==========================================================
  *
- * Centralized service for enforcing session security policies.
- * Reduces SessionProvider complexity.
+ * Coordinates and executes all registered session security policies.
+ * Acts as a mediator between SessionProvider and PolicyGroupBuilder.
+ *
+ * ✅ Enforces compliance with OWASP ASVS 3.4.2 (Audit logging of violations)
+ * ✅ Integrates seamlessly with the Audit feature for traceability
+ * ✅ Keeps SessionProvider lightweight and clean
  *
  * @package Avax\HTTP\Session\Security
  */
 final class PolicyEnforcer
 {
     /**
-     * @var array<PolicyInterface> Registered policies
+     * @var array<PolicyInterface>
      */
     private array $policies = [];
 
     /**
-     * @var ?\Avax\HTTP\Session\Features\Audit Audit logger
+     * @var Audit|null
      */
-    private $audit = null;
+    private Audit|null $audit;
 
     /**
-     * PolicyEnforcer Constructor.
-     *
-     * @param \Avax\HTTP\Session\Features\Audit|null $audit Optional audit logger.
+     * @param Audit|null $audit Optional PSR-3 compatible audit logger.
      */
-    public function __construct($audit = null)
+    public function __construct(Audit|null $audit = null)
     {
         $this->audit = $audit;
     }
@@ -40,9 +44,7 @@ final class PolicyEnforcer
     /**
      * Register multiple policies at once.
      *
-     * @param array<PolicyInterface> $policies Policies to register.
-     *
-     * @return void
+     * @param array<PolicyInterface> $policies
      */
     public function registerMany(array $policies) : void
     {
@@ -52,11 +54,7 @@ final class PolicyEnforcer
     }
 
     /**
-     * Register a policy.
-     *
-     * @param PolicyInterface $policy The policy.
-     *
-     * @return void
+     * Register a single policy.
      */
     public function register(PolicyInterface $policy) : void
     {
@@ -64,14 +62,12 @@ final class PolicyEnforcer
     }
 
     /**
-     * Enforce all registered policies.
+     * Enforce all registered security policies.
      *
-     * OWASP ASVS 3.4.2 - Security event audit logging
+     * @param array<string, mixed> $data Contextual session data.
      *
-     * @param array<string, mixed> $data Session data for policy checks.
-     *
-     * @return void
      * @throws \RuntimeException If any policy is violated.
+     * @throws \Exception
      */
     public function enforce(array $data) : void
     {
@@ -79,24 +75,23 @@ final class PolicyEnforcer
             try {
                 $policy->enforce($data);
             } catch (Exception $e) {
-                // AUDIT: Log security violation
                 if ($this->audit !== null) {
-                    $this->audit->record('policy_violation', [
-                        'policy' => $policy->getName(),
-                        'reason' => $e->getMessage()
+                    $this->audit->record(event: 'policy_violation', data: [
+                        'policy'  => $policy->getName(),
+                        'reason'  => $e->getMessage(),
+                        'user_id' => $data['user_id'] ?? null,
+                        'ip'      => $_SERVER['REMOTE_ADDR'] ?? null,
+                        'time'    => date('c'),
                     ]);
                 }
 
-                // Re-throw exception
                 throw $e;
             }
         }
     }
 
     /**
-     * Get all registered policies.
-     *
-     * @return array<PolicyInterface> Policies.
+     * @return array<PolicyInterface>
      */
     public function getPolicies() : array
     {

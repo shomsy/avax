@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Filesystem\Storage;
 
-use FilesystemIterator;
 use Avax\Filesystem\Exceptions\DirectoryCreationException;
 use Avax\Filesystem\Exceptions\DirectoryDeletionException;
 use Avax\Filesystem\Exceptions\FileDeleteException;
+use FilesystemIterator;
 use RuntimeException;
+use SplFileInfo;
+use Throwable;
 
 /**
  * Class LocalFileStorage
@@ -17,6 +19,48 @@ use RuntimeException;
  */
 class LocalFileStorage implements FileStorageInterface
 {
+    /**
+     * Lists all files within a given directory.
+     *
+     * @param string $directory Absolute or relative path to the directory.
+     *
+     * @return array<int, string> Full file paths.
+     *
+     * 🧠 Theory:
+     * This is a non-recursive file listing helper.
+     * It scans a directory and returns absolute paths for every file inside it.
+     * It ignores `.` and `..` entries, and silently skips invalid directories.
+     *
+     * 💬 Think of it like:
+     * “Show me all the files that live directly inside this folder.”
+     *
+     * 🚧 Notes:
+     * - This does *not* descend into subdirectories (non-recursive).
+     * - To make it recursive later, wrap it in a `RecursiveDirectoryIterator`.
+     */
+    public function listFiles(string $directory) : array
+    {
+        if (! is_dir($directory) || ! is_readable($directory)) {
+            return [];
+        }
+
+        try {
+            $iterator = new FilesystemIterator(
+                directory: $directory,
+                flags    : FilesystemIterator::SKIP_DOTS
+            );
+
+            return array_map(
+                static fn(SplFileInfo $file) => $file->getPathname(),
+                iterator_to_array($iterator, preserve_keys: false)
+            );
+        } catch (Throwable $e) {
+            // Fail silently — listing files is optional, not critical
+            return [];
+        }
+    }
+
+
     /**
      * Reads the content of a file.
      *

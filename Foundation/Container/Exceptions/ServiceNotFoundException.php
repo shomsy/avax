@@ -12,6 +12,7 @@ use Throwable;
  */
 class ServiceNotFoundException extends RuntimeException
 {
+    #[\Override]
     public function __construct(string $serviceId, int $code = 0, Throwable|null $previous = null)
     {
         parent::__construct(

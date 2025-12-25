@@ -1,0 +1,140 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Avax CLI Tool - The primary entry point for Avax components.
+ */
+
+// Determine the root directory
+$rootDir = __DIR__;
+while (!file_exists($rootDir . '/bootstrap.php') && $rootDir !== dirname($rootDir)) {
+    $rootDir = dirname($rootDir);
+}
+
+// Bootstrap application
+require_once $rootDir . '/bootstrap.php';
+
+use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
+use Avax\Migrations\Execution\Console\DatabaseCreateCommand;
+use Avax\Migrations\Execution\Console\DatabaseDropCommand;
+use Avax\Migrations\Execution\Console\DatabaseExportCommand;
+use Avax\Migrations\Execution\Console\DatabaseSeedCommand;
+use Avax\Migrations\Execution\Console\Operations\TableDropCommand;
+use Avax\Migrations\Execution\Console\Operations\TableTruncateCommand;
+use Avax\Migrations\Execution\Console\MigrateCommand;
+use Avax\Migrations\Execution\Console\MigrateMakeCommand;
+use Avax\Migrations\Execution\Console\MigrateRollbackCommand;
+use Avax\Migrations\Execution\Console\MigrateStatusCommand;
+use Avax\Migrations\Generate\MigrationGenerator;
+use Avax\Migrations\Generate\MigrationLoader;
+use Avax\Migrations\Execution\Runner\MigrationRunner;
+use Avax\Migrations\Execution\Repository\MigrationRepository;
+use Avax\Migrations\Export\DatabaseExporter;
+
+// Get dependencies from container
+$repository = app(MigrationRepository::class);
+$runner = app(MigrationRunner::class);
+$builder = app(QueryBuilder::class);
+$loader = new MigrationLoader();
+$generator = new MigrationGenerator();
+$exporter = new DatabaseExporter($builder);
+
+// Migrations directory
+$migrationsPath = $rootDir . '/database/migrations';
+$seedersPath    = $rootDir . '/database/seeders';
+$exportPath     = $rootDir . '/database/exports';
+
+$command = $argv[1] ?? 'help';
+$arg1 = $argv[2] ?? null;
+$arg2 = $argv[3] ?? null;
+
+try {
+    switch ($command) {
+        case 'db:create':
+            if (!$arg1) {
+                echo "Database name required.\n";
+                exit(1);
+            }
+            exit((new DatabaseCreateCommand($builder))->handle($arg1));
+
+        case 'db:drop':
+            if (!$arg1) {
+                echo "Database name required.\n";
+                exit(1);
+            }
+            exit((new DatabaseDropCommand($builder))->handle($arg1));
+
+        case 'db:export':
+            $table = null;
+            $path = $exportPath;
+            if ($arg1 && str_starts_with($arg1, '--table=')) {
+                $table = substr($arg1, 8);
+                $path = $arg2 ?? $exportPath;
+            } else {
+                $path = $arg1 ?? $exportPath;
+            }
+            exit((new DatabaseExportCommand($exporter))->handle($path, $table));
+
+        case 'db:seed':
+            exit((new DatabaseSeedCommand())->handle($seedersPath, $arg1));
+
+        case 'table:drop':
+            if (!$arg1) {
+                echo "Table name(s) required. Separate multiple with comma.\n";
+                exit(1);
+            }
+            exit((new TableDropCommand($builder))->handle($arg1));
+
+        case 'table:truncate':
+            if (!$arg1) {
+                echo "Table name(s) required. Separate multiple with comma.\n";
+                exit(1);
+            }
+            exit((new TableTruncateCommand($builder))->handle($arg1));
+
+        case 'migrate':
+        case 'run':
+            $dryRun = ($arg1 === '--dry' || $arg2 === '--dry');
+            exit((new MigrateCommand($repository, $runner, $loader))->handle($migrationsPath, $dryRun));
+
+        case 'make':
+            $options = [];
+            if ($arg2 && str_starts_with($arg2, '--create=')) {
+                $options['table'] = substr($arg2, 9);
+                $options['create'] = true;
+            } elseif ($arg2 && str_starts_with($arg2, '--table=')) {
+                $options['table'] = substr($arg2, 8);
+            }
+            exit((new MigrateMakeCommand($generator))->handle($arg1, $migrationsPath, $options));
+
+        case 'rollback':
+            exit((new MigrateRollbackCommand($repository, $runner, $loader))->handle($migrationsPath, (int)($arg1 ?? 1)));
+
+        case 'status':
+            exit((new MigrateStatusCommand($repository, $loader))->handle($migrationsPath));
+
+        case 'help':
+        default:
+            echo "\033[33mAvax Framework CLI\033[0m\n\n";
+            echo "Usage: php avax [command] [arguments]\n\n";
+            echo "\033[32mDatabase Commands:\033[0m\n";
+            echo "  db:create <name>       Create a new database\n";
+            echo "  db:drop <name>         Drop an existing database\n";
+            echo "  db:export [options]    Export database or table to SQL file\n";
+            echo "  db:seed [class]        Seed the database with records\n\n";
+            echo "\033[32mTable Operations:\033[0m\n";
+            echo "  table:drop <tables>     Drop one or more tables (comma separated)\n";
+            echo "  table:truncate <tables> Truncate one or more tables (comma separated)\n\n";
+            echo "\033[32mMigration Commands:\033[0m\n";
+            echo "  migrate            Run all pending migrations\n";
+            echo "  make <name>        Create a new migration file\n";
+            echo "  rollback [steps]   Rollback the last batch of migrations\n";
+            echo "  status             Show the status of all migrations\n";
+            exit(0);
+    }
+} catch (Throwable $e) {
+    echo "\033[31mError: {$e->getMessage()}\033[0m\n";
+    exit(1);
+}

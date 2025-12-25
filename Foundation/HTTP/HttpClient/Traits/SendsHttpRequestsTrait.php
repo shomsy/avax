@@ -21,6 +21,7 @@ trait SendsHttpRequestsTrait
      * @return ResponseInterface The raw HTTP response.
      * @throws \RuntimeException
      */
+    #[\Override]
     public function sendRequest(
         string     $method,
         string     $url,

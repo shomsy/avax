@@ -19,7 +19,7 @@ class LocalFileService implements FileServiceInterface
      */
     public function isDirectory(string $path) : bool
     {
-        return is_dir($path);
+        return is_dir(filename: $path);
     }
 
     /**
@@ -34,7 +34,7 @@ class LocalFileService implements FileServiceInterface
      */
     public function createDirectory(string $path, int $permissions) : bool
     {
-        return ! (! is_dir($path) && ! @mkdir($path, $permissions, true));
+        return ! (! is_dir(filename: $path) && ! @mkdir(directory: $path, permissions: $permissions, recursive: true));
     }
 
 
@@ -48,7 +48,7 @@ class LocalFileService implements FileServiceInterface
      */
     public function setPermissions(string $path, int $permissions) : bool
     {
-        return chmod($path, $permissions);
+        return chmod(filename: $path, permissions: $permissions);
     }
 
     /**
@@ -60,7 +60,7 @@ class LocalFileService implements FileServiceInterface
      */
     public function isWritable(string $path) : bool
     {
-        return is_writable($path);
+        return is_writable(filename: $path);
     }
 
     /**
@@ -72,7 +72,7 @@ class LocalFileService implements FileServiceInterface
      */
     public function fileExists(string $path) : bool
     {
-        return file_exists($path);
+        return file_exists(filename: $path);
     }
 
     /**
@@ -87,7 +87,7 @@ class LocalFileService implements FileServiceInterface
     public function createFile(string $path) : bool
     {
         if (! $this->fileExists(path: $path)) {
-            return touch($path);
+            return touch(filename: $path);
         }
 
         return true;
@@ -106,11 +106,11 @@ class LocalFileService implements FileServiceInterface
     public function appendToFile(string $path, string $content) : bool
     {
         // Ensure directory exists
-        $directory = dirname($path);
+        $directory = dirname(path: $path);
         if (! $this->isDirectory(path: $directory) && ! $this->createDirectory(path: $directory, permissions: 0755)) {
             return false;
         }
 
-        return file_put_contents($path, $content . PHP_EOL, FILE_APPEND | LOCK_EX) !== false;
+        return file_put_contents(filename: $path, data: $content . PHP_EOL, flags: FILE_APPEND | LOCK_EX) !== false;
     }
 }

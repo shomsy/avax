@@ -19,9 +19,10 @@ class InvalidTypeException extends InvalidArgumentException
      * @param string $expectedType The expected type.
      * @param mixed  $actualValue  The actual value that caused the exception.
      */
+    #[\Override]
     public function __construct(string $expectedType, mixed $actualValue)
     {
-        $actualType = gettype($actualValue);
+        $actualType = gettype(value: $actualValue);
         $message    = sprintf("Expected type '%s', but got '%s'.", $expectedType, $actualType);
         parent::__construct(message: $message);
     }

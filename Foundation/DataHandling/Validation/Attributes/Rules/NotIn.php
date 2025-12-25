@@ -32,8 +32,8 @@ readonly class NotIn
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (in_array($value, $this->values, true)) {
-            throw new ValidationException(message: $property . ' must not be one of: ' . implode(', ', $this->values));
+        if (in_array(needle: $value, haystack: $this->values, strict: true)) {
+            throw new ValidationException(message: $property . ' must not be one of: ' . implode(separator: ', ', array: $this->values));
         }
     }
 }

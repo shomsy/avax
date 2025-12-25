@@ -45,15 +45,15 @@ class XmlFormatter
     {
         foreach ($data as $key => $value) {
             // Handle numeric keys to ensure valid XML element names
-            $key = is_numeric($key) ? 'item' . $key : htmlspecialchars($key);
+            $key = is_numeric(value: $key) ? 'item' . $key : htmlspecialchars(string: $key);
 
-            if (is_array($value)) {
+            if (is_array(value: $value)) {
                 // Recurse if value is an array, creating a new child element
                 $child = $xml->addChild(qualifiedName: $key);
                 self::arrayToXml(data: $value, xml: $child);
             } else {
                 // Add simple text node, escaping any HTML entities
-                $xml->addChild(qualifiedName: $key, value: htmlspecialchars((string) $value));
+                $xml->addChild(qualifiedName: $key, value: htmlspecialchars(string: (string) $value));
             }
         }
     }

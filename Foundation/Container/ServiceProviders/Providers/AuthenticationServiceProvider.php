@@ -22,7 +22,7 @@ use Avax\Auth\Adapters\RateLimiter;
 use Avax\Auth\Adapters\PasswordHasher;
 use Avax\Auth\Adapters\UserDataSource;
 use Avax\Container\ServiceProviders\ServiceProvider;
-use Avax\Database\QueryBuilder\QueryBuilder;
+use Avax\Database\Modules\Query\Builder\QueryBuilder;
 use Avax\HTTP\Session\Session;
 
 /**
@@ -33,6 +33,7 @@ class AuthenticationServiceProvider extends ServiceProvider
     /**
      * Register authentication-related services and their dependencies.
      */
+    #[\Override]
     public function register() : void
     {
         // Core Dependencies
@@ -43,8 +44,8 @@ class AuthenticationServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: IdentityInterface::class,
             concrete: fn() => new SessionIdentity(
-                session: $this->dependencyInjector->get(Session::class),
-                userProvider: $this->dependencyInjector->get(UserSourceInterface::class)
+                session: $this->dependencyInjector->get(id: Session::class),
+                userProvider: $this->dependencyInjector->get(id: UserSourceInterface::class)
             )
         );
 
@@ -52,8 +53,8 @@ class AuthenticationServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: UserSourceInterface::class,
             concrete: fn() => new UserDataSource(
-                queryBuilder: $this->dependencyInjector->get(QueryBuilder::class),
-                passwordHasher: $this->dependencyInjector->get(PasswordHasher::class)
+                queryBuilder: $this->dependencyInjector->get(id: QueryBuilder::class),
+                passwordHasher: $this->dependencyInjector->get(id: PasswordHasher::class)
             )
         );
 
@@ -61,10 +62,10 @@ class AuthenticationServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: AuthInterface::class,
             concrete: fn() => new Authenticator(
-                loginAction: new Login(identity: $this->dependencyInjector->get(IdentityInterface::class)),
-                logoutAction: new Logout(identity: $this->dependencyInjector->get(IdentityInterface::class)),
-                getUserAction: new GetUser(identity: $this->dependencyInjector->get(IdentityInterface::class)),
-                checkAction: new Check(identity: $this->dependencyInjector->get(IdentityInterface::class))
+                loginAction: new Login(identity: $this->dependencyInjector->get(id: IdentityInterface::class)),
+                logoutAction: new Logout(identity: $this->dependencyInjector->get(id: IdentityInterface::class)),
+                getUserAction: new GetUser(identity: $this->dependencyInjector->get(id: IdentityInterface::class)),
+                checkAction: new Check(identity: $this->dependencyInjector->get(id: IdentityInterface::class))
             )
         );
 
@@ -79,6 +80,7 @@ class AuthenticationServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(abstract: AccessMiddleware::class, concrete: AccessMiddleware::class);
     }
 
+    #[\Override]
     public function boot() : void
     {
         // Boot logic

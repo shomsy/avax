@@ -26,6 +26,7 @@ class HttpClientServiceProvider extends ServiceProvider
     /**
      * Registers the necessary services into the service container.
      */
+    #[\Override]
     public function register() : void
     {
         $this->dependencyInjector->singleton(
@@ -37,7 +38,7 @@ class HttpClientServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: RetryMiddleware::class,
             concrete: fn() : RetryMiddleware => new RetryMiddleware(
-                logger    : $this->dependencyInjector->get(LoggerInterface::class),
+                logger    : $this->dependencyInjector->get(id: LoggerInterface::class),
                 maxRetries: 3, // Configurable retry wait time in ms
             )
         );
@@ -46,9 +47,9 @@ class HttpClientServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: HttpClient::class,
             concrete: fn() : HttpClient => new HttpClient(
-                retryMiddleware: $this->dependencyInjector->get(RetryMiddleware::class),
-                logger         : $this->dependencyInjector->get(LoggerInterface::class),
-                baseUri        : $this->dependencyInjector->get(UriInterface::class) // Inject base API URL
+                retryMiddleware: $this->dependencyInjector->get(id: RetryMiddleware::class),
+                logger         : $this->dependencyInjector->get(id: LoggerInterface::class),
+                baseUri        : $this->dependencyInjector->get(id: UriInterface::class) // Inject base API URL
             )
         );
 
@@ -56,9 +57,9 @@ class HttpClientServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: GuzzleClient::class,
             concrete: fn() : GuzzleClient => new GuzzleClient(
-                httpClient     : $this->dependencyInjector->get(HttpClient::class),
-                dataLogger     : $this->dependencyInjector->get(LoggerInterface::class),
-                responseFactory: $this->dependencyInjector->get(ResponseFactory::class)
+                httpClient     : $this->dependencyInjector->get(id: HttpClient::class),
+                dataLogger     : $this->dependencyInjector->get(id: LoggerInterface::class),
+                responseFactory: $this->dependencyInjector->get(id: ResponseFactory::class)
             )
         );
 
@@ -72,7 +73,7 @@ class HttpClientServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: Client::class,
             concrete: fn() : Client => new Client(
-                ['handler' => $this->dependencyInjector->get(HandlerStack::class)]
+                ['handler' => $this->dependencyInjector->get(id: HandlerStack::class)]
             )
         );
     }
@@ -80,6 +81,7 @@ class HttpClientServiceProvider extends ServiceProvider
     /**
      * Starts the boot process for the class.
      */
+    #[\Override]
     public function boot() : void
     {
         // Optionally add bootstrapping logic if necessary

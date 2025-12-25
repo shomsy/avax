@@ -13,9 +13,12 @@ final readonly class Login
 {
     public function __construct(private IdentityInterface $identity) {}
 
+    /**
+     * @throws AuthFailed
+     */
     public function execute(Credentials $credentials): UserInterface
     {
-        if (! $this->identity->attempt($credentials)) {
+        if (! $this->identity->attempt(credentials: $credentials)) {
             throw new AuthFailed(message: 'Invalid credentials provided.');
         }
 

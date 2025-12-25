@@ -23,7 +23,7 @@ use UnitEnum;
  *
  * @template T of UnitEnum
  */
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class Enum
 {
     /**
@@ -45,7 +45,7 @@ readonly class Enum
     public function validate(mixed $value, string $property) : void
     {
         // Check if the provided class exists and is a valid enum.
-        if (! enum_exists($this->enumClass)) {
+        if (! enum_exists(enum: $this->enumClass)) {
             // Throws an exception when the class does not exist or is not declared as an enum.
             throw new ValidationException(
                 message: "Enum class '{$this->enumClass}' does not exist."
@@ -58,18 +58,18 @@ readonly class Enum
         }
 
         // If the value is scalar, validate its compatibility with BackedEnum.
-        if (is_scalar($value) && is_subclass_of($this->enumClass, BackedEnum::class)) {
+        if (is_scalar(value: $value) && is_subclass_of(object_or_class: $this->enumClass, class: BackedEnum::class)) {
             // Extract all scalar values (backed values) from the enum cases.
-            $values = array_column($this->enumClass::cases(), 'value');
+            $values = array_column(array: $this->enumClass::cases(), column_key: 'value');
 
             // If the scalar value matches one of the allowed enum backed values, validation passes.
-            if (in_array($value, $values, true)) {
+            if (in_array(needle: $value, haystack: $values, strict: true)) {
                 return; // Validation passes; exit early.
             }
 
             // Throw an exception if the scalar value does not match any of the allowed backed values.
             throw new ValidationException(
-                message: "{$property} must be one of: " . implode(', ', $values)
+                message: "{$property} must be one of: " . implode(separator: ', ', array: $values)
             );
         }
 

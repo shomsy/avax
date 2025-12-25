@@ -33,10 +33,10 @@ readonly class Mimes
      */
     public function validate(mixed $value, string $property) : void
     {
-        $extension = strtolower(pathinfo((string) $value, PATHINFO_EXTENSION));
-        if (! in_array($extension, $this->mimes)) {
+        $extension = strtolower(string: pathinfo(path: (string) $value, flags: PATHINFO_EXTENSION));
+        if (! in_array(needle: $extension, haystack: $this->mimes)) {
             throw new ValidationException(
-                message: $property . ' must be a file of type: ' . implode(', ', $this->mimes),
+                message: $property . ' must be a file of type: ' . implode(separator: ', ', array: $this->mimes),
             );
         }
     }

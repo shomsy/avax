@@ -28,7 +28,7 @@ readonly class Size
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (strlen((string) $value) !== $this->size) {
+        if (strlen(string: (string) $value) !== $this->size) {
             throw new ValidationException(
                 message: sprintf('%s must be exactly %d characters.', $property, $this->size),
             );

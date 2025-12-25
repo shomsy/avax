@@ -33,16 +33,16 @@ final readonly class MiddlewareGroupResolver
      */
     private function validateConfig(array $config) : void
     {
-        if (! isset($config['groups']) || ! is_array($config['groups'])) {
+        if (! isset($config['groups']) || ! is_array(value: $config['groups'])) {
             throw new RuntimeException(message: 'Middleware configuration must contain a "groups" array.');
         }
 
         foreach ($config['groups'] as $groupName => $middlewares) {
-            if (! is_string($groupName)) {
+            if (! is_string(value: $groupName)) {
                 throw new RuntimeException(message: 'Middleware group names must be strings.');
             }
 
-            if (! is_array($middlewares)) {
+            if (! is_array(value: $middlewares)) {
                 throw new RuntimeException(message: "Middleware group [{$groupName}] must be an array.");
             }
         }
@@ -65,13 +65,13 @@ final readonly class MiddlewareGroupResolver
 
         $group = $this->config['groups'][$entry];
 
-        if (! is_array($group)) {
+        if (! is_array(value: $group)) {
             throw new RuntimeException(message: "Middleware group [{$entry}] must be an array.");
         }
 
         // Ensure all entries strictly adhere to the class-string type.
         foreach ($group as $middleware) {
-            if (! is_string($middleware) || ! class_exists($middleware)) {
+            if (! is_string(value: $middleware) || ! class_exists(class: $middleware)) {
                 throw new RuntimeException(
                     message: "Invalid middleware [{$middleware}] in group [{$entry}]. Must be a valid class name."
                 );

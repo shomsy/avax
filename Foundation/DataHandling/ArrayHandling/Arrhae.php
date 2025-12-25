@@ -126,11 +126,11 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      */
     protected function convertToArray(iterable $items) : array
     {
-        if (is_array($items)) {
+        if (is_array(value: $items)) {
             return $items;
         }
 
-        return iterator_to_array($items, false);
+        return iterator_to_array(iterator: $items, preserve_keys: false);
     }
 
     /**
@@ -151,7 +151,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
     {
         // First create a new collection instance from the provided items
         // Then immediately lock it to ensure immutability
-        return self::make($items)->lock();
+        return self::make(items: $items)->lock();
     }
 
     /**
@@ -240,16 +240,16 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      */
     public function set(string|int $key, mixed $value) : self
     {
-        if (! is_string($key) && ! is_int($key)) {
+        if (! is_string(value: $key) && ! is_int(value: $key)) {
             throw new InvalidArgumentException(message: "Key must be a string or an integer.");
         }
 
         $this->assertNotLocked();
 
-        if (is_string($key) && str_contains($key, '.')) {
+        if (is_string(value: $key) && str_contains(haystack: $key, needle: '.')) {
             $array = &$this->items;
-            foreach (explode('.', $key) as $segment) {
-                if (! isset($array[$segment]) || ! is_array($array[$segment])) {
+            foreach (explode(separator: '.', string: $key) as $segment) {
+                if (! isset($array[$segment]) || ! is_array(value: $array[$segment])) {
                     $array[$segment] = [];
                 }
 
@@ -302,14 +302,14 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      */
     public function get(string|int $key, mixed $default = null) : mixed
     {
-        if (array_key_exists($key, $this->items)) {
+        if (array_key_exists(key: $key, array: $this->items)) {
             return $this->items[$key];
         }
 
-        if (is_string($key) && str_contains($key, '.')) {
+        if (is_string(value: $key) && str_contains(haystack: $key, needle: '.')) {
             $array = $this->items;
-            foreach (explode('.', $key) as $segment) {
-                if (is_array($array) && array_key_exists($segment, $array)) {
+            foreach (explode(separator: '.', string: $key) as $segment) {
+                if (is_array(value: $array) && array_key_exists(key: $segment, array: $array)) {
                     $array = $array[$segment];
                 } else {
                     return $default;
@@ -342,21 +342,21 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
     {
         $this->assertNotLocked();
 
-        if (array_key_exists($key, $this->items)) {
+        if (array_key_exists(key: $key, array: $this->items)) {
             unset($this->items[$key]);
-        } elseif (is_string($key) && str_contains($key, '.')) {
+        } elseif (is_string(value: $key) && str_contains(haystack: $key, needle: '.')) {
             $array = &$this->items;
-            $keys  = explode('.', $key);
-            while (count($keys) > 1) {
-                $segment = array_shift($keys);
-                if (! isset($array[$segment]) || ! is_array($array[$segment])) {
+            $keys  = explode(separator: '.', string: $key);
+            while (count(value: $keys) > 1) {
+                $segment = array_shift(array: $keys);
+                if (! isset($array[$segment]) || ! is_array(value: $array[$segment])) {
                     return $this;
                 }
 
                 $array = &$array[$segment];
             }
 
-            unset($array[array_shift($keys)]);
+            unset($array[array_shift(array: $keys)]);
         }
 
         return $this;
@@ -420,7 +420,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      */
     public function count() : int
     {
-        return count($this->items);
+        return count(value: $this->items);
     }
 
     /**
@@ -454,10 +454,10 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
     public function pluck(string|Closure $key) : array
     {
         return match (true) {
-            $key instanceof Closure => array_map($key, $this->items),
+            $key instanceof Closure => array_map(callback: $key, array: $this->items),
             default                 => array_map(
-                fn($item) => is_array($item) && array_key_exists($key, $item) ? $item[$key] : null,
-                $this->items
+                callback: fn($item) => is_array(value: $item) && array_key_exists(key: $key, array: $item) ? $item[$key] : null,
+                array   : $this->items
             ),
         };
     }
@@ -481,7 +481,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      */
     public function arrGet(string $key, mixed $default = null) : mixed
     {
-        if (is_array($this->items) && array_key_exists($key, $this->items)) {
+        if (is_array(value: $this->items) && array_key_exists(key: $key, array: $this->items)) {
             return $this->items[$key];
         }
 
@@ -510,12 +510,12 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
     public function getValue(string $key, mixed $default = null) : mixed
     {
         $firstItem = $this->first();
-        if (! $firstItem || ! is_array($firstItem)) {
+        if (! $firstItem || ! is_array(value: $firstItem)) {
             return $default;
         }
 
-        foreach (explode('.', $key) as $segment) {
-            if (is_array($firstItem) && array_key_exists($segment, $firstItem)) {
+        foreach (explode(separator: '.', string: $key) as $segment) {
+            if (is_array(value: $firstItem) && array_key_exists(key: $segment, array: $firstItem)) {
                 $firstItem = $firstItem[$segment];
             } else {
                 return $default;
@@ -574,7 +574,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
             return $default;
         }
 
-        $firstItem = reset($this->items);
+        $firstItem = reset(array: $this->items);
         if ($key === null) {
             return $firstItem;
         }
@@ -605,7 +605,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
             return $key($item);
         }
 
-        if (is_array($item)) {
+        if (is_array(value: $item)) {
             return $this->getValueFromArray(array: $item, key: $key, default: $default);
         }
 
@@ -625,14 +625,14 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      */
     protected function getValueFromArray(array $array, string|int $key, mixed $default = null) : mixed
     {
-        if (array_key_exists($key, $array)) {
+        if (array_key_exists(key: $key, array: $array)) {
             return $array[$key];
         }
 
-        if (is_string($key) && str_contains($key, '.')) {
-            $segments = explode('.', $key);
+        if (is_string(value: $key) && str_contains(haystack: $key, needle: '.')) {
+            $segments = explode(separator: '.', string: $key);
             foreach ($segments as $segment) {
-                if (is_array($array) && array_key_exists($segment, $array)) {
+                if (is_array(value: $array) && array_key_exists(key: $segment, array: $array)) {
                     $array = $array[$segment];
                 } else {
                     return $default;

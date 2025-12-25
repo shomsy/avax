@@ -34,7 +34,7 @@ class FileException
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! is_file($value)) {
+        if (! is_file(filename: $value)) {
             throw new ValidationException(message: $property . ' must be a file.');
         }
     }

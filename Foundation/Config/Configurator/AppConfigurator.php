@@ -135,7 +135,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
      */
     public function has(string $key) : bool
     {
-        return $this->configuration->contains($key);
+        return $this->configuration->contains(value: $key);
     }
 
     /**

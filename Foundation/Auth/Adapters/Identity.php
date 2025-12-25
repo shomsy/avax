@@ -19,7 +19,7 @@ abstract class Identity
     /**
      * Construct the Identity with a UserSourceInterface instance.
      *
-     * @param User $user The provider responsible for user retrieval and data operations.
+     * @param UserSourceInterface $user The provider responsible for user retrieval and data operations.
      */
     public function __construct(protected UserSourceInterface $user) {}
 
@@ -39,13 +39,13 @@ abstract class Identity
     protected function authenticate(CredentialsInterface $credentials) : UserInterface|string|null
     {
         /** Retrieve the user based on the provided credentials */
-        $user = $this->user->retrieveByCredentials($credentials);
+        $user = $this->user->retrieveByCredentials(credentials: $credentials);
 
         /**
          * Verify if the retrieved user's password matches the provided credentials.
          * If yes, return the user. Otherwise, return null indicating authentication failure.
          */
-        if ($user instanceof UserInterface && password_verify($credentials->getPassword(), $user->getPassword())) {
+        if ($user instanceof UserInterface && password_verify(password: $credentials->getPassword(), hash: $user->getPassword())) {
             return $user;
         }
 

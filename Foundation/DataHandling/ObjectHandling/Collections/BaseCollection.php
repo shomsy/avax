@@ -55,7 +55,7 @@ abstract class BaseCollection implements CollectionInterface
         }
 
         if ($items instanceof Traversable) {
-            return iterator_to_array($items);
+            return iterator_to_array(iterator: $items);
         }
 
         return (array) $items;
@@ -118,7 +118,7 @@ abstract class BaseCollection implements CollectionInterface
      */
     public function count() : int
     {
-        return count($this->getItems());
+        return count(value: $this->getItems());
     }
 
     /**
@@ -143,7 +143,7 @@ abstract class BaseCollection implements CollectionInterface
      */
     public function toArray() : array
     {
-        return array_map(fn($item) => $item instanceof self ? $item->toArray() : $item, $this->getItems());
+        return array_map(callback: fn($item) => $item instanceof self ? $item->toArray() : $item, array: $this->getItems());
     }
 
     // Abstract methods to be implemented by subclasses for specific functionalities

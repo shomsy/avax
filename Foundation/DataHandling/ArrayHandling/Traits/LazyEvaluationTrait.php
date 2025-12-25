@@ -48,7 +48,7 @@ trait LazyEvaluationTrait
         return new static(function () use ($callback) {
             foreach ($this->getItems() as $key => $item) {
                 $result = $callback($item, $key);
-                if (! is_bool($result)) {
+                if (! is_bool(value: $result)) {
                     throw new InvalidArgumentException(message: 'Callback must return a boolean.');
                 }
 
@@ -89,7 +89,7 @@ trait LazyEvaluationTrait
             foreach ($this->getItems() as $key => $item) {
                 if (! $yielding) {
                     $result = $callback($item, $key);
-                    if (! is_bool($result)) {
+                    if (! is_bool(value: $result)) {
                         throw new InvalidArgumentException(message: 'Callback must return a boolean.');
                     }
 
@@ -160,7 +160,7 @@ trait LazyEvaluationTrait
         return new static(function () use ($callback) {
             foreach ($this->getItems() as $key => $item) {
                 $result = $callback($item, $key);
-                if (! is_bool($result)) {
+                if (! is_bool(value: $result)) {
                     throw new InvalidArgumentException(message: 'Callback must return a boolean.');
                 }
 
@@ -199,7 +199,7 @@ trait LazyEvaluationTrait
             foreach ($this->getItems() as $key => $item) {
                 if (! $yielding) {
                     $result = $callback($item, $key);
-                    if (! is_bool($result)) {
+                    if (! is_bool(value: $result)) {
                         throw new InvalidArgumentException(message: 'Callback must return a boolean.');
                     }
 
@@ -243,9 +243,9 @@ trait LazyEvaluationTrait
             $buffer = [];
             foreach ($this->getItems() as $item) {
                 $buffer[] = $item;
-                if (count($buffer) === $size) {
+                if (count(value: $buffer) === $size) {
                     yield $buffer;
-                    array_splice($buffer, 0, $step);
+                    array_splice(array: $buffer, offset: 0, length: $step);
                 }
             }
 
@@ -283,7 +283,7 @@ trait LazyEvaluationTrait
 
         return new static(
             iterator_to_array(
-                (function () use ($limit) {
+                iterator     : (function () use ($limit) {
                     if ($limit === 0) {
                         return;
                     }
@@ -296,7 +296,7 @@ trait LazyEvaluationTrait
                         }
                     }
                 })(),
-                false
+                preserve_keys: false
             )
         );
     }
@@ -399,7 +399,7 @@ trait LazyEvaluationTrait
      */
     public function toEager() : static
     {
-        return new static(iterator_to_array($this->getItems()));
+        return new static(iterator_to_array(iterator: $this->getItems()));
     }
 
 

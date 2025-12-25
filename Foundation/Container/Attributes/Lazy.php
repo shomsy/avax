@@ -6,5 +6,5 @@ namespace Avax\Container\Attributes;
 
 use Attribute;
 
-#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_PROPERTY)]
+#[Attribute(flags: Attribute::TARGET_CLASS | Attribute::TARGET_PROPERTY)]
 final readonly class Lazy {}

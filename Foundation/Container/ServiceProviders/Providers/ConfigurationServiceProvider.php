@@ -17,6 +17,7 @@ class ConfigurationServiceProvider extends ServiceProvider
      * only instantiated once and shared across the entire application lifecycle.
      *
      */
+    #[\Override]
     public function register() : void
     {
         // Register ConfigFileLoader as a singleton to make sure
@@ -38,6 +39,7 @@ class ConfigurationServiceProvider extends ServiceProvider
      * overridden by derived classes to implement specific boot logic.
      * It outputs a default boot message.
      */
+    #[\Override]
     public function boot() : void
     {
         // TODO: Implement boot() method.

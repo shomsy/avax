@@ -71,7 +71,7 @@ readonly class Bootstrapper
     private function initializeSessionSecurity() : void
     {
         session_set_cookie_params(
-            [
+            lifetime_or_options: [
                 'secure'   => true,
                 'httponly' => true,
                 'samesite' => 'Strict',
@@ -108,7 +108,7 @@ readonly class Bootstrapper
      */
     private function loadHelperFunctions() : void
     {
-        if (! file_exists($this->helpersFilePath)) {
+        if (! file_exists(filename: $this->helpersFilePath)) {
             throw new Exception(message: 'Helpers file not found: ' . $this->helpersFilePath);
         }
 

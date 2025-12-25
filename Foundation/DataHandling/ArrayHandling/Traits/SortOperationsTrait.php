@@ -71,7 +71,7 @@ trait SortOperationsTrait
      */
     public function reverse() : static
     {
-        return new static(items: array_reverse($this->getItems(), true));
+        return new static(items: array_reverse(array: $this->getItems(), preserve_keys: true));
     }
 
     /**
@@ -114,18 +114,18 @@ trait SortOperationsTrait
     {
         $sortedItems = $this->getItems();
 
-        if (is_string($key)) {
+        if (is_string(value: $key)) {
             foreach ($sortedItems as $sortedItem) {
-                if (! is_array($sortedItem) || ! array_key_exists($key, $sortedItem)) {
+                if (! is_array(value: $sortedItem) || ! array_key_exists(key: $key, array: $sortedItem)) {
                     throw new InvalidArgumentException(
                         message: sprintf("Each item must be an array containing the key '%s'.", $key)
                     );
                 }
             }
 
-            uasort($sortedItems, static fn($a, $b) : int => $a[$key] <=> $b[$key]);
-        } elseif (is_callable($key)) {
-            uasort($sortedItems, $key);
+            uasort(array: $sortedItems, callback: static fn($a, $b) : int => $a[$key] <=> $b[$key]);
+        } elseif (is_callable(value: $key)) {
+            uasort(array: $sortedItems, callback: $key);
         } else {
             throw new InvalidArgumentException(message: 'The key must be either a string or a callable.');
         }
@@ -150,7 +150,7 @@ trait SortOperationsTrait
     public function sortKeys() : static
     {
         $sorted = $this->getItems();
-        ksort($sorted);
+        ksort(array: $sorted);
 
         return new static(items: $sorted);
     }
@@ -172,7 +172,7 @@ trait SortOperationsTrait
     public function sortKeysDesc() : static
     {
         $sorted = $this->getItems();
-        krsort($sorted);
+        krsort(array: $sorted);
 
         return new static(items: $sorted);
     }
@@ -265,7 +265,7 @@ trait SortOperationsTrait
     public function sortByMultiple(array $criteria) : static
     {
         $items = $this->getItems();
-        usort($items, static function (array $a, array $b) use ($criteria) : int {
+        usort(array: $items, callback: static function (array $a, array $b) use ($criteria) : int {
             foreach ($criteria as $key => $order) {
                 $result = $a[$key] <=> $b[$key];
                 if ($result !== 0) {

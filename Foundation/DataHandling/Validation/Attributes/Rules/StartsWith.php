@@ -30,13 +30,13 @@ readonly class StartsWith
     public function validate(mixed $value, string $property) : void
     {
         foreach ($this->prefixes as $prefix) {
-            if (str_starts_with((string) $value, (string) $prefix)) {
+            if (str_starts_with(haystack: (string) $value, needle: (string) $prefix)) {
                 return;
             }
         }
 
         throw new ValidationException(
-            message: $property . ' must start with one of the following: ' . implode(', ', $this->prefixes),
+            message: $property . ' must start with one of the following: ' . implode(separator: ', ', array: $this->prefixes),
         );
     }
 }

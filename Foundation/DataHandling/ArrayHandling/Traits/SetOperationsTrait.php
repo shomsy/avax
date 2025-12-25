@@ -53,12 +53,12 @@ trait SetOperationsTrait
         $otherItems   = $collection->toArray();
 
         if (empty($otherItems)) {
-            throw new InvalidArgumentException('The provided collection for intersection is empty.');
+            throw new InvalidArgumentException(message: 'The provided collection for intersection is empty.');
         }
 
         $intersected = array_intersect($currentItems, $otherItems);
 
-        return new static($intersected);
+        return new static(items: $intersected);
     }
 
     /** ***Set Operations Methods*** */
@@ -95,9 +95,9 @@ trait SetOperationsTrait
         $otherItems   = $collection->toArray();
 
         $merged = array_merge($currentItems, $otherItems);
-        $unique = array_unique($merged, SORT_REGULAR); // SORT_REGULAR ensures proper uniqueness for arrays
+        $unique = array_unique(array: $merged, flags: SORT_REGULAR); // SORT_REGULAR ensures proper uniqueness for arrays
 
-        return new static($unique);
+        return new static(items: $unique);
     }
 
     /**
@@ -124,7 +124,7 @@ trait SetOperationsTrait
 
         $diff = array_diff($currentItems, $otherItems);
 
-        return new static($diff);
+        return new static(items: $diff);
     }
 
     /**
@@ -151,7 +151,7 @@ trait SetOperationsTrait
 
         $merged = array_merge($currentItems, $otherItems);
 
-        return new static($merged);
+        return new static(items: $merged);
     }
 
     /**
@@ -183,6 +183,6 @@ trait SetOperationsTrait
         $diff2         = array_diff($collection->toArray(), $this->getItems());
         $symDifference = array_merge($diff1, $diff2);
 
-        return new static($symDifference);
+        return new static(items: $symDifference);
     }
 }

@@ -48,7 +48,7 @@ final readonly class RoutePipelineFactory
     public function create(RouteDefinition $route) : RoutePipeline
     {
         // Resolving middleware definitions from the route into callable middleware instances.
-        $resolvedMiddleware = $this->middlewareResolver->resolve($route->middleware);
+        $resolvedMiddleware = $this->middlewareResolver->resolve(middleware: $route->middleware);
 
         // Constructing a new RoutePipeline with the resolved dependencies and injecting middleware.
         // This step prepares the pipeline to handle HTTP requests for the given route.

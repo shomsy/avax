@@ -81,7 +81,7 @@ trait HandlesHydration
         array              $attributes,
         array              $data
     ) : void {
-        if (! array_key_exists($name, $data)) {
+        if (! array_key_exists(key: $name, array: $data)) {
             $this->handleMissingField(name: $name, property: $property);
 
             return;
@@ -157,7 +157,7 @@ trait HandlesHydration
     private function validateField(string $fieldName, mixed $value, array $attributes) : void
     {
         foreach ($attributes as $attribute) {
-            if (method_exists($attribute, 'validate')) {
+            if (method_exists(object_or_class: $attribute, method: 'validate')) {
                 $attribute->validate(
                     value   : $value,
                     property: $fieldName

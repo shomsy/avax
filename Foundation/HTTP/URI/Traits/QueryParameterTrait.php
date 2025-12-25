@@ -11,7 +11,7 @@ trait QueryParameterTrait
     public function addParam(string $key, string $value) : self
     {
         $clone = clone $this;
-        $clone->queryParams->set(rawurldecode($key), rawurldecode($value));
+        $clone->queryParams->set(key: rawurldecode(string: $key), value: rawurldecode(string: $value));
 
         return $clone;
     }
@@ -21,7 +21,7 @@ trait QueryParameterTrait
     {
         $clone = clone $this;
         foreach ($params as $key => $value) {
-            $clone->queryParams->set($key, $value);
+            $clone->queryParams->set(key: $key, value: $value);
         }
 
         return $clone;
@@ -35,7 +35,7 @@ trait QueryParameterTrait
     public function removeParam(string $key) : self
     {
         $clone = clone $this;
-        $clone->queryParams->delete($key);
+        $clone->queryParams->delete(key: $key);
 
         return $clone;
     }

@@ -51,19 +51,19 @@ final readonly class RouterKernel
     public function handle(Request $request) : ResponseInterface
     {
         // Apply fallback logic for HEAD requests, converting them to GET if needed.
-        $request = $this->headRequestFallback->resolve($request);
+        $request = $this->headRequestFallback->resolve(request: $request);
 
         // Resolve the current request into a matching route definition.
-        $route = $this->httpRequestRouter->resolve($request);
+        $route = $this->httpRequestRouter->resolve(request: $request);
 
         // Inject route parameters and defaults into the request as attributes.
-        $request = $this->injectRouteAttributes($request, $route);
+        $request = $this->injectRouteAttributes(request: $request, route: $route);
 
         // Create a middleware pipeline based on the resolved route.
-        $pipeline = $this->pipelineFactory->create($route);
+        $pipeline = $this->pipelineFactory->create(route: $route);
 
         // Process the pipeline and dispatch the final response.
-        return $pipeline->dispatch($request);
+        return $pipeline->dispatch(request: $request);
     }
 
     /**
@@ -81,13 +81,13 @@ final readonly class RouterKernel
     {
         // Inject route parameters as attributes into the request.
         foreach ($route->parameters as $key => $value) {
-            $request = $request->withAttribute($key, $value);
+            $request = $request->withAttribute(name: $key, value: $value);
         }
 
         // Inject default values for attributes that are not already set in the request.
         foreach ($route->defaults as $key => $value) {
-            if ($request->getAttribute($key) === null) {
-                $request = $request->withAttribute($key, $value);
+            if ($request->getAttribute(name: $key) === null) {
+                $request = $request->withAttribute(name: $key, value: $value);
             }
         }
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Avax\Facade\Facades\Route;
 
-Route::get(path: '/', action: static fn() : string => 'Welcome to the homepage!')->name('test-route');
+Route::get(path: '/', action: static fn() : string => 'Welcome to the homepage!')->name(name: 'test-route');
 
 
 //Route::get(

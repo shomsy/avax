@@ -67,8 +67,7 @@ interface AvaxClientInterface
     /**
      * Creates asynchronous requests for multiple endpoints.
      *
-     * @param array      $urls   An array of URLs.
-     * @param HttpMethod $method The HTTP method to use (GET, POST, etc.).
+     * @param array $urls An array of URLs.
      *
      * @return array An array of promises for the requests.
      */

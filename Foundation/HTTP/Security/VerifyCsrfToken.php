@@ -60,7 +60,7 @@ class VerifyCsrfToken
      */
     private function isSafeMethod(Request $request) : bool
     {
-        return in_array($request->getMethod(), self::SAFE_METHODS, true);
+        return in_array(needle: $request->getMethod(), haystack: self::SAFE_METHODS, strict: true);
     }
 
     /**
@@ -79,7 +79,7 @@ class VerifyCsrfToken
         }
 
         if ($request->getHeaderLine(name: 'Content-Type') === 'application/json') {
-            $data = json_decode($request->getBody()->getContents(), true);
+            $data = json_decode(json: $request->getBody()->getContents(), associative: true);
 
             return $data['_token'] ?? null;
         }
@@ -98,7 +98,7 @@ class VerifyCsrfToken
 
         $response->getBody()->write(
             string: json_encode(
-                        [
+                        value: [
                             'error' => [
                                 'code'    => 'CSRF_TOKEN_MISMATCH',
                                 'message' => 'The CSRF token is invalid, missing, or expired.',

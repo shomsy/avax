@@ -35,6 +35,7 @@ final class MiddlewareServiceProvider extends ServiceProvider
     /**
      * Registers all middleware-related services into the container.
      */
+    #[\Override]
     public function register() : void
     {
         $this->registerPipelineInfrastructure();
@@ -57,7 +58,7 @@ final class MiddlewareServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: MiddlewarePipelineLogger::class,
             concrete: fn() => new MiddlewarePipelineLogger(
-                logger: $this->dependencyInjector->get(LoggerInterface::class)
+                logger: $this->dependencyInjector->get(id: LoggerInterface::class)
             )
         );
     }
@@ -70,8 +71,8 @@ final class MiddlewareServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: ExceptionHandlerMiddleware::class,
             concrete: fn() => new ExceptionHandlerMiddleware(
-                logger:          $this->dependencyInjector->get(LoggerInterface::class),
-                responseFactory: $this->dependencyInjector->get(ResponseFactory::class)
+                logger:          $this->dependencyInjector->get(id: LoggerInterface::class),
+                responseFactory: $this->dependencyInjector->get(id: ResponseFactory::class)
             )
         );
     }
@@ -110,7 +111,7 @@ final class MiddlewareServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: MiddlewareResolver::class,
             concrete: fn() => new MiddlewareResolver(
-                groupResolver: $this->dependencyInjector->get(MiddlewareGroupResolver::class)
+                groupResolver: $this->dependencyInjector->get(id: MiddlewareGroupResolver::class)
             )
         );
     }
@@ -141,5 +142,6 @@ final class MiddlewareServiceProvider extends ServiceProvider
     /**
      * Boots global and grouped middleware for runtime execution.
      */
+    #[\Override]
     public function boot() : void {}
 }

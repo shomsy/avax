@@ -54,15 +54,15 @@ class Min
         }
 
         match (true) {
-            is_numeric($value)                              => $this->validateNumeric(
+            is_numeric(value: $value) => $this->validateNumeric(
                 value   : (float) $value,
                 property: $property
             ),
-            is_string($value)                               => $this->validateString(
+            is_string(value: $value) => $this->validateString(
                 value   : $value,
                 property: $property
             ),
-            is_countable($value) => $this->validateCountable(
+            is_countable(value: $value) => $this->validateCountable(
                 value   : $value,
                 property: $property
             ),
@@ -84,7 +84,7 @@ class Min
     private function throwValidationException(string $errorKey, string $property, mixed $value) : void
     {
         throw new ValidationException(
-            message : $this->message ?? sprintf('%s must be at least %d.', ucfirst($property), $this->min),
+            message : $this->message ?? sprintf('%s must be at least %d.', ucfirst(string: $property), $this->min),
             metadata: [
                           'property' => $property,
                           'value'    => $value,
@@ -96,14 +96,14 @@ class Min
 
     private function validateString(string $value, string $property) : void
     {
-        if (mb_strlen($value) < $this->min) {
+        if (mb_strlen(string: $value) < $this->min) {
             $this->throwValidationException(errorKey: self::ERROR_STRING, property: $property, value: $value);
         }
     }
 
     private function validateCountable(array|Countable $value, string $property) : void
     {
-        $count = is_array($value) ? count($value) : iterator_count($value);
+        $count = is_array(value: $value) ? count(value: $value) : iterator_count(iterator: $value);
 
         if ($count < $this->min) {
             $this->throwValidationException(errorKey: self::ERROR_COUNTABLE, property: $property, value: $count);

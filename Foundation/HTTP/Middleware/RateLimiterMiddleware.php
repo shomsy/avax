@@ -97,6 +97,6 @@ readonly class RateLimiterMiddleware
         return $this->responseFactory->createResponse(
             code        : 429,
             reasonPhrase: 'Too Many Requests'
-        )->withHeader('Retry-After', (string) $this->timeWindow);
+        )->withHeader(name: 'Retry-After', value: (string) $this->timeWindow);
     }
 }

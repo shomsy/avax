@@ -22,7 +22,7 @@ final class RouteNotFoundException extends RuntimeException
     public static function for(string $method, string $path) : self
     {
         return new self(
-            message: sprintf('No route found for [%s] %s', strtoupper($method), $path),
+            message: sprintf('No route found for [%s] %s', strtoupper(string: $method), $path),
             code   : 404
         );
     }

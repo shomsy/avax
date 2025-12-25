@@ -18,6 +18,7 @@ class InvalidPropertyException extends Exception
      *
      * @param string $propertyName The name of the missing or invalid property.
      */
+    #[\Override]
     public function __construct(string $propertyName)
     {
         $message = sprintf("The property '%s' is missing or invalid in the DTO.", $propertyName);

@@ -18,7 +18,7 @@ final readonly class RegisterController
     {
         try {
             $data = new RegistrationDTO(data: $request->allInputs());
-            $user = $this->registerAction->execute($data);
+            $user = $this->registerAction->execute(data: $data);
 
             return response()->send(
                 data: [

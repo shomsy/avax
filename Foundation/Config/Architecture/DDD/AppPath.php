@@ -135,8 +135,8 @@ enum AppPath: string
         $rootDir      = '/'; // should be root of (any) project
 
         // (1) Start from the current directory
-        while (! file_exists($currentDir . DIRECTORY_SEPARATOR . $composerFile)) { // (2) Check if composer.json exists
-            $currentDir = dirname($currentDir); // (3) Move one directory up
+        while (! file_exists(filename: $currentDir . DIRECTORY_SEPARATOR . $composerFile)) { // (2) Check if composer.json exists
+            $currentDir = dirname(path: $currentDir); // (3) Move one directory up
 
             if ($currentDir === $rootDir) { // (4) Prevent infinite loop if root is not found
                 throw new RuntimeException(message: 'Project root not found');

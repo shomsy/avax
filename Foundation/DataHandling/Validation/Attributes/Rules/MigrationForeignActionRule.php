@@ -33,13 +33,13 @@ readonly class MigrationForeignActionRule
             return;
         }
 
-        if (! is_string($value)) {
+        if (! is_string(value: $value)) {
             throw new ValidationException(message: "{$property} must be a string or ForeignActionEnum instance.");
         }
 
         if (ForeignActionEnum::tryFrom(value: $value) === null) {
             throw new ValidationException(
-                message: "{$property} is not a valid ForeignActionEnum. Got: " . var_export($value, true)
+                message: "{$property} is not a valid ForeignActionEnum. Got: " . var_export(value: $value, return: true)
             );
         }
     }

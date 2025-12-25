@@ -9,6 +9,7 @@ use Avax\DataHandling\ObjectHandling\DTO\Traits\HandlesAttributes;
 use Avax\DataHandling\ObjectHandling\DTO\Traits\HandlesHydration;
 use Avax\DataHandling\ObjectHandling\DTO\Traits\InspectsProperties;
 use Avax\DataHandling\ObjectHandling\DTO\Traits\Serialization;
+use ReflectionException;
 
 /**
  * Base abstract class for Data Transfer Objects (DTOs).
@@ -73,11 +74,11 @@ abstract class AbstractDTO
      *
      * @param array $data The associative array containing the initial properties of the DTO.
      *
-     * @throws \ReflectionException If reflection fails to evaluate class or property metadata during hydration.
+     * @throws ReflectionException If reflection fails to evaluate class or property metadata during hydration.
      */
     public function __construct(array $data)
     {
         // Hydrate the object with the given data array.
-        $this->hydrateFrom($data);
+        $this->hydrateFrom(data: $data);
     }
 }

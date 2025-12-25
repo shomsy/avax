@@ -50,7 +50,7 @@ final readonly class AccessMiddleware
         $policy = $request->getAttribute(name: 'route:authorization');
 
         // Ensure the policy exists and is a valid string.
-        if (! is_string($policy)) {
+        if (! is_string(value: $policy)) {
             throw new RuntimeException(message: 'Route authorization policy is missing or invalid.');
         }
 

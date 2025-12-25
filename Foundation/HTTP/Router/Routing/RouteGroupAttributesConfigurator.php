@@ -40,21 +40,21 @@ final class RouteGroupAttributesConfigurator
              * Strategy for handling 'prefix' - converts the value to a string
              * and applies it as a prefix to the route group context.
              */
-            'prefix'     => fn(RouteGroupContext $context, mixed $value) => $context->setPrefix((string) $value),
+            'prefix'     => fn(RouteGroupContext $context, mixed $value) => $context->setPrefix(prefix: (string) $value),
 
             /**
              * Strategy for handling 'middleware' - converts the value to an array
              * and appends the middleware to the route group context.
              */
             'middleware' => fn(RouteGroupContext $context, mixed $value) => $context->addMiddleware(
-                (array) $value
+                middleware: (array) $value
             ),
 
             /**
              * Strategy for handling 'domain' - converts the value to a string
              * and sets it as the domain for the route group context.
              */
-            'domain'     => fn(RouteGroupContext $context, mixed $value) => $context->setDomain((string) $value),
+            'domain'     => fn(RouteGroupContext $context, mixed $value) => $context->setDomain(domain: (string) $value),
 
             /**
              * Strategy for handling 'name' - converts the value to a string
@@ -62,7 +62,7 @@ final class RouteGroupAttributesConfigurator
              * names.
              */
             'name'       => fn(RouteGroupContext $context, mixed $value) => $context->setNamePrefix(
-                (string) $value
+                prefix: (string) $value
             ),
 
             /**
@@ -70,7 +70,7 @@ final class RouteGroupAttributesConfigurator
              * and sets it as authorization for the route group context.
              */
             'authorize'  => fn(RouteGroupContext $context, mixed $value) => $context->setAuthorization(
-                (string) $value
+                authorization: (string) $value
             ),
 
             // Additional attribute types can be added here following the same pattern, maintaining extensibility.
@@ -98,7 +98,7 @@ final class RouteGroupAttributesConfigurator
             if (! isset($this->strategies[$attribute])) {
                 // If not supported, throw an exception to enforce proper usage.
                 throw new InvalidArgumentException(
-                    sprintf('Unsupported route group attribute: %s', $attribute)
+                    message: sprintf('Unsupported route group attribute: %s', $attribute)
                 );
             }
 

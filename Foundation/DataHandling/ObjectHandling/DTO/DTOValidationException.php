@@ -48,6 +48,7 @@ final class DTOValidationException extends InvalidArgumentException
      * @param array<string, string> $errors  Associative array of validation errors, with keys as field names
      *                                       and values as corresponding messages explaining the validation failure.
      */
+    #[\Override]
     public function __construct(
         string $message,
         array  $errors,
@@ -58,7 +59,7 @@ final class DTOValidationException extends InvalidArgumentException
             $formattedErrors[] = sprintf('%s: %s', $field, $errorMsg);
         }
 
-        $message .= "\n" . implode("\n", $formattedErrors);
+        $message .= "\n" . implode(separator: "\n", array: $formattedErrors);
 
         parent::__construct(message: $message);
         $this->errors = $errors;

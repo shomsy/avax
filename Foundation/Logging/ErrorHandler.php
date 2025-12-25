@@ -40,9 +40,9 @@ final readonly class ErrorHandler
     public function initialize() : void
     {
         ob_start();
-        set_exception_handler([$this, 'handle']);
-        set_error_handler([$this, 'convertErrorToException']);
-        register_shutdown_function([$this, 'handleShutdown']);
+        set_exception_handler(callback: [$this, 'handle']);
+        set_error_handler(callback: [$this, 'convertErrorToException']);
+        register_shutdown_function(callback: [$this, 'handleShutdown']);
         $this->registerCliSignalHandlers();
     }
 
@@ -51,9 +51,9 @@ final readonly class ErrorHandler
      */
     private function registerCliSignalHandlers() : void
     {
-        if (PHP_SAPI === 'cli' && function_exists('pcntl_signal')) {
-            pcntl_signal(SIGTERM, fn() => $this->exitGracefully(signal: 'SIGTERM'));
-            pcntl_signal(SIGINT, fn() => $this->exitGracefully(signal: 'SIGINT'));
+        if (PHP_SAPI === 'cli' && function_exists(function: 'pcntl_signal')) {
+            pcntl_signal(signal: SIGTERM, handler: fn() => $this->exitGracefully(signal: 'SIGTERM'));
+            pcntl_signal(signal: SIGINT, handler: fn() => $this->exitGracefully(signal: 'SIGINT'));
         }
     }
 
@@ -129,8 +129,8 @@ final readonly class ErrorHandler
             $this->report(throwable: $throwable);
 
             match ($this->renderFormat()) {
-                self::RENDER_FORMAT_JSON => $this->renderJson($throwable),
-                default                  => $this->renderIgnition($throwable)
+                self::RENDER_FORMAT_JSON => $this->renderJson(throwable: $throwable),
+                default                  => $this->renderIgnition(throwable: $throwable)
             };
         } catch (Throwable $e) {
             $this->logger->critical(
@@ -183,8 +183,8 @@ final readonly class ErrorHandler
             : new JsonResponse(status: 500, message: 'An unexpected error occurred');
 
         if (! headers_sent()) {
-            http_response_code($response->status);
-            header('Content-Type: application/json');
+            http_response_code(response_code: $response->status);
+            header(header: 'Content-Type: application/json');
         }
 
         echo $response->toJson();

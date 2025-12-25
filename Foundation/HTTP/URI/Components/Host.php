@@ -45,20 +45,20 @@ final readonly class Host implements Stringable
      */
     private function validate(string $host) : string
     {
-        if (trim($host) === '') {
+        if (trim(string: $host) === '') {
             // Host cannot be an empty string.
             throw new InvalidArgumentException(message: "Host cannot be empty.");
         }
 
-        $asciiHost = idn_to_ascii($host, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+        $asciiHost = idn_to_ascii(domain: $host, flags: IDNA_DEFAULT, variant: INTL_IDNA_VARIANT_UTS46);
 
         // Ensures the host is a valid domain name after conversion to ASCII.
-        if ($asciiHost === false || ! filter_var($asciiHost, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+        if ($asciiHost === false || ! filter_var(value: $asciiHost, filter: FILTER_VALIDATE_DOMAIN, options: FILTER_FLAG_HOSTNAME)) {
             throw new InvalidArgumentException(message: 'Invalid host: ' . $host);
         }
 
         // Return the host in lowercase to avoid case sensitivity issues.
-        return strtolower($asciiHost);
+        return strtolower(string: $asciiHost);
     }
 
     /**

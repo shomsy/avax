@@ -37,6 +37,7 @@ class InvalidInjectionException extends RuntimeException
      * @param ReflectionProperty $property The reflection of the property where injection failed.
      * @param string             $message  A detailed descriptive error message explaining the cause.
      */
+    #[\Override]
     public function __construct(ReflectionProperty $property, string $message)
     {
         // Assigns the problematic property's name to the private property for future reference.

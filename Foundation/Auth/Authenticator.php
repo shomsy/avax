@@ -11,6 +11,7 @@ use Avax\Auth\Actions\Logout;
 use Avax\Auth\Contracts\AuthInterface;
 use Avax\Auth\Contracts\UserInterface;
 use Avax\Auth\Data\Credentials;
+use Avax\Auth\Exceptions\AuthFailed;
 
 final readonly class Authenticator implements AuthInterface
 {
@@ -21,9 +22,12 @@ final readonly class Authenticator implements AuthInterface
         private Check $checkAction
     ) {}
 
+    /**
+     * @throws AuthFailed
+     */
     public function login(Credentials $credentials): UserInterface
     {
-        return $this->loginAction->execute($credentials);
+        return $this->loginAction->execute(credentials: $credentials);
     }
 
     public function logout(): void

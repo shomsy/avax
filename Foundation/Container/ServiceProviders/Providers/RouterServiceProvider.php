@@ -30,11 +30,12 @@ class RouterServiceProvider extends ServiceProvider
      * Register routing-related services in the container.
      * Using singleton to ensure a single instance of these classes is used throughout the application.
      */
+    #[\Override]
     public function register() : void
     {
         $this->dependencyInjector->singleton(
             abstract: RouterInterface::class,
-            concrete: fn() => $this->dependencyInjector->get(Router::class)
+            concrete: fn() => $this->dependencyInjector->get(id: Router::class)
         );
 
         $this->dependencyInjector->singleton(
@@ -45,7 +46,7 @@ class RouterServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: HttpRequestRouter::class,
             concrete: fn() : HttpRequestRouter => new HttpRequestRouter(
-                constraintValidator: $this->dependencyInjector->get(RouteConstraintValidator::class)
+                constraintValidator: $this->dependencyInjector->get(id: RouteConstraintValidator::class)
             )
         );
 
@@ -67,8 +68,8 @@ class RouterServiceProvider extends ServiceProvider
             abstract: RoutePipelineFactory::class,
             concrete: fn() => new RoutePipelineFactory(
                 container         : $this->dependencyInjector,
-                dispatcher        : $this->dependencyInjector->get(ControllerDispatcher::class),
-                middlewareResolver: $this->dependencyInjector->get(MiddlewareResolver::class)
+                dispatcher        : $this->dependencyInjector->get(id: ControllerDispatcher::class),
+                middlewareResolver: $this->dependencyInjector->get(id: MiddlewareResolver::class)
             )
         );
 
@@ -113,16 +114,16 @@ class RouterServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: RouteCacheLoader::class,
             concrete: fn() => new RouteCacheLoader(
-                router: $this->dependencyInjector->get(Router::class)
+                router: $this->dependencyInjector->get(id: Router::class)
             )
         );
 
         $this->dependencyInjector->singleton(
             abstract: RouteBootstrapper::class,
             concrete: fn() => new RouteBootstrapper(
-                routeCacheLoader : $this->dependencyInjector->get(RouteCacheLoader::class),
-                httpRequestRouter: $this->dependencyInjector->get(HttpRequestRouter::class),
-                logger           : $this->dependencyInjector->get(LoggerInterface::class),
+                routeCacheLoader : $this->dependencyInjector->get(id: RouteCacheLoader::class),
+                httpRequestRouter: $this->dependencyInjector->get(id: HttpRequestRouter::class),
+                logger           : $this->dependencyInjector->get(id: LoggerInterface::class),
             )
         );
     }
@@ -132,10 +133,11 @@ class RouterServiceProvider extends ServiceProvider
      *
      * @throws \Throwable
      */
+    #[\Override]
     public function boot() : void
     {
         /** @var RouteBootstrapper $bootstrapper */
-        $bootstrapper = $this->dependencyInjector->get(RouteBootstrapper::class);
+        $bootstrapper = $this->dependencyInjector->get(id: RouteBootstrapper::class);
         $bootstrapper->bootstrap();
     }
 }

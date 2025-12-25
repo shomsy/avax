@@ -83,7 +83,7 @@ final readonly class RouteDefinition
     private function validateConstraints(array $constraints) : void
     {
         foreach ($constraints as $pattern) {
-            if (@preg_match('/' . $pattern . '/', '') === false) {
+            if (@preg_match(pattern: '/' . $pattern . '/', subject: '') === false) {
                 throw new InvalidArgumentException(message: sprintf('Invalid regex constraint: %s', $pattern));
             }
         }
@@ -166,7 +166,7 @@ final readonly class RouteDefinition
      */
     public function hasConstraint(string $parameter) : bool
     {
-        return array_key_exists($parameter, $this->constraints);
+        return array_key_exists(key: $parameter, array: $this->constraints);
     }
 
     /**

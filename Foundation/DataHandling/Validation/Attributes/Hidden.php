@@ -13,7 +13,7 @@ use Attribute;
  *
  * Pure marker – contains no logic. Interpreted by Serialization trait.
  */
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(flags: Attribute::TARGET_PROPERTY)]
 final class Hidden
 {
     //

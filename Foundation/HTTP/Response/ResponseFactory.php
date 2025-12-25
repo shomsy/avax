@@ -46,10 +46,10 @@ readonly class ResponseFactory implements ResponseFactoryInterface
     public function send(mixed $data, int $status = 200) : ResponseInterface
     {
         return match (true) {
-            $data instanceof ResponseInterface  => $data,
-            is_array($data) || is_object($data) => $this->createJsonResponse(data: (array) $data, status: $status),
-            is_string($data)                    => $this->createTextResponse(content: $data, status: $status),
-            default                             => $this->createResponseWithBody(
+            $data instanceof ResponseInterface                => $data,
+            is_array(value: $data) || is_object(value: $data) => $this->createJsonResponse(data: (array) $data, status: $status),
+            is_string(value: $data)                           => $this->createTextResponse(content: $data, status: $status),
+            default                                           => $this->createResponseWithBody(
                 content: (string) ($data ?? ''),
                 status : $status
             ),
@@ -62,7 +62,7 @@ readonly class ResponseFactory implements ResponseFactoryInterface
     public function createJsonResponse(array $data, int $status = 200) : ResponseInterface
     {
         try {
-            $json = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+            $json = json_encode(value: $data, flags: JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
         } catch (JsonException $jsonException) {
             return $this->createErrorResponse(message: "JSON encoding failed: " . $jsonException->getMessage());
         }
@@ -143,7 +143,7 @@ readonly class ResponseFactory implements ResponseFactoryInterface
      */
     public function createRedirectResponse(string $url, int $status = 302) : ResponseInterface
     {
-        if (! filter_var($url, FILTER_VALIDATE_URL) && ! str_starts_with($url, '/')) {
+        if (! filter_var(value: $url, filter: FILTER_VALIDATE_URL) && ! str_starts_with(haystack: $url, needle: '/')) {
             throw new InvalidArgumentException(message: 'Invalid URL for redirection.');
         }
 
@@ -158,11 +158,11 @@ readonly class ResponseFactory implements ResponseFactoryInterface
      */
     public function createHtmlResponse(string $html, int $status = 200) : ResponseInterface
     {
-        $stream = $this->streamFactory->createStream($html);
+        $stream = $this->streamFactory->createStream(content: $html);
 
         return $this
             ->cloneResponse()
-            ->withStatus($status)
+            ->withStatus(code: $status)
             ->withBody($stream)
             ->withHeader('Content-Type', 'text/html; charset=UTF-8');
     }
@@ -180,7 +180,7 @@ readonly class ResponseFactory implements ResponseFactoryInterface
     {
         $data ??= [];
 
-        return view($template, $data);
+        return view(template: $template, data: $data);
     }
 
 }

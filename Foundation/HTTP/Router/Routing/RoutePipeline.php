@@ -147,17 +147,17 @@ final class RoutePipeline
         // Reduce the middleware and stages into a single processing stack (chain of responsibility).
         $stack = array_reduce(
         // Reverse the pipeline to ensure middleware are applied in the correct order.
-            array_reverse($pipeline),
+            array   : array_reverse(array: $pipeline),
             // Accumulate middleware execution into the next stack function.
-            fn(Closure $next, string $class) => function (Request $request) use (
+            callback: fn(Closure $next, string $class) => function (Request $request) use (
                 $class,
                 $next
             ) : ResponseInterface {
                 // Resolve the middleware or stage instance from the container.
-                $instance = $this->container->get($class);
+                $instance = $this->container->get(id: $class);
 
                 // Ensure the middleware or stage has a `handle()` method.
-                if (! method_exists($instance, 'handle')) {
+                if (! method_exists(object_or_class: $instance, method: 'handle')) {
                     throw new RuntimeException(
                         message: "Middleware or stage [{$class}] must have a handle() method."
                     );
@@ -167,7 +167,7 @@ final class RoutePipeline
                 return $instance->handle($request, $next);
             },
             // Start from the core action dispatcher.
-            $core
+            initial : $core
         );
 
         // Execute the complete middleware stack with the initial request.

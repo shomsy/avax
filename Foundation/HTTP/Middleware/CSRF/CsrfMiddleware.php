@@ -38,7 +38,7 @@ readonly class CsrfMiddleware
     public function handle(Request $request, callable $next) : mixed
     {
         // Only validate CSRF tokens for methods that can modify state
-        if (in_array($request->getMethod(), ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+        if (in_array(needle: $request->getMethod(), haystack: ['POST', 'PUT', 'PATCH', 'DELETE'])) {
             // Retrieve the CSRF token from the request
             $token = $request->get(key: '_csrf_token');
 

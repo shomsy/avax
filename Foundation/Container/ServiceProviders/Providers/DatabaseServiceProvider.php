@@ -5,93 +5,80 @@ declare(strict_types=1);
 namespace Avax\Container\ServiceProviders\Providers;
 
 use Avax\Container\ServiceProviders\ServiceProvider;
-use Avax\Database\{Connection\ConnectionPool, DatabaseConnection, QueryBuilder\QueryBuilder, QueryBuilder\UnitOfWork};
-use Psr\Log\LoggerInterface;
+use Avax\Database\Connection\ConnectionManager;
+use Avax\Database\Connection\Contracts\DatabaseConnection;
+use Exception;
+use Infrastructure\Config\Service\Config;
+use Override;
 use Throwable;
 
 /**
  * Class DatabaseServiceProvider
  *
  * Registers and configures database-related services inside the dependency injection (DI) container.
- *
- * - ✅ **Connection Pool**: Manages database connections efficiently.
- * - ✅ **Database Connection**: Fetches connections from the pool.
- * - ✅ **Unit of Work**: Handles batch transactions.
- * - ✅ **Query Builder**: Provides a fluent API for building and executing queries.
  */
 class DatabaseServiceProvider extends ServiceProvider
 {
     /**
      * Registers database services in the DI container.
      */
-    public function register() : void
+    #[\Override]
+    public function register(): void
     {
-        // ✅ Regis  ter ConnectionPool
+        // Bind ConnectionManager as Singleton
         $this->dependencyInjector->singleton(
-            abstract: ConnectionPool::class,
-            concrete: fn() : ConnectionPool => new ConnectionPool(
-                config        : [
-                                    'connections' => [
-                                        'mysql' => [
-                                            'connection' => config(key: 'database.connections.mysql.connection'),
-                                            'username'   => config(key: 'database.connections.mysql.username'),
-                                            'password'   => config(key: 'database.connections.mysql.password'),
-                                            'options'    => config(
-                                                key:     'database.connections.mysql.options',
-                                                default: []
-                                            ),
-                                        ],
-                                    ],
-                                ],
-                logger        : $this->dependencyInjector->get(LoggerInterface::class),
-                maxConnections: 10
-            )
+            abstract: ConnectionManager::class,
+            concrete: function () {
+                $config = $this->loadDatabaseConfig();
+                return new ConnectionManager(config: $config);
+            }
         );
 
-        // ✅ Register DatabaseConnection
-        $this->dependencyInjector->singleton(
+        // Bind the default DatabaseConnection
+        $this->dependencyInjector->bind(
             abstract: DatabaseConnection::class,
-            concrete: fn() : DatabaseConnection => new DatabaseConnection(
-                connectionPool: $this->dependencyInjector->get(id: ConnectionPool::class),
-                logger        : $this->dependencyInjector->get(id: LoggerInterface::class)
-            )
-        );
-
-        // ✅ Register UnitOfWork (MUST be shared across multiple QueryBuilder instances)
-        $this->dependencyInjector->singleton(
-            abstract: UnitOfWork::class,
-            concrete: fn() : UnitOfWork => new UnitOfWork(
-                databaseConnection: $this->dependencyInjector->get(id: DatabaseConnection::class)
-            )
-        );
-
-        // ✅ Register QueryBuilder
-        $this->dependencyInjector->singleton(
-            abstract: QueryBuilder::class,
-            concrete: fn() : QueryBuilder => new QueryBuilder(
-                databaseConnection: $this->dependencyInjector->get(id: DatabaseConnection::class),
-                unitOfWork        : $this->dependencyInjector->get(id: UnitOfWork::class),
-                logger            : $this->dependencyInjector->get(id: LoggerInterface::class)
-            )
+            concrete: fn() => $this->dependencyInjector->get(id: ConnectionManager::class)->connection()
         );
     }
 
     /**
      * Performs an optional database connectivity test during boot.
-     *
-     * Ensures that the database is accessible before usage.
      */
-    public function boot() : void
+    #[\Override]
+    public function boot(): void
     {
         try {
-            $this->dependencyInjector->get(id: DatabaseConnection::class)->testConnection();
-        } catch (Throwable $throwable) {
-            // ❌ Log database connection errors
-            $logger = $this->dependencyInjector->get(id: LoggerInterface::class);
-            $logger->error(
-                'Database connection failed in DatabaseServiceProvider::boot() : ' .
-                $throwable->getMessage()
-            );
+            $config = $this->loadDatabaseConfig();
+
+            if (($config['healthcheck']['enabled'] ?? false) === true) {
+                /** @var DatabaseConnection $connection */
+                $connection = $this->dependencyInjector->get(id: DatabaseConnection::class);
+                if (!$connection->ping()) {
+                    throw new Exception(message: 'Database healthcheck failed.');
+                }
+            }
+        } catch (Throwable $e) {
+            // Logic to handle boot failure (e.g. logging)
         }
+    }
+
+    /**
+     * Load database configuration from the system config service.
+     *
+     * @return array
+     */
+    private function loadDatabaseConfig(): array
+    {
+        try {
+            if ($this->dependencyInjector->has(id: Config::class)) {
+                /** @var Config $configService */
+                $configService = $this->dependencyInjector->get(id: Config::class);
+                return (array) $configService->get('database', []);
+            }
+        } catch (Throwable) {
+            // Fallback if config service is not available
+        }
+
+        return [];
     }
 }

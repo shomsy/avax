@@ -89,11 +89,11 @@ final class RotatingFileLogWriter implements LogWriterInterface
         // Attempt to resolve the absolute path of the provided base log path. If realpath() fails (e.g.,
         // if the path does not exist yet), fallback to using the raw $baseLogPath value,
         // ensuring that it does not end with DIRECTORY_SEPARATOR unnecessarily.
-        $this->baseLogPath = rtrim($baseLogPath, DIRECTORY_SEPARATOR);
+        $this->baseLogPath = rtrim(string: $baseLogPath, characters: DIRECTORY_SEPARATOR);
 
         // Check if the provided timezone is valid by ensuring it exists in the list of IANA timezone identifiers.
         // If it is invalid, throw a RuntimeException with a clear message.
-        if (! in_array($timezone, DateTimeZone::listIdentifiers(), true)) {
+        if (! in_array(needle: $timezone, haystack: DateTimeZone::listIdentifiers(), strict: true)) {
             throw new RuntimeException(message: "Invalid timezone provided: {$timezone}");
         }
 
@@ -117,7 +117,7 @@ final class RotatingFileLogWriter implements LogWriterInterface
             throw new RuntimeException(message: "Base log path cannot be empty.");
         }
 
-        if (strpos($baseLogPath, '..') !== false) {
+        if (strpos(haystack: $baseLogPath, needle: '..') !== false) {
             throw new RuntimeException(message: "Base log path contains unsafe segments: {$baseLogPath}");
         }
     }
@@ -144,7 +144,7 @@ final class RotatingFileLogWriter implements LogWriterInterface
         }
 
         // Ensure the directory for the log file exists, creating it if necessary.
-        $this->ensureDirectoryExists(directory: dirname($this->cachedFilePath));
+        $this->ensureDirectoryExists(directory: dirname(path: $this->cachedFilePath));
 
         // Rotate old logs if the number of log files exceeds the defined limit.
         $this->rotateLogs();
@@ -163,7 +163,7 @@ final class RotatingFileLogWriter implements LogWriterInterface
      */
     private function ensureDirectoryExists(string $directory) : void
     {
-        if (! is_dir($directory) && ! mkdir($directory, 0775, true) && ! is_dir($directory)) {
+        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0775, recursive: true) && ! is_dir(filename: $directory)) {
             throw new RuntimeException(message: "Failed to create log directory: {$directory}");
         }
     }
@@ -182,7 +182,7 @@ final class RotatingFileLogWriter implements LogWriterInterface
     {
         // Retrieve a list of log files matching the naming convention: `<baseLogPath>-*.log`.
         // This uses the `glob` function to find all files matching the wildcard pattern.
-        $logFiles = glob("{$this->baseLogPath}-*.log");
+        $logFiles = glob(pattern: "{$this->baseLogPath}-*.log");
 
         // If the `glob` function fails (returns false), exit early as no files were found to process.
         if ($logFiles === false) {
@@ -199,16 +199,16 @@ final class RotatingFileLogWriter implements LogWriterInterface
         foreach ($logFiles as $file) {
             // Skip processing if the current path is not a regular file.
             // This avoids issues with directories or non-files that may have matched the pattern.
-            if (! is_file($file)) {
+            if (! is_file(filename: $file)) {
                 continue;
             }
 
             // Check if the file's modification time exceeds the maximum allowed age.
             // Compare the current timestamp with the last modification time (`filemtime`).
-            if (($now - filemtime($file)) > $maxFileAgeInSeconds) {
+            if (($now - filemtime(filename: $file)) > $maxFileAgeInSeconds) {
                 // If the file is older than allowed, delete it using the `unlink` function.
                 // The `unlink` function permanently removes the file from the file system.
-                unlink($file);
+                unlink(filename: $file);
             }
         }
     }

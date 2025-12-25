@@ -57,7 +57,7 @@ trait TransformationTrait
     public function flatten() : static
     {
         $items = $this->getItems();
-        if (! is_array($items)) {
+        if (! is_array(value: $items)) {
             throw new InvalidArgumentException(message: 'The collection must be an array to perform flattening.');
         }
 
@@ -108,7 +108,7 @@ trait TransformationTrait
         $mapped = [];
         foreach ($this->getItems() as $item) {
             $result = $callback($item);
-            if (! is_array($result)) {
+            if (! is_array(value: $result)) {
                 throw new InvalidArgumentException(message: 'The callback for flatMap must return an array.');
             }
 
@@ -144,15 +144,15 @@ trait TransformationTrait
         $mapped = [];
         foreach ($this->getItems() as $key => $item) {
             $result = $callback($item, $key);
-            if (! is_array($result) || count($result) !== 1) {
+            if (! is_array(value: $result) || count(value: $result) !== 1) {
                 throw new InvalidArgumentException(
                     message: 'The callback for mapWithKeys must return an associative array with exactly one key-value pair.'
                 );
             }
 
-            $newKey   = key($result);
-            $newValue = reset($result);
-            if (array_key_exists($newKey, $mapped)) {
+            $newKey   = key(array: $result);
+            $newValue = reset(array: $result);
+            if (array_key_exists(key: $newKey, array: $mapped)) {
                 throw new InvalidArgumentException(
                     message: sprintf("Duplicate key '%s' returned by mapWithKeys callback.", $newKey)
                 );
@@ -184,7 +184,7 @@ trait TransformationTrait
      */
     public function transform(Closure $callback) : static
     {
-        $transformedItems = array_map($callback, $this->getItems());
+        $transformedItems = array_map(callback: $callback, array: $this->getItems());
 
         return new static(items: $transformedItems);
     }
@@ -237,7 +237,7 @@ trait TransformationTrait
         $transformed = $this->getItems();
 
         foreach ($iterator as $key => $value) {
-            if (! is_array($value)) {
+            if (! is_array(value: $value)) {
                 $transformed[$key] = $callback($value, $key);
             }
         }

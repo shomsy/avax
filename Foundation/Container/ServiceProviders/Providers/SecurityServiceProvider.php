@@ -27,6 +27,7 @@ class SecurityServiceProvider extends ServiceProvider
      * It ensures a single instance is used throughout the application lifecycle.
      *
      */
+    #[\Override]
     public function register() : void
     {
         $this->dependencyInjector->singleton(
@@ -56,6 +57,7 @@ class SecurityServiceProvider extends ServiceProvider
      * Intended for any security-related initialization that
      * might be required after the service registration.
      */
+    #[\Override]
     public function boot() : void
     {
         // Additional bootstrapping for security if necessary

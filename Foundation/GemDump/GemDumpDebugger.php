@@ -17,10 +17,10 @@ class GemDumpDebugger
     #[NoReturn]
     public static function ddx(mixed ...$args) : never
     {
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1] ?? [];
+        $trace = debug_backtrace(options: DEBUG_BACKTRACE_IGNORE_ARGS, limit: 2)[1] ?? [];
         $html  = self::renderDump(args: $args, file: $trace['file'] ?? 'unknown', line: $trace['line'] ?? 0);
 
-        header('Content-Type: text/html; charset=utf-8');
+        header(header: 'Content-Type: text/html; charset=utf-8');
         echo $html;
         exit(1);
     }
@@ -47,7 +47,7 @@ class GemDumpDebugger
      */
     public static function dumpx(mixed ...$args) : void
     {
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1] ?? [];
+        $trace = debug_backtrace(options: DEBUG_BACKTRACE_IGNORE_ARGS, limit: 2)[1] ?? [];
         echo self::renderDump(args: $args, file: $trace['file'] ?? 'unknown', line: $trace['line'] ?? 0);
     }
 }

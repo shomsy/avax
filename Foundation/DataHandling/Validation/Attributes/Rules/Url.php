@@ -27,7 +27,7 @@ class URL
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! filter_var($value, FILTER_VALIDATE_URL)) {
+        if (! filter_var(value: $value, filter: FILTER_VALIDATE_URL)) {
             throw new ValidationException(message: $property . ' must be a valid URL.');
         }
     }

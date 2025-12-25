@@ -18,7 +18,7 @@ final class PasswordHasher
      */
     public function hash(string $password) : string
     {
-        return password_hash($password, PASSWORD_ARGON2ID, [
+        return password_hash(password: $password, algo: PASSWORD_ARGON2ID, options: [
             'memory_cost' => 65536, // 64MB memory
             'time_cost'   => 4,     // 4 iterations
             'threads'     => 2,     // 2 parallel threads
@@ -35,7 +35,7 @@ final class PasswordHasher
      */
     public function verify(string $password, string $hashedPassword) : bool
     {
-        return password_verify($password, $hashedPassword);
+        return password_verify(password: $password, hash: $hashedPassword);
     }
 
     /**
@@ -47,7 +47,7 @@ final class PasswordHasher
      */
     public function needsRehash(string $hashedPassword) : bool
     {
-        return password_needs_rehash($hashedPassword, PASSWORD_ARGON2ID, [
+        return password_needs_rehash(hash: $hashedPassword, algo: PASSWORD_ARGON2ID, options: [
             'memory_cost' => 65536,
             'time_cost'   => 4,
             'threads'     => 2,

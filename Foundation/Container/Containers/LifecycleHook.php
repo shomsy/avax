@@ -28,7 +28,7 @@ enum LifecycleHook: string
      */
     public static function all() : array
     {
-        return array_map(static fn(self $hook) : string => $hook->value, self::cases());
+        return array_map(callback: static fn(self $hook) : string => $hook->value, array: self::cases());
     }
 
     /**
@@ -40,6 +40,6 @@ enum LifecycleHook: string
      */
     public static function isValid(string $value) : bool
     {
-        return in_array($value, self::all(), true);
+        return in_array(needle: $value, haystack: self::all(), strict: true);
     }
 }

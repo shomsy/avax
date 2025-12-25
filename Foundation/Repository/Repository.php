@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Repository;
 
 use Exception;
-use Avax\Database\QueryBuilder\QueryBuilder;
+use Avax\Database\Modules\Query\Builder\QueryBuilder;
 use RuntimeException;
 
 /**
@@ -18,14 +18,11 @@ abstract class Repository
     /**
      * Repository constructor.
      *
-     * Sets the table name for the QueryBuilder instance.
+     * Stores a builder factory; each call uses a fresh builder instance.
      *
-     * @param QueryBuilder $queryBuilder The QueryBuilder instance for database operations.
+     * @param QueryBuilder $queryBuilder The query builder instance for database operations.
      */
-    public function __construct(protected QueryBuilder $queryBuilder)
-    {
-        $this->queryBuilder->table(tableName: $this->getTableName());
-    }
+    public function __construct(protected QueryBuilder $queryBuilder) {}
 
     /**
      * Get the table name for the entity.
@@ -36,7 +33,7 @@ abstract class Repository
     {
         $entityClass = $this->getEntityClass();
 
-        if (! method_exists($entityClass, 'getTableName')) {
+        if (! method_exists(object_or_class: $entityClass, method: 'getTableName')) {
             throw new RuntimeException(
                 message: sprintf(
                              'Entity class %s must implement a getTableName() method.',
@@ -54,6 +51,11 @@ abstract class Repository
      * @return string The fully qualified class name of the entity.
      */
     abstract protected function getEntityClass() : string;
+
+    protected function query(): QueryBuilder
+    {
+        return $this->queryBuilder->newQuery()->table($this->getTableName());
+    }
 
     /**
      * @throws \Exception
@@ -75,7 +77,7 @@ abstract class Repository
     public function findOneBy(array $conditions) : object|null
     {
         try {
-            $query = $this->queryBuilder;
+            $query = $this->query();
 
             foreach ($conditions as $column => $value) {
                 $query->where(column: $column, operator: '=', value: $value);
@@ -141,7 +143,7 @@ abstract class Repository
         int|null    $offset = null
     ) : array {
         try {
-            $query = $this->queryBuilder;
+            $query = $this->query();
 
             foreach ($conditions as $column => $value) {
                 $query->where(column: $column, operator: '=', value: $value);
@@ -161,7 +163,7 @@ abstract class Repository
 
             $results = $query->get();
 
-            return array_map([$this, 'mapToEntity'], $results);
+            return array_map(callback: [$this, 'mapToEntity'], array: $results);
         } catch (Exception $exception) {
             $this->logError(message: 'Failed to find entities by conditions.', context: [
                 'conditions' => $conditions,
@@ -186,14 +188,14 @@ abstract class Repository
 
         $data = $this->mapToDatabase(entity: $entity);
 
-        if (method_exists($entity, 'getId') && $entity->getId() !== null) {
-            $this->queryBuilder
+        if (method_exists(object_or_class: $entity, method: 'getId') && $entity->getId() !== null) {
+            $this->query()
                 ->where(column: 'id', operator: '=', value: $entity->getId())
-                ->update(values: $data, conditions: []);
+                ->update($data);
         } else {
-            $id = $this->queryBuilder->getLastInsertIdAfterInsert($data);
+            $id = $this->query()->insertGetId($data);
 
-            if (method_exists($entity, 'setId')) {
+            if (method_exists(object_or_class: $entity, method: 'setId')) {
                 $entity->setId($id);
             }
         }
@@ -227,11 +229,11 @@ abstract class Repository
      */
     public function delete(object $entity) : void
     {
-        if (! method_exists($entity, 'getId') || $entity->getId() === null) {
+        if (! method_exists(object_or_class: $entity, method: 'getId') || $entity->getId() === null) {
             throw new RuntimeException(message: "Entity must have an ID to be deleted.");
         }
 
-        $this->queryBuilder
+        $this->query()
             ->where(column: 'id', operator: '=', value: $entity->getId())
             ->delete();
     }
@@ -248,7 +250,7 @@ abstract class Repository
     public function exists(array $conditions) : bool
     {
         try {
-            $query = $this->queryBuilder;
+            $query = $this->query();
 
             foreach ($conditions as $column => $value) {
                 $query->where(column: $column, operator: '=', value: $value);
@@ -278,7 +280,7 @@ abstract class Repository
     public function count(array $conditions) : int
     {
         try {
-            $query = $this->queryBuilder;
+            $query = $this->query();
 
             foreach ($conditions as $column => $value) {
                 $query->where(column: $column, operator: '=', value: $value);

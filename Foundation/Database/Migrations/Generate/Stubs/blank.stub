@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+use Avax\Migrations\Design\BaseMigration;
+
+/**
+ * Migration: {{className}}
+ */
+return new class extends BaseMigration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up() : void
+    {
+        // Write your migration logic here
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down() : void
+    {
+        // Write your rollback logic here
+    }
+};

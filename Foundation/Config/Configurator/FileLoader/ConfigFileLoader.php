@@ -54,7 +54,7 @@ class ConfigFileLoader implements ConfigLoaderInterface
      */
     private function ensureFileExists(string $filePath) : void
     {
-        if (! file_exists($filePath)) {
+        if (! file_exists(filename: $filePath)) {
             throw new RuntimeException(message: 'Configuration file not found: ' . $filePath);
         }
     }
@@ -68,7 +68,7 @@ class ConfigFileLoader implements ConfigLoaderInterface
      */
     private function getFileExtension(string $filePath) : string
     {
-        return pathinfo($filePath, PATHINFO_EXTENSION);
+        return pathinfo(path: $filePath, flags: PATHINFO_EXTENSION);
     }
 
     /**
@@ -95,7 +95,7 @@ class ConfigFileLoader implements ConfigLoaderInterface
      */
     private function loadJsonFile(string $filePath) : array
     {
-        $config = json_decode(file_get_contents($filePath), true);
+        $config = json_decode(json: file_get_contents(filename: $filePath), associative: true);
 
         // Check for and handle JSON decoding errors.
         if (json_last_error() !== JSON_ERROR_NONE) {
@@ -115,7 +115,7 @@ class ConfigFileLoader implements ConfigLoaderInterface
      */
     private function ensureIsArray(mixed $config, string $filePath) : void
     {
-        if (! is_array($config)) {
+        if (! is_array(value: $config)) {
             throw new RuntimeException(message: 'Invalid configuration format in file: ' . $filePath);
         }
     }

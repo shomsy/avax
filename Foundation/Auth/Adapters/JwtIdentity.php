@@ -28,6 +28,7 @@ class JwtIdentity extends Identity implements AuthGuardInterface
      * @param int                  $tokenExpiry  The token expiration time in seconds.
      * @param LoggerInterface|null $logger       Optional logger for tracking authentication issues.
      */
+    #[\Override]
     public function __construct(
         UserSourceInterface                   $userProvider,
         private readonly string               $secret,
@@ -92,8 +93,8 @@ class JwtIdentity extends Identity implements AuthGuardInterface
     {
         $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
 
-        if (str_starts_with((string) $authHeader, 'Bearer ')) {
-            return substr((string) $authHeader, 7);
+        if (str_starts_with(haystack: (string) $authHeader, needle: 'Bearer ')) {
+            return substr(string: (string) $authHeader, offset: 7);
         }
 
         return null;

@@ -35,10 +35,10 @@ readonly class DigitsBetween
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (in_array(preg_match('/^\d+$/', (string) $value), [0, false], true) || strlen(
-                                                                                      (string) $value,
+        if (in_array(needle: preg_match(pattern: '/^\d+$/', subject: (string) $value), haystack: [0, false], strict: true) || strlen(
+                string: (string) $value,
                                                                                   ) < $this->min || strlen(
-                                                                                                        (string) $value,
+                string: (string) $value,
                                                                                                     ) > $this->max) {
             throw new ValidationException(
                 message: sprintf(

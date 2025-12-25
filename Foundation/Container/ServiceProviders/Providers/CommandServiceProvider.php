@@ -18,7 +18,7 @@ use Avax\Database\Migration\Runner\Generators\{Repository\RepositoryGenerator};
 use Avax\Database\Migration\Runner\Generators\Controller\ControllerGenerator;
 use Avax\Database\Migration\Runner\Generators\DTO\DtoGenerator;
 use Avax\Database\Migration\Runner\Generators\Entity\EntityGenerator;
-use Avax\Database\Migration\Runner\Generators\Entity\EntityQueryBuilderGenerator;
+use Avax\Database\Migration\Runner\Generators\Entity\EntityBuilderGenerator;
 use Avax\Database\Migration\Runner\Generators\Migration\MigrationGenerator;
 use Avax\Database\Migration\Runner\Generators\Service\ServiceGenerator;
 use Avax\Database\Migration\Runner\Manifest\ManifestStoreInterface;
@@ -26,7 +26,7 @@ use Avax\Database\Migration\Runner\Repository\MigrationRepositoryInterface;
 use Avax\Database\Migration\Runner\SchemaBuilder;
 use Avax\Database\Migration\Runner\Service\MigrationExecution;
 use Avax\Database\Migration\Runner\Service\MigrationStateManager;
-use Avax\Database\QueryBuilder\QueryBuilder;
+use Avax\Database\Modules\Query\Builder\QueryBuilder;
 use Psr\Log\LoggerInterface;
 
 class CommandServiceProvider extends ServiceProvider
@@ -34,6 +34,7 @@ class CommandServiceProvider extends ServiceProvider
     /**
      * Registers all services and commands into the container.
      */
+    #[\Override]
     public function register() : void
     {
         $this->dependencyInjector->singleton(
@@ -49,8 +50,8 @@ class CommandServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: MigrationGenerator::class,
             concrete: fn() => new MigrationGenerator(
-                mapper       : $this->dependencyInjector->get(FieldToDslMapperInterface::class),
-                manifestStore: $this->dependencyInjector->get(ManifestStoreInterface::class),
+                mapper       : $this->dependencyInjector->get(id: FieldToDslMapperInterface::class),
+                manifestStore: $this->dependencyInjector->get(id: ManifestStoreInterface::class),
             )
         );
 
@@ -60,8 +61,8 @@ class CommandServiceProvider extends ServiceProvider
         );
 
         $this->dependencyInjector->singleton(
-            abstract: EntityQueryBuilderGenerator::class,
-            concrete: static fn() => new EntityQueryBuilderGenerator()
+            abstract: EntityBuilderGenerator::class,
+            concrete: static fn() => new EntityBuilderGenerator()
         );
 
         $this->dependencyInjector->singleton(
@@ -88,8 +89,8 @@ class CommandServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: MigrationRepositoryInterface::class,
             concrete: fn() => new MigrationExecution(
-                queryBuilder: $this->dependencyInjector->get(QueryBuilder::class),
-                logger      : $this->dependencyInjector->get(LoggerInterface::class)
+                queryBuilder: $this->dependencyInjector->get(id: QueryBuilder::class),
+                logger      : $this->dependencyInjector->get(id: LoggerInterface::class)
             )
         );
 
@@ -102,8 +103,8 @@ class CommandServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: MigrationStateManager::class,
             concrete: fn() => new MigrationStateManager(
-                migrationRepository: $this->dependencyInjector->get(MigrationExecution::class),
-                logger             : $this->dependencyInjector->get(LoggerInterface::class)
+                migrationRepository: $this->dependencyInjector->get(id: MigrationExecution::class),
+                logger             : $this->dependencyInjector->get(id: LoggerInterface::class)
             )
         );
 
@@ -111,8 +112,8 @@ class CommandServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: SchemaBuilder::class,
             concrete: fn() => new SchemaBuilder(
-                queryBuilder: $this->dependencyInjector->get(QueryBuilder::class),
-                logger      : $this->dependencyInjector->get(LoggerInterface::class)
+                queryBuilder: $this->dependencyInjector->get(id: QueryBuilder::class),
+                logger      : $this->dependencyInjector->get(id: LoggerInterface::class)
             )
         );
 
@@ -120,14 +121,14 @@ class CommandServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: MakeMigrationCommand::class,
             concrete: fn() => new MakeMigrationCommand(
-                migrationGenerator         : $this->dependencyInjector->get(MigrationGenerator::class),
-                entityGenerator            : $this->dependencyInjector->get(EntityGenerator::class),
-                entityQueryBuilderGenerator: $this->dependencyInjector->get(EntityQueryBuilderGenerator::class),
-                dtoGenerator               : $this->dependencyInjector->get(DtoGenerator::class),
-                repositoryGenerator        : $this->dependencyInjector->get(RepositoryGenerator::class),
-                serviceGenerator           : $this->dependencyInjector->get(ServiceGenerator::class),
-                migrationStateManager      : $this->dependencyInjector->get(MigrationStateManager::class),
-                logger                     : $this->dependencyInjector->get(LoggerInterface::class)
+                migrationGenerator    : $this->dependencyInjector->get(id: MigrationGenerator::class),
+                entityGenerator       : $this->dependencyInjector->get(id: EntityGenerator::class),
+                entityBuilderGenerator: $this->dependencyInjector->get(id: EntityBuilderGenerator::class),
+                dtoGenerator          : $this->dependencyInjector->get(id: DtoGenerator::class),
+                repositoryGenerator   : $this->dependencyInjector->get(id: RepositoryGenerator::class),
+                serviceGenerator      : $this->dependencyInjector->get(id: ServiceGenerator::class),
+                migrationStateManager : $this->dependencyInjector->get(id: MigrationStateManager::class),
+                logger                : $this->dependencyInjector->get(id: LoggerInterface::class)
             )
         );
 
@@ -135,40 +136,40 @@ class CommandServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: MakeControllerCommand::class,
             concrete: fn() => new MakeControllerCommand(
-                controllerGenerator: $this->dependencyInjector->get(ControllerGenerator::class),
-                logger             : $this->dependencyInjector->get(LoggerInterface::class)
+                controllerGenerator: $this->dependencyInjector->get(id: ControllerGenerator::class),
+                logger             : $this->dependencyInjector->get(id: LoggerInterface::class)
             )
         );
 
         $this->dependencyInjector->singleton(
             abstract: MakeEntityCommand::class,
             concrete: fn() => new MakeEntityCommand(
-                entityGenerator: $this->dependencyInjector->get(EntityGenerator::class),
-                logger         : $this->dependencyInjector->get(LoggerInterface::class)
+                entityGenerator: $this->dependencyInjector->get(id: EntityGenerator::class),
+                logger         : $this->dependencyInjector->get(id: LoggerInterface::class)
             )
         );
 
         $this->dependencyInjector->singleton(
             abstract: MakeRepositoryCommand::class,
             concrete: fn() => new MakeRepositoryCommand(
-                repositoryGenerator: $this->dependencyInjector->get(RepositoryGenerator::class),
-                logger             : $this->dependencyInjector->get(LoggerInterface::class)
+                repositoryGenerator: $this->dependencyInjector->get(id: RepositoryGenerator::class),
+                logger             : $this->dependencyInjector->get(id: LoggerInterface::class)
             )
         );
 
         $this->dependencyInjector->singleton(
             abstract: MakeServiceCommand::class,
             concrete: fn() => new MakeServiceCommand(
-                serviceGenerator: $this->dependencyInjector->get(ServiceGenerator::class),
-                logger          : $this->dependencyInjector->get(LoggerInterface::class)
+                serviceGenerator: $this->dependencyInjector->get(id: ServiceGenerator::class),
+                logger          : $this->dependencyInjector->get(id: LoggerInterface::class)
             )
         );
 
         $this->dependencyInjector->singleton(
             abstract: ValidateStubsCommand::class,
             concrete: fn() => new ValidateStubsCommand(
-                stubResolver: $this->dependencyInjector->get('stubResolver'),
-                logger      : $this->dependencyInjector->get(LoggerInterface::class)
+                stubResolver: $this->dependencyInjector->get(id: 'stubResolver'),
+                logger      : $this->dependencyInjector->get(id: LoggerInterface::class)
             )
         );
     }
@@ -179,5 +180,6 @@ class CommandServiceProvider extends ServiceProvider
      * @throws \Exception
      * @throws \Throwable
      */
+    #[\Override]
     public function boot() : void {}
 }

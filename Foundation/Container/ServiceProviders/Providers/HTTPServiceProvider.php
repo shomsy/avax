@@ -27,11 +27,12 @@ class HTTPServiceProvider extends ServiceProvider
      * - StreamFactoryInterface, ResponseFactoryInterface, and UriInterface are registered for dependency injection.
      * - ResponseInterface uses the configured StreamInterface.
      */
+    #[\Override]
     public function register() : void
     {
         // Register StreamInterface with a temporary stream
         $this->dependencyInjector->singleton(abstract: StreamInterface::class, concrete: static function () : Stream {
-            $streamResource = fopen('php://temp', 'rw+');
+            $streamResource = fopen(filename: 'php://temp', mode: 'rw+');
             if ($streamResource === false) {
                 throw new RuntimeException(message: "Failed to create temporary stream.");
             }
@@ -85,7 +86,7 @@ class HTTPServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: UriInterface::class,
             concrete: static fn() : UriBuilder => UriBuilder::createFromString(
-                env(key: 'APP_URL', default: 'http://localhost')
+                uri: env(key: 'APP_URL', default: 'http://localhost')
             )
         );
 
@@ -105,6 +106,7 @@ class HTTPServiceProvider extends ServiceProvider
     /**
      * Placeholder for HTTP service bootstrapping logic.
      */
+    #[\Override]
     public function boot() : void {}
 
 }

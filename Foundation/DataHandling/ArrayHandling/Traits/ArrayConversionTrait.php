@@ -54,7 +54,7 @@ trait ArrayConversionTrait
      */
     public function toJson(int $options = 0) : string
     {
-        $json = json_encode($this->toArray(), $options);
+        $json = json_encode(value: $this->toArray(), flags: $options);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new InvalidArgumentException(
                 message: 'Failed to encode collection to JSON: ' . json_last_error_msg()
@@ -90,13 +90,13 @@ trait ArrayConversionTrait
      */
     public function toArray() : array
     {
-        return array_map(function ($item) {
-            if (is_object($item) && method_exists($item, 'toArray')) {
+        return array_map(callback: function ($item) {
+            if (is_object(value: $item) && method_exists(object_or_class: $item, method: 'toArray')) {
                 return $item->toArray();
             }
 
             return $item;
-        }, $this->getItems());
+        },               array   : $this->getItems());
     }
 
     /**
@@ -150,15 +150,15 @@ trait ArrayConversionTrait
     {
         foreach ($data as $key => $value) {
             // Handle numeric keys by using 'item' as the tag name
-            if (is_numeric($key)) {
+            if (is_numeric(value: $key)) {
                 $key = 'item';
             }
 
-            if (is_array($value)) {
+            if (is_array(value: $value)) {
                 $child = $xml->addChild(qualifiedName: $key);
                 $this->arrayToXml(data: $value, xml: $child);
             } else {
-                $xml->addChild(qualifiedName: $key, value: htmlspecialchars((string) $value));
+                $xml->addChild(qualifiedName: $key, value: htmlspecialchars(string: (string) $value));
             }
         }
     }
@@ -188,9 +188,9 @@ trait ArrayConversionTrait
         }
 
         $filteredItems = array_filter(
-            $this->getItems(),
-            static fn($item, $key) : bool => in_array($key, $keys, true),
-            ARRAY_FILTER_USE_BOTH
+            array   : $this->getItems(),
+            callback: static fn($item, $key) : bool => in_array(needle: $key, haystack: $keys, strict: true),
+            mode    : ARRAY_FILTER_USE_BOTH
         );
 
         return new static(items: $filteredItems);
@@ -221,9 +221,9 @@ trait ArrayConversionTrait
         }
 
         $filteredItems = array_filter(
-            $this->getItems(),
-            static fn($item, $key) : bool => ! in_array($key, $keys, true),
-            ARRAY_FILTER_USE_BOTH
+            array   : $this->getItems(),
+            callback: static fn($item, $key) : bool => ! in_array(needle: $key, haystack: $keys, strict: true),
+            mode    : ARRAY_FILTER_USE_BOTH
         );
 
         return new static(items: $filteredItems);

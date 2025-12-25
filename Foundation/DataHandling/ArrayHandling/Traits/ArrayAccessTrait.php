@@ -83,13 +83,13 @@ trait ArrayAccessTrait
     public function offsetSet(mixed $offset, mixed $value) : void
     {
         $items = $this->getItems();
-        if (is_null($offset)) {
+        if (is_null(value: $offset)) {
             $items[] = $value;
         } else {
             $items[$offset] = $value;
         }
 
-        $this->setItems($items);
+        $this->setItems(items: $items);
     }
 
     /**
@@ -111,7 +111,7 @@ trait ArrayAccessTrait
     {
         $items = $this->getItems();
         unset($items[$offset]);
-        $this->setItems($items);
+        $this->setItems(items: $items);
     }
 
     /**
@@ -134,7 +134,7 @@ trait ArrayAccessTrait
     {
         $items = $this->getItems();
 
-        return array_intersect_key($items, array_flip($keys));
+        return array_intersect_key($items, array_flip(array: $keys));
     }
 
     /**
@@ -160,7 +160,7 @@ trait ArrayAccessTrait
             $items[$key] = $value;
         }
 
-        $this->setItems($items);
+        $this->setItems(items: $items);
     }
 
     /**
@@ -185,9 +185,9 @@ trait ArrayAccessTrait
         $items = $this->getItems();
         $value = $items[$offset] ?? null;
 
-        if (array_key_exists($offset, $items)) {
+        if (array_key_exists(key: $offset, array: $items)) {
             unset($items[$offset]);
-            $this->setItems($items);
+            $this->setItems(items: $items);
         }
 
         return $value;
@@ -221,7 +221,7 @@ trait ArrayAccessTrait
 
         [$items[$offset1], $items[$offset2]] = [$items[$offset2], $items[$offset1]];
 
-        $this->setItems($items);
+        $this->setItems(items: $items);
     }
 
     /**
@@ -238,7 +238,7 @@ trait ArrayAccessTrait
      */
     public function keys() : array
     {
-        return array_keys($this->getItems());
+        return array_keys(array: $this->getItems());
     }
 
     /**
@@ -255,6 +255,6 @@ trait ArrayAccessTrait
      */
     public function values() : array
     {
-        return array_values($this->getItems());
+        return array_values(array: $this->getItems());
     }
 }

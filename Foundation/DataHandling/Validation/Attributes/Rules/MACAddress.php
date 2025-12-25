@@ -31,7 +31,7 @@ class MACAddress
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! filter_var($value, FILTER_VALIDATE_MAC)) {
+        if (! filter_var(value: $value, filter: FILTER_VALIDATE_MAC)) {
             throw new ValidationException(message: $property . ' must be a valid MAC address.');
         }
     }

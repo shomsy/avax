@@ -10,7 +10,7 @@ use Avax\Auth\Contracts\UserInterface;
 use Avax\Auth\Contracts\UserSourceInterface;
 use Avax\Auth\Data\RegistrationDTO;
 use Avax\Auth\Adapters\PasswordHasher;
-use Avax\Database\QueryBuilder\QueryBuilder;
+use Avax\Database\Modules\Query\Builder\QueryBuilder;
 
 readonly class UserDataSource implements UserSourceInterface
 {
@@ -18,6 +18,11 @@ readonly class UserDataSource implements UserSourceInterface
         private QueryBuilder   $queryBuilder,
         private PasswordHasher $passwordHasher
     ) {}
+
+    private function usersQuery(): QueryBuilder
+    {
+        return $this->queryBuilder->newQuery()->table('users');
+    }
 
     /**
      * Retrieve a user based on a set of credentials.
@@ -29,9 +34,8 @@ readonly class UserDataSource implements UserSourceInterface
         $identifierKey   = $credentials->getIdentifierKey();
         $identifierValue = $credentials->getIdentifierValue();
 
-        $result = $this->queryBuilder
-            ->table(tableName: 'users')
-            ->where(column: $identifierKey, value: $identifierValue)
+        $result = $this->usersQuery()
+            ->where($identifierKey, $identifierValue)
             ->first();
 
         return $result ? $this->mapToInterface(data: $result) : null;
@@ -46,7 +50,7 @@ readonly class UserDataSource implements UserSourceInterface
             return null;
         }
 
-        $data = is_array($data) ? (object) $data : $data;
+        $data = is_array(value: $data) ? (object) $data : $data;
 
         return new class ($data) implements UserInterface {
             public readonly int    $id;
@@ -83,13 +87,13 @@ readonly class UserDataSource implements UserSourceInterface
             public function hasPermission(string $permission) : bool
             {
                 return in_array(
-                    $permission,
-                    $this->roles,
-                    true
+                    needle  : $permission,
+                    haystack: $this->roles,
+                    strict  : true
                 );
             }
 
-            public function hasRole(string $role) : bool { return in_array($role, $this->roles, true); }
+            public function hasRole(string $role) : bool { return in_array(needle: $role, haystack: $this->roles, strict: true); }
 
             public function addRole(RoleInterface $role) : void { /* TODO: Implement */ }
 
@@ -102,7 +106,7 @@ readonly class UserDataSource implements UserSourceInterface
      */
     public function validateCredentials(UserInterface $user, CredentialsInterface $credentials) : bool
     {
-        return $this->passwordHasher->verify($credentials->getPassword(), $user->getPassword());
+        return $this->passwordHasher->verify(password: $credentials->getPassword(), hashedPassword: $user->getPassword());
     }
 
     /**
@@ -117,16 +121,13 @@ readonly class UserDataSource implements UserSourceInterface
             'last_name'  => $RegistrationDTO->last_name,
             'username'   => $RegistrationDTO->username,
             'email'      => $RegistrationDTO->email,
-            'password'   => $this->passwordHasher->hash($RegistrationDTO->password),
+            'password'   => $this->passwordHasher->hash(password: $RegistrationDTO->password),
             'is_admin'   => (int) $RegistrationDTO->is_admin,
         ];
 
         logger(message: 'Creating user with data:', context: $userData);
 
-//        $id = $this->queryBuilder
-//            ->table(tableName: 'users')
-//            ->getLastInsertIdAfterInsert(parameters: $userData);
-        $id = '1asaa1'; //TODO: Update this to use the actual ID from the database
+        $id = $this->usersQuery()->insertGetId($userData);
 
         return $this->retrieveById(identifier: $id);
     }
@@ -138,10 +139,9 @@ readonly class UserDataSource implements UserSourceInterface
      */
     public function retrieveById(mixed $identifier) : UserInterface|null
     {
-        $result = $this->queryBuilder
-            ->table(tableName: 'users')
+        $result = $this->usersQuery()
             ->select('id', 'first_name', 'last_name', 'email', 'username', 'password', 'is_admin')
-            ->where(column: 'id', value: $identifier)
+            ->where('id', $identifier)
             ->first();
 
         return $this->mapToInterface(data: $result);
@@ -152,15 +152,17 @@ readonly class UserDataSource implements UserSourceInterface
      */
     public function updateUser(UserInterface $user, array $data) : bool
     {
-        return false;
-//        if (isset($data['password'])) {
-//            $data['password'] = $this->passwordHasher->hash($data['password']);
-//        }
-//
-//        return $this->queryBuilder
-//                   ->table(tableName: 'users')
-//                   ->where(column: 'id', operator: '=', value: $user->getId())
-//                   ->update(parameters: $data) > 0;
+        if (isset($data['password'])) {
+            $data['password'] = $this->passwordHasher->hash(password: $data['password']);
+        }
+
+        if ($data === []) {
+            return false;
+        }
+
+        return $this->usersQuery()
+            ->where('id', '=', $user->getId())
+            ->update($data);
     }
 
     /**
@@ -170,11 +172,8 @@ readonly class UserDataSource implements UserSourceInterface
      */
     public function deleteUser(mixed $identifier) : bool
     {
-        return false;
-
-//        return $this->queryBuilder
-//                   ->table(tableName: 'users')
-//                   ->where(column: 'id', operator: '=', value: $identifier)
-//                   ->delete() > 0;
+        return $this->usersQuery()
+            ->where('id', '=', $identifier)
+            ->delete();
     }
 }

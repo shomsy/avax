@@ -86,7 +86,7 @@ final readonly class ErrorLogger implements LoggerInterface
     public function log(mixed $level, Stringable|string $message, array $context = []) : void
     {
         // 🔍 Validate log level before proceeding
-        if (! $this->isValidLogLevel($level)) {
+        if (! $this->isValidLogLevel(level: $level)) {
             throw new InvalidArgumentException(message: "❌ Invalid log level: {$level}");
         }
 
@@ -94,9 +94,9 @@ final readonly class ErrorLogger implements LoggerInterface
         $formattedMessage = sprintf(
             "[%s] %s %s %s\n",
             Carbon::now()->setTimezone('Europe/Belgrade')->format('Y-m-d H:i:s'),
-            $this->getLogPrefix($level),
+            $this->getLogPrefix(level: $level),
             (string) $message,
-            $this->formatContext($context)
+            $this->formatContext(context: $context)
         );
 
         // 📡 Write the log entry to the designated log writer
@@ -109,10 +109,10 @@ final readonly class ErrorLogger implements LoggerInterface
      */
     private function isValidLogLevel(mixed $level) : bool
     {
-        return is_string($level)
+        return is_string(value: $level)
                && in_array(
-                   $level,
-                   [
+                needle  : $level,
+                haystack: [
                        LogLevel::EMERGENCY,
                        LogLevel::ALERT,
                        LogLevel::CRITICAL,
@@ -122,7 +122,7 @@ final readonly class ErrorLogger implements LoggerInterface
                        LogLevel::INFO,
                        LogLevel::DEBUG,
                    ],
-                   true
+                strict  : true
                );
     }
 
@@ -164,7 +164,7 @@ final readonly class ErrorLogger implements LoggerInterface
                 'message'  => $exception->getMessage(),
                 'file'     => $exception->getFile(),
                 'line'     => $exception->getLine(),
-                'trace'    => explode("\n", $exception->getTraceAsString()), // Stack trace formatted as an array
+                'trace'    => explode(separator: "\n", string: $exception->getTraceAsString()), // Stack trace formatted as an array
                 'code'     => $exception->getPrevious() ? $exception->getPrevious()->getCode() : $exception->getCode(),
                 'previous' => $exception->getPrevious() ? [
                     'message' => $exception->getPrevious()->getMessage(),
@@ -175,9 +175,9 @@ final readonly class ErrorLogger implements LoggerInterface
         }
 
         try {
-            return json_encode($context, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+            return json_encode(value: $context, flags: JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         } catch (JsonException $e) {
-            return json_encode(['error' => 'Context encoding failed', 'message' => $e->getMessage()]);
+            return json_encode(value: ['error' => 'Context encoding failed', 'message' => $e->getMessage()]);
         }
     }
 

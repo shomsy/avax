@@ -41,7 +41,7 @@ class Boolean
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! is_bool(filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE))) {
+        if (! is_bool(value: filter_var(value: $value, filter: FILTER_VALIDATE_BOOLEAN, options: FILTER_NULL_ON_FAILURE))) {
             throw new ValidationException(message: $property . ' field must be true or false.');
         }
     }

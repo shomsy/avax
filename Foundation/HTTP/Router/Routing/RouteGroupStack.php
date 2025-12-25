@@ -60,7 +60,7 @@ final class RouteGroupStack
     public static function pop() : void
     {
         // Remove the most recent context from the stack.
-        array_pop(self::$stack);
+        array_pop(array: self::$stack);
     }
 
     /**
@@ -87,7 +87,7 @@ final class RouteGroupStack
         // If the $context instance exists, apply the context-specific modifications
         // to the provided RouteBuilder ($builder). If no context is available, return
         // the unmodified $builder instance.
-        return $context?->applyTo($builder) ?? $builder;
+        return $context?->applyTo(builder: $builder) ?? $builder;
     }
 
     /**
@@ -101,7 +101,7 @@ final class RouteGroupStack
     public static function current() : RouteGroupContext|null
     {
         // Get the last context from the stack without removing it.
-        return end(self::$stack) ?: null;
+        return end(array: self::$stack) ?: null;
     }
 
     /**

@@ -66,12 +66,12 @@ trait StructureConversionTrait
         $results = [];
         $flatten = static function (array $items, string $prefix = '') use (&$flatten, &$results) : void {
             foreach ($items as $key => $value) {
-                if (! is_scalar($key) && ! is_null($key)) {
+                if (! is_scalar(value: $key) && ! is_null(value: $key)) {
                     throw new InvalidArgumentException(message: 'Keys must be scalar or null.');
                 }
 
                 $dotKey = $prefix . $key;
-                if (is_array($value)) {
+                if (is_array(value: $value)) {
                     $flatten($value, $dotKey . '.');
                 } else {
                     $results[$dotKey] = $value;
@@ -80,7 +80,7 @@ trait StructureConversionTrait
         };
 
         $items = $this->getItems();
-        if (! is_array($items)) {
+        if (! is_array(value: $items)) {
             throw new InvalidArgumentException(
                 message: 'The collection must be an array to perform dot notation flattening.'
             );
@@ -118,7 +118,7 @@ trait StructureConversionTrait
      */
     public function toList() : static
     {
-        $list = array_values($this->getItems());
+        $list = array_values(array: $this->getItems());
 
         return new static(items: $list);
     }
@@ -155,10 +155,10 @@ trait StructureConversionTrait
     {
         $results = [];
         foreach ($this->getItems() as $dotKey => $item) {
-            $keys = explode('.', (string) $dotKey);
+            $keys = explode(separator: '.', string: (string) $dotKey);
             $temp = &$results;
             foreach ($keys as $key) {
-                if (! isset($temp[$key]) || ! is_array($temp[$key])) {
+                if (! isset($temp[$key]) || ! is_array(value: $temp[$key])) {
                     $temp[$key] = [];
                 }
 
@@ -169,6 +169,6 @@ trait StructureConversionTrait
             unset($temp);
         }
 
-        return new static($results);
+        return new static(items: $results);
     }
 }

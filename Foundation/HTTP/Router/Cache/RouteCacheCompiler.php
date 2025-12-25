@@ -58,7 +58,7 @@ final readonly class RouteCacheCompiler
                 // Compile each route into a directive that also serializes the action logic.
                 foreach ($builder->build() as $route) {
                     // Serialize the route after preparing it with a serialized action.
-                    $routes[] = serialize($route->withSerializedAction());
+                    $routes[] = serialize(value: $route->withSerializedAction());
                 }
             }
         }
@@ -72,7 +72,7 @@ final readonly class RouteCacheCompiler
         $cacheContent = $this->generateCacheFileContent(serializedRoutes: $routes);
 
         // Attempt to write the generated cache content to the specified output file.
-        if (! file_put_contents($outputFile, $cacheContent)) {
+        if (! file_put_contents(filename: $outputFile, data: $cacheContent)) {
             throw new RuntimeException(message: "Failed to write route cache to: {$outputFile}");
         }
     }
@@ -92,17 +92,17 @@ final readonly class RouteCacheCompiler
     private function getRouteFilesFromDirectory(string $baseDir) : array
     {
         // Verify that the provided base directory is both accessible and readable.
-        if (! is_dir($baseDir) || ! is_readable($baseDir)) {
+        if (! is_dir(filename: $baseDir) || ! is_readable(filename: $baseDir)) {
             throw new RuntimeException(message: "Routes directory '{$baseDir}' is not accessible.");
         }
 
         // Use glob to find all PHP files adhering to the "*.routes.php" pattern.
-        $files = glob("{$baseDir}/*.routes.php");
+        $files = glob(pattern: "{$baseDir}/*.routes.php");
 
         // Convert each file path into an SplFileInfo instance and return the resulting array.
         return array_map(
-            static fn(string $path) => new SplFileInfo(filename: $path),
-            $files ?: [] // Default to an empty array if no files match.
+            callback: static fn(string $path) => new SplFileInfo(filename: $path),
+            array   : $files ?: [] // Default to an empty array if no files match.
         );
     }
 
@@ -125,7 +125,7 @@ final readonly class RouteCacheCompiler
         // Append each serialized route using unserialize function calls.
         foreach ($serializedRoutes as $route) {
             // Escape single quotes to ensure code safety within double-quote strings.
-            $escaped = str_replace("'", "\\'", $route);
+            $escaped = str_replace(search: "'", replace: "\\'", subject: $route);
 
             // Append the unserialized route definition to the array.
             $code .= "    unserialize('{$escaped}'),\n";

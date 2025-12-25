@@ -64,8 +64,8 @@ readonly class ExceptionHandlerMiddleware
 
             // Determine a response rendering format based on environment configuration.
             return match ($this->renderFormat()) {
-                self::RENDER_FORMAT_JSON => $this->renderJsonResponse($throwable),
-                default                  => $this->renderIgnitionResponse($throwable),
+                self::RENDER_FORMAT_JSON => $this->renderJsonResponse(throwable: $throwable),
+                default                  => $this->renderIgnitionResponse(throwable: $throwable),
             };
         }
     }
@@ -96,11 +96,11 @@ readonly class ExceptionHandlerMiddleware
     private function renderJsonResponse(Throwable $throwable) : ResponseInterface
     {
         return $this->responseFactory->response(
-            data  : json_encode([
+            data  : json_encode(value: [
                                     'error'   => 'Internal Server Error',
                                     'message' => 'Lele! An unexpected error occurred.',
                                 ],
-                                JSON_THROW_ON_ERROR),
+                                flags: JSON_THROW_ON_ERROR),
             status: 500
         );
     }

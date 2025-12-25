@@ -30,7 +30,7 @@ class Alpha
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (in_array(preg_match('/^\pL+$/u', (string) $value), [0, false], true)) {
+        if (in_array(needle: preg_match(pattern: '/^\pL+$/u', subject: (string) $value), haystack: [0, false], strict: true)) {
             throw new ValidationException(message: $property . ' must only contain letters.');
         }
     }

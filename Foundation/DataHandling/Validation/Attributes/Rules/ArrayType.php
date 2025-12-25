@@ -35,7 +35,7 @@ class ArrayType
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! is_array($value)) {
+        if (! is_array(value: $value)) {
             throw new ValidationException(message: $property . ' must be an array.');
         }
     }

@@ -35,7 +35,7 @@ enum HttpMethod: string
      */
     public static function isValid(string $method) : bool
     {
-        return in_array(strtoupper($method), array_column(self::cases(), 'value'), true);
+        return in_array(needle: strtoupper(string: $method), haystack: array_column(array: self::cases(), column_key: 'value'), strict: true);
     }
 
     /**
@@ -45,6 +45,6 @@ enum HttpMethod: string
      */
     public static function list() : array
     {
-        return array_map(static fn(HttpMethod $method) => $method->value, self::cases());
+        return array_map(callback: static fn(HttpMethod $method) => $method->value, array: self::cases());
     }
 }

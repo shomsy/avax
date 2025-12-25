@@ -11,11 +11,11 @@ trait UriValidationTrait
     public function validateScheme(string $scheme) : string
     {
         $allowedSchemes = ['http', 'https', 'ftp', 'ws', 'wss', 'file', 'mailto', 'data', 'blob'];
-        if ($scheme === '' || ! in_array(strtolower($scheme), $allowedSchemes, true)) {
+        if ($scheme === '' || ! in_array(needle: strtolower(string: $scheme), haystack: $allowedSchemes, strict: true)) {
             throw new InvalidArgumentException(message: 'Invalid scheme: ' . $scheme);
         }
 
-        return strtolower($scheme);
+        return strtolower(string: $scheme);
     }
 
     public function validateHost(string $host) : string
@@ -24,46 +24,46 @@ trait UriValidationTrait
             return '';
         }
 
-        if (str_starts_with($host, '[') && str_ends_with($host, ']')) {
-            $ipv6 = trim($host, '[]');
-            if (! filter_var($ipv6, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+        if (str_starts_with(haystack: $host, needle: '[') && str_ends_with(haystack: $host, needle: ']')) {
+            $ipv6 = trim(string: $host, characters: '[]');
+            if (! filter_var(value: $ipv6, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV6)) {
                 throw new InvalidArgumentException(message: 'Invalid IPv6 host: ' . $host);
             }
 
             return $host;
         }
 
-        $asciiHost = idn_to_ascii($host, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-        if ($asciiHost === false || ! filter_var($asciiHost, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+        $asciiHost = idn_to_ascii(domain: $host, flags: IDNA_DEFAULT, variant: INTL_IDNA_VARIANT_UTS46);
+        if ($asciiHost === false || ! filter_var(value: $asciiHost, filter: FILTER_VALIDATE_DOMAIN, options: FILTER_FLAG_HOSTNAME)) {
             throw new InvalidArgumentException(message: 'Invalid host: ' . $host);
         }
 
-        return strtolower($asciiHost);
+        return strtolower(string: $asciiHost);
     }
 
     public function validatePath(string $path) : string
     {
         $segments = array_map(
-            static fn(string $segment) : string => rawurlencode($segment),
-            explode('/', $path)
+            callback: static fn(string $segment) : string => rawurlencode(string: $segment),
+            array   : explode(separator: '/', string: $path)
         );
 
-        return '/' . ltrim(implode('/', $segments), '/');
+        return '/' . ltrim(string: implode(separator: '/', array: $segments), characters: '/');
     }
 
     public function validateQuery(string $query) : string
     {
-        parse_str($query, $queryArray);
-        if (! is_array($queryArray)) {
+        parse_str(string: $query, result: $queryArray);
+        if (! is_array(value: $queryArray)) {
             throw new InvalidArgumentException(message: 'Invalid query string: ' . $query);
         }
 
-        return http_build_query($queryArray, '', '&', PHP_QUERY_RFC3986);
+        return http_build_query(data: $queryArray, numeric_prefix: '', arg_separator: '&', encoding_type: PHP_QUERY_RFC3986);
     }
 
     public function validateFragment(string $fragment) : string
     {
-        return rawurlencode($fragment);
+        return rawurlencode(string: $fragment);
     }
 
     public function validatePort(int|null $port, string $scheme) : int|null

@@ -38,12 +38,12 @@ trait StringManipulationTrait
     {
         // Ensure all items are strings
         foreach ($this->getItems() as $item) {
-            if (! is_string($item)) {
+            if (! is_string(value: $item)) {
                 throw new InvalidArgumentException(message: 'All items must be strings to perform implode.');
             }
         }
 
-        return implode($glue, $this->getItems());
+        return implode(separator: $glue, array: $this->getItems());
     }
 
     /**
@@ -60,7 +60,7 @@ trait StringManipulationTrait
      */
     public function uppercase(string|null $key = null) : static
     {
-        return $this->processItems(callback: fn(string $value) : string => strtoupper($value), key: $key);
+        return $this->processItems(callback: fn(string $value) : string => strtoupper(string: $value), key: $key);
     }
 
     /**
@@ -74,13 +74,13 @@ trait StringManipulationTrait
     private function processItems(callable $callback, string|null $key = null) : static
     {
         return $this->map(callback: function ($item) use ($callback, $key) {
-            if ($key !== null && is_array($item) && isset($item[$key]) && is_string($item[$key])) {
+            if ($key !== null && is_array(value: $item) && isset($item[$key]) && is_string(value: $item[$key])) {
                 $item[$key] = $callback($item[$key]);
 
                 return $item;
             }
 
-            if (is_string($item)) {
+            if (is_string(value: $item)) {
                 return $callback($item);
             }
 
@@ -102,7 +102,7 @@ trait StringManipulationTrait
      */
     public function lowercase(string|null $key = null) : static
     {
-        return $this->processItems(callback: fn(string $value) : string => strtolower($value), key: $key);
+        return $this->processItems(callback: fn(string $value) : string => strtolower(string: $value), key: $key);
     }
 
     /**
@@ -119,7 +119,7 @@ trait StringManipulationTrait
      */
     public function title(string|null $key = null) : static
     {
-        return $this->processItems(callback: fn(string $value) : string => ucwords(strtolower($value)), key: $key);
+        return $this->processItems(callback: fn(string $value) : string => ucwords(string: strtolower(string: $value)), key: $key);
     }
 
     /**
@@ -137,7 +137,7 @@ trait StringManipulationTrait
      */
     public function trim(string $characters = self::DEFAULT_TRIM_CHARACTERS, string|null $key = null) : static
     {
-        return $this->processItems(callback: fn(string $value) : string => trim($value, $characters), key: $key);
+        return $this->processItems(callback: fn(string $value) : string => trim(string: $value, characters: $characters), key: $key);
     }
 
     /**
@@ -156,7 +156,7 @@ trait StringManipulationTrait
     {
         return $this->processItems(
             callback: fn(string $value) : string => lcfirst(
-                str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $value)))
+                string: str_replace(search: ' ', replace: '', subject: ucwords(string: str_replace(search: ['-', '_'], replace: ' ', subject: $value)))
             ),
             key     : $key
         );

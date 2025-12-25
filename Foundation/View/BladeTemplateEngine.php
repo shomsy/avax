@@ -28,7 +28,7 @@ class BladeTemplateEngine extends Blade
     private function getBaseUrl() : string
     {
         $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $url    = parse_url((string) env('APP_URL', 'http://localhost'));
+        $url    = parse_url(url: (string) env('APP_URL', 'http://localhost'));
         $scheme = $url['scheme'] ?? 'http';
 
         return sprintf('%s://%s', $scheme, $host);
@@ -131,7 +131,7 @@ class BladeTemplateEngine extends Blade
         try {
             return $this->render($view, $data);
         } catch (Throwable $throwable) {
-            logger('View rendering to html failed.', ['view' => $view, 'exception' => $throwable]);
+            logger(message: 'View rendering to html failed.', context: ['view' => $view, 'exception' => $throwable]);
 
             return "<div>View rendering error: " . $throwable->getMessage() . "</div>";
         }

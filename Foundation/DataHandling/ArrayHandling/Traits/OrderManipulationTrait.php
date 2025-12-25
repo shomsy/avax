@@ -51,18 +51,18 @@ trait OrderManipulationTrait
         $items = $this->getItems();
 
         // If sorting by a string key, ensure all items are arrays and contain the key
-        if (is_string($key)) {
+        if (is_string(value: $key)) {
             foreach ($items as $item) {
-                if (! is_array($item) || ! array_key_exists($key, $item)) {
+                if (! is_array(value: $item) || ! array_key_exists(key: $key, array: $item)) {
                     throw new InvalidArgumentException(
                         message: sprintf("Each item must be an array containing the key '%s'.", $key)
                     );
                 }
             }
 
-            usort($items, static fn($a, $b) : int => $a[$key] <=> $b[$key]);
-        } elseif (is_callable($key)) {
-            usort($items, $key);
+            usort(array: $items, callback: static fn($a, $b) : int => $a[$key] <=> $b[$key]);
+        } elseif (is_callable(value: $key)) {
+            usort(array: $items, callback: $key);
         } else {
             throw new InvalidArgumentException(message: 'The key must be either a string or a callable.');
         }
@@ -98,7 +98,7 @@ trait OrderManipulationTrait
         $items = $this->getItems();
 
         // Shuffle items to randomize their order
-        shuffle($items);
+        shuffle(array: $items);
 
         // Return a new instance to preserve immutability
         return new static(items: $items);

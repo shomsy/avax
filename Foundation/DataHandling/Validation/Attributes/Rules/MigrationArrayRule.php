@@ -35,20 +35,20 @@ readonly class MigrationArrayRule
             return;
         }
 
-        if (is_array($value)) {
+        if (is_array(value: $value)) {
             return;
         }
 
-        if (is_string($value) && json_validate(json: $value)) {
-            $decoded = json_decode($value, true);
+        if (is_string(value: $value) && json_validate(json: $value)) {
+            $decoded = json_decode(json: $value, associative: true);
 
-            if (is_array($decoded)) {
+            if (is_array(value: $decoded)) {
                 return;
             }
         }
 
         throw new ValidationException(
-            message: "{$property} must be a valid array or JSON array string. Got: " . get_debug_type($value)
+            message: "{$property} must be a valid array or JSON array string. Got: " . get_debug_type(value: $value)
         );
     }
 

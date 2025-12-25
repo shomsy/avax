@@ -8,8 +8,9 @@ use Exception;
 
 class FileWriteException extends Exception
 {
+    #[\Override]
     public function __construct(string $string)
     {
-        parent::__construct($string);
+        parent::__construct(message: $string);
     }
 }

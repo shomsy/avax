@@ -24,6 +24,7 @@ class LifecycleHooks extends Arrhae
      * The constructor ensures that every possible lifecycle hook is
      * initialized with an empty array to avoid key existence checks later.
      */
+    #[\Override]
     public function __construct()
     {
         parent::__construct();

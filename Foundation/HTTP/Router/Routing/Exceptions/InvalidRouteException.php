@@ -21,6 +21,7 @@ final class InvalidRouteException extends InvalidArgumentException
      * @param int             $code     Error code (optional).
      * @param \Throwable|null $previous Chained exception (optional).
      */
+    #[\Override]
     public function __construct(string $message = '', int $code = 0, Throwable|null $previous = null)
     {
         parent::__construct(message: $message, code: $code, previous: $previous);

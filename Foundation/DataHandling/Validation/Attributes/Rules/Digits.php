@@ -31,7 +31,7 @@ readonly class Digits
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (in_array(preg_match(sprintf('/^\d{%d}$/', $this->digits), (string) $value), [0, false], true)) {
+        if (in_array(needle: preg_match(pattern: sprintf('/^\d{%d}$/', $this->digits), subject: (string) $value), haystack: [0, false], strict: true)) {
             throw new ValidationException(message: sprintf('%s must be %d digits.', $property, $this->digits));
         }
     }

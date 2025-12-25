@@ -29,6 +29,7 @@ class BootstrapServiceProvider extends ServiceProvider
      * and use throughout the application.
      *
      */
+    #[\Override]
     public function register() : void
     {
         // Register Bootstrapper singleton with required dependencies.
@@ -50,8 +51,8 @@ class BootstrapServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: Kernel::class,
             concrete: fn() : Kernel => new Kernel(
-                router      : $this->dependencyInjector->get(Router::class),
-                errorHandler: $this->dependencyInjector->get(ErrorHandler::class)
+                router      : $this->dependencyInjector->get(id: Router::class),
+                errorHandler: $this->dependencyInjector->get(id: ErrorHandler::class)
             )
         );
     }
@@ -62,10 +63,11 @@ class BootstrapServiceProvider extends ServiceProvider
      *
      * @throws \Exception
      */
+    #[\Override]
     public function boot() : void
     {
         /** @var Bootstrapper $bootstrapper */
-        $bootstrapper = $this->dependencyInjector->get(Bootstrapper::class);
-        $bootstrapper->bootstrap($this->dependencyInjector);
+        $bootstrapper = $this->dependencyInjector->get(id: Bootstrapper::class);
+        $bootstrapper->bootstrap(container: $this->dependencyInjector);
     }
 }

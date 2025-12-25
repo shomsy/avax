@@ -60,7 +60,7 @@ final class HttpRequestRouter
      */
     public function setPrefix(string $prefix) : void
     {
-        $this->currentPrefix = rtrim($prefix, '/');
+        $this->currentPrefix = rtrim(string: $prefix, characters: '/');
     }
 
     /**
@@ -127,7 +127,7 @@ final class HttpRequestRouter
         $this->validateRoutePath(path: $path);
 
         $route = new RouteDefinition(
-            method       : strtoupper($method),
+            method       : strtoupper(string: $method),
             path         : $this->applyPrefix(path: $path),
             action       : $action,
             middleware   : $middleware ?? [],
@@ -154,7 +154,7 @@ final class HttpRequestRouter
      */
     private function validateRoutePath(string $path) : void
     {
-        if (empty($path) || ! str_starts_with($path, '/')) {
+        if (empty($path) || ! str_starts_with(haystack: $path, needle: '/')) {
             throw new InvalidRouteException(message: 'Route path must start with a "/" and cannot be empty.');
         }
     }
@@ -182,7 +182,7 @@ final class HttpRequestRouter
     public function resolve(Request $request) : RouteDefinition
     {
         // Retrieve the HTTP method of the request, convert it to uppercase for consistency.
-        $method = strtoupper($request->getMethod());
+        $method = strtoupper(string: $request->getMethod());
 
         // Retrieve the URI path of the request to determine the path being accessed.
         $uriPath = $request->getUri()->getPath();
@@ -194,8 +194,8 @@ final class HttpRequestRouter
         foreach ($this->routes[$method] ?? [] as $route) {
             // If the route specifies a domain and the domain does not match the current host, skip this route.
             if ($route->domain !== null) {
-                $compiled = DomainPatternCompiler::compile($route->domain);
-                if (! DomainPatternCompiler::match($host, $compiled)) {
+                $compiled = DomainPatternCompiler::compile(pattern: $route->domain);
+                if (! DomainPatternCompiler::match(host: $host, compiled: $compiled)) {
                     continue;
                 }
             }
@@ -207,7 +207,7 @@ final class HttpRequestRouter
             );
 
             // Check if the requested URI path matches the compiled route pattern.
-            if (preg_match($pattern, $uriPath, $matches)) {
+            if (preg_match(pattern: $pattern, subject: $uriPath, matches: $matches)) {
                 // Extract any parameters captured from the regex match (e.g., {id} = 123).
                 $parameters = $this->extractParameters(matches: $matches);
 
@@ -283,7 +283,7 @@ final class HttpRequestRouter
      */
     private function extractParameters(array $matches) : array
     {
-        return array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+        return array_filter(array: $matches, callback: 'is_string', mode: ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -328,9 +328,9 @@ final class HttpRequestRouter
      */
     public function add(RouteDefinition $route) : void
     {
-        $method = strtoupper($route->method);
+        $method = strtoupper(string: $route->method);
 
-        if (! array_key_exists($method, $this->routes)) {
+        if (! array_key_exists(key: $method, array: $this->routes)) {
             $this->routes[$method] = [];
         }
 

@@ -237,9 +237,9 @@ final class Router implements RouterInterface
      */
     public function fallback(callable|array|string $handler) : void
     {
-        if (is_callable($handler)) {
+        if (is_callable(value: $handler)) {
             $this->fallbackHandler = $handler;
-        } elseif (is_array($handler) || is_string($handler)) {
+        } elseif (is_array(value: $handler) || is_string(value: $handler)) {
             $this->fallbackHandler = static function (Request $request) use ($handler) : ResponseInterface {
                 /** @var ControllerDispatcher $dispatcher */
                 $dispatcher = app(abstract: ControllerDispatcher::class);
@@ -337,7 +337,7 @@ final class Router implements RouterInterface
     public function domain(string $domain) : self
     {
         // Set the domain configuration for the current route group if available.
-        RouteGroupStack::current()?->setDomain($domain);
+        RouteGroupStack::current()?->setDomain(domain: $domain);
 
         // Return the current instance for method chaining.
         return $this;
@@ -353,7 +353,7 @@ final class Router implements RouterInterface
     public function authorize(string $policy) : self
     {
         // Set the authorization policy for the current route group if available.
-        RouteGroupStack::current()?->setAuthorization($policy);
+        RouteGroupStack::current()?->setAuthorization(authorization: $policy);
 
         // Return the current instance for method chaining.
         return $this;
@@ -414,7 +414,7 @@ final class Router implements RouterInterface
         );
 
         // Push the created context onto the routing stack, indicating the start of a new route group.
-        RouteGroupStack::push($context);
+        RouteGroupStack::push(group: $context);
 
         try {
             // Invoke the provided callback, passing the current instance to define the group's routes.
@@ -454,7 +454,7 @@ final class Router implements RouterInterface
     public function middleware(array $middleware) : self
     {
         // Retrieve the current route group stack if available, and add the middleware to it.
-        RouteGroupStack::current()?->addMiddleware($middleware);
+        RouteGroupStack::current()?->addMiddleware(middleware: $middleware);
 
         // Enable method chaining by returning the current object instance.
         return $this;
@@ -478,7 +478,7 @@ final class Router implements RouterInterface
     {
         // Retrieve the current route group from the stack and
         // add the specified parameter constraints.
-        RouteGroupStack::current()?->addConstraints($constraints);
+        RouteGroupStack::current()?->addConstraints(constraints: $constraints);
 
         // Return the current instance for further modifications.
         return $this;
@@ -502,7 +502,7 @@ final class Router implements RouterInterface
     {
         // Retrieve the current route group from the stack and
         // add the specified default parameter values.
-        RouteGroupStack::current()?->addDefaults($defaults);
+        RouteGroupStack::current()?->addDefaults(defaults: $defaults);
 
         // Return the current instance for further modifications.
         return $this;
@@ -525,7 +525,7 @@ final class Router implements RouterInterface
     {
         // Retrieve the current route group from the stack and
         // add the specified metadata attributes.
-        RouteGroupStack::current()?->addAttributes($attributes);
+        RouteGroupStack::current()?->addAttributes(attributes: $attributes);
 
         // Return the current instance for further modifications.
         return $this;

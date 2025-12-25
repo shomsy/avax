@@ -35,6 +35,7 @@ final class GuzzleClient extends AbstractHttpClient
      * @param LoggerInterface $dataLogger      Logger to capture and record data-related events.
      * @param ResponseFactory $responseFactory Factory to create response objects.
      */
+    #[\Override]
     public function __construct(
         private readonly HttpClient      $httpClient,
         private readonly LoggerInterface $dataLogger,
@@ -54,6 +55,7 @@ final class GuzzleClient extends AbstractHttpClient
      * @throws \Throwable
      * @throws \Throwable
      */
+    #[\Override]
     public function sendAsyncRequest(string $method, string $endpoint, array $options = []) : AsyncOperationInterface
     {
         try {

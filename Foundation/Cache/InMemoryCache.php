@@ -53,11 +53,11 @@ class InMemoryCache implements CacheInterface
      */
     public function getMultiple(iterable $keys, mixed $default = null) : iterable
     {
-        $this->validateKeys($keys);
+        $this->validateKeys(keys: $keys);
 
         $results = [];
         foreach ($keys as $key) {
-            $results[$key] = $this->get($key, $default);
+            $results[$key] = $this->get(key: $key, default: $default);
         }
 
         return $results;
@@ -71,7 +71,7 @@ class InMemoryCache implements CacheInterface
     private function validateKeys(iterable $keys) : void
     {
         foreach ($keys as $key) {
-            $this->validateKey($key);
+            $this->validateKey(key: $key);
         }
     }
 
@@ -82,8 +82,8 @@ class InMemoryCache implements CacheInterface
      */
     private function validateKey(string $key) : void
     {
-        if (! is_string($key) || trim($key) === '') {
-            throw new InMemoryInvalidArgumentException('Cache key must be a non-empty string.');
+        if (! is_string(value: $key) || trim(string: $key) === '') {
+            throw new InMemoryInvalidArgumentException(message: 'Cache key must be a non-empty string.');
         }
     }
 
@@ -99,9 +99,9 @@ class InMemoryCache implements CacheInterface
      */
     public function get(string $key, mixed $default = null) : mixed
     {
-        $this->validateKey($key);
+        $this->validateKey(key: $key);
 
-        if (! $this->has($key)) {
+        if (! $this->has(key: $key)) {
             return $default;
         }
 
@@ -119,7 +119,7 @@ class InMemoryCache implements CacheInterface
      */
     public function has(string $key) : bool
     {
-        $this->validateKey($key);
+        $this->validateKey(key: $key);
 
         if (! isset($this->cache[$key])) {
             return false;
@@ -127,7 +127,7 @@ class InMemoryCache implements CacheInterface
 
         $expiresAt = $this->cache[$key]['expires_at'];
         if ($expiresAt !== null && $expiresAt < time()) {
-            $this->delete($key);
+            $this->delete(key: $key);
 
             return false;
         }
@@ -146,7 +146,7 @@ class InMemoryCache implements CacheInterface
      */
     public function delete(string $key) : bool
     {
-        $this->validateKey($key);
+        $this->validateKey(key: $key);
         unset($this->cache[$key]);
 
         return true;
@@ -164,10 +164,10 @@ class InMemoryCache implements CacheInterface
      */
     public function setMultiple(iterable $values, int|DateInterval|null $ttl = null) : bool
     {
-        $this->validateKeys(array_keys(iterator_to_array($values)));
+        $this->validateKeys(keys: array_keys(array: iterator_to_array(iterator: $values)));
 
         foreach ($values as $key => $value) {
-            $this->set($key, $value, $ttl);
+            $this->set(key: $key, value: $value, ttl: $ttl);
         }
 
         return true;
@@ -186,9 +186,9 @@ class InMemoryCache implements CacheInterface
      */
     public function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
-        $this->validateKey($key);
+        $this->validateKey(key: $key);
 
-        $expiresAt         = $this->calculateExpirationTime($ttl);
+        $expiresAt         = $this->calculateExpirationTime(ttl: $ttl);
         $this->cache[$key] = ['value' => $value, 'expires_at' => $expiresAt];
 
         return true;
@@ -204,7 +204,7 @@ class InMemoryCache implements CacheInterface
         }
 
         return ($ttl instanceof DateInterval)
-            ? (new DateTimeImmutable())->add($ttl)->getTimestamp()
+            ? (new DateTimeImmutable())->add(interval: $ttl)->getTimestamp()
             : (time() + $ttl);
     }
 
@@ -219,10 +219,10 @@ class InMemoryCache implements CacheInterface
      */
     public function deleteMultiple(iterable $keys) : bool
     {
-        $this->validateKeys($keys);
+        $this->validateKeys(keys: $keys);
 
         foreach ($keys as $key) {
-            $this->delete($key);
+            $this->delete(key: $key);
         }
 
         return true;
@@ -240,7 +240,7 @@ class InMemoryCache implements CacheInterface
      */
     public function decrement(string $key, int $value = 1) : int
     {
-        return $this->increment($key, -$value);
+        return $this->increment(key: $key, value: -$value);
     }
 
     /**
@@ -255,15 +255,15 @@ class InMemoryCache implements CacheInterface
      */
     public function increment(string $key, int $value = 1) : int
     {
-        $this->validateKey($key);
+        $this->validateKey(key: $key);
 
-        $currentValue = $this->get($key, 0);
-        if (! is_numeric($currentValue)) {
-            throw new InMemoryInvalidArgumentException("Value at key '$key' is not numeric.");
+        $currentValue = $this->get(key: $key, default: 0);
+        if (! is_numeric(value: $currentValue)) {
+            throw new InMemoryInvalidArgumentException(message: "Value at key '$key' is not numeric.");
         }
 
         $newValue = (int) $currentValue + $value;
-        $this->set($key, $newValue);
+        $this->set(key: $key, value: $newValue);
 
         return $newValue;
     }
@@ -279,9 +279,9 @@ class InMemoryCache implements CacheInterface
      */
     public function clearNamespace(string $namespace) : bool
     {
-        foreach (array_keys($this->cache) as $key) {
-            if (str_starts_with($key, $namespace . ':')) {
-                $this->delete($key);
+        foreach (array_keys(array: $this->cache) as $key) {
+            if (str_starts_with(haystack: $key, needle: $namespace . ':')) {
+                $this->delete(key: $key);
             }
         }
 

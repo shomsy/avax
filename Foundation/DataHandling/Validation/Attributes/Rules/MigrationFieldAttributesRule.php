@@ -19,7 +19,7 @@ use Avax\Exceptions\ValidationException;
  * - any non-array input
  * - values not resolvable via FieldModifierEnum::tryFrom()
  */
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class MigrationFieldAttributesRule
 {
     /**
@@ -36,7 +36,7 @@ readonly class MigrationFieldAttributesRule
             return;
         }
 
-        if (! is_array($value)) {
+        if (! is_array(value: $value)) {
             throw new ValidationException(
                 message: "{$property} must be an array of FieldModifierEnum values or string equivalents."
             );
@@ -51,15 +51,15 @@ readonly class MigrationFieldAttributesRule
                 continue;
             }
 
-            if (! is_string($item)) {
+            if (! is_string(value: $item)) {
                 throw new ValidationException(
-                    message: "{$property} contains non-string value: " . var_export($item, true)
+                    message: "{$property} contains non-string value: " . var_export(value: $item, return: true)
                 );
             }
 
             if (! FieldModifierEnum::tryFrom($item)) {
                 throw new ValidationException(
-                    message: "{$property} contains invalid field modifier: " . var_export($item, true)
+                    message: "{$property} contains invalid field modifier: " . var_export(value: $item, return: true)
                 );
             }
         }
@@ -67,7 +67,7 @@ readonly class MigrationFieldAttributesRule
 
     public function apply(mixed $value) : array|null
     {
-        return is_array($value) ? $value : null;
+        return is_array(value: $value) ? $value : null;
     }
 
 }

@@ -32,7 +32,7 @@ abstract class AbstractHttpClient
      * @param string $endpoint The URL endpoint.
      * @param array  $options  Additional options for the request.
      *
-     * @return array A structured response with endpoint and result data.
+     * @return ResponseInterface A structured response with endpoint and result data.
      */
     abstract public function sendRequest(
         string $method,

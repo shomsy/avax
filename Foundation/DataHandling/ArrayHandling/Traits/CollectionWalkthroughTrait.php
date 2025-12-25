@@ -47,7 +47,7 @@ trait CollectionWalkthroughTrait
      */
     public function map(Closure $callback) : static
     {
-        $mappedItems = array_map($callback, $this->getItems());
+        $mappedItems = array_map(callback: $callback, array: $this->getItems());
 
         return new static(items: $mappedItems);
     }
@@ -166,7 +166,7 @@ trait CollectionWalkthroughTrait
      */
     public function contains(mixed $value) : bool
     {
-        return in_array($value, $this->getItems(), true);
+        return in_array(needle: $value, haystack: $this->getItems(), strict: true);
     }
 
     /** ***Query and Search Methods*** */
@@ -214,7 +214,7 @@ trait CollectionWalkthroughTrait
      */
     public function search(mixed $value, bool $strict = false) : int|false
     {
-        return array_search($value, $this->getItems(), $strict);
+        return array_search(needle: $value, haystack: $this->getItems(), strict: $strict);
     }
 
     /**
@@ -237,9 +237,9 @@ trait CollectionWalkthroughTrait
      */
     public function lastIndexOf(mixed $value) : int|false
     {
-        $reversedItems = array_reverse($this->getItems(), true);
+        $reversedItems = array_reverse(array: $this->getItems(), preserve_keys: true);
 
-        return array_search($value, $reversedItems, true);
+        return array_search(needle: $value, haystack: $reversedItems, strict: true);
     }
 
     /**
@@ -271,8 +271,8 @@ trait CollectionWalkthroughTrait
     public function where(string $key, mixed $value) : static
     {
         $filtered = array_filter(
-            $this->getItems(),
-            static fn($item) : bool => ($item[$key] ?? null) === $value
+            array   : $this->getItems(),
+            callback: static fn($item) : bool => ($item[$key] ?? null) === $value
         );
 
         return new static(items: $filtered);
@@ -306,15 +306,15 @@ trait CollectionWalkthroughTrait
      */
     public function whereBetween(string $key, array $range) : static
     {
-        if (count($range) !== 2) {
+        if (count(value: $range) !== 2) {
             throw new InvalidArgumentException(message: 'Range array must contain exactly two elements: [min, max].');
         }
 
         [$min, $max] = $range;
 
         $filtered = array_filter(
-            $this->getItems(),
-            static fn($item) : bool => ($item[$key] ?? null) >= $min &&
+            array   : $this->getItems(),
+            callback: static fn($item) : bool => ($item[$key] ?? null) >= $min &&
                                        ($item[$key] ?? null) <= $max
         );
 
@@ -354,8 +354,8 @@ trait CollectionWalkthroughTrait
         }
 
         $filtered = array_filter(
-            $this->getItems(),
-            static fn($item) : bool => in_array($item[$key] ?? null, $values, true)
+            array   : $this->getItems(),
+            callback: static fn($item) : bool => in_array(needle: $item[$key] ?? null, haystack: $values, strict: true)
         );
 
         return new static(items: $filtered);
@@ -388,15 +388,15 @@ trait CollectionWalkthroughTrait
      */
     public function whereNotBetween(string $key, array $range) : static
     {
-        if (count($range) !== 2) {
+        if (count(value: $range) !== 2) {
             throw new InvalidArgumentException(message: 'Range array must contain exactly two elements: [min, max].');
         }
 
         [$min, $max] = $range;
 
         $filtered = array_filter(
-            $this->getItems(),
-            static fn($item) : bool => ($item[$key] ?? null) < $min ||
+            array   : $this->getItems(),
+            callback: static fn($item) : bool => ($item[$key] ?? null) < $min ||
                                        ($item[$key] ?? null) > $max
         );
 
@@ -431,8 +431,8 @@ trait CollectionWalkthroughTrait
     public function whereNull(string $key) : static
     {
         $filtered = array_filter(
-            $this->getItems(),
-            static fn($item) : bool => ($item[$key] ?? null) === null
+            array   : $this->getItems(),
+            callback: static fn($item) : bool => ($item[$key] ?? null) === null
         );
 
         return new static(items: $filtered);
@@ -465,8 +465,8 @@ trait CollectionWalkthroughTrait
     public function whereNotNull(string $key) : static
     {
         $filtered = array_filter(
-            $this->getItems(),
-            static fn($item) : bool => ($item[$key] ?? null) !== null
+            array   : $this->getItems(),
+            callback: static fn($item) : bool => ($item[$key] ?? null) !== null
         );
 
         return new static(items: $filtered);
@@ -503,7 +503,7 @@ trait CollectionWalkthroughTrait
      */
     public function whereInGroup(string $key, array $groups) : static
     {
-        return $this->filter(callback: static fn($item) : bool => in_array($item[$key] ?? null, $groups, true));
+        return $this->filter(callback: static fn($item) : bool => in_array(needle: $item[$key] ?? null, haystack: $groups, strict: true));
     }
 
     /**
@@ -527,9 +527,9 @@ trait CollectionWalkthroughTrait
     public function filter(Closure $callback) : static
     {
         $filteredItems = array_filter(
-            $this->getItems(),
-            $callback,
-            ARRAY_FILTER_USE_BOTH
+            array   : $this->getItems(),
+            callback: $callback,
+            mode    : ARRAY_FILTER_USE_BOTH
         );
 
         return new static(items: $filteredItems);
@@ -571,8 +571,8 @@ trait CollectionWalkthroughTrait
     public function updateWhere(Closure $condition, Closure $updater) : static
     {
         $updated = array_map(
-            static fn($item) => $condition($item) ? $updater($item) : $item,
-            $this->getItems()
+            callback: static fn($item) => $condition($item) ? $updater($item) : $item,
+            array   : $this->getItems()
         );
 
         return new static(items: $updated);
@@ -612,13 +612,13 @@ trait CollectionWalkthroughTrait
             'not in',
         ];
 
-        if (! in_array($operator, $supportedOperators, true)) {
+        if (! in_array(needle: $operator, haystack: $supportedOperators, strict: true)) {
             throw new InvalidArgumentException(message: 'Unsupported operator: ' . $operator);
         }
 
         $filteredItems = array_filter(
-            $this->items,
-            function ($item) use ($column, $operator, $value) : bool {
+            array   : $this->items,
+            callback: function ($item) use ($column, $operator, $value) : bool {
                 $itemValue = $this->getFromItem(item: $item, key: $column);
 
                 return match ($operator) {
@@ -632,23 +632,23 @@ trait CollectionWalkthroughTrait
                     '<='           => $itemValue <= $value,
                     '<=>'          => $itemValue <=> $value,
                     'contains'     => match (true) {
-                        is_string($itemValue) && is_string($value) => str_contains($itemValue, $value),
-                        is_array($itemValue)                       => in_array($value, $itemValue, true),
-                        default                                    => false,
+                        is_string(value: $itemValue) && is_string(value: $value) => str_contains(haystack: $itemValue, needle: $value),
+                        is_array(value: $itemValue)                              => in_array(needle: $value, haystack: $itemValue, strict: true),
+                        default                                                  => false,
                     },
                     'not contains' => match (true) {
-                        is_string($itemValue) && is_string($value) => ! str_contains($itemValue, $value),
-                        is_array($itemValue)                       => ! in_array($value, $itemValue, true),
-                        default                                    => true,
+                        is_string(value: $itemValue) && is_string(value: $value) => ! str_contains(haystack: $itemValue, needle: $value),
+                        is_array(value: $itemValue)                              => ! in_array(needle: $value, haystack: $itemValue, strict: true),
+                        default                                                  => true,
                     },
-                    'in'           => in_array($itemValue, (array) $value, true),
-                    'not in'       => ! in_array($itemValue, (array) $value, true),
+                    'in'           => in_array(needle: $itemValue, haystack: (array) $value, strict: true),
+                    'not in'       => ! in_array(needle: $itemValue, haystack: (array) $value, strict: true),
                     default        => false,
                 };
             }
         );
 
-        $this->items = array_values($filteredItems);
+        $this->items = array_values(array: $filteredItems);
 
         return new static(items: $this->items);
     }

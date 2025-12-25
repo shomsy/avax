@@ -33,7 +33,7 @@ class Timezone
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! in_array($value, DateTimeZone::listIdentifiers(), true)) {
+        if (! in_array(needle: $value, haystack: DateTimeZone::listIdentifiers(), strict: true)) {
             throw new ValidationException(message: $property . ' must be a valid timezone.');
         }
     }

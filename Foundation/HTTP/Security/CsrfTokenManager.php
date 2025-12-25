@@ -67,7 +67,7 @@ final readonly class CsrfTokenManager
         $tokens = $this->pruneExpiredTokens(tokens: $tokens);
 
         // Log a warning if the number of tokens exceeds the predefined limit.
-        if (count($tokens) >= self::MAX_TOKENS_PER_SESSION) {
+        if (count(value: $tokens) >= self::MAX_TOKENS_PER_SESSION) {
             $this->logger->warning(
                 message: 'Maximum CSRF token limit reached.',
                 context: ['tokens' => $tokens]
@@ -105,10 +105,10 @@ final readonly class CsrfTokenManager
         $tokens = $this->session->get(key: self::SESSION_KEY, default: []);
 
         // Handle cases where the session value is corrupted or in an invalid format.
-        if (! is_array($tokens)) {
+        if (! is_array(value: $tokens)) {
             $this->logger->warning(
                 message: 'CSRF tokens session value was not an array. Resetting.',
-                context: ['type' => gettype($tokens)]
+                context: ['type' => gettype(value: $tokens)]
             );
 
             // Reset tokens to an empty array if invalid data is found.
@@ -146,8 +146,8 @@ final readonly class CsrfTokenManager
 
         // Filter out tokens that have exceeded their expiration time.
         return array_filter(
-            $tokens,
-            static fn($timestamp) => $currentTime - $timestamp <= self::TOKEN_EXPIRATION_MINUTES * 60
+            array   : $tokens,
+            callback: static fn($timestamp) => $currentTime - $timestamp <= self::TOKEN_EXPIRATION_MINUTES * 60
         );
     }
 
@@ -160,7 +160,7 @@ final readonly class CsrfTokenManager
     private function generateToken() : string
     {
         // Use a cryptographic function to generate a secure 32-byte token.
-        return bin2hex(random_bytes(32));
+        return bin2hex(string: random_bytes(length: 32));
     }
 
     /**

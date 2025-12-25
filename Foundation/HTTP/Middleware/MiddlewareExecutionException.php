@@ -22,6 +22,7 @@ final class MiddlewareExecutionException extends Exception
      * @param int            $code     The Exception code.
      * @param Exception|null $previous The previous throwable used for exception chaining.
      */
+    #[\Override]
     public function __construct(
         string         $message = "",
         int            $code = 0,

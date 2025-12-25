@@ -436,7 +436,7 @@ Infrastructure Layer (Implementations)
 ```php
 use Avax\HTTP\Session\Providers\SessionProvider;
 use Avax\HTTP\Session\Storage\Psr16CacheAdapter;
-use Avax\HTTP\Session\Security\CookieManager;
+use Avax\HTTP\Session\Shared\Security\CookieManager;
 use Avax\HTTP\Session\Features\{AuditRotator, AsyncEventDispatcher};
 
 // Storage (Redis)

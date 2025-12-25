@@ -121,10 +121,10 @@ trait PartitioningTrait
         $grouped = [];
 
         foreach ($this->getItems() as $item) {
-            if (is_callable($key)) {
+            if (is_callable(value: $key)) {
                 $groupKey = $key($item);
-            } elseif (is_string($key)) {
-                if (! is_array($item) || ! array_key_exists($key, $item)) {
+            } elseif (is_string(value: $key)) {
+                if (! is_array(value: $item) || ! array_key_exists(key: $key, array: $item)) {
                     throw new InvalidArgumentException(
                         message: sprintf("Each item must be an array containing the key '%s'.", $key)
                     );
@@ -138,7 +138,7 @@ trait PartitioningTrait
             $grouped[$groupKey][] = $item;
         }
 
-        return new static(items: array_map(fn($group) : static => new static(items: $group), $grouped));
+        return new static(items: array_map(callback: fn($group) : static => new static(items: $group), array: $grouped));
     }
 
     /**
@@ -169,11 +169,11 @@ trait PartitioningTrait
             throw new InvalidArgumentException(message: 'Number of groups must be at least 1.');
         }
 
-        $totalItems = count($this->getItems());
-        $groupSize  = (int) ceil($totalItems / $numberOfGroups);
-        $groups     = array_chunk($this->getItems(), $groupSize);
+        $totalItems = count(value: $this->getItems());
+        $groupSize  = (int) ceil(num: $totalItems / $numberOfGroups);
+        $groups     = array_chunk(array: $this->getItems(), length: $groupSize);
 
-        return new static(items: array_map(static fn($group) : static => new static(items: $group), $groups));
+        return new static(items: array_map(callback: static fn($group) : static => new static(items: $group), array: $groups));
     }
 
     /**
@@ -205,8 +205,8 @@ trait PartitioningTrait
             throw new InvalidArgumentException(message: 'Chunk size must be at least 1.');
         }
 
-        $chunks = array_chunk($this->getItems(), $size);
+        $chunks = array_chunk(array: $this->getItems(), length: $size);
 
-        return new static(items: array_map(static fn($chunk) : static => new static(items: $chunk), $chunks));
+        return new static(items: array_map(callback: static fn($chunk) : static => new static(items: $chunk), array: $chunks));
     }
 }

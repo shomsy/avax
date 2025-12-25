@@ -56,7 +56,7 @@ class Stream implements StreamInterface
      */
     private function ensureIsResource(mixed $stream) : void
     {
-        if (! is_resource($stream)) {
+        if (! is_resource(value: $stream)) {
             throw new RuntimeException(message: 'Stream must be a valid resource.');
         }
     }
@@ -68,11 +68,11 @@ class Stream implements StreamInterface
      */
     private function initializeStreamMetadata() : void
     {
-        $meta           = stream_get_meta_data($this->stream);
+        $meta           = stream_get_meta_data(stream: $this->stream);
         $this->seekable = $meta['seekable'] ?? false;
-        $mode           = str_split($meta['mode']);
-        $this->readable = in_array('r', $mode) || in_array('+', $mode);
-        $this->writable = in_array('w', $mode) || in_array('a', $mode) || in_array('+', $mode);
+        $mode           = str_split(string: $meta['mode']);
+        $this->readable = in_array(needle: 'r', haystack: $mode) || in_array(needle: '+', haystack: $mode);
+        $this->writable = in_array(needle: 'w', haystack: $mode) || in_array(needle: 'a', haystack: $mode) || in_array(needle: '+', haystack: $mode);
     }
 
     /**
@@ -85,13 +85,13 @@ class Stream implements StreamInterface
      */
     public static function fromString(string $content) : self
     {
-        $stream = fopen('php://temp', 'r+');
+        $stream = fopen(filename: 'php://temp', mode: 'r+');
         if ($stream === false) {
             throw new RuntimeException(message: 'Failed to open temporary stream.');
         }
 
-        fwrite($stream, $content);
-        rewind($stream);
+        fwrite(stream: $stream, data: $content);
+        rewind(stream: $stream);
 
         return new self(stream: $stream);
     }
@@ -103,8 +103,8 @@ class Stream implements StreamInterface
      */
     public function close() : void
     {
-        if (is_resource($this->stream)) {
-            fclose($this->stream);
+        if (is_resource(value: $this->stream)) {
+            fclose(stream: $this->stream);
         }
 
         $this->stream   = null;
@@ -145,7 +145,7 @@ class Stream implements StreamInterface
             return null;
         }
 
-        $stats = fstat($this->stream);
+        $stats = fstat(stream: $this->stream);
 
         return $stats['size'] ?? null;
     }
@@ -160,7 +160,7 @@ class Stream implements StreamInterface
     public function tell() : int
     {
         $this->ensureStreamIsOpen();
-        $position = ftell($this->stream);
+        $position = ftell(stream: $this->stream);
         if ($position === false) {
             throw new RuntimeException(message: 'Unable to determine the position of the stream.');
         }
@@ -187,7 +187,7 @@ class Stream implements StreamInterface
      */
     public function eof() : bool
     {
-        return ! $this->stream || feof($this->stream);
+        return ! $this->stream || feof(stream: $this->stream);
     }
 
     /**
@@ -205,7 +205,7 @@ class Stream implements StreamInterface
             throw new RuntimeException(message: 'Stream is not writable.');
         }
 
-        $result = fwrite($this->stream, $string);
+        $result = fwrite(stream: $this->stream, data: $string);
         if ($result === false) {
             throw new RuntimeException(message: 'Failed to write to the stream.');
         }
@@ -242,7 +242,7 @@ class Stream implements StreamInterface
             throw new StreamNotReadableException(message: "Attempted to read from a non-readable stream.");
         }
 
-        $result = fread($this->stream, $length);
+        $result = fread(stream: $this->stream, length: $length);
         if ($result === false) {
             throw new RuntimeException(message: "Failed to read from the stream.");
         }
@@ -273,7 +273,7 @@ class Stream implements StreamInterface
             return $key !== null && $key !== '' && $key !== '0' ? null : [];
         }
 
-        $meta = stream_get_meta_data($this->stream);
+        $meta = stream_get_meta_data(stream: $this->stream);
 
         return $key === null ? $meta : ($meta[$key] ?? null);
     }
@@ -336,7 +336,7 @@ class Stream implements StreamInterface
             throw new RuntimeException(message: 'Stream is not seekable.');
         }
 
-        if (fseek($this->stream, $offset, $whence) === -1) {
+        if (fseek(stream: $this->stream, offset: $offset, whence: $whence) === -1) {
             throw new RuntimeException(message: 'Failed to seek within the stream.');
         }
     }
@@ -354,7 +354,7 @@ class Stream implements StreamInterface
             throw new RuntimeException(message: 'Stream is not readable.');
         }
 
-        $contents = stream_get_contents($this->stream);
+        $contents = stream_get_contents(stream: $this->stream);
         if ($contents === false) {
             throw new RuntimeException(message: 'Failed to get contents of the stream.');
         }

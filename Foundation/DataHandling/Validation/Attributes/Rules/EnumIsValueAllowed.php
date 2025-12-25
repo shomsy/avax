@@ -25,7 +25,7 @@ use Avax\Exceptions\ValidationException;
  *
  * This validator relies on the PHP 8.1+ `BackedEnum` interface for backed enums.
  */
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class EnumIsValueAllowed
 {
     /**
@@ -67,9 +67,9 @@ readonly class EnumIsValueAllowed
         }
 
         // Step 2: If the value is a scalar (e.g., string, int), check for compatibility with backed Enums.
-        if (is_scalar($value) && is_subclass_of($enumClass, BackedEnum::class)) {
+        if (is_scalar(value: $value) && is_subclass_of(object_or_class: $enumClass, class: BackedEnum::class)) {
             // Attempt to resolve the scalar value into a backed Enum case using 'tryFrom'.
-            $resolved = $enumClass::tryFrom($value);
+            $resolved = $enumClass::tryFrom(value: $value);
 
             // If the value was successfully resolved, update the reference and exit.
             if ($resolved !== null) {
@@ -80,10 +80,10 @@ readonly class EnumIsValueAllowed
 
             // Step 3: If resolution failed, enumerate all possible backed values for error clarity.
             $allowed = implode(
-                ', ',
-                array_map(
-                    static fn(BackedEnum $e) => $e->value, // Extract each Enum's value.
-                    $enumClass::cases() // Retrieve all cases for the Enum.
+                separator: ', ',
+                array    : array_map(
+                    callback: static fn(BackedEnum $e) => $e->value, // Extract each Enum's value.
+                    array   : $enumClass::cases() // Retrieve all cases for the Enum.
                 )
             );
 

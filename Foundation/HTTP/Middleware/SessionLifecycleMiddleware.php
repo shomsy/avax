@@ -34,7 +34,7 @@ final readonly class SessionLifecycleMiddleware
         $response = $next($request);
 
         if (! $response instanceof ResponseInterface) {
-            error_log('Invalid response returned from middleware chain.');
+            error_log(message: 'Invalid response returned from middleware chain.');
 
             $response = response(
                 status : 500,

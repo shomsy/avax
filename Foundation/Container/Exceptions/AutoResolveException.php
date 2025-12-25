@@ -11,9 +11,10 @@ use Throwable;
  */
 class AutoResolveException extends \RuntimeException
 {
+    #[\Override]
     public function __construct(string $className, Throwable|null $previous = null)
     {
-        $detailedMessage = $this->generateDetailedMessage($className, $previous);
+        $detailedMessage = $this->generateDetailedMessage(className: $className, previous: $previous);
 
         parent::__construct(
             message: $detailedMessage,

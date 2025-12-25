@@ -21,6 +21,7 @@ final class UriBuilder extends BaseUri implements UriInterface
 
     private QueryParams $queryParams;
 
+    #[\Override]
     public function __construct(
         string      $scheme = '',
         string      $host = '',
@@ -60,7 +61,7 @@ final class UriBuilder extends BaseUri implements UriInterface
 
     public static function createFromString(string $uri) : self
     {
-        $parts = parse_url($uri);
+        $parts = parse_url(url: $uri);
 
         if ($parts === false) {
             throw new InvalidArgumentException(message: "Invalid URI: {$uri}");
@@ -80,14 +81,14 @@ final class UriBuilder extends BaseUri implements UriInterface
 
     public function appendPath(string $segment) : self
     {
-        [$path, $query] = explode('?', $segment, 2) + [1 => ''];
+        [$path, $query] = explode(separator: '?', string: $segment, limit: 2) + [1 => ''];
 
-        $newPath = rtrim($this->path, '/') . '/' . ltrim($path, '/');
-        $clone   = $this->withPath($newPath);
+        $newPath = rtrim(string: $this->path, characters: '/') . '/' . ltrim(string: $path, characters: '/');
+        $clone   = $this->withPath(path: $newPath);
 
         if ($query !== '') {
-            parse_str($query, $queryParams);
-            $clone = $clone->withAddedQueryParams($queryParams);
+            parse_str(string: $query, result: $queryParams);
+            $clone = $clone->withAddedQueryParams(params: $queryParams);
         }
 
         return $clone;
@@ -116,15 +117,15 @@ final class UriBuilder extends BaseUri implements UriInterface
             $uri .= ":{$this->port}";
         }
 
-        $uri .= '/' . ltrim($this->path, '/');
+        $uri .= '/' . ltrim(string: $this->path, characters: '/');
 
         $query = $this->buildQuery();
         if ($query) {
-            $uri .= '?' . urldecode($query);
+            $uri .= '?' . urldecode(string: $query);
         }
 
         if ($this->fragment) {
-            $uri .= '#' . rawurlencode($this->fragment);
+            $uri .= '#' . rawurlencode(string: $this->fragment);
         }
 
         return $uri;

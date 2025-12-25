@@ -54,7 +54,7 @@ trait Serialization
     {
         $flags ??= 0; // Default to no flags if none provided.
 
-        return json_encode($this->toArray(), $flags | JSON_THROW_ON_ERROR, $depth); // Encode object as JSON.
+        return json_encode(value: $this->toArray(), flags: $flags | JSON_THROW_ON_ERROR, depth: $depth); // Encode object as JSON.
     }
 
     /**
@@ -72,8 +72,8 @@ trait Serialization
         // Normalize and filter object properties depending on the excludeHidden flag.
         return $this->normalizeValue(
             value: $excludeHidden
-                       ? $this->filterHiddenFields(get_object_vars($this)) // Filter hidden fields.
-                       : get_object_vars($this),
+                       ? $this->filterHiddenFields(properties: get_object_vars(object: $this)) // Filter hidden fields.
+                       : get_object_vars(object: $this),
             depth: $depth
         );
     }
@@ -107,20 +107,20 @@ trait Serialization
             $value instanceof JsonSerializable  => $value->jsonSerialize(), // Serialize JSON-serializable objects.
             $value instanceof Traversable       => array_map(
             // Convert iterable objects to arrays and normalize their items.
-                fn($item) => $this->normalizeValue(value: $item, depth: $depth !== null ? $depth - 1 : null),
-                iterator_to_array($value)
+                callback: fn($item) => $this->normalizeValue(value: $item, depth: $depth !== null ? $depth - 1 : null),
+                array   : iterator_to_array(iterator: $value)
             ),
-            is_array($value)                    => array_map(
+            is_array(value: $value) => array_map(
             // Normalize and recurse through array elements.
-                fn($item) => $this->normalizeValue(value: $item, depth: $depth !== null ? $depth - 1 : null),
-                $value
+                callback: fn($item) => $this->normalizeValue(value: $item, depth: $depth !== null ? $depth - 1 : null),
+                array   : $value
             ),
-            is_object($value) && method_exists(
-                $value,
-                '__toString'
+            is_object(value: $value) && method_exists(
+                object_or_class: $value,
+                method         : '__toString'
             )                                   => (string) $value, // Convert objects with __toString to strings.
             is_object(
-                $value
+                value: $value
             )                                   => (array) $value, // Fallback: convert objects to arrays.
             default                             => $value, // Default case: return the value as-is.
         };
@@ -178,7 +178,7 @@ trait Serialization
      */
     public function toFlatArray() : array
     {
-        return get_object_vars($this); // Return an associative array of all object properties.
+        return get_object_vars(object: $this); // Return an associative array of all object properties.
     }
 
     /**

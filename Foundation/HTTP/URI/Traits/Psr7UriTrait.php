@@ -50,35 +50,35 @@ trait Psr7UriTrait
     public function withUserInfo(string $user, string|null $password = null) : UriInterface
     {
         return new self(
-            $this->scheme,
-            $this->host,
-            $this->path,
-            $this->port,
-            $this->queryParams->toString(),
-            $this->fragment,
-            $user,
-            $password
+            scheme  : $this->scheme,
+            host    : $this->host,
+            path    : $this->path,
+            port    : $this->port,
+            query   : $this->queryParams->toString(),
+            fragment: $this->fragment,
+            user    : $user,
+            password: $password
         );
     }
 
     public function withPort(int|null $port) : UriInterface
     {
         return new self(
-            $this->scheme,
-            $this->host,
-            $this->path,
-            $this->validatePort($port, $this->scheme),
-            $this->queryParams->toString(),
-            $this->fragment,
-            $this->user,
-            $this->password
+            scheme  : $this->scheme,
+            host    : $this->host,
+            path    : $this->path,
+            port    : $this->validatePort(port: $port, scheme: $this->scheme),
+            query   : $this->queryParams->toString(),
+            fragment: $this->fragment,
+            user    : $this->user,
+            password: $this->password
         );
     }
 
     public function withQuery(string $query) : UriInterface
     {
         $clone              = clone $this;
-        $clone->queryParams = new QueryParams($this->validateQuery($query));
+        $clone->queryParams = new QueryParams(queryString: $this->validateQuery(query: $query));
 
         return $clone;
     }
@@ -86,14 +86,14 @@ trait Psr7UriTrait
     public function withFragment(string $fragment) : UriInterface
     {
         return new self(
-            $this->scheme,
-            $this->host,
-            $this->path,
-            $this->port,
-            $this->queryParams->toString(),
-            $this->validateFragment($fragment),
-            $this->user,
-            $this->password
+            scheme  : $this->scheme,
+            host    : $this->host,
+            path    : $this->path,
+            port    : $this->port,
+            query   : $this->queryParams->toString(),
+            fragment: $this->validateFragment(fragment: $fragment),
+            user    : $this->user,
+            password: $this->password
         );
     }
 
@@ -139,6 +139,7 @@ trait Psr7UriTrait
         );
     }
 
+    #[\Override]
     public function getAuthority() : string
     {
         $authority = $this->host;

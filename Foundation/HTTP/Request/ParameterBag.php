@@ -32,7 +32,7 @@ class ParameterBag
      */
     public function has(string $key) : bool
     {
-        return array_key_exists($key, $this->parameters);
+        return array_key_exists(key: $key, array: $this->parameters);
     }
 
     /**
@@ -93,7 +93,7 @@ class ParameterBag
         $value = $this->get(key: $key, default: $default);
 
         // Handle null and cast based on type
-        if (is_null($value)) {
+        if (is_null(value: $value)) {
             return $default;
         }
 
@@ -101,8 +101,8 @@ class ParameterBag
             'string' => (string) $value,
             'int'    => (int) $value,
             'float'  => (float) $value,
-            'bool'   => filter_var($value, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE) ?? $default,
-            'array'  => is_array($value) ? $value : (array) $value,
+            'bool'   => filter_var(value: $value, filter: FILTER_VALIDATE_BOOL, options: FILTER_NULL_ON_FAILURE) ?? $default,
+            'array'  => is_array(value: $value) ? $value : (array) $value,
             default  => throw new InvalidArgumentException(message: sprintf("Unsupported type '%s'", $type)),
         };
     }

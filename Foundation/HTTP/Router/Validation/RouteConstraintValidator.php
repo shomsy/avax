@@ -28,7 +28,7 @@ final class RouteConstraintValidator
         foreach ($route->constraints as $param => $pattern) {
             $value = $request->getAttribute(name: $param);
 
-            if (! is_string($value) && ! is_numeric($value)) {
+            if (! is_string(value: $value) && ! is_numeric(value: $value)) {
                 continue;
             }
 

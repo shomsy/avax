@@ -36,13 +36,13 @@ readonly class EndsWith
     public function validate(mixed $value, string $property) : void
     {
         foreach ($this->suffixes as $suffix) {
-            if (str_ends_with((string) $value, (string) $suffix)) {
+            if (str_ends_with(haystack: (string) $value, needle: (string) $suffix)) {
                 return;
             }
         }
 
         throw new ValidationException(
-            message: $property . ' must end with one of the following: ' . implode(', ', $this->suffixes),
+            message: $property . ' must end with one of the following: ' . implode(separator: ', ', array: $this->suffixes),
         );
     }
 }

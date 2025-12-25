@@ -44,11 +44,11 @@ trait DebugTrait
     {
         $arrayRepresentation = $this->toArray();
 
-        if (! is_array($arrayRepresentation)) {
+        if (! is_array(value: $arrayRepresentation)) {
             throw new InvalidArgumentException(message: 'toArray method must return an array.');
         }
 
-        var_dump($arrayRepresentation);
+        var_dump(value: $arrayRepresentation);
 
         return $this;
     }
@@ -90,11 +90,11 @@ trait DebugTrait
     {
         $arrayRepresentation = $this->toArray();
 
-        if (! is_array($arrayRepresentation)) {
+        if (! is_array(value: $arrayRepresentation)) {
             throw new InvalidArgumentException(message: 'toArray method must return an array.');
         }
 
-        var_dump($arrayRepresentation);
+        var_dump(value: $arrayRepresentation);
         die();
     }
 
@@ -135,7 +135,7 @@ trait DebugTrait
     {
         $items = $this->toArray();
 
-        if (! is_array($items)) {
+        if (! is_array(value: $items)) {
             throw new InvalidArgumentException(message: 'toArray method must return an array.');
         }
 

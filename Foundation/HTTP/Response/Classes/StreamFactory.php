@@ -33,15 +33,15 @@ class StreamFactory implements StreamFactoryInterface
      */
     public function createStream(string $content = '') : StreamInterface
     {
-        $resource = strlen($content) <= self::MEMORY_LIMIT ? 'php://memory' : 'php://temp';
-        $stream   = fopen($resource, 'r+');
+        $resource = strlen(string: $content) <= self::MEMORY_LIMIT ? 'php://memory' : 'php://temp';
+        $stream   = fopen(filename: $resource, mode: 'r+');
 
         if ($stream === false) {
             throw new RuntimeException(message: 'Failed to open stream resource: ' . $resource);
         }
 
-        fwrite($stream, $content);
-        rewind($stream);
+        fwrite(stream: $stream, data: $content);
+        rewind(stream: $stream);
 
         return new Stream(stream: $stream);
     }
@@ -56,7 +56,7 @@ class StreamFactory implements StreamFactoryInterface
      */
     public function createStreamFromFile(string $filename, string $mode = 'r') : StreamInterface
     {
-        $stream = fopen($filename, $mode);
+        $stream = fopen(filename: $filename, mode: $mode);
         if ($stream === false) {
             throw new RuntimeException(message: 'Failed to open file: ' . $filename);
         }
@@ -73,7 +73,7 @@ class StreamFactory implements StreamFactoryInterface
      */
     public function createStreamFromResource($resource) : StreamInterface
     {
-        if (! is_resource($resource)) {
+        if (! is_resource(value: $resource)) {
             throw new RuntimeException(message: 'Invalid resource provided for stream creation.');
         }
 

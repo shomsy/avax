@@ -14,6 +14,6 @@ final class UnauthorizedException extends RuntimeException
 {
     public static function because(string $reason = 'Access denied.') : self
     {
-        return new self($reason);
+        return new self(message: $reason);
     }
 }

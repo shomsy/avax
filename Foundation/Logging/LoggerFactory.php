@@ -71,7 +71,7 @@ final class LoggerFactory
     public function createLoggerFor(string $channel) : ErrorLogger
     {
         // Resolve a full path based on configured log directory + channel name
-        $path = rtrim(AppPath::LOGS_PATH->get(), '/') . '/' . trim($channel, '/');
+        $path = rtrim(string: AppPath::LOGS_PATH->get(), characters: '/') . '/' . trim(string: $channel, characters: '/');
 
         // Ensure the directory is safe to use
         $this->ensureLogDirectoryIsWritable(logPath: $path);
@@ -105,14 +105,14 @@ final class LoggerFactory
         $dir = dirname(path: $logPath);
 
         // Attempt to create the directory if it does not exist
-        if (! is_dir($dir) && ! mkdir($dir, 0750, true) && ! is_dir($dir)) {
+        if (! is_dir(filename: $dir) && ! mkdir(directory: $dir, permissions: 0750, recursive: true) && ! is_dir(filename: $dir)) {
             throw new RuntimeException(
                 message: "Failed to create log directory: {$dir}"
             );
         }
 
         // Verify write permission (prevents silent failures or security issues)
-        if (! is_writable($dir)) {
+        if (! is_writable(filename: $dir)) {
             throw new RuntimeException(
                 message: "Log directory not writable: {$dir}"
             );

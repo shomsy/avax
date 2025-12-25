@@ -46,11 +46,11 @@ final readonly class Scheme implements Stringable
      */
     private function validate(string $scheme) : string
     {
-        if ($scheme === '' || ! in_array(strtolower($scheme), self::ALLOWED_SCHEMES, true)) {
+        if ($scheme === '' || ! in_array(needle: strtolower(string: $scheme), haystack: self::ALLOWED_SCHEMES, strict: true)) {
             throw new InvalidArgumentException(message: 'Invalid scheme: ' . $scheme);
         }
 
-        return strtolower($scheme);
+        return strtolower(string: $scheme);
     }
 
     /**

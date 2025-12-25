@@ -28,7 +28,7 @@ class Distinct
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (count($value) !== count(array_unique($value))) {
+        if (count(value: $value) !== count(value: array_unique(array: $value))) {
             throw new ValidationException(message: $property . ' field has a duplicate value.');
         }
     }

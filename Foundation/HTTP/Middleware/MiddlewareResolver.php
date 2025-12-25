@@ -41,13 +41,13 @@ final readonly class MiddlewareResolver
         // Iterate through each middleware entry in the provided list.
         foreach ($middleware as $entry) {
             // Validate the middleware entry, ensuring it adheres to the expected data type.
-            $this->validateEntry($entry);
+            $this->validateEntry(entry: $entry);
 
             // If the entry matches a defined middleware group alias:
             if ($this->groupResolver->hasGroup(group: $entry)) {
                 // Recursively resolve the middleware group and merge its entries into the result.
                 $resolved = array_merge($resolved, $this->resolveGroup(entry: $entry));
-            } elseif (class_exists($entry)) {
+            } elseif (class_exists(class: $entry)) {
                 // If the entry is a valid class name, add it to the result list.
                 $resolved[] = $entry;
             } else {
@@ -76,9 +76,9 @@ final readonly class MiddlewareResolver
     private function validateEntry(mixed $entry) : void
     {
         // Ensure the entry is a string; otherwise, reject the entry.
-        if (! is_string($entry)) {
+        if (! is_string(value: $entry)) {
             throw new UnresolvableMiddlewareException(
-                message: "Middleware entry must be a string. Got: " . gettype($entry)
+                message: "Middleware entry must be a string. Got: " . gettype(value: $entry)
             );
         }
     }

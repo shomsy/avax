@@ -27,7 +27,7 @@
 
     @foreach ($args as $arg)
         <pre class="gemdump" x-ref="dump">
-                {{ var_export($arg, true) }}
+                {{ var_export(value: $arg, return: true) }}
             </pre>
     @endforeach
 </div>

@@ -42,7 +42,7 @@ class LogInitializer
             // Try the fallback path if primary fails
             if (! self::verifyDirectory(path: $logPath)) {
                 throw new Exception(
-                    sprintf('Unable to create logs directory at either %s or fallback path.', $logPath)
+                    message: sprintf('Unable to create logs directory at either %s or fallback path.', $logPath)
                 );
             }
         }
@@ -75,9 +75,9 @@ class LogInitializer
         } catch (Exception $exception) {
             // Log an emergency message on failure
             error_log(
-                sprintf('Failed to initialize log directory at %s: %s', $path, $exception->getMessage()),
-                3,
-                self::FALLBACK_LOG_PATH . '/emergency_log.log'
+                message     : sprintf('Failed to initialize log directory at %s: %s', $path, $exception->getMessage()),
+                message_type: 3,
+                destination : self::FALLBACK_LOG_PATH . '/emergency_log.log'
             );
 
             return false;

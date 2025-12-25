@@ -23,6 +23,7 @@ class LazyCollection extends Collection
      *
      * @param Closure $generator A generator function to build the collection lazily.
      */
+    #[\Override]
     public function __construct(protected Closure $generator)
     {
         parent::__construct();
@@ -35,9 +36,10 @@ class LazyCollection extends Collection
      *
      * @return array The entire collection as an array.
      */
+    #[\Override]
     public function all() : array
     {
-        return iterator_to_array($this->getIterator());
+        return iterator_to_array(iterator: $this->getIterator());
     }
 
     /**
@@ -47,6 +49,7 @@ class LazyCollection extends Collection
      *
      * @return Traversable The generator yielding items of the collection.
      */
+    #[\Override]
     public function getIterator() : Traversable
     {
         return ($this->generator)();
@@ -61,6 +64,7 @@ class LazyCollection extends Collection
      *
      * @return static A new lazy collection containing every nth item.
      */
+    #[\Override]
     public function nth(int $step) : static
     {
         return new static(generator: function () use ($step) {
@@ -82,6 +86,7 @@ class LazyCollection extends Collection
      *
      * @return static A new lazy collection containing items while the callback returns true.
      */
+    #[\Override]
     public function takeWhile(Closure $callback) : static
     {
         return new static(generator: function () use ($callback) {

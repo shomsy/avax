@@ -34,7 +34,7 @@ final class RetryMiddleware
                 }
 
                 if ($response instanceof ResponseInterface
-                    && in_array($statusCode, $this->retryStatusCodes, true)) {
+                    && in_array(needle: $statusCode, haystack: $this->retryStatusCodes, strict: true)) {
                     $this->logger->info(message: '🔄 Retrying due to response status: ' . $statusCode);
 
 

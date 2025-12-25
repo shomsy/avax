@@ -19,6 +19,7 @@ class StreamNotReadableException extends RuntimeException
      *
      * @param string $message Descriptive message explaining why the stream is not readable.
      */
+    #[\Override]
     public function __construct(string $message)
     {
         // Pass the message to the RuntimeException constructor.

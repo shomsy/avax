@@ -33,7 +33,7 @@ class ActiveURL
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! filter_var($value, FILTER_VALIDATE_URL) || ! checkdnsrr(parse_url((string) $value, PHP_URL_HOST), 'A')) {
+        if (! filter_var(value: $value, filter: FILTER_VALIDATE_URL) || ! checkdnsrr(hostname: parse_url(url: (string) $value, component: PHP_URL_HOST), type: 'A')) {
             throw new ValidationException(message: $property . ' must be an active URL.');
         }
     }

@@ -53,10 +53,10 @@ class Required
 
         if ($this->path !== null) {
             // Traverse nested properties (e.g., schema.fields)
-            foreach (explode('.', $this->path) as $segment) {
-                if (is_array($target) && array_key_exists($segment, $target)) {
+            foreach (explode(separator: '.', string: $this->path) as $segment) {
+                if (is_array(value: $target) && array_key_exists(key: $segment, array: $target)) {
                     $target = $target[$segment];
-                } elseif (is_object($target) && isset($target->$segment)) {
+                } elseif (is_object(value: $target) && isset($target->$segment)) {
                     $target = $target->$segment;
                 } else {
                     $target = null;

@@ -18,6 +18,7 @@ class LoggingServiceProvider extends ServiceProvider
      *
      * @throws \Exception
      */
+    #[\Override]
     public function register() : void
     {
         $this->dependencyInjector->singleton(
@@ -62,5 +63,6 @@ class LoggingServiceProvider extends ServiceProvider
         return $this->dependencyInjector->get(id: $abstract);
     }
 
+    #[\Override]
     public function boot() : void {}
 }

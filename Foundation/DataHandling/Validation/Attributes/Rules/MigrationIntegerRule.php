@@ -24,7 +24,7 @@ use Avax\Exceptions\ValidationException;
  *   42 => 42
  *   null => null
  */
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class MigrationIntegerRule
 {
     /**
@@ -37,16 +37,16 @@ readonly class MigrationIntegerRule
      */
     public function validate(mixed $value, string $property) : void
     {
-        if ($value === null || is_int($value)) {
+        if ($value === null || is_int(value: $value)) {
             return;
         }
 
-        if (is_string($value) && preg_match('/^\d+$/', $value)) {
+        if (is_string(value: $value) && preg_match(pattern: '/^\d+$/', subject: $value)) {
             return;
         }
 
         throw new ValidationException(
-            message: "{$property} must be an integer or numeric string. Got: " . get_debug_type($value)
+            message: "{$property} must be an integer or numeric string. Got: " . get_debug_type(value: $value)
         );
     }
 

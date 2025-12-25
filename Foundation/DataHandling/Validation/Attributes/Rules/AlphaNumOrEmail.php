@@ -38,7 +38,7 @@ readonly class AlphaNumOrEmail
      */
     public function validate(mixed $value, string $name) : void
     {
-        if (! $this->isValidValue($value)) {
+        if (! $this->isValidValue(value: $value)) {
             throw new ValidationException(
                 message : $this->message ?? sprintf(self::DEFAULT_ERROR_MESSAGE, $name),
                 metadata: [
@@ -59,7 +59,7 @@ readonly class AlphaNumOrEmail
      */
     private function isValidValue(mixed $value) : bool
     {
-        return is_string($value) && ($this->isAlphanumeric($value) || $this->isEmail($value));
+        return is_string(value: $value) && ($this->isAlphanumeric(value: $value) || $this->isEmail(value: $value));
     }
 
     /**
@@ -71,7 +71,7 @@ readonly class AlphaNumOrEmail
      */
     private function isAlphanumeric(string $value) : bool
     {
-        return (bool) preg_match('/^[a-zA-Z0-9]+$/', $value);
+        return (bool) preg_match(pattern: '/^[a-zA-Z0-9]+$/', subject: $value);
     }
 
     /**
@@ -83,6 +83,6 @@ readonly class AlphaNumOrEmail
      */
     private function isEmail(string $value) : bool
     {
-        return filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
+        return filter_var(value: $value, filter: FILTER_VALIDATE_EMAIL) !== false;
     }
 }

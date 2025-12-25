@@ -36,7 +36,7 @@ readonly class MigrationFieldTypeRule
 
         if (! $value instanceof FieldTypeEnum) {
             throw new ValidationException(
-                message: "{$property} must be an instance of FieldTypeEnum or null. Got: " . get_debug_type($value)
+                message: "{$property} must be an instance of FieldTypeEnum or null. Got: " . get_debug_type(value: $value)
             );
         }
     }

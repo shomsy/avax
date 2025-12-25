@@ -45,7 +45,7 @@ final readonly class ValidDTOArray
     public function validate(mixed $value, string $property) : void
     {
         // Ensure the provided value is of type array.
-        if (! is_array($value)) {
+        if (! is_array(value: $value)) {
             throw new ValidationException(
                 message: "Expected array of DTOs for {$property}"
             );
@@ -54,7 +54,7 @@ final readonly class ValidDTOArray
         // Iterate through the array to validate each item.
         foreach ($value as $item) {
             // Ensure each item is either an array or an object.
-            if (! is_array($item) && ! is_object($item)) {
+            if (! is_array(value: $item) && ! is_object(value: $item)) {
                 throw new ValidationException(
                     message: "Invalid item in {$property}, must be an array or object"
                 );
@@ -82,8 +82,8 @@ final readonly class ValidDTOArray
     public function apply(mixed $value) : array
     {
         return array_map(
-            fn($v) => new $this->dtoClass($v), // Instantiate DTO for each item
-            $value // Input array
+            callback: fn($v) => new $this->dtoClass($v), // Instantiate DTO for each item
+            array   : $value // Input array
         );
     }
 }

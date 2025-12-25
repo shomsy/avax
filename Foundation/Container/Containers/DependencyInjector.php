@@ -185,7 +185,7 @@ final class DependencyInjector implements ContainerInterface
         }
 
         // ✅ Fallback to autowiring in dev/test
-        if (class_exists($id)) {
+        if (class_exists(class: $id)) {
             return $this->autoResolve(class: $id);
         }
 
@@ -214,7 +214,7 @@ final class DependencyInjector implements ContainerInterface
      */
     private function resolve(string $abstract) : mixed
     {
-        if (in_array($abstract, $this->resolutionStack, true)) {
+        if (in_array(needle: $abstract, haystack: $this->resolutionStack, strict: true)) {
             $circularDependencyException = new CircularDependencyException(
                 serviceId      : $abstract,
                 resolutionStack: $this->resolutionStack
@@ -261,7 +261,7 @@ final class DependencyInjector implements ContainerInterface
 
             return $instance;
         } finally {
-            array_pop($this->resolutionStack);
+            array_pop(array: $this->resolutionStack);
         }
     }
 
@@ -300,10 +300,10 @@ final class DependencyInjector implements ContainerInterface
             }
 
             $dependencies = array_map(
-                fn(ReflectionParameter $reflectionParameter) : mixed => $this->resolveDependency(
+                callback: fn(ReflectionParameter $reflectionParameter) : mixed => $this->resolveDependency(
                     reflectionParameter: $reflectionParameter
                 ),
-                $constructor->getParameters()
+                array   : $constructor->getParameters()
             );
 
             return $reflectionClass->newInstanceArgs(args: $dependencies);
@@ -386,7 +386,7 @@ final class DependencyInjector implements ContainerInterface
 
         foreach ($this->allBindings() as $abstract => $_) {
             try {
-                $this->get($abstract);
+                $this->get(id: $abstract);
             } catch (Throwable $e) {
                 $errors[] = "[{$abstract}] => " . $e::class . ': ' . $e->getMessage();
             }
@@ -395,7 +395,7 @@ final class DependencyInjector implements ContainerInterface
         if ($errors !== []) {
             throw new AutoResolveException(
                 className: 'Container',
-                previous : new RuntimeException(implode("\n", $errors))
+                previous : new RuntimeException(message: implode(separator: "\n", array: $errors))
             );
         }
     }
@@ -425,7 +425,7 @@ final class DependencyInjector implements ContainerInterface
      */
     public function bind(string $abstract, Closure|string|callable $concrete, bool $singleton = false) : void
     {
-        if (! is_callable($concrete) && ! class_exists($concrete)) {
+        if (! is_callable(value: $concrete) && ! class_exists(class: $concrete)) {
             throw new InvalidArgumentException(
                 message: "Concrete for " . $abstract . " must be callable or a valid class."
             );
@@ -536,12 +536,12 @@ final class DependencyInjector implements ContainerInterface
             $this->scopedInstancesByScope->clear();
         } else {
             $keysToForget = array_filter(
-                $this->scopedInstancesByScope->keys(),
-                static fn(string $key) => str_starts_with($key, "{$scope}.")
+                array   : $this->scopedInstancesByScope->keys(),
+                callback: static fn(string $key) => str_starts_with(haystack: $key, needle: "{$scope}.")
             );
 
             foreach ($keysToForget as $key) {
-                $this->scopedInstancesByScope->forget($key);
+                $this->scopedInstancesByScope->forget(key: $key);
             }
         }
     }
@@ -551,8 +551,8 @@ final class DependencyInjector implements ContainerInterface
     {
         $this->activeScope = $scope;
 
-        if (! $this->scopedInstancesByScope->has($scope)) {
-            $this->scopedInstancesByScope->set($scope, []);
+        if (! $this->scopedInstancesByScope->has(key: $scope)) {
+            $this->scopedInstancesByScope->set(key: $scope, value: []);
         }
     }
 
@@ -681,7 +681,7 @@ final class DependencyInjector implements ContainerInterface
         Closure $resolver
     ) : void {
         // Register the lazy binding resolver in the container's lazy bindings collection
-        $this->lazyBindings->set($abstract, static fn() => new LazyProxy($resolver));
+        $this->lazyBindings->set(key: $abstract, value: static fn() => new LazyProxy(resolver: $resolver));
     }
 
     /**

@@ -66,8 +66,8 @@ final class Kernel
         $middlewareClasses = config(key: 'middleware.global');
 
         return array_map(
-            static fn(string $middlewareClass) => app()->get($middlewareClass),
-            $middlewareClasses
+            callback: static fn(string $middlewareClass) => app()->get($middlewareClass),
+            array   : $middlewareClasses
         );
     }
 
@@ -80,8 +80,8 @@ final class Kernel
      */
     private function generateResponse(Request $request) : ResponseInterface
     {
-        $handler = fn(Request $request) : ResponseInterface => $this->router->resolve($request);
-        foreach (array_reverse($this->middlewares) as $middleware) {
+        $handler = fn(Request $request) : ResponseInterface => $this->router->resolve(request: $request);
+        foreach (array_reverse(array: $this->middlewares) as $middleware) {
             $currentHandler = $handler;
             $handler        = static fn(Request $request) : ResponseInterface => $middleware->handle(
                 $request,
@@ -89,7 +89,7 @@ final class Kernel
             );
         }
 
-        return $handler($request);
+        return $handler(request: $request);
     }
 
     /**
@@ -100,7 +100,7 @@ final class Kernel
     private function sendResponse(ResponseInterface $response) : void
     {
         if (! headers_sent()) {
-            http_response_code($response->getStatusCode());
+            http_response_code(response_code: $response->getStatusCode());
 
             foreach ($response->getHeaders() as $name => $values) {
                 foreach ($values as $value) {

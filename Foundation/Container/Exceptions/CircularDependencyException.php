@@ -14,15 +14,16 @@ use Throwable;
  */
 class CircularDependencyException extends RuntimeException
 {
+    #[\Override]
     public function __construct(
         string         $serviceId,
         array          $resolutionStack,
         int            $code = 0,
         Throwable|null $previous = null
     ) {
-        $formattedStack  = implode(' -> ', $resolutionStack);
-        $reflectionHints = self::generateDebugHints($resolutionStack);
-        $suggestions     = self::suggestFix($serviceId);
+        $formattedStack  = implode(separator: ' -> ', array: $resolutionStack);
+        $reflectionHints = self::generateDebugHints(resolutionStack: $resolutionStack);
+        $suggestions     = self::suggestFix(serviceId: $serviceId);
 
         $message = <<<TEXT
             ❌ Circular dependency detected while resolving service: '$serviceId'
@@ -52,7 +53,7 @@ class CircularDependencyException extends RuntimeException
 
         foreach ($resolutionStack as $class) {
             try {
-                $r    = new ReflectionClass($class);
+                $r    = new ReflectionClass(objectOrClass: $class);
                 $file = $r->getFileName();
                 $line = $r->getStartLine();
 
@@ -62,7 +63,7 @@ class CircularDependencyException extends RuntimeException
             }
         }
 
-        return implode("\n", $lines);
+        return implode(separator: "\n", array: $lines);
     }
 
     /**

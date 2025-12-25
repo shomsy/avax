@@ -40,7 +40,7 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function listFiles(string $directory) : array
     {
-        if (! is_dir($directory) || ! is_readable($directory)) {
+        if (! is_dir(filename: $directory) || ! is_readable(filename: $directory)) {
             return [];
         }
 
@@ -51,8 +51,8 @@ class LocalFileStorage implements FileStorageInterface
             );
 
             return array_map(
-                static fn(SplFileInfo $file) => $file->getPathname(),
-                iterator_to_array($iterator, preserve_keys: false)
+                callback: static fn(SplFileInfo $file) => $file->getPathname(),
+                array   : iterator_to_array(iterator: $iterator, preserve_keys: false)
             );
         } catch (Throwable $e) {
             // Fail silently — listing files is optional, not critical
@@ -71,15 +71,15 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function read(string $path) : string
     {
-        if (! file_exists($path)) {
+        if (! file_exists(filename: $path)) {
             throw new FileNotFoundException(string: sprintf('File not found: %s', $path));
         }
 
-        if (! is_readable($path)) {
+        if (! is_readable(filename: $path)) {
             throw new FileNotFoundException(string: sprintf('File is not readable: %s', $path));
         }
 
-        $content = file_get_contents($path);
+        $content = file_get_contents(filename: $path);
         if ($content === false) {
             throw new RuntimeException(message: sprintf('Failed to read file: %s', $path));
         }
@@ -98,13 +98,13 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function write(string $path, string $content, bool $append = false) : bool
     {
-        $directory = dirname($path);
-        if (! is_dir($directory) && ! $this->createDirectory(directory: $directory)) {
+        $directory = dirname(path: $path);
+        if (! is_dir(filename: $directory) && ! $this->createDirectory(directory: $directory)) {
             throw new FileWriteException(string: sprintf('Failed to create directory: %s', $directory));
         }
 
         $flags = $append ? FILE_APPEND | LOCK_EX : 0;
-        if (file_put_contents($path, $content . PHP_EOL, $flags) === false) {
+        if (file_put_contents(filename: $path, data: $content . PHP_EOL, flags: $flags) === false) {
             throw new FileWriteException(string: "Failed to write to file: {$path}");
         }
 
@@ -122,11 +122,11 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function createDirectory(string $directory, int $permissions = 0755) : bool
     {
-        if (is_dir($directory)) {
+        if (is_dir(filename: $directory)) {
             return true; // Directory already exists.
         }
 
-        if (! mkdir($directory, $permissions, true) && ! is_dir($directory)) {
+        if (! mkdir(directory: $directory, permissions: $permissions, recursive: true) && ! is_dir(filename: $directory)) {
             throw new DirectoryCreationException(message: sprintf('Failed to create directory: %s', $directory));
         }
 
@@ -142,7 +142,7 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function exists(string $path) : bool
     {
-        return file_exists($path);
+        return file_exists(filename: $path);
     }
 
     /**
@@ -155,13 +155,13 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function deleteDirectory(string $directory) : bool
     {
-        if (! is_dir($directory)) {
+        if (! is_dir(filename: $directory)) {
             return true; // Non-existent directories are considered "deleted".
         }
 
         $this->clear(directory: $directory);
 
-        if (! rmdir($directory)) {
+        if (! rmdir(directory: $directory)) {
             throw new DirectoryDeletionException(message: sprintf('Failed to delete directory: %s', $directory));
         }
 
@@ -178,7 +178,7 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function clear(string $directory) : bool
     {
-        if (! is_dir($directory)) {
+        if (! is_dir(filename: $directory)) {
             throw new RuntimeException(message: sprintf('Not a directory: %s', $directory));
         }
 
@@ -205,11 +205,11 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function delete(string $path) : bool
     {
-        if (! file_exists($path)) {
+        if (! file_exists(filename: $path)) {
             return true; // Consider non-existent files as "deleted".
         }
 
-        if (! unlink($path)) {
+        if (! unlink(filename: $path)) {
             throw new FileDeleteException(message: sprintf('Failed to delete file: %s', $path));
         }
 
@@ -225,7 +225,7 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function isWritable(string $path) : bool
     {
-        return is_writable($path);
+        return is_writable(filename: $path);
     }
 
     /**
@@ -239,12 +239,12 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function setPermissions(string $path, int $permissions) : bool
     {
-        if (! file_exists($path)) {
+        if (! file_exists(filename: $path)) {
             throw new RuntimeException(message: sprintf('Path does not exist: %s', $path));
         }
 
-        if (! @chmod($path, $permissions)) { // Suppress warning to handle it manually
-            error_log(sprintf('Failed to set permissions on: %s', $path));
+        if (! @chmod(filename: $path, permissions: $permissions)) { // Suppress warning to handle it manually
+            error_log(message: sprintf('Failed to set permissions on: %s', $path));
 
             return false;
         }
@@ -263,11 +263,11 @@ class LocalFileStorage implements FileStorageInterface
      */
     public function hasPermission(string $path, int $permissions) : bool
     {
-        if (! file_exists($path)) {
+        if (! file_exists(filename: $path)) {
             return false; // Path does not exist, so it cannot have the specified permissions.
         }
 
-        $actualPermissions = fileperms($path) & 0777; // Get permissions and mask to relevant bits.
+        $actualPermissions = fileperms(filename: $path) & 0777; // Get permissions and mask to relevant bits.
 
         return $actualPermissions === $permissions;
     }

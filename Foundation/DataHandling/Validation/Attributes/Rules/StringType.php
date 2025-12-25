@@ -36,14 +36,14 @@ class StringType
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! is_string($value)) {
+        if (! is_string(value: $value)) {
             throw new ValidationException(
                 message : $this->message ?? sprintf(self::ERROR_MESSAGE, $property),
                 metadata: [
                               'property' => $property,
                               'value'    => $value,
                               'expected' => 'string',
-                              'actual'   => gettype($value),
+                              'actual'   => gettype(value: $value),
                           ]
             );
         }

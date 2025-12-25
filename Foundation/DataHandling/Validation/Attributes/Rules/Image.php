@@ -37,8 +37,8 @@ class Image
     public function validate(mixed $value, string $property) : void
     {
         $allowedMimes = ['jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-        $extension    = strtolower(pathinfo((string) $value, PATHINFO_EXTENSION));
-        if (! in_array($extension, $allowedMimes, true)) {
+        $extension    = strtolower(string: pathinfo(path: (string) $value, flags: PATHINFO_EXTENSION));
+        if (! in_array(needle: $extension, haystack: $allowedMimes, strict: true)) {
             throw new ValidationException(message: $property . ' must be an image.');
         }
     }

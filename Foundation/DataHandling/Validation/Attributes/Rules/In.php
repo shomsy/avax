@@ -10,7 +10,7 @@ use Avax\Exceptions\ValidationException;
 /**
  * Attribute that validates a property's value is one of a predefined set.
  */
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class In
 {
     /**
@@ -29,13 +29,13 @@ readonly class In
     public function validate(mixed $value, string $property) : void
     {
         // Unwrap enum to scalar value if needed
-        if (is_object($value) && method_exists($value, 'value')) {
+        if (is_object(value: $value) && method_exists(object_or_class: $value, method: 'value')) {
             $value = $value->value;
         }
 
         // Perform strict comparison against an allowed set
-        if (! in_array($value, $this->values, true)) {
-            $allowed = implode(', ', array_map('strval', $this->values));
+        if (! in_array(needle: $value, haystack: $this->values, strict: true)) {
+            $allowed = implode(separator: ', ', array: array_map(callback: 'strval', array: $this->values));
 
             throw new ValidationException(
                 message: "{$property} must be one of: {$allowed}"

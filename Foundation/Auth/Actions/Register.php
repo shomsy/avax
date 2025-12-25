@@ -14,6 +14,6 @@ final readonly class Register
 
     public function execute(RegistrationDTO $data): UserInterface
     {
-        return $this->userProvider->createUser($data);
+        return $this->userProvider->createUser(RegistrationDTO: $data);
     }
 }

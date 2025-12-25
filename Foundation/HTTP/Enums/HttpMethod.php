@@ -122,6 +122,6 @@ enum HttpMethod: string
      */
     public static function getSupportedMethods() : array
     {
-        return array_map(static fn($case) => $case->value, self::cases());
+        return array_map(callback: static fn($case) => $case->value, array: self::cases());
     }
 }

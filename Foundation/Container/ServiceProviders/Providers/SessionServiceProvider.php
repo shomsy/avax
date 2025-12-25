@@ -6,68 +6,91 @@ namespace Avax\Container\ServiceProviders\Providers;
 
 use Avax\Container\ServiceProviders\ServiceProvider;
 use Avax\Filesystem\Storage\LocalFileStorage;
-use Avax\HTTP\Session\Config\SessionConfig;
-use Avax\HTTP\Session\Contracts\SessionContract;
-use Avax\HTTP\Session\Contracts\SessionInterface;
-use Avax\HTTP\Session\Contracts\Storage\Store;
-use Avax\HTTP\Session\Data\FileStore;
-use Avax\HTTP\Session\Data\Recovery;
-use Avax\HTTP\Session\Features\{Audit, Events};
-use Avax\HTTP\Session\Lifecycle\SessionProvider;
-use Avax\HTTP\Session\Security\CookieManager;
-use Avax\HTTP\Session\Security\EncrypterFactory;
-use Avax\HTTP\Session\Security\Policies\{PolicyGroupBuilder, PolicyInterface};
-use Avax\HTTP\Session\Security\SessionRegistry;
-use Avax\HTTP\Session\Security\SessionSignature;
+use Avax\HTTP\Session\Audit\Audit;
+use Avax\HTTP\Session\Audit\AuditManager;
+use Avax\HTTP\Session\Core\Config;
+use Avax\HTTP\Session\Core\CoreManager;
+use Avax\HTTP\Session\Core\Lifecycle\SessionEngine;
+use Avax\HTTP\Session\Core\Storage\FileStore;
+use Avax\HTTP\Session\Events\Events;
+use Avax\HTTP\Session\Events\EventsManager;
+use Avax\HTTP\Session\Recovery\Recovery;
+use Avax\HTTP\Session\Recovery\RecoveryManager;
 use Avax\HTTP\Session\Session;
+use Avax\HTTP\Session\Shared\Contracts\Security\SessionIdProviderInterface;
+use Avax\HTTP\Session\Shared\Contracts\SessionContract;
+use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
+use Avax\HTTP\Session\Shared\Contracts\Storage\StoreInterface;
+use Avax\HTTP\Session\Shared\Security\CookieManager;
+use Avax\HTTP\Session\Shared\Security\EncrypterFactory;
+use Avax\HTTP\Session\Shared\Security\NativeSessionIdProvider;
+use Avax\HTTP\Session\Shared\Security\Policies\PolicyGroupBuilder;
+use Avax\HTTP\Session\Shared\Security\Policies\PolicyInterface;
+use Avax\HTTP\Session\Shared\Security\SessionRegistry;
+use Avax\HTTP\Session\Shared\Security\SessionSignature;
+use Random\RandomException;
+
 
 /**
- * 🧩 SessionServiceProvider
- * ------------------------------------------------------------
- * Central registration for all Session Component dependencies.
+ * SessionServiceProvider
+ * ======================================================================
+ * Absolute enterprise-grade dependency bootstrap for the entire Session
+ * subsystem. Ensures deterministic, immutable and fully auditable wiring:
  *
- * Integrates secure storage, encryption, recovery, registry,
- * auditing, events, and security policies into a single DI service.
+ * 1. Storage         (FileStore / RedisStore)
+ * 2. Security        (Signature, Policies, Cookie Rules)
+ * 3. Recovery        (Snapshots & Transactions)
+ * 4. Registry        (Multi-device session tracking)
+ * 5. Features        (Audit, Events)
+ * 6. Engine          (SessionEngine)
+ * 7. Managers        (Core/Audit/Events/Recovery)
+ * 8. Facade          (Session)
  *
- * 💡 DI-friendly — this provider wires all dependencies, but
- * does not rely on lifecycle hooks like afterResolving().
+ * Philosophy:
+ * - Pure DI (no runtime registration or mutation)
+ * - Immutable policies and security config
+ * - Predictable lifecycle & consistent injection
+ * - Zero side-effects in constructors
+ * - Enterprise observability and security isolation
  */
 final class SessionServiceProvider extends ServiceProvider
 {
     /**
-     * Register all session-related dependencies.
-     *
-     * @return void
+     * @throws RandomException
      */
+    #[\Override]
     public function register() : void
     {
-        // -----------------------------------------------------
-        // ⚙️ Configuration (dynamic from ENV or fallback)
-        // -----------------------------------------------------
+        // -----------------------------------------------------------------
+        // CONFIGURATION
+        // -----------------------------------------------------------------
         $storagePath  = $_ENV['SESSION_STORAGE_PATH'] ?? base_path(path: 'storage/sessions');
         $auditLogPath = $_ENV['SESSION_AUDIT_LOG_PATH'] ?? base_path(path: 'storage/logs/session_audit.log');
         $ttl          = (int) ($_ENV['SESSION_TTL'] ?? 3600);
         $secure       = filter_var(value: $_ENV['SESSION_SECURE'] ?? true, filter: FILTER_VALIDATE_BOOL);
 
-        // -----------------------------------------------------
-        // 🧱 Storage & Filesystem
-        // -----------------------------------------------------
+        // Core signature key (separate from encryption key)
+        $signatureKey = $_ENV['SESSION_SIGNATURE_KEY'] ?? bin2hex(string: random_bytes(length: 32));
+
+        // -----------------------------------------------------------------
+        // STORAGE
+        // -----------------------------------------------------------------
         $this->dependencyInjector->singleton(
             abstract: LocalFileStorage::class,
             concrete: static fn() => new LocalFileStorage()
         );
 
         $this->dependencyInjector->singleton(
-            abstract: Store::class,
+            abstract: StoreInterface::class,
             concrete: fn() => new FileStore(
                 storage  : $this->dependencyInjector->get(id: LocalFileStorage::class),
                 directory: $storagePath
             )
         );
 
-        // -----------------------------------------------------
-        // 🔐 Security Layer
-        // -----------------------------------------------------
+        // -----------------------------------------------------------------
+        // SECURITY
+        // -----------------------------------------------------------------
         $this->dependencyInjector->singleton(
             abstract: CookieManager::class,
             concrete: static fn() => CookieManager::strict()
@@ -78,60 +101,59 @@ final class SessionServiceProvider extends ServiceProvider
             concrete: static fn() => new EncrypterFactory()
         );
 
+        // Signature key is **standalone**, not tied to encryption
         $this->dependencyInjector->singleton(
             abstract: SessionSignature::class,
-            concrete: static fn() => new SessionSignature(
-                secretKey: $_ENV['SESSION_SIGNATURE_KEY'] ?? 'default-signature-key'
-            )
+            concrete: static fn() => new SessionSignature(secretKey: $signatureKey)
         );
 
-        // -----------------------------------------------------
-        // ⚙️ Configuration & Policies
-        // -----------------------------------------------------
         $this->dependencyInjector->singleton(
-            abstract: SessionConfig::class,
-            concrete: static fn() => new SessionConfig(
-                ttl   : $ttl,
-                secure: $secure
-            )
+            abstract: SessionIdProviderInterface::class,
+            concrete: static fn() => new NativeSessionIdProvider()
+        );
+
+        // -----------------------------------------------------------------
+        // CONFIG & POLICIES (immutable)
+        // -----------------------------------------------------------------
+        $this->dependencyInjector->singleton(
+            abstract: Config::class,
+            concrete: static fn() => new Config(ttl: $ttl, secure: $secure)
         );
 
         $this->dependencyInjector->singleton(
             abstract: PolicyInterface::class,
             concrete: static fn() => PolicyGroupBuilder::create()
-                ->requireAll(name: 'default_policy')
-                ->maxLifetime(seconds: 7200)
-                ->maxIdle(seconds: 900)
+                ->requireAll(name: 'default_security_policy')
+                ->maxLifetime(seconds: 7200) // 2h
+                ->maxIdle(seconds: 900)      // 15 min
                 ->secureOnly()
                 ->endGroup()
                 ->build()
         );
 
-        // -----------------------------------------------------
-        // 🧠 Recovery & Registry
-        // -----------------------------------------------------
+        // -----------------------------------------------------------------
+        // RECOVERY & REGISTRY
+        // -----------------------------------------------------------------
         $this->dependencyInjector->singleton(
             abstract: Recovery::class,
             concrete: fn() => new Recovery(
-                store: $this->dependencyInjector->get(id: Store::class)
+                store: $this->dependencyInjector->get(id: StoreInterface::class)
             )
         );
 
         $this->dependencyInjector->singleton(
             abstract: SessionRegistry::class,
             concrete: fn() => new SessionRegistry(
-                store: $this->dependencyInjector->get(id: Store::class)
+                store: $this->dependencyInjector->get(id: StoreInterface::class)
             )
         );
 
-        // -----------------------------------------------------
-        // 🪶 Observability (Audit + Events)
-        // -----------------------------------------------------
+        // -----------------------------------------------------------------
+        // FEATURES: AUDIT & EVENTS
+        // -----------------------------------------------------------------
         $this->dependencyInjector->singleton(
             abstract: Audit::class,
-            concrete: static fn() => new Audit(
-                logPath: $auditLogPath
-            )
+            concrete: static fn() => new Audit(logPath: $auditLogPath)
         );
 
         $this->dependencyInjector->singleton(
@@ -139,66 +161,94 @@ final class SessionServiceProvider extends ServiceProvider
             concrete: static fn() => new Events()
         );
 
-        // -----------------------------------------------------
-        // 🧩 Core Session Provider
-        // -----------------------------------------------------
+        // -----------------------------------------------------------------
+        // ENGINE
+        // -----------------------------------------------------------------
         $this->dependencyInjector->singleton(
-            abstract: SessionProvider::class,
-            concrete: fn() => $this->createSessionProvider()
+            abstract: SessionEngine::class,
+            concrete: fn() => $this->createSessionEngine()
         );
 
-        // -----------------------------------------------------
-        // 🪶 Contracts / Aliases
-        // -----------------------------------------------------
+        // -----------------------------------------------------------------
+        // MANAGERS (consistent: all receive engine)
+        // -----------------------------------------------------------------
+        $this->dependencyInjector->singleton(
+            abstract: CoreManager::class,
+            concrete: fn() => new CoreManager(
+                engine: $this->dependencyInjector->get(id: SessionEngine::class)
+            )
+        );
+
+        $this->dependencyInjector->singleton(
+            abstract: RecoveryManager::class,
+            concrete: fn() => new RecoveryManager(
+                recovery: $this->dependencyInjector->get(id: Recovery::class),
+                audit   : $this->dependencyInjector->get(id: Audit::class)
+            )
+        );
+
+        $this->dependencyInjector->singleton(
+            abstract: AuditManager::class,
+            concrete: fn() => new AuditManager(
+                audit: $this->dependencyInjector->get(id: Audit::class)
+            )
+        );
+
+        $this->dependencyInjector->singleton(
+            abstract: EventsManager::class,
+            concrete: fn() => new EventsManager(
+                events         : $this->dependencyInjector->get(id: Events::class),
+                asyncDispatcher: null
+            )
+        );
+
+        // -----------------------------------------------------------------
+        // CONTRACTS → ENGINE
+        // -----------------------------------------------------------------
         $this->dependencyInjector->singleton(
             abstract: SessionInterface::class,
-            concrete: fn() => $this->dependencyInjector->get(id: SessionProvider::class)
+            concrete: fn() => $this->dependencyInjector->get(id: SessionEngine::class)
         );
 
         $this->dependencyInjector->singleton(
             abstract: SessionContract::class,
-            concrete: fn() => $this->dependencyInjector->get(id: SessionProvider::class)
+            concrete: fn() => $this->dependencyInjector->get(id: SessionEngine::class)
         );
 
-        // -----------------------------------------------------
-        // 🎯 Register High-Level Session API (Facade Layer)
-        // -----------------------------------------------------
+        // -----------------------------------------------------------------
+        // HIGH-LEVEL FACADE
+        // -----------------------------------------------------------------
         $this->dependencyInjector->singleton(
             abstract: Session::class,
             concrete: fn() => new Session(
-                provider: $this->dependencyInjector->get(id: SessionProvider::class)
+                core    : $this->dependencyInjector->get(id: CoreManager::class),
+                recovery: $this->dependencyInjector->get(id: RecoveryManager::class),
+                audit   : $this->dependencyInjector->get(id: AuditManager::class),
+                events  : $this->dependencyInjector->get(id: EventsManager::class)
             )
         );
     }
 
+
     /**
-     * Factory method for creating a fully wired SessionProvider instance.
-     *
-     * @return SessionProvider
+     * Build a fully-initialized, immutable SessionEngine.
      */
-    private function createSessionProvider() : SessionProvider
+    private function createSessionEngine() : SessionEngine
     {
-        $provider = new SessionProvider(
-            store    : $this->dependencyInjector->get(id: Store::class),
-            config   : $this->dependencyInjector->get(id: SessionConfig::class),
-            encrypter: $this->dependencyInjector->get(id: EncrypterFactory::class)->create(),
-            recovery : $this->dependencyInjector->get(id: Recovery::class),
-            signature: $this->dependencyInjector->get(id: SessionSignature::class),
-            policies : $this->dependencyInjector->get(id: PolicyInterface::class),
-            registry : $this->dependencyInjector->get(id: SessionRegistry::class)
+        return new SessionEngine(
+            store     : $this->dependencyInjector->get(id: StoreInterface::class),
+            config    : $this->dependencyInjector->get(id: Config::class),
+            encrypter : $this->dependencyInjector->get(id: EncrypterFactory::class)->create(),
+            recovery  : $this->dependencyInjector->get(id: Recovery::class),
+            idProvider: $this->dependencyInjector->get(id: SessionIdProviderInterface::class),
+            audit     : $this->dependencyInjector->get(id: Audit::class),
+            events    : $this->dependencyInjector->get(id: Events::class),
+            signature : $this->dependencyInjector->get(id: SessionSignature::class),
+            policies  : $this->dependencyInjector->get(id: PolicyInterface::class),
+            registry  : $this->dependencyInjector->get(id: SessionRegistry::class)
         );
-
-        // Manually attach optional features (Audit + Events)
-        $provider->registerFeature(feature: $this->dependencyInjector->get(id: Audit::class));
-        $provider->registerFeature(feature: $this->dependencyInjector->get(id: Events::class));
-
-        return $provider;
     }
 
-    /**
-     * Boot method (no-op for this provider).
-     *
-     * @return void
-     */
+    #[\Override]
     public function boot() : void {}
 }

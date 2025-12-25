@@ -31,7 +31,7 @@ class IP
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! filter_var($value, FILTER_VALIDATE_IP)) {
+        if (! filter_var(value: $value, filter: FILTER_VALIDATE_IP)) {
             throw new ValidationException(message: $property . ' must be a valid IP address.');
         }
     }

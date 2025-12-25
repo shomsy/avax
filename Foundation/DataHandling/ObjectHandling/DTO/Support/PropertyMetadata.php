@@ -39,7 +39,7 @@ final class PropertyMetadata
      */
     public function hasAttribute(string $fqcn) : bool
     {
-        return $this->property->getAttributes($fqcn) !== [];
+        return $this->property->getAttributes(name: $fqcn) !== [];
     }
 
     /**
@@ -50,8 +50,8 @@ final class PropertyMetadata
     public function instantiateAttributes() : array
     {
         return array_map(
-            static fn(ReflectionAttribute $attr) => $attr->newInstance(),
-            $this->attributes
+            callback: static fn(ReflectionAttribute $attr) => $attr->newInstance(),
+            array   : $this->attributes
         );
     }
 }

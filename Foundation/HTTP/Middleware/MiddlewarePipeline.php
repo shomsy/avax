@@ -32,7 +32,7 @@ class MiddlewarePipeline
     public function add(callable $middleware, int $priority = 10) : void
     {
         $this->middlewareStack[] = ['middleware' => $middleware, 'priority' => $priority];
-        usort($this->middlewareStack, static fn(array $a, array $b) : int => $a['priority'] <=> $b['priority']);
+        usort(array: $this->middlewareStack, callback: static fn(array $a, array $b) : int => $a['priority'] <=> $b['priority']);
     }
 
     /**
@@ -60,7 +60,7 @@ class MiddlewarePipeline
         // Build the middleware chain
         $next = $finalHandler;
 
-        foreach (array_reverse($this->middlewareStack) as $entry) {
+        foreach (array_reverse(array: $this->middlewareStack) as $entry) {
             $middleware = $entry['middleware'];
 
             $next = static fn($req) => $middleware($req, $next);
@@ -68,7 +68,7 @@ class MiddlewarePipeline
 
         // Execute the pipeline
         try {
-            $response = $next($request);
+            $response = $next(req: $request);
 
             // Ensure the response is valid
             if (! $response instanceof ResponseInterface) {

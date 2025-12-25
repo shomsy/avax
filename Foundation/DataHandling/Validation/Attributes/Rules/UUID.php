@@ -34,7 +34,7 @@ class UUID
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (in_array(preg_match(self::UUID_REGEX, (string) $value), [0, false], true)) {
+        if (in_array(needle: preg_match(pattern: self::UUID_REGEX, subject: (string) $value), haystack: [0, false], strict: true)) {
             throw new ValidationException(message: $property . ' must be a valid UUID.');
         }
     }

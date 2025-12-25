@@ -58,7 +58,7 @@ final readonly class RouteGroupBuilder
     {
         // Creates a new immutable route group with the modified prefix.
         return new self(
-            prefix       : rtrim($prefix, '/'), // Ensure no trailing slash on the prefix.
+            prefix       : rtrim(string: $prefix, characters: '/'), // Ensure no trailing slash on the prefix.
             middleware   : $this->middleware, // Reuse the existing middleware.
             domain       : $this->domain, // Keep the existing domain value.
             authorization: $this->authorization, // Maintain the same authorization.
@@ -162,7 +162,7 @@ final readonly class RouteGroupBuilder
         // Assign middleware (e.g., authentication, logging) to the route.
         $route = RouteBuilder::make(
             method: $method,
-            path  : $this->applyPrefix($path)
+            path  : $this->applyPrefix(path: $path)
 
         )
             ->action(action: $action)
@@ -236,7 +236,7 @@ final readonly class RouteGroupBuilder
         // - Use `rtrim` to strip any trailing slashes from the prefix.
         // - Use `ltrim` to remove any leading slashes from the provided path.
         // - This ensures a single forward slash (`/`) separates the prefix and path.
-        return rtrim($this->prefix, '/') . '/' . ltrim($path, '/');
+        return rtrim(string: $this->prefix, characters: '/') . '/' . ltrim(string: $path, characters: '/');
     }
 
 
@@ -290,8 +290,8 @@ final readonly class RouteGroupBuilder
         // This results in an array where every route is now a finalized
         // `RouteDefinition` object.
         return array_map(
-            static fn(RouteBuilder $r) => $r->build(), // Transform RouteBuilder into RouteDefinition.
-            $this->routes                // The array of RouteBuilder instances to process.
+            callback: static fn(RouteBuilder $r) => $r->build(), // Transform RouteBuilder into RouteDefinition.
+            array   : $this->routes                // The array of RouteBuilder instances to process.
         );
     }
 

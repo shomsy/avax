@@ -25,6 +25,7 @@ class NotFoundException extends Exception
      *
      * @param string|null $message Custom message for the exception (optional).
      */
+    #[\Override]
     public function __construct(string|null $message = null)
     {
         // Use the custom message if provided, otherwise use the default message.

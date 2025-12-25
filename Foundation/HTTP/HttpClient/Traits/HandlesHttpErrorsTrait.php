@@ -16,6 +16,7 @@ trait HandlesHttpErrorsTrait
      *
      * @return array A structured response with error information.
      */
+    #[\Override]
     public function handleFailure(string $endpoint, mixed $reason) : array
     {
         $errorMessage = $reason instanceof Throwable ? $reason->getMessage() : 'Unknown error';

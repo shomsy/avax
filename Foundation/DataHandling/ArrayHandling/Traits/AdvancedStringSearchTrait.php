@@ -50,27 +50,27 @@ trait AdvancedStringSearchTrait
     public function fuzzyMatch(string $query, float|null $threshold = null, string|null $key = null) : static
     {
         $threshold ??= 70.0;
-        $this->isProperThreshold($threshold);
+        $this->isProperThreshold(threshold: $threshold);
 
         $fuzz    = new Fuzz();
         $process = new Process(fuzz: $fuzz);
 
         $matchedItems = array_filter(
-            $this->getItems(),
-            function ($item) use ($key, $fuzz, $query, $threshold) : bool {
+            array   : $this->getItems(),
+            callback: function ($item) use ($key, $fuzz, $query, $threshold) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
-                $similarity = $fuzz->ratio(s1: strtolower($query), s2: strtolower($target));
+                $similarity = $fuzz->ratio(s1: strtolower(string: $query), s2: strtolower(string: $target));
 
                 return $similarity >= $threshold;
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -120,27 +120,27 @@ trait AdvancedStringSearchTrait
      */
     public function similaritySearch(string $query, float $threshold = 70.0, string|null $key = null) : static
     {
-        $this->isProperThreshold($threshold);
+        $this->isProperThreshold(threshold: $threshold);
 
         $fuzz    = new Fuzz();
         $process = new Process(fuzz: $fuzz);
 
         $matchedItems = array_filter(
-            $this->getItems(),
-            function ($item) use ($key, $fuzz, $query, $threshold) : bool {
+            array   : $this->getItems(),
+            callback: function ($item) use ($key, $fuzz, $query, $threshold) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
-                $similarity = $fuzz->ratio(s1: strtolower($query), s2: strtolower($target));
+                $similarity = $fuzz->ratio(s1: strtolower(string: $query), s2: strtolower(string: $target));
 
                 return $similarity >= $threshold;
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -149,12 +149,10 @@ trait AdvancedStringSearchTrait
      * This method finds items within a certain distance from the query and sorts them by their similarity to the query.
      *
      * @param string      $query       The search query string.
-     * @param int         $maxDistance The maximum Levenshtein distance allowed.
+     * @param int|null    $maxDistance The maximum Levenshtein distance allowed.
      * @param string|null $key         The key to search within if items are associative arrays.
      *
      * @return static A new instance containing the matched items sorted by similarity.
-     *
-     * @throws InvalidArgumentException If the max distance is negative.
      *
      * @example
      * $arrh = new Arrhae(['apple', 'apricot', 'banana', 'grape', 'pineapple']);
@@ -185,18 +183,18 @@ trait AdvancedStringSearchTrait
         foreach ($this->getItems() as $item) {
             $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-            if (! is_string($target)) {
+            if (! is_string(value: $target)) {
                 continue;
             }
 
-            $distance = levenshtein(strtolower($query), strtolower($target));
+            $distance = levenshtein(string1: strtolower(string: $query), string2: strtolower(string: $target));
 
             if ($distance <= $maxDistance) {
                 $matchedItems[$distance][] = $item;
             }
         }
 
-        ksort($matchedItems);
+        ksort(array: $matchedItems);
 
         // Flatten the array while preserving order
         $sortedMatchedItems = [];
@@ -239,20 +237,20 @@ trait AdvancedStringSearchTrait
     public function partialMatch(string $query, string|null $key = null) : static
     {
         $matchedItems = array_filter(
-            $this->getItems(),
-            static function ($item) use ($key, $query) : bool {
+            array   : $this->getItems(),
+            callback: static function ($item) use ($key, $query) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
                 // Check if query is a substring of target
-                return stripos($target, $query) !== false;
+                return stripos(haystack: $target, needle: $query) !== false;
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -274,25 +272,25 @@ trait AdvancedStringSearchTrait
     public function tokenSortMatch(string $query, float|null $threshold = null, string|null $key = null) : static
     {
         $threshold ??= 70.0;
-        $this->isProperThreshold($threshold);
+        $this->isProperThreshold(threshold: $threshold);
 
         $fuzz    = new Fuzz();
         $process = new Process(fuzz: $fuzz);
 
         // Sort tokens in the query
-        $sortedQuery = $this->sortTokens($query);
+        $sortedQuery = $this->sortTokens(string: $query);
 
         $matchedItems = array_filter(
-            $this->getItems(),
-            function ($item) use ($key, $fuzz, $sortedQuery, $threshold) : bool {
+            array   : $this->getItems(),
+            callback: function ($item) use ($key, $fuzz, $sortedQuery, $threshold) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
                 // Sort tokens in the target
-                $sortedTarget = $this->sortTokens($target);
+                $sortedTarget = $this->sortTokens(string: $target);
 
                 // Calculating similarity using FuzzyWuzzy
                 $similarity = $fuzz->ratio(s1: $sortedQuery, s2: $sortedTarget);
@@ -301,7 +299,7 @@ trait AdvancedStringSearchTrait
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -313,10 +311,10 @@ trait AdvancedStringSearchTrait
      */
     protected function sortTokens(string $string) : string
     {
-        $tokens = explode(' ', strtolower($string));
-        sort($tokens); // Sort tokens in ascending order
+        $tokens = explode(separator: ' ', string: strtolower(string: $string));
+        sort(array: $tokens); // Sort tokens in ascending order
 
-        return implode(' ', $tokens);
+        return implode(separator: ' ', array: $tokens);
     }
 
     /**
@@ -325,12 +323,10 @@ trait AdvancedStringSearchTrait
      * This method calculates the similarity ratio between the unique tokens of the query and target strings.
      *
      * @param string      $query     The search query string.
-     * @param float       $threshold The minimum similarity percentage (0 to 100) required for a match.
+     * @param float|null  $threshold The minimum similarity percentage (0 to 100) required for a match.
      * @param string|null $key       The key to search within if items are associative arrays.
      *
      * @return static A new instance containing the matched items.
-     *
-     * @throws InvalidArgumentException If the threshold is not between 0 and 100.
      *
      * @example
      * $arrh = new Arrhae(['apple banana', 'banana apple', 'apple grape', 'banana grape']);
@@ -340,30 +336,30 @@ trait AdvancedStringSearchTrait
     public function tokenSetMatch(string $query, float|null $threshold = null, string|null $key = null) : static
     {
         $threshold ??= 70.0;
-        $this->isProperThreshold($threshold);
+        $this->isProperThreshold(threshold: $threshold);
 
         // Initializing FuzzyWuzzy components
         $fuzz    = new Fuzz();
         $process = new Process(fuzz: $fuzz);
 
         // Get unique tokens in the query
-        $uniqueQueryTokens = array_unique(explode(' ', strtolower($query)));
-        sort($uniqueQueryTokens);
-        $sortedQuery = implode(' ', $uniqueQueryTokens);
+        $uniqueQueryTokens = array_unique(array: explode(separator: ' ', string: strtolower(string: $query)));
+        sort(array: $uniqueQueryTokens);
+        $sortedQuery = implode(separator: ' ', array: $uniqueQueryTokens);
 
         $matchedItems = array_filter(
-            $this->getItems(),
-            function ($item) use ($key, $fuzz, $sortedQuery, $threshold, $process) : bool {
+            array   : $this->getItems(),
+            callback: function ($item) use ($key, $fuzz, $sortedQuery, $threshold, $process) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
                 // Get unique tokens in the target
-                $uniqueTargetTokens = array_unique(explode(' ', strtolower($target)));
-                sort($uniqueTargetTokens);
-                $sortedTarget = implode(' ', $uniqueTargetTokens);
+                $uniqueTargetTokens = array_unique(array: explode(separator: ' ', string: strtolower(string: $target)));
+                sort(array: $uniqueTargetTokens);
+                $sortedTarget = implode(separator: ' ', array: $uniqueTargetTokens);
 
                 // Calculating similarity using FuzzyWuzzy
                 $similarity = $fuzz->ratio(s1: $sortedQuery, s2: $sortedTarget);
@@ -372,7 +368,7 @@ trait AdvancedStringSearchTrait
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -392,25 +388,25 @@ trait AdvancedStringSearchTrait
      */
     public function phoneticMatch(string $query, string|null $key = null) : static
     {
-        $queryPhonetic = metaphone(strtolower($query));
+        $queryPhonetic = metaphone(string: strtolower(string: $query));
 
         $matchedItems = array_filter(
-            $this->getItems(),
-            static function ($item) use ($key, $queryPhonetic) : bool {
+            array   : $this->getItems(),
+            callback: static function ($item) use ($key, $queryPhonetic) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
                 // Calculate phonetic code
-                $targetPhonetic = metaphone(strtolower($target));
+                $targetPhonetic = metaphone(string: strtolower(string: $target));
 
                 return $queryPhonetic === $targetPhonetic;
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -444,24 +440,24 @@ trait AdvancedStringSearchTrait
      */
     public function regexSearch(string $pattern, string|null $key = null) : static
     {
-        if (@preg_match($pattern, '') === false) {
+        if (@preg_match(pattern: $pattern, subject: '') === false) {
             throw new InvalidArgumentException(message: 'Invalid regular expression pattern.');
         }
 
         $matchedItems = array_filter(
-            $this->getItems(),
-            static function ($item) use ($key, $pattern) : bool {
+            array   : $this->getItems(),
+            callback: static function ($item) use ($key, $pattern) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
-                return preg_match($pattern, $target) === 1;
+                return preg_match(pattern: $pattern, subject: $target) === 1;
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -498,15 +494,15 @@ trait AdvancedStringSearchTrait
     public function customMatch(callable $callback, string|null $key = null) : static
     {
         $matchedItems = array_filter(
-            $this->getItems(),
-            static function ($item) use ($key, $callback) {
+            array   : $this->getItems(),
+            callback: static function ($item) use ($key, $callback) {
                 $target = $key !== null ? ($item[$key] ?? null) : $item;
 
                 return $callback($target, $item);
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -526,20 +522,20 @@ trait AdvancedStringSearchTrait
      */
     public function sortBySimilarity(string $query, string|null $key = null) : array
     {
-        $queryLower = strtolower($query);
+        $queryLower = strtolower(string: $query);
 
         $sortedItems = $this->getItems();
-        usort($sortedItems, function ($a, $b) use ($key, $queryLower) : int {
+        usort(array: $sortedItems, callback: function ($a, $b) use ($key, $queryLower) : int {
             $fuzz   = new Fuzz();
             $aValue = $key !== null ? ($a[$key] ?? '') : $a;
             $bValue = $key !== null ? ($b[$key] ?? '') : $b;
 
-            if (! is_string($aValue) || ! is_string($bValue)) {
+            if (! is_string(value: $aValue) || ! is_string(value: $bValue)) {
                 return 0;
             }
 
-            $similarityA = $fuzz->ratio(s1: $queryLower, s2: strtolower($aValue));
-            $similarityB = $fuzz->ratio(s1: $queryLower, s2: strtolower($bValue));
+            $similarityA = $fuzz->ratio(s1: $queryLower, s2: strtolower(string: $aValue));
+            $similarityB = $fuzz->ratio(s1: $queryLower, s2: strtolower(string: $bValue));
 
             return $similarityB <=> $similarityA;
         });

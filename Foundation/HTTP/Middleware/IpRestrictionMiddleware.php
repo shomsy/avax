@@ -29,7 +29,7 @@ abstract class IpRestrictionMiddleware
      */
     public function handle(Request $request, Closure $next) : ResponseInterface
     {
-        if (! $this->isAllowedIp($request->getClientIp())) {
+        if (! $this->isAllowedIp(ipAddress: $request->getClientIp())) {
             return $this->createAccessDeniedResponse();
         }
 

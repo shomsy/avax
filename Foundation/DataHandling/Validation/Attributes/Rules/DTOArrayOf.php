@@ -12,7 +12,7 @@ use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
  *
  * Used for fields like: array<int, FieldDTO>
  */
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class DTOArrayOf
 {
     /**
@@ -30,8 +30,8 @@ readonly class DTOArrayOf
     public function apply(array|null $value) : array
     {
         return array_map(
-            fn(array $item) => new ($this->class)($item),
-            $value ?? []
+            callback: fn(array $item) => new ($this->class)($item),
+            array   : $value ?? []
         );
     }
 }

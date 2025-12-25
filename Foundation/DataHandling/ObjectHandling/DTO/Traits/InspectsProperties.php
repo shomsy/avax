@@ -89,12 +89,12 @@ trait InspectsProperties
 
         // Use an array mapping function to convert ReflectionProperty instances to PropertyMetadata objects
         return array_map(
-            static fn(ReflectionProperty $property) : PropertyMetadata => new PropertyMetadata(
+            callback: static fn(ReflectionProperty $property) : PropertyMetadata => new PropertyMetadata(
                 name      : $property->getName(),       // Assign the property name
                 property  : $property,             // Embed the ReflectionProperty instance
                 attributes: $property->getAttributes() // Extract any PHP attributes applied to the property
             ),
-            $reflection->getProperties(filter: ReflectionProperty::IS_PUBLIC) // Focus only on public properties
+            array   : $reflection->getProperties(filter: ReflectionProperty::IS_PUBLIC) // Focus only on public properties
         );
     }
 

@@ -47,14 +47,14 @@ trait MetaInfoTrait
      */
     public function guid() : static
     {
-        return $this->map(static function ($item) : array {
+        return $this->map(callback: static function ($item) : array {
             try {
                 return [
                     'id'   => Uuid::uuid4()->toString(),
                     'data' => $item,
                 ];
             } catch (Exception $e) {
-                throw new InvalidArgumentException('Failed to generate UUID: ' . $e->getMessage(), $e->getCode(), $e);
+                throw new InvalidArgumentException(message: 'Failed to generate UUID: ' . $e->getMessage(), code: $e->getCode(), previous: $e);
             }
         });
     }
@@ -102,14 +102,14 @@ trait MetaInfoTrait
             $timestamp = Carbon::now()->format($format);
         } catch (Exception $exception) {
             throw new InvalidArgumentException(
-                'Invalid date format: ' . $exception->getMessage(),
-                $exception->getCode(),
-                $exception
+                message : 'Invalid date format: ' . $exception->getMessage(),
+                code    : $exception->getCode(),
+                previous: $exception
             );
         }
 
         return $this->map(
-            static function ($item) use ($set, $timestamp) {
+            callback: static function ($item) use ($set, $timestamp) {
                 if ($set) {
                     return [
                         'timestamp' => $timestamp,
@@ -144,7 +144,7 @@ trait MetaInfoTrait
      */
     public function version(int $version = 1) : static
     {
-        return $this->map(static fn($item) : array => [
+        return $this->map(callback: static fn($item) : array => [
             'version' => $version,
             'data'    => $item,
         ]);
@@ -165,7 +165,7 @@ trait MetaInfoTrait
      */
     public function clone() : static
     {
-        return new static($this->toArray());
+        return new static(items: $this->toArray());
     }
 
     /**

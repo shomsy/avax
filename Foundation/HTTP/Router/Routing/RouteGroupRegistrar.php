@@ -34,7 +34,7 @@ final class RouteGroupRegistrar
         );
 
         $files = iterator_to_array(
-            new CallbackFilterIterator(
+            iterator: new CallbackFilterIterator(
                 iterator: $iterator,
                 callback: static fn(SplFileInfo $file) => $file->isFile() && $file->getExtension() === 'php'
             )
@@ -77,7 +77,7 @@ final class RouteGroupRegistrar
      */
     private function ensureDirectoryIsValid(string $baseDir) : void
     {
-        if (! is_dir($baseDir) || ! is_readable($baseDir)) {
+        if (! is_dir(filename: $baseDir) || ! is_readable(filename: $baseDir)) {
             throw new LogicException(message: "Routes directory '{$baseDir}' does not exist or is not readable.");
         }
     }

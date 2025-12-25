@@ -38,6 +38,8 @@ class SessionIdentity implements IdentityInterface
      *
      * @return bool True on successful authentication, false otherwise.
      * @throws AuthenticationException If authentication fails.
+     * @throws AuthFailed
+     * @throws AuthFailed
      */
     public function attempt(CredentialsInterface $credentials) : bool
     {
@@ -47,7 +49,7 @@ class SessionIdentity implements IdentityInterface
             throw new AuthFailed(message: 'Subject not found.');
         }
 
-        if (! password_verify($credentials->getPassword(), $user->getPassword())) {
+        if (! password_verify(password: $credentials->getPassword(), hash: $user->getPassword())) {
             throw new AuthFailed(message: 'Invalid credentials.');
         }
 

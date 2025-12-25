@@ -45,15 +45,15 @@ trait HandlesAttributes
         // Iterate over all attributes associated with the field.
         foreach ($attributes as $attribute) {
             // Instantiate the attribute into a usable object.
-            $instance = $this->instantiateAttribute($attribute);
+            $instance = $this->instantiateAttribute(attribute: $attribute);
 
             // Apply transformation logic if the attribute defines the `apply` method.
-            if (method_exists($instance, 'apply')) {
+            if (method_exists(object_or_class: $instance, method: 'apply')) {
                 $value = $this->applyAttribute(instance: $instance, value: $value, fieldName: $fieldName);
             }
 
             // Perform validation if the attribute defines the `validate` method.
-            if (method_exists($instance, 'validate')) {
+            if (method_exists(object_or_class: $instance, method: 'validate')) {
                 $this->validateAttribute(instance: $instance, value: $value, fieldName: $fieldName);
             }
         }

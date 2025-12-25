@@ -148,11 +148,11 @@ if (! function_exists(function: 'route')) {
 
             // Inject parameters into the path
             foreach ($parameters as $key => $value) {
-                $path = preg_replace("/\{{$key}(?:[?*]?)}/", $value, $path);
+                $path = preg_replace(pattern: "/\{{$key}(?:[?*]?)}/", replacement: $value, subject: $path);
             }
 
             // Clean up any optional params not provided
-            $path = preg_replace('/\{[^}]+\}/', '', $path);
+            $path = preg_replace(pattern: '/\{[^}]+\}/', replacement: '', subject: $path);
 
             return $path;
         } catch (Throwable $throwable) {
@@ -173,13 +173,13 @@ if (! function_exists(function: 'view')) {
     function view(string $template, array $data = []) : ResponseInterface
     {
         try {
-            $blade = app(BladeTemplateEngine::class);
+            $blade = app(abstract: BladeTemplateEngine::class);
             $body  = $blade->render($template, $data);
 
             return response(status: 200, headers: ['Content-Type' => 'text/html'], body: $body);
         } catch (Throwable $throwable) {
             dump('dump view ', $throwable);
-            logger('View rendering failed.', ['template' => $template, 'exception' => $throwable]);
+            logger(message: 'View rendering failed.', context: ['template' => $template, 'exception' => $throwable]);
 
             return response(status: 500, body: 'An error occurred while rendering the view.');
         }
@@ -190,7 +190,7 @@ if (! function_exists(function: 'view')) {
 // Debugging Utilities
 // -----------------------------------
 // dd() like function
-if (! function_exists('ddx')) {
+if (! function_exists(function: 'ddx')) {
     #[NoReturn]
     function ddx(mixed ...$args) : never
     {
@@ -199,7 +199,7 @@ if (! function_exists('ddx')) {
 }
 
 // dump() like function
-if (! function_exists('dumpx')) {
+if (! function_exists(function: 'dumpx')) {
     function dumpx(mixed ...$args) : void
     {
         DumpDebugger::dumpx(...$args);
@@ -278,13 +278,13 @@ if (! function_exists(function: 'auth')) {
     }
 }
 
-if (! function_exists('asset')) {
+if (! function_exists(function: 'asset')) {
     function asset(string $path) : string
     {
         $baseUrl = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
         $baseUrl .= $_SERVER['HTTP_HOST'] ?? 'localhost';
 
-        return $baseUrl . '/' . ltrim($path, '/');
+        return $baseUrl . '/' . ltrim(string: $path, characters: '/');
     }
 }
 
@@ -297,7 +297,7 @@ if (! function_exists('asset')) {
  *
  * @return \Psr\Http\Message\ResponseInterface
  */
-if (! function_exists(function: 'redirect') && ! function_exists('redirect')) {
+if (! function_exists(function: 'redirect') && ! function_exists(function: 'redirect')) {
     /**
      * Redirects to a given URL.
      *
@@ -306,7 +306,7 @@ if (! function_exists(function: 'redirect') && ! function_exists('redirect')) {
      */
     function redirect(string $url, int $status = 302) : ResponseInterface
     {
-        $responseFactory = app(ResponseFactoryInterface::class);
+        $responseFactory = app(abstract: ResponseFactoryInterface::class);
 
         return $responseFactory
             ->createResponse($status)
@@ -323,14 +323,14 @@ if (! function_exists(function: 'redirect') && ! function_exists('redirect')) {
  *
  * @return \Psr\Http\Message\ResponseInterface
  */
-if (! function_exists(function: 'arrhae') && ! function_exists('arrhae')) {
+if (! function_exists(function: 'arrhae') && ! function_exists(function: 'arrhae')) {
     function arrhae(array $array) : Arrhae
     {
-        return new Arrhae($array);
+        return new Arrhae(items: $array);
     }
 }
 
-if (! function_exists('connection')) {
+if (! function_exists(function: 'connection')) {
     /**
      * Retrieves a PDO database connection.
      *
@@ -351,7 +351,7 @@ if (! function_exists('connection')) {
         return $databaseManager->getConnection(connectionName: $connectionName);
     }
 
-    if (! function_exists('preview_text')) {
+    if (! function_exists(function: 'preview_text')) {
         /**
          * Shortens the given text for preview purposes.
          *
@@ -362,10 +362,10 @@ if (! function_exists('connection')) {
          */
         function preview_text(string $text, int $limit = 80) : string
         {
-            $text = strip_tags($text);
+            $text = strip_tags(string: $text);
 
-            return mb_strlen($text) > $limit
-                ? mb_substr($text, 0, $limit - 3) . '...'
+            return mb_strlen(string: $text) > $limit
+                ? mb_substr(string: $text, start: 0, length: $limit - 3) . '...'
                 : $text;
         }
     }

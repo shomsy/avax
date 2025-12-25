@@ -28,14 +28,14 @@ final class DumpDebugger
     public static function ddx(mixed ...$args) : never
     {
         // Retrieve caller information from debug backtrace, limiting to 2 frames for performance
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1] ?? [];
+        $trace = debug_backtrace(options: DEBUG_BACKTRACE_IGNORE_ARGS, limit: 2)[1] ?? [];
 
         // Extract file and line information with fallback values for safety
         $file = $trace['file'] ?? 'unknown';
         $line = $trace['line'] ?? 0;
 
         // Set the content type to ensure proper rendering in the browser
-        header('Content-Type: text/html; charset=utf-8');
+        header(header: 'Content-Type: text/html; charset=utf-8');
 
         // Render the HTML header with file and line information
         echo self::renderHtmlHeader(
@@ -80,7 +80,7 @@ final class DumpDebugger
      */
     private static function renderHtmlHeader(string $file, int $line) : string
     {
-        $fileEsc = htmlspecialchars($file);
+        $fileEsc = htmlspecialchars(string: $file);
 
         return <<<HTML
                                     <!DOCTYPE html>
@@ -261,17 +261,17 @@ final class DumpDebugger
     ) : string {
         // Construct the prefix HTML with proper key formatting and operator
         $prefix = $key !== null
-            ? '<span class="key">' . (is_int($key)
+            ? '<span class="key">' . (is_int(value: $key)
                 ? $key
                 : htmlspecialchars(
-                           $key,
-                    flags: ENT_QUOTES
+                    string: $key,
+                    flags : ENT_QUOTES
                 )) . '</span><span class="operator"> => </span>'
             : '';
 
         // Handle array rendering with a collapsible structure
-        if (is_array($value)) {
-            $count = count($value);
+        if (is_array(value: $value)) {
+            $count = count(value: $value);
             // Return compact representation for empty arrays
             if ($count === 0) {
                 return '<div class="entry">' . $prefix . '<span class="type">array:0</span> []</div>';
@@ -291,10 +291,10 @@ final class DumpDebugger
         }
 
         // Handle object rendering with a collapsible structure
-        if (is_object($value)) {
-            $class = get_class($value);
+        if (is_object(value: $value)) {
+            $class = get_class(object: $value);
             $props = (array) $value;
-            $count = count($props);
+            $count = count(value: $props);
             // Return compact representation for empty objects
             if ($count === 0) {
                 return '<div class="entry">' . $prefix .
@@ -316,12 +316,12 @@ final class DumpDebugger
 
         // Handle scalar values with appropriate type-specific formatting
         $val = match (true) {
-            is_null($value)   => '<span class="value null">null</span>',
-            is_bool($value)   => '<span class="value bool">' . ($value ? 'true' : 'false') . '</span>',
-            is_string($value) => '<span class="value string">"' . htmlspecialchars($value) . '"</span>',
-            is_int($value)    => '<span class="value int">' . $value . '</span>',
-            is_float($value)  => '<span class="value float">' . $value . '</span>',
-            default           => '<span class="value unknown">(unknown)</span>',
+            is_null(value: $value)   => '<span class="value null">null</span>',
+            is_bool(value: $value)   => '<span class="value bool">' . ($value ? 'true' : 'false') . '</span>',
+            is_string(value: $value) => '<span class="value string">"' . htmlspecialchars(string: $value) . '"</span>',
+            is_int(value: $value)    => '<span class="value int">' . $value . '</span>',
+            is_float(value: $value)  => '<span class="value float">' . $value . '</span>',
+            default                  => '<span class="value unknown">(unknown)</span>',
         };
 
         // Return the final HTML representation for scalar values
@@ -346,7 +346,7 @@ final class DumpDebugger
 
         // Retrieve caller information from debug backtrace
         // Limit trace depth to 2 for performance and get only essential data
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1] ?? [];
+        $trace = debug_backtrace(options: DEBUG_BACKTRACE_IGNORE_ARGS, limit: 2)[1] ?? [];
 
         // Extract source file and line information with fallback values
         $file = $trace['file'] ?? 'unknown';
@@ -364,7 +364,7 @@ final class DumpDebugger
 
         // Render dump location information with file and line details
         echo '<div class="entry"><span class="type">📦 Dump</span> ';
-        echo '<span style="color:#f88">' . htmlspecialchars($file) . '</span> : ';
+        echo '<span style="color:#f88">' . htmlspecialchars(string: $file) . '</span> : ';
         echo '<span style="color:#6cf">' . $line . '</span></div>';
 
         // Process and render each provided argument

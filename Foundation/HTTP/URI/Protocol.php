@@ -35,7 +35,7 @@ enum Protocol: string
      */
     public static function isValid(string $scheme) : bool
     {
-        return self::fromString($scheme) instanceof self;
+        return self::fromString(protocol: $scheme) instanceof self;
     }
 
     /**
@@ -47,7 +47,7 @@ enum Protocol: string
      */
     public static function fromString(string $protocol) : self|null
     {
-        return self::tryFrom(strtolower($protocol));
+        return self::tryFrom(value: strtolower(string: $protocol));
     }
 
     /**

@@ -160,7 +160,7 @@ final class Reflector
         array              $data
     ) : void {
         // If the field is not present in the data array, handle it as missing.
-        if (! array_key_exists($name, $data)) {
+        if (! array_key_exists(key: $name, array: $data)) {
             $this->handleMissingField(name: $name, property: $property);
 
             return;
@@ -257,7 +257,7 @@ final class Reflector
         // Apply a transformation to each metadata entry from reflectPublicFields().
         // The resulting array will contain a schema representation for each public property.
         return array_map(
-            fn($meta) => [
+            callback: fn($meta) => [
                 // Add the property name to the schema array.
                 'name'       => $meta->name,
 
@@ -268,12 +268,12 @@ final class Reflector
                 'nullable'   => $meta->isNullable(),
 
                 // Map the attributes of the property to their names and add them to the schema array.
-                'attributes' => array_map(fn($a) => $a->getName(), $meta->attributes),
+                'attributes' => array_map(callback: fn($a) => $a->getName(), array: $meta->attributes),
             ],
 
             // Retrieve metadata for all public fields of the target object.
             // Metadata includes details about the properties of the object being reflected.
-            $this->reflectPublicFields()
+            array   : $this->reflectPublicFields()
         );
     }
 }

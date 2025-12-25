@@ -120,7 +120,7 @@ trait ManageItemsTrait
 
         if ($items instanceof self) {
             $items = $items->getItems();
-        } elseif (! is_array($items)) {
+        } elseif (! is_array(value: $items)) {
             throw new InvalidArgumentException(
                 message: 'Concat method expects an array or an instance of the using class.'
             );
@@ -148,7 +148,7 @@ trait ManageItemsTrait
     public function shift() : static|null
     {
         $items = $this->getItems();
-        $value = array_shift($items);
+        $value = array_shift(array: $items);
 
         if ($value === null && $items === []) {
             return null;
@@ -174,7 +174,7 @@ trait ManageItemsTrait
     public function pop() : static|null
     {
         $items = $this->getItems();
-        $value = array_pop($items);
+        $value = array_pop(array: $items);
 
         if ($value === null && $items === []) {
             return null;
@@ -206,14 +206,14 @@ trait ManageItemsTrait
     {
         $items = $this->getItems();
 
-        if (! array_key_exists($index, $items)) {
+        if (! array_key_exists(key: $index, array: $items)) {
             throw new OutOfBoundsException(message: "Invalid index " . $index . ".");
         }
 
         unset($items[$index]);
 
         // Reindex the array to maintain sequential keys
-        $items = array_values($items);
+        $items = array_values(array: $items);
 
         return $this->setItems(items: $items);
     }
@@ -242,7 +242,7 @@ trait ManageItemsTrait
     {
         $items = $this->getItems();
 
-        if (! array_key_exists($index, $items)) {
+        if (! array_key_exists(key: $index, array: $items)) {
             throw new OutOfBoundsException(message: "Invalid index " . $index . ".");
         }
 
@@ -282,7 +282,7 @@ trait ManageItemsTrait
             throw new InvalidArgumentException(message: 'Length cannot be negative.');
         }
 
-        $slicedItems = array_slice($this->getItems(), $offset, $length, true);
+        $slicedItems = array_slice(array: $this->getItems(), offset: $offset, length: $length, preserve_keys: true);
 
         // If slicing preserves keys and you want sequential keys, reindex
         // $slicedItems = array_values($slicedItems);

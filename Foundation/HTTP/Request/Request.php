@@ -67,6 +67,7 @@ class Request extends AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return void
      */
+    #[\Override]
     public function __construct(
         SessionInterface|string|null $session = null,
         array                        $serverParams = [],
@@ -116,7 +117,7 @@ class Request extends AbsoluteServerRequest implements ServerRequestInterface
                 session      : app(abstract: SessionInterface::class), // Retrieve session from the IoC container.
                 serverParams : $_SERVER,
                 uri          : $uri,
-                body         : new Stream(stream: fopen('php://input', 'rb')),
+                body         : new Stream(stream: fopen(filename: 'php://input', mode: 'rb')),
                 queryParams  : $_GET,
                 parsedBody   : $_POST,
                 cookies      : $_COOKIE,
@@ -155,7 +156,7 @@ class Request extends AbsoluteServerRequest implements ServerRequestInterface
         }
 
         // Parse the request URI path and query components.
-        $path  = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+        $path  = parse_url(url: $_SERVER['REQUEST_URI'] ?? '/', component: PHP_URL_PATH) ?? '/';
         $query = $_SERVER['QUERY_STRING'] ?? '';
 
         // Construct and return a usable URI object.

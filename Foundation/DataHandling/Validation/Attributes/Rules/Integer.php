@@ -55,7 +55,7 @@ class Integer
     public function validate(mixed $value, string $property) : void
     {
         // Check if the value is not an integer.
-        if (! is_int($value)) {
+        if (! is_int(value: $value)) {
             // Throw a detailed validation exception if the value is invalid.
             throw new ValidationException(
                 message : $this->message ?? sprintf(self::ERROR_MESSAGE, $property),
@@ -64,7 +64,7 @@ class Integer
                               'property' => $property, // The name of the property being validated.
                               'value'    => $value,    // The actual value that failed validation.
                               'expected' => 'int',     // The expected type of the value (integer).
-                              'actual'   => gettype($value), // The actual type of the provided value.
+                              'actual'   => gettype(value: $value), // The actual type of the provided value.
                           ]
             );
         }

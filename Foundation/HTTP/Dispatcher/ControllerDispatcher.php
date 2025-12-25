@@ -60,19 +60,19 @@ final readonly class ControllerDispatcher
         return match (true) {
             // If $action is callable (like a closure, anonymous function, or valid callable object),
             // invoke `dispatchCallable`, passing $action and the $request as arguments.
-            is_callable($action) => $this->dispatchCallable(callable: $action, request: $request),
+            is_callable(value: $action) => $this->dispatchCallable(callable: $action, request: $request),
 
             // If $action is an array (typically [ControllerClass, "method"] format),
             // invoke `dispatchControllerAndMethod`, passing $action and the $request.
-            is_array($action)    => $this->dispatchControllerAndMethod(action: $action, request: $request),
+            is_array(value: $action)    => $this->dispatchControllerAndMethod(action: $action, request: $request),
 
             // If $action is a string (usually indicating an invokable controller class name),
             // invoke `dispatchInvokableController`, passing the $action and $request.
-            is_string($action)   => $this->dispatchInvokableController(controller: $action, request: $request),
+            is_string(value: $action)   => $this->dispatchInvokableController(controller: $action, request: $request),
 
             // If none of the above conditions match, throw an exception because the action provided
             // is invalid or unsupported.
-            default              => throw new InvalidArgumentException(message: 'Invalid route action provided.')
+            default                   => throw new InvalidArgumentException(message: 'Invalid route action provided.')
         };
     }
 
@@ -107,7 +107,7 @@ final readonly class ControllerDispatcher
     private function dispatchControllerAndMethod(array $action, Request $request) : ResponseInterface
     {
         // Check if the `$action` array has exactly 2 elements ([Class, "method"] format).
-        if (count($action) !== 2) {
+        if (count(value: $action) !== 2) {
             // If not, throw an exception to indicate improper structure.
             throw new InvalidArgumentException(message: 'Controller action must be [Class, "method"]');
         }
@@ -116,7 +116,7 @@ final readonly class ControllerDispatcher
         [$controller, $method] = $action;
 
         // Check if the `$controller` (class name) exists.
-        if (! class_exists($controller)) {
+        if (! class_exists(class: $controller)) {
             // Throw an exception if the provided class does not exist.
             throw new RuntimeException(message: "Controller class '{$controller}' not found.");
         }
@@ -125,7 +125,7 @@ final readonly class ControllerDispatcher
         $instance = $this->resolveController(className: $controller);
 
         // Check if the `method` exists in the resolved controller instance.
-        if (! method_exists($instance, $method)) {
+        if (! method_exists(object_or_class: $instance, method: $method)) {
             // Throw an exception if the method is not found in the class.
             throw new RuntimeException(message: "Method '{$method}' not found in '{$controller}'.");
         }
@@ -149,7 +149,7 @@ final readonly class ControllerDispatcher
                 $typeName = $paramType->getName();
 
                 // If the type corresponds to a class that is a `Request` (or extends it).
-                if (is_a($typeName, Request::class, true)) {
+                if (is_a(object_or_class: $typeName, class: Request::class, allow_string: true)) {
                     // Inject the `$request` instance as the value for this parameter.
                     $arguments[] = $request;
                     continue;
@@ -205,7 +205,7 @@ final readonly class ControllerDispatcher
             return $this->container->get(id: $className);
         }
 
-        if (class_exists($className)) {
+        if (class_exists(class: $className)) {
             return new $className();
         }
 
@@ -226,7 +226,7 @@ final readonly class ControllerDispatcher
     {
         // Check if the specified controller class exists.
         // If the class is not found, throw a RuntimeException with a descriptive error message.
-        if (! class_exists($controller)) {
+        if (! class_exists(class: $controller)) {
             throw new RuntimeException(message: "Controller class '{$controller}' does not exist.");
         }
 
@@ -236,7 +236,7 @@ final readonly class ControllerDispatcher
 
         // Check if the resolved controller instance is callable (i.e., it must be an invokable class).
         // If the controller is not callable, throw a RuntimeException indicating the issue.
-        if (! is_callable($instance)) {
+        if (! is_callable(value: $instance)) {
             throw new RuntimeException(message: "Controller class '{$controller}' must be invokable.");
         }
 

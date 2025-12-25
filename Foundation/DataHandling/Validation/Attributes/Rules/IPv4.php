@@ -30,7 +30,7 @@ class IPv4
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+        if (! filter_var(value: $value, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV4)) {
             throw new ValidationException(message: $property . ' must be a valid IPv4 address.');
         }
     }

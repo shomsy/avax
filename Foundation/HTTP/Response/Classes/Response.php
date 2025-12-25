@@ -116,7 +116,7 @@ class Response implements ResponseInterface
     {
         $normalized = [];
         foreach ($headers as $name => $value) {
-            $normalized[strtolower($name)] = (array) $value;
+            $normalized[strtolower(string: $name)] = (array) $value;
         }
 
         return $normalized;
@@ -244,7 +244,7 @@ class Response implements ResponseInterface
      */
     public function hasHeader(string $name) : bool
     {
-        return array_key_exists(strtolower($name), $this->headers);
+        return array_key_exists(key: strtolower(string: $name), array: $this->headers);
     }
 
     /**
@@ -259,7 +259,7 @@ class Response implements ResponseInterface
      */
     public function getHeaderLine(string $name) : string
     {
-        return implode(',', $this->getHeader(name: $name));
+        return implode(separator: ',', array: $this->getHeader(name: $name));
     }
 
     /**
@@ -276,7 +276,7 @@ class Response implements ResponseInterface
      */
     public function getHeader(string $name) : array
     {
-        return $this->headers[strtolower($name)] ?? [];
+        return $this->headers[strtolower(string: $name)] ?? [];
     }
 
     /**
@@ -285,7 +285,7 @@ class Response implements ResponseInterface
     public function withAddedHeader(string $name, mixed $value) : ResponseInterface
     {
         $new                       = clone $this;
-        $normalized                = strtolower($name);
+        $normalized                = strtolower(string: $name);
         $new->headers[$normalized] = array_merge($this->headers[$normalized] ?? [], (array) $value);
 
         return $new;
@@ -317,8 +317,8 @@ class Response implements ResponseInterface
      */
     public function withHeader(string $name, mixed $value) : ResponseInterface
     {
-        $new                             = clone $this;
-        $new->headers[strtolower($name)] = (array) $value;
+        $new                                     = clone $this;
+        $new->headers[strtolower(string: $name)] = (array) $value;
 
         return $new;
     }
@@ -329,7 +329,7 @@ class Response implements ResponseInterface
     public function withoutHeader(string $name) : ResponseInterface
     {
         $new = clone $this;
-        unset($new->headers[strtolower($name)]);
+        unset($new->headers[strtolower(string: $name)]);
 
         return $new;
     }
@@ -358,14 +358,14 @@ class Response implements ResponseInterface
     public function withJson(array $data) : ResponseInterface
     {
         $new  = clone $this;
-        $json = json_encode($data);
+        $json = json_encode(value: $data);
         if ($json === false) {
             throw new RuntimeException(message: 'Failed to encode JSON data: ' . json_last_error_msg());
         }
 
-        $stream = fopen('php://temp', 'r+');
-        fwrite($stream, $json);
-        fseek($stream, 0);
+        $stream = fopen(filename: 'php://temp', mode: 'r+');
+        fwrite(stream: $stream, data: $json);
+        fseek(stream: $stream, offset: 0);
         $new->stream                  = new \GuzzleHttp\Psr7\Stream(stream: $stream);
         $new->headers['content-type'] = ['application/json'];
 
@@ -380,12 +380,12 @@ class Response implements ResponseInterface
     {
         $new = clone $this;
         $xml = new SimpleXMLElement(data: '<response/>');
-        array_walk_recursive($data, function ($value, $key) use ($xml) : void {
+        array_walk_recursive(array: $data, callback: function ($value, $key) use ($xml) : void {
             $xml->addChild(qualifiedName: $key, value: (string) $value);
         });
-        $stream = fopen('php://temp', 'r+');
-        fwrite($stream, $xml->asXML());
-        fseek($stream, 0);
+        $stream = fopen(filename: 'php://temp', mode: 'r+');
+        fwrite(stream: $stream, data: $xml->asXML());
+        fseek(stream: $stream, offset: 0);
         $new->stream                  = new Stream(stream: $stream);
         $new->headers['content-type'] = ['application/xml'];
 
@@ -404,12 +404,12 @@ class Response implements ResponseInterface
     {
         // Set the HTTP status code and headers if they haven't been sent already
         if (! headers_sent()) {
-            http_response_code($this->statusCode);
+            http_response_code(response_code: $this->statusCode);
 
             foreach ($this->headers as $name => $values) {
                 foreach ($values as $value) {
                     // Appends each header line, handling multiple values
-                    header(sprintf('%s: %s', $name, $value), false);
+                    header(header: sprintf('%s: %s', $name, $value), replace: false);
                 }
             }
         }

@@ -24,6 +24,7 @@ class FoundationContainerException extends Exception
      * @param int            $code     Optional error code for the exception.
      * @param Exception|null $previous Optional previous exception for chaining exceptions.
      */
+    #[\Override]
     public function __construct(string $message = self::DEFAULT_MESSAGE, int $code = 0, Exception|null $previous = null)
     {
         // Calling the parent constructor to ensure proper exception handling.

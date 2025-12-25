@@ -31,7 +31,7 @@ final class DomainPatternCompiler
     public static function compile(string $pattern) : string
     {
         // Escape all special characters in the input domain pattern to ensure regex safety.
-        $escaped = preg_quote($pattern, delimiter: '/');
+        $escaped = preg_quote(str: $pattern, delimiter: '/');
 
         // Transform placeholders (e.g., `{account}`) into named capturing groups in the regex pattern.
         // - \w matches word characters (a-z, A-Z, 0-9, and underscore).
@@ -64,6 +64,6 @@ final class DomainPatternCompiler
     {
         // Use preg_match to check if the host matches the compiled domain pattern.
         // Casting to boolean simplifies the return value to true/false.
-        return (bool) preg_match($compiled, $host);
+        return (bool) preg_match(pattern: $compiled, subject: $host);
     }
 }

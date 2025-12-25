@@ -6,7 +6,7 @@ namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
 
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(flags: Attribute::TARGET_PROPERTY)]
 class Trimmed
 {
     /**
@@ -18,7 +18,7 @@ class Trimmed
      */
     public function apply(mixed $value) : mixed
     {
-        return is_string($value) ? trim($value) : $value;
+        return is_string(value: $value) ? trim(string: $value) : $value;
     }
 }
 

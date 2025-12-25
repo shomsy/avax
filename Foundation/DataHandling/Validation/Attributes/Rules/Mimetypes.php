@@ -32,11 +32,11 @@ readonly class Mimetypes
         $finfo    = new finfo(flags: FILEINFO_MIME_TYPE);
         $mimeType = $finfo->file(filename: $value);
 
-        if (! in_array($mimeType, $this->mimetypes, true)) {
+        if (! in_array(needle: $mimeType, haystack: $this->mimetypes, strict: true)) {
             throw new ValidationException(
                 message: $property . ' must be a file of type: ' . implode(
-                           ', ',
-                           $this->mimetypes,
+                           separator: ', ',
+                           array    : $this->mimetypes,
                        ),
             );
         }

@@ -101,6 +101,7 @@ final readonly class HttpClient implements ClientInterface
      *
      * @return ResponseInterface|PromiseInterface
      * @throws GuzzleException
+     * @throws Exception
      */
     private function performRequest(
         string              $method,
@@ -133,7 +134,7 @@ final readonly class HttpClient implements ClientInterface
                          ],
             );
 
-            if (str_contains($e->getMessage(), 'timed out')) {
+            if (str_contains(haystack: $e->getMessage(), needle: 'timed out')) {
                 $this->logger->warning(
                     message: '⏳ HTTP Request stopped because of timeout!',
                     context: [
@@ -201,7 +202,7 @@ final readonly class HttpClient implements ClientInterface
     {
         try {
             // Delegate the asynchronous request to the underlying Guzzle client
-            return $this->guzzleClient->sendAsync($request, $options);
+            return $this->guzzleClient->sendAsync(request: $request, options: $options);
         } catch (Throwable $throwable) {
             $this->logger->error(
                 message: "Asynchronous request failed",
@@ -227,6 +228,6 @@ final readonly class HttpClient implements ClientInterface
      */
     public function getConfig(string|null $option = null)
     {
-        return $this->guzzleClient->getConfig($option);
+        return $this->guzzleClient->getConfig(option: $option);
     }
 }

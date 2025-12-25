@@ -59,15 +59,15 @@ class Max
 
         // Match the type of value to the appropriate validation method.
         match (true) {
-            is_numeric($value)                              => $this->validateNumeric(
+            is_numeric(value: $value) => $this->validateNumeric(
                 value   : (float) $value,
                 property: $property
             ),
-            is_string($value)                               => $this->validateString(
+            is_string(value: $value) => $this->validateString(
                 value   : $value,
                 property: $property
             ),
-            is_countable($value) => $this->validateCountable(
+            is_countable(value: $value) => $this->validateCountable(
                 value   : $value,
                 property: $property
             ),
@@ -108,7 +108,7 @@ class Max
     {
         // Constructs and throws a detailed ValidationException.
         throw new ValidationException(
-            message : $this->message ?? sprintf('%s must be at most %d.', ucfirst($property), $this->max),
+            message : $this->message ?? sprintf('%s must be at most %d.', ucfirst(string: $property), $this->max),
             metadata: [
                           'property' => $property,
                           'value'    => $value,
@@ -128,7 +128,7 @@ class Max
      */
     private function validateString(string $value, string $property) : void
     {
-        if (mb_strlen($value) > $this->max) {
+        if (mb_strlen(string: $value) > $this->max) {
             // String length exceeds the maximum allowed.
             $this->throwValidationException(errorKey: self::ERROR_STRING, property: $property, value: $value);
         }
@@ -145,7 +145,7 @@ class Max
     private function validateCountable(array|Countable $value, string $property) : void
     {
         // Determine the count of elements.
-        $count = is_array($value) ? count($value) : iterator_count($value);
+        $count = is_array(value: $value) ? count(value: $value) : iterator_count(iterator: $value);
 
         if ($count > $this->max) {
             // Element count exceeds the maximum allowed.

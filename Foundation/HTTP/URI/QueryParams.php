@@ -13,7 +13,7 @@ final class QueryParams
     public function __construct(string $queryString = '')
     {
         if ($queryString !== '') {
-            parse_str($queryString, $this->params);
+            parse_str(string: $queryString, result: $this->params);
         }
     }
 
@@ -35,7 +35,7 @@ final class QueryParams
     {
         if (! isset($this->params[$key])) {
             $this->params[$key] = $value;
-        } elseif (is_array($this->params[$key])) {
+        } elseif (is_array(value: $this->params[$key])) {
             $this->params[$key][] = $value;
         } else {
             $this->params[$key] = [$this->params[$key], $value];
@@ -51,10 +51,10 @@ final class QueryParams
     {
         $query = [];
         foreach ($this->params as $key => $value) {
-            $query[] = sprintf('%s=%s', rawurlencode($key), rawurlencode((string) $value));
+            $query[] = sprintf('%s=%s', rawurlencode(string: $key), rawurlencode(string: (string) $value));
         }
 
-        return implode('&', $query);
+        return implode(separator: '&', array: $query);
     }
 
 

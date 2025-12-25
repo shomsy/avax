@@ -37,7 +37,7 @@ class Email
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var(value: $value, filter: FILTER_VALIDATE_EMAIL)) {
             throw new ValidationException(message: $property . ' must be a valid email address.');
         }
     }

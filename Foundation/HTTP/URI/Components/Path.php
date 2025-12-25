@@ -27,7 +27,7 @@ final readonly class Path implements \Stringable
      */
     public function __construct(string $path)
     {
-        $this->path = $this->normalize($path);
+        $this->path = $this->normalize(path: $path);
     }
 
     /**
@@ -39,7 +39,7 @@ final readonly class Path implements \Stringable
      */
     private function normalize(string $path) : string
     {
-        $segments   = explode('/', $path);
+        $segments   = explode(separator: '/', string: $path);
         $normalized = [];
 
         foreach ($segments as $segment) {
@@ -53,14 +53,14 @@ final readonly class Path implements \Stringable
             }
             if ($segment === '..') {
                 // Remove the last segment for parent directory markers.
-                array_pop($normalized);
+                array_pop(array: $normalized);
             } else {
                 // Encode the segment to ensure it's safe for URLs.
-                $normalized[] = rawurlencode($segment);
+                $normalized[] = rawurlencode(string: $segment);
             }
         }
 
-        return '/' . implode('/', $normalized);
+        return '/' . implode(separator: '/', array: $normalized);
     }
 
     /**
@@ -74,12 +74,12 @@ final readonly class Path implements \Stringable
      */
     public function normalizeForFile(string $path) : string
     {
-        if (preg_match('#^[a-zA-Z]:\\\\#', $path)) {
+        if (preg_match(pattern: '#^[a-zA-Z]:\\\\#', subject: $path)) {
             // Convert Windows paths to Unix format.
-            $path = '/' . str_replace('\\', '/', ltrim($path, '/'));
+            $path = '/' . str_replace(search: '\\', replace: '/', subject: ltrim(string: $path, characters: '/'));
         }
 
-        return $this->normalize($path);
+        return $this->normalize(path: $path);
     }
 
     /**

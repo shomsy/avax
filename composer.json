@@ -48,7 +48,8 @@
     "amphp/parallel-functions": "^2.0",
     "ext-curl": "*",
     "wyndow/fuzzywuzzy": "^0.6.0",
-    "rakibtg/sleekdb": "^2.15"
+    "rakibtg/sleekdb": "^2.15",
+    "psr/simple-cache": "^3.0"
   },
   "scripts": {
     "analyse": [

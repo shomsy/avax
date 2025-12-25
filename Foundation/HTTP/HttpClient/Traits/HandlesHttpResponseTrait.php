@@ -21,7 +21,7 @@ trait HandlesHttpResponseTrait
     public function getResponse(ResponseInterface $response, string $endpoint) : ResponseInterface
     {
         $body    = $response->getBody()->getContents();
-        $decoded = json_decode($body, true);
+        $decoded = json_decode(json: $body, associative: true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             $this->dataLogger->warning(

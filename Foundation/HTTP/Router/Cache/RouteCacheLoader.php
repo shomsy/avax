@@ -31,7 +31,7 @@ final class RouteCacheLoader
         /** @var array<RouteDefinition> $routes */
         $routes = require $cachePath;
 
-        if (! is_array($routes)) {
+        if (! is_array(value: $routes)) {
             throw new RuntimeException(message: "Invalid route cache: must be an array.");
         }
 
@@ -53,22 +53,22 @@ final class RouteCacheLoader
      */
     public function write(string $cachePath) : void
     {
-        $directory = dirname($cachePath);
+        $directory = dirname(path: $cachePath);
 
         $this->ensureDirectoryIsWritable(directory: $directory);
 
         $routeDefinitions = $this->router->allRoutes();
 
-        $flattenedRoutes = array_merge(...array_values($routeDefinitions));
+        $flattenedRoutes = array_merge(...array_values(array: $routeDefinitions));
 
         // 🧼 Remove any route that uses a Closure action
         $serializableRoutes = array_filter(
-            $flattenedRoutes,
-            static fn(RouteDefinition $route) : bool => ! $route->usesClosure()
+            array   : $flattenedRoutes,
+            callback: static fn(RouteDefinition $route) : bool => ! $route->usesClosure()
         );
 
-        $exported = var_export($serializableRoutes, true);
-        $hash     = sha1($exported);
+        $exported = var_export(value: $serializableRoutes, return: true);
+        $hash     = sha1(string: $exported);
         $content  = "<?php\n\n/** Auto-generated route cache [sha1: {$hash}]. Do not edit manually. */\n\nreturn {$exported};\n";
 
         if (! Storage::write(path: $cachePath, content: $content)) {

@@ -53,7 +53,7 @@ trait AggregationTrait
      */
     public function average(string|callable $key) : float
     {
-        $count = count($this->getItems());
+        $count = count(value: $this->getItems());
 
         return $count !== 0 ? $this->sum(key: $key) / $count : 0.0;
     }
@@ -93,17 +93,17 @@ trait AggregationTrait
         $this->validateData();
 
         return array_reduce(
-            $this->getItems(),
-            static function ($carry, $item) use ($key) : int|float {
-                $value = is_callable($key) ? $key($item) : ($item[$key] ?? 0);
+            array   : $this->getItems(),
+            callback: static function ($carry, $item) use ($key) : int|float {
+                $value = is_callable(value: $key) ? $key($item) : ($item[$key] ?? 0);
 
-                if (! is_numeric($value)) {
-                    throw new InvalidArgumentException('Non-numeric value encountered in sum calculation.');
+                if (! is_numeric(value: $value)) {
+                    throw new InvalidArgumentException(message: 'Non-numeric value encountered in sum calculation.');
                 }
 
                 return $carry + $value;
             },
-            0
+            initial : 0
         );
     }
 
@@ -119,8 +119,8 @@ trait AggregationTrait
     {
         $items = $this->getItems();
 
-        if (! is_array($items)) {
-            throw new LogicException('Expected data to be an array.');
+        if (! is_array(value: $items)) {
+            throw new LogicException(message: 'Expected data to be an array.');
         }
     }
 
@@ -158,10 +158,10 @@ trait AggregationTrait
         $values = $this->mapValues(key: $key);
 
         if (empty($values)) {
-            throw new LogicException('Cannot determine minimum value of an empty collection.');
+            throw new LogicException(message: 'Cannot determine minimum value of an empty collection.');
         }
 
-        return min($values);
+        return min(value: $values);
     }
 
     /**
@@ -198,8 +198,8 @@ trait AggregationTrait
         $this->validateData();
 
         return array_map(
-            static fn($item) => is_callable($key) ? $key($item) : ($item[$key] ?? null),
-            $this->getItems()
+            callback: static fn($item) => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
+            array   : $this->getItems()
         );
     }
 
@@ -237,10 +237,10 @@ trait AggregationTrait
         $values = $this->mapValues(key: $key);
 
         if (empty($values)) {
-            throw new LogicException('Cannot determine maximum value of an empty collection.');
+            throw new LogicException(message: 'Cannot determine maximum value of an empty collection.');
         }
 
-        return max($values);
+        return max(value: $values);
     }
 
     /**
@@ -283,7 +283,7 @@ trait AggregationTrait
 
         $result = [];
         foreach ($this->getItems() as $item) {
-            $value          = is_callable($key) ? $key($item) : ($item[$key] ?? null);
+            $value          = is_callable(value: $key) ? $key($item) : ($item[$key] ?? null);
             $result[$value] = ($result[$value] ?? 0) + 1;
         }
 
@@ -323,7 +323,7 @@ trait AggregationTrait
     {
         $this->validateData();
 
-        return array_reduce($this->getItems(), $callback, $initial);
+        return array_reduce(array: $this->getItems(), callback: $callback, initial: $initial);
     }
 
     /**
@@ -404,7 +404,7 @@ trait AggregationTrait
 
         $grouped = [];
         foreach ($this->getItems() as $item) {
-            $groupKey             = is_callable($key) ? $key($item) : ($item[$key] ?? null);
+            $groupKey             = is_callable(value: $key) ? $key($item) : ($item[$key] ?? null);
             $grouped[$groupKey][] = $item;
         }
 

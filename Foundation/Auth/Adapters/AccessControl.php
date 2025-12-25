@@ -15,8 +15,8 @@ class AccessControl
 {
     public function addRole(UserInterface $user, RoleInterface $role): bool
     {
-        if (!$user->hasRole($role->getRole())) {
-            $user->addRole($role);
+        if (!$user->hasRole(role: $role->getRole())) {
+            $user->addRole(role: $role);
             return true;
         }
         return false;
@@ -24,13 +24,13 @@ class AccessControl
 
     public function hasRole(UserInterface $user, string $role): bool
     {
-        return $user->hasRole($role);
+        return $user->hasRole(role: $role);
     }
 
     public function removeRole(UserInterface $user, string $role): bool
     {
-        if ($user->hasRole($role)) {
-            $user->removeRole($role);
+        if ($user->hasRole(role: $role)) {
+            $user->removeRole(role: $role);
             return true;
         }
         return false;
@@ -38,8 +38,8 @@ class AccessControl
 
     public function addPermissionToRole(RoleInterface $role, PermissionInterface $permission): bool
     {
-        if (!$role->hasPermission($permission->getPermission())) {
-            $role->addPermission($permission);
+        if (!$role->hasPermission(permission: $permission->getPermission())) {
+            $role->addPermission(permission: $permission);
             return true;
         }
         return false;
@@ -57,8 +57,8 @@ class AccessControl
 
     public function removePermissionFromRole(RoleInterface $role, PermissionInterface $permission): bool
     {
-        if ($role->hasPermission($permission->getPermission())) {
-            $role->removePermission($permission);
+        if ($role->hasPermission(permission: $permission->getPermission())) {
+            $role->removePermission(permission: $permission);
             return true;
         }
         return false;
@@ -66,9 +66,9 @@ class AccessControl
 
     public function check(UserInterface $user, string $policy): bool
     {
-        if ($this->hasRole($user, $policy)) {
+        if ($this->hasRole(user: $user, role: $policy)) {
             return true;
         }
-        return $this->hasPermission($user, $policy);
+        return $this->hasPermission(user: $user, permission: $policy);
     }
 }

@@ -36,14 +36,14 @@ class FloatRule
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! is_float($value) && ! is_numeric($value)) {
+        if (! is_float(value: $value) && ! is_numeric(value: $value)) {
             throw new ValidationException(
                 message : $this->message ?? sprintf(self::ERROR_MESSAGE, $property),
                 metadata: [
                               'property' => $property,
                               'value'    => $value,
                               'expected' => 'float',
-                              'actual'   => gettype($value),
+                              'actual'   => gettype(value: $value),
                           ]
             );
         }

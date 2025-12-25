@@ -127,12 +127,12 @@ trait MacrosTrait
     public static function __callStatic(string $name, array $arguments)
     {
         // Handle namespaced macros (e.g., 'namespace::macro')
-        if (str_contains($name, '::')) {
-            [$namespace, $macro] = explode('::', $name, 2);
+        if (str_contains(haystack: $name, needle: '::')) {
+            [$namespace, $macro] = explode(separator: '::', string: $name, limit: 2);
             if (isset(self::$macroNamespaces[$namespace][$macro])) {
                 $boundMacro = self::$macroNamespaces[$namespace][$macro]->bindTo(null, static::class);
 
-                return call_user_func_array($boundMacro, $arguments);
+                return call_user_func_array(callback: $boundMacro, args: $arguments);
             }
         }
 
@@ -140,7 +140,7 @@ trait MacrosTrait
         if (isset(self::$macros[$name])) {
             $boundMacro = self::$macros[$name]->bindTo(null, static::class);
 
-            return call_user_func_array($boundMacro, $arguments);
+            return call_user_func_array(callback: $boundMacro, args: $arguments);
         }
 
         throw new BadMethodCallException(message: sprintf("Static method '%s' does not exist.", $name));
@@ -198,12 +198,12 @@ trait MacrosTrait
     public function __call(string $name, array $arguments)
     {
         // Handle namespaced macros (e.g., 'namespace::macro')
-        if (str_contains($name, '::')) {
-            [$namespace, $macro] = explode('::', $name, 2);
+        if (str_contains(haystack: $name, needle: '::')) {
+            [$namespace, $macro] = explode(separator: '::', string: $name, limit: 2);
             if (isset(self::$macroNamespaces[$namespace][$macro])) {
                 $boundMacro = self::$macroNamespaces[$namespace][$macro]->bindTo($this, static::class);
 
-                return call_user_func_array($boundMacro, $arguments);
+                return call_user_func_array(callback: $boundMacro, args: $arguments);
             }
         }
 
@@ -211,7 +211,7 @@ trait MacrosTrait
         if (isset(self::$macros[$name])) {
             $boundMacro = self::$macros[$name]->bindTo($this, static::class);
 
-            return call_user_func_array($boundMacro, $arguments);
+            return call_user_func_array(callback: $boundMacro, args: $arguments);
         }
 
         throw new BadMethodCallException(message: sprintf("Method '%s' does not exist.", $name));

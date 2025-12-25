@@ -57,7 +57,7 @@ final class RouteGroupContext
      */
     public function setNamePrefix(string $prefix) : void
     {
-        $this->namePrefix = rtrim($prefix, '.') . '.';
+        $this->namePrefix = rtrim(string: $prefix, characters: '.') . '.';
     }
 
     /**
@@ -77,7 +77,7 @@ final class RouteGroupContext
     {
         // If a prefix is defined, prepend it to the route's existing path.
         if ($this->prefix !== null) {
-            $builder->path = rtrim($this->prefix, '/') . $builder->path;
+            $builder->path = rtrim(string: $this->prefix, characters: '/') . $builder->path;
         }
 
         // If middleware is defined, merge it with the existing middleware stack.
@@ -135,7 +135,7 @@ final class RouteGroupContext
     {
         // Normalize the prefix by trimming trailing slashes to prevent
         // issues with inconsistent path generation.
-        $this->prefix = rtrim($prefix, '/');
+        $this->prefix = rtrim(string: $prefix, characters: '/');
     }
 
     /**

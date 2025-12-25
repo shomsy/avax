@@ -53,7 +53,7 @@ readonly class EnumAreValuesAllowed
         }
 
         // Ensure the value is an array
-        if (! is_array($value)) {
+        if (! is_array(value: $value)) {
             throw new ValidationException(
                 message: "{$property} must be an array of {$this->enumClass}"
             );
@@ -65,11 +65,11 @@ readonly class EnumAreValuesAllowed
                 throw new ValidationException(message: "{$property} must not contain null values");
             }
 
-            $resolved = is_object($v) ? $v : ($this->enumClass)::tryFrom($v);
+            $resolved = is_object(value: $v) ? $v : ($this->enumClass)::tryFrom($v);
 
             if (! $resolved instanceof $this->enumClass) {
                 throw new ValidationException(
-                    message: "{$property} contains invalid enum value: " . var_export($v, true)
+                    message: "{$property} contains invalid enum value: " . var_export(value: $v, return: true)
                 );
             }
         }
@@ -88,10 +88,10 @@ readonly class EnumAreValuesAllowed
     public function apply(mixed $value) : array|null
     {
         // Resolve each array element to its respective Enum instance, or return null if not an array
-        return is_array($value)
+        return is_array(value: $value)
             ? array_map(
-                fn($v) => is_object($v) ? $v : ($this->enumClass)::tryFrom($v),
-                $value
+                callback: fn($v) => is_object(value: $v) ? $v : ($this->enumClass)::tryFrom($v),
+                array   : $value
             )
             : null;
     }

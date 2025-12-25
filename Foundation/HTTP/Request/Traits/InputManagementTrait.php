@@ -184,7 +184,7 @@ trait InputManagementTrait
 
         try {
             // Decode raw request content as JSON into array format
-            $data = json_decode((string) ($content ?: '{}'), true, 512, JSON_THROW_ON_ERROR);
+            $data = json_decode(json: (string) ($content ?: '{}'), associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $jsonException) {
             // Wrap JSON parsing failure in a descriptive runtime exception
             throw new RuntimeException(
@@ -195,11 +195,11 @@ trait InputManagementTrait
         }
 
         // Wrap JSON array inside Arrhae for advanced dot-access
-        $this->json = new ParameterBag((array) $data);
-        $arrhae     = Arrhae::make($this->json->all());
+        $this->json = new ParameterBag(parameters: (array) $data);
+        $arrhae     = Arrhae::make(items: $this->json->all());
 
         // Return an entire array if no key, or safely fetch nested value using Arrhae
-        return is_null($key) ? $arrhae->all() : $arrhae->get($key, $default);
+        return is_null(value: $key) ? $arrhae->all() : $arrhae->get(key: $key, default: $default);
     }
 
 
@@ -261,8 +261,8 @@ trait InputManagementTrait
         $authHeader = $this->getHeaderLine(name: 'Authorization');
 
         // Check if the header starts with "Bearer " and, if so, extract the token part
-        if (str_starts_with((string) $authHeader, 'Bearer ')) {
-            return substr((string) $authHeader, 7);
+        if (str_starts_with(haystack: (string) $authHeader, needle: 'Bearer ')) {
+            return substr(string: (string) $authHeader, offset: 7);
         }
 
         // Return null if no Bearer token is present in the Authorization header
@@ -280,14 +280,15 @@ trait InputManagementTrait
      *
      * @return string The header value as a single string or an empty string if the header does not exist.
      */
+    #[\Override]
     public function getHeaderLine(string $name) : string
     {
         // Use the request method to access headers, normalizing the header name to lowercase for consistency
-        $header = $this->request(key: 'headers.' . strtolower($name));
+        $header = $this->request(key: 'headers.' . strtolower(string: $name));
 
         // If the header exists and contains multiple values, convert the array to a comma-separated string
         if ($header !== null) {
-            return is_array($header) ? implode(', ', $header) : (string) $header;
+            return is_array(value: $header) ? implode(separator: ', ', array: $header) : (string) $header;
         }
 
         // Return an empty string if the header is not found
@@ -332,16 +333,16 @@ trait InputManagementTrait
 
     private function parseJsonBody() : array
     {
-        $contentType = $this->getHeaderLine('Content-Type');
+        $contentType = $this->getHeaderLine(name: 'Content-Type');
 
         // Proverava da li je zahtev JSON
-        if (str_contains($contentType, 'application/json')) {
+        if (str_contains(haystack: $contentType, needle: 'application/json')) {
             $rawBody = (string) $this->getBody();
 
             if (! empty($rawBody)) {
-                $decoded = json_decode($rawBody, true);
+                $decoded = json_decode(json: $rawBody, associative: true);
 
-                return is_array($decoded) ? $decoded : [];
+                return is_array(value: $decoded) ? $decoded : [];
             }
         }
 

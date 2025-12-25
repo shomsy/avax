@@ -82,7 +82,7 @@ final readonly class RouteBootstrapper
      */
     private function isCacheAvailable(string $cachePath) : bool
     {
-        return is_file($cachePath) && is_readable($cachePath);
+        return is_file(filename: $cachePath) && is_readable(filename: $cachePath);
     }
 
     /**
@@ -154,7 +154,7 @@ final readonly class RouteBootstrapper
     private function getRouteFilesFromDirectory(string $baseDir) : array
     {
         // Ensure the provided directory exists and is readable.
-        if (! is_dir($baseDir) || ! is_readable($baseDir)) {
+        if (! is_dir(filename: $baseDir) || ! is_readable(filename: $baseDir)) {
             throw new RuntimeException(message: "Routes directory '{$baseDir}' is not accessible or readable.");
         }
 
@@ -168,17 +168,17 @@ final readonly class RouteBootstrapper
 
         // Filter and return files that end with `.routes.php`, or just 'routes.php'
         $routeFiles = array_filter(
-            array   : iterator_to_array($iterator),
+            array   : iterator_to_array(iterator: $iterator),
             callback: static fn(SplFileInfo $file) : bool => $file->isFile()
                                                              && $file->isReadable()
                                                              && preg_match(
-                                                                 '/\.routes\.php$|^routes\.php$/',
-                                                                 $file->getFilename()
+                    pattern: '/\.routes\.php$|^routes\.php$/',
+                    subject: $file->getFilename()
                                                              )
         );
 
         // Ensure a returned array is indexed sequentially
-        return array_values($routeFiles); // Avoids gaps in array keys
+        return array_values(array: $routeFiles); // Avoids gaps in array keys
 
 
     }

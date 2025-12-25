@@ -31,6 +31,6 @@ abstract class Entity
         $shortName = (new ReflectionClass(objectOrClass: static::class))->getShortName();
 
         // Converting to lowercase and appending 's' to standardize table naming.
-        return strtolower($shortName) . 's';
+        return strtolower(string: $shortName) . 's';
     }
 }

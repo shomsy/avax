@@ -34,7 +34,7 @@ final readonly class LoginController
             }
 
             // Authenticate
-            $user = $this->authenticator->login($credentials);
+            $user = $this->authenticator->login(credentials: $credentials);
 
             // Reset attempts
             $this->rateLimiter->resetAttempts(identifier: $identifier);

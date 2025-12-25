@@ -40,7 +40,7 @@ readonly class ImageDimension
     public function validate(mixed $value, string $property) : void
     {
         try {
-            $dimensions = getimagesize($value);
+            $dimensions = getimagesize(filename: $value);
 
             $width  = $dimensions[0];
             $height = $dimensions[1];
@@ -85,7 +85,7 @@ readonly class ImageDimension
                 );
             }
 
-            if ($this->ratio !== null && abs($width / $height - $this->ratio) > 0.0001) {
+            if ($this->ratio !== null && abs(num: $width / $height - $this->ratio) > 0.0001) {
                 throw new ValidationException(message: sprintf('%s aspect ratio must be %s.', $property, $this->ratio));
             }
         } catch (Exception) {

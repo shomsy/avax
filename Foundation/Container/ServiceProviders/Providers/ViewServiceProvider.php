@@ -10,6 +10,7 @@ use Infrastructure\Config\Service\Config;
 
 class ViewServiceProvider extends ServiceProvider
 {
+    #[\Override]
     public function register() : void
     {
 //        $this->dependencyInjector->singleton(
@@ -23,12 +24,13 @@ class ViewServiceProvider extends ServiceProvider
         $this->dependencyInjector->singleton(
             abstract: BladeTemplateEngine::class,
             concrete: fn() : BladeTemplateEngine => new BladeTemplateEngine(
-                viewsPath: $this->dependencyInjector->get(Config::class)->get('views.views_path'),
-                cachePath: $this->dependencyInjector->get(Config::class)->get('views.cache_path')
+                viewsPath: $this->dependencyInjector->get(id: Config::class)->get('views.views_path'),
+                cachePath: $this->dependencyInjector->get(id: Config::class)->get('views.cache_path')
             )
         );
     }
 
+    #[\Override]
     public function boot() : void
     {
         // Optional: Additional view-related logic

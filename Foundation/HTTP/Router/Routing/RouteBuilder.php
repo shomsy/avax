@@ -64,7 +64,7 @@ final class RouteBuilder
         $this->validateMethod(method: $method);
         $this->validatePath(path: $path);
 
-        $this->method = strtoupper($method);
+        $this->method = strtoupper(string: $method);
         $this->path   = $path;
     }
 

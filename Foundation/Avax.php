@@ -76,13 +76,13 @@ enum Avax: string
     public static function root() : string
     {
         // Ensure APP_ROOT is set correctly in the environment.
-        $root = env(key: 'FW_ROOT', default: dirname(__DIR__, 2));
+        $root = env(key: 'FW_ROOT', default: dirname(path: __DIR__, levels: 2));
 
-        if (! is_dir($root)) {
+        if (! is_dir(filename: $root)) {
             throw new RuntimeException(message: "The root path '" . $root . "' does not exist.");
         }
 
-        return rtrim((string) $root, '/') . '/Infrastructure/';
+        return rtrim(string: (string) $root, characters: '/') . '/Infrastructure/';
     }
 
 }

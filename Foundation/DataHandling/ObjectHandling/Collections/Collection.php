@@ -61,6 +61,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @param iterable $items Initial set of items to populate the collection.
      */
+    #[\Override]
     public function __construct(iterable $items = [])
     {
         parent::__construct(items: $items);
@@ -74,6 +75,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return static This collection instance.
      */
+    #[\Override]
     public function setItems(iterable $items) : static
     {
         $this->elements = $items;
@@ -90,6 +92,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return static The current collection instance for method chaining.
      */
+    #[\Override]
     public function tap(Closure $callback) : static
     {
         $callback($this);
@@ -105,6 +108,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return mixed|null The first matching item or null if not found.
      */
+    #[\Override]
     public function firstWhere(string $key, mixed $value) : mixed
     {
         foreach ($this->getItems() as $item) {
@@ -121,6 +125,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return array The elements in the collection.
      */
+    #[\Override]
     public function getItems() : array
     {
         return $this->elements;
@@ -133,12 +138,13 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return mixed The maximum value or null if the collection is empty.
      */
+    #[\Override]
     public function max(string|null $key = null) : mixed
     {
         return max(
-            array_map(
-                static fn($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
-                $this->getItems(),
+            value: array_map(
+                callback: static fn($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
+                array   : $this->getItems(),
             ),
         );
     }
@@ -150,12 +156,13 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return mixed The minimum value or null if the collection is empty.
      */
+    #[\Override]
     public function min(string|null $key = null) : mixed
     {
         return min(
-            array_map(
-                static fn($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
-                $this->getItems(),
+            value: array_map(
+                callback: static fn($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
+                array   : $this->getItems(),
             ),
         );
     }
@@ -167,17 +174,18 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return string|int|null The mode or null if the collection is empty.
      */
+    #[\Override]
     public function mode(string|null $key = null) : string|int|null
     {
         $counts = array_count_values(
-            array_map(
-                static fn($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
-                $this->getItems(),
+            array: array_map(
+                callback: static fn($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
+                array   : $this->getItems(),
             ),
         );
-        arsort($counts);
+        arsort(array: $counts);
 
-        return array_key_first($counts);
+        return array_key_first(array: $counts);
     }
 
     /**
@@ -187,6 +195,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return static A new collection containing count values.
      */
+    #[\Override]
     public function countBy(Closure $callback) : static
     {
         $counts = [];
@@ -205,6 +214,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return static The current collection instance for method chaining.
      */
+    #[\Override]
     public function append(mixed $value) : static
     {
         $this->elements[] = $value;
@@ -219,6 +229,7 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return static The current collection instance for method chaining.
      */
+    #[\Override]
     public function prepend(mixed $value) : static
     {
         array_unshift($this->elements, $value);
@@ -235,9 +246,10 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return static The current collection instance for method chaining.
      */
+    #[\Override]
     public function merge(CollectionInterface|array $items) : static
     {
-        $mergedItems = array_merge($this->getItems(), is_array($items) ? $items : $items->all());
+        $mergedItems = array_merge($this->getItems(), is_array(value: $items) ? $items : $items->all());
         $this->setItems(items: $mergedItems);
 
         return $this;
@@ -248,9 +260,10 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return int The number of items in the collection.
      */
+    #[\Override]
     public function count() : int
     {
-        return count($this->getItems());
+        return count(value: $this->getItems());
     }
 
     /**
@@ -258,8 +271,9 @@ class Collection extends BaseCollection implements CollectionInterface
      *
      * @return Traversable An iterator for the items.
      */
+    #[\Override]
     public function getIterator() : Traversable
     {
-        return new ArrayIterator($this->getItems());
+        return new ArrayIterator(array: $this->getItems());
     }
 }

@@ -98,8 +98,8 @@ trait JwtTrait
         $authHeader = $this->getHeaderLine(name: 'Authorization');
 
         // Ensure the Authorization header starts with "Bearer ".
-        return str_starts_with((string) $authHeader, self::JWT_PREFIX) ?
-            substr((string) $authHeader, strlen(self::JWT_PREFIX)) : null;
+        return str_starts_with(haystack: (string) $authHeader, needle: self::JWT_PREFIX) ?
+            substr(string: (string) $authHeader, offset: strlen(string: self::JWT_PREFIX)) : null;
     }
 
     /**
@@ -111,7 +111,7 @@ trait JwtTrait
      */
     private function hasMethod(string $methodName) : bool
     {
-        return method_exists($this, $methodName);
+        return method_exists(object_or_class: $this, method: $methodName);
     }
 
     /**

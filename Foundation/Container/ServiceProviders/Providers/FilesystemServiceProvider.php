@@ -39,6 +39,7 @@ final class FilesystemServiceProvider extends ServiceProvider
      * @return void
      *
      */
+    #[\Override]
     public function register() : void
     {
         // Bind the file storage interface to its local implementation
@@ -109,6 +110,7 @@ final class FilesystemServiceProvider extends ServiceProvider
      *
      * @return void
      */
+    #[\Override]
     public function boot() : void
     {
         // No boot operations required for filesystem services

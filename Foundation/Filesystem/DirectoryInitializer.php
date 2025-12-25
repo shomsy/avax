@@ -70,7 +70,7 @@ readonly class DirectoryInitializer
                 return;
             }
 
-            usleep(self::RETRY_DELAY);
+            usleep(microseconds: self::RETRY_DELAY);
         }
 
         throw new Exception(
@@ -102,7 +102,7 @@ readonly class DirectoryInitializer
         // Check if the test file is writable
         $isWritable = $this->fileService->isWritable(path: $testFilePath);
         if ($isWritable) {
-            unlink($testFilePath); // Clean up the test file if everything is functioning correctly
+            unlink(filename: $testFilePath); // Clean up the test file if everything is functioning correctly
         }
 
         return $isWritable;

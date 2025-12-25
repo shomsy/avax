@@ -39,7 +39,7 @@ final class RouteRegistrarProxy
      */
     public function name(string $name) : self
     {
-        $this->builder->name($name);
+        $this->builder->name(name: $name);
 
         return $this->register();
     }
@@ -90,7 +90,7 @@ final class RouteRegistrarProxy
      */
     public function where(string $param, string $pattern) : self
     {
-        $this->builder->where($param, $pattern);
+        $this->builder->where(parameter: $param, pattern: $pattern);
 
         return $this;
     }
@@ -100,7 +100,7 @@ final class RouteRegistrarProxy
      */
     public function whereIn(array $constraints) : self
     {
-        $this->builder->whereIn($constraints);
+        $this->builder->whereIn(constraints: $constraints);
 
         return $this;
     }
@@ -110,7 +110,7 @@ final class RouteRegistrarProxy
      */
     public function defaults(array $defaults) : self
     {
-        $this->builder->defaults($defaults);
+        $this->builder->defaults(defaults: $defaults);
 
         return $this;
     }
@@ -120,7 +120,7 @@ final class RouteRegistrarProxy
      */
     public function attributes(array $attributes) : self
     {
-        $this->builder->attributes($attributes);
+        $this->builder->attributes(attributes: $attributes);
 
         return $this;
     }
@@ -130,7 +130,7 @@ final class RouteRegistrarProxy
      */
     public function middleware(array $middleware) : self
     {
-        $this->builder->middleware($middleware);
+        $this->builder->middleware(middleware: $middleware);
 
         return $this;
     }
@@ -140,7 +140,7 @@ final class RouteRegistrarProxy
      */
     public function authorize(string $policy) : self
     {
-        $this->builder->authorize($policy);
+        $this->builder->authorize(policy: $policy);
 
         return $this;
     }
@@ -150,7 +150,7 @@ final class RouteRegistrarProxy
      */
     public function controller(string $controller, string $method = 'index') : self
     {
-        $this->builder->controller($controller, $method);
+        $this->builder->controller(controller: $controller, method: $method);
 
         return $this;
     }
@@ -160,7 +160,7 @@ final class RouteRegistrarProxy
      */
     public function action(callable|array|string $action) : self
     {
-        $this->builder->action($action);
+        $this->builder->action(action: $action);
 
         return $this;
     }

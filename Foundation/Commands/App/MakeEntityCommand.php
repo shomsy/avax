@@ -43,8 +43,8 @@ final readonly class MakeEntityCommand
         }
 
         $fields = [];
-        foreach (explode(',', $fieldsInput) as $pair) {
-            [$name, $type] = explode(':', $pair) + [1 => 'string'];
+        foreach (explode(separator: ',', string: $fieldsInput) as $pair) {
+            [$name, $type] = explode(separator: ':', string: $pair) + [1 => 'string'];
             $fields[] = ['name' => $name, 'type' => $type];
         }
 

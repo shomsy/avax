@@ -39,9 +39,9 @@ readonly class AcceptedIf
     {
         if (($data[$this->conditionField] ?? null) === $this->conditionValue
             && ! in_array(
-                $value,
-                ['yes', 'on', 1, true],
-                true,
+                needle  : $value,
+                haystack: ['yes', 'on', 1, true],
+                strict  : true,
             )) {
             throw new ValidationException(message: $property . " must be accepted.");
         }

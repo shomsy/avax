@@ -31,7 +31,7 @@ readonly class NotRegex
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (preg_match($this->pattern, (string) $value)) {
+        if (preg_match(pattern: $this->pattern, subject: (string) $value)) {
             throw new ValidationException(message: $property . ' format is invalid.');
         }
     }

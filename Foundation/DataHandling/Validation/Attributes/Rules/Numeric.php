@@ -25,7 +25,7 @@ class Numeric
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! is_numeric($value)) {
+        if (! is_numeric(value: $value)) {
             throw new ValidationException(message: $property . ' must be a number.');
         }
     }

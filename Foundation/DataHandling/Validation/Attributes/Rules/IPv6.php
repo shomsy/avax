@@ -31,7 +31,7 @@ class IPv6
      */
     public function validate(mixed $value, string $property) : void
     {
-        if (! filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+        if (! filter_var(value: $value, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV6)) {
             throw new ValidationException(message: $property . ' must be a valid IPv6 address.');
         }
     }

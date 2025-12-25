@@ -37,7 +37,7 @@ class ScopedInstances extends Arrhae
         // Iterate through all registered instances in the current scope
         foreach ($this->all() as $key => $value) {
             // Remove each instance individually to ensure proper cleanup
-            $this->forget($key);
+            $this->forget(key: $key);
         }
     }
 }

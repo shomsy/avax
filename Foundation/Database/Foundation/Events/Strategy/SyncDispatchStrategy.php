@@ -13,13 +13,13 @@ use Throwable;
  * Technical execution engine for the synchronous distribution of system signals.
  *
  * -- intent:
- * Implements a "Blocking Dispatch" strategy where every registered observer 
- * is triggered immediately within the same request thread as the producer, 
+ * Implements a "Blocking Dispatch" strategy where every registered observer
+ * is triggered immediately within the same request thread as the producer,
  * ensuring predictable order and immediate state consistency.
  *
  * -- invariants:
  * - Observers must be executed sequentially in the order of registration.
- * - Individual observer failures must be defensively captured to prevent 
+ * - Individual observer failures must be defensively captured to prevent
  *   disruption of the entire dispatch chain.
  * - Failures must be logged if an authorized technical logger is provided.
  *
@@ -38,15 +38,16 @@ final readonly class SyncDispatchStrategy implements DispatchStrategyInterface
      * Coordinate the sequential and defensive triggering of all authorized observers.
      *
      * -- intent:
-     * Physically iterates through the listener collection, invoking each with 
-     * the signal payload while providing a safety boundary to isolate 
+     * Physically iterates through the listener collection, invoking each with
+     * the signal payload while providing a safety boundary to isolate
      * cross-observer side-effects.
      *
      * @param Event              $event     The technical signal payload to be distributed.
      * @param iterable<callable> $listeners The collection of authorized technical handlers to be triggered.
+     *
      * @return void
      */
-    public function handle(Event $event, iterable $listeners): void
+    public function handle(Event $event, iterable $listeners) : void
     {
         foreach ($listeners as $listener) {
             try {
@@ -56,9 +57,9 @@ final readonly class SyncDispatchStrategy implements DispatchStrategyInterface
                 $this->logger?->error(
                     message: "Event listener execution failed: " . $e->getMessage(),
                     context: [
-                        'event'     => $event::class,
-                        'exception' => $e
-                    ]
+                                 'event'     => $event::class,
+                                 'exception' => $e
+                             ]
                 );
             }
         }

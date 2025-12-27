@@ -1,6 +1,7 @@
 # Identity Map
 
-This document covers the Identity Map pattern implementation, explaining how it provides object identity and deferred persistence.
+This document covers the Identity Map pattern implementation, explaining how it provides object identity and deferred
+persistence.
 
 ---
 
@@ -39,7 +40,8 @@ $user1['name'] = 'Changed';
 // $user2['name'] is also 'Changed' - they're the same object
 ```
 
-Think of it as a "guest registry" at a hotel. When someone checks in, you write down their room number. If they come back later, you don't give them a new room — you look up their existing one.
+Think of it as a "guest registry" at a hotel. When someone checks in, you write down their room number. If they come
+back later, you don't give them a new room — you look up their existing one.
 
 ---
 
@@ -47,21 +49,22 @@ Think of it as a "guest registry" at a hotel. When someone checks in, you write 
 
 **The in-memory cache for tracked entities.**
 
-The `IdentityMap` class stores entities by their table and primary key. It's the foundation for both object identity and the Unit of Work pattern.
+The `IdentityMap` class stores entities by their table and primary key. It's the foundation for both object identity and
+the Unit of Work pattern.
 
 **Key Methods:**
 
-| Method | Purpose |
-|--------|---------|
-| `register($table, $id, $entity)` | Add an entity to the map |
-| `get($table, $id)` | Retrieve an entity (or null) |
-| `has($table, $id)` | Check if an entity exists |
-| `remove($table, $id)` | Remove an entity from tracking |
-| `clear()` | Reset the entire map |
-| `scheduleInsert($table, $data)` | Queue an INSERT for later |
-| `scheduleUpdate($table, $id, $data)` | Queue an UPDATE for later |
-| `scheduleDelete($table, $id)` | Queue a DELETE for later |
-| `flush()` | Execute all pending operations |
+| Method                               | Purpose                        |
+|--------------------------------------|--------------------------------|
+| `register($table, $id, $entity)`     | Add an entity to the map       |
+| `get($table, $id)`                   | Retrieve an entity (or null)   |
+| `has($table, $id)`                   | Check if an entity exists      |
+| `remove($table, $id)`                | Remove an entity from tracking |
+| `clear()`                            | Reset the entire map           |
+| `scheduleInsert($table, $data)`      | Queue an INSERT for later      |
+| `scheduleUpdate($table, $id, $data)` | Queue an UPDATE for later      |
+| `scheduleDelete($table, $id)`        | Queue a DELETE for later       |
+| `flush()`                            | Execute all pending operations |
 
 ```php
 $map = new IdentityMap($connection);
@@ -81,7 +84,8 @@ var_dump($user === $sameUser); // true
 
 **Batch operations instead of executing immediately.**
 
-Instead of running INSERT/UPDATE/DELETE queries one by one, you can "schedule" them and execute all at once with `flush()`.
+Instead of running INSERT/UPDATE/DELETE queries one by one, you can "schedule" them and execute all at once with
+`flush()`.
 
 This is more efficient (fewer round-trips to the database) and allows you to cancel everything if something goes wrong.
 
@@ -124,7 +128,8 @@ $identityMap->flush();
 
 **Track all changes and commit them atomically.**
 
-The Unit of Work pattern combines the Identity Map with deferred execution to provide transactional consistency. All changes within a "unit of work" either succeed together or fail together.
+The Unit of Work pattern combines the Identity Map with deferred execution to provide transactional consistency. All
+changes within a "unit of work" either succeed together or fail together.
 
 ```php
 // Start a unit of work

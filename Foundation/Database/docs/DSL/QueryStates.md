@@ -1,6 +1,7 @@
 # Query States & AST
 
-This document covers the internal query representation — the immutable state objects and AST (Abstract Syntax Tree) nodes that the QueryBuilder uses to represent SQL queries before compilation.
+This document covers the internal query representation — the immutable state objects and AST (Abstract Syntax Tree)
+nodes that the QueryBuilder uses to represent SQL queries before compilation.
 
 ---
 
@@ -34,9 +35,11 @@ This document covers the internal query representation — the immutable state o
 
 **The "Working Memory" of a query being built.**
 
-`QueryState` is an immutable object that holds all the accumulated information about a query: the table, columns, WHERE conditions, JOINs, ORDER BY clauses, LIMIT/OFFSET, and parameter bindings.
+`QueryState` is an immutable object that holds all the accumulated information about a query: the table, columns, WHERE
+conditions, JOINs, ORDER BY clauses, LIMIT/OFFSET, and parameter bindings.
 
-Think of it as a "recipe card" that gets passed through each building step. Each method on QueryBuilder creates a NEW QueryState with the new information added, leaving the original unchanged.
+Think of it as a "recipe card" that gets passed through each building step. Each method on QueryBuilder creates a NEW
+QueryState with the new information added, leaving the original unchanged.
 
 **Why immutable?**
 
@@ -46,34 +49,34 @@ Think of it as a "recipe card" that gets passed through each building step. Each
 
 **Properties stored:**
 
-| Property | Type | Purpose |
-|----------|------|---------|
-| `from` | string\|null | Target table name |
-| `columns` | array | SELECT columns (defaults to `*`) |
-| `wheres` | array | WHERE conditions (WhereNode instances) |
-| `joins` | array | JOIN definitions (JoinNode instances) |
-| `orders` | array | ORDER BY rules (OrderNode instances) |
-| `groups` | array | GROUP BY columns |
-| `having` | array | HAVING conditions |
-| `distinct` | bool | Whether to use DISTINCT |
-| `limit` | int\|null | Maximum rows to return |
-| `offset` | int\|null | Rows to skip |
-| `bindings` | array | Parameter values for prepared statements |
+| Property   | Type         | Purpose                                  |
+|------------|--------------|------------------------------------------|
+| `from`     | string\|null | Target table name                        |
+| `columns`  | array        | SELECT columns (defaults to `*`)         |
+| `wheres`   | array        | WHERE conditions (WhereNode instances)   |
+| `joins`    | array        | JOIN definitions (JoinNode instances)    |
+| `orders`   | array        | ORDER BY rules (OrderNode instances)     |
+| `groups`   | array        | GROUP BY columns                         |
+| `having`   | array        | HAVING conditions                        |
+| `distinct` | bool         | Whether to use DISTINCT                  |
+| `limit`    | int\|null    | Maximum rows to return                   |
+| `offset`   | int\|null    | Rows to skip                             |
+| `bindings` | array        | Parameter values for prepared statements |
 
 **Key Methods (all return new instances):**
 
-| Method | Purpose |
-|--------|---------|
-| `withFrom($table)` | Set the target table |
-| `withColumns($columns)` | Set SELECT columns |
-| `addWhere($whereNode)` | Add a WHERE condition |
-| `addJoin($joinNode)` | Add a JOIN clause |
-| `addOrder($orderNode)` | Add an ORDER BY rule |
-| `withLimit($limit)` | Set LIMIT |
-| `withOffset($offset)` | Set OFFSET |
-| `addBinding($value)` | Add a parameter binding |
-| `mergeBindings($values)` | Add multiple bindings |
-| `getBindings()` | Get all current bindings |
+| Method                   | Purpose                  |
+|--------------------------|--------------------------|
+| `withFrom($table)`       | Set the target table     |
+| `withColumns($columns)`  | Set SELECT columns       |
+| `addWhere($whereNode)`   | Add a WHERE condition    |
+| `addJoin($joinNode)`     | Add a JOIN clause        |
+| `addOrder($orderNode)`   | Add an ORDER BY rule     |
+| `withLimit($limit)`      | Set LIMIT                |
+| `withOffset($offset)`    | Set OFFSET               |
+| `addBinding($value)`     | Add a parameter binding  |
+| `mergeBindings($values)` | Add multiple bindings    |
+| `getBindings()`          | Get all current bindings |
 
 ```php
 // QueryState is never modified — new instances are created
@@ -111,13 +114,13 @@ new WhereNode(
 
 **Properties:**
 
-| Property | Type | Purpose |
-|----------|------|---------|
-| `column` | string | The column name (or raw SQL) |
-| `operator` | string | Comparison operator (=, >, <, LIKE, IN, etc.) |
-| `value` | mixed | The comparison value |
-| `boolean` | string | 'AND' or 'OR' connector |
-| `type` | string | Node type ('Basic', 'Null', 'In', 'Raw', etc.) |
+| Property   | Type   | Purpose                                        |
+|------------|--------|------------------------------------------------|
+| `column`   | string | The column name (or raw SQL)                   |
+| `operator` | string | Comparison operator (=, >, <, LIKE, IN, etc.)  |
+| `value`    | mixed  | The comparison value                           |
+| `boolean`  | string | 'AND' or 'OR' connector                        |
+| `type`     | string | Node type ('Basic', 'Null', 'In', 'Raw', etc.) |
 
 ---
 
@@ -144,14 +147,14 @@ new JoinNode(
 
 **Properties:**
 
-| Property | Type | Purpose |
-|----------|------|---------|
-| `table` | string | Table to join |
-| `type` | string | 'inner', 'left', 'right', 'cross' |
-| `first` | string\|null | Left-hand column |
-| `operator` | string\|null | Comparison operator |
-| `second` | string\|null | Right-hand column |
-| `clause` | JoinClause\|null | For complex multi-condition joins |
+| Property   | Type             | Purpose                           |
+|------------|------------------|-----------------------------------|
+| `table`    | string           | Table to join                     |
+| `type`     | string           | 'inner', 'left', 'right', 'cross' |
+| `first`    | string\|null     | Left-hand column                  |
+| `operator` | string\|null     | Comparison operator               |
+| `second`   | string\|null     | Right-hand column                 |
+| `clause`   | JoinClause\|null | For complex multi-condition joins |
 
 ---
 
@@ -174,12 +177,12 @@ new OrderNode(
 
 **Properties:**
 
-| Property | Type | Purpose |
-|----------|------|---------|
-| `column` | string\|null | Column to sort by |
-| `direction` | string | 'ASC' or 'DESC' |
-| `sql` | string\|null | Raw SQL for special cases (e.g., RAND()) |
-| `type` | string | 'Basic' or 'Raw' |
+| Property    | Type         | Purpose                                  |
+|-------------|--------------|------------------------------------------|
+| `column`    | string\|null | Column to sort by                        |
+| `direction` | string       | 'ASC' or 'DESC'                          |
+| `sql`       | string\|null | Raw SQL for special cases (e.g., RAND()) |
+| `type`      | string       | 'Basic' or 'Raw'                         |
 
 ---
 
@@ -309,11 +312,11 @@ $builder->limit($pagination->perPage)->offset($pagination->getOffset());
 
 **Properties:**
 
-| Property | Type | Purpose |
-|----------|------|---------|
-| `page` | int | Current page (1-indexed) |
-| `perPage` | int | Items per page |
-| `total` | int\|null | Total record count (optional) |
+| Property  | Type      | Purpose                       |
+|-----------|-----------|-------------------------------|
+| `page`    | int       | Current page (1-indexed)      |
+| `perPage` | int       | Items per page                |
+| `total`   | int\|null | Total record count (optional) |
 
 **The math:**
 

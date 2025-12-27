@@ -6,7 +6,6 @@ namespace Avax\Database\Connection;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Foundation\Connection\Pool\Contracts\ConnectionPoolInterface;
-use Throwable;
 
 /**
  * Fluent builder for coordinating one-off database operations with resource safety.
@@ -30,9 +29,10 @@ final class DatabaseFlow
      * Specify the target connection name.
      *
      * @param string $name
+     *
      * @return self
      */
-    public function on(string $name): self
+    public function on(string $name) : self
     {
         $this->connectionName = $name;
 
@@ -44,7 +44,7 @@ final class DatabaseFlow
      *
      * @return self
      */
-    public function usePool(): self
+    public function usePool() : self
     {
         $this->pooled = true;
 
@@ -55,9 +55,10 @@ final class DatabaseFlow
      * Execute the task with automatic resource management.
      *
      * @param callable(DatabaseConnection): mixed $callback
+     *
      * @return mixed
      */
-    public function run(callable $callback): mixed
+    public function run(callable $callback) : mixed
     {
         $connection = $this->manager->connection(name: $this->connectionName);
 

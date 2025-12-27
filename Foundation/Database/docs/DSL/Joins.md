@@ -1,6 +1,7 @@
 # Joins (Relational Queries)
 
-The `HasJoins` trait provides methods for combining data from multiple tables. This document explains each join method in human-readable terms.
+The `HasJoins` trait provides methods for combining data from multiple tables. This document explains each join method
+in human-readable terms.
 
 ---
 
@@ -48,9 +49,11 @@ $builder->from('products')
 
 **Keep ALL records from the left table, even if no match exists on the right.**
 
-Returns every row from the primary (left) table, and matching rows from the joined (right) table. If no match exists, the right side columns contain NULL.
+Returns every row from the primary (left) table, and matching rows from the joined (right) table. If no match exists,
+the right side columns contain NULL.
 
-You're asking for a roster of all employees, with their assigned projects. Employees without projects still appear, just with null project data.
+You're asking for a roster of all employees, with their assigned projects. Employees without projects still appear, just
+with null project data.
 
 ```php
 $builder->from('users')
@@ -82,7 +85,8 @@ $usersWithoutOrders = $builder->from('users')
 
 **Keep ALL records from the right table, even if no match exists on the left.**
 
-The opposite of LEFT JOIN. Returns every row from the joined (right) table, and matching rows from the primary (left) table.
+The opposite of LEFT JOIN. Returns every row from the joined (right) table, and matching rows from the primary (left)
+table.
 
 Less commonly used — you can usually restructure as a LEFT JOIN by swapping table order.
 
@@ -125,7 +129,8 @@ Common use cases:
 
 1. **Always qualify column names** — When joining, use `table.column` format to avoid ambiguity.
 
-2. **Be careful with NULL** — LEFT/RIGHT joins produce NULLs for non-matching rows. Account for this in your WHERE clauses.
+2. **Be careful with NULL** — LEFT/RIGHT joins produce NULLs for non-matching rows. Account for this in your WHERE
+   clauses.
 
 3. **Watch performance** — Each join multiplies result set size. Index your join columns.
 

@@ -1,6 +1,7 @@
 # Soft Deletes
 
-Soft deleting allows you to "delete" a record without actually removing it from the database. Instead, a `deleted_at` timestamp is set.
+Soft deleting allows you to "delete" a record without actually removing it from the database. Instead, a `deleted_at`
+timestamp is set.
 
 ---
 

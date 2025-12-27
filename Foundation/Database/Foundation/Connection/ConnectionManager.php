@@ -6,7 +6,6 @@ namespace Avax\Database\Connection;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Connection\Exceptions\ConnectionException;
-use Avax\Database\Connection\Exceptions\ConnectionFailure;
 use Avax\Database\Events\EventBus;
 use Avax\Database\Foundation\Connection\Pool\ConnectionPool;
 use Avax\Database\Foundation\Connection\Pool\PooledConnectionAuthority;
@@ -39,7 +38,8 @@ final class ConnectionManager
         private readonly array         $config,
         private readonly EventBus|null $eventBus = null,
         private ExecutionScope|null    $scope = null
-    ) {
+    )
+    {
         $this->scope ??= ExecutionScope::fresh();
     }
 
@@ -48,9 +48,10 @@ final class ConnectionManager
      *
      * @param callable    $callback Task to run.
      * @param string|null $name     Specific connection name.
+     *
      * @return mixed
      */
-    public function pool(callable $callback, string|null $name = null): mixed
+    public function pool(callable $callback, string|null $name = null) : mixed
     {
         $connection = $this->flow()->usePool();
         if ($name) {
@@ -65,7 +66,7 @@ final class ConnectionManager
      *
      * @return DatabaseFlow
      */
-    public function flow(): DatabaseFlow
+    public function flow() : DatabaseFlow
     {
         return new DatabaseFlow(manager: $this);
     }
@@ -74,9 +75,10 @@ final class ConnectionManager
      * Get the raw technical tool (PDO) for a specific database.
      *
      * @param string|null $name The nickname (e.g., 'primary').
+     *
      * @return PDO The raw technical engine.
      */
-    public function getPdo(string|null $name = null): PDO
+    public function getPdo(string|null $name = null) : PDO
     {
         return $this->connection(name: $name)->getConnection();
     }
@@ -85,9 +87,10 @@ final class ConnectionManager
      * Retrieve a cached or new connection by nickname.
      *
      * @param string|null $name Connection nickname (null for default).
+     *
      * @return DatabaseConnection
      */
-    public function connection(string|null $name = null): DatabaseConnection
+    public function connection(string|null $name = null) : DatabaseConnection
     {
         $name = $name ?: $this->getDefaultConnection();
 
@@ -111,7 +114,7 @@ final class ConnectionManager
     /**
      * Find out which connection is set as the "Main" one.
      */
-    private function getDefaultConnection(): string
+    private function getDefaultConnection() : string
     {
         return $this->config['default'] ?? 'mysql';
     }
@@ -121,7 +124,7 @@ final class ConnectionManager
      *
      * @throws Throwable
      */
-    private function makeConnection(string $name): DatabaseConnection
+    private function makeConnection(string $name) : DatabaseConnection
     {
         $config = $this->config['connections'][$name] ?? null;
 
@@ -135,7 +138,7 @@ final class ConnectionManager
         if (isset($config['pool'])) {
             if (! isset($this->pools[$name])) {
                 $this->pools[$name] = new ConnectionPool(
-                    config: $config,
+                    config  : $config,
                     eventBus: $this->eventBus
                 );
             }
@@ -166,9 +169,10 @@ final class ConnectionManager
      * Create a clone with a specific correlation scope.
      *
      * @param ExecutionScope $scope Context for telemetry.
+     *
      * @return self
      */
-    public function withScope(ExecutionScope $scope): self
+    public function withScope(ExecutionScope $scope) : self
     {
         $clone        = clone $this;
         $clone->scope = $scope;

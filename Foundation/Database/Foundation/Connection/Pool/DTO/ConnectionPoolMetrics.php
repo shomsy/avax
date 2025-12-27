@@ -11,19 +11,19 @@ use Avax\DataHandling\Validation\Attributes\Rules\IntegerRule;
  * The "Status Report" (Snapshot) for a connection pool.
  *
  * -- what is it?
- * This is a DTO (Data Transfer Object). It's a simple, typed container used 
+ * This is a DTO (Data Transfer Object). It's a simple, typed container used
  * to carry a "Snapshot" of how the connection pool is doing right now.
  *
  * -- how to imagine it:
- * Think of a "Dashboard" in a car. It doesn't drive the car; it just 
- * shows you the speed, fuel level, and oil pressure. This class shows 
- * you the "Fuel level" (how many connections are left) and "Speed" (how 
+ * Think of a "Dashboard" in a car. It doesn't drive the car; it just
+ * shows you the speed, fuel level, and oil pressure. This class shows
+ * you the "Fuel level" (how many connections are left) and "Speed" (how
  * many times people have used it) of the pool.
  *
  * -- why this exists:
- * To provide a clean, standard way to look into the "Black Box" of 
- * the connection pool. If you're building a monitoring page or trying 
- * to debug why the app is slow, this report tells you if the pool is 
+ * To provide a clean, standard way to look into the "Black Box" of
+ * the connection pool. If you're building a monitoring page or trying
+ * to debug why the app is slow, this report tells you if the pool is
  * overcrowded or empty.
  *
  * -- mental models:

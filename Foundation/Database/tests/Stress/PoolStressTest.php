@@ -8,6 +8,7 @@ use Avax\Database\Foundation\Connection\Pool\ConnectionPool;
 use Avax\Database\Foundation\Connection\Pool\PooledConnectionAuthority;
 use PDO;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * Stress test: Verify pool correctly handles rapid acquire/release cycles.
@@ -17,10 +18,10 @@ final class PoolStressTest extends TestCase
     /**
      * Test: 100 rapid acquire/release cycles without slot leakage.
      */
-    public function test_pool_handles_rapid_acquire_release(): void
+    public function test_pool_handles_rapid_acquire_release() : void
     {
-        $factory = fn() => new PDO('sqlite::memory:');
-        $pool = new ConnectionPool(factory: $factory, maxSize: 5);
+        $factory = fn () => new PDO(dsn: 'sqlite::memory:');
+        $pool    = new ConnectionPool(factory: $factory, maxSize: 5);
 
         // Simulate 100 rapid requests
         for ($i = 0; $i < 100; $i++) {
@@ -42,10 +43,10 @@ final class PoolStressTest extends TestCase
     /**
      * Test: Concurrent slot usage respects max pool size.
      */
-    public function test_pool_respects_max_size(): void
+    public function test_pool_respects_max_size() : void
     {
-        $factory = fn() => new PDO('sqlite::memory:');
-        $pool = new ConnectionPool(factory: $factory, maxSize: 3);
+        $factory = fn () => new PDO(dsn: 'sqlite::memory:');
+        $pool    = new ConnectionPool(factory: $factory, maxSize: 3);
 
         $authorities = [];
         $connections = [];
@@ -71,18 +72,18 @@ final class PoolStressTest extends TestCase
     /**
      * Test: Exception during connection usage doesn't leak slot.
      */
-    public function test_pool_releases_slot_on_exception(): void
+    public function test_pool_releases_slot_on_exception() : void
     {
-        $factory = fn() => new PDO('sqlite::memory:');
-        $pool = new ConnectionPool(factory: $factory, maxSize: 2);
+        $factory = fn () => new PDO(dsn: 'sqlite::memory:');
+        $pool    = new ConnectionPool(factory: $factory, maxSize: 2);
 
         try {
-            $authority = $pool->acquire();
+            $authority  = $pool->acquire();
             $connection = $authority->borrow();
 
             // Simulate exception during usage
-            throw new \RuntimeException('Simulated failure');
-        } catch (\RuntimeException $e) {
+            throw new RuntimeException(message: 'Simulated failure');
+        } catch (RuntimeException $e) {
             // Expected
         }
 

@@ -43,13 +43,16 @@ class QueryBuilder
     /**
      * Set up the builder with its two "helpers".
      *
-     * @param GrammarInterface  $grammar      The "Translator". It knows how to turn your PHP code into specific SQL for MySQL/SQLite/etc.
-     * @param QueryOrchestrator $orchestrator The "Conductor". It doesn't write SQL, but it knows how to send the final SQL to the database and get results back.
+     * @param GrammarInterface  $grammar      The "Translator". It knows how to turn your PHP code into specific SQL
+     *                                        for MySQL/SQLite/etc.
+     * @param QueryOrchestrator $orchestrator The "Conductor". It doesn't write SQL, but it knows how to send the final
+     *                                        SQL to the database and get results back.
      */
     public function __construct(
         protected readonly GrammarInterface $grammar,
         protected QueryOrchestrator         $orchestrator
-    ) {
+    )
+    {
         $this->state = new QueryState();
 
         // If this class has a 'tableName' property defined (like in a Model), we use it as the default target.
@@ -67,7 +70,7 @@ class QueryBuilder
      * Create a perfect copy of this builder.
      *
      * -- intent:
-     * This is the "Save As" mechanism. It ensures that when you branch off a 
+     * This is the "Save As" mechanism. It ensures that when you branch off a
      * common search, you don't mess up the original search object.
      */
     public function __clone()
@@ -80,10 +83,10 @@ class QueryBuilder
      *
      * @return static A fresh builder instance with no filters or tables set.
      */
-    public function newQuery(): static
+    public function newQuery() : static
     {
         return new static(
-            grammar: $this->grammar,
+            grammar     : $this->grammar,
             orchestrator: $this->orchestrator
         );
     }
@@ -94,11 +97,12 @@ class QueryBuilder
      * Use only for trusted literals (e.g., functions/CASE expressions), never for user input.
      *
      * @param string $value SQL fragment to include verbatim.
+     *
+     * @return Expression
      * @throws InvalidCriteriaException When the fragment contains disallowed characters.
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#raw
-     * @return Expression
      */
-    public function raw(string $value): Expression
+    public function raw(string $value) : Expression
     {
         $this->assertSafeRawExpression(expression: $value, context: 'raw');
 
@@ -111,7 +115,7 @@ class QueryBuilder
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#pretend
      * @return self Builder clone in pretend mode.
      */
-    public function pretend(): self
+    public function pretend() : self
     {
         $clone = clone $this;
         $clone->orchestrator->pretend(value: true);
@@ -122,11 +126,12 @@ class QueryBuilder
     /**
      * Execute a raw SQL "Statement" that doesn't return data (e.g., cleanup commands).
      *
-     * @param string $query SQL command to run.
+     * @param string $query    SQL command to run.
      * @param array  $bindings Parameter bindings for the command.
+     *
      * @return bool True if the database accepted the command.
      */
-    public function statement(string $query, array $bindings = []): bool
+    public function statement(string $query, array $bindings = []) : bool
     {
         return $this->orchestrator->execute(sql: $query, bindings: $bindings)->isSuccessful();
     }
@@ -135,9 +140,10 @@ class QueryBuilder
      * Set the target table.
      *
      * @param string $table Table name.
+     *
      * @return self
      */
-    public function from(string $table): self
+    public function from(string $table) : self
     {
         $clone        = clone $this;
         $clone->state = $this->state->withFrom(table: $table);
@@ -149,9 +155,10 @@ class QueryBuilder
      * Select specific columns.
      *
      * @param string ...$columns Columns to include (defaults to `*` when empty).
+     *
      * @return self
      */
-    public function select(string ...$columns): self
+    public function select(string ...$columns) : self
     {
         $clone        = clone $this;
         $clone->state = $this->state->withColumns(columns: empty($columns) ? ['*'] : $columns);
@@ -163,11 +170,12 @@ class QueryBuilder
      * Mix raw SQL into your column selection.
      *
      * @param string ...$expressions Raw SQL snippets for selection.
+     *
+     * @return self
      * @throws InvalidCriteriaException When the fragment contains disallowed characters.
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#selectraw
-     * @return self
      */
-    public function selectRaw(string ...$expressions): self
+    public function selectRaw(string ...$expressions) : self
     {
         foreach ($expressions as $expression) {
             $this->assertSafeRawExpression(expression: $expression, context: 'selectRaw');
@@ -181,12 +189,13 @@ class QueryBuilder
 
     /**
      * Security Check: Make sure raw SQL fragments aren't dangerous.
-     * 
+     *
      * @param string $expression The text to check.
      * @param string $context    Where this check is happening (for error messages).
+     *
      * @throws InvalidCriteriaException If dangerous characters are found.
      */
-    private function assertSafeRawExpression(string $expression, string $context): void
+    private function assertSafeRawExpression(string $expression, string $context) : void
     {
         if ($expression === '') {
             throw new InvalidCriteriaException(method: $context, reason: "Raw expressions must not be empty.");
@@ -219,7 +228,7 @@ class QueryBuilder
      *
      * @return self A builder copy with the UNIQUE/DISTINCT filter active.
      */
-    public function distinct(): self
+    public function distinct() : self
     {
         $clone        = clone $this;
         $clone->state = $this->state->withDistinct(distinct: true);
@@ -231,13 +240,14 @@ class QueryBuilder
      * Skip the first X number of rows.
      *
      * -- intent:
-     * Essential for "Page 2" or "Page 3" of results. If each page has 10 
+     * Essential for "Page 2" or "Page 3" of results. If each page has 10
      * items, Page 2 would skip the first 10.
      *
      * @param int $offset How many rows to jump over.
+     *
      * @return self A builder copy with this skip applied.
      */
-    public function offset(int $offset): self
+    public function offset(int $offset) : self
     {
         if ($offset < 0) {
             throw new InvalidCriteriaException(method: 'offset', reason: "OFFSET must be a non-negative integer.");
@@ -255,11 +265,12 @@ class QueryBuilder
      * Requires an available IdentityMap (provided or already on the orchestrator).
      *
      * @param IdentityMap|null $identityMap Optional map to use for this query.
+     *
+     * @return self New builder instance with deferred execution enabled.
      * @throws InvalidCriteriaException When no IdentityMap is available.
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#deferred
-     * @return self New builder instance with deferred execution enabled.
      */
-    public function deferred(IdentityMap|null $identityMap = null): self
+    public function deferred(IdentityMap|null $identityMap = null) : self
     {
         $clone             = clone $this;
         $clone->isDeferred = true;
@@ -274,6 +285,7 @@ class QueryBuilder
                 reason: "IdentityMap must be available via Orchestrator or provided to use deferred execution."
             );
         }
+
         return $clone;
     }
 
@@ -282,7 +294,7 @@ class QueryBuilder
      *
      * @return bool
      */
-    public function exists(): bool
+    public function exists() : bool
     {
         $instance = clone $this;
 
@@ -300,10 +312,11 @@ class QueryBuilder
      * Apply a maximum ceiling to the number of rows returned.
      *
      * @param int $limit Maximum results to retrieve.
-     * @throws InvalidCriteriaException If limit is negative.
+     *
      * @return self
+     * @throws InvalidCriteriaException If limit is negative.
      */
-    public function limit(int $limit): self
+    public function limit(int $limit) : self
     {
         if ($limit < 0) {
             throw new InvalidCriteriaException(method: 'limit', reason: "LIMIT must be a non-negative integer.");
@@ -320,9 +333,10 @@ class QueryBuilder
      *
      * @param string|callable|null $key     Optional column or transform callback.
      * @param mixed                $default Fallback value if no record exists.
+     *
      * @return mixed
      */
-    public function first(string|callable|null $key = null, mixed $default = null): mixed
+    public function first(string|callable|null $key = null, mixed $default = null) : mixed
     {
         $instance = clone $this;
         $result   = $instance->limit(limit: 1)->get();
@@ -365,7 +379,7 @@ class QueryBuilder
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#get
      * @return array<array-key, mixed>
      */
-    public function get(): array
+    public function get() : array
     {
         $instance = clone $this;
 
@@ -382,18 +396,19 @@ class QueryBuilder
      * Persist a new record into the database.
      *
      * @param array $values Associative array of column => values.
-     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#insert
+     *
      * @return bool
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#insert
      */
-    public function insert(array $values): bool
+    public function insert(array $values) : bool
     {
         $clone        = clone $this;
         $clone->state = $this->state->withValues(values: $values);
         $sql          = $clone->grammar->compileInsert(state: $clone->state);
 
         return $clone->orchestrator->execute(
-            sql: $sql,
-            bindings: $clone->state->getBindings(),
+            sql      : $sql,
+            bindings : $clone->state->getBindings(),
             operation: $this->isDeferred ? 'INSERT' : null
         )->isSuccessful();
     }
@@ -402,10 +417,11 @@ class QueryBuilder
      * Modify existing records in the database.
      *
      * @param array $values Associative array of updates.
-     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#update
+     *
      * @return bool
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#update
      */
-    public function update(array $values): bool
+    public function update(array $values) : bool
     {
         $instance = clone $this;
 
@@ -414,8 +430,8 @@ class QueryBuilder
         $sql             = $instance->grammar->compileUpdate(state: $instance->state);
 
         return $instance->orchestrator->execute(
-            sql: $sql,
-            bindings: $instance->state->getBindings(),
+            sql      : $sql,
+            bindings : $instance->state->getBindings(),
             operation: $this->isDeferred ? 'UPDATE' : null
         )->isSuccessful();
     }
@@ -426,7 +442,7 @@ class QueryBuilder
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#delete
      * @return bool
      */
-    public function delete(): bool
+    public function delete() : bool
     {
         $instance = clone $this;
 
@@ -437,8 +453,8 @@ class QueryBuilder
         $sql = $instance->grammar->compileDelete(state: $instance->state);
 
         return $instance->orchestrator->execute(
-            sql: $sql,
-            bindings: $instance->state->getBindings(),
+            sql      : $sql,
+            bindings : $instance->state->getBindings(),
             operation: $this->isDeferred ? 'DELETE' : null
         )->isSuccessful();
     }
@@ -448,9 +464,10 @@ class QueryBuilder
      *
      * @param string      $value Target column name.
      * @param string|null $key   Optional column to use for array keys.
+     *
      * @return array
      */
-    public function pluck(string $value, string|null $key = null): array
+    public function pluck(string $value, string|null $key = null) : array
     {
         $columns = $key ? [$value, $key] : [$value];
         $results = $this->select(...$columns)->get();
@@ -472,9 +489,10 @@ class QueryBuilder
      *
      * @param string $column  Target column name.
      * @param mixed  $default Fallback value if no record exists.
+     *
      * @return mixed
      */
-    public function value(string $column, mixed $default = null): mixed
+    public function value(string $column, mixed $default = null) : mixed
     {
         $result = $this->first();
 
@@ -485,9 +503,10 @@ class QueryBuilder
      * Retrieve the total number of records matching the query.
      *
      * @param string $column Column to count (defaults to '*').
+     *
      * @return int
      */
-    public function count(string $column = '*'): int
+    public function count(string $column = '*') : int
     {
         $instance        = clone $this;
         $instance->state = $instance->state->withColumns(columns: ["COUNT({$column}) as aggregate"]);
@@ -501,9 +520,10 @@ class QueryBuilder
      *
      * @param mixed  $id     Identity value.
      * @param string $column Field name for the identity (defaults to 'id').
+     *
      * @return mixed
      */
-    public function find(mixed $id, string $column = 'id'): mixed
+    public function find(mixed $id, string $column = 'id') : mixed
     {
         return $this->where(column: $column, operator: '=', value: $id)->first();
     }
@@ -511,7 +531,7 @@ class QueryBuilder
     /**
      * Get the internal state of the builder (the AST).
      */
-    public function getState(): QueryState
+    public function getState() : QueryState
     {
         return $this->state;
     }
@@ -520,11 +540,12 @@ class QueryBuilder
      * Execute a closure within a database transaction.
      *
      * @param callable $callback Logic to run transactionally.
-     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#transaction
+     *
      * @return mixed
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#transaction
      */
-    public function transaction(callable $callback): mixed
+    public function transaction(callable $callback) : mixed
     {
-        return $this->orchestrator->transaction(callback: fn() => $callback($this));
+        return $this->orchestrator->transaction(callback: fn () => $callback($this));
     }
 }

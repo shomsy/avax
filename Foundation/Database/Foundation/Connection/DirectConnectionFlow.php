@@ -37,7 +37,7 @@ final class DirectConnectionFlow
      *
      * @return self
      */
-    public static function begin(): self
+    public static function begin() : self
     {
         return new self();
     }
@@ -46,9 +46,10 @@ final class DirectConnectionFlow
      * Give the helper the settings it needs (Host, Driver, etc.).
      *
      * @param array<string, mixed> $config The settings dictionary.
+     *
      * @return self The helper itself, so you can keep adding instructions.
      */
-    public function using(array $config): self
+    public function using(array $config) : self
     {
         $this->config = $config;
 
@@ -58,7 +59,7 @@ final class DirectConnectionFlow
     /**
      * Tell the helper where to send "Connected" or "Failed" notifications.
      */
-    public function withEvents(EventBus $eventBus): self
+    public function withEvents(EventBus $eventBus) : self
     {
         $this->eventBus = $eventBus;
 
@@ -68,7 +69,7 @@ final class DirectConnectionFlow
     /**
      * Give the connection a "Luggage Tag" (Scope) so we can trace its work.
      */
-    public function withScope(ExecutionScope $scope): self
+    public function withScope(ExecutionScope $scope) : self
     {
         $this->scope = $scope;
 
@@ -78,10 +79,10 @@ final class DirectConnectionFlow
     /**
      * Establish the physical connection with event dispatching.
      *
-     * @throws Throwable
      * @return DatabaseConnection
+     * @throws Throwable
      */
-    public function connect(): DatabaseConnection
+    public function connect() : DatabaseConnection
     {
         $label = $this->config['name'] ?? 'default';
         $scope = $this->scope ?? ExecutionScope::fresh();
@@ -90,18 +91,18 @@ final class DirectConnectionFlow
             $connection = ConnectionFactory::from(config: $this->config);
             // Signal to the system that the line is open.
             $this->eventBus?->dispatch(event: new ConnectionOpened(
-                connectionName: $label,
-                correlationId: $scope->correlationId
-            ));
+                                                  connectionName: $label,
+                                                  correlationId : $scope->correlationId
+                                              ));
 
             return $connection;
         } catch (Throwable $e) {
             // Signal to the system that we had an error.
             $this->eventBus?->dispatch(event: new ConnectionFailed(
-                connectionName: $label,
-                exception: $e,
-                correlationId: $scope->correlationId
-            ));
+                                                  connectionName: $label,
+                                                  exception     : $e,
+                                                  correlationId : $scope->correlationId
+                                              ));
 
             throw $e;
         }

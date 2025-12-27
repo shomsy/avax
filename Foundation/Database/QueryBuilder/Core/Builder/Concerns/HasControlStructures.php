@@ -29,6 +29,26 @@ use Closure;
 trait HasControlStructures
 {
     /**
+     * Programmatic branch: execute a callback only if a specific condition is NOT met.
+     *
+     * -- intent:
+     * Provides an expressive inverse of the when() method, typically used for
+     * applying default filters or     * @see
+     * https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Transactions.md#transaction logic
+     * when a specific flag is absent.
+     *
+     * @param mixed         $condition Scalar, boolean, or truthy data point to evaluate.
+     * @param callable      $callback  The logic to execute if the condition evaluates to false.
+     * @param callable|null $default   Optional alternative logic to execute if the condition is true.
+     *
+     * @return self The resulting builder instance after applying the inverse conditional logic.
+     */
+    public function unless(mixed $condition, callable $callback, callable|null $default = null) : self
+    {
+        return $this->when(condition: ! $condition, callback: $callback, default: $default);
+    }
+
+    /**
      * Programmatic branch: execute a callback only if a specific condition is met.
      *
      * -- intent:
@@ -38,9 +58,10 @@ trait HasControlStructures
      * @param mixed         $condition Scalar, boolean, or truthy data point to evaluate.
      * @param callable      $callback  The logic to execute if the condition evaluates to true.
      * @param callable|null $default   Optional alternative logic to execute if the condition is false.
+     *
      * @return self The resulting builder instance after applying the conditional logic.
      */
-    public function when(mixed $condition, callable $callback, callable|null $default = null): self
+    public function when(mixed $condition, callable $callback, callable|null $default = null) : self
     {
         if ($condition) {
             return $callback($this, $condition) ?: $this;
@@ -54,34 +75,17 @@ trait HasControlStructures
     }
 
     /**
-     * Programmatic branch: execute a callback only if a specific condition is NOT met.
-     *
-     * -- intent:
-     * Provides an expressive inverse of the when() method, typically used for
-     * applying default filters or     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Transactions.md#transaction
-logic when a specific flag is absent.
-     *
-     * @param mixed         $condition Scalar, boolean, or truthy data point to evaluate.
-     * @param callable      $callback  The logic to execute if the condition evaluates to false.
-     * @param callable|null $default   Optional alternative logic to execute if the condition is true.
-     * @return self The resulting builder instance after applying the inverse conditional logic.
-     */
-    public function unless(mixed $condition, callable $callback, callable|null $default = null): self
-    {
-        return $this->when(condition: ! $condition, callback: $callback, default: $default);
-    }
-
-    /**
      * Fluent diagnostic hook: execute a callback on the builder without modifying the chain return.
      *
      * -- intent:
-     * Provide a mechanism for side-effects (logging, debugging, inspection) 
+     * Provide a mechanism for side-effects (logging, debugging, inspection)
      * within the fluent chain without requiring variable assignment.
      *
      * @param Closure $callback A logic hook receiving the current builder instance.
+     *
      * @return self The current builder instance.
      */
-    public function tap(Closure $callback): self
+    public function tap(Closure $callback) : self
     {
         $callback($this);
 

@@ -22,9 +22,10 @@ final readonly class BindingBag
      * Create a new bag with an additional parameter value.
      *
      * @param mixed $value
+     *
      * @return self
      */
-    public function with(mixed $value): self
+    public function with(mixed $value) : self
     {
         $values   = $this->values;
         $values[] = $value;
@@ -36,9 +37,10 @@ final readonly class BindingBag
      * Merge multiple parameters into a new bag instance.
      *
      * @param array $parameters
+     *
      * @return self
      */
-    public function merge(array $parameters): self
+    public function merge(array $parameters) : self
     {
         return new self(values: array_merge($this->values, $parameters));
     }
@@ -48,7 +50,7 @@ final readonly class BindingBag
      *
      * @return array
      */
-    public function all(): array
+    public function all() : array
     {
         return $this->values;
     }
@@ -58,7 +60,7 @@ final readonly class BindingBag
      *
      * @return bool
      */
-    public function isEmpty(): bool
+    public function isEmpty() : bool
     {
         return empty($this->values);
     }

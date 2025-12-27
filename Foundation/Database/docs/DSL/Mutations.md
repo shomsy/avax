@@ -253,7 +253,8 @@ $builder->transaction(function () use ($builder, $from, $to, $amount) {
 
 ## Mutation Results
 
-Mutation methods return a boolean indicating success. For more details about affected rows, use the orchestrator directly or check `PDO::rowCount()`.
+Mutation methods return a boolean indicating success. For more details about affected rows, use the orchestrator
+directly or check `PDO::rowCount()`.
 
 ```php
 $success = $builder->from('users')->where('id', 42)->delete();

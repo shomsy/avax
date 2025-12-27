@@ -2,7 +2,8 @@
 
 ## Purpose
 
-This document establishes the discipline required to maintain the stability and reliability of the Database component now that it has reached enterprise-grade maturity (9.8/10).
+This document establishes the discipline required to maintain the stability and reliability of the Database component
+now that it has reached enterprise-grade maturity (9.8/10).
 
 ## Core Freeze Criteria
 
@@ -21,19 +22,19 @@ The following modules are considered **frozen core**:
 ### Freeze Rules
 
 1. **No Refactoring Without Cause**: Changes to frozen modules require one of:
-   - A documented security vulnerability
-   - A confirmed production incident
-   - A breaking change in PHP or a core dependency
+    - A documented security vulnerability
+    - A confirmed production incident
+    - A breaking change in PHP or a core dependency
 
 2. **No Feature Creep**: New features must be implemented as:
-   - Extensions (traits, decorators)
-   - New modules in separate directories
-   - Never by modifying frozen core logic
+    - Extensions (traits, decorators)
+    - New modules in separate directories
+    - Never by modifying frozen core logic
 
 3. **Approval Required**: Any change to frozen core requires:
-   - Written justification
-   - Code review by at least one senior engineer
-   - Regression test coverage
+    - Written justification
+    - Code review by at least one senior engineer
+    - Regression test coverage
 
 ## Acceptable Changes
 

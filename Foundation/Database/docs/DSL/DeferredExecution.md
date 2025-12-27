@@ -1,25 +1,29 @@
 # Deferred Execution
 
-Deferred execution implements the [Unit of Work](https://martinfowler.com/eaaCatalog/unitOfWork.html) pattern, allowing you to queue database operations and execute them all at once.
+Deferred execution implements the [Unit of Work](https://martinfowler.com/eaaCatalog/unitOfWork.html) pattern, allowing
+you to queue database operations and execute them all at once.
 
 ---
 
 ## The Concept
 
-Instead of hitting the database immediately for every INSERT, UPDATE, or DELETE, deferred mode schedules these operations in an [Identity Map](../Concepts/IdentityMap.md).
+Instead of hitting the database immediately for every INSERT, UPDATE, or DELETE, deferred mode schedules these
+operations in an [Identity Map](../Concepts/IdentityMap.md).
 
 **Benefits:**
 
 - **Performance**: Reduces database round-trips.
 - **Atomicity**: All changes can be committed in a single transaction.
-- **Order Optimization**: The Identity Map can potentially optimize the order of operations (though the current implementation respects insertion order).
+- **Order Optimization**: The Identity Map can potentially optimize the order of operations (though the current
+  implementation respects insertion order).
 - **Cancellation**: You can discard pending changes before flushing.
 
 ---
 
 ## Usage
 
-Use the `deferred()` method to switch a builder into deferred mode. You must provide (or have access to) an `IdentityMap`.
+Use the `deferred()` method to switch a builder into deferred mode. You must provide (or have access to) an
+`IdentityMap`.
 
 ```php
 $map = new IdentityMap($connection);

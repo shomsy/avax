@@ -18,7 +18,7 @@ final class Manifest
      *
      * @return array<string, string> Map of nicknames to class names.
      */
-    public static function getModules(): array
+    public static function getModules() : array
     {
         $potentialModules = [
             \Avax\Database\Transaction\Module::class,

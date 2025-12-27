@@ -28,9 +28,10 @@ final class ModuleRegistry
      * @param string    $name      Module nickname.
      * @param string    $class     Module class name.
      * @param Container $container DI container.
+     *
      * @throws ModuleException
      */
-    public function register(string $name, string $class, Container $container): void
+    public function register(string $name, string $class, Container $container) : void
     {
         if (! class_exists(class: $class)) {
             throw new ModuleException(moduleClass: $class, phase: 'registration', message: "Module class not found.");
@@ -43,8 +44,8 @@ final class ModuleRegistry
             if (! $module instanceof LifecycleInterface) {
                 throw new ModuleException(
                     moduleClass: $class,
-                    phase: 'registration',
-                    message: "Module must implement LifecycleInterface."
+                    phase      : 'registration',
+                    message    : "Module must implement LifecycleInterface."
                 );
             }
 
@@ -54,9 +55,9 @@ final class ModuleRegistry
         } catch (Throwable $e) {
             throw new ModuleException(
                 moduleClass: $class,
-                phase: 'registration',
-                message: $e->getMessage(),
-                previous: $e
+                phase      : 'registration',
+                message    : $e->getMessage(),
+                previous   : $e
             );
         }
     }
@@ -66,7 +67,7 @@ final class ModuleRegistry
      *
      * @throws ModuleException
      */
-    public function boot(): void
+    public function boot() : void
     {
         foreach ($this->modules as $name => $module) {
             if (! isset($this->booted[$name])) {
@@ -76,9 +77,9 @@ final class ModuleRegistry
                 } catch (Throwable $e) {
                     throw new ModuleException(
                         moduleClass: $module::class,
-                        phase: 'boot',
-                        message: $e->getMessage(),
-                        previous: $e
+                        phase      : 'boot',
+                        message    : $e->getMessage(),
+                        previous   : $e
                     );
                 }
             }
@@ -90,7 +91,7 @@ final class ModuleRegistry
      *
      * @throws ModuleException
      */
-    public function shutdown(): void
+    public function shutdown() : void
     {
         foreach ($this->modules as $module) {
             try {
@@ -98,9 +99,9 @@ final class ModuleRegistry
             } catch (Throwable $e) {
                 throw new ModuleException(
                     moduleClass: $module::class,
-                    phase: 'shutdown',
-                    message: $e->getMessage(),
-                    previous: $e
+                    phase      : 'shutdown',
+                    message    : $e->getMessage(),
+                    previous   : $e
                 );
             }
         }
@@ -114,9 +115,10 @@ final class ModuleRegistry
      * Find a specific active feature by its nickname.
      *
      * @param string $name The nickname (e.g., 'query_builder').
+     *
      * @return LifecycleInterface The requested feature.
      */
-    public function getModule(string $name): LifecycleInterface
+    public function getModule(string $name) : LifecycleInterface
     {
         if (! isset($this->modules[$name])) {
             throw new ModuleException(moduleClass: $name, phase: 'retrieval', message: "Module not registered.");

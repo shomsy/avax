@@ -36,13 +36,14 @@ final readonly class QueryExecuted extends Event
      */
     #[Override]
     public function __construct(
-        public string $sql,
+        public string               $sql,
         #[SensitiveParameter] array $bindings,
-        public float $timeMs,
-        public string $connectionName,
-        string $correlationId,
-        bool $redactBindings = true
-    ) {
+        public float                $timeMs,
+        public string               $connectionName,
+        string                      $correlationId,
+        bool                        $redactBindings = true
+    )
+    {
         $this->rawBindings      = $bindings;
         $this->redactedBindings = self::redactBindings(bindings: $bindings);
         $this->bindingsRedacted = $redactBindings;
@@ -53,8 +54,8 @@ final readonly class QueryExecuted extends Event
     /**
      * Redact sensitive query parameters for telemetry.
      */
-    private static function redactBindings(array $bindings): array
+    private static function redactBindings(array $bindings) : array
     {
-        return array_map(callback: static fn($value) => '[REDACTED]', array: $bindings);
+        return array_map(callback: static fn ($value) => '[REDACTED]', array: $bindings);
     }
 }

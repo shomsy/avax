@@ -50,7 +50,8 @@ $builder->transaction(function (QueryBuilder $query) {
 
 - **SQL Injection Protection**: All values are bound as parameters, never interpolated
 - **Binding Redaction**: Sensitive data (passwords, PII) is automatically masked in logs
-- **Raw SQL Guardrails**: `raw()` and `selectRaw()` include allowlist filters to block statement terminators and control characters
+- **Raw SQL Guardrails**: `raw()` and `selectRaw()` include allowlist filters to block statement terminators and control
+  characters
 
 See [SECURITY.md](SECURITY.md) for full details.
 

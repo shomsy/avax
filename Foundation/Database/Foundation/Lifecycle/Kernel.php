@@ -6,7 +6,6 @@ namespace Avax\Database\Lifecycle;
 
 use Avax\Container\Containers\DependencyInjector as Container;
 use Avax\Database\Registry\ModuleRegistry;
-use Throwable;
 
 /**
  * Central Bootstrapper (Kernel) for the database component lifecycle.
@@ -26,9 +25,8 @@ final class Kernel
 
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Architecture.md#kernel
-
      */
-    public function boot(): void
+    public function boot() : void
     {
         $modules = Manifest::getModules();
 
@@ -41,9 +39,8 @@ final class Kernel
 
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Architecture.md#kernel
-
      */
-    public function shutdown(): void
+    public function shutdown() : void
     {
         $this->registry->shutdown();
     }

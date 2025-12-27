@@ -24,7 +24,7 @@ final readonly class PdoConnection implements DatabaseConnection
     /**
      * Get the actual technical engine (PDO) to run your SQL.
      */
-    public function getConnection(): PDO
+    public function getConnection() : PDO
     {
         return $this->pdo;
     }
@@ -34,7 +34,7 @@ final readonly class PdoConnection implements DatabaseConnection
      *
      * @return bool
      */
-    public function ping(): bool
+    public function ping() : bool
     {
         try {
             $this->pdo->query(query: "SELECT 1");
@@ -48,7 +48,7 @@ final readonly class PdoConnection implements DatabaseConnection
     /**
      * Get the nickname assigned to this connection.
      */
-    public function getName(): string
+    public function getName() : string
     {
         return $this->name;
     }

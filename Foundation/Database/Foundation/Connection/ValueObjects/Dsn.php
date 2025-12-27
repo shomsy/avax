@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Database\Connection\ValueObjects;
 
-use InvalidArgumentException;
-
 /**
  * Immutable value object encapsulating a PDO Data Source Name string.
  *
@@ -27,6 +25,7 @@ final readonly class Dsn
      * @param string $host     The computer's address (e.g., '127.0.0.1').
      * @param string $database The name of the specific database (e.g., 'users_db').
      * @param string $charset  The "Language" (Encoding) to use (e.g., 'utf8').
+     *
      * @return self An immutable object holding the perfectly formatted address.
      */
     public static function for(
@@ -34,7 +33,8 @@ final readonly class Dsn
         string $host,
         string $database,
         string $charset,
-    ): self {
+    ) : self
+    {
         // Different drivers have different "Address Formats".
         // SQLite:   "sqlite:/path/to/db.sqlite"
         // MySQL:    "mysql:host=127.0.0.1;dbname=test;charset=utf8"
@@ -51,7 +51,7 @@ final readonly class Dsn
      *
      * @return string
      */
-    public function toString(): string
+    public function toString() : string
     {
         return $this->dsn;
     }

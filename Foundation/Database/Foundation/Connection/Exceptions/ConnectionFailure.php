@@ -11,18 +11,18 @@ use Throwable;
  * A "Total Connection Failure" report.
  *
  * -- what is it?
- * This is a "Fatal" error. It's more serious than a generic connection 
- * error. It means the database server is completely unreachable or it flat-out 
+ * This is a "Fatal" error. It's more serious than a generic connection
+ * error. It means the database server is completely unreachable or it flat-out
  * rejected our attempt to talk to it.
  *
  * -- how to imagine it:
- * Think of trying to visit a store and finding the building has burned down 
- * or the doors are welded shut. It's not just a "wrong key" issue; it's a 
+ * Think of trying to visit a store and finding the building has burned down
+ * or the doors are welded shut. It's not just a "wrong key" issue; it's a
  * "the destination doesn't exist or is offline" issue.
  *
  * -- why this exists:
- * To trigger immediate recovery logic. When the system sees this specific 
- * error, it knows there's no point in "trying again" immediately—it might 
+ * To trigger immediate recovery logic. When the system sees this specific
+ * error, it knows there's no point in "trying again" immediately—it might
  * need to switch to a backup server or show a "Maintenance" page.
  *
  * -- mental models:
@@ -39,8 +39,9 @@ class ConnectionFailure extends DatabaseException
     public function __construct(
         public readonly string $name,
         string                 $message = "",
-        Throwable|null $previous = null
-    ) {
+        Throwable|null         $previous = null
+    )
+    {
         parent::__construct(message: $message, code: 0, previous: $previous);
     }
 }

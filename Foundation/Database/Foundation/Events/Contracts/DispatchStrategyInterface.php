@@ -10,8 +10,8 @@ use Avax\Database\Events\Event;
  * Technical contract defining the processing strategy for system-wide signals.
  *
  * -- intent:
- * Abstract the execution policy (synchronous, asynchronous, queued, or deferred) 
- * for signal distribution, allowing the EventBus to remain agnostic of the 
+ * Abstract the execution policy (synchronous, asynchronous, queued, or deferred)
+ * for signal distribution, allowing the EventBus to remain agnostic of the
  * physical performance profile required for observer execution.
  *
  * -- invariants:
@@ -28,13 +28,14 @@ interface DispatchStrategyInterface
      * Coordinate the technical execution of a collection of observers for a specific signal.
      *
      * -- intent:
-     * Physically triggers the provided listeners in accordance with the 
-     * implementation's performance strategy (e.g., executing all listeners 
+     * Physically triggers the provided listeners in accordance with the
+     * implementation's performance strategy (e.g., executing all listeners
      * sequentially in the current process).
      *
      * @param Event              $event     The technical signal payload to be distributed.
      * @param iterable<callable> $listeners The collection of authorized technical handlers/observers to be triggered.
+     *
      * @return void
      */
-    public function handle(Event $event, iterable $listeners): void;
+    public function handle(Event $event, iterable $listeners) : void;
 }

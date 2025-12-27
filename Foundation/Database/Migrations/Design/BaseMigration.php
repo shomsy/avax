@@ -88,7 +88,7 @@ abstract class BaseMigration
         if ($this->queryBuilder === null) {
             throw new RuntimeException(
                 message: 'QueryBuilder must be set on migration instance. ' .
-                'Use setQueryBuilder() method or inject via constructor in migration classes.'
+                         'Use setQueryBuilder() method or inject via constructor in migration classes.'
             );
         }
 

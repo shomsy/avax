@@ -44,18 +44,19 @@ final readonly class ConnectionConfig
      *     charset?: string,
      *     name?: string
      * } $config The raw dictionary of details.
+     *
      * @return self A fresh, perfectly structured ID Card.
      */
-    public static function from(array $config): self
+    public static function from(array $config) : self
     {
         return new self(
-            driver: $config['driver'] ?? 'mysql',
-            host: $config['host'] ?? '127.0.0.1',
+            driver  : $config['driver'] ?? 'mysql',
+            host    : $config['host'] ?? '127.0.0.1',
             database: $config['database'] ?? '',
             username: $config['username'] ?? 'root',
             password: $config['password'] ?? '',
-            charset: $config['charset'] ?? 'utf8mb4',
-            name: $config['name'] ?? 'default'
+            charset : $config['charset'] ?? 'utf8mb4',
+            name    : $config['name'] ?? 'default'
         );
     }
 }

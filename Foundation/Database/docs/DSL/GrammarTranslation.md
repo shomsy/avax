@@ -2,12 +2,15 @@
 
 ## What it does
 
-Grammar classes (`BaseGrammar`, `MySqlGrammar`, etc.) are responsible for turning the `QueryState` DTO into a valid SQL string for a specific database engine.
+Grammar classes (`BaseGrammar`, `MySqlGrammar`, etc.) are responsible for turning the `QueryState` DTO into a valid SQL
+string for a specific database engine.
 
 ## Why it exists
 
-- **Dialect Abstraction**: Different databases use different syntax for things like limits (`LIMIT` vs `TOP`), column quoting (`backticks` vs `double quotes`), and upserts.
-- **Single Responsibility**: The `QueryBuilder` handles logic, while the `Grammar` handles the technical string formatting.
+- **Dialect Abstraction**: Different databases use different syntax for things like limits (`LIMIT` vs `TOP`), column
+  quoting (`backticks` vs `double quotes`), and upserts.
+- **Single Responsibility**: The `QueryBuilder` handles logic, while the `Grammar` handles the technical string
+  formatting.
 
 ## When to use
 
@@ -22,5 +25,7 @@ Grammar classes (`BaseGrammar`, `MySqlGrammar`, etc.) are responsible for turnin
 
 ## Common pitfalls
 
-- **Quoting identifiers**: Always use the grammar's `wrap()` method for column and table names to ensure they are escaped according to the database's rules.
-- **SQL Injection in Grammar**: Grammars should never interpolate raw values. They should only produce SQL fragments with placeholders (`?`) that match the `BindingBag`.
+- **Quoting identifiers**: Always use the grammar's `wrap()` method for column and table names to ensure they are
+  escaped according to the database's rules.
+- **SQL Injection in Grammar**: Grammars should never interpolate raw values. They should only produce SQL fragments
+  with placeholders (`?`) that match the `BindingBag`.

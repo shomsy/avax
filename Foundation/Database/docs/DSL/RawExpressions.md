@@ -6,9 +6,12 @@ This document explains how to inject raw SQL fragments safely into your queries 
 
 ## The Concept
 
-The QueryBuilder is designed to protect you from SQL injection by automatically escaping values and quoting identifiers. However, sometimes you need to pass a specific SQL function (like `NOW()`) or a complex calculation that shouldn't be quoted like a string.
+The QueryBuilder is designed to protect you from SQL injection by automatically escaping values and quoting identifiers.
+However, sometimes you need to pass a specific SQL function (like `NOW()`) or a complex calculation that shouldn't be
+quoted like a string.
 
-**Raw Expressions** act as an "escape hatch" — they tell the QueryBuilder: "Trust me, I know what I'm doing. Put this text directly into the SQL."
+**Raw Expressions** act as an "escape hatch" — they tell the QueryBuilder: "Trust me, I know what I'm doing. Put this
+text directly into the SQL."
 
 ---
 
@@ -62,7 +65,8 @@ $builder->orderBy($builder->raw('FIELD(status, "active", "pending", "banned")'))
 
 ## Security Warning ⚠️
 
-**NEVER** pass untrusted user input directly into a raw expression. This bypasses all security protections and opens you up to SQL injection.
+**NEVER** pass untrusted user input directly into a raw expression. This bypasses all security protections and opens you
+up to SQL injection.
 
 ```php
 // ❌ DANGEROUS - Do NOT do this:
@@ -73,7 +77,8 @@ $builder->raw("DATEDIFF($userInput, NOW())");
 $builder->selectRaw('DATEDIFF(?, NOW())', [$userInput]);
 ```
 
-The `selectRaw`, `whereRaw` (via closures), and `havingRaw` methods often support binding arrays to safely handle parameters.
+The `selectRaw`, `whereRaw` (via closures), and `havingRaw` methods often support binding arrays to safely handle
+parameters.
 
 ---
 

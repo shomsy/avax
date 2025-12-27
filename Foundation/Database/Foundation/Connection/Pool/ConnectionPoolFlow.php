@@ -24,7 +24,7 @@ final class ConnectionPoolFlow
      *
      * @return self
      */
-    public static function begin(): self
+    public static function begin() : self
     {
         return new self();
     }
@@ -33,9 +33,10 @@ final class ConnectionPoolFlow
      * Provide configuration settings for the pool.
      *
      * @param array $config
+     *
      * @return self
      */
-    public function using(array $config): self
+    public function using(array $config) : self
     {
         $this->config = $config;
 
@@ -47,7 +48,7 @@ final class ConnectionPoolFlow
      *
      * @return ConnectionPool
      */
-    public function pool(): ConnectionPool
+    public function pool() : ConnectionPool
     {
         return new ConnectionPool(config: $this->config);
     }

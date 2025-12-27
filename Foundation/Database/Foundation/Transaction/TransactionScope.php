@@ -11,10 +11,10 @@ use Throwable;
  * Technical RAII-style scope value object for managing the lifetime of a specific transaction block.
  *
  * -- intent:
- * Implements the "Dispose/RAII" pattern to ensure deterministic transaction 
- * finalization. This allows developers to open a transaction window that 
- * automatically reverts (ROLLBACK) upon destruction if an explicit 
- * completion (COMMIT) signal was not dispatched, safeguarding against 
+ * Implements the "Dispose/RAII" pattern to ensure deterministic transaction
+ * finalization. This allows developers to open a transaction window that
+ * automatically reverts (ROLLBACK) upon destruction if an explicit
+ * completion (COMMIT) signal was not dispatched, safeguarding against
  * dangling transactions.
  *
  * -- invariants:
@@ -32,7 +32,8 @@ final class TransactionScope
     private bool $completed = false;
 
     /**
-     * @param TransactionManagerInterface $manager The active technical authority responsible for atomicity and persistence.
+     * @param TransactionManagerInterface $manager The active technical authority responsible for atomicity and
+     *                                             persistence.
      */
     public function __construct(private readonly TransactionManagerInterface $manager)
     {
@@ -43,8 +44,8 @@ final class TransactionScope
      * Coordinate the automated teardown and defensive rollback of a dangling transaction window.
      *
      * -- intent:
-     * Prevents data corruption and persistent connection locks by ensuring 
-     * that every transaction opened by this scope is closed, either through 
+     * Prevents data corruption and persistent connection locks by ensuring
+     * that every transaction opened by this scope is closed, either through
      * success (COMMIT) or defensive failure recovery (ROLLBACK).
      */
     public function __destruct()
@@ -62,13 +63,13 @@ final class TransactionScope
      * Coordinate the manual finalization and technical COMMIT of all changes within this scope.
      *
      * -- intent:
-     * Signals the successful and complete execution of the enclosed unit 
-     * of work, instructing the manager to persist changes and disabling the 
+     * Signals the successful and complete execution of the enclosed unit
+     * of work, instructing the manager to persist changes and disabling the
      * automated rollback guardian.
      *
      * @return void
      */
-    public function complete(): void
+    public function complete() : void
     {
         $this->manager->commit();
         $this->completed = true;

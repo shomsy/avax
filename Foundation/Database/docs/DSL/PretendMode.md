@@ -1,12 +1,14 @@
 # Pretend Mode
 
-Pretend mode allows you to "dry run" your queries. It generates the SQL that *would* be executed without actually running it against the database.
+Pretend mode allows you to "dry run" your queries. It generates the SQL that *would* be executed without actually
+running it against the database.
 
 ---
 
 ## How It Works
 
-When you call `pretend()`, the builder enters a simulation mode. Any subsequent execution method (like `get()`, `update()`, `delete()`) will:
+When you call `pretend()`, the builder enters a simulation mode. Any subsequent execution method (like `get()`,
+`update()`, `delete()`) will:
 
 1. Compile the QueryState into a SQL string
 2. Gather the execution bindings

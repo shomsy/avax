@@ -1,6 +1,7 @@
 # Schema Operations
 
-This document covers structural database modifications — creating tables, dropping databases, and managing schema objects.
+This document covers structural database modifications — creating tables, dropping databases, and managing schema
+objects.
 
 ---
 

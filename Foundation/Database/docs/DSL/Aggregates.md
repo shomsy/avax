@@ -1,6 +1,7 @@
 # Aggregates (Statistical Functions)
 
-The `HasAggregates` trait provides methods for performing database-level calculations. This document explains each aggregate method in human-readable terms.
+The `HasAggregates` trait provides methods for performing database-level calculations. This document explains each
+aggregate method in human-readable terms.
 
 ---
 
@@ -18,7 +19,8 @@ The `HasAggregates` trait provides methods for performing database-level calcula
 
 **Count how many records match your query.**
 
-Returns an integer representing the total number of matching rows. The database does the counting — much faster than fetching all records and counting in PHP.
+Returns an integer representing the total number of matching rows. The database does the counting — much faster than
+fetching all records and counting in PHP.
 
 ```php
 // Count all users
@@ -148,9 +150,11 @@ $builder->from('products')
 
 ## Best Practices
 
-1. **Use database-level aggregates** — Always prefer `count()` over `count($builder->get())`. The database is optimized for this.
+1. **Use database-level aggregates** — Always prefer `count()` over `count($builder->get())`. The database is optimized
+   for this.
 
-2. **Watch for NULLs** — Aggregates ignore NULL values. `COUNT(column)` counts non-NULL values; `COUNT(*)` counts all rows.
+2. **Watch for NULLs** — Aggregates ignore NULL values. `COUNT(column)` counts non-NULL values; `COUNT(*)` counts all
+   rows.
 
 3. **Use with conditions** — Aggregates respect WHERE clauses, so you can calculate for specific subsets.
 

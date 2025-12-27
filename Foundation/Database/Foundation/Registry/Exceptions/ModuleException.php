@@ -12,13 +12,13 @@ use Throwable;
  * A "Feature Failure" report (Module Error).
  *
  * -- what is it?
- * This is a specialized error that happens when something goes wrong with 
- * a specific database "Feature" (Module) while it's starting up or 
+ * This is a specialized error that happens when something goes wrong with
+ * a specific database "Feature" (Module) while it's starting up or
  * shutting down.
  *
  * -- how to imagine it:
- * Think of an "Accident Report" in a factory. It doesn't just say 
- * "Something broke"; it says "The conveyor belt broke while we were 
+ * Think of an "Accident Report" in a factory. It doesn't just say
+ * "Something broke"; it says "The conveyor belt broke while we were
  * trying to turn it on (Boot phase)."
  *
  * -- why this exists:
@@ -44,10 +44,11 @@ final class ModuleException extends DatabaseException
         private readonly string $phase,
         string                  $message,
         Throwable|null          $previous = null
-    ) {
+    )
+    {
         parent::__construct(
-            message: "Module [{$moduleClass}] failed during [{$phase}]: {$message}",
-            code: 0,
+            message : "Module [{$moduleClass}] failed during [{$phase}]: {$message}",
+            code    : 0,
             previous: $previous
         );
     }
@@ -55,7 +56,7 @@ final class ModuleException extends DatabaseException
     /**
      * Get the name of the problematic feature.
      */
-    public function getModuleClass(): string
+    public function getModuleClass() : string
     {
         return $this->moduleClass;
     }
@@ -63,7 +64,7 @@ final class ModuleException extends DatabaseException
     /**
      * Get the stage of life where the error happened.
      */
-    public function getPhase(): string
+    public function getPhase() : string
     {
         return $this->phase;
     }

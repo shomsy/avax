@@ -39,7 +39,7 @@ abstract readonly class Event
      *
      * @return string The full name of the event class.
      */
-    public function getName(): string
+    public function getName() : string
     {
         return static::class;
     }

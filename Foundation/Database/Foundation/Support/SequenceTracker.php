@@ -8,23 +8,23 @@ namespace Avax\Database\Support;
  * The "Number Clicker" (Sequence Tracker).
  *
  * -- what is it?
- * This is a very simple tool that gives out numbers in order (1, 2, 3...). 
- * It's primarily used to tag events so we know exactly which one happened 
+ * This is a very simple tool that gives out numbers in order (1, 2, 3...).
+ * It's primarily used to tag events so we know exactly which one happened
  * first.
  *
  * -- how to imagine it:
- * Think of the "Take a Number" machine at a deli counter. Every event 
- * that happens in the database pulls a ticket from this machine, so 
- * we can perfectly reconstruct the order of events later, even if 
+ * Think of the "Take a Number" machine at a deli counter. Every event
+ * that happens in the database pulls a ticket from this machine, so
+ * we can perfectly reconstruct the order of events later, even if
  * they happen only microseconds apart.
  *
  * -- why this exists:
- * To provide a "Source of Truth" for time. Computers can sometimes have 
- * tiny fluctuations in their clocks, but a simple counter never lies 
+ * To provide a "Source of Truth" for time. Computers can sometimes have
+ * tiny fluctuations in their clocks, but a simple counter never lies
  * about the order of arrival.
  *
  * -- mental models:
- * - "Monotonic": It only ever goes UP. It never repeats and never goes 
+ * - "Monotonic": It only ever goes UP. It never repeats and never goes
  *   backwards.
  */
 final class SequenceTracker
@@ -37,7 +37,7 @@ final class SequenceTracker
      *
      * @return int The next number in the chain.
      */
-    public static function next(): int
+    public static function next() : int
     {
         return ++self::$counter;
     }

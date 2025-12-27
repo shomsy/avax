@@ -1,6 +1,7 @@
 # Ordering (Sorting Results)
 
-The `HasOrders` trait provides methods for sorting query results. This document explains each ordering method in human-readable terms.
+The `HasOrders` trait provides methods for sorting query results. This document explains each ordering method in
+human-readable terms.
 
 ---
 
@@ -44,7 +45,8 @@ $builder->from('products')
 
 **Shorthand for descending order.**
 
-Instead of `orderBy('column', 'DESC')`, you can write `orderByDesc('column')`. More readable for common descending sorts.
+Instead of `orderBy('column', 'DESC')`, you can write `orderByDesc('column')`. More readable for common descending
+sorts.
 
 ```php
 // These are equivalent:
@@ -59,7 +61,8 @@ $builder->from('posts')->orderByDesc('created_at');
 
 **Shuffle results into a random sequence.**
 
-Each query execution returns results in a different, unpredictable order. The database handles randomization server-side.
+Each query execution returns results in a different, unpredictable order. The database handles randomization
+server-side.
 
 Useful for "featured" sections, quizzes, or any time you need variety.
 
@@ -72,7 +75,8 @@ $builder->from('products')->where('featured', true)->inRandomOrder()->limit(5);
 $quotes = $builder->from('quotes')->inRandomOrder()->limit(3)->get();
 ```
 
-⚠️ **Performance note:** Random ordering can be slow on large tables because the database must scan all rows before shuffling.
+⚠️ **Performance note:** Random ordering can be slow on large tables because the database must scan all rows before
+shuffling.
 
 ---
 
@@ -80,7 +84,8 @@ $quotes = $builder->from('quotes')->inRandomOrder()->limit(3)->get();
 
 **Sort by newest first (descending by timestamp).**
 
-A semantic shorthand for `orderByDesc('created_at')`. Makes your code more expressive when dealing with chronological data.
+A semantic shorthand for `orderByDesc('created_at')`. Makes your code more expressive when dealing with chronological
+data.
 
 ```php
 // These are equivalent:
@@ -123,11 +128,13 @@ $pendingJobs = $builder->from('jobs')
 
 ## Best Practices
 
-1. **Order matters** — When chaining multiple `orderBy()` calls, the first one is primary, subsequent ones are secondary tiebreakers.
+1. **Order matters** — When chaining multiple `orderBy()` calls, the first one is primary, subsequent ones are secondary
+   tiebreakers.
 
 2. **Index your sort columns** — Sorting on non-indexed columns requires full table scans.
 
-3. **Use semantic methods** — `latest()` and `oldest()` make code self-documenting compared to raw `orderBy('created_at', 'DESC')`.
+3. **Use semantic methods** — `latest()` and `oldest()` make code self-documenting compared to raw
+   `orderBy('created_at', 'DESC')`.
 
 4. **Combine with LIMIT** — Sorting is often paired with `limit()` for "top N" queries.
 

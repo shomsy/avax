@@ -12,7 +12,7 @@ class ConnectionPoolTest extends TestCase
     public function testConnectionPoolInitialization() : void
     {
         $pool = new ConnectionPool(
-            ['connections' => ['mysql' => ['driver' => 'mysql']]]
+            config: ['connections' => ['mysql' => ['driver' => 'mysql']]]
         );
 
         $this->assertInstanceOf(ConnectionPool::class, $pool);
@@ -20,7 +20,7 @@ class ConnectionPoolTest extends TestCase
 
     public function testPruneStaleConnections() : void
     {
-        $pool = new ConnectionPool([]);
+        $pool = new ConnectionPool(config: []);
 
         // This is a unit test, so we can't easily test real connections
         // but we can verify the method exists and runs.

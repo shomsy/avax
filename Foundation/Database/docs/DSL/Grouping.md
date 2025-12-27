@@ -39,7 +39,8 @@ $builder->from('orders')
 
 **Filter groups using aggregate functions.**
 
-Similar to `where()`, but works on **groups** instead of individual rows. The SQL `HAVING` clause runs *after* the `GROUP BY` operation.
+Similar to `where()`, but works on **groups** instead of individual rows. The SQL `HAVING` clause runs *after* the
+`GROUP BY` operation.
 
 You're telling the librarian: "Show me categories that have **more than 5 books**."
 
@@ -53,14 +54,17 @@ $builder->from('products')
 //      GROUP BY category_id HAVING count > 5
 ```
 
-⚠️ **Important:** You generally cannot use `having()` on columns that aren't in the `GROUP BY` clause or an aggregate function.
+⚠️ **Important:** You generally cannot use `having()` on columns that aren't in the `GROUP BY` clause or an aggregate
+function.
 
 ---
 
 ## Best Practices
 
-1. **Use with Aggregates** — Grouping typically only makes sense when you're calculating something (`SUM`, `COUNT`, `AVG`).
-2. **Filter rows first** — Use `where()` to filter raw data *before* grouping, and `having()` to filter the *results* of grouping. `where()` is faster.
+1. **Use with Aggregates** — Grouping typically only makes sense when you're calculating something (`SUM`, `COUNT`,
+   `AVG`).
+2. **Filter rows first** — Use `where()` to filter raw data *before* grouping, and `having()` to filter the *results* of
+   grouping. `where()` is faster.
 3. **Select what you group** — In most strict SQL modes, you must select the columns you group by.
 
 ---

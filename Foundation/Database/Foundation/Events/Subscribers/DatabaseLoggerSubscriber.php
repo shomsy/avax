@@ -16,17 +16,17 @@ use Psr\Log\LoggerInterface;
  * Infrastructure observer for logging database activity and lifecycle events.
  *
  * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Telemetry.md#databaseloggersubscriber
-
  */
 final readonly class DatabaseLoggerSubscriber implements EventSubscriberInterface
 {
     /**
      * @param LoggerInterface $logger The PSR-3 logging implementation for outputting telemetry.
-     * @param Config|null     $config Optional configuration registry for dynamic control over logging levels and redaction.
+     * @param Config|null     $config Optional configuration registry for dynamic control over logging levels and
+     *                                redaction.
      */
     public function __construct(
         private LoggerInterface $logger,
-        private Config|null $config = null
+        private Config|null     $config = null
     ) {}
 
     /**
@@ -38,7 +38,7 @@ final readonly class DatabaseLoggerSubscriber implements EventSubscriberInterfac
      *
      * @return array<string, string> Collection mapping Event class names to handler method names.
      */
-    public function getSubscribedEvents(): array
+    public function getSubscribedEvents() : array
     {
         return [
             ConnectionOpened::class   => 'onConnectionOpened',
@@ -56,9 +56,10 @@ final readonly class DatabaseLoggerSubscriber implements EventSubscriberInterfac
      * for pool optimization monitoring.
      *
      * @param ConnectionAcquired $event The signal payload containing acquisition details.
+     *
      * @return void
      */
-    public function onConnectionAcquired(ConnectionAcquired $event): void
+    public function onConnectionAcquired(ConnectionAcquired $event) : void
     {
         $this->logger->info(message: "Database connection acquired", context: [
             'correlation_id' => $event->correlationId,
@@ -76,9 +77,10 @@ final readonly class DatabaseLoggerSubscriber implements EventSubscriberInterfac
      * connection "churn" or pool exhaustion.
      *
      * @param ConnectionOpened $event The signal payload containing the new connection data.
+     *
      * @return void
      */
-    public function onConnectionOpened(ConnectionOpened $event): void
+    public function onConnectionOpened(ConnectionOpened $event) : void
     {
         $this->logger->info(message: "Database connection opened", context: [
             'correlation_id' => $event->correlationId,
@@ -95,9 +97,10 @@ final readonly class DatabaseLoggerSubscriber implements EventSubscriberInterfac
      * failures to assist in alerting and post-mortem analysis.
      *
      * @param ConnectionFailed $event The signal payload containing the failure exception.
+     *
      * @return void
      */
-    public function onConnectionFailed(ConnectionFailed $event): void
+    public function onConnectionFailed(ConnectionFailed $event) : void
     {
         $this->logger->error(message: "Database connection failed", context: [
             'correlation_id' => $event->correlationId,
@@ -115,9 +118,10 @@ final readonly class DatabaseLoggerSubscriber implements EventSubscriberInterfac
      * enforcing security redaction policies to prevent data leakage into logs.
      *
      * @param QueryExecuted $event The signal payload containing SQL, bindings, and timing data.
+     *
      * @return void
      */
-    public function onQueryExecuted(QueryExecuted $event): void
+    public function onQueryExecuted(QueryExecuted $event) : void
     {
         $shouldRedact = $this->config?->get(key: 'logging.redact', default: true) ?? true;
         $includeRaw   = $this->config?->get(key: 'logging.include_raw_bindings', default: false) ?? false;

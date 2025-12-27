@@ -10,8 +10,8 @@ use Avax\Database\QueryBuilder\Core\Grammar\GrammarInterface;
  * technical builder for constructing and compiling JOIN clause conditions.
  *
  * -- intent:
- * Provides a specialized, fluent interface for defining complex relational 
- * links (ON conditions) between data sources, facilitating the use of 
+ * Provides a specialized, fluent interface for defining complex relational
+ * links (ON conditions) between data sources, facilitating the use of
  * closures to group logical conditions within a join context.
  *
  * -- invariants:
@@ -37,15 +37,17 @@ final class JoinClause
      * Coordinate the addition of an 'OR ON' logical condition to the join clause.
      *
      * -- intent:
-     * Appends a new comparison constraint linked via the OR logical operator, 
+     * Appends a new comparison constraint linked via the OR logical operator,
      * allowing for alternative relationship matches.
      *
      * @param string      $first    The structural identifier of the left-hand column.
      * @param string|null $operator The technical comparison operator (defaults to '=' if second is provided).
-     * @param string|null $second   The structural identifier of the right-hand column or the value (if operator is omitted).
+     * @param string|null $second   The structural identifier of the right-hand column or the value (if operator is
+     *                              omitted).
+     *
      * @return self The current builder instance for further fluent configuration.
      */
-    public function orOn(string $first, string|null $operator = null, string|null $second = null): self
+    public function orOn(string $first, string|null $operator = null, string|null $second = null) : self
     {
         return $this->on(first: $first, operator: $operator, second: $second, boolean: 'OR');
     }
@@ -54,17 +56,18 @@ final class JoinClause
      * Coordinate the addition of an 'ON' (AND ON) logical condition to the join clause.
      *
      * -- intent:
-     * Provides the primary mechanism for defining a relational constraint, 
-     * supporting both the standard three-argument form and the shortcut 
+     * Provides the primary mechanism for defining a relational constraint,
+     * supporting both the standard three-argument form and the shortcut
      * two-argument equality form.
      *
      * @param string      $first    The structural identifier of the left-hand column.
      * @param string|null $operator The technical comparison operator or the target value (for shortcuts).
      * @param string|null $second   The structural identifier of the right-hand target column.
      * @param string      $boolean  The logical joiner used to link this condition ('AND' or 'OR').
+     *
      * @return self The current builder instance.
      */
-    public function on(string $first, string|null $operator = null, string|null $second = null, string $boolean = 'AND'): self
+    public function on(string $first, string|null $operator = null, string|null $second = null, string $boolean = 'AND') : self
     {
         // Technical shortcut: handle two-argument equality form.
         if ($operator !== null && $second === null) {
@@ -86,12 +89,12 @@ final class JoinClause
      * Coordinate the technical compilation of all captured conditions into a valid SQL string.
      *
      * -- intent:
-     * Transforms the internal condition collection into a dialect-aware SQL 
+     * Transforms the internal condition collection into a dialect-aware SQL
      * snapshot, ensuring all identifiers are correctly escaped via the grammar technician.
      *
      * @return string The compiled technical SQL 'ON' clause string.
      */
-    public function toSql(): string
+    public function toSql() : string
     {
         if (empty($this->conditions)) {
             return '';

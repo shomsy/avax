@@ -21,32 +21,32 @@ use Avax\Database\Support\ExecutionScope;
 use Avax\Database\Transaction\TransactionManager;
 
 // 1. Bootstrap the infrastructure
-$pdo = new PDO('mysql:host=localhost;dbname=example', 'user', 'pass');
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo = new PDO(dsn: 'mysql:host=localhost;dbname=example', username: 'user', password: 'pass');
+$pdo->setAttribute(attribute: PDO::ATTR_ERRMODE, value: PDO::ERRMODE_EXCEPTION);
 
-$grammar           = new MySQLGrammar();
-$executor          = new PDOExecutor(pdo: $pdo, connectionName: 'primary');
-$transactionMgr    = new TransactionManager(pdo: $pdo);
-$orchestrator      = new QueryOrchestrator(
-    executor: $executor,
+$grammar        = new MySQLGrammar();
+$executor       = new PDOExecutor(pdo: $pdo, connectionName: 'primary');
+$transactionMgr = new TransactionManager(pdo: $pdo);
+$orchestrator   = new QueryOrchestrator(
+    executor          : $executor,
     transactionManager: $transactionMgr
 );
 
 // 2. Create an execution scope for correlation tracking
-$scope = ExecutionScope::fresh(correlationId: 'req_' . bin2hex(random_bytes(8)));
+$scope = ExecutionScope::fresh(correlationId: 'req_' . bin2hex(string: random_bytes(length: 8)));
 
 // 3. Initialize the Query Builder
 $builder = new QueryBuilder(grammar: $grammar, orchestrator: $orchestrator->withScope(scope: $scope));
 
 // 4. Execute within a transactional boundary
-$builder->transaction(function (QueryBuilder $query) {
+$builder->transaction(callback: function (QueryBuilder $query) {
 
     // Standard INSERT
     $query->from(table: 'users')->insert(values: [
-        'name'     => 'John Doe',
-        'email'    => 'john@example.com',
-        'password' => password_hash('secret', PASSWORD_BCRYPT), // This will be redacted in logs
-    ]);
+                                                     'name'     => 'John Doe',
+                                                     'email'    => 'john@example.com',
+                                                     'password' => password_hash(password: 'secret', algo: PASSWORD_BCRYPT), // This will be redacted in logs
+                                                 ]);
 
     // Deferred execution with Identity Map (batch optimization)
     $identityMap = new IdentityMap(orchestrator: $query->orchestrator);

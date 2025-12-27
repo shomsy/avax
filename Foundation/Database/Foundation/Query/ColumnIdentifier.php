@@ -25,7 +25,7 @@ final readonly class ColumnIdentifier
      *
      * @return string
      */
-    public function __toString(): string
+    public function __toString() : string
     {
         if ($this->alias === null) {
             return $this->name;

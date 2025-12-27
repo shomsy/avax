@@ -8,14 +8,14 @@ namespace Avax\Database\QueryBuilder\DTO;
  * The "Operation Result" (Execution Result).
  *
  * -- what is it?
- * This is a standardized report that tells you whether a database operation 
- * succeeded and how many rows were affected. Unlike a simple boolean, it 
+ * This is a standardized report that tells you whether a database operation
+ * succeeded and how many rows were affected. Unlike a simple boolean, it
  * carries both the success status and the physical impact (count).
  *
  * -- why this exists:
- * 1. DDL Support: DDL statements (like CREATE TABLE) often return 0 affected 
+ * 1. DDL Support: DDL statements (like CREATE TABLE) often return 0 affected
  *    rows but are still successful. A separate 'success' flag handles this.
- * 2. Enterprise Patterns: It provides a consistent, immutable object for 
+ * 2. Enterprise Patterns: It provides a consistent, immutable object for
  *    checking any "Change" query.
  */
 final readonly class ExecutionResult
@@ -32,7 +32,7 @@ final readonly class ExecutionResult
     /**
      * Create a success report.
      */
-    public static function success(int $affectedRows = 0): self
+    public static function success(int $affectedRows = 0) : self
     {
         return new self(success: true, affectedRows: $affectedRows);
     }
@@ -40,7 +40,7 @@ final readonly class ExecutionResult
     /**
      * Create a failure report.
      */
-    public static function failure(): self
+    public static function failure() : self
     {
         return new self(success: false, affectedRows: 0);
     }
@@ -48,7 +48,7 @@ final readonly class ExecutionResult
     /**
      * Was the operation successful?
      */
-    public function isSuccessful(): bool
+    public function isSuccessful() : bool
     {
         return $this->success;
     }
@@ -56,7 +56,7 @@ final readonly class ExecutionResult
     /**
      * Get the number of affected rows.
      */
-    public function getAffectedRows(): int
+    public function getAffectedRows() : int
     {
         return $this->affectedRows;
     }

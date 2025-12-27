@@ -26,10 +26,11 @@ final readonly class ExecutionScope
      * Create a new scope with a randomly generated correlation ID.
      *
      * @param array $metadata Initial metrics/context data.
-     * @throws RandomException
+     *
      * @return self
+     * @throws RandomException
      */
-    public static function fresh(array $metadata = []): self
+    public static function fresh(array $metadata = []) : self
     {
         $id = bin2hex(string: random_bytes(length: 8));
 

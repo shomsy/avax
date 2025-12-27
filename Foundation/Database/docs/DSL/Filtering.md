@@ -1,6 +1,7 @@
 # Filtering (WHERE Clauses)
 
-The `HasConditions` trait provides all WHERE clause methods for the QueryBuilder. This document explains each filtering method in human-readable terms.
+The `HasConditions` trait provides all WHERE clause methods for the QueryBuilder. This document explains each filtering
+method in human-readable terms.
 
 ---
 
@@ -19,7 +20,8 @@ The `HasConditions` trait provides all WHERE clause methods for the QueryBuilder
 
 **Add a basic filtering condition to your query.**
 
-This is the workhorse of filtering. It adds a `WHERE` clause that compares a column to a value using an operator (=, >, <, LIKE, etc.).
+This is the workhorse of filtering. It adds a `WHERE` clause that compares a column to a value using an
+operator (=, >, <, LIKE, etc.).
 
 Think of it as telling a librarian: "I only want books where the **author** is **'Stephen King'**."
 
@@ -56,7 +58,8 @@ $builder->from('orders')
 
 **Add an alternative condition with OR logic.**
 
-While `where()` chains conditions with AND, `orWhere()` uses OR. This means "match if THIS condition is true OR if the PREVIOUS conditions are true."
+While `where()` chains conditions with AND, `orWhere()` uses OR. This means "match if THIS condition is true OR if the
+PREVIOUS conditions are true."
 
 You're at a restaurant asking: "Bring me a dish that's vegetarian **OR** costs less than $10."
 
@@ -80,7 +83,8 @@ $builder->from('users')
 
 **Filter records where a column matches any value in a list.**
 
-The SQL `IN` operator — checks if a value exists in a provided set. You're checking if someone's name is on the guest list.
+The SQL `IN` operator — checks if a value exists in a provided set. You're checking if someone's name is on the guest
+list.
 
 Much more efficient than chaining multiple `orWhere()` calls for the same column.
 
@@ -154,7 +158,8 @@ $builder->from('products')->whereBetween('price', [0, 10], not: true);
 
 **Group multiple conditions inside parentheses.**
 
-This is how you control order of operations in complex queries. Without nesting, `A AND B OR C` might not mean what you think. With nesting, you can explicitly say `A AND (B OR C)`.
+This is how you control order of operations in complex queries. Without nesting, `A AND B OR C` might not mean what you
+think. With nesting, you can explicitly say `A AND (B OR C)`.
 
 You're telling the librarian: "I want books that are (either mysteries OR thrillers) AND published after 2020."
 
@@ -192,7 +197,8 @@ $builder->from('products')
 
 ## Best Practices
 
-1. **Always use parameter binding** — The QueryBuilder automatically binds values as parameters to prevent SQL injection. Never concatenate user input directly.
+1. **Always use parameter binding** — The QueryBuilder automatically binds values as parameters to prevent SQL
+   injection. Never concatenate user input directly.
 
 2. **Use `whereIn` for lists** — Instead of chaining 10 `orWhere()` calls, use `whereIn()` with an array.
 

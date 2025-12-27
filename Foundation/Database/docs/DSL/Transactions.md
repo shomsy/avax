@@ -23,7 +23,8 @@ The simplest way to use transactions. Wrap your code in a closure, and the datab
 - **COMMIT** if the closure succeeds
 - **ROLLBACK** if the closure throws an exception
 
-Think of it as a "Save Game" feature. You can make changes, and if something goes wrong, everything reverts to the last save point.
+Think of it as a "Save Game" feature. You can make changes, and if something goes wrong, everything reverts to the last
+save point.
 
 ```php
 $builder->transaction(function () use ($builder) {
@@ -82,7 +83,8 @@ try {
 
 **Object-oriented transaction management.**
 
-For more control than closures provide, use the `Transaction` class directly. This gives you explicit methods for begin, commit, and rollback.
+For more control than closures provide, use the `Transaction` class directly. This gives you explicit methods for begin,
+commit, and rollback.
 
 ```php
 $transaction = new Transaction($connection);
@@ -103,11 +105,11 @@ try {
 
 **Key Methods:**
 
-| Method | Purpose |
-|--------|---------|
-| `begin()` | Start a new transaction |
-| `commit()` | Save all changes permanently |
-| `rollback()` | Discard all changes since begin |
+| Method       | Purpose                               |
+|--------------|---------------------------------------|
+| `begin()`    | Start a new transaction               |
+| `commit()`   | Save all changes permanently          |
+| `rollback()` | Discard all changes since begin       |
 | `isActive()` | Check if a transaction is in progress |
 
 ---
@@ -116,7 +118,8 @@ try {
 
 **RAII-style transaction that auto-rolls back on failure.**
 
-Similar to `BorrowedConnection` — if the scope object is destroyed without an explicit commit, it automatically rolls back.
+Similar to `BorrowedConnection` — if the scope object is destroyed without an explicit commit, it automatically rolls
+back.
 
 Useful when you want transaction safety without try/catch blocks.
 
@@ -138,7 +141,8 @@ $scope->commit();
 
 **Savepoints for partial rollback.**
 
-When you nest transaction calls, the inner transaction uses a SAVEPOINT instead of a full transaction. This allows partial rollback.
+When you nest transaction calls, the inner transaction uses a SAVEPOINT instead of a full transaction. This allows
+partial rollback.
 
 ```php
 $builder->transaction(function () use ($builder) {
@@ -210,12 +214,12 @@ try {
 
 Different isolation levels control what data a transaction can see from other concurrent transactions.
 
-| Level | Description |
-|-------|-------------|
+| Level            | Description                                           |
+|------------------|-------------------------------------------------------|
 | READ UNCOMMITTED | Can see uncommitted changes from others (dirty reads) |
-| READ COMMITTED | Only sees committed changes (default for many DBs) |
-| REPEATABLE READ | Same query returns same results within transaction |
-| SERIALIZABLE | Full isolation, as if transactions ran one at a time |
+| READ COMMITTED   | Only sees committed changes (default for many DBs)    |
+| REPEATABLE READ  | Same query returns same results within transaction    |
+| SERIALIZABLE     | Full isolation, as if transactions ran one at a time  |
 
 ```php
 // Set isolation level before starting transaction
@@ -315,7 +319,8 @@ while ($attempt < $maxRetries) {
 
 1. **Keep transactions short** — Long transactions hold locks and block other queries.
 
-2. **Don't do I/O inside transactions** — HTTP requests, file operations, etc. should happen before or after, not during.
+2. **Don't do I/O inside transactions** — HTTP requests, file operations, etc. should happen before or after, not
+   during.
 
 3. **Always handle rollback** — Either use closures (automatic) or wrap manual transactions in try/catch.
 

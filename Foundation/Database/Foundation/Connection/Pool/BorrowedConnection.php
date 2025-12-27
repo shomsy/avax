@@ -21,7 +21,8 @@ final class BorrowedConnection implements DatabaseConnection
 
     /**
      * @param DatabaseConnection      $connection The actual, physical connection to the database.
-     * @param ConnectionPoolInterface $pool       The "Library Manager" that knows how to put this connection back on the shelf.
+     * @param ConnectionPoolInterface $pool       The "Library Manager" that knows how to put this connection back on
+     *                                            the shelf.
      */
     public function __construct(
         private readonly DatabaseConnection      $connection,
@@ -34,7 +35,7 @@ final class BorrowedConnection implements DatabaseConnection
      * @return PDO The active technical tool for the database.
      * @throws ConnectionException If the connection was lost or closed unexpectedly.
      */
-    public function getConnection(): PDO
+    public function getConnection() : PDO
     {
         return $this->connection->getConnection();
     }
@@ -44,7 +45,7 @@ final class BorrowedConnection implements DatabaseConnection
      *
      * @return bool True if it responds, false if the line is dead.
      */
-    public function ping(): bool
+    public function ping() : bool
     {
         return $this->connection->ping();
     }
@@ -52,7 +53,7 @@ final class BorrowedConnection implements DatabaseConnection
     /**
      * Get the technical nickname of this connection (e.g., 'primary', 'read-only').
      */
-    public function getName(): string
+    public function getName() : string
     {
         return $this->connection->getName();
     }
@@ -68,7 +69,7 @@ final class BorrowedConnection implements DatabaseConnection
     /**
      * Manually return the connection to the pool early.
      */
-    public function release(): void
+    public function release() : void
     {
         if (! $this->released) {
             $this->pool->release(connection: $this);
@@ -82,7 +83,7 @@ final class BorrowedConnection implements DatabaseConnection
      * @return DatabaseConnection The physical connection instance without the wrapper.
      * @internal You should never need to call this in your application code.
      */
-    public function getOriginalConnection(): DatabaseConnection
+    public function getOriginalConnection() : DatabaseConnection
     {
         return $this->connection;
     }

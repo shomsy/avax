@@ -29,9 +29,10 @@ final class Config
      *
      * @param string $key     Setting key or path.
      * @param mixed  $default Default value if not found.
+     *
      * @return mixed
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null) : mixed
     {
         if (array_key_exists(key: $key, array: $this->items)) {
             return $this->items[$key];
@@ -59,7 +60,7 @@ final class Config
      * @param string $key   The name of the setting.
      * @param mixed  $value The new information to store.
      */
-    public function set(string $key, mixed $value): void
+    public function set(string $key, mixed $value) : void
     {
         $this->items[$key] = $value;
     }
@@ -69,7 +70,7 @@ final class Config
      *
      * @return array<string, mixed> The raw list of everything inside.
      */
-    public function all(): array
+    public function all() : array
     {
         return $this->items;
     }

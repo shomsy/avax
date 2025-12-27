@@ -11,8 +11,8 @@ use Throwable;
  * Trait providing automated soft-deletion filtering and data lifecycle management.
  *
  * -- intent:
- * Extends the QueryBuilder with transparent handling of "shadow-deleted" 
- * records—data that is logically removed from the application but physically 
+ * Extends the QueryBuilder with transparent handling of "shadow-deleted"
+ * records—data that is logically removed from the application but physically
  * persists in the database with a deletion timestamp.
  *
  * -- invariants:
@@ -22,6 +22,7 @@ use Throwable;
  *
  * -- boundaries:
  * - Does NOT handle the physical schema definitions (delegated to Schema/Migrations).
+ *
  * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/SoftDeletes.md
  * - Only applies to tables containing a technical deletion column (default 'deleted_at').
  */
@@ -39,12 +40,13 @@ trait HasSoftDeletes
      * -- intent:
      * Explicitly override the default exclusion policy, allowing for auditing
      * or complex reporting across both active and deleted
+     *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/SoftDeletes.md#including-deleted-records
-domain records.
+     *      domain records.
      *
      * @return self A fresh, cloned builder instance with soft-deleted inclusion active.
      */
-    public function withTrashed(): self
+    public function withTrashed() : self
     {
         $clone              = clone $this;
         $clone->withTrashed = true;
@@ -53,8 +55,9 @@ domain records.
     }
 
     /**
-     * Filter the results     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/SoftDeletes.md#only-deleted-records
-to exclusively include records marked as soft-deleted.
+     * Filter the results     * @see
+     * https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/SoftDeletes.md#only-deleted-records
+     * to exclusively include records marked as soft-deleted.
      *
      * -- intent:
      * Isolate domain records that have been logically removed from the active
@@ -62,7 +65,7 @@ to exclusively include records marked as soft-deleted.
      *
      * @return self A fresh, cloned builder instance targeting only deleted records.
      */
-    public function onlyTrashed(): self
+    public function onlyTrashed() : self
     {
         $clone              = clone $this;
         $clone->onlyTrashed = true;
@@ -76,74 +79,33 @@ to exclusively include records marked as soft-deleted.
      * -- intent:
      * Nullify the deletion timestamp for records matching the current criteria,
      * bringing them back into the active result se
+     *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/SoftDeletes.md#restoring-records
-t.
+     * t.
      *
      * @param string $column The technical deletion field identifier (defaults to 'deleted_at').
+     *
      * @throws Throwable If the restoration update fails at the persistence layer.
      * @return bool True if the records were successfully marked as active.
      */
-    public function restore(string $column = 'deleted_at'): bool
+    public function restore(string $column = 'deleted_at') : bool
     {
         return $this->update(values: [$column => null]);
-    }
-
-    /**
-     * Add a filtering criterion to check for the absence of a value (IS NULL).
-     *
-     * -- intent:
-     * Provide an expressive DSL for SQL "IS NULL" logic, primarily used for 
-     * checking existence flags or soft-delete statuses.
-     *
-     * @param string      $column  The technical field name to target for the null check.
-     * @param string|null $boolean The logical joiner used to attach this condition ('AND' or 'OR').
-     * @param bool        $not     Flag indicating whether to check for existence (IS NOT NULL) instead.
-     * @return self A fresh, cloned builder instance with the null filter.
-     */
-    public function whereNull(string $column, string|null $boolean = null, bool $not = false): self
-    {
-        $boolean  ??= 'AND';
-        $operator = $not ? 'IS NOT NULL' : 'IS NULL';
-
-        $clone        = clone $this;
-        $clone->state = $clone->state->addWhere(where: new WhereNode(
-            column: $column,
-            operator: $operator,
-            type: 'Null',
-            boolean: $boolean
-        ));
-
-        return $clone;
-    }
-
-    /**
-     * Add a filtering criterion to check for the presence of a value (IS NOT NULL).
-     *
-     * -- intent:
-     * Provide an expressive DSL for SQL "IS NOT NULL" logic, acting as a 
-     * categorical filter for required technical metadata.
-     *
-     * @param string $column  The technical field name to target for the non-null check.
-     * @param string $boolean The logical joiner used to attach this condition ('AND' or 'OR').
-     * @return self A fresh, cloned builder instance with the non-null filter.
-     */
-    public function whereNotNull(string $column, string $boolean = 'AND'): self
-    {
-        return $this->whereNull(column: $column, boolean: $boolean, not: true);
     }
 
     /**
      * Internal technician for injecting the relevant soft-delete filters.
      *
      * -- intent:
-     * Provide an automated mechanism for enforcing data isolation based on 
-     * the current feature flags (withTrashed, onlyTrashed), ensuring that 
+     * Provide an automated mechanism for enforcing data isolation based on
+     * the current feature flags (withTrashed, onlyTrashed), ensuring that
      * logical deletion is respected in all final SQL instructions.
      *
      * @param string $column The technical deletion field identifier (defaults to 'deleted_at').
+     *
      * @return self A fresh, cloned builder instance with the appropriate deletion filters injected.
      */
-    public function withSoftDeleteFilter(string $column = 'deleted_at'): self
+    public function withSoftDeleteFilter(string $column = 'deleted_at') : self
     {
         if ($this->withTrashed) {
             return $this;
@@ -154,5 +116,51 @@ t.
         }
 
         return $this->whereNull(column: $column);
+    }
+
+    /**
+     * Add a filtering criterion to check for the presence of a value (IS NOT NULL).
+     *
+     * -- intent:
+     * Provide an expressive DSL for SQL "IS NOT NULL" logic, acting as a
+     * categorical filter for required technical metadata.
+     *
+     * @param string $column  The technical field name to target for the non-null check.
+     * @param string $boolean The logical joiner used to attach this condition ('AND' or 'OR').
+     *
+     * @return self A fresh, cloned builder instance with the non-null filter.
+     */
+    public function whereNotNull(string $column, string $boolean = 'AND') : self
+    {
+        return $this->whereNull(column: $column, boolean: $boolean, not: true);
+    }
+
+    /**
+     * Add a filtering criterion to check for the absence of a value (IS NULL).
+     *
+     * -- intent:
+     * Provide an expressive DSL for SQL "IS NULL" logic, primarily used for
+     * checking existence flags or soft-delete statuses.
+     *
+     * @param string      $column  The technical field name to target for the null check.
+     * @param string|null $boolean The logical joiner used to attach this condition ('AND' or 'OR').
+     * @param bool        $not     Flag indicating whether to check for existence (IS NOT NULL) instead.
+     *
+     * @return self A fresh, cloned builder instance with the null filter.
+     */
+    public function whereNull(string $column, string|null $boolean = null, bool $not = false) : self
+    {
+        $boolean  ??= 'AND';
+        $operator = $not ? 'IS NOT NULL' : 'IS NULL';
+
+        $clone        = clone $this;
+        $clone->state = $clone->state->addWhere(where: new WhereNode(
+                                                           column  : $column,
+                                                           operator: $operator,
+                                                           type    : 'Null',
+                                                           boolean : $boolean
+                                                       ));
+
+        return $clone;
     }
 }

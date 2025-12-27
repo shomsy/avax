@@ -118,7 +118,7 @@ final readonly class PDOExecutor implements ExecutorInterface
 
         $correlationId = $scope?->correlationId ?? ('ctx_' . bin2hex(string: random_bytes(length: 4)));
 
-        $this->eventBus->dispatch(new QueryExecuted(
+        $this->eventBus->dispatch(event: new QueryExecuted(
             sql: $sql,
             bindings: $bindings,
             timeMs: (microtime(as_float: true) - $start) * 1000,
@@ -130,7 +130,7 @@ final readonly class PDOExecutor implements ExecutorInterface
 
     private function shouldRedactBindings(): bool
     {
-        $flag = getenv('DB_LOG_BINDINGS') ?: 'redacted';
+        $flag = getenv(name: 'DB_LOG_BINDINGS') ?: 'redacted';
 
         return strtolower(string: $flag) !== 'raw';
     }

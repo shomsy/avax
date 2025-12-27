@@ -1,6 +1,7 @@
 # Architecture Overview
 
-This document covers the foundational architecture of the Database component, explaining the lifecycle management, module system, and configuration.
+This document covers the foundational architecture of the Database component, explaining the lifecycle management,
+module system, and configuration.
 
 ---
 
@@ -33,21 +34,23 @@ This document covers the foundational architecture of the Database component, ex
 
 **The "Heart" of the Database component.**
 
-The Kernel is the central coordinator that bootstraps the entire database subsystem. When your application starts, the Kernel:
+The Kernel is the central coordinator that bootstraps the entire database subsystem. When your application starts, the
+Kernel:
 
 1. Reads the manifest to discover available modules
 2. Registers each module with the registry
 3. Boots all registered modules
 4. On shutdown, gracefully tears down everything in reverse order
 
-Think of it as the project manager who assembles the team, briefs everyone, and later dismisses them at the end of the day.
+Think of it as the project manager who assembles the team, briefs everyone, and later dismisses them at the end of the
+day.
 
 **Key Methods:**
 
-| Method | Purpose |
-|--------|---------|
-| `boot()` | Start up all database modules |
-| `shutdown()` | Gracefully stop all modules |
+| Method       | Purpose                       |
+|--------------|-------------------------------|
+| `boot()`     | Start up all database modules |
+| `shutdown()` | Gracefully stop all modules   |
 
 ```php
 // Bootstrap the database component
@@ -94,7 +97,8 @@ Clean exit
 
 **The "Table of Contents" for database modules.**
 
-A static catalog that lists all available database modules. The Kernel reads this manifest to know which modules to load.
+A static catalog that lists all available database modules. The Kernel reads this manifest to know which modules to
+load.
 
 Think of it as the index page of a book — it tells you what chapters exist and where to find them.
 
@@ -154,13 +158,13 @@ The registry tracks all registered modules and coordinates their lifecycle. It k
 
 **Key Methods:**
 
-| Method | Purpose |
-|--------|---------|
-| `register($name, $class, $container)` | Add a module to the registry |
-| `boot()` | Start all registered modules |
-| `shutdown()` | Stop all modules in reverse order |
-| `get($name)` | Retrieve a specific module instance |
-| `has($name)` | Check if a module is registered |
+| Method                                | Purpose                             |
+|---------------------------------------|-------------------------------------|
+| `register($name, $class, $container)` | Add a module to the registry        |
+| `boot()`                              | Start all registered modules        |
+| `shutdown()`                          | Stop all modules in reverse order   |
+| `get($name)`                          | Retrieve a specific module instance |
+| `has($name)`                          | Check if a module is registered     |
 
 ```php
 $registry = new ModuleRegistry();
@@ -196,18 +200,19 @@ This ensures B is cleaned up before A disappears.
 
 **In-memory configuration repository with dot-notation access.**
 
-A fluent, immutable container for database configuration. Supports nested access using dot notation (e.g., `database.connections.mysql.host`).
+A fluent, immutable container for database configuration. Supports nested access using dot notation (e.g.,
+`database.connections.mysql.host`).
 
 Think of it as a smart filing cabinet that can find nested folders with a single path.
 
 **Key Methods:**
 
-| Method | Purpose |
-|--------|---------|
-| `get($key, $default)` | Retrieve a value by key |
-| `has($key)` | Check if a key exists |
-| `set($key, $value)` | Set a value (returns new instance) |
-| `all()` | Get all configuration as an array |
+| Method                | Purpose                            |
+|-----------------------|------------------------------------|
+| `get($key, $default)` | Retrieve a value by key            |
+| `has($key)`           | Check if a key exists              |
+| `set($key, $value)`   | Set a value (returns new instance) |
+| `all()`               | Get all configuration as an array  |
 
 ```php
 $config = new Config([
@@ -251,7 +256,8 @@ if ($config->has('database.connections.postgres')) {
 
 **Base exception for all database errors.**
 
-All database-related exceptions extend this class. It allows you to catch ANY database error with a single `catch` block.
+All database-related exceptions extend this class. It allows you to catch ANY database error with a single `catch`
+block.
 
 Think of it as the "main fuse box" — if anything in the database layer fails, you can catch it here.
 
@@ -286,7 +292,8 @@ DatabaseThrowable (interface)
 
 **Marker interface for database exceptions.**
 
-An interface (badge) that all database exceptions implement. Useful for type-hinting when you want to catch only database-related errors.
+An interface (badge) that all database exceptions implement. Useful for type-hinting when you want to catch only
+database-related errors.
 
 ```php
 try {

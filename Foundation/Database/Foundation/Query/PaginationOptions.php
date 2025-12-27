@@ -27,7 +27,7 @@ final readonly class PaginationOptions
      *
      * @return int
      */
-    public function getOffset(): int
+    public function getOffset() : int
     {
         return ($this->page - 1) * $this->perPage;
     }

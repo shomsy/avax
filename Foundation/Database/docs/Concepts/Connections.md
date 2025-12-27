@@ -1,6 +1,7 @@
 # Connection Management
 
-This document covers all connection-related classes in the Database component, explaining how database connections are established, pooled, and managed.
+This document covers all connection-related classes in the Database component, explaining how database connections are
+established, pooled, and managed.
 
 ---
 
@@ -34,17 +35,19 @@ This document covers all connection-related classes in the Database component, e
 
 **A wrapper around PHP's native PDO connection.**
 
-This is the actual database connection object. It wraps PHP's `PDO` instance and provides a consistent interface with additional features like health-checking (`ping()`).
+This is the actual database connection object. It wraps PHP's `PDO` instance and provides a consistent interface with
+additional features like health-checking (`ping()`).
 
-Think of it as a "phone line" to the database. You can make calls (queries) through it, and it can tell you if the line is still connected.
+Think of it as a "phone line" to the database. You can make calls (queries) through it, and it can tell you if the line
+is still connected.
 
 **Key Methods:**
 
-| Method | Purpose |
-|--------|---------|
-| `getPdo()` | Get the underlying PHP PDO instance |
-| `ping()` | Test if the connection is still alive |
-| `getName()` | Get the connection's identifier |
+| Method      | Purpose                               |
+|-------------|---------------------------------------|
+| `getPdo()`  | Get the underlying PHP PDO instance   |
+| `ping()`    | Test if the connection is still alive |
+| `getName()` | Get the connection's identifier       |
 
 ```php
 $connection = new PdoConnection($pdo, 'primary');
@@ -61,7 +64,8 @@ if ($connection->ping()) {
 
 **Creates PDO connections from configuration arrays.**
 
-The factory that actually "dials the phone number" to establish a database connection. It takes configuration (host, database, credentials) and returns a working connection.
+The factory that actually "dials the phone number" to establish a database connection. It takes configuration (host,
+database, credentials) and returns a working connection.
 
 Handles:
 
@@ -86,7 +90,8 @@ $connection = $factory->create([
 
 **Manages multiple named database connections.**
 
-The "receptionist" who keeps track of all your database connections. If you have multiple databases (primary, replica, analytics), the manager knows them all by name.
+The "receptionist" who keeps track of all your database connections. If you have multiple databases (primary, replica,
+analytics), the manager knows them all by name.
 
 Supports:
 
@@ -110,7 +115,8 @@ $analytics = $manager->connection('analytics');
 
 **Fluent builder for establishing a single direct connection.**
 
-A builder pattern for connecting to a database in a clear, step-by-step way. Instead of passing a big configuration array, you chain method calls.
+A builder pattern for connecting to a database in a clear, step-by-step way. Instead of passing a big configuration
+array, you chain method calls.
 
 Think of it as planning a road trip: "I'll start → use this map → bring these supplies → then go."
 
@@ -130,13 +136,13 @@ $connection = DirectConnectionFlow::begin()
 
 **Key Methods:**
 
-| Method | Purpose |
-|--------|---------|
-| `begin()` | Start a new flow (static factory) |
-| `using($config)` | Set the connection configuration |
+| Method                  | Purpose                                |
+|-------------------------|----------------------------------------|
+| `begin()`               | Start a new flow (static factory)      |
+| `using($config)`        | Set the connection configuration       |
 | `withEvents($eventBus)` | Attach event bus for connection events |
-| `withScope($scope)` | Attach execution scope for tracing |
-| `connect()` | Establish the connection and return it |
+| `withScope($scope)`     | Attach execution scope for tracing     |
+| `connect()`             | Establish the connection and return it |
 
 ---
 
@@ -144,7 +150,8 @@ $connection = DirectConnectionFlow::begin()
 
 **Base fluent interface for all connection flows.**
 
-The abstract foundation that both `DirectConnectionFlow` and `ConnectionPoolFlow` extend. Provides common configuration methods.
+The abstract foundation that both `DirectConnectionFlow` and `ConnectionPoolFlow` extend. Provides common configuration
+methods.
 
 ---
 
@@ -154,7 +161,8 @@ The abstract foundation that both `DirectConnectionFlow` and `ConnectionPoolFlow
 
 **A "garage" of reusable database connections.**
 
-Instead of opening a new connection for every request (expensive!), the pool maintains a set of pre-opened connections that can be borrowed and returned.
+Instead of opening a new connection for every request (expensive!), the pool maintains a set of pre-opened connections
+that can be borrowed and returned.
 
 Imagine a car rental service:
 
@@ -182,15 +190,15 @@ $pool = new ConnectionPool([
 
 **Key Methods:**
 
-| Method | Purpose |
-|--------|---------|
-| `acquire()` | Borrow a connection from the pool |
-| `release($connection)` | Return a connection to the pool |
-| `pruneStaleConnections()` | Remove old/dead connections |
+| Method                      | Purpose                              |
+|-----------------------------|--------------------------------------|
+| `acquire()`                 | Borrow a connection from the pool    |
+| `release($connection)`      | Return a connection to the pool      |
+| `pruneStaleConnections()`   | Remove old/dead connections          |
 | `validateConnection($conn)` | Check if a connection is still alive |
-| `ping()` | Test overall pool health |
-| `getMetrics()` | Get pool statistics |
-| `withScope($scope)` | Attach tracing context |
+| `ping()`                    | Test overall pool health             |
+| `getMetrics()`              | Get pool statistics                  |
+| `withScope($scope)`         | Attach tracing context               |
 
 ---
 
@@ -223,7 +231,8 @@ $pool = ConnectionPoolFlow::begin()
 
 **A RAII wrapper that auto-releases a pooled connection.**
 
-When you borrow a connection from the pool, you get a `BorrowedConnection` instead of the raw connection. This wrapper automatically returns the connection when it's destroyed (goes out of scope).
+When you borrow a connection from the pool, you get a `BorrowedConnection` instead of the raw connection. This wrapper
+automatically returns the connection when it's destroyed (goes out of scope).
 
 RAII = "Resource Acquisition Is Initialization" — the connection is released when the object is garbage-collected.
 
@@ -244,12 +253,12 @@ $borrowed->release();
 
 **Key Methods:**
 
-| Method | Purpose |
-|--------|---------|
-| `getPdo()` | Get the underlying PDO (proxied) |
-| `ping()` | Check connection health (proxied) |
-| `release()` | Return to pool immediately |
-| `getOriginalConnection()` | Get the wrapped PdoConnection |
+| Method                    | Purpose                           |
+|---------------------------|-----------------------------------|
+| `getPdo()`                | Get the underlying PDO (proxied)  |
+| `ping()`                  | Check connection health (proxied) |
+| `release()`               | Return to pool immediately        |
+| `getOriginalConnection()` | Get the wrapped PdoConnection     |
 
 ---
 
@@ -269,7 +278,8 @@ Not used directly — the pool uses it internally.
 
 **Immutable credentials container.**
 
-A type-safe object holding all connection credentials. Instead of passing arrays with potential typos, use this structured object.
+A type-safe object holding all connection credentials. Instead of passing arrays with potential typos, use this
+structured object.
 
 The `#[SensitiveParameter]` attribute ensures passwords don't appear in stack traces or error logs.
 
@@ -299,7 +309,8 @@ $config = ConnectionConfig::from([
 
 **Data Source Name generator.**
 
-Constructs the PDO DSN string for different database drivers. Instead of manually formatting `mysql:host=127.0.0.1;dbname=myapp`, use this value object.
+Constructs the PDO DSN string for different database drivers. Instead of manually formatting
+`mysql:host=127.0.0.1;dbname=myapp`, use this value object.
 
 ```php
 $dsn = Dsn::for(
@@ -327,9 +338,11 @@ echo $sqliteDsn->toString();
 
 ## Best Practices
 
-1. **Use connection pooling for web applications** — Opening a new connection for every request is slow. Pools reuse connections.
+1. **Use connection pooling for web applications** — Opening a new connection for every request is slow. Pools reuse
+   connections.
 
-2. **Always release borrowed connections** — Either explicitly or via RAII (let the `BorrowedConnection` go out of scope).
+2. **Always release borrowed connections** — Either explicitly or via RAII (let the `BorrowedConnection` go out of
+   scope).
 
 3. **Configure pool limits sensibly** — Too few connections = bottleneck. Too many = overwhelming the database.
 

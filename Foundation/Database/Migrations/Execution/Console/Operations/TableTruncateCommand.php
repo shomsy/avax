@@ -28,19 +28,19 @@ final class TableTruncateCommand
         echo "\033[33mCAUTION: You are about to TRUNCATE (clear) the following table(s): {$tables}\033[0m\n";
         echo "Are you sure? [y/N]: ";
 
-        $confirmation = trim(fgets(STDIN));
-        if (strtolower($confirmation) !== 'y') {
+        $confirmation = trim(string: fgets(stream: STDIN));
+        if (strtolower(string: $confirmation) !== 'y') {
             echo "Operation cancelled.\n";
 
             return 0;
         }
 
-        $tableList = array_map('trim', explode(',', $tables));
+        $tableList = array_map(callback: 'trim', array: explode(separator: ',', string: $tables));
 
         foreach ($tableList as $table) {
             echo "\033[36mTruncating table: {$table}...\033[0m ";
             try {
-                $this->builder->truncate($table);
+                $this->builder->truncate(table: $table);
                 echo "\033[32mDONE\033[0m\n";
             } catch (Throwable $e) {
                 echo "\033[31mFAILED: {$e->getMessage()}\033[0m\n";

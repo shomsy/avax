@@ -4,44 +4,41 @@ declare(strict_types=1);
 
 namespace Avax\Database\QueryBuilder\Core\Builder\Concerns;
 
-use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 use Closure;
 
 /**
- * Trait HasControlStructures
+ * Trait providing programmatic branching and logical flow structures for the QueryBuilder.
  *
- * -- intent: extend the query builder with conditional execution pathways.
+ * -- intent:
+ * Extends the fluent QueryBuilder API with high-level control structures, 
+ * allowing for dynamic query building based on external application state 
+ * without breaking the continuous method chain.
+ *
+ * -- invariants:
+ * - Callbacks must receive the current builder instance as their primary argument.
+ * - Methods should return the resulting builder instance from the callback or 
+ *   the current instance if no modification occurred.
+ * - Promotes a declarative style for complex, multi-path query construction.
+ *
+ * -- boundaries:
+ * - Does NOT handle SQL compilation or state storage directly.
+ * - Callbacks are responsible for cloning or mutation policies (typically builder methods handle cloning).
  */
 trait HasControlStructures
 {
     /**
-     * Execute a callback if a given condition is falsy.
+     * Programmatic branch: execute a callback only if a specific condition is met.
      *
-     * -- intent: provide a pragmatic shorthand for negative conditional building.
+     * -- intent:
+     * Support dynamic query modification (e.g., adding filters based on user input) 
+     * by encapsulating the logic within a conditional fluently-chained block.
      *
-     * @param mixed         $condition Falsy value to evaluate
-     * @param callable      $callback  Operation to perform if false
-     * @param callable|null $default   Alternative operation if true
-     *
-     * @return QueryBuilder|HasControlStructures
+     * @param mixed         $condition Scalar, boolean, or truthy data point to evaluate.
+     * @param callable      $callback  The logic to execute if the condition evaluates to true.
+     * @param callable|null $default   Optional alternative logic to execute if the condition is false.
+     * @return self The resulting builder instance after applying the conditional logic.
      */
-    public function unless(mixed $condition, callable $callback, callable|null $default = null) : self
-    {
-        return $this->when(condition: ! $condition, callback: $callback, default: $default);
-    }
-
-    /**
-     * Execute a callback if a given truthy condition is met.
-     *
-     * -- intent: provide a pragmatic shorthand for conditional query building.
-     *
-     * @param mixed         $condition Boolean or truthy value to evaluate
-     * @param callable      $callback  Operation to perform if true
-     * @param callable|null $default   Alternative operation if false
-     *
-     * @return QueryBuilder|HasControlStructures
-     */
-    public function when(mixed $condition, callable $callback, callable|null $default = null) : self
+    public function when(mixed $condition, callable $callback, callable|null $default = null): self
     {
         if ($condition) {
             return $callback($this, $condition) ?: $this;
@@ -55,15 +52,33 @@ trait HasControlStructures
     }
 
     /**
-     * Apply a closure directly to the query builder instance.
+     * Programmatic branch: execute a callback only if a specific condition is NOT met.
      *
-     * -- intent: allow external logic to participate in the fluent chain.
+     * -- intent:
+     * Provides an expressive inverse of the when() method, typically used for 
+     * applying default filters or logic when a specific flag is absent.
      *
-     * @param Closure $callback Operation to tap into
-     *
-     * @return QueryBuilder|HasControlStructures
+     * @param mixed         $condition Scalar, boolean, or truthy data point to evaluate.
+     * @param callable      $callback  The logic to execute if the condition evaluates to false.
+     * @param callable|null $default   Optional alternative logic to execute if the condition is true.
+     * @return self The resulting builder instance after applying the inverse conditional logic.
      */
-    public function tap(Closure $callback) : self
+    public function unless(mixed $condition, callable $callback, callable|null $default = null): self
+    {
+        return $this->when(condition: ! $condition, callback: $callback, default: $default);
+    }
+
+    /**
+     * Fluent diagnostic hook: execute a callback on the builder without modifying the chain return.
+     *
+     * -- intent:
+     * Provide a mechanism for side-effects (logging, debugging, inspection) 
+     * within the fluent chain without requiring variable assignment.
+     *
+     * @param Closure $callback A logic hook receiving the current builder instance.
+     * @return self The current builder instance.
+     */
+    public function tap(Closure $callback): self
     {
         $callback($this);
 

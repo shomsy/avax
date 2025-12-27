@@ -9,42 +9,32 @@ use PDO;
 use Throwable;
 
 /**
- * Concrete technician for the native PHP Data Object connection.
+ * Standard implementation of DatabaseConnection using PHP's PDO extension.
  *
- * -- intent: provide a domain-specific wrapper around the standard PDO engine.
+ * @see docs/Concepts/Connections.md
  */
 final readonly class PdoConnection implements DatabaseConnection
 {
     /**
-     * Constructor promoting the native driver instance.
-     *
-     * -- intent: encapsulate the physical driver within the component contract.
-     *
-     * @param string $name Technical identifier/label of the connection
-     * @param PDO    $pdo  Active PHP driver instance
+     * @param string $name The nickname for this connection (e.g., 'primary').
+     * @param PDO    $pdo  The active technical engine already plugged into the DB.
      */
     public function __construct(private string $name, private PDO $pdo) {}
 
     /**
-     * Retrieve the internal PDO instance.
-     *
-     * -- intent: expose the driver for raw SQL execution.
-     *
-     * @return PDO
+     * Get the actual technical engine (PDO) to run your SQL.
      */
-    public function getConnection() : PDO
+    public function getConnection(): PDO
     {
         return $this->pdo;
     }
 
     /**
-     * Perform a low-level heartbeat check on the connection.
-     *
-     * -- intent: verify the physical socket or server is still responsive.
+     * Send a heartbeat query to verify connection health.
      *
      * @return bool
      */
-    public function ping() : bool
+    public function ping(): bool
     {
         try {
             $this->pdo->query(query: "SELECT 1");
@@ -56,11 +46,9 @@ final readonly class PdoConnection implements DatabaseConnection
     }
 
     /**
-     * Retrieve the logical name/label of the active connection.
-     *
-     * @return string
+     * Get the nickname assigned to this connection.
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }

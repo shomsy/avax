@@ -10,72 +10,63 @@ use Avax\Database\Registry\Exceptions\ModuleException;
 use Throwable;
 
 /**
- * Technical authority responsible for managing the registration and status of all modules.
+ * Central registry for managing module lifecycles and registration.
  *
- * -- intent: maintain a central Map of active features and coordinate their lifecycle events.
+ * @see docs/Concepts/Architecture.md
  */
 final class ModuleRegistry
 {
-    /**
-     * Storage for instantiated and registered module objects.
-     */
+    /** @var array<string, LifecycleInterface> The collection of all features currently on the team. */
     private array $modules = [];
 
-    /**
-     * Tracks which modules have successfully passed the boot sequence.
-     */
+    /** @var array<string, bool> A list of which team members have finished their "Start-up" logic. */
     private array $booted = [];
 
     /**
-     * Register a new feature module into the internal and system containers.
+     * Register a new module and its services into the container.
      *
-     * -- intent: instantiate the module and trigger its internal service definitions.
-     *
-     * @param string    $name      Logical identifier for the feature
-     * @param string    $class     Fully qualified module class name
-     * @param Container $container The target DI vessel
-     *
-     * @return void
-     * @throws ModuleException If the module class is invalid or missing
+     * @param string    $name      Module nickname.
+     * @param string    $class     Module class name.
+     * @param Container $container DI container.
+     * @throws ModuleException
      */
-    public function register(string $name, string $class, Container $container) : void
+    public function register(string $name, string $class, Container $container): void
     {
         if (! class_exists(class: $class)) {
             throw new ModuleException(moduleClass: $class, phase: 'registration', message: "Module class not found.");
         }
 
         try {
+            // We create a fresh instance of the feature.
             $module = new $class(container: $container);
 
             if (! $module instanceof LifecycleInterface) {
                 throw new ModuleException(
                     moduleClass: $class,
-                    phase      : 'registration',
-                    message    : "Module must implement LifecycleInterface."
+                    phase: 'registration',
+                    message: "Module must implement LifecycleInterface."
                 );
             }
 
+            // We tell the feature to put its tools in the toolbox.
             $module->register();
             $this->modules[$name] = $module;
         } catch (Throwable $e) {
             throw new ModuleException(
                 moduleClass: $class,
-                phase      : 'registration',
-                message    : $e->getMessage(),
-                previous   : $e
+                phase: 'registration',
+                message: $e->getMessage(),
+                previous: $e
             );
         }
     }
 
     /**
-     * Initiate the boot sequence for all registered and non-booted modules.
+     * Transition all registered modules to the active (booted) state.
      *
-     * -- intent: ensure every active feature is fully operational after registration.
-     *
-     * @return void
-     * @throws ModuleException If any module fails to boot
+     * @throws ModuleException
      */
-    public function boot() : void
+    public function boot(): void
     {
         foreach ($this->modules as $name => $module) {
             if (! isset($this->booted[$name])) {
@@ -85,9 +76,9 @@ final class ModuleRegistry
                 } catch (Throwable $e) {
                     throw new ModuleException(
                         moduleClass: $module::class,
-                        phase      : 'boot',
-                        message    : $e->getMessage(),
-                        previous   : $e
+                        phase: 'boot',
+                        message: $e->getMessage(),
+                        previous: $e
                     );
                 }
             }
@@ -95,14 +86,11 @@ final class ModuleRegistry
     }
 
     /**
-     * Execute the graceful shutdown routine for all initialized modules.
+     * Shutdown all active modules and clear the registry.
      *
-     * -- intent: trigger resource cleanup across all active features in the registry.
-     *
-     * @return void
-     * @throws ModuleException If any module fails during shutdown
+     * @throws ModuleException
      */
-    public function shutdown() : void
+    public function shutdown(): void
     {
         foreach ($this->modules as $module) {
             try {
@@ -110,28 +98,25 @@ final class ModuleRegistry
             } catch (Throwable $e) {
                 throw new ModuleException(
                     moduleClass: $module::class,
-                    phase      : 'shutdown',
-                    message    : $e->getMessage(),
-                    previous   : $e
+                    phase: 'shutdown',
+                    message: $e->getMessage(),
+                    previous: $e
                 );
             }
         }
 
+        // Reset the registry to an empty state.
         $this->modules = [];
         $this->booted  = [];
     }
 
     /**
-     * Retrieve an active module instance by its technical name.
+     * Find a specific active feature by its nickname.
      *
-     * -- intent: provide direct access to specific feature controllers.
-     *
-     * @param string $name Technical name of the feature
-     *
-     * @return LifecycleInterface
-     * @throws ModuleException If the feature is not found in the registry
+     * @param string $name The nickname (e.g., 'query_builder').
+     * @return LifecycleInterface The requested feature.
      */
-    public function getModule(string $name) : LifecycleInterface
+    public function getModule(string $name): LifecycleInterface
     {
         if (! isset($this->modules[$name])) {
             throw new ModuleException(moduleClass: $name, phase: 'retrieval', message: "Module not registered.");

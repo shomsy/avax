@@ -5,20 +5,16 @@ declare(strict_types=1);
 namespace Avax\Database\Query;
 
 /**
- * Pragmatic value object encapsulating pagination parameters for large datasets.
+ * Immutable value object encapsulating pagination parameters (page, perPage, total).
  *
- * -- intent: provide a structured way to handle record offsets and limits.
+ * @see docs/DSL/QueryExecution.md
  */
 final readonly class PaginationOptions
 {
     /**
-     * Constructor promoting pagination settings via PHP 8.3 features.
-     *
-     * -- intent: define the current window of the result set.
-     *
-     * @param int      $page    Current page index (1-based)
-     * @param int      $perPage Number of records per resulting page
-     * @param int|null $total   Optional total record count for metadata calculation
+     * @param int      $page    The current logical 1-based page index.
+     * @param int      $perPage The technical volume of records to be retrieved per resulting page.
+     * @param int|null $total   The optional total record count discovered for calculating pagination metadata.
      */
     public function __construct(
         public int      $page = 1,
@@ -27,16 +23,12 @@ final readonly class PaginationOptions
     ) {}
 
     /**
-     * Calculate the technical offset value for SQL retrieval.
-     *
-     * -- intent: transform logical page number into physical SQL offset.
+     * Calculate the SQL OFFSET for the current page.
      *
      * @return int
      */
-    public function getOffset() : int
+    public function getOffset(): int
     {
         return ($this->page - 1) * $this->perPage;
     }
 }
-
-

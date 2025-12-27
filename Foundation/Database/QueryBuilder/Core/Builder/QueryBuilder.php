@@ -6,20 +6,22 @@ namespace Avax\Database\QueryBuilder\Core\Builder;
 
 use Avax\Database\Identity\IdentityMap;
 use Avax\Database\Query\QueryState;
-use Avax\Database\QueryBuilder\Core\Executor\ExecutorInterface;
+use Avax\Database\QueryBuilder\Core\Executor\QueryOrchestrator;
 use Avax\Database\QueryBuilder\Core\Grammar\GrammarInterface;
+use Avax\Database\QueryBuilder\DTO\ExecutionResult;
 use Avax\Database\QueryBuilder\Exceptions\InvalidCriteriaException;
 use Avax\Database\QueryBuilder\ValueObjects\Expression;
-use Avax\Database\Transaction\Contracts\TransactionManagerInterface;
-use Avax\Database\Transaction\Exceptions\TransactionException;
 use ReflectionClass;
-use ReflectionException;
 use Throwable;
 
 /**
- * The primary entry point for constructing and executing domain-fluent SQL queries.
+ * Fluent, immutable builder for compiling and executing SQL queries.
  *
- * -- intent: provide a high-level DSL balanced with robust infrastructure coordination.
+ * Supports dialect-aware compilation, safe bindings, pretend mode, and optional deferred execution via IdentityMap.
+ *
+ * @see docs/DSL/RawExpressions.md
+ * @see docs/DSL/PretendMode.md
+ * @see docs/DSL/DeferredExecution.md
  */
 class QueryBuilder
 {
@@ -34,292 +36,295 @@ class QueryBuilder
     use Concerns\HasAdvancedMutations;
     use Concerns\HasSchema;
 
-    /**
-     * Current state of the builder's parameters.
-     */
-    protected readonly QueryState $state;
+    /** @var QueryState The internal "memory" of all the blocks (table, filters, columns) we've added so far. */
+    protected QueryState $state;
 
-    /**
-     * Flag indicating if execution should be deferred.
-     */
+    /** @var bool If true, we don't save changes immediately. We wait and do them all at once later. */
     protected bool $isDeferred = false;
 
     /**
-     * Flag indicating if execution should be simulated.
-     */
-    protected bool $isPretending = false;
-
-    /**
-     * Constructor using PHP 8.3 property promotion for core engines.
+     * Set up the builder with its two "helpers".
      *
-     * -- intent: initialize the builder with its core engine dependencies and query state.
-     *
-     * @param GrammarInterface                 $grammar            The compiler for dialect-specific SQL
-     * @param ExecutorInterface                $executor           The technician for query execution
-     * @param TransactionManagerInterface|null $transactionManager The coordinator for atomicity
-     * @param IdentityMap|null                 $identityMap        The vault for deferred operations
-     *
-     * @throws ReflectionException If class introspection fails
+     * @param GrammarInterface  $grammar      The "Translator". It knows how to turn your PHP code into specific SQL for MySQL/SQLite/etc.
+     * @param QueryOrchestrator $orchestrator The "Conductor". It doesn't write SQL, but it knows how to send the final SQL to the database and get results back.
      */
     public function __construct(
-        protected readonly GrammarInterface                 $grammar,
-        protected readonly ExecutorInterface                $executor,
-        protected readonly TransactionManagerInterface|null $transactionManager = null,
-        protected IdentityMap|null                          $identityMap = null
-    )
-    {
+        protected readonly GrammarInterface $grammar,
+        protected QueryOrchestrator         $orchestrator
+    ) {
         $this->state = new QueryState();
 
+        // If this class has a 'tableName' property defined (like in a Model), we use it as the default target.
         if (property_exists(object_or_class: $this, property: 'tableName')) {
             $ref       = new ReflectionClass(objectOrClass: $this);
             $tableName = $ref->getProperty(name: 'tableName')->getValue(object: $this);
 
             if (is_string(value: $tableName) && $tableName !== '') {
-                $this->state->from = $tableName;
+                $this->state = $this->state->withFrom(table: $tableName);
             }
         }
     }
 
     /**
-     * Deep clone the builder to ensure decoupled state branches.
+     * Create a perfect copy of this builder.
      *
-     * -- intent: prevent state leakage between derived query instances.
-     *
-     * @return void
+     * -- intent:
+     * This is the "Save As" mechanism. It ensures that when you branch off a 
+     * common search, you don't mess up the original search object.
      */
     public function __clone()
     {
-        $this->state = clone $this->state;
+        $this->orchestrator = clone $this->orchestrator;
     }
 
     /**
-     * Spawn a clean builder instance sharing the same foundational engines.
+     * Start a brand new, empty query using the same database setup.
      *
-     * -- intent: create a fresh query context without re-injecting core dependencies manually.
-     *
-     * @return static
-     * @throws ReflectionException
+     * @return static A fresh builder instance with no filters or tables set.
      */
-    public function newQuery() : static
+    public function newQuery(): static
     {
         return new static(
-            grammar           : $this->grammar,
-            executor          : $this->executor,
-            transactionManager: $this->transactionManager,
-            identityMap       : $this->identityMap
+            grammar: $this->grammar,
+            orchestrator: $this->orchestrator
         );
     }
 
     /**
-     * Create a raw SQL expression that will not be escaped or parameterized.
+     * Inject a raw SQL fragment without quoting or escaping.
      *
-     * -- intent: allow injection of literal SQL fragments for advanced operations.
+     * Use only for trusted literals (e.g., functions/CASE expressions), never for user input.
      *
-     * @param string $value The raw SQL fragment
-     *
+     * @param string $value SQL fragment to include verbatim.
+     * @throws InvalidCriteriaException When the fragment contains disallowed characters.
+     * @see docs/DSL/RawExpressions.md
      * @return Expression
      */
-    public function raw(string $value) : Expression
+    public function raw(string $value): Expression
     {
+        $this->assertSafeRawExpression(expression: $value, context: 'raw');
+
         return new Expression(value: $value);
     }
 
-
     /**
-     * Enable simulation (pretend) mode.
+     * Enable dry-run mode that logs SQL without executing it.
+     *
+     * @see docs/DSL/PretendMode.md
+     * @return self Builder clone in pretend mode.
      */
-    public function pretend() : self
+    public function pretend(): self
     {
-        $this->isPretending = true;
+        $clone = clone $this;
+        $clone->orchestrator->pretend(value: true);
 
-        return $this;
+        return $clone;
     }
 
     /**
-     * Execute a raw SQL statement or simulate it.
+     * Execute a raw SQL "Statement" that doesn't return data (e.g., cleanup commands).
+     *
+     * @param string $query SQL command to run.
+     * @param array  $bindings Parameter bindings for the command.
+     * @return bool True if the database accepted the command.
      */
-    public function statement(string $query, array $bindings = []) : bool
+    public function statement(string $query, array $bindings = []): bool
     {
-        if ($this->isPretending) {
-            echo "\033[33m[DRY RUN]\033[0m SQL: {$query}\n";
-
-            return true;
-        }
-
-        return $this->executor->execute(sql: $query, bindings: $bindings)->isSuccessful();
+        return $this->orchestrator->execute(sql: $query, bindings: $bindings)->isSuccessful();
     }
 
     /**
-     * Target a specific database table for the query operations.
+     * Set the target table.
      *
-     * -- intent: set the primary data source for the query.
-     *
-     * @param string $table The domain table name
-     *
+     * @param string $table Table name.
      * @return self
      */
-    public function from(string $table) : self
+    public function from(string $table): self
     {
-        $this->state->from = $table;
+        $clone        = clone $this;
+        $clone->state = $this->state->withFrom(table: $table);
 
-        return $this;
+        return $clone;
     }
 
     /**
-     * Define the specific columns to be retrieved.
+     * Select specific columns.
      *
-     * -- intent: restrict the result set to the requested technical identifiers.
-     *
-     * @param string ...$columns List of column names
-     *
+     * @param string ...$columns Columns to include (defaults to `*` when empty).
      * @return self
      */
-    public function select(string ...$columns) : self
+    public function select(string ...$columns): self
     {
-        $this->state->columns = empty($columns) ? ['*'] : $columns;
+        $clone        = clone $this;
+        $clone->state = $this->state->withColumns(columns: empty($columns) ? ['*'] : $columns);
 
-        return $this;
+        return $clone;
     }
 
     /**
-     * Inject raw SQL fragments into the select clause.
+     * Mix raw SQL into your column selection.
      *
-     * -- intent: allow bypass of the grammar's column wrapping for complex expressions.
-     *
-     * @param string ...$expressions Raw SQL expressions
-     *
+     * @param string ...$expressions Raw SQL snippets for selection.
+     * @throws InvalidCriteriaException When the fragment contains disallowed characters.
+     * @see docs/DSL/RawExpressions.md
      * @return self
-     * @throws InvalidCriteriaException On detected SQL injection attempts
      */
-    public function selectRaw(string ...$expressions) : self
+    public function selectRaw(string ...$expressions): self
     {
         foreach ($expressions as $expression) {
-            if (str_contains(haystack: $expression, needle: ';') || str_contains(haystack: $expression, needle: '--')) {
-                throw new InvalidCriteriaException(
-                    method: 'selectRaw',
-                    reason: "Raw SELECT expressions must not contain semicolons or SQL comments."
-                );
-            }
+            $this->assertSafeRawExpression(expression: $expression, context: 'selectRaw');
         }
 
-        $this->state->columns = array_merge($this->state->columns ?: [], $expressions);
+        $clone        = clone $this;
+        $clone->state = $this->state->withColumns(columns: array_merge($this->state->columns ?: [], $expressions));
 
-        return $this;
+        return $clone;
     }
 
     /**
-     * Enforce unique result sets via the DISTINCT operator.
-     *
-     * -- intent: filter out duplicate records from the final dataset.
-     *
-     * @return self
+     * Security Check: Make sure raw SQL fragments aren't dangerous.
+     * 
+     * @param string $expression The text to check.
+     * @param string $context    Where this check is happening (for error messages).
+     * @throws InvalidCriteriaException If dangerous characters are found.
      */
-    public function distinct() : self
+    private function assertSafeRawExpression(string $expression, string $context): void
     {
-        $this->state->distinct = true;
+        if ($expression === '') {
+            throw new InvalidCriteriaException(method: $context, reason: "Raw expressions must not be empty.");
+        }
 
-        return $this;
+        if (preg_match(pattern: '/[;]|--|\\/\\*/', subject: $expression) === 1) {
+            throw new InvalidCriteriaException(
+                method: $context,
+                reason: "Raw expressions must not contain statement terminators or comments."
+            );
+        }
+
+        if (preg_match(pattern: '/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]/', subject: $expression) === 1) {
+            throw new InvalidCriteriaException(
+                method: $context,
+                reason: "Raw expressions must not contain control characters."
+            );
+        }
+
+        if (preg_match(pattern: '/^[\\x20-\\x7E]+$/', subject: $expression) !== 1) {
+            throw new InvalidCriteriaException(
+                method: $context,
+                reason: "Raw expressions must be plain ASCII characters to allow safe inspection."
+            );
+        }
     }
 
     /**
-     * Skip a specific number of records at the beginning of the result set.
+     * Remove all duplicate rows from your results.
      *
-     * -- intent: coordinate with limit for precise data windowing.
-     *
-     * @param int $offset Records to bypass
-     *
-     * @return self
-     * @throws InvalidCriteriaException On negative integer inputs
+     * @return self A builder copy with the UNIQUE/DISTINCT filter active.
      */
-    public function offset(int $offset) : self
+    public function distinct(): self
+    {
+        $clone        = clone $this;
+        $clone->state = $this->state->withDistinct(distinct: true);
+
+        return $clone;
+    }
+
+    /**
+     * Skip the first X number of rows.
+     *
+     * -- intent:
+     * Essential for "Page 2" or "Page 3" of results. If each page has 10 
+     * items, Page 2 would skip the first 10.
+     *
+     * @param int $offset How many rows to jump over.
+     * @return self A builder copy with this skip applied.
+     */
+    public function offset(int $offset): self
     {
         if ($offset < 0) {
             throw new InvalidCriteriaException(method: 'offset', reason: "OFFSET must be a non-negative integer.");
         }
 
-        $this->state->offset = $offset;
+        $clone        = clone $this;
+        $clone->state = $this->state->withOffset(offset: $offset);
 
-        return $this;
+        return $clone;
     }
 
     /**
-     * Enable deferred execution mode (Identity Map / Unit of Work).
+     * Defer mutations into an IdentityMap instead of executing immediately.
      *
-     * -- intent: buffer mutation operations for optimized batch processing.
+     * Requires an available IdentityMap (provided or already on the orchestrator).
      *
-     * @param IdentityMap|null $identityMap Optional specific map to use
-     *
-     * @return self
-     * @throws InvalidCriteriaException If no identity map is available for tracking
+     * @param IdentityMap|null $identityMap Optional map to use for this query.
+     * @throws InvalidCriteriaException When no IdentityMap is available.
+     * @see docs/DSL/DeferredExecution.md
+     * @return self New builder instance with deferred execution enabled.
      */
-    public function deferred(IdentityMap|null $identityMap = null) : self
+    public function deferred(IdentityMap|null $identityMap = null): self
     {
-        $this->isDeferred = true;
+        $clone             = clone $this;
+        $clone->isDeferred = true;
 
         if ($identityMap !== null) {
-            $this->identityMap = $identityMap;
+            $clone->orchestrator = $clone->orchestrator->withIdentityMap(map: $identityMap);
         }
 
-        if (! $this->identityMap) {
+        if ($clone->orchestrator->getIdentityMap() === null) {
             throw new InvalidCriteriaException(
                 method: 'deferred',
-                reason: "IdentityMap must be provided to use deferred execution."
+                reason: "IdentityMap must be available via Orchestrator or provided to use deferred execution."
             );
         }
-
-        return $this;
+        return $clone;
     }
 
     /**
-     * Determine if any records matching the current criteria exist.
-     *
-     * -- intent: execute a minimal existence probe for binary result checking.
+     * Quickly check if ANY records exist matching your search.
      *
      * @return bool
-     * @throws Throwable If SQL execution fails
      */
-    public function exists() : bool
+    public function exists(): bool
     {
         $instance = clone $this;
-        $sql      = $instance->grammar->compileSelect(state: $instance->limit(limit: 1)->state);
-        $result   = $instance->executor->query(sql: $sql, bindings: $instance->state->getBindings());
+
+        if (method_exists(object_or_class: $instance, method: 'withSoftDeleteFilter')) {
+            $instance = $instance->withSoftDeleteFilter();
+        }
+
+        $sql    = $instance->grammar->compileSelect(state: $instance->limit(limit: 1)->state);
+        $result = $instance->orchestrator->query(sql: $sql, bindings: $instance->state->getBindings());
 
         return ! empty($result);
     }
 
     /**
-     * Restrict the number of records returned by the query.
+     * Apply a maximum ceiling to the number of rows returned.
      *
-     * -- intent: optimize performance and facilitate pagination boundaries.
-     *
-     * @param int $limit Maximum record count
-     *
+     * @param int $limit Maximum results to retrieve.
+     * @throws InvalidCriteriaException If limit is negative.
      * @return self
-     * @throws InvalidCriteriaException On negative integer inputs
      */
-    public function limit(int $limit) : self
+    public function limit(int $limit): self
     {
         if ($limit < 0) {
             throw new InvalidCriteriaException(method: 'limit', reason: "LIMIT must be a non-negative integer.");
         }
 
-        $this->state->limit = $limit;
+        $clone        = clone $this;
+        $clone->state = $this->state->withLimit(limit: $limit);
 
-        return $this;
+        return $clone;
     }
 
     /**
-     * Retrieve the first record from the query result set.
+     * Execute the query and return the first matching record.
      *
-     * -- intent: isolate a single record from the results with optional path resolution.
-     *
-     * @param string|callable|null $key     Target column or processing closure
-     * @param mixed                $default Fallback if no result is found
-     *
+     * @param string|callable|null $key     Optional column or transform callback.
+     * @param mixed                $default Fallback value if no record exists.
      * @return mixed
-     * @throws Throwable If SQL execution fails
      */
-    public function first(string|callable|null $key = null, mixed $default = null) : mixed
+    public function first(string|callable|null $key = null, mixed $default = null): mixed
     {
         $instance = clone $this;
         $result   = $instance->limit(limit: 1)->get();
@@ -357,137 +362,171 @@ class QueryBuilder
     }
 
     /**
-     * Fulfill a SELECT query and retrieve all resulting records.
+     * Execute the retrieval query and return all matching records.
      *
-     * -- intent: compile the final SQL and execute the physical data retrieval.
-     *
-     * @return array<array-key, mixed> Resulting dataset
-     * @throws Throwable If SQL syntax or execution fails
+     * @see docs/DSL/QueryExecution.md
+     * @return array<array-key, mixed>
      */
-    public function get() : array
+    public function get(): array
     {
-        if (method_exists(object_or_class: $this, method: 'applySoftDeleteFilter')) {
-            $this->applySoftDeleteFilter();
+        $instance = clone $this;
+
+        if (method_exists(object_or_class: $instance, method: 'withSoftDeleteFilter')) {
+            $instance = $instance->withSoftDeleteFilter();
         }
 
-        $sql = $this->grammar->compileSelect(state: $this->state);
+        $sql = $instance->grammar->compileSelect(state: $instance->state);
 
-        return $this->executor->query(sql: $sql, bindings: $this->state->getBindings());
+        return $instance->orchestrator->query(sql: $sql, bindings: $instance->state->getBindings());
     }
 
     /**
-     * Execute an INSERT mutation query.
+     * Persist a new record into the database.
      *
-     * -- intent: transform values into a physical data insertion instruction.
-     *
-     * @param array $values Columns and their corresponding values
-     *
+     * @param array $values Associative array of column => values.
+     * @see docs/DSL/Mutations.md
      * @return bool
-     * @throws Throwable If insertion fails or deferral technician is missing
      */
-    public function insert(array $values) : bool
+    public function insert(array $values): bool
     {
-        $this->state->values = $values;
-        $sql                 = $this->grammar->compileInsert(state: $this->state);
+        $clone        = clone $this;
+        $clone->state = $this->state->withValues(values: $values);
+        $sql          = $clone->grammar->compileInsert(state: $clone->state);
 
-        if ($this->isDeferred) {
-            $this->identityMap->schedule(operation: 'INSERT', sql: $sql, bindings: $this->state->getBindings());
-
-            return true;
-        }
-
-        return $this->executor->execute(sql: $sql, bindings: $this->state->getBindings())->isSuccessful();
+        return $clone->orchestrator->execute(
+            sql: $sql,
+            bindings: $clone->state->getBindings(),
+            operation: $this->isDeferred ? 'INSERT' : null
+        )->isSuccessful();
     }
 
     /**
-     * Execute an UPDATE mutation query.
+     * Modify existing records in the database.
      *
-     * -- intent: transform values and criteria into a physical data modification instruction.
-     *
-     * @param array $values Target assignments
-     *
+     * @param array $values Associative array of updates.
+     * @see docs/DSL/Mutations.md
      * @return bool
-     * @throws Throwable If update fails
      */
-    public function update(array $values) : bool
+    public function update(array $values): bool
     {
-        if (method_exists(object_or_class: $this, method: 'applySoftDeleteFilter')) {
-            $this->applySoftDeleteFilter();
-        }
+        $instance = clone $this;
 
-        $this->state->values = $values;
-        $sql                 = $this->grammar->compileUpdate(state: $this->state);
+        $instance        = $instance->withSoftDeleteFilter();
+        $instance->state = $instance->state->withValues(values: $values);
+        $sql             = $instance->grammar->compileUpdate(state: $instance->state);
 
-        if ($this->isDeferred) {
-            $this->identityMap->schedule(operation: 'UPDATE', sql: $sql, bindings: $this->state->getBindings());
-
-            return true;
-        }
-
-        return $this->executor->execute(sql: $sql, bindings: $this->state->getBindings())->isSuccessful();
+        return $instance->orchestrator->execute(
+            sql: $sql,
+            bindings: $instance->state->getBindings(),
+            operation: $this->isDeferred ? 'UPDATE' : null
+        )->isSuccessful();
     }
 
     /**
-     * Execute a DELETE query against the target table.
+     * Remove matching records from the database.
      *
-     * -- intent: physically or logically remove records based on active criteria.
-     *
+     * @see docs/DSL/Mutations.md
      * @return bool
-     * @throws Throwable If deletion fails
      */
-    public function delete() : bool
+    public function delete(): bool
     {
-        if (method_exists(object_or_class: $this, method: 'applySoftDeleteFilter')) {
-            $this->applySoftDeleteFilter();
+        $instance = clone $this;
+
+        if (method_exists(object_or_class: $instance, method: 'withSoftDeleteFilter')) {
+            $instance = $instance->withSoftDeleteFilter();
         }
 
-        $sql = $this->grammar->compileDelete(state: $this->state);
+        $sql = $instance->grammar->compileDelete(state: $instance->state);
 
-        if ($this->isDeferred) {
-            $this->identityMap->schedule(operation: 'DELETE', sql: $sql, bindings: $this->state->getBindings());
-
-            return true;
-        }
-
-        return $this->executor->execute(sql: $sql, bindings: $this->state->getBindings())->isSuccessful();
+        return $instance->orchestrator->execute(
+            sql: $sql,
+            bindings: $instance->state->getBindings(),
+            operation: $this->isDeferred ? 'DELETE' : null
+        )->isSuccessful();
     }
 
     /**
-     * Access the raw internal state for advanced structural metadata retrieval.
+     * Retrieve a flattened array of values from a single column.
      *
-     * -- intent: provide programmatic access to the accumulated query parameters.
-     *
-     * @return QueryState
+     * @param string      $value Target column name.
+     * @param string|null $key   Optional column to use for array keys.
+     * @return array
      */
-    public function getState() : QueryState
+    public function pluck(string $value, string|null $key = null): array
+    {
+        $columns = $key ? [$value, $key] : [$value];
+        $results = $this->select(...$columns)->get();
+
+        $pluck = [];
+        foreach ($results as $result) {
+            if ($key) {
+                $pluck[$result[$key]] = $result[$value];
+                continue;
+            }
+            $pluck[] = $result[$value];
+        }
+
+        return $pluck;
+    }
+
+    /**
+     * Retrieve a single scalar value from the first matching record.
+     *
+     * @param string $column  Target column name.
+     * @param mixed  $default Fallback value if no record exists.
+     * @return mixed
+     */
+    public function value(string $column, mixed $default = null): mixed
+    {
+        $result = $this->first();
+
+        return $result[$column] ?? $default;
+    }
+
+    /**
+     * Retrieve the total number of records matching the query.
+     *
+     * @param string $column Column to count (defaults to '*').
+     * @return int
+     */
+    public function count(string $column = '*'): int
+    {
+        $instance        = clone $this;
+        $instance->state = $instance->state->withColumns(columns: ["COUNT({$column}) as aggregate"]);
+        $result          = $instance->first();
+
+        return (int) ($result['aggregate'] ?? 0);
+    }
+
+    /**
+     * Retrieve a single record by its primary identity.
+     *
+     * @param mixed  $id     Identity value.
+     * @param string $column Field name for the identity (defaults to 'id').
+     * @return mixed
+     */
+    public function find(mixed $id, string $column = 'id'): mixed
+    {
+        return $this->where(column: $column, operator: '=', value: $id)->first();
+    }
+
+    /**
+     * Get the internal state of the builder (the AST).
+     */
+    public function getState(): QueryState
     {
         return $this->state;
     }
 
     /**
-     * Execute a closure within a managed database transaction.
+     * Execute a closure within a database transaction.
      *
-     * -- intent: ensure atomic execution of multiple builder operations with automatic safety.
-     *
-     * @param callable $callback Operational closure
-     *
+     * @param callable $callback Logic to run transactionally.
+     * @see docs/DSL/Transactions.md
      * @return mixed
-     * @throws TransactionException If no transaction manager is present or execution fails
-     * @throws Throwable If the transaction or callback fails
      */
-    public function transaction(callable $callback) : mixed
+    public function transaction(callable $callback): mixed
     {
-        if (! $this->transactionManager) {
-            throw new TransactionException(message: "Transaction manager not set in builder.", nestingLevel: 0);
-        }
-
-        try {
-            return $this->transactionManager->transaction(callback: fn () => $callback($this));
-        } catch (Throwable $e) {
-            if ($e instanceof TransactionException) {
-                throw $e;
-            }
-            throw new TransactionException(message: $e->getMessage(), nestingLevel: 1, previous: $e);
-        }
+        return $this->orchestrator->transaction(callback: fn() => $callback($this));
     }
 }

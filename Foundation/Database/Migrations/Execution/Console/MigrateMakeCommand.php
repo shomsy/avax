@@ -21,17 +21,17 @@ final class MigrateMakeCommand
         $table  = $options['table'] ?? null;
         $create = $options['create'] ?? false;
 
-        $this->info("Creating migration: {$name}");
+        $this->info(msg: "Creating migration: {$name}");
 
         try {
-            $filepath = $this->generator->generate($name, $path, $table, $create);
-            $filename = basename($filepath);
-            $this->success("Migration created successfully!");
+            $filepath = $this->generator->generate(name: $name, path: $path, table: $table, create: $create);
+            $filename = basename(path: $filepath);
+            $this->success(msg: "Migration created successfully!");
             echo "  📄 {$filename}\n";
 
             return 0;
         } catch (Throwable $e) {
-            $this->error('Failed to create migration: ' . $e->getMessage());
+            $this->error(msg: 'Failed to create migration: ' . $e->getMessage());
 
             return 1;
         }

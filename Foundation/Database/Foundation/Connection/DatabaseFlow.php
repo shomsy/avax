@@ -4,39 +4,35 @@ declare(strict_types=1);
 
 namespace Avax\Database\Connection;
 
-use Avax\Database\Connection\Contracts\ConnectionPoolInterface;
-use Exception;
+use Avax\Database\Connection\Contracts\DatabaseConnection;
+use Avax\Database\Foundation\Connection\Pool\Contracts\ConnectionPoolInterface;
+use Throwable;
 
 /**
- * Fluent DSL for executing database operations with automatic resource management.
+ * Fluent builder for coordinating one-off database operations with resource safety.
+ *
+ * @see docs/Concepts/Connections.md
  */
 final class DatabaseFlow
 {
-    /**
-     * Target connection identifier for routing queries.
-     */
+    /** @var string|null The nickname of the database we want to talk to. */
     private string|null $connectionName = null;
 
-    /**
-     * Enable connection pooling with acquire/release semantics.
-     */
+    /** @var bool If true, we will borrow a connection from a shared collection. */
     private bool $pooled = false;
 
     /**
-     * Initialize the fluent query builder with connection manager.
-     *
-     * @param ConnectionManager $manager Connection lifecycle manager
+     * @param ConnectionManager $manager The "Switchboard Operator" who actually holds the cables.
      */
     public function __construct(private readonly ConnectionManager $manager) {}
 
     /**
-     * Specify the target connection name for query routing.
+     * Specify the target connection name.
      *
-     * @param string $name Connection identifier
-     *
-     * @return self Fluent interface for method chaining
+     * @param string $name
+     * @return self
      */
-    public function on(string $name) : self
+    public function on(string $name): self
     {
         $this->connectionName = $name;
 
@@ -44,11 +40,11 @@ final class DatabaseFlow
     }
 
     /**
-     * Enable connection pooling with acquire/release lifecycle management.
+     * Enable connection pooling for this flow.
      *
-     * @return self Fluent interface for method chaining
+     * @return self
      */
-    public function usePool() : self
+    public function usePool(): self
     {
         $this->pooled = true;
 
@@ -56,30 +52,27 @@ final class DatabaseFlow
     }
 
     /**
-     * Execute the given logic using the resolved connection with automatic resource cleanup.
+     * Execute the task with automatic resource management.
      *
-     * -- intent: runs the callback with either pooled or direct connection, ensuring
-     * proper resource acquisition and release semantics.
-     *
-     * @param callable $callback Logic to execute with connection instance
-     *
-     * @return mixed Result of the callback execution
-     *
-     * @throws Exception Any exception thrown by the callback or connection operations
+     * @param callable(DatabaseConnection): mixed $callback
+     * @return mixed
      */
-    public function run(callable $callback) : mixed
+    public function run(callable $callback): mixed
     {
         $connection = $this->manager->connection(name: $this->connectionName);
 
+        // If we requested a pool and the connection supports it...
         if ($this->pooled && $connection instanceof ConnectionPoolInterface) {
             $instance = $connection->acquire();
             try {
                 return $callback($instance);
             } finally {
+                // This is the "No matter what" cleanup rule.
                 $connection->release(connection: $instance);
             }
         }
 
+        // Otherwise, just run the code with the standard connection.
         return $callback($connection);
     }
 }

@@ -5,12 +5,20 @@ declare(strict_types=1);
 namespace Avax\Database\Events;
 
 /**
- * Event signaled when a new database connection is successfully opened.
+ * Event emitted when a fresh database connection is opened.
+ *
+ * @see docs/Concepts/Telemetry.md
  */
 final readonly class ConnectionOpened extends Event
 {
-    public function __construct(public string $connectionName)
-    {
-        parent::__construct();
+    /**
+     * @param string $connectionName The technical identifier assigned to the established database channel.
+     * @param string $correlationId  The technical trace identifier used for correlating this event with a specific execution scope.
+     */
+    public function __construct(
+        public string $connectionName,
+        string        $correlationId
+    ) {
+        parent::__construct(correlationId: $correlationId);
     }
 }

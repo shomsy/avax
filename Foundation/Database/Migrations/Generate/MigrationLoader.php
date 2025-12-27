@@ -19,20 +19,20 @@ final class MigrationLoader
      */
     public function getChecksum(string $name, string $path) : string
     {
-        $file = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $name . '.php';
+        $file = rtrim(string: $path, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $name . '.php';
 
-        if (! file_exists($file)) {
+        if (! file_exists(filename: $file)) {
             return '';
         }
 
-        return md5_file($file);
+        return md5_file(filename: $file);
     }
 
     public function getPending(string $path, array $ran) : array
     {
         $all = $this->load(path: $path);
 
-        $ranNames = array_column($ran, 'migration');
+        $ranNames = array_column(array: $ran, column_key: 'migration');
 
         return array_filter(
             array   : $all,
@@ -82,7 +82,7 @@ final class MigrationLoader
         return $files;
     }
 
-    private function loadMigrationFile(string $file) : ?BaseMigration
+    private function loadMigrationFile(string $file) : BaseMigration|null
     {
         $migration = require $file;
 

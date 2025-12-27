@@ -4,91 +4,110 @@ declare(strict_types=1);
 
 namespace Avax\Database\QueryBuilder\Core\Builder\Concerns;
 
-use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
+use Avax\Database\Query\AST\OrderNode;
 
 /**
- * Trait HasOrders
+ * Trait providing sorting and ordering capabilities for the QueryBuilder.
  *
- * -- intent: extend the query builder with sorting and ordering capabilities.
+ * -- intent:
+ * Extends the QueryBuilder with a Domain Specific Language (DSL) for 
+ * defining the sequence of retrieved result sets (ORDER BY), supporting 
+ * both standard column sorting and specialized random or chronological patterns.
+ *
+ * -- invariants:
+ * - Every ordering instruction must return a new, cloned builder instance.
+ * - Ordering metadata must be encapsulated within an OrderNode abstraction.
+ * - Supports sequential ordering instructions (multiple ORDER BY clauses).
+ *
+ * -- boundaries:
+ * - Does NOT handle SQL compilation (delegated to Grammar).
+ * - Does NOT validate the existence of the targeted sorting columns.
  */
 trait HasOrders
 {
     /**
-     * Add a descending ORDER BY clause to the query.
+     * Add a primary sorting criterion (ORDER BY) to the current query context.
      *
-     * -- intent: provide a shorthand for reverse chronological or numeric sorting.
+     * -- intent:
+     * Specify the technical field and orientation for the result set 
+     * sequence at the database level.
      *
-     * @param string $column Technical column name
-     *
-     * @return HasOrders|QueryBuilder
+     * @param string $column    The technical field name to target for sorting.
+     * @param string $direction The sorting orientation ('ASC' or 'DESC').
+     * @return self A fresh, cloned builder instance with the applied order.
      */
-    public function orderByDesc(string $column) : self
+    public function orderBy(string $column, string $direction = 'ASC'): self
+    {
+        $clone        = clone $this;
+        $clone->state = $clone->state->addOrder(order: new OrderNode(
+            column: $column,
+            direction: strtoupper(string: $direction)
+        ));
+
+        return $clone;
+    }
+
+    /**
+     * Add a descending sorting criterion (ORDER BY ... DESC).
+     *
+     * -- intent:
+     * Provide an expressive shorthand for reverse chronological or reverse 
+     * numeric sorting patterns.
+     *
+     * @param string $column The technical field name to target for descending sort.
+     * @return self A fresh, cloned builder instance with the descending order.
+     */
+    public function orderByDesc(string $column): self
     {
         return $this->orderBy(column: $column, direction: 'DESC');
     }
 
     /**
-     * Add an ORDER BY clause to the query.
+     * Sort the resulting records in a random sequence.
      *
-     * -- intent: provide a human-readable DSL for sorting record sets.
+     * -- intent:
+     * Provide a pragmatic DSL for fetching unpredictable results, delegating 
+     * the specific random function generation to the grammar dialect.
      *
-     * @param string $column    Technical column name
-     * @param string $direction Sort orientation (ASC/DESC)
-     *
-     * @return HasOrders|QueryBuilder
+     * @return self A fresh, cloned builder instance with random ordering active.
      */
-    public function orderBy(string $column, string $direction = 'ASC') : self
+    public function inRandomOrder(): self
     {
-        $this->state->orders[] = [
-            'column'    => $column,
-            'direction' => strtoupper(string: $direction)
-        ];
+        $clone        = clone $this;
+        $clone->state = $clone->state->addOrder(order: new OrderNode(
+            sql: $this->grammar->compileRandomOrder(),
+            type: 'Raw'
+        ));
 
-        return $this;
+        return $clone;
     }
 
     /**
-     * Add a random sorting order to the query.
+     * Sort the result set by the most recent records first.
      *
-     * -- intent: provide a pragmatic shorthand for chaotic record retrieval.
+     * -- intent:
+     * Provide a chronological shorthand for prioritizing recently updated or 
+     * created domain records.
      *
-     * @return HasOrders|QueryBuilder
+     * @param string $column The timestamp or sequence field to target (defaults to 'created_at').
+     * @return self A fresh, cloned builder instance sorted by newest first.
      */
-    public function inRandomOrder() : self
-    {
-        $this->state->orders[] = [
-            'type'   => 'Raw',
-            'sql'    => $this->grammar->compileRandomOrder(),
-            'values' => []
-        ];
-
-        return $this;
-    }
-
-    /**
-     * Add a latest (chronological desc) sort order.
-     *
-     * -- intent: provide a domain-specific shorthand for recent record retrieval.
-     *
-     * @param string $column Name of the timestamp column
-     *
-     * @return HasOrders|QueryBuilder
-     */
-    public function latest(string $column = 'created_at') : self
+    public function latest(string $column = 'created_at'): self
     {
         return $this->orderBy(column: $column, direction: 'DESC');
     }
 
     /**
-     * Add an oldest (chronological asc) sort order.
+     * Sort the result set by the oldest records first.
      *
-     * -- intent: provide a domain-specific shorthand for historic record retrieval.
+     * -- intent:
+     * Provide a chronological shorthand for prioritizing historical domain 
+     * records across the current dataset.
      *
-     * @param string $column Name of the timestamp column
-     *
-     * @return HasOrders|QueryBuilder
+     * @param string $column The timestamp or sequence field to target (defaults to 'created_at').
+     * @return self A fresh, cloned builder instance sorted by oldest first.
      */
-    public function oldest(string $column = 'created_at') : self
+    public function oldest(string $column = 'created_at'): self
     {
         return $this->orderBy(column: $column, direction: 'ASC');
     }

@@ -29,7 +29,7 @@ final readonly class MigrationRunner
 
         try {
             $ran      = $this->repository->getRan();
-            $ranNames = array_column($ran, 'migration');
+            $ranNames = array_column(array: $ran, column_key: 'migration');
             $batch    = $this->repository->getNextBatchNumber();
 
             foreach ($migrations as $name => $migration) {
@@ -37,7 +37,7 @@ final readonly class MigrationRunner
                     continue;
                 }
 
-                $checksum = md5_file(rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $name . '.php');
+                $checksum = md5_file(filename: rtrim(string: $path, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $name . '.php');
                 $this->runMigration(migration: $migration, method: 'up', name: $name, batch: $batch, checksum: $checksum);
             }
         } catch (Throwable $e) {
@@ -45,9 +45,14 @@ final readonly class MigrationRunner
         }
     }
 
-    private function runMigration($migration, string $method, string $name, int|null $batch = null, ?string $checksum = null) : void
+    private function runMigration($migration, string $method, string $name, int|null $batch = null, string|null $checksum = null) : void
     {
         try {
+            // Inject QueryBuilder into migration if it supports it
+            if (method_exists(object_or_class: $migration, method: 'setQueryBuilder')) {
+                $migration->setQueryBuilder($this->builder);
+            }
+
             $this->builder->transaction(callback: function () use ($migration, $method, $name, $batch, $checksum) {
                 $migration->{$method}();
 

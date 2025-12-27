@@ -23,57 +23,57 @@ final class MigrateCommand
     public function handle(string $path, bool $dryRun = false) : int
     {
         if ($dryRun) {
-            $this->info('DRY RUN MODE: No changes will be executed.');
+            $this->info(msg: 'DRY RUN MODE: No changes will be executed.');
         }
 
-        $this->info('Running migrations...');
+        $this->info(msg: 'Running migrations...');
         $this->repository->ensureTableExists();
 
         $ran = $this->repository->getRan();
 
         // --- Enterprise Integrity Check ---
-        $ranMap = array_column($ran, 'checksum', 'migration');
+        $ranMap = array_column(array: $ran, column_key: 'checksum', index_key: 'migration');
         foreach ($ran as $record) {
             $name       = $record['migration'];
             $dbChecksum = $record['checksum'];
 
             if ($dbChecksum) {
-                $fileChecksum = $this->loader->getChecksum($name, $path);
+                $fileChecksum = $this->loader->getChecksum(name: $name, path: $path);
                 if ($fileChecksum && $dbChecksum !== $fileChecksum) {
-                    $this->error("CRITICAL: Migration integrity violation in '{$name}'.");
-                    $this->error("The file has been modified after execution. Please revert changes.");
+                    $this->error(msg: "CRITICAL: Migration integrity violation in '{$name}'.");
+                    $this->error(msg: "The file has been modified after execution. Please revert changes.");
 
                     return 1;
                 }
             }
         }
 
-        $pending = $this->loader->getPending($path, $ran);
+        $pending = $this->loader->getPending(path: $path, ran: $ran);
 
         if (empty($pending)) {
-            $this->info('Nothing to migrate.');
+            $this->info(msg: 'Nothing to migrate.');
 
             return 0;
         }
 
-        $this->info(sprintf('Found %d pending migration(s).', count($pending)));
+        $this->info(msg: sprintf('Found %d pending migration(s).', count(value: $pending)));
 
         try {
-            $this->runner->up($pending, $path, $dryRun);
+            $this->runner->up(migrations: $pending, path: $path, dryRun: $dryRun);
 
             if ($dryRun) {
-                $this->success('Dry run completed successfully. No changes made.');
+                $this->success(msg: 'Dry run completed successfully. No changes made.');
             } else {
-                $this->success(sprintf('Migrated %d migration(s) successfully!', count($pending)));
+                $this->success(msg: sprintf('Migrated %d migration(s) successfully!', count(value: $pending)));
             }
 
-            foreach (array_keys($pending) as $name) {
+            foreach (array_keys(array: $pending) as $name) {
                 echo "  ✓ {$name}\n";
             }
 
             return 0;
         } catch (Throwable $e) {
-            $this->error('Migration failed: ' . $e->getMessage());
+            $this->error(msg: 'Migration failed: ' . $e->getMessage());
 
             return 1;
         }

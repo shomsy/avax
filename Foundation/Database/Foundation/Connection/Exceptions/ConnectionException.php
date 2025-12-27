@@ -9,40 +9,50 @@ use Override;
 use Throwable;
 
 /**
- * General connection error.
+ * A "Connection Error" report.
+ *
+ * -- what is it?
+ * This is a specialized error (Exception). It's what the system "screams" 
+ * when it tries to talk to a database but something goes wrong with 
+ * the line itself (e.g., wrong password, server is offline).
+ *
+ * -- how to imagine it:
+ * Think of it as a "Service Ticket". It's not just a generic "Something 
+ * broke" message; it's a specific report that says "I tried to call the 
+ * 'Primary' database, but the line was busy/dead."
+ *
+ * -- why this exists:
+ * To make debugging easier. Instead of just seeing a raw computer error, 
+ * this object carries the "Nickname" of the connection that failed, so 
+ * you know exactly which server to check.
+ *
+ * -- mental models:
+ * - "Immutable": Once this error is created, you can't change its details. 
+ *    It's a permanent record of what happened at that moment.
  */
 class ConnectionException extends DatabaseException
 {
     /**
-     * Constructor capturing the connection name and failure details.
-     *
-     * -- intent: provide visibility into which connection configuration failed.
-     *
-     * @param string         $name     Technical connection identifier
-     * @param string         $message  Driver-provided error message
-     * @param Throwable|null $previous Original PDO or socket exception
+     * @param string         $name     The nickname of the database connection that failed.
+     * @param string         $message  The human-readable description of what went wrong.
+     * @param Throwable|null $previous The raw system error that triggered this report.
      */
     #[Override]
     public function __construct(
         private readonly string $name,
         string                  $message,
         Throwable|null          $previous = null
-    )
-    {
+    ) {
         parent::__construct(message: "Connection [{$name}] failed: {$message}", code: 0, previous: $previous);
     }
 
     /**
-     * Retrieve the technical name of the failing connection.
+     * Get the nickname of the failing database.
      *
-     * -- intent: allow identification of the problematic database node.
-     *
-     * @return string
+     * @return string The nickname (e.g., 'primary').
      */
-    public function getConnectionName() : string
+    public function getConnectionName(): string
     {
         return $this->name;
     }
 }
-
-

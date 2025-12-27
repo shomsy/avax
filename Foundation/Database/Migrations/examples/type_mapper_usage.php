@@ -86,7 +86,7 @@ foreach ($columns as $column) {
     $typeHint = $column['nullable'] ? "?{$phpType}" : $phpType;
 
     // Add PHPDoc for complex types
-    if (in_array($phpType, ['array', 'GeoPoint'], true)) {
+    if (in_array(needle: $phpType, haystack: ['array', 'GeoPoint'], strict: true)) {
         echo "    /** @var {$docType} */\n";
     }
 
@@ -99,11 +99,11 @@ echo "}\n\n";
 // SUPPORTED TYPES LIST
 // ========================================
 
-echo "5. All Supported Types (" . count($mapper->getSupportedTypes()) . " total):\n";
+echo "5. All Supported Types (" . count(value: $mapper->getSupportedTypes()) . " total):\n";
 $types  = $mapper->getSupportedTypes();
-$chunks = array_chunk($types, 5);
+$chunks = array_chunk(array: $types, length: 5);
 foreach ($chunks as $chunk) {
-    echo "   " . implode(', ', $chunk) . "\n";
+    echo "   " . implode(separator: ', ', array: $chunk) . "\n";
 }
 echo "\n";
 

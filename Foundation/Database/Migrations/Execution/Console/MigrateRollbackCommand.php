@@ -22,16 +22,16 @@ final class MigrateRollbackCommand
 
     public function handle(string $path, int $steps = 1) : int
     {
-        $this->info("Rolling back {$steps} batch(es)...");
+        $this->info(msg: "Rolling back {$steps} batch(es)...");
 
-        $records = $this->repository->getLastBatch($steps);
+        $records = $this->repository->getLastBatch(steps: $steps);
         if (empty($records)) {
-            $this->info('Nothing to rollback.');
+            $this->info(msg: 'Nothing to rollback.');
 
             return 0;
         }
 
-        $all        = $this->loader->load($path);
+        $all        = $this->loader->load(path: $path);
         $toRollback = [];
         foreach ($records as $record) {
             $name = $record['migration'];
@@ -41,15 +41,15 @@ final class MigrateRollbackCommand
         }
 
         try {
-            $this->runner->rollback($toRollback, $steps);
-            $this->success(sprintf('Rolled back %d migration(s) successfully!', count($toRollback)));
+            $this->runner->rollback(migrations: $toRollback, steps: $steps);
+            $this->success(msg: sprintf('Rolled back %d migration(s) successfully!', count(value: $toRollback)));
             foreach ($records as $record) {
                 echo "  ✓ {$record['migration']}\n";
             }
 
             return 0;
         } catch (Throwable $e) {
-            $this->error('Rollback failed: ' . $e->getMessage());
+            $this->error(msg: 'Rollback failed: ' . $e->getMessage());
 
             return 1;
         }

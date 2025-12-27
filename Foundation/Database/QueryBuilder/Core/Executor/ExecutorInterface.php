@@ -4,48 +4,55 @@ declare(strict_types=1);
 
 namespace Avax\Database\QueryBuilder\Core\Executor;
 
-use Avax\Database\QueryBuilder\DTO\MutationResult;
+use Avax\Database\QueryBuilder\DTO\ExecutionResult;
+use Avax\Database\Support\ExecutionScope;
 use Throwable;
 
 /**
- * Functional contract for the physical execution of database queries.
+ * Interface defining capabilities for the physical execution of database operations.
  *
- * -- intent: decouple the builder's logic from the technicalities of driver-level communication.
+ * @see docs/DSL/QueryExecution.md
  */
 interface ExecutorInterface
 {
     /**
-     * Execute a data retrieval query (SELECT) and return the resulting collection.
+     * Dispatch a retrieval instruction (SELECT) to the persistence driver.
      *
-     * -- intent: provide a pragmatic entry point for fetching raw datasets.
-     *
-     * @param string $sql      Technical query dialect
-     * @param array  $bindings Secure parameter values
-     *
+     * @param string              $sql      Pre-compiled SQL retrieval string.
+     * @param array               $bindings Secure tokens for parameterization.
+     * @param ExecutionScope|null $scope    Optional context for correlation.
+     * @throws Throwable If persistence connection failure occurs.
      * @return array<array-key, mixed>
-     * @throws Throwable If driver or connection failure occurs
      */
-    public function query(string $sql, array $bindings = []) : array;
+    public function query(
+        string           $sql,
+        array            $bindings = [],
+        ExecutionScope|null $scope = null
+    ): array;
 
     /**
-     * Execute a data mutation query (INSERT/UPDATE/DELETE) and return mutation result.
+     * Dispatch a mutation instruction (INSERT/UPDATE/DELETE/DDL) to the persistence driver.
      *
-     * -- intent: provide a pragmatic entry point for structural or data changes.
-     *
-     * @param string $sql      Technical query dialect
-     * @param array  $bindings Secure parameter values
-     *
-     * @return MutationResult Encapsulates success status and affected row count
-     * @throws Throwable If driver or connection failure occurs
+     * @param string              $sql      Pre-compiled SQL mutation string.
+     * @param array               $bindings Secure tokens for parameterization.
+     * @param ExecutionScope|null $scope    Optional context for correlation.
+     * @throws Throwable If technical modification fails.
+     * @return ExecutionResult
      */
-    public function execute(string $sql, array $bindings = []) : MutationResult;
+    public function execute(
+        string           $sql,
+        array            $bindings = [],
+        ExecutionScope|null $scope = null
+    ): ExecutionResult;
 
     /**
-     * Retrieve the identifying technical name of the underlying database driver.
+     * Retrieve the authoritative technical identifier of the underlying persistence driver.
      *
-     * -- intent: allow components to adapt behavior based on the active storage engine.
+     * -- intent:
+     * Enables high-level components to adapt their behavior based on the specific 
+     * characteristics and capabilities of the active persistence engine.
      *
-     * @return string
+     * @return string THE technical identifier of the driver (e.g., 'mysql').
      */
-    public function getDriverName() : string;
+    public function getDriverName(): string;
 }

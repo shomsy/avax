@@ -687,9 +687,9 @@ final class Blueprint
      */
     public function enum(string $name, array $values) : ColumnDefinition
     {
-        $quoted = array_map(fn ($v) => "'{$v}'", $values);
+        $quoted = array_map(callback: fn ($v) => "'{$v}'", array: $values);
 
-        return $this->addColumn(type: 'ENUM(' . implode(',', $quoted) . ')', name: $name);
+        return $this->addColumn(type: 'ENUM(' . implode(separator: ',', array: $quoted) . ')', name: $name);
     }
 
     /**
@@ -704,9 +704,9 @@ final class Blueprint
      */
     public function set(string $name, array $values) : ColumnDefinition
     {
-        $quoted = array_map(fn ($v) => "'{$v}'", $values);
+        $quoted = array_map(callback: fn ($v) => "'{$v}'", array: $values);
 
-        return $this->addColumn(type: 'SET(' . implode(',', $quoted) . ')', name: $name);
+        return $this->addColumn(type: 'SET(' . implode(separator: ',', array: $quoted) . ')', name: $name);
     }
 
     /**
@@ -960,7 +960,7 @@ final class Blueprint
      */
     public function toSql(GrammarInterface $grammar) : array
     {
-        return $this->creating ? $this->toCreateSql($grammar) : $this->toAlterSql($grammar);
+        return $this->creating ? $this->toCreateSql(grammar: $grammar) : $this->toAlterSql(grammar: $grammar);
     }
 
     /**
@@ -991,15 +991,15 @@ final class Blueprint
 
         // Handle new columns (ADD)
         foreach ($this->columns as $column) {
-            $sql[] = "ALTER TABLE " . $grammar->wrap($this->table) . " ADD " . $renderer->render($column, $grammar);
+            $sql[] = "ALTER TABLE " . $grammar->wrap(value: $this->table) . " ADD " . $renderer->render(column: $column, grammar: $grammar);
         }
 
         // Handle commands (DROP, RENAME)
         foreach ($this->commands as $command) {
             if ($command['type'] === 'drop') {
-                $sql[] = "ALTER TABLE " . $grammar->wrap($this->table) . " DROP COLUMN " . $grammar->wrap($command['name']);
+                $sql[] = "ALTER TABLE " . $grammar->wrap(value: $this->table) . " DROP COLUMN " . $grammar->wrap(value: $command['name']);
             } elseif ($command['type'] === 'rename') {
-                $sql[] = "ALTER TABLE " . $grammar->wrap($this->table) . " RENAME COLUMN " . $grammar->wrap($command['from']) . " TO " . $grammar->wrap($command['to']);
+                $sql[] = "ALTER TABLE " . $grammar->wrap(value: $this->table) . " RENAME COLUMN " . $grammar->wrap(value: $command['from']) . " TO " . $grammar->wrap(value: $command['to']);
             }
         }
 

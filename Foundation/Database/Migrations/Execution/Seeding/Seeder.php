@@ -18,7 +18,7 @@ abstract class Seeder
      */
     public function call(string $class) : void
     {
-        basename($class);
+        basename(path: $class);
         echo "\033[36mSeeding:\033[0m {$class}\n";
         (new $class())->run();
     }
@@ -33,6 +33,6 @@ abstract class Seeder
      */
     protected function command(string $table) : QueryBuilder
     {
-        return app(QueryBuilder::class)->from($table);
+        return app(abstract: QueryBuilder::class)->from($table);
     }
 }

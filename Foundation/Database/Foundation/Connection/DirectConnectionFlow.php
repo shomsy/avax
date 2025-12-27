@@ -8,46 +8,47 @@ use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Events\ConnectionFailed;
 use Avax\Database\Events\ConnectionOpened;
 use Avax\Database\Events\EventBus;
+use Avax\Database\Support\ExecutionScope;
 use Throwable;
 
 /**
- * DSL for establishing direct (non-pooled) database connections.
+ * Fluent builder for establishing direct database connections.
+ *
+ * @see docs/Concepts/Connections.md
  */
 final class DirectConnectionFlow
 {
-    /**
-     * Database connection configuration parameters.
-     */
+    /** @var array<string, mixed> The list of server addresses, usernames, and passwords. */
     private array $config = [];
 
-    /**
-     * Event dispatcher for connection lifecycle events.
-     */
+    /** @var EventBus|null The system we use to send connection events. */
     private EventBus|null $eventBus = null;
 
+    /** @var ExecutionScope|null The "Passenger Ticket" used to tag this connection for logs. */
+    private ExecutionScope|null $scope = null;
+
     /**
-     * Private constructor for static factory pattern.
+     * Private constructor — use `DirectConnectionFlow::begin()` to start.
      */
     private function __construct() {}
 
     /**
-     * Create a new connection flow builder instance.
+     * Start the setup wizard for a new database connection.
      *
-     * @return self Fluent interface for method chaining
+     * @return self
      */
-    public static function begin() : self
+    public static function begin(): self
     {
         return new self();
     }
 
     /**
-     * Set the database connection configuration.
+     * Give the helper the settings it needs (Host, Driver, etc.).
      *
-     * @param array $config Connection parameters (host, port, database, etc.)
-     *
-     * @return self Fluent interface for method chaining
+     * @param array<string, mixed> $config The settings dictionary.
+     * @return self The helper itself, so you can keep adding instructions.
      */
-    public function using(array $config) : self
+    public function using(array $config): self
     {
         $this->config = $config;
 
@@ -55,13 +56,9 @@ final class DirectConnectionFlow
     }
 
     /**
-     * Attach event dispatcher for connection lifecycle notifications.
-     *
-     * @param EventBus $eventBus Event dispatcher instance
-     *
-     * @return self Fluent interface for method chaining
+     * Tell the helper where to send "Connected" or "Failed" notifications.
      */
-    public function withEvents(EventBus $eventBus) : self
+    public function withEvents(EventBus $eventBus): self
     {
         $this->eventBus = $eventBus;
 
@@ -69,25 +66,43 @@ final class DirectConnectionFlow
     }
 
     /**
-     * Establish the database connection with event notifications.
-     *
-     * -- intent: creates a new connection instance, dispatches lifecycle events,
-     * and propagates any connection errors to the event bus.
-     *
-     * @return DatabaseConnection Active database connection instance
-     *
-     * @throws Throwable Any exception from connection factory or event dispatch
+     * Give the connection a "Luggage Tag" (Scope) so we can trace its work.
      */
-    public function connect() : DatabaseConnection
+    public function withScope(ExecutionScope $scope): self
+    {
+        $this->scope = $scope;
+
+        return $this;
+    }
+
+    /**
+     * Establish the physical connection with event dispatching.
+     *
+     * @throws Throwable
+     * @return DatabaseConnection
+     */
+    public function connect(): DatabaseConnection
     {
         $label = $this->config['name'] ?? 'default';
+        $scope = $this->scope ?? ExecutionScope::fresh();
+
         try {
             $connection = ConnectionFactory::from(config: $this->config);
-            $this->eventBus?->dispatch(event: new ConnectionOpened(connectionName: $label));
+            // Signal to the system that the line is open.
+            $this->eventBus?->dispatch(event: new ConnectionOpened(
+                connectionName: $label,
+                correlationId: $scope->correlationId
+            ));
 
             return $connection;
         } catch (Throwable $e) {
-            $this->eventBus?->dispatch(event: new ConnectionFailed(connectionName: $label, exception: $e));
+            // Signal to the system that we had an error.
+            $this->eventBus?->dispatch(event: new ConnectionFailed(
+                connectionName: $label,
+                exception: $e,
+                correlationId: $scope->correlationId
+            ));
+
             throw $e;
         }
     }

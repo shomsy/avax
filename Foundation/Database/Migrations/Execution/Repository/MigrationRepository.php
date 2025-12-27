@@ -20,6 +20,9 @@ final class MigrationRepository
         private readonly QueryBuilder $builder
     ) {}
 
+    /**
+     * @throws Throwable
+     */
     public function getRan() : array
     {
         return $this->builder->from(table: $this->table)
@@ -27,6 +30,9 @@ final class MigrationRepository
             ->get();
     }
 
+    /**
+     * @throws Throwable
+     */
     public function getLastBatch(int $steps = 1) : array
     {
         $maxBatch = (int) $this->builder->from(table: $this->table)->max(column: 'batch');
@@ -39,11 +45,17 @@ final class MigrationRepository
             ->get();
     }
 
+    /**
+     * @throws Throwable
+     */
     public function getNextBatchNumber() : int
     {
         return (int) $this->builder->from(table: $this->table)->max(column: 'batch') + 1;
     }
 
+    /**
+     * @throws Throwable
+     */
     public function log(string $name, int $batch, string $checksum) : void
     {
         $this->builder->from(table: $this->table)->insert(values: [
@@ -67,6 +79,9 @@ final class MigrationRepository
         }
     }
 
+    /**
+     * @throws Throwable
+     */
     public function createRepository() : void
     {
         $this->builder->create(table: $this->table, callback: function ($table) {

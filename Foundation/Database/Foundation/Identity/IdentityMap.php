@@ -10,24 +10,21 @@ use Avax\Database\Transaction\Exceptions\TransactionException;
 use Throwable;
 
 /**
- * Enterprise-grade technician for tracking record identities and deferring operations.
+ * Unit-of-Work IdentityMap that buffers mutations and tracks loaded records.
  *
- * -- intent: implement the Unit of Work pattern to optimize and batch database writes.
+ * @see docs/Concepts/IdentityMap.md
  */
 final class IdentityMap
 {
-    // Collection of records retrieved and managed by this map
+    /** @var array<string, mixed> A memory of every record we've already loaded. */
     private array $map = [];
 
-    // Queue of pending database operations for deferred execution
+    /** @var array<int, array{operation: string, sql: string, bindings: array}> The list of pending chores. */
     private array $deferred = [];
 
     /**
-     * Constructor promoting the transaction manager dependency.
-     *
-     * -- intent: establish the bridge to the persistence layer for final commits.
-     *
-     * @param TransactionManagerInterface $transactionManager The active manager for atomic batches
+     * @param TransactionManagerInterface $transactionManager
+     * @param DatabaseConnection          $connection
      */
     public function __construct(
         private readonly TransactionManagerInterface $transactionManager,
@@ -35,47 +32,41 @@ final class IdentityMap
     ) {}
 
     /**
-     * Schedule a technical SQL operation for deferred execution.
+     * Schedule a mutation operation for deferred execution.
      *
-     * -- intent: buffer mutation queries until an explicit flush is requested.
-     *
-     * @param string $operation Type of operation (INSERT/UPDATE/DELETE)
-     * @param string $sql       Dialect-specific SQL string
-     * @param array  $bindings  Secure parameter values
-     *
-     * @return void
+     * @param string $operation Operation type (e.g., INSERT).
+     * @param string $sql       Pre-compiled SQL string.
+     * @param array  $bindings  Secure tokens for parameterization.
      */
-    public function schedule(string $operation, string $sql, array $bindings = []) : void
+    public function schedule(string $operation, string $sql, array $bindings = []): void
     {
         $this->deferred[] = compact('operation', 'sql', 'bindings');
     }
 
     /**
-     * Fulfill all pending operations within a single atomic batch.
+     * Execute all scheduled mutations within a transaction.
      *
-     * -- intent: execute all buffered mutations and clear the internal queue.
-     *
-     * @return void
-     * @throws Throwable If any operation in the batch fails
+     * @throws Throwable If any operation fails or connection is lost.
      */
-    public function execute() : void
+    public function execute(): void
     {
         if (empty($this->deferred)) {
             return;
         }
 
-        $this->transactionManager->transaction(callback: function () {
+        $this->transactionManager->transaction(callback: function (TransactionManagerInterface $tx) {
             foreach ($this->deferred as $job) {
-                $stmt = $this->connection->getConnection()->prepare(query: $job['sql']);
+                $stmt = $tx->getConnection()->getConnection()->prepare(query: $job['sql']);
                 if (! $stmt->execute(params: $job['bindings'])) {
                     throw new TransactionException(
-                        message     : "Failed to execute deferred operation: " . $job['operation'],
+                        message: "Failed to execute deferred operation: " . $job['operation'],
                         nestingLevel: 0
                     );
                 }
             }
         });
 
+        // Clear the list after we're done.
         $this->deferred = [];
     }
 }

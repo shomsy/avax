@@ -19,10 +19,10 @@ final class MigrateStatusCommand
 
     public function handle(string $path) : int
     {
-        $this->info('Migration Status:');
+        $this->info(msg: 'Migration Status:');
         echo "\n";
 
-        $all = $this->loader->load($path);
+        $all = $this->loader->load(path: $path);
         $ran = $this->repository->getRan();
 
         if (empty($all)) {
@@ -31,10 +31,10 @@ final class MigrateStatusCommand
             return 0;
         }
 
-        echo str_pad('Migration', 50) . " | Status  | Integrity\n";
-        echo str_repeat('-', 80) . "\n";
+        echo str_pad(string: 'Migration', length: 50) . " | Status  | Integrity\n";
+        echo str_repeat(string: '-', times: 80) . "\n";
 
-        $ranMap = array_column($ran, 'checksum', 'migration');
+        $ranMap = array_column(array: $ran, column_key: 'checksum', index_key: 'migration');
 
         foreach ($all as $name => $migration) {
             $isRan  = isset($ranMap[$name]);
@@ -43,7 +43,7 @@ final class MigrateStatusCommand
             $integrity = '---';
             if ($isRan) {
                 $dbChecksum   = $ranMap[$name];
-                $fileChecksum = $this->loader->getChecksum($name, $path);
+                $fileChecksum = $this->loader->getChecksum(name: $name, path: $path);
 
                 if (! $dbChecksum) {
                     $integrity = "\033[34mLEGACY\033[0m"; // Table created before checksum support
@@ -54,11 +54,11 @@ final class MigrateStatusCommand
                 }
             }
 
-            echo str_pad($name, 50) . " | " . str_pad($status, 15) . " | {$integrity}\n";
+            echo str_pad(string: $name, length: 50) . " | " . str_pad(string: $status, length: 15) . " | {$integrity}\n";
         }
 
         echo "\n";
-        $this->info(sprintf('Total: %d | Ran: %d | Pending: %d', count($all), count($ran), count($all) - count($ran)));
+        $this->info(msg: sprintf('Total: %d | Ran: %d | Pending: %d', count(value: $all), count(value: $ran), count(value: $all) - count(value: $ran)));
 
         return 0;
     }

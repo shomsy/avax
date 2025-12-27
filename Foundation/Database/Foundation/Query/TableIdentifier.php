@@ -5,19 +5,15 @@ declare(strict_types=1);
 namespace Avax\Database\Query;
 
 /**
- * Pragmatic value object representing a database table with an optional alias.
+ * Immutable value object representing a database table identifier with optional alias.
  *
- * -- intent: transport table identification metadata across the builder layers.
+ * @see docs/DSL/QueryStates.md
  */
 final readonly class TableIdentifier
 {
     /**
-     * Constructor promoting immutable properties via PHP 8.3 features.
-     *
-     * -- intent: ensure data integrity for the table identifier.
-     *
-     * @param string      $name  Technical table identifier
-     * @param string|null $alias Optional domain-specific alias (e.g. for joins)
+     * @param string      $name  The technical identifier (physical name) of the database table.
+     * @param string|null $alias The optional domain-specific label (alias) assigned to the table source.
      */
     public function __construct(
         public string      $name,
@@ -25,13 +21,11 @@ final readonly class TableIdentifier
     ) {}
 
     /**
-     * Convert the table identifier into its SQL representation.
-     *
-     * -- intent: simplify SQL concatenation for table targeting.
+     * Convert to SQL-like string format.
      *
      * @return string
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         if ($this->alias === null) {
             return $this->name;
@@ -40,5 +34,3 @@ final readonly class TableIdentifier
         return "{$this->name} AS {$this->alias}";
     }
 }
-
-

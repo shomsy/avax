@@ -9,19 +9,15 @@ use Avax\Database\Registry\ModuleRegistry;
 use Throwable;
 
 /**
- * System orchestrator responsible for managing the database component lifecycle.
+ * Central Bootstrapper (Kernel) for the database component lifecycle.
  *
- * -- intent: coordinate the sequential registration and booting of all feature modules.
+ * @see docs/Concepts/Architecture.md
  */
 final class Kernel
 {
     /**
-     * Constructor promoting core foundation dependencies via PHP 8.3 features.
-     *
-     * -- intent: link the container and registry for cross-component orchestration.
-     *
-     * @param Container      $container Central dependency injection vessel
-     * @param ModuleRegistry $registry  Authority for module registration and status
+     * @param Container      $container The "Toolbox" where we store all our services.
+     * @param ModuleRegistry $registry  The "Librarian" who keeps track of which modules are active.
      */
     public function __construct(
         private readonly Container      $container,
@@ -29,14 +25,11 @@ final class Kernel
     ) {}
 
     /**
-     * Initiate the component boot sequence for all active modules.
-     *
-     * -- intent: transform all registered feature metadata into operational services.
+     * Wake up the entire database system.
      *
      * @return void
-     * @throws Throwable If module registration or booting fails
      */
-    public function boot() : void
+    public function boot(): void
     {
         $modules = Manifest::getModules();
 
@@ -48,13 +41,11 @@ final class Kernel
     }
 
     /**
-     * Execute the graceful shutdown routine for all initialized features.
-     *
-     * -- intent: ensure all active modules release their resources before system termination.
+     * Shut everything down safely and close resources.
      *
      * @return void
      */
-    public function shutdown() : void
+    public function shutdown(): void
     {
         $this->registry->shutdown();
     }

@@ -8,49 +8,55 @@ use Avax\Database\Exceptions\DatabaseException;
 use Override;
 
 /**
- * Triggered when the database connection pool reaches its maximum configured capacity.
+ * A "No More Room" report for a connection pool.
  *
- * -- intent: signal resource exhaustion in high-concurrency environments.
+ * -- what is it?
+ * This error means the "Shared Library" (Pool) is out of books (Connections). 
+ * Every single connection is currently being used by someone else, and we've 
+ * hit the maximum limit you set in the config.
+ *
+ * -- how to imagine it:
+ * Think of a restaurant with only 10 tables. If all 10 tables are full and 
+ * an 11th customer arrives, the host has to say "Sorry, we're at capacity." 
+ * This error is that "Sorry" message.
+ *
+ * -- why this exists:
+ * To prevent the server from exploding. If we kept opening new connections 
+ * forever, the database server would eventually crash from of all the open 
+ * socket lines. This error provides "Backpressure"—it tells the app to 
+ * slow down or wait until a connection is returned.
+ *
+ * -- mental models:
+ * - "Saturation": The pool is 100% full.
+ * - "Backpressure": Forcing the application to wait or fail early rather 
+ *    than overwhelming the database.
  */
 final class PoolLimitReachedException extends DatabaseException
 {
     /**
-     * Constructor capturing the pool name and configured limit.
-     *
-     * -- intent: provide clear evidence of resource saturation for scaling decisions.
-     *
-     * @param string $name  Technical pool identifier
-     * @param int    $limit Configured maximum connection count
+     * @param string $name  The nickname of the pool that is full.
+     * @param int    $limit The maximum number of people allowed in at once.
      */
     #[Override]
     public function __construct(
         private readonly string $name,
         private readonly int    $limit
-    )
-    {
+    ) {
         parent::__construct(message: "Connection pool [{$name}] reached its limit of {$limit} connections.");
     }
 
     /**
-     * Retrieve the technical name of the saturated pool.
-     *
-     * -- intent: identify which connection path is blocked.
-     *
-     * @return string
+     * Get the nickname of the overcrowded pool.
      */
-    public function getPoolName() : string
+    public function getPoolName(): string
     {
         return $this->name;
     }
 
     /**
-     * Retrieve the maximum allowed connection count for this pool.
-     *
-     * -- intent: assist in diagnostic capacity planning.
-     *
-     * @return int
+     * Get the maximum capacity of the pool.
      */
-    public function getLimit() : int
+    public function getLimit(): int
     {
         return $this->limit;
     }

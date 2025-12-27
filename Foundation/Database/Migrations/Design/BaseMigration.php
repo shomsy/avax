@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Avax\Migrations\Design;
 
 use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
+use Avax\Database\QueryBuilder\Core\Grammar\GrammarInterface;
 use Avax\Migrations\Design\Table\Blueprint;
 use Closure;
+use RuntimeException;
 
 /**
  * Base migration class providing fluent schema building methods (DSL).
@@ -15,6 +17,27 @@ use Closure;
  */
 abstract class BaseMigration
 {
+    /**
+     * Query builder instance for executing migration statements.
+     *
+     * @var QueryBuilder|null
+     */
+    protected QueryBuilder|null $queryBuilder = null;
+
+    /**
+     * Set the query builder instance for this migration.
+     *
+     * -- intent: enable dependency injection instead of service locator pattern.
+     *
+     * @param QueryBuilder $builder Query builder instance
+     *
+     * @return void
+     */
+    public function setQueryBuilder(QueryBuilder $builder) : void
+    {
+        $this->queryBuilder = $builder;
+    }
+
     /**
      * Run the migrations.
      */
@@ -41,14 +64,35 @@ abstract class BaseMigration
         }
     }
 
+    /**
+     * Get the grammar instance from the query builder.
+     *
+     * @return GrammarInterface
+     * @throws RuntimeException If query builder is not set
+     */
     private function getGrammar()
     {
         return $this->getConnection()->getGrammar();
     }
 
-    private function getConnection() : QueryBuilder
+    /**
+     * Get the query builder instance.
+     *
+     * -- intent: provide access to query builder with proper dependency injection.
+     *
+     * @return QueryBuilder
+     * @throws RuntimeException If query builder is not set
+     */
+    protected function getConnection() : QueryBuilder
     {
-        return app(QueryBuilder::class);
+        if ($this->queryBuilder === null) {
+            throw new RuntimeException(
+                message: 'QueryBuilder must be set on migration instance. ' .
+                'Use setQueryBuilder() method or inject via constructor in migration classes.'
+            );
+        }
+
+        return $this->queryBuilder;
     }
 
     /**

@@ -12,68 +12,62 @@ use PDO;
 use Throwable;
 
 /**
- * Factory: creates DatabaseConnection instances from configuration.
+ * Factory for assembling and validating physical database connections.
  *
- * Intention:
- * Centralized, declarative, and secure connection assembly with explicit value objects.
+ * @see docs/Concepts/Connections.md
  */
 final readonly class ConnectionFactory
 {
     /**
-     * Build a DatabaseConnection from configuration array.
+     * Assemble a validated connection from raw configuration.
      *
-     * @param array{
-     *     driver?: string,
-     *     host?: string,
-     *     database?: string,
-     *     username?: string,
-     *     password?: string,
-     *     charset?: string,
-     *     name?: string
-     * } $config
-     *
-     * @throws ConnectionFailure
+     * @param array $config Raw settings dictionary.
+     * @throws ConnectionFailure If assembly or physical link fails.
+     * @return DatabaseConnection
      */
-    public static function from(array $config) : DatabaseConnection
+    public static function from(array $config): DatabaseConnection
     {
-        // Enforce strong typing via ConnectionConfig DTO.
+        // First, we convert the raw array into a structured "ConnectionConfig" object.
+        // This makes sure we didn't forget any important details like the host or username.
         $config = ConnectionConfig::from(config: $config);
 
-        // Generate DSN as a first-class Value Object.
+        // Next, we calculate the "DSN" — the technical address the computer uses to call the DB.
         $dsn = Dsn::for(
-            driver  : $config->driver,
-            host    : $config->host,
+            driver: $config->driver,
+            host: $config->host,
             database: $config->database,
-            charset : $config->charset
+            charset: $config->charset
         );
 
-        // Attempt secure connection using DTO parameters.
         try {
+            // We attempt to open the actual communication line.
+            // We force several security/reliability rules here (like ERRMODE_EXCEPTION).
             $pdo = new PDO(
-                dsn     : $dsn->toString(),
+                dsn: $dsn->toString(),
                 username: $config->username,
                 password: $config->password,
-                options : [
-                              PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                              PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                              PDO::ATTR_EMULATE_PREPARES   => false,
-                          ],
+                options: [
+                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES   => false,
+                ],
             );
 
-            // Return wrapped connection adhering to DatabaseConnection contract.
+            // Once established, we put it inside our own "PdoConnection" wrapper.
             return new PdoConnection(
                 name: $config->name,
-                pdo : $pdo,
+                pdo: $pdo,
             );
         } catch (Throwable $e) {
-            // Enterprise-grade exception translation.
+            // If anything goes wrong during construction, we wrap the error 
+            // so we know exactly which connection name failed.
             throw new ConnectionFailure(
-                name    : $config->name,
-                message : sprintf(
-                              'Database connection [%s] failed: %s',
-                              $config->name,
-                              $e->getMessage()
-                          ),
+                name: $config->name,
+                message: sprintf(
+                    'Database connection [%s] failed: %s',
+                    $config->name,
+                    $e->getMessage()
+                ),
                 previous: $e
             );
         }

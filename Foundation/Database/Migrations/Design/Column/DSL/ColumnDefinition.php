@@ -123,7 +123,7 @@ class ColumnDefinition
      *
      * @return $this
      */
-    public function index(?string $name = null) : self
+    public function index(string|null $name = null) : self
     {
         $this->attributes['index'] = $name ?? true;
 

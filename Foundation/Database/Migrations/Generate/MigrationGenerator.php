@@ -24,7 +24,7 @@ final class MigrationGenerator
      *
      * @return string Created file path
      */
-    public function generate(string $name, string $path, ?string $table = null, bool $create = false) : string
+    public function generate(string $name, string $path, string|null $table = null, bool $create = false) : string
     {
         $timestamp = $this->getTimestamp();
         $className = $this->getClassName(name: $name);
@@ -57,7 +57,7 @@ final class MigrationGenerator
         );
     }
 
-    private function getStubContent(?string $table, bool $create) : string
+    private function getStubContent(string|null $table, bool $create) : string
     {
         $stubName = 'blank.stub';
 
@@ -74,7 +74,7 @@ final class MigrationGenerator
         return file_get_contents(filename: $stubPath);
     }
 
-    private function populateStub(string $stub, string $className, ?string $table) : string
+    private function populateStub(string $stub, string $className, string|null $table) : string
     {
         $replacements = [
             '{{className}}' => $className,

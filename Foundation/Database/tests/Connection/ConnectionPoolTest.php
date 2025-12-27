@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Connection;
 
-use Avax\Database\Connection\ConnectionPool;
+use Avax\Database\Foundation\Connection\Pool\ConnectionPool;
 use Avax\Tests\TestCase;
-use Psr\Log\NullLogger;
 
 class ConnectionPoolTest extends TestCase
 {
     public function testConnectionPoolInitialization() : void
     {
         $pool = new ConnectionPool(
-            ['connections' => ['mysql' => ['driver' => 'mysql']]],
-            new NullLogger()
+            ['connections' => ['mysql' => ['driver' => 'mysql']]]
         );
 
         $this->assertInstanceOf(ConnectionPool::class, $pool);
@@ -22,7 +20,7 @@ class ConnectionPoolTest extends TestCase
 
     public function testPruneStaleConnections() : void
     {
-        $pool = new ConnectionPool([], new NullLogger());
+        $pool = new ConnectionPool([]);
 
         // This is a unit test, so we can't easily test real connections
         // but we can verify the method exists and runs.
@@ -30,5 +28,3 @@ class ConnectionPoolTest extends TestCase
         $this->assertTrue(true);
     }
 }
-
-

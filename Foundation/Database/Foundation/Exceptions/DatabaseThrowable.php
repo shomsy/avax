@@ -7,8 +7,8 @@ namespace Avax\Database\Exceptions;
 use Throwable;
 
 /**
- * Marker interface for all database-related exceptions.
+ * Marker interface for all database component throwables.
+ *
+ * @see docs/Concepts/Architecture.md
  */
 interface DatabaseThrowable extends Throwable {}
-
-

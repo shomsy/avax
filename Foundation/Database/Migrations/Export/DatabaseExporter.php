@@ -29,44 +29,44 @@ final class DatabaseExporter
      * @return string Path to the exported file
      * @throws Throwable If export fails
      */
-    public function exportToSql(string $path, ?string $table = null) : string
+    public function exportToSql(string $path, string|null $table = null) : string
     {
-        $filename = ($table ?: 'full_db') . '_export_' . date('Y_m_d_His') . '.sql';
-        $fullPath = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
+        $filename = ($table ?: 'full_db') . '_export_' . date(format: 'Y_m_d_His') . '.sql';
+        $fullPath = rtrim(string: $path, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
 
-        if (! is_dir($path)) {
-            mkdir($path, 0755, true);
+        if (! is_dir(filename: $path)) {
+            mkdir(directory: $path, permissions: 0755, recursive: true);
         }
 
         $output = "-- Avax Database Export\n";
-        $output .= "-- Generated: " . date('Y-m-d H:i:s') . "\n";
+        $output .= "-- Generated: " . date(format: 'Y-m-d H:i:s') . "\n";
         $output .= $table ? "-- Table: {$table}\n\n" : "-- Scope: Full Database\n\n";
 
-        $tables = $table ? [['name' => $table]] : $this->builder->raw("SHOW TABLES")->get();
+        $tables = $table ? [['name' => $table]] : $this->builder->raw(value: "SHOW TABLES")->get();
 
         foreach ($tables as $tableRow) {
-            $tableName = array_values($tableRow)[0];
+            $tableName = array_values(array: $tableRow)[0];
 
             // 1. Export Schema
-            $createTable = $this->builder->raw("SHOW CREATE TABLE `{$tableName}`")->get()[0];
+            $createTable = $this->builder->raw(value: "SHOW CREATE TABLE `{$tableName}`")->get()[0];
             $output      .= "DROP TABLE IF EXISTS `{$tableName}`;\n";
             $output      .= "{$createTable['Create Table']};\n\n";
 
             // 2. Export Data (Simple implementation)
-            $rows = $this->builder->from($tableName)->get();
+            $rows = $this->builder->from(table: $tableName)->get();
             if (! empty($rows)) {
                 $output .= "-- Data for `{$tableName}`\n";
                 foreach ($rows as $row) {
-                    $cols    = implode('`, `', array_keys($row));
-                    $vals    = array_map(fn ($v) => is_null($v) ? 'NULL' : "'" . addslashes((string) $v) . "'", array_values($row));
-                    $valsStr = implode(', ', $vals);
+                    $cols    = implode(separator: '`, `', array: array_keys(array: $row));
+                    $vals    = array_map(callback: fn ($v) => is_null(value: $v) ? 'NULL' : "'" . addslashes(string: (string) $v) . "'", array: array_values(array: $row));
+                    $valsStr = implode(separator: ', ', array: $vals);
                     $output  .= "INSERT INTO `{$tableName}` (`{$cols}`) VALUES ({$valsStr});\n";
                 }
                 $output .= "\n";
             }
         }
 
-        file_put_contents($fullPath, $output);
+        file_put_contents(filename: $fullPath, data: $output);
 
         return $fullPath;
     }

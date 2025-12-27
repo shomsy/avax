@@ -23,63 +23,63 @@ return new class extends BaseMigration {
             $table->id();
 
             // Basic information
-            $table->string('name', 255)->unique();
-            $table->string('slug', 255)->unique()->index();
-            $table->text('description')->nullable();
-            $table->mediumText('full_description')->nullable();
+            $table->string(name: 'name', length: 255)->unique();
+            $table->string(name: 'slug', length: 255)->unique()->index();
+            $table->text(name: 'description')->nullable();
+            $table->mediumText(name: 'full_description')->nullable();
 
             // Pricing (use DECIMAL for exact precision!)
-            $table->decimal('price', 10, 2)->unsigned();
-            $table->decimal('discount_percent', 5, 2)->unsigned()->default(0);
-            $table->decimal('cost', 10, 2)->unsigned()->nullable();
+            $table->decimal(name: 'price', precision: 10, scale: 2)->unsigned();
+            $table->decimal(name: 'discount_percent', precision: 5, scale: 2)->unsigned()->default(value: 0);
+            $table->decimal(name: 'cost', precision: 10, scale: 2)->unsigned()->nullable();
 
             // Inventory
-            $table->integer('stock')->unsigned()->default(0);
-            $table->integer('reserved')->unsigned()->default(0);
-            $table->tinyInteger('min_order_qty')->unsigned()->default(1);
+            $table->integer(name: 'stock')->unsigned()->default(value: 0);
+            $table->integer(name: 'reserved')->unsigned()->default(value: 0);
+            $table->tinyInteger(name: 'min_order_qty')->unsigned()->default(value: 1);
 
             // Status & Flags
-            $table->enum('status', ['draft', 'active', 'archived'])->default('draft');
-            $table->boolean('is_featured')->default(false);
-            $table->boolean('is_digital')->default(false);
-            $table->boolean('requires_shipping')->default(true);
+            $table->enum(name: 'status', values: ['draft', 'active', 'archived'])->default(value: 'draft');
+            $table->boolean(name: 'is_featured')->default(value: false);
+            $table->boolean(name: 'is_digital')->default(value: false);
+            $table->boolean(name: 'requires_shipping')->default(value: true);
 
             // Categorization
-            $table->set('tags', ['new', 'sale', 'bestseller', 'limited'])->nullable();
+            $table->set(name: 'tags', values: ['new', 'sale', 'bestseller', 'limited'])->nullable();
 
             // Metadata (JSON for flexible attributes)
-            $table->json('attributes')->nullable(); // Color, size, material, etc.
-            $table->json('seo_meta')->nullable();   // SEO title, description, keywords
-            $table->json('shipping_info')->nullable();
+            $table->json(name: 'attributes')->nullable(); // Color, size, material, etc.
+            $table->json(name: 'seo_meta')->nullable();   // SEO title, description, keywords
+            $table->json(name: 'shipping_info')->nullable();
 
             // External identifiers
-            $table->uuid('external_id')->unique();
-            $table->string('sku', 100)->unique();
-            $table->string('barcode', 50)->nullable()->unique();
+            $table->uuid(name: 'external_id')->unique();
+            $table->string(name: 'sku', length: 100)->unique();
+            $table->string(name: 'barcode', length: 50)->nullable()->unique();
 
             // Foreign keys
-            $table->bigInteger('category_id')->unsigned()
-                ->references('categories', 'id', 'CASCADE');
-            $table->bigInteger('brand_id')->unsigned()->nullable()
-                ->references('brands', 'id', 'SET NULL');
-            $table->bigInteger('created_by')->unsigned()->nullable()
-                ->references('users', 'id', 'SET NULL');
+            $table->bigInteger(name: 'category_id')->unsigned()
+                ->references(table: 'categories', column: 'id', onDelete: 'CASCADE');
+            $table->bigInteger(name: 'brand_id')->unsigned()->nullable()
+                ->references(table: 'brands', column: 'id', onDelete: 'SET NULL');
+            $table->bigInteger(name: 'created_by')->unsigned()->nullable()
+                ->references(table: 'users', column: 'id', onDelete: 'SET NULL');
 
             // Timestamps
             $table->timestamps();                      // created_at, updated_at
             $table->softDeletes();                     // deleted_at
-            $table->timestamp('published_at')->nullable();
+            $table->timestamp(name: 'published_at')->nullable();
 
             // Tracking & Analytics
-            $table->integer('views')->unsigned()->default(0)
-                ->comment('Total product page views');
-            $table->integer('sales_count')->unsigned()->default(0)
-                ->comment('Total number of sales');
-            $table->decimal('avg_rating', 3, 2)->unsigned()->nullable()
-                ->comment('Average customer rating (0.00 to 5.00)');
+            $table->integer(name: 'views')->unsigned()->default(value: 0)
+                ->comment(text: 'Total product page views');
+            $table->integer(name: 'sales_count')->unsigned()->default(value: 0)
+                ->comment(text: 'Total number of sales');
+            $table->decimal(name: 'avg_rating', precision: 3, scale: 2)->unsigned()->nullable()
+                ->comment(text: 'Average customer rating (0.00 to 5.00)');
 
             // Auto-updating timestamp
-            $table->timestamp('last_modified')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamp(name: 'last_modified')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

@@ -11,12 +11,12 @@ use Throwable;
  */
 final class DatabaseSeedCommand
 {
-    public function handle(string $seedersPath, ?string $class = 'DatabaseSeeder') : int
+    public function handle(string $seedersPath, string|null $class = 'DatabaseSeeder') : int
     {
         $class = $class ?: 'DatabaseSeeder';
-        $file  = rtrim($seedersPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $class . '.php';
+        $file  = rtrim(string: $seedersPath, characters: DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $class . '.php';
 
-        if (! file_exists($file)) {
+        if (! file_exists(filename: $file)) {
             echo "\033[31mSeeder file not found: {$file}\033[0m\n";
 
             return 1;

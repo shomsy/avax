@@ -4,53 +4,33 @@ declare(strict_types=1);
 
 namespace Avax\Database\QueryBuilder\Core\Builder\Concerns;
 
-use Avax\Database\Query\Condition;
-use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
+use Avax\Database\Query\AST\NestedWhereNode;
+use Avax\Database\Query\AST\WhereNode;
 use Closure;
 use InvalidArgumentException;
 
 /**
- * Trait HasConditions
+ * Trait providing high-level logical filtering (WHERE) capabilities for the QueryBuilder.
  *
- * -- intent: extend the query builder with complex logical filtering capabilities (WHERE clauses).
+ * @see docs/DSL/Filtering.md
  */
 trait HasConditions
 {
     /**
-     * Add an "OR WHERE" clause to the query.
+     * Add a basic filtering criterion to the current query context.
      *
-     * -- intent: provide a shorthand for alternative logical constraints.
-     *
-     * @param string|Closure $column   Technical column name
-     * @param mixed          $operator Comparison operator
-     * @param mixed          $value    Comparison value
-     *
-     * @return QueryBuilder|HasConditions
-     */
-    public function orWhere(string|Closure $column, mixed $operator = null, mixed $value = null) : self
-    {
-        return $this->where(column: $column, operator: $operator, value: $value, boolean: 'OR');
-    }
-
-    /**
-     * Add a basic where clause to the query.
-     *
-     * -- intent: provide a human-readable DSL for SQL WHERE constraints.
-     *
-     * @param string|Closure $column   Technical column name or sub-query closure
-     * @param mixed          $operator Comparison operator or value if operator is omitted
-     * @param mixed          $value    Target comparison value
-     * @param string         $boolean  Logical joiner (AND/OR)
-     *
-     * @return QueryBuilder|HasConditions
+     * @param string|Closure $column   Field name or nested logic closure.
+     * @param mixed          $operator Comparison operator or value.
+     * @param mixed          $value    Comparison value.
+     * @param string         $boolean  Logical joiner ('AND' or 'OR').
+     * @return self
      */
     public function where(
         string|Closure $column,
         mixed          $operator = null,
         mixed          $value = null,
         string         $boolean = 'AND'
-    ) : self
-    {
+    ): self {
         if ($column instanceof Closure) {
             return $this->whereNested(callback: $column, boolean: $boolean);
         }
@@ -60,113 +40,96 @@ trait HasConditions
             $operator = '=';
         }
 
-        $this->state->wheres[] = new Condition(
-            column  : $column,
+        $clone        = clone $this;
+        $clone->state = $clone->state->addWhere(where: new WhereNode(
+            column: $column,
             operator: (string) $operator,
-            value   : $value,
-            boolean : $boolean
-        );
+            value: $value,
+            boolean: $boolean
+        ));
 
         if (! in_array(needle: $operator, haystack: ['IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN'])) {
-            $this->state->addBinding(value: $value);
+            $clone->state = $clone->state->addBinding(value: $value);
         }
 
-        return $this;
+        return $clone;
     }
 
     /**
-     * Add a composite nested WHERE block to the query.
+     * Add an "OR WHERE" criterion to the current query context.
      *
-     * -- intent: provide isolation for complex logical groups (using parentheses).
-     *
-     * @param Closure $callback Closure receiving a fresh builder for nesting
-     * @param string  $boolean  Logical joiner
-     *
-     * @return QueryBuilder|HasConditions
+     * @param string|Closure $column   Field name or nested logic closure.
+     * @param mixed          $operator Comparison operator.
+     * @param mixed          $value    Comparison value.
+     * @return self
      */
-    protected function whereNested(Closure $callback, string $boolean = 'AND') : self
+    public function orWhere(string|Closure $column, mixed $operator = null, mixed $value = null): self
     {
-        $query = new class(
-            grammar           : $this->grammar,
-            executor          : $this->executor,
-            transactionManager: $this->transactionManager,
-            identityMap       : $this->identityMap
-        ) extends QueryBuilder {};
-
-        $callback($query);
-
-        $this->state->wheres[] = [
-            'type'    => 'Nested',
-            'query'   => $query,
-            'boolean' => $boolean
-        ];
-
-        foreach ($query->state->getBindings() as $binding) {
-            $this->state->addBinding(value: $binding);
-        }
-
-        return $this;
+        return $this->where(column: $column, operator: $operator, value: $value, boolean: 'OR');
     }
 
     /**
-     * Add an "OR WHERE IN" clause to the query.
+     * Filter results by a membership check against a specific collection of values.
      *
-     * -- intent: provide shorthand for alternative set participation filters.
+     * -- intent:
+     * Provide an expressive DSL for SQL "IN" and "NOT IN" logic, 
+     * handling bulk parameter binding automatically.
      *
-     * @param string $column Technical column name
-     * @param array  $values Collection of values
-     *
-     * @return QueryBuilder|HasConditions
+     * @param string      $column  The technical field name to check for membership.
+     * @param array       $values  The collection of allowed data tokens.
+     * @param string|null $boolean The logical joiner ('AND' or 'OR').
+     * @param bool        $not     Flag indicating whether to use negative (NOT IN) logic.
+     * @return self A fresh, cloned builder instance with the membership filter.
      */
-    public function orWhereIn(string $column, array $values) : self
+    public function whereIn(string $column, array $values, string|null $boolean = null, bool $not = false): self
+    {
+        $boolean  ??= 'AND';
+        $operator = $not ? 'NOT IN' : 'IN';
+
+        $clone        = clone $this;
+        $clone->state = $clone->state->addWhere(where: new WhereNode(
+            column: $column,
+            operator: $operator,
+            value: $values,
+            boolean: $boolean
+        ));
+
+        $clone->state = $clone->state->mergeBindings(values: $values);
+
+        return $clone;
+    }
+
+    /**
+     * Add an "OR WHERE IN" criterion to the current query context.
+     *
+     * -- intent:
+     * Provide an alternative membership filtering branch, acting as a 
+     * shorthand for whereIn() with the 'OR' boolean joiner.
+     *
+     * @param string $column The technical field name to check.
+     * @param array  $values The collection of allowed data tokens.
+     * @return self A fresh, cloned builder instance with the OR membership filter.
+     */
+    public function orWhereIn(string $column, array $values): self
     {
         return $this->whereIn(column: $column, values: $values, boolean: 'OR');
     }
 
     /**
-     * Add a "WHERE IN" clause to the query.
+     * Filter results by verifying a column's value falls within a specified range.
      *
-     * -- intent: filter records based on a predefined set of values.
+     * -- intent:
+     * Provide an expressive DSL for SQL "BETWEEN" and "NOT BETWEEN" logic,
+     * ensuring exactly two values are provided for the range.
      *
-     * @param string      $column  Technical column name
-     * @param array       $values  Collection of values
-     * @param string|null $boolean Logical joiner
-     * @param bool        $not     Whether to use NOT IN
-     *
-     * @return QueryBuilder|HasConditions
+     * @param string      $column  The technical field name to check.
+     * @param array       $values  A pair of values defining the inclusive range.
+     * @param string|null $boolean The logical joiner ('AND' or 'OR').
+     * @param bool        $not     Flag indicating whether to use negative (NOT BETWEEN) logic.
+     * @throws InvalidArgumentException If the provided values array does not contain exactly two items.
+     * @return self A fresh, cloned builder instance with the range filter.
      */
-    public function whereIn(string $column, array $values, string|null $boolean = null, bool $not = false) : self
-    {
-        $boolean  ??= 'AND';
-        $operator = $not ? 'NOT IN' : 'IN';
-
-        $this->state->wheres[] = new Condition(
-            column  : $column,
-            operator: $operator,
-            value   : $values,
-            boolean : $boolean
-        );
-
-        foreach ($values as $value) {
-            $this->state->addBinding(value: $value);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add a "WHERE BETWEEN" clause to the query.
-     *
-     * -- intent: filter records within a numeric or temporal range.
-     *
-     * @param string      $column  Technical column name
-     * @param array       $values  Start and end values
-     * @param string|null $boolean Logical joiner
-     * @param bool        $not     Whether to use NOT BETWEEN
-     *
-     * @return QueryBuilder|HasConditions
-     */
-    public function whereBetween(string $column, array $values, string|null $boolean = null, bool $not = false) : self
+    public function whereBetween(string $column, array $values, string|null $boolean = null, bool $not = false): self
     {
         $boolean ??= 'AND';
         if (count(value: $values) !== 2) {
@@ -175,18 +138,44 @@ trait HasConditions
 
         $operator = $not ? 'NOT BETWEEN' : 'BETWEEN';
 
-        $this->state->wheres[] = new Condition(
-            column  : $column,
+        $clone        = clone $this;
+        $clone->state = $clone->state->addWhere(where: new WhereNode(
+            column: $column,
             operator: $operator,
-            value   : $values,
-            boolean : $boolean
-        );
+            value: $values,
+            boolean: $boolean
+        ));
 
-        $this->state->addBinding(value: $values[0]);
-        $this->state->addBinding(value: $values[1]);
+        $clone->state = $clone->state->mergeBindings(values: $values);
 
-        return $this;
+        return $clone;
+    }
+
+    /**
+     * Coordinate the addition of a nested logical branch (grouped conditions).
+     *
+     * -- intent:
+     * Encapsulate multiple conditions within parentheses in the resulting SQL,
+     * allowing for complex logical grouping and order-of-operation control.
+     *
+     * @param Closure $callback A configuration closure receiving a fresh builder instance.
+     * @param string  $boolean  The logical joiner for the entire nested group.
+     * @return self A fresh, cloned builder instance containing the nested logical node.
+     */
+    protected function whereNested(Closure $callback, string $boolean = 'AND'): self
+    {
+        $query = $this->newQuery();
+
+        $callback($query);
+
+        $clone        = clone $this;
+        $clone->state = $clone->state->addWhere(where: new NestedWhereNode(
+            query: $query,
+            boolean: $boolean
+        ));
+
+        $clone->state = $clone->state->mergeBindings(values: $query->state->getBindings());
+
+        return $clone;
     }
 }
-
-

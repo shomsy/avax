@@ -5,27 +5,53 @@ declare(strict_types=1);
 namespace Avax\Database\QueryBuilder\Core\Grammar;
 
 use Avax\Database\Query\QueryState;
+use Avax\Database\QueryBuilder\ValueObjects\Expression;
 use Override;
 
 /**
- * Specialized technician for compiling SQL according to the MySQL/MariaDB dialect.
+ * The "MySQL Translator" (Grammar).
  *
- * -- intent: override base grammar logic for MySQL-specific syntax (Backticks, Upsert, etc).
+ * -- what is it?
+ * This is a "Translator" that knows how to speak the MySQL language perfectly. 
+ * While the `QueryBuilder` knows WHAT you want to do, the `MySQLGrammar` 
+ * knows exactly HOW to say it in the specific syntax that MySQL understands.
+ *
+ * -- how to imagine it:
+ * Think of an "Interpreter". You speak in high-level commands (like "I want 
+ * to insert or update this user"), and the interpreter writes down the 
+ * exact MySQL sentence (like "INSERT ... ON DUPLICATE KEY UPDATE").
+ *
+ * -- why this exists:
+ * 1. Dialect Handling: Every database (MySQL, Postgres, SQLite) has slightly 
+ *    different rules for quotes and special features. This class isolates all 
+ *    the MySQL-specific quirks.
+ * 2. Security (Quoting): It handles "Backticks" (`). Wrapping column names 
+ *    in backticks prevents errors if you accidentally use a "Reserved Word" 
+ *    (like calling a column `order` or `select`).
+ * 3. Atomic Features: It implements MySQL's powerful "Upsert" (Insert or Update) 
+ *    syntax, which allows the database to handle conflicts automatically.
+ *
+ * -- mental models:
+ * - "Grammar": The set of rules for building valid sentences (SQL).
+ * - "Backticks" (`): The special quotes used by MySQL to identify table 
+ *    and column names correctly.
  */
 final class MySQLGrammar extends BaseGrammar
 {
     /**
-     * Compile an UPSERT (INSERT ... ON DUPLICATE KEY UPDATE) statement.
+     * Compile an UPSERT (Insert or Update) statement for MySQL.
      *
-     * -- intent: leverage MySQL's specific atomicity logic for conditional data mutations.
+     * -- how to imagine it:
+     * This is the "Change if exists" instruction. It tells MySQL: "Try to 
+     * insert this row. But if you find someone with the same ID already 
+     * there, just update these specific columns instead."
      *
-     * @param QueryState $state    Target metadata
-     * @param array      $uniqueBy Unused in MySQL implementation as it relies on schema keys
-     * @param array      $update   Columns to refresh on conflict
-     *
-     * @return string
+     * @param QueryState $state    The instructions of what to insert.
+     * @param array      $uniqueBy Ignored in MySQL (MySQL figures this out from your DB keys).
+     * @param array      $update   The list of columns to change if a conflict happens.
      */
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update) : string
+    #[Override]
+    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
     {
         $sql = $this->compileInsert(state: $state);
         $sql .= " ON DUPLICATE KEY UPDATE ";
@@ -39,63 +65,83 @@ final class MySQLGrammar extends BaseGrammar
     }
 
     /**
-     * Securely wrap a database identifier using MySQL's backtick convention.
+     * Securely wrap column or table names in MySQL backticks.
      *
-     * -- intent: provide dialect-safe escaping for tables and columns in MySQL.
+     * -- why do this?
+     * This is the "Safety Quote". Without it, a table called `users.order` 
+     * would break because `order` is a special MySQL command. By wrapping 
+     * it as `` `users`.`order` ``, we tell MySQL: "This is a name, not a command."
      *
-     * @param string $value Technical name
-     *
-     * @return string
+     * @param mixed $value The name (e.g., 'users.name').
      */
     #[Override]
-    public function wrap(string $value) : string
+    public function wrap(mixed $value): string
     {
+        if ($value instanceof Expression) {
+            return $value->getValue();
+        }
+
+        $value = (string) $value;
+
+        // We don't wrap the asterisk (*) or functions with parentheses.
         if ($value === '*' || str_contains(haystack: $value, needle: '(')) {
             return $value;
         }
 
-        return '`' . str_replace(search: '`', replace: '``', subject: $value) . '`';
+        // Handle names with dots (e.g., 'users.email').
+        if (str_contains(haystack: $value, needle: '.')) {
+            $segments = explode(separator: '.', string: $value);
+
+            return implode(
+                separator: '.',
+                array: array_map(
+                    callback: fn($segment) => $this->wrapSegment(segment: $segment),
+                    array: $segments
+                )
+            );
+        }
+
+        return $this->wrapSegment(segment: $value);
     }
 
     /**
-     * Generate the MySQL-specific random ordering expression.
-     *
-     * -- intent: provide a pragmatic shorthand for the RAND() function.
-     *
-     * @return string
+     * The internal "Backtick Printer" for a single name.
      */
-    public function compileRandomOrder() : string
+    #[Override]
+    protected function wrapSegment(string $segment): string
+    {
+        if ($segment === '*' || $segment === '') {
+            return $segment;
+        }
+
+        // We wrap in backticks and handle escaping if the segment already contains a backtick.
+        return '`' . str_replace(search: '`', replace: '``', subject: $segment) . '`';
+    }
+
+    /**
+     * Get the MySQL snippet for random ordering.
+     */
+    #[Override]
+    public function compileRandomOrder(): string
     {
         return 'RAND()';
     }
 
     /**
-     * Compile a MySQL TRUNCATE statement to purge a table.
-     *
-     * -- intent: provide a high-performance command for record resets in MySQL.
-     *
-     * @param string $table Target table
-     *
-     * @return string
+     * Build the command to completely empty a table.
      */
-    public function compileTruncate(string $table) : string
+    #[Override]
+    public function compileTruncate(string $table): string
     {
         return 'TRUNCATE TABLE ' . $this->wrap(value: $table);
     }
 
     /**
-     * Compile a MySQL DROP TABLE IF EXISTS statement.
-     *
-     * -- intent: provide a safe structural modification command for MySQL.
-     *
-     * @param string $table Target table
-     *
-     * @return string
+     * Build the command to delete a table if it exists.
      */
-    public function compileDropIfExists(string $table) : string
+    #[Override]
+    public function compileDropIfExists(string $table): string
     {
         return 'DROP TABLE IF EXISTS ' . $this->wrap(value: $table);
     }
 }
-
-

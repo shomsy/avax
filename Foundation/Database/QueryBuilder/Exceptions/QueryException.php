@@ -6,6 +6,7 @@ namespace Avax\Database\QueryBuilder\Exceptions;
 
 use Avax\Database\Exceptions\DatabaseException;
 use Override;
+use SensitiveParameter;
 use Throwable;
 
 /**
@@ -27,12 +28,12 @@ class QueryException extends DatabaseException
      */
     #[Override]
     public function __construct(
-        string                  $message,
+        string $message,
         private readonly string $sql,
-        private readonly array  $bindings = [],
-        Throwable|null          $previous = null
-    )
-    {
+        #[SensitiveParameter] private readonly array $rawBindings = [],
+        Throwable|null $previous = null
+    ) {
+        $this->redactedBindings = $this->redactBindings(bindings: $this->rawBindings);
         parent::__construct(message: $message, code: 0, previous: $previous);
     }
 
@@ -43,7 +44,7 @@ class QueryException extends DatabaseException
      *
      * @return string
      */
-    public function getSql() : string
+    public function getSql(): string
     {
         return $this->sql;
     }
@@ -55,10 +56,21 @@ class QueryException extends DatabaseException
      *
      * @return array
      */
-    public function getBindings() : array
+    public function getBindings(bool $redacted = true): array
     {
-        return $this->bindings;
+        return $redacted ? $this->redactedBindings : $this->rawBindings;
     }
+
+    /**
+     * Redact sensitive values from binding payloads.
+     */
+    private function redactBindings(array $bindings): array
+    {
+        return array_map(callback: static fn($value) => '[REDACTED]', array: $bindings);
+    }
+
+    /**
+     * @var array Redacted bindings safe for diagnostics
+     */
+    private readonly array $redactedBindings;
 }
-
-

@@ -18,7 +18,7 @@ final readonly class IntegerRule
      * @param string|null $message Custom error message
      */
     public function __construct(
-        private ?string $message = null
+        private string|null $message = null
     ) {}
 
     /**

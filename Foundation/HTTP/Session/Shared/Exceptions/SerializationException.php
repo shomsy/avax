@@ -24,7 +24,7 @@ final class SerializationException extends RuntimeException
      *
      * @return self
      */
-    public static function serializationFailed(string $reason, ?Throwable $previous = null) : self
+    public static function serializationFailed(string $reason, Throwable|null $previous = null) : self
     {
         return new self(
             message : "Serialization failed: {$reason}",
@@ -41,7 +41,7 @@ final class SerializationException extends RuntimeException
      *
      * @return self
      */
-    public static function deserializationFailed(string $reason, ?Throwable $previous = null) : self
+    public static function deserializationFailed(string $reason, Throwable|null $previous = null) : self
     {
         return new self(
             message : "Deserialization failed: {$reason}",
@@ -100,7 +100,7 @@ final class SerializationException extends RuntimeException
      *
      * @return self
      */
-    public static function jsonEncodeFailed(string $reason, ?Throwable $previous = null) : self
+    public static function jsonEncodeFailed(string $reason, Throwable|null $previous = null) : self
     {
         return new self(
             message : "JSON encoding failed: {$reason}",
@@ -117,7 +117,7 @@ final class SerializationException extends RuntimeException
      *
      * @return self
      */
-    public static function jsonDecodeFailed(string $reason, ?Throwable $previous = null) : self
+    public static function jsonDecodeFailed(string $reason, Throwable|null $previous = null) : self
     {
         return new self(
             message : "JSON decoding failed: {$reason}",

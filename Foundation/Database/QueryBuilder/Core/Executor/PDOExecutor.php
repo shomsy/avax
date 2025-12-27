@@ -5,99 +5,137 @@ declare(strict_types=1);
 namespace Avax\Database\QueryBuilder\Core\Executor;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
-use Avax\Database\QueryBuilder\DTO\MutationResult;
+use Avax\Database\QueryBuilder\DTO\ExecutionResult;
 use Avax\Database\QueryBuilder\Exceptions\QueryException;
+use Avax\Database\Support\ExecutionScope;
+use Avax\Database\Events\EventBus;
+use Avax\Database\Events\QueryExecuted;
 use PDO;
+use SensitiveParameter;
 use Throwable;
 
 /**
- * Practical technician for executing queries via the native PHP Data Object driver.
- *
- * -- intent: provide a secure and reliable implementation of the executor contract using PDO.
+ * PDO-backed executor for queries and mutations with telemetry and binding redaction support.
  */
 final readonly class PDOExecutor implements ExecutorInterface
 {
     /**
-     * @param DatabaseConnection $connection The technician for connection resolution
+     * @param DatabaseConnection $connection
+     * @param EventBus|null      $eventBus
+     * @param string             $connectionName
      */
-    public function __construct(private DatabaseConnection $connection) {}
+    public function __construct(
+        private DatabaseConnection $connection,
+        private EventBus|null      $eventBus = null,
+        private string             $connectionName = 'default'
+    ) {}
 
     /**
-     * Fulfill a retrieval query while maintaining secure parameter binding.
-     *
-     * -- intent: execute SELECT statements and deliver normalized result arrays.
-     *
-     * @param string $sql      Technical SQL string
-     * @param array  $bindings Sanitized values for placeholding
-     *
-     * @return array<array-key, mixed>
-     * @throws QueryException If the SQL is invalid or execution fails
+     * Execute a "Read" query (SELECT) and get the rows back.
      */
-    public function query(string $sql, array $bindings = []) : array
-    {
+    public function query(
+        string $sql,
+        #[SensitiveParameter] array $bindings = [],
+        ExecutionScope|null $scope = null
+    ): array {
+        $start = microtime(as_float: true);
+
         try {
             $statement = $this->getPdo()->prepare(query: $sql);
             $statement->execute(params: $bindings);
+            $results = $statement->fetchAll();
 
-            return $statement->fetchAll();
+            $this->dispatch(
+                sql: $sql,
+                bindings: $bindings,
+                start: $start,
+                scope: $scope,
+                redactBindings: $this->shouldRedactBindings()
+            );
+
+            return $results;
         } catch (Throwable $e) {
             throw new QueryException(
-                message : "Query execution failed: " . $e->getMessage(),
-                sql     : $sql,
-                bindings: $bindings,
+                message: "Query execution failed: " . $e->getMessage(),
+                sql: $sql,
+                rawBindings: $bindings,
                 previous: $e
             );
         }
     }
 
-    /**
-     * Resolve the active PDO instance from the connection technician.
-     *
-     * -- intent: lazily retrieve the physical driver for query fulfillment.
-     *
-     * @return PDO
-     */
-    private function getPdo() : PDO
+    private function getPdo(): PDO
     {
         return $this->connection->getConnection();
     }
 
     /**
-     * Fulfill a mutation query and return the mutation result.
-     *
-     * -- intent: execute write operations (INSERT/UPDATE/DELETE) with atomicity support.
-     *
-     * @param string $sql      Technical SQL string
-     * @param array  $bindings Sanitized values for placeholding
-     *
-     * @return MutationResult Encapsulates success status and affected row count
-     * @throws QueryException If mutation fails
+     * Execute a "Change" query (INSERT/UPDATE/DELETE/DDL).
      */
-    public function execute(string $sql, array $bindings = []) : MutationResult
-    {
+    public function execute(
+        string $sql,
+        #[SensitiveParameter] array $bindings = [],
+        ExecutionScope|null $scope = null
+    ): ExecutionResult {
+        $start = microtime(as_float: true);
+
         try {
             $statement = $this->getPdo()->prepare(query: $sql);
-            $statement->execute(params: $bindings);
+            $success = $statement->execute(params: $bindings);
 
-            return MutationResult::success(count: $statement->rowCount());
+            $this->dispatch(
+                sql: $sql,
+                bindings: $bindings,
+                start: $start,
+                scope: $scope,
+                redactBindings: $this->shouldRedactBindings()
+            );
+
+            return new ExecutionResult(
+                success: $success,
+                affectedRows: $statement->rowCount()
+            );
         } catch (Throwable $e) {
             throw new QueryException(
-                message : "Execution failed: " . $e->getMessage(),
-                sql     : $sql,
-                bindings: $bindings,
+                message: "Execution failed: " . $e->getMessage(),
+                sql: $sql,
+                rawBindings: $bindings,
                 previous: $e
             );
         }
     }
 
-    /**
-     * Determine the active driver name from the physical PDO instance.
-     *
-     * -- intent: facilitate dialect-aware logic in grammar and builder layers.
-     *
-     * @return string
-     */
-    public function getDriverName() : string
+    private function dispatch(
+        string                      $sql,
+        #[SensitiveParameter] array $bindings,
+        float                       $start,
+        ExecutionScope|null         $scope = null,
+        bool                        $redactBindings = true
+    ): void {
+        if ($this->eventBus === null) {
+            return;
+        }
+
+        $correlationId = $scope?->correlationId ?? ('ctx_' . bin2hex(string: random_bytes(length: 4)));
+
+        $this->eventBus->dispatch(new QueryExecuted(
+            sql: $sql,
+            bindings: $bindings,
+            timeMs: (microtime(as_float: true) - $start) * 1000,
+            connectionName: $this->connectionName,
+            correlationId: $correlationId,
+            redactBindings: $redactBindings
+        ));
+    }
+
+    private function shouldRedactBindings(): bool
+    {
+        $flag = getenv('DB_LOG_BINDINGS') ?: 'redacted';
+
+        return strtolower(string: $flag) !== 'raw';
+    }
+
+    public function getDriverName(): string
     {
         return $this->getPdo()->getAttribute(attribute: PDO::ATTR_DRIVER_NAME);
     }

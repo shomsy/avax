@@ -8,24 +8,37 @@ use Avax\Migrations\Design\Table\Blueprint;
 use Throwable;
 
 /**
- * Trait HasSchema
+ * Trait bridging the QueryBuilder with the Migration system for integrated schema management.
  *
- * -- intent: bridge the query builder with the migration system for on-the-fly table management.
+ * -- intent:
+ * Provides a high-level, fluent Domain Specific Language (DSL) for performing 
+ * structural database modifications (creating tables, dropping schemas) 
+ * directly within the builder context, facilitating rapid provisioning and teardown.
+ *
+ * -- invariants:
+ * - Structural modifications must be dispatched via the QueryOrchestrator.
+ * - Table creation must use the Blueprint abstraction to maintain dialect neutrality.
+ * - Destructive operations (DROP/TRUNCATE) must be explicitly invoked with identifiers.
+ *
+ * -- boundaries:
+ * - Does NOT handle the long-term versioning of schema changes (delegated to MigrationRepository).
+ * - Does NOT perform safety checks beyond "IF EXISTS" clauses provided by grammar.
  */
 trait HasSchema
 {
     /**
-     * Create a new database table and define its structure.
+     * Create a new database table structure fluently.
      *
-     * -- intent: provide a fluent API for structural table creation within the builder context.
+     * -- intent:
+     * Provide a standardized entry point for defining and executing table 
+     * structural designs, delegating SQL generation to the Blueprint and Grammar.
      *
-     * @param string   $table    Technical table identifier
-     * @param callable $callback Structural design closure
-     *
+     * @param string   $table    The technical identifier for the new database table.
+     * @param callable $callback A design closure receiving a Blueprint instance to define columns and indexes.
+     * @throws Throwable If the SQL compilation for the dialect or physical execution fails.
      * @return void
-     * @throws Throwable If SQL compilation or execution fails
      */
-    public function create(string $table, callable $callback) : void
+    public function create(string $table, callable $callback): void
     {
         $blueprint = new Blueprint(table: $table);
         $callback($blueprint);
@@ -33,72 +46,76 @@ trait HasSchema
         $statements = $blueprint->toSql(grammar: $this->grammar);
 
         foreach ($statements as $sql) {
-            $this->executor->execute(sql: $sql);
+            $this->orchestrator->execute(sql: $sql);
         }
     }
 
     /**
-     * Drop a database table if it currently exists.
+     * Remove a table from the database schema with built-in existence safety.
      *
-     * -- intent: provide a safe shorthand for table destruction.
+     * -- intent:
+     * Provide a safe, dialect-aware shorthand for destroying a table structure 
+     * if it currently exists in the target database.
      *
-     * @param string $table Technical table name
-     *
+     * @param string $table The technical name of the table to be removed.
+     * @throws Throwable If the drop instruction execution fails at the driver level.
      * @return void
-     * @throws Throwable If SQL execution fails
      */
-    public function dropIfExists(string $table) : void
+    public function dropIfExists(string $table): void
     {
         $sql = $this->grammar->compileDropIfExists(table: $table);
-        $this->executor->execute(sql: $sql);
+        $this->orchestrator->execute(sql: $sql);
     }
 
     /**
-     * Remove all records from a table and reset auto-increment counters.
+     * Efficiently clear all records from a database table without destroying its structure.
      *
-     * -- intent: provide an efficient, low-level reset for a specific table.
+     * -- intent:
+     * Provide a low-level, high-performance reset mechanism (SQL TRUNCATE) for 
+     * clearing raw data while preserving the schema and its indexes.
      *
-     * @param string|null $table Optional table name override
-     *
+     * @param string|null $table The optional technical name of the table (defaults to the builder's current source).
+     * @throws Throwable If the truncate instruction execution fails.
      * @return void
-     * @throws Throwable If SQL execution fails
      */
-    public function truncate(string|null $table = null) : void
+    public function truncate(string|null $table = null): void
     {
         $table = $table ?: $this->state->from;
         $sql   = $this->grammar->compileTruncate(table: $table);
-        $this->executor->execute(sql: $sql);
+        $this->orchestrator->execute(sql: $sql);
     }
 
     /**
-     * Create a new database.
+     * Create a new database container/schema.
      *
-     * -- intent: provide a direct mechanism for creating schema-level containers.
+     * -- intent:
+     * Provide a direct mechanism for provisioning high-level schema containers 
+     * within the database cluster.
      *
-     * @param string $name Database name
-     *
+     * @param string $name The technical identifier for the new database/schema.
+     * @throws Throwable If the creation command fails at the persistence layer.
      * @return void
-     * @throws Throwable If SQL execution fails
      */
-    public function createDatabase(string $name) : void
+    public function createDatabase(string $name): void
     {
         $sql = $this->grammar->compileCreateDatabase(name: $name);
-        $this->executor->execute(sql: $sql);
+        $this->orchestrator->execute(sql: $sql);
     }
 
     /**
-     * Drop a database.
+     * Permanently remove a database container/schema.
      *
-     * -- intent: provide a mechanism for destructive schema-level operations.
+     * -- intent:
+     * Provide a direct mechanism for executing destructive schema-level removals.
+     * WARNING: This operation is non-reversible and deletes all internal data.
      *
-     * @param string $name Database name
-     *
+     * @param string $name The technical identifier of the database to be destroyed.
+     * @throws Throwable If the destruction command fails.
      * @return void
-     * @throws Throwable If SQL execution fails
      */
-    public function dropDatabase(string $name) : void
+    public function dropDatabase(string $name): void
     {
         $sql = $this->grammar->compileDropDatabase(name: $name);
-        $this->executor->execute(sql: $sql);
+        $this->orchestrator->execute(sql: $sql);
     }
 }

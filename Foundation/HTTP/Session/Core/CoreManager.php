@@ -113,7 +113,7 @@ final readonly class CoreManager
      *
      * @return mixed The cached or computed value.
      */
-    public function remember(string $key, callable $callback, ?int $ttl = null) : mixed
+    public function remember(string $key, callable $callback, int|null $ttl = null) : mixed
     {
         // Check if key already exists
         if ($this->has(key: $key)) {

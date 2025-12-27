@@ -47,7 +47,7 @@ final readonly class FileStore implements StoreInterface
      *
      * @return void
      */
-    public function put(string $key, mixed $value, ?int $ttl = null) : void
+    public function put(string $key, mixed $value, int|null $ttl = null) : void
     {
         $path = $this->pathFor(key: $key);
 

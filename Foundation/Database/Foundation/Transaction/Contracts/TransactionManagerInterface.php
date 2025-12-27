@@ -4,51 +4,83 @@ declare(strict_types=1);
 
 namespace Avax\Database\Transaction\Contracts;
 
+use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Throwable;
 
 /**
- * Defines the essential contract for coordinating atomic database transactions.
+ * technical contract defining the authoritative capabilities for coordinating atomic database transactions.
  *
- * -- intent: provide a standard API for starting, committing, and rolling back operations.
+ * -- intent:
+ * Establishes a dialect-neutral, consistent interface for managing the 
+ * lifecycle of atomic database operations, ensuring that ACID properties 
+ * can be enforced across the entire system persistence layer.
+ *
+ * -- invariants:
+ * - Implementation must maintain transactional depth (nesting) to prevent premature commits.
+ * - Every manual transition (Begin/Commit/Rollback) must return the manager for fluent chaining.
+ * - Callback-based transaction management must provide automated recovery.
+ *
+ * -- boundaries:
+ * - Does NOT handle SQL compilation or result projection (QueryBuilder domain).
+ * - Depends on the DatabaseConnection contract for driver-level negotiations.
  */
 interface TransactionManagerInterface
 {
     /**
-     * Execute a domain closure within a managed database transaction.
+     * Coordinate the execution of a professional technical closure within a managed database transaction.
      *
-     * -- intent: provide automatic atomicity and rollback for the provided logic.
+     * -- intent:
+     * Provides a high-level orchestration for executing a unit of work that 
+     * requires strict atomicity, ensuring automated ROLLBACK upon failure 
+     * and COMMIT upon success.
      *
-     * @param callable $callback The unit of work to execute
-     *
-     * @return mixed
-     * @throws Throwable If the operation fails after multiple attempts
+     * @param callable $callback The technical logic (unit of work) to be executed within the protected scope.
+     * @throws Throwable If the technical transaction management or callback execution fails.
+     * @return mixed The scalar or composite result returned by the provided callback.
      */
-    public function transaction(callable $callback) : mixed;
+    public function transaction(callable $callback): mixed;
 
     /**
-     * Physically begin a new transaction on the database driver.
+     * Physically signal the start of a fresh technical transaction window on the database driver.
      *
-     * -- intent: signal the start of a protected sequence of operations.
+     * -- intent:
+     * Instructs the persistence engine to open a protected session window, 
+     * buffering subsequent mutations until a finalization signal is received.
      *
-     * @return void
+     * @return TransactionManagerInterface The current manager instance for continued fluent configuration.
      */
-    public function begin() : void;
+    public function begin(): TransactionManagerInterface;
 
     /**
-     * Permanently persist all changes made within the current transaction.
+     * Coordinate the permanent persistence of all technical changes made within the current transaction window.
      *
-     * -- intent: finalize the atomic sequence and commit data to storage.
+     * -- intent:
+     * Instructs the persistence engine to finalize the atomic sequence and 
+     * permanently commit all buffered mutations to non-volatile storage.
      *
-     * @return void
+     * @return TransactionManagerInterface The current manager instance.
      */
-    public function commit() : void;
+    public function commit(): TransactionManagerInterface;
 
     /**
-     * Revert all changes made during the active transaction.
+     * Coordinate the technical reversion of all changes made during the active transaction window.
      *
-     * -- intent: protect data integrity by discarding failed or partial operations.
+     * -- intent:
+     * Discards all buffered mutations and restores the database state to the 
+     * moment the current transaction window was initiated, safeguarding data integrity.
      *
-     * @return void
+     * @return TransactionManagerInterface The current manager instance.
      */
-    public function rollback() : void;
+    public function rollback(): TransactionManagerInterface;
+
+    /**
+     * Retrieve the authorized technical connection gateway managed by this authority.
+     *
+     * -- intent:
+     * Provides authorized access to the technical connection instance that 
+     * is currently bound to the transaction lifecycle.
+     *
+     * @return DatabaseConnection The active transaction-bound persistence gateway.
+     */
+    public function getConnection(): DatabaseConnection;
 }

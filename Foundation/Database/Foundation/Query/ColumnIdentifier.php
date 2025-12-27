@@ -5,19 +5,15 @@ declare(strict_types=1);
 namespace Avax\Database\Query;
 
 /**
- * Pragmatic value object representing a database column with optional alias.
+ * Immutable value object representing a database column identifier with optional alias.
  *
- * -- intent: transport column identification metadata across the builder layers.
+ * @see docs/DSL/QueryStates.md
  */
 final readonly class ColumnIdentifier
 {
     /**
-     * Constructor promoting immutable properties via PHP 8.3 features.
-     *
-     * -- intent: ensure data integrity for the column identifier.
-     *
-     * @param string      $name  Technical column identifier
-     * @param string|null $alias Optional domain-specific alias
+     * @param string      $name  The technical identifier of the database column.
+     * @param string|null $alias The optional domain-specific label (alias) for the projection.
      */
     public function __construct(
         public string      $name,
@@ -25,21 +21,16 @@ final readonly class ColumnIdentifier
     ) {}
 
     /**
-     * Convert the identifier into a displayable string format.
-     *
-     * -- intent: simplify SQL concatenation via stringable interface.
+     * Convert to SQL-like string format.
      *
      * @return string
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         if ($this->alias === null) {
             return $this->name;
         }
 
-        // alias
         return "{$this->name} AS {$this->alias}";
     }
 }
-
-

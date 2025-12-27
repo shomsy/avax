@@ -5,21 +5,17 @@ declare(strict_types=1);
 namespace Avax\Database\Query;
 
 /**
- * Pragmatic value object encapsulating a single SQL WHERE constraint.
+ * Immutable value object encapsulating a single logical comparison constraint.
  *
- * -- intent: transport logical comparison criteria to the SQL grammar engine.
+ * @see docs/DSL/Filtering.md
  */
 final readonly class Condition
 {
     /**
-     * Constructor promoting immutable criteria properties via PHP 8.3 features.
-     *
-     * -- intent: capture the full state of a logical query filter.
-     *
-     * @param string $column   Technical column identifier
-     * @param string $operator Logical comparison operator (=, <, >, etc)
-     * @param mixed  $value    Comparison target value
-     * @param string $boolean  Logical joiner (AND/OR)
+     * @param string $column   The technical identifier of the database column to be filtered.
+     * @param string $operator The logical comparison operator (e.g., '=', '<', '>', 'LIKE').
+     * @param mixed  $value    The comparison target value (scalar, array, or expression).
+     * @param string $boolean  The logical joiner used to link this condition ('AND' or 'OR').
      */
     public function __construct(
         public string $column,
@@ -28,5 +24,3 @@ final readonly class Condition
         public string $boolean = 'AND'
     ) {}
 }
-
-

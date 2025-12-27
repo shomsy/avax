@@ -11,7 +11,7 @@ use Avax\Database\Events\Strategy\SyncDispatchStrategy;
 /**
  * Central event dispatcher for database lifecycle and telemetry signals.
  *
- * @see docs/Concepts/Telemetry.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Telemetry.md
  */
 final class EventBus implements EventBusInterface
 {

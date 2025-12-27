@@ -7,7 +7,7 @@ namespace Avax\Database\Query;
 /**
  * Immutable value object encapsulating pagination parameters (page, perPage, total).
  *
- * @see docs/DSL/QueryExecution.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryExecution.md
  */
 final readonly class PaginationOptions
 {

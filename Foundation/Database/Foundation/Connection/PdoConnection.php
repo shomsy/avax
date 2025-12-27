@@ -11,7 +11,7 @@ use Throwable;
 /**
  * Standard implementation of DatabaseConnection using PHP's PDO extension.
  *
- * @see docs/Concepts/Connections.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Connections.md
  */
 final readonly class PdoConnection implements DatabaseConnection
 {

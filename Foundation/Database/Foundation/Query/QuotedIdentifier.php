@@ -7,7 +7,7 @@ namespace Avax\Database\Query;
 /**
  * Immutable value object representing a pre-quoted SQL identifier.
  *
- * @see docs/DSL/QueryStates.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryStates.md
  */
 final readonly class QuotedIdentifier
 {

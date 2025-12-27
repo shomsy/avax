@@ -9,7 +9,7 @@ use SensitiveParameter;
 /**
  * Immutable value object containing database connection credentials.
  *
- * @see docs/Concepts/Connections.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Connections.md
  */
 final readonly class ConnectionConfig
 {

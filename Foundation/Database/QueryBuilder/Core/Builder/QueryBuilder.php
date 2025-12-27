@@ -19,9 +19,7 @@ use Throwable;
  *
  * Supports dialect-aware compilation, safe bindings, pretend mode, and optional deferred execution via IdentityMap.
  *
- * @see docs/DSL/RawExpressions.md
- * @see docs/DSL/PretendMode.md
- * @see docs/DSL/DeferredExecution.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md
  */
 class QueryBuilder
 {
@@ -97,7 +95,7 @@ class QueryBuilder
      *
      * @param string $value SQL fragment to include verbatim.
      * @throws InvalidCriteriaException When the fragment contains disallowed characters.
-     * @see docs/DSL/RawExpressions.md
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#raw
      * @return Expression
      */
     public function raw(string $value): Expression
@@ -110,7 +108,7 @@ class QueryBuilder
     /**
      * Enable dry-run mode that logs SQL without executing it.
      *
-     * @see docs/DSL/PretendMode.md
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#pretend
      * @return self Builder clone in pretend mode.
      */
     public function pretend(): self
@@ -166,7 +164,7 @@ class QueryBuilder
      *
      * @param string ...$expressions Raw SQL snippets for selection.
      * @throws InvalidCriteriaException When the fragment contains disallowed characters.
-     * @see docs/DSL/RawExpressions.md
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#selectraw
      * @return self
      */
     public function selectRaw(string ...$expressions): self
@@ -258,7 +256,7 @@ class QueryBuilder
      *
      * @param IdentityMap|null $identityMap Optional map to use for this query.
      * @throws InvalidCriteriaException When no IdentityMap is available.
-     * @see docs/DSL/DeferredExecution.md
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#deferred
      * @return self New builder instance with deferred execution enabled.
      */
     public function deferred(IdentityMap|null $identityMap = null): self
@@ -364,7 +362,7 @@ class QueryBuilder
     /**
      * Execute the retrieval query and return all matching records.
      *
-     * @see docs/DSL/QueryExecution.md
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#get
      * @return array<array-key, mixed>
      */
     public function get(): array
@@ -384,7 +382,7 @@ class QueryBuilder
      * Persist a new record into the database.
      *
      * @param array $values Associative array of column => values.
-     * @see docs/DSL/Mutations.md
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#insert
      * @return bool
      */
     public function insert(array $values): bool
@@ -404,7 +402,7 @@ class QueryBuilder
      * Modify existing records in the database.
      *
      * @param array $values Associative array of updates.
-     * @see docs/DSL/Mutations.md
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#update
      * @return bool
      */
     public function update(array $values): bool
@@ -425,7 +423,7 @@ class QueryBuilder
     /**
      * Remove matching records from the database.
      *
-     * @see docs/DSL/Mutations.md
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#delete
      * @return bool
      */
     public function delete(): bool
@@ -522,7 +520,7 @@ class QueryBuilder
      * Execute a closure within a database transaction.
      *
      * @param callable $callback Logic to run transactionally.
-     * @see docs/DSL/Transactions.md
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#transaction
      * @return mixed
      */
     public function transaction(callable $callback): mixed

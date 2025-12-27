@@ -11,7 +11,7 @@ use Throwable;
 /**
  * Interface defining capabilities for the physical execution of database operations.
  *
- * @see docs/DSL/QueryExecution.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryExecution.md
  */
 interface ExecutorInterface
 {

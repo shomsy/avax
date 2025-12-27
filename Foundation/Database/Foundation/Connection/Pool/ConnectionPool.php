@@ -18,7 +18,7 @@ use Throwable;
 /**
  * Connection pool implementation for managing a set of reusable database connections.
  *
- * @see docs/Concepts/Connections.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Connections.md
  */
 final class ConnectionPool implements ConnectionPoolInterface
 {

@@ -12,7 +12,7 @@ use Throwable;
 /**
  * Unit-of-Work IdentityMap that buffers mutations and tracks loaded records.
  *
- * @see docs/Concepts/IdentityMap.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/IdentityMap.md
  */
 final class IdentityMap
 {
@@ -32,11 +32,8 @@ final class IdentityMap
     ) {}
 
     /**
-     * Schedule a mutation operation for deferred execution.
-     *
-     * @param string $operation Operation type (e.g., INSERT).
-     * @param string $sql       Pre-compiled SQL string.
-     * @param array  $bindings  Secure tokens for parameterization.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/IdentityMap.md#deferred-execution
+
      */
     public function schedule(string $operation, string $sql, array $bindings = []): void
     {
@@ -44,9 +41,8 @@ final class IdentityMap
     }
 
     /**
-     * Execute all scheduled mutations within a transaction.
-     *
-     * @throws Throwable If any operation fails or connection is lost.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/IdentityMap.md#unit-of-work-pattern
+
      */
     public function execute(): void
     {

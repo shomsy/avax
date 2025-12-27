@@ -9,7 +9,7 @@ use Throwable;
 /**
  * Event emitted when a database connection attempt fails.
  *
- * @see docs/Concepts/Telemetry.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Telemetry.md#connectionfailed
  */
 final readonly class ConnectionFailed extends Event
 {

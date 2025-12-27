@@ -9,7 +9,7 @@ use InvalidArgumentException;
 /**
  * Immutable value object encapsulating a PDO Data Source Name string.
  *
- * @see docs/Concepts/Connections.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Connections.md
  */
 final readonly class Dsn
 {

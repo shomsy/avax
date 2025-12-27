@@ -11,28 +11,15 @@ use Closure;
 /**
  * Trait providing relational join capabilities for the QueryBuilder.
  *
- * -- intent:
- * Extends the QueryBuilder with a Domain Specific Language (DSL) for 
- * establishing relationships between different data sources (tables), 
- * allowing for complex relational retrieval and mutation.
- *
- * -- invariants:
- * - Every join addition must return a new, cloned builder instance.
- * - Join metadata must be encapsulated within a JoinNode abstraction.
- * - Supports both simple column-to-column comparisons and complex closure-based conditions.
- *
- * -- boundaries:
- * - Does NOT handle SQL compilation (delegated to Grammar).
- * - Does NOT perform schema verification for the target tables.
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Joins.md
+
  */
 trait HasJoins
 {
     /**
      * Add an INNER JOIN clause to the current query context.
      *
-     * -- intent:
-     * Enforce a strict relational intersection between the primary source 
-     * and the target table, retrieving only records that exist in both.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Joins.md#join
      *
      * @param string         $table    The technical name of the target database table to link.
      * @param string|Closure $first    The left-hand field name or a configuration closure for complex logic.
@@ -52,9 +39,8 @@ trait HasJoins
     /**
      * Add a LEFT JOIN clause to the current query context.
      *
-     * -- intent:
-     * Retrieve all records from the primary source while optionally linking 
-     * matching records from the secondary target table.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Joins.md#leftjoin
+
      *
      * @param string         $table    The technical name of the target database table to link.
      * @param string|Closure $first    The left-hand field name or a configuration closure.
@@ -74,9 +60,8 @@ trait HasJoins
     /**
      * Add a RIGHT JOIN clause to the current query context.
      *
-     * -- intent:
-     * Retrieve all records from the secondary target table while optionally 
-     * linking matching records from the primary source.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Joins.md#rightjoin
+
      *
      * @param string         $table    The technical name of the target database table to link.
      * @param string|Closure $first    The left-hand field name or a configuration closure.
@@ -96,9 +81,8 @@ trait HasJoins
     /**
      * Add a CROSS JOIN clause to the current query context.
      *
-     * -- intent:
-     * Produce a Cartesian product of the primary source and the target table,
-     * linking every record of one to every record of the other.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Joins.md#crossjoin
+
      *
      * @param string $table The technical name of the target database table to cross-link.
      * @return self A fresh, cloned builder instance with the cross join applied.

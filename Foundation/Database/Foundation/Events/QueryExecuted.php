@@ -10,7 +10,7 @@ use SensitiveParameter;
 /**
  * Telemetry event emitted after a database query execution.
  *
- * @see docs/Concepts/Telemetry.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Telemetry.md#queryexecuted
  */
 final readonly class QueryExecuted extends Event
 {

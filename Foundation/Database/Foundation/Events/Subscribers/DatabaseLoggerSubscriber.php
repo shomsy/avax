@@ -15,19 +15,8 @@ use Psr\Log\LoggerInterface;
 /**
  * Infrastructure observer for logging database activity and lifecycle events.
  *
- * -- intent:
- * Centralizes technical telemetry across the database component for unified 
- * monitoring, security auditing, and performance profiling. It translates 
- * internal signals into standardized PSR-3 log entries.
- *
- * -- invariants:
- * - All log entries must include a correlation ID for request tracing.
- * - Sensitivity policies (redaction) must be enforced based on configuration or event flags.
- * - Critical failures (ConnectionFailed) must be recorded at ERROR level.
- *
- * -- boundaries:
- * - Does NOT perform specialized log aggregation (delegated to the PSR-3 implementation).
- * - Does NOT make performance optimizations based on the signals it observes.
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Telemetry.md#databaseloggersubscriber
+
  */
 final readonly class DatabaseLoggerSubscriber implements EventSubscriberInterface
 {

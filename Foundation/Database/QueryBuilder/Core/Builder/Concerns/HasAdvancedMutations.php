@@ -7,16 +7,17 @@ namespace Avax\Database\QueryBuilder\Core\Builder\Concerns;
 use Throwable;
 
 /**
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Mutations.md
  * Trait providing complex data modification capabilities for the QueryBuilder.
  *
  * -- intent:
- * Extends the QueryBuilder with advanced, industrialized mutation patterns 
- * such as atomic UPSERT (insert-or-update) and thread-safe arithmetic 
+ * Extends the QueryBuilder with advanced, industrialized mutation patterns
+ * such as atomic UPSERT (insert-or-update) and thread-safe arithmetic
  * operations (increment/decrement) at the database level.
  *
  * -- invariants:
  * - Mutations must be dispatched via the QueryOrchestrator to ensure atomicity.
- * - Arithmetic operations must be performed using database-side expressions 
+ * - Arithmetic operations must be performed using database-side expressions
  *   to prevent race conditions.
  * - UPSERT operations must normalize input values into a consistent batch format.
  *
@@ -30,8 +31,8 @@ trait HasAdvancedMutations
      * Perform an atomic UPSERT (Insert or Update) operation.
      *
      * -- intent:
-     * Dispatches a single instruction to the database to either insert new 
-     * records or update existing ones if a unique constraint conflict occurs, 
+     * Dispatches a single instruction to the database to either insert new
+     * records or update existing ones if a unique constraint conflict occurs,
      * significantly reducing net database round-trips.
      *
      * @param array        $values   A single associative array or a collection of arrays representing records.
@@ -74,8 +75,8 @@ trait HasAdvancedMutations
      * Atomically increment a numeric field by a specific quantity.
      *
      * -- intent:
-     * Execute a server-side addition to a specific column, ensuring that 
-     * the operation is thread-safe and immune to typical application-level 
+     * Execute a server-side addition to a specific column, ensuring that
+     * the operation is thread-safe and immune to typical application-level
      * read-modify-write race conditions.
      *
      * @param string          $column The technical name of the numeric field to increment.
@@ -95,9 +96,10 @@ trait HasAdvancedMutations
 
     /**
      * Atomically decrement a numeric field by a specific quantity.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Mutations.md#upsert
      *
      * -- intent:
-     * Execute a server-side subtraction from a specific column, ensuring 
+     * Execute a server-side subtraction from a specific column, ensuring
      * thread-safe value modification at the database level.
      *
      * @param string          $column The technical name of the numeric field to decrement.

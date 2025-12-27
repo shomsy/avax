@@ -7,21 +7,8 @@ namespace Avax\Database\QueryBuilder\ValueObjects;
 use Stringable;
 
 /**
- * Technical representation of a raw SQL expression which must bypass standard escaping.
- *
- * -- intent:
- * Provides a secure, intentional mechanism for developers to inject literal 
- * SQL fragments (e.g., function calls, complex math) into the builder 
- * while signaling to the Grammar that the content is trusted and pre-formatted.
- *
- * -- invariants:
- * - The object must be strictly immutable.
- * - The value must be returned as-is by the SQL compilation engine.
- * - Content is assumed to be safe/sanitized by the producer (Escape Hatch).
- *
- * -- boundaries:
- * - Does NOT perform character escaping or parameterization.
- * - Does NOT validate the syntactical correctness of the SQL fragment.
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/RawExpressions.md
+
  */
 final readonly class Expression implements Stringable
 {

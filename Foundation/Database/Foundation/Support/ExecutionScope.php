@@ -9,7 +9,7 @@ use Random\RandomException;
 /**
  * Metadata container for correlating disparate database operations within a single logical request.
  *
- * @see docs/Concepts/Telemetry.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Telemetry.md
  */
 final readonly class ExecutionScope
 {

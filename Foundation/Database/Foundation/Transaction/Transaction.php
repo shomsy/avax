@@ -12,7 +12,7 @@ use Throwable;
 /**
  * Transaction manager for atomic database operations including nesting and savepoints.
  *
- * @see docs/DSL/Transactions.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Transactions.md
  */
 final class Transaction implements TransactionManagerInterface
 {

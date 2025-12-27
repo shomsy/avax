@@ -1,42 +1,288 @@
-# Database Mutations (Writing data)
+# Mutations (INSERT / UPDATE / DELETE)
 
-## What it does
+This document covers data modification operations — how to create, update, and delete records.
 
-Mutation methods (`insert()`, `update()`, `delete()`, `upsert()`, `statement()`) transform the builder state into modification queries.
+---
 
-## Why it exists
+## Table of Contents
 
-- Abstract away SQL syntax for complex writes (UPSERT).
-- Protect against SQL injection via automatic binding normalization.
-- Enable hooks like soft-deletes and deferred execution.
+- [insert](#insert)
+- [update](#update)
+- [delete](#delete)
+- [upsert](#upsert)
+- [increment / decrement](#increment--decrement)
+- [insertOrIgnore](#insertorignore)
 
-## When to use
+---
 
-- `insert()`: Create new records.
-- `update()`: Modify existing records matching the criteria.
-- `delete()`: Remove records (or mark them as deleted if using soft-deletes).
-- `statement()`: Run administrative DDL or maintenance commands.
+## insert
 
-## When *not* to use
+**Create a new record in the database.**
 
-- Do not use `update()` to change a single field if atomic `increment()`/`decrement()` is more appropriate for thread safety.
-- Avoid large bulk `insert()` calls without batching (check `upsert()` or driver-specific batch methods).
-
-## Examples
+Adds a row to the target table with the specified column/value pairs.
 
 ```php
-// Simple Insert
-$builder->table('logs')->insert(['event' => 'login', 'user_id' => 1]);
+// Single insert
+$builder->from('users')->insert([
+    'name' => 'Alice',
+    'email' => 'alice@example.com',
+    'created_at' => date('Y-m-d H:i:s')
+]);
+// SQL: INSERT INTO users (name, email, created_at) VALUES (?, ?, ?)
 
-// Criteria-based Update
-$builder->table('users')->where('id', 1)->update(['last_login' => now()]);
-
-// Soft or Hard Delete
-$builder->table('sessions')->where('expired', true)->delete();
+// Returns: bool (true on success)
 ```
 
-## Common pitfalls
+**Batch insert** (multiple rows at once):
 
-- **Missing criteria**: Calling `update()` or `delete()` without a `where()` clause might affect the entire table. The builder usually requires explicit criteria.
-- **DDL Success**: `statement()` returns success based on driver acceptance, which might be `true` even if 0 rows were altered (e.g., `CREATE TABLE`).
-- **Deferred writes**: If `deferred()` is active, these methods buffer the job rather than hitting the database. See [Deferred Execution](DeferredExecution.md).
+```php
+$builder->from('users')->insert([
+    ['name' => 'Alice', 'email' => 'alice@example.com'],
+    ['name' => 'Bob', 'email' => 'bob@example.com'],
+    ['name' => 'Charlie', 'email' => 'charlie@example.com'],
+]);
+// SQL: INSERT INTO users (name, email) VALUES (?, ?), (?, ?), (?, ?)
+```
+
+---
+
+## update
+
+**Modify existing records that match the query.**
+
+Changes column values for all rows matching your WHERE conditions.
+
+⚠️ **DANGER:** Without WHERE conditions, this updates EVERY row in the table!
+
+```php
+// Update specific record
+$builder->from('users')
+    ->where('id', 42)
+    ->update(['name' => 'Alice Smith']);
+// SQL: UPDATE users SET name = ? WHERE id = ?
+
+// Update multiple records
+$builder->from('users')
+    ->where('status', 'trial')
+    ->where('created_at', '<', '2024-01-01')
+    ->update(['status' => 'expired']);
+// SQL: UPDATE users SET status = ? WHERE status = ? AND created_at < ?
+
+// Returns: bool (true on success)
+```
+
+**Update with expressions:**
+
+```php
+$builder->from('products')
+    ->where('id', 42)
+    ->update([
+        'price' => $builder->raw('price * 1.1'),  // 10% increase
+        'updated_at' => $builder->raw('NOW()')
+    ]);
+```
+
+---
+
+## delete
+
+**Remove matching records from the database.**
+
+Permanently deletes all rows matching your WHERE conditions.
+
+⚠️ **DANGER:** Without WHERE conditions, this deletes EVERYTHING in the table!
+
+```php
+// Delete specific record
+$builder->from('users')
+    ->where('id', 42)
+    ->delete();
+// SQL: DELETE FROM users WHERE id = ?
+
+// Delete matching records
+$builder->from('sessions')
+    ->where('expires_at', '<', date('Y-m-d H:i:s'))
+    ->delete();
+// SQL: DELETE FROM sessions WHERE expires_at < ?
+
+// Returns: bool (true on success)
+```
+
+---
+
+## upsert
+
+**Insert or update — "upsert" operation.**
+
+Attempts to INSERT a record. If a duplicate key violation occurs, it UPDATEs instead.
+
+Useful for "create or update" scenarios.
+
+```php
+$builder->from('user_preferences')->upsert(
+    values: [
+        'user_id' => 42,
+        'theme' => 'dark',
+        'language' => 'en'
+    ],
+    uniqueBy: ['user_id'],  // Column(s) that define uniqueness
+    update: ['theme', 'language']  // Columns to update if exists
+);
+
+// MySQL: INSERT INTO user_preferences (...) VALUES (...)
+//        ON DUPLICATE KEY UPDATE theme = VALUES(theme), language = VALUES(language)
+
+// PostgreSQL: INSERT INTO user_preferences (...) VALUES (...)
+//             ON CONFLICT (user_id) DO UPDATE SET theme = EXCLUDED.theme, ...
+```
+
+---
+
+## increment / decrement
+
+**Atomically increase or decrease a numeric column.**
+
+Safer than fetching, calculating, and updating — avoids race conditions.
+
+```php
+// Increment
+$builder->from('products')
+    ->where('id', 42)
+    ->increment('views');  // +1
+// SQL: UPDATE products SET views = views + 1 WHERE id = ?
+
+// Increment by specific amount
+$builder->from('wallets')
+    ->where('user_id', 42)
+    ->increment('balance', 100);  // +100
+// SQL: UPDATE wallets SET balance = balance + 100 WHERE user_id = ?
+
+// Decrement
+$builder->from('products')
+    ->where('id', 42)
+    ->decrement('stock', 5);  // -5
+// SQL: UPDATE products SET stock = stock - 5 WHERE id = ?
+
+// Increment with additional updates
+$builder->from('posts')
+    ->where('id', 42)
+    ->increment('views', 1, [
+        'last_viewed_at' => date('Y-m-d H:i:s')
+    ]);
+```
+
+---
+
+## insertorignore
+
+**Insert but silently skip if duplicate key exists.**
+
+Unlike upsert, this doesn't update — it just ignores the duplicate.
+
+```php
+$builder->from('subscriptions')->insertOrIgnore([
+    'user_id' => 42,
+    'newsletter' => 'weekly'
+]);
+
+// MySQL: INSERT IGNORE INTO subscriptions (...) VALUES (...)
+// If user_id 42 already has a subscription, nothing happens
+```
+
+---
+
+## Common Patterns
+
+### 1. Create with Timestamps
+
+```php
+$builder->from('posts')->insert([
+    'title' => 'My Post',
+    'content' => 'Hello world',
+    'created_at' => date('Y-m-d H:i:s'),
+    'updated_at' => date('Y-m-d H:i:s')
+]);
+```
+
+### 2. Soft Delete
+
+```php
+// Instead of actually deleting...
+$builder->from('users')
+    ->where('id', 42)
+    ->update([
+        'deleted_at' => date('Y-m-d H:i:s')
+    ]);
+```
+
+### 3. Bulk Update with Condition
+
+```php
+// Deactivate all expired trials
+$builder->from('users')
+    ->where('status', 'trial')
+    ->where('trial_ends_at', '<', date('Y-m-d'))
+    ->update(['status' => 'expired']);
+```
+
+### 4. Conditional Insert (Race-Safe)
+
+```php
+// Only insert if email doesn't exist
+// (Better handled by upsert or database constraints)
+if (!$builder->from('users')->where('email', $email)->exists()) {
+    $builder->from('users')->insert(['email' => $email, ...]);
+}
+```
+
+### 5. Transfer Money (Atomic)
+
+```php
+$builder->transaction(function () use ($builder, $from, $to, $amount) {
+    $builder->from('accounts')
+        ->where('id', $from)
+        ->decrement('balance', $amount);
+    
+    $builder->from('accounts')
+        ->where('id', $to)
+        ->increment('balance', $amount);
+});
+```
+
+---
+
+## Mutation Results
+
+Mutation methods return a boolean indicating success. For more details about affected rows, use the orchestrator directly or check `PDO::rowCount()`.
+
+```php
+$success = $builder->from('users')->where('id', 42)->delete();
+
+if ($success) {
+    echo "Record deleted";
+} else {
+    echo "Delete failed";
+}
+```
+
+---
+
+## Best Practices
+
+1. **Always use WHERE for UPDATE/DELETE** — Or you'll modify the entire table.
+
+2. **Use transactions for related changes** — Keep data consistent.
+
+3. **Use increment/decrement for counters** — Avoids race conditions.
+
+4. **Prefer upsert over check-then-insert** — Atomic and race-safe.
+
+5. **Validate before inserting** — The database will reject invalid data, but validating early gives better errors.
+
+---
+
+## See Also
+
+- [QueryBuilder Overview](QueryBuilder.md)
+- [Transactions](Transactions.md)
+- [Filtering](Filtering.md)

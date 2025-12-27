@@ -7,15 +7,8 @@ namespace Avax\Database\QueryBuilder\Core\Builder\Concerns;
 /**
  * Trait providing aggregation grouping (GROUP BY) and aggregate filtering (HAVING) capabilities.
  *
- * -- intent:
- * Extends the QueryBuilder with a Domain Specific Language (DSL) for 
- * consolidating records based on shared attribute values and applying 
- * logical filters to the resulting aggregations.
- *
- * -- invariants:
- * - Every grouping or having addition must return a new, cloned builder instance.
- * - Grouping metadata must be accumulated within the QueryState's groups collection.
- * - Having parameters must be securely added to the QueryState's BindingBag.
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Grouping.md
+
  *
  * -- boundaries:
  * - Does NOT handle SQL compilation (delegated to Grammar).
@@ -26,9 +19,8 @@ trait HasGroups
     /**
      * Consolidate the result set by one or more specific technical fields.
      *
-     * -- intent:
-     * Organize matching records into groups based on identical values in the 
-     * specified columns, typically used for performing server-side aggregations.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Grouping.md#groupby
+
      *
      * @param string|array ...$columns A variable list of field names or arrays of names to group by.
      * @return self A fresh, cloned builder instance with the grouping criteria applied.
@@ -50,9 +42,8 @@ trait HasGroups
     /**
      * Apply a filtering criterion to aggregated groups in the result set.
      *
-     * -- intent:
-     * Provide a DSL for the SQL "HAVING" clause, allowing for logical 
-     * filtering based on aggregate function results (e.g., HAVING count(*) > 5).
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Grouping.md#having
+
      *
      * @param string $column   The technical column name or aggregate function expression to filter.
      * @param string $operator The SQL comparison operator (e.g., '=', '>', '<').

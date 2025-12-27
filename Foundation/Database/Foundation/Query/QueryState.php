@@ -13,7 +13,7 @@ use Avax\Database\Query\ValueObjects\BindingBag;
 /**
  * Immutable technical state container for database query metadata.
  *
- * @see docs/DSL/QueryStates.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryStates.md
  */
 final readonly class QueryState
 {

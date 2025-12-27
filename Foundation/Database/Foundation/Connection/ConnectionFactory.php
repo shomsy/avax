@@ -14,7 +14,7 @@ use Throwable;
 /**
  * Factory for assembling and validating physical database connections.
  *
- * @see docs/Concepts/Connections.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Connections.md
  */
 final readonly class ConnectionFactory
 {

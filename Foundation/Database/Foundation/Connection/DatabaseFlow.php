@@ -11,7 +11,7 @@ use Throwable;
 /**
  * Fluent builder for coordinating one-off database operations with resource safety.
  *
- * @see docs/Concepts/Connections.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Connections.md
  */
 final class DatabaseFlow
 {

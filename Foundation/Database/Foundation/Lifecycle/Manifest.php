@@ -9,7 +9,7 @@ use Avax\Migrations\Module;
 /**
  * Static registry for database module discovery and configuration.
  *
- * @see docs/Concepts/Architecture.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Architecture.md
  */
 final class Manifest
 {

@@ -10,33 +10,13 @@ use Throwable;
 /**
  * Trait bridging the QueryBuilder with the Migration system for integrated schema management.
  *
- * -- intent:
- * Provides a high-level, fluent Domain Specific Language (DSL) for performing 
- * structural database modifications (creating tables, dropping schemas) 
- * directly within the builder context, facilitating rapid provisioning and teardown.
- *
- * -- invariants:
- * - Structural modifications must be dispatched via the QueryOrchestrator.
- * - Table creation must use the Blueprint abstraction to maintain dialect neutrality.
- * - Destructive operations (DROP/TRUNCATE) must be explicitly invoked with identifiers.
- *
- * -- boundaries:
- * - Does NOT handle the long-term versioning of schema changes (delegated to MigrationRepository).
- * - Does NOT perform safety checks beyond "IF EXISTS" clauses provided by grammar.
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Schema.md
  */
 trait HasSchema
 {
     /**
-     * Create a new database table structure fluently.
-     *
-     * -- intent:
-     * Provide a standardized entry point for defining and executing table 
-     * structural designs, delegating SQL generation to the Blueprint and Grammar.
-     *
-     * @param string   $table    The technical identifier for the new database table.
-     * @param callable $callback A design closure receiving a Blueprint instance to define columns and indexes.
-     * @throws Throwable If the SQL compilation for the dialect or physical execution fails.
-     * @return void
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Schema.md#create
+
      */
     public function create(string $table, callable $callback): void
     {
@@ -51,15 +31,8 @@ trait HasSchema
     }
 
     /**
-     * Remove a table from the database schema with built-in existence safety.
-     *
-     * -- intent:
-     * Provide a safe, dialect-aware shorthand for destroying a table structure 
-     * if it currently exists in the target database.
-     *
-     * @param string $table The technical name of the table to be removed.
-     * @throws Throwable If the drop instruction execution fails at the driver level.
-     * @return void
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Schema.md#dropifexists
+
      */
     public function dropIfExists(string $table): void
     {
@@ -68,15 +41,8 @@ trait HasSchema
     }
 
     /**
-     * Efficiently clear all records from a database table without destroying its structure.
-     *
-     * -- intent:
-     * Provide a low-level, high-performance reset mechanism (SQL TRUNCATE) for 
-     * clearing raw data while preserving the schema and its indexes.
-     *
-     * @param string|null $table The optional technical name of the table (defaults to the builder's current source).
-     * @throws Throwable If the truncate instruction execution fails.
-     * @return void
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Schema.md#truncate
+
      */
     public function truncate(string|null $table = null): void
     {
@@ -86,15 +52,8 @@ trait HasSchema
     }
 
     /**
-     * Create a new database container/schema.
-     *
-     * -- intent:
-     * Provide a direct mechanism for provisioning high-level schema containers 
-     * within the database cluster.
-     *
-     * @param string $name The technical identifier for the new database/schema.
-     * @throws Throwable If the creation command fails at the persistence layer.
-     * @return void
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Schema.md#createdatabase
+
      */
     public function createDatabase(string $name): void
     {
@@ -103,15 +62,8 @@ trait HasSchema
     }
 
     /**
-     * Permanently remove a database container/schema.
-     *
-     * -- intent:
-     * Provide a direct mechanism for executing destructive schema-level removals.
-     * WARNING: This operation is non-reversible and deletes all internal data.
-     *
-     * @param string $name The technical identifier of the database to be destroyed.
-     * @throws Throwable If the destruction command fails.
-     * @return void
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Schema.md#dropdatabase
+
      */
     public function dropDatabase(string $name): void
     {

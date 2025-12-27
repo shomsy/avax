@@ -7,7 +7,7 @@ namespace Avax\Database\Query\ValueObjects;
 /**
  * Immutable container for query parameter bindings.
  *
- * @see docs/DSL/QueryStates.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryStates.md
  */
 final readonly class BindingBag
 {

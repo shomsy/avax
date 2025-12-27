@@ -1,35 +1,83 @@
 # Raw Expressions
 
-## What “raw” means here
-`raw()` and `selectRaw()` let you inject SQL fragments without quoting or escaping. They are escape hatches for constructs the grammar doesn’t cover.
+This document explains how to inject raw SQL fragments safely into your queries using the `Expression` value object.
 
-## Why it exists
-- Allow database functions (`NOW()`, `JSON_EXTRACT`), complex CASE statements, or vendor-specific syntax that the builder can’t generate yet.
+---
 
-## When to use
-- Trusted, static SQL fragments owned by the codebase.
-- Vendor functions or complex expressions you can’t express via the DSL.
+## The Concept
 
-## When *not* to use
-- **Never** for user-provided input (search terms, form fields, query params).
-- Avoid for identifiers built from user input; prefer bound parameters and grammar helpers.
+The QueryBuilder is designed to protect you from SQL injection by automatically escaping values and quoting identifiers. However, sometimes you need to pass a specific SQL function (like `NOW()`) or a complex calculation that shouldn't be quoted like a string.
 
-## Validation/guards
-- The builder rejects fragments with statement terminators, comments, control chars, or non-ASCII.
-- Fragments are included verbatim; bindings are not applied inside raw strings.
+**Raw Expressions** act as an "escape hatch" — they tell the QueryBuilder: "Trust me, I know what I'm doing. Put this text directly into the SQL."
 
-## Examples
+---
+
+## Creating Raw Expressions
+
+Use the `raw()` method on the QueryBuilder to create an `Expression` object.
+
 ```php
-// Vendor function
-$builder->selectRaw('NOW() as current_time');
-
-// CASE expression
-$builder->selectRaw(
-    "CASE WHEN status = 'paid' THEN 1 ELSE 0 END AS is_paid"
-);
+$builder->raw('NOW()');
+$builder->raw('count(*) > 5');
+$builder->raw('price * 1.20');
 ```
 
-## Common pitfalls
-- Attempting to interpolate user data: use bindings instead.
-- Assuming raw fragments are sanitized: they are not; only minimal allowlist checks run.
-- Using multi-statement or comment syntax: rejected by the allowlist.
+---
+
+## Common Use Cases
+
+### 1. Database Functions in WHERE clauses
+
+```php
+// WRONG: This searches for a string literal "NOW()"
+$builder->where('created_at', '<', 'NOW()');
+// SQL: WHERE created_at < 'NOW()'
+
+// RIGHT: This uses the database function
+$builder->where('created_at', '<', $builder->raw('NOW()'));
+// SQL: WHERE created_at < NOW()
+```
+
+### 2. Complex Selections
+
+```php
+$builder->selectRaw('SUM(price * quantity) as total_revenue');
+```
+
+### 3. Incrementing Values
+
+```php
+$builder->update([
+    'points' => $builder->raw('points + 10')
+]);
+```
+
+### 4. Custom Ordering
+
+```php
+$builder->orderBy($builder->raw('FIELD(status, "active", "pending", "banned")'));
+```
+
+---
+
+## Security Warning ⚠️
+
+**NEVER** pass untrusted user input directly into a raw expression. This bypasses all security protections and opens you up to SQL injection.
+
+```php
+// ❌ DANGEROUS - Do NOT do this:
+$userInput = $_GET['column'];
+$builder->raw("DATEDIFF($userInput, NOW())");
+
+// ✅ SAFE - Use bindings inside other methods, or validate strictly
+$builder->selectRaw('DATEDIFF(?, NOW())', [$userInput]);
+```
+
+The `selectRaw`, `whereRaw` (via closures), and `havingRaw` methods often support binding arrays to safely handle parameters.
+
+---
+
+## See Also
+
+- [QueryBuilder Overview](QueryBuilder.md)
+- [Expression Class Reference](QueryStates.md#bindingbag)

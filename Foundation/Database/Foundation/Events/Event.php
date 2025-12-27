@@ -11,7 +11,7 @@ use Avax\Database\Support\SequenceTracker;
  *
  * Provides correlation ID, timestamp, and sequence tracking for audit trails.
  *
- * @see docs/Concepts/Telemetry.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Telemetry.md
  */
 abstract readonly class Event
 {

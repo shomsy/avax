@@ -1,44 +1,62 @@
-# Query Retrieval (Fetch operations)
+# Query Execution
 
-## What it does
+This document explains how the QueryBuilder executes queries against the database and how to fetch results.
 
-Retrieval methods (`get()`, `first()`, `pluck()`, `value()`, `exists()`, `count()`) translate the builder state into a SELECT query and return synchronized data results.
+---
 
-## Why it exists
+## Retrieval Methods
 
-- Provides a high-level API for data access without writing manual PDO fetch loops.
-- Automatically handles dialect differences in LIMIT/OFFSET and aggregation.
-- Integrates with soft-delete filters and other global query scopes.
+These methods run a `SELECT` query and return data.
 
-## When to use
+- **[get()](QueryBuilder.md#get)**: Returns an array of all matching records.
+- **[first()](QueryBuilder.md#first)**: Returns the first matching record (or null/default).
+- **[find()](QueryBuilder.md#find)**: Find a record by its primary key.
+- **[value()](QueryBuilder.md#value)**: Get a single column's value from the first row.
+- **[pluck()](QueryBuilder.md#pluck)**: Get a list of values for a specific column.
+- **[exists()](QueryBuilder.md#exists)**: Check if any records match (returns boolean).
+- **[count()](Aggregates.md#count)**: Count the number of matching records.
 
-- `get()`: Retrieve a full collection of matching records.
-- `first()`: Retrieve the most relevant single record (applies LIMIT 1).
-- `exists()`: Efficiently check presence without data transfer.
-- `pluck()`: Extract specific columns into flat arrays.
+## Modification Methods
 
-## When *not* to use
+These methods modify data and return a boolean or count.
 
-- Use `find($id)` for simple primary key lookups instead of building complex `where()` clauses.
-- Avoid large `get()` calls on unindexed columns or massive tables; use `count()` or `exists()` if you only need metadata.
+- **[insert()](Mutations.md#insert)**: Add new records.
+- **[update()](Mutations.md#update)**: Modify existing records.
+- **[delete()](Mutations.md#delete)**: Remove records.
+- **[upsert()](Mutations.md#upsert)**: Insert or update if exists.
 
-## Examples
+## The Execution Flow
+
+1. **Build**: You define the query state (table, wheres, joins) using the builder methods.
+2. **Compile**: When you call an execution method (like `get()`), the `Grammar` converts the state into a SQL string.
+3. **Execute**: The `Orchestrator` prepares the statement, binds parameters, and runs it via the `Connection`.
+4. **Fetch**: Results are fetched (typically as associative arrays) and returned.
+
+---
+
+## Debugging Execution
+
+You can inspect the generated SQL before execution:
 
 ```php
-// Basic collection
-$users = $builder->table('users')->where('active', true)->get();
+$query = $builder->from('users')->where('active', true);
 
-// Single column map
-$emails = $builder->table('users')->pluck('email', 'id'); // [id => email]
+// Get SQL string
+echo $query->toSql(); 
+// "SELECT * FROM users WHERE active = ?"
 
-// Metadata
-if ($builder->table('orders')->where('status', 'pending')->exists()) {
-    $count = $builder->count();
-}
+// Get Bindings
+print_r($query->getBindings()); 
+// ["active" => true]
+
+// Dry Run
+$query->pretend()->get();
 ```
 
-## Common pitfalls
+---
 
-- **Memory exhaustion**: Calling `get()` on millions of rows. Use pagination or chunking (if available).
-- **Null results**: `first()` returns `null` or a default value, not a collection.
-- **Aggregates are terminal**: Calling `count()` executes the query immediately; you cannot chain more filters after it.
+## See Also
+
+- [QueryBuilder Overview](QueryBuilder.md)
+- [Mutations](Mutations.md)
+- [Aggregates](Aggregates.md)

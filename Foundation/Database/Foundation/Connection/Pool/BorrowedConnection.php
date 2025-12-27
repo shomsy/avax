@@ -12,7 +12,7 @@ use PDO;
 /**
  * RAII wrapper for a pooled database connection that auto-releases on destruction.
  *
- * @see docs/Concepts/Connections.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Connections.md
  */
 final class BorrowedConnection implements DatabaseConnection
 {

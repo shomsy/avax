@@ -12,7 +12,7 @@ use InvalidArgumentException;
 /**
  * Trait providing high-level logical filtering (WHERE) capabilities for the QueryBuilder.
  *
- * @see docs/DSL/Filtering.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Filtering.md
  */
 trait HasConditions
 {

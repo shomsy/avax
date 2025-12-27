@@ -12,7 +12,7 @@ use Throwable;
 /**
  * Central registry for managing module lifecycles and registration.
  *
- * @see docs/Concepts/Architecture.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Architecture.md
  */
 final class ModuleRegistry
 {

@@ -7,7 +7,7 @@ namespace Avax\Database\Query;
 /**
  * Immutable value object encapsulating a single logical comparison constraint.
  *
- * @see docs/DSL/Filtering.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Filtering.md
  */
 final readonly class Condition
 {

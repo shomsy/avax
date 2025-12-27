@@ -7,7 +7,7 @@ namespace Avax\Database\Events;
 /**
  * Event emitted when a fresh database connection is opened.
  *
- * @see docs/Concepts/Telemetry.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Telemetry.md#connectionopened
  */
 final readonly class ConnectionOpened extends Event
 {

@@ -9,7 +9,7 @@ use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 /**
  * Immutable AST node representing a nested logical grouping (SQL parentheses).
  *
- * @see docs/DSL/QueryStates.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryStates.md
  */
 final readonly class NestedWhereNode
 {

@@ -7,30 +7,16 @@ namespace Avax\Database\QueryBuilder\Core\Builder\Concerns;
 use Throwable;
 
 /**
- * Trait providing statistical and aggregate function capabilities for the QueryBuilder.
- *
- * -- intent:
- * Extends the QueryBuilder with a comprehensive Domain Specific Language (DSL) 
- * for performing server-side calculations (count, min, max, average, sum), 
- * optimizing data retrieval by aggregating results at the database level.
- *
- * -- invariants:
- * - Aggregate methods must return a single scalar value.
- * - Aggregate logic must use a cloned builder instance to prevent polluting the original query state.
- * - Results must be extracted from a virtual 'aggregate' column in the result set.
- *
- * -- boundaries:
- * - Does NOT handle complex window functions (delegated to raw expressions).
- * - Does NOT perform client-side calculation (all logic is SQL-based).
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Aggregates.md
+
  */
 trait HasAggregates
 {
     /**
      * Retrieve the total count of records matching the current criteria.
      *
-     * -- intent:
-     * Provide a high-level shorthand for executing an SQL "COUNT(*)" or 
-     * specific field aggregation to determine existence or volume.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Aggregates.md#count
+
      *
      * @param string $columns The specific technical field to target for counting (defaults to '*').
      * @throws Throwable If the query execution fails at the driver level.
@@ -44,9 +30,8 @@ trait HasAggregates
     /**
      * Retrieve the maximum value found in a specific field.
      *
-     * -- intent:
-     * Provide a high-level shorthand for executing an SQL "MAX(column)" 
-     * aggregation across the current filtered dataset.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Aggregates.md#max
+
      *
      * @param string $column The technical field name whose peak value is required.
      * @throws Throwable If the query execution fails at the driver level.
@@ -60,9 +45,8 @@ trait HasAggregates
     /**
      * Retrieve the minimum value found in a specific field.
      *
-     * -- intent:
-     * Provide a high-level shorthand for executing an SQL "MIN(column)" 
-     * aggregation across the current filtered dataset.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Aggregates.md#min
+
      *
      * @param string $column The technical field name whose lowest value is required.
      * @throws Throwable If the query execution fails at the driver level.
@@ -76,9 +60,8 @@ trait HasAggregates
     /**
      * Calculate the average (mean) value for a specific numeric field.
      *
-     * -- intent:
-     * Provide a high-level shorthand for executing an SQL "AVG(column)" 
-     * aggregation across the current filtered dataset.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Aggregates.md#avg
+
      *
      * @param string $column The technical field name to target for averaging.
      * @throws Throwable If the query execution fails at the driver level.
@@ -92,9 +75,8 @@ trait HasAggregates
     /**
      * Calculate the cumulative sum of values in a specific numeric field.
      *
-     * -- intent:
-     * Provide a high-level shorthand for executing an SQL "SUM(column)" 
-     * aggregation across the current filtered dataset.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Aggregates.md#sum
+
      *
      * @param string $column The technical field name to target for summation.
      * @throws Throwable If the query execution fails at the driver level.
@@ -108,9 +90,8 @@ trait HasAggregates
     /**
      * Internal technician for executing a generic SQL aggregate function.
      *
-     * -- intent:
-     * Centralize the logic for query cloning, state modification, and scalar 
-     * result extraction for all statistical aggregation operations.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Aggregates.md
+
      *
      * @param string $function The name of the SQL aggregate function (e.g., 'COUNT', 'SUM').
      * @param array  $columns  The technical field identifiers to target for the calculation.

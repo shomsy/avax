@@ -7,7 +7,7 @@ namespace Avax\Database\Events;
 /**
  * Event emitted when a connection is acquired from the pool.
  *
- * @see docs/Concepts/Telemetry.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Telemetry.md#connectionacquired
  */
 final readonly class ConnectionAcquired extends Event
 {

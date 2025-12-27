@@ -22,6 +22,7 @@ use Throwable;
  *
  * -- boundaries:
  * - Does NOT handle the physical schema definitions (delegated to Schema/Migrations).
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/SoftDeletes.md
  * - Only applies to tables containing a technical deletion column (default 'deleted_at').
  */
 trait HasSoftDeletes
@@ -37,7 +38,9 @@ trait HasSoftDeletes
      *
      * -- intent:
      * Explicitly override the default exclusion policy, allowing for auditing
-     * or complex reporting across both active and deleted domain records.
+     * or complex reporting across both active and deleted
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/SoftDeletes.md#including-deleted-records
+domain records.
      *
      * @return self A fresh, cloned builder instance with soft-deleted inclusion active.
      */
@@ -50,7 +53,8 @@ trait HasSoftDeletes
     }
 
     /**
-     * Filter the results to exclusively include records marked as soft-deleted.
+     * Filter the results     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/SoftDeletes.md#only-deleted-records
+to exclusively include records marked as soft-deleted.
      *
      * -- intent:
      * Isolate domain records that have been logically removed from the active
@@ -71,7 +75,9 @@ trait HasSoftDeletes
      *
      * -- intent:
      * Nullify the deletion timestamp for records matching the current criteria,
-     * bringing them back into the active result set.
+     * bringing them back into the active result se
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/SoftDeletes.md#restoring-records
+t.
      *
      * @param string $column The technical deletion field identifier (defaults to 'deleted_at').
      * @throws Throwable If the restoration update fails at the persistence layer.

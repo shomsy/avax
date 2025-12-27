@@ -7,7 +7,7 @@ namespace Avax\Database\Config;
 /**
  * In-memory configuration repository supporting dot-notation access.
  *
- * @see docs/Concepts/Architecture.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Architecture.md
  */
 final class Config
 {

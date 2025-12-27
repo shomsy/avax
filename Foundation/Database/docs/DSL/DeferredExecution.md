@@ -1,46 +1,69 @@
-# Deferred Execution (IdentityMap)
+# Deferred Execution
 
-## What “deferred” means here
-`deferred()` tells the builder to buffer mutation statements (INSERT/UPDATE/DELETE) into an IdentityMap instead of sending them to the database immediately. The statements are scheduled with their bindings and later executed as a batch.
+Deferred execution implements the [Unit of Work](https://martinfowler.com/eaaCatalog/unitOfWork.html) pattern, allowing you to queue database operations and execute them all at once.
 
-## Why it exists
-- **Unit of Work:** Group related changes so they can be committed atomically and in a predictable order.
-- **Performance:** Reduce round-trips by batching writes.
-- **Consistency:** Keep mutations aligned with the transaction lifecycle managed by `Transaction`/`IdentityMap`.
+---
 
-## When to use
-- You have multiple dependent writes that should succeed or fail together.
-- You want to batch many small mutations to reduce driver chatter.
-- You already have an IdentityMap on the orchestrator or can supply one ad hoc.
+## The Concept
 
-## When *not* to use
-- You need to read back the mutated rows immediately in the same flow (reads are never deferred).
-- You don’t have an IdentityMap wired (or cannot provide one).
-- You depend on side effects that must happen before the current request finishes (e.g., triggers that must fire right away).
+Instead of hitting the database immediately for every INSERT, UPDATE, or DELETE, deferred mode schedules these operations in an [Identity Map](../Concepts/IdentityMap.md).
 
-## How to use (builder-level)
+**Benefits:**
+
+- **Performance**: Reduces database round-trips.
+- **Atomicity**: All changes can be committed in a single transaction.
+- **Order Optimization**: The Identity Map can potentially optimize the order of operations (though the current implementation respects insertion order).
+- **Cancellation**: You can discard pending changes before flushing.
+
+---
+
+## Usage
+
+Use the `deferred()` method to switch a builder into deferred mode. You must provide (or have access to) an `IdentityMap`.
+
 ```php
-$builder = new QueryBuilder($grammar, $orchestrator);
+$map = new IdentityMap($connection);
 
-// provide a map explicitly (per-call)
-$deferred = $builder->deferred($identityMap);
-$deferred->table('users')->insert(['email' => 'a@example.com']);
-$deferred->table('users')->where('id', 5)->update(['active' => false]);
+// 1. Queue an INSERT
+$builder->from('users')
+    ->deferred($map)
+    ->insert(['name' => 'Alice']); 
+// -> Returns true immediately, but nothing is in the DB yet!
 
-// later, flush via the map (often inside a transaction)
-$identityMap->execute();
+// 2. Queue an UPDATE
+$builder->from('products')
+    ->deferred($map)
+    ->where('id', 10)
+    ->update(['stock' => 50]);
+
+// 3. Queue a DELETE
+$builder->from('logs')
+    ->deferred($map)
+    ->where('date', '<', '2020-01-01')
+    ->delete();
+
+// ... time passes ...
+
+// 4. Execute ALL pending operations
+$map->flush();
 ```
 
-If the orchestrator already has an IdentityMap, you can call `deferred()` without arguments; it will reuse the existing map.
+---
 
-## How it flushes
-- `IdentityMap::execute()` runs all buffered jobs inside a transaction.
-- When `QueryOrchestrator::transaction()` completes and the orchestrator has an IdentityMap, it calls `IdentityMap::execute()` automatically.
+## Integration with Transactions
 
-## Common pitfalls
-- **No map available:** `deferred()` throws if no IdentityMap is present or provided.
-- **Reads are live:** `get()`, `first()`, etc. always hit the database immediately; they do not see buffered mutations.
-- **Long-lived buffers:** Keep IdentityMap lifetimes scoped (per request/unit-of-work) to avoid unbounded queues.
+It is highly recommended to wrap `flush()` in a transaction block to ensure data integrity.
 
-## Security/logging
-- Query telemetry redacts bindings by default; set `DB_LOG_BINDINGS=raw` or `logging.include_raw_bindings` only in controlled, non-production debugging sessions.
+```php
+$builder->transaction(function() use ($map) {
+    $map->flush();
+});
+```
+
+---
+
+## See Also
+
+- [Identity Map Pattern](../Concepts/IdentityMap.md)
+- [QueryBuilder::deferred()](QueryBuilder.md#deferred)
+- [Mutations](Mutations.md)

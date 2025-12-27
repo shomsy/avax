@@ -7,7 +7,7 @@ namespace Avax\Database\Query\AST;
 /**
  * Immutable AST node representing a single WHERE condition.
  *
- * @see docs/DSL/QueryStates.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryStates.md
  */
 final readonly class WhereNode
 {

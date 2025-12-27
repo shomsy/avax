@@ -1,32 +1,43 @@
-# Pretend Mode (Dry Run)
+# Pretend Mode
 
-## What it does
-`pretend()` clones the builder and switches the orchestrator into dry-run mode. SQL is logged; no statements are sent to the database.
+Pretend mode allows you to "dry run" your queries. It generates the SQL that *would* be executed without actually running it against the database.
 
-## Why it exists
-- Inspect generated SQL without touching data.
-- Validate DSL logic in development/tests without side effects.
+---
 
-## When to use
-- Developing or debugging query shapes.
-- Verifying migration/DDL statements before running them for real.
-- Writing tests that assert SQL strings instead of executing them.
+## How It Works
 
-## When *not* to use
-- Any flow that depends on database state changes or returned data. Pretend mode never persists or queries.
-- Production monitoring: prefer structured telemetry instead of pretend runs.
+When you call `pretend()`, the builder enters a simulation mode. Any subsequent execution method (like `get()`, `update()`, `delete()`) will:
 
-## Behavior notes
-- Applies to the returned clone only; the original builder is unchanged.
-- Mutations return success in pretend mode, but nothing is written.
-- Queries return empty arrays in pretend mode.
+1. Compile the QueryState into a SQL string
+2. Gather the execution bindings
+3. **Log** the intended query (via the Logger or debug output)
+4. **Return** an empty result set (or `true`)
+5. **NOT** execute the query on the database connection
 
-## Example
+---
+
+## Usage
+
 ```php
-$pretend = $builder->pretend();
-$pretend->table('users')->where('active', true)->get(); // logs SQL, returns []
+// Simulate a destructive query
+$builder->from('users')
+    ->where('last_login', '<', '2020-01-01')
+    ->pretend()
+    ->delete();
+
+// Output (in logs):
+// Pretend: DELETE FROM users WHERE last_login < ? ["2020-01-01"]
 ```
 
-## Common pitfalls
-- Forgetting you’re in pretend mode: always use the returned clone.
-- Assuming the database validates the SQL: it doesn’t run, so typos won’t be caught.
+## When to Use It
+
+1. **Debugging**: See exactly what SQL your builder is producing.
+2. **Testing**: verifying query structure without needing a real database.
+3. **Auditing**: Logging what cleanup operations *would* do before enabling them.
+
+---
+
+## See Also
+
+- [QueryBuilder::pretend()](QueryBuilder.md#pretend)
+- [Introduction to Query Builder](QueryBuilder.md)

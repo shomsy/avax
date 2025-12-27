@@ -18,7 +18,7 @@ use Throwable;
 /**
  * Central registry and lifecycle manager for all database connections and pools.
  *
- * @see docs/Concepts/Connections.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Connections.md
  */
 final class ConnectionManager
 {

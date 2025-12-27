@@ -1,60 +1,332 @@
-# Database Transactions
+# Transactions
 
-## What it does
+This document covers database transaction management, explaining how to ensure atomic operations and data consistency.
 
-`transaction()` allows you to group multiple database operations into an atomic unit. Either all operations succeed, or all are rolled back.
+---
 
-## Why it exists
+## Table of Contents
 
-- **Atomicity**: Ensure data integrity across multiple tables (e.g., creating an Order and deducting Inventory).
-- **Isolation**: Prevent other processes from seeing partial state changes.
-- **Unit of Work**: In many systems, transactions are the primary way to manage IdentityMap flushing and deferred mutations.
+- [transaction() Method](#transaction)
+- [Transaction Class](#transactionclass)
+- [TransactionScope](#transactionscope)
+- [Nested Transactions](#nested-transactions)
+- [Manual Transaction Control](#manual-transaction-control)
 
-## When to use
+---
 
-- Any operation involving two or more related writes.
-- When using `deferred()` execution to ensure all buffered jobs flush together.
-- For business logic critical to consistency (Financial transfers, Order processing).
+## transaction
 
-## When *not* to use
+**Execute a closure within an atomic database transaction.**
 
-- Long-running processes (e.g., calling external APIs inside a transaction). This keeps database locks open too long.
-- Simple single-row reads that don't depend on consistent state of others.
+The simplest way to use transactions. Wrap your code in a closure, and the database will automatically:
 
-## Examples
+- **COMMIT** if the closure succeeds
+- **ROLLBACK** if the closure throws an exception
+
+Think of it as a "Save Game" feature. You can make changes, and if something goes wrong, everything reverts to the last save point.
 
 ```php
-$builder->transaction(function (QueryBuilder $db) {
-    $db->table('accounts')->where('id', 1)->decrement('balance', 100);
-    $db->table('accounts')->where('id', 2)->increment('balance', 100);
+$builder->transaction(function () use ($builder) {
+    // Deduct from sender
+    $builder->from('accounts')
+        ->where('id', 1)
+        ->update(['balance' => 900]);
+    
+    // Credit to receiver
+    $builder->from('accounts')
+        ->where('id', 2)
+        ->update(['balance' => 1100]);
+    
+    // If EITHER update fails, BOTH are rolled back
 });
 ```
 
-## Common pitfalls
+**Return Values:**
 
-- **Unintended side effects**: Transactions do not roll back non-database actions (like sending emails or deleting files).
-- **Deadlocks**: Complex transactions hitting the same tables in different orders can cause the database to hang.
-- **IdentityMap Sync**: If NOT using the orchestrator's transaction manager, manually ensure your IdentityMap is flushed or cleared upon failure.
-
-## Advanced: Nesting and Savepoints
-
-The system supports **Nested Transactions** using database **Savepoints**.
-
-- If you start a transaction while one is already active, it creates a `SAVEPOINT`.
-- Rolling back an inner transaction only undoes changes made since that savepoint.
-- Rolling back the *outer* transaction undoes everything, including successful inner transactions.
-
-### Manual Savepoints
-
-You can create named bookmarks manually:
+The transaction returns whatever your closure returns:
 
 ```php
-$db->transaction(function ($db) {
-    $db->savepoint('before_risky_task');
+$newUser = $builder->transaction(function () use ($builder) {
+    $builder->from('users')->insert([
+        'name' => 'Alice',
+        'email' => 'alice@example.com'
+    ]);
+    
+    return $builder->from('users')
+        ->where('email', 'alice@example.com')
+        ->first();
+});
+
+// $newUser contains the newly inserted user
+```
+
+**Exception Handling:**
+
+```php
+try {
+    $builder->transaction(function () use ($builder) {
+        $builder->from('orders')->insert(['total' => 100]);
+        
+        // This will trigger a rollback
+        throw new \Exception('Something went wrong');
+    });
+} catch (\Exception $e) {
+    // Transaction was rolled back
+    // Original exception is re-thrown
+}
+```
+
+---
+
+## transactionclass
+
+**Object-oriented transaction management.**
+
+For more control than closures provide, use the `Transaction` class directly. This gives you explicit methods for begin, commit, and rollback.
+
+```php
+$transaction = new Transaction($connection);
+
+$transaction->begin();
+
+try {
+    // Perform operations
+    $builder->from('products')->update(['stock' => 99]);
+    $builder->from('orders')->insert(['product_id' => 1, 'quantity' => 1]);
+    
+    $transaction->commit();
+} catch (\Throwable $e) {
+    $transaction->rollback();
+    throw $e;
+}
+```
+
+**Key Methods:**
+
+| Method | Purpose |
+|--------|---------|
+| `begin()` | Start a new transaction |
+| `commit()` | Save all changes permanently |
+| `rollback()` | Discard all changes since begin |
+| `isActive()` | Check if a transaction is in progress |
+
+---
+
+## transactionscope
+
+**RAII-style transaction that auto-rolls back on failure.**
+
+Similar to `BorrowedConnection` — if the scope object is destroyed without an explicit commit, it automatically rolls back.
+
+Useful when you want transaction safety without try/catch blocks.
+
+```php
+$scope = new TransactionScope($connection);
+
+// Operations inside the scope
+$builder->from('users')->insert(['name' => 'Bob']);
+
+// If we reach here without errors, commit
+$scope->commit();
+
+// If an exception occurred before commit(), the destructor rolls back
+```
+
+---
+
+## Nested Transactions
+
+**Savepoints for partial rollback.**
+
+When you nest transaction calls, the inner transaction uses a SAVEPOINT instead of a full transaction. This allows partial rollback.
+
+```php
+$builder->transaction(function () use ($builder) {
+    $builder->from('orders')->insert(['id' => 1, 'total' => 100]);
+    
     try {
-        // risky biz
-    } catch (Exception $e) {
-        $db->rollbackTo('before_risky_task');
+        // Nested transaction (uses SAVEPOINT)
+        $builder->transaction(function () use ($builder) {
+            $builder->from('order_items')->insert(['order_id' => 1, 'product' => 'Widget']);
+            
+            throw new \Exception('Item failed');
+        });
+    } catch (\Exception $e) {
+        // Inner transaction rolled back to savepoint
+        // Outer transaction still active!
     }
+    
+    // This insert still happens
+    $builder->from('order_notes')->insert(['order_id' => 1, 'note' => 'Partial order']);
+    
+    // Outer transaction commits
 });
 ```
+
+**How it works:**
+
+```
+OUTER transaction BEGIN
+    INSERT INTO orders...
+    
+    SAVEPOINT sp1
+        INSERT INTO order_items...
+        Exception thrown!
+    ROLLBACK TO SAVEPOINT sp1
+    
+    INSERT INTO order_notes... (still happens!)
+OUTER transaction COMMIT
+```
+
+---
+
+## Manual Transaction Control
+
+**When you need full control.**
+
+For complex scenarios, you can control transactions manually through the orchestrator or PDO directly.
+
+```php
+$pdo = $connection->getPdo();
+
+$pdo->beginTransaction();
+
+try {
+    $pdo->exec("INSERT INTO users (name) VALUES ('Alice')");
+    $pdo->exec("INSERT INTO profiles (user_id) VALUES (LAST_INSERT_ID())");
+    
+    $pdo->commit();
+} catch (\PDOException $e) {
+    $pdo->rollBack();
+    throw $e;
+}
+```
+
+---
+
+## Transaction Isolation Levels
+
+**Controlling visibility of concurrent changes.**
+
+Different isolation levels control what data a transaction can see from other concurrent transactions.
+
+| Level | Description |
+|-------|-------------|
+| READ UNCOMMITTED | Can see uncommitted changes from others (dirty reads) |
+| READ COMMITTED | Only sees committed changes (default for many DBs) |
+| REPEATABLE READ | Same query returns same results within transaction |
+| SERIALIZABLE | Full isolation, as if transactions ran one at a time |
+
+```php
+// Set isolation level before starting transaction
+$pdo->exec('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
+
+$builder->transaction(function () use ($builder) {
+    // All operations here use SERIALIZABLE isolation
+});
+```
+
+---
+
+## Common Patterns
+
+### 1. Transfer Money (Classic Example)
+
+```php
+$builder->transaction(function () use ($builder, $from, $to, $amount) {
+    // Check balance first
+    $balance = $builder->from('accounts')
+        ->where('id', $from)
+        ->value('balance');
+    
+    if ($balance < $amount) {
+        throw new InsufficientFundsException();
+    }
+    
+    // Deduct from sender
+    $builder->from('accounts')
+        ->where('id', $from)
+        ->update(['balance' => $balance - $amount]);
+    
+    // Credit to receiver
+    $builder->from('accounts')
+        ->where('id', $to)
+        ->increment('balance', $amount);
+});
+```
+
+### 2. Create Related Records
+
+```php
+$orderId = $builder->transaction(function () use ($builder, $cart) {
+    // Create order
+    $builder->from('orders')->insert([
+        'customer_id' => $cart->customerId,
+        'total' => $cart->total,
+        'status' => 'pending'
+    ]);
+    
+    $orderId = $builder->from('orders')->max('id');
+    
+    // Create order items
+    foreach ($cart->items as $item) {
+        $builder->from('order_items')->insert([
+            'order_id' => $orderId,
+            'product_id' => $item->productId,
+            'quantity' => $item->quantity,
+            'price' => $item->price
+        ]);
+        
+        // Decrement stock
+        $builder->from('products')
+            ->where('id', $item->productId)
+            ->decrement('stock', $item->quantity);
+    }
+    
+    return $orderId;
+});
+```
+
+### 3. Retry on Deadlock
+
+```php
+$maxRetries = 3;
+$attempt = 0;
+
+while ($attempt < $maxRetries) {
+    try {
+        $builder->transaction(function () use ($builder) {
+            // Operations that might deadlock
+        });
+        break; // Success!
+    } catch (DeadlockException $e) {
+        $attempt++;
+        if ($attempt >= $maxRetries) {
+            throw $e;
+        }
+        usleep(100000 * $attempt); // Exponential backoff
+    }
+}
+```
+
+---
+
+## Best Practices
+
+1. **Keep transactions short** — Long transactions hold locks and block other queries.
+
+2. **Don't do I/O inside transactions** — HTTP requests, file operations, etc. should happen before or after, not during.
+
+3. **Always handle rollback** — Either use closures (automatic) or wrap manual transactions in try/catch.
+
+4. **Use appropriate isolation levels** — Don't use SERIALIZABLE everywhere; it's slower.
+
+5. **Watch for deadlocks** — When multiple transactions access the same rows in different orders, deadlocks can occur.
+
+---
+
+## See Also
+
+- [QueryBuilder Overview](QueryBuilder.md)
+- [Mutations (INSERT/UPDATE/DELETE)](Mutations.md)
+- [Deferred Execution](DeferredExecution.md)

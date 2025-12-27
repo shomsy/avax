@@ -11,7 +11,7 @@ use Throwable;
 /**
  * Central Bootstrapper (Kernel) for the database component lifecycle.
  *
- * @see docs/Concepts/Architecture.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Architecture.md
  */
 final class Kernel
 {
@@ -25,9 +25,8 @@ final class Kernel
     ) {}
 
     /**
-     * Wake up the entire database system.
-     *
-     * @return void
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Architecture.md#kernel
+
      */
     public function boot(): void
     {
@@ -41,9 +40,8 @@ final class Kernel
     }
 
     /**
-     * Shut everything down safely and close resources.
-     *
-     * @return void
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Architecture.md#kernel
+
      */
     public function shutdown(): void
     {

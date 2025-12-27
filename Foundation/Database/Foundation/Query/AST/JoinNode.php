@@ -9,7 +9,7 @@ use Avax\Database\QueryBuilder\Core\Builder\JoinClause;
 /**
  * Immutable AST node representing a SQL JOIN operation.
  *
- * @see docs/DSL/QueryStates.md
+ * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryStates.md
  */
 final readonly class JoinNode
 {

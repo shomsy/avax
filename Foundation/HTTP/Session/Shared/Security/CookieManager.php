@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Shared\Security;
 
+use Closure;
 use InvalidArgumentException;
 
 /**
@@ -21,6 +22,8 @@ use InvalidArgumentException;
  */
 final readonly class CookieManager
 {
+    private Closure|null $cookieSource;
+
     /**
      * CookieManager Constructor.
      *
@@ -37,7 +40,8 @@ final readonly class CookieManager
         private string $sameSite = 'Lax',
         private string $path = '/',
         private string $domain = '',
-        private int    $lifetime = 0
+        private int    $lifetime = 0,
+        callable|null  $cookieSource = null
     )
     {
         // Validate SameSite
@@ -53,6 +57,10 @@ final readonly class CookieManager
                 message: 'SameSite=None requires Secure flag to be true (HTTPS only).'
             );
         }
+
+        $this->cookieSource = $cookieSource instanceof Closure
+            ? $cookieSource
+            : ($cookieSource !== null ? Closure::fromCallable(callback: $cookieSource) : null);
     }
 
     /**
@@ -64,12 +72,13 @@ final readonly class CookieManager
      *
      * @return self
      */
-    public static function strict() : self
+    public static function strict(callable|null $cookieSource = null) : self
     {
         return new self(
-            secure  : true,
-            httpOnly: true,
-            sameSite: 'Strict'
+            secure      : true,
+            httpOnly    : true,
+            sameSite    : 'Strict',
+            cookieSource: $cookieSource
         );
     }
 
@@ -82,12 +91,13 @@ final readonly class CookieManager
      *
      * @return self
      */
-    public static function lax() : self
+    public static function lax(callable|null $cookieSource = null) : self
     {
         return new self(
-            secure  : true,
-            httpOnly: true,
-            sameSite: 'Lax'
+            secure      : true,
+            httpOnly    : true,
+            sameSite    : 'Lax',
+            cookieSource: $cookieSource
         );
     }
 
@@ -100,12 +110,13 @@ final readonly class CookieManager
      *
      * @return self
      */
-    public static function development() : self
+    public static function development(callable|null $cookieSource = null) : self
     {
         return new self(
-            secure  : false,
-            httpOnly: true,
-            sameSite: 'Lax'
+            secure      : false,
+            httpOnly    : true,
+            sameSite    : 'Lax',
+            cookieSource: $cookieSource
         );
     }
 
@@ -164,7 +175,23 @@ final readonly class CookieManager
      */
     public function get(string $name, mixed $default = null) : mixed
     {
-        return $_COOKIE[$name] ?? $default;
+        $cookies = $this->resolveCookies();
+
+        return $cookies[$name] ?? $default;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function resolveCookies() : array
+    {
+        if (is_callable(value: $this->cookieSource)) {
+            $cookies = ($this->cookieSource)();
+
+            return is_array($cookies) ? $cookies : [];
+        }
+
+        return [];
     }
 
     /**
@@ -176,7 +203,9 @@ final readonly class CookieManager
      */
     public function has(string $name) : bool
     {
-        return isset($_COOKIE[$name]);
+        $cookies = $this->resolveCookies();
+
+        return isset($cookies[$name]);
     }
 
     /**

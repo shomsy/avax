@@ -17,7 +17,7 @@ class MigrationTest extends TestCase
         $blueprint->string('email');
         $blueprint->timestamps();
 
-        $this->assertCount(4, $blueprint->getColumns());
+        $this->assertCount(expectedCount: 4, haystack: $blueprint->getColumns());
     }
 
     public function testTableRendererGeneratesSQL() : void
@@ -28,8 +28,8 @@ class MigrationTest extends TestCase
 
         $sql = TableRenderer::renderCreate($blueprint);
 
-        $this->assertStringContainsString('CREATE TABLE `users`', $sql);
-        $this->assertStringContainsString('`id`', $sql);
-        $this->assertStringContainsString('`name`', $sql);
+        $this->assertStringContainsString(needle: 'CREATE TABLE `users`', haystack: $sql);
+        $this->assertStringContainsString(needle: '`id`', haystack: $sql);
+        $this->assertStringContainsString(needle: '`name`', haystack: $sql);
     }
 }

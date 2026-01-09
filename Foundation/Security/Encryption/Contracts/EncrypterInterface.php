@@ -20,7 +20,7 @@ interface EncrypterInterface
      *
      * @return string The encrypted string.
      */
-    public function encrypt(mixed $value): string;
+    public function encrypt(mixed $value) : string;
 
     /**
      * Decrypt the given payload.
@@ -29,5 +29,5 @@ interface EncrypterInterface
      *
      * @return mixed The decrypted value.
      */
-    public function decrypt(string $payload): mixed;
+    public function decrypt(string $payload) : mixed;
 }

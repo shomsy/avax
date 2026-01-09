@@ -30,7 +30,8 @@ readonly class RegexException
     public function __construct(
         private string      $pattern,
         private string|null $message = null
-    ) {
+    )
+    {
         $this->validatePattern(pattern: $pattern);
     }
 
@@ -62,10 +63,10 @@ readonly class RegexException
             throw new ValidationException(
                 message : $this->message ?? sprintf(self::DEFAULT_ERROR_MESSAGE, $property),
                 metadata: [
-                              'property' => $property,
-                              'value'    => $value,
-                              'pattern'  => $this->pattern,
-                          ]
+                    'property' => $property,
+                    'value'    => $value,
+                    'pattern'  => $this->pattern,
+                ]
             );
         }
     }

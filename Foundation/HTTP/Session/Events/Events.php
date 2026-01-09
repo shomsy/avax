@@ -77,7 +77,7 @@ final class Events implements FeatureInterface
 
         $this->listeners[$event] = array_filter(
             array   : $this->listeners[$event],
-            callback: fn($listener) => $listener !== $callback
+            callback: static fn($listener) => $listener !== $callback
         );
     }
 

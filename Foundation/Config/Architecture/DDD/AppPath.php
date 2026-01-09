@@ -15,7 +15,7 @@ use RuntimeException;
  * dynamic method to resolve these paths based on the root directory of
  * the project, ensuring flexibility and maintainability.
  */
-enum AppPath: string
+enum AppPath : string
 {
     /**
      * The path to the view cache directory where compiled Blade views are stored.
@@ -44,7 +44,7 @@ enum AppPath: string
      * include settings such as database configurations, service configurations,
      * and other environment-specific options.
      */
-    case CONFIG = 'Infrastructure/Config';
+    case CONFIG = 'Config';
 
     /**
      * The path to the Composer autoload file.
@@ -62,7 +62,7 @@ enum AppPath: string
      * typically generic and assist in tasks such as formatting, array manipulation,
      * string handling, and debugging.
      */
-    case HELPERS_PATH = 'Infrastructure/Foundation/Helpers/helpers.php'; // Removed the leading slash
+    case HELPERS_PATH = 'Foundation/Helpers/helpers.php'; // Removed the leading slash
 
     /**
      * The path to the web routes file which defines the HTTP routes for the application.
@@ -100,7 +100,7 @@ enum AppPath: string
      */
     case ROUTE_CACHE_PATH = 'storage/cache/routes.cache.php';
 
-    case STUBS_PATH       = 'Infrastructure/Foundation/Database/Migration/Runner/Stubs/';
+    case STUBS_PATH = 'Infrastructure/Foundation/Database/Migration/Runner/Stubs/';
 
     /**
      * Get the full path by prepending the root directory to the enum case value.

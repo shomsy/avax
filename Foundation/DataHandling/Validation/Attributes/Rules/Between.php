@@ -39,11 +39,11 @@ readonly class Between
         if ($value < $this->min || $value > $this->max) {
             throw new ValidationException(
                 message: sprintf(
-                             '%s must be between %d and %d.',
-                             $property,
-                             $this->min,
-                             $this->max,
-                         ),
+                    '%s must be between %d and %d.',
+                    $property,
+                    $this->min,
+                    $this->max,
+                ),
             );
         }
     }

@@ -7,39 +7,39 @@ namespace Avax\HTTP\Enums;
 /**
  * Enum representing HTTP Reason Phrases associated with Status Codes.
  */
-enum HttpReasonPhrase: string
+enum HttpReasonPhrase : string
 {
-    case OK                  = 'OK';
+    case OK = 'OK';
 
-    case CREATED             = 'Created';
+    case CREATED = 'Created';
 
-    case ACCEPTED            = 'Accepted';
+    case ACCEPTED = 'Accepted';
 
-    case NO_CONTENT          = 'No Content';
+    case NO_CONTENT = 'No Content';
 
-    case MOVED_PERMANENTLY   = 'Moved Permanently';
+    case MOVED_PERMANENTLY = 'Moved Permanently';
 
-    case FOUND               = 'Found';
+    case FOUND = 'Found';
 
-    case NOT_MODIFIED        = 'Not Modified';
+    case NOT_MODIFIED = 'Not Modified';
 
-    case BAD_REQUEST         = 'Bad Request';
+    case BAD_REQUEST = 'Bad Request';
 
-    case UNAUTHORIZED        = 'Unauthorized';
+    case UNAUTHORIZED = 'Unauthorized';
 
-    case FORBIDDEN           = 'Forbidden';
+    case FORBIDDEN = 'Forbidden';
 
-    case NOT_FOUND           = 'Not Found';
+    case NOT_FOUND = 'Not Found';
 
-    case METHOD_NOT_ALLOWED  = 'Method Not Allowed';
+    case METHOD_NOT_ALLOWED = 'Method Not Allowed';
 
     case INTERNAL_SERVER_ERROR = 'Internal Server Error';
 
-    case NOT_IMPLEMENTED     = 'Not Implemented';
+    case NOT_IMPLEMENTED = 'Not Implemented';
 
-    case BAD_GATEWAY         = 'Bad Gateway';
+    case BAD_GATEWAY = 'Bad Gateway';
 
     case SERVICE_UNAVAILABLE = 'Service Unavailable';
 
-    case GATEWAY_TIMEOUT     = 'Gateway Timeout';
+    case GATEWAY_TIMEOUT = 'Gateway Timeout';
 }

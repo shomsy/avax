@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Middleware;
 
-use Closure;
 use Avax\Auth\Application\Service\RateLimiterService;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\ResponseFactory;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -18,9 +18,9 @@ readonly class RateLimiterMiddleware
 {
     private const string DEFAULT_IDENTIFIER_TYPE = 'ip';
 
-    private const int    DEFAULT_MAX_REQUESTS    = 60;
+    private const int    DEFAULT_MAX_REQUESTS = 60;
 
-    private const int    DEFAULT_TIME_WINDOW     = 60;
+    private const int    DEFAULT_TIME_WINDOW = 60;
 
     public function __construct(
         private RateLimiterService $rateLimiterService,

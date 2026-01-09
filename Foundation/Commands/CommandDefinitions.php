@@ -12,6 +12,8 @@ use Avax\Database\Migration\Runner\Commands\MigrateCommand;
 use Avax\Database\Migration\Runner\Commands\MigrateFreshCommand;
 use Avax\Database\Migration\Runner\Commands\MigrateRefreshCommand;
 use Avax\Database\Migration\Runner\Commands\MigrateRollbackCommand;
+use Avax\Migrations\Execution\Console\MigrateRollbackCommand;
+use Illuminate\Database\Console\Migrations\InstallCommand;
 
 class CommandDefinitions
 {

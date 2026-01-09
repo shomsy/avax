@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\HttpClient\Config\Contracts\Client;
 
-use Avax\HTTP\Enums\HttpMethod;
 use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\ResponseInterface;
 

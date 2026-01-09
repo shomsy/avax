@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Interface\HTTP\Middleware;
 
-use Closure;
 use Avax\Auth\Contracts\Identity\IdentityInterface;
 use Avax\Auth\Contracts\Identity\Subject\UserInterface;
+use Avax\Auth\Contracts\IdentityInterface;
+use Avax\Auth\Contracts\UserInterface;
 use Avax\Auth\Domain\Exception\AuthorizationException;
+use Closure;
+use Illuminate\Auth\Access\AuthorizationException;
 
 /**
  * Middleware to ensure the user has the specified permission.
@@ -28,9 +31,9 @@ readonly class PermissionMiddleware
             )) {
             throw new AuthorizationException(
                 message: sprintf(
-                             'AccessControl lacks the required permission: %s.',
-                             $permission
-                         )
+                    'AccessControl lacks the required permission: %s.',
+                    $permission
+                )
             );
         }
 

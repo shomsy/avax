@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Middleware;
 
-use Closure;
 use Avax\HTTP\Response\ResponseFactory;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -26,7 +26,7 @@ readonly class ExceptionHandlerMiddleware
      */
     private const string RENDER_FORMAT_IGNITION = 'ignition';
 
-    private const string RENDER_FORMAT_JSON     = 'json';
+    private const string RENDER_FORMAT_JSON = 'json';
 
     /**
      * @param LoggerInterface $logger          Logger instance for recording exceptions.
@@ -97,9 +97,9 @@ readonly class ExceptionHandlerMiddleware
     {
         return $this->responseFactory->response(
             data  : json_encode(value: [
-                                    'error'   => 'Internal Server Error',
-                                    'message' => 'Lele! An unexpected error occurred.',
-                                ],
+                'error'   => 'Internal Server Error',
+                'message' => 'Lele! An unexpected error occurred.',
+            ],
                                 flags: JSON_THROW_ON_ERROR),
             status: 500
         );

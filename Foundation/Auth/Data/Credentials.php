@@ -52,17 +52,17 @@ class Credentials extends AbstractDTO implements CredentialsInterface
     )]
     public string $password;
 
-    public function getIdentifierKey(): string
+    public function getIdentifierKey() : string
     {
         return filter_var(value: $this->identifier, filter: FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
     }
 
-    public function getIdentifierValue(): string
+    public function getIdentifierValue() : string
     {
         return $this->identifier;
     }
 
-    public function getPassword(): string
+    public function getPassword() : string
     {
         return $this->password;
     }

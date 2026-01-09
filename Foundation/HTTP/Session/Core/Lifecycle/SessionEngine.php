@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Core\Lifecycle;
 
+use Avax\HTTP\Context\HttpContextInterface;
 use Avax\HTTP\Session\Audit\Audit;
 use Avax\HTTP\Session\Core\Config;
 use Avax\HTTP\Session\Core\Lifecycle;
@@ -69,7 +70,8 @@ final readonly class SessionEngine
         private Events|null                $events = null,
         private SessionSignature|null      $signature = null,
         private PolicyInterface|null       $policies = null,
-        private SessionRegistry|null       $registry = null
+        private SessionRegistry|null       $registry = null,
+        private HttpContextInterface|null  $httpContext = null
     ) {}
 
     // ---------------------------------------------------------------------
@@ -266,16 +268,19 @@ final readonly class SessionEngine
         $this->put(key: 'last_activity', value: time(), userId: $userId);
 
         // Step 3: Store security metadata
-        $this->put(key: 'ip_address', value: $_SERVER['REMOTE_ADDR'] ?? 'unknown', userId: $userId);
-        $this->put(key: 'user_agent', value: $_SERVER['HTTP_USER_AGENT'] ?? 'unknown');
+        $clientIp  = $this->resolveClientIp();
+        $userAgent = $this->resolveUserAgent();
+
+        $this->put(key: 'ip_address', value: $clientIp, userId: $userId);
+        $this->put(key: 'user_agent', value: $userAgent);
 
         // Step 4: Register in multi-device registry (if available)
         $this->registry?->register(
             userId   : $userId,
             sessionId: session_id(),
             metadata : [
-                'ip'         => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
+                'ip'         => $clientIp,
+                'user_agent' => $userAgent,
                 'login_time' => time()
             ]
         );
@@ -286,7 +291,7 @@ final readonly class SessionEngine
             data : [
                 'user_id'   => $userId,
                 'timestamp' => time(),
-                'ip'        => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                'ip'        => $clientIp
             ]
         );
 
@@ -317,14 +322,40 @@ final readonly class SessionEngine
      */
     private function buildContext(string|null $userId = null) : array
     {
+        $clientIp  = $this->resolveClientIp();
+        $userAgent = $this->resolveUserAgent();
+
         return [
             'session_id'    => $this->idProvider->current(),
-            'ip'            => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-            'user_agent'    => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
+            'ip'            => $clientIp,
+            'client_ip'     => $clientIp,
+            'user_agent'    => $userAgent,
+            'is_secure'     => $this->httpContext?->isSecure() ?? false,
             'last_activity' => time(),
             'created_at'    => $this->store->get(key: '_created_at', default: time()),
-            'user_id'       => $userId ?? $this->store->get(key: 'user_id')
+            'user_id'       => $userId ?? $this->store->get(key: 'user_id'),
+            '_client_ip'    => $this->store->get(key: 'ip_address')
         ];
+    }
+
+    private function resolveClientIp() : string
+    {
+        $ip = $this->httpContext?->clientIp();
+        if ($ip === null || $ip === '') {
+            return 'unknown';
+        }
+
+        return $ip;
+    }
+
+    private function resolveUserAgent() : string
+    {
+        $agent = $this->httpContext?->userAgent();
+        if ($agent === null || $agent === '') {
+            return 'unknown';
+        }
+
+        return $agent;
     }
 
     /**
@@ -478,13 +509,15 @@ final readonly class SessionEngine
      * - 'admin' - Administrative termination
      * - 'concurrent' - Concurrent login limit exceeded
      *
-     * @param string $reason Termination reason for audit purposes.
+     * @param string|null $reason Termination reason for audit purposes.
+     * @param string|null $userId
      *
      * @return void
      */
-    public function terminate(string $reason = 'logout', string|null $userId = null) : void
+    public function terminate(string|null $reason = null, string|null $userId = null) : void
     {
         // Step 1: Get user ID before clearing (for audit)
+        $reason ??= 'logout';
         $userId ??= $this->get(key: 'user_id');
 
         // Step 2: Unregister from multi-device registry

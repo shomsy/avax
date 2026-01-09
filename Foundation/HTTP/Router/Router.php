@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router;
 
-use Closure;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Kernel\RouterKernel;
@@ -17,6 +16,7 @@ use Avax\HTTP\Router\Routing\RouteGroupContext;
 use Avax\HTTP\Router\Routing\RouteGroupStack;
 use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
 use Avax\HTTP\Router\Support\RouteCollector;
+use Closure;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -49,11 +49,11 @@ final class Router implements RouterInterface
     /**
      * Registers a GET route.
      */
-    public function get(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function get(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         return $this->register(
             method: HttpMethod::GET->value,
-            path  : $path,
+            path: $path,
             action: $action
         );
     }
@@ -61,14 +61,14 @@ final class Router implements RouterInterface
     /**
      * Internal route registration via RouteBuilder.
      */
-    private function register(string $method, string $path, callable|array|string $action) : RouteRegistrarProxy
+    private function register(string $method, string $path, callable|array|string $action): RouteRegistrarProxy
     {
         // Define the route using a builder pattern.
         // `RouteBuilder::make` creates a new instance of the RouteBuilder class
         // by specifying the HTTP method and the URI path.
         $builder = RouteBuilder::make(
             method: $method, // The HTTP method (e.g., GET, POST, PUT).
-            path  : $path      // The URI path defining the route (e.g., `/users`, `/posts/{id}`).
+            path: $path      // The URI path defining the route (e.g., `/users`, `/posts/{id}`).
         );
 
         // Define the action (e.g., controller or callable) to handle the route's behavior.
@@ -86,7 +86,7 @@ final class Router implements RouterInterface
         // The `RouteRegistrarProxy` will be used to facilitate the registration of
         // the newly defined route and allow for advanced handling or configurations.
         return new RouteRegistrarProxy(
-            router : $this->httpRequestRouter,
+            router: $this->httpRequestRouter,
             // The HTTP router responsible for routing requests to corresponding actions.
             builder: $builder                  // The route builder containing the route's definition and metadata.
         );
@@ -95,11 +95,11 @@ final class Router implements RouterInterface
     /**
      * Registers a POST route.
      */
-    public function post(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function post(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         return $this->register(
             method: HttpMethod::POST->value,
-            path  : $path,
+            path: $path,
             action: $action
         );
     }
@@ -107,11 +107,11 @@ final class Router implements RouterInterface
     /**
      * Registers a PUT route.
      */
-    public function put(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function put(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         return $this->register(
             method: HttpMethod::PUT->value,
-            path  : $path,
+            path: $path,
             action: $action
         );
     }
@@ -119,11 +119,11 @@ final class Router implements RouterInterface
     /**
      * Registers a PATCH route.
      */
-    public function patch(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function patch(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         return $this->register(
             method: HttpMethod::PATCH->value,
-            path  : $path,
+            path: $path,
             action: $action
         );
     }
@@ -131,11 +131,11 @@ final class Router implements RouterInterface
     /**
      * Registers a DELETE route.
      */
-    public function delete(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function delete(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         return $this->register(
             method: HttpMethod::DELETE->value,
-            path  : $path,
+            path: $path,
             action: $action
         );
     }
@@ -143,11 +143,11 @@ final class Router implements RouterInterface
     /**
      * Registers a HEAD route.
      */
-    public function head(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function head(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         return $this->register(
             method: HttpMethod::HEAD->value,
-            path  : $path,
+            path: $path,
             action: $action
         );
     }
@@ -155,11 +155,11 @@ final class Router implements RouterInterface
     /**
      * Registers an OPTIONS route.
      */
-    public function options(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function options(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         return $this->register(
             method: HttpMethod::OPTIONS->value,
-            path  : $path,
+            path: $path,
             action: $action
         );
     }
@@ -169,14 +169,14 @@ final class Router implements RouterInterface
      *
      * @return RouteRegistrarProxy[]
      */
-    public function any(string $path, callable|array|string $action) : array
+    public function any(string $path, callable|array|string $action): array
     {
         $proxies = [];
 
         foreach (HttpMethod::cases() as $method) {
             $proxies[] = $this->register(
                 method: $method->value,
-                path  : $path,
+                path: $path,
                 action: $action
             );
         }
@@ -194,7 +194,7 @@ final class Router implements RouterInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \ReflectionException
      */
-    public function resolve(Request $request) : ResponseInterface
+    public function resolve(Request $request): ResponseInterface
     {
         /**
          * Handles the incoming HTTP request using the primary kernel.
@@ -225,7 +225,11 @@ final class Router implements RouterInterface
             // If no fallback handler is defined, explicitly throw a `RouteNotFoundException` with
             // a clear message to indicate the failure in routing and lack of fallback resolution.
             throw new RouteNotFoundException(
-                message: "No route matched and no fallback defined."
+                message: sprintf(
+                    "❌ No route matched for [%s] %s and no fallback defined.",
+                    $request->getMethod(),
+                    $request->getUri()->getPath()
+                )
             );
         }
     }
@@ -235,17 +239,17 @@ final class Router implements RouterInterface
      *
      * @param callable|array|string $handler
      */
-    public function fallback(callable|array|string $handler) : void
+    public function fallback(callable|array|string $handler): void
     {
         if (is_callable(value: $handler)) {
             $this->fallbackHandler = $handler;
         } elseif (is_array(value: $handler) || is_string(value: $handler)) {
-            $this->fallbackHandler = static function (Request $request) use ($handler) : ResponseInterface {
+            $this->fallbackHandler = static function (Request $request) use ($handler): ResponseInterface {
                 /** @var ControllerDispatcher $dispatcher */
                 $dispatcher = app(abstract: ControllerDispatcher::class);
 
                 return $dispatcher->dispatch(
-                    action : $handler,
+                    action: $handler,
                     request: $request
                 );
             };
@@ -259,7 +263,7 @@ final class Router implements RouterInterface
      *
      * @return void
      */
-    public function registerRouteFromCache(RouteDefinition $definition) : void
+    public function registerRouteFromCache(RouteDefinition $definition): void
     {
         // Adds the provided route definition to the HTTP request router.
         $this->httpRequestRouter->add(route: $definition);
@@ -272,7 +276,7 @@ final class Router implements RouterInterface
      *
      * @return RouteDefinition The route definition associated with the specified name.
      */
-    public function getRouteByName(string $name) : RouteDefinition
+    public function getRouteByName(string $name): RouteDefinition
     {
         // Returns the route with the specified name from the HTTP request router.
         return $this->httpRequestRouter->getByName(name: $name);
@@ -283,7 +287,7 @@ final class Router implements RouterInterface
      *
      * @return HttpRequestRouter The injected HTTP request router instance.
      */
-    public function getHttpRouter() : HttpRequestRouter
+    public function getHttpRouter(): HttpRequestRouter
     {
         // Returns the currently injected HTTP request router object.
         return $this->httpRequestRouter;
@@ -294,7 +298,7 @@ final class Router implements RouterInterface
      *
      * @return array<string, RouteDefinition[]>
      */
-    public function allRoutes() : array
+    public function allRoutes(): array
     {
         return $this->httpRequestRouter->allRoutes();
     }
@@ -308,7 +312,7 @@ final class Router implements RouterInterface
      * @throws LogicException If called outside the scope of a route group.
      *
      */
-    public function name(string $prefix) : self
+    public function name(string $prefix): self
     {
         // Retrieve the current route group context from the route group stack.
         $context = RouteGroupStack::current();
@@ -334,7 +338,7 @@ final class Router implements RouterInterface
      *
      * @return self Provides fluent chaining of methods.
      */
-    public function domain(string $domain) : self
+    public function domain(string $domain): self
     {
         // Set the domain configuration for the current route group if available.
         RouteGroupStack::current()?->setDomain(domain: $domain);
@@ -350,7 +354,7 @@ final class Router implements RouterInterface
      *
      * @return self Provides fluent chaining of methods.
      */
-    public function authorize(string $policy) : self
+    public function authorize(string $policy): self
     {
         // Set the authorization policy for the current route group if available.
         RouteGroupStack::current()?->setAuthorization(authorization: $policy);
@@ -379,7 +383,7 @@ final class Router implements RouterInterface
      *
      * @return void
      */
-    public function group(array $attributes, Closure $callback) : void
+    public function group(array $attributes, Closure $callback): void
     {
         $context = new RouteGroupContext();
 
@@ -410,7 +414,7 @@ final class Router implements RouterInterface
          */
         (new RouteGroupAttributesConfigurator())->apply(
             attributes: $attributes,
-            context   : $context
+            context: $context
         );
 
         // Push the created context onto the routing stack, indicating the start of a new route group.
@@ -432,7 +436,7 @@ final class Router implements RouterInterface
      *
      * @return self Provides fluent chaining of methods.
      */
-    public function prefix(string $prefix) : self
+    public function prefix(string $prefix): self
     {
         // Assign the URI prefix to the current route group if the context is active.
         RouteGroupStack::current()?->setPrefix(prefix: $prefix);
@@ -451,7 +455,7 @@ final class Router implements RouterInterface
      *
      * @return self Allows method chaining by returning the same instance of MiddlewareManager.
      */
-    public function middleware(array $middleware) : self
+    public function middleware(array $middleware): self
     {
         // Retrieve the current route group stack if available, and add the middleware to it.
         RouteGroupStack::current()?->addMiddleware(middleware: $middleware);
@@ -474,7 +478,7 @@ final class Router implements RouterInterface
      *
      * @return self Returns the current instance for fluent method chaining.
      */
-    public function where(array $constraints) : self
+    public function where(array $constraints): self
     {
         // Retrieve the current route group from the stack and
         // add the specified parameter constraints.
@@ -498,7 +502,7 @@ final class Router implements RouterInterface
      *
      * @return self Returns the current instance for fluent method chaining.
      */
-    public function defaults(array $defaults) : self
+    public function defaults(array $defaults): self
     {
         // Retrieve the current route group from the stack and
         // add the specified default parameter values.
@@ -521,7 +525,7 @@ final class Router implements RouterInterface
      *
      * @return self Returns the current instance for fluent method chaining.
      */
-    public function attributes(array $attributes) : self
+    public function attributes(array $attributes): self
     {
         // Retrieve the current route group from the stack and
         // add the specified metadata attributes.

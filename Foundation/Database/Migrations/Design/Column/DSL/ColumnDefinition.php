@@ -223,15 +223,17 @@ class ColumnDefinition
      *
      * -- intent: establish referential integrity with another table.
      *
-     * @param string $table    Referenced table name
-     * @param string $column   Referenced column name
-     * @param string $onDelete ON DELETE action (CASCADE, SET NULL, etc.)
-     * @param string $onUpdate ON UPDATE action
+     * @param string      $table    Referenced table name
+     * @param string|null $column   Referenced column name
+     * @param string|null $onDelete ON DELETE action (CASCADE, SET NULL, etc.)
+     * @param string      $onUpdate ON UPDATE action
      *
      * @return $this
      */
-    public function references(string $table, string $column = 'id', string $onDelete = 'CASCADE', string $onUpdate = 'CASCADE') : self
+    public function references(string $table, string|null $column = null, string|null $onDelete = null, string $onUpdate = 'CASCADE') : self
     {
+        $column                      ??= 'id';
+        $onDelete                    ??= 'CASCADE';
         $this->attributes['foreign'] = [
             'table'     => $table,
             'column'    => $column,

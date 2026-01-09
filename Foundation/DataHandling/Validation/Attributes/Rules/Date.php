@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
-use DateTime;
 use Avax\Exceptions\ValidationException;
+use DateTime;
 
 /**
  * This class is an attribute used to validate date properties.

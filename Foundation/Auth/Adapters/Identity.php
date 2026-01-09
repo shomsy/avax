@@ -7,7 +7,7 @@ namespace Avax\Auth\Adapters;
 use Avax\Auth\Contracts\CredentialsInterface;
 use Avax\Auth\Contracts\UserInterface;
 use Avax\Auth\Contracts\UserSourceInterface;
-use Avax\Auth\Adapters\UserDataSource;
+use SensitiveParameter;
 
 /**
  * Identity serves as an abstract implementation for authentication mechanisms.
@@ -36,7 +36,7 @@ abstract class Identity
      * @throws \Exception|\Psr\SimpleCache\InvalidArgumentException If any issues arise during the authentication
      *                                                              process.
      */
-    protected function authenticate(CredentialsInterface $credentials) : UserInterface|string|null
+    protected function authenticate(#[SensitiveParameter] CredentialsInterface $credentials) : UserInterface|string|null
     {
         /** Retrieve the user based on the provided credentials */
         $user = $this->user->retrieveByCredentials(credentials: $credentials);

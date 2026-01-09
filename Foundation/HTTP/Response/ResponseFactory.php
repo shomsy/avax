@@ -9,6 +9,7 @@ use JsonException;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
+use SensitiveParameter;
 
 /**
  * Factory for creating standardized PSR-7 HTTP responses.
@@ -109,7 +110,7 @@ readonly class ResponseFactory implements ResponseFactoryInterface
     /**
      * Creates a generic response with body content.
      */
-    public function createResponseWithBody(string $content, int $status, array $headers = []) : ResponseInterface
+    public function createResponseWithBody(string $content, int $status, #[SensitiveParameter] array $headers = []) : ResponseInterface
     {
         $stream   = $this->streamFactory->createStream(content: $content);
         $response = $this
@@ -163,8 +164,8 @@ readonly class ResponseFactory implements ResponseFactoryInterface
         return $this
             ->cloneResponse()
             ->withStatus(code: $status)
-            ->withBody($stream)
-            ->withHeader('Content-Type', 'text/html; charset=UTF-8');
+            ->withBody(stream: $stream)
+            ->withHeader(header: 'Content-Type', value: 'text/html; charset=UTF-8');
     }
 
     /**

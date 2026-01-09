@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\URI;
 
+use SensitiveParameter;
 use Stringable;
 
 /**
@@ -17,14 +18,14 @@ abstract class BaseUri implements Stringable
      * Initializes the URI components.
      */
     public function __construct(
-        protected string      $scheme = '',
-        protected string      $host = '',
-        protected string      $path = '/',
-        protected int|null    $port = null,
-        protected string      $query = '',
-        protected string      $fragment = '',
-        protected string      $user = '',
-        protected string|null $password = null
+        protected string                            $scheme = '',
+        protected string                            $host = '',
+        protected string                            $path = '/',
+        protected int|null                          $port = null,
+        protected string                            $query = '',
+        protected string                            $fragment = '',
+        protected string                            $user = '',
+        #[SensitiveParameter] protected string|null $password = null
     ) {}
 
     /**

@@ -10,10 +10,10 @@ use Throwable;
 /**
  * Console command to truncate one or more tables.
  */
-final class TableTruncateCommand
+final readonly class TableTruncateCommand
 {
     public function __construct(
-        private readonly QueryBuilder $builder
+        private QueryBuilder $builder
     ) {}
 
     /**

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Cache;
 
+use Avax\Cache\Exception\InMemoryInvalidArgumentException;
 use DateInterval;
 use DateTimeImmutable;
-use Avax\Cache\Exception\InMemoryInvalidArgumentException;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 

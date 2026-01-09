@@ -7,6 +7,7 @@ namespace Avax\Tests\Core;
 use Avax\Database\Core\Container;
 use Avax\Database\Core\EventBus;
 use Avax\Database\Core\Registry;
+use Avax\Database\Events\EventBus;
 use Avax\Database\Kernel;
 use Avax\Tests\TestCase;
 
@@ -17,23 +18,23 @@ class KernelTest extends TestCase
         $instance1 = Kernel::getInstance();
         $instance2 = Kernel::getInstance();
 
-        $this->assertSame($instance1, $instance2);
+        $this->assertSame(expected: $instance1, actual: $instance2);
     }
 
     public function testKernelResolvesCoreServices() : void
     {
         $container = $this->kernel->getContainer();
 
-        $this->assertInstanceOf(Container::class, $container->resolve('container'));
-        $this->assertInstanceOf(Registry::class, $container->resolve('registry'));
-        $this->assertInstanceOf(EventBus::class, $container->resolve('events'));
+        $this->assertInstanceOf(expected: Container::class, actual: $container->resolve('container'));
+        $this->assertInstanceOf(expected: Registry::class, actual: $container->resolve('registry'));
+        $this->assertInstanceOf(expected: EventBus::class, actual: $container->resolve('events'));
     }
 
     public function testKernelIsBootstrapped() : void
     {
         $container = $this->kernel->getContainer();
 
-        $this->assertTrue($container->has('config'));
-        $this->assertEquals('sqlite', $container->resolve('config')->get('database.default'));
+        $this->assertTrue(condition: $container->has('config'));
+        $this->assertEquals(expected: 'sqlite', actual: $container->resolve('config')->get('database.default'));
     }
 }

@@ -90,7 +90,7 @@ trait ArrayConversionTrait
      */
     public function toArray() : array
     {
-        return array_map(callback: function ($item) {
+        return array_map(callback: static function ($item) {
             if (is_object(value: $item) && method_exists(object_or_class: $item, method: 'toArray')) {
                 return $item->toArray();
             }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Database\Registry;
 
-use Avax\Container\Containers\DependencyInjector as Container;
+use Avax\Container\Read\DependencyInjector as Container;
 use Avax\Database\Lifecycle\LifecycleInterface;
 use Avax\Database\Registry\Exceptions\ModuleException;
 use Throwable;

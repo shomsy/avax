@@ -12,6 +12,7 @@ use Avax\HTTP\URI\Traits\QueryParameterTrait;
 use Avax\HTTP\URI\Traits\UriValidationTrait;
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
+use SensitiveParameter;
 
 final class UriBuilder extends BaseUri implements UriInterface
 {
@@ -21,17 +22,17 @@ final class UriBuilder extends BaseUri implements UriInterface
 
     private QueryParams $queryParams;
 
-    #[\Override]
     public function __construct(
-        string      $scheme = '',
-        string      $host = '',
-        string      $path = '/',
-        int|null    $port = null,
-        string      $query = '',
-        string      $fragment = '',
-        string      $user = '',
-        string|null $password = null
-    ) {
+        string                            $scheme = '',
+        string                            $host = '',
+        string                            $path = '/',
+        int|null                          $port = null,
+        string                            $query = '',
+        string                            $fragment = '',
+        string                            $user = '',
+        #[SensitiveParameter] string|null $password = null
+    )
+    {
         parent::__construct(
             scheme  : (string) new Scheme(scheme: $scheme),
             host    : (string) new Host(host: $host),

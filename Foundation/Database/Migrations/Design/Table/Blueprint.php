@@ -142,14 +142,16 @@ final class Blueprint
      *
      * -- intent: provide exact numeric storage for financial data.
      *
-     * @param string $name      Technical name
-     * @param int    $precision Total number of digits
-     * @param int    $scale     Number of decimal places
+     * @param string   $name      Technical name
+     * @param int|null $precision Total number of digits
+     * @param int      $scale     Number of decimal places
      *
      * @return ColumnDefinition
      */
-    public function decimal(string $name, int $precision = 8, int $scale = 2) : ColumnDefinition
+    public function decimal(string $name, int|null $precision = null, int $scale = 2) : ColumnDefinition
     {
+        $precision ??= 8;
+
         return $this->addColumn(type: "DECIMAL({$precision},{$scale})", name: $name);
     }
 
@@ -687,7 +689,7 @@ final class Blueprint
      */
     public function enum(string $name, array $values) : ColumnDefinition
     {
-        $quoted = array_map(callback: fn ($v) => "'{$v}'", array: $values);
+        $quoted = array_map(callback: static fn($v) => "'{$v}'", array: $values);
 
         return $this->addColumn(type: 'ENUM(' . implode(separator: ',', array: $quoted) . ')', name: $name);
     }
@@ -704,7 +706,7 @@ final class Blueprint
      */
     public function set(string $name, array $values) : ColumnDefinition
     {
-        $quoted = array_map(callback: fn ($v) => "'{$v}'", array: $values);
+        $quoted = array_map(callback: static fn($v) => "'{$v}'", array: $values);
 
         return $this->addColumn(type: 'SET(' . implode(separator: ',', array: $quoted) . ')', name: $name);
     }
@@ -970,7 +972,7 @@ final class Blueprint
     {
         $renderer = new ColumnSQLRenderer();
         $columns  = array_map(
-            callback: fn (ColumnDefinition $col) => $renderer->render(column: $col, grammar: $grammar),
+            callback: fn(ColumnDefinition $col) => $renderer->render(column: $col, grammar: $grammar),
             array   : $this->columns
         );
 

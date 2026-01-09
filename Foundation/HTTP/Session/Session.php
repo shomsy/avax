@@ -243,7 +243,7 @@ final readonly class Session
      * Register a security policy.
      *
      * **IMPORTANT:** Policies cannot be altered at runtime in this architecture.
-     * All security policies must be configured via DI in SessionServiceProvider.
+     * All security policies must be configured via DI in SessionSecurityProvider.
      *
      * This method exists for API compatibility but will throw an exception.
      *
@@ -256,7 +256,7 @@ final readonly class Session
     {
         throw new LogicException(
             message: 'Session policies cannot be altered at runtime. ' .
-            'Configure all security policies via DI in SessionServiceProvider.'
+            'Configure all security policies via DI in SessionSecurityProvider.'
         );
     }
 

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\URI\Traits;
 
-use Avax\HTTP\URI\QueryParams;
-
 trait QueryParameterTrait
 {
     public function addParam(string $key, string $value) : self

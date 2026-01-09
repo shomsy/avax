@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Database\Transaction\Exceptions;
 
 use Avax\Database\Exceptions\DatabaseException;
-use Override;
 use Throwable;
 
 /**
@@ -33,7 +32,6 @@ final class TransactionException extends DatabaseException
      *                                     intercepted.
      * @param Throwable|null $previous     The underlying technical driver or unit-of-work exception.
      */
-    #[Override]
     public function __construct(
         string               $message,
         private readonly int $nestingLevel,

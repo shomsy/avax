@@ -76,7 +76,7 @@ final class RouteBuilder
      * @return void
      * @throws InvalidArgumentException
      */
-    private function validateMethod(string $method) : void
+    private function validateMethod(string $method): void
     {
         if (! HttpMethod::isValid(method: $method)) {
             throw new InvalidArgumentException(message: "Invalid HTTP method: {$method}");
@@ -91,9 +91,9 @@ final class RouteBuilder
      * @return void
      * @throws InvalidArgumentException
      */
-    private function validatePath(string $path) : void
+    private function validatePath(string $path): void
     {
-        if (! preg_match(pattern: '#^/[\w\-/{}]*$#', subject: $path)) {
+        if (! preg_match(pattern: '#^/[\w\-/.{}]*$#', subject: $path)) {
             throw new InvalidArgumentException(message: "Invalid route path: {$path}");
         }
     }
@@ -106,7 +106,7 @@ final class RouteBuilder
      *
      * @return self
      */
-    public static function make(string $method, string $path) : self
+    public static function make(string $method, string $path): self
     {
         $builder = new self(method: $method, path: $path);
 
@@ -119,7 +119,7 @@ final class RouteBuilder
      *
      * @return string|null
      */
-    public function getName() : string|null
+    public function getName(): string|null
     {
         return $this->name;
     }
@@ -129,7 +129,7 @@ final class RouteBuilder
      *
      * @return RouteBuilder
      */
-    public function setName(string|null $name) : RouteBuilder
+    public function setName(string|null $name): RouteBuilder
     {
         $this->name = $name;
 
@@ -141,7 +141,7 @@ final class RouteBuilder
      *
      * @return array
      */
-    public function getMiddleware() : array
+    public function getMiddleware(): array
     {
         return $this->middleware;
     }
@@ -151,7 +151,7 @@ final class RouteBuilder
      *
      * @return RouteBuilder
      */
-    public function setMiddleware(array $middleware) : RouteBuilder
+    public function setMiddleware(array $middleware): RouteBuilder
     {
         $this->middleware = $middleware;
 
@@ -163,7 +163,7 @@ final class RouteBuilder
      *
      * @return callable|array|string|null
      */
-    public function getAction() : callable|array|string|null
+    public function getAction(): callable|array|string|null
     {
         return $this->action;
     }
@@ -173,7 +173,7 @@ final class RouteBuilder
      *
      * @return RouteBuilder
      */
-    public function setAction(mixed $action) : RouteBuilder
+    public function setAction(mixed $action): RouteBuilder
     {
         $this->action = $action;
 
@@ -185,7 +185,7 @@ final class RouteBuilder
      *
      * @return array<string, string>
      */
-    public function getConstraints() : array
+    public function getConstraints(): array
     {
         return $this->constraints;
     }
@@ -195,7 +195,7 @@ final class RouteBuilder
      *
      * @return RouteBuilder
      */
-    public function setConstraints(array $constraints) : RouteBuilder
+    public function setConstraints(array $constraints): RouteBuilder
     {
         $this->constraints = $constraints;
 
@@ -207,7 +207,7 @@ final class RouteBuilder
      *
      * @return array<string, string>
      */
-    public function getDefaults() : array
+    public function getDefaults(): array
     {
         return $this->defaults;
     }
@@ -217,7 +217,7 @@ final class RouteBuilder
      *
      * @return RouteBuilder
      */
-    public function setDefaults(array $defaults) : RouteBuilder
+    public function setDefaults(array $defaults): RouteBuilder
     {
         $this->defaults = $defaults;
 
@@ -229,7 +229,7 @@ final class RouteBuilder
      *
      * @return string|null
      */
-    public function getDomain() : string|null
+    public function getDomain(): string|null
     {
         return $this->domain;
     }
@@ -239,7 +239,7 @@ final class RouteBuilder
      *
      * @return RouteBuilder
      */
-    public function setDomain(string|null $domain) : RouteBuilder
+    public function setDomain(string|null $domain): RouteBuilder
     {
         $this->domain = $domain;
 
@@ -251,7 +251,7 @@ final class RouteBuilder
      *
      * @return array<string, mixed>
      */
-    public function getAttributes() : array
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -261,7 +261,7 @@ final class RouteBuilder
      *
      * @return RouteBuilder
      */
-    public function setAttributes(array $attributes) : RouteBuilder
+    public function setAttributes(array $attributes): RouteBuilder
     {
         $this->attributes = $attributes;
 
@@ -271,7 +271,7 @@ final class RouteBuilder
     /**
      * @return string|null
      */
-    public function getAuthorization() : string|null
+    public function getAuthorization(): string|null
     {
         return $this->authorization;
     }
@@ -282,7 +282,7 @@ final class RouteBuilder
      *
      * @return RouteBuilder
      */
-    public function setAuthorization(string|null $authorization) : RouteBuilder
+    public function setAuthorization(string|null $authorization): RouteBuilder
     {
         $this->authorization = $authorization;
 
@@ -296,7 +296,7 @@ final class RouteBuilder
      *
      * @return self
      */
-    public function name(string $name) : self
+    public function name(string $name): self
     {
         $this->name = $name;
 
@@ -312,7 +312,7 @@ final class RouteBuilder
      *
      * @return self
      */
-    public function action(callable|array|string $action) : self
+    public function action(callable|array|string $action): self
     {
         $this->action = $action;
 
@@ -327,7 +327,7 @@ final class RouteBuilder
      *
      * @return self
      */
-    public function controller(string $controller, string $method = 'index') : self
+    public function controller(string $controller, string $method = 'index'): self
     {
         $this->action = [$controller, $method];
 
@@ -341,7 +341,7 @@ final class RouteBuilder
      *
      * @return self
      */
-    public function middleware(array $middleware) : self
+    public function middleware(array $middleware): self
     {
         $this->middleware = $middleware;
 
@@ -355,7 +355,7 @@ final class RouteBuilder
      *
      * @return self
      */
-    public function defaults(array $defaults) : self
+    public function defaults(array $defaults): self
     {
         $this->defaults = $defaults;
 
@@ -369,7 +369,7 @@ final class RouteBuilder
      *
      * @return self
      */
-    public function withDomain(string $domain) : self
+    public function withDomain(string $domain): self
     {
         $this->domain = $domain;
 
@@ -383,7 +383,7 @@ final class RouteBuilder
      *
      * @return self
      */
-    public function attributes(array $attributes) : self
+    public function attributes(array $attributes): self
     {
         $this->attributes = $attributes;
 
@@ -397,7 +397,7 @@ final class RouteBuilder
      *
      * @return self
      */
-    public function withAuthorization(string $policy) : self
+    public function withAuthorization(string $policy): self
     {
         $this->authorization = $policy;
 
@@ -412,7 +412,7 @@ final class RouteBuilder
      * @return self
      * @throws InvalidArgumentException
      */
-    public function whereIn(array $constraints) : self
+    public function whereIn(array $constraints): self
     {
         foreach ($constraints as $param => $pattern) {
             $this->where(parameter: $param, pattern: $pattern);
@@ -430,7 +430,7 @@ final class RouteBuilder
      * @return self
      * @throws InvalidArgumentException
      */
-    public function where(string $parameter, string $pattern) : self
+    public function where(string $parameter, string $pattern): self
     {
         $this->validateConstraintPattern(pattern: $pattern);
 
@@ -447,7 +447,7 @@ final class RouteBuilder
      * @return void
      * @throws InvalidArgumentException
      */
-    private function validateConstraintPattern(string $pattern) : void
+    private function validateConstraintPattern(string $pattern): void
     {
         if (@preg_match(pattern: "/{$pattern}/", subject: '') === false) {
             throw new InvalidArgumentException(message: "Invalid constraint regex: {$pattern}");
@@ -459,18 +459,18 @@ final class RouteBuilder
      *
      * @return RouteDefinition
      */
-    public function build() : RouteDefinition
+    public function build(): RouteDefinition
     {
         return new RouteDefinition(
-            method       : $this->method,
-            path         : $this->path,
-            action       : $this->action,
-            middleware   : $this->middleware,
-            name         : $this->name ?? '',
-            constraints  : $this->constraints,
-            defaults     : $this->defaults,
-            domain       : $this->domain,
-            attributes   : $this->attributes,
+            method: $this->method,
+            path: $this->path,
+            action: $this->action,
+            middleware: $this->middleware,
+            name: $this->name ?? '',
+            constraints: $this->constraints,
+            defaults: $this->defaults,
+            domain: $this->domain,
+            attributes: $this->attributes,
             authorization: $this->authorization
         );
     }
@@ -482,7 +482,7 @@ final class RouteBuilder
      *
      * @return self
      */
-    public function authorize(string $policy) : self
+    public function authorize(string $policy): self
     {
         $this->authorization = $policy;
 
@@ -494,7 +494,7 @@ final class RouteBuilder
      *
      * @return string
      */
-    public function getMethod() : string
+    public function getMethod(): string
     {
         return $this->method;
     }
@@ -504,9 +504,8 @@ final class RouteBuilder
      *
      * @return string
      */
-    public function getPath() : string
+    public function getPath(): string
     {
         return $this->path;
     }
-
 }

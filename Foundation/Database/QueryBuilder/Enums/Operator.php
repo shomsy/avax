@@ -9,7 +9,7 @@ namespace Avax\Database\QueryBuilder\Enums;
  *
  * -- intent: provide a type-safe way to reference logical comparison strings.
  */
-enum Operator: string
+enum Operator : string
 {
     case EQUAL         = '=';
     case NOT_EQUAL     = '!=';

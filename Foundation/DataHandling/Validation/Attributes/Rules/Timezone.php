@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
-use DateTimeZone;
 use Avax\Exceptions\ValidationException;
+use DateTimeZone;
 
 /**
  * Validates whether the provided value is a valid timezone identifier.

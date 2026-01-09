@@ -20,7 +20,7 @@ use Avax\HTTP\Session\Shared\Exceptions\PolicyViolationException;
  *
  * @package Avax\HTTP\Session\Shared\Security\Policies
  */
-final class SessionIpPolicy implements PolicyInterface
+final readonly class SessionIpPolicy implements PolicyInterface
 {
     /**
      * SessionIpPolicy Constructor.
@@ -37,7 +37,7 @@ final class SessionIpPolicy implements PolicyInterface
     public function enforce(array $data) : void
     {
         $storedIp  = $data['_client_ip'] ?? null;
-        $currentIp = $_SERVER['REMOTE_ADDR'] ?? '';
+        $currentIp = $data['client_ip'] ?? $data['ip'] ?? '';
 
         // First time - no stored IP yet
         if ($storedIp === null) {

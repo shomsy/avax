@@ -315,7 +315,7 @@ trait CollectionWalkthroughTrait
         $filtered = array_filter(
             array   : $this->getItems(),
             callback: static fn($item) : bool => ($item[$key] ?? null) >= $min &&
-                                       ($item[$key] ?? null) <= $max
+                ($item[$key] ?? null) <= $max
         );
 
         return new static(items: $filtered);
@@ -397,7 +397,7 @@ trait CollectionWalkthroughTrait
         $filtered = array_filter(
             array   : $this->getItems(),
             callback: static fn($item) : bool => ($item[$key] ?? null) < $min ||
-                                       ($item[$key] ?? null) > $max
+                ($item[$key] ?? null) > $max
         );
 
         return new static(items: $filtered);

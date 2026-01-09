@@ -35,12 +35,12 @@ final class GuzzleClient extends AbstractHttpClient
      * @param LoggerInterface $dataLogger      Logger to capture and record data-related events.
      * @param ResponseFactory $responseFactory Factory to create response objects.
      */
-    #[\Override]
     public function __construct(
         private readonly HttpClient      $httpClient,
         private readonly LoggerInterface $dataLogger,
         private readonly ResponseFactory $responseFactory,
-    ) {
+    )
+    {
         parent::__construct(logger: $dataLogger);
     }
 
@@ -55,7 +55,6 @@ final class GuzzleClient extends AbstractHttpClient
      * @throws \Throwable
      * @throws \Throwable
      */
-    #[\Override]
     public function sendAsyncRequest(string $method, string $endpoint, array $options = []) : AsyncOperationInterface
     {
         try {
@@ -84,15 +83,15 @@ final class GuzzleClient extends AbstractHttpClient
         $this->dataLogger->error(
             message: 'HTTP Request failed',
             context: [
-                         'method'    => $method,
-                         'endpoint'  => $endpoint,
-                         'options'   => $options,
-                         'exception' => [
-                             'message' => $throwable->getMessage(),
-                             'code'    => $throwable->getCode(),
-                             'trace'   => $throwable->getTraceAsString(),
-                         ],
-                     ]
+                'method'    => $method,
+                'endpoint'  => $endpoint,
+                'options'   => $options,
+                'exception' => [
+                    'message' => $throwable->getMessage(),
+                    'code'    => $throwable->getCode(),
+                    'trace'   => $throwable->getTraceAsString(),
+                ],
+            ]
         );
     }
 }

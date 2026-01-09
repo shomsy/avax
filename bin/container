@@ -1,0 +1,341 @@
+<?php
+
+declare(strict_types=1);
+
+use Avax\Container\Read\DependencyInjector;
+use Avax\Container\Validate\Tools\ContainerCompiler;
+use Avax\Container\Validate\Tools\DependencyGraphBuilder;
+use Avax\Container\Validate\Telemetry\MetricsCollector;
+use Avax\Container\Validate\Diagnostics\ContainerHealthReport;
+use Avax\Container\Validate\Diagnostics\ResolutionReport;
+use Avax\Container\Attributes\Internal\Cache\ReflectionCache;
+use Avax\Container\Attributes\Internal\Cache\ReflectionMetadataCache;
+use Avax\Container\Attributes\Internal\Cache\ReflectionCacheSupervisor;
+use Avax\Container\Validate\Exceptions\ValidationException;
+use Avax\Container\Validate\Tools\CoverageSummary;
+use Avax\Container\Application\Provider\Providers;
+use Avax\Container\Application\DevTools\DevToolsRegistry;
+use Avax\Container\Validate\Validator;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$command = $argv[1] ?? '';
+$report = null;
+$format = null;
+$dryRun = in_array('--dry-run', $argv, true);
+foreach ($argv as $arg) {
+    if (str_starts_with(haystack: $arg, needle: '--report=')) {
+        $report = substr(string: $arg, offset: strlen('--report='));
+        break;
+    }
+}
+foreach ($argv as $arg) {
+    if (str_starts_with(haystack: $arg, needle: '--format=')) {
+        $format = substr(string: $arg, offset: strlen('--format='));
+        break;
+    }
+}
+
+$injector = new DependencyInjector();
+(new Providers($injector))->register();
+$injector->boot();
+
+function formatMetricBar(string $label, int $value, int $max = 40) : string
+{
+    $filled = min($max, $value);
+    $bar = str_repeat('#', $filled);
+    $pad = $max > $filled ? str_repeat(' ', $max - $filled) : '';
+
+    return sprintf('%-16s | %s%s %d', $label, $bar, $pad, $value);
+}
+
+if ($injector->has(id: DevToolsRegistry::class)) {
+    $registry = $injector->get(id: DevToolsRegistry::class);
+    if ($registry instanceof DevToolsRegistry && $command !== '' && $registry->has(command: $command)) {
+        exit($registry->run(command: $command, injector: $injector, argv: $argv));
+    }
+}
+
+switch ($command) {
+    case 'container:validate':
+        try {
+            $validator = new Validator($injector);
+            if ($report === 'json') {
+                $data = $validator->validateBindings(throw: false);
+                $payload = $data->toArray();
+                echo json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+                exit(0);
+            }
+
+            $validator->validateBindings();
+            echo "Container validation OK" . PHP_EOL;
+            exit(0);
+        } catch (ValidationException $e) {
+            fwrite(STDERR, $e->getMessage() . PHP_EOL);
+            exit(1);
+        }
+    case 'container:graph':
+        $output = null;
+        for ($i = 2; $i < count($argv); $i++) {
+            $arg = $argv[$i];
+            if (is_string($arg) && str_starts_with(haystack: $arg, needle: '--')) {
+                continue;
+            }
+            $output = $arg;
+            break;
+        }
+        $graph = (new DependencyGraphBuilder())->build($injector);
+        $format ??= 'dot';
+
+        if ($format === 'mermaid') {
+            $output ??= (dirname(__DIR__) . '/cache/container_graph.md');
+            $lines = ['graph TD'];
+            $nodes = [];
+            foreach ($graph as $service => $deps) {
+                $nodes[$service] ??= 'S' . substr(md5($service), 0, 8);
+                if ($deps === []) {
+                    $lines[] = "  {$nodes[$service]}[\"{$service}\"]";
+                    continue;
+                }
+                foreach ($deps as $dep) {
+                    $nodes[$dep] ??= 'S' . substr(md5($dep), 0, 8);
+                    $lines[] = "  {$nodes[$service]}[\"{$service}\"] --> {$nodes[$dep]}[\"{$dep}\"]";
+                }
+            }
+            $payload = implode(PHP_EOL, $lines) . PHP_EOL;
+        } else {
+            $output ??= (dirname(__DIR__) . '/cache/container_graph.dot');
+            $payload = "digraph Container {\n";
+            foreach ($graph as $service => $deps) {
+                if ($deps === []) {
+                    $payload .= "    \"" . $service . "\";\n";
+                    continue;
+                }
+                foreach ($deps as $dep) {
+                    $payload .= "    \"" . $service . "\" -> \"" . $dep . "\";\n";
+                }
+            }
+            $payload .= "}\n";
+        }
+
+        $dir = dirname($output);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        file_put_contents($output, $payload);
+        echo "Dependency graph written to {$output}" . PHP_EOL;
+        exit(0);
+    case 'container:list':
+        $entries = [];
+        foreach ($injector->getBindingsStore()->all() as $abstract => $binding) {
+            $entries[$abstract] = [
+                'abstract'  => $abstract,
+                'singleton' => (bool) ($binding['singleton'] ?? false),
+                'lazy'      => false,
+                'scope'     => null,
+                'conditional' => false,
+            ];
+        }
+        foreach ($injector->getLazyRegistry()->all() as $abstract => $definition) {
+            $entries[$abstract] ??= [
+                'abstract'  => $abstract,
+                'singleton' => false,
+                'lazy'      => true,
+                'scope'     => null,
+                'conditional' => false,
+            ];
+            $entries[$abstract]['lazy'] = true;
+        }
+        $definitions = $injector->getScopedRegistry()->getDefinitions()->all();
+        foreach ($definitions as $key => $definition) {
+            $parts = explode('.', (string) $key, 2);
+            $scope = $parts[0] ?? 'default';
+            $abstract = $parts[1] ?? (string) $key;
+            $entries[$abstract] ??= [
+                'abstract'  => $abstract,
+                'singleton' => false,
+                'lazy'      => false,
+                'scope'     => $scope,
+                'conditional' => false,
+            ];
+            $entries[$abstract]['scope'] = $scope;
+        }
+        $conditionalDeps = [];
+        foreach ($injector->getConditionalRegistry()->all() as $consumer => $bindings) {
+            if ($consumer === '*patterns' && is_array($bindings)) {
+                foreach ($bindings as $pattern) {
+                    if (is_array($pattern) && isset($pattern['dependency']) && is_string($pattern['dependency'])) {
+                        $conditionalDeps[$pattern['dependency']] = true;
+                    }
+                }
+                continue;
+            }
+
+            if (! is_array($bindings)) {
+                continue;
+            }
+
+            foreach ($bindings as $dependency => $concrete) {
+                if (is_string($dependency)) {
+                    $conditionalDeps[$dependency] = true;
+                }
+            }
+        }
+        foreach (array_keys($conditionalDeps) as $dependency) {
+            $entries[$dependency] ??= [
+                'abstract'  => $dependency,
+                'singleton' => false,
+                'lazy'      => false,
+                'scope'     => null,
+                'conditional' => true,
+            ];
+            $entries[$dependency]['conditional'] = true;
+        }
+        ksort($entries);
+        echo json_encode(array_values($entries), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+        exit(0);
+    case 'container:explain':
+        $service = $argv[2] ?? '';
+        if (! is_string($service) || $service === '') {
+            fwrite(STDERR, "Usage: php bin/container container:explain ServiceName\n");
+            exit(1);
+        }
+        $report = $injector->resolve(abstract: $service, consumer: null, debug: true);
+        if ($report instanceof ResolutionReport) {
+            echo json_encode($report->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+            exit(0);
+        }
+        echo "Resolution report unavailable." . PHP_EOL;
+        exit(1);
+    case 'container:diagnose':
+        $diagnostics = $injector->getCircularDiagnostics();
+        if ($diagnostics === []) {
+            echo "No circular dependency diagnostics recorded" . PHP_EOL;
+            exit(0);
+        }
+        uasort($diagnostics, static fn($a, $b) => ($b['count'] ?? 0) <=> ($a['count'] ?? 0));
+        foreach ($diagnostics as $entry) {
+            $chain = implode(' -> ', $entry['chain'] ?? []);
+            $count = $entry['count'] ?? 0;
+            echo "{$count}x {$chain}" . PHP_EOL;
+        }
+        exit(0);
+    case 'container:health':
+        $report = new ContainerHealthReport(injector: $injector);
+        if ($format === 'ascii') {
+            $data = $report->toArray();
+            $lines = [
+                'Container health metrics',
+                formatMetricBar('bindings', (int) ($data['bindings'] ?? 0)),
+                formatMetricBar('lazy_loads', (int) ($data['lazy_loads'] ?? 0)),
+                formatMetricBar('binding_hits', (int) ($data['binding_hits'] ?? 0)),
+                formatMetricBar('conditional_hits', (int) ($data['conditional_hits'] ?? 0)),
+                formatMetricBar('autowire_hits', (int) ($data['autowire_hits'] ?? 0)),
+                formatMetricBar('errors', (int) ($data['errors'] ?? 0)),
+            ];
+            echo implode(PHP_EOL, $lines) . PHP_EOL;
+            exit(0);
+        }
+
+        echo $report->toJson() . PHP_EOL;
+        exit(0);
+    case 'container:optimize':
+        $path = null;
+        for ($i = 2; $i < count($argv); $i++) {
+            $arg = $argv[$i];
+            if (is_string($arg) && str_starts_with(haystack: $arg, needle: '--')) {
+                continue;
+            }
+            $path = $arg;
+            break;
+        }
+        $path ??= (dirname(__DIR__) . '/cache/container_compiled.php');
+        $compiler = new ContainerCompiler();
+        $compiler->compile($injector, $path, $dryRun);
+        if ($dryRun) {
+            echo "Dry run complete. Compiled container not written." . PHP_EOL;
+            exit(0);
+        }
+        echo "Compiled container written to {$path}" . PHP_EOL;
+        exit(0);
+    case 'container:cache:clear':
+        ReflectionCache::clear();
+        ReflectionMetadataCache::clear();
+        echo "Reflection caches cleared" . PHP_EOL;
+        exit(0);
+    case 'container:coverage':
+        $path = null;
+        for ($i = 2; $i < count($argv); $i++) {
+            $arg = $argv[$i];
+            if (is_string($arg) && str_starts_with(haystack: $arg, needle: '--')) {
+                continue;
+            }
+            $path = $arg;
+            break;
+        }
+        $path ??= (dirname(__DIR__) . '/build/logs/clover.xml');
+
+        try {
+            $summary = CoverageSummary::fromClover(path: $path);
+        } catch (RuntimeException $e) {
+            fwrite(STDERR, $e->getMessage() . PHP_EOL);
+            exit(1);
+        }
+
+        echo CoverageSummary::toText($summary) . PHP_EOL;
+
+        exit(0);
+    case 'cache:rebuild':
+    case 'container:cache:rebuild':
+        (new ReflectionCacheSupervisor())->rebuild();
+        echo "Reflection metadata cache rebuilt" . PHP_EOL;
+        exit(0);
+    case 'metrics:dump':
+    case 'container:metrics:dump':
+        $format = $argv[2] ?? 'json';
+        $metrics = new MetricsCollector();
+        $injector->setMetricsCollector(metrics: $metrics);
+        $snapshot = $metrics->snapshot();
+
+        if ($format === 'prometheus') {
+            echo $metrics->flushToPrometheus();
+            exit(0);
+        }
+
+        echo json_encode($snapshot, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+        exit(0);
+    case 'container:policy':
+        $policy = $injector->getPolicy();
+        echo json_encode([
+            'strict' => $policy->strict,
+            'strictInjection' => $policy->strictInjection,
+            'debug' => $policy->debug,
+            'strictAutowire' => $policy->strictAutowire,
+            'lazyFallback' => $policy->lazyFallback,
+            'allowRebinding' => $policy->allowRebinding,
+            'trackMetrics' => $policy->trackMetrics,
+            'lazyDefault' => $policy->lazyDefault,
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+        exit(0);
+    default:
+        echo "Usage:\n";
+        echo "  php bin/container container:validate\n";
+        echo "  php bin/container container:validate --report=json\n";
+        echo "  php bin/container container:graph [output.dot]\n";
+        echo "  php bin/container container:graph --format=mermaid [output.md]\n";
+        echo "  php bin/container container:list\n";
+        echo "  php bin/container container:explain ServiceName\n";
+        echo "  php bin/container container:diagnose\n";
+        echo "  php bin/container container:health\n";
+        echo "  php bin/container container:health --format=ascii\n";
+        echo "  php bin/container container:report\n";
+        echo "  php bin/container container:hooks\n";
+        echo "  php bin/container container:optimize [output.php]\n";
+        echo "  php bin/container container:optimize --dry-run\n";
+        echo "  php bin/container container:cache:clear\n";
+        echo "  php bin/container container:cache:rebuild\n";
+        echo "  php bin/container container:coverage [clover.xml]\n";
+        echo "  php bin/container container:metrics:dump [json|prometheus]\n";
+        echo "  php bin/container container:policy\n";
+        exit(0);
+}

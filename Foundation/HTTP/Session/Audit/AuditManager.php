@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Audit;
 
-use Psr\Log\LoggerInterface;
-
 /**
  * 🧠 AuditManager - Session Audit Operations Orchestrator
  * ============================================================

@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
-use Exception;
 use Avax\Exceptions\ValidationException;
+use Exception;
 
 /**
  * This readonly class is used to encapsulate the dimensions of an image and ensure they adhere to specified validation
@@ -56,20 +56,20 @@ readonly class ImageDimension
             if ($this->min_width !== null && $width < $this->min_width) {
                 throw new ValidationException(
                     message: sprintf(
-                                 '%s must be at least %d pixels wide.',
-                                 $property,
-                                 $this->min_width,
-                             ),
+                        '%s must be at least %d pixels wide.',
+                        $property,
+                        $this->min_width,
+                    ),
                 );
             }
 
             if ($this->min_height !== null && $height < $this->min_height) {
                 throw new ValidationException(
                     message: sprintf(
-                                 '%s must be at least %d pixels tall.',
-                                 $property,
-                                 $this->min_height,
-                             ),
+                        '%s must be at least %d pixels tall.',
+                        $property,
+                        $this->min_height,
+                    ),
                 );
             }
 

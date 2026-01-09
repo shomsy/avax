@@ -7,13 +7,13 @@ namespace Avax\DataHandling\ObjectHandling\DTO\Support;
 use ReflectionAttribute;
 use ReflectionProperty;
 
-final class PropertyMetadata
+final readonly class PropertyMetadata
 {
     public function __construct(
-        public readonly string             $name,
-        public readonly ReflectionProperty $property,
+        public string             $name,
+        public ReflectionProperty $property,
         /** @var array<ReflectionAttribute> */
-        public readonly array              $attributes,
+        public array              $attributes,
     ) {}
 
     /**

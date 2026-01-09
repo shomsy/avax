@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>TerminalKernelStep</title>
+    <link href="../../../../../styles.css" rel="stylesheet">
+</head>
+<body>
+<div class="layout">
+                        <aside class="sidebar">
+        <div class="brand"><a href="../../../../index.html">Container Docs</a></div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search...">
+        </div>
+        <nav>
+            <div class="nav-section">
+                <h3 class="nav-title">Container (Root)</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Container.html">Container</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Act/Inject</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Act/Inject/InjectDependencies.html">InjectDependencies</a></li>
+                    <li><a href="../../../Act/Inject/PropertyInjector.html">PropertyInjector</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Advanced/Lazy</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Actions/Advanced/Lazy/LazyInterface.html">LazyInterface</a></li>
+                    <li><a href="../../../Actions/Advanced/Lazy/LazyValue.html">LazyValue</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Inject</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Actions/Inject/InjectDependencies.html">InjectDependencies</a></li>
+                    <li><a href="../../../Actions/Inject/PropertyInjector.html">PropertyInjector</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Inject/Resolvers</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Actions/Inject/Resolvers/PropertyResolution.html">PropertyResolution</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Instantiate</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Actions/Instantiate/Instantiator.html">Instantiator</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Invoke/Cache</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Actions/Invoke/Cache/ReflectionCache.html">ReflectionCache</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Advanced/Lazy</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Advanced/Lazy/LazyInterface.html">LazyInterface</a></li>
+                    <li><a href="../../../Advanced/Lazy/LazyValue.html">LazyValue</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Advanced/Observe</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Advanced/Observe/DiagnosticsFlow.html">DiagnosticsFlow</a></li>
+                    <li><a href="../../../Advanced/Observe/Telemetry.html">Telemetry</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Advanced/Policy</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Advanced/Policy/PolicyFlow.html">PolicyFlow</a></li>
+                    <li><a href="../../../Advanced/Policy/Security.html">Security</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Container.html">Container</a></li>
+                    <li><a href="../../ContainerBuilder.html">ContainerBuilder</a></li>
+                    <li><a href="../../ContainerConfig.html">ContainerConfig</a></li>
+                    <li><a href="../../ContainerEngine.html">ContainerEngine</a></li>
+                    <li><a href="../../ContainerKernel.html">ContainerKernel</a></li>
+                    <li><a href="../../ResolutionEngine.html">ResolutionEngine</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Attribute</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Attribute/Inject.html">Inject</a></li>
+                    <li><a href="../../Attribute/Singleton.html">Singleton</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/DTO</h3>
+                <ul class="nav-list">
+                    <li><a href="../../DTO/ErrorDTO.html">ErrorDTO</a></li>
+                    <li><a href="../../DTO/InjectionReport.html">InjectionReport</a></li>
+                    <li><a href="../../DTO/SuccessDTO.html">SuccessDTO</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Enum</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Enum/ServiceLifetime.html">ServiceLifetime</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Exceptions</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Exceptions/ContainerExceptions.html">ContainerExceptions</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel</h3>
+                <ul class="nav-list">
+                    <li><a href="../KernelCompiler.html">KernelCompiler</a></li>
+                    <li><a href="../KernelConfig.html">KernelConfig</a></li>
+                    <li><a href="../KernelFacade.html">KernelFacade</a></li>
+                    <li><a href="../KernelRuntime.html">KernelRuntime</a></li>
+                    <li><a href="../KernelState.html">KernelState</a></li>
+                    <li><a href="../LifecycleResolver.html">LifecycleResolver</a></li>
+                    <li><a href="../LifecycleStrategyRegistry.html">LifecycleStrategyRegistry</a></li>
+                    <li><a href="../ResolutionPipeline.html">ResolutionPipeline</a></li>
+                    <li><a href="../ResolutionPipelineBuilder.html">ResolutionPipelineBuilder</a></li>
+                    <li><a href="../StepTelemetryCollector.html">StepTelemetryCollector</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel/Contracts</h3>
+                <ul class="nav-list">
+                    <li><a href="KernelContext.html">KernelContext</a></li>
+                    <li><a href="KernelStep.html">KernelStep</a></li>
+                    <li><a href="LifecycleStrategy.html">LifecycleStrategy</a></li>
+                    <li><a href="StepTelemetry.html">StepTelemetry</a></li>
+                    <li><a href="TerminalKernelStep.html">TerminalKernelStep</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel/Events</h3>
+                <ul class="nav-list">
+                    <li><a href="../Events/StepFailed.html">StepFailed</a></li>
+                    <li><a href="../Events/StepStarted.html">StepStarted</a></li>
+                    <li><a href="../Events/StepSucceeded.html">StepSucceeded</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel/Steps</h3>
+                <ul class="nav-list">
+                    <li><a href="../Steps/AnalyzePrototypeStep.html">AnalyzePrototypeStep</a></li>
+                    <li><a href="../Steps/ApplyExtendersStep.html">ApplyExtendersStep</a></li>
+                    <li><a href="../Steps/CircularDependencyStep.html">CircularDependencyStep</a></li>
+                    <li><a href="../Steps/CollectDiagnosticsStep.html">CollectDiagnosticsStep</a></li>
+                    <li><a href="../Steps/DepthGuardStep.html">DepthGuardStep</a></li>
+                    <li><a href="../Steps/EnsureDefinitionExistsStep.html">EnsureDefinitionExistsStep</a></li>
+                    <li><a href="../Steps/GuardPolicyStep.html">GuardPolicyStep</a></li>
+                    <li><a href="../Steps/InjectDependenciesStep.html">InjectDependenciesStep</a></li>
+                    <li><a href="../Steps/InvokePostConstructStep.html">InvokePostConstructStep</a></li>
+                    <li><a href="../Steps/ResolveInstanceStep.html">ResolveInstanceStep</a></li>
+                    <li><a href="../Steps/RetrieveFromScopeStep.html">RetrieveFromScopeStep</a></li>
+                    <li><a href="../Steps/StoreLifecycleStep.html">StoreLifecycleStep</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel/Strategies</h3>
+                <ul class="nav-list">
+                    <li><a href="../Strategies/ScopedLifecycleStrategy.html">ScopedLifecycleStrategy</a></li>
+                    <li><a href="../Strategies/SingletonLifecycleStrategy.html">SingletonLifecycleStrategy</a></li>
+                    <li><a href="../Strategies/TransientLifecycleStrategy.html">TransientLifecycleStrategy</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Utils</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Utils/ArrayTools.html">ArrayTools</a></li>
+                    <li><a href="../../Utils/StrTools.html">StrTools</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Define/Bind</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Define/Bind/BindingBuilder.html">BindingBuilder</a></li>
+                    <li><a href="../../../Define/Bind/ContextBuilder.html">ContextBuilder</a></li>
+                    <li><a href="../../../Define/Bind/Registrar.html">Registrar</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Define/Store</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Define/Store/DefinitionStore.html">DefinitionStore</a></li>
+                    <li><a href="../../../Define/Store/ServiceDefinition.html">ServiceDefinition</a></li>
+                    <li><a href="../../../Define/Store/ServiceDefinitionEntity.html">ServiceDefinitionEntity</a></li>
+                    <li><a href="../../../Define/Store/ServiceDiscovery.html">ServiceDiscovery</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Define/Store/Compiler</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Define/Store/Compiler/CompilerPassInterface.html">CompilerPassInterface</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Invoke</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Invoke/InvocationExecutor.html">InvocationExecutor</a></li>
+                    <li><a href="../../../Invoke/InvokeAction.html">InvokeAction</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Invoke/Cache</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Invoke/Cache/ReflectionCache.html">ReflectionCache</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Invoke/Context</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Invoke/Context/InvocationContext.html">InvocationContext</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Operate/ScopeManager.html">ScopeManager</a></li>
+                    <li><a href="../../../Operate/ScopeRegistry.html">ScopeRegistry</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate/Boot</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Operate/Boot/Application.html">Application</a></li>
+                    <li><a href="../../../Operate/Boot/ApplicationBuilder.html">ApplicationBuilder</a></li>
+                    <li><a href="../../../Operate/Boot/ContainerBootstrapper.html">ContainerBootstrapper</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate/Config</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Operate/Config/BootstrapProfile.html">BootstrapProfile</a></li>
+                    <li><a href="../../../Operate/Config/ContainerConfig.html">ContainerConfig</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate/Scope</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Operate/Scope/ScopeManager.html">ScopeManager</a></li>
+                    <li><a href="../../../Operate/Scope/ScopeRegistry.html">ScopeRegistry</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate/Shutdown</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Operate/Shutdown/TerminateContainer.html">TerminateContainer</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Resolve</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Resolve/DependencyResolver.html">DependencyResolver</a></li>
+                    <li><a href="../../../Resolve/ResolutionContext.html">ResolutionContext</a></li>
+                    <li><a href="../../../Resolve/ResolutionEngine.html">ResolutionEngine</a></li>
+                    <li><a href="../../../Resolve/ResolutionPipeline.html">ResolutionPipeline</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Resolve/Pipes</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Resolve/Pipes/AutowirePipe.html">AutowirePipe</a></li>
+                    <li><a href="../../../Resolve/Pipes/BindingPipe.html">BindingPipe</a></li>
+                    <li><a href="../../../Resolve/Pipes/ScopePipe.html">ScopePipe</a></li>
+                    <li><a href="../../../Resolve/Pipes/TerminalPipe.html">TerminalPipe</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Resolve/Resolvers</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Resolve/Resolvers/DefaultResolver.html">DefaultResolver</a></li>
+                    <li><a href="../../../Resolve/Resolvers/ExceptionResolver.html">ExceptionResolver</a></li>
+                    <li><a href="../../../Resolve/Resolvers/NullResolver.html">NullResolver</a></li>
+                    <li><a href="../../../Resolve/Resolvers/OverrideResolver.html">OverrideResolver</a></li>
+                    <li><a href="../../../Resolve/Resolvers/ParameterResolutionChain.html">ParameterResolutionChain</a></li>
+                    <li><a href="../../../Resolve/Resolvers/ParameterResolver.html">ParameterResolver</a></li>
+                    <li><a href="../../../Resolve/Resolvers/TypeResolver.html">TypeResolver</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Analyze</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Think/Analyze/PrototypeAnalyzer.html">PrototypeAnalyzer</a></li>
+                    <li><a href="../../../Think/Analyze/ReflectionTypeAnalyzer.html">ReflectionTypeAnalyzer</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Cache</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Think/Cache/FilePrototypeCache.html">FilePrototypeCache</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Model</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Think/Model/MethodPrototype.html">MethodPrototype</a></li>
+                    <li><a href="../../../Think/Model/ParameterPrototype.html">ParameterPrototype</a></li>
+                    <li><a href="../../../Think/Model/PropertyPrototype.html">PropertyPrototype</a></li>
+                    <li><a href="../../../Think/Model/ServicePrototype.html">ServicePrototype</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Prototype</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Think/Prototype/ServicePrototypeFactory.html">ServicePrototypeFactory</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Prototype/Contracts</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Think/Prototype/Contracts/ServicePrototypeFactoryInterface.html">ServicePrototypeFactoryInterface</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Verify</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Think/Verify/VerifyPrototype.html">VerifyPrototype</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Guidelines</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../../master-prompt.html">Master Prompt</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+    <main class="content">
+        <section class="hero">
+            <h1>TerminalKernelStep</h1>
+            <p>Marker for steps that can short-circuit resolution</p>
+            <div class="meta">Foundation/Container/Core/Kernel/Contracts/TerminalKernelStep.php</div>
+        </section>
+
+        <section class="section">
+            <h2>Interface Overview</h2>
+            <div class="card">
+                <p>TerminalKernelStep is a marker interface that extends KernelStep. It indicates that implementing steps have the potential to terminate the resolution pipeline early by providing a complete resolution result.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To identify steps that can short-circuit expensive processing</p>
+                    <p>- To optimize resolution performance by avoiding unnecessary work</p>
+                    <p>- To provide semantic information about step capabilities</p>
+                    <p>- To enable pipeline optimizations and step reordering</p>
+                    <p><strong>HOW IT WORKS:</strong></p>
+                    <p>Terminal steps can complete resolution by:</p>
+                    <p>1. Finding a cached instance in scope</p>
+                    <p>2. Locating an existing singleton</p>
+                    <p>3. Providing a pre-resolved result</p>
+                    <p>4. Short-circuiting further pipeline processing</p>
+                    <p><strong>PIPELINE OPTIMIZATION:</strong></p>
+                    <p>The pipeline can use this marker to:</p>
+                    <p>- Run terminal steps first for better performance</p>
+                    <p>- Skip remaining steps when resolution is complete</p>
+                    <p>- Optimize step execution order</p>
+                </details>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Terminal Step Examples</h2>
+
+            <div class="card">
+                <h3>Scope Check Step</h3>
+                <pre><code class="language-php">// Checks if service exists in current scope
+final class ScopeCheckStep implements TerminalKernelStep {
+    public function __invoke(KernelContext $context): void {
+        $scopes = $this->scopeManager->getActiveScopes();
+
+        foreach ($scopes as $scope) {
+            if ($scope->has($context->serviceId)) {
+                // Found in scope - terminate pipeline
+                $instance = $scope->get($context->serviceId);
+                $context->resolvedWith($instance);
+                return; // Pipeline stops here
+            }
+        }
+
+        // Not found - continue to next step
+    }
+}</code></pre>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY TERMINAL:</strong> If an instance exists in any active scope, no further resolution is needed. The pipeline can immediately return the cached instance.</p>
+                    <p><strong>PERFORMANCE IMPACT:</strong> O(1) scope lookups can save milliseconds of reflection and construction time.</p>
+                </details>
+            </div>
+
+            <div class="card">
+                <h3>Singleton Cache Step</h3>
+                <pre><code class="language-php">// Checks singleton registry for cached instances
+final class SingletonCacheStep implements TerminalKernelStep {
+    private array $singletons = [];
+
+    public function __invoke(KernelContext $context): void {
+        if (isset($this->singletons[$context->serviceId])) {
+            // Singleton exists - terminate pipeline
+            $context->resolvedWith($this->singletons[$context->serviceId]);
+            return;
+        }
+
+        // Check if this should be a singleton
+        $definition = $this->definitions->get($context->serviceId);
+        if ($definition && $definition->lifetime === ServiceLifetime::Singleton) {
+            // First resolution of singleton - create and cache
+            // (Actual resolution happens in later steps)
+        }
+    }
+}</code></pre>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY TERMINAL:</strong> Singletons are globally cached. Once resolved, they should be returned immediately on subsequent requests.</p>
+                    <p><strong>CACHE STRATEGY:</strong> Combines existence checks with creation hints for optimal singleton handling.</p>
+                </details>
+            </div>
+
+            <div class="card">
+                <h3>Early Binding Resolution</h3>
+                <pre><code class="language-php">// Resolves explicit bindings before complex logic
+final class BindingResolutionStep implements TerminalKernelStep {
+    public function __invoke(KernelContext $context): void {
+        $binding = $this->definitions->findBinding($context->serviceId);
+
+        if ($binding && $binding->isResolvedInstance()) {
+            // Pre-resolved instance binding
+            $context->resolvedWith($binding->getInstance());
+            return;
+        }
+
+        if ($binding && $binding->isFactory()) {
+            // Factory binding - execute and terminate
+            $instance = $binding->executeFactory($context);
+            $context->resolvedWith($instance);
+            return;
+        }
+
+        // No binding or complex binding - continue pipeline
+    }
+}</code></pre>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY TERMINAL:</strong> Simple bindings (instances, factories) can be resolved immediately without further processing.</p>
+                    <p><strong>COMPLEXITY HANDLING:</strong> Only terminates for simple cases; complex bindings continue through full pipeline.</p>
+                </details>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Pipeline Flow with Terminal Steps</h2>
+            <div class="card">
+                <pre><code class="language-php">// Pipeline execution with terminal optimization
+class ResolutionPipeline {
+    private array $steps;
+
+    public function run(KernelContext $context): void {
+        foreach ($this->steps as $step) {
+            $step($context);
+
+            // If terminal step resolved, stop processing
+            if ($context->isResolved()) {
+                break;
+            }
+        }
+    }
+}
+
+// Example flow:
+// 1. ScopeCheckStep (terminal) - checks cache → FOUND → STOP
+// 2. BindingStep (terminal) - not reached
+// 3. AutowireStep - not reached
+// 4. InjectStep - not reached
+
+// Alternative flow:
+// 1. ScopeCheckStep (terminal) - checks cache → NOT FOUND → CONTINUE
+// 2. BindingStep (terminal) - finds factory → EXECUTE → RESOLVED → STOP
+// 3. AutowireStep - not reached
+// 4. InjectStep - not reached</code></pre>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>SHORT-CIRCUIT OPTIMIZATION:</strong> Terminal steps enable the pipeline to stop as soon as resolution is complete, avoiding unnecessary work.</p>
+                    <p><strong>ORDER MATTERS:</strong> Fast terminal steps (like scope checks) should run first for maximum performance benefit.</p>
+                </details>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Implementation Guidelines</h2>
+
+            <div class="card">
+                <h3>When to Implement TerminalKernelStep</h3>
+                <p><strong>Fast Existence Checks:</strong> If you can quickly determine if resolution is possible without full processing.</p>
+                <p><strong>Cached Results:</strong> When you have pre-computed or cached instances available.</p>
+                <p><strong>Simple Bindings:</strong> For straightforward mappings that don't need complex resolution logic.</p>
+                <p><strong>Optimization Opportunities:</strong> When early termination can significantly improve performance.</p>
+            </div>
+
+            <div class="card">
+                <h3>When NOT to Use Terminal Steps</h3>
+                <p><strong>Complex Logic:</strong> Don't terminate if the step needs to contribute metadata for later steps.</p>
+                <p><strong>Partial Results:</strong> Avoid if the step provides incomplete resolution that needs further processing.</p>
+                <p><strong>Side Effects:</strong> Don't terminate if later steps are needed for proper initialization or injection.</p>
+                <p><strong>Validation:</strong> Regular KernelStep is better if the step performs important validation or setup.</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Marker Interface Benefits</h2>
+            <div class="card">
+                <p><strong>Design Clarity:</strong> Explicitly marks steps with short-circuit capability.</p>
+                <p><strong>Pipeline Optimization:</strong> Enables reordering and optimization of step execution.</p>
+                <p><strong>Testing:</strong> Allows targeted testing of terminal behavior.</p>
+                <p><strong>Documentation:</strong> Makes step capabilities clear to maintainers.</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Relationship to KernelStep</h2>
+            <div class="card">
+                <p><strong>Inheritance:</strong> TerminalKernelStep extends KernelStep, so all terminal steps are also regular steps.</p>
+                <p><strong>Additional Contract:</strong> Terminal steps promise they may complete resolution, but are not required to.</p>
+                <p><strong>Pipeline Compatibility:</strong> Terminal steps work in any pipeline position but are most effective early.</p>
+                <p><strong>Observability:</strong> Terminal steps are subject to the same telemetry and monitoring as regular steps.</p>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

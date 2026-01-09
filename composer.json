@@ -1,10 +1,6 @@
 {
   "autoload": {
     "psr-4": {
-      "Domain\\": "Domain/",
-      "Application\\": "Application/",
-      "Infrastructure\\": "Infrastructure/",
-      "Presentation\\": "Presentation/",
       "Avax\\": "Foundation/"
     }
   },
@@ -17,7 +13,8 @@
     "squizlabs/php_codesniffer": "^3.7",
     "qossmic/deptrac": "^2.0",
     "tracy/tracy": "^2.3",
-    "swoole/ide-helper": "^5.1"
+    "swoole/ide-helper": "^5.1",
+    "phpunit/phpunit": "10.5"
   },
   "config": {
     "allow-plugins": {
@@ -63,6 +60,7 @@
     "fix-insights": "php vendor/bin/phpinsights analyse --fix",
     "fix-rector": "php vendor/bin/rector",
     "fix-pint": "php vendor/bin/pint",
-    "pint": "php vendor/bin/pint"
+    "pint": "php vendor/bin/pint",
+    "check:superglobals": "php scripts/check-superglobals.php"
   }
 }

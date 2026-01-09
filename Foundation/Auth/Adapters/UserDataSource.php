@@ -9,27 +9,22 @@ use Avax\Auth\Contracts\RoleInterface;
 use Avax\Auth\Contracts\UserInterface;
 use Avax\Auth\Contracts\UserSourceInterface;
 use Avax\Auth\Data\RegistrationDTO;
-use Avax\Auth\Adapters\PasswordHasher;
 use Avax\Database\Modules\Query\Builder\QueryBuilder;
+use SensitiveParameter;
 
 readonly class UserDataSource implements UserSourceInterface
 {
     public function __construct(
-        private QueryBuilder   $queryBuilder,
-        private PasswordHasher $passwordHasher
+        private QueryBuilder                         $queryBuilder,
+        #[SensitiveParameter] private PasswordHasher $passwordHasher
     ) {}
-
-    private function usersQuery(): QueryBuilder
-    {
-        return $this->queryBuilder->newQuery()->table('users');
-    }
 
     /**
      * Retrieve a user based on a set of credentials.
      *
      * @throws \Exception|\Psr\SimpleCache\InvalidArgumentException
      */
-    public function retrieveByCredentials(CredentialsInterface $credentials) : UserInterface|null
+    public function retrieveByCredentials(#[SensitiveParameter] CredentialsInterface $credentials) : UserInterface|null
     {
         $identifierKey   = $credentials->getIdentifierKey();
         $identifierValue = $credentials->getIdentifierValue();
@@ -39,6 +34,11 @@ readonly class UserDataSource implements UserSourceInterface
             ->first();
 
         return $result ? $this->mapToInterface(data: $result) : null;
+    }
+
+    private function usersQuery() : QueryBuilder
+    {
+        return $this->queryBuilder->newQuery()->table('users');
     }
 
     /**
@@ -53,15 +53,15 @@ readonly class UserDataSource implements UserSourceInterface
         $data = is_array(value: $data) ? (object) $data : $data;
 
         return new class ($data) implements UserInterface {
-            public readonly int    $id;
+            public readonly int $id;
 
             public readonly string $email;
 
             public readonly string $username;
 
-            private string         $password;
+            private string $password;
 
-            public readonly array  $roles;
+            public readonly array $roles;
 
             public function __construct(object $data)
             {
@@ -82,7 +82,7 @@ readonly class UserDataSource implements UserSourceInterface
 
             public function getRoles() : array { return $this->roles; }
 
-            public function setPassword(string $password) : void { $this->password = $password; }
+            public function setPassword(#[SensitiveParameter] string $password) : void { $this->password = $password; }
 
             public function hasPermission(string $permission) : bool
             {
@@ -104,7 +104,7 @@ readonly class UserDataSource implements UserSourceInterface
     /**
      * Validate the provided credentials against the stored user credentials.
      */
-    public function validateCredentials(UserInterface $user, CredentialsInterface $credentials) : bool
+    public function validateCredentials(UserInterface $user, #[SensitiveParameter] CredentialsInterface $credentials) : bool
     {
         return $this->passwordHasher->verify(password: $credentials->getPassword(), hashedPassword: $user->getPassword());
     }

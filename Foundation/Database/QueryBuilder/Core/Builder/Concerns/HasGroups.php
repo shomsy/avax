@@ -22,7 +22,16 @@ trait HasGroups
      *
      * @param string|array ...$columns A variable list of field names or arrays of names to group by.
      *
-     * @return self A fresh, cloned builder instance with the grouping criteria applied.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasGroups|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     *                                                                                                                           fresh,
+     *                                                                                                                           cloned
+     *                                                                                                                           builder
+     *                                                                                                                           instance
+     *                                                                                                                           with
+     *                                                                                                                           the
+     *                                                                                                                           grouping
+     *                                                                                                                           criteria
+     *                                                                                                                           applied.
      */
     public function groupBy(string|array ...$columns) : self
     {
@@ -48,7 +57,16 @@ trait HasGroups
      * @param mixed  $value    The comparison target value, which will be safely parameterized.
      * @param string $boolean  The logical joiner used to attach this condition ('AND' or 'OR').
      *
-     * @return self A fresh, cloned builder instance with the aggregate filter applied.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasGroups|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     *                                                                                                                           fresh,
+     *                                                                                                                           cloned
+     *                                                                                                                           builder
+     *                                                                                                                           instance
+     *                                                                                                                           with
+     *                                                                                                                           the
+     *                                                                                                                           aggregate
+     *                                                                                                                           filter
+     *                                                                                                                           applied.
      */
     public function having(string $column, string $operator, mixed $value, string $boolean = 'AND') : self
     {

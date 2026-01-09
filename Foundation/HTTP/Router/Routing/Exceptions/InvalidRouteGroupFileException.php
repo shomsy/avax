@@ -12,7 +12,6 @@ use Throwable;
  */
 final class InvalidRouteGroupFileException extends RuntimeException
 {
-    #[\Override]
     public function __construct(string $message, Throwable|null $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);

@@ -2,11 +2,13 @@
 
 ## Philosophy
 
-This project follows the **Human-Grade** documentation standard. While we maintain the technical precision of enterprise contracts, we prioritize **mental models** and **human clarity**.
+This project follows the **Human-Grade** documentation standard. While we maintain the technical precision of enterprise
+contracts, we prioritize **mental models** and **human clarity**.
 
 > **Standard code speaks to the compiler. Great code speaks to the human brain.**
 
-Our goal is that any smart developer can understand a class or a method **without googling** and **without knowing theory (DDD/CQRS)** beforehand.
+Our goal is that any smart developer can understand a class or a method **without googling** and **without knowing
+theory (DDD/CQRS)** beforehand.
 
 ---
 
@@ -14,7 +16,8 @@ Our goal is that any smart developer can understand a class or a method **withou
 
 > **If you use a word that would make someone ask "What does that mean?" — you MUST explain it.**
 
-This applies to terms like `deferred`, `orchestrator`, `scope`, `lease`, `identity map`, etc. Don't assume the reader knows the theory.
+This applies to terms like `deferred`, `orchestrator`, `scope`, `lease`, `identity map`, etc. Don't assume the reader
+knows the theory.
 
 ---
 
@@ -92,10 +95,13 @@ public function acquire(string $name): DatabaseConnection
 
 If you must use a technical term, you must define it in context.
 
-- **Orchestrator**: "The conductor of an orchestra. It doesn't play the instruments (SQL), but it tells everyone else when to start and stop."
-- **Scope**: "A temporary window or a bubble. Once the code leaves this bubble, everything inside is cleaned up automatically."
+- **Orchestrator**: "The conductor of an orchestra. It doesn't play the instruments (SQL), but it tells everyone else
+  when to start and stop."
+- **Scope**: "A temporary window or a bubble. Once the code leaves this bubble, everything inside is cleaned up
+  automatically."
 - **Lease**: "A temporary permission to use a resource. You don't own it; you just have it for a while."
-- **Identity Map**: "A 'To-Do' list of changes. Instead of doing chores one by one, we write them down and do them all at once at the end."
+- **Identity Map**: "A 'To-Do' list of changes. Instead of doing chores one by one, we write them down and do them all
+  at once at the end."
 
 ---
 
@@ -134,11 +140,11 @@ Every file should start with a "Big Picture" explanation.
 
 ## Summary of Changes
 
-| Category | Enterprise Cold (Old) | Human-Grade (New) |
-| :--- | :--- | :--- |
-| **Tone** | Abstract, formal | Warm, explanatory, helpful |
-| **Logic** | Definition-based | Analogy/Mental model-based |
-| **Terms** | Expected to be known | Explained in context |
-| **Purpose** | Architecture documentation | Brain-friendly onboarding |
+| Category    | Enterprise Cold (Old)      | Human-Grade (New)          |
+|:------------|:---------------------------|:---------------------------|
+| **Tone**    | Abstract, formal           | Warm, explanatory, helpful |
+| **Logic**   | Definition-based           | Analogy/Mental model-based |
+| **Terms**   | Expected to be known       | Explained in context       |
+| **Purpose** | Architecture documentation | Brain-friendly onboarding  |
 
 **Our goal is: Great code must be top-down readable, starting from the comments.**

@@ -58,7 +58,7 @@ final class HttpRequestRouter
      *
      * @param string $prefix URI path prefix (without trailing slash).
      */
-    public function setPrefix(string $prefix) : void
+    public function setPrefix(string $prefix): void
     {
         $this->currentPrefix = rtrim(string: $prefix, characters: '/');
     }
@@ -66,7 +66,7 @@ final class HttpRequestRouter
     /**
      * Clears any existing prefix used for route groupings.
      */
-    public function clearPrefix() : void
+    public function clearPrefix(): void
     {
         $this->currentPrefix = '';
     }
@@ -78,19 +78,19 @@ final class HttpRequestRouter
      *
      * @return void
      */
-    public function registerGroup(RouteGroupBuilder $group) : void
+    public function registerGroup(RouteGroupBuilder $group): void
     {
         foreach ($group->build() as $route) {
             $this->registerRoute(
-                method       : $route->method,
-                path         : $route->path,
-                action       : $route->action,
-                middleware   : $route->middleware,
-                name         : $route->name,
-                constraints  : $route->constraints,
-                defaults     : $route->defaults,
-                domain       : $route->domain,
-                attributes   : $route->attributes,
+                method: $route->method,
+                path: $route->path,
+                action: $route->action,
+                middleware: $route->middleware,
+                name: $route->name,
+                constraints: $route->constraints,
+                defaults: $route->defaults,
+                domain: $route->domain,
+                attributes: $route->attributes,
                 authorization: $route->authorization
             );
         }
@@ -123,19 +123,19 @@ final class HttpRequestRouter
         string|null           $domain = null,
         array|null            $attributes = null,
         string|null           $authorization = null
-    ) : void {
+    ): void {
         $this->validateRoutePath(path: $path);
 
         $route = new RouteDefinition(
-            method       : strtoupper(string: $method),
-            path         : $this->applyPrefix(path: $path),
-            action       : $action,
-            middleware   : $middleware ?? [],
-            name         : $name ?? '',
-            constraints  : $constraints ?? [],
-            defaults     : $defaults ?? [],
-            domain       : $domain,
-            attributes   : $attributes ?? [],
+            method: strtoupper(string: $method),
+            path: $this->applyPrefix(path: $path),
+            action: $action,
+            middleware: $middleware ?? [],
+            name: $name ?? '',
+            constraints: $constraints ?? [],
+            defaults: $defaults ?? [],
+            domain: $domain,
+            attributes: $attributes ?? [],
             authorization: $authorization
         );
 
@@ -152,7 +152,7 @@ final class HttpRequestRouter
      *
      * @throws InvalidRouteException
      */
-    private function validateRoutePath(string $path) : void
+    private function validateRoutePath(string $path): void
     {
         if (empty($path) || ! str_starts_with(haystack: $path, needle: '/')) {
             throw new InvalidRouteException(message: 'Route path must start with a "/" and cannot be empty.');
@@ -166,7 +166,7 @@ final class HttpRequestRouter
      *
      * @return string
      */
-    private function applyPrefix(string $path) : string
+    private function applyPrefix(string $path): string
     {
         return $this->currentPrefix . $path;
     }
@@ -179,7 +179,7 @@ final class HttpRequestRouter
      * @return RouteDefinition The resolved route definition that matches the request.
      * @throws RouteNotFoundException If no matching route is found.
      */
-    public function resolve(Request $request) : RouteDefinition
+    public function resolve(Request $request): RouteDefinition
     {
         // Retrieve the HTTP method of the request, convert it to uppercase for consistency.
         $method = strtoupper(string: $request->getMethod());
@@ -202,7 +202,7 @@ final class HttpRequestRouter
 
             // Compile the route's path into a regex pattern, taking into account any constraints defined.
             $pattern = $this->compileRoutePattern(
-                template   : $route->path,       // The route path (e.g., "/users/{id}").
+                template: $route->path,       // The route path (e.g., "/users/{id}").
                 constraints: $route->constraints // Route parameter constraints (e.g., regex for {id}).
             );
 
@@ -213,8 +213,8 @@ final class HttpRequestRouter
 
                 // Apply default route parameters and merge them with extracted parameters into the request object.
                 $request = $this->applyRouteDefaults(
-                    request   : $request,
-                    defaults  : $route->defaults,   // Default values (e.g., {lang} = "en" if not provided).
+                    request: $request,
+                    defaults: $route->defaults,   // Default values (e.g., {lang} = "en" if not provided).
                     parameters: $parameters         // Extracted parameters from the request URI path.
                 );
 
@@ -225,17 +225,17 @@ final class HttpRequestRouter
 
                 // 🧠 Return the same object, but bind modified request
                 return new RouteDefinition(
-                    method       : $route->method,
-                    path         : $route->path,
-                    action       : $route->action,
-                    middleware   : $route->middleware,
-                    name         : $route->name,
-                    constraints  : $route->constraints,
-                    defaults     : $route->defaults,
-                    domain       : $route->domain,
-                    attributes   : $route->attributes,
+                    method: $route->method,
+                    path: $route->path,
+                    action: $route->action,
+                    middleware: $route->middleware,
+                    name: $route->name,
+                    constraints: $route->constraints,
+                    defaults: $route->defaults,
+                    domain: $route->domain,
+                    attributes: $route->attributes,
                     authorization: $route->authorization,
-                    parameters   : $parameters
+                    parameters: $parameters
                 );
             }
         }
@@ -256,22 +256,22 @@ final class HttpRequestRouter
      *
      * @return string Regex pattern.
      */
-    private function compileRoutePattern(string $template, array $constraints = []) : string
+    private function compileRoutePattern(string $template, array $constraints = []): string
     {
         return '#^' . preg_replace_callback(
-                pattern : '/\{(\w+)([?*]?)}/',
-                callback: static function (array $match) use ($constraints) : string {
-                    [$param, $modifier] = [$match[1], $match[2]];
-                    $pattern = $constraints[$param] ?? '[^/]+';
+            pattern: '/\{(\w+)([?*]?)}/',
+            callback: static function (array $match) use ($constraints): string {
+                [$param, $modifier] = [$match[1], $match[2]];
+                $pattern = $constraints[$param] ?? '[^/]+';
 
-                    return match ($modifier) {
-                        '?'     => '(?:/(?P<' . $param . '>' . $pattern . '))?',
-                        '*'     => '(?P<' . $param . '>.*)',
-                        default => '(?P<' . $param . '>' . $pattern . ')'
-                    };
-                },
-                subject : $template
-            ) . '$#';
+                return match ($modifier) {
+                    '?'     => '(?:/(?P<' . $param . '>' . $pattern . '))?',
+                    '*'     => '(?P<' . $param . '>.*)',
+                    default => '(?P<' . $param . '>' . $pattern . ')'
+                };
+            },
+            subject: $template
+        ) . '$#';
     }
 
     /**
@@ -281,7 +281,7 @@ final class HttpRequestRouter
      *
      * @return array<string, string>
      */
-    private function extractParameters(array $matches) : array
+    private function extractParameters(array $matches): array
     {
         return array_filter(array: $matches, callback: 'is_string', mode: ARRAY_FILTER_USE_KEY);
     }
@@ -295,7 +295,7 @@ final class HttpRequestRouter
      *
      * @return Request
      */
-    private function applyRouteDefaults(Request $request, array $defaults, array $parameters) : Request
+    private function applyRouteDefaults(Request $request, array $defaults, array $parameters): Request
     {
         foreach ($parameters as $key => $value) {
             $request = $request->withAttribute(name: $key, value: $value);
@@ -315,7 +315,7 @@ final class HttpRequestRouter
      *
      * @return array<string, RouteDefinition[]>
      */
-    public function allRoutes() : array
+    public function allRoutes(): array
     {
         return $this->routes;
     }
@@ -326,7 +326,7 @@ final class HttpRequestRouter
      *
      * @param RouteDefinition $route The precompiled route to register.
      */
-    public function add(RouteDefinition $route) : void
+    public function add(RouteDefinition $route): void
     {
         $method = strtoupper(string: $route->method);
 
@@ -346,7 +346,7 @@ final class HttpRequestRouter
      *
      * @throws RouteNotFoundException
      */
-    public function getByName(string $name) : RouteDefinition
+    public function getByName(string $name): RouteDefinition
     {
         if (! isset($this->namedRoutes[$name])) {
             throw new RouteNotFoundException(message: "Named route [{$name}] not found.");
@@ -362,7 +362,7 @@ final class HttpRequestRouter
      *
      * @return bool
      */
-    public function hasNamedRoute(string $name) : bool
+    public function hasNamedRoute(string $name): bool
     {
         return isset($this->namedRoutes[$name]);
     }
@@ -374,13 +374,13 @@ final class HttpRequestRouter
      *
      * @return void
      */
-    public function fallback(callable|array|string $handler) : void
+    public function fallback(callable|array|string $handler): void
     {
         $this->registerRoute(
             method: 'ANY',
-            path  : '__fallback__',
+            path: '/__fallback__',
             action: $handler,
-            name  : '__router.fallback'
+            name: '__router.fallback'
         );
     }
 }

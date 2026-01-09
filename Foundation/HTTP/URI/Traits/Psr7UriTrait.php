@@ -9,6 +9,7 @@ use Avax\HTTP\URI\Components\Path;
 use Avax\HTTP\URI\Components\Scheme;
 use Avax\HTTP\URI\QueryParams;
 use Psr\Http\Message\UriInterface;
+use SensitiveParameter;
 
 trait Psr7UriTrait
 {
@@ -47,7 +48,7 @@ trait Psr7UriTrait
         return $this->fragment;
     }
 
-    public function withUserInfo(string $user, string|null $password = null) : UriInterface
+    public function withUserInfo(string $user, #[SensitiveParameter] string|null $password = null) : UriInterface
     {
         return new self(
             scheme  : $this->scheme,
@@ -139,7 +140,6 @@ trait Psr7UriTrait
         );
     }
 
-    #[\Override]
     public function getAuthority() : string
     {
         $authority = $this->host;

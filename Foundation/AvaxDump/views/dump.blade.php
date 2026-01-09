@@ -14,7 +14,8 @@
 
 <div class="container-fluid">
     <h3 class="text-warning mb-3">
-        🔍 Dump from <span class="text-danger">{{ $file }}</span> : <span class="text-info">{{ $line }}</span>
+        🔍 Dump from <span class="text-danger">{{value: $file }}</span> : <span
+                class="text-info">{{value: $line }}</span>
     </h3>
 
     <div class="input-group mb-4 w-50">
@@ -27,7 +28,7 @@
 
     @foreach ($args as $arg)
         <pre class="gemdump" x-ref="dump">
-                {{ var_export(value: $arg, return: true) }}
+                {{value: var_export(value: $arg, return: true) }}
             </pre>
     @endforeach
 </div>

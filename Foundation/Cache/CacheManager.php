@@ -46,7 +46,7 @@ readonly class CacheManager implements CacheInterface
     public function delete(string $key) : bool
     {
         try {
-            return $this->cacheBackend->delete($key);
+            return $this->cacheBackend->delete(key: $key);
         } catch (Throwable $e) {
             $this->logger->error(message: 'Cache delete failed', context: ['key' => $key, 'error' => $e->getMessage()]);
 
@@ -90,7 +90,7 @@ readonly class CacheManager implements CacheInterface
     public function deleteMultiple(iterable $keys) : bool
     {
         try {
-            return $this->cacheBackend->deleteMultiple($keys);
+            return $this->cacheBackend->deleteMultiple(keys: $keys);
         } catch (Throwable $e) {
             $this->logger->error(message: 'Cache deleteMultiple failed', context: ['error' => $e->getMessage()]);
 
@@ -101,7 +101,7 @@ readonly class CacheManager implements CacheInterface
     public function has(string $key) : bool
     {
         try {
-            return $this->cacheBackend->has($key);
+            return $this->cacheBackend->has(key: $key);
         } catch (Throwable $e) {
             $this->logger->error(message: 'Cache has failed', context: ['key' => $key, 'error' => $e->getMessage()]);
 

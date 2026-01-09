@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
-use BackedEnum;
 use Avax\Exceptions\ValidationException;
+use BackedEnum;
 use UnitEnum;
 
 /**

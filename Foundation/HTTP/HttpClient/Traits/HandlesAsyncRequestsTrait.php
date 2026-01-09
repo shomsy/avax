@@ -17,6 +17,7 @@ trait HandlesAsyncRequestsTrait
      * @return array An array of promises for the asynchronous requests.
      * @throws \Exception
      * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createAsyncRequests(array $urls) : array
     {

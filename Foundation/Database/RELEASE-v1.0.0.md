@@ -2,13 +2,16 @@
 
 ## Release Notes
 
-This release marks the **freeze** of the Database component core. All critical OWASP security concerns have been addressed, the architecture is stable, and the API surface is finalized.
+This release marks the **freeze** of the Database component core. All critical OWASP security concerns have been
+addressed, the architecture is stable, and the API surface is finalized.
 
 ### ✅ Security Hardening (OWASP Compliance)
 
 - **Binding Redaction**: Query telemetry automatically masks sensitive parameters by default
-- **Raw SQL Guardrails**: `raw()` and `selectRaw()` now enforce allowlist filters to block statement terminators, comments, and control characters
-- **Safe Exception Handling**: `QueryException` exposes redacted bindings by default; raw access requires explicit opt-in
+- **Raw SQL Guardrails**: `raw()` and `selectRaw()` now enforce allowlist filters to block statement terminators,
+  comments, and control characters
+- **Safe Exception Handling**: `QueryException` exposes redacted bindings by default; raw access requires explicit
+  opt-in
 
 ### ✅ Infrastructure Maturity
 

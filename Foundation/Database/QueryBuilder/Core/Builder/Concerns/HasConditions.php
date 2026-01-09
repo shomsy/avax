@@ -23,7 +23,8 @@ trait HasConditions
      * @param mixed          $operator Comparison operator.
      * @param mixed          $value    Comparison value.
      *
-     * @return self
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder
+     * @throws \ReflectionException
      */
     public function orWhere(string|Closure $column, mixed $operator = null, mixed $value = null) : self
     {
@@ -38,7 +39,8 @@ trait HasConditions
      * @param mixed          $value    Comparison value.
      * @param string         $boolean  Logical joiner ('AND' or 'OR').
      *
-     * @return self
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder
+     * @throws \ReflectionException
      */
     public function where(
         string|Closure $column,
@@ -58,11 +60,11 @@ trait HasConditions
 
         $clone        = clone $this;
         $clone->state = $clone->state->addWhere(where: new WhereNode(
-                                                           column  : $column,
-                                                           operator: (string) $operator,
-                                                           value   : $value,
-                                                           boolean : $boolean
-                                                       ));
+            column  : $column,
+            operator: (string) $operator,
+            value   : $value,
+            boolean : $boolean
+        ));
 
         if (! in_array(needle: $operator, haystack: ['IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN'])) {
             $clone->state = $clone->state->addBinding(value: $value);
@@ -81,7 +83,17 @@ trait HasConditions
      * @param Closure $callback A configuration closure receiving a fresh builder instance.
      * @param string  $boolean  The logical joiner for the entire nested group.
      *
-     * @return self A fresh, cloned builder instance containing the nested logical node.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     *                                                                                                                               fresh,
+     *                                                                                                                               cloned
+     *                                                                                                                               builder
+     *                                                                                                                               instance
+     *                                                                                                                               containing
+     *                                                                                                                               the
+     *                                                                                                                               nested
+     *                                                                                                                               logical
+     *                                                                                                                               node.
+     * @throws \ReflectionException
      */
     protected function whereNested(Closure $callback, string $boolean = 'AND') : self
     {
@@ -91,9 +103,9 @@ trait HasConditions
 
         $clone        = clone $this;
         $clone->state = $clone->state->addWhere(where: new NestedWhereNode(
-                                                           query  : $query,
-                                                           boolean: $boolean
-                                                       ));
+            query  : $query,
+            boolean: $boolean
+        ));
 
         $clone->state = $clone->state->mergeBindings(values: $query->state->getBindings());
 
@@ -110,7 +122,16 @@ trait HasConditions
      * @param string $column The technical field name to check.
      * @param array  $values The collection of allowed data tokens.
      *
-     * @return self A fresh, cloned builder instance with the OR membership filter.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     *                                                                                                                               fresh,
+     *                                                                                                                               cloned
+     *                                                                                                                               builder
+     *                                                                                                                               instance
+     *                                                                                                                               with
+     *                                                                                                                               the
+     *                                                                                                                               OR
+     *                                                                                                                               membership
+     *                                                                                                                               filter.
      */
     public function orWhereIn(string $column, array $values) : self
     {
@@ -129,7 +150,15 @@ trait HasConditions
      * @param string|null $boolean The logical joiner ('AND' or 'OR').
      * @param bool        $not     Flag indicating whether to use negative (NOT IN) logic.
      *
-     * @return self A fresh, cloned builder instance with the membership filter.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     *                                                                                                                               fresh,
+     *                                                                                                                               cloned
+     *                                                                                                                               builder
+     *                                                                                                                               instance
+     *                                                                                                                               with
+     *                                                                                                                               the
+     *                                                                                                                               membership
+     *                                                                                                                               filter.
      */
     public function whereIn(string $column, array $values, string|null $boolean = null, bool $not = false) : self
     {
@@ -138,11 +167,11 @@ trait HasConditions
 
         $clone        = clone $this;
         $clone->state = $clone->state->addWhere(where: new WhereNode(
-                                                           column  : $column,
-                                                           operator: $operator,
-                                                           value   : $values,
-                                                           boolean : $boolean
-                                                       ));
+            column  : $column,
+            operator: $operator,
+            value   : $values,
+            boolean : $boolean
+        ));
 
         $clone->state = $clone->state->mergeBindings(values: $values);
 
@@ -161,8 +190,15 @@ trait HasConditions
      * @param string|null $boolean The logical joiner ('AND' or 'OR').
      * @param bool        $not     Flag indicating whether to use negative (NOT BETWEEN) logic.
      *
-     * @return self A fresh, cloned builder instance with the range filter.
-     * @throws InvalidArgumentException If the provided values array does not contain exactly two items.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     *                                                                                                                               fresh,
+     *                                                                                                                               cloned
+     *                                                                                                                               builder
+     *                                                                                                                               instance
+     *                                                                                                                               with
+     *                                                                                                                               the
+     *                                                                                                                               range
+     *                                                                                                                               filter.
      */
     public function whereBetween(string $column, array $values, string|null $boolean = null, bool $not = false) : self
     {
@@ -175,11 +211,11 @@ trait HasConditions
 
         $clone        = clone $this;
         $clone->state = $clone->state->addWhere(where: new WhereNode(
-                                                           column  : $column,
-                                                           operator: $operator,
-                                                           value   : $values,
-                                                           boolean : $boolean
-                                                       ));
+            column  : $column,
+            operator: $operator,
+            value   : $values,
+            boolean : $boolean
+        ));
 
         $clone->state = $clone->state->mergeBindings(values: $values);
 

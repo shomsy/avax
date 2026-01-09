@@ -27,7 +27,7 @@ class TemplateEngine extends BladeOne
      * @param string $compiledPath The path where compiled templates are stored.
      * @param int    $mode         BladeOne mode (e.g., MODE_AUTO).
      *
-     * @throws \Avax\Container\Exceptions\FoundationContainerException
+     * @throws \Avax\Container\Core\Exceptions\FoundationContainerException
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
@@ -35,7 +35,8 @@ class TemplateEngine extends BladeOne
         string $templatePath,
         string $compiledPath,
         int    $mode = BladeOne::MODE_AUTO,
-    ) {
+    )
+    {
         // Initialize the parent BladeOne class with provided paths and mode
         parent::__construct(
             templatePath: $templatePath,
@@ -59,7 +60,7 @@ class TemplateEngine extends BladeOne
     }
 
     /**
-     * @throws \Avax\Container\Exceptions\FoundationContainerException
+     * @throws \Avax\Container\Core\Exceptions\FoundationContainerException
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
@@ -78,10 +79,12 @@ class TemplateEngine extends BladeOne
      */
     public function getBaseUrl() : string
     {
-        $scheme = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $context = function_exists('http_context') ? http_context() : null;
+        if ($context !== null) {
+            return $context->baseUrl();
+        }
 
-        return sprintf('%s://%s', $scheme, $host);
+        return 'http://localhost';
     }
 
     /**
@@ -179,8 +182,7 @@ class TemplateEngine extends BladeOne
     {
         $this->directive(
             name   : 'csrf',
-            handler: static fn(
-            ) : string => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>",
+            handler: static fn() : string => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>",
         );
     }
 

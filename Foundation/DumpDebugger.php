@@ -126,46 +126,46 @@ final class DumpDebugger
                                                 clearHighlights();
                                                 results = [], currentIndex = -1;
                                                 if (!term.trim()) return updateStatus();
-                    
+            
                                                 const rawTerm = term.trim().toLowerCase();
                                                 const quotedTerm = '"' + rawTerm.replace(/^"+|"+$/g, '') + '"';
                                                 const normalizedTerm = normalize(rawTerm);
                                                 const normalizedQuoted = normalize(quotedTerm);
-                    
+            
                                                 const entries = document.querySelectorAll('.entry');
-                    
+            
                                                 entries.forEach(el => {
                                                     const keyEl = el.querySelector('.key');
                                                     const valEl = el.querySelector('.value');
                                                     if (!keyEl || !valEl) return;
-                    
+            
                                                     const keyRaw = keyEl.textContent.trim().toLowerCase();
                                                     const valRaw = valEl.textContent.trim().toLowerCase();
-                    
+            
                                                     const keyNorm = normalize(keyRaw);
                                                     const valNorm = normalize(valRaw);
-                    
+            
                                                     const combined = normalize(keyRaw + '=>' + valRaw);
-                    
+            
                                                     const matches = (
                                                         keyRaw.includes(rawTerm) || keyNorm.includes(normalizedTerm) ||
                                                         valRaw.includes(rawTerm) || valNorm.includes(normalizedTerm) ||
                                                         valRaw.includes(quotedTerm) || valNorm.includes(normalizedQuoted) ||
                                                         combined.includes(normalizedTerm)
                                                     );
-                    
+            
                                                     if (matches) {
                                                         keyEl.classList.add('highlight-key');
                                                         valEl.classList.add('highlight-key');
                                                         results.push(keyEl);
                                                     }
                                                 });
-                    
+            
                                                 if (results.length) {
                                                     currentIndex = 0;
                                                     scrollToResult(currentIndex);
                                                 }
-                    
+            
                                                 updateStatus();
                                             }
             
@@ -258,7 +258,8 @@ final class DumpDebugger
         string|null $key,
         mixed       $value,
         int         $depth = 0
-    ) : string {
+    ) : string
+    {
         // Construct the prefix HTML with proper key formatting and operator
         $prefix = $key !== null
             ? '<span class="key">' . (is_int(value: $key)
@@ -279,7 +280,7 @@ final class DumpDebugger
 
             // Build expandable array representation with nested elements
             $html = '<div class="entry"><span class="toggle" onclick="toggle(this)">▼</span> ' .
-                    $prefix . '<span class="type">array:' . $count . '</span> [';
+                $prefix . '<span class="type">array:' . $count . '</span> [';
             $html .= '<div class="children">';
             // Recursively render each array element
             foreach ($value as $k => $v) {
@@ -298,12 +299,12 @@ final class DumpDebugger
             // Return compact representation for empty objects
             if ($count === 0) {
                 return '<div class="entry">' . $prefix .
-                       '<span class="type">object:' . $class . '</span> {}</div>';
+                    '<span class="type">object:' . $class . '</span> {}</div>';
             }
 
             // Build expandable object representation with nested properties
             $html = '<div class="entry"><span class="toggle" onclick="toggle(this)">▼</span> ' .
-                    $prefix . '<span class="type">object:' . $class . '</span> {';
+                $prefix . '<span class="type">object:' . $class . '</span> {';
             $html .= '<div class="children">';
             // Recursively render each object property
             foreach ($props as $k => $v) {

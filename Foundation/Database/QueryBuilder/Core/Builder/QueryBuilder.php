@@ -8,7 +8,6 @@ use Avax\Database\Identity\IdentityMap;
 use Avax\Database\Query\QueryState;
 use Avax\Database\QueryBuilder\Core\Executor\QueryOrchestrator;
 use Avax\Database\QueryBuilder\Core\Grammar\GrammarInterface;
-use Avax\Database\QueryBuilder\DTO\ExecutionResult;
 use Avax\Database\QueryBuilder\Exceptions\InvalidCriteriaException;
 use Avax\Database\QueryBuilder\ValueObjects\Expression;
 use ReflectionClass;
@@ -47,6 +46,8 @@ class QueryBuilder
      *                                        for MySQL/SQLite/etc.
      * @param QueryOrchestrator $orchestrator The "Conductor". It doesn't write SQL, but it knows how to send the final
      *                                        SQL to the database and get results back.
+     *
+     * @throws \ReflectionException
      */
     public function __construct(
         protected readonly GrammarInterface $grammar,
@@ -82,6 +83,7 @@ class QueryBuilder
      * Start a brand new, empty query using the same database setup.
      *
      * @return static A fresh builder instance with no filters or tables set.
+     * @throws \ReflectionException
      */
     public function newQuery() : static
     {
@@ -107,84 +109,6 @@ class QueryBuilder
         $this->assertSafeRawExpression(expression: $value, context: 'raw');
 
         return new Expression(value: $value);
-    }
-
-    /**
-     * Enable dry-run mode that logs SQL without executing it.
-     *
-     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#pretend
-     * @return self Builder clone in pretend mode.
-     */
-    public function pretend() : self
-    {
-        $clone = clone $this;
-        $clone->orchestrator->pretend(value: true);
-
-        return $clone;
-    }
-
-    /**
-     * Execute a raw SQL "Statement" that doesn't return data (e.g., cleanup commands).
-     *
-     * @param string $query    SQL command to run.
-     * @param array  $bindings Parameter bindings for the command.
-     *
-     * @return bool True if the database accepted the command.
-     */
-    public function statement(string $query, array $bindings = []) : bool
-    {
-        return $this->orchestrator->execute(sql: $query, bindings: $bindings)->isSuccessful();
-    }
-
-    /**
-     * Set the target table.
-     *
-     * @param string $table Table name.
-     *
-     * @return self
-     */
-    public function from(string $table) : self
-    {
-        $clone        = clone $this;
-        $clone->state = $this->state->withFrom(table: $table);
-
-        return $clone;
-    }
-
-    /**
-     * Select specific columns.
-     *
-     * @param string ...$columns Columns to include (defaults to `*` when empty).
-     *
-     * @return self
-     */
-    public function select(string ...$columns) : self
-    {
-        $clone        = clone $this;
-        $clone->state = $this->state->withColumns(columns: empty($columns) ? ['*'] : $columns);
-
-        return $clone;
-    }
-
-    /**
-     * Mix raw SQL into your column selection.
-     *
-     * @param string ...$expressions Raw SQL snippets for selection.
-     *
-     * @return self
-     * @throws InvalidCriteriaException When the fragment contains disallowed characters.
-     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#selectraw
-     */
-    public function selectRaw(string ...$expressions) : self
-    {
-        foreach ($expressions as $expression) {
-            $this->assertSafeRawExpression(expression: $expression, context: 'selectRaw');
-        }
-
-        $clone        = clone $this;
-        $clone->state = $this->state->withColumns(columns: array_merge($this->state->columns ?: [], $expressions));
-
-        return $clone;
     }
 
     /**
@@ -221,6 +145,70 @@ class QueryBuilder
                 reason: "Raw expressions must be plain ASCII characters to allow safe inspection."
             );
         }
+    }
+
+    /**
+     * Enable dry-run mode that logs SQL without executing it.
+     *
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#pretend
+     * @return self Builder clone in pretend mode.
+     */
+    public function pretend() : self
+    {
+        $clone = clone $this;
+        $clone->orchestrator->pretend(value: true);
+
+        return $clone;
+    }
+
+    /**
+     * Execute a raw SQL "Statement" that doesn't return data (e.g., cleanup commands).
+     *
+     * @param string $query    SQL command to run.
+     * @param array  $bindings Parameter bindings for the command.
+     *
+     * @return bool True if the database accepted the command.
+     * @throws Throwable
+     */
+    public function statement(string $query, array $bindings = []) : bool
+    {
+        return $this->orchestrator->execute(sql: $query, bindings: $bindings)->isSuccessful();
+    }
+
+    /**
+     * Set the target table.
+     *
+     * @param string $table Table name.
+     *
+     * @return self
+     */
+    public function from(string $table) : self
+    {
+        $clone        = clone $this;
+        $clone->state = $this->state->withFrom(table: $table);
+
+        return $clone;
+    }
+
+    /**
+     * Mix raw SQL into your column selection.
+     *
+     * @param string ...$expressions Raw SQL snippets for selection.
+     *
+     * @return self
+     * @throws InvalidCriteriaException When the fragment contains disallowed characters.
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#selectraw
+     */
+    public function selectRaw(string ...$expressions) : self
+    {
+        foreach ($expressions as $expression) {
+            $this->assertSafeRawExpression(expression: $expression, context: 'selectRaw');
+        }
+
+        $clone        = clone $this;
+        $clone->state = $this->state->withColumns(columns: array_merge($this->state->columns ?: [], $expressions));
+
+        return $clone;
     }
 
     /**
@@ -293,6 +281,7 @@ class QueryBuilder
      * Quickly check if ANY records exist matching your search.
      *
      * @return bool
+     * @throws Throwable
      */
     public function exists() : bool
     {
@@ -329,12 +318,160 @@ class QueryBuilder
     }
 
     /**
+     * Persist a new record into the database.
+     *
+     * @param array $values Associative array of column => values.
+     *
+     * @return bool
+     * @throws Throwable
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#insert
+     */
+    public function insert(array $values) : bool
+    {
+        $clone        = clone $this;
+        $clone->state = $this->state->withValues(values: $values);
+        $sql          = $clone->grammar->compileInsert(state: $clone->state);
+
+        return $clone->orchestrator->execute(
+            sql      : $sql,
+            bindings : $clone->state->getBindings(),
+            operation: $this->isDeferred ? 'INSERT' : null
+        )->isSuccessful();
+    }
+
+    /**
+     * Modify existing records in the database.
+     *
+     * @param array $values Associative array of updates.
+     *
+     * @return bool
+     * @throws Throwable
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#update
+     */
+    public function update(array $values) : bool
+    {
+        $instance = clone $this;
+
+        $instance        = $instance->withSoftDeleteFilter();
+        $instance->state = $instance->state->withValues(values: $values);
+        $sql             = $instance->grammar->compileUpdate(state: $instance->state);
+
+        return $instance->orchestrator->execute(
+            sql      : $sql,
+            bindings : $instance->state->getBindings(),
+            operation: $this->isDeferred ? 'UPDATE' : null
+        )->isSuccessful();
+    }
+
+    /**
+     * Remove matching records from the database.
+     *
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#delete
+     * @return bool
+     * @throws Throwable
+     */
+    public function delete() : bool
+    {
+        $instance = clone $this;
+
+        if (method_exists(object_or_class: $instance, method: 'withSoftDeleteFilter')) {
+            $instance = $instance->withSoftDeleteFilter();
+        }
+
+        $sql = $instance->grammar->compileDelete(state: $instance->state);
+
+        return $instance->orchestrator->execute(
+            sql      : $sql,
+            bindings : $instance->state->getBindings(),
+            operation: $this->isDeferred ? 'DELETE' : null
+        )->isSuccessful();
+    }
+
+    /**
+     * Retrieve a flattened array of values from a single column.
+     *
+     * @param string      $value Target column name.
+     * @param string|null $key   Optional column to use for array keys.
+     *
+     * @return array
+     * @throws \Throwable
+     */
+    public function pluck(string $value, string|null $key = null) : array
+    {
+        $columns = $key ? [$value, $key] : [$value];
+        $results = $this->select(...$columns)->get();
+
+        $pluck = [];
+        foreach ($results as $result) {
+            if ($key) {
+                $pluck[$result[$key]] = $result[$value];
+                continue;
+            }
+            $pluck[] = $result[$value];
+        }
+
+        return $pluck;
+    }
+
+    /**
+     * Execute the retrieval query and return all matching records.
+     *
+     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#get
+     * @return array<array-key, mixed>
+     * @throws Throwable
+     */
+    public function get() : array
+    {
+        $instance = clone $this;
+
+        if (method_exists(object_or_class: $instance, method: 'withSoftDeleteFilter')) {
+            $instance = $instance->withSoftDeleteFilter();
+        }
+
+        $sql = $instance->grammar->compileSelect(state: $instance->state);
+
+        return $instance->orchestrator->query(sql: $sql, bindings: $instance->state->getBindings());
+    }
+
+    /**
+     * Select specific columns.
+     *
+     * @param string ...$columns Columns to include (defaults to `*` when empty).
+     *
+     * @return self
+     */
+    public function select(string ...$columns) : self
+    {
+        $clone        = clone $this;
+        $clone->state = $this->state->withColumns(columns: empty($columns) ? ['*'] : $columns);
+
+        return $clone;
+    }
+
+    /**
+     * Retrieve a single scalar value from the first matching record.
+     *
+     * @param string $column  Target column name.
+     * @param mixed  $default Fallback value if no record exists.
+     *
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function value(string $column, mixed $default = null) : mixed
+    {
+        $result = $this->first();
+
+        return $result[$column] ?? $default;
+    }
+
+    /**
      * Execute the query and return the first matching record.
      *
      * @param string|callable|null $key     Optional column or transform callback.
      * @param mixed                $default Fallback value if no record exists.
      *
      * @return mixed
+     * @throws \Throwable
      */
     public function first(string|callable|null $key = null, mixed $default = null) : mixed
     {
@@ -374,137 +511,12 @@ class QueryBuilder
     }
 
     /**
-     * Execute the retrieval query and return all matching records.
-     *
-     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#get
-     * @return array<array-key, mixed>
-     */
-    public function get() : array
-    {
-        $instance = clone $this;
-
-        if (method_exists(object_or_class: $instance, method: 'withSoftDeleteFilter')) {
-            $instance = $instance->withSoftDeleteFilter();
-        }
-
-        $sql = $instance->grammar->compileSelect(state: $instance->state);
-
-        return $instance->orchestrator->query(sql: $sql, bindings: $instance->state->getBindings());
-    }
-
-    /**
-     * Persist a new record into the database.
-     *
-     * @param array $values Associative array of column => values.
-     *
-     * @return bool
-     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#insert
-     */
-    public function insert(array $values) : bool
-    {
-        $clone        = clone $this;
-        $clone->state = $this->state->withValues(values: $values);
-        $sql          = $clone->grammar->compileInsert(state: $clone->state);
-
-        return $clone->orchestrator->execute(
-            sql      : $sql,
-            bindings : $clone->state->getBindings(),
-            operation: $this->isDeferred ? 'INSERT' : null
-        )->isSuccessful();
-    }
-
-    /**
-     * Modify existing records in the database.
-     *
-     * @param array $values Associative array of updates.
-     *
-     * @return bool
-     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#update
-     */
-    public function update(array $values) : bool
-    {
-        $instance = clone $this;
-
-        $instance        = $instance->withSoftDeleteFilter();
-        $instance->state = $instance->state->withValues(values: $values);
-        $sql             = $instance->grammar->compileUpdate(state: $instance->state);
-
-        return $instance->orchestrator->execute(
-            sql      : $sql,
-            bindings : $instance->state->getBindings(),
-            operation: $this->isDeferred ? 'UPDATE' : null
-        )->isSuccessful();
-    }
-
-    /**
-     * Remove matching records from the database.
-     *
-     * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#delete
-     * @return bool
-     */
-    public function delete() : bool
-    {
-        $instance = clone $this;
-
-        if (method_exists(object_or_class: $instance, method: 'withSoftDeleteFilter')) {
-            $instance = $instance->withSoftDeleteFilter();
-        }
-
-        $sql = $instance->grammar->compileDelete(state: $instance->state);
-
-        return $instance->orchestrator->execute(
-            sql      : $sql,
-            bindings : $instance->state->getBindings(),
-            operation: $this->isDeferred ? 'DELETE' : null
-        )->isSuccessful();
-    }
-
-    /**
-     * Retrieve a flattened array of values from a single column.
-     *
-     * @param string      $value Target column name.
-     * @param string|null $key   Optional column to use for array keys.
-     *
-     * @return array
-     */
-    public function pluck(string $value, string|null $key = null) : array
-    {
-        $columns = $key ? [$value, $key] : [$value];
-        $results = $this->select(...$columns)->get();
-
-        $pluck = [];
-        foreach ($results as $result) {
-            if ($key) {
-                $pluck[$result[$key]] = $result[$value];
-                continue;
-            }
-            $pluck[] = $result[$value];
-        }
-
-        return $pluck;
-    }
-
-    /**
-     * Retrieve a single scalar value from the first matching record.
-     *
-     * @param string $column  Target column name.
-     * @param mixed  $default Fallback value if no record exists.
-     *
-     * @return mixed
-     */
-    public function value(string $column, mixed $default = null) : mixed
-    {
-        $result = $this->first();
-
-        return $result[$column] ?? $default;
-    }
-
-    /**
      * Retrieve the total number of records matching the query.
      *
      * @param string $column Column to count (defaults to '*').
      *
      * @return int
+     * @throws \Throwable
      */
     public function count(string $column = '*') : int
     {
@@ -522,6 +534,7 @@ class QueryBuilder
      * @param string $column Field name for the identity (defaults to 'id').
      *
      * @return mixed
+     * @throws \Throwable
      */
     public function find(mixed $id, string $column = 'id') : mixed
     {
@@ -542,10 +555,11 @@ class QueryBuilder
      * @param callable $callback Logic to run transactionally.
      *
      * @return mixed
+     * @throws Throwable
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#transaction
      */
     public function transaction(callable $callback) : mixed
     {
-        return $this->orchestrator->transaction(callback: fn () => $callback($this));
+        return $this->orchestrator->transaction(callback: fn() => $callback($this));
     }
 }

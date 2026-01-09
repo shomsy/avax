@@ -49,15 +49,17 @@ final class CompositePolicy implements PolicyInterface
      * CompositePolicy Constructor.
      *
      * @param array<PolicyInterface> $policies Child policies.
-     * @param string                 $mode     Execution mode (all|any|none).
+     * @param string|null            $mode     Execution mode (all|any|none).
      * @param string                 $name     Policy name.
      */
     public function __construct(
-        array          $policies = [],
-        private string $mode = self::MODE_ALL,
-        private string $name = 'composite'
+        array|null              $policies = null,
+        private string|null     $mode = null,
+        private readonly string $name = 'composite'
     )
     {
+        $policies   ??= [];
+        $this->mode ??= self::MODE_ALL;
         foreach ($policies as $policy) {
             $this->add(policy: $policy);
         }

@@ -51,7 +51,7 @@
 <div class="container">
     <h1>404</h1>
     <p>The page you’re looking for doesn’t exist.</p>
-    <a href="{{ route('cashback.index') }}">← Back to Home</a>
+    <a href="{{value: route(name: 'cashback.index') }}">← Back to Home</a>
 </div>
 </body>
 </html>

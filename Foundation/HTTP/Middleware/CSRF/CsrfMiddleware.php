@@ -7,6 +7,7 @@ namespace Avax\HTTP\Middleware\CSRF;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\ResponseFactory;
 use Avax\HTTP\Security\CsrfTokenManager;
+use SensitiveParameter;
 
 /**
  * `CsrfMiddleware` is a middleware that ensures CSRF token validation for specific HTTP methods.
@@ -21,8 +22,8 @@ readonly class CsrfMiddleware
      * @param ResponseFactory  $responseFactory  The factory used to create HTTP responses.
      */
     public function __construct(
-        private CsrfTokenManager $csrfTokenManager,
-        private ResponseFactory  $responseFactory,
+        #[SensitiveParameter] private CsrfTokenManager $csrfTokenManager,
+        private ResponseFactory                        $responseFactory,
     ) {}
 
     /**

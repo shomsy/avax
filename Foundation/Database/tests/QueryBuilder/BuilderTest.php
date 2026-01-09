@@ -8,7 +8,6 @@ use Avax\Database\Database;
 use Avax\Database\Modules\Query\Builder\QueryBuilder;
 use Avax\Database\Modules\Query\Query;
 use Avax\Tests\TestCase;
-use Override;
 use Throwable;
 
 class BuilderTest extends TestCase
@@ -17,15 +16,15 @@ class BuilderTest extends TestCase
     {
         $results = Query::table('users')->select('id', 'name')->get();
 
-        $this->assertCount(1, $results);
-        $this->assertEquals('John Doe', $results[0]['name']);
+        $this->assertCount(expectedCount: 1, haystack: $results);
+        $this->assertEquals(expected: 'John Doe', actual: $results[0]['name']);
     }
 
     public function testWhereClauses() : void
     {
         $builder = Query::table('users')->where('id', 1)->orWhere('email', 'test@example.com');
 
-        $this->assertInstanceOf(QueryBuilder::class, $builder);
+        $this->assertInstanceOf(expected: QueryBuilder::class, actual: $builder);
     }
 
     public function testJoins() : void
@@ -34,26 +33,25 @@ class BuilderTest extends TestCase
             ->join('posts', 'users.id', '=', 'posts.user_id')
             ->select('users.name', 'posts.title');
 
-        $this->assertInstanceOf(QueryBuilder::class, $builder);
+        $this->assertInstanceOf(expected: QueryBuilder::class, actual: $builder);
     }
 
     public function testAggregates() : void
     {
         $count = Query::table('users')->count();
 
-        $this->assertSame(1, $count);
+        $this->assertSame(expected: 1, actual: $count);
     }
 
     /**
      * @throws Throwable
      */
-    #[Override]
     protected function setUp() : void
     {
         parent::setUp();
 
         // Create the users table for testing
-        Database::schema()->create('users', function ($table) {
+        Database::schema()->create('users', static function ($table) {
             $table->id();
             $table->string('name');
             $table->string('email');

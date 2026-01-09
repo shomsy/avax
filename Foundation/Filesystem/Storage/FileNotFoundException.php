@@ -8,7 +8,6 @@ use Exception;
 
 class FileNotFoundException extends Exception
 {
-    #[\Override]
     public function __construct(string $string)
     {
         parent::__construct(message: $string);

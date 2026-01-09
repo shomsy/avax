@@ -26,7 +26,7 @@ final class SecureOnlyPolicy implements PolicyInterface
      */
     public function enforce(array $data) : void
     {
-        $isSecure = ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+        $isSecure = (bool) ($data['is_secure'] ?? false);
 
         if (! $isSecure) {
             throw new RuntimeException(

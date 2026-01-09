@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Logging;
 
-use Exception;
 use Avax\Config\Architecture\DDD\AppPath;
 use Avax\Facade\Facades\Storage;
+use Exception;
 
 /**
  * Class LogInitializer

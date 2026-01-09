@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Facade\Facades;
 
-use Avax\Filesystem\Storage\FileStorageInterface;
 use Avax\Facade\BaseFacade;
+use Avax\Filesystem\Storage\FileStorageInterface;
 
 /**
  * Facade for accessing the Filesystem service.

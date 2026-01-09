@@ -1,0 +1,48 @@
+<?php
+
+declare(strict_types=1);
+
+use Avax\Container\Read\DependencyInjector;
+use Avax\Container\Attributes\Internal\Cache\ReflectionCache;
+use Avax\Container\Attributes\Internal\Cache\ReflectionMetadataCache;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+final class BenchB {}
+final class BenchA
+{
+    public function __construct(public BenchB $b) {}
+}
+
+$iterations = (int) ($argv[1] ?? 10000);
+
+$injector = new DependencyInjector();
+
+ReflectionCache::disable();
+ReflectionMetadataCache::clear();
+$start = microtime(true);
+for ($i = 0; $i < $iterations; $i++) {
+    $injector->resolve(BenchA::class);
+}
+$noCache = (microtime(true) - $start) * 1000;
+
+ReflectionCache::enable();
+ReflectionMetadataCache::clear();
+$start = microtime(true);
+for ($i = 0; $i < $iterations; $i++) {
+    $injector->resolve(BenchA::class);
+}
+$cached = (microtime(true) - $start) * 1000;
+
+ReflectionMetadataCache::warm([BenchA::class, BenchB::class]);
+ReflectionCache::enable();
+$start = microtime(true);
+for ($i = 0; $i < $iterations; $i++) {
+    $injector->resolve(BenchA::class);
+}
+$metaCached = (microtime(true) - $start) * 1000;
+
+echo "Iterations: {$iterations}\n";
+echo "No cache: " . number_format($noCache, 2) . " ms\n";
+echo "Cache: " . number_format($cached, 2) . " ms\n";
+echo "Metadata cache: " . number_format($metaCached, 2) . " ms\n";

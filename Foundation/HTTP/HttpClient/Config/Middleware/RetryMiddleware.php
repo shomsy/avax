@@ -17,7 +17,8 @@ final class RetryMiddleware
     public function __construct(
         private readonly LoggerInterface $logger,
         private int|null                 $maxRetries = null,
-    ) {
+    )
+    {
         $this->maxRetries ??= 3;
     }
 

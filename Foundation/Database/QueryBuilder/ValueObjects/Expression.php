@@ -8,7 +8,6 @@ use Stringable;
 
 /**
  * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/RawExpressions.md
-
  */
 final readonly class Expression implements Stringable
 {
@@ -21,12 +20,12 @@ final readonly class Expression implements Stringable
      * Retrieve the internal raw SQL instruction as a primitive string.
      *
      * -- intent:
-     * Support seamless integration with string-based operations and 
+     * Support seamless integration with string-based operations and
      * concatenation during SQL compilation.
      *
      * @return string The raw SQL instruction.
      */
-    public function __toString(): string
+    public function __toString() : string
     {
         return $this->value;
     }
@@ -35,12 +34,12 @@ final readonly class Expression implements Stringable
      * Retrieve the encapsulated raw SQL value.
      *
      * -- intent:
-     * Provide an explicit getter for retrieving the raw instruction, 
+     * Provide an explicit getter for retrieving the raw instruction,
      * typically consumed by the Grammar technician.
      *
      * @return string The raw SQL fragment.
      */
-    public function getValue(): string
+    public function getValue() : string
     {
         return $this->value;
     }

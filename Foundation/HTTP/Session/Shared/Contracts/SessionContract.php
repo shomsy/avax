@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Shared\Contracts;
 
+use Avax\HTTP\Session\Core\Lifecycle\SessionScope;
 use Avax\HTTP\Session\Events\Events;
 use Avax\HTTP\Session\Features\Flash;
-use Avax\HTTP\Session\Providers\SessionConsumer;
 
 /**
  * SessionContract - Formal API Contract
@@ -83,9 +83,9 @@ interface SessionContract
      *
      * @param string $namespace The namespace.
      *
-     * @return SessionConsumer Scoped consumer.
+     * @return SessionScope Scoped consumer.
      */
-    public function scope(string $namespace) : SessionConsumer;
+    public function scope(string $namespace) : SessionScope;
 
     /**
      * Access flash messages.

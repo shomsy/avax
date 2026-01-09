@@ -1,0 +1,37 @@
+<?php
+
+return array (
+  'class' => 'Avax\\HTTP\\Router\\Router',
+  'constructor' => 
+  array (
+    'name' => '__construct',
+    'parameters' => 
+    array (
+      0 => 
+      array (
+        'name' => 'httpRequestRouter',
+        'type' => 'Avax\\HTTP\\Router\\Routing\\HttpRequestRouter',
+        'isOptional' => false,
+        'defaultValue' => NULL,
+        'isVariadic' => false,
+        'allowsNull' => false,
+      ),
+      1 => 
+      array (
+        'name' => 'kernel',
+        'type' => 'Avax\\HTTP\\Router\\Kernel\\RouterKernel',
+        'isOptional' => false,
+        'defaultValue' => NULL,
+        'isVariadic' => false,
+        'allowsNull' => false,
+      ),
+    ),
+  ),
+  'injectedProperties' => 
+  array (
+  ),
+  'injectedMethods' => 
+  array (
+  ),
+  'isInstantiable' => true,
+);

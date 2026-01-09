@@ -1,0 +1,35 @@
+[2026-01-08 16:02:19] 🚨 [EMERGENCY] Fatal error during bootstrap {
+    "type": 1,
+    "message": "Maximum execution time of 30 seconds exceeded",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Core\\Kernel\\Contracts\\KernelContext.php",
+    "line": 98
+}
+
+[2026-01-08 16:02:49] 🚨 [EMERGENCY] Fatal error during bootstrap {
+    "type": 1,
+    "message": "Maximum execution time of 30 seconds exceeded",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Core\\Kernel\\Contracts\\KernelContext.php",
+    "line": 98
+}
+
+[2026-01-08 16:03:50] 🚨 [EMERGENCY] Fatal error during bootstrap {
+    "type": 1,
+    "message": "Maximum execution time of 30 seconds exceeded",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Core\\Kernel\\Contracts\\KernelContext.php",
+    "line": 98
+}
+
+[2026-01-08 16:04:21] 🚨 [EMERGENCY] Fatal error during bootstrap {
+    "type": 1,
+    "message": "Maximum execution time of 30 seconds exceeded",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Core\\Kernel\\Contracts\\KernelContext.php",
+    "line": 98
+}
+
+[2026-01-08 16:05:52] 🚨 [EMERGENCY] Fatal error during bootstrap {
+    "type": 1,
+    "message": "Uncaught RuntimeException: Test exception for logging in Command line code:1\nStack trace:\n#0 {main}\n  thrown",
+    "file": "Command line code",
+    "line": 1
+}
+

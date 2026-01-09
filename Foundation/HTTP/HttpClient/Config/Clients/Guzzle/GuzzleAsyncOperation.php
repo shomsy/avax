@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\HttpClient\Config\Clients\Guzzle;
 
-use Exception;
 use Avax\HTTP\HttpClient\Config\Contracts\Client\Async\AsyncOperationInterface;
+use Exception;
 use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;

@@ -10,10 +10,10 @@ use Throwable;
 /**
  * Console command to export the database.
  */
-final class DatabaseExportCommand
+final readonly class DatabaseExportCommand
 {
     public function __construct(
-        private readonly DatabaseExporter $exporter
+        private DatabaseExporter $exporter
     ) {}
 
     public function handle(string $path, string|null $table = null) : int

@@ -40,6 +40,7 @@ final class IdentityMap
 
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/IdentityMap.md#unit-of-work-pattern
+     * @throws \Throwable
      */
     public function execute() : void
     {
@@ -47,9 +48,13 @@ final class IdentityMap
             return;
         }
 
+        // Use the same connection that the transaction manager uses for atomicity
         $this->transactionManager->transaction(callback: function (TransactionManagerInterface $tx) {
+            // Get PDO from the connection that was injected (same one transaction uses)
+            $pdo = $this->connection->getConnection();
+
             foreach ($this->deferred as $job) {
-                $stmt = $tx->getConnection()->getConnection()->prepare(query: $job['sql']);
+                $stmt = $pdo->prepare(query: $job['sql']);
                 if (! $stmt->execute(params: $job['bindings'])) {
                     throw new TransactionException(
                         message     : "Failed to execute deferred operation: " . $job['operation'],

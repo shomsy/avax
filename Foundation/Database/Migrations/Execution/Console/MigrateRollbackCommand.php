@@ -12,14 +12,17 @@ use Throwable;
 /**
  * Console command to rollback migrations.
  */
-final class MigrateRollbackCommand
+final readonly class MigrateRollbackCommand
 {
     public function __construct(
-        private readonly MigrationRepository $repository,
-        private readonly MigrationRunner     $runner,
-        private readonly MigrationLoader     $loader
+        private MigrationRepository $repository,
+        private MigrationRunner     $runner,
+        private MigrationLoader     $loader
     ) {}
 
+    /**
+     * @throws Throwable
+     */
     public function handle(string $path, int $steps = 1) : int
     {
         $this->info(msg: "Rolling back {$steps} batch(es)...");

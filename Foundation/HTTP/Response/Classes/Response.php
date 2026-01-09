@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
+use SensitiveParameter;
 use SimpleXMLElement;
 
 /**
@@ -33,17 +34,18 @@ class Response implements ResponseInterface
     /**
      * Commonly used HTTP status phrases.
      */
-    private const array STATUS_PHRASES = [
-        200 => 'OK',
-        201 => 'Created',
-        204 => 'No Content',
-        400 => 'Bad Request',
-        401 => 'Unauthorized',
-        403 => 'Forbidden',
-        404 => 'Not Found',
-        500 => 'Internal Server Error',
-        503 => 'Service Unavailable',
-    ];
+    private const array STATUS_PHRASES
+        = [
+            200 => 'OK',
+            201 => 'Created',
+            204 => 'No Content',
+            400 => 'Bad Request',
+            401 => 'Unauthorized',
+            403 => 'Forbidden',
+            404 => 'Not Found',
+            500 => 'Internal Server Error',
+            503 => 'Service Unavailable',
+        ];
 
     /**
      * Class responsible for handling HTTP requests and responses.
@@ -88,12 +90,13 @@ class Response implements ResponseInterface
          * Stream class responsible for handling and manipulating data streams.
          * This class provides methods to read and write streams, as well as manage stream state and contents.
          */
-        private StreamInterface $stream,
-        string|null             $protocolVersion = null,
-        int|null                $statusCode = null,
-        array|null              $headers = null,
-        string                  $reasonPhrase = '',
-    ) {
+        private StreamInterface          $stream,
+        string|null                      $protocolVersion = null,
+        int|null                         $statusCode = null,
+        #[SensitiveParameter] array|null $headers = null,
+        string                           $reasonPhrase = '',
+    )
+    {
         // Default values are provided when specific values are not given.
         $this->statusCode      = $statusCode ?? self::DEFAULT_STATUS_CODE;
         $this->protocolVersion = $protocolVersion ?? self::DEFAULT_PROTOCOL_VERSION;
@@ -112,7 +115,7 @@ class Response implements ResponseInterface
      *
      * @return array An associative array with header names in lowercase and values as arrays.
      */
-    private function normalizeHeaders(array $headers) : array
+    private function normalizeHeaders(#[SensitiveParameter] array $headers) : array
     {
         $normalized = [];
         foreach ($headers as $name => $value) {
@@ -302,7 +305,7 @@ class Response implements ResponseInterface
      *
      * @return self A new instance with the specified headers.
      */
-    public function withHeaders(array $headers) : self
+    public function withHeaders(#[SensitiveParameter] array $headers) : self
     {
         $new = clone $this;
         foreach ($headers as $name => $value) {

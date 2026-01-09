@@ -12,36 +12,36 @@ use RuntimeException;
  * Manages application paths specifically within the "Foundation" directory of the project.
  * Provides dynamic resolution and validation for key Foundation components.
  */
-enum Avax: string
+enum Avax : string
 {
     // Foundation core directories
-    case AUTH          = 'Foundation/Auth/';
+    case AUTH = 'Foundation/Auth/';
 
-    case CACHE         = 'Foundation/Cache/';
+    case CACHE = 'Foundation/Cache/';
 
-    case CONFIG        = 'Foundation/Config/';
+    case CONFIG = 'Foundation/Config/';
 
-    case CONTAINER     = 'Foundation/Container/';
+    case CONTAINER = 'Foundation/Container/';
 
     case DATA_HANDLING = 'Foundation/DataHandling/';
 
-    case DATABASE      = 'Foundation/Database/';
+    case DATABASE = 'Foundation/Database/';
 
-    case EXCEPTIONS    = 'Foundation/Exceptions/';
+    case EXCEPTIONS = 'Foundation/Exceptions/';
 
-    case FACADE        = 'Foundation/Facade/';
+    case FACADE = 'Foundation/Facade/';
 
-    case FILESYSTEM    = 'Foundation/Filesystem/';
+    case FILESYSTEM = 'Foundation/Filesystem/';
 
-    case HTTP          = 'Foundation/HTTP/';
+    case HTTP = 'Foundation/HTTP/';
 
-    case LOGGING       = 'Foundation/Logging/';
+    case LOGGING = 'Foundation/Logging/';
 
-    case MIDDLEWARES   = 'Foundation/Middlewares/';
+    case MIDDLEWARES = 'Foundation/Middlewares/';
 
-    case VIEW          = 'Foundation/View/';
+    case VIEW = 'Foundation/View/';
 
-    case MIGRATIONS    = 'Foundation/Database/Migration/';
+    case MIGRATIONS = 'Foundation/Database/Migration/';
 
 
     /**

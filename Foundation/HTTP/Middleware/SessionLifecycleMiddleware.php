@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Middleware;
 
-use Avax\HTTP\Session\Contracts\SessionInterface;
+use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use SensitiveParameter;
 
 /**
  * Class SessionLifecycleMiddleware
@@ -23,7 +24,7 @@ use Psr\Http\Message\ResponseInterface;
 final readonly class SessionLifecycleMiddleware
 {
     public function __construct(
-        private SessionInterface $session
+        #[SensitiveParameter] private SessionInterface $session
     ) {}
 
     public function handle(RequestInterface $request, callable $next) : ResponseInterface
@@ -50,3 +51,4 @@ final readonly class SessionLifecycleMiddleware
         return $response;
     }
 }
+

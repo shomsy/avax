@@ -33,15 +33,25 @@ trait HasControlStructures
      *
      * -- intent:
      * Provides an expressive inverse of the when() method, typically used for
-     * applying default filters or     * @see
+     * applying default filters or     * @param mixed $condition Scalar, boolean, or truthy data point to evaluate.
+     *
+     * @param callable      $callback The logic to execute if the condition evaluates to false.
+     * @param callable|null $default  Optional alternative logic to execute if the condition is true.
+     *
+     * @return \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasControlStructures The
+     *                                                                                                                                      resulting
+     *                                                                                                                                      builder
+     *                                                                                                                                      instance
+     *                                                                                                                                      after
+     *                                                                                                                                      applying
+     *                                                                                                                                      the
+     *                                                                                                                                      inverse
+     *                                                                                                                                      conditional
+     *                                                                                                                                      logic.
+     * @see
      * https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Transactions.md#transaction logic
      * when a specific flag is absent.
      *
-     * @param mixed         $condition Scalar, boolean, or truthy data point to evaluate.
-     * @param callable      $callback  The logic to execute if the condition evaluates to false.
-     * @param callable|null $default   Optional alternative logic to execute if the condition is true.
-     *
-     * @return self The resulting builder instance after applying the inverse conditional logic.
      */
     public function unless(mixed $condition, callable $callback, callable|null $default = null) : self
     {
@@ -59,7 +69,15 @@ trait HasControlStructures
      * @param callable      $callback  The logic to execute if the condition evaluates to true.
      * @param callable|null $default   Optional alternative logic to execute if the condition is false.
      *
-     * @return self The resulting builder instance after applying the conditional logic.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasControlStructures The
+     *                                                                                                                                      resulting
+     *                                                                                                                                      builder
+     *                                                                                                                                      instance
+     *                                                                                                                                      after
+     *                                                                                                                                      applying
+     *                                                                                                                                      the
+     *                                                                                                                                      conditional
+     *                                                                                                                                      logic.
      */
     public function when(mixed $condition, callable $callback, callable|null $default = null) : self
     {
@@ -83,7 +101,10 @@ trait HasControlStructures
      *
      * @param Closure $callback A logic hook receiving the current builder instance.
      *
-     * @return self The current builder instance.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasControlStructures The
+     *                                                                                                                                      current
+     *                                                                                                                                      builder
+     *                                                                                                                                      instance.
      */
     public function tap(Closure $callback) : self
     {

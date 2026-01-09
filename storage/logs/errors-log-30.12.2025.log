@@ -1,0 +1,1975 @@
+[2025-12-30 02:00:09] 🔥 [CRITICAL] 🔥 Route bootstrap failed. {
+    "exception": "Routes directory 'C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/' is not accessible or readable.",
+    "trace": "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Bootstrap\\RouteBootstrapper.php(138): Avax\\HTTP\\Router\\Bootstrap\\RouteBootstrapper->getRouteFilesFromDirectory('C:\\\\Users\\\\shomsy...')\n#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Bootstrap\\RouteBootstrapper.php(111): Avax\\HTTP\\Router\\Bootstrap\\RouteBootstrapper->loadRoutesFromDisk('C:\\\\Users\\\\shomsy...')\n#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Bootstrap\\RouteBootstrapper.php(64): Avax\\HTTP\\Router\\Bootstrap\\RouteBootstrapper->loadRoutesFromDiskAndCache('C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...')\n#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\HTTP\\RouterServiceProvider.php(143): Avax\\HTTP\\Router\\Bootstrap\\RouteBootstrapper->bootstrap()\n#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers.php(119): Avax\\Container\\Application\\Provider\\Providers\\Modules\\HTTP\\RouterServiceProvider->boot()\n#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap.php(17): Avax\\Container\\Application\\Provider\\Providers->register()\n#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(8): require_once('C:\\\\Users\\\\shomsy...')\n#7 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')\n#8 {main}",
+    "cache_path": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php",
+    "routes_dir": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:00:10] 🔥 [CRITICAL] 🔥 Route bootstrap failed. {
+    "exception": "Routes directory 'C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/' is not accessible or readable.",
+    "trace": "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Bootstrap\\RouteBootstrapper.php(138): Avax\\HTTP\\Router\\Bootstrap\\RouteBootstrapper->getRouteFilesFromDirectory('C:\\\\Users\\\\shomsy...')\n#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Bootstrap\\RouteBootstrapper.php(111): Avax\\HTTP\\Router\\Bootstrap\\RouteBootstrapper->loadRoutesFromDisk('C:\\\\Users\\\\shomsy...')\n#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Bootstrap\\RouteBootstrapper.php(64): Avax\\HTTP\\Router\\Bootstrap\\RouteBootstrapper->loadRoutesFromDiskAndCache('C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...')\n#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\HTTP\\RouterServiceProvider.php(143): Avax\\HTTP\\Router\\Bootstrap\\RouteBootstrapper->bootstrap()\n#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers.php(119): Avax\\Container\\Application\\Provider\\Providers\\Modules\\HTTP\\RouterServiceProvider->boot()\n#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap.php(17): Avax\\Container\\Application\\Provider\\Providers->register()\n#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(8): require_once('C:\\\\Users\\\\shomsy...')\n#7 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')\n#8 {main}",
+    "cache_path": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php",
+    "routes_dir": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:08:54] ✅ [INFO] 📦 Route cache created from disk. {
+    "source": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/",
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:08:54] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:08:55] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:08:55] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:09:22] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:09:22] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:09:23] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:09:23] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:10:50] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:10:50] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:10:50] ❌ [ERROR] Unknown named parameter $callable {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php",
+    "line": 54,
+    "exception": {
+        "message": "Unknown named parameter $callable",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php",
+        "line": 54,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider.php(60): Avax\\Container\\Application\\Kernel->__construct(Object(Avax\\HTTP\\Router\\Router), Object(Avax\\Logging\\ErrorHandler), Object(Avax\\Container\\Read\\DependencyInjector), Object(Closure), NULL)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), true)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(32): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\Container\\\\...')",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#7 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#8 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:10:50] 🔥 [CRITICAL] ⚠️ Error handler crashed: Service 'Config' not found in the container. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+    "line": 64,
+    "exception": {
+        "message": "Service 'Config' not found in the container.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+        "line": 64,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Config', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Config', NULL, false, false)",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(63): Avax\\Container\\Read\\DependencyInjector->get('Config')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(256): app('Config')",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(97): config('ErrorSolutions....', Array)",
+            "#5 [internal function]: Spatie\\ErrorSolutions\\SolutionProviderRepository->Spatie\\ErrorSolutions\\{closure}('Spatie\\\\ErrorSol...', 0)",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Arr.php(930): array_filter(Array, Object(Closure), 1)",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Collection.php(399): Illuminate\\Support\\Arr::where(Array, Object(Closure))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(92): Illuminate\\Support\\Collection->filter(Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(50): Spatie\\ErrorSolutions\\SolutionProviderRepository->initialiseSolutionProviderRepositories()",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddSolutions.php(22): Spatie\\ErrorSolutions\\SolutionProviderRepository->getSolutionsForThrowable(Object(Error))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddSolutions->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddEnvironmentInformation.php(16): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddEnvironmentInformation->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddGlows.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddGlows->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(490): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(460): Spatie\\FlareClient\\Flare->applyMiddlewareToReport(Object(Spatie\\FlareClient\\Report))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(380): Spatie\\FlareClient\\Flare->createReport(Object(Error))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(288): Spatie\\Ignition\\Ignition->createReport(Object(Error))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(202): Spatie\\Ignition\\Ignition->handleException(Object(Error))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(Error))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(37): Avax\\Logging\\ErrorHandler->handle(Object(Error))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#25 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#26 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:10:50] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:10:50] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:10:50] ❌ [ERROR] Unknown named parameter $callable {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php",
+    "line": 54,
+    "exception": {
+        "message": "Unknown named parameter $callable",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php",
+        "line": 54,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider.php(60): Avax\\Container\\Application\\Kernel->__construct(Object(Avax\\HTTP\\Router\\Router), Object(Avax\\Logging\\ErrorHandler), Object(Avax\\Container\\Read\\DependencyInjector), Object(Closure), NULL)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), true)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(32): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\Container\\\\...')",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#7 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#8 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:10:50] 🔥 [CRITICAL] ⚠️ Error handler crashed: Service 'Config' not found in the container. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+    "line": 64,
+    "exception": {
+        "message": "Service 'Config' not found in the container.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+        "line": 64,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Config', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Config', NULL, false, false)",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(63): Avax\\Container\\Read\\DependencyInjector->get('Config')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(256): app('Config')",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(97): config('ErrorSolutions....', Array)",
+            "#5 [internal function]: Spatie\\ErrorSolutions\\SolutionProviderRepository->Spatie\\ErrorSolutions\\{closure}('Spatie\\\\ErrorSol...', 0)",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Arr.php(930): array_filter(Array, Object(Closure), 1)",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Collection.php(399): Illuminate\\Support\\Arr::where(Array, Object(Closure))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(92): Illuminate\\Support\\Collection->filter(Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(50): Spatie\\ErrorSolutions\\SolutionProviderRepository->initialiseSolutionProviderRepositories()",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddSolutions.php(22): Spatie\\ErrorSolutions\\SolutionProviderRepository->getSolutionsForThrowable(Object(Error))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddSolutions->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddEnvironmentInformation.php(16): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddEnvironmentInformation->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddGlows.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddGlows->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(490): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(460): Spatie\\FlareClient\\Flare->applyMiddlewareToReport(Object(Spatie\\FlareClient\\Report))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(380): Spatie\\FlareClient\\Flare->createReport(Object(Error))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(288): Spatie\\Ignition\\Ignition->createReport(Object(Error))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(202): Spatie\\Ignition\\Ignition->handleException(Object(Error))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(Error))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(37): Avax\\Logging\\ErrorHandler->handle(Object(Error))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#25 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#26 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:10:58] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:10:58] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:10:58] ❌ [ERROR] Unknown named parameter $callable {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php",
+    "line": 54,
+    "exception": {
+        "message": "Unknown named parameter $callable",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php",
+        "line": 54,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider.php(60): Avax\\Container\\Application\\Kernel->__construct(Object(Avax\\HTTP\\Router\\Router), Object(Avax\\Logging\\ErrorHandler), Object(Avax\\Container\\Read\\DependencyInjector), Object(Closure), NULL)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), true)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(32): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\Container\\\\...')",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#7 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#8 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:10:58] 🔥 [CRITICAL] ⚠️ Error handler crashed: Service 'Config' not found in the container. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+    "line": 64,
+    "exception": {
+        "message": "Service 'Config' not found in the container.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+        "line": 64,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Config', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Config', NULL, false, false)",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(63): Avax\\Container\\Read\\DependencyInjector->get('Config')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(256): app('Config')",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(97): config('ErrorSolutions....', Array)",
+            "#5 [internal function]: Spatie\\ErrorSolutions\\SolutionProviderRepository->Spatie\\ErrorSolutions\\{closure}('Spatie\\\\ErrorSol...', 0)",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Arr.php(930): array_filter(Array, Object(Closure), 1)",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Collection.php(399): Illuminate\\Support\\Arr::where(Array, Object(Closure))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(92): Illuminate\\Support\\Collection->filter(Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(50): Spatie\\ErrorSolutions\\SolutionProviderRepository->initialiseSolutionProviderRepositories()",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddSolutions.php(22): Spatie\\ErrorSolutions\\SolutionProviderRepository->getSolutionsForThrowable(Object(Error))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddSolutions->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddEnvironmentInformation.php(16): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddEnvironmentInformation->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddGlows.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddGlows->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(490): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(460): Spatie\\FlareClient\\Flare->applyMiddlewareToReport(Object(Spatie\\FlareClient\\Report))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(380): Spatie\\FlareClient\\Flare->createReport(Object(Error))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(288): Spatie\\Ignition\\Ignition->createReport(Object(Error))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(202): Spatie\\Ignition\\Ignition->handleException(Object(Error))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(Error))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(37): Avax\\Logging\\ErrorHandler->handle(Object(Error))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#25 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#26 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:10:59] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:10:59] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:10:59] ❌ [ERROR] Unknown named parameter $callable {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php",
+    "line": 54,
+    "exception": {
+        "message": "Unknown named parameter $callable",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php",
+        "line": 54,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider.php(60): Avax\\Container\\Application\\Kernel->__construct(Object(Avax\\HTTP\\Router\\Router), Object(Avax\\Logging\\ErrorHandler), Object(Avax\\Container\\Read\\DependencyInjector), Object(Closure), NULL)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), true)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(32): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\Container\\\\...')",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#7 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#8 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:10:59] 🔥 [CRITICAL] ⚠️ Error handler crashed: Service 'Config' not found in the container. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+    "line": 64,
+    "exception": {
+        "message": "Service 'Config' not found in the container.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+        "line": 64,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Config', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Config', NULL, false, false)",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(63): Avax\\Container\\Read\\DependencyInjector->get('Config')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(256): app('Config')",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(97): config('ErrorSolutions....', Array)",
+            "#5 [internal function]: Spatie\\ErrorSolutions\\SolutionProviderRepository->Spatie\\ErrorSolutions\\{closure}('Spatie\\\\ErrorSol...', 0)",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Arr.php(930): array_filter(Array, Object(Closure), 1)",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Collection.php(399): Illuminate\\Support\\Arr::where(Array, Object(Closure))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(92): Illuminate\\Support\\Collection->filter(Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(50): Spatie\\ErrorSolutions\\SolutionProviderRepository->initialiseSolutionProviderRepositories()",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddSolutions.php(22): Spatie\\ErrorSolutions\\SolutionProviderRepository->getSolutionsForThrowable(Object(Error))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddSolutions->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddEnvironmentInformation.php(16): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddEnvironmentInformation->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddGlows.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddGlows->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(490): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(460): Spatie\\FlareClient\\Flare->applyMiddlewareToReport(Object(Spatie\\FlareClient\\Report))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(380): Spatie\\FlareClient\\Flare->createReport(Object(Error))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(288): Spatie\\Ignition\\Ignition->createReport(Object(Error))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(202): Spatie\\Ignition\\Ignition->handleException(Object(Error))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(Error))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(37): Avax\\Logging\\ErrorHandler->handle(Object(Error))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#25 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#26 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:20:38] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:20:38] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:20:38] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:20:38] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:21:03] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:21:03] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:21:03] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:21:03] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:21:04] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:21:04] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:21:04] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:21:04] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:23:45] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:23:45] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:23:45] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 127,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 127,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Service 'Avax\\HTTP\\Session\\Contracts\\SessionInterface' not found in the container.",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+            "line": 64
+        }
+    }
+}
+
+[2025-12-30 02:23:45] 🔥 [CRITICAL] ⚠️ Error handler crashed: Service 'Infrastructure\Config\Service\Config' not found in the container. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+    "line": 64,
+    "exception": {
+        "message": "Service 'Infrastructure\\Config\\Service\\Config' not found in the container.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+        "line": 64,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Infrastructure\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Infrastructure\\\\...', NULL, false, false)",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(64): Avax\\Container\\Read\\DependencyInjector->get('Infrastructure\\\\...')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(257): app('Infrastructure\\\\...')",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(97): config('ErrorSolutions....', Array)",
+            "#5 [internal function]: Spatie\\ErrorSolutions\\SolutionProviderRepository->Spatie\\ErrorSolutions\\{closure}('Spatie\\\\ErrorSol...', 0)",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Arr.php(930): array_filter(Array, Object(Closure), 1)",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Collection.php(399): Illuminate\\Support\\Arr::where(Array, Object(Closure))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(92): Illuminate\\Support\\Collection->filter(Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(50): Spatie\\ErrorSolutions\\SolutionProviderRepository->initialiseSolutionProviderRepositories()",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddSolutions.php(22): Spatie\\ErrorSolutions\\SolutionProviderRepository->getSolutionsForThrowable(Object(RuntimeException))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddSolutions->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddEnvironmentInformation.php(16): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddEnvironmentInformation->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddGlows.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddGlows->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(490): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(460): Spatie\\FlareClient\\Flare->applyMiddlewareToReport(Object(Spatie\\FlareClient\\Report))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(380): Spatie\\FlareClient\\Flare->createReport(Object(RuntimeException))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(288): Spatie\\Ignition\\Ignition->createReport(Object(RuntimeException))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(202): Spatie\\Ignition\\Ignition->handleException(Object(RuntimeException))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(RuntimeException))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(37): Avax\\Logging\\ErrorHandler->handle(Object(RuntimeException))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#25 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#26 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:23:45] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:23:45] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:23:45] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 127,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 127,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Service 'Avax\\HTTP\\Session\\Contracts\\SessionInterface' not found in the container.",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+            "line": 64
+        }
+    }
+}
+
+[2025-12-30 02:23:45] 🔥 [CRITICAL] ⚠️ Error handler crashed: Service 'Infrastructure\Config\Service\Config' not found in the container. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+    "line": 64,
+    "exception": {
+        "message": "Service 'Infrastructure\\Config\\Service\\Config' not found in the container.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+        "line": 64,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Infrastructure\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Infrastructure\\\\...', NULL, false, false)",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(64): Avax\\Container\\Read\\DependencyInjector->get('Infrastructure\\\\...')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(257): app('Infrastructure\\\\...')",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(97): config('ErrorSolutions....', Array)",
+            "#5 [internal function]: Spatie\\ErrorSolutions\\SolutionProviderRepository->Spatie\\ErrorSolutions\\{closure}('Spatie\\\\ErrorSol...', 0)",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Arr.php(930): array_filter(Array, Object(Closure), 1)",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Collection.php(399): Illuminate\\Support\\Arr::where(Array, Object(Closure))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(92): Illuminate\\Support\\Collection->filter(Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(50): Spatie\\ErrorSolutions\\SolutionProviderRepository->initialiseSolutionProviderRepositories()",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddSolutions.php(22): Spatie\\ErrorSolutions\\SolutionProviderRepository->getSolutionsForThrowable(Object(RuntimeException))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddSolutions->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddEnvironmentInformation.php(16): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddEnvironmentInformation->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddGlows.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddGlows->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(490): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(460): Spatie\\FlareClient\\Flare->applyMiddlewareToReport(Object(Spatie\\FlareClient\\Report))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(380): Spatie\\FlareClient\\Flare->createReport(Object(RuntimeException))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(288): Spatie\\Ignition\\Ignition->createReport(Object(RuntimeException))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(202): Spatie\\Ignition\\Ignition->handleException(Object(RuntimeException))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(RuntimeException))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(37): Avax\\Logging\\ErrorHandler->handle(Object(RuntimeException))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#25 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#26 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:23:46] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:23:46] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:23:46] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 127,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 127,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Service 'Avax\\HTTP\\Session\\Contracts\\SessionInterface' not found in the container.",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+            "line": 64
+        }
+    }
+}
+
+[2025-12-30 02:23:46] 🔥 [CRITICAL] ⚠️ Error handler crashed: Service 'Infrastructure\Config\Service\Config' not found in the container. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+    "line": 64,
+    "exception": {
+        "message": "Service 'Infrastructure\\Config\\Service\\Config' not found in the container.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+        "line": 64,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Infrastructure\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Infrastructure\\\\...', NULL, false, false)",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(64): Avax\\Container\\Read\\DependencyInjector->get('Infrastructure\\\\...')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(257): app('Infrastructure\\\\...')",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(97): config('ErrorSolutions....', Array)",
+            "#5 [internal function]: Spatie\\ErrorSolutions\\SolutionProviderRepository->Spatie\\ErrorSolutions\\{closure}('Spatie\\\\ErrorSol...', 0)",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Arr.php(930): array_filter(Array, Object(Closure), 1)",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Collection.php(399): Illuminate\\Support\\Arr::where(Array, Object(Closure))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(92): Illuminate\\Support\\Collection->filter(Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(50): Spatie\\ErrorSolutions\\SolutionProviderRepository->initialiseSolutionProviderRepositories()",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddSolutions.php(22): Spatie\\ErrorSolutions\\SolutionProviderRepository->getSolutionsForThrowable(Object(RuntimeException))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddSolutions->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddEnvironmentInformation.php(16): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddEnvironmentInformation->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddGlows.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddGlows->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(490): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(460): Spatie\\FlareClient\\Flare->applyMiddlewareToReport(Object(Spatie\\FlareClient\\Report))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(380): Spatie\\FlareClient\\Flare->createReport(Object(RuntimeException))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(288): Spatie\\Ignition\\Ignition->createReport(Object(RuntimeException))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(202): Spatie\\Ignition\\Ignition->handleException(Object(RuntimeException))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(RuntimeException))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(37): Avax\\Logging\\ErrorHandler->handle(Object(RuntimeException))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#25 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#26 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:23:46] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:23:46] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:23:46] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 127,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 127,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Service 'Avax\\HTTP\\Session\\Contracts\\SessionInterface' not found in the container.",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+            "line": 64
+        }
+    }
+}
+
+[2025-12-30 02:23:46] 🔥 [CRITICAL] ⚠️ Error handler crashed: Service 'Infrastructure\Config\Service\Config' not found in the container. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+    "line": 64,
+    "exception": {
+        "message": "Service 'Infrastructure\\Config\\Service\\Config' not found in the container.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+        "line": 64,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Infrastructure\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Infrastructure\\\\...', NULL, false, false)",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(64): Avax\\Container\\Read\\DependencyInjector->get('Infrastructure\\\\...')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(257): app('Infrastructure\\\\...')",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(97): config('ErrorSolutions....', Array)",
+            "#5 [internal function]: Spatie\\ErrorSolutions\\SolutionProviderRepository->Spatie\\ErrorSolutions\\{closure}('Spatie\\\\ErrorSol...', 0)",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Arr.php(930): array_filter(Array, Object(Closure), 1)",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Collection.php(399): Illuminate\\Support\\Arr::where(Array, Object(Closure))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(92): Illuminate\\Support\\Collection->filter(Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(50): Spatie\\ErrorSolutions\\SolutionProviderRepository->initialiseSolutionProviderRepositories()",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddSolutions.php(22): Spatie\\ErrorSolutions\\SolutionProviderRepository->getSolutionsForThrowable(Object(RuntimeException))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddSolutions->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddEnvironmentInformation.php(16): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddEnvironmentInformation->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddGlows.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddGlows->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(490): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(460): Spatie\\FlareClient\\Flare->applyMiddlewareToReport(Object(Spatie\\FlareClient\\Report))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(380): Spatie\\FlareClient\\Flare->createReport(Object(RuntimeException))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(288): Spatie\\Ignition\\Ignition->createReport(Object(RuntimeException))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(202): Spatie\\Ignition\\Ignition->handleException(Object(RuntimeException))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(RuntimeException))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(37): Avax\\Logging\\ErrorHandler->handle(Object(RuntimeException))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#25 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#26 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:27:05] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:27:05] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:27:05] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Class \"Avax\\HTTP\\Session\\NullSession\" not found",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 128
+        }
+    }
+}
+
+[2025-12-30 02:27:05] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:27:05] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:27:05] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Class \"Avax\\HTTP\\Session\\NullSession\" not found",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 128
+        }
+    }
+}
+
+[2025-12-30 02:36:04] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:36:04] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:36:04] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:36:04] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:36:05] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:36:05] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:36:05] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:36:05] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:47:46] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:47:46] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:47:46] ❌ [ERROR] Class "Avax\Container\Application\Provider\Providers\Modules\Core\Config" not found {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\ConfigurationServiceProvider.php",
+    "line": 28,
+    "exception": {
+        "message": "Class \"Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\Config\" not found",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\ConfigurationServiceProvider.php",
+        "line": 28,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\ConfigurationServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\Container\\\\...', NULL, false, false)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider.php(63): Avax\\Container\\Read\\DependencyInjector->get('Avax\\\\Container\\\\...')",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(140): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}('middleware.glob...', NULL)",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(111): Avax\\Container\\Application\\Kernel->resolveConfigValue('middleware.glob...')",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(101): Avax\\Container\\Application\\Kernel->resolveConfiguredMiddlewares()",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(69): Avax\\Container\\Application\\Kernel->registerMiddlewares()",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#12 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#13 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:47:48] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:47:48] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:47:48] ❌ [ERROR] Class "Avax\Container\Application\Provider\Providers\Modules\Core\Config" not found {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\ConfigurationServiceProvider.php",
+    "line": 28,
+    "exception": {
+        "message": "Class \"Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\Config\" not found",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\ConfigurationServiceProvider.php",
+        "line": 28,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\ConfigurationServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\Container\\\\...', NULL, false, false)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider.php(63): Avax\\Container\\Read\\DependencyInjector->get('Avax\\\\Container\\\\...')",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(140): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}('middleware.glob...', NULL)",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(111): Avax\\Container\\Application\\Kernel->resolveConfigValue('middleware.glob...')",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(101): Avax\\Container\\Application\\Kernel->resolveConfiguredMiddlewares()",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(69): Avax\\Container\\Application\\Kernel->registerMiddlewares()",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#12 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#13 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:48:36] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:48:36] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:48:36] ❌ [ERROR] Class "Avax\Container\Application\Provider\Providers\Modules\Core\Config" not found {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\ConfigurationServiceProvider.php",
+    "line": 28,
+    "exception": {
+        "message": "Class \"Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\Config\" not found",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\ConfigurationServiceProvider.php",
+        "line": 28,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\ConfigurationServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\Container\\\\...', NULL, false, false)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider.php(63): Avax\\Container\\Read\\DependencyInjector->get('Avax\\\\Container\\\\...')",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(140): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}('middleware.glob...', NULL)",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(111): Avax\\Container\\Application\\Kernel->resolveConfigValue('middleware.glob...')",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(101): Avax\\Container\\Application\\Kernel->resolveConfiguredMiddlewares()",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(69): Avax\\Container\\Application\\Kernel->registerMiddlewares()",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#12 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#13 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 02:48:36] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 02:48:36] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 02:48:36] ❌ [ERROR] Class "Avax\Container\Application\Provider\Providers\Modules\Core\Config" not found {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\ConfigurationServiceProvider.php",
+    "line": 28,
+    "exception": {
+        "message": "Class \"Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\Config\" not found",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\ConfigurationServiceProvider.php",
+        "line": 28,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\ConfigurationServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\Container\\\\...', NULL, false, false)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider.php(63): Avax\\Container\\Read\\DependencyInjector->get('Avax\\\\Container\\\\...')",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(140): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}('middleware.glob...', NULL)",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(111): Avax\\Container\\Application\\Kernel->resolveConfigValue('middleware.glob...')",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(101): Avax\\Container\\Application\\Kernel->resolveConfiguredMiddlewares()",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(69): Avax\\Container\\Application\\Kernel->registerMiddlewares()",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#12 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#13 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 03:56:56] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 03:56:56] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 03:56:56] ❌ [ERROR] Service 'Avax\Container\Application\Provider\Providers\Modules\Core\Config' not found in the container. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+    "line": 64,
+    "exception": {
+        "message": "Service 'Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\Config' not found in the container.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+        "line": 64,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\Container\\\\...', NULL, false, false)",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider.php(63): Avax\\Container\\Read\\DependencyInjector->get('Avax\\\\Container\\\\...')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(140): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}('middleware.glob...', NULL)",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(111): Avax\\Container\\Application\\Kernel->resolveConfigValue('middleware.glob...')",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(101): Avax\\Container\\Application\\Kernel->resolveConfiguredMiddlewares()",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(69): Avax\\Container\\Application\\Kernel->registerMiddlewares()",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#9 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#10 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 03:56:56] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 03:56:56] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 03:56:56] ❌ [ERROR] Service 'Avax\Container\Application\Provider\Providers\Modules\Core\Config' not found in the container. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+    "line": 64,
+    "exception": {
+        "message": "Service 'Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\Config' not found in the container.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php",
+        "line": 64,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\Container\\\\...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\Container\\\\...', NULL, false, false)",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider.php(63): Avax\\Container\\Read\\DependencyInjector->get('Avax\\\\Container\\\\...')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(140): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\BootstrapServiceProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Core\\{closure}('middleware.glob...', NULL)",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(111): Avax\\Container\\Application\\Kernel->resolveConfigValue('middleware.glob...')",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(101): Avax\\Container\\Application\\Kernel->resolveConfiguredMiddlewares()",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(69): Avax\\Container\\Application\\Kernel->registerMiddlewares()",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#9 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#10 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 03:57:59] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 03:57:59] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 03:57:59] ❌ [ERROR] No group to end. Already at root level. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Session\\Shared\\Security\\Policies\\PolicyGroupBuilder.php",
+    "line": 312,
+    "exception": {
+        "message": "No group to end. Already at root level.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Session\\Shared\\Security\\Policies\\PolicyGroupBuilder.php",
+        "line": 312,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionSecurityProvider.php(61): Avax\\HTTP\\Session\\Shared\\Security\\Policies\\PolicyGroupBuilder->endGroup()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionSecurityProvider::Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\{closure}()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\HTTP\\\\Sessi...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\HTTP\\\\Sessi...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\HTTP\\\\Sessi...', NULL, false, false)",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionLifecycleProvider.php(112): Avax\\Container\\Read\\DependencyInjector->get('Avax\\\\HTTP\\\\Sessi...')",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionLifecycleProvider.php(47): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionLifecycleProvider->createSessionEngine()",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionLifecycleProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\{closure}()",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\HTTP\\\\Sessi...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\HTTP\\\\Sessi...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\HTTP\\\\Sessi...', NULL, false, false)",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionLifecycleProvider.php(82): Avax\\Container\\Read\\DependencyInjector->get('Avax\\\\HTTP\\\\Sessi...')",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionLifecycleProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\{closure}()",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\HTTP\\\\Sessi...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\HTTP\\\\Sessi...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), true)",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\AutowireResolver.php(139): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\HTTP\\\\Sessi...', 'Avax\\\\HTTP\\\\Middl...')",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\AutowireResolver.php(71): Avax\\Container\\Read\\Resolver\\ResolveFrom\\AutowireResolver->resolveFromMetadata('Avax\\\\HTTP\\\\Middl...', Array)",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(63): Avax\\Container\\Read\\Resolver\\ResolveFrom\\AutowireResolver->make('Avax\\\\HTTP\\\\Middl...')",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate('Avax\\\\HTTP\\\\Middl...')",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\HTTP\\\\Middl...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\HTTP\\\\Middl...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\HTTP\\\\Middl...', NULL, false, false)",
+            "#25 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(131): Avax\\Container\\Read\\DependencyInjector->get('Avax\\\\HTTP\\\\Middl...')",
+            "#26 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(101): Avax\\Container\\Application\\Kernel->resolveConfiguredMiddlewares()",
+            "#27 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(69): Avax\\Container\\Application\\Kernel->registerMiddlewares()",
+            "#28 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#29 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#30 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#31 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 03:57:59] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 03:57:59] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 03:57:59] ❌ [ERROR] No group to end. Already at root level. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Session\\Shared\\Security\\Policies\\PolicyGroupBuilder.php",
+    "line": 312,
+    "exception": {
+        "message": "No group to end. Already at root level.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Session\\Shared\\Security\\Policies\\PolicyGroupBuilder.php",
+        "line": 312,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionSecurityProvider.php(61): Avax\\HTTP\\Session\\Shared\\Security\\Policies\\PolicyGroupBuilder->endGroup()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionSecurityProvider::Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\{closure}()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\HTTP\\\\Sessi...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\HTTP\\\\Sessi...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\HTTP\\\\Sessi...', NULL, false, false)",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionLifecycleProvider.php(112): Avax\\Container\\Read\\DependencyInjector->get('Avax\\\\HTTP\\\\Sessi...')",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionLifecycleProvider.php(47): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionLifecycleProvider->createSessionEngine()",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionLifecycleProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\{closure}()",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\HTTP\\\\Sessi...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\HTTP\\\\Sessi...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\HTTP\\\\Sessi...', NULL, false, false)",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionLifecycleProvider.php(82): Avax\\Container\\Read\\DependencyInjector->get('Avax\\\\HTTP\\\\Sessi...')",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(52): Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\SessionLifecycleProvider->Avax\\Container\\Application\\Provider\\Providers\\Modules\\Security\\{closure}()",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate(Object(Closure))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\HTTP\\\\Sessi...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\HTTP\\\\Sessi...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), true)",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\AutowireResolver.php(139): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\HTTP\\\\Sessi...', 'Avax\\\\HTTP\\\\Middl...')",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\AutowireResolver.php(71): Avax\\Container\\Read\\Resolver\\ResolveFrom\\AutowireResolver->resolveFromMetadata('Avax\\\\HTTP\\\\Middl...', Array)",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(63): Avax\\Container\\Read\\Resolver\\ResolveFrom\\AutowireResolver->make('Avax\\\\HTTP\\\\Middl...')",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings.php(34): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->instantiate('Avax\\\\HTTP\\\\Middl...')",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Resolver\\Resolver.php(57): Avax\\Container\\Read\\Resolver\\ResolveFrom\\ResolveFromBindings->resolve('Avax\\\\HTTP\\\\Middl...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(90): Avax\\Container\\Read\\Resolver\\Resolver->resolve('Avax\\\\HTTP\\\\Middl...', Object(Avax\\Container\\Read\\Resolver\\ResolutionContext), false)",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Read\\Traits\\Resolve\\ProvidesPolicyAwareResolution.php(56): Avax\\Container\\Read\\DependencyInjector->resolve('Avax\\\\HTTP\\\\Middl...', NULL, false, false)",
+            "#25 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(131): Avax\\Container\\Read\\DependencyInjector->get('Avax\\\\HTTP\\\\Middl...')",
+            "#26 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(101): Avax\\Container\\Application\\Kernel->resolveConfiguredMiddlewares()",
+            "#27 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(69): Avax\\Container\\Application\\Kernel->registerMiddlewares()",
+            "#28 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#29 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#30 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#31 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 03:59:21] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 03:59:21] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 03:59:21] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Avax\\HTTP\\Request\\Request::__construct(): Argument #1 ($session) must be of type Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface|string|null, Avax\\HTTP\\Session\\Core\\Lifecycle\\SessionEngine given, called in C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php on line 130",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 70
+        }
+    }
+}
+
+[2025-12-30 03:59:22] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 03:59:22] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 03:59:22] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Avax\\HTTP\\Request\\Request::__construct(): Argument #1 ($session) must be of type Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface|string|null, Avax\\HTTP\\Session\\Core\\Lifecycle\\SessionEngine given, called in C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php on line 130",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 70
+        }
+    }
+}
+
+[2025-12-30 03:59:22] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 03:59:22] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 03:59:22] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Avax\\HTTP\\Request\\Request::__construct(): Argument #1 ($session) must be of type Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface|string|null, Avax\\HTTP\\Session\\Core\\Lifecycle\\SessionEngine given, called in C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php on line 130",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 70
+        }
+    }
+}
+
+[2025-12-30 03:59:23] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 03:59:23] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 03:59:23] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Avax\\HTTP\\Request\\Request::__construct(): Argument #1 ($session) must be of type Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface|string|null, Avax\\HTTP\\Session\\Core\\Lifecycle\\SessionEngine given, called in C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php on line 130",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 70
+        }
+    }
+}
+
+[2025-12-30 04:01:33] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:01:33] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:01:33] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Avax\\HTTP\\Request\\Request::__construct(): Argument #1 ($session) must be of type Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface|string|null, Avax\\HTTP\\Session\\Core\\Lifecycle\\SessionEngine given, called in C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php on line 130",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 70
+        }
+    }
+}
+
+[2025-12-30 04:01:34] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:01:34] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:01:34] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Avax\\HTTP\\Request\\Request::__construct(): Argument #1 ($session) must be of type Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface|string|null, Avax\\HTTP\\Session\\Core\\Lifecycle\\SessionEngine given, called in C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php on line 130",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 70
+        }
+    }
+}
+
+[2025-12-30 04:01:34] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:01:34] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:01:34] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Avax\\HTTP\\Request\\Request::__construct(): Argument #1 ($session) must be of type Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface|string|null, Avax\\HTTP\\Session\\Core\\Lifecycle\\SessionEngine given, called in C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php on line 130",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 70
+        }
+    }
+}
+
+[2025-12-30 04:01:35] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:01:35] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:01:35] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Avax\\HTTP\\Request\\Request::__construct(): Argument #1 ($session) must be of type Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface|string|null, Avax\\HTTP\\Session\\Core\\Lifecycle\\SessionEngine given, called in C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php on line 130",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 70
+        }
+    }
+}
+
+[2025-12-30 04:02:00] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:02:00] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:02:00] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Avax\\HTTP\\Request\\Request::__construct(): Argument #1 ($session) must be of type Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface|string|null, Avax\\HTTP\\Session\\Core\\Lifecycle\\SessionEngine given, called in C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php on line 130",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 70
+        }
+    }
+}
+
+[2025-12-30 04:02:10] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:02:10] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:02:10] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Avax\\HTTP\\Request\\Request::__construct(): Argument #1 ($session) must be of type Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface|string|null, Avax\\HTTP\\Session\\Core\\Lifecycle\\SessionEngine given, called in C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php on line 130",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 70
+        }
+    }
+}
+
+[2025-12-30 04:02:16] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:02:16] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:02:16] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Avax\\HTTP\\Request\\Request::__construct(): Argument #1 ($session) must be of type Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface|string|null, Avax\\HTTP\\Session\\Core\\Lifecycle\\SessionEngine given, called in C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php on line 130",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 70
+        }
+    }
+}
+
+[2025-12-30 04:02:18] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:02:18] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:02:18] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Avax\\HTTP\\Request\\Request::__construct(): Argument #1 ($session) must be of type Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface|string|null, Avax\\HTTP\\Session\\Core\\Lifecycle\\SessionEngine given, called in C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php on line 130",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 70
+        }
+    }
+}
+
+[2025-12-30 04:02:20] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:02:20] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:02:20] ❌ [ERROR] Failed to create Request from globals. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+    "line": 142,
+    "exception": {
+        "message": "Failed to create Request from globals.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+        "line": 142,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(65): Avax\\HTTP\\Request\\Request::createFromGlobals()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#3 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#4 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Avax\\HTTP\\Request\\Request::__construct(): Argument #1 ($session) must be of type Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface|string|null, Avax\\HTTP\\Session\\Core\\Lifecycle\\SessionEngine given, called in C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php on line 130",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Request\\Request.php",
+            "line": 70
+        }
+    }
+}
+
+[2025-12-30 04:12:22] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:12:22] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:12:22] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 04:12:24] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:12:24] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:12:24] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/favicon.ico",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 04:12:24] ❌ [ERROR] Unhandled exception during request processing {
+    "exception": {
+        "message": "No route matched and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(186): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\RequestLoggerMiddleware.php(49): Avax\\Container\\Application\\Kernel->Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(189): Avax\\HTTP\\Middleware\\RequestLoggerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SessionLifecycleMiddleware.php(34): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(189): Avax\\HTTP\\Middleware\\SessionLifecycleMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SecurityHeadersMiddleware.php(27): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(189): Avax\\HTTP\\Middleware\\SecurityHeadersMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\ExceptionHandlerMiddleware.php(57): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(189): Avax\\HTTP\\Middleware\\ExceptionHandlerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(195): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(70): Avax\\Container\\Application\\Kernel->generateResponse(Object(Avax\\HTTP\\Request\\Request))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#13 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#14 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 04:20:36] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:20:36] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:20:36] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:20:36] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:24:22] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:24:22] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:42:44] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:42:44] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:42:44] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:42:44] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:43:31] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:43:31] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:43:31] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:43:31] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:43:49] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:43:49] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:43:49] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:43:49] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:45:53] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:45:53] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:45:53] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 04:45:53] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:45:53] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:45:53] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/favicon.ico",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 04:45:53] ❌ [ERROR] Unhandled exception during request processing {
+    "exception": {
+        "message": "No route matched and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(190): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\RequestLoggerMiddleware.php(49): Avax\\Container\\Application\\Kernel->Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\RequestLoggerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SessionLifecycleMiddleware.php(34): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\SessionLifecycleMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SecurityHeadersMiddleware.php(27): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\SecurityHeadersMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\ExceptionHandlerMiddleware.php(57): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\ExceptionHandlerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(199): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(70): Avax\\Container\\Application\\Kernel->generateResponse(Object(Avax\\HTTP\\Request\\Request))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#13 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#14 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/favicon.ico",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 04:45:54] ❌ [ERROR] Unhandled exception during request processing {
+    "exception": {
+        "message": "No route matched and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(190): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\RequestLoggerMiddleware.php(49): Avax\\Container\\Application\\Kernel->Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\RequestLoggerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SessionLifecycleMiddleware.php(34): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\SessionLifecycleMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SecurityHeadersMiddleware.php(27): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\SecurityHeadersMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\ExceptionHandlerMiddleware.php(57): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\ExceptionHandlerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(199): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(70): Avax\\Container\\Application\\Kernel->generateResponse(Object(Avax\\HTTP\\Request\\Request))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#13 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#14 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/favicon.ico",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 04:45:54] ❌ [ERROR] Unhandled exception during request processing {
+    "exception": {
+        "message": "No route matched and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(190): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\RequestLoggerMiddleware.php(49): Avax\\Container\\Application\\Kernel->Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\RequestLoggerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SessionLifecycleMiddleware.php(34): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\SessionLifecycleMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SecurityHeadersMiddleware.php(27): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\SecurityHeadersMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\ExceptionHandlerMiddleware.php(57): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\ExceptionHandlerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(199): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(70): Avax\\Container\\Application\\Kernel->generateResponse(Object(Avax\\HTTP\\Request\\Request))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#13 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#14 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:45:54] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 04:45:55] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 04:45:55] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 04:45:55] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/favicon.ico",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 04:45:55] ❌ [ERROR] Unhandled exception during request processing {
+    "exception": {
+        "message": "No route matched and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(190): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\RequestLoggerMiddleware.php(49): Avax\\Container\\Application\\Kernel->Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\RequestLoggerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SessionLifecycleMiddleware.php(34): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\SessionLifecycleMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SecurityHeadersMiddleware.php(27): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\SecurityHeadersMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\ExceptionHandlerMiddleware.php(57): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\ExceptionHandlerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(199): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(70): Avax\\Container\\Application\\Kernel->generateResponse(Object(Avax\\HTTP\\Request\\Request))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#13 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#14 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 05:11:38] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 05:11:38] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 05:11:38] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 05:11:38] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 05:12:08] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 05:12:08] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 05:12:08] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 05:12:08] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 13:26:31] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 13:26:31] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 13:26:31] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 13:26:32] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 13:26:32] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 13:26:32] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/favicon.ico",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 13:26:32] ❌ [ERROR] Unhandled exception during request processing {
+    "exception": {
+        "message": "No route matched and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(190): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\RequestLoggerMiddleware.php(49): Avax\\Container\\Application\\Kernel->Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\RequestLoggerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SessionLifecycleMiddleware.php(34): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\SessionLifecycleMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SecurityHeadersMiddleware.php(27): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\SecurityHeadersMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\ExceptionHandlerMiddleware.php(57): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\ExceptionHandlerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(199): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(70): Avax\\Container\\Application\\Kernel->generateResponse(Object(Avax\\HTTP\\Request\\Request))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#13 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#14 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2025-12-30 21:27:55] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 21:27:55] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 21:27:55] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 21:27:59] ✅ [INFO] ✅ Route cache loaded. {
+    "cache": "C:\\Users\\shomsy\\PhpstormProjects\\components\\storage\/cache\/routes.cache.php"
+}
+
+[2025-12-30 21:27:59] ✅ [INFO] 🔁 Closure-based routes loaded from disk. {
+    "directory": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\/HTTP\/routes\/"
+}
+
+[2025-12-30 21:27:59] ✅ [INFO] Incoming request {
+    "method": "GET",
+    "uri": "https:\/\/components.test\/favicon.ico",
+    "ip": "127.0.0.1"
+}
+
+[2025-12-30 21:27:59] ❌ [ERROR] Unhandled exception during request processing {
+    "exception": {
+        "message": "No route matched and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(190): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\RequestLoggerMiddleware.php(49): Avax\\Container\\Application\\Kernel->Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\RequestLoggerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SessionLifecycleMiddleware.php(34): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\SessionLifecycleMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\SecurityHeadersMiddleware.php(27): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\SecurityHeadersMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Middleware\\ExceptionHandlerMiddleware.php(57): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(193): Avax\\HTTP\\Middleware\\ExceptionHandlerMiddleware->handle(Object(Avax\\HTTP\\Request\\Request), Object(Closure))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(199): Avax\\Container\\Application\\Kernel::Avax\\Container\\Application\\{closure}(Object(Avax\\HTTP\\Request\\Request))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Kernel.php(70): Avax\\Container\\Application\\Kernel->generateResponse(Object(Avax\\HTTP\\Request\\Request))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Application\\Application.php(33): Avax\\Container\\Application\\Kernel->handleHttpRequest()",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\index.php(12): Avax\\Container\\Application\\Application->run()",
+            "#13 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#14 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+

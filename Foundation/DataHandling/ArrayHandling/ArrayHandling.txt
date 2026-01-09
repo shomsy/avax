@@ -3,32 +3,32 @@
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling;
+namespace Avax\DataHandling\ArrayHandling;
 
 use ArrayAccess;
 use ArrayIterator;
 use Closure;
 use Countable;
-use Gemini\DataHandling\ArrayHandling\Traits\AbstractDependenciesTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\AdvancedStringSearchTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\AggregationTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\ArrayAccessTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\ArrayConversionTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\CollectionWalkthroughTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\ConditionalsTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\DebugTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\LazyEvaluationTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\LockableTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\MacrosTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\ManageItemsTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\MetaInfoTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\OrderManipulationTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\PartitioningTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\SetOperationsTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\SortOperationsTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\StringManipulationTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\StructureConversionTrait;
-use Gemini\DataHandling\ArrayHandling\Traits\TransformationTrait;
+use Avax\DataHandling\ArrayHandling\Traits\AbstractDependenciesTrait;
+use Avax\DataHandling\ArrayHandling\Traits\AdvancedStringSearchTrait;
+use Avax\DataHandling\ArrayHandling\Traits\AggregationTrait;
+use Avax\DataHandling\ArrayHandling\Traits\ArrayAccessTrait;
+use Avax\DataHandling\ArrayHandling\Traits\ArrayConversionTrait;
+use Avax\DataHandling\ArrayHandling\Traits\CollectionWalkthroughTrait;
+use Avax\DataHandling\ArrayHandling\Traits\ConditionalsTrait;
+use Avax\DataHandling\ArrayHandling\Traits\DebugTrait;
+use Avax\DataHandling\ArrayHandling\Traits\LazyEvaluationTrait;
+use Avax\DataHandling\ArrayHandling\Traits\LockableTrait;
+use Avax\DataHandling\ArrayHandling\Traits\MacrosTrait;
+use Avax\DataHandling\ArrayHandling\Traits\ManageItemsTrait;
+use Avax\DataHandling\ArrayHandling\Traits\MetaInfoTrait;
+use Avax\DataHandling\ArrayHandling\Traits\OrderManipulationTrait;
+use Avax\DataHandling\ArrayHandling\Traits\PartitioningTrait;
+use Avax\DataHandling\ArrayHandling\Traits\SetOperationsTrait;
+use Avax\DataHandling\ArrayHandling\Traits\SortOperationsTrait;
+use Avax\DataHandling\ArrayHandling\Traits\StringManipulationTrait;
+use Avax\DataHandling\ArrayHandling\Traits\StructureConversionTrait;
+use Avax\DataHandling\ArrayHandling\Traits\TransformationTrait;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Traversable;
@@ -68,7 +68,7 @@ use Traversable;
  * @method Arrhae fromJson(string $json) Creates an Arrhae instance from a JSON string.
  * @method string toJson() Converts the array to a JSON string.
  *
- * @package Gemini\DataHandling\ArrayHandling
+ * @package Avax\DataHandling\ArrayHandling
  */
 class Arrhae implements ArrayAccess, IteratorAggregate, Countable
 {
@@ -127,11 +127,11 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      */
     protected function convertToArray(iterable $items) : array
     {
-        if (is_array($items)) {
+        if (is_array(value: $items)) {
             return $items;
         }
 
-        return iterator_to_array($items, false);
+        return iterator_to_array(iterator: $items, preserve_keys: false);
     }
 
     /**
@@ -152,7 +152,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
     {
         // First create a new collection instance from the provided items
         // Then immediately lock it to ensure immutability
-        return self::make($items)->lock();
+        return self::make(items: $items)->lock();
     }
 
     /**
@@ -169,7 +169,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * @throws InvalidArgumentException If the provided items cannot be converted to an array.
      *
      * @example
-     * use Gemini\DataHandling\Arrhae;
+     * use Avax\DataHandling\Arrhae;
      *
      * // Creating a collection from an array
      * $collection = Arrhae::make(['apple', 'banana', 'cherry']);
@@ -241,16 +241,16 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      */
     public function set(string|int $key, mixed $value) : self
     {
-        if (! is_string($key) && ! is_int($key)) {
+        if (! is_string(value: $key) && ! is_int(value: $key)) {
             throw new InvalidArgumentException(message: "Key must be a string or an integer.");
         }
 
         $this->assertNotLocked();
 
-        if (is_string($key) && str_contains($key, '.')) {
+        if (is_string(value: $key) && str_contains(haystack: $key, needle: '.')) {
             $array = &$this->items;
-            foreach (explode('.', $key) as $segment) {
-                if (! isset($array[$segment]) || ! is_array($array[$segment])) {
+            foreach (explode(separator: '.', string: $key) as $segment) {
+                if (! isset($array[$segment]) || ! is_array(value: $array[$segment])) {
                     $array[$segment] = [];
                 }
 
@@ -303,14 +303,14 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      */
     public function get(string|int $key, mixed $default = null) : mixed
     {
-        if (array_key_exists($key, $this->items)) {
+        if (array_key_exists(key: $key, array: $this->items)) {
             return $this->items[$key];
         }
 
-        if (is_string($key) && str_contains($key, '.')) {
+        if (is_string(value: $key) && str_contains(haystack: $key, needle: '.')) {
             $array = $this->items;
-            foreach (explode('.', $key) as $segment) {
-                if (is_array($array) && array_key_exists($segment, $array)) {
+            foreach (explode(separator: '.', string: $key) as $segment) {
+                if (is_array(value: $array) && array_key_exists(key: $segment, array: $array)) {
                     $array = $array[$segment];
                 } else {
                     return $default;
@@ -343,21 +343,21 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
     {
         $this->assertNotLocked();
 
-        if (array_key_exists($key, $this->items)) {
+        if (array_key_exists(key: $key, array: $this->items)) {
             unset($this->items[$key]);
-        } elseif (is_string($key) && str_contains($key, '.')) {
+        } elseif (is_string(value: $key) && str_contains(haystack: $key, needle: '.')) {
             $array = &$this->items;
-            $keys  = explode('.', $key);
-            while (count($keys) > 1) {
-                $segment = array_shift($keys);
-                if (! isset($array[$segment]) || ! is_array($array[$segment])) {
+            $keys  = explode(separator: '.', string: $key);
+            while (count(value: $keys) > 1) {
+                $segment = array_shift(array: $keys);
+                if (! isset($array[$segment]) || ! is_array(value: $array[$segment])) {
                     return $this;
                 }
 
                 $array = &$array[$segment];
             }
 
-            unset($array[array_shift($keys)]);
+            unset($array[array_shift(array: $keys)]);
         }
 
         return $this;
@@ -421,7 +421,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      */
     public function count() : int
     {
-        return count($this->items);
+        return count(value: $this->items);
     }
 
     /**
@@ -455,10 +455,10 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
     public function pluck(string|Closure $key) : array
     {
         return match (true) {
-            $key instanceof Closure => array_map($key, $this->items),
+            $key instanceof Closure => array_map(callback: $key, array: $this->items),
             default                 => array_map(
-                fn($item) => is_array($item) && array_key_exists($key, $item) ? $item[$key] : null,
-                $this->items
+                callback: fn($item) => is_array(value: $item) && array_key_exists(key: $key, array: $item) ? $item[$key] : null,
+                array   : $this->items
             ),
         };
     }
@@ -482,7 +482,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      */
     public function arrGet(string $key, mixed $default = null) : mixed
     {
-        if (is_array($this->items) && array_key_exists($key, $this->items)) {
+        if (is_array(value: $this->items) && array_key_exists(key: $key, array: $this->items)) {
             return $this->items[$key];
         }
 
@@ -511,12 +511,12 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
     public function getValue(string $key, mixed $default = null) : mixed
     {
         $firstItem = $this->first();
-        if (! $firstItem || ! is_array($firstItem)) {
+        if (! $firstItem || ! is_array(value: $firstItem)) {
             return $default;
         }
 
-        foreach (explode('.', $key) as $segment) {
-            if (is_array($firstItem) && array_key_exists($segment, $firstItem)) {
+        foreach (explode(separator: '.', string: $key) as $segment) {
+            if (is_array(value: $firstItem) && array_key_exists(key: $segment, array: $firstItem)) {
                 $firstItem = $firstItem[$segment];
             } else {
                 return $default;
@@ -575,7 +575,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
             return $default;
         }
 
-        $firstItem = reset($this->items);
+        $firstItem = reset(array: $this->items);
         if ($key === null) {
             return $firstItem;
         }
@@ -606,7 +606,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
             return $key($item);
         }
 
-        if (is_array($item)) {
+        if (is_array(value: $item)) {
             return $this->getValueFromArray(array: $item, key: $key, default: $default);
         }
 
@@ -626,14 +626,14 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      */
     protected function getValueFromArray(array $array, string|int $key, mixed $default = null) : mixed
     {
-        if (array_key_exists($key, $array)) {
+        if (array_key_exists(key: $key, array: $array)) {
             return $array[$key];
         }
 
-        if (is_string($key) && str_contains($key, '.')) {
-            $segments = explode('.', $key);
+        if (is_string(value: $key) && str_contains(haystack: $key, needle: '.')) {
+            $segments = explode(separator: '.', string: $key);
             foreach ($segments as $segment) {
-                if (is_array($array) && array_key_exists($segment, $array)) {
+                if (is_array(value: $array) && array_key_exists(key: $segment, array: $array)) {
                     $array = $array[$segment];
                 } else {
                     return $default;
@@ -673,6 +673,26 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Determines if the collection is operating in batch mode.
+     *
+     * Batch mode indicates that the collection is handling multiple items
+     * as a single unit of work, which can be useful for bulk operations
+     * and performance optimization in data processing scenarios.
+     *
+     * @return bool True if the collection is in batch mode, false otherwise
+     *
+     * @since 1.0.0
+     * @api
+     *
+     * @see   \Avax\DataHandling\ArrayHandling\Arrhae::setItems() For setting batch mode
+     */
+    public function isBatch() : bool
+    {
+        // Verify the existence of 'batch' flag in the internal items collection
+        return isset($this->items['batch']);
+    }
+
+    /**
      * Retrieves the items stored in the `Arrhae` instance.
      *
      * This is a protected method that returns the array of items, which is useful in internal operations.
@@ -709,7 +729,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 /**
  * This trait provides common query operations for collections.
@@ -741,7 +761,7 @@ trait AbstractDependenciesTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use FuzzyWuzzy\Fuzz;
 use FuzzyWuzzy\Process;
@@ -752,7 +772,7 @@ use InvalidArgumentException;
  *
  * Provides advanced string search functionalities for collections, including fuzzy search and similarity-based search.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait AdvancedStringSearchTrait
 {
@@ -789,27 +809,27 @@ trait AdvancedStringSearchTrait
     public function fuzzyMatch(string $query, float|null $threshold = null, string|null $key = null) : static
     {
         $threshold ??= 70.0;
-        $this->isProperThreshold($threshold);
+        $this->isProperThreshold(threshold: $threshold);
 
         $fuzz    = new Fuzz();
         $process = new Process(fuzz: $fuzz);
 
         $matchedItems = array_filter(
-            $this->getItems(),
-            function ($item) use ($key, $fuzz, $query, $threshold) : bool {
+            array   : $this->getItems(),
+            callback: function ($item) use ($key, $fuzz, $query, $threshold) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
-                $similarity = $fuzz->ratio(s1: strtolower($query), s2: strtolower($target));
+                $similarity = $fuzz->ratio(s1: strtolower(string: $query), s2: strtolower(string: $target));
 
                 return $similarity >= $threshold;
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -857,29 +877,30 @@ trait AdvancedStringSearchTrait
      * //     ['title' => 'PHP for Beginners'],
      * // ]
      */
-    public function similaritySearch(string $query, float $threshold = 70.0, string|null $key = null) : static
+    public function similaritySearch(string $query, float|null $threshold = null, string|null $key = null) : static
     {
-        $this->isProperThreshold($threshold);
+        $threshold ??= 70.0;
+        $this->isProperThreshold(threshold: $threshold);
 
         $fuzz    = new Fuzz();
         $process = new Process(fuzz: $fuzz);
 
         $matchedItems = array_filter(
-            $this->getItems(),
-            function ($item) use ($key, $fuzz, $query, $threshold) : bool {
+            array   : $this->getItems(),
+            callback: function ($item) use ($key, $fuzz, $query, $threshold) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
-                $similarity = $fuzz->ratio(s1: strtolower($query), s2: strtolower($target));
+                $similarity = $fuzz->ratio(s1: strtolower(string: $query), s2: strtolower(string: $target));
 
                 return $similarity >= $threshold;
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -888,12 +909,10 @@ trait AdvancedStringSearchTrait
      * This method finds items within a certain distance from the query and sorts them by their similarity to the query.
      *
      * @param string      $query       The search query string.
-     * @param int         $maxDistance The maximum Levenshtein distance allowed.
+     * @param int|null    $maxDistance The maximum Levenshtein distance allowed.
      * @param string|null $key         The key to search within if items are associative arrays.
      *
      * @return static A new instance containing the matched items sorted by similarity.
-     *
-     * @throws InvalidArgumentException If the max distance is negative.
      *
      * @example
      * $arrh = new Arrhae(['apple', 'apricot', 'banana', 'grape', 'pineapple']);
@@ -924,18 +943,18 @@ trait AdvancedStringSearchTrait
         foreach ($this->getItems() as $item) {
             $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-            if (! is_string($target)) {
+            if (! is_string(value: $target)) {
                 continue;
             }
 
-            $distance = levenshtein(strtolower($query), strtolower($target));
+            $distance = levenshtein(string1: strtolower(string: $query), string2: strtolower(string: $target));
 
             if ($distance <= $maxDistance) {
                 $matchedItems[$distance][] = $item;
             }
         }
 
-        ksort($matchedItems);
+        ksort(array: $matchedItems);
 
         // Flatten the array while preserving order
         $sortedMatchedItems = [];
@@ -978,20 +997,20 @@ trait AdvancedStringSearchTrait
     public function partialMatch(string $query, string|null $key = null) : static
     {
         $matchedItems = array_filter(
-            $this->getItems(),
-            static function ($item) use ($key, $query) : bool {
+            array   : $this->getItems(),
+            callback: static function ($item) use ($key, $query) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
                 // Check if query is a substring of target
-                return stripos($target, $query) !== false;
+                return stripos(haystack: $target, needle: $query) !== false;
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -1013,25 +1032,25 @@ trait AdvancedStringSearchTrait
     public function tokenSortMatch(string $query, float|null $threshold = null, string|null $key = null) : static
     {
         $threshold ??= 70.0;
-        $this->isProperThreshold($threshold);
+        $this->isProperThreshold(threshold: $threshold);
 
         $fuzz    = new Fuzz();
         $process = new Process(fuzz: $fuzz);
 
         // Sort tokens in the query
-        $sortedQuery = $this->sortTokens($query);
+        $sortedQuery = $this->sortTokens(string: $query);
 
         $matchedItems = array_filter(
-            $this->getItems(),
-            function ($item) use ($key, $fuzz, $sortedQuery, $threshold) : bool {
+            array   : $this->getItems(),
+            callback: function ($item) use ($key, $fuzz, $sortedQuery, $threshold) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
                 // Sort tokens in the target
-                $sortedTarget = $this->sortTokens($target);
+                $sortedTarget = $this->sortTokens(string: $target);
 
                 // Calculating similarity using FuzzyWuzzy
                 $similarity = $fuzz->ratio(s1: $sortedQuery, s2: $sortedTarget);
@@ -1040,7 +1059,7 @@ trait AdvancedStringSearchTrait
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -1052,10 +1071,10 @@ trait AdvancedStringSearchTrait
      */
     protected function sortTokens(string $string) : string
     {
-        $tokens = explode(' ', strtolower($string));
-        sort($tokens); // Sort tokens in ascending order
+        $tokens = explode(separator: ' ', string: strtolower(string: $string));
+        sort(array: $tokens); // Sort tokens in ascending order
 
-        return implode(' ', $tokens);
+        return implode(separator: ' ', array: $tokens);
     }
 
     /**
@@ -1064,12 +1083,10 @@ trait AdvancedStringSearchTrait
      * This method calculates the similarity ratio between the unique tokens of the query and target strings.
      *
      * @param string      $query     The search query string.
-     * @param float       $threshold The minimum similarity percentage (0 to 100) required for a match.
+     * @param float|null  $threshold The minimum similarity percentage (0 to 100) required for a match.
      * @param string|null $key       The key to search within if items are associative arrays.
      *
      * @return static A new instance containing the matched items.
-     *
-     * @throws InvalidArgumentException If the threshold is not between 0 and 100.
      *
      * @example
      * $arrh = new Arrhae(['apple banana', 'banana apple', 'apple grape', 'banana grape']);
@@ -1079,30 +1096,30 @@ trait AdvancedStringSearchTrait
     public function tokenSetMatch(string $query, float|null $threshold = null, string|null $key = null) : static
     {
         $threshold ??= 70.0;
-        $this->isProperThreshold($threshold);
+        $this->isProperThreshold(threshold: $threshold);
 
         // Initializing FuzzyWuzzy components
         $fuzz    = new Fuzz();
         $process = new Process(fuzz: $fuzz);
 
         // Get unique tokens in the query
-        $uniqueQueryTokens = array_unique(explode(' ', strtolower($query)));
-        sort($uniqueQueryTokens);
-        $sortedQuery = implode(' ', $uniqueQueryTokens);
+        $uniqueQueryTokens = array_unique(array: explode(separator: ' ', string: strtolower(string: $query)));
+        sort(array: $uniqueQueryTokens);
+        $sortedQuery = implode(separator: ' ', array: $uniqueQueryTokens);
 
         $matchedItems = array_filter(
-            $this->getItems(),
-            function ($item) use ($key, $fuzz, $sortedQuery, $threshold, $process) : bool {
+            array   : $this->getItems(),
+            callback: function ($item) use ($key, $fuzz, $sortedQuery, $threshold, $process) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
                 // Get unique tokens in the target
-                $uniqueTargetTokens = array_unique(explode(' ', strtolower($target)));
-                sort($uniqueTargetTokens);
-                $sortedTarget = implode(' ', $uniqueTargetTokens);
+                $uniqueTargetTokens = array_unique(array: explode(separator: ' ', string: strtolower(string: $target)));
+                sort(array: $uniqueTargetTokens);
+                $sortedTarget = implode(separator: ' ', array: $uniqueTargetTokens);
 
                 // Calculating similarity using FuzzyWuzzy
                 $similarity = $fuzz->ratio(s1: $sortedQuery, s2: $sortedTarget);
@@ -1111,7 +1128,7 @@ trait AdvancedStringSearchTrait
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -1131,25 +1148,25 @@ trait AdvancedStringSearchTrait
      */
     public function phoneticMatch(string $query, string|null $key = null) : static
     {
-        $queryPhonetic = metaphone(strtolower($query));
+        $queryPhonetic = metaphone(string: strtolower(string: $query));
 
         $matchedItems = array_filter(
-            $this->getItems(),
-            static function ($item) use ($key, $queryPhonetic) : bool {
+            array   : $this->getItems(),
+            callback: static function ($item) use ($key, $queryPhonetic) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
                 // Calculate phonetic code
-                $targetPhonetic = metaphone(strtolower($target));
+                $targetPhonetic = metaphone(string: strtolower(string: $target));
 
                 return $queryPhonetic === $targetPhonetic;
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -1183,24 +1200,24 @@ trait AdvancedStringSearchTrait
      */
     public function regexSearch(string $pattern, string|null $key = null) : static
     {
-        if (@preg_match($pattern, '') === false) {
+        if (@preg_match(pattern: $pattern, subject: '') === false) {
             throw new InvalidArgumentException(message: 'Invalid regular expression pattern.');
         }
 
         $matchedItems = array_filter(
-            $this->getItems(),
-            static function ($item) use ($key, $pattern) : bool {
+            array   : $this->getItems(),
+            callback: static function ($item) use ($key, $pattern) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
-                if (! is_string($target)) {
+                if (! is_string(value: $target)) {
                     return false;
                 }
 
-                return preg_match($pattern, $target) === 1;
+                return preg_match(pattern: $pattern, subject: $target) === 1;
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -1237,15 +1254,15 @@ trait AdvancedStringSearchTrait
     public function customMatch(callable $callback, string|null $key = null) : static
     {
         $matchedItems = array_filter(
-            $this->getItems(),
-            static function ($item) use ($key, $callback) {
+            array   : $this->getItems(),
+            callback: static function ($item) use ($key, $callback) {
                 $target = $key !== null ? ($item[$key] ?? null) : $item;
 
                 return $callback($target, $item);
             }
         );
 
-        return new static(items: array_values($matchedItems));
+        return new static(items: array_values(array: $matchedItems));
     }
 
     /**
@@ -1265,20 +1282,20 @@ trait AdvancedStringSearchTrait
      */
     public function sortBySimilarity(string $query, string|null $key = null) : array
     {
-        $queryLower = strtolower($query);
+        $queryLower = strtolower(string: $query);
 
         $sortedItems = $this->getItems();
-        usort($sortedItems, function ($a, $b) use ($key, $queryLower) : int {
+        usort(array: $sortedItems, callback: function ($a, $b) use ($key, $queryLower) : int {
             $fuzz   = new Fuzz();
             $aValue = $key !== null ? ($a[$key] ?? '') : $a;
             $bValue = $key !== null ? ($b[$key] ?? '') : $b;
 
-            if (! is_string($aValue) || ! is_string($bValue)) {
+            if (! is_string(value: $aValue) || ! is_string(value: $bValue)) {
                 return 0;
             }
 
-            $similarityA = $fuzz->ratio(s1: $queryLower, s2: strtolower($aValue));
-            $similarityB = $fuzz->ratio(s1: $queryLower, s2: strtolower($bValue));
+            $similarityA = $fuzz->ratio(s1: $queryLower, s2: strtolower(string: $aValue));
+            $similarityB = $fuzz->ratio(s1: $queryLower, s2: strtolower(string: $bValue));
 
             return $similarityB <=> $similarityA;
         });
@@ -1292,7 +1309,7 @@ trait AdvancedStringSearchTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use InvalidArgumentException;
 use LogicException;
@@ -1307,7 +1324,7 @@ use LogicException;
  * such as arrays of associative arrays or objects. It offers flexible methods
  * that can operate on specific keys or use callbacks for dynamic value extraction.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait AggregationTrait
 {
@@ -1343,7 +1360,7 @@ trait AggregationTrait
      */
     public function average(string|callable $key) : float
     {
-        $count = count($this->getItems());
+        $count = count(value: $this->getItems());
 
         return $count !== 0 ? $this->sum(key: $key) / $count : 0.0;
     }
@@ -1383,17 +1400,17 @@ trait AggregationTrait
         $this->validateData();
 
         return array_reduce(
-            $this->getItems(),
-            static function ($carry, $item) use ($key) : int|float {
-                $value = is_callable($key) ? $key($item) : ($item[$key] ?? 0);
+            array   : $this->getItems(),
+            callback: static function ($carry, $item) use ($key) : int|float {
+                $value = is_callable(value: $key) ? $key($item) : ($item[$key] ?? 0);
 
-                if (! is_numeric($value)) {
-                    throw new InvalidArgumentException('Non-numeric value encountered in sum calculation.');
+                if (! is_numeric(value: $value)) {
+                    throw new InvalidArgumentException(message: 'Non-numeric value encountered in sum calculation.');
                 }
 
                 return $carry + $value;
             },
-            0
+            initial : 0
         );
     }
 
@@ -1409,8 +1426,8 @@ trait AggregationTrait
     {
         $items = $this->getItems();
 
-        if (! is_array($items)) {
-            throw new LogicException('Expected data to be an array.');
+        if (! is_array(value: $items)) {
+            throw new LogicException(message: 'Expected data to be an array.');
         }
     }
 
@@ -1448,10 +1465,10 @@ trait AggregationTrait
         $values = $this->mapValues(key: $key);
 
         if (empty($values)) {
-            throw new LogicException('Cannot determine minimum value of an empty collection.');
+            throw new LogicException(message: 'Cannot determine minimum value of an empty collection.');
         }
 
-        return min($values);
+        return min(value: $values);
     }
 
     /**
@@ -1488,8 +1505,8 @@ trait AggregationTrait
         $this->validateData();
 
         return array_map(
-            static fn($item) => is_callable($key) ? $key($item) : ($item[$key] ?? null),
-            $this->getItems()
+            callback: static fn($item) => is_callable(value: $key) ? $key($item) : ($item[$key] ?? null),
+            array   : $this->getItems()
         );
     }
 
@@ -1527,10 +1544,10 @@ trait AggregationTrait
         $values = $this->mapValues(key: $key);
 
         if (empty($values)) {
-            throw new LogicException('Cannot determine maximum value of an empty collection.');
+            throw new LogicException(message: 'Cannot determine maximum value of an empty collection.');
         }
 
-        return max($values);
+        return max(value: $values);
     }
 
     /**
@@ -1573,7 +1590,7 @@ trait AggregationTrait
 
         $result = [];
         foreach ($this->getItems() as $item) {
-            $value          = is_callable($key) ? $key($item) : ($item[$key] ?? null);
+            $value          = is_callable(value: $key) ? $key($item) : ($item[$key] ?? null);
             $result[$value] = ($result[$value] ?? 0) + 1;
         }
 
@@ -1613,7 +1630,7 @@ trait AggregationTrait
     {
         $this->validateData();
 
-        return array_reduce($this->getItems(), $callback, $initial);
+        return array_reduce(array: $this->getItems(), callback: $callback, initial: $initial);
     }
 
     /**
@@ -1694,7 +1711,7 @@ trait AggregationTrait
 
         $grouped = [];
         foreach ($this->getItems() as $item) {
-            $groupKey             = is_callable($key) ? $key($item) : ($item[$key] ?? null);
+            $groupKey             = is_callable(value: $key) ? $key($item) : ($item[$key] ?? null);
             $grouped[$groupKey][] = $item;
         }
 
@@ -1707,7 +1724,7 @@ trait AggregationTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use InvalidArgumentException;
 use OutOfBoundsException;
@@ -1722,7 +1739,7 @@ use OutOfBoundsException;
  * such as arrays of associative arrays or objects. It leverages the `AbstractDependenciesTrait`
  * for dependency management, ensuring that the underlying data collection is properly handled.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait ArrayAccessTrait
 {
@@ -1788,13 +1805,13 @@ trait ArrayAccessTrait
     public function offsetSet(mixed $offset, mixed $value) : void
     {
         $items = $this->getItems();
-        if (is_null($offset)) {
+        if (is_null(value: $offset)) {
             $items[] = $value;
         } else {
             $items[$offset] = $value;
         }
 
-        $this->setItems($items);
+        $this->setItems(items: $items);
     }
 
     /**
@@ -1816,7 +1833,7 @@ trait ArrayAccessTrait
     {
         $items = $this->getItems();
         unset($items[$offset]);
-        $this->setItems($items);
+        $this->setItems(items: $items);
     }
 
     /**
@@ -1839,7 +1856,7 @@ trait ArrayAccessTrait
     {
         $items = $this->getItems();
 
-        return array_intersect_key($items, array_flip($keys));
+        return array_intersect_key($items, array_flip(array: $keys));
     }
 
     /**
@@ -1865,7 +1882,7 @@ trait ArrayAccessTrait
             $items[$key] = $value;
         }
 
-        $this->setItems($items);
+        $this->setItems(items: $items);
     }
 
     /**
@@ -1890,9 +1907,9 @@ trait ArrayAccessTrait
         $items = $this->getItems();
         $value = $items[$offset] ?? null;
 
-        if (array_key_exists($offset, $items)) {
+        if (array_key_exists(key: $offset, array: $items)) {
             unset($items[$offset]);
-            $this->setItems($items);
+            $this->setItems(items: $items);
         }
 
         return $value;
@@ -1926,7 +1943,7 @@ trait ArrayAccessTrait
 
         [$items[$offset1], $items[$offset2]] = [$items[$offset2], $items[$offset1]];
 
-        $this->setItems($items);
+        $this->setItems(items: $items);
     }
 
     /**
@@ -1943,7 +1960,7 @@ trait ArrayAccessTrait
      */
     public function keys() : array
     {
-        return array_keys($this->getItems());
+        return array_keys(array: $this->getItems());
     }
 
     /**
@@ -1960,7 +1977,7 @@ trait ArrayAccessTrait
      */
     public function values() : array
     {
-        return array_values($this->getItems());
+        return array_values(array: $this->getItems());
     }
 }
 
@@ -1969,7 +1986,7 @@ trait ArrayAccessTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use Exception;
 use InvalidArgumentException;
@@ -1986,7 +2003,7 @@ use SimpleXMLElement;
  * such as arrays of associative arrays or objects. It leverages the `AbstractDependenciesTrait`
  * for dependency management, ensuring that the underlying data collection is properly handled.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait ArrayConversionTrait
 {
@@ -2021,7 +2038,7 @@ trait ArrayConversionTrait
      */
     public function toJson(int $options = 0) : string
     {
-        $json = json_encode($this->toArray(), $options);
+        $json = json_encode(value: $this->toArray(), flags: $options);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new InvalidArgumentException(
                 message: 'Failed to encode collection to JSON: ' . json_last_error_msg()
@@ -2057,13 +2074,13 @@ trait ArrayConversionTrait
      */
     public function toArray() : array
     {
-        return array_map(function ($item) {
-            if (is_object($item) && method_exists($item, 'toArray')) {
+        return array_map(callback: function ($item) {
+            if (is_object(value: $item) && method_exists(object_or_class: $item, method: 'toArray')) {
                 return $item->toArray();
             }
 
             return $item;
-        }, $this->getItems());
+        },               array   : $this->getItems());
     }
 
     /**
@@ -2117,15 +2134,15 @@ trait ArrayConversionTrait
     {
         foreach ($data as $key => $value) {
             // Handle numeric keys by using 'item' as the tag name
-            if (is_numeric($key)) {
+            if (is_numeric(value: $key)) {
                 $key = 'item';
             }
 
-            if (is_array($value)) {
+            if (is_array(value: $value)) {
                 $child = $xml->addChild(qualifiedName: $key);
                 $this->arrayToXml(data: $value, xml: $child);
             } else {
-                $xml->addChild(qualifiedName: $key, value: htmlspecialchars((string) $value));
+                $xml->addChild(qualifiedName: $key, value: htmlspecialchars(string: (string) $value));
             }
         }
     }
@@ -2155,9 +2172,9 @@ trait ArrayConversionTrait
         }
 
         $filteredItems = array_filter(
-            $this->getItems(),
-            static fn($item, $key) : bool => in_array($key, $keys, true),
-            ARRAY_FILTER_USE_BOTH
+            array   : $this->getItems(),
+            callback: static fn($item, $key) : bool => in_array(needle: $key, haystack: $keys, strict: true),
+            mode    : ARRAY_FILTER_USE_BOTH
         );
 
         return new static(items: $filteredItems);
@@ -2188,9 +2205,9 @@ trait ArrayConversionTrait
         }
 
         $filteredItems = array_filter(
-            $this->getItems(),
-            static fn($item, $key) : bool => ! in_array($key, $keys, true),
-            ARRAY_FILTER_USE_BOTH
+            array   : $this->getItems(),
+            callback: static fn($item, $key) : bool => ! in_array(needle: $key, haystack: $keys, strict: true),
+            mode    : ARRAY_FILTER_USE_BOTH
         );
 
         return new static(items: $filteredItems);
@@ -2202,7 +2219,7 @@ trait ArrayConversionTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use Closure;
 use InvalidArgumentException;
@@ -2217,7 +2234,7 @@ use InvalidArgumentException;
  * such as arrays of associative arrays or objects. It leverages the `AbstractDependenciesTrait`
  * for dependency management, ensuring that the underlying data collection is properly handled.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait CollectionWalkthroughTrait
 {
@@ -2247,7 +2264,7 @@ trait CollectionWalkthroughTrait
      */
     public function map(Closure $callback) : static
     {
-        $mappedItems = array_map($callback, $this->getItems());
+        $mappedItems = array_map(callback: $callback, array: $this->getItems());
 
         return new static(items: $mappedItems);
     }
@@ -2366,7 +2383,7 @@ trait CollectionWalkthroughTrait
      */
     public function contains(mixed $value) : bool
     {
-        return in_array($value, $this->getItems(), true);
+        return in_array(needle: $value, haystack: $this->getItems(), strict: true);
     }
 
     /** ***Query and Search Methods*** */
@@ -2414,7 +2431,7 @@ trait CollectionWalkthroughTrait
      */
     public function search(mixed $value, bool $strict = false) : int|false
     {
-        return array_search($value, $this->getItems(), $strict);
+        return array_search(needle: $value, haystack: $this->getItems(), strict: $strict);
     }
 
     /**
@@ -2437,9 +2454,9 @@ trait CollectionWalkthroughTrait
      */
     public function lastIndexOf(mixed $value) : int|false
     {
-        $reversedItems = array_reverse($this->getItems(), true);
+        $reversedItems = array_reverse(array: $this->getItems(), preserve_keys: true);
 
-        return array_search($value, $reversedItems, true);
+        return array_search(needle: $value, haystack: $reversedItems, strict: true);
     }
 
     /**
@@ -2471,8 +2488,8 @@ trait CollectionWalkthroughTrait
     public function where(string $key, mixed $value) : static
     {
         $filtered = array_filter(
-            $this->getItems(),
-            static fn($item) : bool => ($item[$key] ?? null) === $value
+            array   : $this->getItems(),
+            callback: static fn($item) : bool => ($item[$key] ?? null) === $value
         );
 
         return new static(items: $filtered);
@@ -2506,15 +2523,15 @@ trait CollectionWalkthroughTrait
      */
     public function whereBetween(string $key, array $range) : static
     {
-        if (count($range) !== 2) {
+        if (count(value: $range) !== 2) {
             throw new InvalidArgumentException(message: 'Range array must contain exactly two elements: [min, max].');
         }
 
         [$min, $max] = $range;
 
         $filtered = array_filter(
-            $this->getItems(),
-            static fn($item) : bool => ($item[$key] ?? null) >= $min &&
+            array   : $this->getItems(),
+            callback: static fn($item) : bool => ($item[$key] ?? null) >= $min &&
                                        ($item[$key] ?? null) <= $max
         );
 
@@ -2554,8 +2571,8 @@ trait CollectionWalkthroughTrait
         }
 
         $filtered = array_filter(
-            $this->getItems(),
-            static fn($item) : bool => in_array($item[$key] ?? null, $values, true)
+            array   : $this->getItems(),
+            callback: static fn($item) : bool => in_array(needle: $item[$key] ?? null, haystack: $values, strict: true)
         );
 
         return new static(items: $filtered);
@@ -2588,15 +2605,15 @@ trait CollectionWalkthroughTrait
      */
     public function whereNotBetween(string $key, array $range) : static
     {
-        if (count($range) !== 2) {
+        if (count(value: $range) !== 2) {
             throw new InvalidArgumentException(message: 'Range array must contain exactly two elements: [min, max].');
         }
 
         [$min, $max] = $range;
 
         $filtered = array_filter(
-            $this->getItems(),
-            static fn($item) : bool => ($item[$key] ?? null) < $min ||
+            array   : $this->getItems(),
+            callback: static fn($item) : bool => ($item[$key] ?? null) < $min ||
                                        ($item[$key] ?? null) > $max
         );
 
@@ -2631,8 +2648,8 @@ trait CollectionWalkthroughTrait
     public function whereNull(string $key) : static
     {
         $filtered = array_filter(
-            $this->getItems(),
-            static fn($item) : bool => ($item[$key] ?? null) === null
+            array   : $this->getItems(),
+            callback: static fn($item) : bool => ($item[$key] ?? null) === null
         );
 
         return new static(items: $filtered);
@@ -2665,8 +2682,8 @@ trait CollectionWalkthroughTrait
     public function whereNotNull(string $key) : static
     {
         $filtered = array_filter(
-            $this->getItems(),
-            static fn($item) : bool => ($item[$key] ?? null) !== null
+            array   : $this->getItems(),
+            callback: static fn($item) : bool => ($item[$key] ?? null) !== null
         );
 
         return new static(items: $filtered);
@@ -2703,7 +2720,7 @@ trait CollectionWalkthroughTrait
      */
     public function whereInGroup(string $key, array $groups) : static
     {
-        return $this->filter(callback: static fn($item) : bool => in_array($item[$key] ?? null, $groups, true));
+        return $this->filter(callback: static fn($item) : bool => in_array(needle: $item[$key] ?? null, haystack: $groups, strict: true));
     }
 
     /**
@@ -2727,9 +2744,9 @@ trait CollectionWalkthroughTrait
     public function filter(Closure $callback) : static
     {
         $filteredItems = array_filter(
-            $this->getItems(),
-            $callback,
-            ARRAY_FILTER_USE_BOTH
+            array   : $this->getItems(),
+            callback: $callback,
+            mode    : ARRAY_FILTER_USE_BOTH
         );
 
         return new static(items: $filteredItems);
@@ -2771,8 +2788,8 @@ trait CollectionWalkthroughTrait
     public function updateWhere(Closure $condition, Closure $updater) : static
     {
         $updated = array_map(
-            static fn($item) => $condition($item) ? $updater($item) : $item,
-            $this->getItems()
+            callback: static fn($item) => $condition($item) ? $updater($item) : $item,
+            array   : $this->getItems()
         );
 
         return new static(items: $updated);
@@ -2812,13 +2829,13 @@ trait CollectionWalkthroughTrait
             'not in',
         ];
 
-        if (! in_array($operator, $supportedOperators, true)) {
+        if (! in_array(needle: $operator, haystack: $supportedOperators, strict: true)) {
             throw new InvalidArgumentException(message: 'Unsupported operator: ' . $operator);
         }
 
         $filteredItems = array_filter(
-            $this->items,
-            function ($item) use ($column, $operator, $value) : bool {
+            array   : $this->items,
+            callback: function ($item) use ($column, $operator, $value) : bool {
                 $itemValue = $this->getFromItem(item: $item, key: $column);
 
                 return match ($operator) {
@@ -2832,23 +2849,23 @@ trait CollectionWalkthroughTrait
                     '<='           => $itemValue <= $value,
                     '<=>'          => $itemValue <=> $value,
                     'contains'     => match (true) {
-                        is_string($itemValue) && is_string($value) => str_contains($itemValue, $value),
-                        is_array($itemValue)                       => in_array($value, $itemValue, true),
-                        default                                    => false,
+                        is_string(value: $itemValue) && is_string(value: $value) => str_contains(haystack: $itemValue, needle: $value),
+                        is_array(value: $itemValue)                              => in_array(needle: $value, haystack: $itemValue, strict: true),
+                        default                                                  => false,
                     },
                     'not contains' => match (true) {
-                        is_string($itemValue) && is_string($value) => ! str_contains($itemValue, $value),
-                        is_array($itemValue)                       => ! in_array($value, $itemValue, true),
-                        default                                    => true,
+                        is_string(value: $itemValue) && is_string(value: $value) => ! str_contains(haystack: $itemValue, needle: $value),
+                        is_array(value: $itemValue)                              => ! in_array(needle: $value, haystack: $itemValue, strict: true),
+                        default                                                  => true,
                     },
-                    'in'           => in_array($itemValue, (array) $value, true),
-                    'not in'       => ! in_array($itemValue, (array) $value, true),
+                    'in'           => in_array(needle: $itemValue, haystack: (array) $value, strict: true),
+                    'not in'       => ! in_array(needle: $itemValue, haystack: (array) $value, strict: true),
                     default        => false,
                 };
             }
         );
 
-        $this->items = array_values($filteredItems);
+        $this->items = array_values(array: $filteredItems);
 
         return new static(items: $this->items);
     }
@@ -2860,7 +2877,7 @@ trait CollectionWalkthroughTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use Closure;
 use InvalidArgumentException;
@@ -2876,7 +2893,7 @@ use InvalidArgumentException;
  * such as arrays of associative arrays or objects. It leverages the `AbstractDependenciesTrait`
  * for dependency management, ensuring that the underlying data collection is properly handled.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait ConditionalsTrait
 {
@@ -3092,7 +3109,7 @@ trait ConditionalsTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use InvalidArgumentException;
 
@@ -3102,7 +3119,7 @@ use InvalidArgumentException;
  * Provides debugging capabilities for classes that implement the required methods.
  * This trait enforces the presence of `toArray` and `count` methods in the using class.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait DebugTrait
 {
@@ -3134,11 +3151,11 @@ trait DebugTrait
     {
         $arrayRepresentation = $this->toArray();
 
-        if (! is_array($arrayRepresentation)) {
+        if (! is_array(value: $arrayRepresentation)) {
             throw new InvalidArgumentException(message: 'toArray method must return an array.');
         }
 
-        var_dump($arrayRepresentation);
+        var_dump(value: $arrayRepresentation);
 
         return $this;
     }
@@ -3180,11 +3197,11 @@ trait DebugTrait
     {
         $arrayRepresentation = $this->toArray();
 
-        if (! is_array($arrayRepresentation)) {
+        if (! is_array(value: $arrayRepresentation)) {
             throw new InvalidArgumentException(message: 'toArray method must return an array.');
         }
 
-        var_dump($arrayRepresentation);
+        var_dump(value: $arrayRepresentation);
         die();
     }
 
@@ -3225,7 +3242,7 @@ trait DebugTrait
     {
         $items = $this->toArray();
 
-        if (! is_array($items)) {
+        if (! is_array(value: $items)) {
             throw new InvalidArgumentException(message: 'toArray method must return an array.');
         }
 
@@ -3250,7 +3267,7 @@ trait DebugTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use Closure;
 use InvalidArgumentException;
@@ -3267,7 +3284,7 @@ use InvalidArgumentException;
  * such as arrays of associative arrays or objects. It leverages the `AbstractDependenciesTrait`
  * for dependency management, ensuring that the underlying data collection is properly handled.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait LazyEvaluationTrait
 {
@@ -3296,7 +3313,7 @@ trait LazyEvaluationTrait
         return new static(function () use ($callback) {
             foreach ($this->getItems() as $key => $item) {
                 $result = $callback($item, $key);
-                if (! is_bool($result)) {
+                if (! is_bool(value: $result)) {
                     throw new InvalidArgumentException(message: 'Callback must return a boolean.');
                 }
 
@@ -3337,7 +3354,7 @@ trait LazyEvaluationTrait
             foreach ($this->getItems() as $key => $item) {
                 if (! $yielding) {
                     $result = $callback($item, $key);
-                    if (! is_bool($result)) {
+                    if (! is_bool(value: $result)) {
                         throw new InvalidArgumentException(message: 'Callback must return a boolean.');
                     }
 
@@ -3408,7 +3425,7 @@ trait LazyEvaluationTrait
         return new static(function () use ($callback) {
             foreach ($this->getItems() as $key => $item) {
                 $result = $callback($item, $key);
-                if (! is_bool($result)) {
+                if (! is_bool(value: $result)) {
                     throw new InvalidArgumentException(message: 'Callback must return a boolean.');
                 }
 
@@ -3447,7 +3464,7 @@ trait LazyEvaluationTrait
             foreach ($this->getItems() as $key => $item) {
                 if (! $yielding) {
                     $result = $callback($item, $key);
-                    if (! is_bool($result)) {
+                    if (! is_bool(value: $result)) {
                         throw new InvalidArgumentException(message: 'Callback must return a boolean.');
                     }
 
@@ -3491,9 +3508,9 @@ trait LazyEvaluationTrait
             $buffer = [];
             foreach ($this->getItems() as $item) {
                 $buffer[] = $item;
-                if (count($buffer) === $size) {
+                if (count(value: $buffer) === $size) {
                     yield $buffer;
-                    array_splice($buffer, 0, $step);
+                    array_splice(array: $buffer, offset: 0, length: $step);
                 }
             }
 
@@ -3531,7 +3548,7 @@ trait LazyEvaluationTrait
 
         return new static(
             iterator_to_array(
-                (function () use ($limit) {
+                iterator     : (function () use ($limit) {
                     if ($limit === 0) {
                         return;
                     }
@@ -3544,7 +3561,7 @@ trait LazyEvaluationTrait
                         }
                     }
                 })(),
-                false
+                preserve_keys: false
             )
         );
     }
@@ -3647,7 +3664,7 @@ trait LazyEvaluationTrait
      */
     public function toEager() : static
     {
-        return new static(iterator_to_array($this->getItems()));
+        return new static(iterator_to_array(iterator: $this->getItems()));
     }
 
 
@@ -3658,7 +3675,7 @@ trait LazyEvaluationTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use LogicException;
 
@@ -3677,7 +3694,7 @@ use LogicException;
  * - Immutable API response structures
  * - Secure, read-only configuration holders
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait LockableTrait
 {
@@ -3737,7 +3754,7 @@ trait LockableTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use BadMethodCallException;
 use Closure;
@@ -3753,7 +3770,7 @@ use InvalidArgumentException;
  * The trait enforces the implementation of the `getItems` and `setItems` methods
  * in the using class to manage the underlying data collection.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait MacrosTrait
 {
@@ -3862,12 +3879,12 @@ trait MacrosTrait
     public static function __callStatic(string $name, array $arguments)
     {
         // Handle namespaced macros (e.g., 'namespace::macro')
-        if (str_contains($name, '::')) {
-            [$namespace, $macro] = explode('::', $name, 2);
+        if (str_contains(haystack: $name, needle: '::')) {
+            [$namespace, $macro] = explode(separator: '::', string: $name, limit: 2);
             if (isset(self::$macroNamespaces[$namespace][$macro])) {
                 $boundMacro = self::$macroNamespaces[$namespace][$macro]->bindTo(null, static::class);
 
-                return call_user_func_array($boundMacro, $arguments);
+                return call_user_func_array(callback: $boundMacro, args: $arguments);
             }
         }
 
@@ -3875,7 +3892,7 @@ trait MacrosTrait
         if (isset(self::$macros[$name])) {
             $boundMacro = self::$macros[$name]->bindTo(null, static::class);
 
-            return call_user_func_array($boundMacro, $arguments);
+            return call_user_func_array(callback: $boundMacro, args: $arguments);
         }
 
         throw new BadMethodCallException(message: sprintf("Static method '%s' does not exist.", $name));
@@ -3933,12 +3950,12 @@ trait MacrosTrait
     public function __call(string $name, array $arguments)
     {
         // Handle namespaced macros (e.g., 'namespace::macro')
-        if (str_contains($name, '::')) {
-            [$namespace, $macro] = explode('::', $name, 2);
+        if (str_contains(haystack: $name, needle: '::')) {
+            [$namespace, $macro] = explode(separator: '::', string: $name, limit: 2);
             if (isset(self::$macroNamespaces[$namespace][$macro])) {
                 $boundMacro = self::$macroNamespaces[$namespace][$macro]->bindTo($this, static::class);
 
-                return call_user_func_array($boundMacro, $arguments);
+                return call_user_func_array(callback: $boundMacro, args: $arguments);
             }
         }
 
@@ -3946,7 +3963,7 @@ trait MacrosTrait
         if (isset(self::$macros[$name])) {
             $boundMacro = self::$macros[$name]->bindTo($this, static::class);
 
-            return call_user_func_array($boundMacro, $arguments);
+            return call_user_func_array(callback: $boundMacro, args: $arguments);
         }
 
         throw new BadMethodCallException(message: sprintf("Method '%s' does not exist.", $name));
@@ -3958,7 +3975,7 @@ trait MacrosTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use InvalidArgumentException;
 use OutOfBoundsException;
@@ -3973,7 +3990,7 @@ use OutOfBoundsException;
  * The trait enforces the implementation of `getItems` and `setItems` methods
  * in the using class to manage the underlying data collection.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait ManageItemsTrait
 {
@@ -4076,7 +4093,7 @@ trait ManageItemsTrait
 
         if ($items instanceof self) {
             $items = $items->getItems();
-        } elseif (! is_array($items)) {
+        } elseif (! is_array(value: $items)) {
             throw new InvalidArgumentException(
                 message: 'Concat method expects an array or an instance of the using class.'
             );
@@ -4104,7 +4121,7 @@ trait ManageItemsTrait
     public function shift() : static|null
     {
         $items = $this->getItems();
-        $value = array_shift($items);
+        $value = array_shift(array: $items);
 
         if ($value === null && $items === []) {
             return null;
@@ -4130,7 +4147,7 @@ trait ManageItemsTrait
     public function pop() : static|null
     {
         $items = $this->getItems();
-        $value = array_pop($items);
+        $value = array_pop(array: $items);
 
         if ($value === null && $items === []) {
             return null;
@@ -4162,14 +4179,14 @@ trait ManageItemsTrait
     {
         $items = $this->getItems();
 
-        if (! array_key_exists($index, $items)) {
+        if (! array_key_exists(key: $index, array: $items)) {
             throw new OutOfBoundsException(message: "Invalid index " . $index . ".");
         }
 
         unset($items[$index]);
 
         // Reindex the array to maintain sequential keys
-        $items = array_values($items);
+        $items = array_values(array: $items);
 
         return $this->setItems(items: $items);
     }
@@ -4198,7 +4215,7 @@ trait ManageItemsTrait
     {
         $items = $this->getItems();
 
-        if (! array_key_exists($index, $items)) {
+        if (! array_key_exists(key: $index, array: $items)) {
             throw new OutOfBoundsException(message: "Invalid index " . $index . ".");
         }
 
@@ -4228,7 +4245,7 @@ trait ManageItemsTrait
      * // $sliced contains ['banana', 'cherry', 'date']
      * ```
      */
-    public function slice(int $offset, ?int $length = null) : static
+    public function slice(int $offset, int|null $length = null) : static
     {
         if ($offset < 0) {
             throw new InvalidArgumentException(message: 'Offset cannot be negative.');
@@ -4238,7 +4255,7 @@ trait ManageItemsTrait
             throw new InvalidArgumentException(message: 'Length cannot be negative.');
         }
 
-        $slicedItems = array_slice($this->getItems(), $offset, $length, true);
+        $slicedItems = array_slice(array: $this->getItems(), offset: $offset, length: $length, preserve_keys: true);
 
         // If slicing preserves keys and you want sequential keys, reindex
         // $slicedItems = array_values($slicedItems);
@@ -4271,7 +4288,7 @@ trait ManageItemsTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use Carbon\Carbon;
 use Closure;
@@ -4289,7 +4306,7 @@ use Ramsey\Uuid\Uuid;
  * This trait enforces the implementation of `getItems()`, `setItems()`, `map()`, and `toArray()` methods
  * in the using class to manage and transform the underlying data collection.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait MetaInfoTrait
 {
@@ -4316,14 +4333,14 @@ trait MetaInfoTrait
      */
     public function guid() : static
     {
-        return $this->map(static function ($item) : array {
+        return $this->map(callback: static function ($item) : array {
             try {
                 return [
                     'id'   => Uuid::uuid4()->toString(),
                     'data' => $item,
                 ];
             } catch (Exception $e) {
-                throw new InvalidArgumentException('Failed to generate UUID: ' . $e->getMessage(), $e->getCode(), $e);
+                throw new InvalidArgumentException(message: 'Failed to generate UUID: ' . $e->getMessage(), code: $e->getCode(), previous: $e);
             }
         });
     }
@@ -4371,14 +4388,14 @@ trait MetaInfoTrait
             $timestamp = Carbon::now()->format($format);
         } catch (Exception $exception) {
             throw new InvalidArgumentException(
-                'Invalid date format: ' . $exception->getMessage(),
-                $exception->getCode(),
-                $exception
+                message : 'Invalid date format: ' . $exception->getMessage(),
+                code    : $exception->getCode(),
+                previous: $exception
             );
         }
 
         return $this->map(
-            static function ($item) use ($set, $timestamp) {
+            callback: static function ($item) use ($set, $timestamp) {
                 if ($set) {
                     return [
                         'timestamp' => $timestamp,
@@ -4413,7 +4430,7 @@ trait MetaInfoTrait
      */
     public function version(int $version = 1) : static
     {
-        return $this->map(static fn($item) : array => [
+        return $this->map(callback: static fn($item) : array => [
             'version' => $version,
             'data'    => $item,
         ]);
@@ -4434,7 +4451,7 @@ trait MetaInfoTrait
      */
     public function clone() : static
     {
-        return new static($this->toArray());
+        return new static(items: $this->toArray());
     }
 
     /**
@@ -4452,7 +4469,7 @@ trait MetaInfoTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use InvalidArgumentException;
 
@@ -4463,7 +4480,7 @@ use InvalidArgumentException;
  * This trait allows sorting arrays in ascending order
  * and shuffling array elements.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait OrderManipulationTrait
 {
@@ -4501,18 +4518,18 @@ trait OrderManipulationTrait
         $items = $this->getItems();
 
         // If sorting by a string key, ensure all items are arrays and contain the key
-        if (is_string($key)) {
+        if (is_string(value: $key)) {
             foreach ($items as $item) {
-                if (! is_array($item) || ! array_key_exists($key, $item)) {
+                if (! is_array(value: $item) || ! array_key_exists(key: $key, array: $item)) {
                     throw new InvalidArgumentException(
                         message: sprintf("Each item must be an array containing the key '%s'.", $key)
                     );
                 }
             }
 
-            usort($items, static fn($a, $b) : int => $a[$key] <=> $b[$key]);
-        } elseif (is_callable($key)) {
-            usort($items, $key);
+            usort(array: $items, callback: static fn($a, $b) : int => $a[$key] <=> $b[$key]);
+        } elseif (is_callable(value: $key)) {
+            usort(array: $items, callback: $key);
         } else {
             throw new InvalidArgumentException(message: 'The key must be either a string or a callable.');
         }
@@ -4548,7 +4565,7 @@ trait OrderManipulationTrait
         $items = $this->getItems();
 
         // Shuffle items to randomize their order
-        shuffle($items);
+        shuffle(array: $items);
 
         // Return a new instance to preserve immutability
         return new static(items: $items);
@@ -4560,7 +4577,7 @@ trait OrderManipulationTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use Closure;
 use InvalidArgumentException;
@@ -4572,7 +4589,7 @@ use InvalidArgumentException;
  * This trait allows splitting collections based on conditions, grouping by keys or callbacks,
  * and dividing collections into specified numbers of groups or chunks.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait PartitioningTrait
 {
@@ -4679,10 +4696,10 @@ trait PartitioningTrait
         $grouped = [];
 
         foreach ($this->getItems() as $item) {
-            if (is_callable($key)) {
+            if (is_callable(value: $key)) {
                 $groupKey = $key($item);
-            } elseif (is_string($key)) {
-                if (! is_array($item) || ! array_key_exists($key, $item)) {
+            } elseif (is_string(value: $key)) {
+                if (! is_array(value: $item) || ! array_key_exists(key: $key, array: $item)) {
                     throw new InvalidArgumentException(
                         message: sprintf("Each item must be an array containing the key '%s'.", $key)
                     );
@@ -4696,7 +4713,7 @@ trait PartitioningTrait
             $grouped[$groupKey][] = $item;
         }
 
-        return new static(items: array_map(fn($group) : static => new static(items: $group), $grouped));
+        return new static(items: array_map(callback: fn($group) : static => new static(items: $group), array: $grouped));
     }
 
     /**
@@ -4727,11 +4744,11 @@ trait PartitioningTrait
             throw new InvalidArgumentException(message: 'Number of groups must be at least 1.');
         }
 
-        $totalItems = count($this->getItems());
-        $groupSize  = (int) ceil($totalItems / $numberOfGroups);
-        $groups     = array_chunk($this->getItems(), $groupSize);
+        $totalItems = count(value: $this->getItems());
+        $groupSize  = (int) ceil(num: $totalItems / $numberOfGroups);
+        $groups     = array_chunk(array: $this->getItems(), length: $groupSize);
 
-        return new static(items: array_map(static fn($group) : static => new static(items: $group), $groups));
+        return new static(items: array_map(callback: static fn($group) : static => new static(items: $group), array: $groups));
     }
 
     /**
@@ -4763,9 +4780,9 @@ trait PartitioningTrait
             throw new InvalidArgumentException(message: 'Chunk size must be at least 1.');
         }
 
-        $chunks = array_chunk($this->getItems(), $size);
+        $chunks = array_chunk(array: $this->getItems(), length: $size);
 
-        return new static(items: array_map(static fn($chunk) : static => new static(items: $chunk), $chunks));
+        return new static(items: array_map(callback: static fn($chunk) : static => new static(items: $chunk), array: $chunks));
     }
 }
 
@@ -4774,7 +4791,7 @@ trait PartitioningTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use InvalidArgumentException;
 
@@ -4783,7 +4800,7 @@ use InvalidArgumentException;
  *
  * Provides set operations methods to manipulate collections, including intersection, union, difference, and merging.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait SetOperationsTrait
 {
@@ -4825,12 +4842,12 @@ trait SetOperationsTrait
         $otherItems   = $collection->toArray();
 
         if (empty($otherItems)) {
-            throw new InvalidArgumentException('The provided collection for intersection is empty.');
+            throw new InvalidArgumentException(message: 'The provided collection for intersection is empty.');
         }
 
         $intersected = array_intersect($currentItems, $otherItems);
 
-        return new static($intersected);
+        return new static(items: $intersected);
     }
 
     /** ***Set Operations Methods*** */
@@ -4867,9 +4884,9 @@ trait SetOperationsTrait
         $otherItems   = $collection->toArray();
 
         $merged = array_merge($currentItems, $otherItems);
-        $unique = array_unique($merged, SORT_REGULAR); // SORT_REGULAR ensures proper uniqueness for arrays
+        $unique = array_unique(array: $merged, flags: SORT_REGULAR); // SORT_REGULAR ensures proper uniqueness for arrays
 
-        return new static($unique);
+        return new static(items: $unique);
     }
 
     /**
@@ -4896,7 +4913,7 @@ trait SetOperationsTrait
 
         $diff = array_diff($currentItems, $otherItems);
 
-        return new static($diff);
+        return new static(items: $diff);
     }
 
     /**
@@ -4923,7 +4940,7 @@ trait SetOperationsTrait
 
         $merged = array_merge($currentItems, $otherItems);
 
-        return new static($merged);
+        return new static(items: $merged);
     }
 
     /**
@@ -4955,7 +4972,7 @@ trait SetOperationsTrait
         $diff2         = array_diff($collection->toArray(), $this->getItems());
         $symDifference = array_merge($diff1, $diff2);
 
-        return new static($symDifference);
+        return new static(items: $symDifference);
     }
 }
 
@@ -4964,7 +4981,7 @@ trait SetOperationsTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use Closure;
 use InvalidArgumentException;
@@ -4976,7 +4993,7 @@ use InvalidArgumentException;
  * This trait allows sorting in ascending or descending order based on a key or callback,
  * reversing the order of items, and sorting by keys.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait SortOperationsTrait
 {
@@ -5033,7 +5050,7 @@ trait SortOperationsTrait
      */
     public function reverse() : static
     {
-        return new static(items: array_reverse($this->getItems(), true));
+        return new static(items: array_reverse(array: $this->getItems(), preserve_keys: true));
     }
 
     /**
@@ -5076,18 +5093,18 @@ trait SortOperationsTrait
     {
         $sortedItems = $this->getItems();
 
-        if (is_string($key)) {
+        if (is_string(value: $key)) {
             foreach ($sortedItems as $sortedItem) {
-                if (! is_array($sortedItem) || ! array_key_exists($key, $sortedItem)) {
+                if (! is_array(value: $sortedItem) || ! array_key_exists(key: $key, array: $sortedItem)) {
                     throw new InvalidArgumentException(
                         message: sprintf("Each item must be an array containing the key '%s'.", $key)
                     );
                 }
             }
 
-            uasort($sortedItems, static fn($a, $b) : int => $a[$key] <=> $b[$key]);
-        } elseif (is_callable($key)) {
-            uasort($sortedItems, $key);
+            uasort(array: $sortedItems, callback: static fn($a, $b) : int => $a[$key] <=> $b[$key]);
+        } elseif (is_callable(value: $key)) {
+            uasort(array: $sortedItems, callback: $key);
         } else {
             throw new InvalidArgumentException(message: 'The key must be either a string or a callable.');
         }
@@ -5112,7 +5129,7 @@ trait SortOperationsTrait
     public function sortKeys() : static
     {
         $sorted = $this->getItems();
-        ksort($sorted);
+        ksort(array: $sorted);
 
         return new static(items: $sorted);
     }
@@ -5134,7 +5151,7 @@ trait SortOperationsTrait
     public function sortKeysDesc() : static
     {
         $sorted = $this->getItems();
-        krsort($sorted);
+        krsort(array: $sorted);
 
         return new static(items: $sorted);
     }
@@ -5227,7 +5244,7 @@ trait SortOperationsTrait
     public function sortByMultiple(array $criteria) : static
     {
         $items = $this->getItems();
-        usort($items, static function (array $a, array $b) use ($criteria) : int {
+        usort(array: $items, callback: static function (array $a, array $b) use ($criteria) : int {
             foreach ($criteria as $key => $order) {
                 $result = $a[$key] <=> $b[$key];
                 if ($result !== 0) {
@@ -5247,7 +5264,7 @@ trait SortOperationsTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use InvalidArgumentException;
 
@@ -5283,12 +5300,12 @@ trait StringManipulationTrait
     {
         // Ensure all items are strings
         foreach ($this->getItems() as $item) {
-            if (! is_string($item)) {
+            if (! is_string(value: $item)) {
                 throw new InvalidArgumentException(message: 'All items must be strings to perform implode.');
             }
         }
 
-        return implode($glue, $this->getItems());
+        return implode(separator: $glue, array: $this->getItems());
     }
 
     /**
@@ -5303,9 +5320,9 @@ trait StringManipulationTrait
      * $uppercased = $arrh->uppercase();
      * // ['APPLE', 'BANANA']
      */
-    public function uppercase(?string $key = null) : static
+    public function uppercase(string|null $key = null) : static
     {
-        return $this->processItems(callback: fn(string $value) : string => strtoupper($value), key: $key);
+        return $this->processItems(callback: fn(string $value) : string => strtoupper(string: $value), key: $key);
     }
 
     /**
@@ -5316,16 +5333,16 @@ trait StringManipulationTrait
      *
      * @return static A new Arrhae instance with processed items.
      */
-    private function processItems(callable $callback, ?string $key = null) : static
+    private function processItems(callable $callback, string|null $key = null) : static
     {
         return $this->map(callback: function ($item) use ($callback, $key) {
-            if ($key !== null && is_array($item) && isset($item[$key]) && is_string($item[$key])) {
+            if ($key !== null && is_array(value: $item) && isset($item[$key]) && is_string(value: $item[$key])) {
                 $item[$key] = $callback($item[$key]);
 
                 return $item;
             }
 
-            if (is_string($item)) {
+            if (is_string(value: $item)) {
                 return $callback($item);
             }
 
@@ -5345,9 +5362,9 @@ trait StringManipulationTrait
      * $lowercased = $arrh->lowercase();
      * // ['apple', 'banana']
      */
-    public function lowercase(?string $key = null) : static
+    public function lowercase(string|null $key = null) : static
     {
-        return $this->processItems(callback: fn(string $value) : string => strtolower($value), key: $key);
+        return $this->processItems(callback: fn(string $value) : string => strtolower(string: $value), key: $key);
     }
 
     /**
@@ -5362,9 +5379,9 @@ trait StringManipulationTrait
      * $titlecased = $arrh->title();
      * // ['Hello World', 'Php Is Great']
      */
-    public function title(?string $key = null) : static
+    public function title(string|null $key = null) : static
     {
-        return $this->processItems(callback: fn(string $value) : string => ucwords(strtolower($value)), key: $key);
+        return $this->processItems(callback: fn(string $value) : string => ucwords(string: strtolower(string: $value)), key: $key);
     }
 
     /**
@@ -5380,9 +5397,11 @@ trait StringManipulationTrait
      * $trimmed = $arrh->trim();
      * // ['apple', 'banana', 'cherry']
      */
-    public function trim(string $characters = self::DEFAULT_TRIM_CHARACTERS, ?string $key = null) : static
+    public function trim(string|null $characters = null, string|null $key = null) : static
     {
-        return $this->processItems(callback: fn(string $value) : string => trim($value, $characters), key: $key);
+        $characters ??= self::DEFAULT_TRIM_CHARACTERS;
+
+        return $this->processItems(callback: fn(string $value) : string => trim(string: $value, characters: $characters), key: $key);
     }
 
     /**
@@ -5397,11 +5416,11 @@ trait StringManipulationTrait
      * $camelCased = $arrh->camelCase();
      * // ['helloWorld', 'phpIsGreat', 'convertThis']
      */
-    public function camelCase(?string $key = null) : static
+    public function camelCase(string|null $key = null) : static
     {
         return $this->processItems(
             callback: fn(string $value) : string => lcfirst(
-                str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $value)))
+                string: str_replace(search: ' ', replace: '', subject: ucwords(string: str_replace(search: ['-', '_'], replace: ' ', subject: $value)))
             ),
             key     : $key
         );
@@ -5412,7 +5431,7 @@ trait StringManipulationTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use InvalidArgumentException;
 
@@ -5423,7 +5442,7 @@ use InvalidArgumentException;
  * including flattening multidimensional arrays into dot-notated arrays
  * and converting collections to indexed lists.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait StructureConversionTrait
 {
@@ -5476,12 +5495,12 @@ trait StructureConversionTrait
         $results = [];
         $flatten = static function (array $items, string $prefix = '') use (&$flatten, &$results) : void {
             foreach ($items as $key => $value) {
-                if (! is_scalar($key) && ! is_null($key)) {
+                if (! is_scalar(value: $key) && ! is_null(value: $key)) {
                     throw new InvalidArgumentException(message: 'Keys must be scalar or null.');
                 }
 
                 $dotKey = $prefix . $key;
-                if (is_array($value)) {
+                if (is_array(value: $value)) {
                     $flatten($value, $dotKey . '.');
                 } else {
                     $results[$dotKey] = $value;
@@ -5490,7 +5509,7 @@ trait StructureConversionTrait
         };
 
         $items = $this->getItems();
-        if (! is_array($items)) {
+        if (! is_array(value: $items)) {
             throw new InvalidArgumentException(
                 message: 'The collection must be an array to perform dot notation flattening.'
             );
@@ -5528,7 +5547,7 @@ trait StructureConversionTrait
      */
     public function toList() : static
     {
-        $list = array_values($this->getItems());
+        $list = array_values(array: $this->getItems());
 
         return new static(items: $list);
     }
@@ -5565,10 +5584,10 @@ trait StructureConversionTrait
     {
         $results = [];
         foreach ($this->getItems() as $dotKey => $item) {
-            $keys = explode('.', (string) $dotKey);
+            $keys = explode(separator: '.', string: (string) $dotKey);
             $temp = &$results;
             foreach ($keys as $key) {
-                if (! isset($temp[$key]) || ! is_array($temp[$key])) {
+                if (! isset($temp[$key]) || ! is_array(value: $temp[$key])) {
                     $temp[$key] = [];
                 }
 
@@ -5579,7 +5598,7 @@ trait StructureConversionTrait
             unset($temp);
         }
 
-        return new static($results);
+        return new static(items: $results);
     }
 }
 
@@ -5588,7 +5607,7 @@ trait StructureConversionTrait
 
 declare(strict_types=1);
 
-namespace Gemini\DataHandling\ArrayHandling\Traits;
+namespace Avax\DataHandling\ArrayHandling\Traits;
 
 use Closure;
 use InvalidArgumentException;
@@ -5602,7 +5621,7 @@ use RecursiveIteratorIterator;
  * including flattening multidimensional arrays, applying callbacks,
  * and mapping with custom keys.
  *
- * @package Gemini\DataHandling\ArrayHandling\Traits
+ * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait TransformationTrait
 {
@@ -5643,7 +5662,7 @@ trait TransformationTrait
     public function flatten() : static
     {
         $items = $this->getItems();
-        if (! is_array($items)) {
+        if (! is_array(value: $items)) {
             throw new InvalidArgumentException(message: 'The collection must be an array to perform flattening.');
         }
 
@@ -5694,7 +5713,7 @@ trait TransformationTrait
         $mapped = [];
         foreach ($this->getItems() as $item) {
             $result = $callback($item);
-            if (! is_array($result)) {
+            if (! is_array(value: $result)) {
                 throw new InvalidArgumentException(message: 'The callback for flatMap must return an array.');
             }
 
@@ -5730,15 +5749,15 @@ trait TransformationTrait
         $mapped = [];
         foreach ($this->getItems() as $key => $item) {
             $result = $callback($item, $key);
-            if (! is_array($result) || count($result) !== 1) {
+            if (! is_array(value: $result) || count(value: $result) !== 1) {
                 throw new InvalidArgumentException(
                     message: 'The callback for mapWithKeys must return an associative array with exactly one key-value pair.'
                 );
             }
 
-            $newKey   = key($result);
-            $newValue = reset($result);
-            if (array_key_exists($newKey, $mapped)) {
+            $newKey   = key(array: $result);
+            $newValue = reset(array: $result);
+            if (array_key_exists(key: $newKey, array: $mapped)) {
                 throw new InvalidArgumentException(
                     message: sprintf("Duplicate key '%s' returned by mapWithKeys callback.", $newKey)
                 );
@@ -5770,7 +5789,7 @@ trait TransformationTrait
      */
     public function transform(Closure $callback) : static
     {
-        $transformedItems = array_map($callback, $this->getItems());
+        $transformedItems = array_map(callback: $callback, array: $this->getItems());
 
         return new static(items: $transformedItems);
     }
@@ -5823,7 +5842,7 @@ trait TransformationTrait
         $transformed = $this->getItems();
 
         foreach ($iterator as $key => $value) {
-            if (! is_array($value)) {
+            if (! is_array(value: $value)) {
                 $transformed[$key] = $callback($value, $key);
             }
         }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\Facade\Facades;
 
 use Avax\Auth\Contracts\AuthInterface;
+use Avax\Auth\Contracts\UserInterface;
+use Avax\Auth\Data\Credentials;
 use Avax\Facade\BaseFacade;
 
 /**
@@ -18,9 +20,9 @@ use Avax\Facade\BaseFacade;
  * Auth::user();               // Returns current user.
  * ```
  *
- * @method static \Avax\Auth\Contracts\UserInterface login(\Avax\Auth\Data\Credentials $credentials)
+ * @method static UserInterface login(Credentials $credentials)
  * @method static void logout()
- * @method static \Avax\Auth\Contracts\UserInterface|null user()
+ * @method static UserInterface|null user()
  * @method static bool check()
  *
  * @see \Avax\Auth\Authenticator

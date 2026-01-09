@@ -44,7 +44,15 @@ trait HasSoftDeletes
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/SoftDeletes.md#including-deleted-records
      *      domain records.
      *
-     * @return self A fresh, cloned builder instance with soft-deleted inclusion active.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes A
+     *                                                                                                                                fresh,
+     *                                                                                                                                cloned
+     *                                                                                                                                builder
+     *                                                                                                                                instance
+     *                                                                                                                                with
+     *                                                                                                                                soft-deleted
+     *                                                                                                                                inclusion
+     *                                                                                                                                active.
      */
     public function withTrashed() : self
     {
@@ -55,15 +63,18 @@ trait HasSoftDeletes
     }
 
     /**
-     * Filter the results     * @see
+     * Filter the results     *
+     *
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes
+     * \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes
+     * A fresh, cloned builder instance targeting only deleted records.
+     * @see
      * https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/SoftDeletes.md#only-deleted-records
      * to exclusively include records marked as soft-deleted.
      *
      * -- intent:
      * Isolate domain records that have been logically removed from the active
      * set, typically for recovery, permanent destruction, or auditing.
-     *
-     * @return self A fresh, cloned builder instance targeting only deleted records.
      */
     public function onlyTrashed() : self
     {
@@ -103,7 +114,17 @@ trait HasSoftDeletes
      *
      * @param string $column The technical deletion field identifier (defaults to 'deleted_at').
      *
-     * @return self A fresh, cloned builder instance with the appropriate deletion filters injected.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes A
+     *                                                                                                                                fresh,
+     *                                                                                                                                cloned
+     *                                                                                                                                builder
+     *                                                                                                                                instance
+     *                                                                                                                                with
+     *                                                                                                                                the
+     *                                                                                                                                appropriate
+     *                                                                                                                                deletion
+     *                                                                                                                                filters
+     *                                                                                                                                injected.
      */
     public function withSoftDeleteFilter(string $column = 'deleted_at') : self
     {
@@ -128,7 +149,15 @@ trait HasSoftDeletes
      * @param string $column  The technical field name to target for the non-null check.
      * @param string $boolean The logical joiner used to attach this condition ('AND' or 'OR').
      *
-     * @return self A fresh, cloned builder instance with the non-null filter.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes A
+     *                                                                                                                                fresh,
+     *                                                                                                                                cloned
+     *                                                                                                                                builder
+     *                                                                                                                                instance
+     *                                                                                                                                with
+     *                                                                                                                                the
+     *                                                                                                                                non-null
+     *                                                                                                                                filter.
      */
     public function whereNotNull(string $column, string $boolean = 'AND') : self
     {
@@ -146,7 +175,15 @@ trait HasSoftDeletes
      * @param string|null $boolean The logical joiner used to attach this condition ('AND' or 'OR').
      * @param bool        $not     Flag indicating whether to check for existence (IS NOT NULL) instead.
      *
-     * @return self A fresh, cloned builder instance with the null filter.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes A
+     *                                                                                                                                fresh,
+     *                                                                                                                                cloned
+     *                                                                                                                                builder
+     *                                                                                                                                instance
+     *                                                                                                                                with
+     *                                                                                                                                the
+     *                                                                                                                                null
+     *                                                                                                                                filter.
      */
     public function whereNull(string $column, string|null $boolean = null, bool $not = false) : self
     {
@@ -155,11 +192,11 @@ trait HasSoftDeletes
 
         $clone        = clone $this;
         $clone->state = $clone->state->addWhere(where: new WhereNode(
-                                                           column  : $column,
-                                                           operator: $operator,
-                                                           type    : 'Null',
-                                                           boolean : $boolean
-                                                       ));
+            column  : $column,
+            operator: $operator,
+            type    : 'Null',
+            boolean : $boolean
+        ));
 
         return $clone;
     }

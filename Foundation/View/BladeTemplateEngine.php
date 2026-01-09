@@ -27,9 +27,14 @@ class BladeTemplateEngine extends Blade
 
     private function getBaseUrl() : string
     {
-        $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $url    = parse_url(url: (string) env('APP_URL', 'http://localhost'));
+        $context = function_exists('http_context') ? http_context() : null;
+        if ($context !== null) {
+            return $context->baseUrl();
+        }
+
+        $url    = parse_url(url: (string) env(key: 'APP_URL', default: 'http://localhost'));
         $scheme = $url['scheme'] ?? 'http';
+        $host   = $url['host'] ?? 'localhost';
 
         return sprintf('%s://%s', $scheme, $host);
     }
@@ -53,8 +58,7 @@ class BladeTemplateEngine extends Blade
         ));
 
         // CSRF directive
-        $this->compiler()->directive(name: 'csrf', handler: static fn(
-        ) : string => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>");
+        $this->compiler()->directive(name: 'csrf', handler: static fn() : string => "<?php echo '<input type=\"hidden\" name=\"_token\" value=\"' . csrf_token() . '\">'; ?>");
 
         // Route directive
         $this->compiler()->directive(name: 'route', handler: static fn($expression) : string => sprintf(
@@ -129,7 +133,7 @@ class BladeTemplateEngine extends Blade
     public function toHtml(string $view, array $data = []) : string
     {
         try {
-            return $this->render($view, $data);
+            return $this->render(view: $view, data: $data);
         } catch (Throwable $throwable) {
             logger(message: 'View rendering to html failed.', context: ['view' => $view, 'exception' => $throwable]);
 

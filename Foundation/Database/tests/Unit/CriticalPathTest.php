@@ -25,6 +25,10 @@ final class CriticalPathTest extends TestCase
 
     /**
      * Test: Transaction rollback on inner failure.
+     *
+     * @throws \Random\RandomException
+     * @throws \ReflectionException
+     * @throws \Throwable
      */
     public function test_transaction_rollback_on_failure() : void
     {
@@ -47,7 +51,7 @@ final class CriticalPathTest extends TestCase
 
         // Verify rollback: no records should exist
         $count = $builder->from(table: 'users')->count();
-        $this->assertSame(0, $count, 'Transaction should have rolled back');
+        $this->assertSame(expected: 0, actual: $count, message: 'Transaction should have rolled back');
     }
 
     /**
@@ -68,16 +72,20 @@ final class CriticalPathTest extends TestCase
 
         // Before flush: no records
         $count = $builder->from(table: 'users')->count();
-        $this->assertSame(0, $count);
+        $this->assertSame(expected: 0, actual: $count);
 
         // After flush: record exists
         $identityMap->execute();
         $count = $builder->from(table: 'users')->count();
-        $this->assertSame(1, $count);
+        $this->assertSame(expected: 1, actual: $count);
     }
 
     /**
      * Test: QueryException never exposes raw bindings by default.
+     *
+     * @throws \Random\RandomException
+     * @throws \ReflectionException
+     * @throws \Throwable
      */
     public function test_query_exception_redacts_bindings_by_default() : void
     {
@@ -91,10 +99,10 @@ final class CriticalPathTest extends TestCase
             $builder->from(table: 'nonexistent')->insert(values: ['secret' => 'password123']);
         } catch (QueryException $e) {
             $bindings = $e->getBindings(); // Default redacted
-            $this->assertSame(['[REDACTED]'], $bindings);
+            $this->assertSame(expected: ['[REDACTED]'], actual: $bindings);
 
             $rawBindings = $e->getBindings(redacted: false); // Explicit opt-in
-            $this->assertSame(['password123'], $rawBindings);
+            $this->assertSame(expected: ['password123'], actual: $rawBindings);
         }
     }
 

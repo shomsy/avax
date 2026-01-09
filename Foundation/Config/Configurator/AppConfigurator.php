@@ -31,7 +31,8 @@ abstract class AppConfigurator implements ConfiguratorInterface
      */
     public function __construct(
         protected ConfigLoaderInterface $configLoader,
-    ) {
+    )
+    {
         // Initialize WeakMap if not already set
         self::$weakMap ??= new WeakMap();
         // Load configuration, either from cache or fresh data

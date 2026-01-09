@@ -11,7 +11,7 @@ namespace Avax\HTTP\Enums;
  * Utilizing an enum class ensures all HTTP methods are handled uniformly
  * and reduces the likelihood of typos or unsupported methods being used.
  */
-enum HttpMethod: string
+enum HttpMethod : string
 {
     /**
      * HTTP method GET.

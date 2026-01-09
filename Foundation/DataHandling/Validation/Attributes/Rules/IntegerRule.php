@@ -29,11 +29,11 @@ final readonly class IntegerRule
      *
      * @throws ValidationException
      */
-    public function validate(mixed $value, string $property): void
+    public function validate(mixed $value, string $property) : void
     {
-        if (!is_int(value: $value) && !ctype_digit(text: (string)$value)) {
+        if (! is_int(value: $value) && ! ctype_digit(text: (string) $value)) {
             throw new ValidationException(
-                message: $this->message ?? "The {$property} field must be an integer.",
+                message : $this->message ?? "The {$property} field must be an integer.",
                 metadata: [
                     'property' => $property,
                     'value'    => $value,

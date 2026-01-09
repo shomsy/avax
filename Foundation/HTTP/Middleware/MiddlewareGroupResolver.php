@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Middleware;
 
+use Avax\Container\Config\Settings;
 use RuntimeException;
 
 /**
@@ -14,14 +15,20 @@ use RuntimeException;
  */
 final readonly class MiddlewareGroupResolver
 {
-    /**
-     * @param array{
-     *     groups: array<string, array<class-string>>
-     * } $config Middleware group configuration data.
-     */
-    public function __construct(private array $config)
+    private array $config;
+
+    public function __construct(Settings $configRepository)
     {
-        $this->validateConfig(config: $config);
+        $this->config = $configRepository->get(
+            key    : 'middleware',
+            default: ['groups' => []]
+        );
+
+        if (! isset($this->config['groups']) || ! is_array(value: $this->config['groups'])) {
+            $this->config['groups'] = [];
+        }
+
+        $this->validateConfig(config: $this->config);
     }
 
     /**

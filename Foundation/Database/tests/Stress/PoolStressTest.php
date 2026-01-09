@@ -17,19 +17,21 @@ final class PoolStressTest extends TestCase
 {
     /**
      * Test: 100 rapid acquire/release cycles without slot leakage.
+     *
+     * @throws \Throwable
      */
     public function test_pool_handles_rapid_acquire_release() : void
     {
-        $factory = fn () => new PDO(dsn: 'sqlite::memory:');
+        $factory = static fn() => new PDO(dsn: 'sqlite::memory:');
         $pool    = new ConnectionPool(factory: $factory, maxSize: 5);
 
         // Simulate 100 rapid requests
         for ($i = 0; $i < 100; $i++) {
             $authority = $pool->acquire();
-            $this->assertInstanceOf(PooledConnectionAuthority::class, $authority);
+            $this->assertInstanceOf(expected: PooledConnectionAuthority::class, actual: $authority);
 
             $connection = $authority->borrow();
-            $this->assertInstanceOf(PDO::class, $connection->getConnection());
+            $this->assertInstanceOf(expected: PDO::class, actual: $connection->getConnection());
 
             // Explicit release (simulating end of request)
             unset($connection);
@@ -37,15 +39,18 @@ final class PoolStressTest extends TestCase
         }
 
         // Verify pool is still healthy
-        $this->assertTrue(true, 'Pool survived 100 cycles');
+        $this->assertTrue(condition: true, message: 'Pool survived 100 cycles');
     }
 
     /**
      * Test: Concurrent slot usage respects max pool size.
+     *
+     * @throws \Throwable
+     * @throws \Throwable
      */
     public function test_pool_respects_max_size() : void
     {
-        $factory = fn () => new PDO(dsn: 'sqlite::memory:');
+        $factory = static fn() => new PDO(dsn: 'sqlite::memory:');
         $pool    = new ConnectionPool(factory: $factory, maxSize: 3);
 
         $authorities = [];
@@ -59,22 +64,25 @@ final class PoolStressTest extends TestCase
 
         // Fourth acquire should create a new connection (pool exhausted)
         $fourthAuth = $pool->acquire();
-        $this->assertInstanceOf(PooledConnectionAuthority::class, $fourthAuth);
+        $this->assertInstanceOf(expected: PooledConnectionAuthority::class, actual: $fourthAuth);
 
         // Cleanup
         unset($connections);
         unset($authorities);
         unset($fourthAuth);
 
-        $this->assertTrue(true, 'Pool correctly handled slot exhaustion');
+        $this->assertTrue(condition: true, message: 'Pool correctly handled slot exhaustion');
     }
 
     /**
      * Test: Exception during connection usage doesn't leak slot.
+     *
+     * @throws \Throwable
+     * @throws \Throwable
      */
     public function test_pool_releases_slot_on_exception() : void
     {
-        $factory = fn () => new PDO(dsn: 'sqlite::memory:');
+        $factory = static fn() => new PDO(dsn: 'sqlite::memory:');
         $pool    = new ConnectionPool(factory: $factory, maxSize: 2);
 
         try {
@@ -90,6 +98,6 @@ final class PoolStressTest extends TestCase
         // Slot should be released via __destruct
         // Verify pool is still usable
         $newAuthority = $pool->acquire();
-        $this->assertInstanceOf(PooledConnectionAuthority::class, $newAuthority);
+        $this->assertInstanceOf(expected: PooledConnectionAuthority::class, actual: $newAuthority);
     }
 }

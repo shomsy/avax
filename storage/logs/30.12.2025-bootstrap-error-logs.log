@@ -1,0 +1,140 @@
+[01:27:22] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:27:22] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:27:23] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:27:24] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:05] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:06] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:06] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:07] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:31] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:31] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:32] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:33] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:49] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:49] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:50] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:50] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:50] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:50] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:51] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+
+[01:30:51] BOOT ERROR: Avax\Container\Application\Provider\Exceptions\ProviderBootException: Provider [Avax\Container\Application\Provider\Providers\Modules\Core\ReflectionCacheAdapterProvider] failed during register. in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Application\Provider\Providers.php:107
+Trace:
+#0 C:\Users\shomsy\PhpstormProjects\components\bootstrap.php(17): Avax\Container\Application\Provider\Providers->register()
+#1 C:\Users\shomsy\PhpstormProjects\components\index.php(8): require_once('C:\\Users\\shomsy...')
+#2 C:\Program Files\Herd\resources\app.asar.unpacked\resources\valet\server.php(139): require('C:\\Users\\shomsy...')
+#3 {main}
+

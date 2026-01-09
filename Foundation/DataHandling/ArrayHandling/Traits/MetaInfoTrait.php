@@ -99,7 +99,7 @@ trait MetaInfoTrait
     {
         $set ??= true;
         try {
-            $timestamp = Carbon::now()->format($format);
+            $timestamp = Carbon::now()->format(format: $format);
         } catch (Exception $exception) {
             throw new InvalidArgumentException(
                 message : 'Invalid date format: ' . $exception->getMessage(),

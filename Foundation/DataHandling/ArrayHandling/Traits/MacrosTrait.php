@@ -23,7 +23,7 @@ use InvalidArgumentException;
 trait MacrosTrait
 {
     // Store macros and namespaced macros
-    protected static array $macros          = [];
+    protected static array $macros = [];
 
     protected static array $macroNamespaces = [];
 

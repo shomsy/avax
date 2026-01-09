@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\Traits;
 
-use Avax\HTTP\Session\Contracts\SessionInterface;
+use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
 
 /**
  * Trait that provides session management capabilities.
@@ -84,7 +84,7 @@ trait SessionManagementTrait
      */
     public function getFlash(string $key, mixed $default = null) : mixed
     {
-        return $this->session->flash()->get($key, $default) ?? $default;
+        return $this->session->flash()->get(key: $key, default: $default) ?? $default;
     }
 
     /**
@@ -112,3 +112,4 @@ trait SessionManagementTrait
         $this->session->set(key: 'user', value: $user);
     }
 }
+

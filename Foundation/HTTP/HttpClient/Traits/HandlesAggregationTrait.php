@@ -15,6 +15,7 @@ trait HandlesAggregationTrait
      *
      * @return PromiseInterface A promise that resolves with the aggregated results.
      * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function aggregateDataAsynchronously(array $urls) : PromiseInterface
     {

@@ -22,13 +22,13 @@ final class RouteGroupContext
      *
      * @var string|null
      */
-    public string|null $namePrefix  = null;
+    public string|null $namePrefix = null;
 
-    public array       $constraints = [];
+    public array $constraints = [];
 
-    public array       $defaults    = [];
+    public array $defaults = [];
 
-    public array       $attributes  = [];
+    public array $attributes = [];
 
     /**
      * Constructor for initializing the RouteGroupContext with optional settings.

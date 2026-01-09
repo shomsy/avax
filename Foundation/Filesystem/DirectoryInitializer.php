@@ -33,7 +33,8 @@ readonly class DirectoryInitializer
     public function __construct(
         private string               $directoryPath,
         private FileServiceInterface $fileService
-    ) {
+    )
+    {
         $this->initializeDirectory();
     }
 
@@ -75,9 +76,9 @@ readonly class DirectoryInitializer
 
         throw new Exception(
             message: sprintf(
-                         'Unable to make the directory writable at %s. Check file system permissions.',
-                         $this->directoryPath
-                     )
+                'Unable to make the directory writable at %s. Check file system permissions.',
+                $this->directoryPath
+            )
         );
     }
 

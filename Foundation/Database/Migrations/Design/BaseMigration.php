@@ -50,6 +50,8 @@ abstract class BaseMigration
 
     /**
      * Create a new table in the database.
+     *
+     * @throws \Throwable
      */
     protected function create(string $table, Closure $callback) : void
     {
@@ -70,7 +72,7 @@ abstract class BaseMigration
      * @return GrammarInterface
      * @throws RuntimeException If query builder is not set
      */
-    private function getGrammar()
+    private function getGrammar() : GrammarInterface
     {
         return $this->getConnection()->getGrammar();
     }
@@ -88,7 +90,7 @@ abstract class BaseMigration
         if ($this->queryBuilder === null) {
             throw new RuntimeException(
                 message: 'QueryBuilder must be set on migration instance. ' .
-                         'Use setQueryBuilder() method or inject via constructor in migration classes.'
+                'Use setQueryBuilder() method or inject via constructor in migration classes.'
             );
         }
 
@@ -97,6 +99,8 @@ abstract class BaseMigration
 
     /**
      * Modify an existing table.
+     *
+     * @throws \Throwable
      */
     protected function table(string $table, Closure $callback) : void
     {
@@ -113,6 +117,8 @@ abstract class BaseMigration
 
     /**
      * Drop a table if it exists.
+     *
+     * @throws \Throwable
      */
     protected function dropIfExists(string $table) : void
     {
@@ -121,6 +127,8 @@ abstract class BaseMigration
 
     /**
      * Drop a table.
+     *
+     * @throws \Throwable
      */
     protected function drop(string $table) : void
     {

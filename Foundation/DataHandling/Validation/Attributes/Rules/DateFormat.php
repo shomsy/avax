@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
-use DateTime;
 use Avax\Exceptions\ValidationException;
+use DateTime;
 
 /**
  * The DateFormat class is a read-only attribute used to enforce a specific date format on a property.

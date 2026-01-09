@@ -2,52 +2,28 @@
 
 declare(strict_types=1);
 
-use Avax\Auth\Contracts\AuthenticationServiceInterface;
+use Avax\Auth\Contracts\AuthInterface;
 use Avax\Config\Architecture\DDD\AppPath;
-use Avax\Container\Containers\DependencyInjector;
-use Avax\Container\Contracts\ContainerInterface;
-use Avax\Database\DatabaseConnection;
+use Avax\Config\Service\Config;
+use Avax\Database\Connection\ConnectionManager;
 use Avax\DataHandling\ArrayHandling\Arrhae;
 use Avax\DataHandling\ObjectHandling\Collections\Collection;
 use Avax\DumpDebugger;
 use Avax\HTTP\Response\ResponseFactory;
 use Avax\HTTP\Router\Router;
 use Avax\HTTP\Security\CsrfTokenManager;
-use Avax\HTTP\Session\Contracts\SessionInterface;
+use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
 use Avax\View\BladeTemplateEngine;
-use Infrastructure\Config\Service\Config;
 use JetBrains\PhpStorm\NoReturn;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
+require_once __DIR__ . '/app_instance.php';
+
 // -----------------------------------
 // Dependency Injection and Services
 // -----------------------------------
-
-if (! function_exists(function: 'appInstance')) {
-    function appInstance(ContainerInterface|null $instance = null) : DependencyInjector
-    {
-        static $container = null;
-
-        if ($instance instanceof ContainerInterface) {
-            if (! $instance instanceof DependencyInjector) {
-                throw new RuntimeException(message: "Only DependencyInjector instances can be used for appInstance.");
-            }
-
-            $container = $instance;
-        }
-
-        if ($container === null) {
-            throw new RuntimeException(
-                message: "Container instance is not initialized. Please set the container first."
-            );
-        }
-
-        return $container;
-    }
-}
-
 if (! function_exists(function: 'app')) {
     function app(string|null $abstract = null) : mixed
     {
@@ -57,9 +33,9 @@ if (! function_exists(function: 'app')) {
             return $dependencyInjector;
         }
 
-//        if (! $dependencyInjector->has(id: $abstract)) {
-//            throw new RuntimeException(message: "Action '" . $abstract . "' is not found in the container.");
-//        }
+        //        if (! $dependencyInjector->has(id: $abstract)) {
+        //            throw new RuntimeException(message: "Action '" . $abstract . "' is not found in the container.");
+        //        }
 
         return $dependencyInjector->get(id: $abstract);
     }
@@ -85,23 +61,25 @@ if (! function_exists(function: 'base_path')) {
 
 if (! function_exists(function: 'response')) {
     function response(
-        int|null $status = null,
-        array    $headers = [],
-        string   $body = ''
-    ) : ResponseInterface|ResponseFactory {
+        int|null                         $status = null,
+        #[SensitiveParameter] array|null $headers = null,
+        string                           $body = ''
+    ) : ResponseInterface|ResponseFactory
+    {
+        $headers         ??= [];
         $responseFactory = app(abstract: ResponseFactory::class);
 
         if ($status === null) {
             return $responseFactory;
         }
 
-        $response = $responseFactory->createResponse($status);
+        $response = $responseFactory->createResponse(code: $status);
 
         foreach ($headers as $header => $value) {
-            $response = $response->withHeader($header, $value);
+            $response = $response->withHeader(name: $header, value: $value);
         }
 
-        $response->getBody()->write($body);
+        $response->getBody()->write(string: $body);
 
         return $response;
     }
@@ -141,7 +119,7 @@ if (! function_exists(function: 'route')) {
 
             // Fetch the route definition by its name using the retrieved `Router` instance.
             // This name is typically associated with a specific route you defined earlier in the application.
-            $route = $router->getRouteByName($name);
+            $route = $router->getRouteByName(name: $name);
 
             // Extract the path of the route. The `path` property contains the URL pattern for the route.
             $path = $route->path;
@@ -174,7 +152,7 @@ if (! function_exists(function: 'view')) {
     {
         try {
             $blade = app(abstract: BladeTemplateEngine::class);
-            $body  = $blade->render($template, $data);
+            $body  = $blade->render(view: $template, data: $data);
 
             return response(status: 200, headers: ['Content-Type' => 'text/html'], body: $body);
         } catch (Throwable $throwable) {
@@ -230,15 +208,16 @@ if (! function_exists(function: 'session')) {
 }
 
 if (! function_exists(function: 'logger')) {
-    function logger(string|null $message = null, array $context = [], string $level = 'info')
+    function logger(string|null $message = null, array|null $context = null, string $level = 'info')
     {
-        $logger = app(abstract: LoggerInterface::class);
+        $context ??= [];
+        $logger  = app(abstract: LoggerInterface::class);
 
         if ($message === null) {
             return $logger;
         }
 
-        $logger->log($level, $message, $context);
+        $logger->log(level: $level, message: $message, context: $context);
 
         return null;
     }
@@ -272,9 +251,9 @@ if (! function_exists(function: 'collect')) {
 }
 
 if (! function_exists(function: 'auth')) {
-    function auth() : AuthenticationServiceInterface
+    function auth() : AuthInterface
     {
-        return app(abstract: AuthenticationServiceInterface::class);
+        return app(abstract: AuthInterface::class);
     }
 }
 
@@ -309,8 +288,8 @@ if (! function_exists(function: 'redirect') && ! function_exists(function: 'redi
         $responseFactory = app(abstract: ResponseFactoryInterface::class);
 
         return $responseFactory
-            ->createResponse($status)
-            ->withHeader('Location', $url);
+            ->createResponse(code: $status)
+            ->withHeader(name: 'Location', value: $url);
     }
 }
 
@@ -336,39 +315,38 @@ if (! function_exists(function: 'connection')) {
      *
      * @param string|null $connectionName The name of the database connection to retrieve. Defaults to null for the default connection.
      *
-     * @return PDO The PDO database connection instance.
+     * @return \PDO The PDO database connection instance.
      * @throws RuntimeException If the database connection service is not available in the dependency injection container.
+     * @throws \Throwable
      */
     function connection(string $connectionName = null) : PDO
     {
-        /** @var DatabaseConnection $databaseManager */
-        $databaseManager = app(abstract: DatabaseConnection::class);
+        /** @var ConnectionManager $databaseManager */
+        $databaseManager = app(abstract: ConnectionManager::class);
 
-        if (! $databaseManager instanceof DatabaseConnection) {
+        if (! $databaseManager instanceof ConnectionManager) {
             throw new RuntimeException(message: 'Database connection service is not registered in DI container.');
         }
 
-        return $databaseManager->getConnection(connectionName: $connectionName);
-    }
-
-    if (! function_exists(function: 'preview_text')) {
-        /**
-         * Shortens the given text for preview purposes.
-         *
-         * @param string $text
-         * @param int    $limit Number of characters to show
-         *
-         * @return string Truncated text with ellipsis if necessary.
-         */
-        function preview_text(string $text, int $limit = 80) : string
-        {
-            $text = strip_tags(string: $text);
-
-            return mb_strlen(string: $text) > $limit
-                ? mb_substr(string: $text, start: 0, length: $limit - 3) . '...'
-                : $text;
-        }
+        return $databaseManager->getPdo(name: $connectionName);
     }
 }
 
+if (! function_exists(function: 'preview_text')) {
+    /**
+     * Shortens the given text for preview purposes.
+     *
+     * @param string $text
+     * @param int    $limit Number of characters to show
+     *
+     * @return string Truncated text with ellipsis if necessary.
+     */
+    function preview_text(string $text, int $limit = 80) : string
+    {
+        $text = strip_tags(string: $text);
 
+        return mb_strlen(string: $text) > $limit
+            ? mb_substr(string: $text, start: 0, length: $limit - 3) . '...'
+            : $text;
+    }
+}

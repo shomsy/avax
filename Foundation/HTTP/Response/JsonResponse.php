@@ -6,6 +6,7 @@ namespace Avax\HTTP\Response;
 
 use JsonException;
 use Psr\Http\Message\ResponseInterface;
+use SensitiveParameter;
 
 /**
  * Utility for creating standardized JSON HTTP responses.
@@ -15,10 +16,10 @@ readonly class JsonResponse
     private const array DEFAULT_HEADERS = ['Content-Type' => 'application/json'];
 
     public function __construct(
-        public int    $status,
-        public string $message = '',
-        public array  $data = [],
-        public array  $headers = self::DEFAULT_HEADERS,
+        public int                         $status,
+        public string                      $message = '',
+        public array                       $data = [],
+        #[SensitiveParameter] public array $headers = self::DEFAULT_HEADERS,
     ) {}
 
     /**
@@ -63,13 +64,13 @@ readonly class JsonResponse
      */
     public function toResponse() : ResponseInterface
     {
-        $response = app(abstract: ResponseFactory::class)->createResponse($this->status);
+        $response = app(abstract: ResponseFactory::class)->createResponse(code: $this->status);
 
         foreach ($this->headers as $header => $value) {
-            $response = $response->withHeader($header, $value);
+            $response = $response->withHeader(header: $header, value: $value);
         }
 
-        $response->getBody()->write($this->toJson());
+        $response->getBody()->write(string: $this->toJson());
 
         return $response;
     }

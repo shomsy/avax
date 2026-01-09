@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Interface\HTTP\Middleware;
 
-use Closure;
 use Avax\Auth\Contracts\Identity\IdentityInterface;
 use Avax\Auth\Contracts\Identity\Subject\UserInterface;
+use Avax\Auth\Contracts\IdentityInterface;
+use Avax\Auth\Contracts\UserInterface;
 use Avax\Auth\Domain\Exception\AuthorizationException;
+use Closure;
+use Illuminate\Auth\Access\AuthorizationException;
 
 /**
  * Middleware to ensure the user has the specified role.
  */
-class RoleMiddleware
+readonly class RoleMiddleware
 {
-    public function __construct(private readonly IdentityInterface $guard) {}
+    public function __construct(private IdentityInterface $guard) {}
 
     /**
      * @throws AuthorizationException

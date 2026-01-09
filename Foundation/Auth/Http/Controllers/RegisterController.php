@@ -9,23 +9,24 @@ use Avax\Auth\Data\RegistrationDTO;
 use Avax\Exceptions\ValidationException;
 use Avax\HTTP\Request\Request;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
 
 final readonly class RegisterController
 {
     public function __construct(private Register $registerAction) {}
 
-    public function register(Request $request): ResponseInterface
+    public function register(Request $request) : ResponseInterface
     {
         try {
             $data = new RegistrationDTO(data: $request->allInputs());
             $user = $this->registerAction->execute(data: $data);
 
             return response()->send(
-                data: [
+                data  : [
                     'status' => 'success',
-                    'user' => [
-                        'id' => $user->getId(),
-                        'email' => $user->getEmail(),
+                    'user'   => [
+                        'id'       => $user->getId(),
+                        'email'    => $user->getEmail(),
                         'username' => $user->getUsername(),
                     ]
                 ],
@@ -33,7 +34,7 @@ final readonly class RegisterController
             );
         } catch (ValidationException $e) {
             return response()->send(data: ['error' => 'Validation failed', 'details' => $e->getErrors()], status: 422);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return response()->send(data: ['error' => 'Registration failed', 'message' => $e->getMessage()], status: 500);
         }
     }

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
-use Closure;
 use Avax\Auth\Interface\HTTP\Middleware\AuthorizeMiddleware;
-use Avax\Container\Contracts\ContainerInterface;
+use Avax\Container\Features\Core\Contracts\ContainerInterface;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
@@ -67,7 +67,8 @@ final class RoutePipeline
         RouteDefinition      $route,
         ControllerDispatcher $dispatcher,
         ContainerInterface   $container
-    ) : self {
+    ) : self
+    {
         return new self(
             route     : $route,
             dispatcher: $dispatcher,

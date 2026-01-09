@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Avax\Database\QueryBuilder\Core\Executor;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
+use Avax\Database\Events\EventBus;
+use Avax\Database\Events\QueryExecuted;
 use Avax\Database\QueryBuilder\DTO\ExecutionResult;
 use Avax\Database\QueryBuilder\Exceptions\QueryException;
 use Avax\Database\Support\ExecutionScope;
-use Avax\Database\Events\EventBus;
-use Avax\Database\Events\QueryExecuted;
 use PDO;
+use Random\RandomException;
 use SensitiveParameter;
 use Throwable;
 
@@ -34,10 +35,11 @@ final readonly class PDOExecutor implements ExecutorInterface
      * Execute a "Read" query (SELECT) and get the rows back.
      */
     public function query(
-        string $sql,
+        string                      $sql,
         #[SensitiveParameter] array $bindings = [],
-        ExecutionScope|null $scope = null
-    ): array {
+        ExecutionScope|null         $scope = null
+    ) : array
+    {
         $start = microtime(as_float: true);
 
         try {
@@ -46,25 +48,25 @@ final readonly class PDOExecutor implements ExecutorInterface
             $results = $statement->fetchAll();
 
             $this->dispatch(
-                sql: $sql,
-                bindings: $bindings,
-                start: $start,
-                scope: $scope,
+                sql           : $sql,
+                bindings      : $bindings,
+                start         : $start,
+                scope         : $scope,
                 redactBindings: $this->shouldRedactBindings()
             );
 
             return $results;
         } catch (Throwable $e) {
             throw new QueryException(
-                message: "Query execution failed: " . $e->getMessage(),
-                sql: $sql,
+                message    : "Query execution failed: " . $e->getMessage(),
+                sql        : $sql,
                 rawBindings: $bindings,
-                previous: $e
+                previous   : $e
             );
         }
     }
 
-    private function getPdo(): PDO
+    private function getPdo() : PDO
     {
         return $this->connection->getConnection();
     }
@@ -73,45 +75,50 @@ final readonly class PDOExecutor implements ExecutorInterface
      * Execute a "Change" query (INSERT/UPDATE/DELETE/DDL).
      */
     public function execute(
-        string $sql,
+        string                      $sql,
         #[SensitiveParameter] array $bindings = [],
-        ExecutionScope|null $scope = null
-    ): ExecutionResult {
+        ExecutionScope|null         $scope = null
+    ) : ExecutionResult
+    {
         $start = microtime(as_float: true);
 
         try {
             $statement = $this->getPdo()->prepare(query: $sql);
-            $success = $statement->execute(params: $bindings);
+            $success   = $statement->execute(params: $bindings);
 
             $this->dispatch(
-                sql: $sql,
-                bindings: $bindings,
-                start: $start,
-                scope: $scope,
+                sql           : $sql,
+                bindings      : $bindings,
+                start         : $start,
+                scope         : $scope,
                 redactBindings: $this->shouldRedactBindings()
             );
 
             return new ExecutionResult(
-                success: $success,
+                success     : $success,
                 affectedRows: $statement->rowCount()
             );
         } catch (Throwable $e) {
             throw new QueryException(
-                message: "Execution failed: " . $e->getMessage(),
-                sql: $sql,
+                message    : "Execution failed: " . $e->getMessage(),
+                sql        : $sql,
                 rawBindings: $bindings,
-                previous: $e
+                previous   : $e
             );
         }
     }
 
+    /**
+     * @throws RandomException
+     */
     private function dispatch(
         string                      $sql,
         #[SensitiveParameter] array $bindings,
         float                       $start,
         ExecutionScope|null         $scope = null,
         bool                        $redactBindings = true
-    ): void {
+    ) : void
+    {
         if ($this->eventBus === null) {
             return;
         }
@@ -119,23 +126,23 @@ final readonly class PDOExecutor implements ExecutorInterface
         $correlationId = $scope?->correlationId ?? ('ctx_' . bin2hex(string: random_bytes(length: 4)));
 
         $this->eventBus->dispatch(event: new QueryExecuted(
-            sql: $sql,
-            bindings: $bindings,
-            timeMs: (microtime(as_float: true) - $start) * 1000,
+            sql           : $sql,
+            bindings      : $bindings,
+            timeMs        : (microtime(as_float: true) - $start) * 1000,
             connectionName: $this->connectionName,
-            correlationId: $correlationId,
+            correlationId : $correlationId,
             redactBindings: $redactBindings
         ));
     }
 
-    private function shouldRedactBindings(): bool
+    private function shouldRedactBindings() : bool
     {
         $flag = getenv(name: 'DB_LOG_BINDINGS') ?: 'redacted';
 
         return strtolower(string: $flag) !== 'raw';
     }
 
-    public function getDriverName(): string
+    public function getDriverName() : string
     {
         return $this->getPdo()->getAttribute(attribute: PDO::ATTR_DRIVER_NAME);
     }

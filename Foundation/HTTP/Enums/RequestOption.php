@@ -19,7 +19,7 @@ namespace Avax\HTTP\Enums;
  * Each member of the enum stands for a specific way in which request data
  * can be formatted or processed, tailored for different use cases.
  */
-enum RequestOption: string
+enum RequestOption : string
 {
     case HEADERS = 'headers';
 

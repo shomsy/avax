@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use Avax\Container\Containers\Application;
+use Avax\Container\Features\Operate\Boot\Application;
 
 require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/bootstrap.php';
 
-/** @var Application $application */
-$application = app()->get(id: Application::class);
-$application->run();
+/** @var Application $app */
+$app = require_once __DIR__ . '/bootstrap.php';
+
+$app->run();

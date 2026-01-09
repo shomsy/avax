@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Avax\Migrations\Design\Table\Blueprint;
 use Avax\Migrations\Migration;
+use Illuminate\Database\Migrations\Migration;
 
 /**
  * Example migration demonstrating comprehensive SQL data type support.

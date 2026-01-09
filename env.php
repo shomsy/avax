@@ -43,11 +43,11 @@ function loadEnvFile(string $filePath, string $context) : void
     if (! file_exists($filePath)) {
         throw new Exception(
             message: sprintf(
-                         'The required %s .env file is missing at path: %s. 
+                'The required %s .env file is missing at path: %s. 
                 Please contact the developers to obtain the necessary file.',
-                         $context,
-                         $filePath,
-                     ),
+                $context,
+                $filePath,
+            ),
         );
     }
 
@@ -69,7 +69,10 @@ function loadEnvFiles() : void
     loadEnvFile(filePath: __DIR__ . '/.env', context: 'root');
 
     /* Load Docker-specific environment variables */
-    loadEnvFile(filePath: __DIR__ . '/docker/mysql/.env', context: 'Docker MySQL');
+    $dockerEnv = __DIR__ . '/docker/mysql/.env';
+    if (file_exists($dockerEnv)) {
+        loadEnvFile(filePath: $dockerEnv, context: 'Docker MySQL');
+    }
 }
 
 /* Execute Load of the environment files */

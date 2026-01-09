@@ -8,23 +8,23 @@ namespace Avax\HTTP\URI;
  * Enum Protocol
  * Defines supported protocols for URIs and provides methods for conversion and validation.
  */
-enum Protocol: string
+enum Protocol : string
 {
-    case HTTP   = 'http';
+    case HTTP = 'http';
 
-    case HTTPS  = 'https';
+    case HTTPS = 'https';
 
-    case FTP    = 'ftp';
+    case FTP = 'ftp';
 
-    case WS     = 'ws';
+    case WS = 'ws';
 
-    case WSS    = 'wss';
+    case WSS = 'wss';
 
-    case FILE   = 'file';
+    case FILE = 'file';
 
     case MAILTO = 'mailto';
 
-    case DATA   = 'data';
+    case DATA = 'data';
 
     /**
      * Validates if the given scheme is a valid protocol.

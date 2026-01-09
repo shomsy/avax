@@ -130,7 +130,8 @@ class AbsoluteServerRequest implements ServerRequestInterface
         array|null           $parsedBody = null,
         array|null           $cookies = null,
         protected array      $uploadedFiles = [],
-    ) {
+    )
+    {
         $this->serverParams = $server ?? $_SERVER;
         $this->uri          = $uri ?? $this->initializeUri(requestUri: $this->serverParams['REQUEST_URI'] ?? '/');
         $resource           = fopen('php://temp', 'r+');

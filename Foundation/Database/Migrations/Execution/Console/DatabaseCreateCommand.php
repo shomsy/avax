@@ -10,10 +10,10 @@ use Throwable;
 /**
  * Console command to create a new database.
  */
-final class DatabaseCreateCommand
+final readonly class DatabaseCreateCommand
 {
     public function __construct(
-        private readonly QueryBuilder $builder
+        private QueryBuilder $builder
     ) {}
 
     public function handle(string $name) : int

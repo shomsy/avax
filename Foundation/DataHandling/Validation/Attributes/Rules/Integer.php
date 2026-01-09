@@ -61,11 +61,11 @@ class Integer
                 message : $this->message ?? sprintf(self::ERROR_MESSAGE, $property),
                 // Use a custom or default error message.
                 metadata: [
-                              'property' => $property, // The name of the property being validated.
-                              'value'    => $value,    // The actual value that failed validation.
-                              'expected' => 'int',     // The expected type of the value (integer).
-                              'actual'   => gettype(value: $value), // The actual type of the provided value.
-                          ]
+                    'property' => $property, // The name of the property being validated.
+                    'value'    => $value,    // The actual value that failed validation.
+                    'expected' => 'int',     // The expected type of the value (integer).
+                    'actual'   => gettype(value: $value), // The actual type of the provided value.
+                ]
             );
         }
     }

@@ -25,7 +25,16 @@ trait HasJoins
      * @param string|null    $operator The SQL comparison operator (defaults to '=' if second is provided).
      * @param string|null    $second   The right-hand field name belonging to the target table.
      *
-     * @return self A fresh, cloned builder instance with the inner join applied.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasJoins|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     *                                                                                                                          fresh,
+     *                                                                                                                          cloned
+     *                                                                                                                          builder
+     *                                                                                                                          instance
+     *                                                                                                                          with
+     *                                                                                                                          the
+     *                                                                                                                          inner
+     *                                                                                                                          join
+     *                                                                                                                          applied.
      */
     public function join(
         string         $table,
@@ -50,7 +59,16 @@ trait HasJoins
      * @param string|null    $second   The target comparison field label.
      * @param string         $type     The join strategy type (inner/left/right/cross).
      *
-     * @return self A fresh, cloned builder instance containing the new join metadata.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasJoins|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     *                                                                                                                          fresh,
+     *                                                                                                                          cloned
+     *                                                                                                                          builder
+     *                                                                                                                          instance
+     *                                                                                                                          containing
+     *                                                                                                                          the
+     *                                                                                                                          new
+     *                                                                                                                          join
+     *                                                                                                                          metadata.
      */
     protected function addJoin(
         string         $table,
@@ -67,18 +85,18 @@ trait HasJoins
             $first($joinClause);
 
             $clone->state = $clone->state->addJoin(join: new JoinNode(
-                                                             table : $table,
-                                                             type  : $type,
-                                                             clause: $joinClause
-                                                         ));
+                table : $table,
+                type  : $type,
+                clause: $joinClause
+            ));
         } else {
             $clone->state = $clone->state->addJoin(join: new JoinNode(
-                                                             table   : $table,
-                                                             type    : $type,
-                                                             first   : $first,
-                                                             operator: $operator,
-                                                             second  : $second
-                                                         ));
+                table   : $table,
+                type    : $type,
+                first   : $first,
+                operator: $operator,
+                second  : $second
+            ));
         }
 
         return $clone;
@@ -94,7 +112,16 @@ trait HasJoins
      * @param string|null    $operator The SQL comparison operator.
      * @param string|null    $second   The right-hand field name.
      *
-     * @return self A fresh, cloned builder instance with the left join applied.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasJoins|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     *                                                                                                                          fresh,
+     *                                                                                                                          cloned
+     *                                                                                                                          builder
+     *                                                                                                                          instance
+     *                                                                                                                          with
+     *                                                                                                                          the
+     *                                                                                                                          left
+     *                                                                                                                          join
+     *                                                                                                                          applied.
      */
     public function leftJoin(
         string         $table,
@@ -116,7 +143,16 @@ trait HasJoins
      * @param string|null    $operator The SQL comparison operator.
      * @param string|null    $second   The right-hand field name.
      *
-     * @return self A fresh, cloned builder instance with the right join applied.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasJoins|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     *                                                                                                                          fresh,
+     *                                                                                                                          cloned
+     *                                                                                                                          builder
+     *                                                                                                                          instance
+     *                                                                                                                          with
+     *                                                                                                                          the
+     *                                                                                                                          right
+     *                                                                                                                          join
+     *                                                                                                                          applied.
      */
     public function rightJoin(
         string         $table,
@@ -135,7 +171,16 @@ trait HasJoins
      *
      * @param string $table The technical name of the target database table to cross-link.
      *
-     * @return self A fresh, cloned builder instance with the cross join applied.
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasJoins|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     *                                                                                                                          fresh,
+     *                                                                                                                          cloned
+     *                                                                                                                          builder
+     *                                                                                                                          instance
+     *                                                                                                                          with
+     *                                                                                                                          the
+     *                                                                                                                          cross
+     *                                                                                                                          join
+     *                                                                                                                          applied.
      */
     public function crossJoin(string $table) : self
     {

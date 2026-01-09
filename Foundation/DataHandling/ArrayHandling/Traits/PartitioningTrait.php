@@ -138,7 +138,7 @@ trait PartitioningTrait
             $grouped[$groupKey][] = $item;
         }
 
-        return new static(items: array_map(callback: fn($group) : static => new static(items: $group), array: $grouped));
+        return new static(items: array_map(callback: static fn($group) : static => new static(items: $group), array: $grouped));
     }
 
     /**

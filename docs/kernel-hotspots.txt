@@ -1,0 +1,36 @@
+ContainerKernel Hotspots Analysis - Code that doesn't belong in orchestration layer:
+
+1. Flow Objects (lazy initialization with business logic):
+   - $designFlow - TODO move to step: DesignFlowStep
+   - $lifecycleFlow - TODO move to step: LifecycleManagementStep
+   - $policyFlow - TODO move to step: PolicyEnforcementStep
+   - $diagnosticsFlow - TODO move to step: DiagnosticsCollectionStep
+
+2. State Management:
+   - $compilationStats - TODO move to step: CompilationTrackingStep
+   - Compilation methods (compile, validate, clearCache) - TODO move to step: CompilationStep
+
+3. Direct Service Calls (not orchestration):
+   - analyzeDependenciesFor() - TODO move to step: DependencyAnalysisStep
+   - canInject() - TODO move to step: InjectionCapabilityStep
+   - getInjectionInfo() - TODO move to step: InjectionInfoStep
+   - call() - TODO move to step: MethodInvocationStep
+   - injectInto() - TODO move to step: DependencyInjectionStep
+
+4. Binding Logic:
+   - instance() - TODO move to step: InstanceRegistrationStep
+   - singleton/bind/scoped() - TODO move to step: ServiceBindingStep
+   - resolving/extend/when() - TODO move to step: ServiceExtensionStep
+
+5. Conditional Logic:
+   - if (!$this->definitions->has($id)) in instance() - TODO move to step: DefinitionValidationStep
+   - Error handling in resolve() - TODO move to step: ErrorHandlingStep
+
+6. State Collections:
+   - $this->scopes - TODO move to KernelContext metadata
+   - $this->definitions access - TODO move to DefinitionRepository in context
+
+7. Lifecycle Methods:
+   - beginScope/endScope - TODO move to step: ScopeManagementStep
+
+Total hotspots identified: 27 areas to refactor into steps

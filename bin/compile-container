@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+use Avax\Container\Read\DependencyInjector;
+use Avax\Container\Validate\Tools\ContainerCompiler;
+use Avax\Container\Application\Provider\Providers;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$dryRun = in_array('--dry-run', $argv, true);
+$path = null;
+for ($i = 1; $i < count($argv); $i++) {
+    $arg = $argv[$i];
+    if (is_string($arg) && str_starts_with($arg, '--')) {
+        continue;
+    }
+    $path = $arg;
+    break;
+}
+$path ??= (dirname(__DIR__) . '/cache/container_compiled.php');
+
+$injector = new DependencyInjector();
+(new Providers($injector))->register();
+$injector->boot();
+
+$compiler = new ContainerCompiler();
+$compiler->compile($injector, $path, $dryRun);
+
+if ($dryRun) {
+    echo "Dry run complete. Compiled container not written." . PHP_EOL;
+    exit(0);
+}
+
+echo "Compiled container written to {$path}" . PHP_EOL;

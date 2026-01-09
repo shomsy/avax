@@ -50,6 +50,7 @@ final class ConnectionManager
      * @param string|null $name     Specific connection name.
      *
      * @return mixed
+     * @throws \Throwable
      */
     public function pool(callable $callback, string|null $name = null) : mixed
     {
@@ -77,6 +78,7 @@ final class ConnectionManager
      * @param string|null $name The nickname (e.g., 'primary').
      *
      * @return PDO The raw technical engine.
+     * @throws \Throwable
      */
     public function getPdo(string|null $name = null) : PDO
     {
@@ -89,6 +91,7 @@ final class ConnectionManager
      * @param string|null $name Connection nickname (null for default).
      *
      * @return DatabaseConnection
+     * @throws Throwable
      */
     public function connection(string|null $name = null) : DatabaseConnection
     {

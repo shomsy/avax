@@ -36,7 +36,7 @@ final class MigrationLoader
 
         return array_filter(
             array   : $all,
-            callback: fn ($name) => ! in_array(needle: $name, haystack: $ranNames, strict: true),
+            callback: static fn($name) => ! in_array(needle: $name, haystack: $ranNames, strict: true),
             mode    : ARRAY_FILTER_USE_KEY
         );
     }

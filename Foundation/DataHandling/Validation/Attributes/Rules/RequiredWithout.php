@@ -41,10 +41,10 @@ readonly class RequiredWithout
             if (! isset($data[$field]) && empty($value)) {
                 throw new ValidationException(
                     message: sprintf(
-                                 '%s is required when %s is not present.',
-                                 $property,
-                                 $field,
-                             ),
+                        '%s is required when %s is not present.',
+                        $property,
+                        $field,
+                    ),
                 );
             }
         }

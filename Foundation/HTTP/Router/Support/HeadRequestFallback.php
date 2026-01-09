@@ -13,10 +13,10 @@ use Avax\HTTP\Router\Routing\HttpRequestRouter;
  *
  * If a HEAD route is not defined, attempts to resolve the corresponding GET route.
  */
-final class HeadRequestFallback
+final readonly class HeadRequestFallback
 {
     public function __construct(
-        private readonly HttpRequestRouter $router
+        private HttpRequestRouter $router
     ) {}
 
     /**

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Logging\Writers;
 
+use Avax\Logging\LogWriterInterface;
 use Carbon\Carbon;
 use DateTimeZone;
-use Avax\Logging\LogWriterInterface;
 use RuntimeException;
 
 /**
@@ -111,7 +111,7 @@ final class RotatingFileLogWriter implements LogWriterInterface
      *
      * @throws RuntimeException If a path is unsafe or empty.
      */
-    private function validateBaseLogPath(string $baseLogPath) : void
+    private function validateBaseLogPath(string $baseLogPath): void
     {
         if (empty($baseLogPath)) {
             throw new RuntimeException(message: "Base log path cannot be empty.");
@@ -129,7 +129,7 @@ final class RotatingFileLogWriter implements LogWriterInterface
      *
      * @throws RuntimeException If a file cannot be written.
      */
-    public function write(string $content) : void
+    public function write(string $content): void
     {
         // Get the current date and time in the specified timezone, formatted as 'd.m.Y'.
         $currentDate = Carbon::now()->setTimezone(timeZone: $this->timezone)->format(format: 'd.m.Y');
@@ -139,8 +139,12 @@ final class RotatingFileLogWriter implements LogWriterInterface
             // Update the cached date to the current date.
             $this->cachedDate = $currentDate;
 
-            // Generate a new log file path using the base log path and the current date.
-            $this->cachedFilePath = "{$this->baseLogPath}-{$currentDate}.log";
+            // Resolve directory and filename for specific format: {date}-{filename}.log
+            $directory = dirname(path: $this->baseLogPath);
+            $filename  = basename(path: $this->baseLogPath);
+
+            // Generate a new log file path: e.g., 30.12.2025-bootstrap-error-logs.log
+            $this->cachedFilePath = "{$directory}/{$currentDate}-{$filename}.log";
         }
 
         // Ensure the directory for the log file exists, creating it if necessary.
@@ -161,7 +165,7 @@ final class RotatingFileLogWriter implements LogWriterInterface
      *
      * @return void
      */
-    private function ensureDirectoryExists(string $directory) : void
+    private function ensureDirectoryExists(string $directory): void
     {
         if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0775, recursive: true) && ! is_dir(filename: $directory)) {
             throw new RuntimeException(message: "Failed to create log directory: {$directory}");
@@ -178,7 +182,7 @@ final class RotatingFileLogWriter implements LogWriterInterface
      *
      * @return void
      */
-    private function rotateLogs(int $maxFileAgeInDays = 30) : void
+    private function rotateLogs(int $maxFileAgeInDays = 30): void
     {
         // Retrieve a list of log files matching the naming convention: `<baseLogPath>-*.log`.
         // This uses the `glob` function to find all files matching the wildcard pattern.
@@ -222,7 +226,7 @@ final class RotatingFileLogWriter implements LogWriterInterface
      *
      * @throws RuntimeException If writing fails.
      */
-    private function appendToFile(string $filePath, string $content) : void
+    private function appendToFile(string $filePath, string $content): void
     {
         // Attempting to write content to the specified file.
         // The filename is provided by the $filePath variable.
@@ -232,8 +236,8 @@ final class RotatingFileLogWriter implements LogWriterInterface
         //  by getting an exclusive lock during the writing process.
         $result = file_put_contents(
             filename: $filePath,
-            data    : $content . PHP_EOL,
-            flags   : FILE_APPEND | LOCK_EX
+            data: $content . PHP_EOL,
+            flags: FILE_APPEND | LOCK_EX
         );
 
         // Checking if the result of the file_put_contents call is false.

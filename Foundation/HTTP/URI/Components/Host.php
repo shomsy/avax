@@ -45,16 +45,33 @@ final readonly class Host implements Stringable
      */
     private function validate(string $host) : string
     {
-        if (trim(string: $host) === '') {
+        $normalizedHost = trim(string: $host);
+        if ($normalizedHost === '') {
             // Host cannot be an empty string.
             throw new InvalidArgumentException(message: "Host cannot be empty.");
         }
 
-        $asciiHost = idn_to_ascii(domain: $host, flags: IDNA_DEFAULT, variant: INTL_IDNA_VARIANT_UTS46);
+        if (str_contains($normalizedHost, ':') && ! str_starts_with($normalizedHost, '[')) {
+            $parsed = parse_url(url: 'http://' . $normalizedHost);
+            if ($parsed !== false && isset($parsed['host'])) {
+                $normalizedHost = $parsed['host'];
+            }
+        }
+
+        $asciiHost = $normalizedHost;
+        if (function_exists('idn_to_ascii')) {
+            $flags     = defined('IDNA_DEFAULT') ? IDNA_DEFAULT : 0;
+            $variant   = defined('INTL_IDNA_VARIANT_UTS46') ? INTL_IDNA_VARIANT_UTS46 : 0;
+            $converted = idn_to_ascii(domain: $normalizedHost, flags: $flags, variant: $variant);
+            if ($converted !== false) {
+                $asciiHost = $converted;
+            }
+        }
 
         // Ensures the host is a valid domain name after conversion to ASCII.
-        if ($asciiHost === false || ! filter_var(value: $asciiHost, filter: FILTER_VALIDATE_DOMAIN, options: FILTER_FLAG_HOSTNAME)) {
-            throw new InvalidArgumentException(message: 'Invalid host: ' . $host);
+        if (! filter_var(value: $asciiHost, filter: FILTER_VALIDATE_DOMAIN, options: FILTER_FLAG_HOSTNAME)
+            && ! filter_var(value: $asciiHost, filter: FILTER_VALIDATE_IP)) {
+            throw new InvalidArgumentException(message: 'Invalid host: ' . $normalizedHost);
         }
 
         // Return the host in lowercase to avoid case sensitivity issues.

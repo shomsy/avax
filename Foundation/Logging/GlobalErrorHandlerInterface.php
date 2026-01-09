@@ -18,7 +18,7 @@ interface GlobalErrorHandlerInterface
      *
      * @throws \Exception
      */
-    public function initialize(): void;
+    public function initialize() : void;
 
     /**
      * Handles exceptions and logs the error details.
@@ -27,20 +27,20 @@ interface GlobalErrorHandlerInterface
      *
      * @throws \Exception
      */
-    public function handle(Throwable $throwable): void;
+    public function handle(Throwable $throwable) : void;
 
     /**
      * Logs custom messages for debugging.
      *
      * @param string $message - Custom message to log.
-     * @param mixed $context - Additional context for the log entry.
+     * @param mixed  $context - Additional context for the log entry.
      */
-    public function log(string $message, mixed $context = null): void;
+    public function log(string $message, mixed $context = null) : void;
 
     /**
      * Dumps variables during development for debugging purposes.
      *
      * @param mixed $dumpMe - Variable to dump.
      */
-    public function dumpIt(mixed $dumpMe): void;
+    public function dumpIt(mixed $dumpMe) : void;
 }

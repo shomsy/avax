@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
-use Closure;
 use Avax\HTTP\Router\HttpMethod;
+use Closure;
 use InvalidArgumentException;
 use Laravel\SerializableClosure\SerializableClosure;
 
@@ -56,7 +56,7 @@ final readonly class RouteDefinition
      *
      * @throws InvalidArgumentException
      */
-    private function validateMethod(string $method) : void
+    private function validateMethod(string $method): void
     {
         if (! HttpMethod::isValid(method: $method)) {
             throw new InvalidArgumentException(message: sprintf('Invalid HTTP method: %s', $method));
@@ -68,9 +68,9 @@ final readonly class RouteDefinition
      *
      * @throws InvalidArgumentException
      */
-    private function validatePath(string $path) : void
+    private function validatePath(string $path): void
     {
-        if (! preg_match(pattern: '#^/[\w\-/{}]*$#', subject: $path)) {
+        if (! preg_match(pattern: '#^/[\w\-/.{}]*$#', subject: $path)) {
             throw new InvalidArgumentException(message: sprintf('Invalid route path: %s', $path));
         }
     }
@@ -80,7 +80,7 @@ final readonly class RouteDefinition
      *
      * @throws InvalidArgumentException
      */
-    private function validateConstraints(array $constraints) : void
+    private function validateConstraints(array $constraints): void
     {
         foreach ($constraints as $pattern) {
             if (@preg_match(pattern: '/' . $pattern . '/', subject: '') === false) {
@@ -89,20 +89,20 @@ final readonly class RouteDefinition
         }
     }
 
-    public static function __set_state(array $properties) : self
+    public static function __set_state(array $properties): self
     {
         return new self(
-            method       : $properties['method'],
-            path         : $properties['path'],
-            action       : $properties['action'],
-            middleware   : $properties['middleware'],
-            name         : $properties['name'],
-            constraints  : $properties['constraints'],
-            defaults     : $properties['defaults'],
-            domain       : $properties['domain'],
-            attributes   : $properties['attributes'],
+            method: $properties['method'],
+            path: $properties['path'],
+            action: $properties['action'],
+            middleware: $properties['middleware'],
+            name: $properties['name'],
+            constraints: $properties['constraints'],
+            defaults: $properties['defaults'],
+            domain: $properties['domain'],
+            attributes: $properties['attributes'],
             authorization: $properties['authorization'],
-            parameters   : $properties['parameters'] ?? []
+            parameters: $properties['parameters'] ?? []
         );
     }
 
@@ -114,22 +114,22 @@ final readonly class RouteDefinition
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
      */
-    public function withSerializedAction() : self
+    public function withSerializedAction(): self
     {
         $action = $this->action instanceof Closure
-            ? new SerializableClosure($this->action)
+            ? new SerializableClosure(closure: $this->action)
             : $this->action;
 
         return new self(
-            method       : $this->method,
-            path         : $this->path,
-            action       : $action,
-            middleware   : $this->middleware,
-            name         : $this->name,
-            constraints  : $this->constraints,
-            defaults     : $this->defaults,
-            domain       : $this->domain,
-            attributes   : $this->attributes,
+            method: $this->method,
+            path: $this->path,
+            action: $action,
+            middleware: $this->middleware,
+            name: $this->name,
+            constraints: $this->constraints,
+            defaults: $this->defaults,
+            domain: $this->domain,
+            attributes: $this->attributes,
             authorization: $this->authorization
         );
     }
@@ -141,22 +141,22 @@ final readonly class RouteDefinition
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
      * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
      */
-    public function withUnserializedAction() : self
+    public function withUnserializedAction(): self
     {
         $action = $this->action instanceof SerializableClosure
             ? $this->action->getClosure()
             : $this->action;
 
         return new self(
-            method       : $this->method,
-            path         : $this->path,
-            action       : $action,
-            middleware   : $this->middleware,
-            name         : $this->name,
-            constraints  : $this->constraints,
-            defaults     : $this->defaults,
-            domain       : $this->domain,
-            attributes   : $this->attributes,
+            method: $this->method,
+            path: $this->path,
+            action: $action,
+            middleware: $this->middleware,
+            name: $this->name,
+            constraints: $this->constraints,
+            defaults: $this->defaults,
+            domain: $this->domain,
+            attributes: $this->attributes,
             authorization: $this->authorization
         );
     }
@@ -164,7 +164,7 @@ final readonly class RouteDefinition
     /**
      * Checks if the given parameter has a constraint.
      */
-    public function hasConstraint(string $parameter) : bool
+    public function hasConstraint(string $parameter): bool
     {
         return array_key_exists(key: $parameter, array: $this->constraints);
     }
@@ -172,12 +172,12 @@ final readonly class RouteDefinition
     /**
      * Returns the regex constraint for a route parameter.
      */
-    public function getConstraint(string $parameter) : string|null
+    public function getConstraint(string $parameter): string|null
     {
         return $this->constraints[$parameter] ?? null;
     }
 
-    public function usesClosure() : bool
+    public function usesClosure(): bool
     {
         return $this->action instanceof Closure;
     }

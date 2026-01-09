@@ -21,8 +21,8 @@ final readonly class MakeRepositoryCommand
         $entity = $arguments['entity'] ?? null;
 
         if (empty($name) || empty($entity)) {
-            $this->logger->error(message: "Repository name and entity are required.");
-            echo "Error: Repository name and entity are required.\n";
+            $this->logger->error(message: "Settings name and entity are required.");
+            echo "Error: Settings name and entity are required.\n";
 
             return;
         }
@@ -31,10 +31,10 @@ final readonly class MakeRepositoryCommand
             $this->repositoryGenerator->create(tableName: $name, entity: $entity);
             $this->logger->info(
                 message: sprintf(
-                             "Repository '%s' for entity '%s' created successfully.",
-                             $name,
-                             $entity
-                         )
+                    "Settings '%s' for entity '%s' created successfully.",
+                    $name,
+                    $entity
+                )
             );
         } catch (Throwable $throwable) {
             $this->logger->error(message: 'Error creating repository: ' . $throwable->getMessage());

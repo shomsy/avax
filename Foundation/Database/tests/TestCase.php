@@ -17,17 +17,17 @@ abstract class TestCase extends BaseTestCase
 
         $this->kernel = Kernel::getInstance();
         $this->kernel->bootstrap([
-                                     'database' => [
-                                         'default'     => 'sqlite',
-                                         'connections' => [
-                                             'sqlite' => [
-                                                 'driver'   => 'sqlite',
-                                                 'database' => ':memory:',
-                                                 'prefix'   => '',
-                                             ]
-                                         ]
-                                     ]
-                                 ]);
+            'database' => [
+                'default'     => 'sqlite',
+                'connections' => [
+                    'sqlite' => [
+                        'driver'   => 'sqlite',
+                        'database' => ':memory:',
+                        'prefix'   => '',
+                    ]
+                ]
+            ]
+        ]);
     }
 
     protected function tearDown() : void

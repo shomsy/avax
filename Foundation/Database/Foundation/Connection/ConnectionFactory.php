@@ -48,10 +48,10 @@ final readonly class ConnectionFactory
                 username: $config->username,
                 password: $config->password,
                 options : [
-                              PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                              PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                              PDO::ATTR_EMULATE_PREPARES   => false,
-                          ],
+                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES   => false,
+                ],
             );
 
             // Once established, we put it inside our own "PdoConnection" wrapper.
@@ -65,10 +65,10 @@ final readonly class ConnectionFactory
             throw new ConnectionFailure(
                 name    : $config->name,
                 message : sprintf(
-                              'Database connection [%s] failed: %s',
-                              $config->name,
-                              $e->getMessage()
-                          ),
+                    'Database connection [%s] failed: %s',
+                    $config->name,
+                    $e->getMessage()
+                ),
                 previous: $e
             );
         }

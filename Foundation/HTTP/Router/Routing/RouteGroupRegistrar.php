@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
+use Avax\HTTP\Router\Router;
 use CallbackFilterIterator;
 use FilesystemIterator;
-use Avax\HTTP\Router\Router;
 use LogicException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

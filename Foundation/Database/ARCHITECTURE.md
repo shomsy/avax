@@ -2,7 +2,9 @@
 
 ## Overview
 
-The Avax Database component is an enterprise-grade SQL abstraction layer built for reliability, security, and developer ergonomics. It follows a strict separation of concerns between the fluent Domain Specific Language (DSL), the execution orchestration, and the physical driver management.
+The Avax Database component is an enterprise-grade SQL abstraction layer built for reliability, security, and developer
+ergonomics. It follows a strict separation of concerns between the fluent Domain Specific Language (DSL), the execution
+orchestration, and the physical driver management.
 
 ## Core Components
 
@@ -10,7 +12,8 @@ The Avax Database component is an enterprise-grade SQL abstraction layer built f
 
 Located in `QueryBuilder/Core/Builder`, the `QueryBuilder` provides the fluent API for constructing SQL.
 
-- **Immutability**: Every method call returns a `clone` of the builder, ensuring that partial queries can be reused without side effects.
+- **Immutability**: Every method call returns a `clone` of the builder, ensuring that partial queries can be reused
+  without side effects.
 - **State Management**: The builder delegates all structural metadata to a `QueryState` value object.
 
 ### 2. Query Orchestrator (The Conductor)
@@ -26,7 +29,8 @@ The `QueryOrchestrator` acts as the bridge between the DSL and the physical exec
 
 Managed in `Foundation/Connection/Pool`, the pool ensures efficient resource utilization.
 
-- **RAII Lifecycle**: `BorrowedConnection` wraps physical connections and automatically releases them back to the pool via its destructor.
+- **RAII Lifecycle**: `BorrowedConnection` wraps physical connections and automatically releases them back to the pool
+  via its destructor.
 - **Health Checks**: Optional heartbeats to prune stale connections.
 
 ### 4. Grammar Engine (The Compiler)
@@ -42,6 +46,7 @@ An asynchronous/synchronous signal bus for database activity.
 
 ## Design Philosophy
 
-1. **Security First**: Parameters are never inlined; SQL injection is prevented by strict bound-parameter separation at the orchestrator level.
+1. **Security First**: Parameters are never inlined; SQL injection is prevented by strict bound-parameter separation at
+   the orchestrator level.
 2. **Predictability**: Errors are wrapped in domain-specific exceptions (e.g., `ConnectionFailure`, `QueryException`).
 3. **Enterprise Hardening**: The core is "frozen" and prioritized for stability over new features.

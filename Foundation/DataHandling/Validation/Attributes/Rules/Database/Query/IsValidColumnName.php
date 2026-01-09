@@ -6,7 +6,6 @@ namespace Avax\DataHandling\Validation\Attributes\Rules\Database\Query;
 
 use Attribute;
 use Avax\DataHandling\Validation\Attributes\AbstractRule;
-use Avax\Exceptions\ValidationException;
 
 /**
  * Validates that a value is a valid SQL column identifier.
@@ -20,11 +19,10 @@ use Avax\Exceptions\ValidationException;
 class IsValidColumnName extends AbstractRule
 {
     public function __construct(
-        private string $message = 'The :attribute must be a valid column name (alphanumeric, underscore, optional dot, wildcard).'
+        private readonly string $message = 'The :attribute must be a valid column name (alphanumeric, underscore, optional dot, wildcard).'
     ) {}
 
-    #[\Override]
-    public function validate(mixed $value, array $data, string $property): void
+    public function validate(mixed $value, array $data, string $property) : void
     {
         if (! is_string(value: $value)) {
             $this->fail(message: $this->message, property: $property);

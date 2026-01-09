@@ -6,8 +6,6 @@ namespace Avax\DataHandling\ArrayHandling;
 
 use ArrayAccess;
 use ArrayIterator;
-use Closure;
-use Countable;
 use Avax\DataHandling\ArrayHandling\Traits\AbstractDependenciesTrait;
 use Avax\DataHandling\ArrayHandling\Traits\AdvancedStringSearchTrait;
 use Avax\DataHandling\ArrayHandling\Traits\AggregationTrait;
@@ -28,6 +26,8 @@ use Avax\DataHandling\ArrayHandling\Traits\SortOperationsTrait;
 use Avax\DataHandling\ArrayHandling\Traits\StringManipulationTrait;
 use Avax\DataHandling\ArrayHandling\Traits\StructureConversionTrait;
 use Avax\DataHandling\ArrayHandling\Traits\TransformationTrait;
+use Closure;
+use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Traversable;
@@ -456,7 +456,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
         return match (true) {
             $key instanceof Closure => array_map(callback: $key, array: $this->items),
             default                 => array_map(
-                callback: fn($item) => is_array(value: $item) && array_key_exists(key: $key, array: $item) ? $item[$key] : null,
+                callback: static fn($item) => is_array(value: $item) && array_key_exists(key: $key, array: $item) ? $item[$key] : null,
                 array   : $this->items
             ),
         };

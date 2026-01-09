@@ -42,10 +42,10 @@ readonly class AlphaNumOrEmail
             throw new ValidationException(
                 message : $this->message ?? sprintf(self::DEFAULT_ERROR_MESSAGE, $name),
                 metadata: [
-                              'property' => $name,
-                              'value'    => $value,
-                              'expected' => 'alphanumeric or valid email',
-                          ]
+                    'property' => $name,
+                    'value'    => $value,
+                    'expected' => 'alphanumeric or valid email',
+                ]
             );
         }
     }

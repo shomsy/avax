@@ -10,10 +10,10 @@ use Throwable;
 /**
  * Console command to create new migration files.
  */
-final class MigrateMakeCommand
+final readonly class MigrateMakeCommand
 {
     public function __construct(
-        private readonly MigrationGenerator $generator
+        private MigrationGenerator $generator
     ) {}
 
     public function handle(string $name, string $path, array $options = []) : int

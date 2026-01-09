@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
-use Closure;
 use Avax\HTTP\Router\HttpMethod;
+use Closure;
 use InvalidArgumentException;
 use RuntimeException;
 

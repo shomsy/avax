@@ -94,12 +94,10 @@ trait AdvancedStringSearchTrait
      * This method uses the similarity percentage between the query and each item to determine matches.
      *
      * @param string      $query     The search query string.
-     * @param float       $threshold The minimum similarity percentage (0 to 100).
+     * @param float|null  $threshold The minimum similarity percentage (0 to 100).
      * @param string|null $key       The key to search within if items are associative arrays.
      *
      * @return static A new instance containing the matched items.
-     *
-     * @throws InvalidArgumentException If the threshold is not between 0 and 100.
      *
      * @example
      * $arrh = new Arrhae(['apple', 'aple', 'apply', 'banana']);
@@ -118,8 +116,9 @@ trait AdvancedStringSearchTrait
      * //     ['title' => 'PHP for Beginners'],
      * // ]
      */
-    public function similaritySearch(string $query, float $threshold = 70.0, string|null $key = null) : static
+    public function similaritySearch(string $query, float|null $threshold = null, string|null $key = null) : static
     {
+        $threshold ??= 70.0;
         $this->isProperThreshold(threshold: $threshold);
 
         $fuzz    = new Fuzz();

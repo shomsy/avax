@@ -5,16 +5,16 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Adapters;
 
+use Avax\Auth\Contracts\CredentialsInterface;
+use Avax\Auth\Contracts\UserInterface;
+use Avax\Auth\Contracts\UserSourceInterface;
+use Avax\HTTP\Context\HttpContextInterface;
 use Carbon\Carbon;
 use DomainException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Avax\Auth\Contracts\CredentialsInterface;
-use Avax\Auth\Contracts\IdentityInterface;
-use Avax\Auth\Contracts\UserInterface;
-use Avax\Auth\Adapters\Identity;
-use Avax\Auth\Adapters\UserDataSource;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 use UnexpectedValueException;
 
 class JwtIdentity extends Identity implements AuthGuardInterface
@@ -28,13 +28,14 @@ class JwtIdentity extends Identity implements AuthGuardInterface
      * @param int                  $tokenExpiry  The token expiration time in seconds.
      * @param LoggerInterface|null $logger       Optional logger for tracking authentication issues.
      */
-    #[\Override]
     public function __construct(
-        UserSourceInterface                   $userProvider,
-        private readonly string               $secret,
-        private readonly int                  $tokenExpiry = 3600,
-        private readonly LoggerInterface|null $logger = null,
-    ) {
+        UserSourceInterface                           $userProvider,
+        #[SensitiveParameter] private readonly string $secret,
+        private readonly int                          $tokenExpiry = 3600,
+        private readonly LoggerInterface|null         $logger = null,
+        private readonly HttpContextInterface|null    $httpContext = null
+    )
+    {
         parent::__construct(userProvider: $userProvider);
     }
 
@@ -44,10 +45,9 @@ class JwtIdentity extends Identity implements AuthGuardInterface
      * @param CredentialsInterface $credentials Subject credentials.
      *
      * @return bool True if authentication is successful, otherwise false.
-     * @throws \Exception
-     * @throws \Exception
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function attempt(CredentialsInterface $credentials) : bool
+    public function attempt(#[SensitiveParameter] CredentialsInterface $credentials) : bool
     {
         return $this->authenticate(credentials: $credentials) !== null;
     }
@@ -91,7 +91,7 @@ class JwtIdentity extends Identity implements AuthGuardInterface
      */
     private function getTokenFromHeader() : string|null
     {
-        $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        $authHeader = $this->httpContext?->authHeader() ?? '';
 
         if (str_starts_with(haystack: (string) $authHeader, needle: 'Bearer ')) {
             return substr(string: (string) $authHeader, offset: 7);
@@ -107,7 +107,7 @@ class JwtIdentity extends Identity implements AuthGuardInterface
      *
      * @return bool True if the token is valid, otherwise false.
      */
-    private function isTokenValid(object $decodedToken) : bool
+    private function isTokenValid(#[SensitiveParameter] object $decodedToken) : bool
     {
         return isset($decodedToken->exp) && $decodedToken->exp >= Carbon::now()->timestamp;
     }

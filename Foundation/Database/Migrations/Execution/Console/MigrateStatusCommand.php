@@ -10,13 +10,16 @@ use Avax\Migrations\Generate\MigrationLoader;
 /**
  * Console command to show migration status.
  */
-final class MigrateStatusCommand
+final readonly class MigrateStatusCommand
 {
     public function __construct(
-        private readonly MigrationRepository $repository,
-        private readonly MigrationLoader     $loader
+        private MigrationRepository $repository,
+        private MigrationLoader     $loader
     ) {}
 
+    /**
+     * @throws \Throwable
+     */
     public function handle(string $path) : int
     {
         $this->info(msg: 'Migration Status:');

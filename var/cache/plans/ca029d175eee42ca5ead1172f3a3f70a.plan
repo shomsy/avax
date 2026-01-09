@@ -1,0 +1,46 @@
+<?php
+
+return array (
+  'class' => 'Avax\\HTTP\\Router\\Kernel\\RouterKernel',
+  'constructor' => 
+  array (
+    'name' => '__construct',
+    'parameters' => 
+    array (
+      0 => 
+      array (
+        'name' => 'httpRequestRouter',
+        'type' => 'Avax\\HTTP\\Router\\Routing\\HttpRequestRouter',
+        'isOptional' => false,
+        'defaultValue' => NULL,
+        'isVariadic' => false,
+        'allowsNull' => false,
+      ),
+      1 => 
+      array (
+        'name' => 'pipelineFactory',
+        'type' => 'Avax\\HTTP\\Router\\Routing\\RoutePipelineFactory',
+        'isOptional' => false,
+        'defaultValue' => NULL,
+        'isVariadic' => false,
+        'allowsNull' => false,
+      ),
+      2 => 
+      array (
+        'name' => 'headRequestFallback',
+        'type' => 'Avax\\HTTP\\Router\\Support\\HeadRequestFallback',
+        'isOptional' => false,
+        'defaultValue' => NULL,
+        'isVariadic' => false,
+        'allowsNull' => false,
+      ),
+    ),
+  ),
+  'injectedProperties' => 
+  array (
+  ),
+  'injectedMethods' => 
+  array (
+  ),
+  'isInstantiable' => true,
+);

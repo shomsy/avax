@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Migrations\Exceptions;
 
 use Avax\Database\Exceptions\DatabaseException;
-use Override;
 use Throwable;
 
 /**
@@ -25,7 +24,6 @@ final class MigrationException extends DatabaseException
      * @param string|null    $sql            The specific SQL statement that failed
      * @param Throwable|null $previous       Underlying system trigger
      */
-    #[Override]
     public function __construct(
         private readonly string      $migrationClass,
         string                       $message,

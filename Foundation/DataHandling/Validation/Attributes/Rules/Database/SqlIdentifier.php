@@ -23,7 +23,7 @@ readonly class SqlIdentifier
     /**
      * @throws ValidationException
      */
-    public function validate(mixed $value, string $property): void
+    public function validate(mixed $value, string $property) : void
     {
         if (! is_string(value: $value) || ! preg_match(pattern: '/^[a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)?$/', subject: $value)) {
             throw new ValidationException(

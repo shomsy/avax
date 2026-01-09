@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
-use Countable;
 use Avax\Exceptions\ValidationException;
+use Countable;
 use InvalidArgumentException;
 
 /**
@@ -17,13 +17,13 @@ use InvalidArgumentException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 class Min
 {
-    private const string ERROR_NUMERIC   = 'The value of "%s" must be at least %d.';
+    private const string ERROR_NUMERIC = 'The value of "%s" must be at least %d.';
 
-    private const string ERROR_STRING    = 'The length of "%s" must be at least %d characters.';
+    private const string ERROR_STRING = 'The length of "%s" must be at least %d characters.';
 
     private const string ERROR_COUNTABLE = 'The number of items in "%s" must be at least %d.';
 
-    private const string ERROR_INVALID   = 'Invalid value type for "%s". Expected a numeric, string, or countable value, but got "%s".';
+    private const string ERROR_INVALID = 'Invalid value type for "%s". Expected a numeric, string, or countable value, but got "%s".';
 
 
     /**
@@ -54,11 +54,11 @@ class Min
         }
 
         match (true) {
-            is_numeric(value: $value) => $this->validateNumeric(
+            is_numeric(value: $value)   => $this->validateNumeric(
                 value   : (float) $value,
                 property: $property
             ),
-            is_string(value: $value) => $this->validateString(
+            is_string(value: $value)    => $this->validateString(
                 value   : $value,
                 property: $property
             ),
@@ -66,7 +66,7 @@ class Min
                 value   : $value,
                 property: $property
             ),
-            default                                         => $this->throwValidationException(
+            default                     => $this->throwValidationException(
                 errorKey: self::ERROR_INVALID,
                 property: $property,
                 value   : $value
@@ -86,11 +86,11 @@ class Min
         throw new ValidationException(
             message : $this->message ?? sprintf('%s must be at least %d.', ucfirst(string: $property), $this->min),
             metadata: [
-                          'property' => $property,
-                          'value'    => $value,
-                          'min'      => $this->min,
-                          'errorKey' => $errorKey,
-                      ]
+                'property' => $property,
+                'value'    => $value,
+                'min'      => $this->min,
+                'errorKey' => $errorKey,
+            ]
         );
     }
 

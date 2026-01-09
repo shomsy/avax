@@ -57,9 +57,9 @@ final readonly class SyncDispatchStrategy implements DispatchStrategyInterface
                 $this->logger?->error(
                     message: "Event listener execution failed: " . $e->getMessage(),
                     context: [
-                                 'event'     => $event::class,
-                                 'exception' => $e
-                             ]
+                        'event'     => $event::class,
+                        'exception' => $e
+                    ]
                 );
             }
         }

@@ -91,18 +91,18 @@ final class DirectConnectionFlow
             $connection = ConnectionFactory::from(config: $this->config);
             // Signal to the system that the line is open.
             $this->eventBus?->dispatch(event: new ConnectionOpened(
-                                                  connectionName: $label,
-                                                  correlationId : $scope->correlationId
-                                              ));
+                connectionName: $label,
+                correlationId : $scope->correlationId
+            ));
 
             return $connection;
         } catch (Throwable $e) {
             // Signal to the system that we had an error.
             $this->eventBus?->dispatch(event: new ConnectionFailed(
-                                                  connectionName: $label,
-                                                  exception     : $e,
-                                                  correlationId : $scope->correlationId
-                                              ));
+                connectionName: $label,
+                exception     : $e,
+                correlationId : $scope->correlationId
+            ));
 
             throw $e;
         }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Logging;
 
-use Exception;
 use Avax\Facade\Facades\Storage;
+use Exception;
 
 /**
  * Final class FileLogWriter

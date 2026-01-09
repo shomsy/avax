@@ -60,7 +60,7 @@ trait StringManipulationTrait
      */
     public function uppercase(string|null $key = null) : static
     {
-        return $this->processItems(callback: fn(string $value) : string => strtoupper(string: $value), key: $key);
+        return $this->processItems(callback: static fn(string $value) : string => strtoupper(string: $value), key: $key);
     }
 
     /**
@@ -73,7 +73,7 @@ trait StringManipulationTrait
      */
     private function processItems(callable $callback, string|null $key = null) : static
     {
-        return $this->map(callback: function ($item) use ($callback, $key) {
+        return $this->map(callback: static function ($item) use ($callback, $key) {
             if ($key !== null && is_array(value: $item) && isset($item[$key]) && is_string(value: $item[$key])) {
                 $item[$key] = $callback($item[$key]);
 
@@ -102,7 +102,7 @@ trait StringManipulationTrait
      */
     public function lowercase(string|null $key = null) : static
     {
-        return $this->processItems(callback: fn(string $value) : string => strtolower(string: $value), key: $key);
+        return $this->processItems(callback: static fn(string $value) : string => strtolower(string: $value), key: $key);
     }
 
     /**
@@ -119,13 +119,13 @@ trait StringManipulationTrait
      */
     public function title(string|null $key = null) : static
     {
-        return $this->processItems(callback: fn(string $value) : string => ucwords(string: strtolower(string: $value)), key: $key);
+        return $this->processItems(callback: static fn(string $value) : string => ucwords(string: strtolower(string: $value)), key: $key);
     }
 
     /**
      * Removes whitespace or other predefined characters from the beginning and end of string items.
      *
-     * @param string      $characters The characters to trim. Defaults to trimming common whitespace characters.
+     * @param string|null $characters The characters to trim. Defaults to trimming common whitespace characters.
      * @param string|null $key        The key to target within associative arrays. If null, apply to all string items.
      *
      * @return static A new Arrhae instance with items trimmed.
@@ -135,9 +135,11 @@ trait StringManipulationTrait
      * $trimmed = $arrh->trim();
      * // ['apple', 'banana', 'cherry']
      */
-    public function trim(string $characters = self::DEFAULT_TRIM_CHARACTERS, string|null $key = null) : static
+    public function trim(string|null $characters = null, string|null $key = null) : static
     {
-        return $this->processItems(callback: fn(string $value) : string => trim(string: $value, characters: $characters), key: $key);
+        $characters ??= self::DEFAULT_TRIM_CHARACTERS;
+
+        return $this->processItems(callback: static fn(string $value) : string => trim(string: $value, characters: $characters), key: $key);
     }
 
     /**
@@ -155,7 +157,7 @@ trait StringManipulationTrait
     public function camelCase(string|null $key = null) : static
     {
         return $this->processItems(
-            callback: fn(string $value) : string => lcfirst(
+            callback: static fn(string $value) : string => lcfirst(
                 string: str_replace(search: ' ', replace: '', subject: ucwords(string: str_replace(search: ['-', '_'], replace: ' ', subject: $value)))
             ),
             key     : $key

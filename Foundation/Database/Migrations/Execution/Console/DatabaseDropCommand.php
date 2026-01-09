@@ -10,10 +10,10 @@ use Throwable;
 /**
  * Console command to drop a database.
  */
-final class DatabaseDropCommand
+final readonly class DatabaseDropCommand
 {
     public function __construct(
-        private readonly QueryBuilder $builder
+        private QueryBuilder $builder
     ) {}
 
     public function handle(string $name) : int

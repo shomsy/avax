@@ -33,7 +33,8 @@ final class QueryOrchestrator
         private readonly TransactionManagerInterface|null $transactionManager = null,
         private IdentityMap|null                          $identityMap = null,
         private ExecutionScope|null                       $scope = null
-    ) {
+    )
+    {
         $this->scope ??= ExecutionScope::fresh();
     }
 
@@ -47,7 +48,7 @@ final class QueryOrchestrator
     /**
      * Switch to pretend (dry-run) mode.
      */
-    public function pretend(bool $value = true): void
+    public function pretend(bool $value = true) : void
     {
         $this->isPretending = $value;
     }
@@ -57,7 +58,7 @@ final class QueryOrchestrator
      *
      * @throws Throwable
      */
-    public function query(string $sql, array $bindings = []): array
+    public function query(string $sql, array $bindings = []) : array
     {
         if ($this->isPretending) {
             $this->logPretend(sql: $sql);
@@ -66,6 +67,33 @@ final class QueryOrchestrator
         }
 
         return $this->executor->query(sql: $sql, bindings: $bindings, scope: $this->scope);
+    }
+
+    private function logPretend(string $sql) : void
+    {
+        echo "\033[33m[DRY RUN]\033[0m SQL: {$sql}\n";
+    }
+
+    /**
+     * Execute a callback inside a transaction, flushing the IdentityMap after success.
+     *
+     * @throws Throwable
+     */
+    public function transaction(callable $callback) : mixed
+    {
+        if (! $this->transactionManager) {
+            throw new RuntimeException(message: "Transaction manager not available in Orchestrator.");
+        }
+
+        return $this->transactionManager->transaction(callback: function () use ($callback) {
+            $result = $callback($this);
+
+            if ($this->identityMap !== null) {
+                $this->identityMap->execute();
+            }
+
+            return $result;
+        });
     }
 
     /**
@@ -77,7 +105,8 @@ final class QueryOrchestrator
         string      $sql,
         array|null  $bindings = null,
         string|null $operation = null
-    ): ExecutionResult {
+    ) : ExecutionResult
+    {
         $bindings ??= [];
 
         if ($this->isPretending) {
@@ -95,34 +124,12 @@ final class QueryOrchestrator
         return $this->executor->execute(sql: $sql, bindings: $bindings, scope: $this->scope);
     }
 
-    /**
-     * Execute a callback inside a transaction, flushing the IdentityMap after success.
-     *
-     * @throws Throwable
-     */
-    public function transaction(callable $callback): mixed
-    {
-        if (! $this->transactionManager) {
-            throw new RuntimeException(message: "Transaction manager not available in Orchestrator.");
-        }
-
-        return $this->transactionManager->transaction(callback: function () use ($callback) {
-            $result = $callback($this);
-
-            if ($this->identityMap !== null) {
-                $this->identityMap->execute();
-            }
-
-            return $result;
-        });
-    }
-
-    public function getTransactionManager(): TransactionManagerInterface|null
+    public function getTransactionManager() : TransactionManagerInterface|null
     {
         return $this->transactionManager;
     }
 
-    public function withIdentityMap(IdentityMap|null $map): self
+    public function withIdentityMap(IdentityMap|null $map) : self
     {
         $clone              = clone $this;
         $clone->identityMap = $map;
@@ -130,7 +137,7 @@ final class QueryOrchestrator
         return $clone;
     }
 
-    public function withScope(ExecutionScope $scope): self
+    public function withScope(ExecutionScope $scope) : self
     {
         $clone        = clone $this;
         $clone->scope = $scope;
@@ -138,18 +145,13 @@ final class QueryOrchestrator
         return $clone;
     }
 
-    public function getScope(): ExecutionScope
+    public function getScope() : ExecutionScope
     {
         return $this->scope;
     }
 
-    public function getIdentityMap(): IdentityMap|null
+    public function getIdentityMap() : IdentityMap|null
     {
         return $this->identityMap;
-    }
-
-    private function logPretend(string $sql): void
-    {
-        echo "\033[33m[DRY RUN]\033[0m SQL: {$sql}\n";
     }
 }

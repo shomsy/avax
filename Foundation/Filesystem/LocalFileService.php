@@ -11,34 +11,6 @@ namespace Avax\Filesystem;
 class LocalFileService implements FileServiceInterface
 {
     /**
-     * Checks if the given path is a directory.
-     *
-     * @param string $path The path to check.
-     *
-     * @return bool True if the path is a directory, false otherwise.
-     */
-    public function isDirectory(string $path) : bool
-    {
-        return is_dir(filename: $path);
-    }
-
-    /**
-     * Creates a directory with the specified permissions.
-     *
-     * @param string $path        The directory path to create.
-     * @param int    $permissions The permissions to set for the directory.
-     *
-     * @return bool True on success, false on failure.
-     *
-     * Note: The third argument for mkdir() is set to true to ensure recursive directory creation.
-     */
-    public function createDirectory(string $path, int $permissions) : bool
-    {
-        return ! (! is_dir(filename: $path) && ! @mkdir(directory: $path, permissions: $permissions, recursive: true));
-    }
-
-
-    /**
      * Sets the permissions for the given path.
      *
      * @param string $path        The path to set permissions for.
@@ -64,18 +36,6 @@ class LocalFileService implements FileServiceInterface
     }
 
     /**
-     * Checks if a file exists at the given path.
-     *
-     * @param string $path The path to check.
-     *
-     * @return bool True if the file exists, false otherwise.
-     */
-    public function fileExists(string $path) : bool
-    {
-        return file_exists(filename: $path);
-    }
-
-    /**
      * Creates an empty file at the specified path.
      *
      * @param string $path The file path to create.
@@ -91,6 +51,18 @@ class LocalFileService implements FileServiceInterface
         }
 
         return true;
+    }
+
+    /**
+     * Checks if a file exists at the given path.
+     *
+     * @param string $path The path to check.
+     *
+     * @return bool True if the file exists, false otherwise.
+     */
+    public function fileExists(string $path) : bool
+    {
+        return file_exists(filename: $path);
     }
 
     /**
@@ -112,5 +84,32 @@ class LocalFileService implements FileServiceInterface
         }
 
         return file_put_contents(filename: $path, data: $content . PHP_EOL, flags: FILE_APPEND | LOCK_EX) !== false;
+    }
+
+    /**
+     * Checks if the given path is a directory.
+     *
+     * @param string $path The path to check.
+     *
+     * @return bool True if the path is a directory, false otherwise.
+     */
+    public function isDirectory(string $path) : bool
+    {
+        return is_dir(filename: $path);
+    }
+
+    /**
+     * Creates a directory with the specified permissions.
+     *
+     * @param string $path        The directory path to create.
+     * @param int    $permissions The permissions to set for the directory.
+     *
+     * @return bool True on success, false on failure.
+     *
+     * Note: The third argument for mkdir() is set to true to ensure recursive directory creation.
+     */
+    public function createDirectory(string $path, int $permissions) : bool
+    {
+        return ! (! is_dir(filename: $path) && ! @mkdir(directory: $path, permissions: $permissions, recursive: true));
     }
 }

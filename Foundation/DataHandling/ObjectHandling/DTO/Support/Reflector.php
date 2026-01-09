@@ -158,7 +158,8 @@ final class Reflector
         ReflectionProperty $property,
         array              $attributes,
         array              $data
-    ) : void {
+    ) : void
+    {
         // If the field is not present in the data array, handle it as missing.
         if (! array_key_exists(key: $name, array: $data)) {
             $this->handleMissingField(name: $name, property: $property);

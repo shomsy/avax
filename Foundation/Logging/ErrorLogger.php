@@ -93,7 +93,7 @@ final readonly class ErrorLogger implements LoggerInterface
         // 📝 Format the log entry with Belgrade timezone
         $formattedMessage = sprintf(
             "[%s] %s %s %s\n",
-            Carbon::now()->setTimezone('Europe/Belgrade')->format('Y-m-d H:i:s'),
+            Carbon::now()->setTimezone(timeZone: 'Europe/Belgrade')->format(format: 'Y-m-d H:i:s'),
             $this->getLogPrefix(level: $level),
             (string) $message,
             $this->formatContext(context: $context)
@@ -110,20 +110,20 @@ final readonly class ErrorLogger implements LoggerInterface
     private function isValidLogLevel(mixed $level) : bool
     {
         return is_string(value: $level)
-               && in_array(
+            && in_array(
                 needle  : $level,
                 haystack: [
-                       LogLevel::EMERGENCY,
-                       LogLevel::ALERT,
-                       LogLevel::CRITICAL,
-                       LogLevel::ERROR,
-                       LogLevel::WARNING,
-                       LogLevel::NOTICE,
-                       LogLevel::INFO,
-                       LogLevel::DEBUG,
-                   ],
+                    LogLevel::EMERGENCY,
+                    LogLevel::ALERT,
+                    LogLevel::CRITICAL,
+                    LogLevel::ERROR,
+                    LogLevel::WARNING,
+                    LogLevel::NOTICE,
+                    LogLevel::INFO,
+                    LogLevel::DEBUG,
+                ],
                 strict  : true
-               );
+            );
     }
 
     /**

@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>LifecycleStrategy</title>
+    <link href="../../../../../styles.css" rel="stylesheet">
+</head>
+<body>
+<div class="layout">
+                        <aside class="sidebar">
+        <div class="brand"><a href="../../../../index.html">Container Docs</a></div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search...">
+        </div>
+        <nav>
+            <div class="nav-section">
+                <h3 class="nav-title">Container (Root)</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Container.html">Container</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Act/Inject</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Act/Inject/InjectDependencies.html">InjectDependencies</a></li>
+                    <li><a href="../../../Act/Inject/PropertyInjector.html">PropertyInjector</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Advanced/Lazy</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Actions/Advanced/Lazy/LazyInterface.html">LazyInterface</a></li>
+                    <li><a href="../../../Actions/Advanced/Lazy/LazyValue.html">LazyValue</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Inject</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Actions/Inject/InjectDependencies.html">InjectDependencies</a></li>
+                    <li><a href="../../../Actions/Inject/PropertyInjector.html">PropertyInjector</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Inject/Resolvers</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Actions/Inject/Resolvers/PropertyResolution.html">PropertyResolution</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Instantiate</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Actions/Instantiate/Instantiator.html">Instantiator</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Invoke/Cache</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Actions/Invoke/Cache/ReflectionCache.html">ReflectionCache</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Advanced/Lazy</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Advanced/Lazy/LazyInterface.html">LazyInterface</a></li>
+                    <li><a href="../../../Advanced/Lazy/LazyValue.html">LazyValue</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Advanced/Observe</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Advanced/Observe/DiagnosticsFlow.html">DiagnosticsFlow</a></li>
+                    <li><a href="../../../Advanced/Observe/Telemetry.html">Telemetry</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Advanced/Policy</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Advanced/Policy/PolicyFlow.html">PolicyFlow</a></li>
+                    <li><a href="../../../Advanced/Policy/Security.html">Security</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Container.html">Container</a></li>
+                    <li><a href="../../ContainerBuilder.html">ContainerBuilder</a></li>
+                    <li><a href="../../ContainerConfig.html">ContainerConfig</a></li>
+                    <li><a href="../../ContainerEngine.html">ContainerEngine</a></li>
+                    <li><a href="../../ContainerKernel.html">ContainerKernel</a></li>
+                    <li><a href="../../ResolutionEngine.html">ResolutionEngine</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Attribute</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Attribute/Inject.html">Inject</a></li>
+                    <li><a href="../../Attribute/Singleton.html">Singleton</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/DTO</h3>
+                <ul class="nav-list">
+                    <li><a href="../../DTO/ErrorDTO.html">ErrorDTO</a></li>
+                    <li><a href="../../DTO/InjectionReport.html">InjectionReport</a></li>
+                    <li><a href="../../DTO/SuccessDTO.html">SuccessDTO</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Enum</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Enum/ServiceLifetime.html">ServiceLifetime</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Exceptions</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Exceptions/ContainerExceptions.html">ContainerExceptions</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel</h3>
+                <ul class="nav-list">
+                    <li><a href="../KernelCompiler.html">KernelCompiler</a></li>
+                    <li><a href="../KernelConfig.html">KernelConfig</a></li>
+                    <li><a href="../KernelFacade.html">KernelFacade</a></li>
+                    <li><a href="../KernelRuntime.html">KernelRuntime</a></li>
+                    <li><a href="../KernelState.html">KernelState</a></li>
+                    <li><a href="../LifecycleResolver.html">LifecycleResolver</a></li>
+                    <li><a href="../LifecycleStrategyRegistry.html">LifecycleStrategyRegistry</a></li>
+                    <li><a href="../ResolutionPipeline.html">ResolutionPipeline</a></li>
+                    <li><a href="../ResolutionPipelineBuilder.html">ResolutionPipelineBuilder</a></li>
+                    <li><a href="../StepTelemetryCollector.html">StepTelemetryCollector</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel/Contracts</h3>
+                <ul class="nav-list">
+                    <li><a href="KernelContext.html">KernelContext</a></li>
+                    <li><a href="KernelStep.html">KernelStep</a></li>
+                    <li><a href="LifecycleStrategy.html">LifecycleStrategy</a></li>
+                    <li><a href="StepTelemetry.html">StepTelemetry</a></li>
+                    <li><a href="TerminalKernelStep.html">TerminalKernelStep</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel/Events</h3>
+                <ul class="nav-list">
+                    <li><a href="../Events/StepFailed.html">StepFailed</a></li>
+                    <li><a href="../Events/StepStarted.html">StepStarted</a></li>
+                    <li><a href="../Events/StepSucceeded.html">StepSucceeded</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel/Steps</h3>
+                <ul class="nav-list">
+                    <li><a href="../Steps/AnalyzePrototypeStep.html">AnalyzePrototypeStep</a></li>
+                    <li><a href="../Steps/ApplyExtendersStep.html">ApplyExtendersStep</a></li>
+                    <li><a href="../Steps/CircularDependencyStep.html">CircularDependencyStep</a></li>
+                    <li><a href="../Steps/CollectDiagnosticsStep.html">CollectDiagnosticsStep</a></li>
+                    <li><a href="../Steps/DepthGuardStep.html">DepthGuardStep</a></li>
+                    <li><a href="../Steps/EnsureDefinitionExistsStep.html">EnsureDefinitionExistsStep</a></li>
+                    <li><a href="../Steps/GuardPolicyStep.html">GuardPolicyStep</a></li>
+                    <li><a href="../Steps/InjectDependenciesStep.html">InjectDependenciesStep</a></li>
+                    <li><a href="../Steps/InvokePostConstructStep.html">InvokePostConstructStep</a></li>
+                    <li><a href="../Steps/ResolveInstanceStep.html">ResolveInstanceStep</a></li>
+                    <li><a href="../Steps/RetrieveFromScopeStep.html">RetrieveFromScopeStep</a></li>
+                    <li><a href="../Steps/StoreLifecycleStep.html">StoreLifecycleStep</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel/Strategies</h3>
+                <ul class="nav-list">
+                    <li><a href="../Strategies/ScopedLifecycleStrategy.html">ScopedLifecycleStrategy</a></li>
+                    <li><a href="../Strategies/SingletonLifecycleStrategy.html">SingletonLifecycleStrategy</a></li>
+                    <li><a href="../Strategies/TransientLifecycleStrategy.html">TransientLifecycleStrategy</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Utils</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Utils/ArrayTools.html">ArrayTools</a></li>
+                    <li><a href="../../Utils/StrTools.html">StrTools</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Define/Bind</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Define/Bind/BindingBuilder.html">BindingBuilder</a></li>
+                    <li><a href="../../../Define/Bind/ContextBuilder.html">ContextBuilder</a></li>
+                    <li><a href="../../../Define/Bind/Registrar.html">Registrar</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Define/Store</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Define/Store/DefinitionStore.html">DefinitionStore</a></li>
+                    <li><a href="../../../Define/Store/ServiceDefinition.html">ServiceDefinition</a></li>
+                    <li><a href="../../../Define/Store/ServiceDefinitionEntity.html">ServiceDefinitionEntity</a></li>
+                    <li><a href="../../../Define/Store/ServiceDiscovery.html">ServiceDiscovery</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Define/Store/Compiler</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Define/Store/Compiler/CompilerPassInterface.html">CompilerPassInterface</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Invoke</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Invoke/InvocationExecutor.html">InvocationExecutor</a></li>
+                    <li><a href="../../../Invoke/InvokeAction.html">InvokeAction</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Invoke/Cache</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Invoke/Cache/ReflectionCache.html">ReflectionCache</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Invoke/Context</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Invoke/Context/InvocationContext.html">InvocationContext</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Operate/ScopeManager.html">ScopeManager</a></li>
+                    <li><a href="../../../Operate/ScopeRegistry.html">ScopeRegistry</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate/Boot</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Operate/Boot/Application.html">Application</a></li>
+                    <li><a href="../../../Operate/Boot/ApplicationBuilder.html">ApplicationBuilder</a></li>
+                    <li><a href="../../../Operate/Boot/ContainerBootstrapper.html">ContainerBootstrapper</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate/Config</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Operate/Config/BootstrapProfile.html">BootstrapProfile</a></li>
+                    <li><a href="../../../Operate/Config/ContainerConfig.html">ContainerConfig</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate/Scope</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Operate/Scope/ScopeManager.html">ScopeManager</a></li>
+                    <li><a href="../../../Operate/Scope/ScopeRegistry.html">ScopeRegistry</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate/Shutdown</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Operate/Shutdown/TerminateContainer.html">TerminateContainer</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Resolve</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Resolve/DependencyResolver.html">DependencyResolver</a></li>
+                    <li><a href="../../../Resolve/ResolutionContext.html">ResolutionContext</a></li>
+                    <li><a href="../../../Resolve/ResolutionEngine.html">ResolutionEngine</a></li>
+                    <li><a href="../../../Resolve/ResolutionPipeline.html">ResolutionPipeline</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Resolve/Pipes</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Resolve/Pipes/AutowirePipe.html">AutowirePipe</a></li>
+                    <li><a href="../../../Resolve/Pipes/BindingPipe.html">BindingPipe</a></li>
+                    <li><a href="../../../Resolve/Pipes/ScopePipe.html">ScopePipe</a></li>
+                    <li><a href="../../../Resolve/Pipes/TerminalPipe.html">TerminalPipe</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Resolve/Resolvers</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Resolve/Resolvers/DefaultResolver.html">DefaultResolver</a></li>
+                    <li><a href="../../../Resolve/Resolvers/ExceptionResolver.html">ExceptionResolver</a></li>
+                    <li><a href="../../../Resolve/Resolvers/NullResolver.html">NullResolver</a></li>
+                    <li><a href="../../../Resolve/Resolvers/OverrideResolver.html">OverrideResolver</a></li>
+                    <li><a href="../../../Resolve/Resolvers/ParameterResolutionChain.html">ParameterResolutionChain</a></li>
+                    <li><a href="../../../Resolve/Resolvers/ParameterResolver.html">ParameterResolver</a></li>
+                    <li><a href="../../../Resolve/Resolvers/TypeResolver.html">TypeResolver</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Analyze</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Think/Analyze/PrototypeAnalyzer.html">PrototypeAnalyzer</a></li>
+                    <li><a href="../../../Think/Analyze/ReflectionTypeAnalyzer.html">ReflectionTypeAnalyzer</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Cache</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Think/Cache/FilePrototypeCache.html">FilePrototypeCache</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Model</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Think/Model/MethodPrototype.html">MethodPrototype</a></li>
+                    <li><a href="../../../Think/Model/ParameterPrototype.html">ParameterPrototype</a></li>
+                    <li><a href="../../../Think/Model/PropertyPrototype.html">PropertyPrototype</a></li>
+                    <li><a href="../../../Think/Model/ServicePrototype.html">ServicePrototype</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Prototype</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Think/Prototype/ServicePrototypeFactory.html">ServicePrototypeFactory</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Prototype/Contracts</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Think/Prototype/Contracts/ServicePrototypeFactoryInterface.html">ServicePrototypeFactoryInterface</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Verify</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../Think/Verify/VerifyPrototype.html">VerifyPrototype</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Guidelines</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../../master-prompt.html">Master Prompt</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+    <main class="content">
+        <section class="hero">
+            <h1>LifecycleStrategy</h1>
+            <p>Contract for service lifecycle management</p>
+            <div class="meta">Foundation/Container/Core/Kernel/Contracts/LifecycleStrategy.php</div>
+        </section>
+
+        <section class="section">
+            <h2>Interface Overview</h2>
+            <div class="card">
+                <p>LifecycleStrategy defines how services are cached and retrieved based on their lifecycle type. Different implementations provide different caching behaviors for singleton, scoped, and transient services.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To define consistent storage/retrieval behavior for different lifecycles</p>
+                    <p>- To enable pluggable caching strategies</p>
+                    <p>- To support different scoping models (global, request, custom)</p>
+                    <p>- To allow lifecycle-specific cleanup and resource management</p>
+                    <p><strong>HOW IT FITS IN THE ARCHITECTURE:</strong></p>
+                    <p>The container uses strategies through the scope manager:</p>
+                    <p><code>Container</code> → <code>ScopeManager</code> → <code>LifecycleStrategy</code></p>
+                    <p>Each lifecycle type (singleton, scoped, transient) uses a different strategy implementation.</p>
+                    <p><strong>STRATEGY TYPES:</strong></p>
+                    <p>- SingletonStrategy: Global application cache</p>
+                    <p>- ScopedStrategy: Request/session scoped cache</p>
+                    <p>- TransientStrategy: No caching (always new)</p>
+                </details>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Lifecycle Types Explained</h2>
+
+            <div class="card">
+                <h3>Singleton Lifecycle</h3>
+                <pre><code class="language-php">// One instance for entire application
+$container->singleton(Database::class, MySqlConnection::class);
+
+final class SingletonStrategy implements LifecycleStrategy {
+    private array $instances = [];
+
+    public function store(string $abstract, $instance): void {
+        $this->instances[$abstract] = $instance;
+    }
+
+    public function has(string $abstract): bool {
+        return isset($this->instances[$abstract]);
+    }
+
+    public function retrieve(string $abstract) {
+        return $this->instances[$abstract] ?? null;
+    }
+
+    public function clear(): void {
+        $this->instances = []; // Rarely called
+    }
+}</code></pre>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHEN TO USE:</strong> Expensive services, configuration, shared resources</p>
+                    <p><strong>BEHAVIOR:</strong> First resolution creates and caches globally</p>
+                    <p><strong>LIFETIME:</strong> Same as application</p>
+                    <p><strong>MEMORY:</strong> Permanent until application ends</p>
+                </details>
+            </div>
+
+            <div class="card">
+                <h3>Scoped Lifecycle</h3>
+                <pre><code class="language-php">// Instance per scope (request, session, etc.)
+$container->scoped(UserSession::class, HttpSession::class);
+
+final class ScopedStrategy implements LifecycleStrategy {
+    private array $instances = [];
+
+    public function store(string $abstract, $instance): void {
+        $this->instances[$abstract] = $instance;
+    }
+
+    public function has(string $abstract): bool {
+        return isset($this->instances[$abstract]);
+    }
+
+    public function retrieve(string $abstract) {
+        return $this->instances[$abstract] ?? null;
+    }
+
+    public function clear(): void {
+        $this->instances = []; // Called when scope ends
+    }
+}</code></pre>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHEN TO USE:</strong> Per-request data, transactions, user context</p>
+                    <p><strong>BEHAVIOR:</strong> New instance per scope, shared within scope</p>
+                    <p><strong>LIFETIME:</strong> Until scope ends (request completes, etc.)</p>
+                    <p><strong>MEMORY:</strong> Automatic cleanup prevents leaks</p>
+                </details>
+            </div>
+
+            <div class="card">
+                <h3>Transient Lifecycle</h3>
+                <pre><code class="language-php">// Always create new instance
+$container->bind(ReportGenerator::class, PdfReportGenerator::class);
+
+final class TransientStrategy implements LifecycleStrategy {
+    public function store(string $abstract, $instance): void {
+        // No-op - don't store
+    }
+
+    public function has(string $abstract): bool {
+        return false; // Never cached
+    }
+
+    public function retrieve(string $abstract) {
+        return null; // Always miss
+    }
+
+    public function clear(): void {
+        // Nothing to clear
+    }
+}</code></pre>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHEN TO USE:</strong> Factories, new instances needed, stateless services</p>
+                    <p><strong>BEHAVIOR:</strong> Every resolution creates new instance</p>
+                    <p><strong>LIFETIME:</strong> Use immediately, no caching</p>
+                    <p><strong>MEMORY:</strong> No long-term storage</p>
+                </details>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Application Usage Examples</h2>
+
+            <div class="card">
+                <h3>Custom Lifecycle Strategy</h3>
+                <pre><code class="language-php">// Custom strategy for time-based caching
+final class TimeBasedStrategy implements LifecycleStrategy {
+    private array $instances = [];
+    private array $timestamps = [];
+
+    public function store(string $abstract, $instance): void {
+        $this->instances[$abstract] = $instance;
+        $this->timestamps[$abstract] = time();
+    }
+
+    public function has(string $abstract): bool {
+        if (!isset($this->instances[$abstract])) {
+            return false;
+        }
+
+        // Expire after 5 minutes
+        if (time() - $this->timestamps[$abstract] > 300) {
+            unset($this->instances[$abstract], $this->timestamps[$abstract]);
+            return false;
+        }
+
+        return true;
+    }
+
+    public function retrieve(string $abstract) {
+        return $this->instances[$abstract] ?? null;
+    }
+
+    public function clear(): void {
+        $this->instances = [];
+        $this->timestamps = [];
+    }
+}</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>Database Connection Pooling</h3>
+                <pre><code class="language-php">// Singleton strategy with connection pooling
+final class PooledConnectionStrategy implements LifecycleStrategy {
+    private ?DatabaseConnection $connection = null;
+
+    public function store(string $abstract, $instance): void {
+        if ($instance instanceof DatabaseConnection) {
+            $this->connection = $instance;
+        }
+    }
+
+    public function has(string $abstract): bool {
+        return $this->connection !== null && $this->connection->isConnected();
+    }
+
+    public function retrieve(string $abstract) {
+        return $this->connection;
+    }
+
+    public function clear(): void {
+        if ($this->connection) {
+            $this->connection->close();
+            $this->connection = null;
+        }
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Methods</h2>
+
+            <div class="card" id="store">
+                <h3>store</h3>
+                <p>Store an instance according to the lifecycle strategy.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To cache resolved instances according to lifecycle rules</p>
+                    <p>- To enable instance reuse for performance</p>
+                    <p>- To manage memory and resource lifecycle</p>
+                    <p><strong>STRATEGY-SPECIFIC BEHAVIOR:</strong></p>
+                    <p><em>Singleton:</em> Store in global map, never evicted</p>
+                    <p><em>Scoped:</em> Store in scope-specific map, cleared when scope ends</p>
+                    <p><em>Transient:</em> No-op, instance not stored</p>
+                    <p><strong>THREAD SAFETY:</strong></p>
+                    <p>Implementations should be thread-safe if used in concurrent environments.</p>
+                    <p><strong>RESOURCE MANAGEMENT:</strong></p>
+                    <p>Some strategies may initialize connections or start background processes when storing.</p>
+                </details>
+            </div>
+
+            <div class="card" id="has">
+                <h3>has</h3>
+                <p>Check if an instance exists for the given identifier.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To enable fast existence checks before retrieval</p>
+                    <p>- To support conditional logic in resolution pipeline</p>
+                    <p>- To avoid unnecessary object creation</p>
+                    <p><strong>VALIDITY CHECKS:</strong></p>
+                    <p>Some strategies perform validity checks:</p>
+                    <p>- Connection still alive?</p>
+                    <p>- Cache entry expired?</p>
+                    <p>- Resource still available?</p>
+                    <p><strong>PERFORMANCE:</strong></p>
+                    <p>Should be O(1) for hash-based strategies, may be O(n) for complex validation.</p>
+                </details>
+            </div>
+
+            <div class="card" id="retrieve">
+                <h3>retrieve</h3>
+                <p>Retrieve an instance for the given identifier.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To return cached instances when available</p>
+                    <p>- To enable instance reuse and performance optimization</p>
+                    <p>- To support different retrieval patterns</p>
+                    <p><strong>RETURN VALUES:</strong></p>
+                    <p>- Valid cached instance</p>
+                    <p>- null if not found or invalid</p>
+                    <p>- May return different instances for different calls (scoped strategies)</p>
+                    <p><strong>VALIDATION:</strong></p>
+                    <p>Some implementations validate instances before returning:</p>
+                    <p>- Check if connections are still alive</p>
+                    <p>- Verify cached data hasn't expired</p>
+                    <p>- Ensure resources are still available</p>
+                </details>
+            </div>
+
+            <div class="card" id="clear">
+                <h3>clear</h3>
+                <p>Clear stored instances.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To free memory and resources when no longer needed</p>
+                    <p>- To reset state between operations or tests</p>
+                    <p>- To handle scope boundaries and cleanup</p>
+                    <p><strong>CLEANUP BEHAVIOR:</strong></p>
+                    <p>Different strategies handle cleanup differently:</p>
+                    <p><em>Singleton:</em> Rarely called, may cause application-wide issues</p>
+                    <p><em>Scoped:</em> Called when scope ends, frees request/session resources</p>
+                    <p><em>Transient:</em> No-op, nothing to clear</p>
+                    <p><strong>RESOURCE DISPOSAL:</strong></p>
+                    <p>Should properly dispose of resources:</p>
+                    <p>- Close database connections</p>
+                    <p>- Release file handles</p>
+                    <p>- Cancel background tasks</p>
+                    <p>- Clear event listeners</p>
+                </details>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Strategy Selection Guidelines</h2>
+            <div class="card">
+                <p><strong>Singleton:</strong> Use for expensive, stateless, or shared resources that should live for the entire application lifetime.</p>
+                <p><strong>Scoped:</strong> Use for per-request, per-session, or per-unit-of-work data that needs isolation but sharing within boundaries.</p>
+                <p><strong>Transient:</strong> Use for new instances each time, factories, or when state isolation is critical.</p>
+                <p><strong>Custom:</strong> Implement custom strategies for specific caching needs like time-based expiration or size limits.</p>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

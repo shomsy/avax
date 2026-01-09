@@ -10,10 +10,10 @@ use Psr\Log\LoggerInterface;
 /**
  * Logs middleware pipeline execution lifecycle.
  */
-final class MiddlewarePipelineLogger
+final readonly class MiddlewarePipelineLogger
 {
     public function __construct(
-        private readonly LoggerInterface $logger
+        private LoggerInterface $logger
     ) {}
 
     /**

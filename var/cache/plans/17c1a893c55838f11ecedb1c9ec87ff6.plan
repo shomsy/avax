@@ -1,0 +1,28 @@
+<?php
+
+return array (
+  'class' => 'Avax\\HTTP\\Router\\Support\\HeadRequestFallback',
+  'constructor' => 
+  array (
+    'name' => '__construct',
+    'parameters' => 
+    array (
+      0 => 
+      array (
+        'name' => 'router',
+        'type' => 'Avax\\HTTP\\Router\\Routing\\HttpRequestRouter',
+        'isOptional' => false,
+        'defaultValue' => NULL,
+        'isVariadic' => false,
+        'allowsNull' => false,
+      ),
+    ),
+  ),
+  'injectedProperties' => 
+  array (
+  ),
+  'injectedMethods' => 
+  array (
+  ),
+  'isInstantiable' => true,
+);

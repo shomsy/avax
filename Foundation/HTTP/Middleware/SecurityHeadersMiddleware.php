@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Avax\HTTP\Middleware;
 
 use Avax\HTTP\Request\Request;
-use Psr\Http\Message\ResponseInterface;
 use Closure;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * The SecurityHeadersMiddleware class adds essential security-related headers
@@ -17,11 +17,11 @@ class SecurityHeadersMiddleware
      * Handle an incoming request and add security headers to the response.
      *
      * @param Request $request The incoming HTTP request.
-     * @param Closure $next A Closure that passes the request to the next middleware.
+     * @param Closure $next    A Closure that passes the request to the next middleware.
      *
      * @return ResponseInterface The HTTP response with security headers added.
      */
-    public function handle(Request $request, Closure $next): ResponseInterface
+    public function handle(Request $request, Closure $next) : ResponseInterface
     {
         // Pass the request to the next middleware and get the response.
         $response = $next($request);

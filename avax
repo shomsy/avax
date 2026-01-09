@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 // Determine the root directory
 $rootDir = __DIR__;
-while (!file_exists($rootDir . '/bootstrap.php') && $rootDir !== dirname($rootDir)) {
+while (! file_exists($rootDir . '/bootstrap.php') && $rootDir !== dirname($rootDir)) {
     $rootDir = dirname($rootDir);
 }
 
@@ -21,25 +21,25 @@ use Avax\Migrations\Execution\Console\DatabaseCreateCommand;
 use Avax\Migrations\Execution\Console\DatabaseDropCommand;
 use Avax\Migrations\Execution\Console\DatabaseExportCommand;
 use Avax\Migrations\Execution\Console\DatabaseSeedCommand;
-use Avax\Migrations\Execution\Console\Operations\TableDropCommand;
-use Avax\Migrations\Execution\Console\Operations\TableTruncateCommand;
 use Avax\Migrations\Execution\Console\MigrateCommand;
 use Avax\Migrations\Execution\Console\MigrateMakeCommand;
 use Avax\Migrations\Execution\Console\MigrateRollbackCommand;
 use Avax\Migrations\Execution\Console\MigrateStatusCommand;
+use Avax\Migrations\Execution\Console\Operations\TableDropCommand;
+use Avax\Migrations\Execution\Console\Operations\TableTruncateCommand;
+use Avax\Migrations\Execution\Repository\MigrationRepository;
+use Avax\Migrations\Execution\Runner\MigrationRunner;
+use Avax\Migrations\Export\DatabaseExporter;
 use Avax\Migrations\Generate\MigrationGenerator;
 use Avax\Migrations\Generate\MigrationLoader;
-use Avax\Migrations\Execution\Runner\MigrationRunner;
-use Avax\Migrations\Execution\Repository\MigrationRepository;
-use Avax\Migrations\Export\DatabaseExporter;
 
 // Get dependencies from container
-$repository = app(MigrationRepository::class);
-$runner = app(MigrationRunner::class);
-$builder = app(QueryBuilder::class);
-$loader = new MigrationLoader();
-$generator = new MigrationGenerator();
-$exporter = new DatabaseExporter($builder);
+$repository = app(abstract: MigrationRepository::class);
+$runner     = app(abstract: MigrationRunner::class);
+$builder    = app(abstract: QueryBuilder::class);
+$loader     = new MigrationLoader();
+$generator  = new MigrationGenerator();
+$exporter   = new DatabaseExporter(builder: $builder);
 
 // Migrations directory
 $migrationsPath = $rootDir . '/database/migrations';
@@ -47,73 +47,73 @@ $seedersPath    = $rootDir . '/database/seeders';
 $exportPath     = $rootDir . '/database/exports';
 
 $command = $argv[1] ?? 'help';
-$arg1 = $argv[2] ?? null;
-$arg2 = $argv[3] ?? null;
+$arg1    = $argv[2] ?? null;
+$arg2    = $argv[3] ?? null;
 
 try {
     switch ($command) {
         case 'db:create':
-            if (!$arg1) {
+            if (! $arg1) {
                 echo "Database name required.\n";
                 exit(1);
             }
-            exit((new DatabaseCreateCommand($builder))->handle($arg1));
+            exit((new DatabaseCreateCommand(builder: $builder))->handle(name: $arg1));
 
         case 'db:drop':
-            if (!$arg1) {
+            if (! $arg1) {
                 echo "Database name required.\n";
                 exit(1);
             }
-            exit((new DatabaseDropCommand($builder))->handle($arg1));
+            exit((new DatabaseDropCommand(builder: $builder))->handle(name: $arg1));
 
         case 'db:export':
             $table = null;
-            $path = $exportPath;
+            $path  = $exportPath;
             if ($arg1 && str_starts_with($arg1, '--table=')) {
                 $table = substr($arg1, 8);
-                $path = $arg2 ?? $exportPath;
+                $path  = $arg2 ?? $exportPath;
             } else {
                 $path = $arg1 ?? $exportPath;
             }
-            exit((new DatabaseExportCommand($exporter))->handle($path, $table));
+            exit((new DatabaseExportCommand(exporter: $exporter))->handle(path: $path, table: $table));
 
         case 'db:seed':
-            exit((new DatabaseSeedCommand())->handle($seedersPath, $arg1));
+            exit((new DatabaseSeedCommand())->handle(seedersPath: $seedersPath, class: $arg1));
 
         case 'table:drop':
-            if (!$arg1) {
+            if (! $arg1) {
                 echo "Table name(s) required. Separate multiple with comma.\n";
                 exit(1);
             }
-            exit((new TableDropCommand($builder))->handle($arg1));
+            exit((new TableDropCommand(builder: $builder))->handle(tables: $arg1));
 
         case 'table:truncate':
-            if (!$arg1) {
+            if (! $arg1) {
                 echo "Table name(s) required. Separate multiple with comma.\n";
                 exit(1);
             }
-            exit((new TableTruncateCommand($builder))->handle($arg1));
+            exit((new TableTruncateCommand(builder: $builder))->handle(tables: $arg1));
 
         case 'migrate':
         case 'run':
             $dryRun = ($arg1 === '--dry' || $arg2 === '--dry');
-            exit((new MigrateCommand($repository, $runner, $loader))->handle($migrationsPath, $dryRun));
+            exit((new MigrateCommand(repository: $repository, runner: $runner, loader: $loader))->handle(path: $migrationsPath, dryRun: $dryRun));
 
         case 'make':
             $options = [];
             if ($arg2 && str_starts_with($arg2, '--create=')) {
-                $options['table'] = substr($arg2, 9);
+                $options['table']  = substr($arg2, 9);
                 $options['create'] = true;
             } elseif ($arg2 && str_starts_with($arg2, '--table=')) {
                 $options['table'] = substr($arg2, 8);
             }
-            exit((new MigrateMakeCommand($generator))->handle($arg1, $migrationsPath, $options));
+            exit((new MigrateMakeCommand(generator: $generator))->handle(name: $arg1, path: $migrationsPath, options: $options));
 
         case 'rollback':
-            exit((new MigrateRollbackCommand($repository, $runner, $loader))->handle($migrationsPath, (int)($arg1 ?? 1)));
+            exit((new MigrateRollbackCommand(repository: $repository, runner: $runner, loader: $loader))->handle(path: $migrationsPath, steps: (int) ($arg1 ?? 1)));
 
         case 'status':
-            exit((new MigrateStatusCommand($repository, $loader))->handle($migrationsPath));
+            exit((new MigrateStatusCommand(repository: $repository, loader: $loader))->handle(path: $migrationsPath));
 
         case 'help':
         default:

@@ -21,14 +21,15 @@ interface ExecutorInterface
      * @param string              $sql      Pre-compiled SQL retrieval string.
      * @param array               $bindings Secure tokens for parameterization.
      * @param ExecutionScope|null $scope    Optional context for correlation.
-     * @throws Throwable If persistence connection failure occurs.
+     *
      * @return array<array-key, mixed>
+     * @throws Throwable If persistence connection failure occurs.
      */
     public function query(
-        string           $sql,
-        array            $bindings = [],
+        string              $sql,
+        array               $bindings = [],
         ExecutionScope|null $scope = null
-    ): array;
+    ) : array;
 
     /**
      * Dispatch a mutation instruction (INSERT/UPDATE/DELETE/DDL) to the persistence driver.
@@ -36,23 +37,24 @@ interface ExecutorInterface
      * @param string              $sql      Pre-compiled SQL mutation string.
      * @param array               $bindings Secure tokens for parameterization.
      * @param ExecutionScope|null $scope    Optional context for correlation.
-     * @throws Throwable If technical modification fails.
+     *
      * @return ExecutionResult
+     * @throws Throwable If technical modification fails.
      */
     public function execute(
-        string           $sql,
-        array            $bindings = [],
+        string              $sql,
+        array               $bindings = [],
         ExecutionScope|null $scope = null
-    ): ExecutionResult;
+    ) : ExecutionResult;
 
     /**
      * Retrieve the authoritative technical identifier of the underlying persistence driver.
      *
      * -- intent:
-     * Enables high-level components to adapt their behavior based on the specific 
+     * Enables high-level components to adapt their behavior based on the specific
      * characteristics and capabilities of the active persistence engine.
      *
      * @return string THE technical identifier of the driver (e.g., 'mysql').
      */
-    public function getDriverName(): string;
+    public function getDriverName() : string;
 }

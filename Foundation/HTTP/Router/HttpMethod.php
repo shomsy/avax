@@ -12,19 +12,20 @@ namespace Avax\HTTP\Router;
  */
 enum HttpMethod: string
 {
-    case GET     = 'GET';
+    case GET = 'GET';
 
-    case POST    = 'POST';
+    case POST = 'POST';
 
-    case PUT     = 'PUT';
+    case PUT = 'PUT';
 
-    case DELETE  = 'DELETE';
+    case DELETE = 'DELETE';
 
-    case PATCH   = 'PATCH';
+    case PATCH = 'PATCH';
 
     case OPTIONS = 'OPTIONS';
 
-    case HEAD    = 'HEAD';
+    case HEAD = 'HEAD';
+    case ANY = 'ANY';
 
     /**
      * Validates if a given string matches a valid HTTP method.
@@ -33,7 +34,7 @@ enum HttpMethod: string
      *
      * @return bool True if valid, false otherwise.
      */
-    public static function isValid(string $method) : bool
+    public static function isValid(string $method): bool
     {
         return in_array(needle: strtoupper(string: $method), haystack: array_column(array: self::cases(), column_key: 'value'), strict: true);
     }
@@ -43,7 +44,7 @@ enum HttpMethod: string
      *
      * @return array<string>
      */
-    public static function list() : array
+    public static function list(): array
     {
         return array_map(callback: static fn(HttpMethod $method) => $method->value, array: self::cases());
     }

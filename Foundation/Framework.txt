@@ -6474,7 +6474,7 @@ namespace Gemini\Container\ServiceProviders\Providers;
 
 use Gemini\Config\Configurator\FileLoader\ConfigFileLoader;
 use Gemini\Container\ServiceProviders\ServiceProvider;
-use Infrastructure\Config\Service\Config;
+use Config\Service;
 
 class ConfigurationServiceProvider extends ServiceProvider
 {
@@ -7435,7 +7435,7 @@ namespace Gemini\Container\ServiceProviders\Providers;
 
 use Gemini\Container\ServiceProviders\ServiceProvider;
 use Gemini\View\BladeTemplateEngine;
-use Infrastructure\Config\Service\Config;
+use Config\Service;
 
 class ViewServiceProvider extends ServiceProvider
 {
@@ -45905,7 +45905,6 @@ Route::get(path: '/', action: static fn() : string => 'Welcome to the homepage!'
 //
 //Route::post(
 //    path  : '/tesst',
-//    action: [HealthCheckController::class, 'testRTGApi'],
 //);
 
 === HTTP/Security/CsrfTokenManager.php ===
@@ -51379,7 +51378,7 @@ use Gemini\HTTP\Router\Router;
 use Gemini\HTTP\Security\CsrfTokenManager;
 use Gemini\HTTP\Session\Contracts\SessionInterface;
 use Gemini\View\BladeTemplateEngine;
-use Infrastructure\Config\Service\Config;
+use Config\Service;
 use JetBrains\PhpStorm\NoReturn;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;

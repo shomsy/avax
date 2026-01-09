@@ -16,8 +16,8 @@ declare(strict_types=1);
 namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
-use DateTime;
 use Avax\Exceptions\ValidationException;
+use DateTime;
 
 /**
  * Validates that the given value matches the specified date.

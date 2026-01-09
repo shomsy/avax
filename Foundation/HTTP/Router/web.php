@@ -29,7 +29,3 @@ Route::get(path: '/', action: static fn() : string => 'Welcome to the homepage!'
 //    },
 //);
 //
-//Route::post(
-//    path  : '/tesst',
-//    action: [HealthCheckController::class, 'testRTGApi'],
-//);

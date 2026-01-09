@@ -43,10 +43,10 @@ $builder->transaction(callback: function (QueryBuilder $query) {
 
     // Standard INSERT
     $query->from(table: 'users')->insert(values: [
-                                                     'name'     => 'John Doe',
-                                                     'email'    => 'john@example.com',
-                                                     'password' => password_hash(password: 'secret', algo: PASSWORD_BCRYPT), // This will be redacted in logs
-                                                 ]);
+        'name'     => 'John Doe',
+        'email'    => 'john@example.com',
+        'password' => password_hash(password: 'secret', algo: PASSWORD_BCRYPT), // This will be redacted in logs
+    ]);
 
     // Deferred execution with Identity Map (batch optimization)
     $identityMap = new IdentityMap(orchestrator: $query->orchestrator);

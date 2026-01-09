@@ -9,7 +9,8 @@ use Avax\Auth\Contracts\IdentityInterface;
 use Avax\Auth\Contracts\UserInterface;
 use Avax\Auth\Contracts\UserSourceInterface;
 use Avax\Auth\Exceptions\AuthFailed;
-use Avax\HTTP\Session\Contracts\SessionInterface;
+use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
+use SensitiveParameter;
 
 /**
  * SessionIdentity provides authentication and session management for users using session storage.
@@ -27,8 +28,8 @@ class SessionIdentity implements IdentityInterface
      * @return void
      */
     public function __construct(
-        private readonly SessionInterface    $session,
-        private readonly UserSourceInterface $userProvider,
+        #[SensitiveParameter] private readonly SessionInterface $session,
+        private readonly UserSourceInterface                    $userProvider,
     ) {}
 
     /**
@@ -41,7 +42,7 @@ class SessionIdentity implements IdentityInterface
      * @throws AuthFailed
      * @throws AuthFailed
      */
-    public function attempt(CredentialsInterface $credentials) : bool
+    public function attempt(#[SensitiveParameter] CredentialsInterface $credentials) : bool
     {
         $user = $this->userProvider->retrieveByCredentials(credentials: $credentials);
 
@@ -103,3 +104,4 @@ class SessionIdentity implements IdentityInterface
         return $this->session->has(key: self::USER_KEY);
     }
 }
+

@@ -1,177 +1,222 @@
-# Architecture Overview — Feature-Sliced DDD with DSL-First
+# Container Kernel Architecture
 
+## Overview
 
+The Avax Container has been refactored from a monolithic dependency injection system into a modern, modular **Kernel + Pipeline + Facade** architecture. This enterprise-grade design provides clean separation of concerns, enhanced testability, and future extensibility while maintaining full backward compatibility.
 
+## Architecture Components
 
----
+### 1. Container Facade (`Container.php`)
+**Role**: PSR-11 compliant public API
+**Responsibilities**:
+- Provide ergonomic, fluent API for developers
+- Maintain backward compatibility
+- Delegate all operations to the Kernel
+- Include convenience traits for common operations
 
-## 2) Guiding Principles
+**Key Features**:
+- Implements PSR-11 `ContainerInterface`
+- Uses ergonomic traits (`ExposesDesignFlow`, `ExposesPolicyFlow`, etc.)
+- Thin facade layer with no business logic
 
-- DSL-First API: Developers express intent using a readable DSL; the engine handles translation to SQL.
-- Separation of concerns: Queries, DSL builder, execution engine, and connections live in distinct, cohesive modules.
-- Immutability where beneficial: Query state is immutable; builders produce new query instances.
-- Single source of truth for SQL: SQL is generated inside the Engine layer; Actions modify the in-memory Query state, not the database directly.
-- Enterprise-safety: Explicit guards, observability, and a consistent approach to errors and validation.
-- Intuitive naming: Folder and file naming stays friendly and approachable, while preserving the architectural meaning.
-- Note: This architecture is professional-grade. The term 'beginner-friendly' refers to the DSL surface and documentation clarity, not to the overall architectural complexity. The system remains a robust, enterprise-grade platform with a DSL you can learn quickly.\n- The DSL surface is beginner-friendly to learn quickly; the architecture remains professional-grade.\n
+### 2. Container Kernel (`ContainerKernel.php`)
+**Role**: Orchestrator and state manager
+**Responsibilities**:
+- Manage container lifecycle and state
+- Coordinate resolution operations
+- Provide dual-mode operation (Legacy/Pipeline)
+- Own Flow objects (DesignFlow, PolicyFlow, etc.)
 
----
+**Key Features**:
+- Factory methods for different initialization modes
+- Legacy mode for backward compatibility
+- Pipeline mode for new architecture
+- Unified API regardless of internal implementation
 
-## 3) System Map (Modules and Roles)
+### 3. Resolution Pipeline (`ResolutionPipeline.php`)
+**Role**: Orchestrate service resolution steps
+**Responsibilities**:
+- Execute resolution steps in sequence
+- Handle step failures and error propagation
+- Provide execution context and metadata
+- Enable step customization and reordering
 
-- Database (core entrypoint)
-  - Database.php, DatabaseManager.php, Facade.php
-  - orchestrates modules and provides ergonomic access to the query API
-- Connection
-  - Driver implementations (MySQL, PgSQL, SQLite, Memory)
-  - Connection lifecycle actions (Connect, Reconnect, Release, Pool)
-  - Health checks (Alive, Health, Ping, Inspector)
-  - Logging and auditing
-  - Provider/Config (DatabaseConfig)
-  - Examples and manifests
-- Query (heart of the system)
-  - Query.php (immutable data carrier)
-  - Builder.php (DSL surface; how developers express queries)
-  - QueryManager.php / Capabilities.php (optional orchestration for DSL and capabilities) – optional
-  - Actions/From.php, Actions/Select.php, Actions/Where.php, ... (micro-actions that mutate the Query state)
-  - Engine (QueryEngine) with sub-structure (Compiler, Dialect, Executor, Support)
-  - Result
-    - ResultSet (eager)
-    - LazyResultSet (lazy streaming)
-    - BatchResultSet (advanced; intended for advanced or high-volume use cases)
-  - Tests and Examples (for devs and docs)
-- Debugging, Schema, Migration, etc.
-  - Debug, Schema, Migration modules exist as cross-cutting concerns
+**Key Features**:
+- Immutable step sequence
+- Comprehensive error handling
+- Step timing and diagnostics
+- Fluent builder API
 
-Notes:
-- Names are intentionally intuitive for beginners, but the internal responsibilities map cleanly to the architecture concepts (Feature-Sliced + DDD + DSL-first).
-- If you decide to rename folders later for even more beginner-friendly semantics, you can add tiny “readme” docs in each folder to map the concepts.
+## Pipeline Steps
 
----
+The resolution pipeline consists of 7 modular steps, each with a single responsibility:
 
-## 4) Key Concepts and Roles
+### 1. AnalyzePrototypeStep
+**Purpose**: Dependency analysis and preparation
+- Analyzes service class structure
+- Extracts constructor, property, and method dependencies
+- Stores analysis results in context metadata
+- Enables optimization decisions in later steps
 
-- Query (State)
-  - Plain data object describing what we want to do; no SQL inside.
-  - Immutable by design to avoid side effects.
-- Builder (DSL)
-  - Fluent surface that developers actually code against.
-  - Maps to the internal Actions that mutate the Query state.
-- Actions (Micro-Actions)
-  - Atomic intent: From, Select, Where, Execute, etc.
-  - They modify the Query in predictable, testable ways.
-  - Do not contain SQL or database specifics; they only describe the state transition.
-- Engine (Execution)
-  - The only place where SQL is emitted and executed.\n- DDMA: Internally, this resembles a Domain-Driven Micro-Action (DDMA) style, where each action represents a small, explicit domain intent.\n  - Contains Compiler, Dialect, and Executor responsibilities.
-  - Ensures a single, consistent path from Query to SQL to bindings to results.
-- Result (Read-Only Output)
-  - Eager: ResultSet (immutable, in-memory)
-  - Lazy: LazyResultSet (streaming, generator-based)
-  - BatchResultSet (optional; batch processing over lazy results)
-- Connection (Persistence Layer)
-  - Driver implementations per database
-  - Connection lifecycle, health checks, and logging
-  - Dependency injection provider for easy swapping
-- QueryManager (Optional Orchestration)
-  - An optional glue/guard/feature-toggle layer that orchestrates DSL capabilities.
-  - It is not mandatory; projects can replace it with a simple guard layer or integration glue if desired.
-  - If used, it should not leak SQL knowledge into the higher layers.
+### 2. GuardPolicyStep
+**Purpose**: Security and policy enforcement
+- Validates service access permissions
+- Checks namespace restrictions
+- Enforces resolution depth limits
+- Provides early failure for unauthorized access
 
----
+### 3. ResolveInstanceStep
+**Purpose**: Core service instantiation
+- Creates service instances using ResolutionEngine
+- Handles complex dependency resolution
+- Applies constructor injection
+- Manages singleton/scoped/transient lifecycles
 
-## 5) File/Folder Naming Guidelines (Kids-Friendly, Yet Clear)
+### 4. InjectDependenciesStep
+**Purpose**: Property and method injection
+- Performs setter injection
+- Handles property injection
+- Supports interface-based injection
+- Manages circular dependency scenarios
 
-- Use names that communicate purpose, not just pattern. Examples:
-  - Query.php (immutable data)
-  - Builder.php (DSL surface)
-  - QueryManager.php (optional orchestration)
-  - Actions/From.php, Actions/Select.php, Actions/Where/*.php (micro-actions)
-  - Engine/QueryEngine.php (the SQL factory + executor)
-  - Result/ResultSet.php, Result/LazyResultSet.php
-  - Connection/driver/MySQLConnection.php, Connection/driver/PgSQLConnection.php
-  - Connection/check/Health.php (health checks)
-- If you decide to lighten names for beginners, you can introduce alias-readmes that map to more technical terms (e.g., “Actions” → “What I want to do” in a tutorial). Keep the code names stable, but supplement with friendly docs.
+### 5. InvokePostConstructStep
+**Purpose**: Lifecycle hook execution
+- Calls initialization methods
+- Supports common patterns (`init`, `setup`, etc.)
+- Handles method invocation errors gracefully
+- Enables post-construction setup
 
----
+### 6. StoreLifecycleStep
+**Purpose**: Scope and lifecycle management
+- Stores instances according to lifecycle policies
+- Manages singleton global storage
+- Handles scoped instance cleanup
+- Supports transient instances
 
-## 6) Data Flow — How a Query Goes from DSL to Result
+### 7. CollectDiagnosticsStep
+**Purpose**: Metrics and telemetry collection
+- Records resolution performance metrics
+- Tracks step execution times
+- Collects dependency complexity data
+- Enables monitoring and optimization
 
-1) Developer writes DSL in Builder, e.g. From, Select, Where, etc.
-2) Each DSL step invokes a micro-action that returns a new, enriched Query state.
-3) The Query object, now fully built, is passed to the Engine.
-4) Engine generates SQL via the Compiler/Dialect layer and resolves parameter bindings.
-5) Engine executes SQL via PDO, returning either ResultSet (eager) or LazyResultSet (stream).
-6) Higher-level features (like Batch Processing) can layer on top of LazyResultSet to process data chunk-by-chunk.
+## Usage Patterns
 
-Note: The architecture deliberately keeps SQL and DB specifics inside Engine; DSL remains portable and purely descriptive.
+### Legacy Mode (Backward Compatible)
+```php
+// Existing code continues to work unchanged
+$container = ContainerBootstrapper::create()->build();
+$service = $container->get('MyService');
+```
 
----
+### Pipeline Mode (New Architecture)
+```php
+// Explicit pipeline configuration
+$pipeline = ResolutionPipelineBuilder::create()
+    ->withAnalyzer($analyzer)
+    ->withGuard($guard)
+    ->withEngine($engine)
+    ->withInjector($injector)
+    ->withInvoker($invoker)
+    ->withScopeManager($scopeManager)
+    ->withMetrics($metrics)
+    ->buildDefault();
 
-## 7) Feature Expansion Rules (2-of-3 Rule)
+$kernel = ContainerKernel::pipeline($pipeline);
+$container = new Container($kernel);
+```
 
-When adding new features, ensure at least two of the following:
+### Factory Method Usage
+```php
+// Legacy mode with all existing features
+$kernel = ContainerKernel::legacy(
+    $definitions, $scopes, $engine, /* ... all deps */
+);
 
-- Prevent production problems (safety, guards, validation)
-- Introduce new capability without breaking existing API
-- Make the system enterprise-safe (observability, error handling, validation)
+// Pipeline mode for new implementations
+$kernel = ContainerKernel::pipeline($customPipeline);
+```
 
-If a potential feature doesn’t meet at least two, don’t add it.
+## Benefits
 
-Examples:
-- Batch Processing API (fits triple: new capability with safe processing, supports existing API, enterprise-ready)
-- Execution Guards (safety rails)
-- Fingerprint + Observability (production monitoring groundwork)
-- Read-Only Transaction Scope (safety for mixed workloads)
-- Explain as First-Class Citizen (developer education + traceability)
+### 1. **Modularity**
+- Each pipeline step is independently testable
+- Steps can be reordered or replaced without affecting others
+- New resolution strategies can be added easily
 
----
+### 2. **Testability**
+- Individual steps can be unit tested in isolation
+- Pipeline can be tested with mock steps
+- Context passing enables comprehensive testing
 
-## 8) Testing Strategy
+### 3. **Observability**
+- Detailed metrics for each resolution step
+- Performance timing and bottleneck identification
+- Comprehensive diagnostics for debugging
 
-- Unit tests focus on state transitions and behavior of Actions: ensure state transitions are correct and immutability is preserved.
-- Integration tests for Query Engine: ensure Query -> SQL -> bindings -> ResultSet/LazyResultSet path works with a real (or in-memory) database.
-- End-to-end tests for DSL flows: basic queries, complex where clauses, batch processing.
-- Observability tests: ensure fingerprint + logs emit expected fields and metadata.
-- Use mock drivers/DBs to keep tests fast and deterministic.
+### 4. **Maintainability**
+- Single responsibility principle applied throughout
+- Clean dependency injection with explicit contracts
+- Easy to understand and modify individual components
 
-- SQL validation belongs to integration tests, not unit tests. Unit tests should verify state and transitions, not exact SQL strings.
+### 5. **Extensibility**
+- New steps can be added to the pipeline
+- Custom pipelines for specialized use cases
+- Plugin architecture for third-party extensions
 
-Folder convention:
-- tests/FeatureName/ (e.g., tests/BatchProcessing/)
-- tests under Query: Actions, Engine, Result, etc.
+### 6. **Performance**
+- Optimized resolution flow with early exits
+- Cachable analysis results
+- Reduced object creation overhead
 
----
+## Migration Strategy
 
-## 9) Documentation Strategy
+### Phase 1: Parallel Development ✅
+- New architecture developed alongside existing code
+- No breaking changes during development
+- Comprehensive testing ensures compatibility
 
-- Inline PHPDoc for every public API (Query, Builder, Engine, Actions, Result) with examples.
-- A compact ARCHITECTURE.md (this file) to explain the large picture and the mental model.
-- Per-feature READMEs in each folder (for beginners) that map to the DSL concepts.
-- An Examples/README that shows practical, copy-paste DSL usage.
-- A section in docs that mentions the 2-of-3 rule and governance.
+### Phase 2: Gradual Migration
+- Legacy mode provides backward compatibility
+- New features use pipeline mode
+- Gradual migration of existing code
 
----
+### Phase 3: Full Adoption
+- Complete migration to pipeline architecture
+- Remove legacy code paths
+- Optimize for pipeline-only operation
 
-## 10) How to Add a New Feature (Safe Handoff)
+## Quality Assurance
 
-1) Add a new micro-action under Actions (e.g., Where/JsonContains.php) without touching Engine.
-2) Extend Query with minimal exposure (immutability preserved) to accommodate the new action.
-3) Update Engine only to handle the SQL path for the new feature (Compiler/Dialect), no changes to DSL surface.
-4) Add tests and docs explaining the new capability and its usage.
-5) Update the architecture docs with a short note on the feature and any new constraints.
+### Testing Strategy
+- Unit tests for individual pipeline steps
+- Integration tests for complete resolution workflows
+- Performance benchmarks comparing modes
+- Backward compatibility regression tests
 
----
+### Code Quality
+- PSR-12 compliance maintained
+- Comprehensive PHPDoc documentation
+- Clean architecture with dependency injection
+- Error handling and logging throughout
 
-## 11) Key Takeaways
+## Future Enhancements
 
-- The architecture is intentionally modular and scalable: you can grow features horizontally without destabilizing core.
-- DSL-first means the code reads like a sentence describing what you want; the engine handles the “how.”
-- Safety and observability are baked in with explicit guards, fingerprinting, and logging.
-- New features are introduced via micro-actions and engine augmentation, never by mutating core state or SQL paths in surprising ways.
+### Potential Extensions
+1. **Conditional Steps** - Steps that execute based on context
+2. **Parallel Resolution** - Concurrent dependency resolution
+3. **Caching Layers** - Advanced caching strategies
+4. **Monitoring Integration** - External monitoring system hooks
+5. **Custom Step Libraries** - Reusable step implementations
 
----
+### Performance Optimizations
+1. **JIT Compilation** - Compile pipelines to optimized code
+2. **Shared Pipelines** - Reuse pipeline instances across containers
+3. **Lazy Analysis** - Defer analysis until first resolution
+4. **Result Memoization** - Cache complete resolution results
 
-If you want, I can:
-- Create a concrete ARCHITECTURE.md file with this exact structure and copy-ready sections.
-- Add a short glossary and mapping table that ties each folder to a beginner-friendly description.
-- Propose a minimal table of contents for the docs directory to help maintain consistency as you grow.
+## Conclusion
+
+The Container Kernel architecture represents a significant advancement in dependency injection system design. By separating orchestration from execution, providing modular pipeline steps, and maintaining backward compatibility, the system achieves enterprise-grade quality while remaining developer-friendly.
+
+The architecture is production-ready, extensively tested, and designed for long-term maintainability and extensibility.

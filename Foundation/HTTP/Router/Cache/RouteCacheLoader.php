@@ -9,10 +9,10 @@ use Avax\HTTP\Router\Router;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use RuntimeException;
 
-final class RouteCacheLoader
+final readonly class RouteCacheLoader
 {
     public function __construct(
-        private readonly Router $router
+        private Router $router
     ) {}
 
     /**

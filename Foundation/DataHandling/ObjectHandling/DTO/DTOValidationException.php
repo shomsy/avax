@@ -48,11 +48,11 @@ final class DTOValidationException extends InvalidArgumentException
      * @param array<string, string> $errors  Associative array of validation errors, with keys as field names
      *                                       and values as corresponding messages explaining the validation failure.
      */
-    #[\Override]
     public function __construct(
         string $message,
         array  $errors,
-    ) {
+    )
+    {
         $formattedErrors = [];
 
         foreach ($errors as $field => $errorMsg) {

@@ -83,10 +83,10 @@ trait HandlesAttributes
             // Throw a developer-friendly error with contextual information.
             throw new InvalidArgumentException(
                 message : sprintf(
-                              'Failed to instantiate attribute of type "%s": %s',
-                              $attribute->getName(),
-                              $e->getMessage()
-                          ),
+                    'Failed to instantiate attribute of type "%s": %s',
+                    $attribute->getName(),
+                    $e->getMessage()
+                ),
                 code    : 422, // Exception code (standardized as 0 for consistent exception chaining).
                 previous: $e // Preserve the original exception for backtrace details.
             );
@@ -116,11 +116,11 @@ trait HandlesAttributes
             // Throw an exception with clear diagnostic information.
             throw new InvalidArgumentException(
                 message : sprintf(
-                              'The "apply" method of attribute "%s" failed for field "%s": %s',
-                              $instance::class,
-                              $fieldName,
-                              $e->getMessage()
-                          ),
+                    'The "apply" method of attribute "%s" failed for field "%s": %s',
+                    $instance::class,
+                    $fieldName,
+                    $e->getMessage()
+                ),
                 code    : 422, // Exception code to maintain consistent exception hierarchy.
                 previous: $e // Preserve chained exception details for diagnosis.
             );
@@ -150,11 +150,11 @@ trait HandlesAttributes
             // Throw informative validation exceptions to aid debugging.
             throw new InvalidArgumentException(
                 message : sprintf(
-                              'Validation failed for field "%s" with attribute "%s": %s',
-                              $fieldName,
-                              $instance::class,
-                              $e->getMessage()
-                          ),
+                    'Validation failed for field "%s" with attribute "%s": %s',
+                    $fieldName,
+                    $instance::class,
+                    $e->getMessage()
+                ),
                 code    : 422, // Maintain consistent exception codes.
                 previous: $e // Include original exception for additional debug trace.
             );

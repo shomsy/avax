@@ -10,10 +10,10 @@ use Throwable;
 /**
  * Console command to drop one or more tables.
  */
-final class TableDropCommand
+final readonly class TableDropCommand
 {
     public function __construct(
-        private readonly QueryBuilder $builder
+        private QueryBuilder $builder
     ) {}
 
     /**

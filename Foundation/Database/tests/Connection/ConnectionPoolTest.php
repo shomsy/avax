@@ -15,7 +15,7 @@ class ConnectionPoolTest extends TestCase
             config: ['connections' => ['mysql' => ['driver' => 'mysql']]]
         );
 
-        $this->assertInstanceOf(ConnectionPool::class, $pool);
+        $this->assertInstanceOf(expected: ConnectionPool::class, actual: $pool);
     }
 
     public function testPruneStaleConnections() : void
@@ -25,6 +25,6 @@ class ConnectionPoolTest extends TestCase
         // This is a unit test, so we can't easily test real connections
         // but we can verify the method exists and runs.
         $pool->pruneStaleConnections();
-        $this->assertTrue(true);
+        $this->assertTrue(condition: true);
     }
 }

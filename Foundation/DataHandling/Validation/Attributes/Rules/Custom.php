@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
-use Closure;
 use Avax\Exceptions\ValidationException;
+use Closure;
 
 /**
  * Indicates that this attribute is targeting a property and is immutable.

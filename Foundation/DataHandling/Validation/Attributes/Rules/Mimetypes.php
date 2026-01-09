@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
-use finfo;
 use Avax\Exceptions\ValidationException;
+use finfo;
 
 /**
  * This class is designed to enforce validation of file MIME types.
@@ -35,9 +35,9 @@ readonly class Mimetypes
         if (! in_array(needle: $mimeType, haystack: $this->mimetypes, strict: true)) {
             throw new ValidationException(
                 message: $property . ' must be a file of type: ' . implode(
-                           separator: ', ',
-                           array    : $this->mimetypes,
-                       ),
+                    separator: ', ',
+                    array    : $this->mimetypes,
+                ),
             );
         }
     }

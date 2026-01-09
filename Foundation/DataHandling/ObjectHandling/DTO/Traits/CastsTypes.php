@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\DataHandling\ObjectHandling\DTO\Traits;
 
-use BackedEnum;
 use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
+use BackedEnum;
 use InvalidArgumentException;
 use ReflectionIntersectionType;
 use ReflectionNamedType;
@@ -118,7 +118,7 @@ trait CastsTypes
                 array   : $types,
                 callback: fn(ReflectionNamedType $a, ReflectionNamedType $b) : int => class_exists(
                         class: $b->getName()
-                                                                            ) <=> class_exists(class: $a->getName())
+                    ) <=> class_exists(class: $a->getName())
             );
 
             return $types[0]?->getName();
@@ -205,7 +205,7 @@ trait CastsTypes
     protected function isDTOArray(ReflectionProperty $property) : bool
     {
         return $this->resolvePropertyType(property: $property) === 'array'
-               && $this->resolveDTOClassFromAnnotationsOrAttributes(property: $property) !== null;
+            && $this->resolveDTOClassFromAnnotationsOrAttributes(property: $property) !== null;
     }
 
     /**
@@ -271,8 +271,8 @@ trait CastsTypes
         $type = $this->resolvePropertyType(property: $property);
 
         return $type !== null
-               && enum_exists(enum: $type)
-               && is_subclass_of(object_or_class: $type, class: BackedEnum::class);
+            && enum_exists(enum: $type)
+            && is_subclass_of(object_or_class: $type, class: BackedEnum::class);
     }
 
     /**

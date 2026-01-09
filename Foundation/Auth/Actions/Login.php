@@ -8,6 +8,7 @@ use Avax\Auth\Contracts\IdentityInterface;
 use Avax\Auth\Contracts\UserInterface;
 use Avax\Auth\Data\Credentials;
 use Avax\Auth\Exceptions\AuthFailed;
+use SensitiveParameter;
 
 final readonly class Login
 {
@@ -16,7 +17,7 @@ final readonly class Login
     /**
      * @throws AuthFailed
      */
-    public function execute(Credentials $credentials): UserInterface
+    public function execute(#[SensitiveParameter] Credentials $credentials) : UserInterface
     {
         if (! $this->identity->attempt(credentials: $credentials)) {
             throw new AuthFailed(message: 'Invalid credentials provided.');

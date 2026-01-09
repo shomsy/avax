@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Security;
 
-use Closure;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\ResponseFactory;
-use Avax\HTTP\Security\CsrfTokenManager;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
+use SensitiveParameter;
 
 /**
  * Middleware to enforce CSRF token validation for incoming requests.
@@ -23,8 +23,8 @@ class VerifyCsrfToken
     private const array SAFE_METHODS = ['HEAD', 'GET', 'OPTIONS'];
 
     public function __construct(
-        protected readonly CsrfTokenManager $csrfTokenManager,
-        protected readonly ResponseFactory  $responseFactory
+        #[SensitiveParameter] protected readonly CsrfTokenManager $csrfTokenManager,
+        protected readonly ResponseFactory                        $responseFactory
     ) {}
 
     /**
@@ -98,13 +98,13 @@ class VerifyCsrfToken
 
         $response->getBody()->write(
             string: json_encode(
-                        value: [
-                            'error' => [
-                                'code'    => 'CSRF_TOKEN_MISMATCH',
-                                'message' => 'The CSRF token is invalid, missing, or expired.',
-                            ],
-                        ]
-                    )
+                value: [
+                    'error' => [
+                        'code'    => 'CSRF_TOKEN_MISMATCH',
+                        'message' => 'The CSRF token is invalid, missing, or expired.',
+                    ],
+                ]
+            )
         );
 
         return $response->withHeader(name: 'Content-Type', value: 'application/json');

@@ -37,16 +37,16 @@ readonly class DigitsBetween
     {
         if (in_array(needle: preg_match(pattern: '/^\d+$/', subject: (string) $value), haystack: [0, false], strict: true) || strlen(
                 string: (string) $value,
-                                                                                  ) < $this->min || strlen(
+            ) < $this->min || strlen(
                 string: (string) $value,
-                                                                                                    ) > $this->max) {
+            ) > $this->max) {
             throw new ValidationException(
                 message: sprintf(
-                             '%s must be between %d and %d digits.',
-                             $property,
-                             $this->min,
-                             $this->max,
-                         ),
+                    '%s must be between %d and %d digits.',
+                    $property,
+                    $this->min,
+                    $this->max,
+                ),
             );
         }
     }

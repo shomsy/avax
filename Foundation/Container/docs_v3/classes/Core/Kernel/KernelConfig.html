@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>KernelConfig</title>
+    <link href="../../../styles.css" rel="stylesheet">
+</head>
+<body>
+<div class="layout">
+                        <aside class="sidebar">
+        <div class="brand"><a href="../../../index.html">Container Docs</a></div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search...">
+        </div>
+        <nav>
+            <div class="nav-section">
+                <h3 class="nav-title">Container (Root)</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Container.html">Container</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Act/Inject</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Act/Inject/InjectDependencies.html">InjectDependencies</a></li>
+                    <li><a href="../../Act/Inject/PropertyInjector.html">PropertyInjector</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Advanced/Lazy</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Actions/Advanced/Lazy/LazyInterface.html">LazyInterface</a></li>
+                    <li><a href="../../Actions/Advanced/Lazy/LazyValue.html">LazyValue</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Inject</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Actions/Inject/InjectDependencies.html">InjectDependencies</a></li>
+                    <li><a href="../../Actions/Inject/PropertyInjector.html">PropertyInjector</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Inject/Resolvers</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Actions/Inject/Resolvers/PropertyResolution.html">PropertyResolution</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Instantiate</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Actions/Instantiate/Instantiator.html">Instantiator</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Actions/Invoke/Cache</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Actions/Invoke/Cache/ReflectionCache.html">ReflectionCache</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Advanced/Lazy</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Advanced/Lazy/LazyInterface.html">LazyInterface</a></li>
+                    <li><a href="../../Advanced/Lazy/LazyValue.html">LazyValue</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Advanced/Observe</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Advanced/Observe/DiagnosticsFlow.html">DiagnosticsFlow</a></li>
+                    <li><a href="../../Advanced/Observe/Telemetry.html">Telemetry</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Advanced/Policy</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Advanced/Policy/PolicyFlow.html">PolicyFlow</a></li>
+                    <li><a href="../../Advanced/Policy/Security.html">Security</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core</h3>
+                <ul class="nav-list">
+                    <li><a href="../Container.html">Container</a></li>
+                    <li><a href="../ContainerBuilder.html">ContainerBuilder</a></li>
+                    <li><a href="../ContainerConfig.html">ContainerConfig</a></li>
+                    <li><a href="../ContainerEngine.html">ContainerEngine</a></li>
+                    <li><a href="../ContainerKernel.html">ContainerKernel</a></li>
+                    <li><a href="../ResolutionEngine.html">ResolutionEngine</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Attribute</h3>
+                <ul class="nav-list">
+                    <li><a href="../Attribute/Inject.html">Inject</a></li>
+                    <li><a href="../Attribute/Singleton.html">Singleton</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/DTO</h3>
+                <ul class="nav-list">
+                    <li><a href="../DTO/ErrorDTO.html">ErrorDTO</a></li>
+                    <li><a href="../DTO/InjectionReport.html">InjectionReport</a></li>
+                    <li><a href="../DTO/SuccessDTO.html">SuccessDTO</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Enum</h3>
+                <ul class="nav-list">
+                    <li><a href="../Enum/ServiceLifetime.html">ServiceLifetime</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Exceptions</h3>
+                <ul class="nav-list">
+                    <li><a href="../Exceptions/ContainerExceptions.html">ContainerExceptions</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel</h3>
+                <ul class="nav-list">
+                    <li><a href="KernelCompiler.html">KernelCompiler</a></li>
+                    <li><a href="KernelConfig.html">KernelConfig</a></li>
+                    <li><a href="KernelFacade.html">KernelFacade</a></li>
+                    <li><a href="KernelRuntime.html">KernelRuntime</a></li>
+                    <li><a href="KernelState.html">KernelState</a></li>
+                    <li><a href="LifecycleResolver.html">LifecycleResolver</a></li>
+                    <li><a href="LifecycleStrategyRegistry.html">LifecycleStrategyRegistry</a></li>
+                    <li><a href="ResolutionPipeline.html">ResolutionPipeline</a></li>
+                    <li><a href="ResolutionPipelineBuilder.html">ResolutionPipelineBuilder</a></li>
+                    <li><a href="StepTelemetryCollector.html">StepTelemetryCollector</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel/Contracts</h3>
+                <ul class="nav-list">
+                    <li><a href="Contracts/KernelContext.html">KernelContext</a></li>
+                    <li><a href="Contracts/KernelStep.html">KernelStep</a></li>
+                    <li><a href="Contracts/LifecycleStrategy.html">LifecycleStrategy</a></li>
+                    <li><a href="Contracts/StepTelemetry.html">StepTelemetry</a></li>
+                    <li><a href="Contracts/TerminalKernelStep.html">TerminalKernelStep</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel/Events</h3>
+                <ul class="nav-list">
+                    <li><a href="Events/StepFailed.html">StepFailed</a></li>
+                    <li><a href="Events/StepStarted.html">StepStarted</a></li>
+                    <li><a href="Events/StepSucceeded.html">StepSucceeded</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel/Steps</h3>
+                <ul class="nav-list">
+                    <li><a href="Steps/AnalyzePrototypeStep.html">AnalyzePrototypeStep</a></li>
+                    <li><a href="Steps/ApplyExtendersStep.html">ApplyExtendersStep</a></li>
+                    <li><a href="Steps/CircularDependencyStep.html">CircularDependencyStep</a></li>
+                    <li><a href="Steps/CollectDiagnosticsStep.html">CollectDiagnosticsStep</a></li>
+                    <li><a href="Steps/DepthGuardStep.html">DepthGuardStep</a></li>
+                    <li><a href="Steps/EnsureDefinitionExistsStep.html">EnsureDefinitionExistsStep</a></li>
+                    <li><a href="Steps/GuardPolicyStep.html">GuardPolicyStep</a></li>
+                    <li><a href="Steps/InjectDependenciesStep.html">InjectDependenciesStep</a></li>
+                    <li><a href="Steps/InvokePostConstructStep.html">InvokePostConstructStep</a></li>
+                    <li><a href="Steps/ResolveInstanceStep.html">ResolveInstanceStep</a></li>
+                    <li><a href="Steps/RetrieveFromScopeStep.html">RetrieveFromScopeStep</a></li>
+                    <li><a href="Steps/StoreLifecycleStep.html">StoreLifecycleStep</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Kernel/Strategies</h3>
+                <ul class="nav-list">
+                    <li><a href="Strategies/ScopedLifecycleStrategy.html">ScopedLifecycleStrategy</a></li>
+                    <li><a href="Strategies/SingletonLifecycleStrategy.html">SingletonLifecycleStrategy</a></li>
+                    <li><a href="Strategies/TransientLifecycleStrategy.html">TransientLifecycleStrategy</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Core/Utils</h3>
+                <ul class="nav-list">
+                    <li><a href="../Utils/ArrayTools.html">ArrayTools</a></li>
+                    <li><a href="../Utils/StrTools.html">StrTools</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Define/Bind</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Define/Bind/BindingBuilder.html">BindingBuilder</a></li>
+                    <li><a href="../../Define/Bind/ContextBuilder.html">ContextBuilder</a></li>
+                    <li><a href="../../Define/Bind/Registrar.html">Registrar</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Define/Store</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Define/Store/DefinitionStore.html">DefinitionStore</a></li>
+                    <li><a href="../../Define/Store/ServiceDefinition.html">ServiceDefinition</a></li>
+                    <li><a href="../../Define/Store/ServiceDefinitionEntity.html">ServiceDefinitionEntity</a></li>
+                    <li><a href="../../Define/Store/ServiceDiscovery.html">ServiceDiscovery</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Define/Store/Compiler</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Define/Store/Compiler/CompilerPassInterface.html">CompilerPassInterface</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Invoke</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Invoke/InvocationExecutor.html">InvocationExecutor</a></li>
+                    <li><a href="../../Invoke/InvokeAction.html">InvokeAction</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Invoke/Cache</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Invoke/Cache/ReflectionCache.html">ReflectionCache</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Invoke/Context</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Invoke/Context/InvocationContext.html">InvocationContext</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Operate/ScopeManager.html">ScopeManager</a></li>
+                    <li><a href="../../Operate/ScopeRegistry.html">ScopeRegistry</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate/Boot</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Operate/Boot/Application.html">Application</a></li>
+                    <li><a href="../../Operate/Boot/ApplicationBuilder.html">ApplicationBuilder</a></li>
+                    <li><a href="../../Operate/Boot/ContainerBootstrapper.html">ContainerBootstrapper</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate/Config</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Operate/Config/BootstrapProfile.html">BootstrapProfile</a></li>
+                    <li><a href="../../Operate/Config/ContainerConfig.html">ContainerConfig</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate/Scope</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Operate/Scope/ScopeManager.html">ScopeManager</a></li>
+                    <li><a href="../../Operate/Scope/ScopeRegistry.html">ScopeRegistry</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Operate/Shutdown</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Operate/Shutdown/TerminateContainer.html">TerminateContainer</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Resolve</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Resolve/DependencyResolver.html">DependencyResolver</a></li>
+                    <li><a href="../../Resolve/ResolutionContext.html">ResolutionContext</a></li>
+                    <li><a href="../../Resolve/ResolutionEngine.html">ResolutionEngine</a></li>
+                    <li><a href="../../Resolve/ResolutionPipeline.html">ResolutionPipeline</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Resolve/Pipes</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Resolve/Pipes/AutowirePipe.html">AutowirePipe</a></li>
+                    <li><a href="../../Resolve/Pipes/BindingPipe.html">BindingPipe</a></li>
+                    <li><a href="../../Resolve/Pipes/ScopePipe.html">ScopePipe</a></li>
+                    <li><a href="../../Resolve/Pipes/TerminalPipe.html">TerminalPipe</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Resolve/Resolvers</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Resolve/Resolvers/DefaultResolver.html">DefaultResolver</a></li>
+                    <li><a href="../../Resolve/Resolvers/ExceptionResolver.html">ExceptionResolver</a></li>
+                    <li><a href="../../Resolve/Resolvers/NullResolver.html">NullResolver</a></li>
+                    <li><a href="../../Resolve/Resolvers/OverrideResolver.html">OverrideResolver</a></li>
+                    <li><a href="../../Resolve/Resolvers/ParameterResolutionChain.html">ParameterResolutionChain</a></li>
+                    <li><a href="../../Resolve/Resolvers/ParameterResolver.html">ParameterResolver</a></li>
+                    <li><a href="../../Resolve/Resolvers/TypeResolver.html">TypeResolver</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Analyze</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Think/Analyze/PrototypeAnalyzer.html">PrototypeAnalyzer</a></li>
+                    <li><a href="../../Think/Analyze/ReflectionTypeAnalyzer.html">ReflectionTypeAnalyzer</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Cache</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Think/Cache/FilePrototypeCache.html">FilePrototypeCache</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Model</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Think/Model/MethodPrototype.html">MethodPrototype</a></li>
+                    <li><a href="../../Think/Model/ParameterPrototype.html">ParameterPrototype</a></li>
+                    <li><a href="../../Think/Model/PropertyPrototype.html">PropertyPrototype</a></li>
+                    <li><a href="../../Think/Model/ServicePrototype.html">ServicePrototype</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Prototype</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Think/Prototype/ServicePrototypeFactory.html">ServicePrototypeFactory</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Prototype/Contracts</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Think/Prototype/Contracts/ServicePrototypeFactoryInterface.html">ServicePrototypeFactoryInterface</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Think/Verify</h3>
+                <ul class="nav-list">
+                    <li><a href="../../Think/Verify/VerifyPrototype.html">VerifyPrototype</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3 class="nav-title">Guidelines</h3>
+                <ul class="nav-list">
+                    <li><a href="../../../master-prompt.html">Master Prompt</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+    <main class="content">
+        <section class="hero">
+            <h1>KernelConfig</h1>
+            <p>Centralized configuration for ContainerKernel</p>
+            <div class="meta">Foundation/Container/Core/Kernel/KernelConfig.php</div>
+        </section>
+
+        <section class="section">
+            <h2>Class Overview</h2>
+            <div class="card">
+                <p>KernelConfig is an immutable configuration object that holds all collaborators and settings needed by ContainerKernel. It provides a fluent API for building container configurations safely without side effects.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To centralize all kernel configuration in one place</p>
+                    <p>- To ensure immutable configuration changes</p>
+                    <p>- To provide type-safe configuration building</p>
+                    <p>- To separate configuration from kernel implementation</p>
+                    <p><strong>HOW IT FITS IN THE ARCHITECTURE:</strong></p>
+                    <p>The config acts as the glue between container components:</p>
+                    <p><code>ContainerBuilder</code> → <code>KernelConfig</code> → <code>ContainerKernel</code></p>
+                    <p>It contains references to all the collaborators the kernel needs to function.</p>
+                    <p><strong>IMMUTABLE DESIGN:</strong></p>
+                    <p>Every configuration change returns a new instance:</p>
+                    <p><code>$config->withStrictMode(true)</code> creates a new config</p>
+                    <p>This ensures thread safety and predictable behavior.</p>
+                    <p><strong>FLUENT API:</strong></p>
+                    <p>Method chaining enables readable configuration:</p>
+                    <p><code>$config->withMetrics($metrics)->withPolicy($policy)->withDevMode(false)</code></p>
+                </details>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Application Configuration Examples</h2>
+
+            <div class="card">
+                <h3>Basic Kernel Configuration</h3>
+                <pre><code class="language-php">// Create basic configuration for kernel
+$config = KernelConfig::create(
+    engine: $resolutionEngine,
+    injector: $dependencyInjector,
+    invoker: $callableInvoker,
+    scopes: $scopeManager,
+    prototypeFactory: $serviceAnalyzer,
+    timeline: $resolutionTracker
+);
+
+// Use default settings (dev mode, no strict validation)
+$kernel = new ContainerKernel($definitions, $config);</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>Production Configuration</h3>
+                <pre><code class="language-php">// Production-ready configuration
+$config = KernelConfig::create(
+    engine: new ProductionResolutionEngine(),
+    injector: new OptimizedInjector(),
+    invoker: new CachedInvoker(),
+    scopes: new ScopedManager(),
+    prototypeFactory: new CompiledPrototypeFactory(),
+    timeline: new MetricsTimeline()
+)->withStrictMode(true)       // Enable strict validation
+ ->withDevMode(false)         // Disable dev features
+ ->withMetrics($metrics)      // Add performance monitoring
+ ->withPolicy($securityPolicy); // Add security checks
+
+$kernel = new ContainerKernel($definitions, $config);</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>Development Configuration</h3>
+                <pre><code class="language-php">// Development configuration with extra debugging
+$config = KernelConfig::create(
+    engine: new DebugResolutionEngine(),
+    injector: new VerboseInjector(),
+    invoker: new LoggingInvoker(),
+    scopes: new ScopeManager(),
+    prototypeFactory: new DebugPrototypeFactory(),
+    timeline: new DetailedTimeline()
+)->withDevMode(true)          // Enable dev features
+ ->withAutoDefine(true)       // Auto-register services
+ ->withMetrics($debugMetrics) // Detailed metrics
+ ->withTerminator($cleanupHandler); // Cleanup on shutdown
+
+$kernel = new ContainerKernel($definitions, $config);</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>Custom Builder Pattern</h3>
+                <pre><code class="language-php">// Custom configuration builder
+class ContainerConfigurator {
+    private KernelConfig $config;
+
+    public function __construct(KernelConfig $baseConfig) {
+        $this->config = $baseConfig;
+    }
+
+    public function forProduction(): self {
+        $this->config = $this->config
+            ->withStrictMode(true)
+            ->withDevMode(false)
+            ->withMetrics(new ProductionMetrics());
+        return $this;
+    }
+
+    public function forTesting(): self {
+        $this->config = $this->config
+            ->withStrictMode(false)
+            ->withDevMode(true)
+            ->withAutoDefine(true);
+        return $this;
+    }
+
+    public function withSecurity(ContainerPolicy $policy): self {
+        $this->config = $this->config->withPolicy($policy);
+        return $this;
+    }
+
+    public function build(): KernelConfig {
+        return $this->config;
+    }
+}</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>Environment-Based Configuration</h3>
+                <pre><code class="language-php">// Environment-aware configuration
+class EnvironmentConfig {
+    public static function create(string $environment): KernelConfig {
+        $baseConfig = KernelConfig::create(/* ... required params ... */);
+
+        return match ($environment) {
+            'production' => $baseConfig
+                ->withStrictMode(true)
+                ->withDevMode(false)
+                ->withMetrics(new CloudWatchMetrics()),
+
+            'staging' => $baseConfig
+                ->withStrictMode(true)
+                ->withDevMode(true)
+                ->withMetrics(new LogMetrics()),
+
+            'development' => $baseConfig
+                ->withStrictMode(false)
+                ->withDevMode(true)
+                ->withAutoDefine(true)
+                ->withMetrics(new DebugMetrics()),
+
+            'testing' => $baseConfig
+                ->withStrictMode(false)
+                ->withDevMode(false)
+                ->withAutoDefine(true),
+        };
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Methods</h2>
+
+            <div class="card" id="__construct">
+                <h3>__construct</h3>
+                <p>Initialize kernel configuration with all collaborators.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To accept all kernel collaborators in a type-safe way</p>
+                    <p>- To establish the complete configuration state</p>
+                    <p>- To validate configuration requirements at creation time</p>
+                    <p><strong>REQUIRED COLLABORATORS:</strong></p>
+                    <p>These are essential for kernel operation:</p>
+                    <p><em>EngineInterface</em>: Handles service resolution logic</p>
+                    <p><em>InjectDependencies</em>: Manages dependency injection</p>
+                    <p><em>InvokeAction</em>: Handles callable execution</p>
+                    <p><em>ScopeManager</em>: Manages instance lifetimes</p>
+                    <p><em>ServicePrototypeFactory</em>: Creates service analysis blueprints</p>
+                    <p><em>ResolutionTimeline</em>: Tracks resolution performance</p>
+                    <p><strong>OPTIONAL COLLABORATORS:</strong></p>
+                    <p>These enhance functionality when provided:</p>
+                    <p><em>CollectMetrics</em>: Performance monitoring</p>
+                    <p><em>ContainerPolicy</em>: Security and access control</p>
+                    <p><em>TerminateContainer</em>: Graceful shutdown handling</p>
+                    <p><strong>CONFIGURATION FLAGS:</strong></p>
+                    <p><em>autoDefine</em>: Automatically register concrete classes</p>
+                    <p><em>strictMode</em>: Enable strict validation and error checking</p>
+                    <p><em>devMode</em>: Enable development-time features and debugging</p>
+                </details>
+            </div>
+
+            <div class="card" id="create">
+                <h3>create</h3>
+                <p>Create configuration with required collaborators only.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To provide a simple factory method for basic configurations</p>
+                    <p>- To reduce boilerplate when optional features aren't needed</p>
+                    <p>- To ensure required collaborators are always provided</p>
+                    <p><strong>DIFFERENCE FROM __construct:</strong></p>
+                    <p><code>create()</code> only requires essential collaborators:</p>
+                    <p>- No metrics, policy, or terminator (set to null)</p>
+                    <p>- Default flags: autoDefine=false, strictMode=false, devMode=true</p>
+                    <p><strong>WHEN TO USE:</strong></p>
+                    <p>- Simple applications without advanced features</p>
+                    <p>- Testing scenarios with minimal setup</p>
+                    <p>- Starting point for further configuration with fluent methods</p>
+                    <p><strong>BUILDING ON CREATE:</strong></p>
+                    <p>Use fluent methods to add optional features:</p>
+                    <p><code>KernelConfig::create(...)->withMetrics($m)->withPolicy($p)</code></p>
+                </details>
+            </div>
+
+            <div class="card" id="withStrictMode">
+                <h3>withStrictMode</h3>
+                <p>Enable or disable strict validation mode.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To control validation strictness based on environment</p>
+                    <p>- To catch configuration errors early in strict mode</p>
+                    <p>- To allow lenient operation during development</p>
+                    <p><strong>STRICT MODE BEHAVIOR:</strong></p>
+                    <p>When enabled:</p>
+                    <p>- Throws exceptions on ambiguous bindings</p>
+                    <p>- Validates all injection points strictly</p>
+                    <p>- Requires explicit service registrations</p>
+                    <p>- Performs comprehensive error checking</p>
+                    <p><strong>WHEN TO ENABLE:</strong></p>
+                    <p>- Production environments</p>
+                    <p>- CI/CD pipelines</p>
+                    <p>- When you want to catch errors early</p>
+                    <p><strong>WHEN TO DISABLE:</strong></p>
+                    <p>- Development with rapid prototyping</p>
+                    <p>- Legacy code integration</p>
+                    <p>- When flexibility is more important than strictness</p>
+                </details>
+            </div>
+
+            <div class="card" id="withAutoDefine">
+                <h3>withAutoDefine</h3>
+                <p>Enable or disable automatic service definition.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To reduce boilerplate in simple applications</p>
+                    <p>- To automatically register concrete classes as services</p>
+                    <p>- To support convention-over-configuration patterns</p>
+                    <p><strong>AUTO-DEFINE BEHAVIOR:</strong></p>
+                    <p>When enabled:</p>
+                    <p>- Concrete classes can be resolved without explicit binding</p>
+                    <p>- Constructor injection works automatically</p>
+                    <p>- Reduces need for manual service registration</p>
+                    <p><strong>PERFORMANCE IMPACT:</strong></p>
+                    <p>- Slight overhead for reflection-based resolution</p>
+                    <p>- May create services that aren't actually needed</p>
+                    <p>- Best for development; consider explicit bindings for production</p>
+                    <p><strong>WHEN TO USE:</strong></p>
+                    <p>- Small applications with straightforward dependencies</p>
+                    <p>- Development and prototyping</p>
+                    <p>- When you want minimal configuration</p>
+                </details>
+            </div>
+
+            <div class="card" id="withMetrics">
+                <h3>withMetrics</h3>
+                <p>Configure metrics collection.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To enable performance monitoring and observability</p>
+                    <p>- To track container usage patterns</p>
+                    <p>- To support debugging and optimization</p>
+                    <p><strong>METRICS CAPTURED:</strong></p>
+                    <p>- Resolution counts and timing</p>
+                    <p>- Cache hit/miss ratios</p>
+                    <p>- Scope usage statistics</p>
+                    <p>- Error rates and types</p>
+                    <p><strong>IMPLEMENTATION:</strong></p>
+                    <p>The metrics collector receives events from:</p>
+                    <p>- Resolution engine (successful/failed resolutions)</p>
+                    <p>- Scope manager (instance creation/destruction)</p>
+                    <p>- Compiler (validation and caching operations)</p>
+                    <p><strong>USE CASES:</strong></p>
+                    <p>- Production monitoring and alerting</p>
+                    <p>- Performance profiling and optimization</p>
+                    <p>- Debugging container usage patterns</p>
+                </details>
+            </div>
+
+            <div class="card" id="withPolicy">
+                <h3>withPolicy</h3>
+                <p>Configure security policy.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To enforce security constraints on service resolution</p>
+                    <p>- To control which services can be accessed</p>
+                    <p>- To implement organizational security policies</p>
+                    <p><strong>POLICY CONTROLS:</strong></p>
+                    <p>- Service access restrictions</p>
+                    <p>- Namespace-based whitelisting/blacklisting</p>
+                    <p>- Role-based access control</p>
+                    <p>- Custom security rules</p>
+                    <p><strong>WHEN THROWS EXCEPTIONS:</strong></p>
+                    <p>- Unauthorized service access attempts</p>
+                    <p>- Policy violations during resolution</p>
+                    <p>- Forbidden constructor parameters</p>
+                    <p><strong>USE CASES:</strong></p>
+                    <p>- Multi-tenant applications</p>
+                    <p>- Enterprise security requirements</p>
+                    <p>- Regulatory compliance</p>
+                </details>
+            </div>
+
+            <div class="card" id="withTerminator">
+                <h3>withTerminator</h3>
+                <p>Configure shutdown terminator.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To enable graceful shutdown of container services</p>
+                    <p>- To clean up resources and connections</p>
+                    <p>- To handle application termination properly</p>
+                    <p><strong>TERMINATION PROCESS:</strong></p>
+                    <p>- Called during container shutdown</p>
+                    <p>- Disposes scoped instances</p>
+                    <p>- Closes connections and releases resources</p>
+                    <p>- Calls cleanup methods on services</p>
+                    <p><strong>LIFECYCLE INTEGRATION:</strong></p>
+                    <p>Works with:</p>
+                    <p>- PHP shutdown handlers</p>
+                    <p>- Framework termination events</p>
+                    <p>- Application cleanup routines</p>
+                    <p><strong>USE CASES:</strong></p>
+                    <p>- Long-running applications (daemons, servers)</p>
+                    <p>- Proper resource cleanup</p>
+                    <p>- Database connection management</p>
+                </details>
+            </div>
+
+            <div class="card" id="withDevMode">
+                <h3>withDevMode</h3>
+                <p>Enable or disable development mode.</p>
+                <details class="more">
+                    <summary>More</summary>
+                    <p><strong>WHY IT EXISTS:</strong></p>
+                    <p>- To enable development-time features and debugging</p>
+                    <p>- To provide better error messages during development</p>
+                    <p>- To disable performance optimizations that aid debugging</p>
+                    <p><strong>DEV MODE FEATURES:</strong></p>
+                    <p>When enabled:</p>
+                    <p>- More detailed error messages and stack traces</p>
+                    <p>- Additional validation and warnings</p>
+                    <p>- Debug logging and diagnostics</p>
+                    <p>- Relaxed security checks for easier development</p>
+                    <p><strong>PERFORMANCE IMPACT:</strong></p>
+                    <p>- Slightly slower due to extra validation</p>
+                    <p>- More memory usage for debug information</p>
+                    <p>- Should always be disabled in production</p>
+                    <p><strong>WHEN TO ENABLE:</strong></p>
+                    <p>- Local development environments</p>
+                    <p>- Staging environments for testing</p>
+                    <p>- Any non-production deployment</p>
+                </details>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

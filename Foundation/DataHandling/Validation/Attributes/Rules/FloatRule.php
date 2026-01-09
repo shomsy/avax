@@ -40,11 +40,11 @@ class FloatRule
             throw new ValidationException(
                 message : $this->message ?? sprintf(self::ERROR_MESSAGE, $property),
                 metadata: [
-                              'property' => $property,
-                              'value'    => $value,
-                              'expected' => 'float',
-                              'actual'   => gettype(value: $value),
-                          ]
+                    'property' => $property,
+                    'value'    => $value,
+                    'expected' => 'float',
+                    'actual'   => gettype(value: $value),
+                ]
             );
         }
     }

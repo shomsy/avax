@@ -18,14 +18,13 @@ class NotFoundException extends Exception
 {
     protected string $defaultMessage = 'Not found!';
 
-    protected        $code           = 404;
+    protected $code = 404;
 
     /**
      * Constructor for NotFoundException that appends file, line, and trace information.
      *
      * @param string|null $message Custom message for the exception (optional).
      */
-    #[\Override]
     public function __construct(string|null $message = null)
     {
         // Use the custom message if provided, otherwise use the default message.

@@ -33,6 +33,6 @@ abstract class Seeder
      */
     protected function command(string $table) : QueryBuilder
     {
-        return app(abstract: QueryBuilder::class)->from($table);
+        return app(abstract: QueryBuilder::class)->from(table: $table);
     }
 }

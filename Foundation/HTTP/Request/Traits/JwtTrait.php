@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use RuntimeException;
+use SensitiveParameter;
 
 /**
  * JwtTrait provides methods for handling JWT (JSON Web Token) generation and decoding.
@@ -41,7 +42,7 @@ trait JwtTrait
      *
      * @param string $secret The secret key for JWT.
      */
-    public function setJwtSecret(string $secret) : void
+    public function setJwtSecret(#[SensitiveParameter] string $secret) : void
     {
         $this->jwtSecret = $secret;
     }
@@ -122,7 +123,7 @@ trait JwtTrait
      * @return object|null The decoded payload if the JWT is valid, null otherwise.
      * @throws RuntimeException If the token is malformed or invalid.
      */
-    public function decodeJwt(string $token) : object|null
+    public function decodeJwt(#[SensitiveParameter] string $token) : object|null
     {
         return JWT::decode(
             jwt          : $token,

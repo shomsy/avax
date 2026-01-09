@@ -1,0 +1,13 @@
+<?php
+
+return array (
+  'class' => 'Avax\\HTTP\\Session\\Shared\\Contracts\\SessionInterface',
+  'constructor' => NULL,
+  'injectedProperties' => 
+  array (
+  ),
+  'injectedMethods' => 
+  array (
+  ),
+  'isInstantiable' => false,
+);

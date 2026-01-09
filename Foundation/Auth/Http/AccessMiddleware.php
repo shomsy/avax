@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Http;
 
-use Closure;
 use Avax\Auth\Adapters\AccessControl;
 use Avax\Auth\Contracts\UserInterface;
 use Avax\HTTP\Request\Request;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 

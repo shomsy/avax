@@ -4,58 +4,25 @@ declare(strict_types=1);
 
 namespace Avax\Repository;
 
-use Exception;
 use Avax\Database\Modules\Query\Builder\QueryBuilder;
+use Exception;
 use RuntimeException;
 
 /**
- * Base Repository
+ * Base Settings
  *
  * Abstract class providing database operations for entities, including find, save, delete, list, and advanced queries.
  */
 abstract class Repository
 {
     /**
-     * Repository constructor.
+     * Settings constructor.
      *
      * Stores a builder factory; each call uses a fresh builder instance.
      *
      * @param QueryBuilder $queryBuilder The query builder instance for database operations.
      */
     public function __construct(protected QueryBuilder $queryBuilder) {}
-
-    /**
-     * Get the table name for the entity.
-     *
-     * @return string The name of the table.
-     */
-    protected function getTableName() : string
-    {
-        $entityClass = $this->getEntityClass();
-
-        if (! method_exists(object_or_class: $entityClass, method: 'getTableName')) {
-            throw new RuntimeException(
-                message: sprintf(
-                             'Entity class %s must implement a getTableName() method.',
-                             $entityClass
-                         )
-            );
-        }
-
-        return $entityClass::getTableName();
-    }
-
-    /**
-     * Get the entity class for the repository.
-     *
-     * @return string The fully qualified class name of the entity.
-     */
-    abstract protected function getEntityClass() : string;
-
-    protected function query(): QueryBuilder
-    {
-        return $this->queryBuilder->newQuery()->table($this->getTableName());
-    }
 
     /**
      * @throws \Exception
@@ -95,6 +62,39 @@ abstract class Repository
             throw $exception;
         }
     }
+
+    protected function query() : QueryBuilder
+    {
+        return $this->queryBuilder->newQuery()->table($this->getTableName());
+    }
+
+    /**
+     * Get the table name for the entity.
+     *
+     * @return string The name of the table.
+     */
+    protected function getTableName() : string
+    {
+        $entityClass = $this->getEntityClass();
+
+        if (! method_exists(object_or_class: $entityClass, method: 'getTableName')) {
+            throw new RuntimeException(
+                message: sprintf(
+                    'Entity class %s must implement a getTableName() method.',
+                    $entityClass
+                )
+            );
+        }
+
+        return $entityClass::getTableName();
+    }
+
+    /**
+     * Get the entity class for the repository.
+     *
+     * @return string The fully qualified class name of the entity.
+     */
+    abstract protected function getEntityClass() : string;
 
     // ===== CRUD Methods ===== //
 
@@ -141,7 +141,8 @@ abstract class Repository
         string|null $direction = null,
         int|null    $limit = null,
         int|null    $offset = null
-    ) : array {
+    ) : array
+    {
         try {
             $query = $this->query();
 

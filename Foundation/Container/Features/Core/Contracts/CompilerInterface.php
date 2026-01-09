@@ -1,0 +1,150 @@
+<?php
+
+declare(strict_types=1);
+namespace Avax\Container\Features\Core\Contracts;
+
+use Avax\Container\Features\Think\Prototype\ServicePrototypeBuilder;
+
+/**
+ * @package Avax\Container\Core\Contracts
+ *
+ * Contract for container compilation and preparation operations.
+ *
+ * CompilerInterface defines the capabilities for preparing and optimizing the container
+ * before runtime usage. It focuses on analysis, validation, caching, and optimization
+ * operations that happen during container bootstrap and compilation phases.
+ *
+ * WHY IT EXISTS:
+ * - To provide a focused contract for container preparation operations
+ * - To enable compilation of container configurations for production deployment
+ * - To support analysis and validation of service definitions
+ * - To facilitate caching and optimization of expensive operations
+ *
+ * COMPILATION PHASES:
+ * 1. Analysis: Static analysis of service definitions and dependencies
+ * 2. Validation: Verification of service configurations and injection points
+ * 3. Optimization: Caching of analysis results and performance optimizations
+ * 4. Compilation: Generation of optimized container artifacts
+ *
+ * COMPILATION SCENARIOS:
+ * - Production deployment preparation
+ * - Development-time validation
+ * - CI/CD pipeline integration
+ * - Startup performance optimization
+ *
+ * THREAD SAFETY:
+ * Compilation operations should be performed before concurrent usage begins.
+ * Implementations may not be thread-safe during compilation.
+ *
+ * @see     ContainerInterface For the full container contract
+ * @see     ResolverInterface For service resolution operations
+ */
+interface CompilerInterface
+{
+    /**
+     * Analyzes dependencies for a service class and returns a prototype builder.
+     *
+     * Performs static analysis of the given class to understand its dependencies,
+     * injection requirements, and instantiation strategy. Returns a builder that
+     * can construct an optimized service prototype.
+     *
+     * ANALYSIS SCOPE:
+     * - Constructor parameters and their types
+     * - Property injection points (#[Inject] attributes)
+     * - Method injection points (#[Inject] attributes)
+     * - Lifecycle interfaces (Initializable, Terminable)
+     * - Instantiability validation
+     *
+     * @param string $class The fully qualified class name to analyze
+     *
+     * @return \Avax\Container\Features\Think\Prototype\ServicePrototypeBuilder A builder for constructing the service
+     *                                                                          prototype
+     *
+     * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface If analysis fails
+     */
+    public function analyzeDependenciesFor(string $class) : ServicePrototypeBuilder;
+
+    /**
+     * Validates all registered service definitions and prototypes.
+     *
+     * Performs comprehensive validation of the container's service definitions,
+     * checking for circular dependencies, invalid configurations, and other
+     * potential runtime issues.
+     *
+     * VALIDATION CHECKS:
+     * - Service definition completeness and correctness
+     * - Circular dependency detection
+     * - Type hint validation for injection points
+     * - Accessibility validation for injection targets
+     * - Lifecycle interface compliance
+     *
+     * @return self Returns $this for method chaining
+     *
+     * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface If validation fails
+     */
+    public function validate() : self;
+
+    /**
+     * Compiles and caches service prototypes for all registered services.
+     *
+     * Performs full compilation of the container by analyzing all registered services,
+     * generating optimized prototypes, and caching the results for production use.
+     * This operation is expensive but results in significant runtime performance gains.
+     *
+     * COMPILATION STEPS:
+     * 1. Analyze all registered service classes
+     * 2. Generate optimized service prototypes
+     * 3. Validate dependency graphs and injection points
+     * 4. Cache prototypes using configured cache strategy
+     * 5. Generate compilation statistics and reports
+     *
+     * PERFORMANCE IMPACT:
+     * - High compilation cost (reflection, analysis, validation)
+     * - Significant runtime performance improvement
+     * - Reduced memory usage through optimized structures
+     * - Faster startup times in production
+     *
+     * @return array{
+     *     compiled_services: int,
+     *     cache_size: int,
+     *     compilation_time: float,
+     *     validation_errors: int
+     * } Compilation statistics and results
+     *
+     * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface If compilation fails
+     */
+    public function compile() : array;
+
+    /**
+     * Clears all cached compilation artifacts.
+     *
+     * Removes all cached prototypes, analysis results, and compiled artifacts.
+     * This forces fresh compilation on the next container operation.
+     *
+     * USE CASES:
+     * - After modifying service class definitions
+     * - When changing injection configurations
+     * - During development iterations
+     * - After deploying updated code
+     *
+     * @return self Returns $this for method chaining
+     */
+    public function clearCache() : self;
+
+    /**
+     * Gets compilation statistics and diagnostics.
+     *
+     * Returns detailed information about the container's compilation state,
+     * including cache status, validation results, and performance metrics.
+     *
+     * STATISTICS INCLUDE:
+     * - Number of compiled services
+     * - Cache hit/miss ratios
+     * - Compilation timestamps
+     * - Validation error summaries
+     * - Memory usage information
+     *
+     * @return array Compilation statistics and diagnostic information
+     */
+    public function getCompilationStats() : array;
+}

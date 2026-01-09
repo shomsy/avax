@@ -41,8 +41,8 @@ trait HasAggregates
     {
         $clone        = clone $this;
         $clone->state = $clone->state->withColumns(columns: [
-                                                                $this->raw(value: "{$function}(" . implode(separator: ', ', array: (array) $columns) . ") as aggregate")
-                                                            ]);
+            $this->raw(value: "{$function}(" . implode(separator: ', ', array: (array) $columns) . ") as aggregate")
+        ]);
 
         $result = $clone->get();
 

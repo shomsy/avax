@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Audit;
 
+use Avax\HTTP\Context\HttpContextInterface;
+use Avax\HTTP\Session\Shared\Security\SessionContextInterface;
 use Avax\Logging\LoggerFactory;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 use Throwable;
 
 /**
@@ -37,7 +40,7 @@ use Throwable;
  * @package Avax\HTTP\Session\Features
  * @author  —
  */
-final class Audit
+final readonly class Audit
 {
 
     /**
@@ -48,14 +51,14 @@ final class Audit
      *
      * @var LoggerInterface
      */
-    private readonly LoggerInterface $logger;
+    private LoggerInterface $logger;
 
     /**
      * Optional log file path for fallback or standalone use.
      *
      * @var string|null
      */
-    private readonly string|null $logPath;
+    private string|null $logPath;
 
     // -------------------------------------------------------------------------
     // 🚀 CONSTRUCTOR
@@ -71,7 +74,12 @@ final class Audit
      * “You can give me a PSR logger, a file path — or nothing.
      *  I’ll make sure your audit events are never lost.”
      */
-    public function __construct(LoggerInterface|null $logger = null, string|null $logPath = null)
+    public function __construct(
+        LoggerInterface|null                                       $logger = null,
+        string|null                                                $logPath = null,
+        private HttpContextInterface|null                          $httpContext = null,
+        #[SensitiveParameter] private SessionContextInterface|null $sessionContext = null
+    )
     {
         $this->logger  = $logger ?? (new LoggerFactory())->createLoggerFor(channel: 'session-audit');
         $this->logPath = $logPath;
@@ -99,13 +107,17 @@ final class Audit
      */
     public function record(string $event, array $data = []) : void
     {
+        $sessionId = $data['session_id'] ?? $this->sessionContext?->sessionId();
+        $userId    = $data['user_id'] ?? $this->sessionContext?->userId();
+        $clientIp  = $this->resolveClientIp();
+
         $payload = [
             'timestamp'   => date(format: 'c'),
             'event'       => strtoupper(string: $event),
             'environment' => getenv(name: 'APP_ENV') ?: 'production',
-            'session_id'  => $data['session_id'] ?? null,
-            'user_id'     => $data['user_id'] ?? null,
-            'ip_address'  => $this->resolveClientIp(),
+            'session_id'  => $sessionId,
+            'user_id'     => $userId,
+            'ip_address'  => $clientIp,
             'action_data' => $this->sanitize(data: $data),
         ];
 
@@ -132,10 +144,7 @@ final class Audit
      */
     private function resolveClientIp() : string|null
     {
-        return $_SERVER['HTTP_CLIENT_IP']
-            ?? $_SERVER['HTTP_X_FORWARDED_FOR']
-            ?? $_SERVER['REMOTE_ADDR']
-            ?? null;
+        return $this->httpContext?->clientIp();
     }
 
     // -------------------------------------------------------------------------
@@ -206,6 +215,11 @@ final class Audit
      */
     private function resolveUserId() : int|null
     {
-        return $_SESSION['user_id'] ?? null;
+        $userId = $this->sessionContext?->userId();
+        if (is_int($userId)) {
+            return $userId;
+        }
+
+        return null;
     }
 }

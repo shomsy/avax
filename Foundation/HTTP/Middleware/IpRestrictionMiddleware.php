@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Middleware;
 
-use Closure;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\ResponseFactory;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 
 /**

@@ -68,8 +68,8 @@ abstract class AbstractHttpClient
         $this->logger->info(
             message: sprintf('Request to %s succeeded', $endpoint),
             context: [
-                         'status' => $response->getStatusCode(),
-                     ],
+                'status' => $response->getStatusCode(),
+            ],
         );
 
         return [
@@ -89,7 +89,7 @@ abstract class AbstractHttpClient
     {
         $this->logger->info(
             message: 'Asynchronous request to ' . $endpoint
-                     . ' completed successfully with status ' . $response->getStatusCode(),
+            . ' completed successfully with status ' . $response->getStatusCode(),
         );
     }
 
@@ -106,8 +106,8 @@ abstract class AbstractHttpClient
         $this->logger->error(
             message: 'Asynchronous request to ' . $endpoint . ' failed.',
             context: [
-                         'reason' => $reason instanceof Throwable ? $reason->getMessage() : 'Unknown error',
-                     ],
+                'reason' => $reason instanceof Throwable ? $reason->getMessage() : 'Unknown error',
+            ],
         );
 
         return $this->handleFailure(endpoint: $endpoint, reason: $reason);

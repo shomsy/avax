@@ -10,7 +10,7 @@ final readonly class Check
 {
     public function __construct(private IdentityInterface $identity) {}
 
-    public function execute(): bool
+    public function execute() : bool
     {
         return $this->identity->check();
     }

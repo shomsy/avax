@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Adapters;
 
+use SensitiveParameter;
+
 /**
  * PasswordHasher handles secure password hashing and verification using Argon2id.
  */
@@ -16,7 +18,7 @@ final class PasswordHasher
      *
      * @return string The hashed password.
      */
-    public function hash(string $password) : string
+    public function hash(#[SensitiveParameter] string $password) : string
     {
         return password_hash(password: $password, algo: PASSWORD_ARGON2ID, options: [
             'memory_cost' => 65536, // 64MB memory
@@ -33,7 +35,7 @@ final class PasswordHasher
      *
      * @return bool True if the password matches, false otherwise.
      */
-    public function verify(string $password, string $hashedPassword) : bool
+    public function verify(#[SensitiveParameter] string $password, #[SensitiveParameter] string $hashedPassword) : bool
     {
         return password_verify(password: $password, hash: $hashedPassword);
     }
@@ -45,7 +47,7 @@ final class PasswordHasher
      *
      * @return bool True if rehashing is needed, false otherwise.
      */
-    public function needsRehash(string $hashedPassword) : bool
+    public function needsRehash(#[SensitiveParameter] string $hashedPassword) : bool
     {
         return password_needs_rehash(hash: $hashedPassword, algo: PASSWORD_ARGON2ID, options: [
             'memory_cost' => 65536,

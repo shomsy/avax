@@ -73,16 +73,19 @@ final class Serializer
      *
      * @param array<int, string> $allowedClasses       Classes allowed during deserialization.
      * @param bool               $compressionEnabled   Enable compression for large data.
-     * @param int                $compressionThreshold Minimum size for compression (bytes).
+     * @param int|null           $compressionThreshold Minimum size for compression (bytes).
      * @param bool               $integrityCheck       Enable checksum verification.
      */
     public function __construct(
-        array $allowedClasses = [],
-        bool  $compressionEnabled = false,
-        int   $compressionThreshold = 1024,
-        bool  $integrityCheck = true
+        array|null $allowedClasses = null,
+        bool|null  $compressionEnabled = null,
+        int|null   $compressionThreshold = null,
+        bool       $integrityCheck = true
     )
     {
+        $allowedClasses              ??= [];
+        $compressionEnabled          ??= false;
+        $compressionThreshold        ??= 1024;
         $this->allowedClasses        = $allowedClasses;
         $this->compressionEnabled    = $compressionEnabled;
         $this->compressionThreshold  = $compressionThreshold;
@@ -222,8 +225,9 @@ final class Serializer
      *
      * @throws SerializationException If JSON decoding fails.
      */
-    public function fromJson(string $json, bool $assoc = true, int $flags = JSON_THROW_ON_ERROR) : mixed
+    public function fromJson(string $json, bool|null $assoc = null, int $flags = JSON_THROW_ON_ERROR) : mixed
     {
+        $assoc ??= true;
         try {
             return json_decode(json: $json, associative: $assoc, depth: 512, flags: $flags);
         } catch (JsonException $e) {

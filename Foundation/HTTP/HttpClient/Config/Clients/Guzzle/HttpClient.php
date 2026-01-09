@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\HttpClient\Config\Clients\Guzzle;
 
-use Exception;
 use Avax\HTTP\HttpClient\Config\Middleware\RetryMiddleware;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ConnectException;
@@ -38,20 +38,21 @@ final readonly class HttpClient implements ClientInterface
         private RetryMiddleware     $retryMiddleware,
         private LoggerInterface     $logger,
         private string|UriInterface $baseUri,
-    ) {
+    )
+    {
         // Initialize Guzzle client with base URI and middleware
         $this->guzzleClient = new Client(
             config: [
-                        'base_uri'        => $this->baseUri,
-                        'handler'         => $this->getHandlerStack(),
-                        'timeout'         => 90,  // Maximum duration of request
-                        'connect_timeout' => 10, // Timeout for connection
-                        'http_errors'     => false,
-                        'headers'         => [
-                            'Accept'       => 'application/json',
-                            'Content-Type' => 'application/json',
-                        ],
-                    ],
+                'base_uri'        => $this->baseUri,
+                'handler'         => $this->getHandlerStack(),
+                'timeout'         => 90,  // Maximum duration of request
+                'connect_timeout' => 10, // Timeout for connection
+                'http_errors'     => false,
+                'headers'         => [
+                    'Accept'       => 'application/json',
+                    'Content-Type' => 'application/json',
+                ],
+            ],
         );
     }
 
@@ -85,9 +86,9 @@ final readonly class HttpClient implements ClientInterface
             $this->logger->error(
                 message: "Request failed",
                 context: [
-                             'uri'   => (string) $request->getUri(),
-                             'error' => $throwable->getMessage(),
-                         ],
+                    'uri'   => (string) $request->getUri(),
+                    'error' => $throwable->getMessage(),
+                ],
             );
             throw new Exception(message: "Failed to send request", code: $throwable->getCode(), previous: $throwable);
         }
@@ -100,15 +101,16 @@ final readonly class HttpClient implements ClientInterface
      * @param bool                $async
      *
      * @return ResponseInterface|PromiseInterface
-     * @throws GuzzleException
-     * @throws Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     private function performRequest(
         string              $method,
         string|UriInterface $uri,
         array|null          $options = null,
         bool                $async = false
-    ) : ResponseInterface|PromiseInterface {
+    ) : ResponseInterface|PromiseInterface
+    {
         $options ??= [];
         try {
             $response = $async
@@ -128,20 +130,20 @@ final readonly class HttpClient implements ClientInterface
             $this->logger->error(
                 message: '⏳ HTTP error detected!',
                 context: [
-                             'method'    => $method,
-                             'url'       => (string) $uri,
-                             'exception' => $e->getMessage(),
-                         ],
+                    'method'    => $method,
+                    'url'       => (string) $uri,
+                    'exception' => $e->getMessage(),
+                ],
             );
 
             if (str_contains(haystack: $e->getMessage(), needle: 'timed out')) {
                 $this->logger->warning(
                     message: '⏳ HTTP Request stopped because of timeout!',
                     context: [
-                                 'method' => $method,
-                                 'url'    => (string) $uri,
-                                 'error'  => $e->getMessage(),
-                             ],
+                        'method' => $method,
+                        'url'    => (string) $uri,
+                        'error'  => $e->getMessage(),
+                    ],
                 );
                 throw new Exception(
                     message : "⏳ Request timeout (server did not respond in time)",
@@ -159,7 +161,7 @@ final readonly class HttpClient implements ClientInterface
      * @param array  $options
      *
      * @return PromiseInterface
-     * @throws Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function requestAsync(string $method, $uri, array $options = []) : PromiseInterface
     {
@@ -179,7 +181,7 @@ final readonly class HttpClient implements ClientInterface
      * @param array               $options Additional request options.
      *
      * @return ResponseInterface
-     * @throws Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function request(string $method, $uri, array $options = []) : ResponseInterface
     {
@@ -207,9 +209,9 @@ final readonly class HttpClient implements ClientInterface
             $this->logger->error(
                 message: "Asynchronous request failed",
                 context: [
-                             'uri'   => (string) $request->getUri(),
-                             'error' => $throwable->getMessage(),
-                         ],
+                    'uri'   => (string) $request->getUri(),
+                    'error' => $throwable->getMessage(),
+                ],
             );
             throw new Exception(
                 message : "Failed to send async request",
@@ -226,7 +228,7 @@ final readonly class HttpClient implements ClientInterface
      *
      * @return mixed
      */
-    public function getConfig(string|null $option = null)
+    public function getConfig(string|null $option = null) : mixed
     {
         return $this->guzzleClient->getConfig(option: $option);
     }

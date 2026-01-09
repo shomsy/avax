@@ -72,7 +72,7 @@ final readonly class ControllerDispatcher
 
             // If none of the above conditions match, throw an exception because the action provided
             // is invalid or unsupported.
-            default                   => throw new InvalidArgumentException(message: 'Invalid route action provided.')
+            default                     => throw new InvalidArgumentException(message: 'Invalid route action provided.')
         };
     }
 

@@ -14,7 +14,7 @@ use RuntimeException;
  *
  * @package Avax\HTTP\Session\Policies
  */
-final class MaxLifetimePolicy implements PolicyInterface
+final readonly class MaxLifetimePolicy implements PolicyInterface
 {
     /**
      * MaxLifetimePolicy Constructor.

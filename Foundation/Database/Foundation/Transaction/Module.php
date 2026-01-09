@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Database\Transaction;
 
-use Avax\Container\Containers\DependencyInjector as Container;
+use Avax\Container\Read\DependencyInjector as Container;
 use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Lifecycle\LifecycleInterface;
 use Avax\Database\Transaction\Contracts\TransactionManagerInterface;

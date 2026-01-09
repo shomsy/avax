@@ -18,9 +18,9 @@
     <h1 class="display-1 fw-bold text-danger">403</h1>
     <p class="fs-4 text-danger-emphasis fw-semibold">
         <i class="bi bi-shield-exclamation me-2"></i>
-        {{ $message ?? 'You do not have permission to access this page.' }}
+        {{value: $message ?? 'You do not have permission to access this page.' }}
     </p>
-    <a href="{{ route('cashback.index') }}" class="btn btn-primary mt-3">
+    <a href="{{value: route(name: 'cashback.index') }}" class="btn btn-primary mt-3">
         ← Back to Home
     </a>
 </div>

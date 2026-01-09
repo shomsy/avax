@@ -1,0 +1,28 @@
+<?php
+
+return array (
+  'class' => 'Avax\\HTTP\\Router\\Routing\\HttpRequestRouter',
+  'constructor' => 
+  array (
+    'name' => '__construct',
+    'parameters' => 
+    array (
+      0 => 
+      array (
+        'name' => 'constraintValidator',
+        'type' => 'Avax\\HTTP\\Router\\Validation\\RouteConstraintValidator',
+        'isOptional' => false,
+        'defaultValue' => NULL,
+        'isVariadic' => false,
+        'allowsNull' => false,
+      ),
+    ),
+  ),
+  'injectedProperties' => 
+  array (
+  ),
+  'injectedMethods' => 
+  array (
+  ),
+  'isInstantiable' => true,
+);

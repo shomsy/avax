@@ -57,6 +57,7 @@ final class DatabaseFlow
      * @param callable(DatabaseConnection): mixed $callback
      *
      * @return mixed
+     * @throws \Throwable
      */
     public function run(callable $callback) : mixed
     {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Database\QueryBuilder\Exceptions;
 
 use Avax\Database\Exceptions\DatabaseException;
-use Override;
 
 /**
  * Triggered when the query builder receives malformed or dangerous criteria.
@@ -22,7 +21,6 @@ final class InvalidCriteriaException extends DatabaseException
      * @param string $method Technical name of the builder method
      * @param string $reason Human-readable explanation of why the input is invalid
      */
-    #[Override]
     public function __construct(
         private readonly string $method,
         string                  $reason

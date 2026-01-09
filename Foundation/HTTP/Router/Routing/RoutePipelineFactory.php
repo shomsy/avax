@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
-use Avax\Container\Contracts\ContainerInterface;
+use Avax\Container\Features\Core\Contracts\ContainerInterface;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Middleware\MiddlewareResolver;
 

@@ -1,25 +1,23 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace SleekDB\Tests;
 
-use PHPUnit\Framework\Attributes\Before;
+use SleekDB\Exceptions\InvalidArgumentException;
 use SleekDB\Tests\TestCases\SleekDBTestCase;
 
 final class QueryTest extends SleekDBTestCase
 {
 
-  #[Before]
-  public function fillStores()
-  {
-    foreach ($this->stores as $storeName => $store) {
+  /**
+   * @before
+   */
+  public function fillStores(){
+    foreach ($this->stores as $storeName => $store){
       $store->insertMany(self::DATABASE_DATA[$storeName]);
     }
   }
 
-  public function testCanGetResultWithWhere()
-  {
+  public function testCanGetResultWithWhere(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
@@ -28,8 +26,7 @@ final class QueryTest extends SleekDBTestCase
     self::assertCount(1, $users);
   }
 
-  public function testCanGetResultWithOrWhere()
-  {
+  public function testCanGetResultWithOrWhere(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
@@ -38,8 +35,7 @@ final class QueryTest extends SleekDBTestCase
     self::assertCount(2, $users);
   }
 
-  public function testCanGetResultWithAndConditionBetweenOrWhere()
-  {
+  public function testCanGetResultWithAndConditionBetweenOrWhere(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
@@ -48,8 +44,7 @@ final class QueryTest extends SleekDBTestCase
     self::assertCount(1, $users);
   }
 
-  public function testCanGetResultWithMultipleWhere()
-  {
+  public function testCanGetResultWithMultipleWhere(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
@@ -58,55 +53,50 @@ final class QueryTest extends SleekDBTestCase
     self::assertCount(0, $users);
   }
 
-  public function testCanGetResultWithoutSomeFields()
-  {
+  public function testCanGetResultWithoutSomeFields(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
     $users = $userQueryBuilder->except(["_id", "name"])->where(["_id", "=", 1])->getQuery()->fetch();
 
-    foreach ($users as $user) {
+    foreach ($users as $user){
       self::assertArrayNotHasKey("_id", $user);
       self::assertArrayNotHasKey("name", $user);
     }
   }
 
-  public function testCanGetResultWithSpecificFields()
-  {
+  public function testCanGetResultWithSpecificFields(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
     $users = $userQueryBuilder->select(["_id", "price"])->where(["_id", "=", 1])->getQuery()->fetch();
 
-    foreach ($users as $user) {
+    foreach ($users as $user){
       self::assertArrayHasKey("_id", $user);
       self::assertArrayHasKey("price", $user);
       self::assertArrayNotHasKey("name", $user);
     }
   }
 
-  public function testCanGetResultWithInCondition()
-  {
+  public function testCanGetResultWithInCondition(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
-    $users = $userQueryBuilder->where(["_id", "in", [1, 2]])->getQuery()->fetch();
+    $users = $userQueryBuilder->where(["_id","in",[1,2]])->getQuery()->fetch();
 
     self::assertCount(2, $users);
   }
 
-  public function testCanGetResultWithNotInCondition()
-  {
+  public function testCanGetResultWithNotInCondition(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
-    $users = $userQueryBuilder->where(["_id", "not in", [1, 2]])->getQuery()->fetch();
+    $users = $userQueryBuilder->where(["_id", "not in", [1,2]])->getQuery()->fetch();
 
     self::assertCount(count(self::DATABASE_DATA["users"]) - 2, $users);
   }
 
-  public function testCanGetFirstResult()
-  {
+  public function testCanGetFirstResult(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
@@ -116,17 +106,16 @@ final class QueryTest extends SleekDBTestCase
     self::assertSame($user1[0], $user2);
   }
 
-  //  public function testCanGetFirstResultAfterOrderBy(){
-  //    $userStore = $this->stores["users"];
-  //
-  //    $user1 = $userStore->orderBy("ASC")->limit(1)->fetch();
-  //    $user2 = $userStore->orderBy("ASC")->first()->fetch();
-  //
-  //    $this->assertSame($user1[0], $user2);
-  //  }
+//  public function testCanGetFirstResultAfterOrderBy(){
+//    $userStore = $this->stores["users"];
+//
+//    $user1 = $userStore->orderBy("ASC")->limit(1)->fetch();
+//    $user2 = $userStore->orderBy("ASC")->first()->fetch();
+//
+//    $this->assertSame($user1[0], $user2);
+//  }
 
-  public function testCanLimitResults()
-  {
+  public function testCanLimitResults(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
@@ -135,8 +124,7 @@ final class QueryTest extends SleekDBTestCase
     self::assertCount(3, $users);
   }
 
-  public function testCanOrderBy()
-  {
+  public function testCanOrderBy(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
@@ -145,7 +133,7 @@ final class QueryTest extends SleekDBTestCase
     $users = $userQueryBuilder->orderBy([$orderByKey => "asc"])->getQuery()->fetch();
 
     $usersLength = count($users);
-    for ($index = 1; $index < $usersLength; $index++) {
+    for($index = 1; $index < $usersLength; $index++){
       self::assertGreaterThan($users[$index - 1][$orderByKey], $users[$index][$orderByKey]);
     }
 
@@ -154,13 +142,12 @@ final class QueryTest extends SleekDBTestCase
     $users = $userQueryBuilder->orderBy([$orderByKey => "DESC"])->getQuery()->fetch();
 
     $usersLength = count($users);
-    for ($index = 1; $index < $usersLength; $index++) {
+    for($index = 1; $index < $usersLength; $index++){
       self::assertLessThan($users[$index - 1][$orderByKey], $users[$index][$orderByKey]);
     }
   }
 
-  public function testResultExists()
-  {
+  public function testResultExists(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
@@ -175,8 +162,7 @@ final class QueryTest extends SleekDBTestCase
     self::assertFalse($userExists);
   }
 
-  public function testCanUseCacheWithNoParameter()
-  {
+  public function testCanUseCacheWithNoParameter(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
@@ -191,8 +177,7 @@ final class QueryTest extends SleekDBTestCase
     self::assertSame($result, $cacheResult);
   }
 
-  public function testCanUseCacheWithLifetimeNull()
-  {
+  public function testCanUseCacheWithLifetimeNull(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
@@ -207,8 +192,7 @@ final class QueryTest extends SleekDBTestCase
     self::assertSame($result, $cacheResult);
   }
 
-  public function testCanUseCacheWithLifetimeZero()
-  {
+  public function testCanUseCacheWithLifetimeZero(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 
@@ -227,8 +211,7 @@ final class QueryTest extends SleekDBTestCase
     self::assertSame($result, $cacheResult);
   }
 
-  public function testCanUseCacheWithLifetimeInt()
-  {
+  public function testCanUseCacheWithLifetimeInt(){
     $userStore = $this->stores["users"];
     $userQueryBuilder = $userStore->createQueryBuilder();
 

@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
-use DateTime;
 use Avax\Exceptions\ValidationException;
+use DateTime;
 
 /**
  * Attribute class designed to enforce the rule that a given date must be
@@ -37,10 +37,10 @@ readonly class AfterOrEqual
         if (! $inputDate || ! $comparisonDate || $inputDate < $comparisonDate) {
             throw new ValidationException(
                 message: sprintf(
-                             '%s must be a date after or equal to %s.',
-                             $property,
-                             $this->date,
-                         ),
+                    '%s must be a date after or equal to %s.',
+                    $property,
+                    $this->date,
+                ),
             );
         }
     }

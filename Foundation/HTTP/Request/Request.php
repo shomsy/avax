@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection GlobalVariableUsageInspection */
 
 declare(strict_types=1);
@@ -9,12 +10,13 @@ use Avax\HTTP\Request\Traits\InputManagementTrait;
 use Avax\HTTP\Request\Traits\JwtTrait;
 use Avax\HTTP\Request\Traits\SessionManagementTrait;
 use Avax\HTTP\Response\Classes\Stream;
-use Avax\HTTP\Session\Contracts\SessionInterface;
 use Avax\HTTP\Session\NullSession;
+use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
 use Avax\HTTP\URI\UriBuilder;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use RuntimeException;
+use SensitiveParameter;
 use Throwable;
 
 /**
@@ -67,17 +69,17 @@ class Request extends AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return void
      */
-    #[\Override]
     public function __construct(
-        SessionInterface|string|null $session = null,
-        array                        $serverParams = [],
-        UriInterface|string|null     $uri = null,
-        Stream|string|null           $body = null,
-        array                        $queryParams = [],
-        array                        $parsedBody = [],
-        array                        $cookies = [],
-        array                        $uploadedFiles = []
-    ) {
+        #[SensitiveParameter] SessionInterface|string|null $session = null,
+        array                                              $serverParams = [],
+        UriInterface|string|null                           $uri = null,
+        Stream|string|null                                 $body = null,
+        array                                              $queryParams = [],
+        array                                              $parsedBody = [],
+        array                                              $cookies = [],
+        array                                              $uploadedFiles = []
+    )
+    {
         parent::__construct(
             server       : $serverParams,
             uri          : $uri,
@@ -110,11 +112,30 @@ class Request extends AbsoluteServerRequest implements ServerRequestInterface
     public static function createFromGlobals() : self
     {
         try {
-            // Build the URI from the global variables ($_SERVER in this case).
-            $uri = self::buildUriFromGlobals();
+            // Build the URI from the global variables ($_SERVER in this case). 
+            $uri     = self::buildUriFromGlobals();
+            $session = null;
+            try {
+                if (function_exists('app')) {
+                    $container = app();
+                    if (
+                        is_object($container)
+                        && method_exists($container, 'has')
+                        && $container->has(id: SessionInterface::class)
+                    ) {
+                        $session = $container->get(id: SessionInterface::class);
+                        if (! $session instanceof SessionInterface) {
+                            $session = null;
+                        }
+                    }
+                }
+            } catch (Throwable $e) {
+                $session = null;
+            }
+            $session ??= new NullSession();
 
             return new self(
-                session      : app(abstract: SessionInterface::class), // Retrieve session from the IoC container.
+                session      : $session, // Use container session or fallback.
                 serverParams : $_SERVER,
                 uri          : $uri,
                 body         : new Stream(stream: fopen(filename: 'php://input', mode: 'rb')),
@@ -126,7 +147,9 @@ class Request extends AbsoluteServerRequest implements ServerRequestInterface
         } catch (Throwable $throwable) {
             // Catch unexpected exceptions during construction and wrap them in a runtime exception.
             throw new RuntimeException(
-                message: "Failed to create Request from globals.", code: 0, previous: $throwable
+                message : "Failed to create Request from globals.",
+                code    : 0,
+                previous: $throwable
             );
         }
     }
@@ -213,7 +236,7 @@ class Request extends AbsoluteServerRequest implements ServerRequestInterface
      *
      * @param SessionInterface $session The session instance to set.
      */
-    public function setSession(SessionInterface $session) : void
+    public function setSession(#[SensitiveParameter] SessionInterface $session) : void
     {
         $this->session = $session;
     }
@@ -249,7 +272,6 @@ class Request extends AbsoluteServerRequest implements ServerRequestInterface
      */
     public function user() : mixed
     {
-        return $this->session->get('user'); // TODO: if not in session, then from JWT !!!
+        return $this->session->get(key: 'user'); // TODO: if not in session, then from JWT !!!
     }
-
 }

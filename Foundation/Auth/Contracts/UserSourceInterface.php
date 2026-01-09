@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Contracts;
 
-use Avax\Auth\Contracts\CredentialsInterface;
-use Avax\Auth\Contracts\UserInterface;
 use Avax\Auth\Data\RegistrationDTO;
 
 /**

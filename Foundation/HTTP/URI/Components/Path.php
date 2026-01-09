@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\URI\Components;
 
+use Stringable;
+
 /**
  * Represents a URI path (e.g., /path/to/resource).
  *
  * A final class to ensure immutability and integrity of URI path components
  * throughout the application, preventing inheritance or modification.
  */
-final readonly class Path implements \Stringable
+final readonly class Path implements Stringable
 {
     /**
      * The normalized path string.

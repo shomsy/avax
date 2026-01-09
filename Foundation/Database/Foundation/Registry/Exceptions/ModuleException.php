@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Database\Registry\Exceptions;
 
 use Avax\Database\Exceptions\DatabaseException;
-use Override;
 use Throwable;
 
 /**
@@ -38,7 +37,6 @@ final class ModuleException extends DatabaseException
      * @param string         $message     A clear explanation of what went wrong.
      * @param Throwable|null $previous    The raw system error that caused the crash.
      */
-    #[Override]
     public function __construct(
         private readonly string $moduleClass,
         private readonly string $phase,

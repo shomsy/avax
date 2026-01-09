@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Bootstrap;
 
-use FilesystemIterator;
 use Avax\Config\Architecture\DDD\AppPath;
 use Avax\HTTP\Router\Cache\RouteCacheLoader;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Support\RouteCollector;
+use FilesystemIterator;
 use Psr\Log\LoggerInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -161,20 +161,20 @@ final readonly class RouteBootstrapper
         // Create a recursive iterator to find all files within the route directory.
         $iterator = new RecursiveIteratorIterator(
             iterator: new RecursiveDirectoryIterator(
-                          directory: $baseDir,
-                          flags    : FilesystemIterator::SKIP_DOTS
-                      )
+                directory: $baseDir,
+                flags    : FilesystemIterator::SKIP_DOTS
+            )
         );
 
         // Filter and return files that end with `.routes.php`, or just 'routes.php'
         $routeFiles = array_filter(
             array   : iterator_to_array(iterator: $iterator),
             callback: static fn(SplFileInfo $file) : bool => $file->isFile()
-                                                             && $file->isReadable()
-                                                             && preg_match(
+                && $file->isReadable()
+                && preg_match(
                     pattern: '/\.routes\.php$|^routes\.php$/',
                     subject: $file->getFilename()
-                                                             )
+                )
         );
 
         // Ensure a returned array is indexed sequentially

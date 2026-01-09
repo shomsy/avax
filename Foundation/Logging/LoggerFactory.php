@@ -79,12 +79,12 @@ final class LoggerFactory
         // Return the logger instance with a rotating file writer
         return new ErrorLogger(
             logWriter: new RotatingFileLogWriter(
-                           baseLogPath: $path,
-                           timezone   : env(
-                                            key    : 'APP_TZ',
-                                            default: date_default_timezone_get()
-                                        )
-                       )
+                baseLogPath: $path,
+                timezone   : env(
+                    key    : 'APP_TZ',
+                    default: date_default_timezone_get()
+                )
+            )
         );
     }
 

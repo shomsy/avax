@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Migrations;
 
-use Avax\Container\Containers\DependencyInjector as Container;
+use Avax\Container\Read\DependencyInjector as Container;
 use Avax\Database\Lifecycle\LifecycleInterface;
 use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 use Avax\Migrations\Execution\Repository\MigrationRepository;
@@ -45,11 +45,11 @@ final readonly class Module implements LifecycleInterface
      */
     public function register() : void
     {
-        $this->container->singleton(abstract: MigrationRepository::class, concrete: function ($c) {
+        $this->container->singleton(abstract: MigrationRepository::class, concrete: static function ($c) {
             return new MigrationRepository(builder: $c->get(id: QueryBuilder::class));
         });
 
-        $this->container->singleton(abstract: MigrationRunner::class, concrete: function ($c) {
+        $this->container->singleton(abstract: MigrationRunner::class, concrete: static function ($c) {
             return new MigrationRunner(
                 repository: $c->get(id: MigrationRepository::class),
                 builder   : $c->get(id: QueryBuilder::class)

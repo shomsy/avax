@@ -59,17 +59,23 @@ final class MigrationRepository
     public function log(string $name, int $batch, string $checksum) : void
     {
         $this->builder->from(table: $this->table)->insert(values: [
-                                                                      'migration' => $name,
-                                                                      'batch'     => $batch,
-                                                                      'checksum'  => $checksum
-                                                                  ]);
+            'migration' => $name,
+            'batch'     => $batch,
+            'checksum'  => $checksum
+        ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function remove(string $name) : void
     {
         $this->builder->from(table: $this->table)->where(column: 'migration', value: $name)->delete();
     }
 
+    /**
+     * @throws Throwable
+     */
     public function ensureTableExists() : void
     {
         try {
@@ -84,7 +90,7 @@ final class MigrationRepository
      */
     public function createRepository() : void
     {
-        $this->builder->create(table: $this->table, callback: function ($table) {
+        $this->builder->create(table: $this->table, callback: static function ($table) {
             $table->id();
             $table->string(name: 'migration');
             $table->integer(name: 'batch');

@@ -32,7 +32,7 @@ readonly class Filesystem
      *                          be used.
      *
      * @return FileStorageInterface The instance of the file storage based on the disk configuration.
-     * @throws \Avax\Container\Exceptions\FoundationContainerException
+     * @throws \Avax\Container\Core\Exceptions\FoundationContainerException
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \Exception

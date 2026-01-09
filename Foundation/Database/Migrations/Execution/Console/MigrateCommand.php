@@ -12,14 +12,17 @@ use Throwable;
 /**
  * Console command to run pending migrations.
  */
-final class MigrateCommand
+final readonly class MigrateCommand
 {
     public function __construct(
-        private readonly MigrationRepository $repository,
-        private readonly MigrationRunner     $runner,
-        private readonly MigrationLoader     $loader
+        private MigrationRepository $repository,
+        private MigrationRunner     $runner,
+        private MigrationLoader     $loader
     ) {}
 
+    /**
+     * @throws Throwable
+     */
     public function handle(string $path, bool $dryRun = false) : int
     {
         if ($dryRun) {

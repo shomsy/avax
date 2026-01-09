@@ -231,7 +231,8 @@ trait InputManagementTrait
         bool|null $intoQuery = null,
         bool|null $intoRequest = null,
         bool      $overwrite = true,
-    ) : void {
+    ) : void
+    {
         $intoRequest ??= true;
         $intoQuery   ??= true;
         foreach ($data as $key => $value) {
@@ -280,7 +281,6 @@ trait InputManagementTrait
      *
      * @return string The header value as a single string or an empty string if the header does not exist.
      */
-    #[\Override]
     public function getHeaderLine(string $name) : string
     {
         // Use the request method to access headers, normalizing the header name to lowercase for consistency

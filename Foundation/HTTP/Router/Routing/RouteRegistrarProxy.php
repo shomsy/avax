@@ -12,11 +12,11 @@ namespace Avax\HTTP\Router\Routing;
  */
 final class RouteRegistrarProxy
 {
-    private readonly RouteBuilder      $builder;
+    private readonly RouteBuilder $builder;
 
     private readonly HttpRequestRouter $router;
 
-    private bool                       $registered = false;
+    private bool $registered = false;
 
     /**
      * Initializes proxy with Router and Builder.

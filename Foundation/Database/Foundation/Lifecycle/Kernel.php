@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Database\Lifecycle;
 
-use Avax\Container\Containers\DependencyInjector as Container;
+use Avax\Container\Read\DependencyInjector as Container;
 use Avax\Database\Registry\ModuleRegistry;
 
 /**
@@ -12,15 +12,15 @@ use Avax\Database\Registry\ModuleRegistry;
  *
  * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Architecture.md
  */
-final class Kernel
+final readonly class Kernel
 {
     /**
      * @param Container      $container The "Toolbox" where we store all our services.
      * @param ModuleRegistry $registry  The "Librarian" who keeps track of which modules are active.
      */
     public function __construct(
-        private readonly Container      $container,
-        private readonly ModuleRegistry $registry
+        private Container      $container,
+        private ModuleRegistry $registry
     ) {}
 
     /**

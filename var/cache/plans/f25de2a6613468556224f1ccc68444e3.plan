@@ -1,0 +1,28 @@
+<?php
+
+return array (
+  'class' => 'Avax\\HTTP\\Middleware\\MiddlewareGroupResolver',
+  'constructor' => 
+  array (
+    'name' => '__construct',
+    'parameters' => 
+    array (
+      0 => 
+      array (
+        'name' => 'configRepository',
+        'type' => 'Avax\\Container\\Config\\Repository',
+        'isOptional' => false,
+        'defaultValue' => NULL,
+        'isVariadic' => false,
+        'allowsNull' => false,
+      ),
+    ),
+  ),
+  'injectedProperties' => 
+  array (
+  ),
+  'injectedMethods' => 
+  array (
+  ),
+  'isInstantiable' => true,
+);

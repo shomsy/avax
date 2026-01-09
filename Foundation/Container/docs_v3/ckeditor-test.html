@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKEditor Test</title>
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
+</head>
+<body>
+    <h1>CKEditor Test</h1>
+    <div id="editor">
+        <p>This is a test editor.</p>
+        <p>You can edit this content!</p>
+    </div>
+
+    <button onclick="getContent()">Get Content</button>
+    <button onclick="setContent()">Set Content</button>
+
+    <script>
+        let editor;
+
+        ClassicEditor
+            .create(document.querySelector('#editor'))
+            .then(newEditor => {
+                editor = newEditor;
+                console.log('Editor initialized successfully');
+            })
+            .catch(error => {
+                console.error('Editor initialization failed:', error);
+            });
+
+        function getContent() {
+            if (editor) {
+                alert(editor.getData());
+            }
+        }
+
+        function setContent() {
+            if (editor) {
+                editor.setData('<p>New content set programmatically!</p>');
+            }
+        }
+    </script>
+</body>
+</html>

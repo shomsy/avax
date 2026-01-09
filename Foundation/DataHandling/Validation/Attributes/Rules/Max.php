@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
-use Countable;
 use Avax\Exceptions\ValidationException;
+use Countable;
 use InvalidArgumentException;
 
 /**
@@ -18,13 +18,13 @@ use InvalidArgumentException;
 class Max
 {
     /** Error messages for different validation types. */
-    private const string ERROR_NUMERIC   = 'The value of "%s" must not exceed %d.';
+    private const string ERROR_NUMERIC = 'The value of "%s" must not exceed %d.';
 
-    private const string ERROR_STRING    = 'The length of "%s" must not exceed %d characters.';
+    private const string ERROR_STRING = 'The length of "%s" must not exceed %d characters.';
 
     private const string ERROR_COUNTABLE = 'The number of items in "%s" must not exceed %d.';
 
-    private const string ERROR_INVALID   = 'Invalid value type for "%s". Expected a numeric, string, or countable value, but got "%s".';
+    private const string ERROR_INVALID = 'Invalid value type for "%s". Expected a numeric, string, or countable value, but got "%s".';
 
     /**
      * Constructor for the Max attribute.
@@ -59,11 +59,11 @@ class Max
 
         // Match the type of value to the appropriate validation method.
         match (true) {
-            is_numeric(value: $value) => $this->validateNumeric(
+            is_numeric(value: $value)   => $this->validateNumeric(
                 value   : (float) $value,
                 property: $property
             ),
-            is_string(value: $value) => $this->validateString(
+            is_string(value: $value)    => $this->validateString(
                 value   : $value,
                 property: $property
             ),
@@ -71,7 +71,7 @@ class Max
                 value   : $value,
                 property: $property
             ),
-            default                                         => $this->throwValidationException(
+            default                     => $this->throwValidationException(
                 errorKey: self::ERROR_INVALID,
                 property: $property,
                 value   : $value
@@ -110,11 +110,11 @@ class Max
         throw new ValidationException(
             message : $this->message ?? sprintf('%s must be at most %d.', ucfirst(string: $property), $this->max),
             metadata: [
-                          'property' => $property,
-                          'value'    => $value,
-                          'max'      => $this->max,
-                          'errorKey' => $errorKey,
-                      ]
+                'property' => $property,
+                'value'    => $value,
+                'max'      => $this->max,
+                'errorKey' => $errorKey,
+            ]
         );
     }
 

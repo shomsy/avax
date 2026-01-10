@@ -25,9 +25,10 @@ final readonly class KernelCompiler
     /**
      * Initialize compiler with core components.
      *
-     * @param DefinitionStore $definitions Service definitions to compile
+     * @param DefinitionStore         $definitions      Service definitions to compile
      * @param ServicePrototypeFactory $prototypeFactory Factory for creating prototypes
-     * @param CollectMetrics|null $metrics Optional metrics collector
+     * @param CollectMetrics|null     $metrics          Optional metrics collector
+     * @see docs_md/Core/Kernel/KernelCompiler.md#method-__construct
      */
     public function __construct(
         private DefinitionStore         $definitions,
@@ -37,11 +38,6 @@ final readonly class KernelCompiler
 
     /**
      * Compile all service definitions and return statistics.
-     *
-     * Performs full compilation by analyzing all registered services,
-     * generating optimized prototypes, and validating configurations.
-     * This method serves as the primary entry point for build-time optimization,
-     * transforming declarative service definitions into optimized runtime structures.
      *
      * @return array{
      *     compiled_services: int,
@@ -94,13 +90,10 @@ final readonly class KernelCompiler
     /**
      * Resolve class name from service definition.
      *
-     * Determines the concrete class to use for a service definition by examining
-     * the concrete binding, falling back to the abstract identifier.
-     * Validates that the resolved class exists and is instantiable.
-     *
      * @param ServiceDefinition $definition Service definition to resolve
      * @return string|null Resolved class name or null if not resolvable
-     * @throws \Throwable When reflection analysis fails (handled internally)
+     * @throws \Throwable When reflection analysis fails
+     * @see docs_md/Core/Kernel/KernelCompiler.md#method-resolvedefinitionclass
      */
     private function resolveDefinitionClass(ServiceDefinition $definition): string|null
     {
@@ -116,7 +109,9 @@ final readonly class KernelCompiler
 
         try {
             $reflection = $this->prototypeFactory
-                ->getReflectionTypeAnalyzer()
+                ->getAnalyzer()
+                ->getTypeAnalyzer()
+
                 ->reflectClass(className: $candidate);
         } catch (Throwable) {
             return null;
@@ -127,10 +122,6 @@ final readonly class KernelCompiler
 
     /**
      * Validate all service definitions without compilation.
-     *
-     * Checks all registered services for configuration errors and dependency issues
-     * without performing expensive prototype generation and caching.
-     * This method provides lightweight validation for development and testing scenarios.
      *
      * @return void
      * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException If validation fails
@@ -153,12 +144,8 @@ final readonly class KernelCompiler
     /**
      * Clear all caches.
      *
-     * Removes all cached prototypes and compilation artifacts.
-     * Forces fresh analysis on next container operation.
-     * This method enables cache invalidation for development workflows and testing.
-     *
      * @return void
-     * @see docs_md/Core/Kernel/KernelCompiler.md#method-clearCache
+     * @see docs_md/Core/Kernel/KernelCompiler.md#method-clearcache
      */
     public function clearCache(): void
     {
@@ -167,10 +154,6 @@ final readonly class KernelCompiler
 
     /**
      * Get compilation statistics with fallback defaults.
-     *
-     * Provides compilation metrics, using provided stats or generating defaults
-     * based on current cache state.
-     * This method enables monitoring and debugging of compilation performance.
      *
      * @param array|null $compilationStats Existing stats or null for defaults
      * @return array Compilation statistics

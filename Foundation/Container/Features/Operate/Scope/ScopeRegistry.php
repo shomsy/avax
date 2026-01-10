@@ -8,27 +8,35 @@ use LogicException;
 use RuntimeException;
 
 /**
- * Holds resolved instances in singleton and scoped storage.
+ * Storage for resolved singleton and scoped service instances.
  *
- * @see docs_md/Features/Operate/Scope/ScopeRegistry.md#quick-summary
+ * This registry acts as the physical memory of the container's runtime, maintaining the
+ * life cycle of shared instances across different operational scopes (e.g., Application,
+ * Request, Session). It provides ordered scope management and isolation.
+ *
+ * @package Avax\Container\Features\Operate\Scope
+ * @see docs/Features/Operate/Scope/ScopeRegistry.md
  */
 final class ScopeRegistry
 {
-    /** @var array<string, mixed> */
+    /** @var array<string, mixed> Application-wide shared instances. */
     private array $singletons = [];
 
-    /** @var array<int, array<string, mixed>> */
+    /** @var array<int, array<string, mixed>> Stack of active operational scopes. */
     private array $scopes = [];
 
     /**
-     * Check whether an instance exists in the current scope (if active) or singleton storage.
+     * Check whether an instance exists in the current active scope or singleton storage.
      *
-     * @see docs_md/Features/Operate/Scope/ScopeRegistry.md#method-has
+     * @param string $abstract The service identifier to check.
+     * @return bool True if a resolved instance is stored.
+     *
+     * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-has
      */
     public function has(string $abstract): bool
     {
         if ($this->scopes !== []) {
-            $currentScope = end($this->scopes);
+            $currentScope = $this->scopes[array_key_last($this->scopes)];
             if (isset($currentScope[$abstract])) {
                 return true;
             }
@@ -38,14 +46,17 @@ final class ScopeRegistry
     }
 
     /**
-     * Retrieve an instance from the current scope (if active) or singleton storage.
+     * Retrieve a resolved instance from the current active scope or singleton storage.
      *
-     * @see docs_md/Features/Operate/Scope/ScopeRegistry.md#method-get
+     * @param string $abstract The service identifier to retrieve.
+     * @return mixed|null The instance or null if not yet resolved.
+     *
+     * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-get
      */
     public function get(string $abstract): mixed
     {
         if ($this->scopes !== []) {
-            $currentScope = end($this->scopes);
+            $currentScope = $this->scopes[array_key_last($this->scopes)];
             if (isset($currentScope[$abstract])) {
                 return $currentScope[$abstract];
             }
@@ -55,34 +66,43 @@ final class ScopeRegistry
     }
 
     /**
-     * Store an instance in singleton storage.
+     * Store a resolved instance into the current active storage.
      *
-     * @see docs_md/Features/Operate/Scope/ScopeRegistry.md#method-set
+     * If a scope is currently active, the instance is stored in that scope.
+     * Otherwise, it is stored in the application-wide singleton storage.
+     *
+     * @param string $abstract The service identifier.
+     * @param mixed  $instance The resolved object/instance.
+     *
+     * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-set
      */
     public function set(string $abstract, mixed $instance): void
+    {
+        if ($this->scopes !== []) {
+            $lastIndex = array_key_last($this->scopes);
+            $this->scopes[$lastIndex][$abstract] = $instance;
+        } else {
+            $this->singletons[$abstract] = $instance;
+        }
+    }
+
+    /**
+     * Force-store an instance into the application-wide singleton storage regardless of active scopes.
+     *
+     * @param string $abstract The service identifier.
+     * @param mixed  $instance The instance to register globally.
+     *
+     * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-addsingleton
+     */
+    public function addSingleton(string $abstract, mixed $instance): void
     {
         $this->singletons[$abstract] = $instance;
     }
 
     /**
-     * Store an instance in the currently active scope.
+     * Enter a new operational scope (e.g., start of a web request).
      *
-     * @throws RuntimeException If no scope is active.
-     * @see docs_md/Features/Operate/Scope/ScopeRegistry.md#method-setscoped
-     */
-    public function setScoped(string $abstract, mixed $instance): void
-    {
-        if ($this->scopes === []) {
-            throw new RuntimeException(message: "Cannot cache scoped service [{$abstract}] without an active scope.");
-        }
-        $key                           = array_key_last($this->scopes);
-        $this->scopes[$key][$abstract] = $instance;
-    }
-
-    /**
-     * Begin a new scope boundary.
-     *
-     * @see docs_md/Features/Operate/Scope/ScopeRegistry.md#method-beginscope
+     * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-beginscope
      */
     public function beginScope(): void
     {
@@ -90,35 +110,26 @@ final class ScopeRegistry
     }
 
     /**
-     * End the current scope boundary.
+     * Exit the current operational scope and discard its stored instances.
      *
-     * @throws LogicException If no scope is active.
-     * @see docs_md/Features/Operate/Scope/ScopeRegistry.md#method-endscope
+     * @throws RuntimeException If no active scope exists to end.
+     * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-endscope
      */
     public function endScope(): void
     {
         if ($this->scopes === []) {
-            throw new LogicException(message: "No active scopes to end.");
+            throw new RuntimeException(message: 'Cannot end scope: No active scope found.');
         }
+
         array_pop($this->scopes);
     }
 
     /**
-     * Terminate the scope system and clear all stored instances.
+     * Completely clear all singleton and scoped instances.
      *
-     * @see docs_md/Features/Operate/Scope/ScopeRegistry.md#method-terminate
+     * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-terminate
      */
     public function terminate(): void
-    {
-        $this->clear();
-    }
-
-    /**
-     * Clear all singleton and scoped instances.
-     *
-     * @see docs_md/Features/Operate/Scope/ScopeRegistry.md#method-clear
-     */
-    public function clear(): void
     {
         $this->singletons = [];
         $this->scopes     = [];

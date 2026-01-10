@@ -1,20 +1,27 @@
 <?php
 
 declare(strict_types=1);
-namespace Avax\Tests\Container\Integration;
+
+namespace Avax\Container\Tests\Integration;
 
 use Avax\Container\Features\Core\Attribute\Inject;
 use Avax\Container\Features\Core\ContainerBuilder;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
+/**
+ * PHPUnit test coverage for Container component behavior.
+ *
+ * @see docs_md/tests/Integration/ContainerIntegrationTest.md#quick-summary
+ */
 final class ContainerIntegrationTest extends TestCase
 {
     private string $tempDir;
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
-    public function testBuildInjectInvoke() : void
+    public function testBuildInjectInvoke(): void
     {
         $container = ContainerBuilder::create()
             ->cacheDir(dir: $this->tempDir)
@@ -31,18 +38,18 @@ final class ContainerIntegrationTest extends TestCase
         $this->assertSame(expected: 'foo-bar-foo-ok', actual: $result);
     }
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->tempDir = sys_get_temp_dir() . '/avax_integration_' . uniqid();
         @mkdir($this->tempDir, 0777, true);
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         $this->removeDirectory(dir: $this->tempDir);
     }
 
-    private function removeDirectory(string $dir) : void
+    private function removeDirectory(string $dir): void
     {
         if (! is_dir($dir)) {
             return;
@@ -63,7 +70,7 @@ final class ContainerIntegrationTest extends TestCase
 
 final class IntegrationFoo
 {
-    public function name() : string
+    public function name(): string
     {
         return 'foo';
     }
@@ -71,7 +78,7 @@ final class IntegrationFoo
 
 final class IntegrationBar
 {
-    public function name() : string
+    public function name(): string
     {
         return 'bar';
     }
@@ -85,12 +92,12 @@ final class IntegrationTarget
     public IntegrationBar $bar;
 
     #[Inject]
-    public function setBar(IntegrationBar $bar) : void
+    public function setBar(IntegrationBar $bar): void
     {
         $this->bar = $bar;
     }
 
-    public function combine(IntegrationFoo $foo, string $suffix) : string
+    public function combine(IntegrationFoo $foo, string $suffix): string
     {
         return $this->foo->name() . '-' . $this->bar->name() . '-' . $foo->name() . $suffix;
     }

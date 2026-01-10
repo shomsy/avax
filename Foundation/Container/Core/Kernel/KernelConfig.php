@@ -27,18 +27,19 @@ final readonly class KernelConfig
     /**
      * Initialize kernel configuration with all collaborators.
      *
-     * @param EngineInterface $engine Resolution engine
-     * @param InjectDependencies $injector Dependency injection system
-     * @param InvokeAction $invoker Callable invocation system
-     * @param ScopeManager $scopes Instance lifetime management
+     * @param EngineInterface         $engine           Resolution engine
+     * @param InjectDependencies      $injector         Dependency injection system
+     * @param InvokeAction            $invoker          Callable invocation system
+     * @param ScopeManager            $scopes           Instance lifetime management
      * @param ServicePrototypeFactory $prototypeFactory Service analysis factory
-     * @param ResolutionTimeline $timeline Resolution tracking
-     * @param CollectMetrics|null $metrics Optional metrics collection
-     * @param ContainerPolicy|null $policy Optional security policy
-     * @param TerminateContainer|null $terminator Optional shutdown handler
-     * @param bool $autoDefine Enable automatic service definition
-     * @param bool $strictMode Enable strict validation mode
-     * @param bool $devMode Enable development mode features
+     * @param ResolutionTimeline      $timeline         Resolution tracking
+     * @param CollectMetrics|null     $metrics          Optional metrics collection
+     * @param ContainerPolicy|null    $policy           Optional security policy
+     * @param TerminateContainer|null $terminator       Optional shutdown handler
+     * @param bool                    $autoDefine       Enable automatic service definition
+     * @param bool                    $strictMode       Enable strict validation mode
+     * @param bool                    $devMode          Enable development mode features
+     * @see docs_md/Core/Kernel/KernelConfig.md#method-__construct
      */
     public function __construct(
         public EngineInterface         $engine,
@@ -58,15 +59,12 @@ final readonly class KernelConfig
     /**
      * Create configuration with required collaborators only.
      *
-     * Provides a factory method for creating KernelConfig instances with only the required collaborators,
-     * allowing optional settings to be configured through fluent methods afterward.
-     *
-     * @param EngineInterface $engine Resolution engine
-     * @param InjectDependencies $injector Dependency injection system
-     * @param InvokeAction $invoker Callable invocation system
-     * @param ScopeManager $scopes Instance lifetime management
+     * @param EngineInterface         $engine           Resolution engine
+     * @param InjectDependencies      $injector         Dependency injection system
+     * @param InvokeAction            $invoker          Callable invocation system
+     * @param ScopeManager            $scopes           Instance lifetime management
      * @param ServicePrototypeFactory $prototypeFactory Service analysis factory
-     * @param ResolutionTimeline $timeline Resolution tracking
+     * @param ResolutionTimeline      $timeline         Resolution tracking
      * @return self New configuration instance
      * @see docs_md/Core/Kernel/KernelConfig.md#method-create
      */
@@ -77,33 +75,40 @@ final readonly class KernelConfig
         ScopeManager            $scopes,
         ServicePrototypeFactory $prototypeFactory,
         ResolutionTimeline      $timeline
-    ) : self
-    {
+    ): self {
         return new self(
-            engine          : $engine,
-            injector        : $injector,
-            invoker         : $invoker,
-            scopes          : $scopes,
+            engine: $engine,
+            injector: $injector,
+            invoker: $invoker,
+            scopes: $scopes,
             prototypeFactory: $prototypeFactory,
-            timeline        : $timeline
+            timeline: $timeline
         );
     }
 
     /**
      * Enable or disable strict validation mode.
      *
-     * Configures whether the kernel should perform additional validation checks,
-     * providing stricter error detection at the cost of some performance.
-     *
      * @param bool $strict Enable strict mode if true
      * @return self New configuration instance
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-withStrictMode
+     * @see docs_md/Core/Kernel/KernelConfig.md#method-withstrictmode
      */
-    public function withStrictMode(bool $strict = true) : self
+    public function withStrictMode(bool $strict = true): self
     {
         return $this->cloneWith(strictMode: $strict);
     }
 
+    /**
+     * Internal helper to create a modified clone of the configuration.
+     *
+     * @param CollectMetrics|null     $metrics
+     * @param ContainerPolicy|null    $policy
+     * @param TerminateContainer|null $terminator
+     * @param bool|null               $autoDefine
+     * @param bool|null               $strictMode
+     * @param bool|null               $devMode
+     * @return self
+     */
     private function cloneWith(
         CollectMetrics|null     $metrics = null,
         ContainerPolicy|null    $policy = null,
@@ -111,35 +116,31 @@ final readonly class KernelConfig
         bool|null               $autoDefine = null,
         bool|null               $strictMode = null,
         bool|null               $devMode = null
-    ) : self
-    {
+    ): self {
         return new self(
-            engine          : $this->engine,
-            injector        : $this->injector,
-            invoker         : $this->invoker,
-            scopes          : $this->scopes,
+            engine: $this->engine,
+            injector: $this->injector,
+            invoker: $this->invoker,
+            scopes: $this->scopes,
             prototypeFactory: $this->prototypeFactory,
-            timeline        : $this->timeline,
-            metrics         : $metrics ?? $this->metrics,
-            policy          : $policy ?? $this->policy,
-            terminator      : $terminator ?? $this->terminator,
-            autoDefine      : $autoDefine ?? $this->autoDefine,
-            strictMode      : $strictMode ?? $this->strictMode,
-            devMode         : $devMode ?? $this->devMode
+            timeline: $this->timeline,
+            metrics: $metrics ?? $this->metrics,
+            policy: $policy ?? $this->policy,
+            terminator: $terminator ?? $this->terminator,
+            autoDefine: $autoDefine ?? $this->autoDefine,
+            strictMode: $strictMode ?? $this->strictMode,
+            devMode: $devMode ?? $this->devMode
         );
     }
 
     /**
      * Enable or disable automatic service definition.
      *
-     * Configures whether the kernel should automatically register services based on class analysis,
-     * reducing the need for explicit service registration.
-     *
      * @param bool $autoDefine Enable auto-definition if true
      * @return self New configuration instance
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-withAutoDefine
+     * @see docs_md/Core/Kernel/KernelConfig.md#method-withautodefine
      */
-    public function withAutoDefine(bool $autoDefine = true) : self
+    public function withAutoDefine(bool $autoDefine = true): self
     {
         return $this->cloneWith(autoDefine: $autoDefine);
     }
@@ -147,13 +148,11 @@ final readonly class KernelConfig
     /**
      * Configure metrics collection.
      *
-     * Sets up a metrics collector to track kernel performance and usage statistics.
-     *
      * @param CollectMetrics $metrics Metrics collector
      * @return self New configuration instance
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-withMetrics
+     * @see docs_md/Core/Kernel/KernelConfig.md#method-withmetrics
      */
-    public function withMetrics(CollectMetrics $metrics) : self
+    public function withMetrics(CollectMetrics $metrics): self
     {
         return $this->cloneWith(metrics: $metrics);
     }
@@ -161,13 +160,11 @@ final readonly class KernelConfig
     /**
      * Configure security policy.
      *
-     * Establishes security rules and validation policies for container operations.
-     *
      * @param ContainerPolicy $policy Security policy
      * @return self New configuration instance
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-withPolicy
+     * @see docs_md/Core/Kernel/KernelConfig.md#method-withpolicy
      */
-    public function withPolicy(ContainerPolicy $policy) : self
+    public function withPolicy(ContainerPolicy $policy): self
     {
         return $this->cloneWith(policy: $policy);
     }
@@ -175,13 +172,11 @@ final readonly class KernelConfig
     /**
      * Configure shutdown terminator.
      *
-     * Sets up a shutdown handler to manage proper cleanup when the container terminates.
-     *
      * @param TerminateContainer $terminator Shutdown handler
      * @return self New configuration instance
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-withTerminator
+     * @see docs_md/Core/Kernel/KernelConfig.md#method-withterminator
      */
-    public function withTerminator(TerminateContainer $terminator) : self
+    public function withTerminator(TerminateContainer $terminator): self
     {
         return $this->cloneWith(terminator: $terminator);
     }
@@ -189,13 +184,11 @@ final readonly class KernelConfig
     /**
      * Enable or disable development mode.
      *
-     * Configures development-friendly features like detailed error messages and debugging aids.
-     *
      * @param bool $devMode Enable dev mode if true
      * @return self New configuration instance
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-withDevMode
+     * @see docs_md/Core/Kernel/KernelConfig.md#method-withdevmode
      */
-    public function withDevMode(bool $devMode) : self
+    public function withDevMode(bool $devMode): self
     {
         return $this->cloneWith(devMode: $devMode);
     }

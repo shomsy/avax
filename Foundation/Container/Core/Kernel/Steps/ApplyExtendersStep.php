@@ -12,15 +12,19 @@ use Avax\Container\Features\Operate\Scope\ScopeManager;
 /**
  * Apply Extenders Step - Post-Resolution Modification
  *
+ * This step retrieves and applies all registered extenders (decorators/callbacks)
+ * to the newly resolved instance, allowing for runtime modification without
+ * altering the original service definition.
+ *
+ * @package Avax\Container\Core\Kernel\Steps
  * @see docs_md/Core/Kernel/Steps/ApplyExtendersStep.md#quick-summary
  */
 final readonly class ApplyExtendersStep implements KernelStep
 {
     /**
-     * @param DefinitionStore $definitions Source of extender callables
-     * @param ScopeManager    $scopes      Scope manager for container access
-     *
-     * @see docs_md/Core/Kernel/Steps/ApplyExtendersStep.md#methods
+     * @param DefinitionStore $definitions Source of registered extenders.
+     * @param ScopeManager    $scopes      System for retrieving system-level services.
+     * @see docs_md/Core/Kernel/Steps/ApplyExtendersStep.md#method-__construct
      */
     public function __construct(
         private DefinitionStore $definitions,
@@ -30,40 +34,39 @@ final readonly class ApplyExtendersStep implements KernelStep
     /**
      * Invoke extenders for the resolved instance and update context metadata.
      *
-     * @param KernelContext $context
-     *
+     * @param KernelContext $context The resolution context.
      * @return void
-     * @see docs_md/Core/Kernel/Steps/ApplyExtendersStep.md#method-__invokekernelcontext-context
+     * @throws \Throwable If an extender fails.
+     * @see docs_md/Core/Kernel/Steps/ApplyExtendersStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void
     {
-        if ($context->getInstance() === null || $context->getMeta('inject', 'target', false)) {
+        if ($context->getMeta('inject', 'target', false)) {
             return;
         }
 
-        $id = $context->serviceId;
-        $extenders = $this->definitions->getExtenders(abstract: $id);
+        $extenders = $this->definitions->getExtenders(abstract: $context->serviceId);
 
         if (empty($extenders)) {
             return;
         }
 
-        // Pull container from scope if possible (has before get pattern for safety)
-        $container = null;
-        $containerType = \Avax\Container\Features\Core\Contracts\ContainerInterface::class;
-        if ($this->scopes->has($containerType)) {
-            $container = $this->scopes->get($containerType);
-        }
+        $instance = $context->getInstance();
 
         foreach ($extenders as $extender) {
-            $result = $extender($context->getInstance(), $container);
+            // Apply extender, allowing it to return a new instance (decoration)
+            $result = $extender($instance, $this->scopes->get(abstract: \Avax\Container\Features\Core\Contracts\ContainerInterface::class));
 
             if ($result !== null) {
-                $context->overwriteWith(instance: $result);
+                $instance = $result;
             }
         }
 
-        $context->setMeta('extenders', 'applied_count', count($extenders));
-        $context->setMeta('extenders', 'completed_at', microtime(true));
+        // Safely overwrite the instance in context with the extended version
+        $context->overwriteWith(instance: $instance);
+
+        // Record metrics
+        $context->setMeta('extenders', 'applied', count($extenders));
+        $context->setMeta('extenders', 'completed_at', microtime(as_float: true));
     }
 }

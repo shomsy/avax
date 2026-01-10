@@ -8,6 +8,11 @@ use Avax\Container\Features\Core\ContainerBuilder;
 use Avax\Container\Features\Core\Exceptions\ContainerException;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * PHPUnit test coverage for Container component behavior.
+ *
+ * @see docs_md/tests/Unit/CircularDependencyTest.md#quick-summary
+ */
 class CircularDependencyTest extends TestCase
 {
     public function test_it_detects_simple_circular_dependency(): void

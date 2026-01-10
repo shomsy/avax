@@ -13,13 +13,17 @@ use Throwable;
 /**
  * Invoke Post Construct Step - Lifecycle Hook Execution
  *
+ * This step identifies and executes conventional initialization methods
+ * (e.g., init, setup, postConstruct) on the resolved instance after
+ * all dependencies have been injected.
+ *
+ * @package Avax\Container\Core\Kernel\Steps
  * @see docs_md/Core/Kernel/Steps/InvokePostConstructStep.md#quick-summary
  */
 final readonly class InvokePostConstructStep implements KernelStep
 {
     /**
-     * @param InvokeAction $invoker Invocation action used to call post-construct hooks
-     *
+     * @param InvokeAction $invoker Helper for executing method calls.
      * @see docs_md/Core/Kernel/Steps/InvokePostConstructStep.md#method-__construct
      */
     public function __construct(
@@ -29,7 +33,7 @@ final readonly class InvokePostConstructStep implements KernelStep
     /**
      * Invoke conventional post-construct hooks on the resolved instance.
      *
-     * @param KernelContext $context
+     * @param KernelContext $context The resolution context.
      * @return void
      * @see docs_md/Core/Kernel/Steps/InvokePostConstructStep.md#method-__invoke
      */
@@ -39,7 +43,7 @@ final readonly class InvokePostConstructStep implements KernelStep
             return;
         }
 
-        if ($context->getInstance() === null || !is_object($context->getInstance())) {
+        if ($context->getInstance() === null || ! is_object($context->getInstance())) {
             // Literal values or missing instances skip lifecycle hooks
             return;
         }
@@ -63,7 +67,7 @@ final readonly class InvokePostConstructStep implements KernelStep
             }
 
             $context->setMeta('lifecycle', 'invoked', true);
-            $context->setMeta('lifecycle', 'completed_at', microtime(true));
+            $context->setMeta('lifecycle', 'completed_at', microtime(as_float: true));
         } catch (Throwable) {
             // If we can't reflect it, skip (shouldn't happen with is_object check but good for safety)
         }

@@ -7,20 +7,12 @@ namespace Avax\Container\Core\Kernel\Steps;
 use Avax\Container\Core\Kernel\Contracts\KernelContext;
 use Avax\Container\Core\Kernel\Contracts\KernelStep;
 use Avax\Container\Core\Kernel\LifecycleResolver;
-use Avax\Container\Features\Operate\Scope\ScopeManager;
 
 /**
  * Store Lifecycle Step - Scope and Lifecycle Management
  *
- * Manages the storage of resolved instances according to their lifecycle policies.
- * This step ensures that instances are stored in the appropriate scope (singleton,
- * scoped, transient) and handles cleanup for scoped instances.
- *
- * Lifecycle management includes:
- * - Singleton storage in global scope
- * - Scoped storage in request/session scope
- * - Transient instances (no storage)
- * - Instance cleanup and disposal
+ * Manages the storage of resolved instances according to their lifecycle policies,
+ * ensuring singletons and scoped services are persisted correctly for reuse.
  *
  * @package Avax\Container\Core\Kernel\Steps
  * @see docs_md/Core/Kernel/Steps/StoreLifecycleStep.md#quick-summary
@@ -28,8 +20,7 @@ use Avax\Container\Features\Operate\Scope\ScopeManager;
 final readonly class StoreLifecycleStep implements KernelStep
 {
     /**
-     * @param LifecycleResolver $lifecycleResolver Resolver that maps definitions to lifecycle strategies
-     *
+     * @param LifecycleResolver $lifecycleResolver Strategy for determining service persistence.
      * @see docs_md/Core/Kernel/Steps/StoreLifecycleStep.md#method-__construct
      */
     public function __construct(
@@ -39,8 +30,7 @@ final readonly class StoreLifecycleStep implements KernelStep
     /**
      * Store the resolved instance according to its lifecycle.
      *
-     * @param KernelContext $context The resolution context with resolved instance
-     *
+     * @param KernelContext $context The resolution context.
      * @return void
      * @see docs_md/Core/Kernel/Steps/StoreLifecycleStep.md#method-__invoke
      */
@@ -57,18 +47,19 @@ final readonly class StoreLifecycleStep implements KernelStep
         }
 
         // Determine lifecycle from definition and get appropriate strategy
+        /** @var \Avax\Container\Features\Define\Store\ServiceDefinition|null $definition */
         $definition = $context->getMeta('definition', 'instance');
-        $strategy = $this->lifecycleResolver->resolve($definition);
+        $strategy   = $this->lifecycleResolver->resolve(definition: $definition);
 
         // Store using the strategy pattern
-        $strategy->store($context->serviceId, $context->getInstance());
+        $strategy->store(abstract: $context->serviceId, instance: $context->getInstance());
 
         // Determine location based on strategy type
         $location = match (true) {
             $strategy instanceof \Avax\Container\Core\Kernel\Strategies\SingletonLifecycleStrategy => 'global',
-            $strategy instanceof \Avax\Container\Core\Kernel\Strategies\ScopedLifecycleStrategy => 'scoped',
+            $strategy instanceof \Avax\Container\Core\Kernel\Strategies\ScopedLifecycleStrategy    => 'scoped',
             $strategy instanceof \Avax\Container\Core\Kernel\Strategies\TransientLifecycleStrategy => 'transient',
-            default => 'unknown'
+            default                                                                                => 'unknown'
         };
 
         // Record storage metadata
@@ -80,6 +71,6 @@ final readonly class StoreLifecycleStep implements KernelStep
         $context->setMeta('storage', 'lifecycle', $lifecycle);
         $context->setMeta('storage', 'location', $location);
         $context->setMeta('storage', 'managed', true);
-        $context->setMeta('storage', 'completed_at', microtime(true));
+        $context->setMeta('storage', 'completed_at', microtime(as_float: true));
     }
 }

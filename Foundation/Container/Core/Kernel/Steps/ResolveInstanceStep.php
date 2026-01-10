@@ -11,13 +11,16 @@ use Avax\Container\Features\Actions\Resolve\Contracts\EngineInterface;
 /**
  * Resolve Instance Step - Core Service Resolution
  *
+ * This pivotal step delegates the actual construction of the service instance
+ * to the resolution engine, marking the context as resolved upon success.
+ *
+ * @package Avax\Container\Core\Kernel\Steps
  * @see docs_md/Core/Kernel/Steps/ResolveInstanceStep.md#quick-summary
  */
 final readonly class ResolveInstanceStep implements KernelStep
 {
     /**
-     * @param EngineInterface $engine Resolution engine
-     *
+     * @param EngineInterface $engine The resolution engine responsible for object creation.
      * @see docs_md/Core/Kernel/Steps/ResolveInstanceStep.md#method-__construct
      */
     public function __construct(
@@ -27,13 +30,13 @@ final readonly class ResolveInstanceStep implements KernelStep
     /**
      * Resolve the instance via the engine and mark the context as resolved.
      *
-     * @param KernelContext $context
+     * @param KernelContext $context The resolution context.
      * @return void
      * @see docs_md/Core/Kernel/Steps/ResolveInstanceStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void
     {
-        if ($context->getMeta('inject', 'target', false)) {
+        if ($context->isResolved() || $context->getMeta('inject', 'target', false)) {
             return;
         }
 
@@ -41,6 +44,6 @@ final readonly class ResolveInstanceStep implements KernelStep
         $context->resolvedWith(instance: $instance);
 
         // Record metrics
-        $context->setMeta('resolution', 'completed_at', microtime(true));
+        $context->setMeta('resolution', 'completed_at', microtime(as_float: true));
     }
 }

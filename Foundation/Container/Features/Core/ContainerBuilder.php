@@ -9,42 +9,46 @@ use Avax\Container\Features\Actions\Advanced\Policy\Security;
 use Avax\Container\Features\Core\Contracts\BindingBuilder;
 use Avax\Container\Features\Core\Contracts\ContextBuilder as ContextBuilderInterface;
 use Avax\Container\Features\Core\Contracts\RegistryInterface;
+use Avax\Container\Features\Core\Exceptions\ContainerException;
 use Avax\Container\Features\Define\Bind\Registrar;
-use Avax\Container\Features\Define\Store\DefinitionStore;
 use Avax\Container\Features\Define\Store\Compiler\CompilerPassInterface;
-use Avax\Container\Features\Operate\Boot\ContainerBootstrapper;
+use Avax\Container\Features\Define\Store\DefinitionStore;
+
 use Avax\Container\Features\Operate\Config\BootstrapProfile;
 use Avax\Container\Features\Operate\Scope\ScopeRegistry;
-use Avax\Container\Features\Think\Analyze\PrototypeAnalyzer;
-use Avax\Container\Features\Think\Analyze\ReflectionTypeAnalyzer;
 use Avax\Container\Features\Think\Analyzer;
-use Avax\Container\Features\Think\Cache\FilePrototypeCache;
-use Avax\Container\Features\Think\Prototype\ServicePrototypeFactory;
-use Avax\Container\Features\Think\Verify\VerifyPrototype;
 use Avax\Container\Guard\Rules\ContainerPolicy;
-use Closure;
 use SensitiveParameter;
 use Throwable;
 
 /**
  * ContainerBuilder - The Architect of the Container.
- * 
+ *
  * Implements RegistryInterface to provide a fluent DSL for service registration.
- * Handles the orchestration of Bootstrapping, Analysis, and Compilation.
+ * Handles the orchestration of configuration, compilation, and the final construction
+ * of the runtime Container instance.
+ *
+ * @package Avax\Container\Features\Core
+ * @see docs/Features/Core/ContainerBuilder.md
  */
 final class ContainerBuilder implements RegistryInterface
 {
-    private BootstrapProfile|null $profile = null;
-    private string|null $cacheDir = null;
-    private bool $debug = false;
-    private ContainerPolicy|null $policy = null;
-    private array $compilerPasses = [];
+    private BootstrapProfile|null $profile        = null;
+    private string|null           $cacheDir       = null;
+    private bool                  $debug          = false;
+    private ContainerPolicy|null  $policy         = null;
+    private array                 $compilerPasses = [];
 
     // Configuration State
     private DefinitionStore $definitions;
-    private ScopeRegistry $registry;
-    private Registrar $registrar;
+    private ScopeRegistry   $registry;
+    private Registrar       $registrar;
 
+    /**
+     * Private constructor to enforce factory usage.
+     *
+     * @see docs/Features/Core/ContainerBuilder.md#method-create
+     */
     private function __construct()
     {
         $this->definitions = new DefinitionStore();
@@ -56,11 +60,8 @@ final class ContainerBuilder implements RegistryInterface
     /**
      * Create a new container builder instance with production defaults.
      *
-     * Initializes a container builder with a production bootstrap profile,
-     * ready for service registration and configuration.
-     *
      * @return self New container builder instance
-     * @see docs_md/Features/Core/ContainerBuilder.md#method-create
+     * @see docs/Features/Core/ContainerBuilder.md#method-create
      */
     public static function create(): self
     {
@@ -75,13 +76,11 @@ final class ContainerBuilder implements RegistryInterface
     /**
      * Bind an abstract identifier to a concrete implementation.
      *
-     * Registers a service binding with transient lifetime, allowing the container
-     * to create new instances for each resolution.
-     *
      * @param string $abstract Service identifier to bind
-     * @param mixed $concrete Concrete implementation (class name, callable, or null)
+     * @param mixed  $concrete Concrete implementation (class name, callable, or null)
+     *
      * @return BindingBuilder Builder for advanced binding configuration
-     * @see docs_md/Features/Core/ContainerBuilder.md#method-bind
+     * @see docs/Features/Core/ContainerBuilder.md#method-bind
      */
     public function bind(string $abstract, mixed $concrete = null): BindingBuilder
     {
@@ -91,13 +90,11 @@ final class ContainerBuilder implements RegistryInterface
     /**
      * Bind an abstract identifier as a singleton.
      *
-     * Registers a service that will return the same instance for all resolutions
-     * throughout the application's lifetime.
-     *
      * @param string $abstract Service identifier to bind
-     * @param mixed $concrete Concrete implementation (class name, callable, or null)
+     * @param mixed  $concrete Concrete implementation (class name, callable, or null)
+     *
      * @return BindingBuilder Builder for advanced binding configuration
-     * @see docs_md/Features/Core/ContainerBuilder.md#method-singleton
+     * @see docs/Features/Core/ContainerBuilder.md#method-singleton
      */
     public function singleton(string $abstract, mixed $concrete = null): BindingBuilder
     {
@@ -105,15 +102,13 @@ final class ContainerBuilder implements RegistryInterface
     }
 
     /**
-     * Bind an abstract identifier with scoped lifetime.
-     *
-     * Registers a service that shares instances within a resolution scope
-     * but creates new instances for different scopes.
+     * Bind an abstract identifier as a scoped service.
      *
      * @param string $abstract Service identifier to bind
-     * @param mixed $concrete Concrete implementation (class name, callable, or null)
+     * @param mixed  $concrete Concrete implementation (class name, callable, or null)
+     *
      * @return BindingBuilder Builder for advanced binding configuration
-     * @see docs_md/Features/Core/ContainerBuilder.md#method-scoped
+     * @see docs/Features/Core/ContainerBuilder.md#method-scoped
      */
     public function scoped(string $abstract, mixed $concrete = null): BindingBuilder
     {
@@ -121,15 +116,12 @@ final class ContainerBuilder implements RegistryInterface
     }
 
     /**
-     * Register a pre-existing instance as a singleton.
+     * Register a pre-existing object instance.
      *
-     * Binds an existing object instance to be returned for all resolutions
-     * of the given abstract identifier.
+     * @param string $abstract Service identifier
+     * @param object $instance Existing object instance
      *
-     * @param string $abstract Service identifier for the instance
-     * @param object $instance The object instance to register
-     * @return void
-     * @see docs_md/Features/Core/ContainerBuilder.md#method-instance
+     * @see docs/Features/Core/ContainerBuilder.md#method-instance
      */
     public function instance(string $abstract, object $instance): void
     {
@@ -137,30 +129,25 @@ final class ContainerBuilder implements RegistryInterface
     }
 
     /**
-     * Extend an existing service with additional behavior.
+     * Extend a service definition with post-resolution logic.
      *
-     * Adds a post-processing extension that modifies resolved service instances,
-     * enabling decoration and enhancement of services.
+     * @param string   $abstract Service to extend
+     * @param callable $closure  Extension logic
      *
-     * @param string $abstract Service identifier to extend
-     * @param callable $closure Extension function that receives and returns the service instance
-     * @return void
-     * @see docs_md/Features/Core/ContainerBuilder.md#method-extend
+     * @see docs/Features/Core/ContainerBuilder.md#method-extend
      */
     public function extend(string $abstract, callable $closure): void
     {
-        $this->definitions->addExtender(abstract: $abstract, extender: $closure);
+        $this->registrar->extend(abstract: $abstract, closure: $closure);
     }
 
     /**
-     * Create a contextual binding builder.
+     * Define contextual binding for a consumer.
      *
-     * Initiates context-aware binding configuration where different implementations
-     * can be bound based on the consuming class context.
+     * @param string $consumer Class name that receives contextual injection
      *
-     * @param string $consumer Class that will receive the contextual binding
-     * @return ContextBuilderInterface Builder for contextual binding configuration
-     * @see docs_md/Features/Core/ContainerBuilder.md#method-when
+     * @return ContextBuilderInterface Contextual configuration builder
+     * @see docs/Features/Core/ContainerBuilder.md#method-when
      */
     public function when(string $consumer): ContextBuilderInterface
     {
@@ -168,16 +155,27 @@ final class ContainerBuilder implements RegistryInterface
     }
 
     /**
-     * Configure security policy or access security builder.
+     * Assign tags to one or more services.
      *
-     * Either sets a new security policy or returns a security configuration builder
-     * for advanced policy management.
+     * @param string|string[] $abstracts Service identifiers.
+     * @param string|string[] $tags      Tags to assign.
      *
-     * @param ContainerPolicy|null $policy Security policy to set, or null to get builder
-     * @return self|Security Builder instance or self for chaining
-     * @see docs_md/Features/Core/ContainerBuilder.md#method-security
+     * @see docs/Features/Core/ContainerBuilder.md#method-tag
      */
-    public function security(ContainerPolicy $policy = null): self|Security
+    public function tag(string|array $abstracts, string|array $tags): void
+    {
+        $this->registrar->tag(abstracts: $abstracts, tags: $tags);
+    }
+
+    /**
+     * Access or set the container security policy.
+     *
+     * @param ContainerPolicy|null $policy Policy to set
+     *
+     * @return self|Security Fluid builder or security configuration access
+     * @see docs/Features/Core/ContainerBuilder.md#method-security
+     */
+    public function security(ContainerPolicy|null $policy = null): self|Security
     {
         if ($policy !== null) {
             $this->policy = $policy;
@@ -188,109 +186,167 @@ final class ContainerBuilder implements RegistryInterface
     }
 
     /**
-     * Add a compiler pass to the build process.
+     * Register a compiler pass for the build phase.
      *
-     * Registers a compiler pass that will process service definitions before
-     * container construction, enabling build-time optimizations and validations.
+     * @param CompilerPassInterface $pass Compiler pass implementation
      *
-     * @param CompilerPassInterface $pass Compiler pass to execute during build
-     * @return self Builder instance for method chaining
-     * @see docs_md/Features/Core/ContainerBuilder.md#method-addCompilerPass
+     * @return self Fluid builder
+     * @see docs/Features/Core/ContainerBuilder.md#method-addcompilerpass
      */
-    public function addCompilerPass(#[SensitiveParameter] CompilerPassInterface $pass): self
+    public function addCompilerPass(CompilerPassInterface $pass): self
     {
         $this->compilerPasses[] = $pass;
-
         return $this;
     }
 
     /**
-     * Configure the bootstrap profile.
+     * Apply a bootstrap profile.
      *
-     * Sets the bootstrap profile that defines container initialization behavior,
-     * including debug settings and optimization levels.
+     * @param BootstrapProfile $profile Pre-configured bootstrap profile
      *
-     * @param BootstrapProfile $profile Bootstrap profile to apply
-     * @return self Builder instance for method chaining
-     * @see docs_md/Features/Core/ContainerBuilder.md#method-withProfile
+     * @return self Fluid builder
+     * @see docs/Features/Core/ContainerBuilder.md#method-withprofile
      */
     public function withProfile(BootstrapProfile $profile): self
     {
         $this->profile = $profile;
-        $this->debug   = $profile->container->debug;
-
         return $this;
     }
 
     /**
-     * Enable or disable debug mode.
+     * Set debug mode for the container.
      *
-     * Configures whether the container should operate in debug mode,
-     * affecting error reporting and development features.
+     * @param bool $debug Debug mode state
      *
-     * @param bool $debug Whether to enable debug mode
-     * @return self Builder instance for method chaining
-     * @see docs_md/Features/Core/ContainerBuilder.md#method-debug
+     * @return self Fluid builder
+     * @see docs/Features/Core/ContainerBuilder.md#method-debug
      */
     public function debug(bool $debug = true): self
     {
         $this->debug = $debug;
-
         return $this;
     }
 
     /**
      * Set the cache directory for compiled artifacts.
      *
-     * Configures the directory where the container will store cached
-     * prototypes and compiled definitions for performance optimization.
+     * @param string $dir Absolute path to cache directory
      *
-     * @param string $dir Path to cache directory
-     * @return self Builder instance for method chaining
-     * @see docs_md/Features/Core/ContainerBuilder.md#method-cacheDir
+     * @return self Fluid builder
+     * @see docs/Features/Core/ContainerBuilder.md#method-cachedir
      */
     public function cacheDir(string $dir): self
     {
         $this->cacheDir = $dir;
-
         return $this;
     }
 
     /**
-     * Build the immutable Container.
+     * Assemble and build the runtime Container instance.
      *
-     * Finalizes the container configuration by executing compiler passes
-     * and bootstrapping the runtime container with all registered services.
+     * This method orchestrates the final assembly, including compiler passes,
+     * internal wiring of the engine, and mounting the Kernel.
      *
-     * @return Container The fully constructed and configured container
-     * @throws \Avax\Container\Features\Core\Exceptions\ContainerException If compilation or bootstrap fails
-     * @see docs_md/Features/Core/ContainerBuilder.md#method-build
+     * @return Container Fully constructed immutable container
+     * @throws ContainerException If construction fails
+     * @see docs/Features/Core/ContainerBuilder.md#method-build
      */
     public function build(): Container
     {
-        // 1. Run Compiler Passes before bootstrapping the container
-        foreach ($this->compilerPasses as $pass) {
-            try {
+        try {
+            // 1. Run Compiler Passes
+            foreach ($this->compilerPasses as $pass) {
                 $pass->process(definitions: $this->definitions);
-            } catch (Throwable $throwable) {
-                // If a compiler pass fails, we should probably know about it
-                throw new \Avax\Container\Features\Core\Exceptions\ContainerException(
-                    message: sprintf('Compiler pass [%s] failed: %s', get_class($pass), $throwable->getMessage()),
-                    previous: $throwable
-                );
             }
+
+            // 2. Initialize Core Components
+            $timeline = new \Avax\Container\Observe\Timeline\ResolutionTimeline();
+            $metrics  = new \Avax\Container\Observe\Metrics\CollectMetrics();
+
+            // 3. Pre-Analysis Layer
+            $cache     = new \Avax\Container\Features\Think\Cache\FilePrototypeCache(directory: $this->cacheDir ?? sys_get_temp_dir());
+            $analyzer  = new \Avax\Container\Features\Think\Analyze\ReflectionTypeAnalyzer();
+            $inspector = new \Avax\Container\Features\Think\Analyze\PrototypeAnalyzer(typeAnalyzer: $analyzer);
+            $factory   = new \Avax\Container\Features\Think\Prototype\ServicePrototypeFactory(
+                cache: $cache,
+                analyzer: $inspector
+            );
+
+            // 4. Action Layer (Resolver, Instantiator, Engine)
+            $resolver = new \Avax\Container\Features\Actions\Resolve\DependencyResolver();
+
+            $instantiator = new \Avax\Container\Features\Actions\Instantiate\Instantiator(
+                prototypes: $factory,
+                resolver: $resolver
+            );
+            $engine = new \Avax\Container\Features\Actions\Resolve\Engine(
+                resolver: $resolver,
+                instantiator: $instantiator,
+                store: $this->definitions,
+                registry: $this->registry,
+                metrics: $metrics
+            );
+
+            // 5. Injection Layer
+            $propertyInjector = new \Avax\Container\Features\Actions\Inject\PropertyInjector(
+                container: null,
+                typeAnalyzer: $analyzer
+            );
+            $injector = new \Avax\Container\Features\Actions\Inject\InjectDependencies(
+                servicePrototypeFactory: $factory,
+                propertyInjector: $propertyInjector,
+                resolver: $resolver
+            );
+
+            // 6. Invocation Layer
+            $invoker = new \Avax\Container\Features\Actions\Invoke\Core\InvokeAction(
+                container: null,
+                resolver: $resolver
+            );
+
+            // 7. Lifecycle Layer
+            $scopeManager = new \Avax\Container\Features\Operate\Scope\ScopeManager(registry: $this->registry);
+            $terminator   = new \Avax\Container\Features\Operate\Shutdown\TerminateContainer(
+                manager: $scopeManager
+            );
+
+            // 8. Assemble Kernel config
+            $config = new \Avax\Container\Core\Kernel\KernelConfig(
+                engine: $engine,
+                injector: $injector,
+                invoker: $invoker,
+                scopes: $scopeManager,
+                prototypeFactory: $factory,
+                timeline: $timeline,
+                metrics: $metrics,
+                policy: $this->policy,
+                terminator: $terminator
+            );
+
+            $kernel    = new \Avax\Container\Core\ContainerKernel(definitions: $this->definitions, config: $config);
+            $container = new \Avax\Container\Container(kernel: $kernel);
+
+            // 9. Circular Wiring (Inject container back into components requiring the facade)
+            $engine->setContainer(container: $container);
+            $instantiator->setContainer(container: $container);
+            $injector->setContainer(container: $container);
+            $propertyInjector->setContainer(container: $container);
+            $invoker->setContainer(container: $container);
+
+            // 10. Self-References
+            $this->registry->addSingleton(abstract: \Psr\Container\ContainerInterface::class, instance: $container);
+            $this->registry->addSingleton(abstract: \Avax\Container\Features\Core\Contracts\ContainerInterface::class, instance: $container);
+            $this->registry->addSingleton(abstract: Container::class, instance: $container);
+            $this->registry->addSingleton(abstract: DefinitionStore::class, instance: $this->definitions);
+            $this->registry->addSingleton(abstract: ScopeRegistry::class, instance: $this->registry);
+
+            return $container;
+        } catch (Throwable $e) {
+            throw new ContainerException(
+                message: "Container build failed: " . $e->getMessage(),
+                code: (int)$e->getCode(),
+                previous: $e
+            );
         }
-
-        // 2. Bootstrap the runtime from the "cooked" definitions
-        $bootstrapper = new ContainerBootstrapper(
-            policy: $this->policy,
-            debug: $this->debug,
-            cacheDir: $this->cacheDir
-        );
-
-        return $bootstrapper->bootstrap(
-            definitions: $this->definitions,
-            registry: $this->registry
-        );
     }
 }

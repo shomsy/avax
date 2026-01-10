@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+// TODO:
+// Idea: Make avax architecture generator and provide: MVC, Clean Architecture, Hexagonal, etc. using Avax Foundation components.
+
 return [
     'clean-architecture' => [
         'namespaces' => [

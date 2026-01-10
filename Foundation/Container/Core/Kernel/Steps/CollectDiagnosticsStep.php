@@ -9,74 +9,87 @@ use Avax\Container\Core\Kernel\Contracts\KernelStep;
 use Avax\Container\Core\Kernel\StepTelemetryCollector;
 
 /**
- * Collect Diagnostics Step - Metrics and Telemetry Collection
+ * Collect Diagnostics Step - Final Pipeline Telemetry
  *
+ * This final step records high-level diagnostic data about the resolution,
+ * including instance types and pipeline completion timestamps, providing
+ * insights into the container's health and performance.
+ *
+ * @package Avax\Container\Core\Kernel\Steps
  * @see docs_md/Core/Kernel/Steps/CollectDiagnosticsStep.md#quick-summary
  */
 final readonly class CollectDiagnosticsStep implements KernelStep
 {
     /**
-     * @param StepTelemetryCollector $telemetryCollector Collector providing step timing metrics
+     * @param StepTelemetryCollector $telemetry Collector for recording pipeline metrics.
+     * @see docs_md/Core/Kernel/Steps/CollectDiagnosticsStep.md#method-__construct
      */
     public function __construct(
-        private StepTelemetryCollector $telemetryCollector
+        private StepTelemetryCollector $telemetry
     ) {}
 
     /**
-     * Collect diagnostic metrics and store them on the context.
+     * Finalize resolution diagnostics and record pipeline completion.
      *
-     * @param KernelContext $context
+     * @param KernelContext $context The resolution context.
      * @return void
      * @see docs_md/Core/Kernel/Steps/CollectDiagnosticsStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void
     {
-        $stepMetrics = $this->telemetryCollector->getStepMetrics(traceId: $context->traceId);
-        $totalDuration = $this->telemetryCollector->getTotalDuration();
-        $pipelineStart = $this->telemetryCollector->getPipelineStartTime();
+        $traceId  = $context->traceId;
+        $instance = $context->getInstance();
 
-        // Store diagnostics in metadata
-        $context->setMeta('diagnostics', 'service_id', $context->serviceId);
-        $context->setMeta('diagnostics', 'duration_ms', max(1, $totalDuration * 1000));
+        // Retrieve raw metrics from collector
+        $rawMetrics = $this->telemetry->getStepMetrics(traceId: $traceId);
+        $totalTime  = $this->telemetry->getTotalDuration(); // Note: This might be global, but for single request it works
 
-        // Handle instance type carefully (could be literal)
-        $instanceType = match (true) {
-            $context->getInstance() === null => 'null',
-            is_object($context->getInstance()) => get_class($context->getInstance()),
-            default => gettype($context->getInstance())
-        };
+        // Format step timings for diagnostics
+        $stepTimings = $this->formatStepTimings(stepMetrics: $rawMetrics, serviceId: $context->serviceId);
 
-        $context->setMeta('diagnostics', 'instance_type', $instanceType);
-        $context->setMeta('diagnostics', 'step_timings', $this->formatStepTimings($stepMetrics, $context->serviceId));
-        $context->setMeta('diagnostics', 'timestamp', time());
-        $context->setMeta('diagnostics', 'success', $context->isResolved());
+        // Record high-level report card
+        $context->setMeta(namespace: 'diagnostics', key: 'report', value: [
+            'resolved'      => $context->isResolved(),
+            'instance_type' => match (true) {
+                $instance === null => 'null',
+                is_object($instance) => $instance::class,
+                default => gettype(value: $instance)
+            },
+            'depth'         => $context->depth,
+            'duration_ms'   => round(num: $totalTime * 1000, precision: 4),
+            'steps_count'   => count(value: $stepTimings),
+            'path'          => $context->getPath()
+        ]);
 
-        // Add final metadata
-        $context->setMeta('diagnostics', 'collected', true);
-        $context->setMeta('pipeline', 'completed_at', microtime(true));
-        $context->setMeta('pipeline', 'started_at', $pipelineStart);
+        // Detailed step breakdown
+        $context->setMeta(namespace: 'diagnostics', key: 'steps', value: $stepTimings);
+
+        // Record completion timestamp
+        $context->setMeta(namespace: 'pipeline', key: 'completed_at', value: microtime(as_float: true));
     }
 
     /**
-     * Format raw step metrics into a consistent structure.
+     * Normalize step metrics to a consistent shape.
      *
-     * @param array  $stepMetrics Raw metrics from telemetry collector
-     * @param string $serviceId   Service identifier
-     * @return array
+     * @param array  $stepMetrics Raw telemetry collector metrics.
+     * @param string $serviceId   Current service ID to select per-service metrics.
+     * @return array Normalized step timing data.
      * @see docs_md/Core/Kernel/Steps/CollectDiagnosticsStep.md#method-formatsteptimings
      */
     private function formatStepTimings(array $stepMetrics, string $serviceId): array
     {
-        $formatted = [];
-        $source = $stepMetrics[$serviceId] ?? $stepMetrics;
+        // StepTelemetryCollector stores as $stepMetrics[$traceId][$serviceId][$stepClass]
+        // But getStepMetrics($traceId) returns $stepMetrics[$traceId]
+        $serviceMetrics = $stepMetrics[$serviceId] ?? [];
+        $formatted      = [];
 
-        foreach ($source as $stepClass => $metrics) {
+        foreach ($serviceMetrics as $stepClass => $metrics) {
             $formatted[$stepClass] = [
-                'duration_ms' => ($metrics['duration'] ?? 0) * 1000,
-                'status' => $metrics['status'] ?? 'unknown',
-                'started_at' => $metrics['started_at'] ?? null,
-                'ended_at' => $metrics['ended_at'] ?? null,
-                'error' => $metrics['error'] ?? null,
+                'duration_ms' => isset($metrics['duration']) ? round(num: $metrics['duration'] * 1000, precision: 4) : 0,
+                'status'      => $metrics['status'] ?? 'unknown',
+                'started_at'  => $metrics['started_at'] ?? 0,
+                'ended_at'    => $metrics['ended_at'] ?? 0,
+                'error'       => $metrics['error'] ?? null
             ];
         }
 

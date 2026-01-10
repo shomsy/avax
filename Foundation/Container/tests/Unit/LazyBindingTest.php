@@ -2,13 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Container\Unit;
+namespace Avax\Container\Tests\Unit;
 
 use Avax\Container\Features\Actions\Advanced\Lazy\LazyValue;
 use Avax\Container\Features\Core\ContainerBuilder;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+/**
+ * PHPUnit test coverage for Container component behavior.
+ *
+ * @see docs_md/tests/Unit/LazyBindingTest.md#quick-summary
+ */
 final class LazyBindingTest extends TestCase
 {
     /**

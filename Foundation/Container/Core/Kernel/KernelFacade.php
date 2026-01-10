@@ -28,6 +28,18 @@ use InvalidArgumentException;
  */
 final readonly class KernelFacade
 {
+    /**
+     * Initialize the facade with its collaborators.
+     *
+     * @param DefinitionStore            $definitions     Service registration store
+     * @param ScopeManager               $scopes          Lifetime management system
+     * @param ResolutionTimeline          $timeline        Resolution path tracker
+     * @param ServicePrototypeFactory     $prototypeFactory Reflection-based analyzer
+     * @param CollectMetrics|null         $metrics          Performance metrics collector
+     * @param TerminateContainer|null     $terminator       Shutdown and cleanup handler
+     * @param ContainerPolicy|null        $policy           Security and access policy
+     * @see docs_md/Core/Kernel/KernelFacade.md#method-__construct
+     */
     public function __construct(
         private DefinitionStore            $definitions,
         private ScopeManager               $scopes,
@@ -40,9 +52,6 @@ final readonly class KernelFacade
 
     /**
      * Bind an abstract to a concrete implementation.
-     *
-     * Creates a service binding that associates an abstract identifier with a concrete implementation,
-     * specifying the lifetime management behavior for resolved instances.
      *
      * @param string               $abstract Abstract service identifier
      * @param string|callable|null $concrete Concrete implementation or factory
@@ -57,13 +66,14 @@ final readonly class KernelFacade
     }
 
     /**
-     * Internal binding helper.
+     * Internal binding helper to create and store service definitions.
      *
      * @param string               $abstract Abstract service identifier
      * @param string|callable|null $concrete Concrete implementation or factory
      * @param ServiceLifetime      $lifetime Service lifetime scope
      *
      * @return BindingBuilder Fluent binding builder
+     * @see docs_md/Core/Kernel/KernelFacade.md#method-bindas
      */
     private function bindAs(string $abstract, string|callable|null $concrete, ServiceLifetime $lifetime): BindingBuilder
     {
@@ -77,9 +87,6 @@ final readonly class KernelFacade
 
     /**
      * Bind an abstract as a singleton.
-     *
-     * Creates a singleton binding where the same instance is returned for all resolutions,
-     * ensuring the service acts as a shared resource across the application.
      *
      * @param string               $abstract Abstract service identifier
      * @param string|callable|null $concrete Concrete implementation or factory
@@ -95,9 +102,6 @@ final readonly class KernelFacade
     /**
      * Bind an abstract as scoped (per request).
      *
-     * Creates a scoped binding where the same instance is shared within a resolution scope
-     * (typically a single request), but different scopes get different instances.
-     *
      * @param string               $abstract Abstract service identifier
      * @param string|callable|null $concrete Concrete implementation or factory
      *
@@ -112,9 +116,6 @@ final readonly class KernelFacade
     /**
      * Extend an existing service with additional behavior.
      *
-     * Adds post-processing behavior to a service after it's resolved, allowing decoration
-     * or modification of the service instance without changing the original binding.
-     *
      * @param string   $abstract Abstract service identifier
      * @param callable $closure  Extension function that receives and returns the service instance
      *
@@ -128,10 +129,7 @@ final readonly class KernelFacade
     }
 
     /**
-     * Register a resolving callback for a service.
-     *
-     * Adds a callback that executes when a service is resolved, enabling service decoration,
-     * initialization, or other post-resolution logic.
+     * Register a resolving callback for a service or globally.
      *
      * @param string|callable $abstract Abstract identifier or global callback
      * @param callable|null   $callback Resolving callback (required if abstract is string)
@@ -168,9 +166,6 @@ final readonly class KernelFacade
     /**
      * Create a contextual binding builder.
      *
-     * Initiates contextual binding configuration where different implementations
-     * can be bound based on the consuming class context.
-     *
      * @param string $consumer Consumer class that requires the dependency
      *
      * @return ContextBuilder Contextual binding builder for fluent configuration
@@ -183,9 +178,6 @@ final readonly class KernelFacade
 
     /**
      * Register a singleton instance directly.
-     *
-     * Binds a pre-existing object instance as a singleton service, making it available
-     * for injection while ensuring it's treated as a shared resource.
      *
      * @param string $abstract Abstract service identifier
      * @param object $instance Service instance to register
@@ -206,8 +198,6 @@ final readonly class KernelFacade
     /**
      * Get the definition store.
      *
-     * Provides direct access to the underlying service definition repository for advanced operations.
-     *
      * @return DefinitionStore The definition store containing all service registrations
      * @see docs_md/Core/Kernel/KernelFacade.md#method-definitions
      */
@@ -218,8 +208,6 @@ final readonly class KernelFacade
 
     /**
      * Get the scope manager.
-     *
-     * Provides direct access to the scope management system for advanced scope operations.
      *
      * @return ScopeManager The scope manager handling service lifetime boundaries
      * @see docs_md/Core/Kernel/KernelFacade.md#method-scopes

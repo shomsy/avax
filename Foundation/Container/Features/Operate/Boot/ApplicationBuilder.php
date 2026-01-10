@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Container\Features\Operate\Boot;
 
+use Avax\Container\Config\Settings;
 use Avax\Container\Features\Core\ContainerBuilder;
-use Avax\Container\Operate\Boot\RuntimeException;
+use Avax\HTTP\Router\Kernel\RouterKernel;
+use Avax\HTTP\Router\Router;
+use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Closure;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Fluent builder for composing and configuring web applications with dependency injection.
@@ -54,7 +59,7 @@ use Closure;
  * @package Avax\Container\Operate\Boot
  * @see     Application The resulting application instance
  * @see     ContainerBootstrapper For container initialization details
- * @see docs_md/Features/Operate/Boot/ApplicationBuilder.md#quick-summary
+ * @see     docs_md/Features/Operate/Boot/ApplicationBuilder.md#quick-summary
  */
 class ApplicationBuilder
 {
@@ -72,6 +77,10 @@ class ApplicationBuilder
 
     /** @var ContainerBuilder */
     private ContainerBuilder $containerBuilder;
+    /**
+     * @var string[]|ServiceProvider[]|Closure[] Array of providers to register
+     */
+    private array $providers = [];
 
     /**
      * Creates a new ApplicationBuilder instance for the specified base path.
@@ -80,13 +89,14 @@ class ApplicationBuilder
      * The base path is used for resolving relative file paths and cache directories during the build process.
      *
      * @param string $basePath Absolute path to the application root directory
+     *
      * @see docs_md/Features/Operate/Boot/ApplicationBuilder.md#method-__construct
      */
     public function __construct(
         private readonly string $basePath
     ) {
         $this->containerBuilder = ContainerBuilder::create();
-        $this->containerBuilder->cacheDir($basePath . '/var/cache');
+        $this->containerBuilder->cacheDir(dir: $basePath . '/var/cache');
     }
 
     /**
@@ -205,17 +215,33 @@ class ApplicationBuilder
     }
 
     /**
+     * Register service providers to be loaded during application build.
+     *
+     * @param array $providers List of provider classes or instances
+     *
+     * @return self
+     * @see docs_md/Features/Operate/Boot/ApplicationBuilder.md#method-withproviders
+     */
+    public function withProviders(array $providers): self
+    {
+        $this->providers = array_merge($this->providers, $providers);
+
+        return $this;
+    }
+
+    /**
      * Assembles and returns the fully configured application instance.
      *
      * This method performs the actual application bootstrap by:
      * 1. Initializing the dependency injection container
      * 2. Loading route definitions from registered files
      * 3. Preparing middleware and exception handling (deferred implementation)
-     * 4. Returning the ready-to-use Application instance
+     * 4. Registering and booting service providers
+     * 5. Returning the ready-to-use Application instance
      *
      * BOOTSTRAP SEQUENCE:
      * ```php
-     * 1. Container Bootstrap â†’ 2. Route Loading â†’ 3. Middleware Setup â†’ 4. Return App
+     * 1. Container Bootstrap -> 2. Route Loading -> 3. Middleware Setup -> 4. Provider Registration -> 5. Return App
      * ```
      *
      * PERFORMANCE IMPACT:
@@ -224,24 +250,26 @@ class ApplicationBuilder
      * - This method should be called once during application startup
      *
      * @return Application Fully configured and bootstrapped application instance
-     * @throws RuntimeException If bootstrap process fails
+     * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      * @see docs_md/Features/Operate/Boot/ApplicationBuilder.md#method-build
      */
     public function build(): Application
     {
         // Core HTTP Components binding
-        $this->containerBuilder->singleton(abstract: \Avax\HTTP\Router\Routing\HttpRequestRouter::class);
-        $this->containerBuilder->singleton(abstract: \Avax\HTTP\Router\Kernel\RouterKernel::class);
-        $this->containerBuilder->singleton(abstract: \Avax\HTTP\Router\Router::class);
+        $this->containerBuilder->singleton(abstract: HttpRequestRouter::class);
+        $this->containerBuilder->singleton(abstract: RouterKernel::class);
+        $this->containerBuilder->singleton(abstract: Router::class);
 
         // Bind aliases for core components
         $this->containerBuilder->singleton(abstract: 'router', concrete: function ($c) {
-            return $c->get(\Avax\HTTP\Router\Router::class);
+            return $c->get(Router::class);
         });
 
         // Bind config abstract to concrete
-        $this->containerBuilder->singleton(abstract: 'config', concrete: \Avax\Container\Config\Settings::class);
-        $this->containerBuilder->singleton(abstract: \Avax\Container\Config\Settings::class, concrete: \Avax\Container\Config\Settings::class);
+        $this->containerBuilder->singleton(abstract: 'config', concrete: Settings::class);
+        $this->containerBuilder->singleton(abstract: Settings::class, concrete: Settings::class);
 
         $container = $this->containerBuilder->build();
 
@@ -249,6 +277,14 @@ class ApplicationBuilder
             basePath: $this->basePath,
             container: $container
         );
+
+        // Register Core Framework Providers FIRST
+        $this->registerCoreProviders(app: $app);
+
+        // Register manually configured providers
+        foreach ($this->providers as $provider) {
+            $app->register(provider: $provider);
+        }
 
         if ($this->webRoutes !== null && $this->webRoutes !== '' && $this->webRoutes !== '0') {
             $app->loadRoutes(path: $this->webRoutes);
@@ -271,6 +307,53 @@ class ApplicationBuilder
         // TODO: Register Middleware ($this->middleware)
         // TODO: Register Exception Handler ($this->exceptionsCallback)
 
+        // Boot the application (boots all registered providers)
+        $app->boot();
+
         return $app;
+    }
+
+    /**
+     * Automatically discover and register core framework service providers.
+     *
+     * Scans the Foundation/Container/Providers directory for ServiceProvider classes
+     * and registers them to ensure core functionality (Auth, DB, HTTP, etc.) is available.
+     *
+     * @param Application $app The application instance
+     *
+     * @return void
+     * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface
+     * @see docs_md/Features/Operate/Boot/ApplicationBuilder.md#method-registercoreproviders
+     */
+    private function registerCoreProviders(Application $app): void
+    {
+        // Path to Foundation/Container/Providers
+        // Current file is in Foundation/Container/Features/Operate/Boot
+        // dirname(__DIR__, 3) takes us to Foundation/Container
+        $providersPath = dirname(__DIR__, 3) . '/Providers';
+
+        if (! is_dir($providersPath)) {
+            return;
+        }
+
+        $iterator = new RecursiveIteratorIterator(
+            iterator: new RecursiveDirectoryIterator(directory: $providersPath, flags: RecursiveDirectoryIterator::SKIP_DOTS),
+            mode: RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        /** @var \SplFileInfo $item */
+        foreach ($iterator as $item) {
+            if ($item->isFile() && $item->getExtension() === 'php') {
+                // Calculate relative class path
+                $relativePath = substr($item->getPathname(), strlen($providersPath) + 1);
+
+                // Convert to namespace
+                $className = 'Avax\\Container\\Providers\\' . str_replace(['/', '.php'], ['\\', ''], $relativePath);
+
+                if (class_exists($className) && is_subclass_of($className, ServiceProvider::class)) {
+                    $app->register(provider: $className);
+                }
+            }
+        }
     }
 }

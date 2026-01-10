@@ -1,0 +1,1910 @@
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Application run started. []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] ❌ No route matched for [GET] / and no fallback defined. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+    "line": 227,
+    "exception": {
+        "message": "❌ No route matched for [GET] \/ and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Features\\Operate\\Boot\\Application.php(367): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Features\\Operate\\Boot\\Application->run()",
+            "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#3 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 01:01:22] 🔥 [CRITICAL] ⚠️ Error handler crashed: Container instance is not initialized. Please set the container first. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\app_instance.php",
+    "line": 23,
+    "exception": {
+        "message": "Container instance is not initialized. Please set the container first.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\app_instance.php",
+        "line": 23,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(30): appInstance()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(233): app('Avax\\\\Config\\\\Ser...')",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(97): config('ErrorSolutions....', Array)",
+            "#3 [internal function]: Spatie\\ErrorSolutions\\SolutionProviderRepository->Spatie\\ErrorSolutions\\{closure}('Spatie\\\\ErrorSol...', 0)",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Arr.php(930): array_filter(Array, Object(Closure), 1)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Collection.php(399): Illuminate\\Support\\Arr::where(Array, Object(Closure))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(92): Illuminate\\Support\\Collection->filter(Object(Closure))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(50): Spatie\\ErrorSolutions\\SolutionProviderRepository->initialiseSolutionProviderRepositories()",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddSolutions.php(22): Spatie\\ErrorSolutions\\SolutionProviderRepository->getSolutionsForThrowable(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddSolutions->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddEnvironmentInformation.php(16): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddEnvironmentInformation->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddGlows.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddGlows->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(490): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(460): Spatie\\FlareClient\\Flare->applyMiddlewareToReport(Object(Spatie\\FlareClient\\Report))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(380): Spatie\\FlareClient\\Flare->createReport(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(288): Spatie\\Ignition\\Ignition->createReport(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(205): Spatie\\Ignition\\Ignition->handleException(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#21 [internal function]: Avax\\Logging\\ErrorHandler->handle(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#22 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Application run started. []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:01:22] ✅ [INFO] ❌ No route matched for [GET] /favicon.ico and no fallback defined. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+    "line": 227,
+    "exception": {
+        "message": "❌ No route matched for [GET] \/favicon.ico and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Features\\Operate\\Boot\\Application.php(367): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Features\\Operate\\Boot\\Application->run()",
+            "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#3 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 01:01:22] 🔥 [CRITICAL] ⚠️ Error handler crashed: Container instance is not initialized. Please set the container first. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\app_instance.php",
+    "line": 23,
+    "exception": {
+        "message": "Container instance is not initialized. Please set the container first.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\app_instance.php",
+        "line": 23,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(30): appInstance()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(233): app('Avax\\\\Config\\\\Ser...')",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(97): config('ErrorSolutions....', Array)",
+            "#3 [internal function]: Spatie\\ErrorSolutions\\SolutionProviderRepository->Spatie\\ErrorSolutions\\{closure}('Spatie\\\\ErrorSol...', 0)",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Arr.php(930): array_filter(Array, Object(Closure), 1)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Collection.php(399): Illuminate\\Support\\Arr::where(Array, Object(Closure))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(92): Illuminate\\Support\\Collection->filter(Object(Closure))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(50): Spatie\\ErrorSolutions\\SolutionProviderRepository->initialiseSolutionProviderRepositories()",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddSolutions.php(22): Spatie\\ErrorSolutions\\SolutionProviderRepository->getSolutionsForThrowable(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddSolutions->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddEnvironmentInformation.php(16): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddEnvironmentInformation->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\FlareMiddleware\\AddGlows.php(26): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(209): Spatie\\FlareClient\\FlareMiddleware\\AddGlows->handle(Object(Spatie\\FlareClient\\Report), Object(Closure))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\pipeline\\Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Spatie\\FlareClient\\Report))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(490): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(460): Spatie\\FlareClient\\Flare->applyMiddlewareToReport(Object(Spatie\\FlareClient\\Report))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(380): Spatie\\FlareClient\\Flare->createReport(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(288): Spatie\\Ignition\\Ignition->createReport(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(205): Spatie\\Ignition\\Ignition->handleException(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#21 [internal function]: Avax\\Logging\\ErrorHandler->handle(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#22 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Application run started. []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Application run finished. []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Application run started. []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:27:35] ✅ [INFO] Application run finished. []
+
+[2026-01-10 01:40:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:40:53] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:40:53] ✅ [INFO] Application run started. []
+
+[2026-01-10 01:40:53] ✅ [INFO] Application run finished. []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Application run started. []
+
+[2026-01-10 01:50:19] ✅ [INFO] Application run finished. []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:50:19] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Application run started. []
+
+[2026-01-10 01:54:04] ✅ [INFO] Application run finished. []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:54:04] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Application run started. []
+
+[2026-01-10 01:56:25] ✅ [INFO] Application run finished. []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 01:56:25] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 02:04:33] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 02:04:33] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 02:04:33] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 02:04:33] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 02:04:33] ✅ [INFO] Application run started. []
+
+[2026-01-10 02:04:33] ✅ [INFO] Application run finished. []
+
+[2026-01-10 02:04:34] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 02:04:34] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 02:04:34] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 02:04:34] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 02:04:34] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 02:04:34] ✅ [INFO] Application run started. []
+
+[2026-01-10 02:04:34] ✅ [INFO] Application run finished. []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Application run started. []
+
+[2026-01-10 02:33:51] ✅ [INFO] Application run finished. []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 02:33:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 03:25:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:25:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:26:00] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:26:00] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:26:00] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:26:00] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:26:00] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:26:00] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:26:00] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:28:46] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:28:46] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:28:46] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:28:46] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:28:46] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:28:46] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:28:46] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:33:03] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:33:03] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:33:03] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:33:03] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:33:03] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:33:03] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:33:03] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:33:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 03:34:15] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:34:15] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:34:45] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:34:45] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:34:45] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:34:45] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:34:45] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:34:45] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:34:45] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:35:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:36:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:36:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:36:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:36:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:36:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:36:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:36:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:37:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:37:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:37:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:37:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:37:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:37:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:37:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:38:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:38:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:38:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:38:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:38:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:38:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:38:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:38:54] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:38:54] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:38:54] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:38:54] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:38:54] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:38:54] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:38:54] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:39:28] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:39:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:39:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:39:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:39:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:39:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:39:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:39:33] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:40:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:40:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:40:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:40:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:40:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:40:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:40:15] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:41:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:41:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:41:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:41:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:41:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:41:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:41:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:41:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:41:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:41:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:41:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:41:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:41:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:41:53] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:42:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:42:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:42:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:42:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:42:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:42:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:42:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:43:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:43:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:43:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:43:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:43:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:43:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:43:16] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:45:09] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:45:09] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:45:09] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:45:09] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:45:09] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:45:09] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:45:09] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:46:01] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 03:46:01] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Application run started. []
+
+[2026-01-10 03:46:01] ✅ [INFO] Application run finished. []
+
+[2026-01-10 03:46:01] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 03:46:01] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/public/index.php []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:46:01] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:46:26] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 03:46:26] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 03:46:26] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 03:46:26] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:46:26] ✅ [INFO] Application run started. []
+
+[2026-01-10 03:46:26] ✅ [INFO] Application run finished. []
+
+[2026-01-10 03:46:55] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:46:55] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 03:46:55] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 03:46:55] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 03:46:55] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:46:55] ✅ [INFO] Application run started. []
+
+[2026-01-10 03:46:55] ✅ [INFO] Application run finished. []
+
+[2026-01-10 03:46:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:46:56] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 03:46:56] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 03:46:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 03:46:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 03:46:56] ✅ [INFO] Application run started. []
+
+[2026-01-10 03:46:56] ✅ [INFO] Application run finished. []
+
+[2026-01-10 04:19:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 04:19:51] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 04:19:51] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 04:19:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 04:19:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 04:19:51] ✅ [INFO] Application run started. []
+
+[2026-01-10 04:19:51] ✅ [INFO] Application run finished. []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 04:19:52] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 04:19:52] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Application run started. []
+
+[2026-01-10 04:19:52] ✅ [INFO] Application run finished. []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 04:19:52] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 04:19:52] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Application run started. []
+
+[2026-01-10 04:19:52] ✅ [INFO] Application run finished. []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 04:19:52] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 04:19:52] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 04:19:52] ✅ [INFO] Application run started. []
+
+[2026-01-10 04:19:53] ✅ [INFO] Application run finished. []
+

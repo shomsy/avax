@@ -15,19 +15,25 @@ use Avax\Container\Features\Think\Prototype\Contracts\ServicePrototypeFactoryInt
 use ReflectionClass;
 
 /**
- * Service for injecting dependencies into an existing object instance.
+ * Orchestrator for post-instantiation dependency injection (Setter & Property).
  *
- * @see docs_md/Features/Actions/Inject/InjectDependencies.md#quick-summary
+ * While {@see Instantiator} handles constructor injection, this class handles 
+ * the secondary "Hydration" phase. it discovers injection points (annotated 
+ * properties or setter methods) and resolves them, ensuring the object is 
+ * fully initialized before being returned to the application.
+ *
+ * @package Avax\Container\Features\Actions\Inject
+ * @see docs/Features/Actions/Inject/InjectDependencies.md
  */
 class InjectDependencies
 {
     /**
-     * @param ServicePrototypeFactoryInterface $servicePrototypeFactory Prototype factory for injection point discovery
-     * @param PropertyInjectorInterface        $propertyInjector        Resolves property values
-     * @param DependencyResolverInterface      $resolver                Resolves method parameters
-     * @param ContainerInterface|null          $container               Container used for method injection
+     * Initializes the injection orchestrator with specialized handlers.
      *
-     * @see docs_md/Features/Actions/Inject/InjectDependencies.md#method-__construct
+     * @param ServicePrototypeFactoryInterface $servicePrototypeFactory Prototype factory for injection point discovery.
+     * @param PropertyInjectorInterface        $propertyInjector        Specific handler for attribute/property injection.
+     * @param DependencyResolverInterface      $resolver                Handler for method parameter resolution.
+     * @param ContainerInterface|null          $container               The container facade (for recursive lookups).
      */
     public function __construct(
         private readonly ServicePrototypeFactoryInterface $servicePrototypeFactory,
@@ -37,76 +43,70 @@ class InjectDependencies
     ) {}
 
     /**
-     * Set the container reference used for method injection.
+     * Wire the container reference for recursive dependency resolution.
      *
-     * @param ContainerInterface $container
-     * @return void
-     * @see docs_md/Features/Actions/Inject/InjectDependencies.md#method-setcontainer
+     * @param ContainerInterface $container The application container instance.
+     * @see docs/Features/Actions/Inject/InjectDependencies.md#method-setcontainer
      */
-    public function setContainer(ContainerInterface $container) : void
+    public function setContainer(ContainerInterface $container): void
     {
         $this->container = $container;
     }
 
     /**
-     * Inject dependencies into an existing target instance.
+     * Inject dependencies into an existing target instance (Hydration).
      *
-     * @param object                $target
-     * @param ServicePrototype|null $prototype
-     * @param array|null            $overrides
-     * @param KernelContext|null    $context
+     * @param object                $target    The object to be hydrated.
+     * @param ServicePrototype|null $prototype Pre-analyzed injection metadata.
+     * @param array<string, mixed>|null $overrides Explicit values for specific injection naming.
+     * @param KernelContext|null    $context   Current resolution context for lifecycle tracking.
      *
-     * @return object
-     * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException
-     * @throws \Avax\Container\Features\Core\Exceptions\ContainerException
-     * @throws \ReflectionException
-     * @see docs_md/Features/Actions/Inject/InjectDependencies.md#method-execute
+     * @return object The hydrated object instance.
+     * @throws ContainerException If resolution fails or an injection point is invalid.
+     *
+     * @see docs/Features/Actions/Inject/InjectDependencies.md#method-execute
      */
     public function execute(
         object                $target,
         ServicePrototype|null $prototype = null,
         array|null            $overrides = null,
         KernelContext|null    $context = null,
-    ) : object
-    {
+    ): object {
         $overrides ??= [];
-        $class     = get_class($target);
+        $class      = $target::class;
         $prototype ??= $this->servicePrototypeFactory->createFor(class: $class);
 
         $reflection = new ReflectionClass(objectOrClass: $class);
 
+        // 1. Property Injection (Attributes/Annotations)
         $this->injectProperties(
-            target    : $target,
-            prototype : $prototype,
+            target: $target,
+            prototype: $prototype,
             reflection: $reflection,
-            overrides : $overrides,
-            context   : $context ?? new KernelContext(serviceId: $class),
+            overrides: $overrides,
+            context: $context ?? new KernelContext(serviceId: $class),
         );
 
+        // 2. Method Injection (Setters/Hooks)
         $this->injectMethods(
-            target    : $target,
-            prototype : $prototype,
+            target: $target,
+            prototype: $prototype,
             reflection: $reflection,
-            overrides : $overrides,
-            context   : $context ?? new KernelContext(serviceId: $class),
+            overrides: $overrides,
+            context: $context ?? new KernelContext(serviceId: $class),
         );
 
         return $target;
     }
 
     /**
-     * Inject resolvable properties into the target object.
+     * Internal: Inject resolvable properties into the target object.
      *
-     * @param object           $target
-     * @param ServicePrototype $prototype
-     * @param ReflectionClass  $reflection
-     * @param array            $overrides
-     * @param KernelContext    $context
-     *
-     * @return void
-     * @throws \ReflectionException
-     * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException
-     * @see docs_md/Features/Actions/Inject/InjectDependencies.md#methods
+     * @param object           $target     Target instance.
+     * @param ServicePrototype $prototype  Metadata.
+     * @param ReflectionClass  $reflection Reflection access.
+     * @param array            $overrides  Manual values.
+     * @param KernelContext    $context    Tracking context.
      */
     private function injectProperties(
         object           $target,
@@ -114,13 +114,12 @@ class InjectDependencies
         ReflectionClass  $reflection,
         array            $overrides,
         KernelContext    $context,
-    ) : void
-    {
+    ): void {
         foreach ($prototype->injectedProperties as $injectedProperty) {
             $resolution = $this->propertyInjector->resolve(
-                property  : $injectedProperty,
-                overrides : $overrides,
-                context   : $context,
+                property: $injectedProperty,
+                overrides: $overrides,
+                context: $context,
                 ownerClass: $prototype->class,
             );
 
@@ -129,7 +128,6 @@ class InjectDependencies
             }
 
             $property = $reflection->getProperty(name: $injectedProperty->name);
-            $property->setAccessible(accessible: true);
 
             if ($property->isReadOnly()) {
                 throw new ResolutionException(
@@ -137,23 +135,18 @@ class InjectDependencies
                 );
             }
 
-            $property->setValue(objectOrValue: $target, value: $resolution->value);
+            $property->setValue($target, $resolution->value);
         }
     }
 
     /**
-     * Inject method calls into the target object by resolving parameters.
+     * Internal: Inject method calls into the target object by resolving parameters.
      *
-     * @param object           $target
-     * @param ServicePrototype $prototype
-     * @param ReflectionClass  $reflection
-     * @param array            $overrides
-     * @param KernelContext    $context
-     *
-     * @return void
-     * @throws \ReflectionException
-     * @throws \Avax\Container\Features\Core\Exceptions\ContainerException
-     * @see docs_md/Features/Actions/Inject/InjectDependencies.md#methods
+     * @param object           $target     Target instance.
+     * @param ServicePrototype $prototype  Metadata.
+     * @param ReflectionClass  $reflection Reflection access.
+     * @param array            $overrides  Manual values.
+     * @param KernelContext    $context    Tracking context.
      */
     private function injectMethods(
         object           $target,
@@ -161,31 +154,25 @@ class InjectDependencies
         ReflectionClass  $reflection,
         array            $overrides,
         KernelContext    $context,
-    ) : void
-    {
+    ): void {
         if (empty($prototype->injectedMethods)) {
             return;
         }
 
         if ($this->container === null) {
-            // If we have methods to inject but no container, we can't proceed.
-            // Ideally, ContainerInterface should be passed in execute() or setter injected.
-            // For now, assume if it's null, we might fail or skip if no params needed?
-            // Actually, DependencyResolver needs a container.
             throw new ContainerException('Container not available for method injection.');
         }
 
         foreach ($prototype->injectedMethods as $methodPrototype) {
             $arguments = $this->resolver->resolveParameters(
                 parameters: $methodPrototype->parameters,
-                overrides : $overrides,
-                container : $this->container,
-                context   : $context,
+                overrides: $overrides,
+                container: $this->container,
+                context: $context,
             );
 
             $method = $reflection->getMethod(name: $methodPrototype->name);
-            $method->setAccessible(accessible: true);
-            $method->invokeArgs(object: $target, args: $arguments);
+            $method->invoke($target, ...$arguments);
         }
     }
 }

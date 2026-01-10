@@ -2,11 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Container\Unit;
+namespace Avax\Container\Tests\Unit;
 
 use Avax\Container\Features\Core\ContainerBuilder;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * PHPUnit test coverage for Container component behavior.
+ *
+ * @see docs_md/tests/Unit/ExtenderTest.md#quick-summary
+ */
 class ExtenderTest extends TestCase
 {
     private string $tempDir;

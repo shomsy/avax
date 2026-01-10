@@ -1,84 +1,101 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Features\Operate\Config;
 
 /**
- * Configuration for container telemetry and metrics collection.
+ * Immutable configuration for container telemetry and observability.
  *
- * Controls how the container collects and reports performance metrics,
- * resolution timelines, and diagnostic information.
+ * Controls how the container collects metrics, logs events, and interacts with
+ * performance monitoring systems.
  *
- * @see docs_md/Features/Operate/Config/TelemetryConfig.md#quick-summary
+ * @package Avax\Container\Features\Operate\Config
+ * @see docs/Features/Operate/Config/TelemetryConfig.md
  */
-final readonly class TelemetryConfig
+class TelemetryConfig
 {
     /**
-     * @param bool   $enabled            Enable telemetry collection
-     * @param string $sink               Telemetry sink type ('null', 'json', 'psr')
-     * @param string $outputPath         File path for JSON output (when using 'json' sink)
-     * @param int    $sampleRate         Sampling rate (1 = every request, 10 = every 10th)
-     * @param bool   $includeStackTraces Include stack traces in diagnostics
-     * @param array  $trackedEvents      List of events to track
-     * @see docs_md/Features/Operate/Config/TelemetryConfig.md#method-__construct
+     * Initializes the telemetry configuration.
+     *
+     * @param bool  $enabled       Overall state of telemetry collection.
+     * @param float $samplingRate  Percentage of events to record (0.0 to 1.0).
+     * @param bool  $reportErrors  Whether to report internal container errors to telemetry.
+     * @param bool  $trackCpu      Whether to include CPU usage in metrics.
+     * @param bool  $trackMemory   Whether to include memory usage in metrics.
+     *
+     * @see docs/Features/Operate/Config/TelemetryConfig.md#method-__construct
      */
     public function __construct(
-        public bool   $enabled = false,
-        public string $sink = 'null',
-        public string $outputPath = '',
-        public int    $sampleRate = 1,
-        public bool   $includeStackTraces = false,
-        public array  $trackedEvents = ['resolve', 'inject', 'cache_hit', 'cache_miss'],
+        public readonly bool  $enabled = true,
+        public readonly float $samplingRate = 1.0,
+        public readonly bool  $reportErrors = true,
+        public readonly bool  $trackCpu = false,
+        public readonly bool  $trackMemory = true
     ) {}
 
     /**
-     * Create config from array.
+     * Create a default production telemetry configuration.
      *
-     * @see docs_md/Features/Operate/Config/TelemetryConfig.md#method-fromarray
+     * @return self Optimized for low overhead (sampled, no CPU tracking).
+     * @see docs/Features/Operate/Config/TelemetryConfig.md#method-production
      */
-    public static function fromArray(array $config) : self
+    public static function production(): self
     {
         return new self(
-            enabled           : $config['enabled'] ?? false,
-            sink              : $config['sink'] ?? 'null',
-            outputPath        : $config['outputPath'] ?? '',
-            sampleRate        : $config['sampleRate'] ?? 1,
-            includeStackTraces: $config['includeStackTraces'] ?? false,
-            trackedEvents     : $config['trackedEvents'] ?? ['resolve', 'inject', 'cache_hit', 'cache_miss'],
+            enabled: true,
+            samplingRate: 0.1, // 10% sampling
+            reportErrors: true,
+            trackCpu: false,
+            trackMemory: true
         );
     }
 
     /**
-     * Development telemetry preset.
+     * Create a default development telemetry configuration.
      *
-     * @see docs_md/Features/Operate/Config/TelemetryConfig.md#method-development
+     * @return self Optimized for maximum visibility (full sampling, all metrics).
+     * @see docs/Features/Operate/Config/TelemetryConfig.md#method-development
      */
-    public static function development() : self
+    public static function development(): self
     {
         return new self(
-            enabled           : true,
-            sink              : 'json',
-            outputPath        : sys_get_temp_dir() . '/container-telemetry.json',
-            sampleRate        : 1,
-            includeStackTraces: true,
-            trackedEvents     : ['resolve', 'inject', 'cache_hit', 'cache_miss', 'error'],
+            enabled: true,
+            samplingRate: 1.0,
+            reportErrors: true,
+            trackCpu: true,
+            trackMemory: true
         );
     }
 
     /**
-     * Production telemetry preset.
+     * Create a default testing telemetry configuration.
      *
-     * @see docs_md/Features/Operate/Config/TelemetryConfig.md#method-production
+     * @return self Optimized for test environments (often disabled).
+     * @see docs/Features/Operate/Config/TelemetryConfig.md#method-testing
      */
-    public static function production() : self
+    public static function testing(): self
     {
         return new self(
-            enabled           : true,
-            sink              : 'psr',
-            outputPath        : '',
-            sampleRate        : 100,
-            includeStackTraces: false,
-            trackedEvents     : ['resolve', 'cache_hit', 'error'],
+            enabled: false
+        );
+    }
+
+    /**
+     * Create a telemetry instance from a raw array.
+     *
+     * @param array<string, mixed> $data Configuration data.
+     * @return self Hydrated configuration instance.
+     * @see docs/Features/Operate/Config/TelemetryConfig.md#method-fromarray
+     */
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            enabled: $data['enabled'] ?? true,
+            samplingRate: (float)($data['sampling_rate'] ?? 1.0),
+            reportErrors: $data['report_errors'] ?? true,
+            trackCpu: $data['track_cpu'] ?? false,
+            trackMemory: $data['track_memory'] ?? true
         );
     }
 }

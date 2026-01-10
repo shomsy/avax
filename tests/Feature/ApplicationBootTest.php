@@ -13,10 +13,10 @@ class ApplicationBootTest extends TestCase
      * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function test_application_boots_and_serves_default_route() : void
+    public function test_application_boots_and_serves_default_route(): void
     {
         /** @var Application $app */
-        $app = require __DIR__ . '/../../bootstrap.php';
+        $app = require __DIR__ . '/../../bootstrap/bootstrap.php';
 
         $app->boot();
 

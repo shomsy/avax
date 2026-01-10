@@ -18,20 +18,17 @@ use Closure;
  */
 final class KernelState
 {
+    /** @var Telemetry|null The telemetry collector instance. */
     public Telemetry|null $telemetry = null;
 
     /**
      * Get or initialize a flow instance using the provided factory.
      *
-     * Implements lazy initialization pattern for kernel state properties.
-     * If the property is null, executes the factory and stores the result.
-     * This enables just-in-time creation of expensive components.
-     *
-     * @param string $property Property name to get/initialize
-     * @param Closure $factory Factory function to create the instance
-     * @return mixed The property value
-     * @throws \InvalidArgumentException If property doesn't exist on this class
-     * @see docs_md/Core/Kernel/KernelState.md#method-getOrInit
+     * @param string  $property Property name to get/initialize.
+     * @param Closure $factory  Factory function to create the instance.
+     * @return mixed The property value.
+     * @throws \InvalidArgumentException If property doesn't exist on this class.
+     * @see docs_md/Core/Kernel/KernelState.md#method-getorinit
      */
     public function getOrInit(string $property, Closure $factory): mixed
     {
@@ -48,10 +45,6 @@ final class KernelState
 
     /**
      * Reset all lazy-initialized state to null.
-     *
-     * Forces re-initialization of all lazy components on next access.
-     * Useful for testing or when you need to clear cached state.
-     * This enables state cleanup and testing isolation.
      *
      * @return void
      * @see docs_md/Core/Kernel/KernelState.md#method-reset

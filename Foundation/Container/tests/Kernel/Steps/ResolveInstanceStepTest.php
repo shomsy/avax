@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Container\Kernel\Steps;
+namespace Avax\Container\Tests\Kernel\Steps;
 
 use Avax\Container\Core\Kernel\Contracts\KernelContext;
 use Avax\Container\Core\Kernel\Steps\ResolveInstanceStep;
@@ -11,6 +11,11 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
 
+/**
+ * PHPUnit test coverage for Container component behavior.
+ *
+ * @see docs_md/tests/Kernel/Steps/ResolveInstanceStepTest.md#quick-summary
+ */
 final class ResolveInstanceStepTest extends TestCase
 {
     /**
@@ -32,9 +37,8 @@ final class ResolveInstanceStepTest extends TestCase
 
         $step(context: $context);
 
-        $this->assertSame($expectedInstance, $context->instance);
-        $this->assertArrayHasKey('resolution', $context->metadata);
-        $this->assertSame('engine_instantiation', $context->metadata['resolution']['strategy']);
+        $this->assertSame($expectedInstance, $context->getInstance());
+        $this->assertNotNull($context->getMeta('resolution', 'completed_at'));
     }
 
     /**

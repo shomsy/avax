@@ -18,78 +18,36 @@ use ReflectionUnionType;
 use ReflectionNamedType;
 
 /**
- * @package Avax\Container\Think\Analyze
+ * The "Swiss Army Knife" for low-level PHP type discovery and validation.
  *
- * Centralized type analysis and reflection operations.
+ * ReflectionTypeAnalyzer provides a unified, cached interface for all expensive 
+ * reflection operations. It centralizes the complexity of handling modern PHP 
+ * types (Union types, Intersection types, Enums) and provides clear answers 
+ * to questions like "Can the container resolve this?" or "What is the 
+ * string name of this complex type-hint?".
  *
- * TypeAnalyzer provides a unified, cached interface for all reflection and type analysis
- * operations used throughout the container. It eliminates duplication of reflection logic
- * and provides consistent, optimized access to class metadata, type information, and
- * injection point discovery.
- *
- * WHY IT EXISTS:
- * - To eliminate duplication of reflection logic across multiple components
- * - To provide consistent type analysis with proper caching
- * - To centralize complex reflection operations and edge case handling
- * - To enable optimization of expensive reflection calls
- *
- * ANALYSIS CAPABILITIES:
- * - Class structure analysis (constructors, properties, methods)
- * - Type hint extraction and validation
- * - Attribute scanning (#[Inject], custom attributes)
- * - Instantiability checking
- * - Interface and trait analysis
- *
- * CACHING STRATEGY:
- * - Reflection results cached per class
- * - Invalidated on class file changes
- * - Memory-efficient storage of analysis results
- * - Thread-safe cache access
- *
- * PERFORMANCE OPTIMIZATIONS:
- * - Lazy loading of expensive analysis operations
- * - Pre-computed injection point mappings
- * - Optimized attribute scanning
- * - Minimal memory footprint for cached results
- *
- * THREAD SAFETY:
- * - Immutable analysis results
- * - Thread-safe cache operations
- * - Safe for concurrent analysis requests
- *
- * @see docs_md/Features/Think/Analyze/ReflectionTypeAnalyzer.md#quick-summary
- * @see     ServicePrototypeBuilder For prototype construction using analysis results
- * @see     Injector For runtime injection using analysis results
+ * @package Avax\Container\Features\Think\Analyze
+ * @see docs/Features/Think/Analyze/ReflectionTypeAnalyzer.md
+ * @see ServicePrototypeBuilder For usage in the prototype pipeline.
  */
 final class ReflectionTypeAnalyzer
 {
     /**
-     * Creates a new type analyzer with reflection capabilities.
+     * Initializes the analyzer with an optional pre-populated reflection cache.
      *
-     * @param \ReflectionClass[] $reflectionCache Optional pre-populated reflection cache
-     * @see docs_md/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-__construct
+     * @param ReflectionClass[] $reflectionCache Internal cache for already reflected classes.
      */
     public function __construct(
         private array $reflectionCache = []
     ) {}
 
     /**
-     * Checks if a class is instantiable.
+     * Determine if a class can be physically instantiated.
      *
-     * Determines if the given class can be instantiated via constructor.
-     * Returns false for abstract classes, interfaces, and classes without
-     * accessible constructors.
+     * @param string $className Fully qualified class name.
+     * @return bool True if the class is not abstract, not an interface, and has an accessible constructor.
      *
-     * INSTANTIABILITY CRITERIA:
-     * - Not an abstract class
-     * - Not an interface or trait
-     * - Has an accessible constructor (public or none)
-     * - Not a built-in PHP class that cannot be instantiated
-     *
-     * @param string $className The class to check
-     *
-     * @return bool True if the class can be instantiated
-     * @see docs_md/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-isinstantiable
+     * @see docs/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-isinstantiable
      */
     public function isInstantiable(string $className): bool
     {
@@ -103,23 +61,21 @@ final class ReflectionTypeAnalyzer
     }
 
     /**
-     * Gets a reflection class instance for the given class name.
+     * Retrieve a cached reflection object for the given class name.
      *
-     * Returns a cached ReflectionClass instance, creating it only if not already cached.
-     * This method handles class loading and provides consistent error handling for
-     * invalid class names.
+     * @param string $className Fully qualified class name.
+     * @return ReflectionClass The generated reflection object.
+     * @throws ResolutionException If the class does not exist or cannot be reflected.
      *
-     * @param string $className The fully qualified class name
-     *
-     * @return \ReflectionClass The reflection class instance
-     *
-     * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException
-     * @see docs_md/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-reflectclass
+     * @see docs/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-reflectclass
      */
     public function reflectClass(string $className): ReflectionClass
     {
         if (! isset($this->reflectionCache[$className])) {
             try {
+                if (! class_exists(class: $className) && ! interface_exists(interface: $className) && ! trait_exists(trait: $className)) {
+                    throw new ResolutionException(message: "Class [{$className}] not found.");
+                }
                 $this->reflectionCache[$className] = new ReflectionClass(objectOrClass: $className);
             } catch (ReflectionException $e) {
                 throw new ResolutionException(
@@ -133,15 +89,12 @@ final class ReflectionTypeAnalyzer
     }
 
     /**
-     * Gets the constructor reflection for a class.
+     * Retrieve the reflected constructor for a class.
      *
-     * Returns the constructor method reflection, or null if the class
-     * has no explicit constructor (uses default constructor).
+     * @param string $className Fully qualified class name.
+     * @return ReflectionMethod|null The constructor reflector, or null if none exists.
      *
-     * @param string $className The class to analyze
-     *
-     * @return \ReflectionMethod|null The constructor method or null
-     * @see docs_md/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-getconstructor
+     * @see docs/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-getconstructor
      */
     public function getConstructor(string $className): ReflectionMethod|null
     {
@@ -155,31 +108,13 @@ final class ReflectionTypeAnalyzer
     }
 
     /**
-     * Gets all properties with injection attributes.
+     * Advanced discovery of properties marked for dependency injection.
      *
-     * Scans the class hierarchy for properties marked with #[Inject] attributes
-     * or other injection markers. Returns detailed information about each
-     * injectable property.
+     * @param string $className The class to scan.
+     * @return array<int, array<string, mixed>> List of descriptive property metadata.
+     * @throws ResolutionException
      *
-     * INJECTION ATTRIBUTE SCANNING:
-     * - #[Inject] attributes on properties
-     * - Custom injection attributes
-     * - Property visibility and accessibility
-     * - Type hints and default values
-     *
-     * @param string $className The class to analyze
-     *
-     * @return array{
-     *     name: string,
-     *     type: string|null,
-     *     allows_null: bool,
-     *     has_default: bool,
-     *     default_value: mixed,
-     *     visibility: string,
-     *     attributes: array
-     * }[] Array of injectable property information
-     * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException
-     * @see docs_md/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-getinjectableproperties
+     * @see docs/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-getinjectableproperties
      */
     public function getInjectableProperties(string $className): array
     {
@@ -206,13 +141,10 @@ final class ReflectionTypeAnalyzer
     }
 
     /**
-     * Finds injection attributes on a reflection object.
+     * Internal utility for finding the #[Inject] attribute on code elements.
      *
-     * Scans a reflection property or method for injection-related attributes.
-     *
-     * @param \ReflectionProperty|\ReflectionMethod $reflection The reflection object to scan
-     *
-     * @return array Array of injection attributes found
+     * @param ReflectionProperty|ReflectionMethod $reflection The element to scan.
+     * @return array<int, array<string, mixed>> Map of attribute names and their arguments.
      */
     private function findInjectAttributes(ReflectionProperty|ReflectionMethod $reflection): array
     {
@@ -221,11 +153,8 @@ final class ReflectionTypeAnalyzer
         foreach ($reflection->getAttributes() as $attribute) {
             $attributeName = $attribute->getName();
 
-            // Check for explicit #[Inject] attribute or our specific namespace
-            if (
-                $attributeName === Inject::class ||
-                $attributeName === 'Avax\Container\Features\Core\Attribute\Inject'
-            ) {
+            // Check for explicit #[Inject] attribute
+            if ($attributeName === Inject::class || $attributeName === 'Avax\Container\Features\Core\Attribute\Inject') {
                 $attributes[] = [
                     'name'      => $attributeName,
                     'arguments' => $attribute->getArguments(),
@@ -237,38 +166,38 @@ final class ReflectionTypeAnalyzer
     }
 
     /**
-     * Gets the type hint for a property.
+     * Resolves the string type name for a property.
      *
-     * @param \ReflectionProperty $property The property to analyze
-     *
-     * @return string|null The type hint or null if untyped
+     * @param ReflectionProperty $property
+     * @return string|null
      */
     private function getPropertyType(ReflectionProperty $property): string|null
     {
         $type = $property->getType();
 
-        if ($type) {
-            return $this->formatType(type: $type);
-        }
-
-        return null;
+        return $type ? $this->formatType(type: $type) : null;
     }
 
     /**
-     * Formats a reflection type to string representation.
+     * Recursively transforms complex reflection types into normalized strings.
      *
-     * @param \ReflectionType $type The type to format
+     * Handles:
+     * - Named Types (`User`)
+     * - Union Types (`A|B`)
+     * - Intersection Types (`A&B`)
+     * - Nullability (`?User`)
      *
-     * @return string The formatted type string
+     * @param ReflectionType $type The native reflection type.
+     * @return string Normalized type string.
      */
-    private function formatType(ReflectionType $type): string
+    public function formatType(ReflectionType $type): string
     {
         if ($type instanceof ReflectionUnionType) {
-            return implode('|', array_map(fn($t) => $this->formatType($t), $type->getTypes()));
+            return implode('|', array_map(callback: fn($t) => $this->formatType(type: $t), array: $type->getTypes()));
         }
 
         if ($type instanceof ReflectionIntersectionType) {
-            return implode('&', array_map(fn($t) => $this->formatType($t), $type->getTypes()));
+            return implode('&', array_map(callback: fn($t) => $this->formatType(type: $t), array: $type->getTypes()));
         }
 
         if ($type instanceof ReflectionNamedType) {
@@ -281,11 +210,10 @@ final class ReflectionTypeAnalyzer
     }
 
     /**
-     * Checks if a property allows null values.
+     * Checks if a property's type-hint allows null values.
      *
-     * @param \ReflectionProperty $property The property to check
-     *
-     * @return bool True if the property allows null
+     * @param ReflectionProperty $property
+     * @return bool
      */
     private function propertyAllowsNull(ReflectionProperty $property): bool
     {
@@ -295,11 +223,10 @@ final class ReflectionTypeAnalyzer
     }
 
     /**
-     * Gets the visibility of a reflection object.
+     * Resolves the visibility level for a code element.
      *
-     * @param \ReflectionProperty|\ReflectionMethod $reflection The reflection object
-     *
-     * @return string The visibility level ('public', 'protected', or 'private')
+     * @param ReflectionProperty|ReflectionMethod $reflection
+     * @return string 'public', 'protected', or 'private'.
      */
     private function getVisibility(ReflectionProperty|ReflectionMethod $reflection): string
     {
@@ -315,28 +242,13 @@ final class ReflectionTypeAnalyzer
     }
 
     /**
-     * Gets all methods with injection attributes.
+     * Advanced discovery of methods marked for dependency injection (Setters).
      *
-     * Scans the class for methods marked with #[Inject] attributes or other
-     * injection markers. Returns detailed information about each injectable method.
+     * @param string $className The class to scan.
+     * @return array<int, array<string, mixed>> List of descriptive method metadata.
+     * @throws ResolutionException
      *
-     * INJECTION METHOD SCANNING:
-     * - #[Inject] attributes on methods
-     * - Setter injection patterns
-     * - Initialization methods
-     * - Method visibility and accessibility
-     *
-     * @param string $className The class to analyze
-     *
-     * @return array{
-     *     name: string,
-     *     parameters: array,
-     *     visibility: string,
-     *     attributes: array
-     * }[] Array of injectable method information
-     * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface
-     * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException
-     * @see docs_md/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-getinjectablemethods
+     * @see docs/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-getinjectablemethods
      */
     public function getInjectableMethods(string $className): array
     {
@@ -360,15 +272,12 @@ final class ReflectionTypeAnalyzer
     }
 
     /**
-     * Analyzes method parameters for type information.
+     * Decomposes a method's parameters into descriptive metadata arrays.
      *
-     * Extracts detailed type information from method parameters, including
-     * type hints, nullability, defaults, and other parameter metadata.
+     * @param ReflectionMethod $method
+     * @return array<int, array<string, mixed>>
      *
-     * @param \ReflectionMethod $method The method to analyze
-     *
-     * @return array Parameter analysis results
-     * @see docs_md/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-analyzemethodparameters
+     * @see docs/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-analyzemethodparameters
      */
     public function analyzeMethodParameters(ReflectionMethod $method): array
     {
@@ -390,11 +299,10 @@ final class ReflectionTypeAnalyzer
     }
 
     /**
-     * Gets the type hint for a parameter.
+     * Resolves the type name for a parameter.
      *
-     * @param \ReflectionParameter $parameter The parameter to analyze
-     *
-     * @return string|null The type hint or null if untyped
+     * @param ReflectionParameter $parameter
+     * @return string|null
      */
     private function getParameterType(ReflectionParameter $parameter): string|null
     {
@@ -404,14 +312,12 @@ final class ReflectionTypeAnalyzer
     }
 
     /**
-     * Checks if a type string is resolvable by the container.
+     * Utility: Determine if a type string refers to a resolvable container service.
      *
-     * This is a convenience helper used during analysis to decide whether a reflected type
-     * is something the container can resolve (class, interface, or enum).
+     * @param string|null $type Fully qualified name to check.
+     * @return bool True if the type represents a class, interface, or enum.
      *
-     * @param string|null $type Type string to check.
-     * @return bool True if resolvable, false otherwise.
-     * @see docs_md/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-canresolvetype
+     * @see docs/Features/Think/Analyze/ReflectionTypeAnalyzer.md#method-canresolvetype
      */
     public function canResolveType(string|null $type): bool
     {
@@ -419,6 +325,6 @@ final class ReflectionTypeAnalyzer
             return false;
         }
 
-        return class_exists($type) || interface_exists($type) || (function_exists('enum_exists') && enum_exists($type));
+        return class_exists(class: $type) || interface_exists(interface: $type) || (function_exists(function: 'enum_exists') && enum_exists(enum: $type));
     }
 }

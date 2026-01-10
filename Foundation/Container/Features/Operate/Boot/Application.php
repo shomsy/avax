@@ -15,6 +15,9 @@ use Avax\HTTP\Router\Cache\RouteCacheLoader;
 use Avax\HTTP\Router\Router;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Support\RouteCollector;
+
+/** @noinspection PhpInternalEntityUsedInspection */
+
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
@@ -95,11 +98,15 @@ class Application implements ContainerInterface
     /** @var array<string, bool> */
     private array $loadedRouteFiles = [];
 
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @see docs_md/Features/Operate/Boot/Application.md#method-__construct
+     */
     public function __construct(
         public readonly string                      $basePath,
         private readonly ContainerInternalInterface $container
-    )
-    {
+    ) {
         $this->registerBaseBindings();
         $this->container->instance(abstract: self::class, instance: $this);
         $this->container->instance(abstract: 'app', instance: $this);
@@ -107,7 +114,11 @@ class Application implements ContainerInterface
         $this->log(message: "Application initialized with base path: {$this->basePath}");
     }
 
-    private function registerBaseBindings() : void
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    private function registerBaseBindings(): void
     {
         $containerSettings = new Settings(items: []);
         $this->loadConfig(containerSettings: $containerSettings);
@@ -119,7 +130,7 @@ class Application implements ContainerInterface
         $this->log(message: "Base bindings registered.");
     }
 
-    private function loadConfig(Settings $containerSettings) : void
+    private function loadConfig(Settings $containerSettings): void
     {
         $configDir = $this->basePath . '/Config';
         if (! is_dir($configDir)) {
@@ -138,7 +149,10 @@ class Application implements ContainerInterface
         }
     }
 
-    public function instance(string $abstract, object $instance) : void
+    /**
+     * @see docs_md/Features/Operate/Boot/Application.md#method-instance
+     */
+    public function instance(string $abstract, object $instance): void
     {
         $this->container->instance(abstract: $abstract, instance: $instance);
     }
@@ -147,7 +161,7 @@ class Application implements ContainerInterface
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    private function log(string $message, string $level = 'info') : void
+    private function log(string $message, string $level = 'info'): void
     {
         if ($this->container->has(id: 'Psr\Log\LoggerInterface')) {
             $this->container->get(id: 'Psr\Log\LoggerInterface')->log($level, $message);
@@ -160,14 +174,17 @@ class Application implements ContainerInterface
      * @param string $id Service identifier to check
      *
      * @return bool True if service is registered or can be resolved
+     * @see docs_md/Features/Operate/Boot/Application.md#method-has
      */
-    public function has(string $id) : bool
+    public function has(string $id): bool
     {
         return $this->container->has(id: $id);
     }
 
     /**
      * Proxy resolution to the underlying container.
+     *
+     * @see docs_md/Features/Operate/Boot/Application.md#method-get
      */
     public function get(string $id)
     {
@@ -183,13 +200,17 @@ class Application implements ContainerInterface
      * @param string $root The application root directory path
      *
      * @return ApplicationBuilder Fluent builder for application configuration
+     * @see docs_md/Features/Operate/Boot/Application.md#method-start
      */
-    public static function start(string $root) : ApplicationBuilder
+    public static function start(string $root): ApplicationBuilder
     {
         return new ApplicationBuilder(basePath: $root);
     }
 
-    public function bind(string $abstract, mixed $concrete = null) : BindingBuilder
+    /**
+     * @see docs_md/Features/Operate/Boot/Application.md#method-bind
+     */
+    public function bind(string $abstract, mixed $concrete = null): BindingBuilder
     {
         return (new Registrar($this->container->getDefinitions()))
             ->bind($abstract, $concrete);
@@ -197,19 +218,28 @@ class Application implements ContainerInterface
 
     // PSR-11 Implementation via Delegation
 
-    public function singleton(string $abstract, mixed $concrete = null) : BindingBuilder
+    /**
+     * @see docs_md/Features/Operate/Boot/Application.md#method-singleton
+     */
+    public function singleton(string $abstract, mixed $concrete = null): BindingBuilder
     {
         return (new Registrar($this->container->getDefinitions()))
             ->singleton($abstract, $concrete);
     }
 
-    public function scoped(string $abstract, mixed $concrete = null) : BindingBuilder
+    /**
+     * @see docs_md/Features/Operate/Boot/Application.md#method-scoped
+     */
+    public function scoped(string $abstract, mixed $concrete = null): BindingBuilder
     {
         return (new Registrar($this->container->getDefinitions()))
             ->scoped($abstract, $concrete);
     }
 
-    public function make(string $abstract, array $parameters = []) : object
+    /**
+     * @see docs_md/Features/Operate/Boot/Application.md#method-make
+     */
+    public function make(string $abstract, array $parameters = []): object
     {
         return $this->container->make(abstract: $abstract, parameters: $parameters);
     }
@@ -221,16 +251,19 @@ class Application implements ContainerInterface
      * Most operations should be done through the Application interface.
      *
      * @return CoreContainerInterface The underlying dependency injection container
+     * @see docs_md/Features/Operate/Boot/Application.md#method-getcontainer
      */
-    public function getContainer() : ContainerInternalInterface
+    public function getContainer(): ContainerInternalInterface
     {
         return $this->container;
     }
 
     /**
      * Load routes from the provided file path and register them with the router.
+     *
+     * @see docs_md/Features/Operate/Boot/Application.md#method-loadroutes
      */
-    public function loadRoutes(string $path) : void
+    public function loadRoutes(string $path): void
     {
         if ($this->routeCacheLoaded) {
             $this->loadedRouteFiles[$path] = true;
@@ -269,15 +302,15 @@ class Application implements ContainerInterface
 
         foreach (RouteCollector::flushBuffered() as $routeBuilder) {
             $httpRouter->registerRoute(
-                method       : $routeBuilder->method,
-                path         : $routeBuilder->path,
-                action       : $routeBuilder->action,
-                middleware   : $routeBuilder->middleware,
-                name         : $routeBuilder->name,
-                constraints  : $routeBuilder->constraints,
-                defaults     : $routeBuilder->defaults,
-                domain       : $routeBuilder->domain,
-                attributes   : $routeBuilder->attributes,
+                method: $routeBuilder->method,
+                path: $routeBuilder->path,
+                action: $routeBuilder->action,
+                middleware: $routeBuilder->middleware,
+                name: $routeBuilder->name,
+                constraints: $routeBuilder->constraints,
+                defaults: $routeBuilder->defaults,
+                domain: $routeBuilder->domain,
+                attributes: $routeBuilder->attributes,
                 authorization: $routeBuilder->authorization,
             );
         }
@@ -302,9 +335,9 @@ class Application implements ContainerInterface
      * Register a service provider with the application.
      *
      *
-     * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface
+     * @see docs_md/Features/Operate/Boot/Application.md#method-register
      */
-    public function register(string|ServiceProvider $provider) : ServiceProvider
+    public function register(string|ServiceProvider $provider): ServiceProvider
     {
         if (is_string($provider)) {
             $provider = new $provider($this);
@@ -330,9 +363,12 @@ class Application implements ContainerInterface
     }
 
     /**
-     * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface
+     * @param \Avax\Container\Features\Operate\Boot\ServiceProvider $provider
+     *
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    private function bootProvider(ServiceProvider $provider) : void
+    private function bootProvider(ServiceProvider $provider): void
     {
         if (method_exists($provider, 'boot')) {
             $this->log(message: "Booting service provider: " . $provider::class);
@@ -343,17 +379,20 @@ class Application implements ContainerInterface
     /**
      * Run the application lifecycle.
      * Boot providers, hand off to the HTTP layer (placeholder), and terminate.
+     *
+     * @see docs_md/Features/Operate/Boot/Application.md#method-call
      */
-
-    public function call(callable|string $callable, array $parameters = []) : mixed
+    public function call(callable|string $callable, array $parameters = []): mixed
     {
         return $this->container->call(callable: $callable, parameters: $parameters);
     }
 
     /**
      * Boot the application, dispatch the HTTP request, and terminate.
+     *
+     * @see docs_md/Features/Operate/Boot/Application.md#method-run
      */
-    public function run() : ResponseInterface
+    public function run(): ResponseInterface
     {
         $this->log(message: "Application run started.");
         $this->container->beginScope();
@@ -380,8 +419,9 @@ class Application implements ContainerInterface
      * Boot all registered service providers.
      *
      * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface
+     * @see docs_md/Features/Operate/Boot/Application.md#method-boot
      */
-    public function boot() : void
+    public function boot(): void
     {
         if ($this->booted) {
             return;
@@ -402,14 +442,22 @@ class Application implements ContainerInterface
      * - PSR-7 responses: Send headers and body manually
      *
      * @param ResponseInterface $response The HTTP response to send
-     *
      * @return void
+     * @see docs/Features/Operate/Boot/Application.md#method-sendresponse
      */
-    private function sendResponse(ResponseInterface $response) : void
+    private function sendResponse(ResponseInterface $response): void
     {
-        if ($response instanceof Response || method_exists($response, 'send')) {
+        // 1. Check for custom Framework Response with send() method
+        if ($response instanceof Response) {
             $response->send();
+            return;
+        }
 
+        // 2. Check for other objects that might have a send() method (Duck Typing)
+        if (method_exists($response, 'send')) {
+            /** @var mixed $duckResponse */
+            $duckResponse = $response;
+            $duckResponse->send();
             return;
         }
 
@@ -427,16 +475,20 @@ class Application implements ContainerInterface
 
     /**
      * Terminate the current request scope.
+     *
+     * @see docs_md/Features/Operate/Boot/Application.md#method-terminate
      */
-    public function terminate() : void
+    public function terminate(): void
     {
         $this->container->endScope();
     }
 
     /**
      * Determine whether the application has already booted.
+     *
+     * @see docs_md/Features/Operate/Boot/Application.md#method-isbooted
      */
-    public function isBooted() : bool
+    public function isBooted(): bool
     {
         return $this->booted;
     }
@@ -444,9 +496,9 @@ class Application implements ContainerInterface
     /**
      * Resolve a path relative to the application base path.
      *
-     *
+     * @see docs_md/Features/Operate/Boot/Application.md#method-basepath
      */
-    public function basePath(string $path = '') : string
+    public function basePath(string $path = ''): string
     {
         return $this->basePath . ($path !== '' && $path !== '0' ? DIRECTORY_SEPARATOR . $path : '');
     }

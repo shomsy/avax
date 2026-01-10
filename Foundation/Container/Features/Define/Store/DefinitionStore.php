@@ -7,91 +7,52 @@ namespace Avax\Container\Features\Define\Store;
 use Closure;
 
 /**
+ * Registry interface for service definitions and injection rules.
+ *
+ * This class acts as the centralized data store for all container configurations,
+ * including service blueprints (ServiceDefinition), tags, extenders, and
+ * contextual injection rules. It provides optimized lookup mechanisms and
+ * memoization caches for complex matching logic.
+ *
  * @package Avax\Container\Define\Store
- *
- * Central Settings for Service Definitions and Bindings.
- *
- * The DefinitionStore is the authoritative source of truth for how the container should
- * behave when resolving specific identifiers. It stores service lifetimes, factory closures,
- * contextual overrides, and extensibility hooks. It serves as the "Knowledge Base" for
- * the EngineInterface.
- *
- * WHY IT EXISTS:
- * - To provide a consistent storage for all service-related metadata.
- * - To support advanced features like contextual binding and service tagging.
- * - To allow lazy resolution of complex rules through hierarchical lookup (wildcards, interfaces).
- * - To enable post-resolution customization through extenders.
- *
- * PERFORMANCE CONSIDERATIONS:
- * - Uses an internal cache ($resolvedCache) for complex contextual lookups (e.g. interfaces, parents).
- * - Definition lookups via dictionary key ($definitions[$abstract]) are O(1).
- * - Tag lookups return arrays of service identifiers, which may require deduplication.
- *
- * SECURITY CONSIDERATIONS:
- * - Does not perform direct logic; it only stores metadata used by the engine.
- * - Input validation should be performed by builders (BindingBuilder, ContextBuilder).
- *
- * THREAD SAFETY:
- * - This class is mutable and not inherently thread-safe.
- * - In multi-threaded environments, access should be synchronized during registration phase.
- *
- * @see     ServiceDefinition The blueprint stored within this class.
- * @see docs_md/Features/Define/Store/DefinitionStore.md#quick-summary
+ * @see docs/Features/Define/Store/DefinitionStore.md
  */
 class DefinitionStore
 {
-    /**
-     * @var array<string, ServiceDefinition> Map of abstract identifier to its definition object.
-     */
+    /** @var array<string, ServiceDefinition> */
     private array $definitions = [];
 
-    /**
-     * @var array<string, string[]> Reverse index of tags to service identifiers.
-     */
+    /** @var array<string, string[]> */
     private array $tags = [];
 
-    /**
-     * @var array<string, array<string, mixed>> Specific contextual rules (Consumer -> Needs -> Give).
-     */
+    /** @var array<string, array<string, mixed>> */
     private array $contextual = [];
 
-    /**
-     * @var array<string, array<string, mixed>> Pattern-based contextual rules (Wildcard -> Needs -> Give).
-     */
+    /** @var array<string, array<string, mixed>> */
     private array $wildcardContextual = [];
 
-    /**
-     * @var array<string, mixed> Cache for memoized contextual matches to avoid recursive reflection.
-     */
+    /** @var array<string, mixed> */
     private array $resolvedCache = [];
 
-    /**
-     * @var array<string, array{parents: string[], interfaces: string[]}> Cache for class hierarchy information.
-     */
+    /** @var array<string, array{parents: string[], interfaces: string[]}> */
     private array $classHierarchyCache = [];
 
-    /**
-     * @var array<string, \Closure[]> Custom callbacks to run after resolution for specific abstract types.
-     */
+    /** @var array<string, Closure[]> */
     private array $extenders = [];
 
     /**
      * Appends or updates a service definition in the store.
      *
      * @param ServiceDefinition $definition The blueprint to store.
-     * @see docs_md/Features/Define/Store/DefinitionStore.md#method-add
+     * @see docs/Features/Define/Store/DefinitionStore.md#method-add
      */
     public function add(ServiceDefinition $definition): void
     {
         if (isset($this->definitions[$definition->abstract])) {
             $existing = $this->definitions[$definition->abstract];
             foreach ($existing->tags as $tag) {
-                if (! isset($this->tags[$tag])) {
-                    continue;
-                }
-                $this->tags[$tag] = array_values(array_diff($this->tags[$tag], [$definition->abstract]));
-                if ($this->tags[$tag] === []) {
-                    unset($this->tags[$tag]);
+                if (isset($this->tags[$tag])) {
+                    $this->tags[$tag] = array_diff($this->tags[$tag], [$definition->abstract]);
                 }
             }
         }
@@ -100,29 +61,16 @@ class DefinitionStore
         foreach ($definition->tags as $tag) {
             $this->tags[$tag][] = $definition->abstract;
         }
+
         $this->resolvedCache = [];
     }
 
     /**
-     * Retrieves a service definition by its identifier.
-     *
-     * @param string $abstract The identifier to look up.
-     *
-     * @return ServiceDefinition|null The definition if found, null otherwise.
-     * @see docs_md/Features/Define/Store/DefinitionStore.md#method-get
-     */
-    public function get(string $abstract): ServiceDefinition|null
-    {
-        return $this->definitions[$abstract] ?? null;
-    }
-
-    /**
-     * Checks if a definition exists for the given abstract identifier.
+     * Checks if a definition exists for the given abstract.
      *
      * @param string $abstract The identifier to check.
-     *
-     * @return bool True if registered, false otherwise.
-     * @see docs_md/Features/Define/Store/DefinitionStore.md#method-has
+     * @return bool True if registered.
+     * @see docs/Features/Define/Store/DefinitionStore.md#method-has
      */
     public function has(string $abstract): bool
     {
@@ -130,158 +78,121 @@ class DefinitionStore
     }
 
     /**
-     * Retrieves all service identifiers associated with a given tag.
+     * Retrieves a service definition.
      *
-     * @param string $tag The tag name.
-     *
-     * @return string[] Array of unique abstract identifiers.
-     * @see docs_md/Features/Define/Store/DefinitionStore.md#method-gettaggedids
+     * @param string $abstract The identifier to retrieve.
+     * @return ServiceDefinition|null The definition or null if not found.
+     * @see docs/Features/Define/Store/DefinitionStore.md#method-get
      */
-    public function getTaggedIds(string $tag): array
+    public function get(string $abstract): ?ServiceDefinition
     {
-        return array_unique($this->tags[$tag] ?? []);
+        return $this->definitions[$abstract] ?? null;
     }
 
     /**
-     * Finds the best contextual binding match for a given consumer and dependency.
+     * Resolve unique service IDs associated with a specific tag.
      *
-     * Uses memoization to optimize repeated lookups.
+     * @param string $tag The tag identifier.
+     * @return array<int, string> List of unique service IDs.
+     * @see docs/Features/Define/Store/DefinitionStore.md#method-gettaggedids
+     */
+    public function getTaggedIds(string $tag): array
+    {
+        return isset($this->tags[$tag]) ? array_values(array_unique($this->tags[$tag])) : [];
+    }
+
+    /**
+     * Retrieve the best contextual match for a specific consumer and requirement.
      *
-     * @param string $consumer The class name of the object being resolved.
-     * @param string $needs    The dependency identifier required by the consumer.
-     *
-     * @return mixed The configured implementation (closure/string/object) or null.
-     * @see docs_md/Features/Define/Store/DefinitionStore.md#method-getcontextualmatch
+     * @param string $consumer The consuming class name.
+     * @param string $needs    The dependency ID being requested.
+     * @return mixed The configured implementation/value override.
+     * @see docs/Features/Define/Store/DefinitionStore.md#method-getcontextualmatch
      */
     public function getContextualMatch(string $consumer, string $needs): mixed
     {
-        $cacheKey = $consumer . ':' . $needs;
+        $cacheKey = $consumer . '@' . $needs;
         if (array_key_exists($cacheKey, $this->resolvedCache)) {
             return $this->resolvedCache[$cacheKey];
         }
 
-        return $this->resolvedCache[$cacheKey] = $this->resolveContextual(consumer: $consumer, needs: $needs);
-    }
-
-    /**
-     * Performs a hierarchical search for contextual rules.
-     *
-     * Search priority:
-     * 1. Direct class match.
-     * 2. Wildcard (fnmatch) pattern match.
-     * 3. Parent class rules.
-     * 4. Interface rules.
-     *
-     * @param string $consumer The consuming class name.
-     * @param string $needs    The dependency being requested.
-     *
-     * @return mixed Match if found, null otherwise.
-     */
-    private function resolveContextual(string $consumer, string $needs): mixed
-    {
+        // 1. Direct Match
         if (isset($this->contextual[$consumer][$needs])) {
-            return $this->contextual[$consumer][$needs];
+            return $this->resolvedCache[$cacheKey] = $this->contextual[$consumer][$needs];
         }
 
+        // 2. Wildcard Match
         foreach ($this->wildcardContextual as $pattern => $rules) {
             if (isset($rules[$needs]) && fnmatch($pattern, $consumer)) {
-                return $rules[$needs];
+                return $this->resolvedCache[$cacheKey] = $rules[$needs];
             }
         }
 
-        if (class_exists($consumer)) {
-            $hierarchy = $this->getClassHierarchy(consumer: $consumer);
-
-            foreach ($hierarchy['parents'] as $parent) {
-                if (isset($this->contextual[$parent][$needs])) {
-                    return $this->contextual[$parent][$needs];
-                }
+        // 3. Hierarchy Match (Parents & Interfaces)
+        $hierarchy = $this->getClassHierarchy($consumer);
+        foreach ($hierarchy['parents'] as $parent) {
+            if (isset($this->contextual[$parent][$needs])) {
+                return $this->resolvedCache[$cacheKey] = $this->contextual[$parent][$needs];
             }
-            foreach ($hierarchy['interfaces'] as $interface) {
-                if (isset($this->contextual[$interface][$needs])) {
-                    return $this->contextual[$interface][$needs];
-                }
+        }
+        foreach ($hierarchy['interfaces'] as $interface) {
+            if (isset($this->contextual[$interface][$needs])) {
+                return $this->resolvedCache[$cacheKey] = $this->contextual[$interface][$needs];
             }
         }
 
-        return null;
+        return $this->resolvedCache[$cacheKey] = null;
     }
 
     /**
-     * Gets cached class hierarchy information for a consumer class.
+     * Add a contextual injection rule.
      *
-     * @param string $consumer The class name to analyze.
-     *
-     * @return array{parents: string[], interfaces: string[]} Cached hierarchy info.
-     */
-    private function getClassHierarchy(string $consumer): array
-    {
-        if (! isset($this->classHierarchyCache[$consumer])) {
-            $this->classHierarchyCache[$consumer] = [
-                'parents'    => class_parents($consumer),
-                'interfaces' => class_implements($consumer),
-            ];
-        }
-
-        return $this->classHierarchyCache[$consumer];
-    }
-
-    /**
-     * Adds a contextual rule to the store.
-     *
-     * @param string $consumer The target class or pattern (*).
-     * @param string $needs    The dependency identifier.
-     * @param mixed  $give     The value or instruction to fulfill the dependency.
-     * @see docs_md/Features/Define/Store/DefinitionStore.md#method-addcontextual
+     * @param string $consumer The class name or wildcard pattern.
+     * @param string $needs    The dependency ID to override.
+     * @param mixed  $give     The override value or implementation.
+     * @see docs/Features/Define/Store/DefinitionStore.md#method-addcontextual
      */
     public function addContextual(string $consumer, string $needs, mixed $give): void
     {
-        $this->resolvedCache = [];
         if (str_contains($consumer, '*')) {
             $this->wildcardContextual[$consumer][$needs] = $give;
         } else {
             $this->contextual[$consumer][$needs] = $give;
         }
+
+        $this->resolvedCache = [];
     }
 
     /**
-     * Registers an extender for a specific service.
+     * Add a post-resolution service extender.
      *
-     * @param string  $abstract The target service.
-     * @param Closure $extender Callback receiving the instance.
-     * @see docs_md/Features/Define/Store/DefinitionStore.md#method-addextender
+     * @param string  $abstract The service identifier.
+     * @param Closure $extender Callback receiving the instance and container.
+     * @see docs/Features/Define/Store/DefinitionStore.md#method-addextender
      */
     public function addExtender(string $abstract, Closure $extender): void
     {
         $this->extenders[$abstract][] = $extender;
-        unset($this->resolvedCache[$abstract]);
     }
 
     /**
-     * Retrieves all registered extenders for a given service.
+     * Retrieve all extenders applicable to a service.
      *
-     * @param string $abstract The target service.
-     *
-     * @return \Closure[]
-     * @see docs_md/Features/Define/Store/DefinitionStore.md#method-getextenders
+     * @param string $abstract The service identifier.
+     * @return array<int, Closure> List of extender callbacks.
+     * @see docs/Features/Define/Store/DefinitionStore.md#method-getextenders
      */
     public function getExtenders(string $abstract): array
     {
-        return array_merge(
-            $this->extenders['*'] ?? [],
-            $this->extenders[$abstract] ?? []
-        );
+        return $this->extenders[$abstract] ?? [];
     }
 
     /**
-     * Updates the tags for an existing service definition.
-     *
-     * This method ensures that tag indexes are properly maintained when tags
-     * are added to existing definitions (e.g., through BindingBuilder::tag()).
+     * Batch add tags to an existing abstract.
      *
      * @param string          $abstract The service identifier.
-     * @param string|string[] $tags     The tags to add.
-     * @see docs_md/Features/Define/Store/DefinitionStore.md#method-addtags
+     * @param string|string[] $tags     Single tag or list of tags.
+     * @see docs/Features/Define/Store/DefinitionStore.md#method-addtags
      */
     public function addTags(string $abstract, string|array $tags): void
     {
@@ -289,23 +200,39 @@ class DefinitionStore
             return;
         }
 
-        $definition       = $this->definitions[$abstract];
-        $definition->tags = array_unique(array_merge($definition->tags, (array) $tags));
-
-        foreach ((array) $tags as $tag) {
-            $this->tags[$tag][] = $abstract;
-            $this->tags[$tag]   = array_unique($this->tags[$tag]);
+        $tags = (array) $tags;
+        foreach ($tags as $tag) {
+            $this->definitions[$abstract]->tags[] = $tag;
+            $this->tags[$tag][]                   = $abstract;
         }
     }
 
     /**
-     * Returns an array of all registered definitions.
+     * Retrieve the internal map of all registered definitions.
      *
      * @return array<string, ServiceDefinition>
-     * @see docs_md/Features/Define/Store/DefinitionStore.md#method-getalldefinitions
+     * @see docs/Features/Define/Store/DefinitionStore.md#method-getalldefinitions
      */
     public function getAllDefinitions(): array
     {
         return $this->definitions;
+    }
+
+    /**
+     * Internal helper to cache and retrieve class hierarchy.
+     *
+     * @param string $class The class name to reflect.
+     * @return array{parents: string[], interfaces: string[]}
+     */
+    private function getClassHierarchy(string $class): array
+    {
+        if (isset($this->classHierarchyCache[$class])) {
+            return $this->classHierarchyCache[$class];
+        }
+
+        return $this->classHierarchyCache[$class] = [
+            'parents'    => class_exists($class) ? array_values(class_parents($class)) : [],
+            'interfaces' => class_exists($class) || interface_exists($class) ? array_values(class_implements($class)) : []
+        ];
     }
 }

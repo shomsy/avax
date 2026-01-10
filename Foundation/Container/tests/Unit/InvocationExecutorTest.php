@@ -2,20 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Container\Unit;
+namespace Avax\Container\Tests\Unit;
 
 use Avax\Container\Core\Kernel\Contracts\KernelContext;
 use Avax\Container\Features\Actions\Invoke\Context\InvocationContext;
 use Avax\Container\Features\Actions\Invoke\InvocationExecutor;
 use Avax\Container\Features\Actions\Resolve\Contracts\DependencyResolverInterface;
-use Avax\Container\Features\Actions\Resolve\DependencyResolver;
 use Avax\Container\Features\Core\Contracts\ContainerInterface;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
+/**
+ * PHPUnit test coverage for Container component behavior.
+ *
+ * @see docs_md/tests/Unit/InvocationExecutorTest.md#quick-summary
+ */
 final class InvocationExecutorTest extends TestCase
 {
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testParameterResolutionUsesParentContext(): void
     {
@@ -50,7 +55,7 @@ final class InvocationExecutorTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testClassAtMethodUsesContainerForResolution(): void
     {

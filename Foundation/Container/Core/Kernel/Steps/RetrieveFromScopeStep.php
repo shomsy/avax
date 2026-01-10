@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Container\Core\Kernel\Steps;
 
 use Avax\Container\Core\Kernel\Contracts\KernelContext;
-use Avax\Container\Core\Kernel\Contracts\KernelStep;
 use Avax\Container\Core\Kernel\Contracts\TerminalKernelStep;
 use Avax\Container\Features\Operate\Scope\ScopeManager;
 
@@ -33,10 +32,11 @@ final readonly class RetrieveFromScopeStep implements TerminalKernelStep
      * Check if instance exists in any scope.
      *
      * @param KernelContext $context The resolution context
+     *
      * @return void
      * @see docs_md/Core/Kernel/Steps/RetrieveFromScopeStep.md#method-__invoke
      */
-    public function __invoke(KernelContext $context): void
+    public function __invoke(KernelContext $context) : void
     {
         // Skip for injectInto operations as they deal with existing instances
         if ($context->getMeta('inject', 'target', false)) {

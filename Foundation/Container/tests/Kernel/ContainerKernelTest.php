@@ -1,87 +1,100 @@
 <?php
 
 declare(strict_types=1);
-namespace Avax\Tests\Container\Kernel;
 
-use Avax\Container\Core\Kernel\ContainerKernel;
+namespace Avax\Container\Tests\Kernel;
+
+use Avax\Container\Core\ContainerKernel;
 use Avax\Container\Core\Kernel\Contracts\KernelContext;
-use Avax\Container\Core\Kernel\Contracts\KernelStep;
-use Avax\Container\Core\Kernel\ResolutionPipeline;
+use Avax\Container\Core\Kernel\KernelConfig;
+use Avax\Container\Features\Actions\Inject\InjectDependencies;
+use Avax\Container\Features\Actions\Inject\PropertyInjector;
+use Avax\Container\Features\Actions\Instantiate\Instantiator;
+use Avax\Container\Features\Actions\Invoke\Core\InvokeAction;
+use Avax\Container\Features\Actions\Resolve\DependencyResolver;
+use Avax\Container\Features\Actions\Resolve\Engine;
+use Avax\Container\Features\Define\Store\DefinitionStore;
+use Avax\Container\Features\Define\Store\ServiceDefinition;
+use Avax\Container\Features\Operate\Scope\ScopeManager;
+use Avax\Container\Features\Operate\Scope\ScopeRegistry;
+use Avax\Container\Features\Think\Analyze\PrototypeAnalyzer;
+use Avax\Container\Features\Think\Analyze\ReflectionTypeAnalyzer;
+use Avax\Container\Features\Think\Cache\PrototypeCache;
+use Avax\Container\Features\Think\Prototype\ServicePrototypeFactory;
+use Avax\Container\Observe\Timeline\ResolutionTimeline;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use stdClass;
 
+/**
+ * PHPUnit test coverage for Container component behavior.
+ *
+ * @see docs_md/tests/Kernel/ContainerKernelTest.md#quick-summary
+ */
 final class ContainerKernelTest extends TestCase
 {
-    /**
-     * @throws \Throwable
-     */
-    public function testResolveDelegatesToPipeline() : void
+    private DefinitionStore $definitions;
+    private KernelConfig $config;
+
+    protected function setUp(): void
     {
-        $expectedInstance = new stdClass();
+        $this->definitions = new DefinitionStore();
 
-        $step = new class($expectedInstance) implements KernelStep {
-            public function __construct(private object $instance) {}
+        $registry = new ScopeRegistry();
+        $scopes = new ScopeManager($registry);
+        $timeline = new ResolutionTimeline();
 
-            public function __invoke(KernelContext $context) : void
-            {
-                $context->instance = $this->instance;
-            }
-        };
+        $cache = $this->createMock(PrototypeCache::class);
+        $analyzer = new PrototypeAnalyzer(new ReflectionTypeAnalyzer());
+        $factory = new ServicePrototypeFactory($cache, $analyzer);
 
-        $pipeline = new ResolutionPipeline(steps: [$step]);
-        $kernel   = new ContainerKernel(pipeline: $pipeline);
+        $resolver = new DependencyResolver();
+        $instantiator = new Instantiator($factory, $resolver);
+        $engine = new Engine($this->definitions, $registry, $instantiator);
+        $injector = new InjectDependencies($factory, new PropertyInjector(null), $resolver);
+        $invoker = new InvokeAction(null, $resolver);
 
-        $result = $kernel->resolve(id: 'test-service');
-
-        $this->assertSame(expected: $expectedInstance, actual: $result);
+        $this->config = new KernelConfig(
+            engine: $engine,
+            injector: $injector,
+            invoker: $invoker,
+            scopes: $scopes,
+            prototypeFactory: $factory,
+            timeline: $timeline,
+            autoDefine: true
+        );
     }
 
     /**
-     * @throws \Throwable
+     * Verify that the kernel delegates retrieval to the runtime engine.
+     *
+     * @see docs_md/tests/Kernel/ContainerKernelTest.md#method-testgetdelegatestoruntime
      */
-    public function testResolveThrowsWhenPipelineDoesNotSetInstance() : void
+    public function testGetDelegatesToRuntime(): void
     {
-        $step = new class implements KernelStep {
-            public function __invoke(KernelContext $context) : void
-            {
-                // Do nothing - instance remains null
-            }
-        };
+        $kernel = new ContainerKernel($this->definitions, $this->config);
+        $this->config->engine->setContainer($kernel);
+        $this->config->injector->setContainer($kernel);
 
-        $pipeline = new ResolutionPipeline(steps: [$step]);
-        $kernel   = new ContainerKernel(pipeline: $pipeline);
-
-        $this->expectException(exception: RuntimeException::class);
-        $this->expectExceptionMessage(message: "Service 'test-service' not resolved");
-
-        $kernel->resolve(id: 'test-service');
+        $instance = $kernel->get(stdClass::class);
+        $this->assertInstanceOf(stdClass::class, $instance);
     }
 
     /**
-     * @throws \Throwable
+     * Verify that the kernel correctly checks for service existence in definitions and scopes.
+     *
+     * @see docs_md/tests/Kernel/ContainerKernelTest.md#method-testhaschecksdefinitionsandscopes
      */
-    public function testResolvePassesServiceIdToContext() : void
+    public function testHasChecksDefinitionsAndScopes(): void
     {
-        $capturedContext = null;
+        $kernel = new ContainerKernel($this->definitions, $this->config);
+        $this->config->engine->setContainer($kernel);
 
-        $step = new class($capturedContext) implements KernelStep {
-            public function __construct(public KernelContext|null &$captured) {}
+        $this->assertFalse($kernel->has('non-existent'));
 
-            public function __invoke(KernelContext $context) : void
-            {
-                $this->captured    = $context;
-                $context->instance = new stdClass();
-            }
-        };
+        $def = new ServiceDefinition('service');
+        $def->concrete = stdClass::class;
+        $this->definitions->add($def);
 
-        $pipeline = new ResolutionPipeline(steps: [$step]);
-        $kernel   = new ContainerKernel(pipeline: $pipeline);
-
-        $kernel->resolve(id: 'my-service');
-
-        $this->assertNotNull(actual: $capturedContext);
-        $this->assertEquals(expected: 'my-service', actual: $capturedContext->serviceId);
-        $this->assertIsArray(actual: $capturedContext->metadata);
+        $this->assertTrue($kernel->has('service'));
     }
 }

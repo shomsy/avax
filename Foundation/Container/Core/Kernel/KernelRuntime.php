@@ -12,9 +12,8 @@ use Avax\Container\Features\Think\Model\ServicePrototype;
 /**
  * Kernel Runtime - Execution layer that delegates to the resolution pipeline.
  *
- * Acts as the execution engine for service resolution, coordinating between
- * the resolution pipeline and invocation system. Handles the core resolution
- * flow while maintaining clean separation from higher-level orchestration, ensuring reliable and consistent dependency injection execution.
+ * Coordinates the actual resolution logic, invoking the pipeline and handling
+ * final instance extraction. Acts as the engine room for the ContainerKernel.
  *
  * @see docs_md/Core/Kernel/KernelRuntime.md#quick-summary
  */
@@ -25,8 +24,9 @@ final readonly class KernelRuntime
     /**
      * Initialize runtime with pipeline and invoker.
      *
-     * @param ResolutionPipeline $pipeline The resolution pipeline to execute
-     * @param InvokeAction $invoker The invocation system for callables
+     * @param ResolutionPipeline $pipeline The execution pipeline.
+     * @param InvokeAction       $invoker  The invocation helper.
+     * @see docs_md/Core/Kernel/KernelRuntime.md#method-__construct
      */
     public function __construct(
         private ResolutionPipeline $pipeline,
@@ -36,32 +36,25 @@ final readonly class KernelRuntime
     /**
      * Resolve a service by its identifier.
      *
-     * Initiates standard service resolution through the pipeline, creating a basic context
-     * and executing the full resolution process to return a fully constructed service instance.
-     *
-     * @param string $id Service identifier to resolve
-     * @return mixed Resolved service instance
-     * @throws ResolutionException If service cannot be resolved
+     * @param string $id The service identifier.
+     * @return mixed The resolved instance.
+     * @throws ResolutionException If resolution fails.
      * @see docs_md/Core/Kernel/KernelRuntime.md#method-get
      */
-    public function get(string $id) : mixed
+    public function get(string $id): mixed
     {
-        return $this->resolveContext(new KernelContext(serviceId: $id));
+        return $this->resolveContext(context: new KernelContext(serviceId: $id));
     }
 
     /**
      * Explicitly resolve with a context.
      *
-     * Executes resolution using a pre-configured KernelContext, allowing advanced resolution
-     * scenarios with custom metadata, overrides, and execution parameters.
-     *
-     * @param KernelContext $context Resolution context with metadata
-     * @return mixed Resolved service instance
-     * @throws ResolutionException If pipeline fails to resolve
-     * @throws \Throwable From pipeline execution
-     * @see docs_md/Core/Kernel/KernelRuntime.md#method-resolveContext
+     * @param KernelContext $context The resolution state.
+     * @return mixed The resolved instance.
+     * @throws ResolutionException If pipeline does not resolve the service.
+     * @see docs_md/Core/Kernel/KernelRuntime.md#method-resolvecontext
      */
-    public function resolveContext(KernelContext $context) : mixed
+    public function resolveContext(KernelContext $context): mixed
     {
         $this->pipeline->run(context: $context);
 
@@ -75,18 +68,15 @@ final readonly class KernelRuntime
     /**
      * Resolve a service by its identifier with overrides.
      *
-     * Creates a new service instance with runtime parameter overrides, bypassing any
-     * shared instance caching to ensure unique object creation with custom configuration.
-     *
-     * @param string $id Service identifier
-     * @param array $parameters Override parameters for constructor/method injection
-     * @return object Resolved service instance
-     * @throws ResolutionException If service cannot be resolved
+     * @param string $id         The service identifier.
+     * @param array  $parameters Constructor/method overrides.
+     * @return object The resolved instance.
+     * @throws ResolutionException If resolution fails.
      * @see docs_md/Core/Kernel/KernelRuntime.md#method-make
      */
-    public function make(string $id, array $parameters = []) : object
+    public function make(string $id, array $parameters = []): object
     {
-        return $this->resolveContext(new KernelContext(
+        return $this->resolveContext(context: new KernelContext(
             serviceId: $id,
             overrides: $parameters
         ));
@@ -95,35 +85,28 @@ final readonly class KernelRuntime
     /**
      * Resolve a service prototype.
      *
-     * Executes optimized resolution using a pre-analyzed service prototype, bypassing
-     * standard analysis for improved performance in frequently resolved services.
-     *
-     * @param ServicePrototype $prototype Pre-analyzed service blueprint
-     * @return mixed Resolved service instance
-     * @throws ResolutionException If prototype cannot be resolved
+     * @param ServicePrototype $prototype The pre-analyzed metadata.
+     * @return mixed The resolved instance.
+     * @throws ResolutionException If resolution fails.
      * @see docs_md/Core/Kernel/KernelRuntime.md#method-resolve
      */
-    public function resolve(ServicePrototype $prototype) : mixed
+    public function resolve(ServicePrototype $prototype): mixed
     {
         $ctx = new KernelContext(serviceId: $prototype->class);
         $ctx->setMeta('analysis', 'prototype', $prototype);
 
-        return $this->resolveContext($ctx);
+        return $this->resolveContext(context: $ctx);
     }
 
     /**
      * Execute a callable with dependency injection.
      *
-     * Invokes a function, method, or closure with automatic dependency injection applied
-     * to its parameters, enabling procedural code to participate in the container's resolution system.
-     *
-     * @param callable|string $callable Callable to execute
-     * @param array $parameters Override parameters that take precedence over injection
-     * @return mixed Execution result
-     * @throws \ReflectionException If callable cannot be analyzed
+     * @param callable|string $callable   The target to invoke.
+     * @param array           $parameters Runtime overrides.
+     * @return mixed The invocation result.
      * @see docs_md/Core/Kernel/KernelRuntime.md#method-call
      */
-    public function call(callable|string $callable, array $parameters = []) : mixed
+    public function call(callable|string $callable, array $parameters = []): mixed
     {
         return $this->invoker->invoke(target: $callable, parameters: $parameters);
     }
@@ -131,18 +114,14 @@ final readonly class KernelRuntime
     /**
      * Inject dependencies into an object.
      *
-     * Performs dependency injection into an existing object instance that was created
-     * outside the container, enabling retrofit injection for legacy objects or deserialization scenarios.
-     *
-     * @param object $target Object to inject into
-     * @return object Object with injected dependencies
-     * @throws \Throwable From pipeline execution
-     * @see docs_md/Core/Kernel/KernelRuntime.md#method-injectInto
+     * @param object $target The instance to hydrate.
+     * @return object The hydrated instance.
+     * @see docs_md/Core/Kernel/KernelRuntime.md#method-injectinto
      */
-    public function injectInto(object $target) : object
+    public function injectInto(object $target): object
     {
         $ctx = new KernelContext(
-            serviceId      : self::INTERNAL_INJECT,
+            serviceId: self::INTERNAL_INJECT,
             manualInjection: true
         );
         $ctx->resolvedWith(instance: $target);

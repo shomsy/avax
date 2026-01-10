@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace {
     // Define appInstance() to store/retrieve the container
     if (! function_exists('appInstance')) {
@@ -24,7 +25,7 @@ namespace {
 
     // Define app() function for Request::createFromGlobals() to use
     if (! function_exists('app')) {
-        function app(string|null $abstract = null) : mixed
+        function app(string|null $abstract = null): mixed
         {
             $container = appInstance();
             if ($abstract === null) {
@@ -36,7 +37,7 @@ namespace {
     }
 }
 
-namespace Avax\Tests\Container {
+namespace Avax\Container\Tests\Integration {
 
     use Avax\HTTP\Request\Request;
     use Avax\HTTP\Session\NullSession;
@@ -54,12 +55,12 @@ namespace Avax\Tests\Container {
             #[SensitiveParameter] private mixed $session
         ) {}
 
-        public function has(string $id) : bool
+        public function has(string $id): bool
         {
             return $this->hasSession && $id === SessionInterface::class;
         }
 
-        public function get(string $id) : mixed
+        public function get(string $id): mixed
         {
             // Ensure we return the exact same instance
             if ($id === SessionInterface::class && $this->hasSession) {
@@ -69,6 +70,11 @@ namespace Avax\Tests\Container {
         }
     }
 
+    /**
+     * PHPUnit test coverage for Container component behavior.
+     *
+     * @see docs_md/tests/Integration/RequestFromGlobalsTest.md#quick-summary
+     */
     final class RequestFromGlobalsTest extends TestCase
     {
         private array $serverBackup = [];
@@ -77,11 +83,11 @@ namespace Avax\Tests\Container {
         private array $cookieBackup = [];
         private array $filesBackup  = [];
 
-        public function testCreateFromGlobalsIgnoresInvalidSessionBinding() : void
+        public function testCreateFromGlobalsIgnoresInvalidSessionBinding(): void
         {
             $container = new FakeContainer(
                 hasSession: true,
-                session   : new stdClass()
+                session: new stdClass()
             );
 
             if (function_exists('appInstance')) {
@@ -94,7 +100,7 @@ namespace Avax\Tests\Container {
             $this->assertInstanceOf(expected: NullSession::class, actual: $this->extractSession(request: $request));
         }
 
-        private function extractSession(Request $request) : SessionInterface
+        private function extractSession(Request $request): SessionInterface
         {
             $property = new ReflectionProperty(class: Request::class, property: 'session');
             $property->setAccessible(accessible: true);
@@ -102,12 +108,12 @@ namespace Avax\Tests\Container {
             return $property->getValue(object: $request);
         }
 
-        public function testCreateFromGlobalsUsesSessionInterface() : void
+        public function testCreateFromGlobalsUsesSessionInterface(): void
         {
             $session   = new NullSession();
             $container = new FakeContainer(
                 hasSession: true,
-                session   : $session
+                session: $session
             );
 
             if (function_exists('appInstance')) {
@@ -119,7 +125,7 @@ namespace Avax\Tests\Container {
             $this->assertSame(expected: $session, actual: $this->extractSession(request: $request));
         }
 
-        protected function setUp() : void
+        protected function setUp(): void
         {
             parent::setUp();
 
@@ -143,7 +149,7 @@ namespace Avax\Tests\Container {
             $_FILES  = [];
         }
 
-        protected function tearDown() : void
+        protected function tearDown(): void
         {
             $_SERVER = $this->serverBackup;
             $_GET    = $this->getBackup;

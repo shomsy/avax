@@ -39,4 +39,9 @@ interface RegistryInterface
      * Define contextual binding for a consumer.
      */
     public function when(string $consumer): ContextBuilder;
+
+    /**
+     * Assign tags to a service.
+     */
+    public function tag(string|array $abstracts, string|array $tags): void;
 }

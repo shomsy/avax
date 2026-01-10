@@ -14,10 +14,19 @@ use Throwable;
 /**
  * Analyze Prototype Step - Dependency Analysis and Preparation
  *
+ * This step performs reflection-based analysis of the service class to build
+ * a prototype blueprint, which is then used by subsequent steps for injection.
+ *
+ * @package Avax\Container\Core\Kernel\Steps
  * @see docs_md/Core/Kernel/Steps/AnalyzePrototypeStep.md#quick-summary
  */
 final readonly class AnalyzePrototypeStep implements KernelStep
 {
+    /**
+     * @param ServicePrototypeFactory $prototypeFactory Factory for creating class prototypes.
+     * @param bool                    $strictMode       Whether to enforce strict validation.
+     * @see docs_md/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-__construct
+     */
     public function __construct(
         private ServicePrototypeFactory $prototypeFactory,
         private bool                    $strictMode = false
@@ -26,12 +35,12 @@ final readonly class AnalyzePrototypeStep implements KernelStep
     /**
      * Execute reflection analysis and cache the prototype metadata on the context.
      *
-     * @param KernelContext $context
+     * @param KernelContext $context The resolution context.
      * @return void
-     * @throws \Throwable
-     * @see docs_md/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-__invokekernelcontext-context
+     * @throws \Throwable If analysis fails.
+     * @see docs_md/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-__invoke
      */
-    public function __invoke(KernelContext $context) : void
+    public function __invoke(KernelContext $context): void
     {
         // Check if prototype is already set
         if ($context->hasMeta('analysis', 'prototype')) {
@@ -52,7 +61,7 @@ final readonly class AnalyzePrototypeStep implements KernelStep
         try {
             $prototype = $this->prototypeFactory->createFor(class: $classToAnalyze);
             $context->setMeta('analysis', 'prototype', $prototype);
-            $context->setMeta('analysis', 'completed_at', microtime(true));
+            $context->setMeta('analysis', 'completed_at', microtime(as_float: true));
         } catch (Throwable $e) {
             $context->setMeta('analysis', 'failed', true);
             $context->setMeta('analysis', 'error', $e->getMessage());
@@ -63,12 +72,12 @@ final readonly class AnalyzePrototypeStep implements KernelStep
     /**
      * Determine the concrete class that should be reflected for this service.
      *
-     * @param string                   $serviceId
-     * @param ServiceDefinition|null   $definition
-     * @return string|null
-     * @see docs_md/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-determineclasstoanalyze-string-serviceid-servicedefinition-null-string-null
+     * @param string                 $serviceId  The abstract service ID.
+     * @param ServiceDefinition|null $definition The service definition if available.
+     * @return string|null The class name or null if non-reflectable.
+     * @see docs_md/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-determineclasstoanalyze
      */
-    private function determineClassToAnalyze(string $serviceId, ServiceDefinition|null $definition) : string|null
+    private function determineClassToAnalyze(string $serviceId, ServiceDefinition|null $definition): string|null
     {
         if ($definition === null) {
             return $serviceId;
@@ -83,7 +92,7 @@ final readonly class AnalyzePrototypeStep implements KernelStep
         }
 
         if (is_object($definition->concrete)) {
-            return get_class($definition->concrete);
+            return $definition->concrete::class;
         }
 
         return $serviceId;

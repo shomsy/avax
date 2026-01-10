@@ -1,7 +1,8 @@
 <?php
 
 declare(strict_types=1);
-namespace Avax\Tests\Container;
+
+namespace Avax\Container\Tests;
 
 use Avax\Container\Features\Operate\Boot\Application;
 use Avax\HTTP\Request\Request;
@@ -14,9 +15,14 @@ use LogicException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * PHPUnit test coverage for Container component behavior.
+ *
+ * @see docs_md/tests/ApplicationLifecycleTest.md#quick-summary
+ */
 final class ApplicationLifecycleTest extends TestCase
 {
-    public function testRunBootsScopeDispatchesRouterAndTerminates() : void
+    public function testRunBootsScopeDispatchesRouterAndTerminates(): void
     {
         $root = dirname(__DIR__, 3);
 
@@ -70,57 +76,57 @@ final class ApplicationLifecycleTest extends TestCase
 
 final class FakeRouter implements RouterInterface
 {
-    public function post(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function post(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         return $this->get(path: $path, action: $action);
     }
 
-    public function get(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function get(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         throw new LogicException(message: 'Fake router does not support route registration.');
     }
 
-    public function put(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function put(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         return $this->get(path: $path, action: $action);
     }
 
-    public function patch(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function patch(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         return $this->get(path: $path, action: $action);
     }
 
-    public function delete(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function delete(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         return $this->get(path: $path, action: $action);
     }
 
-    public function options(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function options(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         return $this->get(path: $path, action: $action);
     }
 
-    public function head(string $path, callable|array|string $action) : RouteRegistrarProxy
+    public function head(string $path, callable|array|string $action): RouteRegistrarProxy
     {
         return $this->get(path: $path, action: $action);
     }
 
-    public function any(string $path, callable|array|string $action) : array
+    public function any(string $path, callable|array|string $action): array
     {
         throw new LogicException(message: 'Fake router does not support wildcard registration.');
     }
 
-    public function fallback(callable|array|string $handler) : void
+    public function fallback(callable|array|string $handler): void
     {
         throw new LogicException(message: 'Fake router does not support fallback.');
     }
 
-    public function resolve(Request $request) : ResponseInterface
+    public function resolve(Request $request): ResponseInterface
     {
         return new Response(
-            stream    : Stream::fromString(content: 'Avax components router is up.'),
+            stream: Stream::fromString(content: 'Avax components router is up.'),
             statusCode: 200,
-            headers   : ['Content-Type' => 'text/plain']
+            headers: ['Content-Type' => 'text/plain']
         );
     }
 }

@@ -1,9 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Features\Operate\Boot;
 
 use Avax\Cache\CacheManager;
+use Avax\Container\Features\Core\ContainerBuilder;
 use Avax\Container\Features\Core\Enum\ServiceLifetime;
 use Avax\Container\Features\Define\Store\ServiceDefinitionEntity;
 use Avax\Container\Features\Define\Store\ServiceDefinitionRepository;
@@ -18,7 +20,7 @@ use Avax\Container\Guard\Rules\ServiceValidator;
 use Avax\Container\Observe\Metrics\EnhancedMetricsCollector;
 use Avax\Container\Observe\Metrics\LoggerFactoryIntegration;
 use Avax\Container\Observe\Metrics\MetricsCollector;
-use Avax\Container\Operate\Boot\Container;
+use Avax\Container\Container;
 use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 use Avax\Logging\LoggerFactory;
 use RuntimeException;
@@ -32,136 +34,11 @@ use Throwable;
  * validation, telemetry, and database-backed service definitions into a production-ready
  * dependency injection container with comprehensive monitoring and error handling.
  *
- * ARCHITECTURAL ROLE:
- * - Complete container lifecycle orchestration from configuration to runtime
- * - Multi-layer infrastructure integration (cache, logging, database, telemetry)
- * - Service definition loading and registration with validation
- * - Environment-aware configuration management and profile selection
- * - Bootstrap monitoring and error recovery mechanisms
- * - Production-ready container assembly with security and performance optimizations
- *
- * BOOTSTRAP LIFECYCLE:
- * 1. Profile-driven configuration loading and validation
- * 2. Core container instantiation with base bindings
- * 3. Infrastructure component initialization (cache, logging, repositories)
- * 4. Service definition loading from persistent storage
- * 5. Comprehensive configuration validation and integrity checking
- * 6. Monitoring and telemetry system initialization
- * 7. Bootstrap completion logging and health verification
- *
- * INFRASTRUCTURE INTEGRATION:
- * - PSR-16 caching with multi-backend support (memory, file, distributed)
- * - PSR-3 structured logging with component-specific channels
- * - Database-backed service definition repositories
- * - Service discovery and dependency resolution
- * - Configuration validation and integrity checking
- * - Telemetry collection and performance monitoring
- *
- * CONFIGURATION MANAGEMENT:
- * - Profile-based bootstrap configuration (development, production, custom)
- * - Environment-aware service loading and filtering
- * - Configuration file support with validation
- * - Dynamic infrastructure component binding
- * - Bootstrap-time configuration validation
- *
- * USAGE SCENARIOS:
- * ```php
- * // Development environment bootstrap
- * $bootstrap = ContainerBootstrap::development($queryBuilder);
- * $container = $bootstrap->bootstrap();
- *
- * // Production environment bootstrap
- * $bootstrap = ContainerBootstrap::production($queryBuilder);
- * $container = $bootstrap->bootstrap();
- *
- * // Custom configuration file bootstrap
- * $bootstrap = ContainerBootstrap::fromConfigFile('/path/to/bootstrap.php', $queryBuilder);
- * $container = $bootstrap->bootstrap();
- *
- * // Programmatic bootstrap with custom profile
- * $profile = new BootstrapProfile([...]);
- * $bootstrap = new ContainerBootstrap($profile, $queryBuilder);
- * $container = $bootstrap->bootstrap();
- * ```
- *
- * SERVICE REGISTRATION PATTERNS:
- * - Singleton services: Application-scoped instances with lazy loading
- * - Scoped services: Request/session-scoped instances with isolation
- * - Transient services: New instances on every resolution
- * - Tagged services: Service categorization for bulk operations
- * - Configured services: Services with injected configuration parameters
- *
- * PERFORMANCE CHARACTERISTICS:
- * - One-time bootstrap cost with cached infrastructure components
- * - Lazy initialization of heavy components (database, external services)
- * - Efficient service registration with bulk operations support
- * - Memory-optimized container construction with reference sharing
- * - Fast bootstrap completion with parallel initialization where possible
- *
- * ERROR HANDLING & RECOVERY:
- * - Graceful degradation when optional components are unavailable
- * - Comprehensive error logging during bootstrap process
- * - Bootstrap validation with actionable error messages
- * - Recovery mechanisms for failed component initialization
- * - Bootstrap interruption prevention with error containment
- *
- * SECURITY FEATURES:
- * - Service definition validation before registration
- * - Secure configuration loading with sanitization
- * - Access control for bootstrap operations
- * - Audit logging of bootstrap activities
- * - Secure defaults with explicit security configuration
- *
- * MONITORING & TELEMETRY:
- * - Bootstrap lifecycle event logging
- * - Performance metrics collection during initialization
- * - Health check integration post-bootstrap
- * - Telemetry export for bootstrap performance analysis
- * - Error tracking and alerting for bootstrap failures
- *
- * THREAD SAFETY:
- * - Single-threaded bootstrap execution model
- * - Immutable configuration during bootstrap process
- * - Safe concurrent container usage after bootstrap completion
- * - Bootstrap-time isolation preventing race conditions
- * - Thread-safe container instance post-initialization
- *
- * BACKWARD COMPATIBILITY:
- * - Maintains compatibility with existing bootstrap interfaces
- * - Gradual migration path for legacy bootstrap code
- * - Extensible bootstrap architecture for future requirements
- * - Version-aware configuration loading
- *
- * EXTENSIBILITY:
- * - Custom bootstrap profiles through configuration
- * - Plugin architecture for additional bootstrap steps
- * - Custom infrastructure component providers
- * - Bootstrap event hooks and callbacks
- * - Configuration source abstraction
- *
- * PRODUCTION CONSIDERATIONS:
- * - Bootstrap timing monitoring and alerting
- * - Memory usage tracking during bootstrap
- * - Bootstrap failure recovery and restart capabilities
- * - Configuration validation and integrity checking
- * - Security audit logging for bootstrap operations
- *
- * TROUBLESHOOTING CAPABILITIES:
- * - Detailed bootstrap logging with timing information
- * - Component initialization failure diagnosis
- * - Configuration validation error reporting
- * - Service registration conflict detection
- * - Bootstrap performance bottleneck identification
+ * It delegates the low-level wiring to {@see ContainerBuilder} while managing the high-level
+ * application lifecycle steps including profile selection and post-build verification.
  *
  * @package Avax\Container\Operate\Boot
- * @see     BootstrapProfile Configuration profile for bootstrap behavior
- * @see     Container The dependency injection container being bootstrapped
- * @see     CacheManagerIntegration Cache system integration and management
- * @see     LoggerFactoryIntegration Logging system integration and configuration
- * @see     ServiceDefinitionRepository Persistent storage for service definitions
- * @see     ServiceDiscovery Service discovery and dependency analysis
- * @see     ServiceValidator Service configuration validation and integrity checking
- * @see     EnhancedMetricsCollector Telemetry collection and performance monitoring
+ * @see docs/Features/Operate/Boot/ContainerBootstrap.md#quick-summary
  */
 class ContainerBootstrap
 {
@@ -170,6 +47,8 @@ class ContainerBootstrap
      *
      * @param BootstrapProfile  $profile      Fully resolved bootstrap profile.
      * @param QueryBuilder|null $queryBuilder Optional query builder for repository-backed services.
+     *
+     * @see docs/Features/Operate/Boot/ContainerBootstrap.md#method-__construct
      */
     public function __construct(
         private BootstrapProfile           $profile,
@@ -183,9 +62,10 @@ class ContainerBootstrap
      * @param QueryBuilder|null $queryBuilder Optional query builder for repository-backed services.
      *
      * @return self
-     *
+     * @throws RuntimeException If the configuration file cannot be found.
+     * @see docs/Features/Operate/Boot/ContainerBootstrap.md#method-fromconfigfile
      */
-    public static function fromConfigFile(string $configPath, QueryBuilder|null $queryBuilder = null) : self
+    public static function fromConfigFile(string $configPath, QueryBuilder|null $queryBuilder = null): self
     {
         if (! file_exists($configPath)) {
             throw new RuntimeException(message: "Configuration file not found: {$configPath}");
@@ -204,12 +84,12 @@ class ContainerBootstrap
     /**
      * Create a bootstrapper using the development profile.
      *
-     * @param QueryBuilder|null $queryBuilder                              Optional query builder for repository-backed
-     *                                                                     services.
+     * @param QueryBuilder|null $queryBuilder Optional query builder for repository-backed services.
      *
      * @return self
+     * @see docs/Features/Operate/Boot/ContainerBootstrap.md#method-development
      */
-    public static function development(QueryBuilder|null $queryBuilder = null) : self
+    public static function development(QueryBuilder|null $queryBuilder = null): self
     {
         return new self(profile: BootstrapProfile::development(), queryBuilder: $queryBuilder);
     }
@@ -217,12 +97,12 @@ class ContainerBootstrap
     /**
      * Create a bootstrapper using the production profile.
      *
-     * @param QueryBuilder|null $queryBuilder                              Optional query builder for repository-backed
-     *                                                                     services.
+     * @param QueryBuilder|null $queryBuilder Optional query builder for repository-backed services.
      *
      * @return self
+     * @see docs/Features/Operate/Boot/ContainerBootstrap.md#method-production
      */
-    public static function production(QueryBuilder|null $queryBuilder = null) : self
+    public static function production(QueryBuilder|null $queryBuilder = null): self
     {
         return new self(profile: BootstrapProfile::production(), queryBuilder: $queryBuilder);
     }
@@ -230,92 +110,115 @@ class ContainerBootstrap
     /**
      * Bootstrap a complete container with all configured features enabled.
      *
-     * @return Container Fully configured container instance.
+     * This method orchestrates the creation and configuration of the ContainerBuilder,
+     * loads definitions, builds the final container, and performs post-build
+     * initialization steps like validation and monitoring.
+     *
+     * @return Container Fully configured immutable container instance.
+     * @see docs/Features/Operate/Boot/ContainerBootstrap.md#method-bootstrap
      */
-    public function bootstrap() : Container
+    public function bootstrap(): Container
     {
-        // Create base container
-        $container = new Container();
+        // 1. Create and configure Builder
+        $builder = ContainerBuilder::create()
+            ->withProfile($this->profile);
 
-        // Configure container
-        $this->configureContainer(container: $container);
+        // 2. Configure bindings (Aliases, Infra bindings)
+        $this->configureBuilder(builder: $builder);
 
-        // Initialize infrastructure
+        // 3. Load service definitions (from DB to Builder)
+        $this->loadServiceDefinitions(builder: $builder);
+
+        // 4. Build the runtime container
+        $container = $builder->build();
+
+        // 5. Post-build initialization (Infrastructure init, Validation, Monitoring)
         $this->initializeInfrastructure($container);
-
-        // Load service definitions
-        $this->loadServiceDefinitions(container: $container);
-
-        // Validate configuration
         $this->validateConfiguration(container: $container);
-
-        // Initialize monitoring
         $this->initializeMonitoring(container: $container);
 
         return $container;
     }
 
     /**
+     * Initialize core infrastructure components post-build.
+     *
+     * @param Container $container Container instance.
+     * @see docs/Features/Operate/Boot/ContainerBootstrap.md#method-initializeinfrastructure
+     */
+    private function initializeInfrastructure(Container $container): void
+    {
+        // Placeholder for future infrastructure initialization (post-build)
+    }
+
+    /**
      * Configure core container bindings for configuration, caching, and logging.
      *
-     * @param Container $container Container instance to configure.
+     * @param ContainerBuilder $builder Container builder instance.
+     * @see docs/Features/Operate/Boot/ContainerBootstrap.md#method-configurebuilder
      */
-    private function configureContainer(Container $container) : void
+    private function configureBuilder(ContainerBuilder $builder): void
     {
         // Bind core configuration
-        $container->instance(BootstrapProfile::class, $this->profile);
-        $container->instance(ContainerConfig::class, $this->profile->container);
-        $container->instance(TelemetryConfig::class, $this->profile->telemetry);
+        $builder->instance(BootstrapProfile::class, $this->profile);
+        $builder->instance(ContainerConfig::class, $this->profile->container);
+        $builder->instance(TelemetryConfig::class, $this->profile->telemetry);
 
         // Bind infrastructure components
-        $this->bindInfrastructure(container: $container);
+        $this->bindInfrastructure(builder: $builder);
 
         // Set up aliases
-        $this->setupAliases(container: $container);
+        $this->setupAliases(builder: $builder);
     }
 
     /**
      * Bind infrastructure integrations (cache, logging, repositories).
      *
-     * @param Container $container Container instance to bind into.
+     * @param ContainerBuilder $builder Container builder instance.
      *
-     * @throws \RuntimeException When cache or logger factories are missing.
+     * @throws RuntimeException When cache or logger factories are missing.
+     * @see docs/Features/Operate/Boot/ContainerBootstrap.md#method-bindinfrastructure
      */
-    private function bindInfrastructure(Container $container) : void
+    private function bindInfrastructure(ContainerBuilder $builder): void
     {
         // Cache system
-        $container->singleton(CacheManagerIntegration::class, function () {
+        $builder->singleton(CacheManagerIntegration::class, function () {
             return new CacheManagerIntegration(
                 cacheManager: $this->profile->container->withCacheAndLogging(
-            // These would be injected in real implementation
-                cacheManager : $this->createCacheManager(),
-                loggerFactory: $this->createLoggerFactory()
-            )->cacheManager ?? throw new RuntimeException(message: 'Cache manager not configured'),
-                config      : $this->profile->container
+                    // These would be injected in real implementation
+                    cacheManager: $this->createCacheManager(),
+                    loggerFactory: $this->createLoggerFactory()
+                )->cacheManager ?? throw new RuntimeException(message: 'Cache manager not configured'),
+                config: $this->profile->container
             );
         });
 
         // Logging system
-        $container->singleton(LoggerFactoryIntegration::class, function () {
+        $builder->singleton(LoggerFactoryIntegration::class, function () {
             return new LoggerFactoryIntegration(
                 loggerFactory: $this->createLoggerFactory(),
-                config       : $this->profile->telemetry
+                config: $this->profile->telemetry
             );
         });
 
         // Data layer
         if ($this->queryBuilder) {
-            $container->singleton(ServiceDefinitionRepository::class, function () {
-                return new ServiceDefinitionRepository(queryBuilder: $this->queryBuilder);
+            $qb = $this->queryBuilder;
+            $builder->singleton(ServiceDefinitionRepository::class, static function () use ($qb) {
+                return new ServiceDefinitionRepository(queryBuilder: $qb);
             });
 
-            $container->singleton(ServiceDiscovery::class, static function ($c) {
+            $builder->singleton(ServiceDependencyRepository::class, static function () use ($qb) {
+                return new ServiceDependencyRepository(queryBuilder: $qb);
+            });
+
+            $builder->singleton(ServiceDiscovery::class, static function ($c) {
                 return new ServiceDiscovery(repository: $c->get(ServiceDefinitionRepository::class));
             });
 
-            $container->singleton(ServiceValidator::class, function ($c) {
+            $builder->singleton(ServiceValidator::class, function ($c) {
                 return new ServiceValidator(
-                    serviceRepo   : $c->get(ServiceDefinitionRepository::class),
+                    serviceRepo: $c->get(ServiceDefinitionRepository::class),
                     // Would need dependency repo too
                     dependencyRepo: $this->createDependencyRepository()
                 );
@@ -323,12 +226,12 @@ class ContainerBootstrap
         }
 
         // Enhanced metrics
-        $container->singleton(EnhancedMetricsCollector::class, static function ($c) {
+        $builder->singleton(EnhancedMetricsCollector::class, static function ($c) {
             return $c->get(LoggerFactoryIntegration::class)->createMetricsCollector();
         });
 
         // Prototype cache
-        $container->singleton(PrototypeCache::class, static function ($c) {
+        $builder->singleton(PrototypeCache::class, static function ($c) {
             return $c->get(CacheManagerIntegration::class)->createPrototypeCache();
         });
     }
@@ -338,7 +241,7 @@ class ContainerBootstrap
      *
      * @return mixed Cache manager instance or null when unconfigured.
      */
-    private function createCacheManager() : mixed
+    private function createCacheManager(): mixed
     {
         // Placeholder - would create actual CacheManager instance
         return null;
@@ -349,7 +252,7 @@ class ContainerBootstrap
      *
      * @return mixed Logger factory instance or null when unconfigured.
      */
-    private function createLoggerFactory() : mixed
+    private function createLoggerFactory(): mixed
     {
         // Placeholder - would create actual LoggerFactory instance
         return null;
@@ -360,49 +263,52 @@ class ContainerBootstrap
      *
      * @return mixed Dependency repository or null if database is unavailable.
      */
-    private function createDependencyRepository() : mixed
+    private function createDependencyRepository(): mixed
     {
         // Placeholder - would create ServiceDependencyRepository
-        return $this->queryBuilder ? new ServiceDependencyRepository(queryBuilder: $this->queryBuilder) : null;
+        $qb = $this->queryBuilder;
+        return $qb ? new ServiceDependencyRepository(queryBuilder: $qb) : null;
     }
 
     /**
      * Set up container aliases for core services.
      *
-     * @param Container $container Container instance to configure.
+     * @param ContainerBuilder $builder Container builder instance.
+     * @see docs/Features/Operate/Boot/ContainerBootstrap.md#method-setupaliases
      */
-    private function setupAliases(Container $container) : void
+    private function setupAliases(ContainerBuilder $builder): void
     {
-        // PSR interfaces
-        $container->alias(CacheManager::class, 'cache');
-        $container->alias(LoggerFactory::class, 'logger');
+        $builder->bind('cache', static fn($c) => $c->get(CacheManager::class));
+        $builder->bind('logger', static fn($c) => $c->get(LoggerFactory::class));
 
         // Container components
-        $container->alias(EnhancedMetricsCollector::class, 'metrics');
-        $container->alias(ServiceDefinitionRepository::class, 'services');
-        $container->alias(ServiceDiscovery::class, 'discovery');
-        $container->alias(ServiceValidator::class, 'validator');
+        $builder->bind('metrics', static fn($c) => $c->get(EnhancedMetricsCollector::class));
+        $builder->bind('services', static fn($c) => $c->get(ServiceDefinitionRepository::class));
+        $builder->bind('discovery', static fn($c) => $c->get(ServiceDiscovery::class));
+        $builder->bind('validator', static fn($c) => $c->get(ServiceValidator::class));
     }
 
     /**
-     * Load service definitions from repository and register them into the container.
+     * Load service definitions from repository and register them into the container builder.
      *
-     * @param Container $container Container instance to register services into.
+     * @param ContainerBuilder $builder Container builder instance.
+     * @see docs/Features/Operate/Boot/ContainerBootstrap.md#method-loadservicedefinitions
      */
-    private function loadServiceDefinitions(Container $container) : void
+    private function loadServiceDefinitions(ContainerBuilder $builder): void
     {
         if (! $this->queryBuilder) {
             return; // No database, skip
         }
 
         try {
-            $serviceRepo = $container->get(ServiceDefinitionRepository::class);
+            $qb = $this->queryBuilder;
+            // Manually instantiate repo since container doesn't exist yet
+            $serviceRepo = new ServiceDefinitionRepository(queryBuilder: $qb);
             $services    = $serviceRepo->findActiveServices($this->getCurrentEnvironment());
 
             foreach ($services as $serviceDef) {
-                $this->registerService(container: $container, service: $serviceDef);
+                $this->registerService(builder: $builder, service: $serviceDef);
             }
-
         } catch (Throwable $e) {
             // Log but don't fail bootstrap
             $this->logBootstrapError(message: 'Failed to load service definitions', error: $e);
@@ -414,37 +320,39 @@ class ContainerBootstrap
      *
      * @return string|null Environment identifier or null if unset.
      */
-    private function getCurrentEnvironment() : string|null
+    private function getCurrentEnvironment(): string|null
     {
         return getenv('APP_ENV') ?: null;
     }
 
     /**
-     * Register a single service definition into the container.
+     * Register a single service definition into the container builder.
      *
-     * @param Container               $container Container instance.
-     * @param ServiceDefinitionEntity $service   Service definition entity to register.
+     * @param ContainerBuilder         $builder Container builder instance.
+     * @param ServiceDefinitionEntity $service Service definition entity to register.
+     *
+     * @see docs/Features/Operate/Boot/ContainerBootstrap.md#method-registerservice
      */
-    private function registerService(Container $container, ServiceDefinitionEntity $service) : void
+    private function registerService(ContainerBuilder $builder, ServiceDefinitionEntity $service): void
     {
         $id    = $service->id;
         $class = $service->class;
 
         // Register based on lifetime
         match ($service->lifetime) {
-            ServiceLifetime::Singleton => $container->singleton($id, $class),
-            ServiceLifetime::Scoped    => $container->scoped($id, $class),
-            default                    => $container->bind($id, $class)
+            ServiceLifetime::Singleton => $builder->singleton($id, $class),
+            ServiceLifetime::Scoped    => $builder->scoped($id, $class),
+            default                    => $builder->bind($id, $class)
         };
 
         // Apply configuration if present
         if (! empty($service->config)) {
-            $container->when($class)->needs('$config')->give($service->config);
+            $builder->when($class)->needs('$config')->give($service->config);
         }
 
         // Register tags
         if (! empty($service->tags)) {
-            $container->tag($id, $service->tags);
+            $builder->tag($id, $service->tags);
         }
     }
 
@@ -452,9 +360,9 @@ class ContainerBootstrap
      * Log bootstrap errors when a logger is not yet available.
      *
      * @param string     $message Error message.
-     * @param \Throwable $error   Error instance.
+     * @param Throwable $error   Error instance.
      */
-    private function logBootstrapError(string $message, Throwable $error) : void
+    private function logBootstrapError(string $message, Throwable $error): void
     {
         // Basic error logging if logger not available yet
         error_log("[BOOTSTRAP ERROR] {$message}: {$error->getMessage()}");
@@ -464,8 +372,9 @@ class ContainerBootstrap
      * Validate services and report warnings if validation fails.
      *
      * @param Container $container Container instance to validate.
+     * @see docs/Features/Operate/Boot/ContainerBootstrap.md#method-validateconfiguration
      */
-    private function validateConfiguration(Container $container) : void
+    private function validateConfiguration(Container $container): void
     {
         if (! $container->has(ServiceValidator::class)) {
             return; // No validator available
@@ -481,7 +390,6 @@ class ContainerBootstrap
                     context: ['summary' => $summary]
                 );
             }
-
         } catch (Throwable $e) {
             $this->logBootstrapError(message: 'Configuration validation failed', error: $e);
         }
@@ -493,7 +401,7 @@ class ContainerBootstrap
      * @param string               $message Warning message.
      * @param array<string, mixed> $context Context payload.
      */
-    private function logBootstrapWarning(string $message, array $context = []) : void
+    private function logBootstrapWarning(string $message, array $context = []): void
     {
         // Basic warning logging
         $contextStr = empty($context) ? '' : json_encode($context);
@@ -504,8 +412,9 @@ class ContainerBootstrap
      * Initialize metrics and telemetry logging after bootstrap.
      *
      * @param Container $container Container instance to instrument.
+     * @see docs/Features/Operate/Boot/ContainerBootstrap.md#method-initializemonitoring
      */
-    private function initializeMonitoring(Container $container) : void
+    private function initializeMonitoring(Container $container): void
     {
         if (! $this->profile->telemetry->enabled) {
             return;
@@ -523,7 +432,6 @@ class ContainerBootstrap
             // Set up performance monitoring
             $metrics = $container->get(EnhancedMetricsCollector::class);
             $container->instance(MetricsCollector::class, $metrics);
-
         } catch (Throwable $e) {
             $this->logBootstrapError(message: 'Monitoring initialization failed', error: $e);
         }

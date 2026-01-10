@@ -25,11 +25,13 @@ final class KernelContext
      * @param array              $metadata      Additional data accumulated during resolution
      * @param bool               $debug         Enable debug mode
      * @param bool               $allowAutowire Allow automatic dependency resolution
+     * @param bool               $manualInjection If true, skips constructor injection
      * @param string|null        $consumer      Consumer identifier
      * @param string|null        $traceId       Trace identifier
      * @param int                $depth         Current recursion depth
      * @param KernelContext|null $parent        Parent context in the resolution chain
      * @param array              $overrides     Parameter overrides for this resolution
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-__construct
      */
     public function __construct(
         public readonly string             $serviceId,
@@ -48,13 +50,9 @@ final class KernelContext
     /**
      * Create a child context for recursive resolution.
      *
-     * Creates a new context for resolving dependencies of the current service.
-     * Maintains the resolution path and increments depth for circular dependency detection.
-     * The child context inherits debug settings and trace ID while establishing the parent as consumer.
-     *
-     * @param string $serviceId Service identifier for the child resolution
-     * @param array $overrides Parameter overrides for child resolution
-     * @return self New child context
+     * @param string $serviceId Service identifier for the child resolution.
+     * @param array  $overrides Runtime parameter overrides.
+     * @return self New child context.
      * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-child
      */
     public function child(string $serviceId, array $overrides = []): self
@@ -75,11 +73,8 @@ final class KernelContext
     /**
      * Get the resolved instance.
      *
-     * Returns the service instance that has been resolved by the pipeline, or null if resolution
-     * has not yet completed. This method provides access to the final result of the resolution process.
-     *
-     * @return mixed The resolved service instance or null if not yet resolved
-     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-getInstance
+     * @return mixed The service instance or null.
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-getinstance
      */
     public function getInstance(): mixed
     {
@@ -90,11 +85,8 @@ final class KernelContext
      * Check if a service exists in the current resolution path.
      * Used for circular dependency detection.
      *
-     * Traverses the parent context chain to detect if the given service ID is already
-     * being resolved higher up in the dependency tree, preventing infinite loops.
-     *
-     * @param string $serviceId Service identifier to check
-     * @return bool True if service is in the resolution path (circular dependency)
+     * @param string $serviceId Identifier to check.
+     * @return bool True if found in path.
      * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-contains
      */
     public function contains(string $serviceId): bool
@@ -104,7 +96,7 @@ final class KernelContext
             if ($current->serviceId === $serviceId) {
                 return true;
             }
-            $current = $current->parent; // ✓ Fixed: was $this->parent (infinite loop!)
+            $current = $current->parent;
         }
 
         return false;
@@ -113,11 +105,8 @@ final class KernelContext
     /**
      * Get the resolution path as a string.
      *
-     * Builds a human-readable string showing the complete chain of service dependencies
-     * from the root resolution down to the current context, useful for debugging.
-     *
-     * @return string Resolution path showing the chain of service dependencies
-     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-getPath
+     * @return string Human-readable path.
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-getpath
      */
     public function getPath(): string
     {
@@ -129,47 +118,39 @@ final class KernelContext
     /**
      * Set metadata only if not already set.
      *
-     * Stores a metadata value in the specified namespace and key, but only if that key
-     * doesn't already exist. This prevents accidental overwrites of important metadata.
-     *
-     * @param string $namespace Metadata namespace
-     * @param string $key Metadata key
-     * @param mixed $value Metadata value
-     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-setMetaOnce
+     * @param string $namespace Data namespace.
+     * @param string $key       Data key.
+     * @param mixed  $value     Data value.
+     * @return void
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-setmetaonce
      */
     public function setMetaOnce(string $namespace, string $key, mixed $value): void
     {
-        if (! isset($this->metadata[$namespace][$key])) {
-            $this->metadata[$namespace][$key] = $value;
-        }
+        $this->metadata[$namespace][$key] ??= $value;
     }
 
     /**
      * Set metadata value.
      *
-     * Stores a metadata value in the specified namespace and key, allowing pipeline steps
-     * to share information and state during the resolution process.
-     *
-     * @param string $namespace Metadata namespace
-     * @param string $key Metadata key
-     * @param mixed $value Metadata value
-     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-setMeta
+     * @param string $namespace Data namespace.
+     * @param string $key       Data key.
+     * @param mixed  $value     Data value.
+     * @return void
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-setmeta
      */
     public function setMeta(string $namespace, string $key, mixed $value): void
     {
-        $this->putMeta($namespace, $key, $value);
+        $this->putMeta(namespace: $namespace, key: $key, value: $value);
     }
 
     /**
-     * Store metadata value.
+     * Store metadata value directly.
      *
-     * Directly stores a metadata value without additional processing, providing
-     * a low-level interface for metadata management.
-     *
-     * @param string $namespace Metadata namespace
-     * @param string $key Metadata key
-     * @param mixed $value Metadata value to store
-     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-putMeta
+     * @param string $namespace Data namespace.
+     * @param string $key       Data key.
+     * @param mixed  $value     Data value.
+     * @return void
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-putmeta
      */
     public function putMeta(string $namespace, string $key, mixed $value): void
     {
@@ -179,14 +160,11 @@ final class KernelContext
     /**
      * Get metadata value with default.
      *
-     * Retrieves a metadata value from the specified namespace and key, returning
-     * the provided default value if the key doesn't exist.
-     *
-     * @param string $namespace Metadata namespace
-     * @param string $key Metadata key
-     * @param mixed $default Default value if key not found
-     * @return mixed Metadata value or default
-     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-getMeta
+     * @param string $namespace Data namespace.
+     * @param string $key       Data key.
+     * @param mixed  $default    Fallback value.
+     * @return mixed Data if found, default otherwise.
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-getmeta
      */
     public function getMeta(string $namespace, string $key, mixed $default = null): mixed
     {
@@ -196,12 +174,10 @@ final class KernelContext
     /**
      * Check if metadata exists.
      *
-     * Determines whether a metadata value has been set for the specified namespace and key.
-     *
-     * @param string $namespace Metadata namespace
-     * @param string $key Metadata key
-     * @return bool True if metadata exists
-     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-hasMeta
+     * @param string $namespace Data namespace.
+     * @param string $key       Data key.
+     * @return bool True if set.
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-hasmeta
      */
     public function hasMeta(string $namespace, string $key): bool
     {
@@ -210,29 +186,22 @@ final class KernelContext
 
     /**
      * Safely set the instance if not already resolved.
-     * Prevents LogicException if the instance was already set by another step.
      *
-     * Sets the resolved instance only if no instance has been set yet, providing
-     * a safe way for pipeline steps to contribute to resolution without conflicts.
-     *
-     * @param mixed $instance Service instance to set
-     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-setInstanceSafe
+     * @param mixed $instance Resolved service.
+     * @return void
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-setinstancesafe
      */
     public function setInstanceSafe(mixed $instance): void
     {
-        if ($this->instance === null) {
-            $this->instance = $instance;
-        }
+        $this->instance ??= $instance;
     }
 
     /**
      * Explicitly overwrite the instance. Use for extenders or decorators.
      *
-     * Replaces the current resolved instance with a new one, intended for use by
-     * extenders, decorators, or other transformations that modify the final result.
-     *
-     * @param mixed $instance New instance to set (overwrites existing)
-     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-overwriteWith
+     * @param mixed $instance The new instance.
+     * @return void
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-overwritewith
      */
     public function overwriteWith(mixed $instance): void
     {
@@ -240,33 +209,29 @@ final class KernelContext
     }
 
     /**
-     * Set the resolved instance.
+     * Set the resolved instance (alias for resolvedWith).
      *
-     * Provides a convenient alias for resolvedWith(), setting the service instance
-     * as the final result of the resolution process.
-     *
-     * @param object $instance Service instance
-     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-setInstance
+     * @param object $instance Resolved service.
+     * @return void
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-setinstance
      */
     public function setInstance(object $instance): void
     {
-        $this->resolvedWith($instance);
+        $this->resolvedWith(instance: $instance);
     }
 
     /**
      * Safely set the resolved instance. Use for initial resolution.
      *
-     * Sets the service instance as resolved, but only if no instance has been set yet.
-     * This prevents accidental overwrites and ensures clean resolution state.
-     *
-     * @param mixed $instance Service instance to set
-     * @throws LogicException If instance already resolved
-     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-resolvedWith
+     * @param mixed $instance Resolved service.
+     * @return void
+     * @throws LogicException If already resolved.
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-resolvedwith
      */
     public function resolvedWith(mixed $instance): void
     {
         if ($this->instance !== null) {
-            throw new LogicException("Instance already resolved for [{$this->serviceId}]. Use overwriteWith() if modification is intended.");
+            throw new LogicException(message: "Instance already resolved for [{$this->serviceId}]. Use overwriteWith() if modification is intended.");
         }
         $this->instance = $instance;
     }
@@ -274,11 +239,8 @@ final class KernelContext
     /**
      * String representation of the context.
      *
-     * Returns a human-readable string summarizing the context's current state,
-     * including service ID, resolution depth, and resolution status.
-     *
-     * @return string Context information
-     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-__toString
+     * @return string
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-__tostring
      */
     public function __toString(): string
     {
@@ -293,10 +255,8 @@ final class KernelContext
     /**
      * Check if the context has a resolved instance.
      *
-     * Determines whether the resolution process has completed and an instance is available.
-     *
-     * @return bool True if instance is resolved
-     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-isResolved
+     * @return bool
+     * @see docs_md/Core/Kernel/Contracts/KernelContext.md#method-isresolved
      */
     public function isResolved(): bool
     {

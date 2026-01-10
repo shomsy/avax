@@ -5,78 +5,34 @@ declare(strict_types=1);
 namespace Avax\Container\Features\Think\Model;
 
 use Avax\Container\Features\Think\Cache\PrototypeCache;
-use Avax\Container\Features\Think\Prototype\DependencyInjectionPrototypeFactory;
+use Avax\Container\Features\Think\Prototype\ServicePrototypeFactory;
 
 /**
- * Immutable blueprint containing static analysis results for dependency injection resolution.
+ * The immutable master blueprint for building a specific service.
  *
- * This class serves as the central data structure that captures all the information needed
- * to instantiate and configure a service within the dependency injection container. It acts
- * as a "construction prototype" that tells the resolution engine exactly how to construct objects,
- * inject dependencies, and handle lifecycle management.
+ * A ServicePrototype is the "Final Output" of the container's analysis phase. 
+ * It contains a complete, verified description of every dependency a class 
+ * needs, where they should be injected (Constructor, Properties, or Methods), 
+ * and whether the class is even capable of being instantiated.
+ * 
+ * This object is designed to be fully serializable, perfectly suitable for 
+ * being cached in files or handled by AOT (Ahead-of-Time) compilers.
  *
- * ANALYSIS CAPTURED:
- * - Target class identification and validation
- * - Constructor parameter mapping and resolution
- * - Property injection specifications
- * - Method injection configurations
- * - Instantiability assessment (abstract classes, interfaces)
- *
- * ARCHITECTURAL ROLE:
- * The ServicePrototype is created during the "Think" phase of container operation and used
- * during the "Actions" phase for actual service instantiation. It bridges static analysis
- * with runtime resolution, enabling optimized and predictable dependency injection.
- *
- * USAGE IN RESOLUTION PIPELINE:
- * ```php
- * // During analysis phase
- * $prototype = $analyzer->analyze(DatabaseConnection::class);
- *
- * // During resolution phase
- * $instance = $resolver->resolve($prototype);
- * ```
- *
- * SERIALIZATION SUPPORT:
- * ServicePrototype supports full serialization for caching and compilation scenarios,
- * enabling pre-computed analysis to be stored and reused across requests.
- *
- * PERFORMANCE CHARACTERISTICS:
- * - Immutable design allows safe sharing across threads
- * - Serialization enables caching of expensive analysis
- * - Lazy loading of complex dependencies
- * - Minimal memory footprint for simple services
- *
- * @package Avax\Container\Think\Model
- * @see     \Avax\Container\Features\Actions\Resolve\Contracts\EngineInterface For runtime instantiation using
- *          ServicePrototype
- * @see     DependencyInjectionPrototypeFactory For creating ServicePrototype instances
- * @see     PrototypeCache For caching serialized prototypes
- * @see docs_md/Features/Think/Model/ServicePrototype.md#quick-summary
+ * @package Avax\Container\Features\Think\Model
+ * @see docs/Features/Think/Model/ServicePrototype.md
+ * @see ServicePrototypeFactory For the creation logic of this model.
+ * @see PrototypeCache For the persistence logic of this model.
  */
 readonly class ServicePrototype
 {
     /**
-     * Creates a new ServicePrototype instance with analyzed dependency information.
+     * Initializes the blueprint with all discovered injection metadata.
      *
-     * This constructor initializes the blueprint with all the static analysis results
-     * needed for service resolution. The parameters represent the complete specification
-     * for how to construct and configure the target service.
-     *
-     * PARAMETER INTERACTIONS:
-     * - $class defines the target type to instantiate
-     * - $constructor specifies how to call the constructor (if any)
-     * - $injectedProperties define property injection requirements
-     * - $injectedMethods specify method injection configurations
-     * - $isInstantiable indicates if the class can actually be instantiated
-     *
-     * @param string               $class              The fully qualified class name to instantiate
-     * @param MethodPrototype|null $constructor        Blueprint for constructor injection (null if no constructor
-     *                                                 needed)
-     * @param PropertyPrototype[]  $injectedProperties Array of property injection specifications
-     * @param MethodPrototype[]    $injectedMethods    Array of method injection configurations
-     * @param bool                 $isInstantiable     Whether the class can be instantiated (false for
-     *                                                 abstracts/interfaces)
-     * @see docs_md/Features/Think/Model/ServicePrototype.md#method-__construct
+     * @param string               $class              The fully qualified name of the target class.
+     * @param MethodPrototype|null $constructor        Blueprint for the object's constructor.
+     * @param PropertyPrototype[]  $injectedProperties List of properties marked for dependency injection.
+     * @param MethodPrototype[]    $injectedMethods    List of methods (setters) marked for dependency injection.
+     * @param bool                 $isInstantiable     False if the target is an Interface or Abstract class.
      */
     public function __construct(
         public string               $class,
@@ -87,26 +43,13 @@ readonly class ServicePrototype
     ) {}
 
     /**
-     * Deserializes a ServicePrototype from var_export() array format.
+     * Magic method to support serialization via var_export().
      *
-     * This magic method enables unserialization from cached or compiled container data.
-     * It's automatically called by PHP when loading serialized ServicePrototype instances.
+     * This is used by the `CompiledPrototypeDumper` to create high-performance 
+     * PHP cache files that can be loaded instantly in production.
      *
-     * USAGE IN COMPILED CONTAINERS:
-     * ```php
-     * // Generated by compilation
-     * $prototype = ServicePrototype::__set_state([
-     *     'class' => 'DatabaseConnection',
-     *     'constructor' => [...],
-     *     // ...
-     * ]);
-     * ```
-     *
-     * @param array $array The serialized array representation
-     *
-     * @return self The deserialized ServicePrototype instance
-     * @see __set_state For PHP's automatic unserialization mechanism
-     * @see docs_md/Features/Think/Model/ServicePrototype.md#method-__set_state
+     * @param array<string, mixed> $array State data for reconstruction.
+     * @return self The reconstructed blueprint.
      */
     public static function __set_state(array $array): self
     {
@@ -114,73 +57,45 @@ readonly class ServicePrototype
     }
 
     /**
-     * Creates a ServicePrototype instance from an array representation.
+     * Hydrate a blueprint from a raw configuration array.
      *
-     * This factory method reconstructs a ServicePrototype from serialized data, typically
-     * loaded from cache or compiled container definitions. It performs validation
-     * and type conversion for all nested objects.
+     * Useful for restoring prototypes from JSON or file caches.
      *
-     * ARRAY FORMAT:
-     * ```php
-     * [
-     *     'class' => 'MyService',
-     *     'constructor' => ['method' => '__construct', 'parameters' => [...]],
-     *     'injectedProperties' => [['name' => 'config', 'value' => '...']],
-     *     'injectedMethods' => [['method' => 'setLogger', 'parameters' => [...]]],
-     *     'isInstantiable' => true
-     * ]
-     * ```
+     * @param array<string, mixed> $data Raw source data.
+     * @return self The resulting model.
      *
-     * @param array $data The array containing ServicePrototype data
-     *
-     * @return self The constructed ServicePrototype instance
-     * @throws \InvalidArgumentException If required data is missing or invalid
-     * @see docs_md/Features/Think/Model/ServicePrototype.md#method-fromarray
+     * @see docs/Features/Think/Model/ServicePrototype.md#method-fromarray
      */
     public static function fromArray(array $data): self
     {
         return new self(
             class: $data['class'],
             constructor: isset($data['constructor']) ? MethodPrototype::fromArray(data: $data['constructor']) : null,
-            injectedProperties: array_map(static fn(array $p): PropertyPrototype => PropertyPrototype::fromArray(data: $p), $data['injectedProperties'] ?? []),
-            injectedMethods: array_map(static fn(array $m): MethodPrototype => MethodPrototype::fromArray(data: $m), $data['injectedMethods'] ?? []),
+            injectedProperties: array_map(
+                static fn(array $p): PropertyPrototype => PropertyPrototype::fromArray(data: $p),
+                $data['injectedProperties'] ?? []
+            ),
+            injectedMethods: array_map(
+                static fn(array $m): MethodPrototype => MethodPrototype::fromArray(data: $m),
+                $data['injectedMethods'] ?? []
+            ),
             isInstantiable: $data['isInstantiable'] ?? true
         );
     }
 
     /**
-     * Converts the ServicePrototype to an array representation for serialization.
+     * Flatten the blueprint into a serializable array.
      *
-     * This method enables the ServicePrototype to be serialized for caching or compilation.
-     * The resulting array can be stored in files or caches and later reconstructed
-     * using fromArray() or __set_state().
-     *
-     * SERIALIZATION SCENARIOS:
-     * - Container compilation for production deployment
-     * - Caching analyzed prototypes to avoid repeated reflection
-     * - Persisting prototypes across application restarts
-     *
-     * OUTPUT FORMAT:
-     * ```php
-     * [
-     *     'class' => 'DatabaseConnection',
-     *     'constructor' => ['method' => '__construct', 'parameters' => [...]],
-     *     'injectedProperties' => [...],
-     *     'injectedMethods' => [...],
-     *     'isInstantiable' => true
-     * ]
-     * ```
-     *
-     * @return array The array representation of this ServicePrototype
-     * @see docs_md/Features/Think/Model/ServicePrototype.md#method-toarray
+     * @return array<string, mixed> Descriptive metadata array.
+     * @see docs/Features/Think/Model/ServicePrototype.md#method-toarray
      */
     public function toArray(): array
     {
         return [
             'class'              => $this->class,
             'constructor'        => $this->constructor?->toArray(),
-            'injectedProperties' => array_map(fn(PropertyPrototype $p): array => $p->toArray(), $this->injectedProperties),
-            'injectedMethods'    => array_map(fn(MethodPrototype $m): array => $m->toArray(), $this->injectedMethods),
+            'injectedProperties' => array_map(static fn(PropertyPrototype $p): array => $p->toArray(), $this->injectedProperties),
+            'injectedMethods'    => array_map(static fn(MethodPrototype $m): array => $m->toArray(), $this->injectedMethods),
             'isInstantiable'     => $this->isInstantiable,
         ];
     }

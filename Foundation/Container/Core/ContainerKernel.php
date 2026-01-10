@@ -27,6 +27,7 @@ use Throwable;
  * Acts as the central hub for resolution, scoping, and injection, orchestrating complex dependency management while maintaining clean separation of concerns.
  *
  * @see docs_md/Core/ContainerKernel.md#quick-summary
+ * @internal This class is not intended for public usage. Use ContainerInterface instead.
  */
 final readonly class ContainerKernel implements ContainerInternalInterface
 {
@@ -40,6 +41,7 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      *
      * @param DefinitionStore $definitions
      * @param KernelConfig $config
+     * @see docs_md/Core/ContainerKernel.md#method-__construct
      */
     public function __construct(
         private DefinitionStore $definitions,
@@ -49,14 +51,18 @@ final readonly class ContainerKernel implements ContainerInternalInterface
 
         $this->runtime  = new KernelRuntime(pipeline: $pipeline, invoker: $config->invoker);
         $this->state    = new KernelState();
-        $this->compiler = new KernelCompiler(definitions: $definitions, prototypeFactory: $config->prototypeFactory, metrics: $config->metrics);
+        $this->compiler = new KernelCompiler(
+            definitions: $definitions,
+            prototypeFactory: $config->prototypeFactory,
+            metrics: $config->metrics
+        );
 
         $this->facade = new KernelFacade(
             definitions: $definitions,
             scopes: $config->scopes,
-            metrics: $config->metrics,
             timeline: $config->timeline,
             prototypeFactory: $config->prototypeFactory,
+            metrics: $config->metrics,
             terminator: $config->terminator,
             policy: $config->policy
         );
@@ -67,8 +73,8 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      *
      * @param KernelContext $context
      * @return mixed
-     * @throws ResolutionException
-     * @see docs/Core/ContainerKernel.html
+     * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException
+     * @see docs_md/Core/ContainerKernel.md#method-resolvecontext
      */
     public function resolveContext(KernelContext $context): mixed
     {
@@ -85,7 +91,7 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      *
      * @param string $id
      * @return bool
-     * @see docs/Core/ContainerKernel.html
+     * @see docs_md/Core/ContainerKernel.md#method-has
      */
     public function has(string $id): bool
     {
@@ -108,7 +114,7 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      * Get the scope manager.
      *
      * @return ScopeManager
-     * @see docs/Core/ContainerKernel.html
+     * @see docs_md/Core/ContainerKernel.md#method-scopes
      */
     public function scopes(): ScopeManager
     {
@@ -120,9 +126,9 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      *
      * @param string $id
      * @return mixed
-     * @throws ResolutionException
-     * @throws ServiceNotFoundException
-     * @see docs/Core/ContainerKernel.html
+     * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException
+     * @throws \Avax\Container\Features\Core\Exceptions\ServiceNotFoundException
+     * @see docs_md/Core/ContainerKernel.md#method-get
      */
     public function get(string $id): mixed
     {
@@ -140,7 +146,7 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      * @param string $abstract
      * @param object $instance
      * @return void
-     * @see docs/Core/ContainerKernel.html
+     * @see docs_md/Core/ContainerKernel.md#method-instance
      */
     public function instance(string $abstract, object $instance): void
     {
@@ -153,9 +159,9 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      * @param string $id
      * @param array $parameters
      * @return object
-     * @throws ResolutionException
-     * @throws ServiceNotFoundException
-     * @see docs/Core/ContainerKernel.html
+     * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException
+     * @throws \Avax\Container\Features\Core\Exceptions\ServiceNotFoundException
+     * @see docs_md/Core/ContainerKernel.md#method-make
      */
     public function make(string $id, array $parameters = []): object
     {
@@ -167,8 +173,8 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      *
      * @param ServicePrototype $prototype
      * @return mixed
-     * @throws ResolutionException
-     * @see docs/Core/ContainerKernel.html
+     * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException
+     * @see docs_md/Core/ContainerKernel.md#method-resolve
      */
     public function resolve(ServicePrototype $prototype): mixed
     {
@@ -181,8 +187,8 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      * @param callable|string $callable
      * @param array $parameters
      * @return mixed
-     * @throws ResolutionException
-     * @see docs/Core/ContainerKernel.html
+     * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException
+     * @see docs_md/Core/ContainerKernel.md#method-call
      */
     public function call(callable|string $callable, array $parameters = []): mixed
     {
@@ -194,8 +200,8 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      *
      * @param object $target
      * @return object
-     * @throws ResolutionException
-     * @see docs/Core/ContainerKernel.html
+     * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException
+     * @see docs_md/Core/ContainerKernel.md#method-injectinto
      */
     public function injectInto(object $target): object
     {
@@ -206,7 +212,7 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      * Start a new resolution scope.
      *
      * @return void
-     * @see docs/Core/ContainerKernel.html
+     * @see docs_md/Core/ContainerKernel.md#method-beginscope
      */
     public function beginScope(): void
     {
@@ -217,7 +223,7 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      * End the current resolution scope.
      *
      * @return void
-     * @see docs/Core/ContainerKernel.html
+     * @see docs_md/Core/ContainerKernel.md#method-endscope
      */
     public function endScope(): void
     {
@@ -229,7 +235,7 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      *
      * @param object $target
      * @return bool
-     * @see docs/Core/ContainerKernel.html
+     * @see docs_md/Core/ContainerKernel.md#method-caninject
      */
     public function canInject(object $target): bool
     {
@@ -242,15 +248,15 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      *
      * @param object $target
      * @return InjectionReport
-     * @see docs/Core/ContainerKernel.html
+     * @see docs_md/Core/ContainerKernel.md#method-inspectinjection
      */
     public function inspectInjection(object $target): InjectionReport
     {
-        $class     = get_class($target);
+        $class     = $target::class;
         $prototype = $this->facade->prototypeFactory->createFor(class: $class);
 
         $properties = array_map(static fn($p) => $p->type ?? 'mixed', $prototype->injectedProperties);
-        $methods = array_map(static fn($m) => array_map(static fn($pa) => $pa->type ?? 'mixed', $m->parameters), $prototype->injectedMethods);
+        $methods    = array_map(static fn($m) => array_map(static fn($pa) => $pa->type ?? 'mixed', $m->parameters), $prototype->injectedMethods);
 
         return new InjectionReport(
             success: !empty($properties) || !empty($methods),
@@ -264,7 +270,7 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      * Export metrics as string.
      *
      * @return string
-     * @see docs/Core/ContainerKernel.html
+     * @see docs_md/Core/ContainerKernel.md#method-exportmetrics
      */
     public function exportMetrics(): string
     {
@@ -275,6 +281,7 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      * Get telemetry component.
      *
      * @return Telemetry
+     * @see docs_md/Core/ContainerKernel.md#method-telemetry
      */
     public function telemetry(): Telemetry
     {
@@ -288,7 +295,7 @@ final readonly class ContainerKernel implements ContainerInternalInterface
      * Get the definition store.
      *
      * @return DefinitionStore
-     * @see docs/Core/ContainerKernel.html
+     * @see docs_md/Core/ContainerKernel.md#method-getdefinitions
      */
     public function getDefinitions(): DefinitionStore
     {

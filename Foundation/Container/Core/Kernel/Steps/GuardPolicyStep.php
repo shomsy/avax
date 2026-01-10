@@ -17,23 +17,13 @@ use Avax\Container\Guard\Enforce\GuardResolution;
  * This step acts as a gatekeeper, validating that the requested service
  * can be resolved according to configured security rules and policies.
  *
- * Checks include:
- * - Service access permissions
- * - Namespace restrictions
- * - Resolution depth limits
- * - Custom security policies
- *
- * If policy validation fails, resolution is blocked before any resources
- * are consumed, providing early feedback and preventing potential security issues.
- *
  * @package Avax\Container\Core\Kernel\Steps
  * @see docs_md/Core/Kernel/Steps/GuardPolicyStep.md#quick-summary
  */
 final readonly class GuardPolicyStep implements KernelStep
 {
     /**
-     * @param GuardResolution $guard Guard policy evaluator
-     *
+     * @param GuardResolution $guard Guard policy evaluator.
      * @see docs_md/Core/Kernel/Steps/GuardPolicyStep.md#method-__construct
      */
     public function __construct(
@@ -43,11 +33,9 @@ final readonly class GuardPolicyStep implements KernelStep
     /**
      * Enforce security policies for the requested service.
      *
-     * @param KernelContext $context The resolution context
-     *
+     * @param KernelContext $context The resolution context.
      * @return void
-     *
-     * @throws ContainerException If policy validation fails
+     * @throws ContainerException If policy validation fails.
      * @see docs_md/Core/Kernel/Steps/GuardPolicyStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void
@@ -55,6 +43,7 @@ final readonly class GuardPolicyStep implements KernelStep
         if ($context->getMeta('inject', 'target', false)) {
             return;
         }
+
         $result = $this->guard->check(abstract: $context->serviceId);
 
         if ($result instanceof ErrorDTO) {
@@ -66,6 +55,6 @@ final readonly class GuardPolicyStep implements KernelStep
 
         // Add policy validation metadata
         $context->setMeta('policy', 'checked', true);
-        $context->setMeta('policy', 'check_time', microtime(true));
+        $context->setMeta('policy', 'check_time', microtime(as_float: true));
     }
 }

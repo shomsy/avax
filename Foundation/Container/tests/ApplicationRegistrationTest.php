@@ -2,11 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Container;
+namespace Avax\Container\Tests;
 
 use Avax\Container\Features\Operate\Boot\Application;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
+/**
+ * PHPUnit test coverage for Container component behavior.
+ *
+ * @see docs_md/tests/ApplicationRegistrationTest.md#quick-summary
+ */
 final class ApplicationRegistrationTest extends TestCase
 {
     private Application $app;
@@ -20,20 +26,20 @@ final class ApplicationRegistrationTest extends TestCase
     public function testSingletonRegistration(): void
     {
         $this->app->singleton('shared_service', function () {
-            return new \stdClass();
+            return new stdClass();
         });
 
         $instance1 = $this->app->make('shared_service');
         $instance2 = $this->app->make('shared_service');
 
-        $this->assertInstanceOf(\stdClass::class, $instance1);
+        $this->assertInstanceOf(stdClass::class, $instance1);
         $this->assertSame($instance1, $instance2);
     }
 
     public function testBindRegistration(): void
     {
         $this->app->bind('transient_service', function () {
-            return new \stdClass();
+            return new stdClass();
         });
 
         $instance1 = $this->app->make('transient_service');
@@ -45,7 +51,7 @@ final class ApplicationRegistrationTest extends TestCase
     public function testScopedRegistration(): void
     {
         $this->app->scoped('scoped_service', function () {
-            return new \stdClass();
+            return new stdClass();
         });
 
         // Scope 1

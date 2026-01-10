@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Repository;
 
-use Avax\Database\Modules\Query\Builder\QueryBuilder;
+use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 use Exception;
 use RuntimeException;
 
@@ -27,7 +27,7 @@ abstract class Repository
     /**
      * @throws \Exception
      */
-    public function findById(int $id) : object|null
+    public function findById(int $id): object|null
     {
         return $this->findOneBy(conditions: ['id' => $id]);
     }
@@ -41,7 +41,7 @@ abstract class Repository
      * @throws \Exception
      * @throws \Exception
      */
-    public function findOneBy(array $conditions) : object|null
+    public function findOneBy(array $conditions): object|null
     {
         try {
             $query = $this->query();
@@ -54,16 +54,18 @@ abstract class Repository
 
             return $result ? $this->mapToEntity(data: $result) : null;
         } catch (Exception $exception) {
-            $this->logError(message: 'Failed to find one entity by conditions.', context: [
-                'conditions' => $conditions,
-                'exception'  => $exception,
-            ]
+            $this->logError(
+                message: 'Failed to find one entity by conditions.',
+                context: [
+                    'conditions' => $conditions,
+                    'exception'  => $exception,
+                ]
             );
             throw $exception;
         }
     }
 
-    protected function query() : QueryBuilder
+    protected function query(): QueryBuilder
     {
         return $this->queryBuilder->newQuery()->table($this->getTableName());
     }
@@ -73,7 +75,7 @@ abstract class Repository
      *
      * @return string The name of the table.
      */
-    protected function getTableName() : string
+    protected function getTableName(): string
     {
         $entityClass = $this->getEntityClass();
 
@@ -94,7 +96,7 @@ abstract class Repository
      *
      * @return string The fully qualified class name of the entity.
      */
-    abstract protected function getEntityClass() : string;
+    abstract protected function getEntityClass(): string;
 
     // ===== CRUD Methods ===== //
 
@@ -105,9 +107,9 @@ abstract class Repository
      *
      * @return object The mapped entity.
      */
-    abstract protected function mapToEntity(array $data) : object;
+    abstract protected function mapToEntity(array $data): object;
 
-    protected function logError(string $message, array $context = []) : void
+    protected function logError(string $message, array $context = []): void
     {
         logger(message: $message, context: $context, level: 'error');
     }
@@ -115,7 +117,7 @@ abstract class Repository
     /**
      * @throws \Exception
      */
-    public function findAll(int|null $limit = null, int $offset = 0) : array
+    public function findAll(int|null $limit = null, int $offset = 0): array
     {
         $limit ??= 100;
 
@@ -141,8 +143,7 @@ abstract class Repository
         string|null $direction = null,
         int|null    $limit = null,
         int|null    $offset = null
-    ) : array
-    {
+    ): array {
         try {
             $query = $this->query();
 
@@ -183,7 +184,7 @@ abstract class Repository
     /**
      * @throws \Exception
      */
-    public function save(object $entity) : void
+    public function save(object $entity): void
     {
         $this->beforeSave(entity: $entity);
 
@@ -204,7 +205,7 @@ abstract class Repository
         $this->afterSave(entity: $entity);
     }
 
-    protected function beforeSave(object $entity) : void
+    protected function beforeSave(object $entity): void
     {
         // Placeholder for pre-save logic.
     }
@@ -216,9 +217,9 @@ abstract class Repository
      *
      * @return array<string, mixed> The database row representation.
      */
-    abstract protected function mapToDatabase(object $entity) : array;
+    abstract protected function mapToDatabase(object $entity): array;
 
-    protected function afterSave(object $entity) : void
+    protected function afterSave(object $entity): void
     {
         // Placeholder for post-save logic.
     }
@@ -228,7 +229,7 @@ abstract class Repository
     /**
      * @throws \Exception
      */
-    public function delete(object $entity) : void
+    public function delete(object $entity): void
     {
         if (! method_exists(object_or_class: $entity, method: 'getId') || $entity->getId() === null) {
             throw new RuntimeException(message: "Entity must have an ID to be deleted.");
@@ -248,7 +249,7 @@ abstract class Repository
      * @throws \Exception
      * @throws \Exception
      */
-    public function exists(array $conditions) : bool
+    public function exists(array $conditions): bool
     {
         try {
             $query = $this->query();
@@ -278,7 +279,7 @@ abstract class Repository
      * @throws \Exception
      * @throws \Exception
      */
-    public function count(array $conditions) : int
+    public function count(array $conditions): int
     {
         try {
             $query = $this->query();

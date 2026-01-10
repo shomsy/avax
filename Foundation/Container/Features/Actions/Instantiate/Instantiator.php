@@ -13,31 +13,36 @@ use ReflectionClass;
 use Throwable;
 
 /**
- * Service used for creating new instances of classes.
+ * The high-performance "Assembly Robot" for physical object instantiation.
  *
- * @see docs_md/Features/Actions/Instantiate/Instantiator.md#quick-summary
+ * The Instantiator is responsible for the final act of object creation. It takes 
+ * a class name, looks up its analyzed constructor metadata (prototype), resolves 
+ * the necessary arguments via the {@see DependencyResolverInterface}, and 
+ * executes the constructor.
+ *
+ * @package Avax\Container\Features\Actions\Instantiate
+ * @see docs/Features/Actions/Instantiate/Instantiator.md
  */
 final class Instantiator
 {
     /**
-     * @param ServicePrototypeFactoryInterface $prototypes Prototype factory for constructor metadata
-     * @param DependencyResolverInterface      $resolver   Constructor parameter resolver
-     * @param ContainerInterface|null          $container  Container used for dependency resolution
+     * Initializes the instantiator with metadata and resolution helpers.
      *
-     * @see docs_md/Features/Actions/Instantiate/Instantiator.md#method-__construct
+     * @param ServicePrototypeFactoryInterface $prototypes Prototype factory for constructor metadata.
+     * @param DependencyResolverInterface      $resolver   Constructor parameter resolver.
+     * @param ContainerInterface|null          $container  The container to use for resolution (dynamic).
      */
     public function __construct(
         private readonly ServicePrototypeFactoryInterface $prototypes,
-        private readonly DependencyResolverInterface $resolver,
-        private ContainerInterface|null          $container = null
+        private readonly DependencyResolverInterface      $resolver,
+        private ContainerInterface|null                   $container = null
     ) {}
 
     /**
-     * Set the container reference used for resolving constructor parameters.
+     * Wire the container reference for recursive dependency resolution.
      *
-     * @param ContainerInterface $container
-     * @return void
-     * @see docs_md/Features/Actions/Instantiate/Instantiator.md#method-setcontainer
+     * @param ContainerInterface $container The application container instance.
+     * @see docs/Features/Actions/Instantiate/Instantiator.md#method-setcontainer
      */
     public function setContainer(ContainerInterface $container): void
     {
@@ -47,33 +52,37 @@ final class Instantiator
     /**
      * Build a class instance using analyzed constructor metadata.
      *
-     * @param string           $class
-     * @param array            $overrides
-     * @param KernelContext|null $context
+     * @param string             $class     Fully qualified class name to instantiate.
+     * @param array<string, mixed> $overrides  Manual constructor arguments (Name => Value).
+     * @param KernelContext|null   $context    Current resolution context for loop detection and metadata.
      *
-     * @return object
-     * @throws ContainerException
-     * @see docs_md/Features/Actions/Instantiate/Instantiator.md#method-build
+     * @return object The newly created instance.
+     * @throws ContainerException If the class is not instantiable or resolution fails.
+     *
+     * @see docs/Features/Actions/Instantiate/Instantiator.md#method-build
      */
     public function build(string $class, array $overrides = [], KernelContext|null $context = null): object
     {
         try {
-            if (! class_exists($class)) {
-                throw new ContainerException(message: "Cannot autowire: class [{$class}] not found.");
+            if (! class_exists(class: $class)) {
+                throw new ContainerException(message: "Cannot instantiate: class [{$class}] not found.");
             }
 
-            // Get prototype from metadata if available (passed from AnalyzePrototypeStep)
-            $prototype = $context?->getMeta('analysis', 'prototype') ?? $this->prototypes->createFor(class: $class);
+            // 1. Fetch analyzed metadata (from context or factory)
+            /** @var \Avax\Container\Features\Think\Model\ServicePrototype $prototype */
+            $prototype = $context?->getMeta(key: 'analysis', namespace: 'prototype')
+                ?? $this->prototypes->createFor(class: $class);
 
             $reflection = new ReflectionClass(objectOrClass: $class);
             if (! $reflection->isInstantiable()) {
-                throw new ContainerException(message: "Cannot autowire: class [{$class}] is not instantiable.");
+                throw new ContainerException(message: "Cannot instantiate: class [{$class}] is abstract or has a private constructor.");
             }
 
+            // 2. Resolve constructor arguments
             $resolvedParameters = [];
             if ($prototype->constructor) {
                 if ($this->container === null) {
-                    throw new ContainerException(message: 'Container not available for dependency resolution.');
+                    throw new ContainerException(message: 'Resolution failed: Container reference missing from instantiator.');
                 }
 
                 $resolvedParameters = $this->resolver->resolveParameters(
@@ -84,6 +93,7 @@ final class Instantiator
                 );
             }
 
+            // 3. Execute constructor
             return $prototype->constructor
                 ? $reflection->newInstanceArgs(args: $resolvedParameters)
                 : $reflection->newInstance();
@@ -91,7 +101,11 @@ final class Instantiator
             if ($e instanceof ContainerException) {
                 throw $e;
             }
-            throw new ContainerException(message: "Failed to build [{$class}]: " . $e->getMessage(), code: 0, previous: $e);
+            throw new ContainerException(
+                message: "Construction failed for [{$class}]: " . $e->getMessage(),
+                code: 0,
+                previous: $e
+            );
         }
     }
 }

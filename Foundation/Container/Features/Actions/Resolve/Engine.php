@@ -4,245 +4,160 @@ declare(strict_types=1);
 
 namespace Avax\Container\Features\Actions\Resolve;
 
-use Avax\Container\Core\Kernel\Contracts\KernelContext;
 use Avax\Container\Features\Actions\Instantiate\Instantiator;
+use Avax\Container\Features\Actions\Resolve\Contracts\DependencyResolverInterface;
 use Avax\Container\Features\Actions\Resolve\Contracts\EngineInterface;
 use Avax\Container\Features\Core\Contracts\ContainerInternalInterface;
 use Avax\Container\Features\Core\Exceptions\ContainerException;
+use Avax\Container\Features\Core\Exceptions\ResolutionException;
+use Avax\Container\Features\Core\Exceptions\ServiceNotFoundException;
 use Avax\Container\Features\Define\Store\DefinitionStore;
-use Avax\Container\Features\Define\Store\ServiceDefinition;
 use Avax\Container\Features\Operate\Scope\ScopeRegistry;
+use Avax\Container\Core\Kernel\Contracts\KernelContext;
+use Avax\Container\Observe\Metrics\CollectMetrics;
 use Closure;
+use Throwable;
 
 /**
- * Core resolver focusing purely on instantiation.
+ * The core resolution engine for determining and producing service instances.
  *
- * @see docs_md/Features/Actions/Resolve/Engine.md#quick-summary
+ * This engine acts as the "Fulfillment Orchestrator". It evaluates service requests 
+ * by checking contextual rules, explicit bindings, and fallback autowiring. 
+ * It manages the delegation of construction to the {@see Instantiator} while 
+ * maintaining the integrity of the resolution context (parent chains, depth, loops).
+ *
+ * @package Avax\Container\Features\Actions\Resolve
+ * @see docs/Features/Actions/Resolve/Engine.md
  */
 final class Engine implements EngineInterface
 {
+    /** @var ContainerInternalInterface|null The container facade used for nested resolutions. */
+    private ?ContainerInternalInterface $container = null;
+
     /**
-     * @param DefinitionStore|null            $definitions   Definition store (lazy-loaded if null)
-     * @param ScopeRegistry|null              $scopes        Scope registry (lazy-loaded if null)
-     * @param Instantiator|null               $instantiator  Instantiator for autowiring
-     * @param ContainerInternalInterface|null $container     Internal container for delegation and lazy loading
+     * Initializes the engine with essential collaborators.
      *
-     * @see docs_md/Features/Actions/Resolve/Engine.md#method-__construct
+     * @param DependencyResolverInterface $resolver     Resolver for constructor and method parameters.
+     * @param Instantiator                $instantiator The component that handles physical object creation.
+     * @param DefinitionStore             $store        Central registry of service blueprints.
+     * @param ScopeRegistry               $registry     Storage for shared (singleton/scoped) instances.
+     * @param CollectMetrics              $metrics      Collector for performance and observability data.
      */
     public function __construct(
-        private DefinitionStore|null            $definitions = null,
-        private ScopeRegistry|null              $scopes = null,
-        private Instantiator|null               $instantiator = null,
-        private ContainerInternalInterface|null $container = null
+        private readonly DependencyResolverInterface $resolver,
+        private readonly Instantiator                $instantiator,
+        private readonly DefinitionStore             $store,
+        private readonly ScopeRegistry               $registry,
+        private readonly CollectMetrics              $metrics
     ) {}
 
     /**
-     * @see docs_md/Features/Actions/Resolve/Engine.md#method-setcontainer
+     * Wire the container facade into the engine and its collaborators.
+     *
+     * @param ContainerInternalInterface $container The application container instance.
+     * @see docs/Features/Actions/Resolve/Engine.md#method-setcontainer
      */
-    public function setContainer(ContainerInternalInterface $container) : void
+    public function setContainer(ContainerInternalInterface $container): void
     {
         $this->container = $container;
-        if ($this->instantiator !== null) {
-            $this->instantiator->setContainer(container: $container);
+        $this->instantiator->setContainer(container: $container);
+    }
+
+    /**
+     * Check if the engine has all required internal state to operate.
+     *
+     * @return bool True if the container reference is initialized.
+     * @see docs/Features/Actions/Resolve/Engine.md#method-hasinternals
+     */
+    public function hasInternals(): bool
+    {
+        return $this->container !== null;
+    }
+
+    /**
+     * Resolve a service into an instance or value based on the provided context.
+     *
+     * @param KernelContext $context The resolution context containing ID and overrides.
+     * @return mixed The fully resolved service instance.
+     * @throws ResolutionException If the service cannot be built or has missing dependencies.
+     * @throws ServiceNotFoundException If the service identifier is unknown.
+     *
+     * @see docs/Features/Actions/Resolve/Engine.md#method-resolve
+     */
+    public function resolve(KernelContext $context): mixed
+    {
+        if ($this->container === null) {
+            throw new ContainerException(message: "Container engine is not fully initialized. Call setContainer() before resolution.");
         }
-    }
 
-    /**
-     * @see docs_md/Features/Actions/Resolve/Engine.md#method-hasinternals
-     */
-    public function hasInternals() : bool
-    {
-        return $this->definitions !== null
-            && $this->scopes !== null
-            && $this->instantiator !== null;
-    }
-
-    /**
-     * @see docs_md/Features/Actions/Resolve/Engine.md#method-resolve
-     */
-    public function resolve(KernelContext $context) : mixed
-    {
         return $this->resolveFromBindings(context: $context);
     }
 
     /**
-     * Resolve an instance/value by consulting contextual bindings, definitions, and autowiring.
+     * Internal logic that prioritizes bindings (Contextual > Explicit > Autowire).
      *
-     * @see docs_md/Features/Actions/Resolve/Engine.md#how-it-works-technical
+     * @param KernelContext $context The resolution context.
+     * @return mixed The resolved value.
      */
-    private function resolveFromBindings(KernelContext $context) : mixed
+    private function resolveFromBindings(KernelContext $context): mixed
     {
-        $abstract = $context->serviceId;
+        $id = $context->serviceId;
 
+        // 1. Check Contextual Bindings (Injected exceptions)
         if ($context->parent !== null) {
-            $contextual = $this->getDefinitions()->getContextualMatch(
-                consumer: $context->parent->serviceId,
-                needs   : $abstract
-            );
-
+            $contextual = $this->store->getContextualMatch(consumer: $context->parent->serviceId, needs: $id);
             if ($contextual !== null) {
-                $instance = $this->resolveContextual(context: $context, contextual: $contextual);
-                if (is_string($contextual)) {
-                    $context->setMeta('resolution', 'delegated', true);
-                }
-
-                return $instance;
+                return $this->evaluateConcrete(concrete: $contextual, context: $context);
             }
         }
 
-        $definition = $this->getDefinitions()->get(abstract: $abstract);
-        if ($definition === null) {
-            return $this->autowire(context: $context);
+        // 2. Check Global Definitions
+        $definition = $this->store->get(abstract: $id);
+        if ($definition !== null) {
+            return $this->evaluateConcrete(concrete: $definition->concrete, context: $context);
         }
 
-        return $this->resolveDefinition(context: $context, definition: $definition);
+        // 3. Fallback: Autowiring for class strings
+        if (class_exists(class: $id)) {
+            return $this->instantiator->build(class: $id, overrides: $context->overrides, context: $context);
+        }
+
+        throw new ServiceNotFoundException(message: "Service [{$id}] not found in container.");
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @see docs_md/Features/Actions/Resolve/Engine.md#terminology
-     */
-    private function getDefinitions() : DefinitionStore
-    {
-        if ($this->definitions === null) {
-            $this->definitions = $this->container?->get(id: DefinitionStore::class)
-                ?? throw new ContainerException(message: 'DefinitionStore not available for Engine.');
-        }
-
-        return $this->definitions;
-    }
-
-    /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @see docs_md/Features/Actions/Resolve/Engine.md#how-it-works-technical
-     */
-    private function resolveContextual(KernelContext $context, mixed $contextual) : mixed
-    {
-        if ($contextual instanceof Closure) {
-            return $contextual($this->container, $context->overrides);
-        }
-
-        if (is_string($contextual)) {
-            if ($this->container instanceof ContainerInternalInterface) {
-                return $this->container->resolveContext(context: $context->child(serviceId: $contextual));
-            }
-
-            return $this->container->get(id: $contextual);
-        }
-
-        return $contextual;
-    }
-
-    /**
-     * Autowire a class directly when no definition exists.
+     * Transform a concrete definition (Closure, Object, Class-string) into an instance.
      *
-     * @throws ContainerException
-     * @see docs_md/Features/Actions/Resolve/Engine.md#terminology
+     * @param mixed         $concrete The raw concrete implementation from definition.
+     * @param KernelContext $context  The current resolution context.
+     * @return mixed The evaluated result.
+     * @throws Throwable If closure execution or construction fails.
      */
-    private function autowire(KernelContext $context) : mixed
+    private function evaluateConcrete(mixed $concrete, KernelContext $context): mixed
     {
-        if ($context->serviceId === self::class) {
-            throw new ContainerException(message: 'Cannot autowire Engine recursively.');
-        }
 
-        if ($this->container === null) {
-            throw new ContainerException(message: 'Engine container reference not initialized.');
-        }
-
-        if (! class_exists($context->serviceId)) {
-            // If it's not a class and we're autowiring, it's a NotFound or Literal.
-            // For autowire phase, we expect a class.
-            throw new ContainerException(message: "Cannot autowire: class [{$context->serviceId}] not found.");
-        }
-
-        return $this->getInstantiator()->build(
-            class    : $context->serviceId,
-            overrides: $context->overrides,
-            context  : $context
-        );
-    }
-
-    /**
-     * @throws ContainerException
-     * @see docs_md/Features/Actions/Resolve/Engine.md#related-files--folders
-     */
-    private function getInstantiator() : Instantiator
-    {
-        if ($this->instantiator === null) {
-            // Instantiator might not be bound as a service yet in some tests, but ideally engine is constructed with it.
-            // If fallback needed, container->get would be ideal if we bound it.
-            throw new ContainerException(message: 'Instantiator not available for Engine.');
-        }
-
-        return $this->instantiator;
-    }
-
-    /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @see docs_md/Features/Actions/Resolve/Engine.md#how-it-works-technical
-     */
-    private function resolveDefinition(KernelContext $context, ServiceDefinition $definition) : mixed
-    {
-        $abstract = $context->serviceId;
-        $concrete = $definition->concrete ?? $abstract;
-
-        if ($concrete instanceof Closure) {
-            return $concrete($this->container, $context->overrides);
-        }
-
-        if (is_object($concrete)) {
+        // 1. Literal Object: Return as-is
+        if (is_object(value: $concrete) && ! ($concrete instanceof Closure)) {
             return $concrete;
         }
 
-        if (is_string($concrete) && $concrete !== $abstract) {
-            // Check if the concrete is a bound service or a class
-            if ($this->getDefinitions()->has($concrete) || class_exists($concrete) || $this->getScopes()->has($concrete)) {
-                if ($this->container instanceof ContainerInternalInterface) {
-                    $instance = $this->container->resolveContext(context: $context->child(serviceId: $concrete));
-                } else {
-                    $instance = $this->container->get(id: $concrete);
-                }
-                $context->setMeta('resolution', 'delegated', true);
+        // 2. Closure Factory: Execute with container and parameters
+        if ($concrete instanceof Closure) {
+            return ($concrete)($this->container, $context->overrides);
+        }
 
-                return $instance;
+        // 3. Class String: Register Instance or Delegate
+        if (is_string(value: $concrete)) {
+            // Check if we are delegating to another service ($concrete !== $id)
+            if ($concrete !== $context->serviceId) {
+                return $this->container->resolveContext(context: $context->child(serviceId: $concrete));
             }
 
-            // Allow literal string if it doesn't look like a service or class
-            return $concrete;
+            // Otherwise, build the class
+            return $this->instantiator->build(class: $concrete, overrides: $context->overrides, context: $context);
         }
 
-        if ($concrete === $abstract && empty($definition->arguments)) {
-            return $this->autowire(context: $context);
-        }
-
-        $overrides = array_replace($definition->arguments, $context->overrides);
-
-        if (is_string($concrete) && class_exists($concrete)) {
-            return $this->getInstantiator()->build(
-                class    : $concrete,
-                overrides: $overrides,
-                context  : $context
-            );
-        }
-
+        // 4. Literal Value (Strings/Ints/etc)
         return $concrete;
-    }
-
-    /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @see docs_md/Features/Actions/Resolve/Engine.md#terminology
-     */
-    private function getScopes() : ScopeRegistry
-    {
-        if ($this->scopes === null) {
-            $this->scopes = $this->container?->get(id: ScopeRegistry::class)
-                ?? throw new ContainerException(message: 'ScopeRegistry not available for Engine.');
-        }
-
-        return $this->scopes;
     }
 }

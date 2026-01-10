@@ -2,15 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Container\Unit;
+namespace Avax\Container\Tests\Unit;
 
 use Avax\Container\Features\Core\Attribute\Inject;
 use Avax\Container\Features\Core\ContainerBuilder;
 use Avax\Container\Features\Core\Contracts\ContainerInterface;
 use Avax\Container\Features\Core\Exceptions\ContainerException;
-use Avax\Container\Features\Core\Exceptions\ResolutionException;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * PHPUnit test coverage for Container component behavior.
+ *
+ * @see docs_md/tests/Unit/ArchitectureTest.md#quick-summary
+ */
 class ArchitectureTest extends TestCase
 {
     private string $tempDir;
@@ -32,7 +36,9 @@ class ArchitectureTest extends TestCase
 
     public function testInjectAttributeWithoutTypeOrIdThrowsException(): void
     {
-        $container = ContainerBuilder::create()->build();
+        $container = ContainerBuilder::create()
+            ->cacheDir($this->tempDir)
+            ->build();
 
         // Using ContainerException because ResolutionPipeline wraps inner exceptions
         $this->expectException(exception: ContainerException::class);

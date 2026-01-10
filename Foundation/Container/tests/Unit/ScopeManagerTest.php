@@ -1,7 +1,8 @@
 <?php
 
 declare(strict_types=1);
-namespace Avax\Tests\Container\Unit;
+
+namespace Avax\Container\Tests\Unit;
 
 use Avax\Container\Features\Operate\Scope\ScopeManager;
 use Avax\Container\Features\Operate\Scope\ScopeRegistry;
@@ -10,62 +11,67 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
 
+/**
+ * PHPUnit test coverage for Container component behavior.
+ *
+ * @see docs_md/tests/Unit/ScopeManagerTest.md#quick-summary
+ */
 final class ScopeRegistryTest extends TestCase
 {
-    public function testSetScopedWithoutActiveScopeThrows() : void
+    public function testSetScopedWithoutActiveScopeThrows(): void
     {
-        $manager = new ScopeRegistry();
+        $registry = new ScopeRegistry();
 
         $this->expectException(exception: RuntimeException::class);
 
-        $manager->setScoped(abstract: 'service', instance: new stdClass());
+        $registry->setScoped(abstract: 'service', instance: new stdClass());
     }
 
-    public function testBeginAndEndScopeControlsScopedInstances() : void
+    public function testBeginAndEndScopeControlsScopedInstances(): void
     {
-        $manager   = new ScopeRegistry();
+        $registry   = new ScopeRegistry();
         $singleton = new stdClass();
         $scoped    = new stdClass();
 
-        $manager->set(abstract: 'service', instance: $singleton);
-        $this->assertSame(expected: $singleton, actual: $manager->get(abstract: 'service'));
+        $registry->set(abstract: 'service', instance: $singleton);
+        $this->assertSame(expected: $singleton, actual: $registry->get(abstract: 'service'));
 
-        $manager->beginScope();
-        $manager->setScoped(abstract: 'service', instance: $scoped);
+        $registry->beginScope();
+        $registry->setScoped(abstract: 'service', instance: $scoped);
 
-        $this->assertTrue(condition: $manager->has(abstract: 'service'));
-        $this->assertSame(expected: $scoped, actual: $manager->get(abstract: 'service'));
+        $this->assertTrue(condition: $registry->has(abstract: 'service'));
+        $this->assertSame(expected: $scoped, actual: $registry->get(abstract: 'service'));
 
-        $manager->endScope();
-        $this->assertSame(expected: $singleton, actual: $manager->get(abstract: 'service'));
+        $registry->endScope();
+        $this->assertSame(expected: $singleton, actual: $registry->get(abstract: 'service'));
     }
 
-    public function testEndScopeWithoutActiveScopeThrows() : void
+    public function testEndScopeWithoutActiveScopeThrows(): void
     {
-        $manager = new ScopeRegistry();
+        $registry = new ScopeRegistry();
 
         $this->expectException(exception: LogicException::class);
 
-        $manager->endScope();
+        $registry->endScope();
     }
 
-    public function testClearResetsState() : void
+    public function testClearResetsState(): void
     {
-        $manager = new ScopeRegistry();
-        $manager->set(abstract: 'service', instance: new stdClass());
-        $manager->beginScope();
-        $manager->setScoped(abstract: 'scoped', instance: new stdClass());
+        $registry = new ScopeRegistry();
+        $registry->set(abstract: 'service', instance: new stdClass());
+        $registry->beginScope();
+        $registry->setScoped(abstract: 'scoped', instance: new stdClass());
 
-        $manager->clear();
+        $registry->clear();
 
-        $this->assertFalse(condition: $manager->has(abstract: 'service'));
-        $this->assertFalse(condition: $manager->has(abstract: 'scoped'));
+        $this->assertFalse(condition: $registry->has(abstract: 'service'));
+        $this->assertFalse(condition: $registry->has(abstract: 'scoped'));
     }
 }
 
 final class ScopeManagerTest extends TestCase
 {
-    public function testTerminateDelegatesToRegistry() : void
+    public function testTerminateDelegatesToRegistry(): void
     {
         $registry = new ScopeRegistry();
         $registry->set(abstract: 'service', instance: new stdClass());

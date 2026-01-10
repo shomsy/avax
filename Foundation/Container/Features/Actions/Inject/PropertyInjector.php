@@ -16,17 +16,23 @@ use Avax\Container\Features\Think\Model\PropertyPrototype;
 use RuntimeException;
 
 /**
- * Service for resolving individual injectable properties.
+ * Specialist for resolving and validating individual property injection points.
  *
- * @see docs_md/Features/Actions/Inject/PropertyInjector.md#quick-summary
+ * The PropertyInjector focuses exclusively on the logic of finding the right 
+ * value for a specific property. It follows a prioritized strategy similar to 
+ * the {@see DependencyResolver}, but specifically tailored for properties 
+ * (handling nullability, defaults, and type analysis).
+ *
+ * @package Avax\Container\Features\Actions\Inject
+ * @see docs/Features/Actions/Inject/PropertyInjector.md
  */
 final class PropertyInjector implements PropertyInjectorInterface
 {
     /**
-     * @param ContainerInterface|null $container     Container used to resolve property types
-     * @param ReflectionTypeAnalyzer  $typeAnalyzer  Helper for checking type resolvability
+     * Initializes the property specialist.
      *
-     * @see docs_md/Features/Actions/Inject/PropertyInjector.md#method-__construct
+     * @param ContainerInterface|null $container     Container used to resolve property types.
+     * @param ReflectionTypeAnalyzer  $typeAnalyzer  Helper for validating type resolvability.
      */
     public function __construct(
         private ContainerInterface|null $container,
@@ -34,75 +40,82 @@ final class PropertyInjector implements PropertyInjectorInterface
     ) {}
 
     /**
-     * Set the container reference for property resolution.
+     * Wire the container reference for recursive dependency resolution.
      *
-     * @param ContainerInterface $container
-     * @return void
-     * @see docs_md/Features/Actions/Inject/PropertyInjector.md#method-setcontainer
+     * @param ContainerInterface $container The application container instance.
+     * @see docs/Features/Actions/Inject/PropertyInjector.md#method-setcontainer
      */
-    public function setContainer(ContainerInterface $container) : void
+    public function setContainer(ContainerInterface $container): void
     {
         $this->container = $container;
     }
 
     /**
-     * Resolve the injection value for a property prototype.
+     * Resolve the injection value for a specific property prototype.
      *
-     * @param PropertyPrototype $property
-     * @param array             $overrides
-     * @param KernelContext     $context
-     * @param string            $ownerClass
+     * @param PropertyPrototype $property   The injection requirement profile.
+     * @param array<string, mixed> $overrides  Manual values provided for this resolution.
+     * @param KernelContext     $context    Tracking context for recursive resolution.
+     * @param string            $ownerClass The class name that owns this property (for errors).
      *
-     * @return PropertyResolution
-     * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException
-     * @throws RuntimeException When the container reference is not initialized
-     * @see docs_md/Features/Actions/Inject/PropertyInjector.md#method-resolve
+     * @return PropertyResolution A wrapper containing the resolved value or status.
+     * @throws ResolutionException If a required property cannot be satisfied.
+     * @throws RuntimeException If the container reference is missing.
+     *
+     * @see docs/Features/Actions/Inject/PropertyInjector.md#method-resolve
      */
     public function resolve(
         PropertyPrototype $property,
         array             $overrides,
         KernelContext     $context,
         string            $ownerClass
-    ) : PropertyResolution
-    {
+    ): PropertyResolution {
         if ($this->container === null) {
-            throw new RuntimeException('PropertyInjector container reference not initialized.');
+            throw new RuntimeException(message: 'PropertyInjector container reference not initialized.');
         }
 
-        if (array_key_exists($property->name, $overrides)) {
-            return PropertyResolution::resolved(value: $overrides[$property->name]);
+        $name = $property->name;
+
+        // 1. Explicit Override (Highest Priority)
+        if (array_key_exists(key: $name, array: $overrides)) {
+            return PropertyResolution::resolved(value: $overrides[$name]);
         }
 
+        // 2. Type-based Resolution
         if ($this->typeAnalyzer->canResolveType(type: $property->type)) {
             try {
+                $type = (string) $property->type;
+
                 // Circular Dependency Guard: Preserving context for children
                 if ($this->container instanceof ContainerInternalInterface) {
                     return PropertyResolution::resolved(
-                        value: $this->container->resolveContext(context: $context->child(serviceId: (string) $property->type))
+                        value: $this->container->resolveContext(context: $context->child(serviceId: $type))
                     );
                 }
 
                 return PropertyResolution::resolved(
-                    value: $this->container->get(id: (string) $property->type)
+                    value: $this->container->get(id: $type)
                 );
-            } catch (ResolutionException|ServiceNotFoundException) {
-                // Fall through to default/null handling.
+            } catch (ResolutionException | ServiceNotFoundException) {
+                // Fall through to default/null handling
             }
         }
 
+        // 3. Default Values (Skip injection if code-level default exists)
         if ($property->hasDefault) {
             return PropertyResolution::unresolved();
         }
 
+        // 4. Nullable Fallback
         if ($property->allowsNull) {
             return PropertyResolution::resolved(value: null);
         }
 
-        // Required property that cannot be resolved - throw exception
+        // 5. Hard Failure
         if ($property->required) {
             throw new ResolutionException(
-                message: "Required property \${$property->name} in class {$ownerClass} cannot be resolved. " .
-                "No service found for type: " . ($property->type ?? 'null')
+                message: "Required property \${$name} in class {$ownerClass} cannot be resolved. " .
+                    "No service found for type: " . ($property->type ?? 'null')
             );
         }
 

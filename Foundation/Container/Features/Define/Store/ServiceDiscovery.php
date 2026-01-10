@@ -76,7 +76,7 @@ use Avax\DataHandling\ArrayHandling\Arrhae;
  * @package Avax\Container\Define\Store
  * @see     ServiceDefinitionRepository For underlying data access
  * @see     ServiceDefinitionEntity For service data structure
- * @see     docs_md/Features/Define/Store/ServiceDiscovery.md#quick-summary
+ * @see docs/Features/Define/Store/ServiceDiscovery.md#quick-summary
  */
 readonly class ServiceDiscovery
 {
@@ -87,7 +87,7 @@ readonly class ServiceDiscovery
      * repository, enabling all discovery and analysis operations.
      *
      * @param ServiceDefinitionRepository $repository The repository providing service data access
-     * @see docs_md/Features/Define/Store/ServiceDiscovery.md#method-__construct
+     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-__construct
      */
     public function __construct(
         private ServiceDefinitionRepository $repository
@@ -117,7 +117,7 @@ readonly class ServiceDiscovery
      * @param string|null $environment Target environment, or null for all environments
      *
      * @return Arrhae Collection of cacheable ServiceDefinitionEntity instances
-     * @see docs_md/Features/Define/Store/ServiceDiscovery.md#method-findcacheableservices
+     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-findcacheableservices
      */
     public function findCacheableServices(string|null $environment = null) : Arrhae
     {
@@ -154,7 +154,7 @@ readonly class ServiceDiscovery
      * @param string|null $environment Environment filter, null for all environments
      *
      * @return Arrhae Collection of services implementing all specified interfaces
-     * @see docs_md/Features/Define/Store/ServiceDiscovery.md#method-findservicesbyinterfaces
+     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-findservicesbyinterfaces
      */
     public function findServicesByInterfaces(array $interfaces, string|null $environment = null) : Arrhae
     {
@@ -197,7 +197,7 @@ readonly class ServiceDiscovery
      *
      * @return Arrhae Collection of services with the specified capabilities
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDiscovery.md#method-findserviceswithcapabilities
+     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-findserviceswithcapabilities
      */
     public function findServicesWithCapabilities(array $capabilities, string $operator = 'AND') : Arrhae
     {
@@ -227,7 +227,7 @@ readonly class ServiceDiscovery
      *
      * @return Arrhae Collection of alternative ServiceDefinitionEntity instances
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDiscovery.md#method-findalternativeservices
+     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-findalternativeservices
      */
     public function findAlternativeServices(string $serviceId, string|null $environment = null) : Arrhae
     {
@@ -282,7 +282,7 @@ readonly class ServiceDiscovery
      * @param string|null $environment Environment filter, null for all environments
      *
      * @return Arrhae Collection of services implementing the specified type
-     * @see docs_md/Features/Define/Store/ServiceDiscovery.md#method-findservicesbyinterface
+     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-findservicesbyinterface
      */
     public function findServicesByInterface(string $interface, string|null $environment = null) : Arrhae
     {
@@ -318,7 +318,7 @@ readonly class ServiceDiscovery
      * @param string $currentServiceId The service to generate recommendations for
      *
      * @return array Associative array with recommendation categories and service lists
-     * @see docs_md/Features/Define/Store/ServiceDiscovery.md#method-getservicerecommendations
+     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-getservicerecommendations
      */
     public function getServiceRecommendations(string $currentServiceId) : array
     {
@@ -380,7 +380,7 @@ readonly class ServiceDiscovery
      * - Consider caching results for monitoring dashboards
      *
      * @return array Comprehensive health analysis with issues, suggestions, and statistics
-     * @see docs_md/Features/Define/Store/ServiceDiscovery.md#method-analyzeservicehealth
+     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-analyzeservicehealth
      */
     public function analyzeServiceHealth(): array
     {
@@ -463,7 +463,7 @@ readonly class ServiceDiscovery
      * - Combine services using composite patterns
      *
      * @return Arrhae Collection of services that participate in interface conflicts
-     * @see docs_md/Features/Define/Store/ServiceDiscovery.md#method-findpotentialconflicts
+     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-findpotentialconflicts
      */
     public function findPotentialConflicts(): Arrhae
     {
@@ -521,7 +521,7 @@ readonly class ServiceDiscovery
      * @param string $serviceId Root service for tree construction
      * @param int $maxDepth Maximum depth to traverse (default: 5)
      * @return array Hierarchical dependency tree structure
-     * @see docs_md/Features/Define/Store/ServiceDiscovery.md#method-getdependencytree
+     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-getdependencytree
      */
     public function getDependencyTree(string $serviceId, int $maxDepth = 5): array
     {
@@ -560,7 +560,7 @@ readonly class ServiceDiscovery
      *
      * @param array $filters Associative array of filter criteria
      * @return Arrhae Collection of services matching all filter criteria
-     * @see docs_md/Features/Define/Store/ServiceDiscovery.md#method-advancedsearch
+     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-advancedsearch
      */
     public function advancedSearch(array $filters): Arrhae
     {
@@ -646,7 +646,7 @@ readonly class ServiceDiscovery
      * - Automatic application requires careful validation
      *
      * @return array Associative array mapping service IDs to suggested changes
-     * @see docs_md/Features/Define/Store/ServiceDiscovery.md#method-suggestmigrations
+     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-suggestmigrations
      */
     public function suggestMigrations(): array
     {

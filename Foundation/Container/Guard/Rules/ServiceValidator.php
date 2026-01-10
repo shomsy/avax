@@ -83,7 +83,7 @@ use ReflectionException;
  * @see     ServiceDefinitionEntity For the validated service structure
  * @see     ServiceDefinitionRepository For service data access
  * @see     ServiceDependencyRepository For dependency relationship management
- * @see     docs_md/Guard/Rules/ServiceValidator.md#quick-summary
+ * @see docs/Guard/Rules/ServiceValidator.md#quick-summary
  */
 readonly class ServiceValidator
 {
@@ -104,7 +104,7 @@ readonly class ServiceValidator
      *
      * @param ServiceDefinitionRepository $serviceRepo    Settings for service definition access
      * @param ServiceDependencyRepository $dependencyRepo Settings for dependency relationship access
-     * @see docs_md/Guard/Rules/ServiceValidator.md#method-__construct
+     * @see docs/Guard/Rules/ServiceValidator.md#method-__construct
      */
     public function __construct(
         private ServiceDefinitionRepository $serviceRepo,
@@ -115,7 +115,7 @@ readonly class ServiceValidator
      * Get validation summary across all services.
      *
      * @throws \Exception
-     * @see docs_md/Guard/Rules/ServiceValidator.md#method-getvalidationsummary
+     * @see docs/Guard/Rules/ServiceValidator.md#method-getvalidationsummary
      */
     public function getValidationSummary() : array
     {
@@ -160,7 +160,7 @@ readonly class ServiceValidator
      * Validate multiple services at once.
      *
      * @throws \Exception
-     * @see docs_md/Guard/Rules/ServiceValidator.md#method-validateservices
+     * @see docs/Guard/Rules/ServiceValidator.md#method-validateservices
      */
     public function validateServices(array $services) : array
     {
@@ -228,7 +228,7 @@ readonly class ServiceValidator
      *
      * @return array Structured validation results with errors, warnings, and metadata
      * @throws \Exception When critical validation infrastructure fails
-     * @see docs_md/Guard/Rules/ServiceValidator.md#method-validateservice
+     * @see docs/Guard/Rules/ServiceValidator.md#method-validateservice
      */
     public function validateService(ServiceDefinitionEntity $service) : array
     {

@@ -9,7 +9,7 @@ use ReflectionFunctionAbstract;
 /**
  * In-memory reflection cache for callable invocation.
  *
- * @see docs_md/Features/Actions/Invoke/Cache/ReflectionCache.md#quick-summary
+ * @see docs/Features/Actions/Invoke/Cache/ReflectionCache.md#quick-summary
  */
 final class ReflectionCache
 {
@@ -18,7 +18,7 @@ final class ReflectionCache
     private bool  $locked = false;
 
     /**
-     * @see docs_md/Features/Actions/Invoke/Cache/ReflectionCache.md#method-get
+     * @see docs/Features/Actions/Invoke/Cache/ReflectionCache.md#method-get
      */
     public function get(string $key): ReflectionFunctionAbstract|null
     {
@@ -26,7 +26,7 @@ final class ReflectionCache
     }
 
     /**
-     * @see docs_md/Features/Actions/Invoke/Cache/ReflectionCache.md#method-set
+     * @see docs/Features/Actions/Invoke/Cache/ReflectionCache.md#method-set
      */
     public function set(string $key, ReflectionFunctionAbstract $reflection): void
     {

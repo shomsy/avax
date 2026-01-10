@@ -15,13 +15,13 @@ use Avax\Container\Core\Kernel\LifecycleResolver;
  * ensuring singletons and scoped services are persisted correctly for reuse.
  *
  * @package Avax\Container\Core\Kernel\Steps
- * @see docs_md/Core/Kernel/Steps/StoreLifecycleStep.md#quick-summary
+ * @see docs/Core/Kernel/Steps/StoreLifecycleStep.md#quick-summary
  */
 final readonly class StoreLifecycleStep implements KernelStep
 {
     /**
      * @param LifecycleResolver $lifecycleResolver Strategy for determining service persistence.
-     * @see docs_md/Core/Kernel/Steps/StoreLifecycleStep.md#method-__construct
+     * @see docs/Core/Kernel/Steps/StoreLifecycleStep.md#method-__construct
      */
     public function __construct(
         private LifecycleResolver $lifecycleResolver
@@ -32,7 +32,7 @@ final readonly class StoreLifecycleStep implements KernelStep
      *
      * @param KernelContext $context The resolution context.
      * @return void
-     * @see docs_md/Core/Kernel/Steps/StoreLifecycleStep.md#method-__invoke
+     * @see docs/Core/Kernel/Steps/StoreLifecycleStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void
     {

@@ -8,7 +8,7 @@ use Avax\Container\Observe\Metrics\Sink\TelemetrySinkInterface;
 /**
  * Lightweight in-memory collector for basic resolution telemetry.
  *
- * @see docs_md/Observe/Metrics/MetricsCollector.md#quick-summary
+ * @see docs/Observe/Metrics/MetricsCollector.md#quick-summary
  */
 class MetricsCollector implements TelemetrySinkInterface
 {
@@ -21,7 +21,7 @@ class MetricsCollector implements TelemetrySinkInterface
     /**
      * {@inheritDoc}
      *
-     * @see docs_md/Observe/Metrics/MetricsCollector.md#method-record
+     * @see docs/Observe/Metrics/MetricsCollector.md#method-record
      */
     public function record(string $abstract, float $durationMs, string $strategy) : void
     {
@@ -39,7 +39,7 @@ class MetricsCollector implements TelemetrySinkInterface
      * Build a snapshot suitable for dashboards or API consumption.
      *
      * @return array Snapshot payload
-     * @see docs_md/Observe/Metrics/MetricsCollector.md#method-getsnapshot
+     * @see docs/Observe/Metrics/MetricsCollector.md#method-getsnapshot
      */
     public function getSnapshot() : array
     {

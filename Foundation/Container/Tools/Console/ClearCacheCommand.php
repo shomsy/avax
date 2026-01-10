@@ -90,7 +90,7 @@ use Throwable;
  * @see FilePrototypeCache For prototype cache implementation
  * @see CompileCommand For cache generation
  * @see Container::clearCache() For programmatic cache clearing
- * @see docs_md/Tools/Console/ClearCacheCommand.md#quick-summary
+ * @see docs/Tools/Console/ClearCacheCommand.md#quick-summary
  */
 readonly class ClearCacheCommand
 {
@@ -98,7 +98,7 @@ readonly class ClearCacheCommand
      * @param Container $container       The container instance whose caches to clear
      * @param string    $defaultCacheDir Default cache directory path
      *
-     * @see docs_md/Tools/Console/ClearCacheCommand.md#method-__construct
+     * @see docs/Tools/Console/ClearCacheCommand.md#method-__construct
      */
     public function __construct(
         private Container $container,
@@ -122,7 +122,7 @@ readonly class ClearCacheCommand
      *
      * @return void Outputs cache clearing results to stdout
      * @throws \Throwable
-     * @see docs_md/Tools/Console/ClearCacheCommand.md#method-execute
+     * @see docs/Tools/Console/ClearCacheCommand.md#method-execute
      */
     public function execute(
         bool|null   $prototypesOnly = null,
@@ -214,7 +214,7 @@ readonly class ClearCacheCommand
      *
      * @param string $directory Directory path to clear
      *
-     * @see docs_md/Tools/Console/ClearCacheCommand.md#method-cleardirectory
+     * @see docs/Tools/Console/ClearCacheCommand.md#method-cleardirectory
      */
     private function clearDirectory(string $directory) : void
     {

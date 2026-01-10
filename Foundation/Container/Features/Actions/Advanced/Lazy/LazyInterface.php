@@ -11,7 +11,7 @@ namespace Avax\Container\Features\Actions\Advanced\Lazy;
  * Implementations of this interface provide on-demand creation of expensive or rarely-used dependencies,
  * optimizing application startup performance and resource usage.
  *
- * @see docs_md/Features/Actions/Advanced/Lazy/LazyInterface.md#quick-summary
+ * @see docs/Features/Actions/Advanced/Lazy/LazyInterface.md#quick-summary
  */
 interface LazyInterface
 {
@@ -22,7 +22,7 @@ interface LazyInterface
      * Subsequent calls return the same cached instance.
      *
      * @return mixed The lazily initialized object instance
-     * @see docs_md/Features/Actions/Advanced/Lazy/LazyInterface.md#method-get
+     * @see docs/Features/Actions/Advanced/Lazy/LazyInterface.md#method-get
      */
     public function get(): mixed;
 }

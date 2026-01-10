@@ -113,7 +113,7 @@ use Throwable;
  * @see     TelemetryConfig Configuration for telemetry behavior
  * @see     LoggerFactory PSR-3 compliant logging factory
  * @see     ErrorLogger Structured error logging capabilities
- * @see     docs_md/Observe/Metrics/EnhancedMetricsCollector.md#quick-summary
+ * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#quick-summary
  */
 class EnhancedMetricsCollector implements MetricsCollector
 {
@@ -177,7 +177,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      *
      * @param LoggerFactory   $loggerFactory PSR-3 logger factory for structured logging
      * @param TelemetryConfig $config        Telemetry configuration for collection behavior
-     * @see docs_md/Observe/Metrics/EnhancedMetricsCollector.md#method-__construct
+     * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-__construct
      */
     public function __construct(
         LoggerFactory                    $loggerFactory,
@@ -236,7 +236,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      * @param array $data Resolution event data with service details and timing
      *
      * @return void
-     * @see docs_md/Observe/Metrics/EnhancedMetricsCollector.md#method-recordresolution
+     * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-recordresolution
      */
     public function recordResolution(array $data) : void
     {
@@ -299,7 +299,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      * @param Throwable $error     The error/exception that occurred
      *
      * @return void
-     * @see docs_md/Observe/Metrics/EnhancedMetricsCollector.md#method-recorderror
+     * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-recorderror
      */
     public function recordError(string $serviceId, Throwable $error) : void
     {
@@ -328,7 +328,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      * Clears all collected metrics from memory.
      *
      * @return void
-     * @see docs_md/Observe/Metrics/EnhancedMetricsCollector.md#method-reset
+     * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-reset
      */
     public function reset() : void
     {
@@ -343,7 +343,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      * Write telemetry data to configured sink.
      *
      * @return void
-     * @see docs_md/Observe/Metrics/EnhancedMetricsCollector.md#method-flush
+     * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-flush
      */
     public function flush() : void
     {
@@ -370,7 +370,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      * Builds an export payload that summarizes recent resolutions, errors, and usage patterns.
      *
      * @return array Telemetry export payload
-     * @see docs_md/Observe/Metrics/EnhancedMetricsCollector.md#method-exporttelemetry
+     * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-exporttelemetry
      */
     public function exportTelemetry() : array
     {
@@ -398,7 +398,7 @@ class EnhancedMetricsCollector implements MetricsCollector
 
     /**
      * @return int Number of recorded resolution events (may be sampled)
-     * @see docs_md/Observe/Metrics/EnhancedMetricsCollector.md#method-getresolutioncount
+     * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-getresolutioncount
      */
     public function getResolutionCount() : int
     {
@@ -407,7 +407,7 @@ class EnhancedMetricsCollector implements MetricsCollector
 
     /**
      * @return float Average resolution time (seconds) over recorded events
-     * @see docs_md/Observe/Metrics/EnhancedMetricsCollector.md#method-getaverageresolutiontime
+     * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-getaverageresolutiontime
      */
     public function getAverageResolutionTime() : float
     {
@@ -422,7 +422,7 @@ class EnhancedMetricsCollector implements MetricsCollector
 
     /**
      * @return float Error rate percentage (0-100) over recorded events
-     * @see docs_md/Observe/Metrics/EnhancedMetricsCollector.md#method-geterrorrate
+     * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-geterrorrate
      */
     public function getErrorRate() : float
     {
@@ -438,7 +438,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      * @param int $limit Maximum number of slow services to return
      *
      * @return Arrhae Collection of slow resolution entries
-     * @see docs_md/Observe/Metrics/EnhancedMetricsCollector.md#method-gettopslowservices
+     * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-gettopslowservices
      */
     public function getTopSlowServices(int $limit = 10) : Arrhae
     {
@@ -451,7 +451,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      * Detects anomalously slow resolution events based on simple statistical thresholds.
      *
      * @return array Anomaly entries
-     * @see docs_md/Observe/Metrics/EnhancedMetricsCollector.md#method-detectperformanceanomalies
+     * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-detectperformanceanomalies
      */
     public function detectPerformanceAnomalies() : array
     {
@@ -476,7 +476,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      * @param int $limit Maximum number of errors to return
      *
      * @return Arrhae Collection of recent errors
-     * @see docs_md/Observe/Metrics/EnhancedMetricsCollector.md#method-getrecenterrors
+     * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-getrecenterrors
      */
     public function getRecentErrors(int $limit = 20) : Arrhae
     {
@@ -487,7 +487,7 @@ class EnhancedMetricsCollector implements MetricsCollector
 
     /**
      * @return array Aggregated per-service usage statistics
-     * @see docs_md/Observe/Metrics/EnhancedMetricsCollector.md#method-getserviceusagestats
+     * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-getserviceusagestats
      */
     public function getServiceUsageStats() : array
     {

@@ -7,7 +7,7 @@ namespace Avax\Container\Features\Actions\Inject\Resolvers;
 /**
  * Property resolution outcome for injection.
  *
- * @see docs_md/Features/Actions/Inject/Resolvers/PropertyResolution.md#quick-summary
+ * @see docs/Features/Actions/Inject/Resolvers/PropertyResolution.md#quick-summary
  */
 final readonly class PropertyResolution
 {
@@ -21,7 +21,7 @@ final readonly class PropertyResolution
      *
      * @param mixed $value Value to inject
      * @return self
-     * @see docs_md/Features/Actions/Inject/Resolvers/PropertyResolution.md#method-resolved
+     * @see docs/Features/Actions/Inject/Resolvers/PropertyResolution.md#method-resolved
      */
     public static function resolved(mixed $value) : self
     {
@@ -32,7 +32,7 @@ final readonly class PropertyResolution
      * Creates an unresolved resolution result.
      *
      * @return self
-     * @see docs_md/Features/Actions/Inject/Resolvers/PropertyResolution.md#method-unresolved
+     * @see docs/Features/Actions/Inject/Resolvers/PropertyResolution.md#method-unresolved
      */
     public static function unresolved() : self
     {

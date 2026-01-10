@@ -12,7 +12,7 @@ use Avax\Container\Observe\Timeline\ResolutionTimeline;
  * This manager gives you one place to access container diagnostics: inspection, metrics, and timeline.
  * Telemetry tools are optional; when disabled, they are exposed as `null`.
  *
- * @see docs_md/Observe/Inspect/DiagnosticsManager.md#quick-summary
+ * @see docs/Observe/Inspect/DiagnosticsManager.md#quick-summary
  */
 readonly class DiagnosticsManager
 {
@@ -20,7 +20,7 @@ readonly class DiagnosticsManager
      * @param Inspector               $inspector Diagnostics inspector instance.
      * @param MetricsCollector|null   $metrics   Collector to store timing metrics.
      * @param ResolutionTimeline|null $timeline  Timeline tracker for resolution operations.
-     * @see docs_md/Observe/Inspect/DiagnosticsManager.md#method-__construct
+     * @see docs/Observe/Inspect/DiagnosticsManager.md#method-__construct
      */
     public function __construct(
         private Inspector               $inspector,
@@ -34,7 +34,7 @@ readonly class DiagnosticsManager
      * @param string|null $id Service identifier to inspect; when null returns the inspector itself
      *
      * @return array|Inspector Inspection result array or the inspector instance
-     * @see docs_md/Observe/Inspect/DiagnosticsManager.md#method-inspect
+     * @see docs/Observe/Inspect/DiagnosticsManager.md#method-inspect
      */
     public function inspect(string|null $id = null) : array|Inspector
     {
@@ -49,7 +49,7 @@ readonly class DiagnosticsManager
      * Retrieve the metrics collector when telemetry is enabled.
      *
      * @return MetricsCollector|null
-     * @see docs_md/Observe/Inspect/DiagnosticsManager.md#method-metrics
+     * @see docs/Observe/Inspect/DiagnosticsManager.md#method-metrics
      */
     public function metrics() : MetricsCollector|null
     {
@@ -60,7 +60,7 @@ readonly class DiagnosticsManager
      * Get the timeline used for resolution diagnostics.
      *
      * @return ResolutionTimeline|null
-     * @see docs_md/Observe/Inspect/DiagnosticsManager.md#method-timeline
+     * @see docs/Observe/Inspect/DiagnosticsManager.md#method-timeline
      */
     public function timeline() : ResolutionTimeline|null
     {

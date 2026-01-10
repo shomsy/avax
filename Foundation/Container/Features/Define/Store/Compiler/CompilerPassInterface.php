@@ -8,7 +8,7 @@ use Avax\Container\Features\Define\Store\DefinitionStore;
 /**
  * Interface for container compiler passes.
  *
- * @see docs_md/Features/Define/Store/Compiler/CompilerPassInterface.md#quick-summary
+ * @see docs/Features/Define/Store/Compiler/CompilerPassInterface.md#quick-summary
  */
 interface CompilerPassInterface
 {
@@ -17,7 +17,7 @@ interface CompilerPassInterface
      *
      * @param DefinitionStore $definitions Definition registry to process.
      * @return void
-     * @see docs_md/Features/Define/Store/Compiler/CompilerPassInterface.md#method-process
+     * @see docs/Features/Define/Store/Compiler/CompilerPassInterface.md#method-process
      */
     public function process(DefinitionStore $definitions) : void;
 }

@@ -15,7 +15,7 @@ use RuntimeException;
  * Enables comprehensive observability of container operations including performance metrics,
  * health status, and operational data export for monitoring and debugging.
  *
- * @see docs_md/Features/Actions/Advanced/Observe/Telemetry.md#quick-summary
+ * @see docs/Features/Actions/Advanced/Observe/Telemetry.md#quick-summary
  */
 final readonly class Telemetry
 {
@@ -24,7 +24,7 @@ final readonly class Telemetry
      *
      * @param ContainerInterface $container The container instance to monitor.
      * @param CollectMetrics $metrics The metrics collector for telemetry data.
-     * @see docs_md/Features/Actions/Advanced/Observe/Telemetry.md#method-__construct
+     * @see docs/Features/Actions/Advanced/Observe/Telemetry.md#method-__construct
      */
     public function __construct(
         private ContainerInterface $container,
@@ -39,7 +39,7 @@ final readonly class Telemetry
      *
      * @return string JSON-encoded metrics data with timestamp.
      * @throws RuntimeException If JSON encoding fails.
-     * @see docs_md/Features/Actions/Advanced/Observe/Telemetry.md#method-exportMetrics
+     * @see docs/Features/Actions/Advanced/Observe/Telemetry.md#method-exportMetrics
      */
     public function exportMetrics(): string
     {
@@ -64,7 +64,7 @@ final readonly class Telemetry
      * and analysis within the application.
      *
      * @return array Raw metrics data organized by metric type and values.
-     * @see docs_md/Features/Actions/Advanced/Observe/Telemetry.md#method-getMetrics
+     * @see docs/Features/Actions/Advanced/Observe/Telemetry.md#method-getMetrics
      */
     public function getMetrics(): array
     {
@@ -78,7 +78,7 @@ final readonly class Telemetry
      * operational status, metrics count, and last update timestamp.
      *
      * @return array Health status data including status, timestamp, and metrics summary.
-     * @see docs_md/Features/Actions/Advanced/Observe/Telemetry.md#method-getHealthStatus
+     * @see docs/Features/Actions/Advanced/Observe/Telemetry.md#method-getHealthStatus
      */
     public function getHealthStatus(): array
     {

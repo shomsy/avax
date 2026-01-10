@@ -12,7 +12,7 @@ use Avax\HTTP\Middleware\MiddlewareResolver;
 /**
  * Service Provider for middleware infrastructure.
  *
- * @see docs_md/Providers/HTTP/MiddlewareServiceProvider.md#quick-summary
+ * @see docs/Providers/HTTP/MiddlewareServiceProvider.md#quick-summary
  */
 class MiddlewareServiceProvider extends ServiceProvider
 {
@@ -20,7 +20,7 @@ class MiddlewareServiceProvider extends ServiceProvider
      * Register middleware pipeline and resolver services.
      *
      * @return void
-     * @see docs_md/Providers/HTTP/MiddlewareServiceProvider.md#method-register
+     * @see docs/Providers/HTTP/MiddlewareServiceProvider.md#method-register
      */
     public function register() : void
     {

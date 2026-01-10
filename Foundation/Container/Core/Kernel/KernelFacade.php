@@ -24,7 +24,7 @@ use InvalidArgumentException;
  * Provides the user-facing API for binding services, singletons, extensions, etc.
  * Separated from orchestration to keep ContainerKernel focused on runtime resolution, enabling clean separation between configuration and execution.
  *
- * @see docs_md/Core/Kernel/KernelFacade.md#quick-summary
+ * @see docs/Core/Kernel/KernelFacade.md#quick-summary
  */
 final readonly class KernelFacade
 {
@@ -38,7 +38,7 @@ final readonly class KernelFacade
      * @param CollectMetrics|null         $metrics          Performance metrics collector
      * @param TerminateContainer|null     $terminator       Shutdown and cleanup handler
      * @param ContainerPolicy|null        $policy           Security and access policy
-     * @see docs_md/Core/Kernel/KernelFacade.md#method-__construct
+     * @see docs/Core/Kernel/KernelFacade.md#method-__construct
      */
     public function __construct(
         private DefinitionStore            $definitions,
@@ -58,7 +58,7 @@ final readonly class KernelFacade
      * @param ServiceLifetime      $lifetime Service lifetime scope
      *
      * @return BindingBuilder Fluent binding builder for advanced configuration
-     * @see docs_md/Core/Kernel/KernelFacade.md#method-bind
+     * @see docs/Core/Kernel/KernelFacade.md#method-bind
      */
     public function bind(string $abstract, string|callable|null $concrete = null, ServiceLifetime $lifetime = ServiceLifetime::Transient): BindingBuilder
     {
@@ -73,7 +73,7 @@ final readonly class KernelFacade
      * @param ServiceLifetime      $lifetime Service lifetime scope
      *
      * @return BindingBuilder Fluent binding builder
-     * @see docs_md/Core/Kernel/KernelFacade.md#method-bindas
+     * @see docs/Core/Kernel/KernelFacade.md#method-bindas
      */
     private function bindAs(string $abstract, string|callable|null $concrete, ServiceLifetime $lifetime): BindingBuilder
     {
@@ -92,7 +92,7 @@ final readonly class KernelFacade
      * @param string|callable|null $concrete Concrete implementation or factory
      *
      * @return BindingBuilder Fluent binding builder for advanced configuration
-     * @see docs_md/Core/Kernel/KernelFacade.md#method-singleton
+     * @see docs/Core/Kernel/KernelFacade.md#method-singleton
      */
     public function singleton(string $abstract, string|callable|null $concrete = null): BindingBuilder
     {
@@ -106,7 +106,7 @@ final readonly class KernelFacade
      * @param string|callable|null $concrete Concrete implementation or factory
      *
      * @return BindingBuilder Fluent binding builder for advanced configuration
-     * @see docs_md/Core/Kernel/KernelFacade.md#method-scoped
+     * @see docs/Core/Kernel/KernelFacade.md#method-scoped
      */
     public function scoped(string $abstract, string|callable|null $concrete = null): BindingBuilder
     {
@@ -120,7 +120,7 @@ final readonly class KernelFacade
      * @param callable $closure  Extension function that receives and returns the service instance
      *
      * @return void
-     * @see docs_md/Core/Kernel/KernelFacade.md#method-extend
+     * @see docs/Core/Kernel/KernelFacade.md#method-extend
      */
     public function extend(string $abstract, callable $closure): void
     {
@@ -136,7 +136,7 @@ final readonly class KernelFacade
      *
      * @return void
      * @throws InvalidArgumentException When parameters are invalid
-     * @see docs_md/Core/Kernel/KernelFacade.md#method-resolving
+     * @see docs/Core/Kernel/KernelFacade.md#method-resolving
      */
     public function resolving(string|callable $abstract, callable|null $callback = null): void
     {
@@ -169,7 +169,7 @@ final readonly class KernelFacade
      * @param string $consumer Consumer class that requires the dependency
      *
      * @return ContextBuilder Contextual binding builder for fluent configuration
-     * @see docs_md/Core/Kernel/KernelFacade.md#method-when
+     * @see docs/Core/Kernel/KernelFacade.md#method-when
      */
     public function when(string $consumer): ContextBuilder
     {
@@ -183,7 +183,7 @@ final readonly class KernelFacade
      * @param object $instance Service instance to register
      *
      * @return void
-     * @see docs_md/Core/Kernel/KernelFacade.md#method-instance
+     * @see docs/Core/Kernel/KernelFacade.md#method-instance
      */
     public function instance(string $abstract, object $instance): void
     {
@@ -199,7 +199,7 @@ final readonly class KernelFacade
      * Get the definition store.
      *
      * @return DefinitionStore The definition store containing all service registrations
-     * @see docs_md/Core/Kernel/KernelFacade.md#method-definitions
+     * @see docs/Core/Kernel/KernelFacade.md#method-definitions
      */
     public function definitions(): DefinitionStore
     {
@@ -210,7 +210,7 @@ final readonly class KernelFacade
      * Get the scope manager.
      *
      * @return ScopeManager The scope manager handling service lifetime boundaries
-     * @see docs_md/Core/Kernel/KernelFacade.md#method-scopes
+     * @see docs/Core/Kernel/KernelFacade.md#method-scopes
      */
     public function scopes(): ScopeManager
     {

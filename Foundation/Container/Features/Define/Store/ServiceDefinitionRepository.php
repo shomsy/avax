@@ -75,7 +75,7 @@ use Throwable;
  * @see     ServiceDefinitionEntity For the managed entity type
  * @see     ServiceDiscovery For high-level service discovery operations
  * @see     Repository For base repository functionality
- * @see     docs_md/Features/Define/Store/ServiceDefinitionRepository.md#quick-summary
+ * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#quick-summary
  */
 class ServiceDefinitionRepository extends Repository
 {
@@ -104,7 +104,7 @@ class ServiceDefinitionRepository extends Repository
      * @param string|null $environment Target environment name, or null for all environments
      *
      * @return Arrhae Collection of active ServiceDefinitionEntity instances
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-findactiveservices
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-findactiveservices
      */
     public function findActiveServices(string|null $environment = null): Arrhae
     {
@@ -152,7 +152,7 @@ class ServiceDefinitionRepository extends Repository
      *
      * @return Arrhae Collection of matching ServiceDefinitionEntity instances
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-findbytags
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-findbytags
      */
     public function findByTags(array $tags, string $operator = 'AND'): Arrhae
     {
@@ -212,7 +212,7 @@ class ServiceDefinitionRepository extends Repository
      *
      * @return Arrhae Collection of services implementing/extending the specified type
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-findbytype
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-findbytype
      */
     public function findByType(string $type): Arrhae
     {
@@ -241,7 +241,7 @@ class ServiceDefinitionRepository extends Repository
      *
      * @return Arrhae Collection of services with the specified lifetime
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-findbylifetime
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-findbylifetime
      */
     public function findByLifetime(ServiceLifetime $lifetime): Arrhae
     {
@@ -268,7 +268,7 @@ class ServiceDefinitionRepository extends Repository
      *
      * @return array Associative array containing various service statistics
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-getservicestats
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-getservicestats
      */
     public function getServiceStats(): array
     {
@@ -345,7 +345,7 @@ class ServiceDefinitionRepository extends Repository
      *
      * @return array Analysis results with cycles, orphans, most_depended, and complexity data
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-analyzedependencies
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-analyzedependencies
      */
     public function analyzeDependencies(): array
     {
@@ -478,7 +478,7 @@ class ServiceDefinitionRepository extends Repository
      *
      * @return Arrhae Collection of services matching the search criteria
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-searchservices
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-searchservices
      */
     public function searchServices(string $query, float $threshold = 70): Arrhae
     {
@@ -556,7 +556,7 @@ class ServiceDefinitionRepository extends Repository
      * @param array $servicesData Array of service definition data arrays
      *
      * @return array Import results with counts and error details
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-importservices
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-importservices
      */
     public function importServices(array $servicesData): array
     {
@@ -601,7 +601,7 @@ class ServiceDefinitionRepository extends Repository
      *
      * @return void
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-saveservicedefinition
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-saveservicedefinition
      */
     public function saveServiceDefinition(ServiceDefinitionEntity $service): void
     {
@@ -658,7 +658,7 @@ class ServiceDefinitionRepository extends Repository
      *
      * @return array Array of service definition arrays
      * @throws \DateMalformedStringException
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-exportservices
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-exportservices
      */
     public function exportServices(array $filters = []): array
     {
@@ -688,7 +688,7 @@ class ServiceDefinitionRepository extends Repository
      *
      * @return ServiceDefinitionEntity Hydrated entity instance
      * @throws \DateMalformedStringException
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-maptoentity
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-maptoentity
      */
     protected function mapToEntity(array $data): ServiceDefinitionEntity
     {
@@ -724,7 +724,7 @@ class ServiceDefinitionRepository extends Repository
      *
      * @return array Cleanup results with deletion count and errors
      * @throws \DateMalformedStringException
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-cleanup
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-cleanup
      */
     public function cleanup(int|null $daysOld = 30): array
     {
@@ -755,7 +755,7 @@ class ServiceDefinitionRepository extends Repository
      * Must return the fully qualified class name of ServiceDefinitionEntity.
      *
      * @return string The entity class name
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-getentityclass
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-getentityclass
      */
     protected function getEntityClass(): string
     {
@@ -772,7 +772,7 @@ class ServiceDefinitionRepository extends Repository
      * @param object $entity The entity to map (must be ServiceDefinitionEntity)
      *
      * @return array Database-compatible array representation
-     * @see docs_md/Features/Define/Store/ServiceDefinitionRepository.md#method-maptodatabase
+     * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-maptodatabase
      */
     protected function mapToDatabase(object $entity): array
     {

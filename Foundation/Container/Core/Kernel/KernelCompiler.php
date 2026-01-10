@@ -18,7 +18,7 @@ use Throwable;
  * Handles service compilation, validation, and cache management.
  * Separated from orchestration to keep ContainerKernel focused on runtime, enabling early error detection and performance optimization.
  *
- * @see docs_md/Core/Kernel/KernelCompiler.md#quick-summary
+ * @see docs/Core/Kernel/KernelCompiler.md#quick-summary
  */
 final readonly class KernelCompiler
 {
@@ -28,7 +28,7 @@ final readonly class KernelCompiler
      * @param DefinitionStore         $definitions      Service definitions to compile
      * @param ServicePrototypeFactory $prototypeFactory Factory for creating prototypes
      * @param CollectMetrics|null     $metrics          Optional metrics collector
-     * @see docs_md/Core/Kernel/KernelCompiler.md#method-__construct
+     * @see docs/Core/Kernel/KernelCompiler.md#method-__construct
      */
     public function __construct(
         private DefinitionStore         $definitions,
@@ -46,7 +46,7 @@ final readonly class KernelCompiler
      *     validation_errors: int
      * } Compilation statistics and results
      * @throws \Throwable When prototype creation or validation fails (handled internally)
-     * @see docs_md/Core/Kernel/KernelCompiler.md#method-compile
+     * @see docs/Core/Kernel/KernelCompiler.md#method-compile
      */
     public function compile(): array
     {
@@ -93,7 +93,7 @@ final readonly class KernelCompiler
      * @param ServiceDefinition $definition Service definition to resolve
      * @return string|null Resolved class name or null if not resolvable
      * @throws \Throwable When reflection analysis fails
-     * @see docs_md/Core/Kernel/KernelCompiler.md#method-resolvedefinitionclass
+     * @see docs/Core/Kernel/KernelCompiler.md#method-resolvedefinitionclass
      */
     private function resolveDefinitionClass(ServiceDefinition $definition): string|null
     {
@@ -125,7 +125,7 @@ final readonly class KernelCompiler
      *
      * @return void
      * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException If validation fails
-     * @see docs_md/Core/Kernel/KernelCompiler.md#method-validate
+     * @see docs/Core/Kernel/KernelCompiler.md#method-validate
      */
     public function validate(): void
     {
@@ -145,7 +145,7 @@ final readonly class KernelCompiler
      * Clear all caches.
      *
      * @return void
-     * @see docs_md/Core/Kernel/KernelCompiler.md#method-clearcache
+     * @see docs/Core/Kernel/KernelCompiler.md#method-clearcache
      */
     public function clearCache(): void
     {
@@ -157,7 +157,7 @@ final readonly class KernelCompiler
      *
      * @param array|null $compilationStats Existing stats or null for defaults
      * @return array Compilation statistics
-     * @see docs_md/Core/Kernel/KernelCompiler.md#method-stats
+     * @see docs/Core/Kernel/KernelCompiler.md#method-stats
      */
     public function stats(array|null $compilationStats): array
     {

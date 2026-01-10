@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Features\Core\Contracts;
 
 use Avax\Container\Features\Think\Prototype\ServicePrototypeBuilder;
@@ -36,8 +37,9 @@ use Avax\Container\Features\Think\Prototype\ServicePrototypeBuilder;
  * Compilation operations should be performed before concurrent usage begins.
  * Implementations may not be thread-safe during compilation.
  *
- * @see     ContainerInterface For the full container contract
- * @see     ResolverInterface For service resolution operations
+ * @see docs/Features/Core/Contracts/CompilerInterface.md
+ * @see ContainerInterface For the full container contract
+ * @see ResolverInterface For service resolution operations
  */
 interface CompilerInterface
 {
@@ -62,7 +64,7 @@ interface CompilerInterface
      *
      * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface If analysis fails
      */
-    public function analyzeDependenciesFor(string $class) : ServicePrototypeBuilder;
+    public function analyzeDependenciesFor(string $class): ServicePrototypeBuilder;
 
     /**
      * Validates all registered service definitions and prototypes.
@@ -82,7 +84,7 @@ interface CompilerInterface
      *
      * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface If validation fails
      */
-    public function validate() : self;
+    public function validate(): self;
 
     /**
      * Compiles and caches service prototypes for all registered services.
@@ -113,7 +115,7 @@ interface CompilerInterface
      *
      * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface If compilation fails
      */
-    public function compile() : array;
+    public function compile(): array;
 
     /**
      * Clears all cached compilation artifacts.
@@ -129,7 +131,7 @@ interface CompilerInterface
      *
      * @return self Returns $this for method chaining
      */
-    public function clearCache() : self;
+    public function clearCache(): self;
 
     /**
      * Gets compilation statistics and diagnostics.
@@ -146,5 +148,5 @@ interface CompilerInterface
      *
      * @return array Compilation statistics and diagnostic information
      */
-    public function getCompilationStats() : array;
+    public function getCompilationStats(): array;
 }

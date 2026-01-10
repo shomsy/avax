@@ -93,14 +93,14 @@ use Avax\Container\Observe\Dashboard\DiagnosticsDashboard;
  * @see DiagnosticsDashboard For the underlying diagnostics system
  * @see Container::diagnostics() For diagnostics API
  * @see Container::inspect() For container inspection
- * @see docs_md/Tools/Console/DiagnoseCommand.md#quick-summary
+ * @see docs/Tools/Console/DiagnoseCommand.md#quick-summary
  */
 readonly class DiagnoseCommand
 {
     /**
      * @param \Avax\Container\Container $container The container instance to diagnose
      *
-     * @see docs_md/Tools/Console/DiagnoseCommand.md#method-__construct
+     * @see docs/Tools/Console/DiagnoseCommand.md#method-__construct
      */
     public function __construct(
         private Container $container
@@ -122,7 +122,7 @@ readonly class DiagnoseCommand
      * - Summary and recommendations
      *
      * @return void Outputs diagnostic report to stdout
-     * @see docs_md/Tools/Console/DiagnoseCommand.md#method-execute
+     * @see docs/Tools/Console/DiagnoseCommand.md#method-execute
      */
     public function execute() : void
     {

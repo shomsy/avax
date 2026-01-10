@@ -59,7 +59,7 @@ use RecursiveIteratorIterator;
  * @package Avax\Container\Operate\Boot
  * @see     Application The resulting application instance
  * @see     ContainerBootstrapper For container initialization details
- * @see     docs_md/Features/Operate/Boot/ApplicationBuilder.md#quick-summary
+ * @see docs/Features/Operate/Boot/ApplicationBuilder.md#quick-summary
  */
 class ApplicationBuilder
 {
@@ -90,7 +90,7 @@ class ApplicationBuilder
      *
      * @param string $basePath Absolute path to the application root directory
      *
-     * @see docs_md/Features/Operate/Boot/ApplicationBuilder.md#method-__construct
+     * @see docs/Features/Operate/Boot/ApplicationBuilder.md#method-__construct
      */
     public function __construct(
         private readonly string $basePath
@@ -116,7 +116,7 @@ class ApplicationBuilder
      * @param string $path Relative path to web routes file from application base
      *
      * @return $this For method chaining
-     * @see docs_md/Features/Operate/Boot/ApplicationBuilder.md#method-exposeweb
+     * @see docs/Features/Operate/Boot/ApplicationBuilder.md#method-exposeweb
      */
     public function exposeWeb(string $path): self
     {
@@ -141,7 +141,7 @@ class ApplicationBuilder
      * @param string $path Relative path to API routes file from application base
      *
      * @return $this For method chaining
-     * @see docs_md/Features/Operate/Boot/ApplicationBuilder.md#method-exposeapi
+     * @see docs/Features/Operate/Boot/ApplicationBuilder.md#method-exposeapi
      */
     public function exposeApi(string $path): self
     {
@@ -176,7 +176,7 @@ class ApplicationBuilder
      * @param callable $middleware Middleware callable for request processing
      *
      * @return $this For method chaining
-     * @see docs_md/Features/Operate/Boot/ApplicationBuilder.md#method-pipe
+     * @see docs/Features/Operate/Boot/ApplicationBuilder.md#method-pipe
      */
     public function pipe(callable $middleware): self
     {
@@ -205,7 +205,7 @@ class ApplicationBuilder
      * @param callable $handler Exception handler callable
      *
      * @return $this For method chaining
-     * @see docs_md/Features/Operate/Boot/ApplicationBuilder.md#method-handle
+     * @see docs/Features/Operate/Boot/ApplicationBuilder.md#method-handle
      */
     public function handle(callable $handler): self
     {
@@ -220,7 +220,7 @@ class ApplicationBuilder
      * @param array $providers List of provider classes or instances
      *
      * @return self
-     * @see docs_md/Features/Operate/Boot/ApplicationBuilder.md#method-withproviders
+     * @see docs/Features/Operate/Boot/ApplicationBuilder.md#method-withproviders
      */
     public function withProviders(array $providers): self
     {
@@ -253,7 +253,7 @@ class ApplicationBuilder
      * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
-     * @see docs_md/Features/Operate/Boot/ApplicationBuilder.md#method-build
+     * @see docs/Features/Operate/Boot/ApplicationBuilder.md#method-build
      */
     public function build(): Application
     {
@@ -323,7 +323,7 @@ class ApplicationBuilder
      *
      * @return void
      * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface
-     * @see docs_md/Features/Operate/Boot/ApplicationBuilder.md#method-registercoreproviders
+     * @see docs/Features/Operate/Boot/ApplicationBuilder.md#method-registercoreproviders
      */
     private function registerCoreProviders(Application $app): void
     {

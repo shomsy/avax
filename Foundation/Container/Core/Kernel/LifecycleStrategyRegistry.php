@@ -12,7 +12,7 @@ use InvalidArgumentException;
  *
  * Provides centralized storage and retrieval of lifecycle strategies, enabling extensible service lifetime management.
  *
- * @see docs_md/Core/Kernel/LifecycleStrategyRegistry.md#quick-summary
+ * @see docs/Core/Kernel/LifecycleStrategyRegistry.md#quick-summary
  */
 final class LifecycleStrategyRegistry
 {
@@ -35,7 +35,7 @@ final class LifecycleStrategyRegistry
      * @param string $name Unique identifier for the strategy
      * @param LifecycleStrategy $strategy The strategy implementation to register
      * @return void
-     * @see docs_md/Core/Kernel/LifecycleStrategyRegistry.md#method-register
+     * @see docs/Core/Kernel/LifecycleStrategyRegistry.md#method-register
      */
     public function register(string $name, LifecycleStrategy $strategy): void
     {
@@ -50,7 +50,7 @@ final class LifecycleStrategyRegistry
      *
      * @param string $name Strategy name to check for existence
      * @return bool True if strategy exists, false otherwise
-     * @see docs_md/Core/Kernel/LifecycleStrategyRegistry.md#method-has
+     * @see docs/Core/Kernel/LifecycleStrategyRegistry.md#method-has
      */
     public function has(string $name): bool
     {
@@ -66,7 +66,7 @@ final class LifecycleStrategyRegistry
      * @param string $name Strategy name to retrieve
      * @return LifecycleStrategy The requested strategy implementation
      * @throws InvalidArgumentException When strategy with given name is not registered
-     * @see docs_md/Core/Kernel/LifecycleStrategyRegistry.md#method-get
+     * @see docs/Core/Kernel/LifecycleStrategyRegistry.md#method-get
      */
     public function get(string $name): LifecycleStrategy
     {
@@ -84,7 +84,7 @@ final class LifecycleStrategyRegistry
      * enabling inspection and iteration over available lifecycle options.
      *
      * @return array<string, LifecycleStrategy> Map of strategy names to implementations
-     * @see docs_md/Core/Kernel/LifecycleStrategyRegistry.md#method-all
+     * @see docs/Core/Kernel/LifecycleStrategyRegistry.md#method-all
      */
     public function all(): array
     {

@@ -172,7 +172,7 @@ use Throwable;
  * @see     ServiceLifetime For service lifetime scope definitions
  * @see     SymfonyStyle For enhanced console output and user interaction
  * @see     Arrhae For collection manipulation and data transformation utilities
- * @see     docs_md/Tools/Console/ServiceManagementCommand.md#quick-summary
+ * @see docs/Tools/Console/ServiceManagementCommand.md#quick-summary
  */
 #[CommandDefinitions(name: 'container:services')]
 class ServiceManagementCommand extends Command
@@ -189,7 +189,7 @@ class ServiceManagementCommand extends Command
     /**
      * @param ServiceDefinitionRepository $serviceRepo Settings for service definitions.
      *
-     * @see docs_md/Tools/Console/ServiceManagementCommand.md#method-__construct
+     * @see docs/Tools/Console/ServiceManagementCommand.md#method-__construct
      */
     public function __construct(
         private readonly ServiceDefinitionRepository $serviceRepo
@@ -202,7 +202,7 @@ class ServiceManagementCommand extends Command
      * Configure CLI arguments and options.
      *
      * @return void
-     * @see docs_md/Tools/Console/ServiceManagementCommand.md#method-configure
+     * @see docs/Tools/Console/ServiceManagementCommand.md#method-configure
      */
     protected function configure() : void
     {
@@ -227,7 +227,7 @@ class ServiceManagementCommand extends Command
      * @param OutputInterface $output Output writer.
      *
      * @return int Command exit code.
-     * @see docs_md/Tools/Console/ServiceManagementCommand.md#method-execute
+     * @see docs/Tools/Console/ServiceManagementCommand.md#method-execute
      */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
@@ -265,7 +265,7 @@ class ServiceManagementCommand extends Command
      * @return void
      *
      * @throws \Exception
-     * @see docs_md/Tools/Console/ServiceManagementCommand.md#method-listservices
+     * @see docs/Tools/Console/ServiceManagementCommand.md#method-listservices
      */
     private function listServices(SymfonyStyle $io, InputInterface $input) : void
     {
@@ -314,7 +314,7 @@ class ServiceManagementCommand extends Command
      * @return void
      *
      * @throws \Exception
-     * @see docs_md/Tools/Console/ServiceManagementCommand.md#method-addservice
+     * @see docs/Tools/Console/ServiceManagementCommand.md#method-addservice
      */
     private function addService(SymfonyStyle $io, InputInterface $input) : void
     {
@@ -361,7 +361,7 @@ class ServiceManagementCommand extends Command
      * @param string|null $value Comma-separated string.
      *
      * @return array<int, string>
-     * @see docs_md/Tools/Console/ServiceManagementCommand.md#method-parsecommaseparated
+     * @see docs/Tools/Console/ServiceManagementCommand.md#method-parsecommaseparated
      */
     private function parseCommaSeparated(string|null $value) : array
     {
@@ -382,7 +382,7 @@ class ServiceManagementCommand extends Command
      * @return void
      *
      * @throws \Exception
-     * @see docs_md/Tools/Console/ServiceManagementCommand.md#method-updateservice
+     * @see docs/Tools/Console/ServiceManagementCommand.md#method-updateservice
      */
     private function updateService(SymfonyStyle $io, InputInterface $input, string|null $serviceId) : void
     {
@@ -446,7 +446,7 @@ class ServiceManagementCommand extends Command
      * @return void
      *
      * @throws \Exception
-     * @see docs_md/Tools/Console/ServiceManagementCommand.md#method-removeservice
+     * @see docs/Tools/Console/ServiceManagementCommand.md#method-removeservice
      */
     private function removeService(SymfonyStyle $io, string|null $serviceId) : void
     {
@@ -485,7 +485,7 @@ class ServiceManagementCommand extends Command
      * @param InputInterface $input Input options and arguments.
      *
      * @return void
-     * @see docs_md/Tools/Console/ServiceManagementCommand.md#method-importservices
+     * @see docs/Tools/Console/ServiceManagementCommand.md#method-importservices
      */
     private function importServices(SymfonyStyle $io, InputInterface $input) : void
     {
@@ -525,7 +525,7 @@ class ServiceManagementCommand extends Command
      *
      * @return void
      * @throws \DateMalformedStringException
-     * @see docs_md/Tools/Console/ServiceManagementCommand.md#method-exportservices
+     * @see docs/Tools/Console/ServiceManagementCommand.md#method-exportservices
      */
     private function exportServices(SymfonyStyle $io, InputInterface $input) : void
     {
@@ -559,7 +559,7 @@ class ServiceManagementCommand extends Command
      * @return void
      *
      * @throws \Exception
-     * @see docs_md/Tools/Console/ServiceManagementCommand.md#method-showservice
+     * @see docs/Tools/Console/ServiceManagementCommand.md#method-showservice
      */
     private function showService(SymfonyStyle $io, string|null $serviceId, InputInterface $input) : void
     {

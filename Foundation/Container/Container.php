@@ -22,7 +22,7 @@ use Avax\Container\Features\Think\Model\ServicePrototype;
  * service requests. By centralizing dependency management, it enables loose coupling, testability, and maintainability
  * across your entire application architecture.
  *
- * @see docs_md/Container.md#quick-summary
+ * @see docs/Container.md#quick-summary
  */
 final readonly class Container implements ContainerInternalInterface
 {
@@ -31,7 +31,7 @@ final readonly class Container implements ContainerInternalInterface
      *
      * @param ContainerKernel $kernel The kernel that handles all container operations
      *
-     * @see docs_md/Container.md#method-__construct
+     * @see docs/Container.md#method-__construct
      */
     public function __construct(
         private readonly ContainerKernel $kernel
@@ -45,7 +45,7 @@ final readonly class Container implements ContainerInternalInterface
      * @return mixed The fully resolved service instance
      * @throws ResolutionException When the service cannot be resolved due to dependency issues
      * @throws ServiceNotFoundException When the requested service identifier is not registered
-     * @see docs_md/Container.md#method-get
+     * @see docs/Container.md#method-get
      */
     public function get(string $id) : mixed
     {
@@ -58,7 +58,7 @@ final readonly class Container implements ContainerInternalInterface
      * @param string $id Service identifier to check
      *
      * @return bool True if the service can be resolved, false otherwise
-     * @see docs_md/Container.md#method-has
+     * @see docs/Container.md#method-has
      */
     public function has(string $id) : bool
     {
@@ -74,7 +74,7 @@ final readonly class Container implements ContainerInternalInterface
      * @return object A new instance of the requested service
      * @throws ResolutionException When dependencies cannot be resolved
      * @throws ServiceNotFoundException When the service is not registered
-     * @see docs_md/Container.md#method-make
+     * @see docs/Container.md#method-make
      */
     public function make(string $abstract, array $parameters = []) : object
     {
@@ -89,7 +89,7 @@ final readonly class Container implements ContainerInternalInterface
      *
      * @return mixed The result of the callable execution
      * @throws ResolutionException When dependencies cannot be resolved for the callable
-     * @see docs_md/Container.md#method-call
+     * @see docs/Container.md#method-call
      */
     public function call(callable|string $callable, array $parameters = []) : mixed
     {
@@ -103,7 +103,7 @@ final readonly class Container implements ContainerInternalInterface
      *
      * @return object The same object with dependencies injected
      * @throws ResolutionException When dependencies cannot be resolved for injection
-     * @see docs_md/Container.md#method-injectinto
+     * @see docs/Container.md#method-injectinto
      */
     public function injectInto(object $target) : object
     {
@@ -117,7 +117,7 @@ final readonly class Container implements ContainerInternalInterface
      *
      * @return mixed The resolved service instance
      * @throws ResolutionException When the prototype cannot be resolved
-     * @see docs_md/Container.md#method-resolve
+     * @see docs/Container.md#method-resolve
      */
     public function resolve(ServicePrototype $prototype) : mixed
     {
@@ -131,7 +131,7 @@ final readonly class Container implements ContainerInternalInterface
      *
      * @return mixed The resolved service instance
      * @throws ResolutionException When the service cannot be resolved with the given context
-     * @see docs_md/Container.md#method-resolvecontext
+     * @see docs/Container.md#method-resolvecontext
      */
     public function resolveContext(KernelContext $context) : mixed
     {
@@ -145,7 +145,7 @@ final readonly class Container implements ContainerInternalInterface
      * @param object $instance The object instance to register
      *
      * @return void
-     * @see docs_md/Container.md#method-instance
+     * @see docs/Container.md#method-instance
      */
     public function instance(string $abstract, object $instance) : void
     {
@@ -156,7 +156,7 @@ final readonly class Container implements ContainerInternalInterface
      * Start a new resolution scope.
      *
      * @return void
-     * @see docs_md/Container.md#method-beginscope
+     * @see docs/Container.md#method-beginscope
      */
     public function beginScope() : void
     {
@@ -167,7 +167,7 @@ final readonly class Container implements ContainerInternalInterface
      * End the current resolution scope.
      *
      * @return void
-     * @see docs_md/Container.md#method-endscope
+     * @see docs/Container.md#method-endscope
      */
     public function endScope() : void
     {
@@ -180,7 +180,7 @@ final readonly class Container implements ContainerInternalInterface
      * @param object $target The object to check for injection points
      *
      * @return bool True if the object has injection points, false otherwise
-     * @see docs_md/Container.md#method-caninject
+     * @see docs/Container.md#method-caninject
      */
     public function canInject(object $target) : bool
     {
@@ -195,7 +195,7 @@ final readonly class Container implements ContainerInternalInterface
      * @param object $target The object to inspect for injection points
      *
      * @return InjectionReport Detailed report of injection points found
-     * @see docs_md/Container.md#method-inspectinjection
+     * @see docs/Container.md#method-inspectinjection
      */
     public function inspectInjection(object $target) : InjectionReport
     {
@@ -206,7 +206,7 @@ final readonly class Container implements ContainerInternalInterface
      * Get the scope manager.
      *
      * @return ScopeManager The scope manager for advanced scope control
-     * @see docs_md/Container.md#method-scopes
+     * @see docs/Container.md#method-scopes
      */
     public function scopes() : ScopeManager
     {
@@ -217,7 +217,7 @@ final readonly class Container implements ContainerInternalInterface
      * Export metrics as string.
      *
      * @return string Serialized metrics data for monitoring and analysis
-     * @see docs_md/Container.md#method-exportmetrics
+     * @see docs/Container.md#method-exportmetrics
      */
     public function exportMetrics() : string
     {
@@ -228,7 +228,7 @@ final readonly class Container implements ContainerInternalInterface
      * Get the definition store.
      *
      * @return DefinitionStore The store containing all service definitions
-     * @see docs_md/Container.md#related-files-folders
+     * @see docs/Container.md#related-files-folders
      */
     public function getDefinitions() : DefinitionStore
     {

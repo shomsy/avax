@@ -34,7 +34,7 @@ namespace Avax\Container\Observe\Metrics;
  * - Asynchronous export preferred for performance
  *
  * @package Avax\Container\Observe\Metrics
- * @see     docs_md/Observe/Metrics/TelemetryExporter.md#quick-summary
+ * @see docs/Observe/Metrics/TelemetryExporter.md#quick-summary
  */
 interface TelemetryExporter
 {
@@ -48,7 +48,7 @@ interface TelemetryExporter
      * @param int    $value  The increment value (default: 1)
      *
      * @return void
-     * @see docs_md/Observe/Metrics/TelemetryExporter.md#method-increment
+     * @see docs/Observe/Metrics/TelemetryExporter.md#method-increment
      */
     public function increment(string $metric, int $value = 1) : void;
 
@@ -62,7 +62,7 @@ interface TelemetryExporter
      * @param float  $value  The observed value
      *
      * @return void
-     * @see docs_md/Observe/Metrics/TelemetryExporter.md#method-observe
+     * @see docs/Observe/Metrics/TelemetryExporter.md#method-observe
      */
     public function observe(string $metric, float $value) : void;
 }

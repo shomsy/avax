@@ -14,7 +14,7 @@ use Avax\Container\Features\Core\Exceptions\ResolutionException;
  * Enforces a maximum resolution depth to prevent stack overflow from
  * deep dependency chains or potential infinite recursion.
  *
- * @see docs_md/Core/Kernel/Steps/DepthGuardStep.md#quick-summary
+ * @see docs/Core/Kernel/Steps/DepthGuardStep.md#quick-summary
  */
 final readonly class DepthGuardStep implements KernelStep
 {
@@ -22,7 +22,7 @@ final readonly class DepthGuardStep implements KernelStep
 
     /**
      * @param int $maxDepth Maximum allowed resolution depth
-     * @see docs_md/Core/Kernel/Steps/DepthGuardStep.md#method-__construct
+     * @see docs/Core/Kernel/Steps/DepthGuardStep.md#method-__construct
      */
     public function __construct(
         private int $maxDepth = self::DEFAULT_MAX_DEPTH
@@ -34,7 +34,7 @@ final readonly class DepthGuardStep implements KernelStep
      * @param KernelContext $context
      * @return void
      * @throws ResolutionException
-     * @see docs_md/Core/Kernel/Steps/DepthGuardStep.md#method-__invoke
+     * @see docs/Core/Kernel/Steps/DepthGuardStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void
     {

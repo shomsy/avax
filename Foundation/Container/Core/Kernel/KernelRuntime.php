@@ -15,7 +15,7 @@ use Avax\Container\Features\Think\Model\ServicePrototype;
  * Coordinates the actual resolution logic, invoking the pipeline and handling
  * final instance extraction. Acts as the engine room for the ContainerKernel.
  *
- * @see docs_md/Core/Kernel/KernelRuntime.md#quick-summary
+ * @see docs/Core/Kernel/KernelRuntime.md#quick-summary
  */
 final readonly class KernelRuntime
 {
@@ -26,7 +26,7 @@ final readonly class KernelRuntime
      *
      * @param ResolutionPipeline $pipeline The execution pipeline.
      * @param InvokeAction       $invoker  The invocation helper.
-     * @see docs_md/Core/Kernel/KernelRuntime.md#method-__construct
+     * @see docs/Core/Kernel/KernelRuntime.md#method-__construct
      */
     public function __construct(
         private ResolutionPipeline $pipeline,
@@ -39,7 +39,7 @@ final readonly class KernelRuntime
      * @param string $id The service identifier.
      * @return mixed The resolved instance.
      * @throws ResolutionException If resolution fails.
-     * @see docs_md/Core/Kernel/KernelRuntime.md#method-get
+     * @see docs/Core/Kernel/KernelRuntime.md#method-get
      */
     public function get(string $id): mixed
     {
@@ -52,7 +52,7 @@ final readonly class KernelRuntime
      * @param KernelContext $context The resolution state.
      * @return mixed The resolved instance.
      * @throws ResolutionException If pipeline does not resolve the service.
-     * @see docs_md/Core/Kernel/KernelRuntime.md#method-resolvecontext
+     * @see docs/Core/Kernel/KernelRuntime.md#method-resolvecontext
      */
     public function resolveContext(KernelContext $context): mixed
     {
@@ -72,7 +72,7 @@ final readonly class KernelRuntime
      * @param array  $parameters Constructor/method overrides.
      * @return object The resolved instance.
      * @throws ResolutionException If resolution fails.
-     * @see docs_md/Core/Kernel/KernelRuntime.md#method-make
+     * @see docs/Core/Kernel/KernelRuntime.md#method-make
      */
     public function make(string $id, array $parameters = []): object
     {
@@ -88,7 +88,7 @@ final readonly class KernelRuntime
      * @param ServicePrototype $prototype The pre-analyzed metadata.
      * @return mixed The resolved instance.
      * @throws ResolutionException If resolution fails.
-     * @see docs_md/Core/Kernel/KernelRuntime.md#method-resolve
+     * @see docs/Core/Kernel/KernelRuntime.md#method-resolve
      */
     public function resolve(ServicePrototype $prototype): mixed
     {
@@ -104,7 +104,7 @@ final readonly class KernelRuntime
      * @param callable|string $callable   The target to invoke.
      * @param array           $parameters Runtime overrides.
      * @return mixed The invocation result.
-     * @see docs_md/Core/Kernel/KernelRuntime.md#method-call
+     * @see docs/Core/Kernel/KernelRuntime.md#method-call
      */
     public function call(callable|string $callable, array $parameters = []): mixed
     {
@@ -116,7 +116,7 @@ final readonly class KernelRuntime
      *
      * @param object $target The instance to hydrate.
      * @return object The hydrated instance.
-     * @see docs_md/Core/Kernel/KernelRuntime.md#method-injectinto
+     * @see docs/Core/Kernel/KernelRuntime.md#method-injectinto
      */
     public function injectInto(object $target): object
     {

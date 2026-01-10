@@ -9,7 +9,7 @@ namespace Avax\Container\Guard\Enforce;
  *
  * This is an "all-of" composite: resolution is allowed only when every configured sub-policy allows it.
  *
- * @see docs_md/Guard/Enforce/CompositeResolutionPolicy.md#quick-summary
+ * @see docs/Guard/Enforce/CompositeResolutionPolicy.md#quick-summary
  */
 final readonly class CompositeResolutionPolicy implements ResolutionPolicy
 {
@@ -18,7 +18,7 @@ final readonly class CompositeResolutionPolicy implements ResolutionPolicy
 
     /**
      * @param array $policies A list of policies; non-ResolutionPolicy values are ignored
-     * @see docs_md/Guard/Enforce/CompositeResolutionPolicy.md#method-__construct
+     * @see docs/Guard/Enforce/CompositeResolutionPolicy.md#method-__construct
      */
     public function __construct(array $policies)
     {
@@ -31,7 +31,7 @@ final readonly class CompositeResolutionPolicy implements ResolutionPolicy
      * @param string $abstract The abstract/service identifier being resolved
      *
      * @return bool True when all policies allow the abstract; otherwise false
-     * @see docs_md/Guard/Enforce/CompositeResolutionPolicy.md#method-isallowed
+     * @see docs/Guard/Enforce/CompositeResolutionPolicy.md#method-isallowed
      */
     public function isAllowed(string $abstract): bool
     {
@@ -50,7 +50,7 @@ final readonly class CompositeResolutionPolicy implements ResolutionPolicy
      * @param ResolutionPolicy ...$policies Policies to combine
      *
      * @return self
-     * @see docs_md/Guard/Enforce/CompositeResolutionPolicy.md#method-with
+     * @see docs/Guard/Enforce/CompositeResolutionPolicy.md#method-with
      */
     public static function with(ResolutionPolicy ...$policies): self
     {

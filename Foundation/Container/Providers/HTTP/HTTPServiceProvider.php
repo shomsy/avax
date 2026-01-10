@@ -17,7 +17,7 @@ use Psr\Http\Message\StreamInterface;
 /**
  * Service Provider for core HTTP components (PSR-7/17).
  *
- * @see docs_md/Providers/HTTP/HTTPServiceProvider.md#quick-summary
+ * @see docs/Providers/HTTP/HTTPServiceProvider.md#quick-summary
  */
 class HTTPServiceProvider extends ServiceProvider
 {
@@ -25,7 +25,7 @@ class HTTPServiceProvider extends ServiceProvider
      * Register PSR-7/17 response and stream bindings.
      *
      * @return void
-     * @see docs_md/Providers/HTTP/HTTPServiceProvider.md#method-register
+     * @see docs/Providers/HTTP/HTTPServiceProvider.md#method-register
      */
     public function register() : void
     {

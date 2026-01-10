@@ -20,7 +20,7 @@ use Throwable;
  * Manages the flow, telemetry via StepTelemetry observer, and error handling for the entire resolution lifecycle,
  * ensuring each step has the opportunity to transform the resolution context.
  *
- * @see docs_md/Core/Kernel/ResolutionPipeline.md#quick-summary
+ * @see docs/Core/Kernel/ResolutionPipeline.md#quick-summary
  * @internal This class is not intended for public usage.
  */
 final readonly class ResolutionPipeline
@@ -34,7 +34,7 @@ final readonly class ResolutionPipeline
      * @param array               $steps     List of KernelStep implementations
      * @param StepTelemetry|null  $telemetry Optional telemetry observer
      * @throws ContainerException If a step does not implement KernelStep or if steps are empty
-     * @see docs_md/Core/Kernel/ResolutionPipeline.md#method-__construct
+     * @see docs/Core/Kernel/ResolutionPipeline.md#method-__construct
      */
     public function __construct(
         array               $steps,
@@ -60,7 +60,7 @@ final readonly class ResolutionPipeline
      * @return void
      * @throws ContainerException If execution fails catastrophically.
      * @throws Throwable From any individual step.
-     * @see docs_md/Core/Kernel/ResolutionPipeline.md#method-run
+     * @see docs/Core/Kernel/ResolutionPipeline.md#method-run
      */
     public function run(KernelContext $context): void
     {
@@ -135,7 +135,7 @@ final readonly class ResolutionPipeline
      * Get the number of steps in the pipeline.
      *
      * @return int
-     * @see docs_md/Core/Kernel/ResolutionPipeline.md#method-count
+     * @see docs/Core/Kernel/ResolutionPipeline.md#method-count
      */
     public function count(): int
     {
@@ -148,7 +148,7 @@ final readonly class ResolutionPipeline
      * @param int $index
      * @return KernelStep
      * @throws ContainerException If index is out of bounds
-     * @see docs_md/Core/Kernel/ResolutionPipeline.md#method-getstep
+     * @see docs/Core/Kernel/ResolutionPipeline.md#method-getstep
      */
     public function getStep(int $index): KernelStep
     {
@@ -164,7 +164,7 @@ final readonly class ResolutionPipeline
      *
      * @param KernelStep $step
      * @return self
-     * @see docs_md/Core/Kernel/ResolutionPipeline.md#method-withstep
+     * @see docs/Core/Kernel/ResolutionPipeline.md#method-withstep
      */
     public function withStep(KernelStep $step): self
     {
@@ -179,7 +179,7 @@ final readonly class ResolutionPipeline
      *
      * @param KernelStep $step
      * @return self
-     * @see docs_md/Core/Kernel/ResolutionPipeline.md#method-withstepfirst
+     * @see docs/Core/Kernel/ResolutionPipeline.md#method-withstepfirst
      */
     public function withStepFirst(KernelStep $step): self
     {
@@ -193,7 +193,7 @@ final readonly class ResolutionPipeline
      * Get all steps in the pipeline.
      *
      * @return KernelStep[]
-     * @see docs_md/Core/Kernel/ResolutionPipeline.md#method-getsteps
+     * @see docs/Core/Kernel/ResolutionPipeline.md#method-getsteps
      */
     public function getSteps(): array
     {
@@ -204,7 +204,7 @@ final readonly class ResolutionPipeline
      * String representation of the pipeline sequence.
      *
      * @return string
-     * @see docs_md/Core/Kernel/ResolutionPipeline.md#method-__tostring
+     * @see docs/Core/Kernel/ResolutionPipeline.md#method-__tostring
      */
     public function __toString(): string
     {

@@ -10,14 +10,14 @@ use Avax\Container\Features\Operate\Scope\ScopeManager;
 /**
  * Scoped Lifecycle Strategy
  *
- * @see docs_md/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#quick-summary
+ * @see docs/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#quick-summary
  */
 final readonly class ScopedLifecycleStrategy implements LifecycleStrategy
 {
     /**
      * @param ScopeManager $scopeManager Scoped storage manager
      *
-     * @see docs_md/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-__constructscopemanager-scopemanager
+     * @see docs/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-__constructscopemanager-scopemanager
      */
     public function __construct(
         private ScopeManager $scopeManager
@@ -30,7 +30,7 @@ final readonly class ScopedLifecycleStrategy implements LifecycleStrategy
      * @param mixed  $instance Instance to cache within scope
      *
      * @return void
-     * @see docs_md/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-storestring-abstract-mixed-instance-void
+     * @see docs/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-storestring-abstract-mixed-instance-void
      */
     public function store(string $abstract, mixed $instance): void
     {
@@ -43,7 +43,7 @@ final readonly class ScopedLifecycleStrategy implements LifecycleStrategy
      * @param string $abstract Service identifier
      *
      * @return bool True when cached in current scope
-     * @see docs_md/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-hasstring-abstract-bool
+     * @see docs/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-hasstring-abstract-bool
      */
     public function has(string $abstract): bool
     {
@@ -56,7 +56,7 @@ final readonly class ScopedLifecycleStrategy implements LifecycleStrategy
      * @param string $abstract Service identifier
      *
      * @return mixed|null Cached instance or null
-     * @see docs_md/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-retrievestring-abstract-mixed
+     * @see docs/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-retrievestring-abstract-mixed
      */
     public function retrieve(string $abstract): mixed
     {
@@ -67,7 +67,7 @@ final readonly class ScopedLifecycleStrategy implements LifecycleStrategy
      * Clear current scope instances.
      *
      * @return void
-     * @see docs_md/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-clearvoid
+     * @see docs/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-clearvoid
      */
     public function clear(): void
     {

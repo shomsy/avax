@@ -10,7 +10,7 @@ namespace Avax\Container\Features\Core\Contracts;
  * with additional options like tags, arguments, and other metadata.
  *
  * @package Avax\Container\Core\Contracts
- * @see docs_md/Features/Core/Contracts/BindingBuilder.md#quick-summary
+ * @see docs/Features/Core/Contracts/BindingBuilder.md#quick-summary
  */
 interface BindingBuilder
 {
@@ -20,7 +20,7 @@ interface BindingBuilder
      * @param string|callable|null $concrete
      *
      * @return self
-     * @see docs_md/Features/Core/Contracts/BindingBuilder.md#method-to
+     * @see docs/Features/Core/Contracts/BindingBuilder.md#method-to
      */
     public function to(string|callable|null $concrete) : self;
 
@@ -30,7 +30,7 @@ interface BindingBuilder
      * @param string|array $tags Tag names
      *
      * @return self
-     * @see docs_md/Features/Core/Contracts/BindingBuilder.md#method-tag
+     * @see docs/Features/Core/Contracts/BindingBuilder.md#method-tag
      */
     public function tag(string|array $tags) : self;
 
@@ -40,7 +40,7 @@ interface BindingBuilder
      * @param array $arguments Named arguments
      *
      * @return self
-     * @see docs_md/Features/Core/Contracts/BindingBuilder.md#method-witharguments
+     * @see docs/Features/Core/Contracts/BindingBuilder.md#method-witharguments
      */
     public function withArguments(array $arguments) : self;
 
@@ -51,7 +51,7 @@ interface BindingBuilder
      * @param mixed  $value
      *
      * @return self
-     * @see docs_md/Features/Core/Contracts/BindingBuilder.md#method-withargument
+     * @see docs/Features/Core/Contracts/BindingBuilder.md#method-withargument
      */
     public function withArgument(string $name, mixed $value) : self;
 

@@ -121,7 +121,7 @@ use Avax\Container\Features\Core\DTO\SuccessDTO;
  * @see     ResolutionPolicy Interface for policy implementation abstraction
  * @see     SuccessDTO Structured success response container
  * @see     ErrorDTO Structured error response container with security context
- * @see     docs_md/Guard/Enforce/GuardResolution.md#quick-summary
+ * @see docs/Guard/Enforce/GuardResolution.md#quick-summary
  */
 final readonly class GuardResolution
 {

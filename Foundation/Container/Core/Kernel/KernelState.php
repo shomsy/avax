@@ -14,7 +14,7 @@ use Closure;
  * or should be instantiated only when needed. Provides a simple key-value store
  * with lazy factory support, optimizing startup performance and resource usage.
  *
- * @see docs_md/Core/Kernel/KernelState.md#quick-summary
+ * @see docs/Core/Kernel/KernelState.md#quick-summary
  */
 final class KernelState
 {
@@ -28,7 +28,7 @@ final class KernelState
      * @param Closure $factory  Factory function to create the instance.
      * @return mixed The property value.
      * @throws \InvalidArgumentException If property doesn't exist on this class.
-     * @see docs_md/Core/Kernel/KernelState.md#method-getorinit
+     * @see docs/Core/Kernel/KernelState.md#method-getorinit
      */
     public function getOrInit(string $property, Closure $factory): mixed
     {
@@ -47,7 +47,7 @@ final class KernelState
      * Reset all lazy-initialized state to null.
      *
      * @return void
-     * @see docs_md/Core/Kernel/KernelState.md#method-reset
+     * @see docs/Core/Kernel/KernelState.md#method-reset
      */
     public function reset(): void
     {

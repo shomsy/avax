@@ -12,7 +12,7 @@ use Avax\Filesystem\Storage\LocalFileStorage;
 /**
  * Service Provider for filesystem and storage services.
  *
- * @see docs_md/Providers/Core/FilesystemServiceProvider.md#quick-summary
+ * @see docs/Providers/Core/FilesystemServiceProvider.md#quick-summary
  */
 class FilesystemServiceProvider extends ServiceProvider
 {
@@ -20,7 +20,7 @@ class FilesystemServiceProvider extends ServiceProvider
      * Register filesystem/storage bindings into the container.
      *
      * @return void
-     * @see docs_md/Providers/Core/FilesystemServiceProvider.md#method-register
+     * @see docs/Providers/Core/FilesystemServiceProvider.md#method-register
      */
     public function register() : void
     {

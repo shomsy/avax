@@ -29,7 +29,7 @@ use Avax\Container\Guard\Rules\ContainerPolicy;
  *
  * Orchestrates the creation and configuration of resolution pipelines from KernelConfig, ensuring proper component initialization and sequencing.
  *
- * @see docs_md/Core/Kernel/ResolutionPipelineBuilder.md#quick-summary
+ * @see docs/Core/Kernel/ResolutionPipelineBuilder.md#quick-summary
  */
 final class ResolutionPipelineBuilder
 {
@@ -42,7 +42,7 @@ final class ResolutionPipelineBuilder
      * @param KernelConfig $config The kernel configuration containing all collaborators
      * @param DefinitionStore $definitions The service definition repository
      * @return ResolutionPipeline A fully configured resolution pipeline ready for execution
-     * @see docs_md/Core/Kernel/ResolutionPipelineBuilder.md#method-defaultFromConfig
+     * @see docs/Core/Kernel/ResolutionPipelineBuilder.md#method-defaultFromConfig
      */
     public static function defaultFromConfig(KernelConfig $config, DefinitionStore $definitions): ResolutionPipeline
     {

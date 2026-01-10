@@ -7,7 +7,7 @@ namespace Avax\Container\Observe\Metrics;
  * Service for collecting performance metrics.
  * "Watch the pulse of the container."
  *
- * @see docs_md/Observe/Metrics/CollectMetrics.md#quick-summary
+ * @see docs/Observe/Metrics/CollectMetrics.md#quick-summary
  */
 final class CollectMetrics
 {
@@ -15,7 +15,7 @@ final class CollectMetrics
 
     /**
      * @param mixed $metrics Optional metrics collector instance used to merge snapshot output
-     * @see docs_md/Observe/Metrics/CollectMetrics.md#method-__construct
+     * @see docs/Observe/Metrics/CollectMetrics.md#method-__construct
      */
     public function __construct(
         private readonly mixed $metrics = null
@@ -28,7 +28,7 @@ final class CollectMetrics
      * @param array  $data  Event context payload
      *
      * @return void
-     * @see docs_md/Observe/Metrics/CollectMetrics.md#method-record
+     * @see docs/Observe/Metrics/CollectMetrics.md#method-record
      */
     public function record(string $event, array $data) : void
     {
@@ -43,7 +43,7 @@ final class CollectMetrics
      * Collect a snapshot of current metrics.
      *
      * @return array Snapshot payload
-     * @see docs_md/Observe/Metrics/CollectMetrics.md#method-collect
+     * @see docs/Observe/Metrics/CollectMetrics.md#method-collect
      */
     public function collect() : array
     {

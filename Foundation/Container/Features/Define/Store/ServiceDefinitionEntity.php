@@ -82,7 +82,7 @@ use InvalidArgumentException;
  * @see     ServiceDefinitionRepository For persistence operations
  * @see     ServiceDiscovery For querying operations
  * @see     ServiceLifetime For lifetime enumeration
- * @see     docs_md/Features/Define/Store/ServiceDefinitionEntity.md#quick-summary
+ * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#quick-summary
  */
 class ServiceDefinitionEntity extends Entity
 {
@@ -114,7 +114,7 @@ class ServiceDefinitionEntity extends Entity
      * @param \DateTimeImmutable|null $updatedAt    Timestamp when this definition was last updated
      *
      * @throws \InvalidArgumentException When validation fails for any required field
-     * @see docs_md/Features/Define/Store/ServiceDefinitionEntity.md#method-__construct
+     * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-__construct
      */
     public function __construct(
         public readonly string                 $id,
@@ -184,7 +184,7 @@ class ServiceDefinitionEntity extends Entity
      * Uses snake_case with 'container_' prefix for namespace isolation.
      *
      * @return string The database table name
-     * @see docs_md/Features/Define/Store/ServiceDefinitionEntity.md#method-gettablename
+     * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-gettablename
      */
     public static function getTableName() : string
     {
@@ -211,7 +211,7 @@ class ServiceDefinitionEntity extends Entity
      * @param string $tag The tag to check for
      *
      * @return bool True if the service has the specified tag
-     * @see docs_md/Features/Define/Store/ServiceDefinitionEntity.md#method-hastag
+     * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-hastag
      */
     public function hasTag(string $tag) : bool
     {
@@ -235,7 +235,7 @@ class ServiceDefinitionEntity extends Entity
      * @param string $serviceId The service ID to check for as a dependency
      *
      * @return bool True if this service depends on the specified service
-     * @see docs_md/Features/Define/Store/ServiceDefinitionEntity.md#method-dependson
+     * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-dependson
      */
     public function dependsOn(string $serviceId) : bool
     {
@@ -264,7 +264,7 @@ class ServiceDefinitionEntity extends Entity
      * ```
      *
      * @return int Complexity score (higher = more complex)
-     * @see docs_md/Features/Define/Store/ServiceDefinitionEntity.md#method-getcomplexityscore
+     * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-getcomplexityscore
      */
     public function getComplexityScore() : int
     {
@@ -316,7 +316,7 @@ class ServiceDefinitionEntity extends Entity
      * @param string|null $environment The environment to check availability for
      *
      * @return bool True if the service is available in the given environment
-     * @see docs_md/Features/Define/Store/ServiceDefinitionEntity.md#method-isavailableinenvironment
+     * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-isavailableinenvironment
      */
     public function isAvailableInEnvironment(string|null $environment) : bool
     {
@@ -354,7 +354,7 @@ class ServiceDefinitionEntity extends Entity
      * @return self New entity instance with applied updates
      * @throws \InvalidArgumentException When updates contain invalid data
      * @throws \DateMalformedStringException
-     * @see docs_md/Features/Define/Store/ServiceDefinitionEntity.md#method-withupdates
+     * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-withupdates
      */
     public function withUpdates(array $updates) : self
     {
@@ -402,7 +402,7 @@ class ServiceDefinitionEntity extends Entity
      * ```
      *
      * @return array Serialized entity data for storage
-     * @see docs_md/Features/Define/Store/ServiceDefinitionEntity.md#method-toarray
+     * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-toarray
      */
     public function toArray() : array
     {
@@ -452,7 +452,7 @@ class ServiceDefinitionEntity extends Entity
      *
      * @return self Reconstructed entity instance
      * @throws \DateMalformedStringException
-     * @see docs_md/Features/Define/Store/ServiceDefinitionEntity.md#method-fromarray
+     * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-fromarray
      */
     public static function fromArray(array $data) : self
     {

@@ -11,7 +11,7 @@ use Throwable;
  *
  * Emitted when a pipeline step fails with an exception.
  *
- * @see docs_md/Core/Kernel/Events/StepFailed.md#quick-summary
+ * @see docs/Core/Kernel/Events/StepFailed.md#quick-summary
  */
 final readonly class StepFailed
 {
@@ -24,7 +24,7 @@ final readonly class StepFailed
      * @param Throwable   $exception  Thrown exception
      * @param string|null $traceId    Optional trace correlation ID
      *
-     * @see docs_md/Core/Kernel/Events/StepFailed.md#method-__construct
+     * @see docs/Core/Kernel/Events/StepFailed.md#method-__construct
      */
     public function __construct(
         public string      $stepClass,

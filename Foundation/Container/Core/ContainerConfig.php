@@ -10,7 +10,7 @@ namespace Avax\Container\Core;
  * before constructing the ContainerKernel. Acts as a configuration builder
  * for customizing container behavior, ensuring immutable configuration that prevents runtime drift.
  *
- * @see docs_md/Core/ContainerConfig.md#quick-summary
+ * @see docs/Core/ContainerConfig.md#quick-summary
  */
 readonly class ContainerConfig
 {

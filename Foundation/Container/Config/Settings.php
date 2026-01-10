@@ -8,7 +8,7 @@ namespace Avax\Container\Config;
  *
  * This class provides a simple key-value store for configuration data with dot notation support, allowing container components to access and modify settings in a structured way. It serves as the foundational configuration storage mechanism, enabling hierarchical organization of settings without external dependencies.
  *
- * @see docs_md/Config/Settings.md#quick-summary
+ * @see docs/Config/Settings.md#quick-summary
  */
 final class Settings
 {
@@ -37,7 +37,7 @@ final class Settings
      * @param mixed  $default Fallback value when the key is missing.
      *
      * @return mixed The resolved configuration value or the default.
-     * @see docs_md/Config/Settings.md#method-get
+     * @see docs/Config/Settings.md#method-get
      */
     public function get(string $key, mixed $default = null) : mixed
     {
@@ -67,7 +67,7 @@ final class Settings
      *
      * @param string $key   Configuration key (e.g., "app.name").
      * @param mixed  $value Value to store.
-     * @see docs_md/Config/Settings.md#method-set
+     * @see docs/Config/Settings.md#method-set
      */
     public function set(string $key, mixed $value) : void
     {
@@ -98,7 +98,7 @@ final class Settings
      * @param string $key Configuration key to check.
      *
      * @return bool True when the key exists.
-     * @see docs_md/Config/Settings.md#method-has
+     * @see docs/Config/Settings.md#method-has
      */
     public function has(string $key) : bool
     {
@@ -127,7 +127,7 @@ final class Settings
      * useful for debugging, serialization, or bulk operations.
      *
      * @return array<string, mixed> All configuration entries.
-     * @see docs_md/Config/Settings.md#method-all
+     * @see docs/Config/Settings.md#method-all
      */
     public function all() : array
     {

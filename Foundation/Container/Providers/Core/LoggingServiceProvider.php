@@ -12,7 +12,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Service Provider for application logging and error handling.
  *
- * @see docs_md/Providers/Core/LoggingServiceProvider.md#quick-summary
+ * @see docs/Providers/Core/LoggingServiceProvider.md#quick-summary
  */
 class LoggingServiceProvider extends ServiceProvider
 {
@@ -20,7 +20,7 @@ class LoggingServiceProvider extends ServiceProvider
      * Registers logging services into the container.
      *
      * @return void
-     * @see docs_md/Providers/Core/LoggingServiceProvider.md#method-register
+     * @see docs/Providers/Core/LoggingServiceProvider.md#method-register
      */
     public function register(): void
     {
@@ -41,7 +41,7 @@ class LoggingServiceProvider extends ServiceProvider
      * Bootstraps global error handling.
      *
      * @return void
-     * @see docs_md/Providers/Core/LoggingServiceProvider.md#method-boot
+     * @see docs/Providers/Core/LoggingServiceProvider.md#method-boot
      */
     public function boot(): void
     {

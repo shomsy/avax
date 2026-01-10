@@ -101,7 +101,7 @@ class Application implements ContainerInterface
     /**
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
-     * @see docs_md/Features/Operate/Boot/Application.md#method-__construct
+     * @see docs/Features/Operate/Boot/Application.md#method-__construct
      */
     public function __construct(
         public readonly string                      $basePath,
@@ -150,7 +150,7 @@ class Application implements ContainerInterface
     }
 
     /**
-     * @see docs_md/Features/Operate/Boot/Application.md#method-instance
+     * @see docs/Features/Operate/Boot/Application.md#method-instance
      */
     public function instance(string $abstract, object $instance): void
     {
@@ -174,7 +174,7 @@ class Application implements ContainerInterface
      * @param string $id Service identifier to check
      *
      * @return bool True if service is registered or can be resolved
-     * @see docs_md/Features/Operate/Boot/Application.md#method-has
+     * @see docs/Features/Operate/Boot/Application.md#method-has
      */
     public function has(string $id): bool
     {
@@ -184,7 +184,7 @@ class Application implements ContainerInterface
     /**
      * Proxy resolution to the underlying container.
      *
-     * @see docs_md/Features/Operate/Boot/Application.md#method-get
+     * @see docs/Features/Operate/Boot/Application.md#method-get
      */
     public function get(string $id)
     {
@@ -200,7 +200,7 @@ class Application implements ContainerInterface
      * @param string $root The application root directory path
      *
      * @return ApplicationBuilder Fluent builder for application configuration
-     * @see docs_md/Features/Operate/Boot/Application.md#method-start
+     * @see docs/Features/Operate/Boot/Application.md#method-start
      */
     public static function start(string $root): ApplicationBuilder
     {
@@ -208,7 +208,7 @@ class Application implements ContainerInterface
     }
 
     /**
-     * @see docs_md/Features/Operate/Boot/Application.md#method-bind
+     * @see docs/Features/Operate/Boot/Application.md#method-bind
      */
     public function bind(string $abstract, mixed $concrete = null): BindingBuilder
     {
@@ -219,7 +219,7 @@ class Application implements ContainerInterface
     // PSR-11 Implementation via Delegation
 
     /**
-     * @see docs_md/Features/Operate/Boot/Application.md#method-singleton
+     * @see docs/Features/Operate/Boot/Application.md#method-singleton
      */
     public function singleton(string $abstract, mixed $concrete = null): BindingBuilder
     {
@@ -228,7 +228,7 @@ class Application implements ContainerInterface
     }
 
     /**
-     * @see docs_md/Features/Operate/Boot/Application.md#method-scoped
+     * @see docs/Features/Operate/Boot/Application.md#method-scoped
      */
     public function scoped(string $abstract, mixed $concrete = null): BindingBuilder
     {
@@ -237,7 +237,7 @@ class Application implements ContainerInterface
     }
 
     /**
-     * @see docs_md/Features/Operate/Boot/Application.md#method-make
+     * @see docs/Features/Operate/Boot/Application.md#method-make
      */
     public function make(string $abstract, array $parameters = []): object
     {
@@ -251,7 +251,7 @@ class Application implements ContainerInterface
      * Most operations should be done through the Application interface.
      *
      * @return CoreContainerInterface The underlying dependency injection container
-     * @see docs_md/Features/Operate/Boot/Application.md#method-getcontainer
+     * @see docs/Features/Operate/Boot/Application.md#method-getcontainer
      */
     public function getContainer(): ContainerInternalInterface
     {
@@ -261,7 +261,7 @@ class Application implements ContainerInterface
     /**
      * Load routes from the provided file path and register them with the router.
      *
-     * @see docs_md/Features/Operate/Boot/Application.md#method-loadroutes
+     * @see docs/Features/Operate/Boot/Application.md#method-loadroutes
      */
     public function loadRoutes(string $path): void
     {
@@ -335,7 +335,7 @@ class Application implements ContainerInterface
      * Register a service provider with the application.
      *
      *
-     * @see docs_md/Features/Operate/Boot/Application.md#method-register
+     * @see docs/Features/Operate/Boot/Application.md#method-register
      */
     public function register(string|ServiceProvider $provider): ServiceProvider
     {
@@ -380,7 +380,7 @@ class Application implements ContainerInterface
      * Run the application lifecycle.
      * Boot providers, hand off to the HTTP layer (placeholder), and terminate.
      *
-     * @see docs_md/Features/Operate/Boot/Application.md#method-call
+     * @see docs/Features/Operate/Boot/Application.md#method-call
      */
     public function call(callable|string $callable, array $parameters = []): mixed
     {
@@ -390,7 +390,7 @@ class Application implements ContainerInterface
     /**
      * Boot the application, dispatch the HTTP request, and terminate.
      *
-     * @see docs_md/Features/Operate/Boot/Application.md#method-run
+     * @see docs/Features/Operate/Boot/Application.md#method-run
      */
     public function run(): ResponseInterface
     {
@@ -419,7 +419,7 @@ class Application implements ContainerInterface
      * Boot all registered service providers.
      *
      * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface
-     * @see docs_md/Features/Operate/Boot/Application.md#method-boot
+     * @see docs/Features/Operate/Boot/Application.md#method-boot
      */
     public function boot(): void
     {
@@ -476,7 +476,7 @@ class Application implements ContainerInterface
     /**
      * Terminate the current request scope.
      *
-     * @see docs_md/Features/Operate/Boot/Application.md#method-terminate
+     * @see docs/Features/Operate/Boot/Application.md#method-terminate
      */
     public function terminate(): void
     {
@@ -486,7 +486,7 @@ class Application implements ContainerInterface
     /**
      * Determine whether the application has already booted.
      *
-     * @see docs_md/Features/Operate/Boot/Application.md#method-isbooted
+     * @see docs/Features/Operate/Boot/Application.md#method-isbooted
      */
     public function isBooted(): bool
     {
@@ -496,7 +496,7 @@ class Application implements ContainerInterface
     /**
      * Resolve a path relative to the application base path.
      *
-     * @see docs_md/Features/Operate/Boot/Application.md#method-basepath
+     * @see docs/Features/Operate/Boot/Application.md#method-basepath
      */
     public function basePath(string $path = ''): string
     {

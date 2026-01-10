@@ -6,12 +6,12 @@ namespace Avax\Container\Features\Operate\Config;
 /**
  * Composite object combining configuration with infrastructure components.
  *
- * @see docs_md/Features/Operate/Config/ContainerWithInfrastructure.md#quick-summary
+ * @see docs/Features/Operate/Config/ContainerWithInfrastructure.md#quick-summary
  */
 final readonly class ContainerWithInfrastructure
 {
     /**
-     * @see docs_md/Features/Operate/Config/ContainerWithInfrastructure.md#method-__construct
+     * @see docs/Features/Operate/Config/ContainerWithInfrastructure.md#method-__construct
      */
     public function __construct(
         public ContainerConfig $config,

@@ -15,7 +15,7 @@ use function Avax\Container\Operate\Boot\config;
  * This class exposes the middleware resolution strategy used during kernel boot,
  * ensuring that configuration failures or missing setups do not break the lifecycle.
  *
- * @see docs_md/Features/Operate/Boot/Kernel.md#quick-summary
+ * @see docs/Features/Operate/Boot/Kernel.md#quick-summary
  */
 final readonly class Kernel
 {
@@ -27,7 +27,7 @@ final readonly class Kernel
      * @param RouterInterface $router         Router implementation responsible for request dispatch.
      * @param ErrorHandler    $errorHandler   Centralized error handler for early lifecycle errors.
      * @param callable|null   $configResolver Optional resolver that provides middleware configuration data.
-     * @see docs_md/Features/Operate/Boot/Kernel.md#method-__construct
+     * @see docs/Features/Operate/Boot/Kernel.md#method-__construct
      */
     public function __construct(
         private RouterInterface $router,
@@ -57,7 +57,7 @@ final readonly class Kernel
      * mirroring the legacy safety net expected by the tests.
      *
      * @return array
-     * @see docs_md/Features/Operate/Boot/Kernel.md#method-resolveconfiguredmiddlewares
+     * @see docs/Features/Operate/Boot/Kernel.md#method-resolveconfiguredmiddlewares
      */
     public function resolveConfiguredMiddlewares() : array
     {

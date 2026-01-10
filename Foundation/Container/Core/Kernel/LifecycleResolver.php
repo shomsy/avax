@@ -13,7 +13,7 @@ use BackedEnum;
  *
  * Determines the appropriate lifecycle strategy based on service definition, enabling proper instance management and resource optimization.
  *
- * @see docs_md/Core/Kernel/LifecycleResolver.md#quick-summary
+ * @see docs/Core/Kernel/LifecycleResolver.md#quick-summary
  */
 final readonly class LifecycleResolver
 {
@@ -29,7 +29,7 @@ final readonly class LifecycleResolver
      *
      * @param ServiceDefinition|null $definition Service definition to resolve lifecycle for, or null for transient
      * @return LifecycleStrategy The resolved lifecycle strategy for managing service instances
-     * @see docs_md/Core/Kernel/LifecycleResolver.md#method-resolve
+     * @see docs/Core/Kernel/LifecycleResolver.md#method-resolve
      */
     public function resolve(ServiceDefinition|null $definition) : LifecycleStrategy
     {

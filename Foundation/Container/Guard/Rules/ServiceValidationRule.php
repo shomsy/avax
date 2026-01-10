@@ -65,7 +65,7 @@ use ReflectionClass;
  * @package Avax\Container\Guard\Rules
  * @see     AbstractRule For base validation rule functionality
  * @see     ServiceDefinitionEntity For service definition structure
- * @see     docs_md/Guard/Rules/ServiceValidationRule.md#quick-summary
+ * @see docs/Guard/Rules/ServiceValidationRule.md#quick-summary
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class ServiceValidationRule extends AbstractRule
@@ -91,7 +91,7 @@ class ServiceValidationRule extends AbstractRule
      * @param bool  $allowInterface     Whether interfaces are permitted
      * @param array $requiredInterfaces Interfaces that must be implemented
      * @param array $forbiddenClasses   Class names that are explicitly blocked
-     * @see docs_md/Guard/Rules/ServiceValidationRule.md#method-__construct
+     * @see docs/Guard/Rules/ServiceValidationRule.md#method-__construct
      */
     public function __construct(
         private readonly bool  $allowAbstract = false,
@@ -124,7 +124,7 @@ class ServiceValidationRule extends AbstractRule
      *
      * @return bool True if the class name passes all validation checks
      * @throws \ReflectionException
-     * @see docs_md/Guard/Rules/ServiceValidationRule.md#method-validate
+     * @see docs/Guard/Rules/ServiceValidationRule.md#method-validate
      */
     public function validate(mixed $value) : bool
     {
@@ -193,7 +193,7 @@ class ServiceValidationRule extends AbstractRule
      * ```
      *
      * @return string Descriptive error message explaining validation failure
-     * @see docs_md/Guard/Rules/ServiceValidationRule.md#method-geterrormessage
+     * @see docs/Guard/Rules/ServiceValidationRule.md#method-geterrormessage
      */
     public function getErrorMessage() : string
     {

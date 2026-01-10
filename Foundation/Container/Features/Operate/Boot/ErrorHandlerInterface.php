@@ -72,7 +72,7 @@ use Throwable;
  * - Concurrent error processing support
  *
  * @package Avax\Container\Operate\Boot
- * @see docs_md/Features/Operate/Boot/ErrorHandlerInterface.md#quick-summary
+ * @see docs/Features/Operate/Boot/ErrorHandlerInterface.md#quick-summary
  */
 interface ErrorHandlerInterface
 {
@@ -118,7 +118,7 @@ interface ErrorHandlerInterface
      * @param object|null $context   Additional context about the error (usually the container instance)
      *
      * @return void
-     * @see docs_md/Features/Operate/Boot/ErrorHandlerInterface.md#method-handleerror
+     * @see docs/Features/Operate/Boot/ErrorHandlerInterface.md#method-handleerror
      */
     public function handleError(Throwable $exception, object|null $context = null) : void;
 }

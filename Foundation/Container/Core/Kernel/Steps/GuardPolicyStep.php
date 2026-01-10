@@ -18,13 +18,13 @@ use Avax\Container\Guard\Enforce\GuardResolution;
  * can be resolved according to configured security rules and policies.
  *
  * @package Avax\Container\Core\Kernel\Steps
- * @see docs_md/Core/Kernel/Steps/GuardPolicyStep.md#quick-summary
+ * @see docs/Core/Kernel/Steps/GuardPolicyStep.md#quick-summary
  */
 final readonly class GuardPolicyStep implements KernelStep
 {
     /**
      * @param GuardResolution $guard Guard policy evaluator.
-     * @see docs_md/Core/Kernel/Steps/GuardPolicyStep.md#method-__construct
+     * @see docs/Core/Kernel/Steps/GuardPolicyStep.md#method-__construct
      */
     public function __construct(
         private GuardResolution $guard
@@ -36,7 +36,7 @@ final readonly class GuardPolicyStep implements KernelStep
      * @param KernelContext $context The resolution context.
      * @return void
      * @throws ContainerException If policy validation fails.
-     * @see docs_md/Core/Kernel/Steps/GuardPolicyStep.md#method-__invoke
+     * @see docs/Core/Kernel/Steps/GuardPolicyStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void
     {

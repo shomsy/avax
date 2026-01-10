@@ -10,7 +10,7 @@ namespace Avax\Container\Features\Core\Contracts;
  * where the implementation depends on the consumer class.
  *
  * @package Avax\Container\Core\Contracts
- * @see docs_md/Features/Core/Contracts/ContextBuilder.md#quick-summary
+ * @see docs/Features/Core/Contracts/ContextBuilder.md#quick-summary
  */
 interface ContextBuilder
 {
@@ -20,7 +20,7 @@ interface ContextBuilder
      * @param string $abstract The abstract type to bind
      *
      * @return self
-     * @see docs_md/Features/Core/Contracts/ContextBuilder.md#method-needs
+     * @see docs/Features/Core/Contracts/ContextBuilder.md#method-needs
      */
     public function needs(string $abstract) : self;
 
@@ -30,7 +30,7 @@ interface ContextBuilder
      * @param mixed $concrete The concrete implementation
      *
      * @return void
-     * @see docs_md/Features/Core/Contracts/ContextBuilder.md#method-give
+     * @see docs/Features/Core/Contracts/ContextBuilder.md#method-give
      */
     public function give(mixed $concrete) : void;
 }

@@ -62,7 +62,7 @@ namespace Avax\Container\Features\Operate\Boot;
  * - Diagnostic information for configuration issues
  *
  * @package Avax\Container\Operate\Boot
- * @see docs_md/Features/Operate/Boot/EnvironmentLoaderInterface.md#quick-summary
+ * @see docs/Features/Operate/Boot/EnvironmentLoaderInterface.md#quick-summary
  */
 interface EnvironmentLoaderInterface
 {
@@ -110,7 +110,7 @@ interface EnvironmentLoaderInterface
      *
      * @return array<string, mixed> Environment configuration array
      * @throws \RuntimeException When configuration cannot be loaded or is invalid
-     * @see docs_md/Features/Operate/Boot/EnvironmentLoaderInterface.md#method-loadenvironment
+     * @see docs/Features/Operate/Boot/EnvironmentLoaderInterface.md#method-loadenvironment
      */
     public function loadEnvironment() : array;
 }

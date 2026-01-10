@@ -10,7 +10,7 @@ namespace Avax\Container\Core\Kernel\Contracts;
  * Defines how services are stored and retrieved based on their lifecycle.
  * Different strategies implement different caching behaviors (singleton, scoped, transient).
  *
- * @see docs_md/Core/Kernel/Contracts/LifecycleStrategy.md#quick-summary
+ * @see docs/Core/Kernel/Contracts/LifecycleStrategy.md#quick-summary
  */
 interface LifecycleStrategy
 {
@@ -25,7 +25,7 @@ interface LifecycleStrategy
      * @param string $abstract Service identifier
      * @param mixed $instance Service instance to store
      * @return void
-     * @see docs_md/Core/Kernel/Contracts/LifecycleStrategy.md#method-store
+     * @see docs/Core/Kernel/Contracts/LifecycleStrategy.md#method-store
      */
     public function store(string $abstract, mixed $instance): void;
 
@@ -34,7 +34,7 @@ interface LifecycleStrategy
      *
      * @param string $abstract Service identifier to check
      * @return bool True if instance exists and can be retrieved
-     * @see docs_md/Core/Kernel/Contracts/LifecycleStrategy.md#method-has
+     * @see docs/Core/Kernel/Contracts/LifecycleStrategy.md#method-has
      */
     public function has(string $abstract): bool;
 
@@ -46,7 +46,7 @@ interface LifecycleStrategy
      *
      * @param string $abstract Service identifier to retrieve
      * @return mixed Stored instance or null
-     * @see docs_md/Core/Kernel/Contracts/LifecycleStrategy.md#method-retrieve
+     * @see docs/Core/Kernel/Contracts/LifecycleStrategy.md#method-retrieve
      */
     public function retrieve(string $abstract): mixed;
 
@@ -57,7 +57,7 @@ interface LifecycleStrategy
      * For scoped strategies, this is called when scope ends.
      *
      * @return void
-     * @see docs_md/Core/Kernel/Contracts/LifecycleStrategy.md#method-clear
+     * @see docs/Core/Kernel/Contracts/LifecycleStrategy.md#method-clear
      */
     public function clear(): void;
 }

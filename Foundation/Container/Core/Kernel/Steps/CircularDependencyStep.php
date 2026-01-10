@@ -14,7 +14,7 @@ use Avax\Container\Features\Core\Exceptions\ResolutionException;
  * Uses the KernelContext parent chain to identify if the current service
  * is already being resolved in the same dependency path.
  *
- * @see docs_md/Core/Kernel/Steps/CircularDependencyStep.md#quick-summary
+ * @see docs/Core/Kernel/Steps/CircularDependencyStep.md#quick-summary
  */
 final readonly class CircularDependencyStep implements KernelStep
 {
@@ -23,7 +23,7 @@ final readonly class CircularDependencyStep implements KernelStep
      *
      * @return void
      * @throws ResolutionException When a circular dependency is detected
-     * @see docs_md/Core/Kernel/Steps/CircularDependencyStep.md#method-__invokekernelcontext-context-void
+     * @see docs/Core/Kernel/Steps/CircularDependencyStep.md#method-__invokekernelcontext-context-void
      */
     public function __invoke(KernelContext $context): void
     {

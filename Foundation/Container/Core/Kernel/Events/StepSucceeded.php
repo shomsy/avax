@@ -9,7 +9,7 @@ namespace Avax\Container\Core\Kernel\Events;
  *
  * Emitted when a pipeline step completes successfully.
  *
- * @see docs_md/Core/Kernel/Events/StepSucceeded.md#quick-summary
+ * @see docs/Core/Kernel/Events/StepSucceeded.md#quick-summary
  */
 final readonly class StepSucceeded
 {
@@ -21,7 +21,7 @@ final readonly class StepSucceeded
      * @param string      $serviceId Service identifier being resolved
      * @param string|null $traceId   Optional trace correlation ID
      *
-     * @see docs_md/Core/Kernel/Events/StepSucceeded.md#method-__construct
+     * @see docs/Core/Kernel/Events/StepSucceeded.md#method-__construct
      */
     public function __construct(
         public string      $stepClass,

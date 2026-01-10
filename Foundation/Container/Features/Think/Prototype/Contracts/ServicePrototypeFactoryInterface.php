@@ -10,7 +10,7 @@ use Avax\Container\Features\Think\Model\ServicePrototype;
 /**
  * Interface for ServicePrototypeFactory.
  *
- * @see docs_md/Features/Think/Prototype/Contracts/ServicePrototypeFactoryInterface.md#quick-summary
+ * @see docs/Features/Think/Prototype/Contracts/ServicePrototypeFactoryInterface.md#quick-summary
  */
 interface ServicePrototypeFactoryInterface
 {
@@ -19,7 +19,7 @@ interface ServicePrototypeFactoryInterface
      *
      * @param string $class The fully qualified class name to analyze
      * @return ServicePrototype The analyzed service prototype
-     * @see docs_md/Features/Think/Prototype/Contracts/ServicePrototypeFactoryInterface.md#method-createfor
+     * @see docs/Features/Think/Prototype/Contracts/ServicePrototypeFactoryInterface.md#method-createfor
      */
     public function createFor(string $class): ServicePrototype;
 
@@ -28,7 +28,7 @@ interface ServicePrototypeFactoryInterface
      *
      * @param string $class
      * @return bool
-     * @see docs_md/Features/Think/Prototype/Contracts/ServicePrototypeFactoryInterface.md#method-hasprototype
+     * @see docs/Features/Think/Prototype/Contracts/ServicePrototypeFactoryInterface.md#method-hasprototype
      */
     public function hasPrototype(string $class): bool;
 
@@ -36,7 +36,7 @@ interface ServicePrototypeFactoryInterface
      * Get the underlying analyzer.
      * 
      * @return PrototypeAnalyzer
-     * @see docs_md/Features/Think/Prototype/Contracts/ServicePrototypeFactoryInterface.md#method-getanalyzer
+     * @see docs/Features/Think/Prototype/Contracts/ServicePrototypeFactoryInterface.md#method-getanalyzer
      */
     public function getAnalyzer(): PrototypeAnalyzer;
 }

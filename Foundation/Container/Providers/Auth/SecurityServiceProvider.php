@@ -12,7 +12,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Service provider for security-related services.
  *
- * @see docs_md/Providers/Auth/SecurityServiceProvider.md#quick-summary
+ * @see docs/Providers/Auth/SecurityServiceProvider.md#quick-summary
  */
 class SecurityServiceProvider extends ServiceProvider
 {
@@ -20,7 +20,7 @@ class SecurityServiceProvider extends ServiceProvider
      * Register CSRF token manager with session and logger dependencies.
      *
      * @return void
-     * @see docs_md/Providers/Auth/SecurityServiceProvider.md#method-register
+     * @see docs/Providers/Auth/SecurityServiceProvider.md#method-register
      */
     public function register() : void
     {

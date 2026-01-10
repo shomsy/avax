@@ -18,14 +18,14 @@ use Throwable;
  * a prototype blueprint, which is then used by subsequent steps for injection.
  *
  * @package Avax\Container\Core\Kernel\Steps
- * @see docs_md/Core/Kernel/Steps/AnalyzePrototypeStep.md#quick-summary
+ * @see docs/Core/Kernel/Steps/AnalyzePrototypeStep.md#quick-summary
  */
 final readonly class AnalyzePrototypeStep implements KernelStep
 {
     /**
      * @param ServicePrototypeFactory $prototypeFactory Factory for creating class prototypes.
      * @param bool                    $strictMode       Whether to enforce strict validation.
-     * @see docs_md/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-__construct
+     * @see docs/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-__construct
      */
     public function __construct(
         private ServicePrototypeFactory $prototypeFactory,
@@ -38,7 +38,7 @@ final readonly class AnalyzePrototypeStep implements KernelStep
      * @param KernelContext $context The resolution context.
      * @return void
      * @throws \Throwable If analysis fails.
-     * @see docs_md/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-__invoke
+     * @see docs/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void
     {
@@ -75,7 +75,7 @@ final readonly class AnalyzePrototypeStep implements KernelStep
      * @param string                 $serviceId  The abstract service ID.
      * @param ServiceDefinition|null $definition The service definition if available.
      * @return string|null The class name or null if non-reflectable.
-     * @see docs_md/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-determineclasstoanalyze
+     * @see docs/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-determineclasstoanalyze
      */
     private function determineClassToAnalyze(string $serviceId, ServiceDefinition|null $definition): string|null
     {

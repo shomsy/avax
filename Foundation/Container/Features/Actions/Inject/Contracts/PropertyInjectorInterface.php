@@ -11,7 +11,7 @@ use Avax\Container\Features\Think\Model\PropertyPrototype;
 /**
  * Interface for PropertyInjector.
  *
- * @see docs_md/Features/Actions/Inject/Contracts/PropertyInjectorInterface.md#quick-summary
+ * @see docs/Features/Actions/Inject/Contracts/PropertyInjectorInterface.md#quick-summary
  */
 interface PropertyInjectorInterface
 {
@@ -23,7 +23,7 @@ interface PropertyInjectorInterface
      * @param KernelContext $context
      * @param string $ownerClass
      * @return PropertyResolution
-     * @see docs_md/Features/Actions/Inject/Contracts/PropertyInjectorInterface.md#method-resolve
+     * @see docs/Features/Actions/Inject/Contracts/PropertyInjectorInterface.md#method-resolve
      */
     public function resolve(
         PropertyPrototype $property,

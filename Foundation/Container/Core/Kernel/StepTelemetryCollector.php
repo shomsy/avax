@@ -15,7 +15,7 @@ use Avax\Container\Core\Kernel\Events\StepSucceeded;
  * Implements the Observer pattern to collect telemetry data from pipeline step execution.
  * Stores metrics in a structured format for diagnostics and monitoring, enabling performance analysis and debugging of resolution processes.
  *
- * @see docs_md/Core/Kernel/StepTelemetryCollector.md#quick-summary
+ * @see docs/Core/Kernel/StepTelemetryCollector.md#quick-summary
  */
 final class StepTelemetryCollector implements StepTelemetry
 {
@@ -30,7 +30,7 @@ final class StepTelemetryCollector implements StepTelemetry
      *
      * @param StepStarted $event The step started event with execution details
      * @return void
-     * @see docs_md/Core/Kernel/StepTelemetryCollector.md#method-onStepStarted
+     * @see docs/Core/Kernel/StepTelemetryCollector.md#method-onStepStarted
      */
     public function onStepStarted(StepStarted $event) : void
     {
@@ -49,7 +49,7 @@ final class StepTelemetryCollector implements StepTelemetry
      *
      * @param StepSucceeded $event The step succeeded event with completion details
      * @return void
-     * @see docs_md/Core/Kernel/StepTelemetryCollector.md#method-onStepSucceeded
+     * @see docs/Core/Kernel/StepTelemetryCollector.md#method-onStepSucceeded
      */
     public function onStepSucceeded(StepSucceeded $event) : void
     {
@@ -69,7 +69,7 @@ final class StepTelemetryCollector implements StepTelemetry
      *
      * @param StepFailed $event The step failed event with failure details
      * @return void
-     * @see docs_md/Core/Kernel/StepTelemetryCollector.md#method-onStepFailed
+     * @see docs/Core/Kernel/StepTelemetryCollector.md#method-onStepFailed
      */
     public function onStepFailed(StepFailed $event) : void
     {
@@ -92,7 +92,7 @@ final class StepTelemetryCollector implements StepTelemetry
      *
      * @param string|null $traceId Optional trace identifier to filter results
      * @return array Step metrics data organized by trace, service, and step
-     * @see docs_md/Core/Kernel/StepTelemetryCollector.md#method-getStepMetrics
+     * @see docs/Core/Kernel/StepTelemetryCollector.md#method-getStepMetrics
      */
     public function getStepMetrics(string|null $traceId = null) : array
     {
@@ -110,7 +110,7 @@ final class StepTelemetryCollector implements StepTelemetry
      * including traces and summary statistics.
      *
      * @return array Structured telemetry data with traces and summary information
-     * @see docs_md/Core/Kernel/StepTelemetryCollector.md#method-asArray
+     * @see docs/Core/Kernel/StepTelemetryCollector.md#method-asArray
      */
     public function asArray() : array
     {
@@ -130,7 +130,7 @@ final class StepTelemetryCollector implements StepTelemetry
      * across all collected telemetry data.
      *
      * @return float Total duration in seconds, or 0.0 if no data available
-     * @see docs_md/Core/Kernel/StepTelemetryCollector.md#method-getTotalDuration
+     * @see docs/Core/Kernel/StepTelemetryCollector.md#method-getTotalDuration
      */
     public function getTotalDuration() : float
     {
@@ -164,7 +164,7 @@ final class StepTelemetryCollector implements StepTelemetry
      * useful for calculating relative timings and pipeline analysis.
      *
      * @return float|null Earliest step start time, or null if no data available
-     * @see docs_md/Core/Kernel/StepTelemetryCollector.md#method-getPipelineStartTime
+     * @see docs/Core/Kernel/StepTelemetryCollector.md#method-getPipelineStartTime
      */
     public function getPipelineStartTime() : float|null
     {

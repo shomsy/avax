@@ -13,7 +13,7 @@ use Avax\Container\Core\Kernel\Events\StepSucceeded;
  * Defines the contract for collecting telemetry data from pipeline step execution.
  * Implementations can collect metrics, logs, traces, or other observability data.
  *
- * @see docs_md/Core/Kernel/Contracts/StepTelemetry.md#quick-summary
+ * @see docs/Core/Kernel/Contracts/StepTelemetry.md#quick-summary
  */
 interface StepTelemetry
 {
@@ -25,7 +25,7 @@ interface StepTelemetry
      *
      * @param StepStarted $event The step started event with context
      * @return void
-     * @see docs_md/Core/Kernel/Contracts/StepTelemetry.md#method-onstepstarted
+     * @see docs/Core/Kernel/Contracts/StepTelemetry.md#method-onstepstarted
      */
     public function onStepStarted(StepStarted $event): void;
 
@@ -37,7 +37,7 @@ interface StepTelemetry
      *
      * @param StepSucceeded $event The step succeeded event with results
      * @return void
-     * @see docs_md/Core/Kernel/Contracts/StepTelemetry.md#method-onstepsucceeded
+     * @see docs/Core/Kernel/Contracts/StepTelemetry.md#method-onstepsucceeded
      */
     public function onStepSucceeded(StepSucceeded $event): void;
 
@@ -49,7 +49,7 @@ interface StepTelemetry
      *
      * @param StepFailed $event The step failed event with error details
      * @return void
-     * @see docs_md/Core/Kernel/Contracts/StepTelemetry.md#method-onstepfailed
+     * @see docs/Core/Kernel/Contracts/StepTelemetry.md#method-onstepfailed
      */
     public function onStepFailed(StepFailed $event): void;
 }

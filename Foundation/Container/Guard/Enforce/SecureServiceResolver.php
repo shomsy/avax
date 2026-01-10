@@ -110,7 +110,7 @@ use Throwable;
  * @see     ContainerConfig For container configuration access
  * @see     LoggerFactoryIntegration For security logging integration
  * @see     Encrypter For encryption service interface
- * @see     docs_md/Guard/Enforce/SecureServiceResolver.md#quick-summary
+ * @see docs/Guard/Enforce/SecureServiceResolver.md#quick-summary
  */
 class SecureServiceResolver
 {
@@ -149,7 +149,7 @@ class SecureServiceResolver
      * @param Encrypter                $encrypter Encryption service for secure data handling
      * @param ContainerConfig          $config    Container configuration with security settings
      * @param LoggerFactoryIntegration $logger    Security event logging integration
-     * @see docs_md/Guard/Enforce/SecureServiceResolver.md#method-__construct
+     * @see docs/Guard/Enforce/SecureServiceResolver.md#method-__construct
      */
     public function __construct(
         private readonly Encrypter                $encrypter,
@@ -203,7 +203,7 @@ class SecureServiceResolver
      * @return mixed Resolved service instance with security hardening applied
      * @throws \RuntimeException When access is denied or security violations occur
      * @throws \ReflectionException When service reflection fails during security checks
-     * @see docs_md/Guard/Enforce/SecureServiceResolver.md#method-resolvesecure
+     * @see docs/Guard/Enforce/SecureServiceResolver.md#method-resolvesecure
      */
     public function resolveSecure(ResolutionContextInterface $context) : mixed
     {
@@ -271,7 +271,7 @@ class SecureServiceResolver
      *
      * @return mixed The decrypted service (or original value when non-object)
      * @throws \ReflectionException
-     * @see docs_md/Guard/Enforce/SecureServiceResolver.md#method-decryptserviceconfig
+     * @see docs/Guard/Enforce/SecureServiceResolver.md#method-decryptserviceconfig
      */
     public function decryptServiceConfig(mixed $service) : mixed
     {
@@ -335,7 +335,7 @@ class SecureServiceResolver
      * @param callable $policy    Callable that receives the resolution context and returns allowed/denied
      *
      * @return void
-     * @see docs_md/Guard/Enforce/SecureServiceResolver.md#method-setaccesspolicy
+     * @see docs/Guard/Enforce/SecureServiceResolver.md#method-setaccesspolicy
      */
     public function setAccessPolicy(string $serviceId, callable $policy) : void
     {
@@ -350,7 +350,7 @@ class SecureServiceResolver
      * @param string $serviceId The service identifier that should be treated as encrypted
      *
      * @return void
-     * @see docs_md/Guard/Enforce/SecureServiceResolver.md#method-markasencrypted
+     * @see docs/Guard/Enforce/SecureServiceResolver.md#method-markasencrypted
      */
     public function markAsEncrypted(string $serviceId) : void
     {
@@ -364,7 +364,7 @@ class SecureServiceResolver
      *
      * @return string Encrypted payload string
      * @throws \RuntimeException When JSON encoding fails
-     * @see docs_md/Guard/Enforce/SecureServiceResolver.md#method-encryptserviceconfig
+     * @see docs/Guard/Enforce/SecureServiceResolver.md#method-encryptserviceconfig
      */
     public function encryptServiceConfig(array $config) : string
     {
@@ -383,7 +383,7 @@ class SecureServiceResolver
      * @param object $service   Resolved service instance to validate
      *
      * @return array Array of issue entries describing detected security risks
-     * @see docs_md/Guard/Enforce/SecureServiceResolver.md#method-validateservicesecurity
+     * @see docs/Guard/Enforce/SecureServiceResolver.md#method-validateservicesecurity
      */
     public function validateServiceSecurity(string $serviceId, object $service) : array
     {
@@ -455,7 +455,7 @@ class SecureServiceResolver
      * @param string $serviceId Service identifier
      *
      * @return array Audit snapshot for the service
-     * @see docs_md/Guard/Enforce/SecureServiceResolver.md#method-getsecurityaudit
+     * @see docs/Guard/Enforce/SecureServiceResolver.md#method-getsecurityaudit
      */
     public function getSecurityAudit(string $serviceId) : array
     {
@@ -476,7 +476,7 @@ class SecureServiceResolver
      * @param object $service Service instance to harden
      *
      * @return object The (potentially hardened) service instance
-     * @see docs_md/Guard/Enforce/SecureServiceResolver.md#method-hardenservice
+     * @see docs/Guard/Enforce/SecureServiceResolver.md#method-hardenservice
      */
     public function hardenService(object $service) : object
     {

@@ -70,7 +70,7 @@ use ReflectionNamedType;
  * @package Avax\Container\Define\Store
  * @see     ServiceDependency For the managed entity type
  * @see     ServiceDefinitionRepository For service definition management
- * @see     docs_md/Features/Define/Store/ServiceDependencyRepository.md#quick-summary
+ * @see docs/Features/Define/Store/ServiceDependencyRepository.md#quick-summary
  */
 class ServiceDependencyRepository extends Repository
 {
@@ -89,7 +89,7 @@ class ServiceDependencyRepository extends Repository
      *
      * @return Arrhae Collection of services that depend on the specified service
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-getdependentservices
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getdependentservices
      */
     public function getDependentServices(string $serviceId): Arrhae
     {
@@ -130,7 +130,7 @@ class ServiceDependencyRepository extends Repository
      *
      * @return array Hierarchical dependency chain structure
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-getdependencychains
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getdependencychains
      */
     public function getDependencyChains(string $serviceId, int $maxDepth = 5): array
     {
@@ -172,7 +172,7 @@ class ServiceDependencyRepository extends Repository
      *
      * @return Arrhae Collection of ServiceDependency entities
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-getservicedependencies
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getservicedependencies
      */
     public function getServiceDependencies(string $serviceId): Arrhae
     {
@@ -212,7 +212,7 @@ class ServiceDependencyRepository extends Repository
      *
      * @return array Comprehensive dependency health analysis
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-analyzedependencyhealth
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-analyzedependencyhealth
      */
     public function analyzeDependencyHealth(): array
     {
@@ -288,7 +288,7 @@ class ServiceDependencyRepository extends Repository
      *
      * @return array Array of detected cycle paths, each as an array of service IDs
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-detectcirculardependencies
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-detectcirculardependencies
      */
     public function detectCircularDependencies(): array
     {
@@ -331,7 +331,7 @@ class ServiceDependencyRepository extends Repository
      *
      * @return array Associative array representing the dependency graph
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-getdependencygraph
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getdependencygraph
      */
     public function getDependencyGraph(): array
     {
@@ -414,7 +414,7 @@ class ServiceDependencyRepository extends Repository
      * - Supports continuous refactoring and cleanup efforts
      *
      * @return array Array of service IDs that have no dependents
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-findorphanedservices
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-findorphanedservices
      */
     public function findOrphanedServices(): array
     {
@@ -453,7 +453,7 @@ class ServiceDependencyRepository extends Repository
      * @param int $limit Maximum number of results to return
      *
      * @return array Associative array mapping service IDs to usage counts
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-getmostdependedservices
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getmostdependedservices
      */
     public function getMostDependedServices(int $limit = 10): array
     {
@@ -495,7 +495,7 @@ class ServiceDependencyRepository extends Repository
      * - Capacity planning data
      *
      * @return array Comprehensive dependency statistics
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-getdependencystats
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getdependencystats
      */
     public function getDependencyStats(): array
     {
@@ -570,7 +570,7 @@ class ServiceDependencyRepository extends Repository
      *
      * @return array Array of discovered dependency relationships
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-autodiscoverdependencies
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-autodiscoverdependencies
      */
     public function autoDiscoverDependencies(ServiceDefinitionRepository $serviceRepo): array
     {
@@ -668,7 +668,7 @@ class ServiceDependencyRepository extends Repository
      *
      * @return void
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-trackdependency
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-trackdependency
      */
     public function trackDependency(
         string $serviceId,
@@ -742,7 +742,7 @@ class ServiceDependencyRepository extends Repository
      *
      * @return array Array of validation issues found
      * @throws \Exception
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-validatedependencies
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-validatedependencies
      */
     public function validateDependencies(ServiceDefinitionRepository $serviceRepo): array
     {
@@ -795,7 +795,7 @@ class ServiceDependencyRepository extends Repository
      * - Detailed reporting of cleanup actions
      *
      * @return array Cleanup operation results with counts and errors
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-cleanuporphaneddependencies
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-cleanuporphaneddependencies
      */
     public function cleanupOrphanedDependencies(): array
     {
@@ -813,7 +813,7 @@ class ServiceDependencyRepository extends Repository
      * Must return the fully qualified class name of ServiceDependency.
      *
      * @return string The entity class name
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-getentityclass
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getentityclass
      */
     protected function getEntityClass(): string
     {
@@ -830,7 +830,7 @@ class ServiceDependencyRepository extends Repository
      *
      * @return ServiceDependency Hydrated entity instance
      * @throws \DateMalformedStringException
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-maptoentity
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-maptoentity
      */
     protected function mapToEntity(array $data): ServiceDependency
     {
@@ -852,7 +852,7 @@ class ServiceDependencyRepository extends Repository
      * @param object $entity The entity to map (must be ServiceDependency)
      *
      * @return array Database-compatible array representation
-     * @see docs_md/Features/Define/Store/ServiceDependencyRepository.md#method-maptodatabase
+     * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-maptodatabase
      */
     protected function mapToDatabase(object $entity): array
     {

@@ -13,7 +13,7 @@ use Avax\Container\Features\Operate\Boot\ServiceProvider;
 /**
  * Service Provider for application configuration.
  *
- * @see docs_md/Providers/Core/ConfigurationServiceProvider.md#quick-summary
+ * @see docs/Providers/Core/ConfigurationServiceProvider.md#quick-summary
  */
 class ConfigurationServiceProvider extends ServiceProvider
 {
@@ -21,7 +21,7 @@ class ConfigurationServiceProvider extends ServiceProvider
      * Register configuration bindings into the container.
      *
      * @return void
-     * @see docs_md/Providers/Core/ConfigurationServiceProvider.md#method-register
+     * @see docs/Providers/Core/ConfigurationServiceProvider.md#method-register
      */
     public function register() : void
     {

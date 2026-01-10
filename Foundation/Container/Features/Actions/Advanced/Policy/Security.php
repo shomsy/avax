@@ -13,7 +13,7 @@ use Avax\Container\Guard\Rules\ContainerPolicy;
  * strict mode enforcement, tag-based access control, and custom security rules.
  * Enables fine-grained control over container behavior for security-sensitive applications.
  *
- * @see docs_md/Features/Actions/Advanced/Policy/Security.md#quick-summary
+ * @see docs/Features/Actions/Advanced/Policy/Security.md#quick-summary
  */
 final class Security
 {
@@ -21,7 +21,7 @@ final class Security
      * Create a new Security configuration instance.
      *
      * @param ContainerPolicy $policy The policy instance to configure.
-     * @see docs_md/Features/Actions/Advanced/Policy/Security.md#method-__construct
+     * @see docs/Features/Actions/Advanced/Policy/Security.md#method-__construct
      */
     public function __construct(private ContainerPolicy $policy) {}
 
@@ -32,7 +32,7 @@ final class Security
      * mandatory access controls, comprehensive validation, and security-first defaults.
      *
      * @return self Builder instance for method chaining.
-     * @see docs_md/Features/Actions/Advanced/Policy/Security.md#method-strict
+     * @see docs/Features/Actions/Advanced/Policy/Security.md#method-strict
      */
     public function strict(): self
     {
@@ -48,7 +48,7 @@ final class Security
      *
      * @param string $tag The security tag to allow access for.
      * @return self Builder instance for method chaining.
-     * @see docs_md/Features/Actions/Advanced/Policy/Security.md#method-allowTagged
+     * @see docs/Features/Actions/Advanced/Policy/Security.md#method-allowTagged
      */
     public function allowTagged(string $tag): self
     {

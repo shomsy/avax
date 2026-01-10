@@ -10,14 +10,14 @@ use Avax\Container\Features\Core\Contracts\ContainerInterface;
 /**
  * Interface for dependency resolution logic.
  *
- * @see docs_md/Features/Actions/Resolve/Contracts/DependencyResolverInterface.md#quick-summary
+ * @see docs/Features/Actions/Resolve/Contracts/DependencyResolverInterface.md#quick-summary
  */
 interface DependencyResolverInterface
 {
     /**
      * Resolves a list of method or constructor parameters.
      *
-     * @see docs_md/Features/Actions/Resolve/Contracts/DependencyResolverInterface.md#method-resolveparameters
+     * @see docs/Features/Actions/Resolve/Contracts/DependencyResolverInterface.md#method-resolveparameters
      */
     public function resolveParameters(
         array               $parameters,

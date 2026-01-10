@@ -10,7 +10,7 @@ namespace Avax\Container\Core\Kernel\Contracts;
  * Defines the contract for individual steps in the resolution pipeline.
  * Each step processes a KernelContext and contributes to service resolution.
  *
- * @see docs_md/Core/Kernel/Contracts/KernelStep.md#quick-summary
+ * @see docs/Core/Kernel/Contracts/KernelStep.md#quick-summary
  */
 interface KernelStep
 {
@@ -22,7 +22,7 @@ interface KernelStep
      *
      * @param KernelContext $context The resolution context to process
      * @return void
-     * @see docs_md/Core/Kernel/Contracts/KernelStep.md#method-__invoke
+     * @see docs/Core/Kernel/Contracts/KernelStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void;
 }

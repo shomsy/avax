@@ -11,7 +11,7 @@ use Avax\Database\Events\EventBus;
 /**
  * Service Provider for database services.
  *
- * @see docs_md/Providers/Database/DatabaseServiceProvider.md#quick-summary
+ * @see docs/Providers/Database/DatabaseServiceProvider.md#quick-summary
  */
 class DatabaseServiceProvider extends ServiceProvider
 {
@@ -19,7 +19,7 @@ class DatabaseServiceProvider extends ServiceProvider
      * Register database event bus, connection manager, and alias.
      *
      * @return void
-     * @see docs_md/Providers/Database/DatabaseServiceProvider.md#method-register
+     * @see docs/Providers/Database/DatabaseServiceProvider.md#method-register
      */
     public function register() : void
     {

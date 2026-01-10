@@ -81,7 +81,7 @@ use Avax\Container\Features\Think\Prototype\CompiledPrototypeDumper;
  * @see     ServicePrototype The data structure being formatted
  * @see     InspectCommand CLI command that uses this dumper
  * @see     CompiledPrototypeDumper Alternative dumper for compiled formats
- * @see     docs_md/Observe/Inspect/CliPrototypeDumper.md#quick-summary
+ * @see docs/Observe/Inspect/CliPrototypeDumper.md#quick-summary
  */
 final readonly class CliPrototypeDumper
 {
@@ -89,7 +89,7 @@ final readonly class CliPrototypeDumper
      * @param ServicePrototype $prototype Prototype to render for CLI output
      *
      * @return string Human-friendly, terminal-ready representation
-     * @see docs_md/Observe/Inspect/CliPrototypeDumper.md#method-dump
+     * @see docs/Observe/Inspect/CliPrototypeDumper.md#method-dump
      */
     public function dump(ServicePrototype $prototype) : string
     {

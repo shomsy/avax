@@ -12,7 +12,7 @@ namespace Avax\Container\Observe\Timeline;
  * resolution events with microsecond precision, enabling detailed performance analysis,
  * memory leak detection, and optimization of dependency injection operations.
  *
- * @see docs_md/Observe/Timeline/ResolutionTimeline.md#quick-summary
+ * @see docs/Observe/Timeline/ResolutionTimeline.md#quick-summary
  */
 class ResolutionTimeline
 {

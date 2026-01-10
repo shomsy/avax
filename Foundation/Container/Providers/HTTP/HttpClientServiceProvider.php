@@ -12,7 +12,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Service Provider for HTTP client services.
  *
- * @see docs_md/Providers/HTTP/HttpClientServiceProvider.md#quick-summary
+ * @see docs/Providers/HTTP/HttpClientServiceProvider.md#quick-summary
  */
 class HttpClientServiceProvider extends ServiceProvider
 {
@@ -20,7 +20,7 @@ class HttpClientServiceProvider extends ServiceProvider
      * Register retry middleware and HTTP client bindings.
      *
      * @return void
-     * @see docs_md/Providers/HTTP/HttpClientServiceProvider.md#method-register
+     * @see docs/Providers/HTTP/HttpClientServiceProvider.md#method-register
      */
     public function register() : void
     {

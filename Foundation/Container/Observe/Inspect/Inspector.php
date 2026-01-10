@@ -12,7 +12,7 @@ use Throwable;
 /**
  * Service for deep introspection of container state.
  *
- * @see docs_md/Observe/Inspect/Inspector.md#quick-summary
+ * @see docs/Observe/Inspect/Inspector.md#quick-summary
  */
 final readonly class Inspector
 {
@@ -20,7 +20,7 @@ final readonly class Inspector
      * @param DefinitionStore                     $definitions      Definition store used to check whether a service is defined
      * @param ScopeRegistry                       $scopes           Scope registry used to check whether a service is cached
      * @param DependencyInjectionPrototypeFactory $prototypeFactory Prototype factory used to build reflection-based summaries
-     * @see docs_md/Observe/Inspect/Inspector.md#method-__construct
+     * @see docs/Observe/Inspect/Inspector.md#method-__construct
      */
     public function __construct(
         private DefinitionStore                     $definitions,
@@ -32,7 +32,7 @@ final readonly class Inspector
      * @param string $id Service identifier/abstract to inspect
      *
      * @return array Inspection report payload
-     * @see docs_md/Observe/Inspect/Inspector.md#method-inspect
+     * @see docs/Observe/Inspect/Inspector.md#method-inspect
      */
     public function inspect(string $id) : array
     {

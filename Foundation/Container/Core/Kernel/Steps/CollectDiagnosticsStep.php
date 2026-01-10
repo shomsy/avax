@@ -16,13 +16,13 @@ use Avax\Container\Core\Kernel\StepTelemetryCollector;
  * insights into the container's health and performance.
  *
  * @package Avax\Container\Core\Kernel\Steps
- * @see docs_md/Core/Kernel/Steps/CollectDiagnosticsStep.md#quick-summary
+ * @see docs/Core/Kernel/Steps/CollectDiagnosticsStep.md#quick-summary
  */
 final readonly class CollectDiagnosticsStep implements KernelStep
 {
     /**
      * @param StepTelemetryCollector $telemetry Collector for recording pipeline metrics.
-     * @see docs_md/Core/Kernel/Steps/CollectDiagnosticsStep.md#method-__construct
+     * @see docs/Core/Kernel/Steps/CollectDiagnosticsStep.md#method-__construct
      */
     public function __construct(
         private StepTelemetryCollector $telemetry
@@ -33,7 +33,7 @@ final readonly class CollectDiagnosticsStep implements KernelStep
      *
      * @param KernelContext $context The resolution context.
      * @return void
-     * @see docs_md/Core/Kernel/Steps/CollectDiagnosticsStep.md#method-__invoke
+     * @see docs/Core/Kernel/Steps/CollectDiagnosticsStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void
     {
@@ -74,7 +74,7 @@ final readonly class CollectDiagnosticsStep implements KernelStep
      * @param array  $stepMetrics Raw telemetry collector metrics.
      * @param string $serviceId   Current service ID to select per-service metrics.
      * @return array Normalized step timing data.
-     * @see docs_md/Core/Kernel/Steps/CollectDiagnosticsStep.md#method-formatsteptimings
+     * @see docs/Core/Kernel/Steps/CollectDiagnosticsStep.md#method-formatsteptimings
      */
     private function formatStepTimings(array $stepMetrics, string $serviceId): array
     {

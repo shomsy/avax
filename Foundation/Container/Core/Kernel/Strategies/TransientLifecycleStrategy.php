@@ -9,7 +9,7 @@ use Avax\Container\Core\Kernel\Contracts\LifecycleStrategy;
 /**
  * Transient Lifecycle Strategy
  *
- * @see docs_md/Core/Kernel/Strategies/TransientLifecycleStrategy.md#quick-summary
+ * @see docs/Core/Kernel/Strategies/TransientLifecycleStrategy.md#quick-summary
  */
 final class TransientLifecycleStrategy implements LifecycleStrategy
 {
@@ -20,7 +20,7 @@ final class TransientLifecycleStrategy implements LifecycleStrategy
      * @param mixed  $instance Instance (ignored)
      *
      * @return void
-     * @see docs_md/Core/Kernel/Strategies/TransientLifecycleStrategy.md#method-storestring-abstract-mixed-instance-void
+     * @see docs/Core/Kernel/Strategies/TransientLifecycleStrategy.md#method-storestring-abstract-mixed-instance-void
      */
     public function store(string $abstract, mixed $instance): void {}
 
@@ -30,7 +30,7 @@ final class TransientLifecycleStrategy implements LifecycleStrategy
      * @param string $abstract Service identifier
      *
      * @return bool Always false
-     * @see docs_md/Core/Kernel/Strategies/TransientLifecycleStrategy.md#method-hasstring-abstract-bool
+     * @see docs/Core/Kernel/Strategies/TransientLifecycleStrategy.md#method-hasstring-abstract-bool
      */
     public function has(string $abstract): bool
     {
@@ -43,7 +43,7 @@ final class TransientLifecycleStrategy implements LifecycleStrategy
      * @param string $abstract Service identifier
      *
      * @return mixed|null Always null
-     * @see docs_md/Core/Kernel/Strategies/TransientLifecycleStrategy.md#method-retrievestring-abstract-mixed
+     * @see docs/Core/Kernel/Strategies/TransientLifecycleStrategy.md#method-retrievestring-abstract-mixed
      */
     public function retrieve(string $abstract): mixed
     {
@@ -54,7 +54,7 @@ final class TransientLifecycleStrategy implements LifecycleStrategy
      * No-op clear; nothing is stored.
      *
      * @return void
-     * @see docs_md/Core/Kernel/Strategies/TransientLifecycleStrategy.md#method-clearvoid
+     * @see docs/Core/Kernel/Strategies/TransientLifecycleStrategy.md#method-clearvoid
      */
     public function clear(): void {}
 }

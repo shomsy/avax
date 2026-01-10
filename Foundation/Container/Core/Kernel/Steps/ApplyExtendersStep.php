@@ -17,14 +17,14 @@ use Avax\Container\Features\Operate\Scope\ScopeManager;
  * altering the original service definition.
  *
  * @package Avax\Container\Core\Kernel\Steps
- * @see docs_md/Core/Kernel/Steps/ApplyExtendersStep.md#quick-summary
+ * @see docs/Core/Kernel/Steps/ApplyExtendersStep.md#quick-summary
  */
 final readonly class ApplyExtendersStep implements KernelStep
 {
     /**
      * @param DefinitionStore $definitions Source of registered extenders.
      * @param ScopeManager    $scopes      System for retrieving system-level services.
-     * @see docs_md/Core/Kernel/Steps/ApplyExtendersStep.md#method-__construct
+     * @see docs/Core/Kernel/Steps/ApplyExtendersStep.md#method-__construct
      */
     public function __construct(
         private DefinitionStore $definitions,
@@ -37,7 +37,7 @@ final readonly class ApplyExtendersStep implements KernelStep
      * @param KernelContext $context The resolution context.
      * @return void
      * @throws \Throwable If an extender fails.
-     * @see docs_md/Core/Kernel/Steps/ApplyExtendersStep.md#method-__invoke
+     * @see docs/Core/Kernel/Steps/ApplyExtendersStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void
     {

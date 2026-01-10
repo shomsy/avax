@@ -15,7 +15,7 @@ use Avax\Container\Features\Operate\Boot\ServiceProvider;
 /**
  * Service Provider for authentication services.
  *
- * @see docs_md/Providers/Auth/AuthenticationServiceProvider.md#quick-summary
+ * @see docs/Providers/Auth/AuthenticationServiceProvider.md#quick-summary
  */
 class AuthenticationServiceProvider extends ServiceProvider
 {
@@ -23,7 +23,7 @@ class AuthenticationServiceProvider extends ServiceProvider
      * Register authentication services: hasher, rate limiter, identity, authenticator, and alias.
      *
      * @return void
-     * @see docs_md/Providers/Auth/AuthenticationServiceProvider.md#method-register
+     * @see docs/Providers/Auth/AuthenticationServiceProvider.md#method-register
      */
     public function register() : void
     {

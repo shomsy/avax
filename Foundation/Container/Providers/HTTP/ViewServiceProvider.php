@@ -10,7 +10,7 @@ use Avax\View\BladeTemplateEngine;
 /**
  * Service Provider for view and template engine services.
  *
- * @see docs_md/Providers/HTTP/ViewServiceProvider.md#quick-summary
+ * @see docs/Providers/HTTP/ViewServiceProvider.md#quick-summary
  */
 class ViewServiceProvider extends ServiceProvider
 {
@@ -18,7 +18,7 @@ class ViewServiceProvider extends ServiceProvider
      * Register Blade template engine and alias with configured paths.
      *
      * @return void
-     * @see docs_md/Providers/HTTP/ViewServiceProvider.md#method-register
+     * @see docs/Providers/HTTP/ViewServiceProvider.md#method-register
      */
     public function register() : void
     {

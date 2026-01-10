@@ -101,14 +101,14 @@ use Throwable;
  * @see CliPrototypeDumper For the prototype visualization logic
  * @see Container::inspect() For the underlying inspection API
  * @see BuildServicePrototype For service prototype generation
- * @see docs_md/Tools/Console/InspectCommand.md#quick-summary
+ * @see docs/Tools/Console/InspectCommand.md#quick-summary
  */
 readonly class InspectCommand
 {
     /**
      * @param \Avax\Container\Container $container The container instance to inspect
      *
-     * @see docs_md/Tools/Console/InspectCommand.md#method-__construct
+     * @see docs/Tools/Console/InspectCommand.md#method-__construct
      */
     public function __construct(
         private Container $container
@@ -124,7 +124,7 @@ readonly class InspectCommand
      * @param string $abstract The service identifier to inspect
      *
      * @return void Outputs detailed service inspection report to stdout
-     * @see docs_md/Tools/Console/InspectCommand.md#method-execute
+     * @see docs/Tools/Console/InspectCommand.md#method-execute
      */
     public function execute(string $abstract) : void
     {

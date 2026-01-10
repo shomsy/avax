@@ -15,14 +15,14 @@ use Avax\Container\Features\Operate\Scope\ScopeManager;
  * If found, it marks the context as resolved and terminates the pipeline early.
  * This is a critical performance optimization for singleton and scoped services.
  *
- * @see docs_md/Core/Kernel/Steps/RetrieveFromScopeStep.md#quick-summary
+ * @see docs/Core/Kernel/Steps/RetrieveFromScopeStep.md#quick-summary
  */
 final readonly class RetrieveFromScopeStep implements TerminalKernelStep
 {
     /**
      * @param ScopeManager $scopeManager Scope-backed instance storage
      *
-     * @see docs_md/Core/Kernel/Steps/RetrieveFromScopeStep.md#method-__construct
+     * @see docs/Core/Kernel/Steps/RetrieveFromScopeStep.md#method-__construct
      */
     public function __construct(
         private ScopeManager $scopeManager
@@ -34,7 +34,7 @@ final readonly class RetrieveFromScopeStep implements TerminalKernelStep
      * @param KernelContext $context The resolution context
      *
      * @return void
-     * @see docs_md/Core/Kernel/Steps/RetrieveFromScopeStep.md#method-__invoke
+     * @see docs/Core/Kernel/Steps/RetrieveFromScopeStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context) : void
     {

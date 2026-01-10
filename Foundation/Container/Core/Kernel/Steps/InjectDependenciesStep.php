@@ -15,13 +15,13 @@ use Avax\Container\Features\Actions\Inject\InjectDependencies;
  * service, handling properties and methods marked for injection via attributes.
  *
  * @package Avax\Container\Core\Kernel\Steps
- * @see docs_md/Core/Kernel/Steps/InjectDependenciesStep.md#quick-summary
+ * @see docs/Core/Kernel/Steps/InjectDependenciesStep.md#quick-summary
  */
 final readonly class InjectDependenciesStep implements KernelStep
 {
     /**
      * @param InjectDependencies $injector The dependency injection engine.
-     * @see docs_md/Core/Kernel/Steps/InjectDependenciesStep.md#method-__construct
+     * @see docs/Core/Kernel/Steps/InjectDependenciesStep.md#method-__construct
      */
     public function __construct(
         private InjectDependencies $injector
@@ -33,7 +33,7 @@ final readonly class InjectDependenciesStep implements KernelStep
      * @param KernelContext $context The resolution context.
      * @return void
      * @throws \ReflectionException If injection fails due to reflection errors.
-     * @see docs_md/Core/Kernel/Steps/InjectDependenciesStep.md#method-__invoke
+     * @see docs/Core/Kernel/Steps/InjectDependenciesStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void
     {

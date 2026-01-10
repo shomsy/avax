@@ -32,7 +32,7 @@ namespace Avax\Container\Features\Operate\Boot;
  * SECURITY CONSIDERATIONS:
  * - Delay resolving sensitive instances until `boot()` after the container is fully configured.
  *
- * @see docs_md/Features/Operate/Boot/ServiceProvider.md#quick-summary
+ * @see docs/Features/Operate/Boot/ServiceProvider.md#quick-summary
  */
 abstract class ServiceProvider
 {
@@ -45,7 +45,7 @@ abstract class ServiceProvider
      *
      * WARNING: Do not resolve services here (DB, etc.); only bind definitions.
      *
-     * @see docs_md/Features/Operate/Boot/ServiceProvider.md#method-register
+     * @see docs/Features/Operate/Boot/ServiceProvider.md#method-register
      */
     public function register() : void
     {
@@ -57,7 +57,7 @@ abstract class ServiceProvider
      *
      * Safe to resolve services and perform post-registration initialization here.
      *
-     * @see docs_md/Features/Operate/Boot/ServiceProvider.md#method-boot
+     * @see docs/Features/Operate/Boot/ServiceProvider.md#method-boot
      */
     public function boot() : void
     {

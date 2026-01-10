@@ -143,7 +143,7 @@ use Throwable;
  * @see     TelemetryConfig Configuration controlling logging behavior and security
  * @see     EnhancedMetricsCollector Metrics collection with integrated logging
  * @see     ErrorLogger PSR-3 compliant error logging interface
- * @see     docs_md/Observe/Metrics/LoggerFactoryIntegration.md#quick-summary
+ * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#quick-summary
  */
 class LoggerFactoryIntegration
 {
@@ -183,7 +183,7 @@ class LoggerFactoryIntegration
      *
      * @param LoggerFactory   $loggerFactory PSR-3 logger factory for component loggers
      * @param TelemetryConfig $config        Telemetry configuration for logging behavior
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-__construct
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-__construct
      */
     public function __construct(
         private readonly LoggerFactory   $loggerFactory,
@@ -212,7 +212,7 @@ class LoggerFactoryIntegration
      *
      * @return EnhancedMetricsCollector Metrics collector with logging integration
      * @see EnhancedMetricsCollector For detailed metrics collection capabilities
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-createmetricscollector
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-createmetricscollector
      */
     public function createMetricsCollector() : EnhancedMetricsCollector
     {
@@ -267,7 +267,7 @@ class LoggerFactoryIntegration
      * @param array  $context Additional context for the lifecycle event
      *
      * @return void
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-loglifecycleevent
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-loglifecycleevent
      */
     public function logLifecycleEvent(string $event, array $context = []) : void
     {
@@ -311,7 +311,7 @@ class LoggerFactoryIntegration
      * @param string $component Container component name for logger scoping
      *
      * @return ErrorLogger PSR-3 compliant logger for the component
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-getcomponentlogger
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-getcomponentlogger
      */
     public function getComponentLogger(string $component) : ErrorLogger
     {
@@ -377,7 +377,7 @@ class LoggerFactoryIntegration
      * @param array  $context   Additional context for the resolution event
      *
      * @return void
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-logserviceresolution
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logserviceresolution
      */
     public function logServiceResolution(
         string $serviceId,
@@ -447,7 +447,7 @@ class LoggerFactoryIntegration
      * @param array  $tags      Tags associated with the service
      *
      * @return void
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-logserviceregistration
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logserviceregistration
      */
     public function logServiceRegistration(
         string $serviceId,
@@ -525,7 +525,7 @@ class LoggerFactoryIntegration
      * @param array  $context   Additional context for the cache operation
      *
      * @return void
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-logcacheoperation
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logcacheoperation
      */
     public function logCacheOperation(
         string $operation,
@@ -602,7 +602,7 @@ class LoggerFactoryIntegration
      * @param array  $config Configuration data to log (will be sanitized)
      *
      * @return void
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-logconfigurationevent
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logconfigurationevent
      */
     public function logConfigurationEvent(string $event, array $config = []) : void
     {
@@ -757,7 +757,7 @@ class LoggerFactoryIntegration
      * @param float  $threshold Expected maximum duration in seconds
      *
      * @return void
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-logperformancewarning
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logperformancewarning
      */
     public function logPerformanceWarning(
         string $serviceId,
@@ -840,7 +840,7 @@ class LoggerFactoryIntegration
      * @param array      $context   Additional context for error diagnosis
      *
      * @return void
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-logcontainererror
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logcontainererror
      */
     public function logContainerError(
         string    $component,
@@ -916,7 +916,7 @@ class LoggerFactoryIntegration
      * ```
      *
      * @return array Comprehensive logging system statistics and configuration
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-getloggingstats
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-getloggingstats
      */
     public function getLoggingStats() : array
     {
@@ -974,7 +974,7 @@ class LoggerFactoryIntegration
      * ```
      *
      * @return void
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-flushall
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-flushall
      */
     public function flushAll() : void
     {
@@ -1042,7 +1042,7 @@ class LoggerFactoryIntegration
      * @param array $healthData Health check results and diagnostic information
      *
      * @return void
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-loghealthcheck
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-loghealthcheck
      */
     public function logHealthCheck(array $healthData) : void
     {
@@ -1101,7 +1101,7 @@ class LoggerFactoryIntegration
      * @param int    $dataPoints Number of data points exported
      *
      * @return void
-     * @see docs_md/Observe/Metrics/LoggerFactoryIntegration.md#method-logtelemetryexport
+     * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logtelemetryexport
      */
     public function logTelemetryExport(string $sink, int $dataPoints) : void
     {

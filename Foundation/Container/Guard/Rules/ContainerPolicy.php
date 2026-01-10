@@ -46,7 +46,7 @@ namespace Avax\Container\Guard\Rules;
  * - Lazy loading reduces initial memory footprint
  *
  * @package Avax\Container\Guard\Rules
- * @see docs_md/Guard/Rules/ContainerPolicy.md#quick-summary
+ * @see docs/Guard/Rules/ContainerPolicy.md#quick-summary
  */
 final readonly class ContainerPolicy
 {

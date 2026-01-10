@@ -20,7 +20,7 @@ use Avax\Container\Observe\Timeline\ResolutionTimeline;
  * Immutable configuration object containing all collaborators and settings
  * needed by ContainerKernel. Provides fluent API for configuration building, ensuring type-safe and predictable kernel setup.
  *
- * @see docs_md/Core/Kernel/KernelConfig.md#quick-summary
+ * @see docs/Core/Kernel/KernelConfig.md#quick-summary
  */
 final readonly class KernelConfig
 {
@@ -39,7 +39,7 @@ final readonly class KernelConfig
      * @param bool                    $autoDefine       Enable automatic service definition
      * @param bool                    $strictMode       Enable strict validation mode
      * @param bool                    $devMode          Enable development mode features
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-__construct
+     * @see docs/Core/Kernel/KernelConfig.md#method-__construct
      */
     public function __construct(
         public EngineInterface         $engine,
@@ -66,7 +66,7 @@ final readonly class KernelConfig
      * @param ServicePrototypeFactory $prototypeFactory Service analysis factory
      * @param ResolutionTimeline      $timeline         Resolution tracking
      * @return self New configuration instance
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-create
+     * @see docs/Core/Kernel/KernelConfig.md#method-create
      */
     public static function create(
         EngineInterface         $engine,
@@ -91,7 +91,7 @@ final readonly class KernelConfig
      *
      * @param bool $strict Enable strict mode if true
      * @return self New configuration instance
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-withstrictmode
+     * @see docs/Core/Kernel/KernelConfig.md#method-withstrictmode
      */
     public function withStrictMode(bool $strict = true): self
     {
@@ -138,7 +138,7 @@ final readonly class KernelConfig
      *
      * @param bool $autoDefine Enable auto-definition if true
      * @return self New configuration instance
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-withautodefine
+     * @see docs/Core/Kernel/KernelConfig.md#method-withautodefine
      */
     public function withAutoDefine(bool $autoDefine = true): self
     {
@@ -150,7 +150,7 @@ final readonly class KernelConfig
      *
      * @param CollectMetrics $metrics Metrics collector
      * @return self New configuration instance
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-withmetrics
+     * @see docs/Core/Kernel/KernelConfig.md#method-withmetrics
      */
     public function withMetrics(CollectMetrics $metrics): self
     {
@@ -162,7 +162,7 @@ final readonly class KernelConfig
      *
      * @param ContainerPolicy $policy Security policy
      * @return self New configuration instance
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-withpolicy
+     * @see docs/Core/Kernel/KernelConfig.md#method-withpolicy
      */
     public function withPolicy(ContainerPolicy $policy): self
     {
@@ -174,7 +174,7 @@ final readonly class KernelConfig
      *
      * @param TerminateContainer $terminator Shutdown handler
      * @return self New configuration instance
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-withterminator
+     * @see docs/Core/Kernel/KernelConfig.md#method-withterminator
      */
     public function withTerminator(TerminateContainer $terminator): self
     {
@@ -186,7 +186,7 @@ final readonly class KernelConfig
      *
      * @param bool $devMode Enable dev mode if true
      * @return self New configuration instance
-     * @see docs_md/Core/Kernel/KernelConfig.md#method-withdevmode
+     * @see docs/Core/Kernel/KernelConfig.md#method-withdevmode
      */
     public function withDevMode(bool $devMode): self
     {

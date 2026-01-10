@@ -10,14 +10,14 @@ use Avax\Container\Features\Operate\Scope\ScopeManager;
 /**
  * Singleton Lifecycle Strategy
  *
- * @see docs_md/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#quick-summary
+ * @see docs/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#quick-summary
  */
 final readonly class SingletonLifecycleStrategy implements LifecycleStrategy
 {
     /**
      * @param ScopeManager $scopeManager Scope storage used for singleton instances
      *
-     * @see docs_md/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-__constructscopemanager-scopemanager
+     * @see docs/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-__constructscopemanager-scopemanager
      */
     public function __construct(
         private ScopeManager $scopeManager
@@ -30,7 +30,7 @@ final readonly class SingletonLifecycleStrategy implements LifecycleStrategy
      * @param mixed  $instance Instance to cache
      *
      * @return void
-     * @see docs_md/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-storestring-abstract-mixed-instance-void
+     * @see docs/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-storestring-abstract-mixed-instance-void
      */
     public function store(string $abstract, mixed $instance): void
     {
@@ -43,7 +43,7 @@ final readonly class SingletonLifecycleStrategy implements LifecycleStrategy
      * @param string $abstract Service identifier
      *
      * @return bool True when cached
-     * @see docs_md/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-hasstring-abstract-bool
+     * @see docs/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-hasstring-abstract-bool
      */
     public function has(string $abstract): bool
     {
@@ -56,7 +56,7 @@ final readonly class SingletonLifecycleStrategy implements LifecycleStrategy
      * @param string $abstract Service identifier
      *
      * @return mixed|null Cached instance or null
-     * @see docs_md/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-retrievestring-abstract-mixed
+     * @see docs/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-retrievestring-abstract-mixed
      */
     public function retrieve(string $abstract): mixed
     {
@@ -67,7 +67,7 @@ final readonly class SingletonLifecycleStrategy implements LifecycleStrategy
      * No-op for singletons; retained for lifetime of the process.
      *
      * @return void
-     * @see docs_md/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-clearvoid
+     * @see docs/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-clearvoid
      */
     public function clear(): void {}
 }

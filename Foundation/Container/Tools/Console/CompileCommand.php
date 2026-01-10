@@ -83,7 +83,7 @@ use Throwable;
  * @see CompiledPrototypeDumper For the underlying compilation logic
  * @see Container::compile() For programmatic compilation
  * @see ClearCacheCommand For cache management
- * @see docs_md/Tools/Console/CompileCommand.md#quick-summary
+ * @see docs/Tools/Console/CompileCommand.md#quick-summary
  */
 readonly class CompileCommand
 {
@@ -91,7 +91,7 @@ readonly class CompileCommand
      * @param \Avax\Container\Container $container       The container instance to compile
      * @param string                    $defaultCacheDir Default cache directory path
      *
-     * @see docs_md/Tools/Console/CompileCommand.md#method-__construct
+     * @see docs/Tools/Console/CompileCommand.md#method-__construct
      */
     public function __construct(
         private Container $container,
@@ -116,7 +116,7 @@ readonly class CompileCommand
      * @return void Outputs compilation results to stdout
      *
      * @throws \Throwable
-     * @see docs_md/Tools/Console/CompileCommand.md#method-execute
+     * @see docs/Tools/Console/CompileCommand.md#method-execute
      */
     public function execute(
         string|null $outputFile = null,

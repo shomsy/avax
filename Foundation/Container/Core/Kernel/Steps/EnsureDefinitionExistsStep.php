@@ -18,7 +18,7 @@ use ReflectionClass;
  * Creates an ephemeral definition if auto-define is enabled, without polluting
  * the global definition store. Uses Transient as default lifetime for auto-wired classes.
  *
- * @see docs_md/Core/Kernel/Steps/EnsureDefinitionExistsStep.md#quick-summary
+ * @see docs/Core/Kernel/Steps/EnsureDefinitionExistsStep.md#quick-summary
  */
 final readonly class EnsureDefinitionExistsStep implements KernelStep
 {
@@ -39,7 +39,7 @@ final readonly class EnsureDefinitionExistsStep implements KernelStep
      * @param KernelContext $context
      * @return void
      * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException When strict mode is enabled and the definition is missing
-     * @see docs_md/Core/Kernel/Steps/EnsureDefinitionExistsStep.md#method-__invoke
+     * @see docs/Core/Kernel/Steps/EnsureDefinitionExistsStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void
     {
@@ -79,7 +79,7 @@ final readonly class EnsureDefinitionExistsStep implements KernelStep
      *
      * @param string $serviceId The service identifier
      * @return bool True if auto-definable
-     * @see docs_md/Core/Kernel/Steps/EnsureDefinitionExistsStep.md#method-isautodefinable
+     * @see docs/Core/Kernel/Steps/EnsureDefinitionExistsStep.md#method-isautodefinable
      */
     private function isAutoDefinable(string $serviceId): bool
     {

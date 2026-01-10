@@ -18,13 +18,13 @@ use Throwable;
  * all dependencies have been injected.
  *
  * @package Avax\Container\Core\Kernel\Steps
- * @see docs_md/Core/Kernel/Steps/InvokePostConstructStep.md#quick-summary
+ * @see docs/Core/Kernel/Steps/InvokePostConstructStep.md#quick-summary
  */
 final readonly class InvokePostConstructStep implements KernelStep
 {
     /**
      * @param InvokeAction $invoker Helper for executing method calls.
-     * @see docs_md/Core/Kernel/Steps/InvokePostConstructStep.md#method-__construct
+     * @see docs/Core/Kernel/Steps/InvokePostConstructStep.md#method-__construct
      */
     public function __construct(
         private InvokeAction $invoker
@@ -35,7 +35,7 @@ final readonly class InvokePostConstructStep implements KernelStep
      *
      * @param KernelContext $context The resolution context.
      * @return void
-     * @see docs_md/Core/Kernel/Steps/InvokePostConstructStep.md#method-__invoke
+     * @see docs/Core/Kernel/Steps/InvokePostConstructStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context): void
     {

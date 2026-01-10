@@ -13,7 +13,7 @@ use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 /**
  * Service Provider for routing services.
  *
- * @see docs_md/Providers/HTTP/RouterServiceProvider.md#quick-summary
+ * @see docs/Providers/HTTP/RouterServiceProvider.md#quick-summary
  */
 class RouterServiceProvider extends ServiceProvider
 {
@@ -21,7 +21,7 @@ class RouterServiceProvider extends ServiceProvider
      * Register router bindings, validator, kernel, and alias.
      *
      * @return void
-     * @see docs_md/Providers/HTTP/RouterServiceProvider.md#method-register
+     * @see docs/Providers/HTTP/RouterServiceProvider.md#method-register
      */
     public function register(): void
     {

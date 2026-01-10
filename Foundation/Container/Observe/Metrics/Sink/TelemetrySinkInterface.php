@@ -6,7 +6,7 @@ namespace Avax\Container\Observe\Metrics\Sink;
 /**
  * Contract for recording telemetry data from the container.
  *
- * @see docs_md/Observe/Metrics/Sink/TelemetrySinkInterface.md#quick-summary
+ * @see docs/Observe/Metrics/Sink/TelemetrySinkInterface.md#quick-summary
  */
 interface TelemetrySinkInterface
 {
@@ -18,7 +18,7 @@ interface TelemetrySinkInterface
      * @param string $strategy   Resolution strategy label (e.g., singleton/scoped/transient)
      *
      * @return void
-     * @see docs_md/Observe/Metrics/Sink/TelemetrySinkInterface.md#method-record
+     * @see docs/Observe/Metrics/Sink/TelemetrySinkInterface.md#method-record
      */
     public function record(string $abstract, float $durationMs, string $strategy) : void;
 }

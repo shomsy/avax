@@ -7,7 +7,7 @@ namespace Avax\Container\Features\Actions\Invoke\Context;
 /**
  * Value object holding state for a single invocation.
  *
- * @see docs_md/Features/Actions/Invoke/Context/InvocationContext.md#quick-summary
+ * @see docs/Features/Actions/Invoke/Context/InvocationContext.md#quick-summary
  */
 final readonly class InvocationContext
 {
@@ -22,7 +22,7 @@ final readonly class InvocationContext
     /**
      * Create a new context with normalized target.
      *
-     * @see docs_md/Features/Actions/Invoke/Context/InvocationContext.md#method-withnormalizedtarget
+     * @see docs/Features/Actions/Invoke/Context/InvocationContext.md#method-withnormalizedtarget
      */
     public function withNormalizedTarget(mixed $normalizedTarget) : self
     {
@@ -38,7 +38,7 @@ final readonly class InvocationContext
     /**
      * Create a new context with reflection object.
      *
-     * @see docs_md/Features/Actions/Invoke/Context/InvocationContext.md#method-withreflection
+     * @see docs/Features/Actions/Invoke/Context/InvocationContext.md#method-withreflection
      */
     public function withReflection(object $reflection) : self
     {
@@ -54,7 +54,7 @@ final readonly class InvocationContext
     /**
      * Create a new context with resolved arguments.
      *
-     * @see docs_md/Features/Actions/Invoke/Context/InvocationContext.md#method-withresolvedarguments
+     * @see docs/Features/Actions/Invoke/Context/InvocationContext.md#method-withresolvedarguments
      */
     public function withResolvedArguments(array $resolvedArguments) : self
     {
@@ -70,7 +70,7 @@ final readonly class InvocationContext
     /**
      * Create a new context with final result.
      *
-     * @see docs_md/Features/Actions/Invoke/Context/InvocationContext.md#method-withresult
+     * @see docs/Features/Actions/Invoke/Context/InvocationContext.md#method-withresult
      */
     public function withResult(mixed $result) : self
     {
@@ -89,7 +89,7 @@ final readonly class InvocationContext
      * Returns normalized target if available, otherwise original target.
      * This allows resolvers to work with the most appropriate target format.
      *
-     * @see docs_md/Features/Actions/Invoke/Context/InvocationContext.md#method-geteffectivetarget
+     * @see docs/Features/Actions/Invoke/Context/InvocationContext.md#method-geteffectivetarget
      */
     public function getEffectiveTarget() : mixed
     {

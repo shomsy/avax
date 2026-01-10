@@ -9,7 +9,7 @@ namespace Avax\Container\Core\Kernel\Events;
  *
  * Emitted when a pipeline step begins execution.
  *
- * @see docs_md/Core/Kernel/Events/StepStarted.md#quick-summary
+ * @see docs/Core/Kernel/Events/StepStarted.md#quick-summary
  */
 final readonly class StepStarted
 {
@@ -19,7 +19,7 @@ final readonly class StepStarted
      * @param string      $serviceId Service identifier being resolved
      * @param string|null $traceId   Optional trace correlation ID
      *
-     * @see docs_md/Core/Kernel/Events/StepStarted.md#method-__construct
+     * @see docs/Core/Kernel/Events/StepStarted.md#method-__construct
      */
     public function __construct(
         public string      $stepClass,

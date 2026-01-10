@@ -11,7 +11,7 @@ use Avax\HTTP\Session\SessionAdapter;
 /**
  * Service Provider for session management.
  *
- * @see docs_md/Providers/HTTP/SessionServiceProvider.md#quick-summary
+ * @see docs/Providers/HTTP/SessionServiceProvider.md#quick-summary
  */
 class SessionServiceProvider extends ServiceProvider
 {
@@ -19,7 +19,7 @@ class SessionServiceProvider extends ServiceProvider
      * Register session manager, adapter, and alias.
      *
      * @return void
-     * @see docs_md/Providers/HTTP/SessionServiceProvider.md#method-register
+     * @see docs/Providers/HTTP/SessionServiceProvider.md#method-register
      */
     public function register() : void
     {

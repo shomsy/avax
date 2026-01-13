@@ -16,8 +16,6 @@ use OutOfBoundsException;
  * This trait is intended to be used within classes that manage collections of data,
  * such as arrays of associative arrays or objects. It leverages the `AbstractDependenciesTrait`
  * for dependency management, ensuring that the underlying data collection is properly handled.
- *
- * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait ArrayAccessTrait
 {
@@ -28,8 +26,7 @@ trait ArrayAccessTrait
      *
      * Determines whether a specific key or index exists within the collection.
      *
-     * @param mixed $offset The offset to check.
-     *
+     * @param  mixed  $offset  The offset to check.
      * @return bool True if the offset exists, false otherwise.
      *
      * ```
@@ -38,7 +35,7 @@ trait ArrayAccessTrait
      * $exists = $arrh->offsetExists(5); // Returns false
      * ```
      */
-    public function offsetExists(mixed $offset) : bool
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->getItems()[$offset]);
     }
@@ -48,8 +45,7 @@ trait ArrayAccessTrait
      *
      * Retrieves the value associated with a given key or index. Returns null if the offset does not exist.
      *
-     * @param mixed $offset The offset to retrieve.
-     *
+     * @param  mixed  $offset  The offset to retrieve.
      * @return mixed|null The value at the specified offset, or null if it doesn't exist.
      *
      * ```
@@ -58,7 +54,7 @@ trait ArrayAccessTrait
      * $fruit = $arrh->offsetGet(5); // Returns null
      * ```
      */
-    public function offsetGet(mixed $offset) : mixed
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->getItems()[$offset] ?? null;
     }
@@ -68,9 +64,8 @@ trait ArrayAccessTrait
      *
      * Assigns a value to a specified key or index. If the offset is null, the value is appended to the collection.
      *
-     * @param mixed $offset The offset to assign the value to.
-     * @param mixed $value  The value to set.
-     *
+     * @param  mixed  $offset  The offset to assign the value to.
+     * @param  mixed  $value  The value to set.
      *
      * @throws InvalidArgumentException If the key is invalid or cannot be set.
      *
@@ -80,7 +75,7 @@ trait ArrayAccessTrait
      * $arrh->offsetSet(null, 'cherry'); // Collection becomes ['apple', 'blueberry', 'cherry']
      * ```
      */
-    public function offsetSet(mixed $offset, mixed $value) : void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $items = $this->getItems();
         if (is_null(value: $offset)) {
@@ -97,8 +92,7 @@ trait ArrayAccessTrait
      *
      * Removes the value associated with a given key or index from the collection.
      *
-     * @param mixed $offset The offset to unset.
-     *
+     * @param  mixed  $offset  The offset to unset.
      *
      * @throws InvalidArgumentException If the offset cannot be unset.
      *
@@ -107,7 +101,7 @@ trait ArrayAccessTrait
      * $arrh->offsetUnset(1); // Collection becomes ['apple', 'cherry']
      * ```
      */
-    public function offsetUnset(mixed $offset) : void
+    public function offsetUnset(mixed $offset): void
     {
         $items = $this->getItems();
         unset($items[$offset]);
@@ -119,8 +113,7 @@ trait ArrayAccessTrait
      *
      * Fetches values corresponding to the provided array of keys or indexes.
      *
-     * @param array $keys The offsets to retrieve.
-     *
+     * @param  array  $keys  The offsets to retrieve.
      * @return array An array of values corresponding to the given offsets.
      *
      * @throws InvalidArgumentException If any of the keys are invalid.
@@ -130,7 +123,7 @@ trait ArrayAccessTrait
      * $fruits = $arrh->getMultiple([0, 2]); // Returns ['apple', 'cherry']
      * ```
      */
-    public function getMultiple(array $keys) : array
+    public function getMultiple(array $keys): array
     {
         $items = $this->getItems();
 
@@ -142,8 +135,7 @@ trait ArrayAccessTrait
      *
      * Assigns multiple values to the collection based on an associative array of offsets and values.
      *
-     * @param array $values An associative array of offsets and their corresponding values.
-     *
+     * @param  array  $values  An associative array of offsets and their corresponding values.
      *
      * @throws InvalidArgumentException If any of the keys are invalid.
      *
@@ -152,7 +144,7 @@ trait ArrayAccessTrait
      * $arrh->setMultiple([1 => 'blueberry', 2 => 'cherry']); // Collection becomes ['apple', 'blueberry', 'cherry']
      * ```
      */
-    public function setMultiple(array $values) : void
+    public function setMultiple(array $values): void
     {
         $items = $this->getItems();
 
@@ -168,8 +160,7 @@ trait ArrayAccessTrait
      *
      * Fetches the value at the specified offset and removes it from the collection.
      *
-     * @param mixed $offset The offset to retrieve and remove.
-     *
+     * @param  mixed  $offset  The offset to retrieve and remove.
      * @return mixed|null The value at the specified offset, or null if it doesn't exist.
      *
      * @throws InvalidArgumentException If the offset is invalid.
@@ -180,7 +171,7 @@ trait ArrayAccessTrait
      * $fruit = $arrh->pull(5); // Returns null
      * ```
      */
-    public function pull(mixed $offset) : mixed
+    public function pull(mixed $offset): mixed
     {
         $items = $this->getItems();
         $value = $items[$offset] ?? null;
@@ -198,9 +189,8 @@ trait ArrayAccessTrait
      *
      * Exchanges the values at the specified offsets within the collection.
      *
-     * @param mixed $offset1 The first offset.
-     * @param mixed $offset2 The second offset.
-     *
+     * @param  mixed  $offset1  The first offset.
+     * @param  mixed  $offset2  The second offset.
      *
      * @throws OutOfBoundsException If either offset does not exist.
      *
@@ -211,12 +201,12 @@ trait ArrayAccessTrait
      * $arrh->swap(1, 3); // Throws OutOfBoundsException
      * ```
      */
-    public function swap(mixed $offset1, mixed $offset2) : void
+    public function swap(mixed $offset1, mixed $offset2): void
     {
         $items = $this->getItems();
 
         if (! isset($items[$offset1]) || ! isset($items[$offset2])) {
-            throw new OutOfBoundsException(message: "One or both offsets do not exist.");
+            throw new OutOfBoundsException(message: 'One or both offsets do not exist.');
         }
 
         [$items[$offset1], $items[$offset2]] = [$items[$offset2], $items[$offset1]];
@@ -236,7 +226,7 @@ trait ArrayAccessTrait
      * $keys = $arrh->keys(); // Returns [0, 1, 2]
      * ```
      */
-    public function keys() : array
+    public function keys(): array
     {
         return array_keys(array: $this->getItems());
     }
@@ -253,7 +243,7 @@ trait ArrayAccessTrait
      * $values = $arrh->values(); // Returns ['apple', 'banana', 'cherry']
      * ```
      */
-    public function values() : array
+    public function values(): array
     {
         return array_values(array: $this->getItems());
     }

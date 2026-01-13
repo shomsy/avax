@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Guard\Enforce;
 
 use Avax\Container\Features\Core\DTO\ErrorDTO;
@@ -115,13 +116,12 @@ use Avax\Container\Features\Core\DTO\SuccessDTO;
  * - Audit logging systems for compliance reporting
  * - Container security frameworks for policy management
  *
- * @package Avax\Container\Policy
- * @final
  * @readonly
+ *
  * @see     ResolutionPolicy Interface for policy implementation abstraction
  * @see     SuccessDTO Structured success response container
  * @see     ErrorDTO Structured error response container with security context
- * @see docs/Guard/Enforce/GuardResolution.md#quick-summary
+ * @see     docs/Guard/Enforce/GuardResolution.md#quick-summary
  */
 final readonly class GuardResolution
 {
@@ -244,6 +244,6 @@ final readonly class GuardResolution
             );
         }
 
-        return new SuccessDTO(message: "Resolution allowed.");
+        return new SuccessDTO(message: 'Resolution allowed.');
     }
 }

@@ -13,27 +13,24 @@ namespace Avax\HTTP\Session\Shared\Contracts\Security;
  * @example
  *   $encrypted = $encrypter->encrypt('sensitive-data');
  *   $decrypted = $encrypter->decrypt($encrypted);
- *
- * @package Avax\HTTP\Session\Contracts
  */
 interface Encrypter
 {
     /**
      * Encrypt a value.
      *
-     * @param mixed $value The value to encrypt.
-     *
+     * @param  mixed  $value  The value to encrypt.
      * @return string The encrypted value.
      */
-    public function encrypt(mixed $value) : string;
+    public function encrypt(mixed $value): string;
 
     /**
      * Decrypt a value.
      *
-     * @param string $encrypted The encrypted value.
-     *
+     * @param  string  $encrypted  The encrypted value.
      * @return mixed The decrypted value.
+     *
      * @throws \RuntimeException If decryption fails.
      */
-    public function decrypt(string $encrypted) : mixed;
+    public function decrypt(string $encrypted): mixed;
 }

@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection ALL */
 
 declare(strict_types=1);
@@ -23,7 +24,7 @@ use RuntimeException;
 class AbsoluteServerRequest implements ServerRequestInterface
 {
     /**
-     * @var array $attributes
+     * @var array
      *
      * Stores attributes for an entity. This array might be used to dynamically
      * add or remove attributes without cluttering the class properties.
@@ -31,9 +32,9 @@ class AbsoluteServerRequest implements ServerRequestInterface
     protected array $attributes = [];
 
     /**
-     * @var array $headers
-     * An array to store HTTP headers for the request. This is initialized as an empty
-     * array and will be populated later based on specific headers required for the request.
+     * @var array
+     *            An array to store HTTP headers for the request. This is initialized as an empty
+     *            array and will be populated later based on specific headers required for the request.
      */
     protected array $headers = [];
 
@@ -45,17 +46,17 @@ class AbsoluteServerRequest implements ServerRequestInterface
     protected string $method;
 
     /**
-     * @var UriInterface $uri Represents the Uniform Resource Identifier (URI) for the resource.
-     *                        Used consistently across functions to refer the endpoint being accessed or manipulated.
-     *                        This variable may be set and modified frequently within different contexts, so it is
-     *                        essential to maintain clarity about its purpose and usage to avoid confusion or misuse.
+     * @var UriInterface Represents the Uniform Resource Identifier (URI) for the resource.
+     *                   Used consistently across functions to refer the endpoint being accessed or manipulated.
+     *                   This variable may be set and modified frequently within different contexts, so it is
+     *                   essential to maintain clarity about its purpose and usage to avoid confusion or misuse.
      */
     protected UriInterface $uri;
 
     /**
      * Handles the processing and validation of the request body.
      *
-     * @param array $body The associative array representing the request body.
+     * @param  array  $body  The associative array representing the request body.
      *
      * This function processes the incoming request body and ensures that all necessary fields are present and valid.
      * Important business logic constraints are enforced here to maintain data integrity.
@@ -69,7 +70,7 @@ class AbsoluteServerRequest implements ServerRequestInterface
     protected string $protocolVersion = '1.1';
 
     /**
-     * @var array $serverParams
+     * @var array
      *
      * Holds server-specific parameters. This array is initialized as empty and expected to be populated
      * with parameters relevant to the server environment. It is crucial for accessing server configurations
@@ -114,41 +115,40 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Constructor to initialize server request object.
      *
-     * @param array|null           $server        Server parameters or defaults to $_SERVER.
-     * @param UriInterface|null    $uri           URI of the request.
-     * @param StreamInterface|null $body          Body of the request.
-     * @param array|null           $queryParams   Query parameters or defaults to $_GET.
-     * @param array|null           $parsedBody    Parsed body or an empty array.
-     * @param array|null           $cookies       Cookie parameters or defaults to $_COOKIE.
-     * @param array                $uploadedFiles Uploaded files parsed from the request.
+     * @param  array|null  $server  Server parameters or defaults to $_SERVER.
+     * @param  UriInterface|null  $uri  URI of the request.
+     * @param  StreamInterface|null  $body  Body of the request.
+     * @param  array|null  $queryParams  Query parameters or defaults to $_GET.
+     * @param  array|null  $parsedBody  Parsed body or an empty array.
+     * @param  array|null  $cookies  Cookie parameters or defaults to $_COOKIE.
+     * @param  array  $uploadedFiles  Uploaded files parsed from the request.
      */
     public function __construct(
-        array|null           $server = null,
-        UriInterface|null    $uri = null,
-        StreamInterface|null $body = null,
-        array|null           $queryParams = null,
-        array|null           $parsedBody = null,
-        array|null           $cookies = null,
-        protected array      $uploadedFiles = [],
-    )
-    {
+        ?array $server = null,
+        ?UriInterface $uri = null,
+        ?StreamInterface $body = null,
+        ?array $queryParams = null,
+        ?array $parsedBody = null,
+        ?array $cookies = null,
+        protected array $uploadedFiles = [],
+    ) {
         $this->serverParams = $server ?? $_SERVER;
-        $this->uri          = $uri ?? $this->initializeUri(requestUri: $this->serverParams['REQUEST_URI'] ?? '/');
-        $resource           = fopen('php://temp', 'r+');
+        $this->uri = $uri ?? $this->initializeUri(requestUri: $this->serverParams['REQUEST_URI'] ?? '/');
+        $resource = fopen('php://temp', 'r+');
         if ($resource === false) {
             throw new RuntimeException(message: 'Unable to create temporary stream for request body.');
         }
 
-        $this->body            = $body ?? new Stream(stream: $resource);
-        $this->method          = $this->serverParams['REQUEST_METHOD'] ?? 'GET';
+        $this->body = $body ?? new Stream(stream: $resource);
+        $this->method = $this->serverParams['REQUEST_METHOD'] ?? 'GET';
         $this->protocolVersion = $this->serverParams['SERVER_PROTOCOL'] ?? '1.1';
-        $this->query           = new ParameterBag(parameters: $queryParams ?? $_GET);
-        $this->request         = new ParameterBag(parameters: is_array($parsedBody) ? $parsedBody : []);
-        $this->cookies         = new ParameterBag(parameters: $cookies ?? $_COOKIE);
-        $this->headers         = $this->extractHeaders(server: $this->serverParams);
+        $this->query = new ParameterBag(parameters: $queryParams ?? $_GET);
+        $this->request = new ParameterBag(parameters: is_array($parsedBody) ? $parsedBody : []);
+        $this->cookies = new ParameterBag(parameters: $cookies ?? $_COOKIE);
+        $this->headers = $this->extractHeaders(server: $this->serverParams);
     }
 
-    private function initializeUri(string $requestUri) : UriInterface
+    private function initializeUri(string $requestUri): UriInterface
     {
         return UriBuilder::createFromString(uri: $requestUri);
     }
@@ -156,16 +156,15 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Extract HTTP headers from server parameters.
      *
-     * @param array $server Server parameters.
-     *
+     * @param  array  $server  Server parameters.
      * @return array Extracted headers.
      */
-    private function extractHeaders(array $server) : array
+    private function extractHeaders(array $server): array
     {
         $headers = [];
         foreach ($server as $key => $value) {
             if (str_starts_with($key, 'HTTP_')) {
-                $name           = str_replace(' ', '-', ucwords(str_replace('_', ' ', strtolower(substr($key, 5)))));
+                $name = str_replace(' ', '-', ucwords(str_replace('_', ' ', strtolower(substr($key, 5)))));
                 $headers[$name] = $value;
             }
         }
@@ -175,13 +174,12 @@ class AbsoluteServerRequest implements ServerRequestInterface
 
     /** ***PSR-7 Protocol Version Methods*** */
 
-
     /**
      * Retrieve the network protocol version used.
      *
      * @return string The current protocol version.
      */
-    public function getProtocolVersion() : string
+    public function getProtocolVersion(): string
     {
         return $this->protocolVersion;
     }
@@ -189,13 +187,12 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Clone the instance with a new protocol version.
      *
-     * @param string $version New protocol version.
-     *
+     * @param  string  $version  New protocol version.
      * @return static Cloned instance with updated protocol version.
      */
-    public function withProtocolVersion(string $version) : static
+    public function withProtocolVersion(string $version): static
     {
-        $clone                  = clone $this;
+        $clone = clone $this;
         $clone->protocolVersion = $version;
 
         return $clone;
@@ -216,7 +213,7 @@ class AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return array Array containing server parameters.
      */
-    public function getServerParams() : array
+    public function getServerParams(): array
     {
         return $this->serverParams;
     }
@@ -224,17 +221,16 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Clone the instance with a new attribute.
      *
-     * @param string $name  Name of the attribute to add or update.
-     * @param mixed  $value Value to associate with the attribute name.
-     *
+     * @param  string  $name  Name of the attribute to add or update.
+     * @param  mixed  $value  Value to associate with the attribute name.
      * @return static Cloned instance with the updated attribute.
      *
      * Intent: This method allows for immutability by cloning the current
      * instance and then modifying the clone, preserving the original instance.
      */
-    public function withAttribute(string $name, mixed $value) : static
+    public function withAttribute(string $name, mixed $value): static
     {
-        $clone                    = clone $this;
+        $clone = clone $this;
         $clone->attributes[$name] = $value;
 
         return $clone;
@@ -248,11 +244,10 @@ class AbsoluteServerRequest implements ServerRequestInterface
      * This can be particularly useful in scenarios where objects need to be shared across different
      * parts of an application without the risk of unintended side-effects.
      *
-     * @param string $name Attribute name to be removed from the cloned instance.
-     *
+     * @param  string  $name  Attribute name to be removed from the cloned instance.
      * @return static Cloned instance without the specified attribute.
      */
-    public function withoutAttribute(string $name) : static
+    public function withoutAttribute(string $name): static
     {
         $clone = clone $this;
         unset($clone->attributes[$name]);
@@ -265,7 +260,7 @@ class AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return array The set of attributes stored in the instance.
      */
-    public function getAttributes() : array
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -275,7 +270,7 @@ class AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return array Associative array of all query parameters.
      */
-    public function getQueryParams() : array
+    public function getQueryParams(): array
     {
         return $this->query->all();
     }
@@ -285,13 +280,12 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Clone the instance with new query parameters.
      *
-     * @param array $query New query parameters.
-     *
+     * @param  array  $query  New query parameters.
      * @return static Cloned instance with updated query parameters.
      */
-    public function withQueryParams(array $query) : static
+    public function withQueryParams(array $query): static
     {
-        $clone        = clone $this;
+        $clone = clone $this;
         $clone->query = new ParameterBag(parameters: $query);
 
         return $clone;
@@ -305,7 +299,7 @@ class AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return array Parsed contents of the HTTP request body.
      */
-    public function getParsedBody() : array
+    public function getParsedBody(): array
     {
         return $this->request->all();
     }
@@ -313,13 +307,12 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Clone the instance with a new parsed body.
      *
-     * @param mixed $data Parsed body data (must be an array).
-     *
+     * @param  mixed  $data  Parsed body data (must be an array).
      * @return static Cloned instance with updated parsed body.
      */
-    public function withParsedBody(mixed $data) : static
+    public function withParsedBody(mixed $data): static
     {
-        $clone          = clone $this;
+        $clone = clone $this;
         $clone->request = new ParameterBag(parameters: is_array($data) ? $data : []);
 
         return $clone;
@@ -330,7 +323,7 @@ class AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return array An associative array of all cookie parameters.
      */
-    public function getCookieParams() : array
+    public function getCookieParams(): array
     {
         return $this->cookies->all();
     }
@@ -340,13 +333,12 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Clone the instance with new cookie parameters.
      *
-     * @param array $cookies New cookie parameters.
-     *
+     * @param  array  $cookies  New cookie parameters.
      * @return static Cloned instance with updated cookie parameters.
      */
-    public function withCookieParams(array $cookies) : static
+    public function withCookieParams(array $cookies): static
     {
-        $clone          = clone $this;
+        $clone = clone $this;
         $clone->cookies = new ParameterBag(parameters: $cookies);
 
         return $clone;
@@ -357,7 +349,7 @@ class AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return array The array of uploaded files.
      */
-    public function getUploadedFiles() : array
+    public function getUploadedFiles(): array
     {
         return $this->uploadedFiles;
     }
@@ -367,12 +359,12 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Clone the instance with new uploaded files.
      *
-     * @param array $uploadedFiles Array of UploadedFileInterface instances.
-     *
+     * @param  array  $uploadedFiles  Array of UploadedFileInterface instances.
      * @return static Cloned instance with updated uploaded files.
+     *
      * @throws InvalidArgumentException If any file does not implement UploadedFileInterface.
      */
-    public function withUploadedFiles(array $uploadedFiles) : static
+    public function withUploadedFiles(array $uploadedFiles): static
     {
         foreach ($uploadedFiles as $uploadedFile) {
             if (! $uploadedFile instanceof UploadedFileInterface) {
@@ -380,7 +372,7 @@ class AbsoluteServerRequest implements ServerRequestInterface
             }
         }
 
-        $clone                = clone $this;
+        $clone = clone $this;
         $clone->uploadedFiles = $uploadedFiles;
 
         return $clone;
@@ -394,12 +386,12 @@ class AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return string The request target.
      */
-    public function getRequestTarget() : string
+    public function getRequestTarget(): string
     {
         $target = $this->uri->getPath();
-        $query  = $this->uri->getQuery();
+        $query = $this->uri->getQuery();
 
-        return $query !== '' && $query !== '0' ? $target . "?" . $query : $target;
+        return $query !== '' && $query !== '0' ? $target.'?'.$query : $target;
     }
 
     /** ***Request Target Methods*** */
@@ -407,13 +399,12 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Clone the instance with a new request target.
      *
-     * @param string $requestTarget New request target.
-     *
+     * @param  string  $requestTarget  New request target.
      * @return static Cloned instance with updated request target.
      */
-    public function withRequestTarget(string $requestTarget) : static
+    public function withRequestTarget(string $requestTarget): static
     {
-        $clone      = clone $this;
+        $clone = clone $this;
         $clone->uri = $clone->uri->withPath(path: $requestTarget);
 
         return $clone;
@@ -425,11 +416,10 @@ class AbsoluteServerRequest implements ServerRequestInterface
      * Combines all the header values for the specified name into a single string
      * separated by commas.
      *
-     * @param string $name The name of the header.
-     *
+     * @param  string  $name  The name of the header.
      * @return string The header line as a string.
      */
-    public function getHeaderLine(string $name) : string
+    public function getHeaderLine(string $name): string
     {
         return implode(', ', $this->getHeader(name: $name));
     }
@@ -442,11 +432,10 @@ class AbsoluteServerRequest implements ServerRequestInterface
      * Returns an array of values for the specified header name. If the header does
      * not exist, an empty array is returned.
      *
-     * @param string $name The name of the header.
-     *
+     * @param  string  $name  The name of the header.
      * @return array An array of header values.
      */
-    public function getHeader(string $name) : array
+    public function getHeader(string $name): array
     {
         return $this->headers[$name] ?? [];
     }
@@ -454,14 +443,13 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Clone the instance with a new header.
      *
-     * @param string $name  Header name.
-     * @param mixed  $value Header value.
-     *
+     * @param  string  $name  Header name.
+     * @param  mixed  $value  Header value.
      * @return static Cloned instance with updated header.
      */
-    public function withHeader(string $name, mixed $value) : static
+    public function withHeader(string $name, mixed $value): static
     {
-        $clone                 = clone $this;
+        $clone = clone $this;
         $clone->headers[$name] = (array) $value;
 
         return $clone;
@@ -470,14 +458,13 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Clone the instance with an added header.
      *
-     * @param string $name  Header name.
-     * @param mixed  $value Header value to add.
-     *
+     * @param  string  $name  Header name.
+     * @param  mixed  $value  Header value to add.
      * @return static Cloned instance with added header.
      */
-    public function withAddedHeader(string $name, mixed $value) : static
+    public function withAddedHeader(string $name, mixed $value): static
     {
-        $clone                 = clone $this;
+        $clone = clone $this;
         $clone->headers[$name] = array_merge($this->getHeader(name: $name), (array) $value);
 
         return $clone;
@@ -486,11 +473,10 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Clone the instance without a specified header.
      *
-     * @param string $name Header name to remove.
-     *
+     * @param  string  $name  Header name to remove.
      * @return static Cloned instance without the header.
      */
-    public function withoutHeader(string $name) : static
+    public function withoutHeader(string $name): static
     {
         $clone = clone $this;
         unset($clone->headers[$name]);
@@ -506,7 +492,7 @@ class AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return array An associative array of all headers.
      */
-    public function getHeaders() : array
+    public function getHeaders(): array
     {
         return $this->headers;
     }
@@ -514,13 +500,12 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Clone the instance with a new body.
      *
-     * @param StreamInterface $stream New body body.
-     *
+     * @param  StreamInterface  $stream  New body body.
      * @return static Cloned instance with updated body.
      */
-    public function withBody(StreamInterface $stream) : static
+    public function withBody(StreamInterface $stream): static
     {
-        $clone       = clone $this;
+        $clone = clone $this;
         $clone->body = $stream;
 
         return $clone;
@@ -535,7 +520,7 @@ class AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return StreamInterface The body of the request.
      */
-    public function getBody() : StreamInterface
+    public function getBody(): StreamInterface
     {
         return $this->body;
     }
@@ -543,13 +528,12 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Clone the instance with a new HTTP method.
      *
-     * @param string $method HTTP method.
-     *
+     * @param  string  $method  HTTP method.
      * @return static Cloned instance with updated method.
      */
-    public function withMethod(string $method) : static
+    public function withMethod(string $method): static
     {
-        $clone         = clone $this;
+        $clone = clone $this;
         $clone->method = $method;
 
         return $clone;
@@ -564,7 +548,7 @@ class AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return string The HTTP method as a string.
      */
-    public function getMethod() : string
+    public function getMethod(): string
     {
         return $this->method;
     }
@@ -576,7 +560,7 @@ class AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return UriInterface The URI of the request.
      */
-    public function getUri() : UriInterface
+    public function getUri(): UriInterface
     {
         return $this->uri;
     }
@@ -586,14 +570,13 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Clone the instance with a new URI.
      *
-     * @param UriInterface $uri          New URI.
-     * @param bool         $preserveHost Whether to preserve the host header.
-     *
+     * @param  UriInterface  $uri  New URI.
+     * @param  bool  $preserveHost  Whether to preserve the host header.
      * @return static Cloned instance with updated URI.
      */
-    public function withUri(UriInterface $uri, bool $preserveHost = false) : static
+    public function withUri(UriInterface $uri, bool $preserveHost = false): static
     {
-        $clone      = clone $this;
+        $clone = clone $this;
         $clone->uri = $uri;
         if (! $preserveHost || ! $this->hasHeader(name: 'Host')) {
             $clone->headers['Host'] = [$uri->getHost()];
@@ -607,11 +590,10 @@ class AbsoluteServerRequest implements ServerRequestInterface
      *
      * Determines whether a specified header is present in the request.
      *
-     * @param string $name The name of the header.
-     *
+     * @param  string  $name  The name of the header.
      * @return bool True if the header exists, false otherwise.
      */
-    public function hasHeader(string $name) : bool
+    public function hasHeader(string $name): bool
     {
         return isset($this->headers[$name]);
     }
@@ -623,7 +605,7 @@ class AbsoluteServerRequest implements ServerRequestInterface
      *
      * @return string|null The client IP address or null if not found.
      */
-    public function getClientIp() : string|null
+    public function getClientIp(): ?string
     {
         $keys = [
             'HTTP_CLIENT_IP',
@@ -654,12 +636,11 @@ class AbsoluteServerRequest implements ServerRequestInterface
     /**
      * Retrieve an attribute value by key, with an optional default.
      *
-     * @param string $key     The key to look up in the attributes.
-     * @param mixed  $default The default value to return if the key does not exist.
-     *
+     * @param  string  $key  The key to look up in the attributes.
+     * @param  mixed  $default  The default value to return if the key does not exist.
      * @return mixed The value of the attribute or the default value.
      */
-    public function route(string $key, mixed $default = null) : mixed
+    public function route(string $key, mixed $default = null): mixed
     {
         return $this->getAttribute($key, $default);
     }
@@ -670,15 +651,12 @@ class AbsoluteServerRequest implements ServerRequestInterface
      * The rationale for returning a default value is to provide a safe fallback mechanism, avoiding potential
      * null pointer exceptions or undefined index errors which might occur if the attribute does not exist.
      *
-     * @param string $name    The name of the attribute to retrieve.
-     * @param mixed  $default The default value to return if the attribute is not set. Defaults to null.
-     *
+     * @param  string  $name  The name of the attribute to retrieve.
+     * @param  mixed  $default  The default value to return if the attribute is not set. Defaults to null.
      * @return mixed The value of the attribute if found, otherwise the default value.
      */
-    public function getAttribute(string $name, mixed $default = null) : mixed
+    public function getAttribute(string $name, mixed $default = null): mixed
     {
         return $this->attributes[$name] ?? $default;
     }
-
-
 }

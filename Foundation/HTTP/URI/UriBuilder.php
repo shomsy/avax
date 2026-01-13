@@ -16,8 +16,8 @@ use SensitiveParameter;
 
 final class UriBuilder extends BaseUri implements UriInterface
 {
-    use QueryParameterTrait;
     use Psr7UriTrait;
+    use QueryParameterTrait;
     use UriValidationTrait;
 
     private QueryParams $queryParams;

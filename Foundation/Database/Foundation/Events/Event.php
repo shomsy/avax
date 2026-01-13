@@ -25,13 +25,13 @@ abstract readonly class Event
     public int $sequence;
 
     /**
-     * @param string $correlationId The Trace ID representing the active work context.
+     * @param  string  $correlationId  The Trace ID representing the active work context.
      */
     public function __construct(string $correlationId)
     {
-        $this->timestamp     = microtime(as_float: true);
+        $this->timestamp = microtime(as_float: true);
         $this->correlationId = $correlationId;
-        $this->sequence      = SequenceTracker::next();
+        $this->sequence = SequenceTracker::next();
     }
 
     /**
@@ -39,7 +39,7 @@ abstract readonly class Event
      *
      * @return string The full name of the event class.
      */
-    public function getName() : string
+    public function getName(): string
     {
         return static::class;
     }

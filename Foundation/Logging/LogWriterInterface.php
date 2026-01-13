@@ -15,7 +15,7 @@ interface LogWriterInterface
     /**
      * Writes a log entry to the defined storage mechanism.
      *
-     * @param string $content The log entry content to be written.
+     * @param  string  $content  The log entry content to be written.
      */
-    public function write(string $content) : void;
+    public function write(string $content): void;
 }

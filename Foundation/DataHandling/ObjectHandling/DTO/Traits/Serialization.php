@@ -34,6 +34,7 @@ trait Serialization
      * Useful for logging or debugging purposes.
      *
      * @return string The JSON representation of the DTO.
+     *
      * @throws JsonException|ReflectionException If an error occurs during encoding.
      */
     public function __toString() : string
@@ -48,6 +49,7 @@ trait Serialization
      * @param int      $depth Maximum depth for JSON serialization to prevent infinite recursion.
      *
      * @return string The JSON-encoded string representation of the DTO.
+     *
      * @throws JsonException|ReflectionException If JSON encoding fails.
      */
     public function toJson(int|null $flags = null, int $depth = 512) : string
@@ -65,6 +67,7 @@ trait Serialization
      * @param bool     $excludeHidden Whether to exclude fields marked with #[Hidden] attribute.
      *
      * @return array<string, mixed> The DTO as an associative array.
+     *
      * @throws ReflectionException
      */
     public function toArray(int|null $depth = null, bool $excludeHidden = true) : array
@@ -86,6 +89,7 @@ trait Serialization
      * @param int|null $depth Maximum depth for recursion, null for unlimited depth.
      *
      * @return mixed The normalized, JSON-serializable value.
+     *
      * @throws ReflectionException
      */
     protected function normalizeValue(mixed $value, int|null $depth = null) : mixed
@@ -130,6 +134,7 @@ trait Serialization
      * Implements the JsonSerializable interface by converting the DTO to an array.
      *
      * @return array A JSON-serializable representation of the DTO.
+     *
      * @throws ReflectionException
      */
     public function jsonSerialize() : array
@@ -143,6 +148,7 @@ trait Serialization
      * @param array<string, mixed> $properties The properties to be filtered.
      *
      * @return array<string, mixed> A filtered associative array of properties.
+     *
      * @throws ReflectionException If reflection fails while accessing class properties.
      */
     protected function filterHiddenFields(array $properties) : array
@@ -185,6 +191,7 @@ trait Serialization
      * Converts the DTO into an instance of stdClass for compatibility with generic object types.
      *
      * @return stdClass The DTO represented as a standard class object.
+     *
      * @throws JsonException If the DTO cannot be encoded into JSON.
      * @throws \ReflectionException
      */
@@ -209,8 +216,11 @@ trait Serialization
      * @return Collection Immutable collection containing the object's data
      *
      * @throws \ReflectionException When reflection fails to analyze the object structure
+     *
      * @api
+     *
      * @since 1.0.0
+     *
      * @final
      */
     public function toCollection() : Collection
@@ -228,6 +238,7 @@ trait Serialization
      * @param string $type The resource type identifier for the JSON:API document
      *
      * @return array<string, array<string, mixed>> The JSON:API formatted response
+     *
      * @throws \ReflectionException When reflection fails during property inspection
      *
      * @see https://jsonapi.org/format/ JSON:API Specification

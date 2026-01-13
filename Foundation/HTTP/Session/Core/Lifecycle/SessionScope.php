@@ -25,13 +25,12 @@ namespace Avax\HTTP\Session\Core\Lifecycle;
  *       ->secure()
  *       ->ttl(3600)
  *       ->put('items', $items);
- *
- * @package Avax\HTTP\Session\Lifecycle
  */
 final class SessionScope
 {
-    private int|null $ttl    = null;
-    private bool     $secure = false;
+    private int|null $ttl = null;
+
+    private bool $secure = false;
 
     /**
      * SessionScope Constructor.
@@ -60,8 +59,6 @@ final class SessionScope
      * Remove a value from this consumer context.
      *
      * @param string $key The key (will be namespaced).
-     *
-     * @return void
      */
     public function forget(string $key) : void
     {
@@ -148,8 +145,6 @@ final class SessionScope
      *
      * @param string $key   The key (will be namespaced).
      * @param mixed  $value The value to store.
-     *
-     * @return void
      */
     public function put(string $key, mixed $value) : void
     {

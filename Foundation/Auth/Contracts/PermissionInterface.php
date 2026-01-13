@@ -18,5 +18,5 @@ interface PermissionInterface
      *
      * @return string The permission string.
      */
-    public function getPermission() : string;
+    public function getPermission(): string;
 }

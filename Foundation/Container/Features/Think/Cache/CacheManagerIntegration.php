@@ -9,17 +9,16 @@ use Avax\Container\Features\Operate\Config\ContainerConfig;
 /**
  * The "Bridge" between the container and external caching systems.
  *
- * CacheManagerIntegration is responsible for deciding exactly how and 
- * where the container's blueprints should be stored based on the 
- * application's global configuration. It acts as a Factory that produces 
- * {@see PrototypeCache} instances, allowing the container to remain 
- * agnostic of whether it's using local files, Redis, or a custom 
+ * CacheManagerIntegration is responsible for deciding exactly how and
+ * where the container's blueprints should be stored based on the
+ * application's global configuration. It acts as a Factory that produces
+ * {@see PrototypeCache} instances, allowing the container to remain
+ * agnostic of whether it's using local files, Redis, or a custom
  * enterprise cache manager.
  *
- * @package Avax\Container\Features\Think\Cache
- * @see docs/Features/Think/Cache/CacheManagerIntegration.md
- * @see ContainerConfig The source of truth for cache settings.
- * @see FilePrototypeCache The most common output of this bridge.
+ * @see     docs/Features/Think/Cache/CacheManagerIntegration.md
+ * @see     ContainerConfig The source of truth for cache settings.
+ * @see     FilePrototypeCache The most common output of this bridge.
  */
 final readonly class CacheManagerIntegration
 {
@@ -37,18 +36,19 @@ final readonly class CacheManagerIntegration
     /**
      * Factory method to create the appropriate cache implementation.
      *
-     * Currently prioritizing the high-performance FilePrototypeCache using 
+     * Currently prioritizing the high-performance FilePrototypeCache using
      * the directory specified in the ContainerConfig.
      *
      * @return PrototypeCache A ready-to-use cache implementation.
+     *
      * @see docs/Features/Think/Cache/CacheManagerIntegration.md#method-createprototypecache
      */
-    public function createPrototypeCache(): PrototypeCache
+    public function createPrototypeCache() : PrototypeCache
     {
         $dir = $this->config->cacheDir;
 
         if ($dir === null) {
-            return new NullPrototypeCache();
+            return new NullPrototypeCache;
         }
 
         return new FilePrototypeCache(directory: $dir);
@@ -58,9 +58,10 @@ final readonly class CacheManagerIntegration
      * Retrieve diagnostic metadata about the current caching setup.
      *
      * @return array{backend_type: string} Information used for debugging and telemetry.
+     *
      * @see docs/Features/Think/Cache/CacheManagerIntegration.md#method-getglobalstats
      */
-    public function getGlobalStats(): array
+    public function getGlobalStats() : array
     {
         return [
             'backend_type' => $this->cacheManager ? $this->cacheManager::class : 'none',

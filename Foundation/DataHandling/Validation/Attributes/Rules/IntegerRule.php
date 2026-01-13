@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\DataHandling\Validation\Attributes\Rules;
 
 use Attribute;
-use Avax\DataHandling\Validation\Contracts\RuleInterface;
 use Avax\Exceptions\ValidationException;
 
 /**
@@ -37,7 +36,7 @@ final readonly class IntegerRule
                 metadata: [
                     'property' => $property,
                     'value'    => $value,
-                    'expected' => 'integer'
+                    'expected' => 'integer',
                 ]
             );
         }

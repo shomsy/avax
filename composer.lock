@@ -4983,7 +4983,7 @@
       "type": "library",
       "autoload": {
         "psr-4": {
-          "Symfony\\Component\\HttpFoundation\\": ""
+          "Symfony\\Component\\HttpAvax\\": ""
         },
         "exclude-from-classmap": [
           "/Tests/"

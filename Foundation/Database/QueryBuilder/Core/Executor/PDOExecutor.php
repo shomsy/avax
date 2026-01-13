@@ -20,11 +20,6 @@ use Throwable;
  */
 final readonly class PDOExecutor implements ExecutorInterface
 {
-    /**
-     * @param DatabaseConnection $connection
-     * @param EventBus|null      $eventBus
-     * @param string             $connectionName
-     */
     public function __construct(
         private DatabaseConnection $connection,
         private EventBus|null      $eventBus = null,
@@ -58,7 +53,7 @@ final readonly class PDOExecutor implements ExecutorInterface
             return $results;
         } catch (Throwable $e) {
             throw new QueryException(
-                message    : "Query execution failed: " . $e->getMessage(),
+                message    : 'Query execution failed: ' . $e->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
                 previous   : $e
@@ -100,7 +95,7 @@ final readonly class PDOExecutor implements ExecutorInterface
             );
         } catch (Throwable $e) {
             throw new QueryException(
-                message    : "Execution failed: " . $e->getMessage(),
+                message    : 'Execution failed: ' . $e->getMessage(),
                 sql        : $sql,
                 rawBindings: $bindings,
                 previous   : $e

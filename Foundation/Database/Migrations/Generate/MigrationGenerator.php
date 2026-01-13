@@ -45,7 +45,7 @@ final class MigrationGenerator
 
     private function getTimestamp() : string
     {
-        return (new DateTime())->format(format: 'Y_m_d_His');
+        return (new DateTime)->format(format: 'Y_m_d_His');
     }
 
     private function getClassName(string $name) : string

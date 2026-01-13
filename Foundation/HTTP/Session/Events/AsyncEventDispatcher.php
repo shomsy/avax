@@ -30,23 +30,22 @@ use InvalidArgumentException;
  *   $dispatcher = new AsyncEventDispatcher();
  *   $dispatcher->listen('event', $callback);
  *   $dispatcher->dispatch('event', $data);  // Immediate
- *
  * @example Async memory mode
  *   $dispatcher = new AsyncEventDispatcher(AsyncEventDispatcher::MODE_ASYNC_MEMORY);
  *   $dispatcher->dispatch('event', $data);  // Queued, processed on shutdown
- *
  * @example Async file mode (for background workers)
  *   $dispatcher = new AsyncEventDispatcher(AsyncEventDispatcher::MODE_ASYNC_FILE, '/tmp/events.queue');
  *   $dispatcher->dispatch('event', $data);  // Written to file
- *
- * @package Avax\HTTP\Session\Events
  */
 final class AsyncEventDispatcher
 {
-    public const string MODE_SYNC         = 'sync';
+    public const string MODE_SYNC = 'sync';
+
     public const string MODE_ASYNC_MEMORY = 'async_memory';
-    public const string MODE_ASYNC_FILE   = 'async_file';
-    public const string MODE_ASYNC_REDIS  = 'async_redis';
+
+    public const string MODE_ASYNC_FILE = 'async_file';
+
+    public const string MODE_ASYNC_REDIS = 'async_redis';
 
     /**
      * @var array<string, array<callable>> Event listeners
@@ -166,8 +165,6 @@ final class AsyncEventDispatcher
      *
      * @param string               $event Event name.
      * @param array<string, mixed> $data  Event data.
-     *
-     * @return void
      */
     public function dispatch(string $event, array $data = []) : void
     {
@@ -185,8 +182,6 @@ final class AsyncEventDispatcher
      *
      * @param string               $event Event name.
      * @param array<string, mixed> $data  Event data.
-     *
-     * @return void
      */
     private function dispatchSync(string $event, array $data) : void
     {
@@ -208,8 +203,6 @@ final class AsyncEventDispatcher
      *
      * @param string               $event Event name.
      * @param array<string, mixed> $data  Event data.
-     *
-     * @return void
      */
     private function dispatchAsyncMemory(string $event, array $data) : void
     {
@@ -235,8 +228,6 @@ final class AsyncEventDispatcher
      *
      * @param string               $event Event name.
      * @param array<string, mixed> $data  Event data.
-     *
-     * @return void
      */
     private function dispatchAsyncFile(string $event, array $data) : void
     {
@@ -255,8 +246,6 @@ final class AsyncEventDispatcher
      *
      * @param string               $event Event name.
      * @param array<string, mixed> $data  Event data.
-     *
-     * @return void
      */
     private function dispatchAsyncRedis(string $event, array $data) : void
     {
@@ -268,8 +257,6 @@ final class AsyncEventDispatcher
 
     /**
      * Process queued events (called on shutdown).
-     *
-     * @return void
      */
     public function processQueue() : void
     {
@@ -319,6 +306,7 @@ final class AsyncEventDispatcher
         while (($line = fgets(stream: $handle)) !== false) {
             if ($limit > 0 && $processed >= $limit) {
                 $remaining[] = $line;
+
                 continue;
             }
 

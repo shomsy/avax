@@ -16,7 +16,7 @@ class InvalidDTOClassException extends InvalidArgumentException
     /**
      * InvalidDTOClassException constructor.
      *
-     * @param string $className The name of the invalid DTO class.
+     * @param  string  $className  The name of the invalid DTO class.
      */
     public function __construct(string $className)
     {

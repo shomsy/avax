@@ -22,6 +22,7 @@ final readonly class DepthGuardStep implements KernelStep
 
     /**
      * @param int $maxDepth Maximum allowed resolution depth
+     *
      * @see docs/Core/Kernel/Steps/DepthGuardStep.md#method-__construct
      */
     public function __construct(
@@ -31,12 +32,12 @@ final readonly class DepthGuardStep implements KernelStep
     /**
      * Enforce max depth and throw on overflow.
      *
-     * @param KernelContext $context
-     * @return void
+     *
      * @throws ResolutionException
+     *
      * @see docs/Core/Kernel/Steps/DepthGuardStep.md#method-__invoke
      */
-    public function __invoke(KernelContext $context): void
+    public function __invoke(KernelContext $context) : void
     {
         if ($context->depth > $this->maxDepth) {
             throw new ResolutionException(

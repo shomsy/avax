@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Observe\Metrics;
 
 use Avax\Container\Observe\Metrics\Sink\TelemetrySinkInterface;
@@ -39,6 +40,7 @@ class MetricsCollector implements TelemetrySinkInterface
      * Build a snapshot suitable for dashboards or API consumption.
      *
      * @return array Snapshot payload
+     *
      * @see docs/Observe/Metrics/MetricsCollector.md#method-getsnapshot
      */
     public function getSnapshot() : array
@@ -47,7 +49,7 @@ class MetricsCollector implements TelemetrySinkInterface
             'total_resolved'    => $this->resolvedCount,
             'total_time_ms'     => $this->totalResolutionTime,
             'avg_resolution_ms' => $this->resolvedCount > 0 ? $this->totalResolutionTime / $this->resolvedCount : 0,
-            'counts'            => $this->resolutionCounts
+            'counts'            => $this->resolutionCounts,
         ];
     }
 }

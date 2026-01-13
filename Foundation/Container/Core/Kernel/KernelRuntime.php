@@ -26,6 +26,7 @@ final readonly class KernelRuntime
      *
      * @param ResolutionPipeline $pipeline The execution pipeline.
      * @param InvokeAction       $invoker  The invocation helper.
+     *
      * @see docs/Core/Kernel/KernelRuntime.md#method-__construct
      */
     public function __construct(
@@ -37,11 +38,15 @@ final readonly class KernelRuntime
      * Resolve a service by its identifier.
      *
      * @param string $id The service identifier.
+     *
      * @return mixed The resolved instance.
+     *
      * @throws ResolutionException If resolution fails.
+     * @throws \Throwable
+     *
      * @see docs/Core/Kernel/KernelRuntime.md#method-get
      */
-    public function get(string $id): mixed
+    public function get(string $id) : mixed
     {
         return $this->resolveContext(context: new KernelContext(serviceId: $id));
     }
@@ -50,11 +55,13 @@ final readonly class KernelRuntime
      * Explicitly resolve with a context.
      *
      * @param KernelContext $context The resolution state.
+     *
      * @return mixed The resolved instance.
-     * @throws ResolutionException If pipeline does not resolve the service.
+     *
+     * @throws \Throwable
      * @see docs/Core/Kernel/KernelRuntime.md#method-resolvecontext
      */
-    public function resolveContext(KernelContext $context): mixed
+    public function resolveContext(KernelContext $context) : mixed
     {
         $this->pipeline->run(context: $context);
 
@@ -70,11 +77,15 @@ final readonly class KernelRuntime
      *
      * @param string $id         The service identifier.
      * @param array  $parameters Constructor/method overrides.
+     *
      * @return object The resolved instance.
+     *
      * @throws ResolutionException If resolution fails.
+     * @throws \Throwable
+     *
      * @see docs/Core/Kernel/KernelRuntime.md#method-make
      */
-    public function make(string $id, array $parameters = []): object
+    public function make(string $id, array $parameters = []) : object
     {
         return $this->resolveContext(context: new KernelContext(
             serviceId: $id,
@@ -86,14 +97,18 @@ final readonly class KernelRuntime
      * Resolve a service prototype.
      *
      * @param ServicePrototype $prototype The pre-analyzed metadata.
+     *
      * @return mixed The resolved instance.
+     *
      * @throws ResolutionException If resolution fails.
+     * @throws \Throwable
+     *
      * @see docs/Core/Kernel/KernelRuntime.md#method-resolve
      */
-    public function resolve(ServicePrototype $prototype): mixed
+    public function resolve(ServicePrototype $prototype) : mixed
     {
         $ctx = new KernelContext(serviceId: $prototype->class);
-        $ctx->setMeta('analysis', 'prototype', $prototype);
+        $ctx->setMeta(namespace: 'analysis', key: 'prototype', value: $prototype);
 
         return $this->resolveContext(context: $ctx);
     }
@@ -103,10 +118,13 @@ final readonly class KernelRuntime
      *
      * @param callable|string $callable   The target to invoke.
      * @param array           $parameters Runtime overrides.
+     *
      * @return mixed The invocation result.
+     *
+     * @throws \ReflectionException
      * @see docs/Core/Kernel/KernelRuntime.md#method-call
      */
-    public function call(callable|string $callable, array $parameters = []): mixed
+    public function call(callable|string $callable, array $parameters = []) : mixed
     {
         return $this->invoker->invoke(target: $callable, parameters: $parameters);
     }
@@ -115,17 +133,20 @@ final readonly class KernelRuntime
      * Inject dependencies into an object.
      *
      * @param object $target The instance to hydrate.
+     *
      * @return object The hydrated instance.
+     *
+     * @throws \Throwable
      * @see docs/Core/Kernel/KernelRuntime.md#method-injectinto
      */
-    public function injectInto(object $target): object
+    public function injectInto(object $target) : object
     {
         $ctx = new KernelContext(
-            serviceId: self::INTERNAL_INJECT,
+            serviceId      : self::INTERNAL_INJECT,
             manualInjection: true
         );
         $ctx->resolvedWith(instance: $target);
-        $ctx->setMeta('inject', 'target', true);
+        $ctx->setMeta(namespace: 'inject', key: 'target', value: true);
 
         $this->pipeline->run(context: $ctx);
 

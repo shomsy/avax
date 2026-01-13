@@ -16,14 +16,14 @@ final readonly class MigrateCommand
 {
     public function __construct(
         private MigrationRepository $repository,
-        private MigrationRunner     $runner,
-        private MigrationLoader     $loader
+        private MigrationRunner $runner,
+        private MigrationLoader $loader
     ) {}
 
     /**
      * @throws Throwable
      */
-    public function handle(string $path, bool $dryRun = false) : int
+    public function handle(string $path, bool $dryRun = false): int
     {
         if ($dryRun) {
             $this->info(msg: 'DRY RUN MODE: No changes will be executed.');
@@ -37,14 +37,14 @@ final readonly class MigrateCommand
         // --- Enterprise Integrity Check ---
         $ranMap = array_column(array: $ran, column_key: 'checksum', index_key: 'migration');
         foreach ($ran as $record) {
-            $name       = $record['migration'];
+            $name = $record['migration'];
             $dbChecksum = $record['checksum'];
 
             if ($dbChecksum) {
                 $fileChecksum = $this->loader->getChecksum(name: $name, path: $path);
                 if ($fileChecksum && $dbChecksum !== $fileChecksum) {
                     $this->error(msg: "CRITICAL: Migration integrity violation in '{$name}'.");
-                    $this->error(msg: "The file has been modified after execution. Please revert changes.");
+                    $this->error(msg: 'The file has been modified after execution. Please revert changes.');
 
                     return 1;
                 }
@@ -76,23 +76,23 @@ final readonly class MigrateCommand
 
             return 0;
         } catch (Throwable $e) {
-            $this->error(msg: 'Migration failed: ' . $e->getMessage());
+            $this->error(msg: 'Migration failed: '.$e->getMessage());
 
             return 1;
         }
     }
 
-    private function info(string $msg) : void
+    private function info(string $msg): void
     {
         echo "\033[36m{$msg}\033[0m\n";
     }
 
-    private function error(string $msg) : void
+    private function error(string $msg): void
     {
         echo "\033[31m{$msg}\033[0m\n";
     }
 
-    private function success(string $msg) : void
+    private function success(string $msg): void
     {
         echo "\033[32m{$msg}\033[0m\n";
     }

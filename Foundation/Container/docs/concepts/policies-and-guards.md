@@ -2,17 +2,20 @@
 
 ## Technical Explanation (Summary)
 
-Policies and guards are the container’s **safety layer**. They exist because “can be resolved” is not the same as “should be resolved”. A guard system lets you express rules like:
+Policies and guards are the container’s **safety layer**. They exist because “can be resolved” is not the same as
+“should be resolved”. A guard system lets you express rules like:
 
 - “Only allow these classes to be resolved”
 - “Reject services that depend on forbidden types”
 - “Require stricter validation in production”
 
-In this component, you typically see policies enforced during the kernel flow (as a step) and implemented in dedicated guard types under `Guard/`.
+In this component, you typically see policies enforced during the kernel flow (as a step) and implemented in dedicated
+guard types under `Guard/`.
 
 ### For Humans: What This Means (Summary)
 
-Guards are your container’s bouncer. Just because something is on the guest list (registered) doesn’t mean it gets into every room (every context).
+Guards are your container’s bouncer. Just because something is on the guest list (registered) doesn’t mean it gets into
+every room (every context).
 
 ## How Policy Enforcement Fits the Flow
 
@@ -31,7 +34,8 @@ This split exists so you can:
 
 ### For Humans: What This Means (Flow)
 
-The kernel doesn’t want to “know security”. It just asks, “Are we allowed to do this?” and lets the guard subsystem answer.
+The kernel doesn’t want to “know security”. It just asks, “Are we allowed to do this?” and lets the guard subsystem
+answer.
 
 ## Typical Policy Shapes in This Codebase
 
@@ -40,10 +44,12 @@ The kernel doesn’t want to “know security”. It just asks, “Are we allowe
 You’ll commonly find:
 
 - **Resolution policies**: decide whether a service may be resolved in the current context  
-  Examples: `Guard/Enforce/ResolutionPolicy.php`, `Guard/Enforce/StrictResolutionPolicy.php`, `Guard/Enforce/CompositeResolutionPolicy.php`
+  Examples: `Guard/Enforce/ResolutionPolicy.php`, `Guard/Enforce/StrictResolutionPolicy.php`,
+  `Guard/Enforce/CompositeResolutionPolicy.php`
 
 - **Validation rules**: inspect service definitions and dependency graphs  
-  Examples: `Guard/Rules/ContainerPolicy.php`, `Guard/Rules/DependencyValidationRule.php`, `Guard/Rules/ServiceValidationRule.php`, `Guard/Rules/ServiceValidator.php`
+  Examples: `Guard/Rules/ContainerPolicy.php`, `Guard/Rules/DependencyValidationRule.php`,
+  `Guard/Rules/ServiceValidationRule.php`, `Guard/Rules/ServiceValidator.php`
 
 - **Security-oriented resolution**: wrappers that enforce safety boundaries  
   Example: `Guard/Enforce/SecureServiceResolver.php`
@@ -66,7 +72,8 @@ Think of “policies” as rules of permission, and “rules/validators” as ru
 
 ### For Humans: What This Means (Risks)
 
-Guards should protect you from foot-guns, not micromanage your app. If the container starts feeling like “the boss”, the policy layer is probably too strict.
+Guards should protect you from foot-guns, not micromanage your app. If the container starts feeling like “the boss”, the
+policy layer is probably too strict.
 
 ## Related Files & Jump Links
 
@@ -76,4 +83,5 @@ Guards should protect you from foot-guns, not micromanage your app. If the conta
 
 ### For Humans: What This Means (Links)
 
-If resolution is being rejected, start at the kernel policy step doc, then jump to the specific policy/rule docs to see what’s being enforced.
+If resolution is being rejected, start at the kernel policy step doc, then jump to the specific policy/rule docs to see
+what’s being enforced.

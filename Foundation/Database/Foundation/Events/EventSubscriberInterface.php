@@ -29,5 +29,5 @@ interface EventSubscriberInterface
      *
      * @return array<string, string> A map where the "News Type" is the key and your "Handler Method" is the value.
      */
-    public function getSubscribedEvents() : array;
+    public function getSubscribedEvents(): array;
 }

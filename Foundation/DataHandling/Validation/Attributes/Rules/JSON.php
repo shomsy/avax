@@ -26,11 +26,11 @@ class JSON
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         json_decode(json: (string) $value);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new ValidationException(message: $property . ' must be a valid JSON string.');
+            throw new ValidationException(message: $property.' must be a valid JSON string.');
         }
     }
 }

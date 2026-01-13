@@ -29,7 +29,8 @@ Same request, different result, depending on who asked.
 
 ## Story Example
 
-When `PaymentService` needs `HttpClient`, you give a hardened client. When other services need `HttpClient`, they get the default client.
+When `PaymentService` needs `HttpClient`, you give a hardened client. When other services need `HttpClient`, they get
+the default client.
 
 ### For Humans: What This Means (Story)
 

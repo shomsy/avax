@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\HTTP\Session;
@@ -17,13 +18,14 @@ final class NullSession implements SessionInterface
      */
     private array $data = [];
 
-    private Flash  $flash;
+    private Flash $flash;
+
     private Events $events;
 
     public function __construct()
     {
-        $this->flash  = new Flash();
-        $this->events = new Events();
+        $this->flash  = new Flash;
+        $this->events = new Events;
     }
 
     public function set(string $key, mixed $value, int|null $ttl = null) : void

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Tools\Console;
 
 use Avax\Container\Container;
@@ -116,6 +117,7 @@ readonly class CompileCommand
      * @return void Outputs compilation results to stdout
      *
      * @throws \Throwable
+     *
      * @see docs/Tools/Console/CompileCommand.md#method-execute
      */
     public function execute(
@@ -167,7 +169,7 @@ readonly class CompileCommand
 
             echo "âœ… Container compilation completed successfully!\n";
             echo "ðŸ“ Output: {$outputFile}\n";
-            echo "ðŸ“ Size: " . number_format(strlen($compiled)) . " bytes\n";
+            echo 'ðŸ“ Size: ' . number_format(strlen($compiled)) . " bytes\n";
             echo "ðŸš€ Ready for production deployment\n";
 
         } catch (Throwable $e) {

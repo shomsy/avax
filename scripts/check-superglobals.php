@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
-$root         = dirname(__DIR__);
-$patterns     = ['$_SERVER', '$_GET', '$_POST', '$_COOKIE', '$_FILES', '$_SESSION', '$_REQUEST'];
+$root = dirname(__DIR__);
+$patterns = ['$_SERVER', '$_GET', '$_POST', '$_COOKIE', '$_FILES', '$_SESSION', '$_REQUEST'];
 $allowedFiles = [
     'Foundation/HTTP/Context/PhpGlobalsProvider.php',
     'Foundation/HTTP/Request/Request.php',
@@ -14,8 +15,8 @@ $allowedFiles = [
 ];
 
 $violations = [];
-$iterator   = new RecursiveIteratorIterator(
-    iterator: new RecursiveDirectoryIterator(directory: $root . '/Foundation', flags: RecursiveDirectoryIterator::SKIP_DOTS)
+$iterator = new RecursiveIteratorIterator(
+    iterator: new RecursiveDirectoryIterator(directory: $root.'/Foundation', flags: RecursiveDirectoryIterator::SKIP_DOTS)
 );
 
 foreach ($iterator as $file) {

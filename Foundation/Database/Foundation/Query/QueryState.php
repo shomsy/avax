@@ -58,15 +58,13 @@ final readonly class QueryState
         public array       $values = [],
         public array       $updateColumns = [],
         public bool        $distinct = false,
-        private BindingBag $bindings = new BindingBag()
+        private BindingBag $bindings = new BindingBag
     ) {}
 
     /**
      * Create a new state with the assigned target table (FROM).
      *
      * @param string $table Target table name.
-     *
-     * @return self
      */
     public function withFrom(string $table) : self
     {
@@ -79,8 +77,6 @@ final readonly class QueryState
      * Create a new state with the defined selection (SELECT) columns.
      *
      * @param string[] $columns Collection of column identifiers.
-     *
-     * @return self
      */
     public function withColumns(array $columns) : self
     {
@@ -93,8 +89,6 @@ final readonly class QueryState
      * Create a new state with the unique records flag (DISTINCT).
      *
      * @param bool $distinct Whether to project unique records.
-     *
-     * @return self
      */
     public function withDistinct(bool $distinct = true) : self
     {
@@ -197,8 +191,6 @@ final readonly class QueryState
      * Create a new state including a filter instruction (WHERE).
      *
      * @param WhereNode|NestedWhereNode $where Filter node data.
-     *
-     * @return self
      */
     public function addWhere(WhereNode|NestedWhereNode $where) : self
     {
@@ -283,8 +275,6 @@ final readonly class QueryState
      * Create a new state with a securely attached parameter token.
      *
      * @param mixed $value Raw data to be bound.
-     *
-     * @return self
      */
     public function addBinding(mixed $value) : self
     {
@@ -323,7 +313,7 @@ final readonly class QueryState
     public function resetBindings() : self
     {
         return new self(
-            ...[...get_object_vars(object: $this), 'bindings' => new BindingBag()]
+            ...[...get_object_vars(object: $this), 'bindings' => new BindingBag]
         );
     }
 

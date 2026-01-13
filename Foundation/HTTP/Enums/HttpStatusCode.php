@@ -7,7 +7,7 @@ namespace Avax\HTTP\Enums;
 /**
  * Enum representing common HTTP Status Codes.
  */
-enum HttpStatusCode : int
+enum HttpStatusCode: int
 {
     case OK = 200;
 

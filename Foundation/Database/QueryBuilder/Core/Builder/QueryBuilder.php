@@ -22,16 +22,16 @@ use Throwable;
  */
 class QueryBuilder
 {
-    use Concerns\Macroable;
+    use Concerns\HasAdvancedMutations;
+    use Concerns\HasAggregates;
     use Concerns\HasConditions;
+    use Concerns\HasControlStructures;
+    use Concerns\HasGroups;
     use Concerns\HasJoins;
     use Concerns\HasOrders;
-    use Concerns\HasAggregates;
-    use Concerns\HasGroups;
-    use Concerns\HasControlStructures;
-    use Concerns\HasSoftDeletes;
-    use Concerns\HasAdvancedMutations;
     use Concerns\HasSchema;
+    use Concerns\HasSoftDeletes;
+    use Concerns\Macroable;
 
     /** @var QueryState The internal "memory" of all the blocks (table, filters, columns) we've added so far. */
     protected QueryState $state;
@@ -42,10 +42,10 @@ class QueryBuilder
     /**
      * Set up the builder with its two "helpers".
      *
-     * @param GrammarInterface  $grammar      The "Translator". It knows how to turn your PHP code into specific SQL
-     *                                        for MySQL/SQLite/etc.
-     * @param QueryOrchestrator $orchestrator The "Conductor". It doesn't write SQL, but it knows how to send the final
-     *                                        SQL to the database and get results back.
+     * @param GrammarInterface  $grammar         The "Translator". It knows how to turn your PHP code into specific SQL
+     *                                           for MySQL/SQLite/etc.
+     * @param QueryOrchestrator $orchestrator    The "Conductor". It doesn't write SQL, but it knows how to send the
+     *                                           final SQL to the database and get results back.
      *
      * @throws \ReflectionException
      */
@@ -54,7 +54,7 @@ class QueryBuilder
         protected QueryOrchestrator         $orchestrator
     )
     {
-        $this->state = new QueryState();
+        $this->state = new QueryState;
 
         // If this class has a 'tableName' property defined (like in a Model), we use it as the default target.
         if (property_exists(object_or_class: $this, property: 'tableName')) {
@@ -83,6 +83,7 @@ class QueryBuilder
      * Start a brand new, empty query using the same database setup.
      *
      * @return static A fresh builder instance with no filters or tables set.
+     *
      * @throws \ReflectionException
      */
     public function newQuery() : static
@@ -100,8 +101,8 @@ class QueryBuilder
      *
      * @param string $value SQL fragment to include verbatim.
      *
-     * @return Expression
      * @throws InvalidCriteriaException When the fragment contains disallowed characters.
+     *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#raw
      */
     public function raw(string $value) : Expression
@@ -122,27 +123,27 @@ class QueryBuilder
     private function assertSafeRawExpression(string $expression, string $context) : void
     {
         if ($expression === '') {
-            throw new InvalidCriteriaException(method: $context, reason: "Raw expressions must not be empty.");
+            throw new InvalidCriteriaException(method: $context, reason: 'Raw expressions must not be empty.');
         }
 
         if (preg_match(pattern: '/[;]|--|\\/\\*/', subject: $expression) === 1) {
             throw new InvalidCriteriaException(
                 method: $context,
-                reason: "Raw expressions must not contain statement terminators or comments."
+                reason: 'Raw expressions must not contain statement terminators or comments.'
             );
         }
 
         if (preg_match(pattern: '/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]/', subject: $expression) === 1) {
             throw new InvalidCriteriaException(
                 method: $context,
-                reason: "Raw expressions must not contain control characters."
+                reason: 'Raw expressions must not contain control characters.'
             );
         }
 
         if (preg_match(pattern: '/^[\\x20-\\x7E]+$/', subject: $expression) !== 1) {
             throw new InvalidCriteriaException(
                 method: $context,
-                reason: "Raw expressions must be plain ASCII characters to allow safe inspection."
+                reason: 'Raw expressions must be plain ASCII characters to allow safe inspection.'
             );
         }
     }
@@ -151,6 +152,7 @@ class QueryBuilder
      * Enable dry-run mode that logs SQL without executing it.
      *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#pretend
+     *
      * @return self Builder clone in pretend mode.
      */
     public function pretend() : self
@@ -168,6 +170,7 @@ class QueryBuilder
      * @param array  $bindings Parameter bindings for the command.
      *
      * @return bool True if the database accepted the command.
+     *
      * @throws Throwable
      */
     public function statement(string $query, array $bindings = []) : bool
@@ -179,8 +182,6 @@ class QueryBuilder
      * Set the target table.
      *
      * @param string $table Table name.
-     *
-     * @return self
      */
     public function from(string $table) : self
     {
@@ -195,8 +196,8 @@ class QueryBuilder
      *
      * @param string ...$expressions Raw SQL snippets for selection.
      *
-     * @return self
      * @throws InvalidCriteriaException When the fragment contains disallowed characters.
+     *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#selectraw
      */
     public function selectRaw(string ...$expressions) : self
@@ -238,7 +239,7 @@ class QueryBuilder
     public function offset(int $offset) : self
     {
         if ($offset < 0) {
-            throw new InvalidCriteriaException(method: 'offset', reason: "OFFSET must be a non-negative integer.");
+            throw new InvalidCriteriaException(method: 'offset', reason: 'OFFSET must be a non-negative integer.');
         }
 
         $clone        = clone $this;
@@ -255,7 +256,9 @@ class QueryBuilder
      * @param IdentityMap|null $identityMap Optional map to use for this query.
      *
      * @return self New builder instance with deferred execution enabled.
+     *
      * @throws InvalidCriteriaException When no IdentityMap is available.
+     *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#deferred
      */
     public function deferred(IdentityMap|null $identityMap = null) : self
@@ -270,7 +273,7 @@ class QueryBuilder
         if ($clone->orchestrator->getIdentityMap() === null) {
             throw new InvalidCriteriaException(
                 method: 'deferred',
-                reason: "IdentityMap must be available via Orchestrator or provided to use deferred execution."
+                reason: 'IdentityMap must be available via Orchestrator or provided to use deferred execution.'
             );
         }
 
@@ -280,7 +283,6 @@ class QueryBuilder
     /**
      * Quickly check if ANY records exist matching your search.
      *
-     * @return bool
      * @throws Throwable
      */
     public function exists() : bool
@@ -302,13 +304,12 @@ class QueryBuilder
      *
      * @param int $limit Maximum results to retrieve.
      *
-     * @return self
      * @throws InvalidCriteriaException If limit is negative.
      */
     public function limit(int $limit) : self
     {
         if ($limit < 0) {
-            throw new InvalidCriteriaException(method: 'limit', reason: "LIMIT must be a non-negative integer.");
+            throw new InvalidCriteriaException(method: 'limit', reason: 'LIMIT must be a non-negative integer.');
         }
 
         $clone        = clone $this;
@@ -322,8 +323,8 @@ class QueryBuilder
      *
      * @param array $values Associative array of column => values.
      *
-     * @return bool
      * @throws Throwable
+     *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#insert
      */
     public function insert(array $values) : bool
@@ -344,8 +345,8 @@ class QueryBuilder
      *
      * @param array $values Associative array of updates.
      *
-     * @return bool
      * @throws Throwable
+     *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#update
      */
     public function update(array $values) : bool
@@ -367,7 +368,7 @@ class QueryBuilder
      * Remove matching records from the database.
      *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#delete
-     * @return bool
+     *
      * @throws Throwable
      */
     public function delete() : bool
@@ -393,7 +394,6 @@ class QueryBuilder
      * @param string      $value Target column name.
      * @param string|null $key   Optional column to use for array keys.
      *
-     * @return array
      * @throws \Throwable
      */
     public function pluck(string $value, string|null $key = null) : array
@@ -405,6 +405,7 @@ class QueryBuilder
         foreach ($results as $result) {
             if ($key) {
                 $pluck[$result[$key]] = $result[$value];
+
                 continue;
             }
             $pluck[] = $result[$value];
@@ -417,7 +418,9 @@ class QueryBuilder
      * Execute the retrieval query and return all matching records.
      *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#get
+     *
      * @return array<array-key, mixed>
+     *
      * @throws Throwable
      */
     public function get() : array
@@ -437,8 +440,6 @@ class QueryBuilder
      * Select specific columns.
      *
      * @param string ...$columns Columns to include (defaults to `*` when empty).
-     *
-     * @return self
      */
     public function select(string ...$columns) : self
     {
@@ -454,7 +455,6 @@ class QueryBuilder
      * @param string $column  Target column name.
      * @param mixed  $default Fallback value if no record exists.
      *
-     * @return mixed
      * @throws \Throwable
      */
     public function value(string $column, mixed $default = null) : mixed
@@ -470,7 +470,6 @@ class QueryBuilder
      * @param string|callable|null $key     Optional column or transform callback.
      * @param mixed                $default Fallback value if no record exists.
      *
-     * @return mixed
      * @throws \Throwable
      */
     public function first(string|callable|null $key = null, mixed $default = null) : mixed
@@ -515,7 +514,6 @@ class QueryBuilder
      *
      * @param string $column Column to count (defaults to '*').
      *
-     * @return int
      * @throws \Throwable
      */
     public function count(string $column = '*') : int
@@ -533,7 +531,6 @@ class QueryBuilder
      * @param mixed  $id     Identity value.
      * @param string $column Field name for the identity (defaults to 'id').
      *
-     * @return mixed
      * @throws \Throwable
      */
     public function find(mixed $id, string $column = 'id') : mixed
@@ -554,8 +551,8 @@ class QueryBuilder
      *
      * @param callable $callback Logic to run transactionally.
      *
-     * @return mixed
      * @throws Throwable
+     *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/QueryBuilder.md#transaction
      */
     public function transaction(callable $callback) : mixed

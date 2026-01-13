@@ -27,17 +27,17 @@ class StreamFactory implements StreamFactoryInterface
     /**
      * Creates a stream from a string, using `php://memory` for small data and `php://temp` for larger data.
      *
-     * @param string $content Content to write to the stream.
+     * @param  string  $content  Content to write to the stream.
      *
      * @throws RuntimeException
      */
-    public function createStream(string $content = '') : StreamInterface
+    public function createStream(string $content = ''): StreamInterface
     {
         $resource = strlen(string: $content) <= self::MEMORY_LIMIT ? 'php://memory' : 'php://temp';
-        $stream   = fopen(filename: $resource, mode: 'r+');
+        $stream = fopen(filename: $resource, mode: 'r+');
 
         if ($stream === false) {
-            throw new RuntimeException(message: 'Failed to open stream resource: ' . $resource);
+            throw new RuntimeException(message: 'Failed to open stream resource: '.$resource);
         }
 
         fwrite(stream: $stream, data: $content);
@@ -49,16 +49,15 @@ class StreamFactory implements StreamFactoryInterface
     /**
      * Creates a new stream from a file.
      *
-     * @param string $filename The file to read.
-     * @param string $mode     The mode in which to open the file (e.g., 'r', 'w').
-     *
+     * @param  string  $filename  The file to read.
+     * @param  string  $mode  The mode in which to open the file (e.g., 'r', 'w').
      * @return StreamInterface New stream with the file content.
      */
-    public function createStreamFromFile(string $filename, string $mode = 'r') : StreamInterface
+    public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
         $stream = fopen(filename: $filename, mode: $mode);
         if ($stream === false) {
-            throw new RuntimeException(message: 'Failed to open file: ' . $filename);
+            throw new RuntimeException(message: 'Failed to open file: '.$filename);
         }
 
         return new Stream(stream: $stream);
@@ -67,11 +66,10 @@ class StreamFactory implements StreamFactoryInterface
     /**
      * Creates a stream from an existing resource.
      *
-     * @param resource $resource PHP resource to use as the stream.
-     *
+     * @param  resource  $resource  PHP resource to use as the stream.
      * @return StreamInterface New stream using the given resource.
      */
-    public function createStreamFromResource($resource) : StreamInterface
+    public function createStreamFromResource($resource): StreamInterface
     {
         if (! is_resource(value: $resource)) {
             throw new RuntimeException(message: 'Invalid resource provided for stream creation.');

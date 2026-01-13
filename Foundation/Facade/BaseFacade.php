@@ -22,14 +22,13 @@ abstract class BaseFacade
     /**
      * Handles static calls to the facade and delegates them to the resolved service instance.
      *
-     * @param string $methodName The name of the method being called.
-     * @param array  $arguments  Arguments passed to the method.
-     *
+     * @param  string  $methodName  The name of the method being called.
+     * @param  array  $arguments  Arguments passed to the method.
      * @return mixed The result of the method call.
      *
      * @throws RuntimeException if the method does not exist on the service instance.
      */
-    public static function __callStatic(string $methodName, array $arguments) : mixed
+    public static function __callStatic(string $methodName, array $arguments): mixed
     {
         $instance = static::resolveFacadeInstance();
 
@@ -49,7 +48,7 @@ abstract class BaseFacade
      *
      * @throws RuntimeException if the service does not exist in the container.
      */
-    protected static function resolveFacadeInstance() : mixed
+    protected static function resolveFacadeInstance(): mixed
     {
         if (! isset(static::$accessor) || (static::$accessor === '' || static::$accessor === '0')) {
             throw new RuntimeException(

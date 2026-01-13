@@ -15,8 +15,6 @@ namespace Avax\HTTP\Session\Shared\Contracts\Storage;
  * - ArrayStore: In-memory (for testing)
  * - RedisStore: Redis backend
  * - DatabaseStore: Database backend
- *
- * @package Avax\HTTP\Session
  */
 interface StoreInterface
 {
@@ -36,8 +34,6 @@ interface StoreInterface
      * @param string   $key   The key.
      * @param mixed    $value The value.
      * @param int|null $ttl   Time-to-live in seconds (null = never expires).
-     *
-     * @return void
      */
     public function put(string $key, mixed $value, int|null $ttl = null) : void;
 
@@ -54,8 +50,6 @@ interface StoreInterface
      * Delete a value.
      *
      * @param string $key The key.
-     *
-     * @return void
      */
     public function delete(string $key) : void;
 
@@ -68,8 +62,6 @@ interface StoreInterface
 
     /**
      * Clear all data.
-     *
-     * @return void
      */
     public function flush() : void;
 
@@ -79,8 +71,6 @@ interface StoreInterface
      * Example: flushNamespace('cart') deletes 'cart.items', 'cart.total', etc.
      *
      * @param string $prefix The namespace prefix.
-     *
-     * @return void
      */
     public function flushNamespace(string $prefix) : void;
 }

@@ -34,12 +34,12 @@ interface TransactionManagerInterface
      * requires strict atomicity, ensuring automated ROLLBACK upon failure
      * and COMMIT upon success.
      *
-     * @param callable $callback The technical logic (unit of work) to be executed within the protected scope.
-     *
+     * @param  callable  $callback  The technical logic (unit of work) to be executed within the protected scope.
      * @return mixed The scalar or composite result returned by the provided callback.
+     *
      * @throws Throwable If the technical transaction management or callback execution fails.
      */
-    public function transaction(callable $callback) : mixed;
+    public function transaction(callable $callback): mixed;
 
     /**
      * Physically signal the start of a fresh technical transaction window on the database driver.
@@ -50,7 +50,7 @@ interface TransactionManagerInterface
      *
      * @return TransactionManagerInterface The current manager instance for continued fluent configuration.
      */
-    public function begin() : TransactionManagerInterface;
+    public function begin(): TransactionManagerInterface;
 
     /**
      * Coordinate the permanent persistence of all technical changes made within the current transaction window.
@@ -61,7 +61,7 @@ interface TransactionManagerInterface
      *
      * @return TransactionManagerInterface The current manager instance.
      */
-    public function commit() : TransactionManagerInterface;
+    public function commit(): TransactionManagerInterface;
 
     /**
      * Coordinate the technical reversion of all changes made during the active transaction window.
@@ -72,7 +72,7 @@ interface TransactionManagerInterface
      *
      * @return TransactionManagerInterface The current manager instance.
      */
-    public function rollback() : TransactionManagerInterface;
+    public function rollback(): TransactionManagerInterface;
 
     /**
      * Retrieve the authorized technical connection gateway managed by this authority.
@@ -83,5 +83,5 @@ interface TransactionManagerInterface
      *
      * @return DatabaseConnection The active transaction-bound persistence gateway.
      */
-    public function getConnection() : DatabaseConnection;
+    public function getConnection(): DatabaseConnection;
 }

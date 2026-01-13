@@ -21,7 +21,7 @@ class IsValidTableName extends AbstractRule
         private readonly string $message = 'The :attribute must be a valid table name (alphanumeric, underscore, optional schema dot).'
     ) {}
 
-    public function validate(mixed $value, array $data, string $property) : void
+    public function validate(mixed $value, array $data, string $property): void
     {
         if (! is_string(value: $value) || ! preg_match(pattern: '/^[a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)?$/', subject: $value)) {
             throw new ValidationException(

@@ -35,7 +35,7 @@ readonly class AcceptedIf
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, array $data, string $property) : void
+    public function validate(mixed $value, array $data, string $property): void
     {
         if (($data[$this->conditionField] ?? null) === $this->conditionValue
             && ! in_array(
@@ -43,7 +43,7 @@ readonly class AcceptedIf
                 haystack: ['yes', 'on', 1, true],
                 strict  : true,
             )) {
-            throw new ValidationException(message: $property . " must be accepted.");
+            throw new ValidationException(message: $property.' must be accepted.');
         }
     }
 }

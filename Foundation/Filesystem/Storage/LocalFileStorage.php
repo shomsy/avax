@@ -22,8 +22,7 @@ class LocalFileStorage implements FileStorageInterface
     /**
      * Lists all files within a given directory.
      *
-     * @param string $directory Absolute or relative path to the directory.
-     *
+     * @param  string  $directory  Absolute or relative path to the directory.
      * @return array<int, string> Full file paths.
      *
      * 🧠 Theory:
@@ -38,7 +37,7 @@ class LocalFileStorage implements FileStorageInterface
      * - This does *not* descend into subdirectories (non-recursive).
      * - To make it recursive later, wrap it in a `RecursiveDirectoryIterator`.
      */
-    public function listFiles(string $directory) : array
+    public function listFiles(string $directory): array
     {
         if (! is_dir(filename: $directory) || ! is_readable(filename: $directory)) {
             return [];
@@ -51,7 +50,7 @@ class LocalFileStorage implements FileStorageInterface
             );
 
             return array_map(
-                callback: static fn(SplFileInfo $file) => $file->getPathname(),
+                callback: static fn (SplFileInfo $file) => $file->getPathname(),
                 array   : iterator_to_array(iterator: $iterator, preserve_keys: false)
             );
         } catch (Throwable $e) {
@@ -60,16 +59,15 @@ class LocalFileStorage implements FileStorageInterface
         }
     }
 
-
     /**
      * Reads the content of a file.
      *
-     * @param string $path Path to the file.
-     *
+     * @param  string  $path  Path to the file.
      * @return string The file contents.
+     *
      * @throws FileNotFoundException If the file does not exist or cannot be read.
      */
-    public function read(string $path) : string
+    public function read(string $path): string
     {
         if (! file_exists(filename: $path)) {
             throw new FileNotFoundException(string: sprintf('File not found: %s', $path));
@@ -90,13 +88,13 @@ class LocalFileStorage implements FileStorageInterface
     /**
      * Writes content to a file, creating directories if necessary.
      *
-     * @param string $path    Path to the file.
-     * @param string $content Content to write.
-     *
+     * @param  string  $path  Path to the file.
+     * @param  string  $content  Content to write.
      * @return bool True on success.
+     *
      * @throws FileWriteException If writing fails.
      */
-    public function write(string $path, string $content, bool $append = false) : bool
+    public function write(string $path, string $content, bool $append = false): bool
     {
         $directory = dirname(path: $path);
         if (! is_dir(filename: $directory) && ! $this->createDirectory(directory: $directory)) {
@@ -104,7 +102,7 @@ class LocalFileStorage implements FileStorageInterface
         }
 
         $flags = $append ? FILE_APPEND | LOCK_EX : 0;
-        if (file_put_contents(filename: $path, data: $content . PHP_EOL, flags: $flags) === false) {
+        if (file_put_contents(filename: $path, data: $content.PHP_EOL, flags: $flags) === false) {
             throw new FileWriteException(string: "Failed to write to file: {$path}");
         }
 
@@ -114,13 +112,13 @@ class LocalFileStorage implements FileStorageInterface
     /**
      * Creates a directory with specified permissions.
      *
-     * @param string $directory   Path to the directory.
-     * @param int    $permissions Permissions to set (default: 0755).
-     *
+     * @param  string  $directory  Path to the directory.
+     * @param  int  $permissions  Permissions to set (default: 0755).
      * @return bool True on success.
+     *
      * @throws DirectoryCreationException If creation fails.
      */
-    public function createDirectory(string $directory, int $permissions = 0755) : bool
+    public function createDirectory(string $directory, int $permissions = 0755): bool
     {
         if (is_dir(filename: $directory)) {
             return true; // Directory already exists.
@@ -136,11 +134,10 @@ class LocalFileStorage implements FileStorageInterface
     /**
      * Checks if a file or directory exists.
      *
-     * @param string $path Path to check.
-     *
+     * @param  string  $path  Path to check.
      * @return bool True if it exists, false otherwise.
      */
-    public function exists(string $path) : bool
+    public function exists(string $path): bool
     {
         return file_exists(filename: $path);
     }
@@ -148,12 +145,12 @@ class LocalFileStorage implements FileStorageInterface
     /**
      * Deletes a directory and its contents.
      *
-     * @param string $directory Path to the directory.
-     *
+     * @param  string  $directory  Path to the directory.
      * @return bool True on success.
+     *
      * @throws DirectoryDeletionException If deletion fails.
      */
-    public function deleteDirectory(string $directory) : bool
+    public function deleteDirectory(string $directory): bool
     {
         if (! is_dir(filename: $directory)) {
             return true; // Non-existent directories are considered "deleted".
@@ -171,12 +168,12 @@ class LocalFileStorage implements FileStorageInterface
     /**
      * Clears the contents of a directory.
      *
-     * @param string $directory Path to the directory.
-     *
+     * @param  string  $directory  Path to the directory.
      * @return bool True on success.
+     *
      * @throws RuntimeException If unable to clear the directory.
      */
-    public function clear(string $directory) : bool
+    public function clear(string $directory): bool
     {
         if (! is_dir(filename: $directory)) {
             throw new RuntimeException(message: sprintf('Not a directory: %s', $directory));
@@ -198,12 +195,12 @@ class LocalFileStorage implements FileStorageInterface
     /**
      * Deletes a file.
      *
-     * @param string $path Path to the file.
-     *
+     * @param  string  $path  Path to the file.
      * @return bool True on success.
+     *
      * @throws FileDeleteException If deletion fails.
      */
-    public function delete(string $path) : bool
+    public function delete(string $path): bool
     {
         if (! file_exists(filename: $path)) {
             return true; // Consider non-existent files as "deleted".
@@ -219,11 +216,10 @@ class LocalFileStorage implements FileStorageInterface
     /**
      * Checks if a path is writable.
      *
-     * @param string $path Path to check.
-     *
+     * @param  string  $path  Path to check.
      * @return bool True if writable, false otherwise.
      */
-    public function isWritable(string $path) : bool
+    public function isWritable(string $path): bool
     {
         return is_writable(filename: $path);
     }
@@ -231,13 +227,13 @@ class LocalFileStorage implements FileStorageInterface
     /**
      * Sets permissions for a file or directory.
      *
-     * @param string $path        Path to the file or directory.
-     * @param int    $permissions Permissions to set.
-     *
+     * @param  string  $path  Path to the file or directory.
+     * @param  int  $permissions  Permissions to set.
      * @return bool True on success.
+     *
      * @throws RuntimeException If chmod fails.
      */
-    public function setPermissions(string $path, int $permissions) : bool
+    public function setPermissions(string $path, int $permissions): bool
     {
         if (! file_exists(filename: $path)) {
             throw new RuntimeException(message: sprintf('Path does not exist: %s', $path));
@@ -252,16 +248,14 @@ class LocalFileStorage implements FileStorageInterface
         return true;
     }
 
-
     /**
      * Checks if the given path has the specified permissions.
      *
-     * @param string $path        The file or directory path to check permissions for.
-     * @param int    $permissions The permissions to check against.
-     *
+     * @param  string  $path  The file or directory path to check permissions for.
+     * @param  int  $permissions  The permissions to check against.
      * @return bool True if the path has the specified permissions, false otherwise.
      */
-    public function hasPermission(string $path, int $permissions) : bool
+    public function hasPermission(string $path, int $permissions): bool
     {
         if (! file_exists(filename: $path)) {
             return false; // Path does not exist, so it cannot have the specified permissions.

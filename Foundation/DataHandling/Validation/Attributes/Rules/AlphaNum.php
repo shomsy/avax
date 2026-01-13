@@ -30,10 +30,10 @@ class AlphaNum
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (in_array(needle: preg_match(pattern: '/^[\pL\pM\pN]+$/u', subject: (string) $value), haystack: [0, false], strict: true)) {
-            throw new ValidationException(message: $property . ' may only contain letters and numbers.');
+            throw new ValidationException(message: $property.' may only contain letters and numbers.');
         }
     }
 }

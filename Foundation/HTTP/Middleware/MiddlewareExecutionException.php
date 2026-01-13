@@ -10,8 +10,6 @@ use Exception;
  * Class MiddlewareExecutionException
  *
  * Exception thrown when a middleware fails during execution.
- *
- * @package Avax\HTTP\Middleware
  */
 final class MiddlewareExecutionException extends Exception
 {
@@ -23,7 +21,7 @@ final class MiddlewareExecutionException extends Exception
      * @param Exception|null $previous The previous throwable used for exception chaining.
      */
     public function __construct(
-        string         $message = "",
+        string         $message = '',
         int            $code = 0,
         Exception|null $previous = null,
     )

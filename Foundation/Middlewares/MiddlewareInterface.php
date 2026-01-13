@@ -6,5 +6,5 @@ namespace Avax\Middlewares;
 
 interface MiddlewareInterface
 {
-    public function handle(string $commandName, array $arguments, callable $next) : void;
+    public function handle(string $commandName, array $arguments, callable $next): void;
 }

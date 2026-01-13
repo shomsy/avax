@@ -22,8 +22,8 @@ namespace Avax\HTTP\Session\Audit;
  * and debugging. This manager ensures all session operations are
  * properly logged without impacting performance or exposing sensitive data.
  *
- * @package Avax\HTTP\Session\Audit
  * @author  Milos
+ *
  * @version 5.0
  */
 final readonly class AuditManager
@@ -31,10 +31,9 @@ final readonly class AuditManager
     /**
      * AuditManager Constructor.
      *
-     * @param Audit $audit The audit feature instance.
+     * @param  Audit  $audit  The audit feature instance.
      */
     public function __construct(private Audit $audit) {}
-
 
     // ----------------------------------------------------------------
     // 🔹 Lifecycle Management
@@ -51,12 +50,10 @@ final readonly class AuditManager
      *
      * Sensitive data is automatically sanitized before logging.
      *
-     * @param string               $event Event name (e.g., 'session.put', 'login').
-     * @param array<string, mixed> $data  Event-specific data.
-     *
-     * @return void
+     * @param  string  $event  Event name (e.g., 'session.put', 'login').
+     * @param  array<string, mixed>  $data  Event-specific data.
      */
-    public function record(string $event, array $data = []) : void
+    public function record(string $event, array $data = []): void
     {
         $this->audit->record(event: $event, data: $data);
     }
@@ -68,13 +65,12 @@ final readonly class AuditManager
      *
      * @return self Fluent interface.
      */
-    public function disable() : self
+    public function disable(): self
     {
         $this->audit->terminate();
 
         return $this;
     }
-
 
     // ----------------------------------------------------------------
     // 🔹 Internal Access
@@ -87,7 +83,7 @@ final readonly class AuditManager
      *
      * @return Audit The audit instance.
      */
-    public function audit() : Audit
+    public function audit(): Audit
     {
         return $this->audit;
     }

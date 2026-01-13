@@ -34,22 +34,22 @@ interface EventBusInterface
     /**
      * Shout out an event to everyone listening.
      *
-     * @param Event $event The "News" piece (e.g., "Connection Opened").
+     * @param  Event  $event  The "News" piece (e.g., "Connection Opened").
      */
-    public function dispatch(Event $event) : void;
+    public function dispatch(Event $event): void;
 
     /**
      * Sign up a multi-topic "Subscriber" (a class that listens to many things).
      *
-     * @param EventSubscriberInterface $subscriber A helper who has a list of everything they care about.
+     * @param  EventSubscriberInterface  $subscriber  A helper who has a list of everything they care about.
      */
-    public function registerSubscriber(EventSubscriberInterface $subscriber) : void;
+    public function registerSubscriber(EventSubscriberInterface $subscriber): void;
 
     /**
      * Manually sign up a single listener for a specific signal.
      *
-     * @param string   $event    The full name of the News Type you want to hear.
-     * @param callable $listener The specific code block to run.
+     * @param  string  $event  The full name of the News Type you want to hear.
+     * @param  callable  $listener  The specific code block to run.
      */
-    public function subscribe(string $event, callable $listener) : void;
+    public function subscribe(string $event, callable $listener): void;
 }

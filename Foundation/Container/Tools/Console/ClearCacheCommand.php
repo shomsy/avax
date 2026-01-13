@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Tools\Console;
 
 use Avax\Container\Container;
@@ -121,7 +122,9 @@ readonly class ClearCacheCommand
      * @param bool        $dryRun         Show what would be cleared without actually doing it
      *
      * @return void Outputs cache clearing results to stdout
+     *
      * @throws \Throwable
+     *
      * @see docs/Tools/Console/ClearCacheCommand.md#method-execute
      */
     public function execute(
@@ -148,13 +151,13 @@ readonly class ClearCacheCommand
                     echo "  â„¹ï¸  Would clear: {$prototypeCachePath}\n";
                 } else {
                     $this->clearDirectory(directory: $prototypeCachePath);
-                    $clearedItems[] = "Service prototype cache";
+                    $clearedItems[] = 'Service prototype cache';
                 }
             } else {
                 // For in-memory cache, just clear the container's cache
                 if (! $dryRun) {
                     $this->container->clearCache();
-                    $clearedItems[] = "In-memory service cache";
+                    $clearedItems[] = 'In-memory service cache';
                 }
             }
 
@@ -164,7 +167,7 @@ readonly class ClearCacheCommand
 
                 $compiledPaths = [
                     '/cache/container.php',
-                    $cacheDirectory . '/container.php'
+                    $cacheDirectory . '/container.php',
                 ];
 
                 foreach ($compiledPaths as $path) {

@@ -19,8 +19,6 @@ abstract class BaseMigration
 {
     /**
      * Query builder instance for executing migration statements.
-     *
-     * @var QueryBuilder|null
      */
     protected QueryBuilder|null $queryBuilder = null;
 
@@ -30,8 +28,6 @@ abstract class BaseMigration
      * -- intent: enable dependency injection instead of service locator pattern.
      *
      * @param QueryBuilder $builder Query builder instance
-     *
-     * @return void
      */
     public function setQueryBuilder(QueryBuilder $builder) : void
     {
@@ -69,7 +65,6 @@ abstract class BaseMigration
     /**
      * Get the grammar instance from the query builder.
      *
-     * @return GrammarInterface
      * @throws RuntimeException If query builder is not set
      */
     private function getGrammar() : GrammarInterface
@@ -82,7 +77,6 @@ abstract class BaseMigration
      *
      * -- intent: provide access to query builder with proper dependency injection.
      *
-     * @return QueryBuilder
      * @throws RuntimeException If query builder is not set
      */
     protected function getConnection() : QueryBuilder
@@ -133,7 +127,7 @@ abstract class BaseMigration
     protected function drop(string $table) : void
     {
         $grammar = $this->getGrammar();
-        $sql     = "DROP TABLE IF EXISTS " . $grammar->wrap(value: $table);
+        $sql     = 'DROP TABLE IF EXISTS ' . $grammar->wrap(value: $table);
 
         $this->getConnection()->statement(query: $sql);
     }

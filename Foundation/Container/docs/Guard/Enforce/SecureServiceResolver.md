@@ -2,34 +2,37 @@
 
 ## Quick Summary
 
-- This file wraps service resolution with security features: access policies, encrypted configuration handling, auditing, and “hardening” hooks.
+- This file wraps service resolution with security features: access policies, encrypted configuration handling,
+  auditing, and “hardening” hooks.
 - It exists so your container can enforce security constraints at the point where objects are actually handed out.
-- It removes the complexity of sprinkling security checks across your app by giving you one secure entry point for resolution.
+- It removes the complexity of sprinkling security checks across your app by giving you one secure entry point for
+  resolution.
 
 ### For Humans: What This Means (Summary)
 
-It’s a security guard for the container: before you get a service, it checks rules, logs what happened, and tries to keep sensitive data protected.
+It’s a security guard for the container: before you get a service, it checks rules, logs what happened, and tries to
+keep sensitive data protected.
 
 ## Terminology (MANDATORY, EXPANSIVE)
 
 - **Secure resolution**: Resolving services while enforcing security controls.
-  - In this file: `resolveSecure()` is the main secure resolution entry point.
-  - Why it matters: “resolution” is the best choke point for access control.
+    - In this file: `resolveSecure()` is the main secure resolution entry point.
+    - Why it matters: “resolution” is the best choke point for access control.
 - **Access policy**: A callable rule that decides if a service can be accessed.
-  - In this file: policies are stored in `$accessPolicies` keyed by service id.
-  - Why it matters: it’s the simplest way to represent “who can resolve what”.
+    - In this file: policies are stored in `$accessPolicies` keyed by service id.
+    - Why it matters: it’s the simplest way to represent “who can resolve what”.
 - **Encrypted service**: A service that requires encryption/decryption of sensitive config data.
-  - In this file: service ids are tracked in `$encryptedServices`.
-  - Why it matters: secrets shouldn’t live in plaintext inside resolved objects.
+    - In this file: service ids are tracked in `$encryptedServices`.
+    - Why it matters: secrets shouldn’t live in plaintext inside resolved objects.
 - **Audit logging**: Recording security-relevant events for troubleshooting and compliance.
-  - In this file: logging integration is done via `LoggerFactoryIntegration`.
-  - Why it matters: without logs, you can’t prove or debug what happened.
+    - In this file: logging integration is done via `LoggerFactoryIntegration`.
+    - Why it matters: without logs, you can’t prove or debug what happened.
 - **Hardening**: Applying defensive changes or checks based on service type.
-  - In this file: `hardenService()` contains type-based “enforce prepared statements / TLS / path restrictions” hooks.
-  - Why it matters: it’s a place to apply safe defaults for risky components.
+    - In this file: `hardenService()` contains type-based “enforce prepared statements / TLS / path restrictions” hooks.
+    - Why it matters: it’s a place to apply safe defaults for risky components.
 - **Reflection**: Inspecting objects/classes at runtime.
-  - In this file: reflection is used to detect encrypted strings and scan methods.
-  - Why it matters: reflection adds power but can add runtime cost.
+    - In this file: reflection is used to detect encrypted strings and scan methods.
+    - Why it matters: reflection adds power but can add runtime cost.
 
 ### For Humans: What This Means (Terms)
 
@@ -37,7 +40,8 @@ This file is trying to keep “who can get what” and “how secrets are handle
 
 ## Think of It
 
-Think of it like a bank teller window. You don’t just hand out cash (services). You check identity (policy), record the transaction (audit), and you keep sensitive data in a safe (encryption).
+Think of it like a bank teller window. You don’t just hand out cash (services). You check identity (policy), record the
+transaction (audit), and you keep sensitive data in a safe (encryption).
 
 ### For Humans: What This Means (Think)
 
@@ -45,7 +49,10 @@ It’s not paranoia; it’s about making “dangerous things” predictable and 
 
 ## Story Example
 
-You have a `payment.gateway` service that contains API keys in configuration. You mark it as encrypted, and you set an access policy that only allows resolution inside payment-processing contexts. When someone tries to resolve it outside those contexts, it’s denied and logged. When it is resolved legitimately, its encrypted properties are decrypted into safe runtime values.
+You have a `payment.gateway` service that contains API keys in configuration. You mark it as encrypted, and you set an
+access policy that only allows resolution inside payment-processing contexts. When someone tries to resolve it outside
+those contexts, it’s denied and logged. When it is resolved legitimately, its encrypted properties are decrypted into
+safe runtime values.
 
 ### For Humans: What This Means (Story)
 
@@ -57,7 +64,8 @@ This section gives you a slow, step-by-step mental model and a beginner-safe wal
 
 ### For Humans: What This Means (Dummies)
 
-If you’re new to this area, read this first. It helps you avoid getting lost in terminology and lets you use the code with confidence.
+If you’re new to this area, read this first. It helps you avoid getting lost in terminology and lets you use the code
+with confidence.
 
 1. You call `resolveSecure($context)` instead of “resolve normally”.
 2. It logs the attempt.
@@ -68,7 +76,11 @@ If you’re new to this area, read this first. It helps you avoid getting lost i
 
 ## How It Works (Technical)
 
-The resolver keeps two registries: an access policy map and an encrypted-service list. `resolveSecure()` logs a resolution attempt, checks access policy via `checkAccessPolicy()`, delegates to an internal resolver method, decrypts config if the service is marked encrypted, then logs post-resolution security context. The class offers utilities for encryption (`encryptServiceConfig()`), decryption (`decryptServiceConfig()`), security scanning (`validateServiceSecurity()`), audit retrieval (`getSecurityAudit()`), and type-based hardening (`hardenService()`).
+The resolver keeps two registries: an access policy map and an encrypted-service list. `resolveSecure()` logs a
+resolution attempt, checks access policy via `checkAccessPolicy()`, delegates to an internal resolver method, decrypts
+config if the service is marked encrypted, then logs post-resolution security context. The class offers utilities for
+encryption (`encryptServiceConfig()`), decryption (`decryptServiceConfig()`), security scanning (
+`validateServiceSecurity()`), audit retrieval (`getSecurityAudit()`), and type-based hardening (`hardenService()`).
 
 ### For Humans: What This Means (How)
 
@@ -76,10 +88,13 @@ It’s basically “resolve + policies + encryption + logging” bundled togethe
 
 ## Architecture Role
 
-- Why this file lives in `Guard/Enforce`: it’s not the container core—it’s an enforcement wrapper you put around resolution.
-- What depends on it: security-conscious bootstraps, admin tooling, and any environment that needs strict access control.
+- Why this file lives in `Guard/Enforce`: it’s not the container core—it’s an enforcement wrapper you put around
+  resolution.
+- What depends on it: security-conscious bootstraps, admin tooling, and any environment that needs strict access
+  control.
 - What it depends on: encryption service, container config, logging integration, and resolution context.
-- System-level reasoning: security is more reliable when enforced centrally at the boundary where services leave the container.
+- System-level reasoning: security is more reliable when enforced centrally at the boundary where services leave the
+  container.
 
 ### For Humans: What This Means (Role)
 
@@ -91,7 +106,8 @@ This section is the API map of the file: it documents what each method does, why
 
 ### For Humans: What This Means (Methods)
 
-When you’re trying to use or debug this file, this is the part you’ll come back to. It’s your “what can I call, and what happens?” cheat sheet.
+When you’re trying to use or debug this file, this is the part you’ll come back to. It’s your “what can I call, and what
+happens?” cheat sheet.
 
 ### Method: __construct(…)
 
@@ -376,10 +392,14 @@ It tries to apply safe defaults when a service looks risky.
 
 Secure resolution is intentionally modeled as a dedicated component instead of “sprinkled” checks:
 
-- **Why a separate security-aware resolver**: it localizes security heuristics and audit logging, and makes it possible to apply security only where it’s needed (sensitive services, strict environments).
-- **Why not traits**: security behavior needs clear inputs (policies, allow/deny lists, context) and clear outputs (audited decisions). Traits would make those dependencies implicit.
-- **Why not static/global security flags**: security decisions often depend on runtime context and configuration profiles. Static globals are hard to test and easy to misuse.
-- **Why not silently mutate behavior**: this design prefers explicit denial/logging over hidden “fixups”, because hidden mutation makes incidents harder to investigate.
+- **Why a separate security-aware resolver**: it localizes security heuristics and audit logging, and makes it possible
+  to apply security only where it’s needed (sensitive services, strict environments).
+- **Why not traits**: security behavior needs clear inputs (policies, allow/deny lists, context) and clear outputs (
+  audited decisions). Traits would make those dependencies implicit.
+- **Why not static/global security flags**: security decisions often depend on runtime context and configuration
+  profiles. Static globals are hard to test and easy to misuse.
+- **Why not silently mutate behavior**: this design prefers explicit denial/logging over hidden “fixups”, because hidden
+  mutation makes incidents harder to investigate.
 
 Trade-offs accepted intentionally:
 
@@ -387,16 +407,18 @@ Trade-offs accepted intentionally:
 
 ### For Humans: What This Means
 
-Security works best when it’s obvious. This class exists so you can point to one place and say: “This is where we decide what’s safe.”
+Security works best when it’s obvious. This class exists so you can point to one place and say: “This is where we decide
+what’s safe.”
 
 - Risk: Heuristic detection (encrypted strings, dangerous methods) can false-positive/false-negative.
-  - Why it matters: you can block legitimate behavior or miss real threats.
-  - Design stance: treat heuristics as signals; log and alert rather than silently changing behavior.
-  - Recommended practice: keep allowlists/denylists explicit and configurable; don’t rely only on heuristics.
+    - Why it matters: you can block legitimate behavior or miss real threats.
+    - Design stance: treat heuristics as signals; log and alert rather than silently changing behavior.
+    - Recommended practice: keep allowlists/denylists explicit and configurable; don’t rely only on heuristics.
 - Trade-off: Reflection and encryption cost performance.
-  - Why it matters: these operations add latency and CPU overhead.
-  - Design stance: use secure resolution for sensitive services or environments; keep fast paths for non-sensitive cases.
-  - Recommended practice: cache policies, limit scanning, and avoid doing heavy work on every resolution.
+    - Why it matters: these operations add latency and CPU overhead.
+    - Design stance: use secure resolution for sensitive services or environments; keep fast paths for non-sensitive
+      cases.
+    - Recommended practice: cache policies, limit scanning, and avoid doing heavy work on every resolution.
 
 ### For Humans: What This Means (Risks)
 
@@ -404,7 +426,8 @@ Security isn’t free. Use it where it matters, and make the costs visible.
 
 ## Related Files & Folders
 
-- `docs_md/Guard/Enforce/ResolutionPolicy.md`: The policy concept this file complements (callables vs interface-based policies).
+- `docs_md/Guard/Enforce/ResolutionPolicy.md`: The policy concept this file complements (callables vs interface-based
+  policies).
 - `docs_md/Observe/Metrics/LoggerFactoryIntegration.md`: Used for audit-style logging.
 - `docs_md/Observe/Timeline/ResolutionTimeline.md`: A related diagnostics tool for resolution behavior.
 

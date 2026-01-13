@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Features\Operate\Boot;
 
 use Avax\HTTP\Router\RouterInterface;
@@ -27,6 +28,7 @@ final readonly class Kernel
      * @param RouterInterface $router         Router implementation responsible for request dispatch.
      * @param ErrorHandler    $errorHandler   Centralized error handler for early lifecycle errors.
      * @param callable|null   $configResolver Optional resolver that provides middleware configuration data.
+     *
      * @see docs/Features/Operate/Boot/Kernel.md#method-__construct
      */
     public function __construct(
@@ -42,8 +44,6 @@ final readonly class Kernel
 
     /**
      * Build the default configuration resolver that safely reads kernel metadata from config files.
-     *
-     * @return Closure
      */
     private function defaultConfigResolver() : Closure
     {
@@ -56,7 +56,6 @@ final readonly class Kernel
      * Any configuration errors are caught and result in an empty array,
      * mirroring the legacy safety net expected by the tests.
      *
-     * @return array
      * @see docs/Features/Operate/Boot/Kernel.md#method-resolveconfiguredmiddlewares
      */
     public function resolveConfiguredMiddlewares() : array

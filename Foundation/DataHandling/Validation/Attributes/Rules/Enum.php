@@ -29,7 +29,7 @@ readonly class Enum
     /**
      * Initializes the Enum Validator Attribute.
      *
-     * @param class-string<T> $enumClass The fully qualified class name of the target enum.
+     * @param  class-string<T>  $enumClass  The fully qualified class name of the target enum.
      */
     public function __construct(private string $enumClass) {}
 
@@ -37,12 +37,12 @@ readonly class Enum
      * Validates whether the provided value is a valid enum instance or a scalar value
      * that can be mapped to a `BackedEnum`.
      *
-     * @param mixed  $value    The value being validated; expected to be an enum instance or backed value.
-     * @param string $property The name of the property being validated (for meaningful exception messages).
+     * @param  mixed  $value  The value being validated; expected to be an enum instance or backed value.
+     * @param  string  $property  The name of the property being validated (for meaningful exception messages).
      *
      * @throws ValidationException When the value does not match the expected enum or backed enum type.
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         // Check if the provided class exists and is a valid enum.
         if (! enum_exists(enum: $this->enumClass)) {
@@ -69,7 +69,7 @@ readonly class Enum
 
             // Throw an exception if the scalar value does not match any of the allowed backed values.
             throw new ValidationException(
-                message: "{$property} must be one of: " . implode(separator: ', ', array: $values)
+                message: "{$property} must be one of: ".implode(separator: ', ', array: $values)
             );
         }
 

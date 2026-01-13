@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Observe\Metrics;
 
 /**
@@ -15,6 +16,7 @@ final class CollectMetrics
 
     /**
      * @param mixed $metrics Optional metrics collector instance used to merge snapshot output
+     *
      * @see docs/Observe/Metrics/CollectMetrics.md#method-__construct
      */
     public function __construct(
@@ -27,7 +29,6 @@ final class CollectMetrics
      * @param string $event Event name
      * @param array  $data  Event context payload
      *
-     * @return void
      * @see docs/Observe/Metrics/CollectMetrics.md#method-record
      */
     public function record(string $event, array $data) : void
@@ -43,6 +44,7 @@ final class CollectMetrics
      * Collect a snapshot of current metrics.
      *
      * @return array Snapshot payload
+     *
      * @see docs/Observe/Metrics/CollectMetrics.md#method-collect
      */
     public function collect() : array

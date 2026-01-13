@@ -14,19 +14,19 @@ use Avax\Exceptions\ValidationException;
 readonly class In
 {
     /**
-     * @param array<int|string> $values List of accepted values for the field.
+     * @param  array<int|string>  $values  List of accepted values for the field.
      */
     public function __construct(private array $values) {}
 
     /**
      * Validates whether a given value is in the allowed set.
      *
-     * @param mixed  $value    Value to validate.
-     * @param string $property Property name (for exception context).
+     * @param  mixed  $value  Value to validate.
+     * @param  string  $property  Property name (for exception context).
      *
      * @throws ValidationException If the value is not in the list of allowed values.
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         // Unwrap enum to scalar value if needed
         if (is_object(value: $value) && method_exists(object_or_class: $value, method: 'value')) {

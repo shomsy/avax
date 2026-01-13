@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Guard\Rules;
 
 use Avax\Container\Features\Define\Store\ServiceDefinitionEntity;
@@ -70,11 +71,10 @@ use Avax\DataHandling\Validation\Attributes\AbstractRule;
  * - Blocks potentially malicious identifier patterns
  * - Ensures clean service dependency graphs
  *
- * @package Avax\Container\Guard\Rules
  * @see     AbstractRule For base validation rule functionality
  * @see     ServiceDefinitionEntity For service definition structure
  * @see     ServiceDependencyRepository For dependency relationship management
- * @see docs/Guard/Rules/DependencyValidationRule.md#quick-summary
+ * @see     docs/Guard/Rules/DependencyValidationRule.md#quick-summary
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class DependencyValidationRule extends AbstractRule
@@ -99,6 +99,7 @@ class DependencyValidationRule extends AbstractRule
      * @param array|null $availableServices  Whitelist of valid service identifiers, null for no restrictions
      * @param bool|null  $allowSelfReference Whether self-referencing dependencies are permitted
      * @param int        $maxDependencyDepth Maximum allowed dependency resolution depth
+     *
      * @see docs/Guard/Rules/DependencyValidationRule.md#method-__construct
      */
     public function __construct(
@@ -138,6 +139,7 @@ class DependencyValidationRule extends AbstractRule
      * @param mixed $value The value to validate (expected to be array of service identifiers)
      *
      * @return bool True if all dependencies are valid, false otherwise
+     *
      * @see docs/Guard/Rules/DependencyValidationRule.md#method-validate
      */
     public function validate(mixed $value) : bool
@@ -194,6 +196,7 @@ class DependencyValidationRule extends AbstractRule
      * ```
      *
      * @return string Descriptive error message explaining validation failure
+     *
      * @see docs/Guard/Rules/DependencyValidationRule.md#method-geterrormessage
      */
     public function getErrorMessage() : string

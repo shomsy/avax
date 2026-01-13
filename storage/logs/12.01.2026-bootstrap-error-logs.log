@@ -1,0 +1,906 @@
+[2026-01-12 02:17:26] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:17:26] ❌ [ERROR] Undefined variable $router {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+    "line": 13,
+    "exception": {
+        "message": "Undefined variable $router",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+        "line": 13,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php(13): Avax\\Logging\\ErrorHandler->convertErrorToException(2, 'Undefined varia...', 'C:\\\\Users\\\\shomsy...', 13)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\RouteRegistrar.php(31): require('C:\\\\Users\\\\shomsy...')",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(46): Avax\\Container\\Http\\RouteRegistrar->load('C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(40): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#5 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#6 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 02:17:27] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:17:27] ❌ [ERROR] Undefined variable $router {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+    "line": 13,
+    "exception": {
+        "message": "Undefined variable $router",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+        "line": 13,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php(13): Avax\\Logging\\ErrorHandler->convertErrorToException(2, 'Undefined varia...', 'C:\\\\Users\\\\shomsy...', 13)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\RouteRegistrar.php(31): require('C:\\\\Users\\\\shomsy...')",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(46): Avax\\Container\\Http\\RouteRegistrar->load('C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(40): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#5 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#6 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 02:52:35] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:52:35] ❌ [ERROR] Undefined variable $router {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+    "line": 13,
+    "exception": {
+        "message": "Undefined variable $router",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+        "line": 13,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php(13): Avax\\Logging\\ErrorHandler->convertErrorToException(2, 'Undefined varia...', 'C:\\\\Users\\\\shomsy...', 13)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\RouteRegistrar.php(31): require('C:\\\\Users\\\\shomsy...')",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(46): Avax\\Container\\Http\\RouteRegistrar->load('C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(40): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#5 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#6 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 02:52:36] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:52:36] ❌ [ERROR] Undefined variable $router {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+    "line": 13,
+    "exception": {
+        "message": "Undefined variable $router",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+        "line": 13,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php(13): Avax\\Logging\\ErrorHandler->convertErrorToException(2, 'Undefined varia...', 'C:\\\\Users\\\\shomsy...', 13)",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\RouteRegistrar.php(31): require('C:\\\\Users\\\\shomsy...')",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(46): Avax\\Container\\Http\\RouteRegistrar->load('C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(40): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#5 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#6 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 02:53:19] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:53:19] ❌ [ERROR] Resolution pipeline failed at step 7: Class "Avax\HTTP\Router\Support\FallbackManager" not found {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php",
+    "line": 121,
+    "exception": {
+        "message": "Resolution pipeline failed at step 7: Class \"Avax\\HTTP\\Router\\Support\\FallbackManager\" not found",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php",
+        "line": 121,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(62): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(83): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(141): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(92): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(51): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(72): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(359): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Container), Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(154): Avax\\Container\\Features\\Actions\\Resolve\\Engine->instantiateCandidate('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(225): Avax\\Container\\Features\\Actions\\Resolve\\Engine->Avax\\Container\\Features\\Actions\\Resolve\\{closure}(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(112): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext), Object(Avax\\Container\\Core\\Kernel\\ResolutionPipelineController), Object(Avax\\Container\\Observe\\Trace\\ResolutionTrace))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(45): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(85): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(62): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(83): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(141): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(336): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(151): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateCandidate('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(219): Avax\\Container\\Features\\Actions\\Resolve\\Engine->Avax\\Container\\Features\\Actions\\Resolve\\{closure}(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(112): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext), Object(Avax\\Container\\Core\\Kernel\\ResolutionPipelineController), Object(Avax\\Container\\Observe\\Trace\\ResolutionTrace))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(45): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(85): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(62): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(48): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(139): Avax\\Container\\Core\\Kernel\\KernelRuntime->get('Avax\\\\HTTP\\\\Route...')",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(55): Avax\\Container\\Core\\ContainerKernel->get('Avax\\\\HTTP\\\\Route...')",
+            "#25 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(48): Avax\\Container\\Container->get('Avax\\\\HTTP\\\\Route...')",
+            "#26 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(40): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#27 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#28 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#29 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Class \"Avax\\HTTP\\Router\\Support\\FallbackManager\" not found",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Providers\\HTTP\\RouterServiceProvider.php",
+            "line": 69
+        }
+    }
+}
+
+[2026-01-12 02:53:20] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:53:20] ❌ [ERROR] Resolution pipeline failed at step 7: Class "Avax\HTTP\Router\Support\FallbackManager" not found {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php",
+    "line": 121,
+    "exception": {
+        "message": "Resolution pipeline failed at step 7: Class \"Avax\\HTTP\\Router\\Support\\FallbackManager\" not found",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php",
+        "line": 121,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(62): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(83): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(141): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(92): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(51): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(72): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(359): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Container), Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(154): Avax\\Container\\Features\\Actions\\Resolve\\Engine->instantiateCandidate('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(225): Avax\\Container\\Features\\Actions\\Resolve\\Engine->Avax\\Container\\Features\\Actions\\Resolve\\{closure}(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(112): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext), Object(Avax\\Container\\Core\\Kernel\\ResolutionPipelineController), Object(Avax\\Container\\Observe\\Trace\\ResolutionTrace))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(45): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(85): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(62): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(83): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(141): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(336): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(151): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateCandidate('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(219): Avax\\Container\\Features\\Actions\\Resolve\\Engine->Avax\\Container\\Features\\Actions\\Resolve\\{closure}(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(112): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext), Object(Avax\\Container\\Core\\Kernel\\ResolutionPipelineController), Object(Avax\\Container\\Observe\\Trace\\ResolutionTrace))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(45): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(85): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(62): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(48): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(139): Avax\\Container\\Core\\Kernel\\KernelRuntime->get('Avax\\\\HTTP\\\\Route...')",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(55): Avax\\Container\\Core\\ContainerKernel->get('Avax\\\\HTTP\\\\Route...')",
+            "#25 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(48): Avax\\Container\\Container->get('Avax\\\\HTTP\\\\Route...')",
+            "#26 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(40): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#27 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#28 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#29 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "Class \"Avax\\HTTP\\Router\\Support\\FallbackManager\" not found",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Providers\\HTTP\\RouterServiceProvider.php",
+            "line": 69
+        }
+    }
+}
+
+[2026-01-12 02:54:45] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:54:45] ❌ [ERROR] Construction failed for [Avax\HTTP\Router\Routing\RoutePipelineFactory]: rename(C:\Users\shomsy\PhpstormProjects\components/storage/cache\Avax_HTTP_Router_Routing_RoutePipelineFactory.php.tmp.3b8a998f460276aa,C:\Users\shomsy\PhpstormProjects\components/storage/cache\Avax_HTTP_Router_Routing_RoutePipelineFactory.php): Access is denied (code: 5) {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php",
+    "line": 88,
+    "exception": {
+        "message": "Construction failed for [Avax\\HTTP\\Router\\Routing\\RoutePipelineFactory]: rename(C:\\Users\\shomsy\\PhpstormProjects\\components\/storage\/cache\\Avax_HTTP_Router_Routing_RoutePipelineFactory.php.tmp.3b8a998f460276aa,C:\\Users\\shomsy\\PhpstormProjects\\components\/storage\/cache\\Avax_HTTP_Router_Routing_RoutePipelineFactory.php): Access is denied (code: 5)",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php",
+        "line": 88,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(359): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Container), Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(154): Avax\\Container\\Features\\Actions\\Resolve\\Engine->instantiateCandidate('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(225): Avax\\Container\\Features\\Actions\\Resolve\\Engine->Avax\\Container\\Features\\Actions\\Resolve\\{closure}(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(112): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext), Object(Avax\\Container\\Core\\Kernel\\ResolutionPipelineController), Object(Avax\\Container\\Observe\\Trace\\ResolutionTrace))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(45): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(85): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(62): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(83): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(141): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(92): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(51): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(72): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(359): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Container), Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(154): Avax\\Container\\Features\\Actions\\Resolve\\Engine->instantiateCandidate('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(225): Avax\\Container\\Features\\Actions\\Resolve\\Engine->Avax\\Container\\Features\\Actions\\Resolve\\{closure}(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(112): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext), Object(Avax\\Container\\Core\\Kernel\\ResolutionPipelineController), Object(Avax\\Container\\Observe\\Trace\\ResolutionTrace))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(45): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(85): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(62): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(83): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(141): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(92): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(51): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(72): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(359): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Container), Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#25 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(154): Avax\\Container\\Features\\Actions\\Resolve\\Engine->instantiateCandidate('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#26 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(225): Avax\\Container\\Features\\Actions\\Resolve\\Engine->Avax\\Container\\Features\\Actions\\Resolve\\{closure}(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#27 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(112): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext), Object(Avax\\Container\\Core\\Kernel\\ResolutionPipelineController), Object(Avax\\Container\\Observe\\Trace\\ResolutionTrace))",
+            "#28 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(45): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#29 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(85): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#30 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(62): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#31 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(83): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#32 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(141): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#33 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(336): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#34 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(151): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateCandidate('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#35 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(219): Avax\\Container\\Features\\Actions\\Resolve\\Engine->Avax\\Container\\Features\\Actions\\Resolve\\{closure}(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#36 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(112): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext), Object(Avax\\Container\\Core\\Kernel\\ResolutionPipelineController), Object(Avax\\Container\\Observe\\Trace\\ResolutionTrace))",
+            "#37 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(45): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#38 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(85): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#39 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(62): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#40 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(48): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#41 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(139): Avax\\Container\\Core\\Kernel\\KernelRuntime->get('Avax\\\\HTTP\\\\Route...')",
+            "#42 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(55): Avax\\Container\\Core\\ContainerKernel->get('Avax\\\\HTTP\\\\Route...')",
+            "#43 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(48): Avax\\Container\\Container->get('Avax\\\\HTTP\\\\Route...')",
+            "#44 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(40): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#45 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#46 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#47 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "rename(C:\\Users\\shomsy\\PhpstormProjects\\components\/storage\/cache\\Avax_HTTP_Router_Routing_RoutePipelineFactory.php.tmp.3b8a998f460276aa,C:\\Users\\shomsy\\PhpstormProjects\\components\/storage\/cache\\Avax_HTTP_Router_Routing_RoutePipelineFactory.php): Access is denied (code: 5)",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Think\\Cache\\FilePrototypeCache.php",
+            "line": 97
+        }
+    }
+}
+
+[2026-01-12 02:54:45] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:54:45] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\FallbackManager::$handler cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+    "line": 17,
+    "type": 64
+}
+
+[2026-01-12 02:54:45] ❌ [ERROR] Property Avax\HTTP\Router\Support\FallbackManager::$handler cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+    "line": 17,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\FallbackManager::$handler cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+        "line": 17,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 02:54:45] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\FallbackManager::$handler cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+    "line": 17,
+    "type": 64
+}
+
+[2026-01-12 02:54:45] ❌ [ERROR] Property Avax\HTTP\Router\Support\FallbackManager::$handler cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+    "line": 17,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\FallbackManager::$handler cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+        "line": 17,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 02:54:46] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:54:46] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\FallbackManager::$handler cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+    "line": 17,
+    "type": 64
+}
+
+[2026-01-12 02:54:46] ❌ [ERROR] Property Avax\HTTP\Router\Support\FallbackManager::$handler cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+    "line": 17,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\FallbackManager::$handler cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+        "line": 17,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 02:54:46] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\FallbackManager::$handler cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+    "line": 17,
+    "type": 64
+}
+
+[2026-01-12 02:54:46] ❌ [ERROR] Property Avax\HTTP\Router\Support\FallbackManager::$handler cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+    "line": 17,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\FallbackManager::$handler cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+        "line": 17,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 02:54:46] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:54:46] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\FallbackManager::$handler cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+    "line": 17,
+    "type": 64
+}
+
+[2026-01-12 02:54:46] ❌ [ERROR] Property Avax\HTTP\Router\Support\FallbackManager::$handler cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+    "line": 17,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\FallbackManager::$handler cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+        "line": 17,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 02:54:46] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\FallbackManager::$handler cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+    "line": 17,
+    "type": 64
+}
+
+[2026-01-12 02:54:46] ❌ [ERROR] Property Avax\HTTP\Router\Support\FallbackManager::$handler cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+    "line": 17,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\FallbackManager::$handler cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\FallbackManager.php",
+        "line": 17,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 02:55:26] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:55:26] 🐞 [DEBUG] Resolving route. {
+    "method": "GET",
+    "path": "\/",
+    "host": "components.test"
+}
+
+[2026-01-12 02:55:26] 🐞 [DEBUG] Route resolved. {
+    "method": "GET",
+    "path": "\/",
+    "name": "home",
+    "parameters": [],
+    "middleware": []
+}
+
+[2026-01-12 02:55:26] 🐞 [DEBUG] Assembling route pipeline. {
+    "route": "home",
+    "middleware": [],
+    "stages": [],
+    "order": [
+        "stages",
+        "middleware",
+        "dispatch"
+    ]
+}
+
+[2026-01-12 02:55:26] 🐞 [DEBUG] Pipeline contains only core dispatcher. []
+
+[2026-01-12 02:55:26] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:55:26] 🐞 [DEBUG] Resolving route. {
+    "method": "GET",
+    "path": "\/favicon.ico",
+    "host": "components.test"
+}
+
+[2026-01-12 02:55:26] 🐞 [DEBUG] Route resolved. {
+    "method": "GET",
+    "path": "\/favicon.ico",
+    "name": "",
+    "parameters": [],
+    "middleware": []
+}
+
+[2026-01-12 02:55:26] 🐞 [DEBUG] Assembling route pipeline. {
+    "route": "\/favicon.ico",
+    "middleware": [],
+    "stages": [],
+    "order": [
+        "stages",
+        "middleware",
+        "dispatch"
+    ]
+}
+
+[2026-01-12 02:55:26] 🐞 [DEBUG] Pipeline contains only core dispatcher. []
+
+[2026-01-12 02:55:27] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:55:27] 🐞 [DEBUG] Resolving route. {
+    "method": "GET",
+    "path": "\/",
+    "host": "components.test"
+}
+
+[2026-01-12 02:55:27] 🐞 [DEBUG] Route resolved. {
+    "method": "GET",
+    "path": "\/",
+    "name": "home",
+    "parameters": [],
+    "middleware": []
+}
+
+[2026-01-12 02:55:27] 🐞 [DEBUG] Assembling route pipeline. {
+    "route": "home",
+    "middleware": [],
+    "stages": [],
+    "order": [
+        "stages",
+        "middleware",
+        "dispatch"
+    ]
+}
+
+[2026-01-12 02:55:27] 🐞 [DEBUG] Pipeline contains only core dispatcher. []
+
+[2026-01-12 02:55:27] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 02:55:27] 🐞 [DEBUG] Resolving route. {
+    "method": "GET",
+    "path": "\/favicon.ico",
+    "host": "components.test"
+}
+
+[2026-01-12 02:55:27] 🐞 [DEBUG] Route resolved. {
+    "method": "GET",
+    "path": "\/favicon.ico",
+    "name": "",
+    "parameters": [],
+    "middleware": []
+}
+
+[2026-01-12 02:55:27] 🐞 [DEBUG] Assembling route pipeline. {
+    "route": "\/favicon.ico",
+    "middleware": [],
+    "stages": [],
+    "order": [
+        "stages",
+        "middleware",
+        "dispatch"
+    ]
+}
+
+[2026-01-12 02:55:27] 🐞 [DEBUG] Pipeline contains only core dispatcher. []
+
+[2026-01-12 03:33:11] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 03:33:11] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "type": 64
+}
+
+[2026-01-12 03:33:11] ❌ [ERROR] Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\RouteRegistry::$fallback cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+        "line": 22,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 03:33:11] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "type": 64
+}
+
+[2026-01-12 03:33:11] ❌ [ERROR] Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\RouteRegistry::$fallback cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+        "line": 22,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 03:33:11] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 03:33:11] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "type": 64
+}
+
+[2026-01-12 03:33:11] ❌ [ERROR] Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\RouteRegistry::$fallback cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+        "line": 22,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 03:33:11] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "type": 64
+}
+
+[2026-01-12 03:33:11] ❌ [ERROR] Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\RouteRegistry::$fallback cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+        "line": 22,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 03:39:21] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 03:39:21] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "type": 64
+}
+
+[2026-01-12 03:39:21] ❌ [ERROR] Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\RouteRegistry::$fallback cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+        "line": 22,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 03:39:21] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "type": 64
+}
+
+[2026-01-12 03:39:21] ❌ [ERROR] Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\RouteRegistry::$fallback cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+        "line": 22,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 03:39:22] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 03:39:22] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "type": 64
+}
+
+[2026-01-12 03:39:22] ❌ [ERROR] Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\RouteRegistry::$fallback cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+        "line": 22,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 03:39:22] ❌ [ERROR] ⚠️ Fatal error: Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "type": 64
+}
+
+[2026-01-12 03:39:22] ❌ [ERROR] Property Avax\HTTP\Router\Support\RouteRegistry::$fallback cannot have type callable|array|string|null {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+    "line": 22,
+    "exception": {
+        "message": "Property Avax\\HTTP\\Router\\Support\\RouteRegistry::$fallback cannot have type callable|array|string|null",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Support\\RouteRegistry.php",
+        "line": 22,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 03:40:00] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 03:40:00] ❌ [ERROR] Call to undefined method Avax\HTTP\Router\RouterDsl::registerRoute() {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+    "line": 13,
+    "exception": {
+        "message": "Call to undefined method Avax\\HTTP\\Router\\RouterDsl::registerRoute()",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+        "line": 13,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\RouteRegistrar.php(41): require()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(50): Avax\\Container\\Http\\RouteRegistrar->load('C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...')",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(40): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#4 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#5 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 03:40:01] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 03:40:01] ❌ [ERROR] Call to undefined method Avax\HTTP\Router\RouterDsl::registerRoute() {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+    "line": 13,
+    "exception": {
+        "message": "Call to undefined method Avax\\HTTP\\Router\\RouterDsl::registerRoute()",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+        "line": 13,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\RouteRegistrar.php(41): require()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(50): Avax\\Container\\Http\\RouteRegistrar->load('C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...')",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(40): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#4 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#5 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 03:42:07] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 03:42:07] ❌ [ERROR] Class "Avax\HTTP\Router\Routing\RoutePathValidator" not found {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Routing\\HttpRequestRouter.php",
+    "line": 177,
+    "exception": {
+        "message": "Class \"Avax\\HTTP\\Router\\Routing\\RoutePathValidator\" not found",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Routing\\HttpRequestRouter.php",
+        "line": 177,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Routing\\HttpRequestRouter.php(143): Avax\\HTTP\\Router\\Routing\\HttpRequestRouter->validateRoutePath('\/')",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php(13): Avax\\HTTP\\Router\\Routing\\HttpRequestRouter->registerRoute('GET', '\/', Object(Closure), NULL, 'home')",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\RouteRegistrar.php(41): require('C:\\\\Users\\\\shomsy...')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(50): Avax\\Container\\Http\\RouteRegistrar->load('C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...')",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(40): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#6 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#7 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 03:42:08] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 03:42:08] ❌ [ERROR] Class "Avax\HTTP\Router\Routing\RoutePathValidator" not found {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Routing\\HttpRequestRouter.php",
+    "line": 177,
+    "exception": {
+        "message": "Class \"Avax\\HTTP\\Router\\Routing\\RoutePathValidator\" not found",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Routing\\HttpRequestRouter.php",
+        "line": 177,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Routing\\HttpRequestRouter.php(143): Avax\\HTTP\\Router\\Routing\\HttpRequestRouter->validateRoutePath('\/')",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php(13): Avax\\HTTP\\Router\\Routing\\HttpRequestRouter->registerRoute('GET', '\/', Object(Closure), NULL, 'home')",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\RouteRegistrar.php(41): require('C:\\\\Users\\\\shomsy...')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(50): Avax\\Container\\Http\\RouteRegistrar->load('C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...')",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(40): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#6 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#7 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-12 03:42:43] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 03:42:43] 🐞 [DEBUG] Resolving route. {
+    "method": "GET",
+    "path": "\/",
+    "host": "components.test"
+}
+
+[2026-01-12 03:42:43] 🐞 [DEBUG] Route resolved. {
+    "method": "GET",
+    "path": "\/",
+    "name": "home",
+    "parameters": [],
+    "middleware": []
+}
+
+[2026-01-12 03:42:43] 🐞 [DEBUG] Assembling route pipeline. {
+    "route": "home",
+    "middleware": [],
+    "stages": [],
+    "order": [
+        "stages",
+        "middleware",
+        "dispatch"
+    ]
+}
+
+[2026-01-12 03:42:43] 🐞 [DEBUG] Pipeline contains only core dispatcher. []
+
+[2026-01-12 03:42:44] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 03:42:44] 🐞 [DEBUG] Resolving route. {
+    "method": "GET",
+    "path": "\/favicon.ico",
+    "host": "components.test"
+}
+
+[2026-01-12 03:42:44] 🐞 [DEBUG] Route resolved. {
+    "method": "GET",
+    "path": "\/favicon.ico",
+    "name": "",
+    "parameters": [],
+    "middleware": []
+}
+
+[2026-01-12 03:42:44] 🐞 [DEBUG] Assembling route pipeline. {
+    "route": "\/favicon.ico",
+    "middleware": [],
+    "stages": [],
+    "order": [
+        "stages",
+        "middleware",
+        "dispatch"
+    ]
+}
+
+[2026-01-12 03:42:44] 🐞 [DEBUG] Pipeline contains only core dispatcher. []
+
+[2026-01-12 03:42:44] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 03:42:44] 🐞 [DEBUG] Resolving route. {
+    "method": "GET",
+    "path": "\/",
+    "host": "components.test"
+}
+
+[2026-01-12 03:42:44] 🐞 [DEBUG] Route resolved. {
+    "method": "GET",
+    "path": "\/",
+    "name": "home",
+    "parameters": [],
+    "middleware": []
+}
+
+[2026-01-12 03:42:44] 🐞 [DEBUG] Assembling route pipeline. {
+    "route": "home",
+    "middleware": [],
+    "stages": [],
+    "order": [
+        "stages",
+        "middleware",
+        "dispatch"
+    ]
+}
+
+[2026-01-12 03:42:44] 🐞 [DEBUG] Pipeline contains only core dispatcher. []
+
+[2026-01-12 03:42:45] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-12 03:42:45] 🐞 [DEBUG] Resolving route. {
+    "method": "GET",
+    "path": "\/favicon.ico",
+    "host": "components.test"
+}
+
+[2026-01-12 03:42:45] 🐞 [DEBUG] Route resolved. {
+    "method": "GET",
+    "path": "\/favicon.ico",
+    "name": "",
+    "parameters": [],
+    "middleware": []
+}
+
+[2026-01-12 03:42:45] 🐞 [DEBUG] Assembling route pipeline. {
+    "route": "\/favicon.ico",
+    "middleware": [],
+    "stages": [],
+    "order": [
+        "stages",
+        "middleware",
+        "dispatch"
+    ]
+}
+
+[2026-01-12 03:42:45] 🐞 [DEBUG] Pipeline contains only core dispatcher. []
+

@@ -14,28 +14,26 @@ final class PasswordHasher
     /**
      * Hash a password using Argon2id.
      *
-     * @param string $password The plain-text password to hash.
-     *
+     * @param  string  $password  The plain-text password to hash.
      * @return string The hashed password.
      */
-    public function hash(#[SensitiveParameter] string $password) : string
+    public function hash(#[SensitiveParameter] string $password): string
     {
         return password_hash(password: $password, algo: PASSWORD_ARGON2ID, options: [
             'memory_cost' => 65536, // 64MB memory
-            'time_cost'   => 4,     // 4 iterations
-            'threads'     => 2,     // 2 parallel threads
+            'time_cost' => 4,     // 4 iterations
+            'threads' => 2,     // 2 parallel threads
         ]);
     }
 
     /**
      * Verify if the given password matches the hashed password.
      *
-     * @param string $password       The plain-text password.
-     * @param string $hashedPassword The hashed password.
-     *
+     * @param  string  $password  The plain-text password.
+     * @param  string  $hashedPassword  The hashed password.
      * @return bool True if the password matches, false otherwise.
      */
-    public function verify(#[SensitiveParameter] string $password, #[SensitiveParameter] string $hashedPassword) : bool
+    public function verify(#[SensitiveParameter] string $password, #[SensitiveParameter] string $hashedPassword): bool
     {
         return password_verify(password: $password, hash: $hashedPassword);
     }
@@ -43,16 +41,15 @@ final class PasswordHasher
     /**
      * Check if a password hash needs to be rehashed.
      *
-     * @param string $hashedPassword The existing hashed password.
-     *
+     * @param  string  $hashedPassword  The existing hashed password.
      * @return bool True if rehashing is needed, false otherwise.
      */
-    public function needsRehash(#[SensitiveParameter] string $hashedPassword) : bool
+    public function needsRehash(#[SensitiveParameter] string $hashedPassword): bool
     {
         return password_needs_rehash(hash: $hashedPassword, algo: PASSWORD_ARGON2ID, options: [
             'memory_cost' => 65536,
-            'time_cost'   => 4,
-            'threads'     => 2,
+            'time_cost' => 4,
+            'threads' => 2,
         ]);
     }
 }

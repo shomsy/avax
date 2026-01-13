@@ -27,8 +27,6 @@ use SensitiveParameter;
  *   $signature = new SessionSignature(secretKey: $_ENV['SESSION_KEY']);
  *   $hash = $signature->sign($sessionData);
  *   $signature->verify($sessionData, $hash);
- *
- * @package Avax\HTTP\Session\Security
  */
 final class SessionSignature
 {

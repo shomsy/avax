@@ -25,9 +25,13 @@ abstract class Repository
     public function __construct(protected QueryBuilder $queryBuilder) {}
 
     /**
-     * @throws \Exception
+     * @param int $id
+     *
+     * @return object|null
+     * @throws \ReflectionException
+     * @throws \Throwable
      */
-    public function findById(int $id): object|null
+    public function findById(int $id) : object|null
     {
         return $this->findOneBy(conditions: ['id' => $id]);
     }
@@ -38,10 +42,11 @@ abstract class Repository
      * @param array<string, mixed> $conditions Conditions for filtering.
      *
      * @return object|null The found entity or null.
-     * @throws \Exception
-     * @throws \Exception
+     *
+     * @throws \ReflectionException
+     * @throws \Throwable
      */
-    public function findOneBy(array $conditions): object|null
+    public function findOneBy(array $conditions) : object|null
     {
         try {
             $query = $this->query();
@@ -56,16 +61,13 @@ abstract class Repository
         } catch (Exception $exception) {
             $this->logError(
                 message: 'Failed to find one entity by conditions.',
-                context: [
-                    'conditions' => $conditions,
-                    'exception'  => $exception,
-                ]
+                context: compact('conditions', 'exception')
             );
             throw $exception;
         }
     }
 
-    protected function query(): QueryBuilder
+    protected function query() : QueryBuilder
     {
         return $this->queryBuilder->newQuery()->table($this->getTableName());
     }
@@ -75,7 +77,7 @@ abstract class Repository
      *
      * @return string The name of the table.
      */
-    protected function getTableName(): string
+    protected function getTableName() : string
     {
         $entityClass = $this->getEntityClass();
 
@@ -96,7 +98,7 @@ abstract class Repository
      *
      * @return string The fully qualified class name of the entity.
      */
-    abstract protected function getEntityClass(): string;
+    abstract protected function getEntityClass() : string;
 
     // ===== CRUD Methods ===== //
 
@@ -107,17 +109,22 @@ abstract class Repository
      *
      * @return object The mapped entity.
      */
-    abstract protected function mapToEntity(array $data): object;
+    abstract protected function mapToEntity(array $data) : object;
 
-    protected function logError(string $message, array $context = []): void
+    protected function logError(string $message, array $context = []) : void
     {
         logger(message: $message, context: $context, level: 'error');
     }
 
     /**
-     * @throws \Exception
+     * @param int|null $limit
+     * @param int      $offset
+     *
+     * @return array
+     * @throws \ReflectionException
+     * @throws \Throwable
      */
-    public function findAll(int|null $limit = null, int $offset = 0): array
+    public function findAll(int|null $limit = null, int $offset = 0) : array
     {
         $limit ??= 100;
 
@@ -134,8 +141,9 @@ abstract class Repository
      * @param int|null             $offset     Offset for pagination.
      *
      * @return array<object> The found entities.
-     * @throws \Exception
-     * @throws \Exception
+     *
+     * @throws \ReflectionException
+     * @throws \Throwable
      */
     public function findBy(
         array       $conditions,
@@ -143,7 +151,8 @@ abstract class Repository
         string|null $direction = null,
         int|null    $limit = null,
         int|null    $offset = null
-    ): array {
+    ) : array
+    {
         try {
             $query = $this->query();
 
@@ -182,9 +191,12 @@ abstract class Repository
     // ===== Generalized Query Methods ===== //
 
     /**
-     * @throws \Exception
+     * @param object $entity
+     *
+     * @throws \ReflectionException
+     * @throws \Throwable
      */
-    public function save(object $entity): void
+    public function save(object $entity) : void
     {
         $this->beforeSave(entity: $entity);
 
@@ -193,7 +205,7 @@ abstract class Repository
         if (method_exists(object_or_class: $entity, method: 'getId') && $entity->getId() !== null) {
             $this->query()
                 ->where(column: 'id', operator: '=', value: $entity->getId())
-                ->update($data);
+                ->update(values: $data);
         } else {
             $id = $this->query()->insertGetId($data);
 
@@ -205,7 +217,7 @@ abstract class Repository
         $this->afterSave(entity: $entity);
     }
 
-    protected function beforeSave(object $entity): void
+    protected function beforeSave(object $entity) : void
     {
         // Placeholder for pre-save logic.
     }
@@ -217,9 +229,9 @@ abstract class Repository
      *
      * @return array<string, mixed> The database row representation.
      */
-    abstract protected function mapToDatabase(object $entity): array;
+    abstract protected function mapToDatabase(object $entity) : array;
 
-    protected function afterSave(object $entity): void
+    protected function afterSave(object $entity) : void
     {
         // Placeholder for post-save logic.
     }
@@ -227,12 +239,15 @@ abstract class Repository
     // ===== Hooks ===== //
 
     /**
-     * @throws \Exception
+     * @param object $entity
+     *
+     * @throws \ReflectionException
+     * @throws \Throwable
      */
-    public function delete(object $entity): void
+    public function delete(object $entity) : void
     {
         if (! method_exists(object_or_class: $entity, method: 'getId') || $entity->getId() === null) {
-            throw new RuntimeException(message: "Entity must have an ID to be deleted.");
+            throw new RuntimeException(message: 'Entity must have an ID to be deleted.');
         }
 
         $this->query()
@@ -246,10 +261,11 @@ abstract class Repository
      * @param array<string, mixed> $conditions Conditions for filtering.
      *
      * @return bool True if the entity exists, false otherwise.
-     * @throws \Exception
-     * @throws \Exception
+     *
+     * @throws \ReflectionException
+     * @throws \Throwable
      */
-    public function exists(array $conditions): bool
+    public function exists(array $conditions) : bool
     {
         try {
             $query = $this->query();
@@ -276,10 +292,11 @@ abstract class Repository
      * @param array<string, mixed> $conditions Conditions for filtering.
      *
      * @return int The number of matching entities.
-     * @throws \Exception
-     * @throws \Exception
+     *
+     * @throws \ReflectionException
+     * @throws \Throwable
      */
-    public function count(array $conditions): int
+    public function count(array $conditions) : int
     {
         try {
             $query = $this->query();

@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection GlobalVariableUsageInspection */
 
 declare(strict_types=1);
@@ -19,7 +20,6 @@ use UnexpectedValueException;
 
 class JwtIdentity extends Identity implements AuthGuardInterface
 {
-
     /**
      * JwtIdentity constructor.
      *
@@ -45,6 +45,7 @@ class JwtIdentity extends Identity implements AuthGuardInterface
      * @param CredentialsInterface $credentials Subject credentials.
      *
      * @return bool True if authentication is successful, otherwise false.
+     *
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function attempt(#[SensitiveParameter] CredentialsInterface $credentials) : bool
@@ -56,6 +57,7 @@ class JwtIdentity extends Identity implements AuthGuardInterface
      * Retrieves the currently authenticated user based on the JWT token in the Authorization header.
      *
      * @return UserInterface|null The authenticated user, or null if no valid token is found.
+     *
      * @throws \Exception
      * @throws \Exception
      */
@@ -64,7 +66,7 @@ class JwtIdentity extends Identity implements AuthGuardInterface
         $token = $this->getTokenFromHeader();
 
         if ($token === null || $token === '' || $token === '0') {
-            $this->logger?->warning(message: "Authorization token not provided or invalid format.");
+            $this->logger?->warning(message: 'Authorization token not provided or invalid format.');
 
             return null;
         }
@@ -76,9 +78,9 @@ class JwtIdentity extends Identity implements AuthGuardInterface
                 return $this->userProvider->retrieveById(identifier: $decoded->sub);
             }
 
-            $this->logger?->warning(message: "Invalid token claims or token expired.");
+            $this->logger?->warning(message: 'Invalid token claims or token expired.');
         } catch (UnexpectedValueException|DomainException $e) {
-            $this->logger?->error(message: "JWT decoding failed: " . $e->getMessage());
+            $this->logger?->error(message: 'JWT decoding failed: ' . $e->getMessage());
         }
 
         return null;

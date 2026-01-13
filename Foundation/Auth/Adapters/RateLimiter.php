@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Adapters;
 
-
 use Avax\HTTP\Session\Session;
 
 /**
@@ -32,27 +31,27 @@ class RateLimiter
     /**
      * Determines if a user or identifier can attempt an action.
      */
-    public function canAttempt(string $identifier, int|null $maxAttempts = null, int|null $timeWindow = null): bool
+    public function canAttempt(string $identifier, int|null $maxAttempts = null, int|null $timeWindow = null) : bool
     {
         $maxAttempts ??= $this->defaultMaxAttempts;
-        $attempts = $this->getAttempts(identifier: $identifier);
+        $attempts    = $this->getAttempts(identifier: $identifier);
 
         return $attempts < $maxAttempts && ! $this->isLockedOut(identifier: $identifier);
     }
 
-    private function getAttempts(string $identifier): int
+    private function getAttempts(string $identifier) : int
     {
         $attemptsKey = $this->getSessionKey(identifier: $identifier, property: 'attempts');
 
         return $this->session->get(key: $attemptsKey, default: 0);
     }
 
-    private function getSessionKey(string $identifier, string $property): string
+    private function getSessionKey(string $identifier, string $property) : string
     {
         return hash('sha256', sprintf('rate_limiter_%s_%s', $identifier, $property));
     }
 
-    private function isLockedOut(string $identifier): bool
+    private function isLockedOut(string $identifier) : bool
     {
         $lockoutKey   = $this->getSessionKey(identifier: $identifier, property: 'lockout_until');
         $lockoutUntil = $this->session->get(key: $lockoutKey);
@@ -64,7 +63,8 @@ class RateLimiter
         string   $identifier,
         int|null $maxAttempts = null,
         int|null $timeWindow = null
-    ): void {
+    ) : void
+    {
         $maxAttempts ??= $this->defaultMaxAttempts;
         $timeWindow  ??= $this->defaultLockoutDuration;
 
@@ -78,7 +78,7 @@ class RateLimiter
         }
     }
 
-    private function lockOut(string $identifier, int $duration): void
+    private function lockOut(string $identifier, int $duration) : void
     {
         $lockoutKey   = $this->getSessionKey(identifier: $identifier, property: 'lockout_until');
         $lockoutUntil = date('Y-m-d H:i:s', time() + $duration);
@@ -86,7 +86,7 @@ class RateLimiter
         $this->session->put(key: $lockoutKey, value: $lockoutUntil);
     }
 
-    public function resetAttempts(string $identifier): void
+    public function resetAttempts(string $identifier) : void
     {
         $attemptsKey = $this->getSessionKey(identifier: $identifier, property: 'attempts');
         $lockoutKey  = $this->getSessionKey(identifier: $identifier, property: 'lockout_until');

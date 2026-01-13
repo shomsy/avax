@@ -15,9 +15,10 @@ use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
 /**
  * Adapter that exposes SessionEngine through SessionInterface.
  */
-final class SessionAdapter implements SessionInterface, SessionContract
+final class SessionAdapter implements SessionContract, SessionInterface
 {
-    private Flash  $flash;
+    private Flash $flash;
+
     private Events $events;
 
     public function __construct(
@@ -27,8 +28,8 @@ final class SessionAdapter implements SessionInterface, SessionContract
         Events|null                                 $events = null
     )
     {
-        $this->flash  = $flash ?? new Flash();
-        $this->events = $events ?? $this->engine->events() ?? new Events();
+        $this->flash  = $flash ?? new Flash;
+        $this->events = $events ?? $this->engine->events() ?? new Events;
     }
 
     public function events() : Events

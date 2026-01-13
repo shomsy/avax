@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\Foundation\Connection\Pool\Contracts;
+namespace Avax\Database\Avax\Connection\Pool\Contracts;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
 

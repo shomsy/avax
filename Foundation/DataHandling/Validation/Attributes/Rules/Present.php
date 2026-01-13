@@ -23,7 +23,7 @@ use Attribute;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 class Present
 {
-    public function validate(mixed $value, array $data, string $property) : void
+    public function validate(mixed $value, array $data, string $property): void
     {
         // No validation needed; the property being set means it is present.
     }

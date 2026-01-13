@@ -13,7 +13,7 @@ class ReflectionCache
     /**
      * @throws \ReflectionException
      */
-    public static function getReflectionClass(string $dtoClass) : ReflectionClass
+    public static function getReflectionClass(string $dtoClass): ReflectionClass
     {
         return self::$reflectionCache[$dtoClass] ??= new ReflectionClass(objectOrClass: $dtoClass);
     }

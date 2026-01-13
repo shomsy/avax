@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Core;
 
 /**
@@ -25,8 +26,10 @@ readonly class ContainerConfig
      * Create a new config instance with updated settings.
      *
      * @param array $settings Settings to merge
+     *
      * @return self New config instance
-     * @see docs/Core/ContainerConfig.html
+     *
+     * @see docs/Core/ContainerConfig.md
      */
     public function withSettings(array $settings) : self
     {
@@ -36,10 +39,12 @@ readonly class ContainerConfig
     /**
      * Get a setting value with optional default.
      *
-     * @param string $key Setting key
-     * @param mixed $default Default value if key not found
+     * @param string $key     Setting key
+     * @param mixed  $default Default value if key not found
+     *
      * @return mixed Setting value or default
-     * @see docs/Core/ContainerConfig.html
+     *
+     * @see docs/Core/ContainerConfig.md
      */
     public function get(string $key, mixed $default = null) : mixed
     {
@@ -50,8 +55,10 @@ readonly class ContainerConfig
      * Check if a setting exists.
      *
      * @param string $key Setting key to check
+     *
      * @return bool True if setting exists
-     * @see docs/Core/ContainerConfig.html
+     *
+     * @see docs/Core/ContainerConfig.md
      */
     public function has(string $key) : bool
     {

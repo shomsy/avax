@@ -17,30 +17,28 @@ interface AsyncOperationInterface
      *
      * @return mixed The result of the asynchronous operation.
      */
-    public function resolve() : mixed;
+    public function resolve(): mixed;
 
     /**
      * Rejects the asynchronous operation and returns the reason for the rejection.
      *
      * @return mixed The reason for rejection.
      */
-    public function reject() : mixed;
+    public function reject(): mixed;
 
     /**
      * Attaches a callback to be executed when the operation is fulfilled.
      *
-     * @param callable $onFulfilled The callback to execute on success.
-     *
+     * @param  callable  $onFulfilled  The callback to execute on success.
      * @return self The instance for chaining.
      */
-    public function then(callable $onFulfilled) : self;
+    public function then(callable $onFulfilled): self;
 
     /**
      * Attaches a callback to be executed when the operation is rejected.
      *
-     * @param callable $onRejected The callback to execute on failure.
-     *
+     * @param  callable  $onRejected  The callback to execute on failure.
      * @return self The instance for chaining.
      */
-    public function catch(callable $onRejected) : self;
+    public function catch(callable $onRejected): self;
 }

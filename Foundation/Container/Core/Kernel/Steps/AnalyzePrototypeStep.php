@@ -17,14 +17,14 @@ use Throwable;
  * This step performs reflection-based analysis of the service class to build
  * a prototype blueprint, which is then used by subsequent steps for injection.
  *
- * @package Avax\Container\Core\Kernel\Steps
- * @see docs/Core/Kernel/Steps/AnalyzePrototypeStep.md#quick-summary
+ * @see     docs/Core/Kernel/Steps/AnalyzePrototypeStep.md#quick-summary
  */
 final readonly class AnalyzePrototypeStep implements KernelStep
 {
     /**
      * @param ServicePrototypeFactory $prototypeFactory Factory for creating class prototypes.
      * @param bool                    $strictMode       Whether to enforce strict validation.
+     *
      * @see docs/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-__construct
      */
     public function __construct(
@@ -36,22 +36,23 @@ final readonly class AnalyzePrototypeStep implements KernelStep
      * Execute reflection analysis and cache the prototype metadata on the context.
      *
      * @param KernelContext $context The resolution context.
-     * @return void
+     *
      * @throws \Throwable If analysis fails.
+     *
      * @see docs/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-__invoke
      */
-    public function __invoke(KernelContext $context): void
+    public function __invoke(KernelContext $context) : void
     {
         // Check if prototype is already set
-        if ($context->hasMeta('analysis', 'prototype')) {
+        if ($context->hasMeta(namespace: 'analysis', key: 'prototype')) {
             return;
         }
 
         /** @var ServiceDefinition|null $definition */
-        $definition = $context->getMeta('definition', 'instance');
+        $definition = $context->getMeta(namespace: 'definition', key: 'instance');
 
         // Determine the class to analyze
-        $classToAnalyze = $this->determineClassToAnalyze($context->serviceId, $definition);
+        $classToAnalyze = $this->determineClassToAnalyze(serviceId: $context->serviceId, definition: $definition);
 
         if ($classToAnalyze === null || ! class_exists($classToAnalyze)) {
             // Not a class, skip reflection-based prototype analysis
@@ -60,11 +61,11 @@ final readonly class AnalyzePrototypeStep implements KernelStep
 
         try {
             $prototype = $this->prototypeFactory->createFor(class: $classToAnalyze);
-            $context->setMeta('analysis', 'prototype', $prototype);
-            $context->setMeta('analysis', 'completed_at', microtime(as_float: true));
+            $context->setMeta(namespace: 'analysis', key: 'prototype', value: $prototype);
+            $context->setMeta(namespace: 'analysis', key: 'completed_at', value: microtime(as_float: true));
         } catch (Throwable $e) {
-            $context->setMeta('analysis', 'failed', true);
-            $context->setMeta('analysis', 'error', $e->getMessage());
+            $context->setMeta(namespace: 'analysis', key: 'failed', value: true);
+            $context->setMeta(namespace: 'analysis', key: 'error', value: $e->getMessage());
             throw $e;
         }
     }
@@ -74,10 +75,12 @@ final readonly class AnalyzePrototypeStep implements KernelStep
      *
      * @param string                 $serviceId  The abstract service ID.
      * @param ServiceDefinition|null $definition The service definition if available.
+     *
      * @return string|null The class name or null if non-reflectable.
+     *
      * @see docs/Core/Kernel/Steps/AnalyzePrototypeStep.md#method-determineclasstoanalyze
      */
-    private function determineClassToAnalyze(string $serviceId, ServiceDefinition|null $definition): string|null
+    private function determineClassToAnalyze(string $serviceId, ServiceDefinition|null $definition) : string|null
     {
         if ($definition === null) {
             return $serviceId;

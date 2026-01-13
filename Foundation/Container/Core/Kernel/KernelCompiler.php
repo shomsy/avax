@@ -16,7 +16,8 @@ use Throwable;
  * Kernel Compiler - Build-time Logic and Validation
  *
  * Handles service compilation, validation, and cache management.
- * Separated from orchestration to keep ContainerKernel focused on runtime, enabling early error detection and performance optimization.
+ * Separated from orchestration to keep ContainerKernel focused on runtime, enabling early error detection and
+ * performance optimization.
  *
  * @see docs/Core/Kernel/KernelCompiler.md#quick-summary
  */
@@ -28,6 +29,7 @@ final readonly class KernelCompiler
      * @param DefinitionStore         $definitions      Service definitions to compile
      * @param ServicePrototypeFactory $prototypeFactory Factory for creating prototypes
      * @param CollectMetrics|null     $metrics          Optional metrics collector
+     *
      * @see docs/Core/Kernel/KernelCompiler.md#method-__construct
      */
     public function __construct(
@@ -45,15 +47,17 @@ final readonly class KernelCompiler
      *     compilation_time: float,
      *     validation_errors: int
      * } Compilation statistics and results
+     *
      * @throws \Throwable When prototype creation or validation fails (handled internally)
+     *
      * @see docs/Core/Kernel/KernelCompiler.md#method-compile
      */
-    public function compile(): array
+    public function compile() : array
     {
         $startTime        = microtime(true);
         $compiledServices = 0;
         $validationErrors = 0;
-        $verifier         = new VerifyPrototype();
+        $verifier         = new VerifyPrototype;
 
         foreach ($this->definitions->getAllDefinitions() as $definition) {
             try {
@@ -91,11 +95,14 @@ final readonly class KernelCompiler
      * Resolve class name from service definition.
      *
      * @param ServiceDefinition $definition Service definition to resolve
+     *
      * @return string|null Resolved class name or null if not resolvable
+     *
      * @throws \Throwable When reflection analysis fails
+     *
      * @see docs/Core/Kernel/KernelCompiler.md#method-resolvedefinitionclass
      */
-    private function resolveDefinitionClass(ServiceDefinition $definition): string|null
+    private function resolveDefinitionClass(ServiceDefinition $definition) : string|null
     {
         if (is_string($definition->concrete) && $definition->concrete !== '') {
             $candidate = $definition->concrete;
@@ -111,7 +118,6 @@ final readonly class KernelCompiler
             $reflection = $this->prototypeFactory
                 ->getAnalyzer()
                 ->getTypeAnalyzer()
-
                 ->reflectClass(className: $candidate);
         } catch (Throwable) {
             return null;
@@ -123,13 +129,12 @@ final readonly class KernelCompiler
     /**
      * Validate all service definitions without compilation.
      *
-     * @return void
-     * @throws \Avax\Container\Features\Core\Exceptions\ResolutionException If validation fails
+     * @throws \Throwable
      * @see docs/Core/Kernel/KernelCompiler.md#method-validate
      */
-    public function validate(): void
+    public function validate() : void
     {
-        $verifier = new VerifyPrototype();
+        $verifier = new VerifyPrototype;
 
         foreach ($this->definitions->getAllDefinitions() as $definition) {
             $class = $this->resolveDefinitionClass(definition: $definition);
@@ -144,10 +149,9 @@ final readonly class KernelCompiler
     /**
      * Clear all caches.
      *
-     * @return void
      * @see docs/Core/Kernel/KernelCompiler.md#method-clearcache
      */
-    public function clearCache(): void
+    public function clearCache() : void
     {
         $this->prototypeFactory->getCache()->clear();
     }
@@ -156,10 +160,12 @@ final readonly class KernelCompiler
      * Get compilation statistics with fallback defaults.
      *
      * @param array|null $compilationStats Existing stats or null for defaults
+     *
      * @return array Compilation statistics
+     *
      * @see docs/Core/Kernel/KernelCompiler.md#method-stats
      */
-    public function stats(array|null $compilationStats): array
+    public function stats(array|null $compilationStats) : array
     {
         return $compilationStats ?? [
             'compiled_services' => $this->prototypeFactory->getCache()->count(),

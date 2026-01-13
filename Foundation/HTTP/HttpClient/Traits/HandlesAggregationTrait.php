@@ -11,13 +11,13 @@ trait HandlesAggregationTrait
     /**
      * Asynchronously aggregates data from multiple endpoints.
      *
-     * @param array $urls The list of URLs to request data from.
-     *
+     * @param  array  $urls  The list of URLs to request data from.
      * @return PromiseInterface A promise that resolves with the aggregated results.
+     *
      * @throws \Exception
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function aggregateDataAsynchronously(array $urls) : PromiseInterface
+    public function aggregateDataAsynchronously(array $urls): PromiseInterface
     {
         $this->dataLogger->info(message: 'Starting data aggregation for multiple endpoints.');
 

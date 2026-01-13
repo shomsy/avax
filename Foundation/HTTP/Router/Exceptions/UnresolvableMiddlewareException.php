@@ -9,7 +9,6 @@ use RuntimeException;
 /**
  * This exception is thrown when middleware cannot be resolved.
  *
- * @package Avax\HTTP\Router\Exceptions
  *
  * @see     RuntimeException
  *

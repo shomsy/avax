@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Tools\Console;
 
 use Avax\Container\Container;
@@ -122,6 +123,7 @@ readonly class DiagnoseCommand
      * - Summary and recommendations
      *
      * @return void Outputs diagnostic report to stdout
+     *
      * @see docs/Tools/Console/DiagnoseCommand.md#method-execute
      */
     public function execute() : void
@@ -140,7 +142,7 @@ readonly class DiagnoseCommand
         echo sprintf('Definitions: %s%s', $stats['definitions_count'], PHP_EOL);
         echo sprintf('Instances (Cached): %s%s', $stats['instances_count'], PHP_EOL);
         echo "Circular Depth Limit: 50\n";
-        echo "Lifecycle Scopes: " . ($this->container->getDefinitionStore()->getAllContextual() !== [] ? count($this->container->getDefinitionStore()->getAllContextual()) : 0) . " (Contextual Rules)\n";
+        echo 'Lifecycle Scopes: ' . ($this->container->getDefinitionStore()->getAllContextual() !== [] ? count($this->container->getDefinitionStore()->getAllContextual()) : 0) . " (Contextual Rules)\n";
 
         echo "\n--- Resolution Timeline ---\n";
         $dashboard = new DiagnosticsDashboard(
@@ -153,7 +155,7 @@ readonly class DiagnoseCommand
         echo "\n--- Memory Snapshots ---\n";
         $snapshot = $this->container->metrics()?->getSnapshot() ?? [];
         foreach ($snapshot as $key => $value) {
-            echo str_pad($key . ":", 25) . $value . "\n";
+            echo str_pad($key . ':', 25) . $value . "\n";
         }
 
         echo "\n--- End of Report ---\n";

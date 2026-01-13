@@ -4,30 +4,36 @@
 
 - This file serves as the physical memory (storage) for resolved singleton and scoped instances.
 - It exists to maintain a stack of "Scopes" that isolate instances based on their lifecycle (e.g., Requests, Sessions).
-- It removes the complexity of managing instance lifecycles by providing a managed stack for entering and exiting operational boundaries.
+- It removes the complexity of managing instance lifecycles by providing a managed stack for entering and exiting
+  operational boundaries.
 
 ### For Humans: What This Means (Summary)
 
-This is the container’s **Instance Warehouse**. When the container builds a singleton or a scoped service, it doesn't want to build it again later. It stores the finished object here so it can "check it out" later without any extra work.
+This is the container’s **Instance Warehouse**. When the container builds a singleton or a scoped service, it doesn't
+want to build it again later. It stores the finished object here so it can "check it out" later without any extra work.
 
 ## Terminology (MANDATORY, EXPANSIVE)
 
 - **Singleton Storage**: A permanent shelf for objects that live as long as the application is running.
-  - In this file: The `$singletons` array.
-  - Why it matters: It ensures that things like "Database Connections" are created only once and shared by everyone.
+    - In this file: The `$singletons` array.
+    - Why it matters: It ensures that things like "Database Connections" are created only once and shared by everyone.
 - **Scoped Storage**: A temporary box for objects that only live for a short time (like one web request).
-  - In this file: The `$scopes` property (a stack of arrays).
-  - Why it matters: It allows you to have "Per-Request" services that are shared *during* the request but destroyed right after.
+    - In this file: The `$scopes` property (a stack of arrays).
+    - Why it matters: It allows you to have "Per-Request" services that are shared *during* the request but destroyed
+      right after.
 - **Scope Stack**: Multiple levels of isolation (e.g., a "Job" scope inside a "Worker" scope).
-  - In this file: New scopes are added to the end of the `$scopes` array.
-  - Why it matters: It enables complex nested lifecycles where you can start a sub-task and clean up its memory without affecting the main app.
+    - In this file: New scopes are added to the end of the `$scopes` array.
+    - Why it matters: It enables complex nested lifecycles where you can start a sub-task and clean up its memory
+      without affecting the main app.
 - **Termination**: A full "Wipe" of all instances.
-  - In this file: The `terminate()` method.
-  - Why it matters: Essential for long-running processes (like workers) to prevent "Memory Leaks" by periodically cleaning everything out.
+    - In this file: The `terminate()` method.
+    - Why it matters: Essential for long-running processes (like workers) to prevent "Memory Leaks" by periodically
+      cleaning everything out.
 
 ### For Humans: What This Means (Terminology)
 
-This registry manages **Permanent Shelves** (Singletons) and **Temporary Boxes** (Scopes). It keeps track of which box you are currently using and makes sure that when you're done with a box, everything inside it is thrown away properly.
+This registry manages **Permanent Shelves** (Singletons) and **Temporary Boxes** (Scopes). It keeps track of which box
+you are currently using and makes sure that when you're done with a box, everything inside it is thrown away properly.
 
 ## Think of It
 
@@ -40,11 +46,15 @@ Think of a **Hotel Reception Desk**:
 
 ### For Humans: What This Means (Analogy)
 
-The Registry is the system that manages "Rooms" (Scopes) and "Furniture" (Singletons) to make sure guests don't wake up to find the previous guest's half-eaten sandwich in their bed.
+The Registry is the system that manages "Rooms" (Scopes) and "Furniture" (Singletons) to make sure guests don't wake up
+to find the previous guest's half-eaten sandwich in their bed.
 
 ## Story Example
 
-You are running a web server. When a request comes in, you call `beginScope()`. During that request, your code asks for the `CurrentUser`. The container builds it once and saves it in the `ScopeRegistry`. Ten different classes use that same `CurrentUser` object. When the response is sent, you call `endScope()`. The `CurrentUser` object is destroyed, so the *next* request doesn't accidentally think it's still the previous person logged in.
+You are running a web server. When a request comes in, you call `beginScope()`. During that request, your code asks for
+the `CurrentUser`. The container builds it once and saves it in the `ScopeRegistry`. Ten different classes use that same
+`CurrentUser` object. When the response is sent, you call `endScope()`. The `CurrentUser` object is destroyed, so the
+*next* request doesn't accidentally think it's still the previous person logged in.
 
 ### For Humans: What This Means (Story)
 
@@ -62,15 +72,21 @@ Imagine a desk with drawers.
 
 ### For Humans: What This Means (Walkthrough)
 
-If you have a service that should disappear after a specific task is done, you should use a "Scoped" lifetime and the `ScopeRegistry` will handle the cleanup for you.
+If you have a service that should disappear after a specific task is done, you should use a "Scoped" lifetime and the
+`ScopeRegistry` will handle the cleanup for you.
 
 ## How It Works (Technical)
 
-The `ScopeRegistry` uses a stack-based approach for scopes. When `beginScope()` is called, a new empty array is pushed onto the `$scopes` stack. All následné `set()` calls write to this top-most array. When `get()` is called, the registry checks the top scope first, then falls back to the `$singletons` layer. This "Last-In-First-Out" approach ensures that nested scopes correctly override or isolate data. Crucially, `terminate()` clears both layers completely to prevent memory bloat in daemonized environments.
+The `ScopeRegistry` uses a stack-based approach for scopes. When `beginScope()` is called, a new empty array is pushed
+onto the `$scopes` stack. All následné `set()` calls write to this top-most array. When `get()` is called, the registry
+checks the top scope first, then falls back to the `$singletons` layer. This "Last-In-First-Out" approach ensures that
+nested scopes correctly override or isolate data. Crucially, `terminate()` clears both layers completely to prevent
+memory bloat in daemonized environments.
 
 ### For Humans: What This Means (Technical)
 
-It always looks at its "Current Task" (the top scope) first. If it can't find what it needs there, it looks in its "Permanent Memory" (Singletons). This makes it very smart about which objects to give you at any given moment.
+It always looks at its "Current Task" (the top scope) first. If it can't find what it needs there, it looks in its "
+Permanent Memory" (Singletons). This makes it very smart about which objects to give you at any given moment.
 
 ## Architecture Role
 
@@ -156,12 +172,15 @@ The "Emergency Stop / Reset" button. Clears all memory.
 
 ## Risks & Trade-offs
 
-- **Memory Leaks**: If you call `beginScope()` but forget to call `endScope()`, the stack will grow forever until the app crashes.
-- **Race Conditions**: In multi-threaded environments (like Swoole), a single registry shared across requests can cause data contamination (this specific implementation is designed for single-threaded lifecycles).
+- **Memory Leaks**: If you call `beginScope()` but forget to call `endScope()`, the stack will grow forever until the
+  app crashes.
+- **Race Conditions**: In multi-threaded environments (like Swoole), a single registry shared across requests can cause
+  data contamination (this specific implementation is designed for single-threaded lifecycles).
 
 ### For Humans: What This Means (Risks)
 
-Always make sure you "Close what you Open". If you start a scope, use a `try...finally` block to make sure it ends, or your server might run out of RAM!
+Always make sure you "Close what you Open". If you start a scope, use a `try...finally` block to make sure it ends, or
+your server might run out of RAM!
 
 ## Related Files & Folders
 
@@ -171,4 +190,5 @@ Always make sure you "Close what you Open". If you start a scope, use a `try...f
 
 ### For Humans: What This Means (Relationships)
 
-The **Engine** does the work, the **Registry** holds the results, and the **Manager** makes it easy for you to control the flow.
+The **Engine** does the work, the **Registry** holds the results, and the **Manager** makes it easy for you to control
+the flow.

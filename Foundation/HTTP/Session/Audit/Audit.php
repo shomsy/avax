@@ -37,26 +37,20 @@ use Throwable;
  * - ✅ Context-aware — captures environment, IP, and session metadata
  * - ✅ Sensitive-data sanitization — masks tokens, passwords, secrets
  *
- * @package Avax\HTTP\Session\Features
  * @author  —
  */
 final readonly class Audit
 {
-
     /**
      * The PSR-3 compliant logger used to record audit events.
      *
      * This is resolved automatically using the `LoggerFactory`
      * if no custom logger is provided in the constructor.
-     *
-     * @var LoggerInterface
      */
     private LoggerInterface $logger;
 
     /**
      * Optional log file path for fallback or standalone use.
-     *
-     * @var string|null
      */
     private string|null $logPath;
 
@@ -81,7 +75,7 @@ final readonly class Audit
         #[SensitiveParameter] private SessionContextInterface|null $sessionContext = null
     )
     {
-        $this->logger  = $logger ?? (new LoggerFactory())->createLoggerFor(channel: 'session-audit');
+        $this->logger  = $logger ?? (new LoggerFactory)->createLoggerFor(channel: 'session-audit');
         $this->logPath = $logPath;
     }
 
@@ -102,8 +96,6 @@ final readonly class Audit
      *     'new_id'  => 'xyz789'
      * ]);
      * ```
-     *
-     * @return void
      */
     public function record(string $event, array $data = []) : void
     {
@@ -171,6 +163,7 @@ final readonly class Audit
         foreach ($data as $key => $value) {
             if (is_array(value: $value)) {
                 $clean[$key] = $this->sanitize(data: $value);
+
                 continue;
             }
 
@@ -190,8 +183,6 @@ final readonly class Audit
      * Write the audit payload to file in JSON format.
      *
      * @param array<string, mixed> $payload Structured log data.
-     *
-     * @return void
      */
     private function writeToFile(array $payload) : void
     {

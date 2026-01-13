@@ -13,12 +13,11 @@ if (! function_exists('env')) {
      * This function fetches the value of the specified environment variable. If the variable
      * is not set, it returns the provided default value.
      *
-     * @param string $key     The name of the environment variable.
-     * @param mixed  $default The default value to return if the environment variable is not set.
-     *
+     * @param  string  $key  The name of the environment variable.
+     * @param  mixed  $default  The default value to return if the environment variable is not set.
      * @return mixed The value of the environment variable or the default value if not set.
      */
-    function env(string $key, mixed $default = null) : mixed
+    function env(string $key, mixed $default = null): mixed
     {
         $value = getenv(name: $key);
 
@@ -33,12 +32,12 @@ if (! function_exists('env')) {
 /**
  * Loads an environment configuration file and throws an exception if the file does not exist.
  *
- * @param string $filePath The path to the .env file to load.
- * @param string $context  The context of the .env file (used in error messages).
+ * @param  string  $filePath  The path to the .env file to load.
+ * @param  string  $context  The context of the .env file (used in error messages).
  *
  * @throws Exception If the .env file does not exist.
  */
-function loadEnvFile(string $filePath, string $context) : void
+function loadEnvFile(string $filePath, string $context): void
 {
     if (! file_exists($filePath)) {
         throw new Exception(
@@ -63,13 +62,13 @@ function loadEnvFile(string $filePath, string $context) : void
  *
  * @throws Exception If any required .env file is missing.
  */
-function loadEnvFiles() : void
+function loadEnvFiles(): void
 {
     /* Load the root environment file */
-    loadEnvFile(filePath: __DIR__ . '/.env', context: 'root');
+    loadEnvFile(filePath: __DIR__.'/.env', context: 'root');
 
     /* Load Docker-specific environment variables */
-    $dockerEnv = __DIR__ . '/docker/mysql/.env';
+    $dockerEnv = __DIR__.'/docker/mysql/.env';
     if (file_exists($dockerEnv)) {
         loadEnvFile(filePath: $dockerEnv, context: 'Docker MySQL');
     }

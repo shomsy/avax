@@ -22,40 +22,39 @@ use Throwable;
  */
 final class GuzzleClient extends AbstractHttpClient
 {
+    use HandlesAggregationTrait;
+    use HandlesAsyncRequestsTrait;
+    use HandlesHttpErrorsTrait;
     use HandlesHttpResponseTrait;
     use SendsHttpRequestsTrait;
-    use HandlesAsyncRequestsTrait;
-    use HandlesAggregationTrait;
-    use HandlesHttpErrorsTrait;
 
     /**
      * Constructor for the class.
      *
-     * @param HttpClient      $httpClient      Allows handling of HTTP requests.
-     * @param LoggerInterface $dataLogger      Logger to capture and record data-related events.
-     * @param ResponseFactory $responseFactory Factory to create response objects.
+     * @param  HttpClient  $httpClient  Allows handling of HTTP requests.
+     * @param  LoggerInterface  $dataLogger  Logger to capture and record data-related events.
+     * @param  ResponseFactory  $responseFactory  Factory to create response objects.
      */
     public function __construct(
-        private readonly HttpClient      $httpClient,
+        private readonly HttpClient $httpClient,
         private readonly LoggerInterface $dataLogger,
         private readonly ResponseFactory $responseFactory,
-    )
-    {
+    ) {
         parent::__construct(logger: $dataLogger);
     }
 
     /**
      * Sends an asynchronous HTTP request.
      *
-     * @param string $method   The HTTP method (GET, POST, etc.).
-     * @param string $endpoint The URL endpoint.
-     * @param array  $options  Additional options for the request.
-     *
+     * @param  string  $method  The HTTP method (GET, POST, etc.).
+     * @param  string  $endpoint  The URL endpoint.
+     * @param  array  $options  Additional options for the request.
      * @return AsyncOperationInterface A promise-like interface that resolves with structured response data.
+     *
      * @throws \Throwable
      * @throws \Throwable
      */
-    public function sendAsyncRequest(string $method, string $endpoint, array $options = []) : AsyncOperationInterface
+    public function sendAsyncRequest(string $method, string $endpoint, array $options = []): AsyncOperationInterface
     {
         try {
             $promise = $this->httpClient->requestAsync(method: $method, uri: $endpoint, options: $options);
@@ -73,23 +72,23 @@ final class GuzzleClient extends AbstractHttpClient
     /**
      * Logs request errors for debugging and monitoring purposes.
      *
-     * @param string    $method    The HTTP method used.
-     * @param string    $endpoint  The URL endpoint.
-     * @param array     $options   Additional options for the request.
-     * @param Throwable $throwable The exception that occurred.
+     * @param  string  $method  The HTTP method used.
+     * @param  string  $endpoint  The URL endpoint.
+     * @param  array  $options  Additional options for the request.
+     * @param  Throwable  $throwable  The exception that occurred.
      */
-    private function logRequestError(string $method, string $endpoint, array $options, Throwable $throwable) : void
+    private function logRequestError(string $method, string $endpoint, array $options, Throwable $throwable): void
     {
         $this->dataLogger->error(
             message: 'HTTP Request failed',
             context: [
-                'method'    => $method,
-                'endpoint'  => $endpoint,
-                'options'   => $options,
+                'method' => $method,
+                'endpoint' => $endpoint,
+                'options' => $options,
                 'exception' => [
                     'message' => $throwable->getMessage(),
-                    'code'    => $throwable->getCode(),
-                    'trace'   => $throwable->getTraceAsString(),
+                    'code' => $throwable->getCode(),
+                    'trace' => $throwable->getTraceAsString(),
                 ],
             ]
         );

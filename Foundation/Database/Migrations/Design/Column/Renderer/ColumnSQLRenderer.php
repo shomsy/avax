@@ -19,14 +19,12 @@ final class ColumnSQLRenderer
      *
      * -- intent: coordinate the rendering of name, type, and all active modifiers.
      *
-     * @param ColumnDefinition $column  The design metadata
-     * @param GrammarInterface $grammar The dialect technician for wrapping
-     *
-     * @return string
+     * @param  ColumnDefinition  $column  The design metadata
+     * @param  GrammarInterface  $grammar  The dialect technician for wrapping
      */
-    public function render(ColumnDefinition $column, GrammarInterface $grammar) : string
+    public function render(ColumnDefinition $column, GrammarInterface $grammar): string
     {
-        $sql = $grammar->wrap(value: $column->name) . ' ' . $column->type;
+        $sql = $grammar->wrap(value: $column->name).' '.$column->type;
 
         // UNSIGNED modifier (must come before NULL/NOT NULL)
         if (isset($column->attributes['unsigned']) && $column->attributes['unsigned']) {
@@ -35,20 +33,20 @@ final class ColumnSQLRenderer
 
         // Character set and collation (MySQL specific)
         if (isset($column->attributes['charset'])) {
-            $sql .= ' CHARACTER SET ' . $column->attributes['charset'];
+            $sql .= ' CHARACTER SET '.$column->attributes['charset'];
         }
 
         if (isset($column->attributes['collation'])) {
-            $sql .= ' COLLATE ' . $column->attributes['collation'];
+            $sql .= ' COLLATE '.$column->attributes['collation'];
         }
 
         // Generated/Computed columns
         if (isset($column->attributes['virtual_as'])) {
-            $sql .= ' AS (' . $column->attributes['virtual_as'] . ') VIRTUAL';
+            $sql .= ' AS ('.$column->attributes['virtual_as'].') VIRTUAL';
         }
 
         if (isset($column->attributes['stored_as'])) {
-            $sql .= ' AS (' . $column->attributes['stored_as'] . ') STORED';
+            $sql .= ' AS ('.$column->attributes['stored_as'].') STORED';
         }
 
         // NULL/NOT NULL constraint
@@ -61,7 +59,7 @@ final class ColumnSQLRenderer
 
         // DEFAULT value
         if (array_key_exists(key: 'default', array: $column->attributes)) {
-            $sql .= ' DEFAULT ' . $this->formatDefault(value: $column->attributes['default']);
+            $sql .= ' DEFAULT '.$this->formatDefault(value: $column->attributes['default']);
         }
 
         // CURRENT_TIMESTAMP defaults
@@ -89,7 +87,7 @@ final class ColumnSQLRenderer
 
         // COMMENT
         if (isset($column->attributes['comment'])) {
-            $sql .= " COMMENT '" . addslashes(string: $column->attributes['comment']) . "'";
+            $sql .= " COMMENT '".addslashes(string: $column->attributes['comment'])."'";
         }
 
         return $sql;
@@ -100,11 +98,9 @@ final class ColumnSQLRenderer
      *
      * -- intent: ensure that data types are appropriately quoted or handled as keywords.
      *
-     * @param mixed $value Raw data value
-     *
-     * @return string
+     * @param  mixed  $value  Raw data value
      */
-    private function formatDefault(mixed $value) : string
+    private function formatDefault(mixed $value): string
     {
         if (is_string(value: $value)) {
             return "'{$value}'";

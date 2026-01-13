@@ -4,11 +4,14 @@
 
 This folder is about running the container inside a real application lifecycle.
 
-Technically, `Features/Operate` contains the “application-facing” orchestration pieces: bootstrapping, configuration wiring, scope lifecycle management, and shutdown actions. It’s where the container becomes operational, not just definable.
+Technically, `Features/Operate` contains the “application-facing” orchestration pieces: bootstrapping, configuration
+wiring, scope lifecycle management, and shutdown actions. It’s where the container becomes operational, not just
+definable.
 
 ### For Humans: What This Means (Summary)
 
-This is where the container goes from “a set of rules” to “a system that actually runs during your app’s start and finish”.
+This is where the container goes from “a set of rules” to “a system that actually runs during your app’s start and
+finish”.
 
 ## What Belongs Here
 
@@ -32,7 +35,9 @@ Operate is the stage manager, not the script writer or the actors.
 
 ## How Files Collaborate
 
-Boot components construct and configure the container for a specific environment. Scope components manage per-request/per-job boundaries for scoped lifetimes. Shutdown components clean up at the end of the lifecycle so state doesn’t leak.
+Boot components construct and configure the container for a specific environment. Scope components manage
+per-request/per-job boundaries for scoped lifetimes. Shutdown components clean up at the end of the lifecycle so state
+doesn’t leak.
 
 ### For Humans: What This Means (Collaboration)
 

@@ -17,8 +17,6 @@ use InvalidArgumentException;
  * - XSS (via HttpOnly)
  * - Man-in-the-middle (via Secure)
  * - CSRF (via SameSite)
- *
- * @package Avax\HTTP\Session\Security
  */
 final readonly class CookieManager
 {
@@ -69,8 +67,6 @@ final readonly class CookieManager
      * - SameSite=Strict
      * - Secure=true
      * - HttpOnly=true
-     *
-     * @return self
      */
     public static function strict(callable|null $cookieSource = null) : self
     {
@@ -88,8 +84,6 @@ final readonly class CookieManager
      * - SameSite=Lax
      * - Secure=true
      * - HttpOnly=true
-     *
-     * @return self
      */
     public static function lax(callable|null $cookieSource = null) : self
     {
@@ -107,8 +101,6 @@ final readonly class CookieManager
      * - SameSite=Lax
      * - Secure=false
      * - HttpOnly=true
-     *
-     * @return self
      */
     public static function development(callable|null $cookieSource = null) : self
     {
@@ -214,8 +206,6 @@ final readonly class CookieManager
      * OWASP ASVS 3.2.2 Compliant
      *
      * Applies security policy to PHP session cookies.
-     *
-     * @return void
      */
     public function configureSessionCookie() : void
     {

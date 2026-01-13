@@ -13,8 +13,6 @@ use InvalidArgumentException;
  * Provides methods to sort and manipulate the order of items within a collection.
  * This trait allows sorting in ascending or descending order based on a key or callback,
  * reversing the order of items, and sorting by keys.
- *
- * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait SortOperationsTrait
 {
@@ -25,11 +23,10 @@ trait SortOperationsTrait
      *
      * Classes using this trait must implement this method.
      *
-     * @param array $items The new collection of items.
-     *
+     * @param  array  $items  The new collection of items.
      * @return static A new instance with the updated collection.
      */
-    abstract public function setItems(array $items) : static;
+    abstract public function setItems(array $items): static;
 
     /**
      * Sort the collection in descending order based on a given key or callback.
@@ -37,8 +34,7 @@ trait SortOperationsTrait
      * This method sorts the collection in descending order either by a specified key or using a custom comparison
      * function. It returns a new instance with the sorted items, ensuring immutability.
      *
-     * @param Closure|string $key The key to sort by, or a callable function to compare items.
-     *
+     * @param  Closure|string  $key  The key to sort by, or a callable function to compare items.
      * @return static A new sorted collection instance.
      *
      * @throws InvalidArgumentException If a string key is provided but does not exist in one or more items.
@@ -49,7 +45,7 @@ trait SortOperationsTrait
      * // $sortedDesc contains ['cherry', 'banana', 'apple']
      * ```
      */
-    public function sortDesc(Closure|string $key) : static
+    public function sortDesc(Closure|string $key): static
     {
         return $this->sortBy(key: $key)->reverse();
     }
@@ -69,7 +65,7 @@ trait SortOperationsTrait
      * // $reversed contains ['cherry', 'banana', 'apple']
      * ```
      */
-    public function reverse() : static
+    public function reverse(): static
     {
         return new static(items: array_reverse(array: $this->getItems(), preserve_keys: true));
     }
@@ -81,7 +77,7 @@ trait SortOperationsTrait
      *
      * @return array The current collection of items.
      */
-    abstract public function getItems() : array;
+    abstract public function getItems(): array;
 
     /**
      * Sort the collection based on a given key or callback.
@@ -89,8 +85,7 @@ trait SortOperationsTrait
      * This method sorts the collection in ascending order either by a specified key or using a custom comparison
      * function. It returns a new instance with the sorted items, ensuring immutability.
      *
-     * @param Closure|string $key The key to sort by, or a callable function to compare items.
-     *
+     * @param  Closure|string  $key  The key to sort by, or a callable function to compare items.
      * @return static A new sorted collection instance.
      *
      * @throws InvalidArgumentException If a string key is provided but does not exist in one or more items.
@@ -110,7 +105,7 @@ trait SortOperationsTrait
      * // ]
      * ```
      */
-    public function sortBy(Closure|string $key) : static
+    public function sortBy(Closure|string $key): static
     {
         $sortedItems = $this->getItems();
 
@@ -123,7 +118,7 @@ trait SortOperationsTrait
                 }
             }
 
-            uasort(array: $sortedItems, callback: static fn($a, $b) : int => $a[$key] <=> $b[$key]);
+            uasort(array: $sortedItems, callback: static fn ($a, $b): int => $a[$key] <=> $b[$key]);
         } elseif (is_callable(value: $key)) {
             uasort(array: $sortedItems, callback: $key);
         } else {
@@ -147,7 +142,7 @@ trait SortOperationsTrait
      * // $sortedKeys contains ['a' => 'apple', 'b' => 'banana', 'c' => 'cherry']
      * ```
      */
-    public function sortKeys() : static
+    public function sortKeys(): static
     {
         $sorted = $this->getItems();
         ksort(array: $sorted);
@@ -169,7 +164,7 @@ trait SortOperationsTrait
      * // $sortedKeysDesc contains ['c' => 'cherry', 'b' => 'banana', 'a' => 'apple']
      * ```
      */
-    public function sortKeysDesc() : static
+    public function sortKeysDesc(): static
     {
         $sorted = $this->getItems();
         krsort(array: $sorted);
@@ -184,8 +179,7 @@ trait SortOperationsTrait
      * elements. If the key is a string, it is expected that the collection's elements are associative arrays
      * containing the specified key. If a callback function is provided, it is used to dynamically compare elements.
      *
-     * @param Closure|string $key The key to sort by or a callable function for comparison.
-     *
+     * @param  Closure|string  $key  The key to sort by or a callable function for comparison.
      * @return static A new sorted collection instance.
      *
      * @throws InvalidArgumentException If a string key is provided but does not exist in one or more elements,
@@ -220,7 +214,7 @@ trait SortOperationsTrait
      * // ]
      * ```
      */
-    public function sortAsc(Closure|string $key) : static
+    public function sortAsc(Closure|string $key): static
     {
         return $this->sortBy(key: $key);
     }
@@ -232,10 +226,9 @@ trait SortOperationsTrait
      * It accepts an associative array where keys represent the attributes to sort by,
      * and values specify the sorting order (`'asc'` for ascending, `'desc'` for descending).
      *
-     * @param array $criteria Associative array of sorting criteria.
-     *                        Keys are the item attributes, and values are sorting orders.
-     *                        Example: `['name' => 'asc', 'age' => 'desc']`.
-     *
+     * @param  array  $criteria  Associative array of sorting criteria.
+     *                           Keys are the item attributes, and values are sorting orders.
+     *                           Example: `['name' => 'asc', 'age' => 'desc']`.
      * @return static A new collection instance sorted by the given criteria.
      *
      * ```
@@ -262,10 +255,10 @@ trait SortOperationsTrait
      * // ]
      * ```
      */
-    public function sortByMultiple(array $criteria) : static
+    public function sortByMultiple(array $criteria): static
     {
         $items = $this->getItems();
-        usort(array: $items, callback: static function (array $a, array $b) use ($criteria) : int {
+        usort(array: $items, callback: static function (array $a, array $b) use ($criteria): int {
             foreach ($criteria as $key => $order) {
                 $result = $a[$key] <=> $b[$key];
                 if ($result !== 0) {

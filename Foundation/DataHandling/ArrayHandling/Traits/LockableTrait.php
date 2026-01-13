@@ -20,8 +20,6 @@ use LogicException;
  * - Domain-driven value object snapshots
  * - Immutable API response structures
  * - Secure, read-only configuration holders
- *
- * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait LockableTrait
 {
@@ -38,7 +36,7 @@ trait LockableTrait
      *
      * @return static Returns the same instance for fluent chaining.
      */
-    public function lock() : static
+    public function lock(): static
     {
         // Enables the immutability flag
         $this->locked = true;
@@ -54,7 +52,7 @@ trait LockableTrait
      *
      * @return bool True if locked, false otherwise.
      */
-    public function isLocked() : bool
+    public function isLocked(): bool
     {
         return $this->locked;
     }
@@ -67,7 +65,7 @@ trait LockableTrait
      *
      * @throws LogicException If mutation is attempted on a locked instance.
      */
-    protected function assertNotLocked() : void
+    protected function assertNotLocked(): void
     {
         // Enforces immutability post-lock
         if ($this->locked === true) {

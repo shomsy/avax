@@ -11,13 +11,12 @@ use Illuminate\Database\Migrations\Migration;
  *
  * -- intent: showcase complete type coverage across MySQL, PostgreSQL, and SQL Server.
  */
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Execute the migration to create the comprehensive types table.
-     *
-     * @return void
      */
-    public function up() : void
+    public function up(): void
     {
         $this->create(table: 'all_sql_types_demo', callback: function (Blueprint $table) {
             // ========================================
@@ -150,10 +149,8 @@ return new class extends Migration {
 
     /**
      * Reverse the migration by dropping the table.
-     *
-     * @return void
      */
-    public function down() : void
+    public function down(): void
     {
         $this->drop(table: 'all_sql_types_demo');
     }

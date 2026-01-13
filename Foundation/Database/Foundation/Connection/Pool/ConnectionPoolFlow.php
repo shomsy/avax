@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\Foundation\Connection\Pool;
+namespace Avax\Database\Avax\Connection\Pool;
 
 /**
  * Fluent builder for constructing database connection pools.
@@ -21,20 +21,14 @@ final class ConnectionPoolFlow
 
     /**
      * Start the setup wizard for a new connection pool.
-     *
-     * @return self
      */
     public static function begin() : self
     {
-        return new self();
+        return new self;
     }
 
     /**
      * Provide configuration settings for the pool.
-     *
-     * @param array $config
-     *
-     * @return self
      */
     public function using(array $config) : self
     {
@@ -45,8 +39,6 @@ final class ConnectionPoolFlow
 
     /**
      * Finish the wizard and return the constructed pool.
-     *
-     * @return ConnectionPool
      */
     public function pool() : ConnectionPool
     {

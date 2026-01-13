@@ -10,7 +10,7 @@ use Avax\Auth\Adapters\SessionIdentity;
 use Avax\Auth\Authenticator;
 use Avax\Auth\Contracts\AuthInterface;
 use Avax\Auth\Contracts\IdentityInterface;
-use Avax\Container\Features\Operate\Boot\ServiceProvider;
+use Avax\Container\Providers\ServiceProvider;
 
 /**
  * Service Provider for authentication services.
@@ -22,7 +22,6 @@ class AuthenticationServiceProvider extends ServiceProvider
     /**
      * Register authentication services: hasher, rate limiter, identity, authenticator, and alias.
      *
-     * @return void
      * @see docs/Providers/Auth/AuthenticationServiceProvider.md#method-register
      */
     public function register() : void
@@ -38,7 +37,7 @@ class AuthenticationServiceProvider extends ServiceProvider
 
         // Bind 'auth' alias
         $this->app->singleton(abstract: 'auth', concrete: function () {
-            return $this->app->get(AuthInterface::class);
+            return $this->app->get(id: AuthInterface::class);
         });
     }
 }

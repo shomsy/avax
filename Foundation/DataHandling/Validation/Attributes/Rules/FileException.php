@@ -32,10 +32,10 @@ class FileException
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (! is_file(filename: $value)) {
-            throw new ValidationException(message: $property . ' must be a file.');
+            throw new ValidationException(message: $property.' must be a file.');
         }
     }
 }

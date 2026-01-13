@@ -19,14 +19,13 @@ final readonly class TableDropCommand
     /**
      * Handle the command execution.
      *
-     * @param string $tables Comma-separated or single table name
-     *
+     * @param  string  $tables  Comma-separated or single table name
      * @return int Exit code
      */
-    public function handle(string $tables) : int
+    public function handle(string $tables): int
     {
         echo "\033[33mCAUTION: You are about to DROP the following table(s): {$tables}\033[0m\n";
-        echo "Are you sure? [y/N]: ";
+        echo 'Are you sure? [y/N]: ';
 
         $confirmation = trim(string: fgets(stream: STDIN));
         if (strtolower(string: $confirmation) !== 'y') {

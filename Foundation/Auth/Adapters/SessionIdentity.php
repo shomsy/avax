@@ -38,6 +38,7 @@ class SessionIdentity implements IdentityInterface
      * @param CredentialsInterface $credentials The user's credentials (e.g., email and password).
      *
      * @return bool True on successful authentication, false otherwise.
+     *
      * @throws AuthenticationException If authentication fails.
      * @throws AuthFailed
      * @throws AuthFailed
@@ -104,4 +105,3 @@ class SessionIdentity implements IdentityInterface
         return $this->session->has(key: self::USER_KEY);
     }
 }
-

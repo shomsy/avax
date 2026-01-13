@@ -51,7 +51,6 @@ enum AppPath : string
      * This case represents the path to Composer's autoload file, which is
      * essential for automatically loading classes in the project based on the
      * PSR-4 autoloading standard. This is typically located in the vendor directory.
-     *
      */
     case AUTOLOAD_PATH = 'vendor/autoload.php'; // Removed the leading slash
 
@@ -126,6 +125,7 @@ enum AppPath : string
      * If the root cannot be determined, an exception is thrown to prevent incorrect path resolution.
      *
      * @return string The absolute path to the project's root directory.
+     *
      * @throws RuntimeException If the project root cannot be found.
      */
     public static function getRoot() : string
@@ -146,5 +146,4 @@ enum AppPath : string
         // (5) Return the root path
         return $currentDir . DIRECTORY_SEPARATOR;
     }
-
 }

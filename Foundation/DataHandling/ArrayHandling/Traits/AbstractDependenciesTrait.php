@@ -17,14 +17,14 @@ trait AbstractDependenciesTrait
      *
      * @return array The items in the collection.
      */
-    abstract protected function getItems() : array;
+    abstract protected function getItems(): array;
 
     /**
      * Sets the items in the collection.
      *
      * This method is abstract and should be implemented in any class using this trait.
      *
-     * @param array $items The items to set in the collection.
+     * @param  array  $items  The items to set in the collection.
      */
-    abstract protected function setItems(array $items) : static;
+    abstract protected function setItems(array $items): static;
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Container\Features\Define\Store;
 
 use Avax\Container\Features\Core\Enum\ServiceLifetime;
-use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 use Avax\DataHandling\ArrayHandling\Arrhae;
 use Avax\Repository\Repository;
 use DateTimeImmutable;
@@ -71,11 +70,10 @@ use Throwable;
  * - Ensures referential integrity for dependencies
  * - Handles concurrent updates with optimistic locking
  *
- * @package Avax\Container\Define\Store
  * @see     ServiceDefinitionEntity For the managed entity type
  * @see     ServiceDiscovery For high-level service discovery operations
  * @see     Repository For base repository functionality
- * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#quick-summary
+ * @see     docs/Features/Define/Store/ServiceDefinitionRepository.md#quick-summary
  */
 class ServiceDefinitionRepository extends Repository
 {
@@ -104,16 +102,19 @@ class ServiceDefinitionRepository extends Repository
      * @param string|null $environment Target environment name, or null for all environments
      *
      * @return Arrhae Collection of active ServiceDefinitionEntity instances
+     *
+     * @throws \ReflectionException
+     * @throws \Throwable
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-findactiveservices
      */
-    public function findActiveServices(string|null $environment = null): Arrhae
+    public function findActiveServices(string|null $environment = null) : Arrhae
     {
-        $query = $this->query()->where('is_active', true);
+        $query = $this->query()->where(column: 'is_active', operator: true);
 
         if ($environment !== null) {
-            $query->where(static function ($q) use ($environment) {
-                $q->whereNull('environment')
-                    ->orWhere('environment', $environment);
+            $query->where(column: static function ($q) use ($environment) {
+                $q->whereNull(column: 'environment')
+                    ->orWhere(column: 'environment', operator: $environment);
             });
         }
 
@@ -151,10 +152,12 @@ class ServiceDefinitionRepository extends Repository
      * @param string $operator Logical operator: 'AND' or 'OR' (default: 'AND')
      *
      * @return Arrhae Collection of matching ServiceDefinitionEntity instances
+     *
      * @throws \Exception
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-findbytags
      */
-    public function findByTags(array $tags, string $operator = 'AND'): Arrhae
+    public function findByTags(array $tags, string $operator = 'AND') : Arrhae
     {
         $services = $this->findAll();
 
@@ -211,10 +214,12 @@ class ServiceDefinitionRepository extends Repository
      * @param string $type Fully qualified interface or class name to match
      *
      * @return Arrhae Collection of services implementing/extending the specified type
+     *
      * @throws \Exception
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-findbytype
      */
-    public function findByType(string $type): Arrhae
+    public function findByType(string $type) : Arrhae
     {
         $services = $this->findAll();
 
@@ -240,10 +245,13 @@ class ServiceDefinitionRepository extends Repository
      * @param ServiceLifetime $lifetime The lifetime scope to match
      *
      * @return Arrhae Collection of services with the specified lifetime
+     *
      * @throws \Exception
+     * @throws \Throwable
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-findbylifetime
      */
-    public function findByLifetime(ServiceLifetime $lifetime): Arrhae
+    public function findByLifetime(ServiceLifetime $lifetime) : Arrhae
     {
         return Arrhae::make(items: $this->findBy(conditions: ['lifetime' => $lifetime->value]));
     }
@@ -267,10 +275,12 @@ class ServiceDefinitionRepository extends Repository
      * - Consider caching results for frequent access
      *
      * @return array Associative array containing various service statistics
+     *
      * @throws \Exception
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-getservicestats
      */
-    public function getServiceStats(): array
+    public function getServiceStats() : array
     {
         $services = $this->findAll();
 
@@ -287,7 +297,7 @@ class ServiceDefinitionRepository extends Repository
         ];
     }
 
-    private function getTagStatistics(array $services): array
+    private function getTagStatistics(array $services) : array
     {
         $tagCounts = [];
 
@@ -302,7 +312,7 @@ class ServiceDefinitionRepository extends Repository
         return $tagCounts;
     }
 
-    private function getMostUsedServices(array $services): array
+    private function getMostUsedServices(array $services) : array
     {
         $usage = [];
 
@@ -344,10 +354,12 @@ class ServiceDefinitionRepository extends Repository
      * ```
      *
      * @return array Analysis results with cycles, orphans, most_depended, and complexity data
+     *
      * @throws \Exception
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-analyzedependencies
      */
-    public function analyzeDependencies(): array
+    public function analyzeDependencies() : array
     {
         $services = $this->findAll();
         $graph    = [];
@@ -368,7 +380,7 @@ class ServiceDefinitionRepository extends Repository
         ];
     }
 
-    private function detectCycles(array $graph): array
+    private function detectCycles(array $graph) : array
     {
         $cycles         = [];
         $visited        = [];
@@ -383,7 +395,7 @@ class ServiceDefinitionRepository extends Repository
         return $cycles;
     }
 
-    private function dfsCycleDetection(string $node, array $graph, array &$visited, array &$recursionStack, array &$cycles): void
+    private function dfsCycleDetection(string $node, array $graph, array &$visited, array &$recursionStack, array &$cycles) : void
     {
         $visited[$node]        = true;
         $recursionStack[$node] = true;
@@ -400,7 +412,7 @@ class ServiceDefinitionRepository extends Repository
         unset($recursionStack[$node]);
     }
 
-    private function extractCycle(string $start, string $end, array $recursionStack): array
+    private function extractCycle(string $start, string $end, array $recursionStack) : array
     {
         $cycle   = [$start];
         $current = $start;
@@ -414,7 +426,7 @@ class ServiceDefinitionRepository extends Repository
         return $cycle;
     }
 
-    private function findOrphanServices(array $graph): array
+    private function findOrphanServices(array $graph) : array
     {
         $allServices = array_keys($graph);
         $referenced  = [];
@@ -428,7 +440,7 @@ class ServiceDefinitionRepository extends Repository
         return array_diff($allServices, array_keys($referenced));
     }
 
-    private function findMostDependedServices(array $graph): array
+    private function findMostDependedServices(array $graph) : array
     {
         $usage = [];
 
@@ -477,10 +489,12 @@ class ServiceDefinitionRepository extends Repository
      * @param float  $threshold Similarity threshold (0-100, default: 70)
      *
      * @return Arrhae Collection of services matching the search criteria
+     *
      * @throws \Exception
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-searchservices
      */
-    public function searchServices(string $query, float $threshold = 70): Arrhae
+    public function searchServices(string $query, float $threshold = 70) : Arrhae
     {
         $services = $this->findAll();
 
@@ -489,7 +503,7 @@ class ServiceDefinitionRepository extends Repository
             $searchable = [
                 $service->id,
                 $service->class,
-                $service->description ?? ''
+                $service->description ?? '',
             ];
 
             foreach ($searchable as $text) {
@@ -504,7 +518,7 @@ class ServiceDefinitionRepository extends Repository
 
     // Private helper methods
 
-    private function calculateSimilarity(string $str1, string $str2): float
+    private function calculateSimilarity(string $str1, string $str2) : float
     {
         // Simple similarity calculation - in production you'd use a proper library
         $str1 = strtolower($str1);
@@ -556,9 +570,10 @@ class ServiceDefinitionRepository extends Repository
      * @param array $servicesData Array of service definition data arrays
      *
      * @return array Import results with counts and error details
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-importservices
      */
-    public function importServices(array $servicesData): array
+    public function importServices(array $servicesData) : array
     {
         $results = ['imported' => 0, 'skipped' => 0, 'errors' => []];
 
@@ -570,7 +585,7 @@ class ServiceDefinitionRepository extends Repository
             } catch (Throwable $e) {
                 $results['errors'][] = [
                     'data'  => $data,
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ];
                 $results['skipped']++;
             }
@@ -599,11 +614,14 @@ class ServiceDefinitionRepository extends Repository
      *
      * @param ServiceDefinitionEntity $service The service definition to save
      *
-     * @return void
      * @throws \Exception
+     * @throws \Throwable
+     * @throws \Throwable
+     * @throws \Throwable
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-saveservicedefinition
      */
-    public function saveServiceDefinition(ServiceDefinitionEntity $service): void
+    public function saveServiceDefinition(ServiceDefinitionEntity $service) : void
     {
         $existing = $this->findOneBy(conditions: ['id' => $service->id]);
 
@@ -657,16 +675,19 @@ class ServiceDefinitionRepository extends Repository
      * @param array $filters Associative array of column => value filters
      *
      * @return array Array of service definition arrays
+     *
      * @throws \DateMalformedStringException
+     * @throws \ReflectionException
+     * @throws \Throwable
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-exportservices
      */
-    public function exportServices(array $filters = []): array
+    public function exportServices(array $filters = []) : array
     {
         $query = $this->query();
 
         // Apply filters
         foreach ($filters as $column => $value) {
-            $query->where($column, $value);
+            $query->where(column: $column, operator: $value);
         }
 
         $services = $query->get();
@@ -687,10 +708,12 @@ class ServiceDefinitionRepository extends Repository
      * @param array $data Raw data from database/cache
      *
      * @return ServiceDefinitionEntity Hydrated entity instance
+     *
      * @throws \DateMalformedStringException
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-maptoentity
      */
-    protected function mapToEntity(array $data): ServiceDefinitionEntity
+    protected function mapToEntity(array $data) : ServiceDefinitionEntity
     {
         return ServiceDefinitionEntity::fromArray(data: $data);
     }
@@ -723,20 +746,22 @@ class ServiceDefinitionRepository extends Repository
      * @param int|null $daysOld Minimum age in days for cleanup (default: 30)
      *
      * @return array Cleanup results with deletion count and errors
+     *
      * @throws \DateMalformedStringException
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-cleanup
      */
-    public function cleanup(int|null $daysOld = 30): array
+    public function cleanup(int|null $daysOld = 30) : array
     {
         $results = ['deleted' => 0, 'errors' => []];
 
         if ($daysOld) {
-            $cutoffDate = (new DateTimeImmutable())->modify(modifier: "-{$daysOld} days");
+            $cutoffDate = (new DateTimeImmutable)->modify(modifier: "-{$daysOld} days");
 
             try {
                 $deleted = $this->query()
-                    ->where('is_active', false)
-                    ->where('updated_at', '<', $cutoffDate->format(format: 'Y-m-d H:i:s'))
+                    ->where(column: 'is_active', operator: false)
+                    ->where(column: 'updated_at', operator: '<', value: $cutoffDate->format(format: 'Y-m-d H:i:s'))
                     ->delete();
 
                 $results['deleted'] = $deleted;
@@ -755,9 +780,10 @@ class ServiceDefinitionRepository extends Repository
      * Must return the fully qualified class name of ServiceDefinitionEntity.
      *
      * @return string The entity class name
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-getentityclass
      */
-    protected function getEntityClass(): string
+    protected function getEntityClass() : string
     {
         return ServiceDefinitionEntity::class;
     }
@@ -772,9 +798,10 @@ class ServiceDefinitionRepository extends Repository
      * @param object $entity The entity to map (must be ServiceDefinitionEntity)
      *
      * @return array Database-compatible array representation
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-maptodatabase
      */
-    protected function mapToDatabase(object $entity): array
+    protected function mapToDatabase(object $entity) : array
     {
         assert($entity instanceof ServiceDefinitionEntity);
 

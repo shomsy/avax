@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Observe\Inspect;
 
 use Avax\Container\Observe\Metrics\MetricsCollector;
@@ -20,6 +21,7 @@ readonly class DiagnosticsManager
      * @param Inspector               $inspector Diagnostics inspector instance.
      * @param MetricsCollector|null   $metrics   Collector to store timing metrics.
      * @param ResolutionTimeline|null $timeline  Timeline tracker for resolution operations.
+     *
      * @see docs/Observe/Inspect/DiagnosticsManager.md#method-__construct
      */
     public function __construct(
@@ -34,6 +36,7 @@ readonly class DiagnosticsManager
      * @param string|null $id Service identifier to inspect; when null returns the inspector itself
      *
      * @return array|Inspector Inspection result array or the inspector instance
+     *
      * @see docs/Observe/Inspect/DiagnosticsManager.md#method-inspect
      */
     public function inspect(string|null $id = null) : array|Inspector
@@ -48,7 +51,6 @@ readonly class DiagnosticsManager
     /**
      * Retrieve the metrics collector when telemetry is enabled.
      *
-     * @return MetricsCollector|null
      * @see docs/Observe/Inspect/DiagnosticsManager.md#method-metrics
      */
     public function metrics() : MetricsCollector|null
@@ -59,7 +61,6 @@ readonly class DiagnosticsManager
     /**
      * Get the timeline used for resolution diagnostics.
      *
-     * @return ResolutionTimeline|null
      * @see docs/Observe/Inspect/DiagnosticsManager.md#method-timeline
      */
     public function timeline() : ResolutionTimeline|null

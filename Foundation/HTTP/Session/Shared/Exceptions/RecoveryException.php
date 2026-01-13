@@ -16,28 +16,28 @@ namespace Avax\HTTP\Session\Shared\Exceptions;
  */
 final class RecoveryException extends SessionException
 {
-    public static function transactionAlreadyStarted() : self
+    public static function transactionAlreadyStarted(): self
     {
         return new self(message: 'Recovery transaction already started.');
     }
 
-    public static function noActiveTransaction(string $operation) : self
+    public static function noActiveTransaction(string $operation): self
     {
         return new self(message: "No active recovery transaction to {$operation}.");
     }
 
-    public static function invalidTransactionState() : self
+    public static function invalidTransactionState(): self
     {
         return new self(message: 'Recovery transaction state is invalid.');
     }
 
-    public static function integrityCheckFailed(string $name) : self
+    public static function integrityCheckFailed(string $name): self
     {
         return new self(message: "Recovery backup integrity check failed for '{$name}'.");
     }
 
-    public static function transactionFailed(string $reason) : self
+    public static function transactionFailed(string $reason): self
     {
-        return new self(message: 'Recovery transaction failed: ' . $reason);
+        return new self(message: 'Recovery transaction failed: '.$reason);
     }
 }

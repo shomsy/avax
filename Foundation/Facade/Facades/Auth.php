@@ -31,8 +31,6 @@ final class Auth extends BaseFacade
 {
     /**
      * The unique key representing the authentication service in the application container.
-     *
-     * @var string
      */
     protected static string $accessor = AuthInterface::class;
 }

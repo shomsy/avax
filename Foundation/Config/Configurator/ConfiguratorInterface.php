@@ -25,7 +25,7 @@ interface ConfiguratorInterface
      * @return array<string, string> Associative array where the key is the configuration namespace
      *                               and the value is the path to the configuration file.
      */
-    public function configurationFilePaths() : array;
+    public function configurationFilePaths(): array;
 
     /**
      * Retrieves a configuration value by its key with an optional default.
@@ -34,14 +34,14 @@ interface ConfiguratorInterface
      * hard-coded configuration keys and enhancing code consistency. If the key does not exist,
      * a default value can be returned.
      *
-     * @param string $key     The configuration key to retrieve.
-     * @param mixed  $default A default value to return if the key does not exist.
-     *                        Use meaningful defaults relevant to the configuration context.
-     *
+     * @param  string  $key  The configuration key to retrieve.
+     * @param  mixed  $default  A default value to return if the key does not exist.
+     *                          Use meaningful defaults relevant to the configuration context.
      * @return mixed The configuration value, or the default if the key is missing.
+     *
      * @throws InvalidArgumentException if the configuration key does not exist and no default is provided.
      */
-    public function get(string $key, mixed $default = null) : mixed;
+    public function get(string $key, mixed $default = null): mixed;
 
     /**
      * Determines if a configuration key exists.
@@ -49,11 +49,10 @@ interface ConfiguratorInterface
      * Enables conditional logic based on the presence of specific configuration settings,
      * improving code robustness by ensuring configuration values are available when needed.
      *
-     * @param string $key The configuration key to check.
-     *
+     * @param  string  $key  The configuration key to check.
      * @return bool True if the key exists in the configuration, false otherwise.
      */
-    public function has(string $key) : bool;
+    public function has(string $key): bool;
 
     /**
      * Returns all configuration settings as a collection.
@@ -63,7 +62,7 @@ interface ConfiguratorInterface
      *
      * @return Collection The complete set of configuration data.
      */
-    public function all() : Collection;
+    public function all(): Collection;
 
     /**
      * Refreshes the configuration data by reloading from files and updating the cache.
@@ -73,5 +72,5 @@ interface ConfiguratorInterface
      *
      * @return Collection The refreshed configuration data.
      */
-    public function refresh() : Collection;
+    public function refresh(): Collection;
 }

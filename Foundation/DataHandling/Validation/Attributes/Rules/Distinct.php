@@ -26,10 +26,10 @@ class Distinct
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (count(value: $value) !== count(value: array_unique(array: $value))) {
-            throw new ValidationException(message: $property . ' field has a duplicate value.');
+            throw new ValidationException(message: $property.' field has a duplicate value.');
         }
     }
 }

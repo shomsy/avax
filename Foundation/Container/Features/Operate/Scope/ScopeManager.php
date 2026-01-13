@@ -7,11 +7,10 @@ namespace Avax\Container\Features\Operate\Scope;
 /**
  * Public-facing manager for container service scopes and shared instances.
  *
- * Direct management of the {@see ScopeRegistry} to provide a safe API for entering, 
+ * Direct management of the {@see ScopeRegistry} to provide a safe API for entering,
  * exiting, and clearing operational scopes across the application lifecycle.
  *
- * @package Avax\Container\Features\Operate\Scope
- * @see docs/Features/Operate/Scope/ScopeManager.md
+ * @see     docs/Features/Operate/Scope/ScopeManager.md
  */
 final readonly class ScopeManager
 {
@@ -19,6 +18,7 @@ final readonly class ScopeManager
      * Initializes the manager with a scope storage backend.
      *
      * @param ScopeRegistry $registry Underlying scope storage.
+     *
      * @see docs/Features/Operate/Scope/ScopeManager.md#method-__construct
      */
     public function __construct(private ScopeRegistry $registry) {}
@@ -27,10 +27,12 @@ final readonly class ScopeManager
      * Determine if a service instance is currently stored in active scopes or singletons.
      *
      * @param string $abstract The service identifier.
+     *
      * @return bool True if an instance exists.
+     *
      * @see docs/Features/Operate/Scope/ScopeManager.md#method-has
      */
-    public function has(string $abstract): bool
+    public function has(string $abstract) : bool
     {
         return $this->registry->has(abstract: $abstract);
     }
@@ -39,10 +41,12 @@ final readonly class ScopeManager
      * Retrieve a resolved instance from the registry.
      *
      * @param string $abstract The service identifier.
+     *
      * @return mixed|null The instance or null if not found.
+     *
      * @see docs/Features/Operate/Scope/ScopeManager.md#method-get
      */
-    public function get(string $abstract): mixed
+    public function get(string $abstract) : mixed
     {
         return $this->registry->get(abstract: $abstract);
     }
@@ -52,9 +56,10 @@ final readonly class ScopeManager
      *
      * @param string $abstract The service identifier.
      * @param mixed  $instance The object/instance to store.
+     *
      * @see docs/Features/Operate/Scope/ScopeManager.md#method-set
      */
-    public function set(string $abstract, mixed $instance): void
+    public function set(string $abstract, mixed $instance) : void
     {
         $this->registry->set(abstract: $abstract, instance: $instance);
     }
@@ -64,11 +69,32 @@ final readonly class ScopeManager
      *
      * @param string $abstract The service identifier.
      * @param mixed  $instance The object/instance to store globally.
+     *
      * @see docs/Features/Operate/Scope/ScopeManager.md#method-instance
      */
-    public function instance(string $abstract, mixed $instance): void
+    public function instance(string $abstract, mixed $instance) : void
     {
         $this->registry->addSingleton(abstract: $abstract, instance: $instance);
+    }
+
+    /**
+     * Run a callable within a scope boundary.
+     *
+     * @template T
+     *
+     * @param callable():T $callback
+     *
+     * @return T
+     */
+    public function run(callable $callback) : mixed
+    {
+        $this->beginScope();
+
+        try {
+            return $callback();
+        } finally {
+            $this->endScope();
+        }
     }
 
     /**
@@ -76,7 +102,7 @@ final readonly class ScopeManager
      *
      * @see docs/Features/Operate/Scope/ScopeManager.md#method-beginscope
      */
-    public function beginScope(): void
+    public function beginScope() : void
     {
         $this->registry->beginScope();
     }
@@ -86,7 +112,7 @@ final readonly class ScopeManager
      *
      * @see docs/Features/Operate/Scope/ScopeManager.md#method-endscope
      */
-    public function endScope(): void
+    public function endScope() : void
     {
         $this->registry->endScope();
     }
@@ -96,7 +122,7 @@ final readonly class ScopeManager
      *
      * @see docs/Features/Operate/Scope/ScopeManager.md#method-terminate
      */
-    public function terminate(): void
+    public function terminate() : void
     {
         $this->registry->terminate();
     }

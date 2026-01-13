@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Cache;
 
-use Avax\HTTP\Router\Support\RouteCollector;
-use Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException;
+use Avax\HTTP\Router\Support\RouteRegistry;
+use JsonException;
 use RuntimeException;
-use SplFileInfo;
 
 /**
  * A service responsible for compiling application routes into a single cache file.
@@ -28,112 +27,66 @@ final readonly class RouteCacheCompiler
      * @param string $directory  The absolute path to the directory containing `*.routes.php` files.
      * @param string $outputFile The absolute file path where the compiled routes cache will be stored.
      *
-     * @return void
-     *
-     * @throws RuntimeException                   Thrown in cases where route compilation fails
-     *                                            (e.g., no routes are defined, or file I/O fails).
-     * @throws PhpVersionNotSupportedException    Thrown when the PHP version does not support
-     *                                            Closure serialization methods used.
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function compile(string $directory, string $outputFile) : void
     {
-        // Initialize an empty array to hold serialized routes.
         $routes = [];
 
-        // Iterate over every route file within the provided directory.
-        foreach ($this->getRouteFilesFromDirectory(baseDir: $directory) as $file) {
-            // Evaluate the route definition file to register its routes with the collector.
-            require $file->getPathname();
+        $locator  = new RouteFileLocator;
+        $registry = new RouteRegistry;
 
-            // Retrieve and flush buffered RouteBuilder instances from the RouteCollector.
-            $builders = RouteCollector::flushBuffered();
+        foreach ($locator->discover(baseDir: $directory) as $file) {
+            $registry->scoped(closure: static function () use ($file, &$routes, $registry) : void {
+                require $file->getPathname();
 
-            // If no builders are registered, skip this file.
-            if (empty($builders)) {
-                continue;
-            }
+                $builders = $registry->flush();
 
-            // Traverse each RouteBuilder, compiling their route definitions.
-            foreach ($builders as $builder) {
-                // Compile each route into a directive that also serializes the action logic.
-                foreach ($builder->build() as $route) {
-                    // Serialize the route after preparing it with a serialized action.
-                    $routes[] = serialize(value: $route->withSerializedAction());
+                if (empty($builders)) {
+                    return;
                 }
-            }
+
+                foreach ($builders as $builder) {
+                    $route = $builder->build();
+
+                    if ($route->usesClosure()) {
+                        continue;
+                    }
+
+                    $routes[] = $route->toArray();
+                }
+            });
         }
 
-        // If no routes have been registered across any of the files, throw an exception.
         if (empty($routes)) {
             throw new RuntimeException(message: 'No routes were registered. Check your route files.');
         }
 
-        // Generate the content for the PHP cache file containing all compiled routes.
-        $cacheContent = $this->generateCacheFileContent(serializedRoutes: $routes);
+        $cacheContent = $this->generateCacheFileContent(routes: $routes);
 
-        // Attempt to write the generated cache content to the specified output file.
         if (! file_put_contents(filename: $outputFile, data: $cacheContent)) {
             throw new RuntimeException(message: "Failed to write route cache to: {$outputFile}");
         }
+
+        $manifest = RouteCacheManifest::buildFromDirectory(baseDir: $directory);
+        $manifest->writeTo(metadataPath: RouteCacheManifest::metadataPath(cachePath: $outputFile));
     }
 
     /**
-     * Discovers all route definition files within the provided directory.
+     * Generates the JSON content to be written in the cache file.
      *
-     * This method searches for files matching the naming pattern `*.routes.php`
-     * and converts their file paths into SplFileInfo objects for further processing.
+     * Uses secure JSON format instead of PHP code to prevent code injection attacks.
      *
-     * @param string $baseDir The base directory path in which to scan for route definition files.
+     * @param array $routes A list of route definition arrays.
      *
-     * @return list<SplFileInfo> A list of SplFileInfo objects representing discovered route files.
-     *
-     * @throws RuntimeException Thrown when the directory is inaccessible or unreadable.
+     * @return string The resultant JSON file's content as a string.
      */
-    private function getRouteFilesFromDirectory(string $baseDir) : array
+    private function generateCacheFileContent(array $routes) : string
     {
-        // Verify that the provided base directory is both accessible and readable.
-        if (! is_dir(filename: $baseDir) || ! is_readable(filename: $baseDir)) {
-            throw new RuntimeException(message: "Routes directory '{$baseDir}' is not accessible.");
+        try {
+            return json_encode($routes, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        } catch (JsonException $exception) {
+            throw new RuntimeException(message: 'Failed to encode route cache as JSON.', previous: $exception);
         }
-
-        // Use glob to find all PHP files adhering to the "*.routes.php" pattern.
-        $files = glob(pattern: "{$baseDir}/*.routes.php");
-
-        // Convert each file path into an SplFileInfo instance and return the resulting array.
-        return array_map(
-            callback: static fn(string $path) => new SplFileInfo(filename: $path),
-            array   : $files ?: [] // Default to an empty array if no files match.
-        );
-    }
-
-    /**
-     * Generates the PHP code to be written in the cache file.
-     *
-     * Given an array of serialized route definitions, this method composes the final
-     * PHP content that will be saved. The resulting file contains an associative array
-     * with each serialized route deserialized at runtime upon inclusion.
-     *
-     * @param array<string> $serializedRoutes A list of serialized route definitions.
-     *
-     * @return string The resultant PHP file's content as a string.
-     */
-    private function generateCacheFileContent(array $serializedRoutes) : string
-    {
-        // Start the creation of cache content with a PHP opening tag and comments.
-        $code = "<?php\n\n/** Auto-generated route cache. Do not edit manually. */\n\nreturn [\n";
-
-        // Append each serialized route using unserialize function calls.
-        foreach ($serializedRoutes as $route) {
-            // Escape single quotes to ensure code safety within double-quote strings.
-            $escaped = str_replace(search: "'", replace: "\\'", subject: $route);
-
-            // Append the unserialized route definition to the array.
-            $code .= "    unserialize('{$escaped}'),\n";
-        }
-
-        // Close the array and return the complete PHP content as a string.
-        $code .= "];\n";
-
-        return $code;
     }
 }

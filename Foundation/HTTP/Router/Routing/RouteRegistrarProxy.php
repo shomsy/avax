@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
+use Avax\HTTP\Router\Support\RouteRegistry;
+
 /**
  * Proxy that wraps a RouteBuilder and lazily registers the route
  * only once it's finalized (via name(), build(), or register()).
@@ -16,56 +18,40 @@ final class RouteRegistrarProxy
 
     private readonly HttpRequestRouter $router;
 
+    private readonly RouteRegistry $registry;
+
     private bool $registered = false;
 
     /**
      * Initializes proxy with Router and Builder.
-     *
-     * @param HttpRequestRouter $router
-     * @param RouteBuilder      $builder
      */
-    public function __construct(HttpRequestRouter $router, RouteBuilder $builder)
+    public function __construct(HttpRequestRouter $router, RouteBuilder $builder, RouteRegistry $registry)
     {
-        $this->router  = $router;
-        $this->builder = $builder;
+        $this->router   = $router;
+        $this->builder  = $builder;
+        $this->registry = $registry;
     }
 
     /**
      * Assigns a route name and triggers registration.
-     *
-     * @param string $name
-     *
-     * @return self
      */
     public function name(string $name) : self
     {
         $this->builder->name(name: $name);
 
-        return $this->register();
+        $this->register();
+
+        return $this;
     }
 
     /**
      * Explicitly triggers registration (if not already).
-     *
-     * @return self
      */
     public function register() : self
     {
         if (! $this->registered) {
-            $definition = $this->builder->build();
-
-            $this->router->registerRoute(
-                method       : $definition->method,
-                path         : $definition->path,
-                action       : $definition->action,
-                middleware   : $definition->middleware,
-                name         : $definition->name,
-                constraints  : $definition->constraints,
-                defaults     : $definition->defaults,
-                domain       : $definition->domain,
-                attributes   : $definition->attributes,
-                authorization: $definition->authorization
-            );
+            // Add route builder to registry for later processing
+            $this->registry->add(builder: $this->builder);
 
             $this->registered = true;
         }
@@ -76,12 +62,10 @@ final class RouteRegistrarProxy
     /**
      * Finalizes and returns the RouteDefinition (registers first).
      *
-     * @return RouteDefinition
+     * @internal Use fluent methods instead.
      */
     public function build() : RouteDefinition
     {
-        $this->register();
-
         return $this->builder->build();
     }
 
@@ -163,5 +147,13 @@ final class RouteRegistrarProxy
         $this->builder->action(action: $action);
 
         return $this;
+    }
+
+    /**
+     * Auto-register route when proxy is destroyed (end of statement).
+     */
+    public function __destruct()
+    {
+        $this->register();
     }
 }

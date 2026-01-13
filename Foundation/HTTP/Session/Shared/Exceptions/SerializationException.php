@@ -11,8 +11,6 @@ use Throwable;
  * SerializationException
  *
  * Thrown when serialization or deserialization operations fail.
- *
- * @package Avax\HTTP\Session\Shared\Exceptions
  */
 final class SerializationException extends RuntimeException
 {
@@ -21,8 +19,6 @@ final class SerializationException extends RuntimeException
      *
      * @param string         $reason   Reason for failure.
      * @param Throwable|null $previous Previous exception.
-     *
-     * @return self
      */
     public static function serializationFailed(string $reason, Throwable|null $previous = null) : self
     {
@@ -38,8 +34,6 @@ final class SerializationException extends RuntimeException
      *
      * @param string         $reason   Reason for failure.
      * @param Throwable|null $previous Previous exception.
-     *
-     * @return self
      */
     public static function deserializationFailed(string $reason, Throwable|null $previous = null) : self
     {
@@ -52,8 +46,6 @@ final class SerializationException extends RuntimeException
 
     /**
      * Create exception for compression failure.
-     *
-     * @return self
      */
     public static function compressionFailed() : self
     {
@@ -62,8 +54,6 @@ final class SerializationException extends RuntimeException
 
     /**
      * Create exception for decompression failure.
-     *
-     * @return self
      */
     public static function decompressionFailed() : self
     {
@@ -72,8 +62,6 @@ final class SerializationException extends RuntimeException
 
     /**
      * Create exception for integrity check failure.
-     *
-     * @return self
      */
     public static function integrityCheckFailed() : self
     {
@@ -84,8 +72,6 @@ final class SerializationException extends RuntimeException
      * Create exception for invalid format.
      *
      * @param string $reason Reason for invalid format.
-     *
-     * @return self
      */
     public static function invalidFormat(string $reason) : self
     {
@@ -97,8 +83,6 @@ final class SerializationException extends RuntimeException
      *
      * @param string         $reason   Reason for failure.
      * @param Throwable|null $previous Previous exception.
-     *
-     * @return self
      */
     public static function jsonEncodeFailed(string $reason, Throwable|null $previous = null) : self
     {
@@ -114,8 +98,6 @@ final class SerializationException extends RuntimeException
      *
      * @param string         $reason   Reason for failure.
      * @param Throwable|null $previous Previous exception.
-     *
-     * @return self
      */
     public static function jsonDecodeFailed(string $reason, Throwable|null $previous = null) : self
     {

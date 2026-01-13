@@ -1,0 +1,198 @@
+[2026-01-11 03:17:15] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 03:17:16] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 13:19:08] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 15:01:43] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 15:01:43] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:01] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:01] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:02] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:02] ❌ [ERROR] Construction failed for [Avax\HTTP\Router\Router]: rename(C:\Users\shomsy\PhpstormProjects\components/storage/cache\Avax_HTTP_Router_Router.php.tmp.79844f26c3a93897,C:\Users\shomsy\PhpstormProjects\components/storage/cache\Avax_HTTP_Router_Router.php): Access is denied (code: 5) {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php",
+    "line": 104,
+    "exception": {
+        "message": "Construction failed for [Avax\\HTTP\\Router\\Router]: rename(C:\\Users\\shomsy\\PhpstormProjects\\components\/storage\/cache\\Avax_HTTP_Router_Router.php.tmp.79844f26c3a93897,C:\\Users\\shomsy\\PhpstormProjects\\components\/storage\/cache\\Avax_HTTP_Router_Router.php): Access is denied (code: 5)",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php",
+        "line": 104,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(212): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(161): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(110): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveDefinitionBinding(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(115): Avax\\Container\\Features\\Actions\\Resolve\\Engine->Avax\\Container\\Features\\Actions\\Resolve\\{closure}()",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(94): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(46): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(140): Avax\\Container\\Core\\Kernel\\KernelRuntime->get('Avax\\\\HTTP\\\\Route...')",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(54): Avax\\Container\\Core\\ContainerKernel->get('Avax\\\\HTTP\\\\Route...')",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(44): Avax\\Container\\Container->get('Avax\\\\HTTP\\\\Route...')",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(40): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#14 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#15 {main}"
+        ],
+        "code": 0,
+        "previous": {
+            "message": "rename(C:\\Users\\shomsy\\PhpstormProjects\\components\/storage\/cache\\Avax_HTTP_Router_Router.php.tmp.79844f26c3a93897,C:\\Users\\shomsy\\PhpstormProjects\\components\/storage\/cache\\Avax_HTTP_Router_Router.php): Access is denied (code: 5)",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Think\\Cache\\FilePrototypeCache.php",
+            "line": 93
+        }
+    }
+}
+
+[2026-01-11 17:41:02] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:08] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:09] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:10] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:10] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:12] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:12] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:13] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:13] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:14] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:14] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:15] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 17:41:15] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 18:08:59] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 18:08:59] ❌ [ERROR] ⚠️ Fatal error: Optional parameter $context declared before required parameter $container is implicitly treated as a required parameter {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php",
+    "line": 52,
+    "type": 8192
+}
+
+[2026-01-11 18:08:59] ❌ [ERROR] Optional parameter $context declared before required parameter $container is implicitly treated as a required parameter {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php",
+    "line": 52,
+    "exception": {
+        "message": "Optional parameter $context declared before required parameter $container is implicitly treated as a required parameter",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php",
+        "line": 52,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-11 18:08:59] ❌ [ERROR] ⚠️ Fatal error: Optional parameter $context declared before required parameter $container is implicitly treated as a required parameter {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php",
+    "line": 52,
+    "type": 8192
+}
+
+[2026-01-11 18:08:59] ❌ [ERROR] Optional parameter $context declared before required parameter $container is implicitly treated as a required parameter {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php",
+    "line": 52,
+    "exception": {
+        "message": "Optional parameter $context declared before required parameter $container is implicitly treated as a required parameter",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php",
+        "line": 52,
+        "trace": [
+            "#0 [internal function]: Avax\\Logging\\ErrorHandler->handleShutdown()",
+            "#1 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-11 18:08:59] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 18:10:31] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 18:23:51] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 18:23:51] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 18:23:52] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 18:23:52] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 18:40:21] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 18:40:21] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 18:46:20] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 18:46:20] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 19:02:40] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 19:02:40] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 19:45:54] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 19:45:54] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 20:06:24] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 20:06:25] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 20:29:41] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 20:29:41] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 21:20:01] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 21:20:01] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:20:58] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:20:58] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:03] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:04] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:04] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:05] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:06] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:06] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:06] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:06] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:06] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:07] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:07] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:07] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:07] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 22:56:07] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 23:41:37] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 23:41:38] ✅ [INFO] Bootstrap logging initialized. []
+

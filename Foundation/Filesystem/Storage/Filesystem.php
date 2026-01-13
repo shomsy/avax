@@ -28,10 +28,11 @@ readonly class Filesystem
      * This method checks the configuration for the given disk name and returns the appropriate
      * file storage implementation. If the disk driver is not supported, an exception is thrown.
      *
-     * @param string|null $name The name of the disk configuration to retrieve. If null, the default configuration will
-     *                          be used.
+     * @param string|null $name    The name of the disk configuration to retrieve. If null, the default configuration
+     *                             will be used.
      *
      * @return FileStorageInterface The instance of the file storage based on the disk configuration.
+     *
      * @throws \Avax\Container\Core\Exceptions\FoundationContainerException
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
@@ -39,7 +40,7 @@ readonly class Filesystem
      */
     public function disk(string|null $name = null) : FileStorageInterface
     {
-        $diskConfig = config(key: "filesystems.disks." . $name, default: config(key: "filesystems.default"));
+        $diskConfig = config(key: 'filesystems.disks.' . $name, default: config(key: 'filesystems.default'));
 
         if ($diskConfig['driver'] === 'local') {
             return app(abstract: LocalFileStorage::class);
@@ -178,7 +179,6 @@ readonly class Filesystem
     /**
      * Lists all files within a given directory.
      *
-     * @param string $directory
      *
      * @return array<int, string> List of file paths.
      */

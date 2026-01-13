@@ -32,29 +32,14 @@ final class LifecycleStrategyRegistry
      * Adds a new lifecycle strategy to the registry, making it available for resolution
      * by name. This enables extensible lifecycle management beyond built-in strategies.
      *
-     * @param string $name Unique identifier for the strategy
+     * @param string            $name     Unique identifier for the strategy
      * @param LifecycleStrategy $strategy The strategy implementation to register
-     * @return void
+     *
      * @see docs/Core/Kernel/LifecycleStrategyRegistry.md#method-register
      */
-    public function register(string $name, LifecycleStrategy $strategy): void
+    public function register(string $name, LifecycleStrategy $strategy) : void
     {
         $this->strategies[$name] = $strategy;
-    }
-
-    /**
-     * Check if a lifecycle strategy exists by name.
-     *
-     * Determines whether a strategy with the given name has been registered,
-     * enabling safe strategy lookups without throwing exceptions.
-     *
-     * @param string $name Strategy name to check for existence
-     * @return bool True if strategy exists, false otherwise
-     * @see docs/Core/Kernel/LifecycleStrategyRegistry.md#method-has
-     */
-    public function has(string $name): bool
-    {
-        return isset($this->strategies[$name]);
     }
 
     /**
@@ -64,17 +49,37 @@ final class LifecycleStrategyRegistry
      * throwing an exception if the strategy is not found.
      *
      * @param string $name Strategy name to retrieve
+     *
      * @return LifecycleStrategy The requested strategy implementation
+     *
      * @throws InvalidArgumentException When strategy with given name is not registered
+     *
      * @see docs/Core/Kernel/LifecycleStrategyRegistry.md#method-get
      */
-    public function get(string $name): LifecycleStrategy
+    public function get(string $name) : LifecycleStrategy
     {
-        if (!$this->has(name: $name)) {
+        if (! $this->has(name: $name)) {
             throw new InvalidArgumentException(message: "Lifecycle strategy [{$name}] not found.");
         }
 
         return $this->strategies[$name];
+    }
+
+    /**
+     * Check if a lifecycle strategy exists by name.
+     *
+     * Determines whether a strategy with the given name has been registered,
+     * enabling safe strategy lookups without throwing exceptions.
+     *
+     * @param string $name Strategy name to check for existence
+     *
+     * @return bool True if strategy exists, false otherwise
+     *
+     * @see docs/Core/Kernel/LifecycleStrategyRegistry.md#method-has
+     */
+    public function has(string $name) : bool
+    {
+        return isset($this->strategies[$name]);
     }
 
     /**
@@ -84,9 +89,10 @@ final class LifecycleStrategyRegistry
      * enabling inspection and iteration over available lifecycle options.
      *
      * @return array<string, LifecycleStrategy> Map of strategy names to implementations
+     *
      * @see docs/Core/Kernel/LifecycleStrategyRegistry.md#method-all
      */
-    public function all(): array
+    public function all() : array
     {
         return $this->strategies;
     }

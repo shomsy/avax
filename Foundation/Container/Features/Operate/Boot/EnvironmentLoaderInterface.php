@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Features\Operate\Boot;
 
 /**
@@ -61,8 +62,7 @@ namespace Avax\Container\Features\Operate\Boot;
  * - Fallback configurations for critical settings
  * - Diagnostic information for configuration issues
  *
- * @package Avax\Container\Operate\Boot
- * @see docs/Features/Operate/Boot/EnvironmentLoaderInterface.md#quick-summary
+ * @see     docs/Features/Operate/Boot/EnvironmentLoaderInterface.md#quick-summary
  */
 interface EnvironmentLoaderInterface
 {
@@ -109,7 +109,9 @@ interface EnvironmentLoaderInterface
      * - Pre-compile configuration for production environments
      *
      * @return array<string, mixed> Environment configuration array
+     *
      * @throws \RuntimeException When configuration cannot be loaded or is invalid
+     *
      * @see docs/Features/Operate/Boot/EnvironmentLoaderInterface.md#method-loadenvironment
      */
     public function loadEnvironment() : array;

@@ -18,34 +18,34 @@ use RuntimeException;
 /**
  * Specialist for resolving and validating individual property injection points.
  *
- * The PropertyInjector focuses exclusively on the logic of finding the right 
- * value for a specific property. It follows a prioritized strategy similar to 
- * the {@see DependencyResolver}, but specifically tailored for properties 
+ * The PropertyInjector focuses exclusively on the logic of finding the right
+ * value for a specific property. It follows a prioritized strategy similar to
+ * the {@see DependencyResolver}, but specifically tailored for properties
  * (handling nullability, defaults, and type analysis).
  *
- * @package Avax\Container\Features\Actions\Inject
- * @see docs/Features/Actions/Inject/PropertyInjector.md
+ * @see     docs/Features/Actions/Inject/PropertyInjector.md
  */
 final class PropertyInjector implements PropertyInjectorInterface
 {
     /**
      * Initializes the property specialist.
      *
-     * @param ContainerInterface|null $container     Container used to resolve property types.
-     * @param ReflectionTypeAnalyzer  $typeAnalyzer  Helper for validating type resolvability.
+     * @param ContainerInterface|null $container    Container used to resolve property types.
+     * @param ReflectionTypeAnalyzer  $typeAnalyzer Helper for validating type resolvability.
      */
     public function __construct(
-        private ContainerInterface|null $container,
-        private ReflectionTypeAnalyzer  $typeAnalyzer = new ReflectionTypeAnalyzer()
+        private ContainerInterface|null         $container,
+        private readonly ReflectionTypeAnalyzer $typeAnalyzer = new ReflectionTypeAnalyzer
     ) {}
 
     /**
      * Wire the container reference for recursive dependency resolution.
      *
      * @param ContainerInterface $container The application container instance.
+     *
      * @see docs/Features/Actions/Inject/PropertyInjector.md#method-setcontainer
      */
-    public function setContainer(ContainerInterface $container): void
+    public function setContainer(ContainerInterface $container) : void
     {
         $this->container = $container;
     }
@@ -53,15 +53,15 @@ final class PropertyInjector implements PropertyInjectorInterface
     /**
      * Resolve the injection value for a specific property prototype.
      *
-     * @param PropertyPrototype $property   The injection requirement profile.
+     * @param PropertyPrototype    $property   The injection requirement profile.
      * @param array<string, mixed> $overrides  Manual values provided for this resolution.
-     * @param KernelContext     $context    Tracking context for recursive resolution.
-     * @param string            $ownerClass The class name that owns this property (for errors).
+     * @param KernelContext        $context    Tracking context for recursive resolution.
+     * @param string               $ownerClass The class name that owns this property (for errors).
      *
      * @return PropertyResolution A wrapper containing the resolved value or status.
-     * @throws ResolutionException If a required property cannot be satisfied.
-     * @throws RuntimeException If the container reference is missing.
      *
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      * @see docs/Features/Actions/Inject/PropertyInjector.md#method-resolve
      */
     public function resolve(
@@ -69,7 +69,8 @@ final class PropertyInjector implements PropertyInjectorInterface
         array             $overrides,
         KernelContext     $context,
         string            $ownerClass
-    ): PropertyResolution {
+    ) : PropertyResolution
+    {
         if ($this->container === null) {
             throw new RuntimeException(message: 'PropertyInjector container reference not initialized.');
         }
@@ -96,7 +97,7 @@ final class PropertyInjector implements PropertyInjectorInterface
                 return PropertyResolution::resolved(
                     value: $this->container->get(id: $type)
                 );
-            } catch (ResolutionException | ServiceNotFoundException) {
+            } catch (ResolutionException|ServiceNotFoundException) {
                 // Fall through to default/null handling
             }
         }
@@ -115,7 +116,7 @@ final class PropertyInjector implements PropertyInjectorInterface
         if ($property->required) {
             throw new ResolutionException(
                 message: "Required property \${$name} in class {$ownerClass} cannot be resolved. " .
-                    "No service found for type: " . ($property->type ?? 'null')
+                'No service found for type: ' . ($property->type ?? 'null')
             );
         }
 

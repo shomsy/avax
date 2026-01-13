@@ -34,11 +34,11 @@ final readonly class MiddlewareGroupResolver
     /**
      * Validates the initial configuration to detect early misconfigurations.
      *
-     * @param array $config The middleware configuration data to validate.
+     * @param  array  $config  The middleware configuration data to validate.
      *
      * @throws RuntimeException If the configuration is invalid.
      */
-    private function validateConfig(array $config) : void
+    private function validateConfig(array $config): void
     {
         if (! isset($config['groups']) || ! is_array(value: $config['groups'])) {
             throw new RuntimeException(message: 'Middleware configuration must contain a "groups" array.');
@@ -58,13 +58,12 @@ final readonly class MiddlewareGroupResolver
     /**
      * Resolves a middleware group name to its list of middleware classes.
      *
-     * @param string $entry Middleware group alias (e.g. 'web', 'api').
-     *
+     * @param  string  $entry  Middleware group alias (e.g. 'web', 'api').
      * @return array<class-string> List of fully qualified middleware class names.
      *
      * @throws RuntimeException If the middleware group does not exist or is invalid.
      */
-    public function resolveGroup(string $entry) : array
+    public function resolveGroup(string $entry): array
     {
         if (! $this->hasGroup(group: $entry)) {
             throw new RuntimeException(message: "Middleware group [{$entry}] does not exist.");
@@ -91,11 +90,10 @@ final readonly class MiddlewareGroupResolver
     /**
      * Checks if a middleware group alias is defined in the configuration.
      *
-     * @param string $group Middleware group alias to check.
-     *
+     * @param  string  $group  Middleware group alias to check.
      * @return bool True if the group exists, false otherwise.
      */
-    public function hasGroup(string $group) : bool
+    public function hasGroup(string $group): bool
     {
         return isset($this->config['groups'][$group]);
     }

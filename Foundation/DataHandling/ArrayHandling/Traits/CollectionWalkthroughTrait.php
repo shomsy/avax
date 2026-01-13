@@ -16,8 +16,6 @@ use InvalidArgumentException;
  * It is intended to be used within classes that manage collections of data,
  * such as arrays of associative arrays or objects. It leverages the `AbstractDependenciesTrait`
  * for dependency management, ensuring that the underlying data collection is properly handled.
- *
- * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait CollectionWalkthroughTrait
 {
@@ -33,8 +31,8 @@ trait CollectionWalkthroughTrait
      * applying the provided callback function. The resulting collection contains
      * the transformed items.
      *
-     * @param Closure $callback The callback to apply to each item. It should accept the item as a parameter and return
-     *                          the transformed value.
+     * @param Closure $callback    The callback to apply to each item. It should accept the item as a parameter and
+     *                             return the transformed value.
      *
      * @return static A new instance with the mapped items.
      *
@@ -61,7 +59,6 @@ trait CollectionWalkthroughTrait
      *
      * @param Closure $callback The callback to apply. It should accept the item and its key as parameters.
      *
-     *
      * @throws InvalidArgumentException If the callback is not callable.
      *
      * ```
@@ -86,8 +83,8 @@ trait CollectionWalkthroughTrait
      * This method retrieves the first item in the collection that satisfies the provided callback.
      * If no callback is provided, it returns the first item in the collection.
      *
-     * @param Closure|null $callback The callback for the truth test. It should accept the item as a parameter and
-     *                               return a boolean.
+     * @param Closure|null $callback    The callback for the truth test. It should accept the item as a parameter and
+     *                                  return a boolean.
      *
      * @return mixed The first item passing the test, or null if none found.
      *
@@ -512,8 +509,8 @@ trait CollectionWalkthroughTrait
      * This method filters the collection by applying the provided callback to each item.
      * Only items for which the callback returns `true` are included in the resulting collection.
      *
-     * @param Closure $callback The callback to filter items. It should accept the item and its key as parameters and
-     *                          return a boolean.
+     * @param Closure $callback    The callback to filter items. It should accept the item and its key as parameters and
+     *                             return a boolean.
      *
      * @return static A new instance containing only the filtered items.
      *
@@ -541,10 +538,10 @@ trait CollectionWalkthroughTrait
      * This method applies the provided update callback to items that satisfy the specified condition.
      * It returns a new instance with the updated items, ensuring immutability.
      *
-     * @param Closure $condition The condition to check for each item. It should accept an item as a parameter and
-     *                           return a boolean indicating whether the item should be updated.
-     * @param Closure $updater   The callback to apply to items that satisfy the condition. It should accept an item
-     *                           as a parameter and return the updated item.
+     * @param Closure $condition    The condition to check for each item. It should accept an item as a parameter and
+     *                              return a boolean indicating whether the item should be updated.
+     * @param Closure $updater      The callback to apply to items that satisfy the condition. It should accept an item
+     *                              as a parameter and return the updated item.
      *
      * @return static A new instance with the updated items.
      *
@@ -586,10 +583,10 @@ trait CollectionWalkthroughTrait
      * '<=>', 'contains', 'not contains', 'in', and 'not in'. The column can be specified using dot notation to access
      * nested values.
      *
-     * @param string $column   The column name for the where clause.
-     * @param string $operator The operator to be used in the where clause (e.g., '=', '==', '!=', '>', '<',
-     *                         'contains', 'in', '<=>').
-     * @param mixed  $value    The value to be compared with the column.
+     * @param string $column      The column name for the where clause.
+     * @param string $operator    The operator to be used in the where clause (e.g., '=', '==', '!=', '>', '<',
+     *                            'contains', 'in', '<=>').
+     * @param mixed  $value       The value to be compared with the column.
      */
     public function whereIs(string $column, string $operator, mixed $value) : self
     {
@@ -652,5 +649,4 @@ trait CollectionWalkthroughTrait
 
         return new static(items: $this->items);
     }
-
 }

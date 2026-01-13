@@ -16,19 +16,19 @@ interface CredentialsInterface
      *
      * @return string The identifier key, such as "username" or "email".
      */
-    public function getIdentifierKey() : string;
+    public function getIdentifierKey(): string;
 
     /**
      * Retrieve the actual value associated with the identifier key.
      *
      * @return string The actual identifier value.
      */
-    public function getIdentifierValue() : string;
+    public function getIdentifierValue(): string;
 
     /**
      * Retrieve the password or secret necessary for authentication.
      *
      * @return string The password or secret for authentication.
      */
-    public function getPassword() : string;
+    public function getPassword(): string;
 }

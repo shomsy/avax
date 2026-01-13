@@ -35,9 +35,9 @@ readonly class DateEquals
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
-        $inputDate      = DateTime::createFromFormat(format: 'Y-m-d', datetime: $value);
+        $inputDate = DateTime::createFromFormat(format: 'Y-m-d', datetime: $value);
         $comparisonDate = DateTime::createFromFormat(format: 'Y-m-d', datetime: $this->date);
 
         if (! $inputDate || ! $comparisonDate || $inputDate != $comparisonDate) {

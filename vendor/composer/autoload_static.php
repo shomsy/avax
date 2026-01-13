@@ -60,6 +60,10 @@ class ComposerStaticInit14ad40e91c462b537c9e89f1a2b2424b
         'e39a8b23c42d4e1452234d762b03835a' => __DIR__ . '/..' . '/ramsey/uuid/src/functions.php',
         '38143a9afc50997d55e4815db8489d1c' => __DIR__ . '/..' . '/rector/rector/bootstrap.php',
         'fb4ca2d97fe7ba6af750497425204e70' => __DIR__ . '/..' . '/sentry/sentry/src/functions.php',
+        '58e06a6b861c5e602a95cf7765b29ff9' => __DIR__ . '/../..' . '/Foundation/Helpers/helpers.php',
+        '92f54f961dc40dc358636e7000a338c2' => __DIR__ . '/../..' . '/Foundation/Text/functions.php',
+        'ea8632818a60d3b775a73f0a220eb1c9' => __DIR__ . '/../..' . '/Foundation/HTTP/Router/functions.php',
+        '6d283f801c1bd0cbf61a624f62a96625' => __DIR__ . '/../..' . '/tests/TestCase.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -236,6 +240,7 @@ class ComposerStaticInit14ad40e91c462b537c9e89f1a2b2424b
         ),
         'A' =>
         array (
+            'Avax\\\\Tests\\\\' => 13,
             'Avax\\' => 5,
             'App\\' => 4,
             'Amp\\Sync\\' => 9,
@@ -703,6 +708,10 @@ class ComposerStaticInit14ad40e91c462b537c9e89f1a2b2424b
         'Barryvdh\\LaravelIdeHelper\\' =>
         array (
             0 => __DIR__ . '/..' . '/barryvdh/laravel-ide-helper/src',
+        ),
+        'Avax\\\\Tests\\\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/tests',
         ),
         'Avax\\' =>
         array (

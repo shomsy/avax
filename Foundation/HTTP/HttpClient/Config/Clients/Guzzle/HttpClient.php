@@ -29,11 +29,6 @@ final readonly class HttpClient implements ClientInterface
 {
     private ClientInterface $guzzleClient;
 
-    /**
-     * @param RetryMiddleware     $retryMiddleware
-     * @param LoggerInterface     $logger
-     * @param string|UriInterface $baseUri
-     */
     public function __construct(
         private RetryMiddleware     $retryMiddleware,
         private LoggerInterface     $logger,
@@ -56,9 +51,6 @@ final readonly class HttpClient implements ClientInterface
         );
     }
 
-    /**
-     * @return HandlerStack
-     */
     private function getHandlerStack() : HandlerStack
     {
         $handlerStack = HandlerStack::create();
@@ -68,10 +60,6 @@ final readonly class HttpClient implements ClientInterface
     }
 
     /**
-     * @param RequestInterface $request
-     * @param array            $options
-     *
-     * @return ResponseInterface
      * @throws Exception
      */
     public function send(RequestInterface $request, array $options = []) : ResponseInterface
@@ -84,23 +72,17 @@ final readonly class HttpClient implements ClientInterface
             );
         } catch (Throwable $throwable) {
             $this->logger->error(
-                message: "Request failed",
+                message: 'Request failed',
                 context: [
                     'uri'   => (string) $request->getUri(),
                     'error' => $throwable->getMessage(),
                 ],
             );
-            throw new Exception(message: "Failed to send request", code: $throwable->getCode(), previous: $throwable);
+            throw new Exception(message: 'Failed to send request', code: $throwable->getCode(), previous: $throwable);
         }
     }
 
     /**
-     * @param string              $method
-     * @param string|UriInterface $uri
-     * @param array|null          $options
-     * @param bool                $async
-     *
-     * @return ResponseInterface|PromiseInterface
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Exception
      */
@@ -119,7 +101,7 @@ final readonly class HttpClient implements ClientInterface
 
             if ($response->getStatusCode() === 504) {
                 throw new RequestException(
-                    message : "⏳ 504 Gateway Timeout - Server did not respond in time.",
+                    message : '⏳ 504 Gateway Timeout - Server did not respond in time.',
                     request : new Request(method: $method, uri: $uri),
                     response: $response
                 );
@@ -146,7 +128,7 @@ final readonly class HttpClient implements ClientInterface
                     ],
                 );
                 throw new Exception(
-                    message : "⏳ Request timeout (server did not respond in time)",
+                    message : '⏳ Request timeout (server did not respond in time)',
                     code    : 408,
                     previous: $e
                 );
@@ -156,11 +138,6 @@ final readonly class HttpClient implements ClientInterface
     }
 
     /**
-     * @param string $method
-     * @param        $uri
-     * @param array  $options
-     *
-     * @return PromiseInterface
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function requestAsync(string $method, $uri, array $options = []) : PromiseInterface
@@ -180,7 +157,6 @@ final readonly class HttpClient implements ClientInterface
      * @param string|UriInterface $uri     Request URI.
      * @param array               $options Additional request options.
      *
-     * @return ResponseInterface
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function request(string $method, $uri, array $options = []) : ResponseInterface
@@ -194,10 +170,6 @@ final readonly class HttpClient implements ClientInterface
     }
 
     /**
-     * @param RequestInterface $request
-     * @param array            $options
-     *
-     * @return PromiseInterface
      * @throws Exception
      */
     public function sendAsync(RequestInterface $request, array $options = []) : PromiseInterface
@@ -207,14 +179,14 @@ final readonly class HttpClient implements ClientInterface
             return $this->guzzleClient->sendAsync(request: $request, options: $options);
         } catch (Throwable $throwable) {
             $this->logger->error(
-                message: "Asynchronous request failed",
+                message: 'Asynchronous request failed',
                 context: [
                     'uri'   => (string) $request->getUri(),
                     'error' => $throwable->getMessage(),
                 ],
             );
             throw new Exception(
-                message : "Failed to send async request",
+                message : 'Failed to send async request',
                 code    : $throwable->getCode(),
                 previous: $throwable
             );
@@ -225,8 +197,6 @@ final readonly class HttpClient implements ClientInterface
      * Implements Guzzle's getConfig method.
      *
      * @param string|null $option Configuration option to retrieve.
-     *
-     * @return mixed
      */
     public function getConfig(string|null $option = null) : mixed
     {

@@ -20,8 +20,7 @@ trait HasGroups
      *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Grouping.md#groupby
      *
-     * @param string|array ...$columns A variable list of field names or arrays of names to group by.
-     *
+     * @param  string|array  ...$columns  A variable list of field names or arrays of names to group by.
      * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasGroups|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
      *                                                                                                                           fresh,
      *                                                                                                                           cloned
@@ -33,9 +32,9 @@ trait HasGroups
      *                                                                                                                           criteria
      *                                                                                                                           applied.
      */
-    public function groupBy(string|array ...$columns) : self
+    public function groupBy(string|array ...$columns): self
     {
-        $clone  = clone $this;
+        $clone = clone $this;
         $groups = $this->state->groups;
 
         foreach ($columns as $column) {
@@ -52,11 +51,10 @@ trait HasGroups
      *
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Grouping.md#having
      *
-     * @param string $column   The technical column name or aggregate function expression to filter.
-     * @param string $operator The SQL comparison operator (e.g., '=', '>', '<').
-     * @param mixed  $value    The comparison target value, which will be safely parameterized.
-     * @param string $boolean  The logical joiner used to attach this condition ('AND' or 'OR').
-     *
+     * @param  string  $column  The technical column name or aggregate function expression to filter.
+     * @param  string  $operator  The SQL comparison operator (e.g., '=', '>', '<').
+     * @param  mixed  $value  The comparison target value, which will be safely parameterized.
+     * @param  string  $boolean  The logical joiner used to attach this condition ('AND' or 'OR').
      * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasGroups|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
      *                                                                                                                           fresh,
      *                                                                                                                           cloned
@@ -68,9 +66,9 @@ trait HasGroups
      *                                                                                                                           filter
      *                                                                                                                           applied.
      */
-    public function having(string $column, string $operator, mixed $value, string $boolean = 'AND') : self
+    public function having(string $column, string $operator, mixed $value, string $boolean = 'AND'): self
     {
-        $clone        = clone $this;
+        $clone = clone $this;
         $clone->state = $clone->state->addHaving(having: compact('column', 'operator', 'value', 'boolean'));
         $clone->state = $clone->state->addBinding(value: $value);
 

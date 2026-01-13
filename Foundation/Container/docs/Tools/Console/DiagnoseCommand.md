@@ -2,7 +2,8 @@
 
 ## Quick Summary
 
-Runs a comprehensive health check over the container, collecting stats, resolution timelines, and memory snapshots. It exists to give developers and operators a single place to understand container health without digging through logs.
+Runs a comprehensive health check over the container, collecting stats, resolution timelines, and memory snapshots. It
+exists to give developers and operators a single place to understand container health without digging through logs.
 
 ### For Humans: What This Means (Summary)
 
@@ -21,7 +22,8 @@ These are the readouts the command shows: timing, memory, and counts that tell y
 
 ## Think of It
 
-It’s like a car’s dashboard diagnostic that shows speed, fuel, engine warnings, and memory of recent trips—all in one glance.
+It’s like a car’s dashboard diagnostic that shows speed, fuel, engine warnings, and memory of recent trips—all in one
+glance.
 
 ### For Humans: What This Means (Think)
 
@@ -29,7 +31,8 @@ You get a dashboard for the container: lights turn on when something is wrong, a
 
 ## Story Example
 
-A developer suspects slow requests. Running `container:diagnose` shows a few services taking too long and memory spiking. After optimizing those services, rerunning the command shows healthy timings and stable memory.
+A developer suspects slow requests. Running `container:diagnose` shows a few services taking too long and memory
+spiking. After optimizing those services, rerunning the command shows healthy timings and stable memory.
 
 ### For Humans: What This Means (Story)
 
@@ -41,7 +44,8 @@ This section gives you a slow, step-by-step mental model and a beginner-safe wal
 
 ### For Humans: What This Means (Dummies)
 
-If you’re new to this area, read this first. It helps you avoid getting lost in terminology and lets you use the code with confidence.
+If you’re new to this area, read this first. It helps you avoid getting lost in terminology and lets you use the code
+with confidence.
 
 - Run the command.
 - Read the stats: definitions, instances, depth limits.
@@ -49,11 +53,14 @@ If you’re new to this area, read this first. It helps you avoid getting lost i
 - Review memory snapshots.
 - Use the report to decide what to fix.
 
-Common misconceptions: it doesn’t fix issues automatically; it is safe to run in production but may expose sensitive info; it’s lightweight but still does work to gather metrics.
+Common misconceptions: it doesn’t fix issues automatically; it is safe to run in production but may expose sensitive
+info; it’s lightweight but still does work to gather metrics.
 
 ## How It Works (Technical)
 
-Builds a diagnostics inspector from the container, gathers stats (definitions, instances, contextual bindings), and rendering a console report with timeline and memory data from `DiagnosticsDashboard` and `metrics()`. Output is plain text with sections.
+Builds a diagnostics inspector from the container, gathers stats (definitions, instances, contextual bindings), and
+rendering a console report with timeline and memory data from `DiagnosticsDashboard` and `metrics()`. Output is plain
+text with sections.
 
 ### For Humans: What This Means (How)
 
@@ -61,7 +68,8 @@ It asks the container for its health data and prints it in an organized way.
 
 ## Architecture Role
 
-Lives under `Tools/Console` because it’s an operational CLI, not runtime logic. Depends on `Container` diagnostics APIs and the metrics subsystem; other tools rely on its report to decide next actions.
+Lives under `Tools/Console` because it’s an operational CLI, not runtime logic. Depends on `Container` diagnostics APIs
+and the metrics subsystem; other tools rely on its report to decide next actions.
 
 ### For Humans: What This Means (Role)
 
@@ -73,7 +81,8 @@ This section is the API map of the file: it documents what each method does, why
 
 ### For Humans: What This Means (Methods)
 
-When you’re trying to use or debug this file, this is the part you’ll come back to. It’s your “what can I call, and what happens?” cheat sheet.
+When you’re trying to use or debug this file, this is the part you’ll come back to. It’s your “what can I call, and what
+happens?” cheat sheet.
 
 ### Method: __construct
 
@@ -86,43 +95,54 @@ Stores the container instance to run diagnostics against.
 Keeps a reference to the container you want to check.
 
 ##### Parameters (__construct)
+
 - `Container $container`: Container to inspect.
 
 ##### Returns (__construct)
+
 - `void`
 
 ##### Throws (__construct)
+
 - None.
 
 ##### When to Use It (__construct)
+
 Instantiate before executing diagnostics.
 
 ##### Common Mistakes (__construct)
+
 Passing a partially configured container yields incomplete stats.
 
 ### Method: execute
 
 #### Technical Explanation (Execute)
 
-Prints ASCII header, collects stats via `diagnostics()->inspect()`, outputs general stats, renders resolution timeline through `DiagnosticsDashboard`, prints memory snapshots, and ends the report.
+Prints ASCII header, collects stats via `diagnostics()->inspect()`, outputs general stats, renders resolution timeline
+through `DiagnosticsDashboard`, prints memory snapshots, and ends the report.
 
 ##### For Humans: What This Means (Execute)
 
 Runs the health check and prints the full report to your terminal.
 
 ##### Parameters (execute)
+
 - None.
 
 ##### Returns (execute)
+
 - `void`
 
 ##### Throws (execute)
+
 - None in signature, but downstream calls may throw if diagnostics fail.
 
 ##### When to Use It (execute)
+
 Any time you need a health report—before deploys, during incident triage, or after changes.
 
 ##### Common Mistakes (execute)
+
 Ignoring the output; remember to act on warnings about resolution speed or memory spikes.
 
 ## Risks, Trade-offs & Recommended Practices
@@ -144,4 +164,5 @@ Treat the report as sensitive and current—run it when needed, compare to known
 
 ### For Humans: What This Means (Related)
 
-Start with the folder overview, clear caches if needed, and drill deeper with the inspect command when diagnostics reveal issues.
+Start with the folder overview, clear caches if needed, and drill deeper with the inspect command when diagnostics
+reveal issues.

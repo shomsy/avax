@@ -27,11 +27,11 @@ readonly class Custom
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         $isValid = ($this->callback)($value);
         if (! $isValid) {
-            throw new ValidationException(message: $property . ' is invalid according to custom rule.');
+            throw new ValidationException(message: $property.' is invalid according to custom rule.');
         }
     }
 }

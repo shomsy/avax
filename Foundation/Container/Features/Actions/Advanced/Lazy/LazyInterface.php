@@ -22,7 +22,8 @@ interface LazyInterface
      * Subsequent calls return the same cached instance.
      *
      * @return mixed The lazily initialized object instance
+     *
      * @see docs/Features/Actions/Advanced/Lazy/LazyInterface.md#method-get
      */
-    public function get(): mixed;
+    public function get() : mixed;
 }

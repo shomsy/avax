@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Avax\HTTP\Middleware;
 
 use Avax\Auth\Application\Service\RateLimiterService;
-use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\ResponseFactory;
-use Closure;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Middleware that enforces rate limiting per client identifier (e.g., IP address) to
+ * PSR-15 Middleware that enforces rate limiting per client identifier (e.g., IP address) to
  * prevent excessive requests within a defined time window.
  */
-readonly class RateLimiterMiddleware
+readonly class RateLimiterMiddleware implements MiddlewareInterface
 {
     private const string DEFAULT_IDENTIFIER_TYPE = 'ip';
 
@@ -31,16 +31,16 @@ readonly class RateLimiterMiddleware
     ) {}
 
     /**
-     * Handles the incoming request, applying rate limiting logic based on a unique identifier.
+     * PSR-15 process method: apply rate limiting before proceeding.
      *
-     * @param Request $request The incoming HTTP request.
-     * @param Closure $next    The next middleware or handler.
+     * @param RequestInterface        $request The incoming HTTP request.
+     * @param RequestHandlerInterface $handler The next handler in the chain.
      *
      * @return ResponseInterface The processed response or a rate-limit-exceeded response.
      *
      * @throws \Psr\Cache\InvalidArgumentException|\DateMalformedStringException If the cache is unavailable or invalid.
      */
-    public function handle(Request $request, Closure $next) : ResponseInterface
+    public function process(RequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         $identifier = $this->extractIdentifier(request: $request);
 
@@ -49,10 +49,10 @@ readonly class RateLimiterMiddleware
             return $this->createRateLimitExceededResponse();
         }
 
-        $response = $next($request);
+        $response = $handler->handle(request: $request);
 
         // Record each attempt after handling to avoid affecting response time
-        $this->rateLimiterService->recordFailedAttempt($identifier, $this->maxRequests, $this->timeWindow);
+        $this->rateLimiterService->recordFailedAttempt(key: $identifier, maxAttempts: $this->maxRequests, decaySeconds: $this->timeWindow);
 
         return $response;
     }
@@ -60,13 +60,27 @@ readonly class RateLimiterMiddleware
     /**
      * Extracts a unique identifier for rate limiting (e.g., client IP or default).
      *
-     * @param Request $request The current request.
+     * @param RequestInterface $request The current request.
      *
      * @return string The extracted identifier.
      */
-    private function extractIdentifier(Request $request) : string
+    private function extractIdentifier(RequestInterface $request) : string
     {
-        return $this->identifierType === 'ip' ? $request->getClientIp() : 'default';
+        if ($this->identifierType === 'ip') {
+            // Extract IP from PSR-7 ServerRequestInterface
+            if ($request instanceof ServerRequestInterface) {
+                $serverParams = $request->getServerParams();
+
+                return $serverParams['REMOTE_ADDR'] ??
+                    $serverParams['HTTP_X_FORWARDED_FOR'] ??
+                    $serverParams['HTTP_X_REAL_IP'] ??
+                    'unknown';
+            }
+
+            return 'unknown';
+        }
+
+        return 'default';
     }
 
     /**

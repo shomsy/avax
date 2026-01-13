@@ -20,8 +20,6 @@ use Avax\HTTP\Session\Features\Flash;
  *
  * Note: This is a formal contract, not used internally.
  * SessionManager implements this implicitly.
- *
- * @package Avax\HTTP\Session
  */
 interface SessionContract
 {
@@ -31,8 +29,6 @@ interface SessionContract
      * @param string   $key   The key.
      * @param mixed    $value The value.
      * @param int|null $ttl   Optional TTL.
-     *
-     * @return void
      */
     public function put(string $key, mixed $value, int|null $ttl = null) : void;
 
@@ -41,8 +37,6 @@ interface SessionContract
      *
      * @param string $key     The key.
      * @param mixed  $default Default value.
-     *
-     * @return mixed
      */
     public function get(string $key, mixed $default = null) : mixed;
 
@@ -50,8 +44,6 @@ interface SessionContract
      * Check if key exists.
      *
      * @param string $key The key.
-     *
-     * @return bool
      */
     public function has(string $key) : bool;
 
@@ -59,8 +51,6 @@ interface SessionContract
      * Remove a value.
      *
      * @param string $key The key.
-     *
-     * @return void
      */
     public function forget(string $key) : void;
 
@@ -73,8 +63,6 @@ interface SessionContract
 
     /**
      * Clear all data.
-     *
-     * @return void
      */
     public function flush() : void;
 

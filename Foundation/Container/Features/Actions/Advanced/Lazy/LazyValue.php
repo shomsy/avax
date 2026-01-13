@@ -17,13 +17,15 @@ use Closure;
  */
 final class LazyValue implements LazyInterface
 {
-    private bool  $initialized = false;
-    private mixed $value       = null;
+    private bool $initialized = false;
+
+    private mixed $value = null;
 
     /**
      * Create a new lazy value wrapper.
      *
      * @param Closure $factory Factory closure that creates the actual object when called
+     *
      * @see docs/Features/Actions/Advanced/Lazy/LazyValue.md#method-__construct
      */
     public function __construct(private readonly Closure $factory) {}
@@ -36,10 +38,12 @@ final class LazyValue implements LazyInterface
      * to prevent endless retries while preserving the exception.
      *
      * @return mixed The lazily initialized object instance
+     *
      * @throws \Throwable Any exception thrown by the factory closure during creation
+     *
      * @see docs/Features/Actions/Advanced/Lazy/LazyValue.md#method-get
      */
-    public function get(): mixed
+    public function get() : mixed
     {
         if (! $this->initialized) {
             try {

@@ -117,6 +117,7 @@ return array(
     'Carbon\\' => array($vendorDir . '/nesbot/carbon/src/Carbon'),
     'Brick\\Math\\' => array($vendorDir . '/brick/math/src'),
     'Barryvdh\\LaravelIdeHelper\\' => array($vendorDir . '/barryvdh/laravel-ide-helper/src'),
+    'Avax\\\\Tests\\\\' => array($baseDir . '/tests'),
     'Avax\\' => array($baseDir . '/Foundation'),
     'App\\' => array($vendorDir . '/laravel/pint/app'),
     'Amp\\Sync\\' => array($vendorDir . '/amphp/sync/src'),

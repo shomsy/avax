@@ -26,8 +26,6 @@ use Avax\HTTP\Session\Shared\Contracts\FeatureInterface;
  *   $events->once('stored', function($data) {
  *       metrics()->increment('session.first_write');
  *   });
- *
- * @package Avax\HTTP\Session
  */
 final class Events implements FeatureInterface
 {
@@ -46,12 +44,10 @@ final class Events implements FeatureInterface
      *
      * Listener will be automatically removed after first dispatch.
      *
-     * @param string   $event    The event name.
-     * @param callable $callback The callback.
-     *
-     * @return void
+     * @param  string  $event  The event name.
+     * @param  callable  $callback  The callback.
      */
-    public function once(string $event, callable $callback) : void
+    public function once(string $event, callable $callback): void
     {
         $wrapper = function ($data) use ($callback, $event, &$wrapper) {
             $callback($data);
@@ -64,12 +60,10 @@ final class Events implements FeatureInterface
     /**
      * Remove an event listener.
      *
-     * @param string   $event    The event name.
-     * @param callable $callback The callback to remove.
-     *
-     * @return void
+     * @param  string  $event  The event name.
+     * @param  callable  $callback  The callback to remove.
      */
-    public function removeListener(string $event, callable $callback) : void
+    public function removeListener(string $event, callable $callback): void
     {
         if (! isset($this->listeners[$event])) {
             return;
@@ -77,19 +71,17 @@ final class Events implements FeatureInterface
 
         $this->listeners[$event] = array_filter(
             array   : $this->listeners[$event],
-            callback: static fn($listener) => $listener !== $callback
+            callback: static fn ($listener) => $listener !== $callback
         );
     }
 
     /**
      * Register an event listener.
      *
-     * @param string   $event    The event name.
-     * @param callable $callback The callback.
-     *
-     * @return void
+     * @param  string  $event  The event name.
+     * @param  callable  $callback  The callback.
      */
-    public function listen(string $event, callable $callback) : void
+    public function listen(string $event, callable $callback): void
     {
         $this->listeners[$event][] = $callback;
     }
@@ -97,12 +89,10 @@ final class Events implements FeatureInterface
     /**
      * Dispatch an event to all registered listeners.
      *
-     * @param string               $event The event name.
-     * @param array<string, mixed> $data  Event data.
-     *
-     * @return void
+     * @param  string  $event  The event name.
+     * @param  array<string, mixed>  $data  Event data.
      */
-    public function dispatch(string $event, array $data = []) : void
+    public function dispatch(string $event, array $data = []): void
     {
         if (! isset($this->listeners[$event])) {
             return;
@@ -116,7 +106,7 @@ final class Events implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function boot() : void
+    public function boot(): void
     {
         // Events are ready on construction
         $this->enabled = true;
@@ -125,17 +115,17 @@ final class Events implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function terminate() : void
+    public function terminate(): void
     {
         // Clear all listeners on termination
         $this->listeners = [];
-        $this->enabled   = false;
+        $this->enabled = false;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getName() : string
+    public function getName(): string
     {
         return 'events';
     }
@@ -143,7 +133,7 @@ final class Events implements FeatureInterface
     /**
      * {@inheritdoc}
      */
-    public function isEnabled() : bool
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }

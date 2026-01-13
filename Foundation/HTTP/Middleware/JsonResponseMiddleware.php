@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Avax\HTTP\Middleware;
 
 use Avax\HTTP\Response\ResponseFactory;
-use Closure;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Middleware to enforce JSON response format for API requests.
+ * PSR-15 Middleware to enforce JSON response format for API requests.
  */
-readonly class JsonResponseMiddleware
+readonly class JsonResponseMiddleware implements MiddlewareInterface
 {
     /**
      * Constructor method for initializing the ResponseFactory dependency.
@@ -24,16 +23,16 @@ readonly class JsonResponseMiddleware
     public function __construct(private ResponseFactory $responseFactory) {}
 
     /**
-     * Process the request and ensure JSON response formatting.
+     * PSR-15 process method: intercept and modify responses to ensure JSON format.
      *
-     * @param ServerRequestInterface $serverRequest The incoming request.
-     * @param Closure                $next          The next middleware or handler.
+     * @param RequestInterface        $request The incoming request.
+     * @param RequestHandlerInterface $handler The next handler in the chain.
      *
      * @return ResponseInterface The JSON-formatted response.
      */
-    public function handle(ServerRequestInterface $serverRequest, Closure $next) : ResponseInterface
+    public function process(RequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
-        $response = $next($serverRequest);
+        $response = $handler->handle(request: $request);
 
         // Enforce JSON response if necessary
         return $this->responseFactory->response(

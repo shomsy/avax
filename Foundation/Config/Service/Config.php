@@ -19,7 +19,7 @@ final class Config extends AppConfigurator implements ConfiguratorInterface
      * @return array<string, string> Associative array where the key is the configuration namespace
      *                               and the value is the path to the configuration file.
      */
-    public function configurationFilePaths() : array
+    public function configurationFilePaths(): array
     {
         return $this->getConfigurationPaths();
     }
@@ -33,15 +33,15 @@ final class Config extends AppConfigurator implements ConfiguratorInterface
      *
      * @return array<string, string> Associative array of configuration namespaces to their file paths.
      */
-    protected function getConfigurationPaths() : array
+    protected function getConfigurationPaths(): array
     {
         return [
-            'app'         => AppPath::CONFIG->get() . '/app.php',
-            'database'    => AppPath::CONFIG->get() . '/database.php',
-            'logging'     => AppPath::CONFIG->get() . '/logging.php',
-            'middleware'  => AppPath::CONFIG->get() . '/middleware.php',
-            'views'       => AppPath::CONFIG->get() . '/views.php',
-            'filesystems' => AppPath::CONFIG->get() . '/filesystems.php',
+            'app' => AppPath::CONFIG->get().'/app.php',
+            'database' => AppPath::CONFIG->get().'/database.php',
+            'logging' => AppPath::CONFIG->get().'/logging.php',
+            'middleware' => AppPath::CONFIG->get().'/middleware.php',
+            'views' => AppPath::CONFIG->get().'/views.php',
+            'filesystems' => AppPath::CONFIG->get().'/filesystems.php',
         ];
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Features\Operate\Boot;
 
 use Throwable;
@@ -71,8 +72,7 @@ use Throwable;
  * - Atomic error state updates
  * - Concurrent error processing support
  *
- * @package Avax\Container\Operate\Boot
- * @see docs/Features/Operate/Boot/ErrorHandlerInterface.md#quick-summary
+ * @see     docs/Features/Operate/Boot/ErrorHandlerInterface.md#quick-summary
  */
 interface ErrorHandlerInterface
 {
@@ -117,7 +117,6 @@ interface ErrorHandlerInterface
      * @param \Throwable  $exception The error or exception that occurred
      * @param object|null $context   Additional context about the error (usually the container instance)
      *
-     * @return void
      * @see docs/Features/Operate/Boot/ErrorHandlerInterface.md#method-handleerror
      */
     public function handleError(Throwable $exception, object|null $context = null) : void;

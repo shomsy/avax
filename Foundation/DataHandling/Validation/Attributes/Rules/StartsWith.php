@@ -27,7 +27,7 @@ readonly class StartsWith
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         foreach ($this->prefixes as $prefix) {
             if (str_starts_with(haystack: (string) $value, needle: (string) $prefix)) {
@@ -36,7 +36,7 @@ readonly class StartsWith
         }
 
         throw new ValidationException(
-            message: $property . ' must start with one of the following: ' . implode(separator: ', ', array: $this->prefixes),
+            message: $property.' must start with one of the following: '.implode(separator: ', ', array: $this->prefixes),
         );
     }
 }

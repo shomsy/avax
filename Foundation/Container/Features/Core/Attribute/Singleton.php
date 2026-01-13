@@ -13,8 +13,7 @@ use Attribute;
  * When applied, only one instance of the class will be created and shared
  * across all resolution requests.
  *
- * @package Avax\Container\Features\Core\Attribute
- * @see docs/Features/Core/Attribute/Singleton.md
+ * @see     docs/Features/Core/Attribute/Singleton.md
  */
 #[Attribute(flags: Attribute::TARGET_CLASS)]
 final class Singleton {}

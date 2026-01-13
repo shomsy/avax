@@ -5,22 +5,20 @@ declare(strict_types=1);
 namespace Avax\Container\Features\Think\Model;
 
 use Avax\Container\Features\Think\Cache\PrototypeCache;
-use Avax\Container\Features\Think\Flow\DesignFlow;
 
 /**
  * The high-speed in-memory vault for active class blueprints.
  *
- * The PrototypeRegistry serves as the L1 (Level 1) cache for 
- * {@see ServicePrototype} objects. It provides O(1) lightning-fast access 
- * to blueprints that have already been created or loaded during the current 
- * process. To prevent memory leakage in long-running processes (like Swoole 
- * or Octane), it implements a strict LRU (Least Recently Used) eviction 
+ * The PrototypeRegistry serves as the L1 (Level 1) cache for
+ * {@see ServicePrototype} objects. It provides O(1) lightning-fast access
+ * to blueprints that have already been created or loaded during the current
+ * process. To prevent memory leakage in long-running processes (like Swoole
+ * or Octane), it implements a strict LRU (Least Recently Used) eviction
  * policy.
  *
- * @package Avax\Container\Features\Think\Model
- * @see docs/Features/Think/Model/PrototypeRegistry.md
- * @see ServicePrototype For the data structure being stored.
- * @see PrototypeCache For the persistent L2 cache that backs this registry.
+ * @see     docs/Features/Think/Model/PrototypeRegistry.md
+ * @see     ServicePrototype For the data structure being stored.
+ * @see     PrototypeCache For the persistent L2 cache that backs this registry.
  */
 class PrototypeRegistry
 {
@@ -50,11 +48,12 @@ class PrototypeRegistry
      * Retrieve a blueprint from RAM.
      *
      * @param string $class Fully qualified class name.
+     *
      * @return ServicePrototype|null The blueprint, or null if not in memory.
      *
      * @see docs/Features/Think/Model/PrototypeRegistry.md#method-get
      */
-    public function get(string $class): ServicePrototype|null
+    public function get(string $class) : ServicePrototype|null
     {
         if (! isset($this->prototypes[$class])) {
             return null;
@@ -70,40 +69,24 @@ class PrototypeRegistry
      * Determine if a blueprint is currently residing in memory.
      *
      * @param string $class Class name to check.
-     * @return bool
+     *
      * @see docs/Features/Think/Model/PrototypeRegistry.md#method-has
      */
-    public function has(string $class): bool
+    public function has(string $class) : bool
     {
         return isset($this->prototypes[$class]);
-    }
-
-    /**
-     * Store a blueprint in memory, potentially triggering eviction of old items.
-     *
-     * @param string           $class     The class name ID.
-     * @param ServicePrototype $prototype The blueprint to store.
-     * @return void
-     *
-     * @see docs/Features/Think/Model/PrototypeRegistry.md#method-set
-     */
-    public function set(string $class, ServicePrototype $prototype): void
-    {
-        $this->accessTimes[$class] = ++$this->timestamp;
-        $this->prototypes[$class]  = $prototype;
-
-        $this->enforceMemoryLimit();
     }
 
     /**
      * Evict a specific blueprint from memory.
      *
      * @param string $class Class name to remove.
+     *
      * @return bool True if an item was actually removed.
      *
      * @see docs/Features/Think/Model/PrototypeRegistry.md#method-remove
      */
-    public function remove(string $class): bool
+    public function remove(string $class) : bool
     {
         if (! isset($this->prototypes[$class])) {
             return false;
@@ -117,10 +100,9 @@ class PrototypeRegistry
     /**
      * Purge all blueprints from memory.
      *
-     * @return void
      * @see docs/Features/Think/Model/PrototypeRegistry.md#method-clear
      */
-    public function clear(): void
+    public function clear() : void
     {
         $this->prototypes  = [];
         $this->accessTimes = [];
@@ -132,7 +114,7 @@ class PrototypeRegistry
      *
      * @return array<int, string>
      */
-    public function getAllClasses(): array
+    public function getAllClasses() : array
     {
         return array_keys($this->prototypes);
     }
@@ -142,7 +124,7 @@ class PrototypeRegistry
      *
      * @return array<string, ServicePrototype>
      */
-    public function getAllPrototypes(): array
+    public function getAllPrototypes() : array
     {
         return $this->prototypes;
     }
@@ -151,9 +133,10 @@ class PrototypeRegistry
      * Retrieve performance and usage metrics for the registry.
      *
      * @return array{count: int, maxSize: int, utilization: float}
+     *
      * @see docs/Features/Think/Model/PrototypeRegistry.md#method-getstats
      */
-    public function getStats(): array
+    public function getStats() : array
     {
         return [
             'count'       => $this->count(),
@@ -164,10 +147,8 @@ class PrototypeRegistry
 
     /**
      * Return the total count of shortcuts stored in memory.
-     *
-     * @return int
      */
-    public function count(): int
+    public function count() : int
     {
         return count($this->prototypes);
     }
@@ -177,11 +158,12 @@ class PrototypeRegistry
      *
      * @param iterable<string> $classes List of classes to load.
      * @param callable         $loader  A function(string) that returns ?ServicePrototype.
+     *
      * @return int The total number of prototypes successfully brought into RAM.
      *
      * @see docs/Features/Think/Model/PrototypeRegistry.md#method-bulkload
      */
-    public function bulkLoad(iterable $classes, callable $loader): int
+    public function bulkLoad(iterable $classes, callable $loader) : int
     {
         $loaded = 0;
 
@@ -197,9 +179,25 @@ class PrototypeRegistry
     }
 
     /**
+     * Store a blueprint in memory, potentially triggering eviction of old items.
+     *
+     * @param string           $class     The class name ID.
+     * @param ServicePrototype $prototype The blueprint to store.
+     *
+     * @see docs/Features/Think/Model/PrototypeRegistry.md#method-set
+     */
+    public function set(string $class, ServicePrototype $prototype) : void
+    {
+        $this->accessTimes[$class] = ++$this->timestamp;
+        $this->prototypes[$class]  = $prototype;
+
+        $this->enforceMemoryLimit();
+    }
+
+    /**
      * Internal logic for removing least-recently-used items when the limit is reached.
      */
-    private function enforceMemoryLimit(): void
+    private function enforceMemoryLimit() : void
     {
         if ($this->count() <= $this->maxSize) {
             return;

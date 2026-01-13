@@ -18,11 +18,11 @@ use Throwable;
 final readonly class LoginController
 {
     public function __construct(
-        private RateLimiter   $rateLimiter,
+        private RateLimiter $rateLimiter,
         private Authenticator $authenticator
     ) {}
 
-    public function login(Request $request) : ResponseInterface
+    public function login(Request $request): ResponseInterface
     {
         try {
             // Create Credentials DTO (Wait, DTO usually validates on construct or explicitly?)

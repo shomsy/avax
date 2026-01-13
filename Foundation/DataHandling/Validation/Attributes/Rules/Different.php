@@ -26,7 +26,7 @@ readonly class Different
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, array $data, string $property) : void
+    public function validate(mixed $value, array $data, string $property): void
     {
         if ($value === ($data[$this->field] ?? null)) {
             throw new ValidationException(message: sprintf('%s must be different from %s.', $property, $this->field));

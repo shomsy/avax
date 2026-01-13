@@ -17,8 +17,6 @@ use InvalidArgumentException;
  *
  * The trait enforces the implementation of the `getItems` and `setItems` methods
  * in the using class to manage the underlying data collection.
- *
- * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait MacrosTrait
 {
@@ -33,11 +31,11 @@ trait MacrosTrait
      * This method allows you to define a macro (dynamic method) that can be called
      * on instances of the class using this trait.
      *
-     * @param string  $name  The name of the macro.
-     * @param Closure $macro The closure representing the macro's functionality.
-     *
+     * @param  string  $name  The name of the macro.
+     * @param  Closure  $macro  The closure representing the macro's functionality.
      *
      * @throws InvalidArgumentException If the macro name is empty or already exists.
+     *
      * @example
      * ```
      * MacrosTrait::macro('toUpperCase', function() {
@@ -47,7 +45,7 @@ trait MacrosTrait
      * $instance->toUpperCase(); // Transforms all items to uppercase.
      * ```
      */
-    public static function macro(string $name, Closure $macro) : void
+    public static function macro(string $name, Closure $macro): void
     {
         if ($name === '' || $name === '0') {
             throw new InvalidArgumentException(message: 'Macro name cannot be empty.');
@@ -66,12 +64,12 @@ trait MacrosTrait
      * This method allows you to define a macro within a specific namespace, enabling
      * better organization and avoiding naming collisions.
      *
-     * @param string  $namespace The namespace for organizing macros.
-     * @param string  $name      The name of the macro within the namespace.
-     * @param Closure $macro     The closure representing the macro's functionality.
-     *
+     * @param  string  $namespace  The namespace for organizing macros.
+     * @param  string  $name  The name of the macro within the namespace.
+     * @param  Closure  $macro  The closure representing the macro's functionality.
      *
      * @throws InvalidArgumentException If the namespace or macro name is empty or already exists.
+     *
      * @example
      * ```
      * MacrosTrait::macroNamespace('string', 'toCamelCase', function() {
@@ -82,7 +80,7 @@ trait MacrosTrait
      * $instance->string::toCamelCase(); // Converts snake_case strings to camelCase.
      * ```
      */
-    public static function macroNamespace(string $namespace, string $name, Closure $macro) : void
+    public static function macroNamespace(string $namespace, string $name, Closure $macro): void
     {
         if ($namespace === '' || $namespace === '0') {
             throw new InvalidArgumentException(message: 'Namespace cannot be empty.');
@@ -107,9 +105,8 @@ trait MacrosTrait
      * This magic method intercepts static calls to methods that are not explicitly defined
      * within the class. It checks if a macro with the given name exists and invokes it.
      *
-     * @param string $name      The name of the static method being called.
-     * @param array  $arguments The arguments passed to the method.
-     *
+     * @param  string  $name  The name of the static method being called.
+     * @param  array  $arguments  The arguments passed to the method.
      * @return mixed The result of the macro invocation.
      *
      * @throws BadMethodCallException If the macro does not exist.
@@ -153,16 +150,16 @@ trait MacrosTrait
      *
      * @return iterable The collection of items.
      */
-    abstract public function getItems() : iterable;
+    abstract public function getItems(): iterable;
 
     /**
      * Enforce the implementation of the setItems method.
      *
      * Classes using this trait must implement this method.
      *
-     * @param iterable $items The collection of items to set.
+     * @param  iterable  $items  The collection of items to set.
      */
-    abstract public function setItems(iterable $items) : static;
+    abstract public function setItems(iterable $items): static;
 
     /**
      * Handle dynamic method calls to macros.
@@ -171,9 +168,8 @@ trait MacrosTrait
      * within the class. It checks if a macro with the given name exists and invokes it.
      * It supports both global macros and namespaced macros (using the '::' separator).
      *
-     * @param string $name      The name of the method being called.
-     * @param array  $arguments The arguments passed to the method.
-     *
+     * @param  string  $name  The name of the method being called.
+     * @param  array  $arguments  The arguments passed to the method.
      * @return mixed The result of the macro invocation.
      *
      * @throws BadMethodCallException If the macro does not exist.

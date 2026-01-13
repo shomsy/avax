@@ -1,115 +1,124 @@
 # RouterServiceProvider
 
 ## Quick Summary
-- This file registers routing services (router, request router, route validator, router kernel) into the container.
-- It exists so your application can route HTTP requests using DI-managed router components.
-- It removes the complexity of wiring routers and validators manually.
 
-### For Humans: What This Means (Summary)
-It installs the navigation system for your web app: how requests find the right destination.
+- Technical: Registers routing stack components (constraint validator, HTTP router, controller dispatcher, pipeline
+  factory, router kernel, head fallback) and a `router` alias.
+- Ensures strict-mode readiness by binding every routing dependency explicitly.
 
-## Terminology (MANDATORY, EXPANSIVE)
-- **Router**: The high-level routing API.
-  - In this file: `Router` is registered as a singleton.
-  - Why it matters: it’s usually what you use to define routes.
-- **Request router**: A component that routes actual HTTP requests.
-  - In this file: `HttpRequestRouter` is built with a constraint validator.
-  - Why it matters: it’s the runtime “match request to route” piece.
-- **Constraint validator**: Validates route constraints (parameters, patterns).
-  - In this file: `RouteConstraintValidator` is registered.
-  - Why it matters: it prevents invalid routes from matching incorrectly.
-- **Router kernel**: Orchestrates routing execution (often the runtime entry point for routing).
-  - In this file: `RouterKernel` is registered.
-  - Why it matters: it’s often the integration point with middleware and application kernel.
-- **Alias (`'router'`)**: A shorthand to resolve the router.
-  - In this file: `'router'` resolves to `Router`.
-  - Why it matters: convenience.
+### For Humans: What This Means
 
-### For Humans: What This Means (Terms)
-This provider sets up the “map” and the “GPS” for your app’s HTTP requests.
+It installs the entire navigation system—maps, rules, dispatcher, and fallbacks—so requests can find their handlers.
+
+## Terminology
+
+- **HttpRequestRouter**: Internal router that matches requests to route definitions.
+- **ControllerDispatcher**: Invokes controller actions for resolved routes.
+- **RoutePipelineFactory**: Builds middleware pipelines for a resolved route.
+- **RouterKernel**: Coordinates fallback handling, routing, and pipeline dispatch.
+- **HeadRequestFallback**: Converts HEAD to GET when needed to avoid 404s.
+- **`router` alias**: Container alias that resolves to `Router`.
+
+### For Humans: What This Means
+
+These bindings are the routing toolkit: matcher, dispatcher, pipeline maker, fallback helper, and a friendly alias.
 
 ## Think of It
-Think of it like setting up street signs and traffic rules before cars start driving. The validator is the rules, the router is the map, the kernel is the traffic control center.
 
-### For Humans: What This Means (Think)
-Routing only feels simple if the wiring is reliable.
+Like installing road signs, traffic lights, and an emergency detour plan before opening a new highway.
+
+### For Humans: What This Means
+
+You prepare all routing infrastructure up front so traffic (requests) flows smoothly.
 
 ## Story Example
-Your app starts and bootstraps providers. This provider registers all routing infrastructure. Later, the HTTP kernel asks for a `RouterKernel` and routes incoming requests without needing to construct routers manually.
 
-### For Humans: What This Means (Story)
-You focus on defining routes; the container handles building the routing system.
+During boot, `AppFactory::http()` builds the container and runs providers. This provider wires the router stack, so when
+`RouteRegistrar` loads routes, everything the router needs is already in the container.
+
+### For Humans: What This Means
+
+By the time routes load, the router, dispatcher, and fallbacks are ready—no surprises later.
 
 ## For Dummies
 
-This section gives you a slow, step-by-step mental model and a beginner-safe walkthrough of what the file does.
+1. Provider registers validator, HTTP router, dispatcher, pipeline factory, router kernel, and head fallback.
+2. It adds the `'router'` alias for convenience.
+3. Once routes are loaded, the router kernel can resolve and dispatch requests.
 
-### For Humans: What This Means (Dummies)
-If you’re new to this area, read this first. It helps you avoid getting lost in terminology and lets you use the code with confidence.
+### For Humans: What This Means
 
-1. Provider checks if routing is already installed.
-2. If not, it registers validator and router infrastructure.
-3. It registers `'router'` alias for convenience.
+This file installs every routing part; after it runs, the rest of the app can route requests safely.
 
 ## How It Works (Technical)
-`register()` first checks if `HttpRequestRouter` is already bound and returns early if so (idempotency). Otherwise, it registers `RouteConstraintValidator`, registers `HttpRequestRouter` via a closure that injects the validator, registers `Router` and `RouterKernel`, and finally binds `'router'` alias to the `Router`.
 
-### For Humans: What This Means (How)
-It avoids double-wiring and then installs everything routing needs.
+- Registers `RouteConstraintValidator`, then builds `HttpRequestRouter` injecting that validator.
+- Registers core routing collaborators: `ControllerDispatcher`, `RoutePipelineFactory`, `Router`, `RouterKernel`, and
+  `HeadRequestFallback`.
+- Adds `'router'` alias returning the main `Router`.
+
+### For Humans: What This Means
+
+It wires every routing dependency explicitly so strict mode can resolve them without guessing.
 
 ## Architecture Role
-- Why this file lives in `Providers/HTTP`: routing is core web infrastructure.
-- What depends on it: request handling layer and middleware/kernel orchestration.
-- What it depends on: routing library classes.
-- System-level reasoning: consistent routing wiring prevents subtle runtime differences across apps.
 
-### For Humans: What This Means (Role)
-If routing is inconsistent, your whole app behaves inconsistently. Central wiring keeps it stable.
+- Lives in `Providers/HTTP` because it supplies HTTP routing primitives.
+- Consumed by AppFactory/provider boot; required before loading routes.
+- Keeps routing bindings deterministic and testable.
 
-## Methods 
+### For Humans: What This Means
 
+If routing breaks, look here first—this provider is the single source of routing bindings.
 
-This section is the API map of the file: it documents what each method does, why it exists, and how you should use it.
+## Methods
 
-### For Humans: What This Means (Methods)
-When you’re trying to use or debug this file, this is the part you’ll come back to. It’s your “what can I call, and what happens?” cheat sheet.
+### Method: register(): void
 
-### Method: register(…)
+Technical: Registers all routing services and the `router` alias.
 
-#### Technical Explanation (register)
-Registers routing services and aliases, unless they are already registered.
+### For Humans: What This Means
 
-##### For Humans: What This Means (register)
-It installs routing only once, then gets out of the way.
+Call during boot to install the routing stack once.
 
-##### Parameters (register)
+#### Parameters
+
 - None.
 
-##### Returns (register)
-- Returns nothing.
+#### Returns
 
-##### Throws (register)
-- No explicit exceptions.
+- `void`
 
-##### When to Use It (register)
-- Bootstrap before middleware/request execution.
+#### Throws
 
-##### Common Mistakes (register)
-- Assuming the early return means routing is “fully configured”; it only means the key binding already exists.
+- None directly; resolution errors surface later if routing types are missing.
 
-## Risks, Trade-offs & Recommended Practices
-- Risk: Partial installation detection.
-  - Why it matters: checking only one binding might miss incomplete wiring in some edge cases.
-  - Design stance: idempotency is useful; completeness checks are safer.
-  - Recommended practice: keep bootstrap deterministic and avoid partial provider execution.
+#### When to use it
 
-### For Humans: What This Means (Risks)
-Don’t half-run providers. Either install routing fully, or don’t install it at all.
+- During application/provider bootstrap before routes are loaded.
+
+#### Common mistakes
+
+- Forgetting to include this provider in the AppFactory provider list.
+
+## Risks & Trade-offs
+
+Technical: Centralizes routing bindings—if this provider is omitted, routing fails fast. Adds all routing components
+even if some apps don’t need them.
+
+### For Humans: What This Means
+
+Include it explicitly; without it, the router can’t start. If you don’t need HTTP, don’t register this provider.
 
 ## Related Files & Folders
-- `docs_md/Providers/HTTP/MiddlewareServiceProvider.md`: Middleware often wraps routing execution.
-- `docs_md/Providers/HTTP/HTTPServiceProvider.md`: Provides HTTP primitives used across the HTTP stack.
 
-### For Humans: What This Means (Related)
-Routing sits in the middle: it needs HTTP basics, and it usually works together with middleware.
+Technical:
 
+- `Http/RouteRegistrar.php` — consumes the router to load routes.
+- `Http/HttpApplication.php` — runs the router at request time.
+- `Core/AppFactory.php` — orchestrates provider registration.
+
+### For Humans: What This Means
+
+These pieces work together: AppFactory runs this provider, RouteRegistrar loads routes into the router, and
+HttpApplication uses the router to handle requests.

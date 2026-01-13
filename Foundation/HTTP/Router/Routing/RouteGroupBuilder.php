@@ -22,10 +22,7 @@ use RuntimeException;
 final readonly class RouteGroupBuilder
 {
     /**
-     * @param string|null    $prefix
      * @param array<string>  $middleware
-     * @param string|null    $domain
-     * @param string|null    $authorization
      * @param RouteBuilder[] $routes
      */
     private function __construct(
@@ -44,7 +41,7 @@ final readonly class RouteGroupBuilder
     public static function create() : self
     {
         // Create and return a new RouteGroup instance with default settings.
-        return new self();
+        return new self;
     }
 
     /**
@@ -146,8 +143,6 @@ final readonly class RouteGroupBuilder
      * @param string                $method HTTP verb
      * @param string                $path   Route path
      * @param callable|array|string $action Target controller or callable
-     *
-     * @return self
      */
     public function addRoute(string $method, string $path, callable|array|string $action) : self
     {
@@ -208,9 +203,8 @@ final readonly class RouteGroupBuilder
     public static function make() : self
     {
         // Instantiate and return a new RouteGroupBuilder with default values.
-        return new self();
+        return new self;
     }
-
 
     /**
      * Applies the group prefix to a given path.
@@ -239,7 +233,6 @@ final readonly class RouteGroupBuilder
         return rtrim(string: $this->prefix, characters: '/') . '/' . ltrim(string: $path, characters: '/');
     }
 
-
     /**
      * Sets a domain constraint for all routes in the group.
      *
@@ -248,8 +241,8 @@ final readonly class RouteGroupBuilder
      * to a specific domain. This is useful for implementing multi-tenant
      * architectures, subdomain routing, or domain-specific behavior.
      *
-     * @param string $domain The domain constraint to be applied to the routes
-     *                       within this group.
+     * @param string $domain    The domain constraint to be applied to the routes
+     *                          within this group.
      *
      * @return self Returns a new instance of the `RouteGroupBuilder` class
      *              with the specified domain applied, ensuring immutability.
@@ -282,6 +275,7 @@ final readonly class RouteGroupBuilder
      * @return RouteDefinition[] An array of `RouteDefinition` instances,
      *                           representing the fully finalized routes
      *                           within this route group.
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function build() : array
     {

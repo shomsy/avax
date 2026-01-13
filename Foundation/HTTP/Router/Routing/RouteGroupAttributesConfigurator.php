@@ -84,9 +84,10 @@ final class RouteGroupAttributesConfigurator
      * against the supported strategies, and applies the corresponding
      * handler to modify the `RouteGroupContext`.
      *
-     * @param array<string, mixed> $attributes A map of attributes to be configured for the route group context (e.g.,
-     *                                         'prefix' => '/api').
-     * @param RouteGroupContext    $context    The route group context where the attributes will be applied.
+     * @param array<string, mixed> $attributes    A map of attributes to be configured for the route group context
+     *                                            (e.g.,
+     *                                            'prefix' => '/api').
+     * @param RouteGroupContext    $context       The route group context where the attributes will be applied.
      *
      * @throws InvalidArgumentException If an attribute key is not recognized or unsupported.
      */

@@ -28,8 +28,6 @@ use Throwable;
  *     'expires_at' => 1702238167,   // Expiration (null = never)
  * ]
  * ```
- *
- * @package Avax\HTTP\Session\Core\Storage
  */
 final readonly class FileStore implements StoreInterface
 {
@@ -44,8 +42,6 @@ final readonly class FileStore implements StoreInterface
      * @param string   $key   The session key.
      * @param mixed    $value The value to store.
      * @param int|null $ttl   Time-to-live in seconds (null = never expires).
-     *
-     * @return void
      */
     public function put(string $key, mixed $value, int|null $ttl = null) : void
     {
@@ -131,8 +127,6 @@ final readonly class FileStore implements StoreInterface
      * Delete a specific session key.
      *
      * @param string $key The session key.
-     *
-     * @return void
      */
     public function delete(string $key) : void
     {
@@ -202,6 +196,7 @@ final readonly class FileStore implements StoreInterface
                 if (isset($metadata['expires_at']) && $metadata['expires_at'] !== null) {
                     if (time() > $metadata['expires_at']) {
                         $this->storage->delete(path: $file);
+
                         continue;
                     }
                 }
@@ -214,7 +209,7 @@ final readonly class FileStore implements StoreInterface
             return $data;
         } catch (Throwable $e) {
             throw new RuntimeException(
-                message : "Failed to read all session data: " . $e->getMessage(),
+                message : 'Failed to read all session data: ' . $e->getMessage(),
                 code    : 0,
                 previous: $e
             );
@@ -223,8 +218,6 @@ final readonly class FileStore implements StoreInterface
 
     /**
      * Delete all session data.
-     *
-     * @return void
      */
     public function flush() : void
     {
@@ -232,7 +225,7 @@ final readonly class FileStore implements StoreInterface
             $this->storage->deleteDirectory(directory: $this->directory);
         } catch (Throwable $e) {
             throw new RuntimeException(
-                message : "Failed to flush session directory: " . $e->getMessage(),
+                message : 'Failed to flush session directory: ' . $e->getMessage(),
                 code    : 0,
                 previous: $e
             );
@@ -245,8 +238,6 @@ final readonly class FileStore implements StoreInterface
      * Example: flushNamespace('cart') deletes 'cart.items', 'cart.total', etc.
      *
      * @param string $prefix The namespace prefix.
-     *
-     * @return void
      */
     public function flushNamespace(string $prefix) : void
     {

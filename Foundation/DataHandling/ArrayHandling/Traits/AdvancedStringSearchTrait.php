@@ -12,8 +12,6 @@ use InvalidArgumentException;
  * Trait AdvancedStringSearchTrait
  *
  * Provides advanced string search functionalities for collections, including fuzzy search and similarity-based search.
- *
- * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait AdvancedStringSearchTrait
 {
@@ -52,7 +50,7 @@ trait AdvancedStringSearchTrait
         $threshold ??= 70.0;
         $this->isProperThreshold(threshold: $threshold);
 
-        $fuzz    = new Fuzz();
+        $fuzz    = new Fuzz;
         $process = new Process(fuzz: $fuzz);
 
         $matchedItems = array_filter(
@@ -77,7 +75,6 @@ trait AdvancedStringSearchTrait
      * Helper method to validate the threshold.
      *
      * @param float $threshold The threshold to validate.
-     *
      *
      * @throws InvalidArgumentException If the threshold is not between 0 and 100.
      */
@@ -121,7 +118,7 @@ trait AdvancedStringSearchTrait
         $threshold ??= 70.0;
         $this->isProperThreshold(threshold: $threshold);
 
-        $fuzz    = new Fuzz();
+        $fuzz    = new Fuzz;
         $process = new Process(fuzz: $fuzz);
 
         $matchedItems = array_filter(
@@ -273,7 +270,7 @@ trait AdvancedStringSearchTrait
         $threshold ??= 70.0;
         $this->isProperThreshold(threshold: $threshold);
 
-        $fuzz    = new Fuzz();
+        $fuzz    = new Fuzz;
         $process = new Process(fuzz: $fuzz);
 
         // Sort tokens in the query
@@ -338,7 +335,7 @@ trait AdvancedStringSearchTrait
         $this->isProperThreshold(threshold: $threshold);
 
         // Initializing FuzzyWuzzy components
-        $fuzz    = new Fuzz();
+        $fuzz    = new Fuzz;
         $process = new Process(fuzz: $fuzz);
 
         // Get unique tokens in the query
@@ -348,7 +345,7 @@ trait AdvancedStringSearchTrait
 
         $matchedItems = array_filter(
             array   : $this->getItems(),
-            callback: function ($item) use ($key, $fuzz, $sortedQuery, $threshold, $process) : bool {
+            callback: function ($item) use ($key, $fuzz, $sortedQuery, $threshold) : bool {
                 $target = $key !== null ? ($item[$key] ?? '') : $item;
 
                 if (! is_string(value: $target)) {
@@ -525,7 +522,7 @@ trait AdvancedStringSearchTrait
 
         $sortedItems = $this->getItems();
         usort(array: $sortedItems, callback: function ($a, $b) use ($key, $queryLower) : int {
-            $fuzz   = new Fuzz();
+            $fuzz   = new Fuzz;
             $aValue = $key !== null ? ($a[$key] ?? '') : $a;
             $bValue = $key !== null ? ($b[$key] ?? '') : $b;
 

@@ -21,7 +21,7 @@ abstract class BaseCollection implements CollectionInterface
 {
     /**
      * @var array Holds the items of the collection.
-     * Using a protected array allows subclasses to access and manipulate the stored items directly.
+     *            Using a protected array allows subclasses to access and manipulate the stored items directly.
      */
     protected array $items = [];
 
@@ -31,7 +31,7 @@ abstract class BaseCollection implements CollectionInterface
      *
      * By accepting any iterable type, this constructor ensures flexibility in initializing the collection.
      *
-     * @param iterable $items Initial items to populate the collection.
+     * @param  iterable  $items  Initial items to populate the collection.
      */
     public function __construct(iterable $items = [])
     {
@@ -44,11 +44,10 @@ abstract class BaseCollection implements CollectionInterface
      * Ensures compatibility regardless of the input type,
      * whether it's an instance of self, Traversable, or an array.
      *
-     * @param mixed $items The items to convert.
-     *
+     * @param  mixed  $items  The items to convert.
      * @return array The converted array.
      */
-    public function convertToArray(mixed $items) : array
+    public function convertToArray(mixed $items): array
     {
         if ($items instanceof self) {
             return $items->all();
@@ -68,7 +67,7 @@ abstract class BaseCollection implements CollectionInterface
      *
      * @return array The entire collection as an array.
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->getItems();
     }
@@ -82,7 +81,7 @@ abstract class BaseCollection implements CollectionInterface
      *
      * @return array The items in the collection.
      */
-    abstract public function getItems() : array;
+    abstract public function getItems(): array;
 
     /**
      * Abstract method to set the internal items.
@@ -91,11 +90,10 @@ abstract class BaseCollection implements CollectionInterface
      * Ensures that subclasses handle the specific logic for setting the items,
      * which can vary based on the type of collection.
      *
-     * @param array $items The items to set.
-     *
+     * @param  array  $items  The items to set.
      * @return static This collection instance.
      */
-    abstract public function setItems(array $items) : static;
+    abstract public function setItems(array $items): static;
 
     /**
      * Get an iterator for the collection.
@@ -104,7 +102,7 @@ abstract class BaseCollection implements CollectionInterface
      *
      * @return Traversable An iterator over the items.
      */
-    public function getIterator() : Traversable
+    public function getIterator(): Traversable
     {
         return new ArrayIterator(array: $this->getItems());
     }
@@ -116,7 +114,7 @@ abstract class BaseCollection implements CollectionInterface
      *
      * @return int The number of items.
      */
-    public function count() : int
+    public function count(): int
     {
         return count(value: $this->getItems());
     }
@@ -128,7 +126,7 @@ abstract class BaseCollection implements CollectionInterface
      *
      * @return array Data ready for JSON serialization.
      */
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
@@ -141,9 +139,9 @@ abstract class BaseCollection implements CollectionInterface
      *
      * @return array The collection items as an array.
      */
-    public function toArray() : array
+    public function toArray(): array
     {
-        return array_map(callback: fn($item) => $item instanceof self ? $item->toArray() : $item, array: $this->getItems());
+        return array_map(callback: fn ($item) => $item instanceof self ? $item->toArray() : $item, array: $this->getItems());
     }
 
     // Abstract methods to be implemented by subclasses for specific functionalities
@@ -151,37 +149,33 @@ abstract class BaseCollection implements CollectionInterface
     /**
      * Append an item to the collection.
      *
-     * @param mixed $value The value to append.
-     *
+     * @param  mixed  $value  The value to append.
      * @return static This collection instance, enabling method chaining.
      */
-    abstract public function append(mixed $value) : static;
+    abstract public function append(mixed $value): static;
 
     /**
      * Prepend an item to the collection.
      *
-     * @param mixed $value The value to prepend.
-     *
+     * @param  mixed  $value  The value to prepend.
      * @return static This collection instance, enabling method chaining.
      */
-    abstract public function prepend(mixed $value) : static;
+    abstract public function prepend(mixed $value): static;
 
     /**
      * Merge another collection or an array of items into this collection.
      *
-     * @param array|CollectionInterface $items The items to merge.
-     *
+     * @param  array|CollectionInterface  $items  The items to merge.
      * @return static This collection instance, enabling method chaining.
      */
-    abstract public function merge(array|CollectionInterface $items) : static;
+    abstract public function merge(array|CollectionInterface $items): static;
 
     /**
      * Invoke the provided callback with the collection instance.
      * This allows operations to be performed on the collection within the callback.
      *
-     * @param Closure $callback The callback to invoke.
-     *
+     * @param  Closure  $callback  The callback to invoke.
      * @return static This collection instance, enabling method chaining.
      */
-    abstract public function tap(Closure $callback) : static;
+    abstract public function tap(Closure $callback): static;
 }

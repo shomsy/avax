@@ -7,7 +7,7 @@ namespace Avax\HTTP\Enums;
 /**
  * Enum representing HTTP Reason Phrases associated with Status Codes.
  */
-enum HttpReasonPhrase : string
+enum HttpReasonPhrase: string
 {
     case OK = 'OK';
 

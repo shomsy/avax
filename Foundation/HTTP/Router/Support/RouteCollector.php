@@ -5,151 +5,230 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Support;
 
 use Avax\HTTP\Router\Routing\RouteBuilder;
-use LogicException;
+use Closure;
 
 /**
- * Class RouteCollector
+ * ROUTE LIFECYCLE: DSL → Collection → Registration
  *
- * Provides a temporary in-memory registry for storing route configurations (via `RouteBuilder` instances)
- * during application initialization phases, such as bootstrapping, cache compilation,
- * or CLI-based route inspection.
+ * RouteCollector is the critical bridge between route DSL execution and router registration.
+ * Refactored to be instance-based to eliminate global state and enable proper isolation.
  *
- * This class is designed for temporary usage and does not handle runtime route resolution.
- * It serves only as an internal tool for assembling and managing router-related data.
+ * ## Route Lifecycle Flow:
+ * 1. **DSL Execution** (RouteRegistrar::load)
+ *    - Route files executed in isolated scope with dedicated collector instance
+ *    - DSL calls (get/post/any) create RouteBuilder instances via collector
+ *    - RouteBuilder instances buffered in instance-specific collection
+ *
+ * 2. **Collection Phase** (RouteCollector instance)
+ *    - Routes buffered in instance $routes array (no global state)
+ *    - Fallback stored in instance $fallback
+ *    - Natural isolation between different collector instances
+ *
+ * 3. **Activation Point** (RouteCollector::flush)
+ *    - RouteBuilder::build() called to create RouteDefinition
+ *    - RouteDefinition registered with HttpRequestRouter
+ *    - Buffer cleared for next collection cycle
+ *
+ * ## Fallback Lifecycle Flow:
+ * 1. **DSL Definition** (RouterDsl::fallback)
+ *    - Fallback callable stored via RouteCollector::setFallback()
+ *
+ * 2. **Registration** (RouteBootstrapper)
+ *    - Fallback passed to HttpRequestRouter::fallback()
+ *    - Stored in HttpRequestRouter for runtime resolution
+ *
+ * 3. **Runtime Invocation** (Router::resolve)
+ *    - Called when no routes match the request
+ *    - Handled by FallbackManager for controller-style dispatch
+ *
+ * ## Thread Safety Benefits:
+ * - No static properties = no race conditions between threads
+ * - Instance isolation = no cross-context contamination
+ * - Predictable state management = deterministic behavior
  */
 final class RouteCollector
 {
     /**
-     * @var list<RouteBuilder> $bufferedRoutes
-     *
-     * Buffers all the route definitions provided during application initialization.
-     * This buffer is emptied after flushing or resetting, maintaining the ephemeral nature of this class.
+     * @var RouteBuilder[] Buffered route builders
      */
-    private static array $bufferedRoutes = [];
+    private array $routes = [];
 
     /**
-     * @var callable|array|string|null $fallback
-     *
-     * Defines the fallback handler for unmatched routes.
-     * This handler is called at runtime when no route matches are found.
-     * Accepts `callable`, an array (controller-action pair), or a string (class or function name).
+     * @var callable|null Fallback route handler
      */
-    private static mixed $fallback = null;
+    private $fallback = null;
 
     /**
-     * Registers a RouteBuilder into the internal buffered routes registry.
+     * Execute a closure with scoped route collection.
      *
-     * RouteBuilder instances are used to encapsulate route definitions and related metadata.
+     * Creates a new RouteCollector instance for the closure execution,
+     * ensuring complete isolation between different route loading contexts.
+     * Eliminates global state by passing collector as closure parameter.
      *
-     * @param RouteBuilder $builder The RouteBuilder instance to buffer.
-     *
-     * @return void
+     * @param Closure $closure The closure to execute with scoped collection
+     * @return RouteCollector The collector instance used for the scope
      */
-    public static function add(RouteBuilder $builder) : void
+    public static function scoped(Closure $closure) : self
     {
-        // Add the provided RouteBuilder instance to the buffered routes list.
-        self::$bufferedRoutes[] = $builder;
+        $collector = new self();
+
+        // Execute closure with collector instance passed as parameter
+        // This eliminates global state completely
+        try {
+            $closure($collector);
+            return $collector;
+        } catch (\Throwable $exception) {
+            // Ensure clean state even on exception
+            $collector->clear();
+            throw $exception;
+        }
     }
 
     /**
-     * Returns all buffered RouteBuilder instances and clears the buffer.
+     * Execute DSL functions with this collector instance.
      *
-     * This method is essential during cache compilation or inspection tasks,
-     * where it retrieves and empties the stored entries for processing downstream.
+     * Provides a clean API for route file execution without global state.
      *
-     * @return list<RouteBuilder> A list of buffered RouteBuilder instances.
+     * @param string $code The PHP code containing DSL function calls
+     * @return void
      */
-    public static function flushBuffered() : array
+    public function executeDsl(string $code) : void
     {
-        // Assign the current buffer to a temporary variable for returning.
-        $routes = self::$bufferedRoutes;
+        // Bind this collector instance to the execution context
+        $collector = $this;
 
-        // Clear the buffered routes to ensure the collector is reset post-flush.
-        self::$bufferedRoutes = [];
+        // Create isolated execution environment
+        $executionClosure = function () use ($code, $collector) : void {
+            // Make collector available to global DSL functions via closure binding
+            // This replaces the global state approach
+            $dslFunctions = [
+                'get' => fn($path, $action) => $collector->addRouteBuilder(
+                    \Avax\HTTP\Router\Routing\RouteBuilder::make('GET', $path)->action($action)
+                ),
+                'post' => fn($path, $action) => $collector->addRouteBuilder(
+                    \Avax\HTTP\Router\Routing\RouteBuilder::make('POST', $path)->action($action)
+                ),
+                'put' => fn($path, $action) => $collector->addRouteBuilder(
+                    \Avax\HTTP\Router\Routing\RouteBuilder::make('PUT', $path)->action($action)
+                ),
+                'patch' => fn($path, $action) => $collector->addRouteBuilder(
+                    \Avax\HTTP\Router\Routing\RouteBuilder::make('PATCH', $path)->action($action)
+                ),
+                'delete' => fn($path, $action) => $collector->addRouteBuilder(
+                    \Avax\HTTP\Router\Routing\RouteBuilder::make('DELETE', $path)->action($action)
+                ),
+                'options' => fn($path, $action) => $collector->addRouteBuilder(
+                    \Avax\HTTP\Router\Routing\RouteBuilder::make('OPTIONS', $path)->action($action)
+                ),
+                'head' => fn($path, $action) => $collector->addRouteBuilder(
+                    \Avax\HTTP\Router\Routing\RouteBuilder::make('HEAD', $path)->action($action)
+                ),
+                'any' => fn($path, $action) => $collector->addRouteBuilder(
+                    \Avax\HTTP\Router\Routing\RouteBuilder::make('ANY', $path)->action($action)
+                ),
+                'fallback' => fn($handler) => $collector->setFallback($handler),
+            ];
 
-        // Return the temporary stash of routes.
+            // Extract variables for the DSL execution
+            extract($dslFunctions);
+
+            // Execute the DSL code in isolated scope
+            eval('?>' . $code);
+        };
+
+        $executionClosure();
+    }
+
+    /**
+     * Add a route builder to the collection.
+     *
+     * @param RouteBuilder $routeBuilder The route builder to add
+     */
+    public function add(RouteBuilder $routeBuilder) : void
+    {
+        $this->routes[] = $routeBuilder;
+    }
+
+    /**
+     * Add a route builder and return a registrar proxy for chaining.
+     *
+     * This method provides the fluent API for DSL functions.
+     *
+     * @param RouteBuilder $routeBuilder The route builder to add
+     * @return \Avax\HTTP\Router\Routing\RouteRegistrarProxy The proxy for chaining
+     */
+    public function addRouteBuilder(RouteBuilder $routeBuilder) : \Avax\HTTP\Router\Routing\RouteRegistrarProxy
+    {
+        $this->add($routeBuilder);
+
+        return new \Avax\HTTP\Router\Routing\RouteRegistrarProxy(
+            router: null, // Will be set by RouterDsl
+            builder: $routeBuilder,
+            registry: null // Will be set by RouterDsl
+        );
+    }
+
+    /**
+     * Flush all collected route builders.
+     *
+     * Returns the collected routes and clears the buffer.
+     *
+     * @return RouteBuilder[] The collected route builders
+     */
+    public function flush() : array
+    {
+        $routes       = $this->routes;
+        $this->routes = [];
+
         return $routes;
     }
 
     /**
-     * Defines a fallback handler for unmatched routes.
+     * Get the fallback route handler.
      *
-     * This operation is important and enforces a single fallback definition.
-     * Calling this method multiple times will result in an exception if the fallback is already defined.
-     *
-     * @param callable|array|string $handler A handler for unmatched routes. This can be:
-     *                                       - A `callable` (e.g., closure, function),
-     *                                       - A controller-action pair array (e.g., [Controller::class, 'method']),
-     *                                       - A string (e.g., fully qualified class name or function).
-     *
-     * @return void
-     * @throws LogicException If a fallback handler has already been set.
-     *
+     * @return callable|null The fallback handler or null if not set
      */
-    public static function fallback(callable|array|string $handler) : void
+    public function getFallback() : callable|null
     {
-        // Prevent overriding an existing fallback handler by throwing an exception.
-        if (self::$fallback !== null) {
-            throw new LogicException(message: 'Fallback route handler has already been defined.');
-        }
-
-        // Set the fallback handler.
-        self::$fallback = $handler;
+        return $this->fallback;
     }
 
     /**
-     * Retrieves the currently set fallback handler.
+     * Set the fallback route handler.
      *
-     * This method is designed to allow downstream consumers to inspect the state
-     * of the collector for unmatched route handling.
-     *
-     * @return callable|array|string|null The fallback handler, or null if none is set.
+     * @param callable $fallback The fallback handler
      */
-    public static function getFallback() : callable|array|string|null
+    public function setFallback(callable $fallback) : void
     {
-        // Return the current fallback handler.
-        return self::$fallback;
+        $this->fallback = $fallback;
     }
 
     /**
-     * Clears the currently set fallback handler.
+     * Check if any routes have been collected.
      *
-     * This method ensures a clean state, consistent with the stateless purpose of the collector.
-     *
-     * @return void
+     * @return bool True if routes are buffered
      */
-    public static function clearFallback() : void
+    public function hasRoutes() : bool
     {
-        // Reset the fallback handler to null.
-        self::$fallback = null;
+        return ! empty($this->routes);
     }
 
     /**
-     * Checks whether the collector contains any buffered RouteBuilder instances.
+     * Get the count of collected routes.
      *
-     * This method helps optimize workflows or conditional operations during bootstrap or cache validation.
-     *
-     * @return bool True if there are buffered routes, false otherwise.
+     * @return int Number of buffered routes
      */
-    public static function hasRoutes() : bool
+    public function count() : int
     {
-        // Return true if the bufferedRoutes array is not empty.
-        return ! empty(self::$bufferedRoutes);
+        return count($this->routes);
     }
 
     /**
-     * Resets the entire collector to a clean state.
-     *
-     * This method clears all buffered routes and removes the fallback handler, ensuring no side effects or
-     * lingering state between bootstrap cycles or application contexts.
-     *
-     * @return void
+     * Clear all routes (for testing/cleanup).
      */
-    public static function reset() : void
+    public function clear() : void
     {
-        // Clear the buffered routes.
-        self::$bufferedRoutes = [];
-        // Reset the fallback handler to null.
-        self::$fallback = null;
+        $this->routes = [];
+        $this->fallback = null;
     }
 }

@@ -17,7 +17,7 @@ use InvalidArgumentException;
  * - Parameter constraints, defaults, and metadata
  * - Clean Architecture-aligned route definitions
  *
- * This class acts as a DSL-style immutable builder that produces `RouteDefinition` objects.
+ * This class acts as a DSL-style fluent builder that produces `RouteDefinition` objects.
  */
 final class RouteBuilder
 {
@@ -71,12 +71,10 @@ final class RouteBuilder
     /**
      * Validates that the HTTP method is allowed.
      *
-     * @param string $method
      *
-     * @return void
      * @throws InvalidArgumentException
      */
-    private function validateMethod(string $method): void
+    private function validateMethod(string $method) : void
     {
         if (! HttpMethod::isValid(method: $method)) {
             throw new InvalidArgumentException(message: "Invalid HTTP method: {$method}");
@@ -86,50 +84,33 @@ final class RouteBuilder
     /**
      * Validates that the route path format is acceptable.
      *
-     * @param string $path
      *
-     * @return void
      * @throws InvalidArgumentException
      */
-    private function validatePath(string $path): void
+    private function validatePath(string $path) : void
     {
-        if (! preg_match(pattern: '#^/[\w\-/.{}]*$#', subject: $path)) {
-            throw new InvalidArgumentException(message: "Invalid route path: {$path}");
-        }
+        route_validate_path(path: $path);
     }
 
     /**
      * Static factory to initialize a RouteBuilder.
      *
-     * @param string $method
-     * @param string $path
-     *
-     * @return self
+     * Note: Group context is applied by RouterDsl, not here.
      */
-    public static function make(string $method, string $path): self
+    public static function make(string $method, string $path) : self
     {
-        $builder = new self(method: $method, path: $path);
-
-        return RouteGroupStack::apply(builder: $builder);
+        return new self(method: $method, path: $path);
     }
-
 
     /**
      * Gets the route name.
-     *
-     * @return string|null
      */
-    public function getName(): string|null
+    public function getName() : string|null
     {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     *
-     * @return RouteBuilder
-     */
-    public function setName(string|null $name): RouteBuilder
+    public function setName(string|null $name) : RouteBuilder
     {
         $this->name = $name;
 
@@ -138,20 +119,13 @@ final class RouteBuilder
 
     /**
      * Gets the middleware stack.
-     *
-     * @return array
      */
-    public function getMiddleware(): array
+    public function getMiddleware() : array
     {
         return $this->middleware;
     }
 
-    /**
-     * @param array $middleware
-     *
-     * @return RouteBuilder
-     */
-    public function setMiddleware(array $middleware): RouteBuilder
+    public function setMiddleware(array $middleware) : RouteBuilder
     {
         $this->middleware = $middleware;
 
@@ -160,20 +134,13 @@ final class RouteBuilder
 
     /**
      * Gets the route action.
-     *
-     * @return callable|array|string|null
      */
-    public function getAction(): callable|array|string|null
+    public function getAction() : callable|array|string|null
     {
         return $this->action;
     }
 
-    /**
-     * @param mixed $action
-     *
-     * @return RouteBuilder
-     */
-    public function setAction(mixed $action): RouteBuilder
+    public function setAction(mixed $action) : RouteBuilder
     {
         $this->action = $action;
 
@@ -185,17 +152,12 @@ final class RouteBuilder
      *
      * @return array<string, string>
      */
-    public function getConstraints(): array
+    public function getConstraints() : array
     {
         return $this->constraints;
     }
 
-    /**
-     * @param array $constraints
-     *
-     * @return RouteBuilder
-     */
-    public function setConstraints(array $constraints): RouteBuilder
+    public function setConstraints(array $constraints) : RouteBuilder
     {
         $this->constraints = $constraints;
 
@@ -207,17 +169,12 @@ final class RouteBuilder
      *
      * @return array<string, string>
      */
-    public function getDefaults(): array
+    public function getDefaults() : array
     {
         return $this->defaults;
     }
 
-    /**
-     * @param array $defaults
-     *
-     * @return RouteBuilder
-     */
-    public function setDefaults(array $defaults): RouteBuilder
+    public function setDefaults(array $defaults) : RouteBuilder
     {
         $this->defaults = $defaults;
 
@@ -226,20 +183,13 @@ final class RouteBuilder
 
     /**
      * Gets the domain constraint, if any.
-     *
-     * @return string|null
      */
-    public function getDomain(): string|null
+    public function getDomain() : string|null
     {
         return $this->domain;
     }
 
-    /**
-     * @param string|null $domain
-     *
-     * @return RouteBuilder
-     */
-    public function setDomain(string|null $domain): RouteBuilder
+    public function setDomain(string|null $domain) : RouteBuilder
     {
         $this->domain = $domain;
 
@@ -251,38 +201,24 @@ final class RouteBuilder
      *
      * @return array<string, mixed>
      */
-    public function getAttributes(): array
+    public function getAttributes() : array
     {
         return $this->attributes;
     }
 
-    /**
-     * @param array $attributes
-     *
-     * @return RouteBuilder
-     */
-    public function setAttributes(array $attributes): RouteBuilder
+    public function setAttributes(array $attributes) : RouteBuilder
     {
         $this->attributes = $attributes;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getAuthorization(): string|null
+    public function getAuthorization() : string|null
     {
         return $this->authorization;
     }
 
-
-    /**
-     * @param string|null $authorization
-     *
-     * @return RouteBuilder
-     */
-    public function setAuthorization(string|null $authorization): RouteBuilder
+    public function setAuthorization(string|null $authorization) : RouteBuilder
     {
         $this->authorization = $authorization;
 
@@ -291,12 +227,8 @@ final class RouteBuilder
 
     /**
      * Sets the route name.
-     *
-     * @param string $name
-     *
-     * @return self
      */
-    public function name(string $name): self
+    public function name(string $name) : self
     {
         $this->name = $name;
 
@@ -307,12 +239,8 @@ final class RouteBuilder
 
     /**
      * Sets the action target of the route.
-     *
-     * @param callable|array|string $action
-     *
-     * @return self
      */
-    public function action(callable|array|string $action): self
+    public function action(callable|array|string $action) : self
     {
         $this->action = $action;
 
@@ -321,13 +249,8 @@ final class RouteBuilder
 
     /**
      * Shortcut for setting a controller and method.
-     *
-     * @param string $controller
-     * @param string $method
-     *
-     * @return self
      */
-    public function controller(string $controller, string $method = 'index'): self
+    public function controller(string $controller, string $method = 'index') : self
     {
         $this->action = [$controller, $method];
 
@@ -336,12 +259,8 @@ final class RouteBuilder
 
     /**
      * Attaches middleware to the route.
-     *
-     * @param array $middleware
-     *
-     * @return self
      */
-    public function middleware(array $middleware): self
+    public function middleware(array $middleware) : self
     {
         $this->middleware = $middleware;
 
@@ -352,10 +271,8 @@ final class RouteBuilder
      * Assigns default values for optional route parameters.
      *
      * @param array<string, string> $defaults
-     *
-     * @return self
      */
-    public function defaults(array $defaults): self
+    public function defaults(array $defaults) : self
     {
         $this->defaults = $defaults;
 
@@ -364,12 +281,8 @@ final class RouteBuilder
 
     /**
      * Assigns a domain pattern to the route.
-     *
-     * @param string $domain
-     *
-     * @return self
      */
-    public function withDomain(string $domain): self
+    public function withDomain(string $domain) : self
     {
         $this->domain = $domain;
 
@@ -380,10 +293,8 @@ final class RouteBuilder
      * Attaches custom metadata (attributes) to the route.
      *
      * @param array<string, mixed> $attributes
-     *
-     * @return self
      */
-    public function attributes(array $attributes): self
+    public function attributes(array $attributes) : self
     {
         $this->attributes = $attributes;
 
@@ -392,12 +303,8 @@ final class RouteBuilder
 
     /**
      * Specifies an authorization policy identifier.
-     *
-     * @param string $policy
-     *
-     * @return self
      */
-    public function withAuthorization(string $policy): self
+    public function withAuthorization(string $policy) : self
     {
         $this->authorization = $policy;
 
@@ -409,10 +316,9 @@ final class RouteBuilder
      *
      * @param array<string, string> $constraints
      *
-     * @return self
      * @throws InvalidArgumentException
      */
-    public function whereIn(array $constraints): self
+    public function whereIn(array $constraints) : self
     {
         foreach ($constraints as $param => $pattern) {
             $this->where(parameter: $param, pattern: $pattern);
@@ -424,13 +330,10 @@ final class RouteBuilder
     /**
      * Adds a single route parameter constraint using regex.
      *
-     * @param string $parameter
-     * @param string $pattern
      *
-     * @return self
      * @throws InvalidArgumentException
      */
-    public function where(string $parameter, string $pattern): self
+    public function where(string $parameter, string $pattern) : self
     {
         $this->validateConstraintPattern(pattern: $pattern);
 
@@ -442,35 +345,45 @@ final class RouteBuilder
     /**
      * Ensures that the regex constraint is syntactically valid.
      *
-     * @param string $pattern
-     *
-     * @return void
      * @throws InvalidArgumentException
      */
-    private function validateConstraintPattern(string $pattern): void
+    private function validateConstraintPattern(string $pattern) : void
     {
-        if (@preg_match(pattern: "/{$pattern}/", subject: '') === false) {
-            throw new InvalidArgumentException(message: "Invalid constraint regex: {$pattern}");
+        // Test pattern compilation without @ suppression
+        $testPattern = "/{$pattern}/";
+        $error       = null;
+
+        set_error_handler(static function ($errno, $errstr) use (&$error) {
+            $error = $errstr;
+        });
+
+        $result = preg_match($testPattern, '');
+
+        restore_error_handler();
+
+        if ($result === false || $error !== null) {
+            $reason = $error ?: 'invalid regex syntax';
+            throw new InvalidArgumentException(message: sprintf('Invalid constraint regex "%s": %s', $pattern, $reason));
         }
     }
 
     /**
      * Finalizes and compiles the route definition.
      *
-     * @return RouteDefinition
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
-    public function build(): RouteDefinition
+    public function build() : RouteDefinition
     {
         return new RouteDefinition(
-            method: $this->method,
-            path: $this->path,
-            action: $this->action,
-            middleware: $this->middleware,
-            name: $this->name ?? '',
-            constraints: $this->constraints,
-            defaults: $this->defaults,
-            domain: $this->domain,
-            attributes: $this->attributes,
+            method       : $this->method,
+            path         : $this->path,
+            action       : $this->action,
+            middleware   : $this->middleware,
+            name         : $this->name ?? '',
+            constraints  : $this->constraints,
+            defaults     : $this->defaults,
+            domain       : $this->domain,
+            attributes   : $this->attributes,
             authorization: $this->authorization
         );
     }
@@ -479,10 +392,8 @@ final class RouteBuilder
      * Specifies a policy for route-level authorization.
      *
      * @param string $policy The authorization policy identifier.
-     *
-     * @return self
      */
-    public function authorize(string $policy): self
+    public function authorize(string $policy) : self
     {
         $this->authorization = $policy;
 
@@ -491,20 +402,16 @@ final class RouteBuilder
 
     /**
      * Gets the HTTP method.
-     *
-     * @return string
      */
-    public function getMethod(): string
+    public function getMethod() : string
     {
         return $this->method;
     }
 
     /**
      * Gets the path for the route.
-     *
-     * @return string
      */
-    public function getPath(): string
+    public function getPath() : string
     {
         return $this->path;
     }

@@ -11,15 +11,13 @@ use RuntimeException;
  *
  * Enforces absolute maximum lifetime for sessions regardless of activity.
  * Once session reaches max lifetime, it must be terminated.
- *
- * @package Avax\HTTP\Session\Policies
  */
 final readonly class MaxLifetimePolicy implements PolicyInterface
 {
     /**
      * MaxLifetimePolicy Constructor.
      *
-     * @param int $maxLifetimeSeconds Maximum session lifetime in seconds (default: 1 hour).
+     * @param  int  $maxLifetimeSeconds  Maximum session lifetime in seconds (default: 1 hour).
      */
     public function __construct(
         private int $maxLifetimeSeconds = 3600
@@ -28,12 +26,11 @@ final readonly class MaxLifetimePolicy implements PolicyInterface
     /**
      * Enforce max lifetime policy.
      *
-     * @param array<string, mixed> $data Current session data.
+     * @param  array<string, mixed>  $data  Current session data.
      *
-     * @return void
      * @throws \RuntimeException If session exceeded max lifetime.
      */
-    public function enforce(array $data) : void
+    public function enforce(array $data): void
     {
         $createdAt = $data['_created_at'] ?? null;
 
@@ -59,7 +56,7 @@ final readonly class MaxLifetimePolicy implements PolicyInterface
      *
      * @return string Policy identifier.
      */
-    public function getName() : string
+    public function getName(): string
     {
         return 'max_lifetime';
     }

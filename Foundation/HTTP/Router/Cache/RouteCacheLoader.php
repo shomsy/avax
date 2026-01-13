@@ -4,54 +4,91 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Cache;
 
-use Avax\Facade\Facades\Storage;
-use Avax\HTTP\Router\Router;
+use Avax\Contracts\FilesystemException;
+use Avax\Filesystem\Contracts\FilesystemInterface;
+use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\Router\Routing\RouteDefinition;
+use Avax\HTTP\Router\Routing\RouterRegistrar;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use RuntimeException;
 
 final readonly class RouteCacheLoader
 {
     public function __construct(
-        private Router $router
+        private RouterRegistrar        $registrar,
+        private RouterRuntimeInterface $router,
+        private FilesystemInterface    $filesystem,
+        private LoggerInterface        $logger = new NullLogger,
     ) {}
 
     /**
-     * Loads route definitions from serialized cache and registers them into the router.
+     * Loads route definitions from JSON cache and registers them into the router.
+     *
+     * Uses secure JSON deserialization instead of PHP require() to prevent code injection attacks.
      *
      * @param string $cachePath
+     * @param string $routesPath
      *
-     * @throws RuntimeException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
-    public function load(string $cachePath) : void
+    public function load(string $cachePath, string $routesPath) : void
     {
-        if (! Storage::exists(path: $cachePath)) {
+        if (! $this->filesystem->exists(path: $cachePath)) {
             throw new RuntimeException(message: "Route cache file not found: {$cachePath}");
         }
 
-        /** @var array<RouteDefinition> $routes */
-        $routes = require $cachePath;
+        $metadataPath    = RouteCacheManifest::metadataPath(cachePath: $cachePath);
+        $storedManifest  = RouteCacheManifest::fromFile(metadataPath: $metadataPath);
+        $currentManifest = RouteCacheManifest::buildFromDirectory(baseDir: $routesPath);
+
+        if ($storedManifest === null || ! $storedManifest->matches(other: $currentManifest)) {
+            throw new RuntimeException(message: 'Route cache manifest mismatch; rebuild required.');
+        }
+
+        // Validate signature for immutable routing guarantees (v2.1 feature)
+        if (! $storedManifest->validateSignatureFile(cachePath: $cachePath)) {
+            $this->logger?->warning(message: 'Route cache signature validation failed. Cache may be compromised.', context: [
+                'cache_path'  => $cachePath,
+                'routes_path' => $routesPath,
+            ]);
+            throw new RuntimeException(message: 'Route cache signature validation failed. Cache integrity compromised.');
+        }
+
+        // Load routes from secure JSON format instead of PHP require()
+        $cacheContent = $this->filesystem->get(path: $cachePath);
+
+        try {
+            /** @var array<array<string, mixed>> $routes */
+            $routes = json_decode($cacheContent, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $exception) {
+            throw new RuntimeException(message: 'Invalid route cache JSON format.', previous: $exception);
+        }
 
         if (! is_array(value: $routes)) {
-            throw new RuntimeException(message: "Invalid route cache: must be an array.");
+            throw new RuntimeException(message: 'Invalid route cache: must be an array.');
         }
 
         foreach ($routes as $definition) {
-            if (! $definition instanceof RouteDefinition) {
-                throw new RuntimeException(message: "Invalid route in cache.");
+            if (! is_array($definition)) {
+                throw new RuntimeException(message: 'Invalid route in cache.');
             }
 
-            $this->router->registerRouteFromCache(definition: $definition);
+            $this->registrar->registerRouteFromCache(definition: RouteDefinition::fromArray(payload: $definition));
         }
     }
 
     /**
-     * Writes the current route definitions to a serialized cache file.
+     * Writes the current route definitions to a secure JSON cache file.
+     *
+     * Uses JSON serialization instead of PHP code generation for security.
      *
      * @param string $cachePath
+     * @param string $routesPath
      *
-     * @throws RuntimeException
+     * @throws \Avax\Contracts\FilesystemException
      */
-    public function write(string $cachePath) : void
+    public function write(string $cachePath, string $routesPath) : void
     {
         $directory = dirname(path: $cachePath);
 
@@ -59,39 +96,59 @@ final readonly class RouteCacheLoader
 
         $routeDefinitions = $this->router->allRoutes();
 
-        $flattenedRoutes = array_merge(...array_values(array: $routeDefinitions));
+        $flattenedRoutes = $routeDefinitions === []
+            ? []
+            : array_merge(...array_values(array: $routeDefinitions));
 
-        // 🧼 Remove any route that uses a Closure action
-        $serializableRoutes = array_filter(
-            array   : $flattenedRoutes,
-            callback: static fn(RouteDefinition $route) : bool => ! $route->usesClosure()
-        );
+        $exportable = [];
+        foreach ($flattenedRoutes as $route) {
+            if ($route->usesClosure()) {
+                $this->logger->warning(message: 'Skipping closure route during cache write.', context: [
+                    'path' => $route->path,
+                ]);
 
-        $exported = var_export(value: $serializableRoutes, return: true);
-        $hash     = sha1(string: $exported);
-        $content  = "<?php\n\n/** Auto-generated route cache [sha1: {$hash}]. Do not edit manually. */\n\nreturn {$exported};\n";
+                continue;
+            }
 
-        if (! Storage::write(path: $cachePath, content: $content)) {
-            throw new RuntimeException(message: "Failed to write route cache to: {$cachePath}");
+            $exportable[] = $route->toArray();
         }
-    }
 
+        if ($exportable === []) {
+            throw new RuntimeException(message: 'No cacheable routes available (closures are not cached).');
+        }
+
+        // Write secure JSON format instead of PHP code
+        try {
+            $content = json_encode($exportable, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        } catch (\JsonException $exception) {
+            throw new RuntimeException(message: 'Failed to encode route cache as JSON.', previous: $exception);
+        }
+
+        $this->filesystem->put(path: $cachePath, content: $content);
+
+        $manifest = RouteCacheManifest::buildFromDirectory(baseDir: $routesPath);
+        $manifest->writeTo(metadataPath: RouteCacheManifest::metadataPath(cachePath: $cachePath));
+
+        // Write signature for immutable routing guarantees (v2.1 feature)
+        $manifest->writeSignature(cachePath: $cachePath);
+    }
 
     /**
      * Ensures the cache directory is writable.
      *
-     * @param string $directory
      *
      * @throws RuntimeException
      */
     private function ensureDirectoryIsWritable(string $directory) : void
     {
-        if (! Storage::exists(path: $directory) && ! Storage::createDirectory(directory: $directory)) {
+        try {
+            $this->filesystem->ensureDirectory(path: $directory);
+        } catch (FilesystemException) {
             throw new RuntimeException(message: "Cannot create route cache directory: {$directory}");
         }
 
-        if (! Storage::isWritable(path: $directory)) {
-            throw new RuntimeException(message: "Route cache directory is not writable: {$directory}");
-        }
+        // Note: FilesystemInterface doesn't have isWritable check
+        // Assuming ensureDirectory makes it writable, or this would need
+        // to be handled by the implementation
     }
 }

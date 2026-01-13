@@ -10,16 +10,16 @@ use ReflectionProperty;
 final readonly class PropertyMetadata
 {
     public function __construct(
-        public string             $name,
+        public string $name,
         public ReflectionProperty $property,
         /** @var array<ReflectionAttribute> */
-        public array              $attributes,
+        public array $attributes,
     ) {}
 
     /**
      * Checks whether the property has an explicit type.
      */
-    public function isTyped() : bool
+    public function isTyped(): bool
     {
         return $this->property->hasType();
     }
@@ -27,7 +27,7 @@ final readonly class PropertyMetadata
     /**
      * Checks whether the property is nullable.
      */
-    public function isNullable() : bool
+    public function isNullable(): bool
     {
         $type = $this->property->getType();
 
@@ -37,7 +37,7 @@ final readonly class PropertyMetadata
     /**
      * Returns true if at least one attribute matches the given FQCN (case-sensitive).
      */
-    public function hasAttribute(string $fqcn) : bool
+    public function hasAttribute(string $fqcn): bool
     {
         return $this->property->getAttributes(name: $fqcn) !== [];
     }
@@ -47,10 +47,10 @@ final readonly class PropertyMetadata
      *
      * @return object[] List of attribute instances.
      */
-    public function instantiateAttributes() : array
+    public function instantiateAttributes(): array
     {
         return array_map(
-            callback: static fn(ReflectionAttribute $attr) => $attr->newInstance(),
+            callback: static fn (ReflectionAttribute $attr) => $attr->newInstance(),
             array   : $this->attributes
         );
     }

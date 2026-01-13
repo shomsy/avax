@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Guard\Rules;
 
 use Avax\Container\Features\Define\Store\ServiceDefinitionEntity;
@@ -62,10 +63,9 @@ use ReflectionClass;
  * - Enforces interface contracts for type safety
  * - Validates abstract class usage appropriately
  *
- * @package Avax\Container\Guard\Rules
  * @see     AbstractRule For base validation rule functionality
  * @see     ServiceDefinitionEntity For service definition structure
- * @see docs/Guard/Rules/ServiceValidationRule.md#quick-summary
+ * @see     docs/Guard/Rules/ServiceValidationRule.md#quick-summary
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class ServiceValidationRule extends AbstractRule
@@ -91,6 +91,7 @@ class ServiceValidationRule extends AbstractRule
      * @param bool  $allowInterface     Whether interfaces are permitted
      * @param array $requiredInterfaces Interfaces that must be implemented
      * @param array $forbiddenClasses   Class names that are explicitly blocked
+     *
      * @see docs/Guard/Rules/ServiceValidationRule.md#method-__construct
      */
     public function __construct(
@@ -123,7 +124,9 @@ class ServiceValidationRule extends AbstractRule
      * @param mixed $value The value to validate (expected to be a class name string)
      *
      * @return bool True if the class name passes all validation checks
+     *
      * @throws \ReflectionException
+     *
      * @see docs/Guard/Rules/ServiceValidationRule.md#method-validate
      */
     public function validate(mixed $value) : bool
@@ -193,6 +196,7 @@ class ServiceValidationRule extends AbstractRule
      * ```
      *
      * @return string Descriptive error message explaining validation failure
+     *
      * @see docs/Guard/Rules/ServiceValidationRule.md#method-geterrormessage
      */
     public function getErrorMessage() : string

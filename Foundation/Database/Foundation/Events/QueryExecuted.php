@@ -26,34 +26,33 @@ final readonly class QueryExecuted extends Event
     public array $rawBindings;
 
     /**
-     * @param string $sql            The actual SQL text that was run.
-     * @param array  $bindings       The "Fill-in-the-blank" values used.
-     * @param float  $timeMs         How many milliseconds it took to finish.
-     * @param string $connectionName The nickname of the database used.
-     * @param string $correlationId  The Trace ID (Luggage Tag) for this request.
-     * @param bool   $redactBindings Should we use the "Black Marker" to hide values in the main report?
+     * @param  string  $sql  The actual SQL text that was run.
+     * @param  array  $bindings  The "Fill-in-the-blank" values used.
+     * @param  float  $timeMs  How many milliseconds it took to finish.
+     * @param  string  $connectionName  The nickname of the database used.
+     * @param  string  $correlationId  The Trace ID (Luggage Tag) for this request.
+     * @param  bool  $redactBindings  Should we use the "Black Marker" to hide values in the main report?
      */
     public function __construct(
-        public string               $sql,
+        public string $sql,
         #[SensitiveParameter] array $bindings,
-        public float                $timeMs,
-        public string               $connectionName,
-        string                      $correlationId,
-        bool                        $redactBindings = true
-    )
-    {
-        $this->rawBindings      = $bindings;
+        public float $timeMs,
+        public string $connectionName,
+        string $correlationId,
+        bool $redactBindings = true
+    ) {
+        $this->rawBindings = $bindings;
         $this->redactedBindings = self::redactBindings(bindings: $bindings);
         $this->bindingsRedacted = $redactBindings;
-        $this->bindings         = $redactBindings ? $this->redactedBindings : $this->rawBindings;
+        $this->bindings = $redactBindings ? $this->redactedBindings : $this->rawBindings;
         parent::__construct(correlationId: $correlationId);
     }
 
     /**
      * Redact sensitive query parameters for telemetry.
      */
-    private static function redactBindings(array $bindings) : array
+    private static function redactBindings(array $bindings): array
     {
-        return array_map(callback: static fn($value) => '[REDACTED]', array: $bindings);
+        return array_map(callback: static fn ($value) => '[REDACTED]', array: $bindings);
     }
 }

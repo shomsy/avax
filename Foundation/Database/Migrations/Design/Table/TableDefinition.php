@@ -16,7 +16,7 @@ final readonly class TableDefinition
      *
      * -- intent: capture the technical identity of a database table.
      *
-     * @param string $name Technical table identifier
+     * @param  string  $name  Technical table identifier
      */
     public function __construct(
         public string $name

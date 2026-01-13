@@ -7,8 +7,8 @@ namespace Avax\Database\Connection;
 use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Connection\Exceptions\ConnectionException;
 use Avax\Database\Events\EventBus;
-use Avax\Database\Foundation\Connection\Pool\ConnectionPool;
-use Avax\Database\Foundation\Connection\Pool\PooledConnectionAuthority;
+use Avax\Database\Avax\Connection\Pool\ConnectionPool;
+use Avax\Database\Avax\Connection\Pool\PooledConnectionAuthority;
 use Avax\Database\Support\ExecutionScope;
 use PDO;
 use Random\RandomException;
@@ -49,7 +49,6 @@ final class ConnectionManager
      * @param callable    $callback Task to run.
      * @param string|null $name     Specific connection name.
      *
-     * @return mixed
      * @throws \Throwable
      */
     public function pool(callable $callback, string|null $name = null) : mixed
@@ -64,8 +63,6 @@ final class ConnectionManager
 
     /**
      * Initiate a fluent connection construction journey.
-     *
-     * @return DatabaseFlow
      */
     public function flow() : DatabaseFlow
     {
@@ -78,6 +75,7 @@ final class ConnectionManager
      * @param string|null $name The nickname (e.g., 'primary').
      *
      * @return PDO The raw technical engine.
+     *
      * @throws \Throwable
      */
     public function getPdo(string|null $name = null) : PDO
@@ -90,7 +88,6 @@ final class ConnectionManager
      *
      * @param string|null $name Connection nickname (null for default).
      *
-     * @return DatabaseConnection
      * @throws Throwable
      */
     public function connection(string|null $name = null) : DatabaseConnection
@@ -103,7 +100,7 @@ final class ConnectionManager
 
         $connection = $this->makeConnection(name: $name);
 
-        // We don't cache pooled authorities here because they handle their own 
+        // We don't cache pooled authorities here because they handle their own
         // internal caching/lazy-loading logic via the Pool.
         if ($connection instanceof PooledConnectionAuthority) {
             return $connection;
@@ -132,7 +129,7 @@ final class ConnectionManager
         $config = $this->config['connections'][$name] ?? null;
 
         if ($config === null) {
-            throw new ConnectionException(name: $name, message: "Database connection configuration not found.");
+            throw new ConnectionException(name: $name, message: 'Database connection configuration not found.');
         }
 
         $config['name'] = $name;
@@ -172,8 +169,6 @@ final class ConnectionManager
      * Create a clone with a specific correlation scope.
      *
      * @param ExecutionScope $scope Context for telemetry.
-     *
-     * @return self
      */
     public function withScope(ExecutionScope $scope) : self
     {

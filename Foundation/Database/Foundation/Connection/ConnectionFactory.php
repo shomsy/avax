@@ -21,12 +21,11 @@ final readonly class ConnectionFactory
     /**
      * Assemble a validated connection from raw configuration.
      *
-     * @param array $config Raw settings dictionary.
+     * @param  array  $config  Raw settings dictionary.
      *
-     * @return DatabaseConnection
      * @throws ConnectionFailure If assembly or physical link fails.
      */
-    public static function from(array $config) : DatabaseConnection
+    public static function from(array $config): DatabaseConnection
     {
         // First, we convert the raw array into a structured "ConnectionConfig" object.
         // This makes sure we didn't forget any important details like the host or username.
@@ -48,9 +47,9 @@ final readonly class ConnectionFactory
                 username: $config->username,
                 password: $config->password,
                 options : [
-                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES   => false,
+                    PDO::ATTR_EMULATE_PREPARES => false,
                 ],
             );
 
@@ -60,7 +59,7 @@ final readonly class ConnectionFactory
                 pdo : $pdo,
             );
         } catch (Throwable $e) {
-            // If anything goes wrong during construction, we wrap the error 
+            // If anything goes wrong during construction, we wrap the error
             // so we know exactly which connection name failed.
             throw new ConnectionFailure(
                 name    : $config->name,

@@ -16,7 +16,7 @@ class MissingPropertyException extends Exception
     /**
      * MissingPropertyException constructor.
      *
-     * @param string $propertyName The name of the missing property.
+     * @param  string  $propertyName  The name of the missing property.
      */
     public function __construct(string $propertyName)
     {

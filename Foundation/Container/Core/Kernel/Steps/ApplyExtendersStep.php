@@ -6,6 +6,7 @@ namespace Avax\Container\Core\Kernel\Steps;
 
 use Avax\Container\Core\Kernel\Contracts\KernelContext;
 use Avax\Container\Core\Kernel\Contracts\KernelStep;
+use Avax\Container\Features\Core\Contracts\ContainerInterface;
 use Avax\Container\Features\Define\Store\DefinitionStore;
 use Avax\Container\Features\Operate\Scope\ScopeManager;
 
@@ -16,14 +17,14 @@ use Avax\Container\Features\Operate\Scope\ScopeManager;
  * to the newly resolved instance, allowing for runtime modification without
  * altering the original service definition.
  *
- * @package Avax\Container\Core\Kernel\Steps
- * @see docs/Core/Kernel/Steps/ApplyExtendersStep.md#quick-summary
+ * @see     docs/Core/Kernel/Steps/ApplyExtendersStep.md#quick-summary
  */
 final readonly class ApplyExtendersStep implements KernelStep
 {
     /**
      * @param DefinitionStore $definitions Source of registered extenders.
      * @param ScopeManager    $scopes      System for retrieving system-level services.
+     *
      * @see docs/Core/Kernel/Steps/ApplyExtendersStep.md#method-__construct
      */
     public function __construct(
@@ -35,13 +36,14 @@ final readonly class ApplyExtendersStep implements KernelStep
      * Invoke extenders for the resolved instance and update context metadata.
      *
      * @param KernelContext $context The resolution context.
-     * @return void
+     *
      * @throws \Throwable If an extender fails.
+     *
      * @see docs/Core/Kernel/Steps/ApplyExtendersStep.md#method-__invoke
      */
-    public function __invoke(KernelContext $context): void
+    public function __invoke(KernelContext $context) : void
     {
-        if ($context->getMeta('inject', 'target', false)) {
+        if ($context->getMeta(namespace: 'inject', key: 'target', default: false)) {
             return;
         }
 
@@ -55,7 +57,7 @@ final readonly class ApplyExtendersStep implements KernelStep
 
         foreach ($extenders as $extender) {
             // Apply extender, allowing it to return a new instance (decoration)
-            $result = $extender($instance, $this->scopes->get(abstract: \Avax\Container\Features\Core\Contracts\ContainerInterface::class));
+            $result = $extender($instance, $this->scopes->get(abstract: ContainerInterface::class));
 
             if ($result !== null) {
                 $instance = $result;
@@ -66,7 +68,7 @@ final readonly class ApplyExtendersStep implements KernelStep
         $context->overwriteWith(instance: $instance);
 
         // Record metrics
-        $context->setMeta('extenders', 'applied', count($extenders));
-        $context->setMeta('extenders', 'completed_at', microtime(as_float: true));
+        $context->setMeta(namespace: 'extenders', key: 'applied', value: count($extenders));
+        $context->setMeta(namespace: 'extenders', key: 'completed_at', value: microtime(as_float: true));
     }
 }

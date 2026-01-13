@@ -22,8 +22,6 @@ final readonly class TableIdentifier
 
     /**
      * Convert to SQL-like string format.
-     *
-     * @return string
      */
     public function __toString() : string
     {

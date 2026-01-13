@@ -47,14 +47,14 @@
 [2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
 
 [2026-01-10 01:01:22] ✅ [INFO] ❌ No route matched for [GET] / and no fallback defined. {
-    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
     "line": 227,
     "exception": {
         "message": "❌ No route matched for [GET] \/ and no fallback defined.",
-        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
         "line": 227,
         "trace": [
-            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Features\\Operate\\Boot\\Application.php(367): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Operate\\Boot\\Application.php(367): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
             "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Features\\Operate\\Boot\\Application->run()",
             "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
             "#3 {main}"
@@ -65,15 +65,15 @@
 }
 
 [2026-01-10 01:01:22] 🔥 [CRITICAL] ⚠️ Error handler crashed: Container instance is not initialized. Please set the container first. {
-    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\app_instance.php",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Helpers\\app_instance.php",
     "line": 23,
     "exception": {
         "message": "Container instance is not initialized. Please set the container first.",
-        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\app_instance.php",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Helpers\\app_instance.php",
         "line": 23,
         "trace": [
-            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(30): appInstance()",
-            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(233): app('Avax\\\\Config\\\\Ser...')",
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Helpers\\helpers.php(30): appInstance()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Helpers\\helpers.php(233): app('Avax\\\\Config\\\\Ser...')",
             "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(97): config('ErrorSolutions....', Array)",
             "#3 [internal function]: Spatie\\ErrorSolutions\\SolutionProviderRepository->Spatie\\ErrorSolutions\\{closure}('Spatie\\\\ErrorSol...', 0)",
             "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Arr.php(930): array_filter(Array, Object(Closure), 1)",
@@ -91,8 +91,8 @@
             "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(460): Spatie\\FlareClient\\Flare->applyMiddlewareToReport(Object(Spatie\\FlareClient\\Report))",
             "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(380): Spatie\\FlareClient\\Flare->createReport(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
             "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(288): Spatie\\Ignition\\Ignition->createReport(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
-            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(205): Spatie\\Ignition\\Ignition->handleException(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
-            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Logging\\ErrorHandler.php(205): Spatie\\Ignition\\Ignition->handleException(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
             "#21 [internal function]: Avax\\Logging\\ErrorHandler->handle(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
             "#22 {main}"
         ],
@@ -150,14 +150,14 @@
 [2026-01-10 01:01:22] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
 
 [2026-01-10 01:01:22] ✅ [INFO] ❌ No route matched for [GET] /favicon.ico and no fallback defined. {
-    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
     "line": 227,
     "exception": {
         "message": "❌ No route matched for [GET] \/favicon.ico and no fallback defined.",
-        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
         "line": 227,
         "trace": [
-            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Features\\Operate\\Boot\\Application.php(367): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Operate\\Boot\\Application.php(367): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
             "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Features\\Operate\\Boot\\Application->run()",
             "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
             "#3 {main}"
@@ -168,15 +168,15 @@
 }
 
 [2026-01-10 01:01:22] 🔥 [CRITICAL] ⚠️ Error handler crashed: Container instance is not initialized. Please set the container first. {
-    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\app_instance.php",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Helpers\\app_instance.php",
     "line": 23,
     "exception": {
         "message": "Container instance is not initialized. Please set the container first.",
-        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\app_instance.php",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Helpers\\app_instance.php",
         "line": 23,
         "trace": [
-            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(30): appInstance()",
-            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(233): app('Avax\\\\Config\\\\Ser...')",
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Helpers\\helpers.php(30): appInstance()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Helpers\\helpers.php(233): app('Avax\\\\Config\\\\Ser...')",
             "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(97): config('ErrorSolutions....', Array)",
             "#3 [internal function]: Spatie\\ErrorSolutions\\SolutionProviderRepository->Spatie\\ErrorSolutions\\{closure}('Spatie\\\\ErrorSol...', 0)",
             "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Arr.php(930): array_filter(Array, Object(Closure), 1)",
@@ -194,8 +194,8 @@
             "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(460): Spatie\\FlareClient\\Flare->applyMiddlewareToReport(Object(Spatie\\FlareClient\\Report))",
             "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(380): Spatie\\FlareClient\\Flare->createReport(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
             "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(288): Spatie\\Ignition\\Ignition->createReport(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
-            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(205): Spatie\\Ignition\\Ignition->handleException(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
-            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Logging\\ErrorHandler.php(205): Spatie\\Ignition\\Ignition->handleException(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Logging\\ErrorHandler.php(133): Avax\\Logging\\ErrorHandler->renderIgnition(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
             "#21 [internal function]: Avax\\Logging\\ErrorHandler->handle(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
             "#22 {main}"
         ],
@@ -1907,4 +1907,1036 @@
 [2026-01-10 04:19:52] ✅ [INFO] Application run started. []
 
 [2026-01-10 04:19:53] ✅ [INFO] Application run finished. []
+
+[2026-01-10 18:04:21] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 18:04:21] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 18:04:21] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 18:04:21] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 18:04:21] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 18:04:21] ✅ [INFO] Application run started. []
+
+[2026-01-10 18:04:21] ✅ [INFO] Application run finished. []
+
+[2026-01-10 18:17:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 18:17:56] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 18:17:56] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 18:17:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 18:17:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 18:17:56] ✅ [INFO] Application run started. []
+
+[2026-01-10 18:17:56] ✅ [INFO] Application run finished. []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 19:49:29] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 19:49:29] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Application run started. []
+
+[2026-01-10 19:49:29] ✅ [INFO] Application run finished. []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 19:49:29] ⚠️ [WARNING] Failed to write routes cache: C:\Users\shomsy\PhpstormProjects\components\storage/cache/routes.cache.php []
+
+[2026-01-10 19:49:29] ✅ [INFO] Loaded routes from file: C:\Users\shomsy\PhpstormProjects\components/Presentation/HTTP/routes/web.routes.php []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\ConfigurationServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\FilesystemServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\Core\LoggingServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Booting service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 19:49:29] ✅ [INFO] Application run started. []
+
+[2026-01-10 19:49:29] ✅ [INFO] Application run finished. []
+
+[2026-01-10 20:58:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 20:58:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 20:58:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 20:58:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 20:58:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 20:58:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 20:58:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 20:58:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 20:58:29] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 20:58:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 20:58:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 20:58:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 20:58:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 20:58:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 20:58:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 20:58:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 20:58:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 20:58:30] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 20:59:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:01:44] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:03:22] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:03:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:05:23] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:05:24] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:06:40] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:06:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:06:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:06:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:06:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:06:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:06:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:06:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:06:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:06:41] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\Auth\SecurityServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\Database\DatabaseServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HTTPServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\MiddlewareServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\RouterServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\SessionServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\ViewServiceProvider []
+
+[2026-01-10 21:08:26] ✅ [INFO] Registering service provider: Avax\Container\Providers\HTTP\HttpClientServiceProvider []
+
+[2026-01-10 21:33:44] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 21:33:44] ❌ [ERROR] Strict Mode: Missing definition for service [Avax\Container\Config\Settings]. Auto-define is off. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep.php",
+    "line": 70,
+    "exception": {
+        "message": "Strict Mode: Missing definition for service [Avax\\Container\\Config\\Settings]. Auto-define is off.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep.php",
+        "line": 70,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Middl...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Middl...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Middl...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Middl...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#25 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#26 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#27 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#28 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#29 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#30 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#31 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#32 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#33 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#34 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#35 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#36 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#37 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#38 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#39 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#40 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#41 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#42 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#43 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#44 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#45 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#46 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#47 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#48 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#49 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#50 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#51 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#52 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#53 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#54 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#55 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#56 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#57 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(46): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#58 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(140): Avax\\Container\\Core\\Kernel\\KernelRuntime->get('Avax\\\\HTTP\\\\Route...')",
+            "#59 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(54): Avax\\Container\\Core\\ContainerKernel->get('Avax\\\\HTTP\\\\Route...')",
+            "#60 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(152): Avax\\Container\\Container->get('Avax\\\\HTTP\\\\Route...')",
+            "#61 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(29): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#62 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#63 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#64 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 21:33:45] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 21:33:45] ❌ [ERROR] Strict Mode: Missing definition for service [Avax\Container\Config\Settings]. Auto-define is off. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep.php",
+    "line": 70,
+    "exception": {
+        "message": "Strict Mode: Missing definition for service [Avax\\Container\\Config\\Settings]. Auto-define is off.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep.php",
+        "line": 70,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Middl...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Middl...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Middl...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Middl...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#25 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#26 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#27 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#28 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#29 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#30 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#31 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#32 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#33 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#34 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#35 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#36 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#37 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#38 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#39 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#40 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#41 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#42 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#43 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#44 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#45 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#46 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#47 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#48 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#49 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#50 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#51 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#52 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#53 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#54 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#55 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#56 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#57 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(46): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#58 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(140): Avax\\Container\\Core\\Kernel\\KernelRuntime->get('Avax\\\\HTTP\\\\Route...')",
+            "#59 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(54): Avax\\Container\\Core\\ContainerKernel->get('Avax\\\\HTTP\\\\Route...')",
+            "#60 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(152): Avax\\Container\\Container->get('Avax\\\\HTTP\\\\Route...')",
+            "#61 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(29): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#62 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#63 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#64 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 21:34:49] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 21:34:49] ❌ [ERROR] Strict Mode: Missing definition for service [Avax\HTTP\Router\Support\HeadRequestFallback]. Auto-define is off. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep.php",
+    "line": 70,
+    "exception": {
+        "message": "Strict Mode: Missing definition for service [Avax\\HTTP\\Router\\Support\\HeadRequestFallback]. Auto-define is off.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep.php",
+        "line": 70,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(46): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#25 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(140): Avax\\Container\\Core\\Kernel\\KernelRuntime->get('Avax\\\\HTTP\\\\Route...')",
+            "#26 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(54): Avax\\Container\\Core\\ContainerKernel->get('Avax\\\\HTTP\\\\Route...')",
+            "#27 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(157): Avax\\Container\\Container->get('Avax\\\\HTTP\\\\Route...')",
+            "#28 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(29): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#29 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#30 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#31 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 21:34:50] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 21:34:50] ❌ [ERROR] Strict Mode: Missing definition for service [Avax\HTTP\Router\Support\HeadRequestFallback]. Auto-define is off. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep.php",
+    "line": 70,
+    "exception": {
+        "message": "Strict Mode: Missing definition for service [Avax\\HTTP\\Router\\Support\\HeadRequestFallback]. Auto-define is off.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep.php",
+        "line": 70,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#7 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#9 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#10 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#11 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#12 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#13 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(86): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#14 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(140): Avax\\Container\\Core\\ContainerKernel->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#15 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(90): Avax\\Container\\Container->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#16 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver.php(50): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameter(Object(Avax\\Container\\Features\\Think\\Model\\ParameterPrototype), Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#17 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator.php(88): Avax\\Container\\Features\\Actions\\Resolve\\DependencyResolver->resolveParameters(Array, Array, Object(Avax\\Container\\Container), Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#18 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(157): Avax\\Container\\Features\\Actions\\Instantiate\\Instantiator->build('Avax\\\\HTTP\\\\Route...', Array, Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#19 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(117): Avax\\Container\\Features\\Actions\\Resolve\\Engine->evaluateConcrete('Avax\\\\HTTP\\\\Route...', Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Actions\\Resolve\\Engine.php(93): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolveFromBindings(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep.php(43): Avax\\Container\\Features\\Actions\\Resolve\\Engine->resolve(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php(81): Avax\\Container\\Core\\Kernel\\Steps\\ResolveInstanceStep->__invoke(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(59): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(46): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#25 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(140): Avax\\Container\\Core\\Kernel\\KernelRuntime->get('Avax\\\\HTTP\\\\Route...')",
+            "#26 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(54): Avax\\Container\\Core\\ContainerKernel->get('Avax\\\\HTTP\\\\Route...')",
+            "#27 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(157): Avax\\Container\\Container->get('Avax\\\\HTTP\\\\Route...')",
+            "#28 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(29): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#29 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#30 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#31 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 21:35:31] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 21:35:31] ❌ [ERROR] Call to undefined method Avax\HTTP\Router\Router::registerRoute() {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+    "line": 12,
+    "exception": {
+        "message": "Call to undefined method Avax\\HTTP\\Router\\Router::registerRoute()",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+        "line": 12,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\RouteRegistrar.php(29): require()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(162): Avax\\Container\\Http\\RouteRegistrar->load('C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...')",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(29): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#4 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#5 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 21:35:31] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 21:35:31] ❌ [ERROR] Call to undefined method Avax\HTTP\Router\Router::registerRoute() {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+    "line": 12,
+    "exception": {
+        "message": "Call to undefined method Avax\\HTTP\\Router\\Router::registerRoute()",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Presentation\\HTTP\\routes\\web.routes.php",
+        "line": 12,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\RouteRegistrar.php(29): require()",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\AppFactory.php(162): Avax\\Container\\Http\\RouteRegistrar->load('C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...')",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\bootstrap\\bootstrap.php(29): Avax\\Container\\Core\\AppFactory::http(Array, 'C:\\\\Users\\\\shomsy...', 'C:\\\\Users\\\\shomsy...', true)",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(5): require('C:\\\\Users\\\\shomsy...')",
+            "#4 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#5 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 21:37:09] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 21:37:09] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 21:37:09] ✅ [INFO] ❌ No route matched for [GET] /favicon.ico and no fallback defined. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
+    "line": 227,
+    "exception": {
+        "message": "❌ No route matched for [GET] \/favicon.ico and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\HttpApplication.php(36): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Http\\HttpApplication->run()",
+            "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#3 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 22:16:42] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:16:42] ✅ [INFO] ❌ No route matched for [GET] / and no fallback defined. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
+    "line": 227,
+    "exception": {
+        "message": "❌ No route matched for [GET] \/ and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\HttpApplication.php(36): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Http\\HttpApplication->run()",
+            "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#3 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 22:16:42] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:16:43] ✅ [INFO] ❌ No route matched for [GET] /favicon.ico and no fallback defined. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
+    "line": 227,
+    "exception": {
+        "message": "❌ No route matched for [GET] \/favicon.ico and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\HttpApplication.php(36): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Http\\HttpApplication->run()",
+            "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#3 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 22:16:45] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:16:45] ✅ [INFO] ❌ No route matched for [GET] / and no fallback defined. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
+    "line": 227,
+    "exception": {
+        "message": "❌ No route matched for [GET] \/ and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\HttpApplication.php(36): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Http\\HttpApplication->run()",
+            "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#3 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 22:16:45] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:16:45] ✅ [INFO] ❌ No route matched for [GET] /favicon.ico and no fallback defined. {
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
+    "line": 227,
+    "exception": {
+        "message": "❌ No route matched for [GET] \/favicon.ico and no fallback defined.",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
+        "line": 227,
+        "trace": [
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Http\\HttpApplication.php(36): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Http\\HttpApplication->run()",
+            "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
+            "#3 {main}"
+        ],
+        "code": 0,
+        "previous": null
+    }
+}
+
+[2026-01-10 22:17:58] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:17:58] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:17:59] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:17:59] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:18:01] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:18:01] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:18:01] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:18:02] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:18:02] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:18:02] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:18:02] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:18:02] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:18:02] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:18:02] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:53:48] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 22:53:49] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 23:59:41] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-10 23:59:42] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 00:53:44] ✅ [INFO] Bootstrap logging initialized. []
+
+[2026-01-11 00:53:44] ✅ [INFO] Bootstrap logging initialized. []
 

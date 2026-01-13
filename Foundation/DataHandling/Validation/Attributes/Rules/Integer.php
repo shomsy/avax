@@ -17,8 +17,6 @@ use Avax\Exceptions\ValidationException;
  * Domain-Driven Design (DDD) implications:
  * - Acts as a declarative rule for property validation within domain entities or value objects.
  * - Short-circuits invalid input before further operations, preserving domain integrity.
- *
- * @package Avax\DataHandling\Validation\Attributes\Rules
  */
 #[Attribute(flags: Attribute::TARGET_PROPERTY)] // Restricts this attribute to properties.
 class Integer
@@ -34,8 +32,8 @@ class Integer
     /**
      * Custom error message for validation failures.
      *
-     * @var string|null $message A custom message provided at instantiation to override the default.
-     *                           If null, the default error message will be used.
+     * @var string|null A custom message provided at instantiation to override the default.
+     *                  If null, the default error message will be used.
      */
     public function __construct(private readonly string|null $message = null) {}
 
@@ -47,8 +45,6 @@ class Integer
      *
      * @param mixed  $value    The value to be validated. Can be any type, as mixed is used.
      * @param string $property The name of the property being validated, for error context.
-     *
-     * @return void
      *
      * @throws ValidationException If the value is not an integer.
      */

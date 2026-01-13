@@ -32,7 +32,7 @@ class LogInitializer
      *
      * @throws Exception if the directory cannot be created or is not writable.
      */
-    public static function ensureLogsDirectoryExists() : void
+    public static function ensureLogsDirectoryExists(): void
     {
         $logPath = AppPath::LOGS_PATH->get();
         // Try to create or validate the primary log path
@@ -56,11 +56,10 @@ class LogInitializer
      * It also ensures the directory is writable.
      * If any step fails, it logs an emergency message.
      *
-     * @param string $path Path to the directory to verify.
-     *
+     * @param  string  $path  Path to the directory to verify.
      * @return bool True if the directory is writable, false otherwise.
      */
-    private static function verifyDirectory(string $path) : bool
+    private static function verifyDirectory(string $path): bool
     {
         try {
             // Check if the path is a directory or attempt to create it
@@ -77,7 +76,7 @@ class LogInitializer
             error_log(
                 message     : sprintf('Failed to initialize log directory at %s: %s', $path, $exception->getMessage()),
                 message_type: 3,
-                destination : self::FALLBACK_LOG_PATH . '/emergency_log.log'
+                destination : self::FALLBACK_LOG_PATH.'/emergency_log.log'
             );
 
             return false;

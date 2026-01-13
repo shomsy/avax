@@ -25,7 +25,7 @@ class InMemoryCache implements CacheInterface
 {
     /**
      * @var array<string, array{value: mixed, expires_at: int|null}>
-     * Holds cached items with expiration metadata.
+     *                                                               Holds cached items with expiration metadata.
      */
     private array $cache = [];
 
@@ -204,7 +204,7 @@ class InMemoryCache implements CacheInterface
         }
 
         return ($ttl instanceof DateInterval)
-            ? (new DateTimeImmutable())->add(interval: $ttl)->getTimestamp()
+            ? (new DateTimeImmutable)->add(interval: $ttl)->getTimestamp()
             : (time() + $ttl);
     }
 
@@ -274,6 +274,7 @@ class InMemoryCache implements CacheInterface
      * @param string $namespace The namespace prefix to clear.
      *
      * @return bool True on success.
+     *
      * @throws \Psr\SimpleCache\InvalidArgumentException
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */

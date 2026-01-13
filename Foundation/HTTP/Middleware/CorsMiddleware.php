@@ -16,12 +16,11 @@ class CorsMiddleware
     /**
      * Process the request and add CORS headers to the response.
      *
-     * @param ServerRequestInterface $serverRequest The incoming request.
-     * @param Closure                $next          The next middleware or handler.
-     *
+     * @param  ServerRequestInterface  $serverRequest  The incoming request.
+     * @param  Closure  $next  The next middleware or handler.
      * @return ResponseInterface The response with CORS headers.
      */
-    public function handle(ServerRequestInterface $serverRequest, Closure $next) : ResponseInterface
+    public function handle(ServerRequestInterface $serverRequest, Closure $next): ResponseInterface
     {
         $response = $next($serverRequest);
 

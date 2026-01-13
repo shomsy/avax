@@ -11,20 +11,17 @@ use RuntimeException;
  *
  * Enforces that session operations only occur over HTTPS.
  * Prevents session hijacking over insecure connections.
- *
- * @package Avax\HTTP\Session\Policies
  */
 final class SecureOnlyPolicy implements PolicyInterface
 {
     /**
      * Enforce HTTPS-only policy.
      *
-     * @param array<string, mixed> $data Current session data.
+     * @param  array<string, mixed>  $data  Current session data.
      *
-     * @return void
      * @throws \RuntimeException If connection is not HTTPS.
      */
-    public function enforce(array $data) : void
+    public function enforce(array $data): void
     {
         $isSecure = (bool) ($data['is_secure'] ?? false);
 
@@ -40,7 +37,7 @@ final class SecureOnlyPolicy implements PolicyInterface
      *
      * @return string Policy identifier.
      */
-    public function getName() : string
+    public function getName(): string
     {
         return 'secure_only';
     }

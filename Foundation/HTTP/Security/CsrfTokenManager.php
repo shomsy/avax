@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Security;
 
-
 use Avax\HTTP\Session\Session;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -43,6 +42,7 @@ final readonly class CsrfTokenManager
      * Retrieves or generates a CSRF token tied to the session.
      *
      * @return string The CSRF token.
+     *
      * @throws Exception If the token generation process fails.
      */
     public function getToken() : string

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Observe\Inspect;
 
 use Avax\Container\Features\Define\Store\DefinitionStore;
@@ -17,9 +18,14 @@ use Throwable;
 final readonly class Inspector
 {
     /**
-     * @param DefinitionStore                     $definitions      Definition store used to check whether a service is defined
-     * @param ScopeRegistry                       $scopes           Scope registry used to check whether a service is cached
-     * @param DependencyInjectionPrototypeFactory $prototypeFactory Prototype factory used to build reflection-based summaries
+     * @param DefinitionStore                     $definitions         Definition store used to check whether a service
+     *                                                                 is defined
+     * @param ScopeRegistry                       $scopes              Scope registry used to check whether a service
+     *                                                                 is
+     *                                                                 cached
+     * @param DependencyInjectionPrototypeFactory $prototypeFactory    Prototype factory used to build reflection-based
+     *                                                                 summaries
+     *
      * @see docs/Observe/Inspect/Inspector.md#method-__construct
      */
     public function __construct(
@@ -32,6 +38,7 @@ final readonly class Inspector
      * @param string $id Service identifier/abstract to inspect
      *
      * @return array Inspection report payload
+     *
      * @see docs/Observe/Inspect/Inspector.md#method-inspect
      */
     public function inspect(string $id) : array
@@ -45,7 +52,7 @@ final readonly class Inspector
             $prototype    = [
                 'implementation'  => $prototypeDto->class,
                 'is_instantiable' => $prototypeDto->isInstantiable,
-                'dependencies'    => count($prototypeDto->constructor?->parameters ?? [])
+                'dependencies'    => count($prototypeDto->constructor?->parameters ?? []),
             ];
         } catch (Throwable $e) {
             $prototype = ['error' => $e->getMessage()];

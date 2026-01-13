@@ -26,10 +26,10 @@ class Filled
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (empty($value)) {
-            throw new ValidationException(message: $property . ' must have a value.');
+            throw new ValidationException(message: $property.' must have a value.');
         }
     }
 }

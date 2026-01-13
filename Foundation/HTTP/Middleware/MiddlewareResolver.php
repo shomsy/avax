@@ -18,7 +18,7 @@ final readonly class MiddlewareResolver
     /**
      * Constructor to initialize the resolver with its dependencies.
      *
-     * @param MiddlewareGroupResolver $groupResolver The dependency capable of resolving middleware groups.
+     * @param  MiddlewareGroupResolver  $groupResolver  The dependency capable of resolving middleware groups.
      */
     public function __construct(private MiddlewareGroupResolver $groupResolver) {}
 
@@ -27,13 +27,12 @@ final readonly class MiddlewareResolver
      * - Fully qualified class names (FQCNs) of middleware.
      * - Group aliases that represent a defined set of middleware.
      *
-     * @param array<string|class-string> $middleware A list of middleware definitions (FQCNs or group aliases).
-     *
+     * @param  array<string|class-string>  $middleware  A list of middleware definitions (FQCNs or group aliases).
      * @return array<class-string> Returns a list of resolved middleware FQCNs (fully-qualified class names).
      *
      * @throws UnresolvableMiddlewareException If any middleware entry is invalid or unresolvable.
      */
-    public function resolve(array $middleware) : array
+    public function resolve(array $middleware): array
     {
         // Initialize an empty array to collect resolved middleware class names.
         $resolved = [];
@@ -69,16 +68,16 @@ final readonly class MiddlewareResolver
      * - A middleware FQCN (class-string).
      * - A middleware group alias defined in the configuration.
      *
-     * @param mixed $entry The middleware entry provided by the user.
+     * @param  mixed  $entry  The middleware entry provided by the user.
      *
      * @throws UnresolvableMiddlewareException If the middleware entry is not a valid string.
      */
-    private function validateEntry(mixed $entry) : void
+    private function validateEntry(mixed $entry): void
     {
         // Ensure the entry is a string; otherwise, reject the entry.
         if (! is_string(value: $entry)) {
             throw new UnresolvableMiddlewareException(
-                message: "Middleware entry must be a string. Got: " . gettype(value: $entry)
+                message: 'Middleware entry must be a string. Got: '.gettype(value: $entry)
             );
         }
     }
@@ -89,13 +88,12 @@ final readonly class MiddlewareResolver
      * This process delegates the resolution task to the `MiddlewareGroupResolver` instance
      * and supports recursive resolution of nested middleware groups.
      *
-     * @param string $entry The middleware group alias to resolve (e.g., 'web', 'api').
-     *
+     * @param  string  $entry  The middleware group alias to resolve (e.g., 'web', 'api').
      * @return array<class-string> Returns the fully resolved middleware classes for the group.
      *
      * @throws UnresolvableMiddlewareException If the group cannot be resolved.
      */
-    private function resolveGroup(string $entry) : array
+    private function resolveGroup(string $entry): array
     {
         // Recursively resolve the group's middleware entries using the group resolver.
         return $this->resolve(middleware: $this->groupResolver->resolveGroup(entry: $entry));

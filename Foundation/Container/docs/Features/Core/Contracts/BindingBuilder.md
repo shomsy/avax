@@ -68,7 +68,8 @@ This section is the API map of the file: it documents what each method does, why
 
 ### For Humans: What This Means (Methods)
 
-When you’re trying to use or debug this file, this is the part you’ll come back to. It’s your “what can I call, and what happens?” cheat sheet.
+When you’re trying to use or debug this file, this is the part you’ll come back to. It’s your “what can I call, and what
+happens?” cheat sheet.
 
 ### Method: to(string|callable|null $concrete): self
 

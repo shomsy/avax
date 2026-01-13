@@ -19,8 +19,6 @@ namespace Avax\HTTP\Session\Core;
  *   );
  *
  *   $session = new SessionManager($store, $config);
- *
- * @package Avax\HTTP\Session
  */
 final readonly class Config
 {
@@ -39,20 +37,16 @@ final readonly class Config
 
     /**
      * Create default configuration.
-     *
-     * @return self
      */
     public static function default() : self
     {
-        return new self();
+        return new self;
     }
 
     /**
      * Create secure configuration.
      *
      * @param string $encryptionKey The encryption key.
-     *
-     * @return self
      */
     public static function secure(string $encryptionKey) : self
     {
@@ -63,8 +57,6 @@ final readonly class Config
      * Create temporary configuration with TTL.
      *
      * @param int $ttl TTL in seconds.
-     *
-     * @return self
      */
     public static function temporary(int $ttl) : self
     {

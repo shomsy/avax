@@ -44,8 +44,6 @@ final readonly class SyncDispatchStrategy implements DispatchStrategyInterface
      *
      * @param Event              $event     The technical signal payload to be distributed.
      * @param iterable<callable> $listeners The collection of authorized technical handlers to be triggered.
-     *
-     * @return void
      */
     public function handle(Event $event, iterable $listeners) : void
     {
@@ -55,10 +53,10 @@ final readonly class SyncDispatchStrategy implements DispatchStrategyInterface
             } catch (Throwable $e) {
                 // Defensive capture: isolate observer failure from the producer's thread.
                 $this->logger?->error(
-                    message: "Event listener execution failed: " . $e->getMessage(),
+                    message: 'Event listener execution failed: ' . $e->getMessage(),
                     context: [
                         'event'     => $event::class,
-                        'exception' => $e
+                        'exception' => $e,
                     ]
                 );
             }

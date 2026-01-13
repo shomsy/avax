@@ -15,8 +15,6 @@ use RecursiveIteratorIterator;
  * Provides methods to transform the structure of collections,
  * including flattening multidimensional arrays, applying callbacks,
  * and mapping with custom keys.
- *
- * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait TransformationTrait
 {
@@ -27,11 +25,10 @@ trait TransformationTrait
      *
      * Classes using this trait must implement this method.
      *
-     * @param array $items The new collection of items.
-     *
+     * @param  array  $items  The new collection of items.
      * @return static A new instance with the updated collection.
      */
-    abstract public function setItems(array $items) : static;
+    abstract public function setItems(array $items): static;
 
     /**
      * Flatten a multi-dimensional array into a single-dimensional array.
@@ -54,14 +51,14 @@ trait TransformationTrait
      * // ['apple', 'banana', 'carrot', 'lettuce', 'milk']
      * ```
      */
-    public function flatten() : static
+    public function flatten(): static
     {
         $items = $this->getItems();
         if (! is_array(value: $items)) {
             throw new InvalidArgumentException(message: 'The collection must be an array to perform flattening.');
         }
 
-        $iterator  = new RecursiveIteratorIterator(iterator: new RecursiveArrayIterator(array: $items));
+        $iterator = new RecursiveIteratorIterator(iterator: new RecursiveArrayIterator(array: $items));
         $flattened = [];
 
         foreach ($iterator as $value) {
@@ -70,7 +67,6 @@ trait TransformationTrait
 
         return new static(items: $flattened);
     }
-
 
     /** ***Transformation Methods*** */
 
@@ -81,7 +77,7 @@ trait TransformationTrait
      *
      * @return array The current collection of items.
      */
-    abstract public function getItems() : array;
+    abstract public function getItems(): array;
 
     /**
      * Apply a callback to each item and flatten the results into a single array.
@@ -89,8 +85,7 @@ trait TransformationTrait
      * This method applies the provided callback to each item in the collection. The callback
      * should return an array, and the results are merged into a single, flattened array.
      *
-     * @param Closure $callback The callback to apply. It should return an array for each item.
-     *
+     * @param  Closure  $callback  The callback to apply. It should return an array for each item.
      * @return static A new instance with the mapped and flattened array.
      *
      * @throws InvalidArgumentException If the callback does not return an array.
@@ -103,7 +98,7 @@ trait TransformationTrait
      * // $flatMapped contains ['apple', 'APPLE', 'banana', 'BANANA', 'cherry', 'CHERRY']
      * ```
      */
-    public function flatMap(Closure $callback) : static
+    public function flatMap(Closure $callback): static
     {
         $mapped = [];
         foreach ($this->getItems() as $item) {
@@ -125,8 +120,7 @@ trait TransformationTrait
      * should return an associative array with a single key-value pair, where the key becomes
      * the new key in the resulting collection.
      *
-     * @param Closure $callback The callback to apply. It should return an associative array with one key-value pair.
-     *
+     * @param  Closure  $callback  The callback to apply. It should return an associative array with one key-value pair.
      * @return static A new instance with mapped keys and values.
      *
      * @throws InvalidArgumentException If the callback does not return an associative array with one key-value pair.
@@ -139,7 +133,7 @@ trait TransformationTrait
      * // $mappedWithKeys contains ['apple' => 5, 'banana' => 6, 'cherry' => 6]
      * ```
      */
-    public function mapWithKeys(Closure $callback) : static
+    public function mapWithKeys(Closure $callback): static
     {
         $mapped = [];
         foreach ($this->getItems() as $key => $item) {
@@ -150,7 +144,7 @@ trait TransformationTrait
                 );
             }
 
-            $newKey   = key(array: $result);
+            $newKey = key(array: $result);
             $newValue = reset(array: $result);
             if (array_key_exists(key: $newKey, array: $mapped)) {
                 throw new InvalidArgumentException(
@@ -170,8 +164,7 @@ trait TransformationTrait
      * This method applies the provided callback to each item in the collection and returns
      * a new instance with the transformed items, ensuring immutability.
      *
-     * @param Closure $callback The callback to apply.
-     *
+     * @param  Closure  $callback  The callback to apply.
      * @return static A new instance with transformed items.
      *
      * ```
@@ -182,7 +175,7 @@ trait TransformationTrait
      * // $transformed contains [2, 4, 6]
      * ```
      */
-    public function transform(Closure $callback) : static
+    public function transform(Closure $callback): static
     {
         $transformedItems = array_map(callback: $callback, array: $this->getItems());
 
@@ -195,8 +188,7 @@ trait TransformationTrait
      * This method allows applying a callback to each element during iteration,
      * enabling complex transformations beyond simple mapping.
      *
-     * @param Closure $callback The callback to apply to each element.
-     *
+     * @param  Closure  $callback  The callback to apply to each element.
      * @return static A new instance with the transformed collection.
      *
      * @throws InvalidArgumentException If the callback does not return a valid value.
@@ -227,7 +219,7 @@ trait TransformationTrait
      * // ]
      * ```
      */
-    public function advancedTransform(Closure $callback) : static
+    public function advancedTransform(Closure $callback): static
     {
         $iterator = new RecursiveIteratorIterator(
             iterator: new RecursiveArrayIterator(array: $this->getItems()),

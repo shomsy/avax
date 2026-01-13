@@ -21,18 +21,18 @@ namespace Avax\Database\QueryBuilder\DTO;
 final readonly class ExecutionResult
 {
     /**
-     * @param bool $success      Whether the database accepted and performed the instruction.
-     * @param int  $affectedRows The number of records touched (if applicable).
+     * @param  bool  $success  Whether the database accepted and performed the instruction.
+     * @param  int  $affectedRows  The number of records touched (if applicable).
      */
     public function __construct(
         private bool $success,
-        private int  $affectedRows = 0
+        private int $affectedRows = 0
     ) {}
 
     /**
      * Create a success report.
      */
-    public static function success(int $affectedRows = 0) : self
+    public static function success(int $affectedRows = 0): self
     {
         return new self(success: true, affectedRows: $affectedRows);
     }
@@ -40,7 +40,7 @@ final readonly class ExecutionResult
     /**
      * Create a failure report.
      */
-    public static function failure() : self
+    public static function failure(): self
     {
         return new self(success: false, affectedRows: 0);
     }
@@ -48,7 +48,7 @@ final readonly class ExecutionResult
     /**
      * Was the operation successful?
      */
-    public function isSuccessful() : bool
+    public function isSuccessful(): bool
     {
         return $this->success;
     }
@@ -56,7 +56,7 @@ final readonly class ExecutionResult
     /**
      * Get the number of affected rows.
      */
-    public function getAffectedRows() : int
+    public function getAffectedRows(): int
     {
         return $this->affectedRows;
     }

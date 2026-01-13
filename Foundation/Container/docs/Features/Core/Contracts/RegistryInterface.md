@@ -33,7 +33,9 @@ You’re setting up the directory and special cases.
 
 ## Story Example
 
-Your app registers `LoggerInterface` as singleton, and adds an extender to wrap it with a profiler in dev. You also define that when `PaymentService` needs `HttpClient`, it should get a special client. Finally, you tag all `Report` services as `reports`.
+Your app registers `LoggerInterface` as singleton, and adds an extender to wrap it with a profiler in dev. You also
+define that when `PaymentService` needs `HttpClient`, it should get a special client. Finally, you tag all `Report`
+services as `reports`.
 
 ### For Humans: What This Means (Story)
 
@@ -53,7 +55,9 @@ It’s a structured way to configure container wiring.
 
 ## How It Works (Technical)
 
-This interface is implemented by container builders/stores. The methods typically create definitions in a store and return builder objects that mutate the definition. For batch operations like `tag`, it updates the underlying indices directly.
+This interface is implemented by container builders/stores. The methods typically create definitions in a store and
+return builder objects that mutate the definition. For batch operations like `tag`, it updates the underlying indices
+directly.
 
 ### For Humans: What This Means (Technical)
 

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Features\Define\Store;
 
 use Avax\Container\Features\Core\Enum\ServiceLifetime;
@@ -78,11 +79,10 @@ use InvalidArgumentException;
  * THREAD SAFETY:
  * Immutable readonly properties ensure thread-safe access across concurrent operations.
  *
- * @package Avax\Container\Define\Store
  * @see     ServiceDefinitionRepository For persistence operations
  * @see     ServiceDiscovery For querying operations
  * @see     ServiceLifetime For lifetime enumeration
- * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#quick-summary
+ * @see     docs/Features/Define/Store/ServiceDefinitionEntity.md#quick-summary
  */
 class ServiceDefinitionEntity extends Entity
 {
@@ -114,6 +114,7 @@ class ServiceDefinitionEntity extends Entity
      * @param \DateTimeImmutable|null $updatedAt    Timestamp when this definition was last updated
      *
      * @throws \InvalidArgumentException When validation fails for any required field
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-__construct
      */
     public function __construct(
@@ -149,8 +150,8 @@ class ServiceDefinitionEntity extends Entity
      * ERROR MESSAGES:
      * Provides specific, actionable error messages for debugging and user feedback.
      *
-     * @return void
      * @throws \InvalidArgumentException When any validation rule is violated
+     *
      * @private Called automatically during construction
      */
     private function validate() : void
@@ -184,6 +185,7 @@ class ServiceDefinitionEntity extends Entity
      * Uses snake_case with 'container_' prefix for namespace isolation.
      *
      * @return string The database table name
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-gettablename
      */
     public static function getTableName() : string
@@ -211,6 +213,7 @@ class ServiceDefinitionEntity extends Entity
      * @param string $tag The tag to check for
      *
      * @return bool True if the service has the specified tag
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-hastag
      */
     public function hasTag(string $tag) : bool
@@ -235,6 +238,7 @@ class ServiceDefinitionEntity extends Entity
      * @param string $serviceId The service ID to check for as a dependency
      *
      * @return bool True if this service depends on the specified service
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-dependson
      */
     public function dependsOn(string $serviceId) : bool
@@ -264,6 +268,7 @@ class ServiceDefinitionEntity extends Entity
      * ```
      *
      * @return int Complexity score (higher = more complex)
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-getcomplexityscore
      */
     public function getComplexityScore() : int
@@ -316,6 +321,7 @@ class ServiceDefinitionEntity extends Entity
      * @param string|null $environment The environment to check availability for
      *
      * @return bool True if the service is available in the given environment
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-isavailableinenvironment
      */
     public function isAvailableInEnvironment(string|null $environment) : bool
@@ -352,8 +358,10 @@ class ServiceDefinitionEntity extends Entity
      * @param array $updates Associative array of field => value updates
      *
      * @return self New entity instance with applied updates
+     *
      * @throws \InvalidArgumentException When updates contain invalid data
      * @throws \DateMalformedStringException
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-withupdates
      */
     public function withUpdates(array $updates) : self
@@ -366,7 +374,7 @@ class ServiceDefinitionEntity extends Entity
             }
         }
 
-        $data['updated_at'] = (new DateTimeImmutable())->format(format: 'Y-m-d H:i:s');
+        $data['updated_at'] = (new DateTimeImmutable)->format(format: 'Y-m-d H:i:s');
 
         return self::fromArray(data: $data);
     }
@@ -402,6 +410,7 @@ class ServiceDefinitionEntity extends Entity
      * ```
      *
      * @return array Serialized entity data for storage
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-toarray
      */
     public function toArray() : array
@@ -451,7 +460,9 @@ class ServiceDefinitionEntity extends Entity
      * @param array $data Associative array of serialized entity data
      *
      * @return self Reconstructed entity instance
+     *
      * @throws \DateMalformedStringException
+     *
      * @see docs/Features/Define/Store/ServiceDefinitionEntity.md#method-fromarray
      */
     public static function fromArray(array $data) : self

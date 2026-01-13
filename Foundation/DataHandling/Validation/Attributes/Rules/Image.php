@@ -34,12 +34,12 @@ class Image
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         $allowedMimes = ['jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
-        $extension    = strtolower(string: pathinfo(path: (string) $value, flags: PATHINFO_EXTENSION));
+        $extension = strtolower(string: pathinfo(path: (string) $value, flags: PATHINFO_EXTENSION));
         if (! in_array(needle: $extension, haystack: $allowedMimes, strict: true)) {
-            throw new ValidationException(message: $property . ' must be an image.');
+            throw new ValidationException(message: $property.' must be an image.');
         }
     }
 }

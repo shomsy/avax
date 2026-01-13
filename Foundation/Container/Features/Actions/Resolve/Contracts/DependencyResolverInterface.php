@@ -20,9 +20,9 @@ interface DependencyResolverInterface
      * @see docs/Features/Actions/Resolve/Contracts/DependencyResolverInterface.md#method-resolveparameters
      */
     public function resolveParameters(
-        array               $parameters,
-        array               $overrides,
-        ContainerInterface  $container,
-        KernelContext|null  $context
-    ): array;
+        array              $parameters,
+        array              $overrides,
+        ContainerInterface $container,
+        KernelContext|null $context
+    ) : array;
 }

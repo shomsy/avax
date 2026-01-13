@@ -19,9 +19,9 @@ final readonly class MiddlewarePipelineLogger
     /**
      * Logs the start of middleware execution.
      *
-     * @param RequestInterface $request The incoming request.
+     * @param  RequestInterface  $request  The incoming request.
      */
-    public function logStart(RequestInterface $request) : void
+    public function logStart(RequestInterface $request): void
     {
         $this->logger->info(
             message: '⚙️ Starting middleware pipeline',
@@ -32,9 +32,9 @@ final readonly class MiddlewarePipelineLogger
     /**
      * Logs a single middleware execution.
      *
-     * @param string $middlewareClass Fully qualified class name.
+     * @param  string  $middlewareClass  Fully qualified class name.
      */
-    public function logMiddleware(string $middlewareClass) : void
+    public function logMiddleware(string $middlewareClass): void
     {
         $this->logger->debug(
             message: sprintf('⛓ Executing middleware: %s', $middlewareClass)
@@ -44,7 +44,7 @@ final readonly class MiddlewarePipelineLogger
     /**
      * Logs the end of middleware pipeline.
      */
-    public function logEnd() : void
+    public function logEnd(): void
     {
         $this->logger->info(message: '✅ Finished middleware pipeline');
     }

@@ -24,15 +24,11 @@ namespace Avax\Facade;
  *   Session::put('user_id', 42);
  *   $id = Session::get('user_id');
  *   Session::flush();
- *
- * @package Avax\Facade
  */
 final class Session extends BaseFacade
 {
     /**
      * The container key used to resolve the underlying session instance.
-     *
-     * @var string
      */
     protected static string $accessor = \Avax\HTTP\Session\Session::class;
 }

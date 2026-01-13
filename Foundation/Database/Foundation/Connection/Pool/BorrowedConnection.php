@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\Foundation\Connection\Pool;
+namespace Avax\Database\Avax\Connection\Pool;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
-use Avax\Database\Foundation\Connection\Pool\Contracts\ConnectionPoolInterface;
-use Avax\Database\Foundation\Connection\Pool\Exceptions\ConnectionException;
+use Avax\Database\Avax\Connection\Pool\Contracts\ConnectionPoolInterface;
+use Avax\Database\Avax\Connection\Pool\Exceptions\ConnectionException;
 use PDO;
 
 /**
@@ -33,6 +33,7 @@ final class BorrowedConnection implements DatabaseConnection
      * Get the underlying PDO tool to run your queries.
      *
      * @return PDO The active technical tool for the database.
+     *
      * @throws ConnectionException If the connection was lost or closed unexpectedly.
      */
     public function getConnection() : PDO
@@ -81,6 +82,7 @@ final class BorrowedConnection implements DatabaseConnection
      * Internal tool for the pool manager to see the "Raw" connection.
      *
      * @return DatabaseConnection The physical connection instance without the wrapper.
+     *
      * @internal You should never need to call this in your application code.
      */
     public function getOriginalConnection() : DatabaseConnection

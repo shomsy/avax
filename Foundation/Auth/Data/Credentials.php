@@ -33,9 +33,9 @@ class Credentials extends AbstractDTO implements CredentialsInterface
      * - Can be an alphanumeric username or a valid email address.
      * - Validated for format consistency to ensure proper input.
      */
-    #[Required(message: "Identifier is required.")]
-    #[StringType(message: "Identifier must be a string.")]
-    #[AlphaNumOrEmail(message: "Identifier must be an alphanumeric username or a valid email.")]
+    #[Required(message: 'Identifier is required.')]
+    #[StringType(message: 'Identifier must be a string.')]
+    #[AlphaNumOrEmail(message: 'Identifier must be an alphanumeric username or a valid email.')]
     public string $identifier;
 
     /**
@@ -44,25 +44,25 @@ class Credentials extends AbstractDTO implements CredentialsInterface
      * - Must meet strict security requirements for length and complexity.
      * - Follows OWASP recommendations to ensure secure handling of sensitive data.
      */
-    #[Required(message: "Password is required.")]
+    #[Required(message: 'Password is required.')]
     #[RegexException(
         pattern: "/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/",
-        message: "Password must include at least one letter, one number, and one special character, 
-        and must be between 8 and 64 characters long."
+        message: 'Password must include at least one letter, one number, and one special character, 
+        and must be between 8 and 64 characters long.'
     )]
     public string $password;
 
-    public function getIdentifierKey() : string
+    public function getIdentifierKey(): string
     {
         return filter_var(value: $this->identifier, filter: FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
     }
 
-    public function getIdentifierValue() : string
+    public function getIdentifierValue(): string
     {
         return $this->identifier;
     }
 
-    public function getPassword() : string
+    public function getPassword(): string
     {
         return $this->password;
     }

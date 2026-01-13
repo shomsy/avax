@@ -33,6 +33,7 @@ trait HasControlStructures
      *
      * -- intent:
      * Provides an expressive inverse of the when() method, typically used for
+     *
      * applying default filters or     * @param mixed $condition Scalar, boolean, or truthy data point to evaluate.
      *
      * @param callable      $callback The logic to execute if the condition evaluates to false.
@@ -48,10 +49,10 @@ trait HasControlStructures
      *                                                                                                                                      inverse
      *                                                                                                                                      conditional
      *                                                                                                                                      logic.
+     *
      * @see
      * https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Transactions.md#transaction logic
      * when a specific flag is absent.
-     *
      */
     public function unless(mixed $condition, callable $callback, callable|null $default = null) : self
     {

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Features\Define\Store;
 
 use Avax\Entity\Entity;
@@ -64,10 +65,9 @@ use InvalidArgumentException;
  * - Efficient serialization for persistence operations
  * - Fast validation during construction
  *
- * @package Avax\Container\Define\Store
  * @see     ServiceDependencyRepository For persistence and querying operations
  * @see     ServiceDefinitionEntity For the services being related
- * @see docs/Features/Define/Store/ServiceDependency.md#quick-summary
+ * @see     docs/Features/Define/Store/ServiceDependency.md#quick-summary
  */
 class ServiceDependency extends Entity
 {
@@ -97,6 +97,7 @@ class ServiceDependency extends Entity
      * @param \DateTimeImmutable|null $createdAt      Timestamp when this dependency was established
      *
      * @throws \InvalidArgumentException When validation rules are violated
+     *
      * @see docs/Features/Define/Store/ServiceDependency.md#method-__construct
      */
     public function __construct(
@@ -134,8 +135,8 @@ class ServiceDependency extends Entity
      * ERROR MESSAGES:
      * Provides specific, actionable error messages for debugging and user feedback.
      *
-     * @return void
      * @throws \InvalidArgumentException When any validation rule is violated
+     *
      * @private Called automatically during construction
      */
     private function validate() : void
@@ -187,8 +188,10 @@ class ServiceDependency extends Entity
      * @param array $data Serialized entity data from storage
      *
      * @return self Reconstructed dependency entity
+     *
      * @throws \InvalidArgumentException When required fields are missing
      * @throws \DateMalformedStringException
+     *
      * @see docs/Features/Define/Store/ServiceDependency.md#method-fromarray
      */
     public static function fromArray(array $data) : self
@@ -213,6 +216,7 @@ class ServiceDependency extends Entity
      * and consistent table identification across the system.
      *
      * @return string The database table name for service dependencies
+     *
      * @see docs/Features/Define/Store/ServiceDependency.md#method-gettablename
      */
     public static function getTableName() : string
@@ -245,6 +249,7 @@ class ServiceDependency extends Entity
      * ```
      *
      * @return array Serialized entity data for storage or transmission
+     *
      * @see docs/Features/Define/Store/ServiceDependency.md#method-toarray
      */
     public function toArray() : array
@@ -272,6 +277,7 @@ class ServiceDependency extends Entity
      * - Moderate coupling strength
      *
      * @return bool True if this is a property dependency
+     *
      * @see docs/Features/Define/Store/ServiceDependency.md#method-ispropertydependency
      */
     public function isPropertyDependency() : bool
@@ -297,6 +303,7 @@ class ServiceDependency extends Entity
      * - Lower coupling strength
      *
      * @return bool True if this is a method or setter dependency
+     *
      * @see docs/Features/Define/Store/ServiceDependency.md#method-ismethoddependency
      */
     public function isMethodDependency() : bool
@@ -332,6 +339,7 @@ class ServiceDependency extends Entity
      * - Enables coupling analysis and architecture assessment
      *
      * @return int Strength score from 1-10 (higher = stronger coupling)
+     *
      * @see docs/Features/Define/Store/ServiceDependency.md#method-getstrengthscore
      */
     public function getStrengthScore() : int
@@ -363,6 +371,7 @@ class ServiceDependency extends Entity
      * - Better support for circular dependency resolution
      *
      * @return bool True if this dependency can be lazy-loaded
+     *
      * @see docs/Features/Define/Store/ServiceDependency.md#method-canbelazyloaded
      */
     public function canBeLazyLoaded() : bool
@@ -384,6 +393,7 @@ class ServiceDependency extends Entity
      * - Highest coupling strength
      *
      * @return bool True if this is a constructor dependency
+     *
      * @see docs/Features/Define/Store/ServiceDependency.md#method-isconstructordependency
      */
     public function isConstructorDependency() : bool
@@ -409,6 +419,7 @@ class ServiceDependency extends Entity
      * - Dependency inversion analysis
      *
      * @return self New dependency entity representing the inverse relationship
+     *
      * @see docs/Features/Define/Store/ServiceDependency.md#method-getinverse
      */
     public function getInverse() : self
@@ -438,6 +449,7 @@ class ServiceDependency extends Entity
      * - "PaymentProcessor depends on PaymentInterface via interface"
      *
      * @return string Human-readable dependency description
+     *
      * @see docs/Features/Define/Store/ServiceDependency.md#method-getdescription
      */
     public function getDescription() : string

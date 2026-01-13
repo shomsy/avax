@@ -33,8 +33,8 @@ readonly class EnumIsValueAllowed
      *
      * Leverages Constructor Promotion for concise and expressive class definition.
      *
-     * @param class-string<BackedEnum> $enumClass Fully qualified Enum class name.
-     *                                            This must be a valid class implementing PHP's `BackedEnum` interface.
+     * @param  class-string<BackedEnum>  $enumClass  Fully qualified Enum class name.
+     *                                               This must be a valid class implementing PHP's `BackedEnum` interface.
      */
     public function __construct(private string $enumClass) {}
 
@@ -48,15 +48,15 @@ readonly class EnumIsValueAllowed
      *   1. The resolution fails (e.g., the provided scalar does not map to any Enum case).
      *   2. The provided value is not an Enum instance or a valid scalar convertible to a case.
      *
-     * @param mixed  $value    The value to validate. This can refer to any mixed-type data.
-     *                         Passed as a reference (`&`) to apply inline transformations (e.g., scalar -> Enum
-     *                         conversion).
-     * @param string $property The name of the property being validated.
-     *                         Used to provide meaningful error messages for exceptions.
+     * @param  mixed  $value  The value to validate. This can refer to any mixed-type data.
+     *                        Passed as a reference (`&`) to apply inline transformations (e.g., scalar -> Enum
+     *                        conversion).
+     * @param  string  $property  The name of the property being validated.
+     *                            Used to provide meaningful error messages for exceptions.
      *
      * @throws ValidationException If the value cannot be validated or resolved to the specified Enum.
      */
-    public function validate(mixed &$value, string $property) : void
+    public function validate(mixed &$value, string $property): void
     {
         // Retrieve the Enum class provided in the attribute.
         $enumClass = $this->enumClass;
@@ -82,7 +82,7 @@ readonly class EnumIsValueAllowed
             $allowed = implode(
                 separator: ', ',
                 array    : array_map(
-                    callback: static fn(BackedEnum $e) => $e->value, // Extract each Enum's value.
+                    callback: static fn (BackedEnum $e) => $e->value, // Extract each Enum's value.
                     array   : $enumClass::cases() // Retrieve all cases for the Enum.
                 )
             );

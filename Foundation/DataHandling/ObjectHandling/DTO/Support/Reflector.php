@@ -25,11 +25,12 @@ use Throwable;
  * - Hydration of DTO properties with strict validation and error reporting.
  * - Reflection and inspection of public properties and their metadata.
  * - Handling complex business rules through attributes and type casting.
- *
- * @final This class is immutable in its implementation and should not be extended.
  */
 final class Reflector
 {
+    use CastsTypes;
+
+    use HandlesAttributes;
     /**
      * Use traits that modularize reflection-based behaviors.
      * - `InspectsProperties`: Adds the ability to inspect DTO object's properties.
@@ -38,8 +39,6 @@ final class Reflector
      * - `Serialization`: Offers serialization support for the DTO.
      */
     use InspectsProperties;
-    use CastsTypes;
-    use HandlesAttributes;
     use Serialization;
 
     /**
@@ -57,7 +56,7 @@ final class Reflector
      *
      * Follows constructor promotion for lean and expressive initialization.
      *
-     * @param object $target The target object for reflection and operations.
+     * @param  object  $target  The target object for reflection and operations.
      */
     public function __construct(object $target)
     {
@@ -70,11 +69,10 @@ final class Reflector
      * This factory method enables a fluent and semantic API for initializing
      * a Reflector from an existing object.
      *
-     * @param object $instance The object instance being wrapped by the reflector.
-     *
+     * @param  object  $instance  The object instance being wrapped by the reflector.
      * @return self Returns a new Reflector instance.
      */
-    public static function fromInstance(object $instance) : self
+    public static function fromInstance(object $instance): self
     {
         return new self(target: $instance);
     }
@@ -85,13 +83,12 @@ final class Reflector
      * Uses `ReflectionClass` to instantiate the object without calling its constructor,
      * allowing flexibility for reflection-based object construction and hydration.
      *
-     * @param string $className The fully qualified class name of the target object.
-     *
+     * @param  string  $className  The fully qualified class name of the target object.
      * @return self Returns a new Reflector instance wrapping the created object.
-     * @throws ReflectionException If the provided class does not exist or cannot be instantiated.
      *
+     * @throws ReflectionException If the provided class does not exist or cannot be instantiated.
      */
-    public static function fromClass(string $className) : self
+    public static function fromClass(string $className): self
     {
         return new self(target: (new ReflectionClass(objectOrClass: $className))->newInstanceWithoutConstructor());
     }
@@ -103,13 +100,13 @@ final class Reflector
      * given raw data to each property. Attributes and type safety rules are
      * respected during the process, ensuring that all DTO constraints are enforced.
      *
-     * @param array<string, mixed> $data An associative array mapping property names
-     *                                   to their corresponding values.
+     * @param  array<string, mixed>  $data  An associative array mapping property names
+     *                                      to their corresponding values.
      *
      * @throws DTOValidationException If hydration fails due to validation or type casting errors.
-     * @throws ReflectionException    If reflection operations encounter an issue.
+     * @throws ReflectionException If reflection operations encounter an issue.
      */
-    public function hydrate(array $data) : void
+    public function hydrate(array $data): void
     {
         // Initialize an empty array to collect errors during the hydration process.
         $errors = [];
@@ -148,18 +145,17 @@ final class Reflector
      * The method validates the presence of the field in the raw data, handles type casting,
      * and applies any field-specific attributes before assigning the final value.
      *
-     * @param string             $name       The name of the property being hydrated.
-     * @param ReflectionProperty $property   The reflection of the target property.
-     * @param array              $attributes An array of attributes applied to the property.
-     * @param array              $data       The raw input data used for hydration.
+     * @param  string  $name  The name of the property being hydrated.
+     * @param  ReflectionProperty  $property  The reflection of the target property.
+     * @param  array  $attributes  An array of attributes applied to the property.
+     * @param  array  $data  The raw input data used for hydration.
      */
     private function hydrateField(
-        string             $name,
+        string $name,
         ReflectionProperty $property,
-        array              $attributes,
-        array              $data
-    ) : void
-    {
+        array $attributes,
+        array $data
+    ): void {
         // If the field is not present in the data array, handle it as missing.
         if (! array_key_exists(key: $name, array: $data)) {
             $this->handleMissingField(name: $name, property: $property);
@@ -190,12 +186,12 @@ final class Reflector
      * This method sets default values or null based on the property's attributes
      * or throws an exception if the property is mandatory and cannot be resolved.
      *
-     * @param string             $name     The name of the missing property.
-     * @param ReflectionProperty $property The reflection of the target property.
+     * @param  string  $name  The name of the missing property.
+     * @param  ReflectionProperty  $property  The reflection of the target property.
      *
      * @throws InvalidArgumentException If no suitable value is found for the missing property.
      */
-    private function handleMissingField(string $name, ReflectionProperty $property) : void
+    private function handleMissingField(string $name, ReflectionProperty $property): void
     {
         // If the property is nullable, assign a null value to the field.
         if ($this->isPropertyNullable(property: $property)) {
@@ -218,12 +214,11 @@ final class Reflector
     /**
      * Formats detailed error messages for failed hydration of a single field.
      *
-     * @param string    $fieldName The name of the field where hydration failed.
-     * @param Throwable $exception The exception that occurred during hydration.
-     *
+     * @param  string  $fieldName  The name of the field where hydration failed.
+     * @param  Throwable  $exception  The exception that occurred during hydration.
      * @return string Returns a string describing the error with the field's name and exception message.
      */
-    private function formatHydrationError(string $fieldName, Throwable $exception) : string
+    private function formatHydrationError(string $fieldName, Throwable $exception): string
     {
         return sprintf(
             '%s → Field "%s": %s',
@@ -238,7 +233,7 @@ final class Reflector
      *
      * @return object The target object.
      */
-    public function getTarget() : object
+    public function getTarget(): object
     {
         return $this->target;
     }
@@ -251,25 +246,26 @@ final class Reflector
      * and formats this data into an array representation.
      *
      * @return array An array representing the schema of the object's public fields.
+     *
      * @throws \ReflectionException If reflection operations encounter an error.
      */
-    public function toSchema() : array
+    public function toSchema(): array
     {
         // Apply a transformation to each metadata entry from reflectPublicFields().
         // The resulting array will contain a schema representation for each public property.
         return array_map(
-            callback: fn($meta) => [
+            callback: fn ($meta) => [
                 // Add the property name to the schema array.
-                'name'       => $meta->name,
+                'name' => $meta->name,
 
                 // Add the property type to the schema array. If no type is defined, default to 'mixed'.
-                'type'       => $meta->property->getType()?->getName() ?? 'mixed',
+                'type' => $meta->property->getType()?->getName() ?? 'mixed',
 
                 // Add the nullability information of the property to the schema array.
-                'nullable'   => $meta->isNullable(),
+                'nullable' => $meta->isNullable(),
 
                 // Map the attributes of the property to their names and add them to the schema array.
-                'attributes' => array_map(callback: fn($a) => $a->getName(), array: $meta->attributes),
+                'attributes' => array_map(callback: fn ($a) => $a->getName(), array: $meta->attributes),
             ],
 
             // Retrieve metadata for all public fields of the target object.

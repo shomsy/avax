@@ -43,33 +43,31 @@ final class DTOValidationException extends InvalidArgumentException
      * Leverages constructor promotion for leaner and more expressive class construction
      * while ensuring appropriate validation messages and errors are encapsulated.
      *
-     * @param string                $message A detailed exception message providing context about the DTO validation
-     *                                       failure.
-     * @param array<string, string> $errors  Associative array of validation errors, with keys as field names
-     *                                       and values as corresponding messages explaining the validation failure.
+     * @param  string  $message  A detailed exception message providing context about the DTO validation
+     *                           failure.
+     * @param  array<string, string>  $errors  Associative array of validation errors, with keys as field names
+     *                                         and values as corresponding messages explaining the validation failure.
      */
     public function __construct(
         string $message,
-        array  $errors,
-    )
-    {
+        array $errors,
+    ) {
         $formattedErrors = [];
 
         foreach ($errors as $field => $errorMsg) {
             $formattedErrors[] = sprintf('%s: %s', $field, $errorMsg);
         }
 
-        $message .= "\n" . implode(separator: "\n", array: $formattedErrors);
+        $message .= "\n".implode(separator: "\n", array: $formattedErrors);
 
         parent::__construct(message: $message);
         $this->errors = $errors;
     }
 
-
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return [
-            'error'  => $this->getMessage(),
+            'error' => $this->getMessage(),
             'fields' => $this->getErrors(),
         ];
     }
@@ -87,10 +85,9 @@ final class DTOValidationException extends InvalidArgumentException
      *                               keys represent the invalid fields or attributes, and the values
      *                               detail the validation issues.
      */
-    public function getErrors() : array
+    public function getErrors(): array
     {
         // Return the immutably defined validation error details to the caller.
         return $this->errors;
     }
-
 }

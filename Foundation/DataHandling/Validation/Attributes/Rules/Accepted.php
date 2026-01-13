@@ -28,10 +28,10 @@ class Accepted
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (! in_array(needle: $value, haystack: ['yes', 'on', 1, true], strict: true)) {
-            throw new ValidationException(message: $property . ' must be accepted.');
+            throw new ValidationException(message: $property.' must be accepted.');
         }
     }
 }

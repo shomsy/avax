@@ -97,11 +97,6 @@ final class SQLToPHPTypeMapper
 
     /**
      * Map SQL type to PHP DocBlock type hint.
-     *
-     * @param string $sqlType
-     * @param bool   $nullable
-     *
-     * @return string
      */
     public function toDocBlockType(string $sqlType, bool $nullable = false) : string
     {
@@ -117,10 +112,6 @@ final class SQLToPHPTypeMapper
 
     /**
      * Map SQL type to PHP native type.
-     *
-     * @param string $sqlType
-     *
-     * @return string
      */
     public function toPhpType(string $sqlType) : string
     {
@@ -150,11 +141,6 @@ final class SQLToPHPTypeMapper
         };
     }
 
-    /**
-     * @param string $sqlType
-     *
-     * @return string|null
-     */
     public function suggestValueObject(string $sqlType) : string|null
     {
         if (! $this->shouldUseValueObject(sqlType: $sqlType)) {
@@ -178,11 +164,6 @@ final class SQLToPHPTypeMapper
         };
     }
 
-    /**
-     * @param string $sqlType
-     *
-     * @return bool
-     */
     public function shouldUseValueObject(string $sqlType) : bool
     {
         $baseType = $this->extractBaseType(sqlType: $sqlType);

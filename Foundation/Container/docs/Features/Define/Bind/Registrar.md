@@ -3,31 +3,37 @@
 ## Quick Summary
 
 - This file serves as the primary gateway for registering services, singletons, and special rules into the container.
-- It exists to encapsulate the complex logic of creating `ServiceDefinition` objects and saving them into the `DefinitionStore`.
-- It removes the complexity of manual object creation by providing a simple, developer-friendly API (`bind`, `singleton`, `scoped`).
+- It exists to encapsulate the complex logic of creating `ServiceDefinition` objects and saving them into the
+  `DefinitionStore`.
+- It removes the complexity of manual object creation by providing a simple, developer-friendly API (`bind`,
+  `singleton`, `scoped`).
 
 ### For Humans: What This Means (Summary)
 
-This is the **Admissions Clerk** for your container. When you want to tell the container about a new class, you talk to the Registrar. You say "Hey, register this as a Singleton," and the Registrar fills out all the paperwork and files it away in the container's memory for you.
+This is the **Admissions Clerk** for your container. When you want to tell the container about a new class, you talk to
+the Registrar. You say "Hey, register this as a Singleton," and the Registrar fills out all the paperwork and files it
+away in the container's memory for you.
 
 ## Terminology (MANDATORY, EXPANSIVE)
 
 - **Registrar**: The orchestrator that handles the initial entry of a service into the system.
-  - In this file: The `Registrar` class.
-  - Why it matters: It ensures that every service starts with a valid, consistent piece of "paperwork" (the definition).
+    - In this file: The `Registrar` class.
+    - Why it matters: It ensures that every service starts with a valid, consistent piece of "paperwork" (the
+      definition).
 - **Service Identifier (Abstract)**: The name or interface being registered.
-  - In this file: The `$abstract` parameter used in almost every method.
-  - Why it matters: It’s the "Label" used to find the service later.
+    - In this file: The `$abstract` parameter used in almost every method.
+    - Why it matters: It’s the "Label" used to find the service later.
 - **Service Lifetime**: How long the instance should "Live".
-  - In this file: Controlled by which method you call (`bind` for short life, `singleton` for long life).
-  - Why it matters: Critical for performance and sharing data between classes.
+    - In this file: Controlled by which method you call (`bind` for short life, `singleton` for long life).
+    - Why it matters: Critical for performance and sharing data between classes.
 - **Contextual Entry Point**: Starting a special-case rule.
-  - In this file: The `when()` method.
-  - Why it matters: It’s the door to saying "In this specific situation, do things differently."
+    - In this file: The `when()` method.
+    - Why it matters: It’s the door to saying "In this specific situation, do things differently."
 
 ### For Humans: What This Means (Terminology)
 
-The Registrar handles the **Paperwork** (Definitions) and ensures every service has a **Valid ID** (Abstract) and a **Home** (Lifetime) before it’s allowed into the container.
+The Registrar handles the **Paperwork** (Definitions) and ensures every service has a **Valid ID** (Abstract) and a *
+*Home** (Lifetime) before it’s allowed into the container.
 
 ## Think of It
 
@@ -40,11 +46,15 @@ Think of a **School Enrollment Office**:
 
 ### For Humans: What This Means (Analogy)
 
-You don't just "walk into" the classroom (the runtime). You have to go to the Enrollment Office (Registrar) first to get your name on the list and get your student ID.
+You don't just "walk into" the classroom (the runtime). You have to go to the Enrollment Office (Registrar) first to get
+your name on the list and get your student ID.
 
 ## Story Example
 
-You are building a complex application with a Cache system. You tell the Registrar: "I want `CacheInterface` to use `RedisCache`, and I want it to be a Singleton so we only connect to Redis once." The Registrar creates a blueprint, marks it as "Singleton," and puts it in the `DefinitionStore`. Later, when 50 different classes ask for the Cache, the container knows exactly what to do because of the Registrar's careful paperwork.
+You are building a complex application with a Cache system. You tell the Registrar: "I want `CacheInterface` to use
+`RedisCache`, and I want it to be a Singleton so we only connect to Redis once." The Registrar creates a blueprint,
+marks it as "Singleton," and puts it in the `DefinitionStore`. Later, when 50 different classes ask for the Cache, the
+container knows exactly what to do because of the Registrar's careful paperwork.
 
 ### For Humans: What This Means (Story)
 
@@ -60,15 +70,20 @@ Imagine a giant guestbook at a wedding.
 
 ### For Humans: What This Means (Walkthrough)
 
-If you're in your `bootstrap.php` file and you’re typing `$container->bind(...)`, you are talking to the Registrar. It’s your first point of contact.
+If you're in your `bootstrap.php` file and you’re typing `$container->bind(...)`, you are talking to the Registrar. It’s
+your first point of contact.
 
 ## How It Works (Technical)
 
-The `Registrar` holds a reference to the `DefinitionStore`. When you call `bind()`, `singleton()`, or `scoped()`, it internally uses a `register()` helper. This helper creates a new `ServiceDefinition` object, assigns the requested lifetime and concrete implementation, and then sends it to the store. Finally, it returns a `BindingBuilder`, which allows the developer to continue "Refining" the definition (adding tags or arguments) using a fluent interface.
+The `Registrar` holds a reference to the `DefinitionStore`. When you call `bind()`, `singleton()`, or `scoped()`, it
+internally uses a `register()` helper. This helper creates a new `ServiceDefinition` object, assigns the requested
+lifetime and concrete implementation, and then sends it to the store. Finally, it returns a `BindingBuilder`, which
+allows the developer to continue "Refining" the definition (adding tags or arguments) using a fluent interface.
 
 ### For Humans: What This Means (Technical)
 
-It’s a "Factory for Blueprints". It builds the basic plan and then lets you pick up a "Markup Pen" (the BindingBuilder) to add more details if you want.
+It’s a "Factory for Blueprints". It builds the basic plan and then lets you pick up a "Markup Pen" (the BindingBuilder)
+to add more details if you want.
 
 ## Architecture Role
 
@@ -107,7 +122,8 @@ Registers a service with a `Singleton` lifetime. The first resolved instance is 
 
 #### Technical Explanation: scoped
 
-Registers a service with a `Scoped` lifetime. The instance is shared within a specific lifecycle (like a Request) but destroyed afterwards.
+Registers a service with a `Scoped` lifetime. The instance is shared within a specific lifecycle (like a Request) but
+destroyed afterwards.
 
 #### For Humans: What This Means
 
@@ -145,12 +161,15 @@ Initializes a `ContextBuilder` for defining specialized injection rules.
 
 ## Risks & Trade-offs
 
-- **Strict Order**: You can't call `to()` or `tag()` *before* calling `bind()`. You must follow the Registrar's order of operations.
-- **Overwriting**: If you register the same ID twice, the Registrar will overwrite the old one without warning (this is standard behavior but requires care).
+- **Strict Order**: You can't call `to()` or `tag()` *before* calling `bind()`. You must follow the Registrar's order of
+  operations.
+- **Overwriting**: If you register the same ID twice, the Registrar will overwrite the old one without warning (this is
+  standard behavior but requires care).
 
 ### For Humans: What This Means (Risks)
 
-Be careful not to register the same name twice with different rules, or the last one you typed will "Win" and delete the first one!
+Be careful not to register the same name twice with different rules, or the last one you typed will "Win" and delete the
+first one!
 
 ## Related Files & Folders
 

@@ -33,7 +33,7 @@ readonly class DateFormat
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         $date = DateTime::createFromFormat(format: $this->format, datetime: $value);
         if (! $date || $date->format(format: $this->format) !== $value) {

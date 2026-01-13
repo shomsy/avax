@@ -28,10 +28,10 @@ class Alpha
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (in_array(needle: preg_match(pattern: '/^\pL+$/u', subject: (string) $value), haystack: [0, false], strict: true)) {
-            throw new ValidationException(message: $property . ' must only contain letters.');
+            throw new ValidationException(message: $property.' must only contain letters.');
         }
     }
 }

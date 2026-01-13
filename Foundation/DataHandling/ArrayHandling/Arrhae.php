@@ -32,7 +32,6 @@ use InvalidArgumentException;
 use IteratorAggregate;
 use Traversable;
 
-
 /**
  * Class Arrhae
  *
@@ -66,12 +65,11 @@ use Traversable;
  * @method float|null average() Calculates the average of all numeric values in the array.
  * @method Arrhae fromJson(string $json) Creates an Arrhae instance from a JSON string.
  * @method string toJson() Converts the array to a JSON string.
- *
- * @package Avax\DataHandling\ArrayHandling
  */
-class Arrhae implements ArrayAccess, IteratorAggregate, Countable
+class Arrhae implements ArrayAccess, Countable, IteratorAggregate
 {
     use AbstractDependenciesTrait;
+    use AdvancedStringSearchTrait;
     use AggregationTrait;
     use ArrayAccessTrait;
     use ArrayConversionTrait;
@@ -79,6 +77,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
     use ConditionalsTrait;
     use DebugTrait;
     use LazyEvaluationTrait;
+    use LockableTrait;
     use MacrosTrait;
     use ManageItemsTrait;
     use MetaInfoTrait;
@@ -86,11 +85,9 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
     use PartitioningTrait;
     use SetOperationsTrait;
     use SortOperationsTrait;
+    use StringManipulationTrait;
     use StructureConversionTrait;
     use TransformationTrait;
-    use AdvancedStringSearchTrait;
-    use StringManipulationTrait;
-    use LockableTrait;
 
     /**
      * @var array The underlying items of the collection.
@@ -103,7 +100,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * Initializes the `Arrhae` instance with an optional array of items. This constructor is called when a new
      * instance of `Arrhae` is created, and it optionally accepts an array of items that will be stored internally.
      *
-     * @param iterable $items Initial items for the collection. Can be an array or any Traversable object.
+     * @param  iterable  $items  Initial items for the collection. Can be an array or any Traversable object.
      *
      * @throws InvalidArgumentException If the provided items cannot be converted to an array.
      */
@@ -118,13 +115,12 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * This helper method ensures that the provided items are converted to an array,
      * regardless of whether they are initially an array or a Traversable object.
      *
-     * @param iterable $items The items to convert.
-     *
+     * @param  iterable  $items  The items to convert.
      * @return array The converted array of items.
      *
      * @throws InvalidArgumentException If the provided items cannot be converted to an array.
      */
-    protected function convertToArray(iterable $items) : array
+    protected function convertToArray(iterable $items): array
     {
         if (is_array(value: $items)) {
             return $items;
@@ -141,13 +137,15 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      *
      * @template TKey of array-key
      * @template TValue
-     * @param iterable<TKey, TValue> $items The source items to populate the collection
      *
+     * @param  iterable<TKey, TValue>  $items  The source items to populate the collection
      * @return static<TKey, TValue> A new locked collection instance
+     *
      * @throws \RuntimeException If the collection cannot be locked
+     *
      * @immutable
      */
-    public static function lockedFrom(iterable $items) : self
+    public static function lockedFrom(iterable $items): self
     {
         // First create a new collection instance from the provided items
         // Then immediately lock it to ensure immutability
@@ -161,8 +159,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * with an initial set of items. It accepts any iterable data type, including
      * arrays and objects implementing the Traversable interface.
      *
-     * @param iterable $items Initial items for the collection. Can be an array or any Traversable object.
-     *
+     * @param  iterable  $items  Initial items for the collection. Can be an array or any Traversable object.
      * @return self A new instance of Arrhae initialized with the provided items.
      *
      * @throws InvalidArgumentException If the provided items cannot be converted to an array.
@@ -177,7 +174,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * $iterator = new ArrayIterator(['apple', 'banana', 'cherry']);
      * $collection = Arrhae::make($iterator);
      */
-    public static function make(iterable $items = []) : self
+    public static function make(iterable $items = []): self
     {
         return new self(items: $items);
     }
@@ -190,12 +187,16 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * Implement the Immutable Object Pattern for defensive programming.
      *
      * @return self Returns a new locked instance
+     *
      * @throws \RuntimeException If the locking mechanism fails
+     *
      * @since 8.3.0
+     *
      * @immutable
+     *
      * @final
      */
-    public function toImmutable() : self
+    public function toImmutable(): self
     {
         // Create a defensive copy and apply immutability lock
         return clone $this->lock();
@@ -214,7 +215,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * print_r($arrh->all()); // Output: [1, 2, 3]
      * ```
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->items;
     }
@@ -225,9 +226,8 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * This method allows setting a value at a specific key, even within nested arrays, by using dot notation.
      * If a nested array doesn't exist, it will be created automatically.
      *
-     * @param string|int $key   The key to set, which may include dot notation for nested arrays.
-     * @param mixed      $value The value to set at the specified key.
-     *
+     * @param  string|int  $key  The key to set, which may include dot notation for nested arrays.
+     * @param  mixed  $value  The value to set at the specified key.
      * @return $this Returns the current instance for method chaining.
      *
      * @throws InvalidArgumentException If the key is not a string or integer.
@@ -238,10 +238,10 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * print_r($arrh->all()); // Output: ['user' => ['name' => 'Alice']]
      * ```
      */
-    public function set(string|int $key, mixed $value) : self
+    public function set(string|int $key, mixed $value): self
     {
         if (! is_string(value: $key) && ! is_int(value: $key)) {
-            throw new InvalidArgumentException(message: "Key must be a string or an integer.");
+            throw new InvalidArgumentException(message: 'Key must be a string or an integer.');
         }
 
         $this->assertNotLocked();
@@ -270,8 +270,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * This method checks if a key exists in the array. If the key contains dot notation, it checks recursively
      * through the nested arrays.
      *
-     * @param string|int $key The key to check for existence.
-     *
+     * @param  string|int  $key  The key to check for existence.
      * @return bool True if the key exists, false otherwise.
      *
      * ```
@@ -279,7 +278,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * echo $arrh->has('user.name'); // Output: true
      * ```
      */
-    public function has(string|int $key) : bool
+    public function has(string|int $key): bool
     {
         return $this->get(key: $key) !== null;
     }
@@ -290,9 +289,8 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * This method retrieves a value for a specific key, supporting dot notation for nested keys.
      * If the key doesn't exist, it returns the provided default value.
      *
-     * @param string|int $key     The key to retrieve, supports dot notation for nested arrays.
-     * @param mixed      $default The default value to return if the key does not exist. Default is `null`.
-     *
+     * @param  string|int  $key  The key to retrieve, supports dot notation for nested arrays.
+     * @param  mixed  $default  The default value to return if the key does not exist. Default is `null`.
      * @return mixed The value associated with the key or the default if the key does not exist.
      *
      * ```
@@ -300,7 +298,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * echo $arrh->get('user.name'); // Output: 'Alice'
      * ```
      */
-    public function get(string|int $key, mixed $default = null) : mixed
+    public function get(string|int $key, mixed $default = null): mixed
     {
         if (array_key_exists(key: $key, array: $this->items)) {
             return $this->items[$key];
@@ -328,8 +326,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * This method removes a specific key and its associated value from the array. If the key is nested, dot notation
      * will be used to traverse through the levels and remove the item.
      *
-     * @param string|int $key The key to remove.
-     *
+     * @param  string|int  $key  The key to remove.
      * @return $this The current instance for method chaining.
      *
      * ```
@@ -338,7 +335,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * print_r($arrh->all()); // Output: ['user' => []]
      * ```
      */
-    public function forget(string|int $key) : self
+    public function forget(string|int $key): self
     {
         $this->assertNotLocked();
 
@@ -346,7 +343,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
             unset($this->items[$key]);
         } elseif (is_string(value: $key) && str_contains(haystack: $key, needle: '.')) {
             $array = &$this->items;
-            $keys  = explode(separator: '.', string: $key);
+            $keys = explode(separator: '.', string: $key);
             while (count(value: $keys) > 1) {
                 $segment = array_shift(array: $keys);
                 if (! isset($array[$segment]) || ! is_array(value: $array[$segment])) {
@@ -367,8 +364,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      *
      * This method adds a new value to the end of the current array, allowing dynamic expansion of the items.
      *
-     * @param mixed $value The value to append to the array.
-     *
+     * @param  mixed  $value  The value to append to the array.
      * @return $this The current instance for method chaining.
      *
      * ```
@@ -377,7 +373,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * print_r($arrh->all()); // Output: [1, 2, 3, 4]
      * ```
      */
-    public function add(mixed $value) : self
+    public function add(mixed $value): self
     {
         $this->assertNotLocked();
 
@@ -401,7 +397,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * }
      * ```
      */
-    public function getIterator() : Traversable
+    public function getIterator(): Traversable
     {
         return new ArrayIterator(array: $this->items);
     }
@@ -418,7 +414,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * echo $arrh->count(); // Output: 3
      * ```
      */
-    public function count() : int
+    public function count(): int
     {
         return count(value: $this->items);
     }
@@ -430,8 +426,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * If a Closure is provided instead of a key, it applies the Closure to each item and returns the results.
      * If a value doesn't exist or isn't an array when using a key, `null` is returned for that item.
      *
-     * @param string|\Closure $key The key to pluck from each item or a Closure to apply to each item.
-     *
+     * @param  string|\Closure  $key  The key to pluck from each item or a Closure to apply to each item.
      * @return array An array containing the plucked values or the results of the Closure for each item.
      *
      * ```
@@ -451,12 +446,12 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * print_r($ages); // Output: [10, 20, 30]
      * ```
      */
-    public function pluck(string|Closure $key) : array
+    public function pluck(string|Closure $key): array
     {
         return match (true) {
             $key instanceof Closure => array_map(callback: $key, array: $this->items),
-            default                 => array_map(
-                callback: static fn($item) => is_array(value: $item) && array_key_exists(key: $key, array: $item) ? $item[$key] : null,
+            default => array_map(
+                callback: static fn ($item) => is_array(value: $item) && array_key_exists(key: $key, array: $item) ? $item[$key] : null,
                 array   : $this->items
             ),
         };
@@ -468,9 +463,8 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * This method retrieves the value associated with a specific key if it exists in the array, or returns
      * the provided default value if the key is absent.
      *
-     * @param string $key     The key to retrieve from the items array.
-     * @param mixed  $default The default value to return if the key doesn't exist. Default is `null`.
-     *
+     * @param  string  $key  The key to retrieve from the items array.
+     * @param  mixed  $default  The default value to return if the key doesn't exist. Default is `null`.
      * @return mixed The value associated with the key, or the default value if the key doesn't exist.
      *
      * ```
@@ -479,7 +473,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * echo $arrh->arrGet('age', 30); // Output: 30
      * ```
      */
-    public function arrGet(string $key, mixed $default = null) : mixed
+    public function arrGet(string $key, mixed $default = null): mixed
     {
         if (is_array(value: $this->items) && array_key_exists(key: $key, array: $this->items)) {
             return $this->items[$key];
@@ -494,9 +488,8 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * This method allows retrieving values from a nested array using a dot notation key. If the value is
      * not found at any level, it returns the provided default value.
      *
-     * @param string $key     The dot-notated key to retrieve the value.
-     * @param mixed  $default The default value to return if the key is not found.
-     *
+     * @param  string  $key  The dot-notated key to retrieve the value.
+     * @param  mixed  $default  The default value to return if the key is not found.
      * @return mixed The nested value associated with the key or the default value if not found.
      *
      * ```
@@ -507,7 +500,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * echo $arrh->getValue('user.name'); // Output: 'Alice'
      * ```
      */
-    public function getValue(string $key, mixed $default = null) : mixed
+    public function getValue(string $key, mixed $default = null): mixed
     {
         $firstItem = $this->first();
         if (! $firstItem || ! is_array(value: $firstItem)) {
@@ -534,10 +527,9 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * to the first item and returns the result. If the array is empty or the key does not exist, it returns `null` or
      * the provided default value.
      *
-     * @param string|int|Closure|null $key      Optional key to retrieve from the first item, supports dot notation or
-     *                                          a Closure.
-     * @param mixed                   $default  The default value to return if the key is not found. Default is `null`.
-     *
+     * @param  string|int|Closure|null  $key  Optional key to retrieve from the first item, supports dot notation or
+     *                                        a Closure.
+     * @param  mixed  $default  The default value to return if the key is not found. Default is `null`.
      * @return mixed The first item, the value of the specified key in the first item, the result of the Closure, or
      *               the default value.
      *
@@ -566,9 +558,10 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * // With key that does not exist
      * echo $arrh->first('user.gender', 'unknown'); // Output: 'unknown'
      * ```
+     *
      * @noinspection PhpParameterNameChangedDuringInheritanceInspection
      */
-    public function first(string|int|Closure|null $key = null, mixed $default = null) : mixed
+    public function first(string|int|Closure|null $key = null, mixed $default = null): mixed
     {
         if ($this->items === []) {
             return $default;
@@ -592,14 +585,13 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * This helper method is used internally to extract a value from a single array item using a dot-notated key
      * or apply a Closure to it.
      *
-     * @param mixed               $item    The array item to extract the value from.
-     * @param string|int|\Closure $key     The key to retrieve, supports dot notation or a Closure.
-     * @param mixed               $default The default value to return if the key does not exist.
-     *
+     * @param  mixed  $item  The array item to extract the value from.
+     * @param  string|int|\Closure  $key  The key to retrieve, supports dot notation or a Closure.
+     * @param  mixed  $default  The default value to return if the key does not exist.
      * @return mixed The value associated with the key, the result of the Closure, or the default value if the key does
      *               not exist.
      */
-    protected function getFromItem(mixed $item, string|int|Closure $key, mixed $default = null) : mixed
+    protected function getFromItem(mixed $item, string|int|Closure $key, mixed $default = null): mixed
     {
         if ($key instanceof Closure) {
             return $key($item);
@@ -617,13 +609,12 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      *
      * This helper method is used internally to extract a value from an array using a dot-notated key.
      *
-     * @param array      $array   The array to extract the value from.
-     * @param string|int $key     The key to retrieve, supports dot notation.
-     * @param mixed      $default The default value to return if the key does not exist.
-     *
+     * @param  array  $array  The array to extract the value from.
+     * @param  string|int  $key  The key to retrieve, supports dot notation.
+     * @param  mixed  $default  The default value to return if the key does not exist.
      * @return mixed The value associated with the key or the default value if the key does not exist.
      */
-    protected function getValueFromArray(array $array, string|int $key, mixed $default = null) : mixed
+    protected function getValueFromArray(array $array, string|int $key, mixed $default = null): mixed
     {
         if (array_key_exists(key: $key, array: $array)) {
             return $array[$key];
@@ -651,8 +642,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * This method iterates over the items and applies the callback function to each item. It returns `true`
      * if the callback returns `true` for any item, and `false` otherwise.
      *
-     * @param callable $callback The callback to apply to each item.
-     *
+     * @param  callable  $callback  The callback to apply to each item.
      * @return bool `true` if at least one item satisfies the condition, `false` otherwise.
      *
      * ```
@@ -660,7 +650,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * $result = $arrh->some(fn($item) => $item > 2); // Output: true
      * ```
      */
-    public function some(callable $callback) : bool
+    public function some(callable $callback): bool
     {
         foreach ($this->items as $item) {
             if ($callback($item)) {
@@ -681,11 +671,12 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * @return bool True if the collection is in batch mode, false otherwise
      *
      * @since 1.0.0
+     *
      * @api
      *
      * @see   \Avax\DataHandling\ArrayHandling\Arrhae::setItems() For setting batch mode
      */
-    public function isBatch() : bool
+    public function isBatch(): bool
     {
         // Verify the existence of 'batch' flag in the internal items collection
         return isset($this->items['batch']);
@@ -698,7 +689,7 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      *
      * @return array The items in the collection.
      */
-    protected function getItems() : array
+    protected function getItems(): array
     {
         return $this->items;
     }
@@ -709,11 +700,10 @@ class Arrhae implements ArrayAccess, IteratorAggregate, Countable
      * This method allows setting a new array of items for the `Arrhae` instance. It is useful when you want
      * to replace the current set of items with a different array.
      *
-     * @param array|iterable $items The new items array to set.
-     *
+     * @param  array|iterable  $items  The new items array to set.
      * @return $this The current instance for method chaining.
      */
-    protected function setItems(iterable $items) : static
+    protected function setItems(iterable $items): static
     {
         $this->assertNotLocked();
 

@@ -10,8 +10,6 @@ use InvalidArgumentException;
  * Trait SetOperationsTrait
  *
  * Provides set operations methods to manipulate collections, including intersection, union, difference, and merging.
- *
- * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait SetOperationsTrait
 {
@@ -22,11 +20,10 @@ trait SetOperationsTrait
      *
      * Classes using this trait must implement this method.
      *
-     * @param array $items The new collection of items.
-     *
+     * @param  array  $items  The new collection of items.
      * @return static A new instance with the updated collection.
      */
-    abstract public function setItems(array $items) : static;
+    abstract public function setItems(array $items): static;
 
     /**
      * Return the intersection of two collections.
@@ -34,8 +31,7 @@ trait SetOperationsTrait
      * This method returns a new collection containing items that are present in both the current collection and the
      * provided collection.
      *
-     * @param self $collection The collection to intersect with.
-     *
+     * @param  self  $collection  The collection to intersect with.
      * @return static A new collection with intersected items.
      *
      * @throws InvalidArgumentException If the provided collection is empty.
@@ -47,10 +43,10 @@ trait SetOperationsTrait
      * // $intersection contains ['banana', 'cherry']
      * ```
      */
-    public function intersect(self $collection) : static
+    public function intersect(self $collection): static
     {
         $currentItems = $this->getItems();
-        $otherItems   = $collection->toArray();
+        $otherItems = $collection->toArray();
 
         if (empty($otherItems)) {
             throw new InvalidArgumentException(message: 'The provided collection for intersection is empty.');
@@ -70,7 +66,7 @@ trait SetOperationsTrait
      *
      * @return array The current collection of items.
      */
-    abstract public function getItems() : array;
+    abstract public function getItems(): array;
 
     /**
      * Return the union of two collections.
@@ -78,8 +74,7 @@ trait SetOperationsTrait
      * This method returns a new collection containing all unique items from both the current collection and the
      * provided collection.
      *
-     * @param self $collection The collection to union with.
-     *
+     * @param  self  $collection  The collection to union with.
      * @return static A new collection with unique combined items.
      *
      * ```
@@ -89,10 +84,10 @@ trait SetOperationsTrait
      * // $union contains ['apple', 'banana', 'cherry']
      * ```
      */
-    public function union(self $collection) : static
+    public function union(self $collection): static
     {
         $currentItems = $this->getItems();
-        $otherItems   = $collection->toArray();
+        $otherItems = $collection->toArray();
 
         $merged = array_merge($currentItems, $otherItems);
         $unique = array_unique(array: $merged, flags: SORT_REGULAR); // SORT_REGULAR ensures proper uniqueness for arrays
@@ -106,8 +101,7 @@ trait SetOperationsTrait
      * This method returns a new collection containing items that are present in the current collection but not in the
      * provided collection.
      *
-     * @param self $collection The collection to compare against.
-     *
+     * @param  self  $collection  The collection to compare against.
      * @return static A new collection with items in the original but not in the compared collection.
      *
      * ```
@@ -117,10 +111,10 @@ trait SetOperationsTrait
      * // $difference contains ['apple', 'cherry']
      * ```
      */
-    public function diff(self $collection) : static
+    public function diff(self $collection): static
     {
         $currentItems = $this->getItems();
-        $otherItems   = $collection->toArray();
+        $otherItems = $collection->toArray();
 
         $diff = array_diff($currentItems, $otherItems);
 
@@ -133,8 +127,7 @@ trait SetOperationsTrait
      * This method merges the current collection with the provided collection and returns a new collection containing
      * all items.
      *
-     * @param self $collection The collection to merge with.
-     *
+     * @param  self  $collection  The collection to merge with.
      * @return static A new collection with merged items.
      *
      * ```
@@ -144,10 +137,10 @@ trait SetOperationsTrait
      * // $merged contains ['apple', 'banana', 'cherry', 'date']
      * ```
      */
-    public function merge(self $collection) : static
+    public function merge(self $collection): static
     {
         $currentItems = $this->getItems();
-        $otherItems   = $collection->toArray();
+        $otherItems = $collection->toArray();
 
         $merged = array_merge($currentItems, $otherItems);
 
@@ -162,8 +155,7 @@ trait SetOperationsTrait
      * provided collection, but not in both. The symmetric difference is the combination of the differences in both
      * directions between the two sets.
      *
-     * @param self $collection The collection to compare against.
-     *
+     * @param  self  $collection  The collection to compare against.
      * @return static A new collection with the symmetric difference of elements.
      *
      * @throws InvalidArgumentException If the provided collection is invalid or contains incompatible element types.
@@ -177,10 +169,10 @@ trait SetOperationsTrait
      * // ['apple', 'cherry', 'date', 'fig']
      * ```
      */
-    public function symmetricDifference(self $collection) : static
+    public function symmetricDifference(self $collection): static
     {
-        $diff1         = array_diff($this->getItems(), $collection->toArray());
-        $diff2         = array_diff($collection->toArray(), $this->getItems());
+        $diff1 = array_diff($this->getItems(), $collection->toArray());
+        $diff2 = array_diff($collection->toArray(), $this->getItems());
         $symDifference = array_merge($diff1, $diff2);
 
         return new static(items: $symDifference);

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Observe\Metrics;
 
 /**
@@ -33,8 +34,7 @@ namespace Avax\Container\Observe\Metrics;
  * - Thread-safe implementations recommended
  * - Asynchronous export preferred for performance
  *
- * @package Avax\Container\Observe\Metrics
- * @see docs/Observe/Metrics/TelemetryExporter.md#quick-summary
+ * @see     docs/Observe/Metrics/TelemetryExporter.md#quick-summary
  */
 interface TelemetryExporter
 {
@@ -47,7 +47,6 @@ interface TelemetryExporter
      * @param string $metric The metric name/identifier
      * @param int    $value  The increment value (default: 1)
      *
-     * @return void
      * @see docs/Observe/Metrics/TelemetryExporter.md#method-increment
      */
     public function increment(string $metric, int $value = 1) : void;
@@ -61,7 +60,6 @@ interface TelemetryExporter
      * @param string $metric The metric name/identifier
      * @param float  $value  The observed value
      *
-     * @return void
      * @see docs/Observe/Metrics/TelemetryExporter.md#method-observe
      */
     public function observe(string $metric, float $value) : void;

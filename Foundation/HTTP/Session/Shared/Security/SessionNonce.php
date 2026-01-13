@@ -16,18 +16,17 @@ use RuntimeException;
  * replay attacks on critical state-changing operations.
  *
  * Nonces are cryptographically secure random values.
- *
- * @package Avax\HTTP\Session\Security
  */
 final class SessionNonce
 {
-    private const string NONCE_KEY    = '_nonce';
+    private const string NONCE_KEY = '_nonce';
+
     private const int    NONCE_LENGTH = 16; // 128 bits
 
     /**
      * SessionNonce Constructor.
      *
-     * @param StoreInterface $store Session storage.
+     * @param  StoreInterface  $store  Session storage.
      */
     public function __construct(
         private readonly StoreInterface $store
@@ -39,9 +38,10 @@ final class SessionNonce
      * Stores it in session for later verification.
      *
      * @return string Hex-encoded nonce.
+     *
      * @throws \Random\RandomException
      */
-    public function generate() : string
+    public function generate(): string
     {
         $nonce = bin2hex(string: random_bytes(length: self::NONCE_LENGTH));
         $this->store->put(key: self::NONCE_KEY, value: $nonce);
@@ -52,13 +52,11 @@ final class SessionNonce
     /**
      * Verify nonce or throw exception.
      *
-     * @param string $providedNonce Nonce to verify.
-     *
-     * @return void
+     * @param  string  $providedNonce  Nonce to verify.
      *
      * @throws \RuntimeException If nonce invalid.
      */
-    public function verifyOrFail(string $providedNonce) : void
+    public function verifyOrFail(string $providedNonce): void
     {
         if (! $this->verify(providedNonce: $providedNonce)) {
             throw new RuntimeException(
@@ -72,11 +70,10 @@ final class SessionNonce
      *
      * Nonce is deleted after verification (single-use).
      *
-     * @param string $providedNonce Nonce to verify.
-     *
+     * @param  string  $providedNonce  Nonce to verify.
      * @return bool True if nonce is valid.
      */
-    public function verify(string $providedNonce) : bool
+    public function verify(string $providedNonce): bool
     {
         $storedNonce = $this->store->get(key: self::NONCE_KEY);
 
@@ -96,7 +93,7 @@ final class SessionNonce
      *
      * @return bool True if nonce present.
      */
-    public function exists() : bool
+    public function exists(): bool
     {
         return $this->store->has(key: self::NONCE_KEY);
     }
@@ -111,22 +108,22 @@ final class SessionNonce
      * Used for critical operations that should only execute once.
      * Each request gets a unique nonce that expires after use.
      *
-     * @param string $action Action identifier (e.g., 'delete_account', 'transfer_funds').
-     *
+     * @param  string  $action  Action identifier (e.g., 'delete_account', 'transfer_funds').
      * @return string Hex-encoded nonce.
+     *
      * @throws \Random\RandomException
      */
-    public function generateForRequest(string $action) : string
+    public function generateForRequest(string $action): string
     {
         $nonce = bin2hex(string: random_bytes(length: self::NONCE_LENGTH));
-        $key   = self::NONCE_KEY . ".{$action}";
+        $key = self::NONCE_KEY.".{$action}";
 
         $this->store->put(
             key  : $key,
             value: [
-                'nonce'      => $nonce,
+                'nonce' => $nonce,
                 'created_at' => time(),
-                'action'     => $action,
+                'action' => $action,
             ]);
 
         return $nonce;
@@ -135,15 +132,13 @@ final class SessionNonce
     /**
      * Verify per-request nonce or throw exception.
      *
-     * @param string $action        Action identifier.
-     * @param string $providedNonce Nonce to verify.
-     * @param int    $maxAge        Maximum age in seconds.
-     *
-     * @return void
+     * @param  string  $action  Action identifier.
+     * @param  string  $providedNonce  Nonce to verify.
+     * @param  int  $maxAge  Maximum age in seconds.
      *
      * @throws \RuntimeException If nonce invalid or expired.
      */
-    public function verifyForRequestOrFail(string $action, string $providedNonce, int $maxAge = 300) : void
+    public function verifyForRequestOrFail(string $action, string $providedNonce, int $maxAge = 300): void
     {
         if (! $this->verifyForRequest(action: $action, providedNonce: $providedNonce, maxAge: $maxAge)) {
             throw new RuntimeException(
@@ -155,15 +150,14 @@ final class SessionNonce
     /**
      * Verify and consume a per-request nonce.
      *
-     * @param string $action        Action identifier.
-     * @param string $providedNonce Nonce to verify.
-     * @param int    $maxAge        Maximum age in seconds (default: 300 = 5 minutes).
-     *
+     * @param  string  $action  Action identifier.
+     * @param  string  $providedNonce  Nonce to verify.
+     * @param  int  $maxAge  Maximum age in seconds (default: 300 = 5 minutes).
      * @return bool True if valid.
      */
-    public function verifyForRequest(string $action, string $providedNonce, int $maxAge = 300) : bool
+    public function verifyForRequest(string $action, string $providedNonce, int $maxAge = 300): bool
     {
-        $key    = self::NONCE_KEY . ".{$action}";
+        $key = self::NONCE_KEY.".{$action}";
         $stored = $this->store->get(key: $key);
 
         if ($stored === null) {
@@ -186,15 +180,13 @@ final class SessionNonce
 
     /**
      * Clear all per-request nonces.
-     *
-     * @return void
      */
-    public function clearAllRequests() : void
+    public function clearAllRequests(): void
     {
         $all = $this->store->all();
 
         foreach (array_keys(array: $all) as $key) {
-            if (str_starts_with(haystack: $key, needle: self::NONCE_KEY . '.')) {
+            if (str_starts_with(haystack: $key, needle: self::NONCE_KEY.'.')) {
                 $this->store->delete(key: $key);
             }
         }
@@ -207,14 +199,14 @@ final class SessionNonce
      *
      * @return array<string, array> Action => nonce data.
      */
-    public function getActiveRequests() : array
+    public function getActiveRequests(): array
     {
-        $all    = $this->store->all();
+        $all = $this->store->all();
         $nonces = [];
 
         foreach ($all as $key => $value) {
-            if (str_starts_with(haystack: $key, needle: self::NONCE_KEY . '.') && is_array(value: $value)) {
-                $action          = substr(string: $key, offset: strlen(string: self::NONCE_KEY) + 1);
+            if (str_starts_with(haystack: $key, needle: self::NONCE_KEY.'.') && is_array(value: $value)) {
+                $action = substr(string: $key, offset: strlen(string: self::NONCE_KEY) + 1);
                 $nonces[$action] = $value;
             }
         }

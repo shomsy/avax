@@ -21,28 +21,25 @@ final class IdentityMap
     /** @var array<int, array{operation: string, sql: string, bindings: array}> The list of pending chores. */
     private array $deferred = [];
 
-    /**
-     * @param TransactionManagerInterface $transactionManager
-     * @param DatabaseConnection          $connection
-     */
     public function __construct(
         private readonly TransactionManagerInterface $transactionManager,
-        private readonly DatabaseConnection          $connection
+        private readonly DatabaseConnection $connection
     ) {}
 
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/IdentityMap.md#deferred-execution
      */
-    public function schedule(string $operation, string $sql, array $bindings = []) : void
+    public function schedule(string $operation, string $sql, array $bindings = []): void
     {
         $this->deferred[] = compact('operation', 'sql', 'bindings');
     }
 
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/IdentityMap.md#unit-of-work-pattern
+     *
      * @throws \Throwable
      */
-    public function execute() : void
+    public function execute(): void
     {
         if (empty($this->deferred)) {
             return;
@@ -57,7 +54,7 @@ final class IdentityMap
                 $stmt = $pdo->prepare(query: $job['sql']);
                 if (! $stmt->execute(params: $job['bindings'])) {
                     throw new TransactionException(
-                        message     : "Failed to execute deferred operation: " . $job['operation'],
+                        message     : 'Failed to execute deferred operation: '.$job['operation'],
                         nestingLevel: 0
                     );
                 }

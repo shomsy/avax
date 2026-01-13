@@ -51,8 +51,6 @@ final class Blueprint
      * -- intent: provide a pragmatic shorthand for the standard 'id' column.
      *
      * @param string $name Technical name, defaults to 'id'
-     *
-     * @return ColumnDefinition
      */
     public function id(string $name = 'id') : ColumnDefinition
     {
@@ -66,8 +64,6 @@ final class Blueprint
      *
      * @param string $type Technical database type
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     private function addColumn(string $type, string $name) : ColumnDefinition
     {
@@ -87,8 +83,6 @@ final class Blueprint
      * -- intent: provide storage for very small integers.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function tinyInteger(string $name) : ColumnDefinition
     {
@@ -101,8 +95,6 @@ final class Blueprint
      * -- intent: provide storage for small integers.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function smallInteger(string $name) : ColumnDefinition
     {
@@ -115,8 +107,6 @@ final class Blueprint
      * -- intent: provide storage for standard integers.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function integer(string $name) : ColumnDefinition
     {
@@ -129,8 +119,6 @@ final class Blueprint
      * -- intent: provide storage for very large integers.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function bigInteger(string $name) : ColumnDefinition
     {
@@ -145,8 +133,6 @@ final class Blueprint
      * @param string   $name      Technical name
      * @param int|null $precision Total number of digits
      * @param int      $scale     Number of decimal places
-     *
-     * @return ColumnDefinition
      */
     public function decimal(string $name, int|null $precision = null, int $scale = 2) : ColumnDefinition
     {
@@ -161,8 +147,6 @@ final class Blueprint
      * -- intent: provide storage for single-precision floating point.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function float(string $name) : ColumnDefinition
     {
@@ -175,8 +159,6 @@ final class Blueprint
      * -- intent: provide storage for double-precision floating point.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function double(string $name) : ColumnDefinition
     {
@@ -189,8 +171,6 @@ final class Blueprint
      * -- intent: provide storage for true/false values.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function boolean(string $name) : ColumnDefinition
     {
@@ -203,8 +183,6 @@ final class Blueprint
      * -- intent: provide storage for medium-range integers.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function mediumInteger(string $name) : ColumnDefinition
     {
@@ -217,8 +195,6 @@ final class Blueprint
      * -- intent: provide PostgreSQL-native auto-incrementing integer.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function serial(string $name) : ColumnDefinition
     {
@@ -231,8 +207,6 @@ final class Blueprint
      * -- intent: provide PostgreSQL-native auto-incrementing big integer.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function bigSerial(string $name) : ColumnDefinition
     {
@@ -245,8 +219,6 @@ final class Blueprint
      * -- intent: provide storage for real numbers (alias for FLOAT in some DBs).
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function real(string $name) : ColumnDefinition
     {
@@ -264,8 +236,6 @@ final class Blueprint
      *
      * @param string $name   Technical name
      * @param int    $length Maximum character capacity
-     *
-     * @return ColumnDefinition
      */
     public function string(string $name, int $length = 255) : ColumnDefinition
     {
@@ -279,8 +249,6 @@ final class Blueprint
      *
      * @param string $name   Technical name
      * @param int    $length Exact character capacity
-     *
-     * @return ColumnDefinition
      */
     public function char(string $name, int $length = 255) : ColumnDefinition
     {
@@ -293,8 +261,6 @@ final class Blueprint
      * -- intent: provide storage for medium-length text content.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function text(string $name) : ColumnDefinition
     {
@@ -307,8 +273,6 @@ final class Blueprint
      * -- intent: provide storage for large text content.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function mediumText(string $name) : ColumnDefinition
     {
@@ -321,8 +285,6 @@ final class Blueprint
      * -- intent: provide storage for very large text content.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function longText(string $name) : ColumnDefinition
     {
@@ -335,8 +297,6 @@ final class Blueprint
      * -- intent: provide storage for very small text content.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function tinyText(string $name) : ColumnDefinition
     {
@@ -350,8 +310,6 @@ final class Blueprint
      *
      * @param string $name   Technical name
      * @param int    $length Exact character capacity
-     *
-     * @return ColumnDefinition
      */
     public function nchar(string $name, int $length = 255) : ColumnDefinition
     {
@@ -365,8 +323,6 @@ final class Blueprint
      *
      * @param string $name   Technical name
      * @param int    $length Maximum character capacity
-     *
-     * @return ColumnDefinition
      */
     public function nvarchar(string $name, int $length = 255) : ColumnDefinition
     {
@@ -379,8 +335,6 @@ final class Blueprint
      * -- intent: provide storage for large Unicode text content.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function ntext(string $name) : ColumnDefinition
     {
@@ -394,8 +348,6 @@ final class Blueprint
      *
      * @param string $name   Technical name
      * @param int    $length Byte capacity
-     *
-     * @return ColumnDefinition
      */
     public function binary(string $name, int $length = 255) : ColumnDefinition
     {
@@ -408,8 +360,6 @@ final class Blueprint
      * -- intent: provide storage for universally unique identifiers.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function uuid(string $name) : ColumnDefinition
     {
@@ -422,8 +372,6 @@ final class Blueprint
      * -- intent: provide PostgreSQL-native UUID storage.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function uuidNative(string $name) : ColumnDefinition
     {
@@ -437,8 +385,6 @@ final class Blueprint
      *
      * @param string $name   Technical name
      * @param int    $length Maximum byte capacity
-     *
-     * @return ColumnDefinition
      */
     public function varbinary(string $name, int $length = 255) : ColumnDefinition
     {
@@ -451,8 +397,6 @@ final class Blueprint
      * -- intent: provide storage for binary files and data.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function blob(string $name) : ColumnDefinition
     {
@@ -465,8 +409,6 @@ final class Blueprint
      * -- intent: provide storage for very small binary data.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function tinyBlob(string $name) : ColumnDefinition
     {
@@ -479,8 +421,6 @@ final class Blueprint
      * -- intent: provide storage for medium-sized binary data.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function mediumBlob(string $name) : ColumnDefinition
     {
@@ -493,8 +433,6 @@ final class Blueprint
      * -- intent: provide storage for very large binary data.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function longBlob(string $name) : ColumnDefinition
     {
@@ -507,8 +445,6 @@ final class Blueprint
      * -- intent: provide PostgreSQL-native binary storage.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function bytea(string $name) : ColumnDefinition
     {
@@ -522,8 +458,6 @@ final class Blueprint
      *
      * @param string $name   Technical name
      * @param int    $length Number of bits
-     *
-     * @return ColumnDefinition
      */
     public function bit(string $name, int $length = 1) : ColumnDefinition
     {
@@ -540,8 +474,6 @@ final class Blueprint
      * -- intent: provide storage for calendar dates.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function date(string $name) : ColumnDefinition
     {
@@ -554,8 +486,6 @@ final class Blueprint
      * -- intent: provide storage for precise timestamps.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function datetime(string $name) : ColumnDefinition
     {
@@ -568,8 +498,6 @@ final class Blueprint
      * -- intent: provide storage for event timestamps.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function timestamp(string $name) : ColumnDefinition
     {
@@ -582,8 +510,6 @@ final class Blueprint
      * -- intent: provide storage for time of day.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function time(string $name) : ColumnDefinition
     {
@@ -596,8 +522,6 @@ final class Blueprint
      * -- intent: provide storage for year values.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function year(string $name) : ColumnDefinition
     {
@@ -610,8 +534,6 @@ final class Blueprint
      * -- intent: provide storage for time intervals/durations.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function interval(string $name) : ColumnDefinition
     {
@@ -622,8 +544,6 @@ final class Blueprint
      * Add basic created_at and updated_at timestamp columns.
      *
      * -- intent: provide a domain-specific shorthand for audit record-keeping.
-     *
-     * @return void
      */
     public function timestamps() : void
     {
@@ -637,8 +557,6 @@ final class Blueprint
      * -- intent: provide support for soft deletion pattern.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function softDeletes(string $name = 'deleted_at') : ColumnDefinition
     {
@@ -655,8 +573,6 @@ final class Blueprint
      * -- intent: provide storage for structured JSON documents.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function json(string $name) : ColumnDefinition
     {
@@ -669,8 +585,6 @@ final class Blueprint
      * -- intent: provide optimized storage for JSON with indexing.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function jsonb(string $name) : ColumnDefinition
     {
@@ -684,8 +598,6 @@ final class Blueprint
      *
      * @param string $name   Technical name
      * @param array  $values Allowed values
-     *
-     * @return ColumnDefinition
      */
     public function enum(string $name, array $values) : ColumnDefinition
     {
@@ -701,8 +613,6 @@ final class Blueprint
      *
      * @param string $name   Technical name
      * @param array  $values Allowed values
-     *
-     * @return ColumnDefinition
      */
     public function set(string $name, array $values) : ColumnDefinition
     {
@@ -717,8 +627,6 @@ final class Blueprint
      * -- intent: provide storage for XML documents.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function xml(string $name) : ColumnDefinition
     {
@@ -735,8 +643,6 @@ final class Blueprint
      * -- intent: provide storage for 2D point coordinates.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function point(string $name) : ColumnDefinition
     {
@@ -749,8 +655,6 @@ final class Blueprint
      * -- intent: provide storage for line/path coordinates.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function lineString(string $name) : ColumnDefinition
     {
@@ -763,8 +667,6 @@ final class Blueprint
      * -- intent: provide storage for area/boundary coordinates.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function polygon(string $name) : ColumnDefinition
     {
@@ -777,8 +679,6 @@ final class Blueprint
      * -- intent: provide storage for any geometric shape.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function geometry(string $name) : ColumnDefinition
     {
@@ -791,8 +691,6 @@ final class Blueprint
      * -- intent: provide storage for earth-surface coordinates.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function geography(string $name) : ColumnDefinition
     {
@@ -809,8 +707,6 @@ final class Blueprint
      * -- intent: provide storage for IPv4/IPv6 addresses.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function inet(string $name) : ColumnDefinition
     {
@@ -823,8 +719,6 @@ final class Blueprint
      * -- intent: provide storage for network CIDR blocks.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function cidr(string $name) : ColumnDefinition
     {
@@ -837,8 +731,6 @@ final class Blueprint
      * -- intent: provide storage for hardware MAC addresses.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function macaddr(string $name) : ColumnDefinition
     {
@@ -851,8 +743,6 @@ final class Blueprint
      * -- intent: provide storage for indexed searchable text.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function tsvector(string $name) : ColumnDefinition
     {
@@ -865,8 +755,6 @@ final class Blueprint
      * -- intent: provide storage for search queries.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function tsquery(string $name) : ColumnDefinition
     {
@@ -883,8 +771,6 @@ final class Blueprint
      * -- intent: provide storage for monetary values.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function money(string $name) : ColumnDefinition
     {
@@ -897,8 +783,6 @@ final class Blueprint
      * -- intent: provide storage for smaller monetary values.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function smallMoney(string $name) : ColumnDefinition
     {
@@ -911,8 +795,6 @@ final class Blueprint
      * -- intent: provide storage for SQL Server GUIDs.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function uniqueIdentifier(string $name) : ColumnDefinition
     {
@@ -925,8 +807,6 @@ final class Blueprint
      * -- intent: provide automatic row version tracking.
      *
      * @param string $name Technical name
-     *
-     * @return ColumnDefinition
      */
     public function rowVersion(string $name = 'row_version') : ColumnDefinition
     {
@@ -970,15 +850,15 @@ final class Blueprint
      */
     private function toCreateSql(GrammarInterface $grammar) : array
     {
-        $renderer = new ColumnSQLRenderer();
+        $renderer = new ColumnSQLRenderer;
         $columns  = array_map(
             callback: fn(ColumnDefinition $col) => $renderer->render(column: $col, grammar: $grammar),
             array   : $this->columns
         );
 
-        $sql = "CREATE TABLE " . $grammar->wrap(value: $this->table) . " (";
+        $sql = 'CREATE TABLE ' . $grammar->wrap(value: $this->table) . ' (';
         $sql .= implode(separator: ', ', array: $columns);
-        $sql .= ")";
+        $sql .= ')';
 
         return [$sql];
     }
@@ -989,19 +869,19 @@ final class Blueprint
     private function toAlterSql(GrammarInterface $grammar) : array
     {
         $sql      = [];
-        $renderer = new ColumnSQLRenderer();
+        $renderer = new ColumnSQLRenderer;
 
         // Handle new columns (ADD)
         foreach ($this->columns as $column) {
-            $sql[] = "ALTER TABLE " . $grammar->wrap(value: $this->table) . " ADD " . $renderer->render(column: $column, grammar: $grammar);
+            $sql[] = 'ALTER TABLE ' . $grammar->wrap(value: $this->table) . ' ADD ' . $renderer->render(column: $column, grammar: $grammar);
         }
 
         // Handle commands (DROP, RENAME)
         foreach ($this->commands as $command) {
             if ($command['type'] === 'drop') {
-                $sql[] = "ALTER TABLE " . $grammar->wrap(value: $this->table) . " DROP COLUMN " . $grammar->wrap(value: $command['name']);
+                $sql[] = 'ALTER TABLE ' . $grammar->wrap(value: $this->table) . ' DROP COLUMN ' . $grammar->wrap(value: $command['name']);
             } elseif ($command['type'] === 'rename') {
-                $sql[] = "ALTER TABLE " . $grammar->wrap(value: $this->table) . " RENAME COLUMN " . $grammar->wrap(value: $command['from']) . " TO " . $grammar->wrap(value: $command['to']);
+                $sql[] = 'ALTER TABLE ' . $grammar->wrap(value: $this->table) . ' RENAME COLUMN ' . $grammar->wrap(value: $command['from']) . ' TO ' . $grammar->wrap(value: $command['to']);
             }
         }
 

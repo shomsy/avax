@@ -16,7 +16,7 @@ final readonly class DatabaseCreateCommand
         private QueryBuilder $builder
     ) {}
 
-    public function handle(string $name) : int
+    public function handle(string $name): int
     {
         echo "\033[36mCreating database: {$name}...\033[0m\n";
 

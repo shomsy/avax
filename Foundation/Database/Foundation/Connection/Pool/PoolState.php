@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\Foundation\Connection\Pool;
+namespace Avax\Database\Avax\Connection\Pool;
 
 /**
  * The "Ledger" (Internal Accountant) of the connection pool.

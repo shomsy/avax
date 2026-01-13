@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Database\Connection;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
-use Avax\Database\Foundation\Connection\Pool\Contracts\ConnectionPoolInterface;
+use Avax\Database\Avax\Connection\Pool\Contracts\ConnectionPoolInterface;
 
 /**
  * Fluent builder for coordinating one-off database operations with resource safety.
@@ -27,10 +27,6 @@ final class DatabaseFlow
 
     /**
      * Specify the target connection name.
-     *
-     * @param string $name
-     *
-     * @return self
      */
     public function on(string $name) : self
     {
@@ -41,8 +37,6 @@ final class DatabaseFlow
 
     /**
      * Enable connection pooling for this flow.
-     *
-     * @return self
      */
     public function usePool() : self
     {
@@ -56,7 +50,6 @@ final class DatabaseFlow
      *
      * @param callable(DatabaseConnection): mixed $callback
      *
-     * @return mixed
      * @throws \Throwable
      */
     public function run(callable $callback) : mixed

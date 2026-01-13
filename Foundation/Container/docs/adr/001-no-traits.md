@@ -6,7 +6,9 @@
 
 ## Context
 
-In many large PHP projects, [Traits](https://en.wikipedia.org/wiki/Trait_(computer_programming)) are used to share logic between classes. However, they often lead to "invisible" dependencies, naming collisions, and difficulty in unit testing because they cannot be mocked independently.
+In many large PHP projects, [Traits](https://en.wikipedia.org/wiki/Trait_(computer_programming)) are used to share logic
+between classes. However, they often lead to "invisible" dependencies, naming collisions, and difficulty in unit testing
+because they cannot be mocked independently.
 
 The Avax Container aims for maximum observability and strict separation of concerns.
 

@@ -9,15 +9,14 @@ use Avax\Container\Features\Actions\Inject\PropertyInjector;
 /**
  * Immutable blueprint for a single property's dependency injection requirements.
  *
- * A PropertyPrototype describes a class variable (property) that has been 
- * marked for injection (usually via the `#[Inject]` attribute). It stores 
- * the property name, its required type, and fallback rules. This model 
- * is used by the {@see PropertyInjector} to hydrate objects after they 
+ * A PropertyPrototype describes a class variable (property) that has been
+ * marked for injection (usually via the `#[Inject]` attribute). It stores
+ * the property name, its required type, and fallback rules. This model
+ * is used by the {@see PropertyInjector} to hydrate objects after they
  * have been instantiated.
  *
- * @package Avax\Container\Features\Think\Model
- * @see docs/Features/Think/Model/PropertyPrototype.md
- * @see ServicePrototype For the master blueprint that contains this model.
+ * @see     docs/Features/Think/Model/PropertyPrototype.md
+ * @see     ServicePrototype For the master blueprint that contains this model.
  */
 readonly class PropertyPrototype
 {
@@ -46,9 +45,10 @@ readonly class PropertyPrototype
      * Enables high-performance AOT compilation.
      *
      * @param array<string, mixed> $array State data for reconstruction.
+     *
      * @return self The reconstructed blueprint.
      */
-    public static function __set_state(array $array): self
+    public static function __set_state(array $array) : self
     {
         return self::fromArray(data: $array);
     }
@@ -57,19 +57,20 @@ readonly class PropertyPrototype
      * Hydrate a property blueprint from a raw configuration array.
      *
      * @param array<string, mixed> $data Raw source data.
+     *
      * @return self The resulting model.
      *
      * @see docs/Features/Think/Model/PropertyPrototype.md#method-fromarray
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data) : self
     {
         return new self(
-            name: $data['name'],
-            type: $data['type'] ?? null,
+            name      : $data['name'],
+            type      : $data['type'] ?? null,
             hasDefault: $data['hasDefault'] ?? false,
-            default: $data['default'] ?? null,
+            default   : $data['default'] ?? null,
             allowsNull: $data['allowsNull'] ?? false,
-            required: $data['required'] ?? true
+            required  : $data['required'] ?? true
         );
     }
 
@@ -77,9 +78,10 @@ readonly class PropertyPrototype
      * Flatten the property blueprint into a serializable array.
      *
      * @return array<string, mixed> Descriptive metadata array.
+     *
      * @see docs/Features/Think/Model/PropertyPrototype.md#method-toarray
      */
-    public function toArray(): array
+    public function toArray() : array
     {
         return [
             'name'       => $this->name,

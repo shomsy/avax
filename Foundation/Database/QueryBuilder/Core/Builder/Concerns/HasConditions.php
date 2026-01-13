@@ -24,6 +24,7 @@ trait HasConditions
      * @param mixed          $value    Comparison value.
      *
      * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder
+     *
      * @throws \ReflectionException
      */
     public function orWhere(string|Closure $column, mixed $operator = null, mixed $value = null) : self
@@ -40,6 +41,7 @@ trait HasConditions
      * @param string         $boolean  Logical joiner ('AND' or 'OR').
      *
      * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder
+     *
      * @throws \ReflectionException
      */
     public function where(
@@ -93,6 +95,7 @@ trait HasConditions
      *                                                                                                                               nested
      *                                                                                                                               logical
      *                                                                                                                               node.
+     *
      * @throws \ReflectionException
      */
     protected function whereNested(Closure $callback, string $boolean = 'AND') : self
@@ -204,7 +207,7 @@ trait HasConditions
     {
         $boolean ??= 'AND';
         if (count(value: $values) !== 2) {
-            throw new InvalidArgumentException(message: "BETWEEN requires exactly two values.");
+            throw new InvalidArgumentException(message: 'BETWEEN requires exactly two values.');
         }
 
         $operator = $not ? 'NOT BETWEEN' : 'BETWEEN';

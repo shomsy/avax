@@ -23,7 +23,7 @@ final readonly class ValidDTOArray
     /**
      * The fully-qualified class name of the Data Transfer Object (DTO) we expect.
      *
-     * @param string $dtoClass The DTO class name to validate instantiated items.
+     * @param  string  $dtoClass  The DTO class name to validate instantiated items.
      */
     public function __construct(private string $dtoClass) {}
 
@@ -37,12 +37,12 @@ final readonly class ValidDTOArray
      *
      * If any of the above conditions are violated, a ValidationException is thrown.
      *
-     * @param mixed  $value    The value of the property to be validated.
-     * @param string $property The name of the property being validated, used in exception messages.
+     * @param  mixed  $value  The value of the property to be validated.
+     * @param  string  $property  The name of the property being validated, used in exception messages.
      *
      * @throws ValidationException If validation fails.
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         // Ensure the provided value is of type array.
         if (! is_array(value: $value)) {
@@ -73,16 +73,15 @@ final readonly class ValidDTOArray
      * is passed to the constructor of the defined `$dtoClass`, returning a new array
      * of fully instantiated DTO objects.
      *
-     * @param mixed $value The input array to transform.
-     *
+     * @param  mixed  $value  The input array to transform.
      * @return array<int, object> An array of DTO objects.
      *
      * @throws ValidationException If construction of any DTO fails.
      */
-    public function apply(mixed $value) : array
+    public function apply(mixed $value): array
     {
         return array_map(
-            callback: fn($v) => new $this->dtoClass($v), // Instantiate DTO for each item
+            callback: fn ($v) => new $this->dtoClass($v), // Instantiate DTO for each item
             array   : $value // Input array
         );
     }

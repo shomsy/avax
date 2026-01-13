@@ -29,7 +29,7 @@ readonly class EnumAreValuesAllowed
     /**
      * Fully qualified class name of the Enum to validate against.
      *
-     * @var string $enumClass The expected Enum class, which must implement `BackedEnum` to support `tryFrom`.
+     * @var string The expected Enum class, which must implement `BackedEnum` to support `tryFrom`.
      */
     public function __construct(
         private string $enumClass,
@@ -43,8 +43,8 @@ readonly class EnumAreValuesAllowed
      * @param string $property The name of the property (used for exception messages).
      *
      * @throws ValidationException If the validation fails due to:
-     *                              - The value not being an array.
-     *                              - The array containing invalid Enum values.
+     *                             - The value not being an array.
+     *                             - The array containing invalid Enum values.
      */
     public function validate(mixed $value, string $property) : void
     {

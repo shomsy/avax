@@ -29,10 +29,9 @@ final readonly class ScopedLifecycleStrategy implements LifecycleStrategy
      * @param string $abstract Service identifier
      * @param mixed  $instance Instance to cache within scope
      *
-     * @return void
      * @see docs/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-storestring-abstract-mixed-instance-void
      */
-    public function store(string $abstract, mixed $instance): void
+    public function store(string $abstract, mixed $instance) : void
     {
         $this->scopeManager->setScoped(abstract: $abstract, instance: $instance);
     }
@@ -43,9 +42,10 @@ final readonly class ScopedLifecycleStrategy implements LifecycleStrategy
      * @param string $abstract Service identifier
      *
      * @return bool True when cached in current scope
+     *
      * @see docs/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-hasstring-abstract-bool
      */
-    public function has(string $abstract): bool
+    public function has(string $abstract) : bool
     {
         return $this->scopeManager->has(abstract: $abstract);
     }
@@ -56,9 +56,10 @@ final readonly class ScopedLifecycleStrategy implements LifecycleStrategy
      * @param string $abstract Service identifier
      *
      * @return mixed|null Cached instance or null
+     *
      * @see docs/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-retrievestring-abstract-mixed
      */
-    public function retrieve(string $abstract): mixed
+    public function retrieve(string $abstract) : mixed
     {
         return $this->scopeManager->get(abstract: $abstract);
     }
@@ -66,10 +67,9 @@ final readonly class ScopedLifecycleStrategy implements LifecycleStrategy
     /**
      * Clear current scope instances.
      *
-     * @return void
      * @see docs/Core/Kernel/Strategies/ScopedLifecycleStrategy.md#method-clearvoid
      */
-    public function clear(): void
+    public function clear() : void
     {
         $this->scopeManager->endScope();
     }

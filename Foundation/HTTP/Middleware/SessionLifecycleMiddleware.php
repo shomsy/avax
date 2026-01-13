@@ -7,41 +7,35 @@ namespace Avax\HTTP\Middleware;
 use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 use SensitiveParameter;
 
 /**
- * Class SessionLifecycleMiddleware
+ * PSR-15 Middleware responsible for managing the session lifecycle during an HTTP request.
  *
- * Middleware responsible for managing the session lifecycle during an HTTP request.
  * Handles:
  * - Session start
  * - FlashBag load/sweep
  * - PSR-15 response validation
  * - Optional native session write-close
- *
- * @final
  */
-final readonly class SessionLifecycleMiddleware
+final readonly class SessionLifecycleMiddleware implements MiddlewareInterface
 {
     public function __construct(
         #[SensitiveParameter] private SessionInterface $session
     ) {}
 
-    public function handle(RequestInterface $request, callable $next) : ResponseInterface
+    public function process(RequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
         // Ensure PHP session is started with the configured cookie policy.
         $this->session->start();
 
-        $response = $next($request);
+        $response = $handler->handle(request: $request);
 
         if (! $response instanceof ResponseInterface) {
-            error_log(message: 'Invalid response returned from middleware chain.');
-
-            $response = response(
-                status : 500,
-                headers: [],
-                body   : 'Middleware chain did not return a valid ResponseInterface.'
-            );
+            // This should not happen in a properly configured PSR-15 chain
+            // But if it does, create a proper error response
+            throw new RuntimeException(message: 'Middleware chain did not return a valid ResponseInterface.');
         }
 
         if (session_status() === PHP_SESSION_ACTIVE) {
@@ -51,4 +45,3 @@ final readonly class SessionLifecycleMiddleware
         return $response;
     }
 }
-

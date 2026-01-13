@@ -33,13 +33,13 @@ readonly class DigitsBetween
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (in_array(needle: preg_match(pattern: '/^\d+$/', subject: (string) $value), haystack: [0, false], strict: true) || strlen(
-                string: (string) $value,
-            ) < $this->min || strlen(
-                string: (string) $value,
-            ) > $this->max) {
+            string: (string) $value,
+        ) < $this->min || strlen(
+            string: (string) $value,
+        ) > $this->max) {
             throw new ValidationException(
                 message: sprintf(
                     '%s must be between %d and %d digits.',

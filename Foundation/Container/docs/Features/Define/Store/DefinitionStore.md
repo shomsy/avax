@@ -8,29 +8,35 @@
 
 ### For Humans: What This Means (Summary)
 
-This is the container’s **Internal Registry**. When you tell the container "When someone asks for A, give them B", this class is the one that writes it down and remembers it. It's the central memory that the rest of the system consults whenever a decision needs to be made.
+This is the container’s **Internal Registry**. When you tell the container "When someone asks for A, give them B", this
+class is the one that writes it down and remembers it. It's the central memory that the rest of the system consults
+whenever a decision needs to be made.
 
 ## Terminology (MANDATORY, EXPANSIVE)
 
 - **Definition Store**: A specialized registry mapping service IDs to their configuration blueprints.
-  - In this file: Represented by the `$definitions` array.
-  - Why it matters: Without a central store, different parts of the app might get different versions of the same service.
+    - In this file: Represented by the `$definitions` array.
+    - Why it matters: Without a central store, different parts of the app might get different versions of the same
+      service.
 - **Service Blueprint (Definition)**: The technical plan for how a service should be built.
-  - In this file: Stored as `ServiceDefinition` objects.
-  - Why it matters: It contains the "Instructions" (lifetime, concrete class, tags) that the resolver follows.
+    - In this file: Stored as `ServiceDefinition` objects.
+    - Why it matters: It contains the "Instructions" (lifetime, concrete class, tags) that the resolver follows.
 - **Contextual Inject Rule**: A rule that says "In THIS specific class, use THAT specific dependency".
-  - In this file: Managed via `$contextual` and `$wildcardContextual`.
-  - Why it matters: It allows you to use different implementations of an interface depending on who is asking for it.
+    - In this file: Managed via `$contextual` and `$wildcardContextual`.
+    - Why it matters: It allows you to use different implementations of an interface depending on who is asking for it.
 - **Service Tagging**: Grouping services together under a label.
-  - In this file: Managed through the `$tags` index.
-  - Why it matters: It lets you pull a whole "Collection" of services (like all 'middleware') at once.
+    - In this file: Managed through the `$tags` index.
+    - Why it matters: It lets you pull a whole "Collection" of services (like all 'middleware') at once.
 - **Extender Callback**: A piece of code that runs after a service is built.
-  - In this file: Stored in `$extenders`.
-  - Why it matters: It allows you to "Pimp my Ride"—adding extra features or wrappers to an object without changing the original class.
+    - In this file: Stored in `$extenders`.
+    - Why it matters: It allows you to "Pimp my Ride"—adding extra features or wrappers to an object without changing
+      the original class.
 
 ### For Humans: What This Means (Terminology)
 
-This store manages **Manuals** (Definitions), **Sticky Notes** (Tags), **Exceptions** (Contextual Rules), and **Upgrades** (Extenders). It doesn't build the furniture; it's the giant library that holds all the assembly instructions and special requests from customers.
+This store manages **Manuals** (Definitions), **Sticky Notes** (Tags), **Exceptions** (Contextual Rules), and **Upgrades
+** (Extenders). It doesn't build the furniture; it's the giant library that holds all the assembly instructions and
+special requests from customers.
 
 ## Think of It
 
@@ -43,11 +49,15 @@ Think of it as a **Master Librarian** in a massive technical library:
 
 ### For Humans: What This Means (Analogy)
 
-The Librarian doesn't write the books or build the things in them. The Librarian just makes sure that when you ask for a book, you get the right edition, with the right cover, based on who you are.
+The Librarian doesn't write the books or build the things in them. The Librarian just makes sure that when you ask for a
+book, you get the right edition, with the right cover, based on who you are.
 
 ## Story Example
 
-Imagine you are building a complex Logging system. You have a `FileLogger` and a `CloudLogger`. Usually, you want the `FileLogger`. But for the `PaymentProcessor` class, you want the `CloudLogger` for extra security. You register this rule in the `DefinitionStore`. When the app starts, the container checks the store and says: "Oh, `PaymentProcessor` is asking for a Logger? The Librarian says for THIS specific person, I should use the Cloud one."
+Imagine you are building a complex Logging system. You have a `FileLogger` and a `CloudLogger`. Usually, you want the
+`FileLogger`. But for the `PaymentProcessor` class, you want the `CloudLogger` for extra security. You register this
+rule in the `DefinitionStore`. When the app starts, the container checks the store and says: "Oh, `PaymentProcessor` is
+asking for a Logger? The Librarian says for THIS specific person, I should use the Cloud one."
 
 ### For Humans: What This Means (Story)
 
@@ -59,7 +69,8 @@ Imagine a giant wall of mailboxes in an apartment building.
 
 1. **Registering**: You put a label on the box saying who lives there and what they need.
 2. **Tagging**: You put a blue dot on all the "Staff" boxes.
-3. **Special Rule**: You put a note saying "If the Landlord asks for a key, give him the master key, but for everyone else, give the standard one."
+3. **Special Rule**: You put a note saying "If the Landlord asks for a key, give him the master key, but for everyone
+   else, give the standard one."
 4. **Extending**: You tell the janitor: "Whenever you deliver a package, also spray it with disinfectant."
 5. **Lookup**: When someone comes to the front desk, the clerk (this class) checks the wall and gives instructions.
 
@@ -73,12 +84,15 @@ The `DefinitionStore` maintains several internal indices to make lookups fast:
 
 - It maps `abstract` to `ServiceDefinition`.
 - It maintains a reverse index of `tag` to `abstract[]`.
-- It performs a specialized search for contextual rules: first checking for a direct match, then checking for wildcard patterns (using `fnmatch`), and finally traversing the class hierarchy (parents and interfaces) to find inherited rules.
+- It performs a specialized search for contextual rules: first checking for a direct match, then checking for wildcard
+  patterns (using `fnmatch`), and finally traversing the class hierarchy (parents and interfaces) to find inherited
+  rules.
 - To prevent slow reflection calls during hierarchy traversal, it uses a `$classHierarchyCache`.
 
 ### For Humans: What This Means (Technical)
 
-It uses "Fast Shortcuts" (Indices) so that even if you have thousands of services, it can find the right one in a fraction of a millisecond.
+It uses "Fast Shortcuts" (Indices) so that even if you have thousands of services, it can find the right one in a
+fraction of a millisecond.
 
 ## Architecture Role
 
@@ -96,7 +110,8 @@ It is the "Database" of the container system. It's where the configuration "rest
 
 #### Technical Explanation: add
 
-Registers or replaces a service definition and updates the tag index to ensure consistency. It clears the local resolution cache to prevent stale data.
+Registers or replaces a service definition and updates the tag index to ensure consistency. It clears the local
+resolution cache to prevent stale data.
 
 #### For Humans: What This Means
 
@@ -136,7 +151,8 @@ Performs a reverse lookup in the tag index and returns unique service IDs.
 
 #### Technical Explanation: getContextualMatch
 
-The most complex method. It searches for an override value based on the consumer's identity, traversing through patterns and class inheritance.
+The most complex method. It searches for an override value based on the consumer's identity, traversing through patterns
+and class inheritance.
 
 #### For Humans: What This Means
 
@@ -195,12 +211,14 @@ Exposes the entire registry for debugging or advanced analysis.
 ## Risks & Trade-offs
 
 - **Memory**: Keeping a massive list of definitions and caches in memory can be expensive in very large apps.
-- **Mutability**: Since it can be modified after it's been read, there's a risk of "Race Conditions" if registration happens too late.
+- **Mutability**: Since it can be modified after it's been read, there's a risk of "Race Conditions" if registration
+  happens too late.
 - **Complexity**: Wildcard matching (`App\*`) is powerful but can be hard for developers to trace.
 
 ### For Humans: What This Means (Risks)
 
-It's a powerful brain, but if you give it too many confusing "Special Rules" (Wildcards), it might be hard for other developers to understand why a specific class is getting a specific dependency.
+It's a powerful brain, but if you give it too many confusing "Special Rules" (Wildcards), it might be hard for other
+developers to understand why a specific class is getting a specific dependency.
 
 ## Related Files & Folders
 
@@ -210,4 +228,5 @@ It's a powerful brain, but if you give it too many confusing "Special Rules" (Wi
 
 ### For Humans: What This Means (Relationships)
 
-If the **Registrar** is the pen, and the **Resolver** is the reader, the **DefinitionStore** is the paper they are both using.
+If the **Registrar** is the pen, and the **Resolver** is the reader, the **DefinitionStore** is the paper they are both
+using.

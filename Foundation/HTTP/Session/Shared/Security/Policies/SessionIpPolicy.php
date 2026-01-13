@@ -17,15 +17,13 @@ use Avax\HTTP\Session\Shared\Exceptions\PolicyViolationException;
  * Security Trade-offs:
  * - Strict: More secure, but breaks with mobile networks (IP changes)
  * - Relaxed: Less secure, but handles legitimate IP changes
- *
- * @package Avax\HTTP\Session\Shared\Security\Policies
  */
 final readonly class SessionIpPolicy implements PolicyInterface
 {
     /**
      * SessionIpPolicy Constructor.
      *
-     * @param bool $strictMode If true, require exact IP match. If false, allow /24 subnet.
+     * @param  bool  $strictMode  If true, require exact IP match. If false, allow /24 subnet.
      */
     public function __construct(
         private bool $strictMode = false
@@ -34,9 +32,9 @@ final readonly class SessionIpPolicy implements PolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function enforce(array $data) : void
+    public function enforce(array $data): void
     {
-        $storedIp  = $data['_client_ip'] ?? null;
+        $storedIp = $data['_client_ip'] ?? null;
         $currentIp = $data['client_ip'] ?? $data['ip'] ?? '';
 
         // First time - no stored IP yet
@@ -66,12 +64,11 @@ final readonly class SessionIpPolicy implements PolicyInterface
     /**
      * Check if two IPs are in the same /24 subnet.
      *
-     * @param string $ip1 First IP.
-     * @param string $ip2 Second IP.
-     *
+     * @param  string  $ip1  First IP.
+     * @param  string  $ip2  Second IP.
      * @return bool True if same subnet.
      */
-    private function isSameSubnet(string $ip1, string $ip2) : bool
+    private function isSameSubnet(string $ip1, string $ip2): bool
     {
         $parts1 = explode(separator: '.', string: $ip1);
         $parts2 = explode(separator: '.', string: $ip2);
@@ -85,7 +82,7 @@ final readonly class SessionIpPolicy implements PolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->strictMode ? 'ip_binding_strict' : 'ip_binding_relaxed';
     }

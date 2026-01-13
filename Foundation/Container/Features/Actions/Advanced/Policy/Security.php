@@ -15,12 +15,13 @@ use Avax\Container\Guard\Rules\ContainerPolicy;
  *
  * @see docs/Features/Actions/Advanced/Policy/Security.md#quick-summary
  */
-final class Security
+final readonly class Security
 {
     /**
      * Create a new Security configuration instance.
      *
      * @param ContainerPolicy $policy The policy instance to configure.
+     *
      * @see docs/Features/Actions/Advanced/Policy/Security.md#method-__construct
      */
     public function __construct(private ContainerPolicy $policy) {}
@@ -32,9 +33,10 @@ final class Security
      * mandatory access controls, comprehensive validation, and security-first defaults.
      *
      * @return self Builder instance for method chaining.
+     *
      * @see docs/Features/Actions/Advanced/Policy/Security.md#method-strict
      */
-    public function strict(): self
+    public function strict() : self
     {
         // Internal logic to update the policy object
         return $this;
@@ -47,10 +49,12 @@ final class Security
      * enabling tag-based access control for grouped service permissions.
      *
      * @param string $tag The security tag to allow access for.
+     *
      * @return self Builder instance for method chaining.
+     *
      * @see docs/Features/Actions/Advanced/Policy/Security.md#method-allowTagged
      */
-    public function allowTagged(string $tag): self
+    public function allowTagged(string $tag) : self
     {
         // Internal logic to update the policy object
         return $this;

@@ -34,7 +34,7 @@ interface LifecycleInterface
      * This is where a module tells the system what "Service Recipes" it has.
      * It adds its tools to the toolbox but doesn't start using them yet.
      */
-    public function register() : void;
+    public function register(): void;
 
     /**
      * The "Working" phase. Start your engines.
@@ -43,7 +43,7 @@ interface LifecycleInterface
      * This is where the module actually "Wakes up". It can now talk to
      * other modules and start performing its duties.
      */
-    public function boot() : void;
+    public function boot(): void;
 
     /**
      * The "Cleanup" phase. Turn off the lights.
@@ -53,5 +53,5 @@ interface LifecycleInterface
      * database connections and make sure everything is clean before
      * it is destroyed.
      */
-    public function shutdown() : void;
+    public function shutdown(): void;
 }

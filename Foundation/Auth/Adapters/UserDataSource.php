@@ -52,7 +52,7 @@ readonly class UserDataSource implements UserSourceInterface
 
         $data = is_array(value: $data) ? (object) $data : $data;
 
-        return new class ($data) implements UserInterface {
+        return new class($data) implements UserInterface {
             public readonly int $id;
 
             public readonly string $email;
@@ -72,17 +72,35 @@ readonly class UserDataSource implements UserSourceInterface
                 $this->roles    = $data->roles ?? [];
             }
 
-            public function getId() : int { return $this->id; }
+            public function getId() : int
+            {
+                return $this->id;
+            }
 
-            public function getEmail() : string { return $this->email; }
+            public function getEmail() : string
+            {
+                return $this->email;
+            }
 
-            public function getUsername() : string { return $this->username; }
+            public function getUsername() : string
+            {
+                return $this->username;
+            }
 
-            public function getPassword() : string { return $this->password; }
+            public function getPassword() : string
+            {
+                return $this->password;
+            }
 
-            public function getRoles() : array { return $this->roles; }
+            public function getRoles() : array
+            {
+                return $this->roles;
+            }
 
-            public function setPassword(#[SensitiveParameter] string $password) : void { $this->password = $password; }
+            public function setPassword(#[SensitiveParameter] string $password) : void
+            {
+                $this->password = $password;
+            }
 
             public function hasPermission(string $permission) : bool
             {
@@ -93,11 +111,18 @@ readonly class UserDataSource implements UserSourceInterface
                 );
             }
 
-            public function hasRole(string $role) : bool { return in_array(needle: $role, haystack: $this->roles, strict: true); }
+            public function hasRole(string $role) : bool
+            {
+                return in_array(needle: $role, haystack: $this->roles, strict: true);
+            }
 
-            public function addRole(RoleInterface $role) : void { /* TODO: Implement */ }
+            public function addRole(RoleInterface $role) : void
+            { /* TODO: Implement */
+            }
 
-            public function removeRole(string $role) : void { /* TODO: Implement */ }
+            public function removeRole(string $role) : void
+            { /* TODO: Implement */
+            }
         };
     }
 

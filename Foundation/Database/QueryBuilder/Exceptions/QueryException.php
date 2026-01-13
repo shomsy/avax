@@ -27,7 +27,6 @@ class QueryException extends DatabaseException
      *
      * @param string         $message  Technical failure description
      * @param string         $sql      The dialect-specific SQL string that failed
-     * @param array          $rawBindings
      * @param Throwable|null $previous The underlying driver exception
      */
     public function __construct(
@@ -53,8 +52,6 @@ class QueryException extends DatabaseException
      * Retrieve the failing SQL statement.
      *
      * -- intent: expose the problematic query for technical analysis.
-     *
-     * @return string
      */
     public function getSql() : string
     {
@@ -65,8 +62,6 @@ class QueryException extends DatabaseException
      * Retrieve the parameter bindings used with the failing statement.
      *
      * -- intent: expose the provided data values for debugging.
-     *
-     * @return array
      */
     public function getBindings(bool $redacted = true) : array
     {

@@ -41,6 +41,7 @@ trait HasAdvancedMutations
      *                               provided values).
      *
      * @return int The total number of affected rows (database-specific semantics apply).
+     *
      * @throws Throwable If the SQL compilation for the specific dialect or physical execution fails.
      */
     public function upsert(array $values, array|string $uniqueBy, array|null $update = null) : int
@@ -86,6 +87,7 @@ trait HasAdvancedMutations
      * @param array          $extra  Optional additional fields to update simultaneously for auditing or state tracking.
      *
      * @return bool True if the operation was successful.
+     *
      * @throws Throwable If the resulting SQL update execution fails.
      */
     public function increment(string $column, int|float|null $amount = null, array $extra = []) : bool
@@ -110,8 +112,9 @@ trait HasAdvancedMutations
      * @param int|float|null $amount The quantity to subtract (defaults to 1).
      * @param array          $extra  Optional additional fields to update simultaneously.
      *
-     * @throws Throwable If the resulting SQL update execution fails.
      * @return bool True if the operation was successful.
+     *
+     * @throws Throwable If the resulting SQL update execution fails.
      */
     public function decrement(string $column, int|float|null $amount = null, array $extra = []) : bool
     {

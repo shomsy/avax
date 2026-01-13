@@ -20,8 +20,8 @@ use RuntimeException;
 final readonly class AccessMiddleware
 {
     /**
-     * @var AccessControl $authorization The service responsible for handling
-     *                                   access control decisions.
+     * @var AccessControl The service responsible for handling
+     *                    access control decisions.
      */
     public function __construct(private AccessControl $authorization) {}
 
@@ -41,8 +41,8 @@ final readonly class AccessMiddleware
      * @param Closure $next    The next middleware or final request handler to execute.
      *
      * @return ResponseInterface The processed response if authorization passes.
-     * @throws RuntimeException If the policy is missing, the user is not found, or authorization fails.
      *
+     * @throws RuntimeException If the policy is missing, the user is not found, or authorization fails.
      */
     public function handle(Request $request, Closure $next) : ResponseInterface
     {

@@ -20,7 +20,8 @@ use Throwable;
  * Manages the flow, telemetry via StepTelemetry observer, and error handling for the entire resolution lifecycle,
  * ensuring each step has the opportunity to transform the resolution context.
  *
- * @see docs/Core/Kernel/ResolutionPipeline.md#quick-summary
+ * @see      docs/Core/Kernel/ResolutionPipeline.md#quick-summary
+ *
  * @internal This class is not intended for public usage.
  */
 final readonly class ResolutionPipeline
@@ -31,15 +32,18 @@ final readonly class ResolutionPipeline
     /**
      * Initialize the pipeline with steps and telemetry.
      *
-     * @param array               $steps     List of KernelStep implementations
-     * @param StepTelemetry|null  $telemetry Optional telemetry observer
+     * @param array              $steps     List of KernelStep implementations
+     * @param StepTelemetry|null $telemetry Optional telemetry observer
+     *
      * @throws ContainerException If a step does not implement KernelStep or if steps are empty
+     *
      * @see docs/Core/Kernel/ResolutionPipeline.md#method-__construct
      */
     public function __construct(
-        array               $steps,
+        array                      $steps,
         private StepTelemetry|null $telemetry = null
-    ) {
+    )
+    {
         if (empty($steps)) {
             throw new ContainerException(message: 'Resolution pipeline cannot be empty');
         }
@@ -57,24 +61,26 @@ final readonly class ResolutionPipeline
      * Execute the resolution pipeline.
      *
      * @param KernelContext $context The resolution state to process.
-     * @return void
+     *
      * @throws ContainerException If execution fails catastrophically.
      * @throws Throwable From any individual step.
+     *
      * @see docs/Core/Kernel/ResolutionPipeline.md#method-run
      */
-    public function run(KernelContext $context): void
+    public function run(KernelContext $context) : void
     {
         $pipelineStartTime = microtime(as_float: true);
+        $context->setMetaOnce(namespace: 'telemetry', key: 'step_timings', value: []);
 
         foreach ($this->steps as $index => $step) {
             $stepStartTime = microtime(as_float: true);
 
             // Notify telemetry about step initiation
-            $this->telemetry?->onStepStarted(new StepStarted(
+            $this->telemetry?->onStepStarted(event: new StepStarted(
                 stepClass: $step::class,
                 timestamp: $stepStartTime,
                 serviceId: $context->serviceId,
-                traceId: $context->traceId
+                traceId  : $context->traceId
             ));
 
             try {
@@ -83,40 +89,39 @@ final readonly class ResolutionPipeline
                 $stepEndTime = microtime(as_float: true);
                 $duration    = round(($stepEndTime - $stepStartTime) * 1000, 4);
 
-                $context->setMetaOnce(namespace: 'telemetry', key: 'step_timings', value: []);
-                $timings           = $context->getMeta(namespace: 'telemetry', key: 'step_timings');
+                $timings               = $context->getMeta(namespace: 'telemetry', key: 'step_timings');
                 $timings[$step::class] = $duration;
                 $context->putMeta(namespace: 'telemetry', key: 'step_timings', value: $timings);
 
                 // Notify telemetry about successful step completion
-                $this->telemetry?->onStepSucceeded(new StepSucceeded(
+                $this->telemetry?->onStepSucceeded(event: new StepSucceeded(
                     stepClass: $step::class,
                     startedAt: $stepStartTime,
-                    endedAt: $stepEndTime,
-                    duration: $duration / 1000,
+                    endedAt  : $stepEndTime,
+                    duration : $duration / 1000,
                     serviceId: $context->serviceId,
-                    traceId: $context->traceId
+                    traceId  : $context->traceId
                 ));
             } catch (Throwable $e) {
                 $stepEndTime = microtime(as_float: true);
                 $duration    = round(($stepEndTime - $stepStartTime) * 1000, 4);
 
                 // Notify telemetry about step failure
-                $this->telemetry?->onStepFailed(new StepFailed(
+                $this->telemetry?->onStepFailed(event: new StepFailed(
                     stepClass: $step::class,
                     startedAt: $stepStartTime,
-                    endedAt: $stepEndTime,
-                    duration: $duration / 1000,
+                    endedAt  : $stepEndTime,
+                    duration : $duration / 1000,
                     serviceId: $context->serviceId,
                     exception: $e,
-                    traceId: $context->traceId
+                    traceId  : $context->traceId
                 ));
 
                 // Re-wrap non-container exceptions if necessary, or just throw if it's already a ContainerException
                 // But the test expects "Resolution pipeline failed at step X"
-                if (!($e instanceof ContainerException)) {
+                if (! ($e instanceof ContainerException)) {
                     throw new ContainerException(
-                        message: sprintf('Resolution pipeline failed at step %d: %s', $index + 1, $e->getMessage()),
+                        message : sprintf('Resolution pipeline failed at step %d: %s', $index + 1, $e->getMessage()),
                         previous: $e
                     );
                 }
@@ -134,10 +139,9 @@ final readonly class ResolutionPipeline
     /**
      * Get the number of steps in the pipeline.
      *
-     * @return int
      * @see docs/Core/Kernel/ResolutionPipeline.md#method-count
      */
-    public function count(): int
+    public function count() : int
     {
         return count(value: $this->steps);
     }
@@ -145,12 +149,12 @@ final readonly class ResolutionPipeline
     /**
      * Get a specific step by index.
      *
-     * @param int $index
-     * @return KernelStep
+     *
      * @throws ContainerException If index is out of bounds
+     *
      * @see docs/Core/Kernel/ResolutionPipeline.md#method-getstep
      */
-    public function getStep(int $index): KernelStep
+    public function getStep(int $index) : KernelStep
     {
         if (! isset($this->steps[$index])) {
             throw new ContainerException(message: sprintf('Step index %d is out of bounds', $index));
@@ -162,13 +166,12 @@ final readonly class ResolutionPipeline
     /**
      * Create a new pipeline with an additional step at the end.
      *
-     * @param KernelStep $step
-     * @return self
+     *
      * @see docs/Core/Kernel/ResolutionPipeline.md#method-withstep
      */
-    public function withStep(KernelStep $step): self
+    public function withStep(KernelStep $step) : self
     {
-        $steps = $this->steps;
+        $steps   = $this->steps;
         $steps[] = $step;
 
         return new self(steps: $steps, telemetry: $this->telemetry);
@@ -177,11 +180,10 @@ final readonly class ResolutionPipeline
     /**
      * Create a new pipeline with an additional step at the beginning.
      *
-     * @param KernelStep $step
-     * @return self
+     *
      * @see docs/Core/Kernel/ResolutionPipeline.md#method-withstepfirst
      */
-    public function withStepFirst(KernelStep $step): self
+    public function withStepFirst(KernelStep $step) : self
     {
         $steps = $this->steps;
         array_unshift($steps, $step);
@@ -193,9 +195,10 @@ final readonly class ResolutionPipeline
      * Get all steps in the pipeline.
      *
      * @return KernelStep[]
+     *
      * @see docs/Core/Kernel/ResolutionPipeline.md#method-getsteps
      */
-    public function getSteps(): array
+    public function getSteps() : array
     {
         return $this->steps;
     }
@@ -203,10 +206,9 @@ final readonly class ResolutionPipeline
     /**
      * String representation of the pipeline sequence.
      *
-     * @return string
      * @see docs/Core/Kernel/ResolutionPipeline.md#method-__tostring
      */
-    public function __toString(): string
+    public function __toString() : string
     {
         $stepNames = array_map(static fn($s) => $s::class, $this->steps);
 

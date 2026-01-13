@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\HTTP\Context;
@@ -13,30 +14,30 @@ interface GlobalsProviderInterface
     /**
      * @return array<string, mixed>
      */
-    public function server() : array;
+    public function server(): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function query() : array;
+    public function query(): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function post() : array;
+    public function post(): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function cookies() : array;
+    public function cookies(): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function files() : array;
+    public function files(): array;
 
     /**
      * @return array<string, mixed>
      */
-    public function session() : array;
+    public function session(): array;
 }

@@ -27,14 +27,13 @@ abstract class AppConfigurator implements ConfiguratorInterface
     /**
      * Constructor to initialize the configurator with a config loader.
      *
-     * @param ConfigLoaderInterface $configLoader An instance responsible for loading config files.
+     * @param  ConfigLoaderInterface  $configLoader  An instance responsible for loading config files.
      */
     public function __construct(
         protected ConfigLoaderInterface $configLoader,
-    )
-    {
+    ) {
         // Initialize WeakMap if not already set
-        self::$weakMap ??= new WeakMap();
+        self::$weakMap ??= new WeakMap;
         // Load configuration, either from cache or fresh data
         $this->initializeConfiguration();
     }
@@ -46,7 +45,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
      * in `WeakMap`. If available, it uses the cached data; otherwise, it loads a fresh
      * configuration and caches it.
      */
-    private function initializeConfiguration() : void
+    private function initializeConfiguration(): void
     {
         // Check if configuration is already cached for this instance
         $this->configuration = self::$weakMap[$this] ?? $this->loadFreshConfigAndCache();
@@ -60,7 +59,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
      *
      * @return Collection The newly loaded configuration data.
      */
-    private function loadFreshConfigAndCache() : Collection
+    private function loadFreshConfigAndCache(): Collection
     {
         $collection = $this->loadConfigurationFiles();
         // Cache the configuration for the current instance in WeakMap
@@ -78,7 +77,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
      *
      * @return Collection The loaded configuration data.
      */
-    protected function loadConfigurationFiles() : Collection
+    protected function loadConfigurationFiles(): Collection
     {
         $configData = [];
         foreach ($this->getConfigurationPaths() as $namespace => $filePath) {
@@ -97,7 +96,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
      *
      * @return array<string, string> Associative array of configuration namespaces and file paths.
      */
-    abstract protected function getConfigurationPaths() : array;
+    abstract protected function getConfigurationPaths(): array;
 
     /**
      * Retrieve a configuration value by dot-notated key.
@@ -106,13 +105,13 @@ abstract class AppConfigurator implements ConfiguratorInterface
      * configuration values (e.g., "database.mysql.dsn"). It uses `data_get` to efficiently
      * resolve nested paths.
      *
-     * @param string $key     The configuration key, supporting dot notation for nested access.
-     * @param mixed  $default Default value if the key does not exist.
-     *
+     * @param  string  $key  The configuration key, supporting dot notation for nested access.
+     * @param  mixed  $default  Default value if the key does not exist.
      * @return mixed The configuration value or the default value if not found.
+     *
      * @throws RuntimeException if the configuration key does not exist and no default is provided.
      */
-    public function get(string $key, mixed $default = null) : mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         // Access the base data from the collection
         $items = $this->configuration->getItems();
@@ -121,7 +120,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
         $value = data_get(target: $items, key: $key, default: $default);
 
         if ($value === $default && $default === null) {
-            throw new RuntimeException(message: "Configuration key [" . $key . "] does not exist.");
+            throw new RuntimeException(message: 'Configuration key ['.$key.'] does not exist.');
         }
 
         return $value;
@@ -130,11 +129,10 @@ abstract class AppConfigurator implements ConfiguratorInterface
     /**
      * Check if a specific configuration key exists.
      *
-     * @param string $key The configuration key, potentially in dot notation.
-     *
+     * @param  string  $key  The configuration key, potentially in dot notation.
      * @return bool Returns true if the key exists, false otherwise.
      */
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         return $this->configuration->contains(value: $key);
     }
@@ -144,7 +142,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
      *
      * @return Collection The entire configuration data as a Collection.
      */
-    public function all() : Collection
+    public function all(): Collection
     {
         return $this->configuration;
     }
@@ -157,7 +155,7 @@ abstract class AppConfigurator implements ConfiguratorInterface
      *
      * @return Collection The newly loaded configuration data.
      */
-    public function refresh() : Collection
+    public function refresh(): Collection
     {
         return $this->configuration = $this->loadFreshConfigAndCache();
     }

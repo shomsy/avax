@@ -12,8 +12,6 @@ use InvalidArgumentException;
  * Provides methods to manipulate the order of arrays.
  * This trait allows sorting arrays in ascending order
  * and shuffling array elements.
- *
- * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait OrderManipulationTrait
 {
@@ -25,8 +23,7 @@ trait OrderManipulationTrait
      * This method sorts the collection in ascending order either by a specified key or using a custom comparison
      * function. It returns a new instance with the sorted items, ensuring immutability.
      *
-     * @param string|callable $key The key to sort by, or a callable function to compare items.
-     *
+     * @param  string|callable  $key  The key to sort by, or a callable function to compare items.
      * @return static A new instance with sorted items.
      *
      * @throws InvalidArgumentException If the key is a string and does not exist in one or more items.
@@ -46,7 +43,7 @@ trait OrderManipulationTrait
      * // ]
      * ```
      */
-    public function sortAscending(string|callable $key) : static
+    public function sortAscending(string|callable $key): static
     {
         $items = $this->getItems();
 
@@ -60,7 +57,7 @@ trait OrderManipulationTrait
                 }
             }
 
-            usort(array: $items, callback: static fn($a, $b) : int => $a[$key] <=> $b[$key]);
+            usort(array: $items, callback: static fn ($a, $b): int => $a[$key] <=> $b[$key]);
         } elseif (is_callable(value: $key)) {
             usort(array: $items, callback: $key);
         } else {
@@ -77,7 +74,7 @@ trait OrderManipulationTrait
      *
      * @return array The current collection of items.
      */
-    abstract public function getItems() : array;
+    abstract public function getItems(): array;
 
     /**
      * Shuffle the items.
@@ -93,7 +90,7 @@ trait OrderManipulationTrait
      * // $shuffled might contain ['cherry', 'apple', 'banana']
      * ```
      */
-    public function shuffle() : static
+    public function shuffle(): static
     {
         $items = $this->getItems();
 

@@ -195,7 +195,6 @@ declare(strict_types=1);
 namespace Avax\DataHandling\ObjectHandling\Collections;
 
 use ArrayIterator;
-use Closure;
 use Avax\DataHandling\ArrayHandling\Traits\AbstractDependenciesTrait;
 use Avax\DataHandling\ArrayHandling\Traits\AggregationTrait;
 use Avax\DataHandling\ArrayHandling\Traits\ArrayAccessTrait;
@@ -213,6 +212,7 @@ use Avax\DataHandling\ArrayHandling\Traits\SetOperationsTrait;
 use Avax\DataHandling\ArrayHandling\Traits\SortOperationsTrait;
 use Avax\DataHandling\ArrayHandling\Traits\StructureConversionTrait;
 use Avax\DataHandling\ArrayHandling\Traits\TransformationTrait;
+use Closure;
 use Traversable;
 
 /**

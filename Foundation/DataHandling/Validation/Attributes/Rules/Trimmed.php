@@ -12,13 +12,11 @@ class Trimmed
     /**
      * Trims the given value if it is a string.
      *
-     * @param mixed $value The value to trim.
-     *
+     * @param  mixed  $value  The value to trim.
      * @return mixed The trimmed value.
      */
-    public function apply(mixed $value) : mixed
+    public function apply(mixed $value): mixed
     {
         return is_string(value: $value) ? trim(string: $value) : $value;
     }
 }
-

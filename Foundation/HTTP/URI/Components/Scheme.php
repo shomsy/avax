@@ -25,7 +25,7 @@ final readonly class Scheme implements Stringable
     /**
      * Constructs a new Scheme instance.
      *
-     * @param string $scheme The scheme to be validated and stored.
+     * @param  string  $scheme  The scheme to be validated and stored.
      *
      * Validates the provided scheme upon instantiation to ensure immediate feedback if the input
      * is not among the allowed schemes.
@@ -38,16 +38,15 @@ final readonly class Scheme implements Stringable
     /**
      * Validates the provided scheme.
      *
-     * @param string $scheme The scheme to validate.
-     *
+     * @param  string  $scheme  The scheme to validate.
      * @return string The validated scheme in lowercase.
      *
      * @throws InvalidArgumentException if the scheme is empty or not in the allowed schemes list.
      */
-    private function validate(string $scheme) : string
+    private function validate(string $scheme): string
     {
         if ($scheme === '' || ! in_array(needle: strtolower(string: $scheme), haystack: self::ALLOWED_SCHEMES, strict: true)) {
-            throw new InvalidArgumentException(message: 'Invalid scheme: ' . $scheme);
+            throw new InvalidArgumentException(message: 'Invalid scheme: '.$scheme);
         }
 
         return strtolower(string: $scheme);
@@ -61,7 +60,7 @@ final readonly class Scheme implements Stringable
      * Provides a string representation of the scheme, which is useful in contexts where the scheme
      * needs to be concatenated or outputted directly.
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->scheme;
     }

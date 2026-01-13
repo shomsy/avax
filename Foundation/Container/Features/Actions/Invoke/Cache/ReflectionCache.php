@@ -14,13 +14,14 @@ use ReflectionFunctionAbstract;
 final class ReflectionCache
 {
     /** @var array<string, ReflectionFunctionAbstract> */
-    private array $cache  = [];
-    private bool  $locked = false;
+    private array $cache = [];
+
+    private bool $locked = false;
 
     /**
      * @see docs/Features/Actions/Invoke/Cache/ReflectionCache.md#method-get
      */
-    public function get(string $key): ReflectionFunctionAbstract|null
+    public function get(string $key) : ReflectionFunctionAbstract|null
     {
         return $this->cache[$key] ?? null;
     }
@@ -28,7 +29,7 @@ final class ReflectionCache
     /**
      * @see docs/Features/Actions/Invoke/Cache/ReflectionCache.md#method-set
      */
-    public function set(string $key, ReflectionFunctionAbstract $reflection): void
+    public function set(string $key, ReflectionFunctionAbstract $reflection) : void
     {
         $this->cache[$key] = $reflection;
     }

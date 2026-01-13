@@ -66,8 +66,17 @@ trait HasSoftDeletes
      * Filter the results     *
      *
      * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes
-     * \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes
-     * A fresh, cloned builder instance targeting only deleted records.
+     *                                                                                                                                \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasSoftDeletes
+     *                                                                                                                                A
+     *                                                                                                                                fresh,
+     *                                                                                                                                cloned
+     *                                                                                                                                builder
+     *                                                                                                                                instance
+     *                                                                                                                                targeting
+     *                                                                                                                                only
+     *                                                                                                                                deleted
+     *                                                                                                                                records.
+     *
      * @see
      * https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/SoftDeletes.md#only-deleted-records
      * to exclusively include records marked as soft-deleted.
@@ -96,8 +105,9 @@ trait HasSoftDeletes
      *
      * @param string $column The technical deletion field identifier (defaults to 'deleted_at').
      *
-     * @throws Throwable If the restoration update fails at the persistence layer.
      * @return bool True if the records were successfully marked as active.
+     *
+     * @throws Throwable If the restoration update fails at the persistence layer.
      */
     public function restore(string $column = 'deleted_at') : bool
     {

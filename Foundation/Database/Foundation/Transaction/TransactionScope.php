@@ -32,8 +32,8 @@ final class TransactionScope
     private bool $completed = false;
 
     /**
-     * @param TransactionManagerInterface $manager The active technical authority responsible for atomicity and
-     *                                             persistence.
+     * @param  TransactionManagerInterface  $manager  The active technical authority responsible for atomicity and
+     *                                                persistence.
      */
     public function __construct(private readonly TransactionManagerInterface $manager)
     {
@@ -66,10 +66,8 @@ final class TransactionScope
      * Signals the successful and complete execution of the enclosed unit
      * of work, instructing the manager to persist changes and disabling the
      * automated rollback guardian.
-     *
-     * @return void
      */
-    public function complete() : void
+    public function complete(): void
     {
         $this->manager->commit();
         $this->completed = true;

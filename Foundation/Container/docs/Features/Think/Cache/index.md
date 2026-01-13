@@ -2,44 +2,55 @@
 
 ## What This Folder Represents
 
-This folder contains the "Long-Term Memory" infrastructure—the systems that allow the container to save what it has learned to a hard drive or a database.
+This folder contains the "Long-Term Memory" infrastructure—the systems that allow the container to save what it has
+learned to a hard drive or a database.
 
-Technically, `Features/Think/Cache` is the persistence layer for service blueprints. Its primary goal is to eliminate the performance cost of PHP Reflection during production. It accomplishes this by defining a strict storage interface (`PrototypeCache`) and providing optimized implementations (like `FilePrototypeCache`) that turn complex objects into super-fast, pre-compiled PHP code. This folder ensures that the "Thinking" phase of the container happens exactly once per class deployment.
+Technically, `Features/Think/Cache` is the persistence layer for service blueprints. Its primary goal is to eliminate
+the performance cost of PHP Reflection during production. It accomplishes this by defining a strict storage interface (
+`PrototypeCache`) and providing optimized implementations (like `FilePrototypeCache`) that turn complex objects into
+super-fast, pre-compiled PHP code. This folder ensures that the "Thinking" phase of the container happens exactly once
+per class deployment.
 
 ### For Humans: What This Means (Summary)
 
-This is the **Librarian's Archive**. If the `Model` folder is the set of "Official Forms", this folder is the **Shelving System** used to store them. It handles the physical task of writing the forms onto paper (Files) and putting them in the right boxes. It ensures that if the container needs to know how to build a class tomorrow, it doesn't have to "Learn" it again—it can just go to the archive and pull the saved form.
+This is the **Librarian's Archive**. If the `Model` folder is the set of "Official Forms", this folder is the **Shelving
+System** used to store them. It handles the physical task of writing the forms onto paper (Files) and putting them in
+the right boxes. It ensures that if the container needs to know how to build a class tomorrow, it doesn't have to "
+Learn" it again—it can just go to the archive and pull the saved form.
 
 ## Terminology (MANDATORY, EXPANSIVE)
 
 - **Persistence Contract**: A promise that data will be saved and loaded in a predictable way.
-  - In this folder: Defined by `PrototypeCache`.
-  - Why it matters: It allows the container to be fast without caring *how* the data is saved.
+    - In this folder: Defined by `PrototypeCache`.
+    - Why it matters: It allows the container to be fast without caring *how* the data is saved.
 - **Opcode Optimization**: Storing data in a format that the PHP engine can read "instantly" from its own memory.
-  - In this folder: Leveraged by `FilePrototypeCache`.
-  - Why it matters: This is the difference between a fast app and a slow one.
+    - In this folder: Leveraged by `FilePrototypeCache`.
+    - Why it matters: This is the difference between a fast app and a slow one.
 - **Factory Integration**: A bridge that connects different systems together.
-  - In this folder: Handled by `CacheManagerIntegration`.
-  - Why it matters: It allows the container to share storage with other parts of your app.
+    - In this folder: Handled by `CacheManagerIntegration`.
+    - Why it matters: It allows the container to share storage with other parts of your app.
 - **Atomic Persistence**: Saving a file in a single "Instant" step to prevent corruption.
-  - In this folder: Used in the file-writing logic.
-  - Why it matters: It prevents your app from crashing if two people access it at the exact same millisecond.
+    - In this folder: Used in the file-writing logic.
+    - Why it matters: It prevents your app from crashing if two people access it at the exact same millisecond.
 
 ### For Humans: What This Means (Terminology)
 
-**Persistence** is "Long-Term Memory". **Opcode Optimization** is "Thinking at the speed of light". **Factory Integration** is "The Universal Plug", and **Atomic Persistence** is "Safe Saving".
+**Persistence** is "Long-Term Memory". **Opcode Optimization** is "Thinking at the speed of light". **Factory
+Integration** is "The Universal Plug", and **Atomic Persistence** is "Safe Saving".
 
 ## Think of It
 
 Think of a **Professional Recording Studio**:
 
-1. **The Performance (Reflection)**: The musicians playing the music live. It’s beautiful but hard to repeat perfectly every time.
+1. **The Performance (Reflection)**: The musicians playing the music live. It’s beautiful but hard to repeat perfectly
+   every time.
 2. **The Record (Prototype)**: The music captured on a piece of tape.
 3. **The Archive (This Folder)**: The climate-controlled room where the tapes are stored, labeled, and protected.
 
 ### For Humans: What This Means (Analogy)
 
-One folder (Analyze) is the "Recording Session", one folder (Model) is the "Tape", and this folder is the "Archive" where the tapes are kept safe for years.
+One folder (Analyze) is the "Recording Session", one folder (Model) is the "Tape", and this folder is the "Archive"
+where the tapes are kept safe for years.
 
 ## Story Example
 
@@ -48,11 +59,13 @@ You are launching a major marketing campaign. Your traffic jumps from 10 users t
 1. The first user triggers the **Analyze** phase. The container learns how to build the `MarketingPage`.
 2. This folder's **Cache** writes that knowledge to a file.
 3. For the other 9,999 users, the container skips the "Learning" part entirely. It just reads the file from this folder.
-The server's CPU stays low, and the site feels fast for every single user because the container "Remembered" what it did for the first person.
+   The server's CPU stays low, and the site feels fast for every single user because the container "Remembered" what it
+   did for the first person.
 
 ### For Humans: What This Means (Story)
 
-It makes your application "Scale". It ensures that no matter how many people visit your site, the container never has to do the same hard work twice.
+It makes your application "Scale". It ensures that no matter how many people visit your site, the container never has to
+do the same hard work twice.
 
 ## For Dummies
 
@@ -77,7 +90,8 @@ The "Cache" folder provides a robust persistence lifecycle:
 
 ### For Humans: What This Means (Technical)
 
-It is the "Data Lifecycle" manager. It manages the birth (Saving), life (Loading), and death (Clearing) of all the container's knowledge.
+It is the "Data Lifecycle" manager. It manages the birth (Saving), life (Loading), and death (Clearing) of all the
+container's knowledge.
 
 ## Architecture Role
 
@@ -111,7 +125,8 @@ This folder is the **Storage Shelf**, not the **Book** (Model) or the **Writer**
 
 ## How Files Collaboration
 
-The `CacheManagerIntegration` decides which `PrototypeCache` to use. That cache then interacts with the filesystem (via `FilePrototypeCache`) to save or load `ServicePrototype` objects. It’s a clean chain: Decision -> Action -> Result.
+The `CacheManagerIntegration` decides which `PrototypeCache` to use. That cache then interacts with the filesystem (via
+`FilePrototypeCache`) to save or load `ServicePrototype` objects. It’s a clean chain: Decision -> Action -> Result.
 
 ### For Humans: What This Means (Collaboration)
 

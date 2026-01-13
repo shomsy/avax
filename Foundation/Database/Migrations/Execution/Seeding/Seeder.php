@@ -16,22 +16,22 @@ abstract class Seeder
     /**
      * Seed the given seeder class.
      */
-    public function call(string $class) : void
+    public function call(string $class): void
     {
         basename(path: $class);
         echo "\033[36mSeeding:\033[0m {$class}\n";
-        (new $class())->run();
+        (new $class)->run();
     }
 
     /**
      * Run the database seeds.
      */
-    abstract public function run() : void;
+    abstract public function run(): void;
 
     /**
      * Get a query builder instance for a table.
      */
-    protected function command(string $table) : QueryBuilder
+    protected function command(string $table): QueryBuilder
     {
         return app(abstract: QueryBuilder::class)->from(table: $table);
     }

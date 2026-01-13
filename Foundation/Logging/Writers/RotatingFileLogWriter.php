@@ -32,29 +32,21 @@ final class RotatingFileLogWriter implements LogWriterInterface
     /**
      * Absolute path prefix for log files (e.g., /var/logs/app-error).
      * The File path is dynamically suffixed with the date.
-     *
-     * @var string
      */
     private string $baseLogPath;
 
     /**
      * Valid IANA timezone identifier (e.g., Europe/Belgrade).
-     *
-     * @var string
      */
     private string $timezone;
 
     /**
      * Current date suffix for caching (format: d.m.Y).
-     *
-     * @var string|null
      */
     private string|null $cachedDate = null;
 
     /**
      * Cached a full path to the log file (rotated daily).
-     *
-     * @var string|null
      */
     private string|null $cachedFilePath = null;
 
@@ -79,7 +71,8 @@ final class RotatingFileLogWriter implements LogWriterInterface
         string      $baseLogPath,
         string|null $timezone = null,
         int         $maxLogFiles = 30
-    ) {
+    )
+    {
         // Set the default timezone to 'UTC' if no value is provided for $timezone.
         $timezone ??= 'UTC';
 
@@ -107,14 +100,13 @@ final class RotatingFileLogWriter implements LogWriterInterface
     /**
      * Validates the base log path before use.
      *
-     * @param string $baseLogPath
      *
      * @throws RuntimeException If a path is unsafe or empty.
      */
-    private function validateBaseLogPath(string $baseLogPath): void
+    private function validateBaseLogPath(string $baseLogPath) : void
     {
         if (empty($baseLogPath)) {
-            throw new RuntimeException(message: "Base log path cannot be empty.");
+            throw new RuntimeException(message: 'Base log path cannot be empty.');
         }
 
         if (strpos(haystack: $baseLogPath, needle: '..') !== false) {
@@ -129,7 +121,7 @@ final class RotatingFileLogWriter implements LogWriterInterface
      *
      * @throws RuntimeException If a file cannot be written.
      */
-    public function write(string $content): void
+    public function write(string $content) : void
     {
         // Get the current date and time in the specified timezone, formatted as 'd.m.Y'.
         $currentDate = Carbon::now()->setTimezone(timeZone: $this->timezone)->format(format: 'd.m.Y');
@@ -162,10 +154,8 @@ final class RotatingFileLogWriter implements LogWriterInterface
      * Throws an exception if directory creation fails.
      *
      * @param string $directory The path of the directory to ensure exists.
-     *
-     * @return void
      */
-    private function ensureDirectoryExists(string $directory): void
+    private function ensureDirectoryExists(string $directory) : void
     {
         if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0775, recursive: true) && ! is_dir(filename: $directory)) {
             throw new RuntimeException(message: "Failed to create log directory: {$directory}");
@@ -177,12 +167,10 @@ final class RotatingFileLogWriter implements LogWriterInterface
      * This method ensures that the logging directory does not exceed a defined maximum file retention period.
      * Adheres to best practices such as validating file paths and ensuring atomic operations with `unlink`.
      *
-     * @param int $maxFileAgeInDays Defaults to 30 days if not specified.
-     *                              Represents the maximum age (in days) for retaining log files.
-     *
-     * @return void
+     * @param int $maxFileAgeInDays    Defaults to 30 days if not specified.
+     *                                 Represents the maximum age (in days) for retaining log files.
      */
-    private function rotateLogs(int $maxFileAgeInDays = 30): void
+    private function rotateLogs(int $maxFileAgeInDays = 30) : void
     {
         // Retrieve a list of log files matching the naming convention: `<baseLogPath>-*.log`.
         // This uses the `glob` function to find all files matching the wildcard pattern.
@@ -217,7 +205,6 @@ final class RotatingFileLogWriter implements LogWriterInterface
         }
     }
 
-
     /**
      * Appends content to the log file using exclusive lock.
      *
@@ -226,7 +213,7 @@ final class RotatingFileLogWriter implements LogWriterInterface
      *
      * @throws RuntimeException If writing fails.
      */
-    private function appendToFile(string $filePath, string $content): void
+    private function appendToFile(string $filePath, string $content) : void
     {
         // Attempting to write content to the specified file.
         // The filename is provided by the $filePath variable.
@@ -236,8 +223,8 @@ final class RotatingFileLogWriter implements LogWriterInterface
         //  by getting an exclusive lock during the writing process.
         $result = file_put_contents(
             filename: $filePath,
-            data: $content . PHP_EOL,
-            flags: FILE_APPEND | LOCK_EX
+            data    : $content . PHP_EOL,
+            flags   : FILE_APPEND | LOCK_EX
         );
 
         // Checking if the result of the file_put_contents call is false.

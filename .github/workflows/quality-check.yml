@@ -1,0 +1,64 @@
+name: Quality Assurance
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, intl, pdo, pdo_mysql, pdo_sqlite
+        tools: composer:v2, phpstan, psalm
+
+    - name: Install dependencies
+      run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+    - name: Run PHPStan static analysis
+      run: vendor/bin/phpstan analyse --error-format=github --no-progress
+      continue-on-error: false
+
+    - name: Run Psalm static analysis
+      run: psalm --no-cache --output-format=github
+      continue-on-error: false
+
+    - name: Run PHP CS Fixer
+      run: vendor/bin/php-cs-fixer fix --dry-run --diff --format=github
+      continue-on-error: false
+
+    - name: Run PHPUnit tests
+      run: vendor/bin/phpunit --coverage-text --colors=never
+      continue-on-error: false
+
+    - name: Check composer dependencies
+      run: composer audit
+      continue-on-error: false
+
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'

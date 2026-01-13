@@ -15,8 +15,6 @@ use Avax\HTTP\Session\Shared\Security\NativeServerContext;
  * If User-Agent changes during session lifetime, policy is violated.
  *
  * Uses ServerContext for testability.
- *
- * @package Avax\HTTP\Session\Shared\Security\Policies
  */
 final class CrossAgentPolicy implements PolicyInterface
 {
@@ -29,7 +27,7 @@ final class CrossAgentPolicy implements PolicyInterface
         private ServerContext|null $serverContext = null
     )
     {
-        $this->serverContext ??= new NativeServerContext();
+        $this->serverContext ??= new NativeServerContext;
     }
 
     /**

@@ -21,7 +21,7 @@ class LazyCollection extends Collection
     /**
      * LazyCollection constructor.
      *
-     * @param Closure $generator A generator function to build the collection lazily.
+     * @param  Closure  $generator  A generator function to build the collection lazily.
      */
     public function __construct(protected Closure $generator)
     {
@@ -35,7 +35,7 @@ class LazyCollection extends Collection
      *
      * @return array The entire collection as an array.
      */
-    public function all() : array
+    public function all(): array
     {
         return iterator_to_array(iterator: $this->getIterator());
     }
@@ -47,7 +47,7 @@ class LazyCollection extends Collection
      *
      * @return Traversable The generator yielding items of the collection.
      */
-    public function getIterator() : Traversable
+    public function getIterator(): Traversable
     {
         return ($this->generator)();
     }
@@ -57,11 +57,10 @@ class LazyCollection extends Collection
      *
      * This method is useful for scenarios where sampling at regular intervals is required.
      *
-     * @param int $step The interval at which items are retrieved.
-     *
+     * @param  int  $step  The interval at which items are retrieved.
      * @return static A new lazy collection containing every nth item.
      */
-    public function nth(int $step) : static
+    public function nth(int $step): static
     {
         return new static(generator: function () use ($step) {
             $index = 0;
@@ -78,11 +77,10 @@ class LazyCollection extends Collection
      *
      * This allows conditional data processing where items are taken as long as a condition holds.
      *
-     * @param Closure $callback The condition used to continue taking items.
-     *
+     * @param  Closure  $callback  The condition used to continue taking items.
      * @return static A new lazy collection containing items while the callback returns true.
      */
-    public function takeWhile(Closure $callback) : static
+    public function takeWhile(Closure $callback): static
     {
         return new static(generator: function () use ($callback) {
             foreach ($this->getIterator() as $item) {

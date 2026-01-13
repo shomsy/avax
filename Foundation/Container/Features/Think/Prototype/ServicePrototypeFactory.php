@@ -12,14 +12,13 @@ use Avax\Container\Features\Think\Prototype\Contracts\ServicePrototypeFactoryInt
 /**
  * The central manager for the creation and lifecycle of service prototypes.
  *
- * This factory acts as the primary entry point for obtaining a {@see ServicePrototype}. 
- * It coordinates with the {@see PrototypeCache} for "Read-Once" performance and 
- * delegates the heavy lifting of code reflection to the {@see PrototypeAnalyzer}. 
- * It ensures that the rest of the container always has access to verified, 
+ * This factory acts as the primary entry point for obtaining a {@see ServicePrototype}.
+ * It coordinates with the {@see PrototypeCache} for "Read-Once" performance and
+ * delegates the heavy lifting of code reflection to the {@see PrototypeAnalyzer}.
+ * It ensures that the rest of the container always has access to verified,
  * pre-analyzed metadata about any class.
  *
- * @package Avax\Container\Features\Think\Prototype
- * @see docs/Features/Think/Prototype/ServicePrototypeFactory.md
+ * @see     docs/Features/Think/Prototype/ServicePrototypeFactory.md
  */
 final readonly class ServicePrototypeFactory implements ServicePrototypeFactoryInterface
 {
@@ -37,10 +36,9 @@ final readonly class ServicePrototypeFactory implements ServicePrototypeFactoryI
     /**
      * Get the underlying cache instance.
      *
-     * @return PrototypeCache
      * @see docs/Features/Think/Prototype/ServicePrototypeFactory.md#method-getcache
      */
-    public function getCache(): PrototypeCache
+    public function getCache() : PrototypeCache
     {
         return $this->cache;
     }
@@ -48,10 +46,9 @@ final readonly class ServicePrototypeFactory implements ServicePrototypeFactoryI
     /**
      * Get the underlying reflection analyzer.
      *
-     * @return PrototypeAnalyzer
      * @see docs/Features/Think/Prototype/ServicePrototypeFactory.md#method-getanalyzer
      */
-    public function getAnalyzer(): PrototypeAnalyzer
+    public function getAnalyzer() : PrototypeAnalyzer
     {
         return $this->analyzer;
     }
@@ -66,12 +63,14 @@ final readonly class ServicePrototypeFactory implements ServicePrototypeFactoryI
      * 4. Return the blueprint.
      *
      * @param string $class The fully qualified class name.
+     *
      * @return ServicePrototype The analyzed and ready-to-use blueprint.
+     *
      * @throws \RuntimeException If the class cannot be analyzed.
      *
      * @see docs/Features/Think/Prototype/ServicePrototypeFactory.md#method-createfor
      */
-    public function createFor(string $class): ServicePrototype
+    public function createFor(string $class) : ServicePrototype
     {
         // 1. Check cache first for high-performance retrieval
         $cached = $this->cache->get(class: $class);
@@ -92,10 +91,12 @@ final readonly class ServicePrototypeFactory implements ServicePrototypeFactoryI
      * Determine if a blueprint already exists in the cache for a class.
      *
      * @param string $class The class name.
+     *
      * @return bool True if a prototype is already cached.
+     *
      * @see docs/Features/Think/Prototype/ServicePrototypeFactory.md#method-hasprototype
      */
-    public function hasPrototype(string $class): bool
+    public function hasPrototype(string $class) : bool
     {
         return $this->cache->has(class: $class);
     }

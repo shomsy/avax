@@ -23,20 +23,22 @@ interface LifecycleStrategy
      * - Transient: Not stored (no-op)
      *
      * @param string $abstract Service identifier
-     * @param mixed $instance Service instance to store
-     * @return void
+     * @param mixed  $instance Service instance to store
+     *
      * @see docs/Core/Kernel/Contracts/LifecycleStrategy.md#method-store
      */
-    public function store(string $abstract, mixed $instance): void;
+    public function store(string $abstract, mixed $instance) : void;
 
     /**
      * Check if an instance exists for the given identifier.
      *
      * @param string $abstract Service identifier to check
+     *
      * @return bool True if instance exists and can be retrieved
+     *
      * @see docs/Core/Kernel/Contracts/LifecycleStrategy.md#method-has
      */
-    public function has(string $abstract): bool;
+    public function has(string $abstract) : bool;
 
     /**
      * Retrieve an instance for the given identifier.
@@ -45,10 +47,12 @@ interface LifecycleStrategy
      * For transient strategies, this always returns null.
      *
      * @param string $abstract Service identifier to retrieve
+     *
      * @return mixed Stored instance or null
+     *
      * @see docs/Core/Kernel/Contracts/LifecycleStrategy.md#method-retrieve
      */
-    public function retrieve(string $abstract): mixed;
+    public function retrieve(string $abstract) : mixed;
 
     /**
      * Clear stored instances.
@@ -56,8 +60,7 @@ interface LifecycleStrategy
      * Removes all instances stored by this strategy.
      * For scoped strategies, this is called when scope ends.
      *
-     * @return void
      * @see docs/Core/Kernel/Contracts/LifecycleStrategy.md#method-clear
      */
-    public function clear(): void;
+    public function clear() : void;
 }

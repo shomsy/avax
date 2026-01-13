@@ -29,10 +29,10 @@ class IP
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (! filter_var(value: $value, filter: FILTER_VALIDATE_IP)) {
-            throw new ValidationException(message: $property . ' must be a valid IP address.');
+            throw new ValidationException(message: $property.' must be a valid IP address.');
         }
     }
 }

@@ -23,7 +23,7 @@ final class MigrationRepository
     /**
      * @throws Throwable
      */
-    public function getRan() : array
+    public function getRan(): array
     {
         return $this->builder->from(table: $this->table)
             ->select('migration', 'checksum')
@@ -33,7 +33,7 @@ final class MigrationRepository
     /**
      * @throws Throwable
      */
-    public function getLastBatch(int $steps = 1) : array
+    public function getLastBatch(int $steps = 1): array
     {
         $maxBatch = (int) $this->builder->from(table: $this->table)->max(column: 'batch');
         $minBatch = max(0, $maxBatch - $steps + 1);
@@ -48,7 +48,7 @@ final class MigrationRepository
     /**
      * @throws Throwable
      */
-    public function getNextBatchNumber() : int
+    public function getNextBatchNumber(): int
     {
         return (int) $this->builder->from(table: $this->table)->max(column: 'batch') + 1;
     }
@@ -56,19 +56,19 @@ final class MigrationRepository
     /**
      * @throws Throwable
      */
-    public function log(string $name, int $batch, string $checksum) : void
+    public function log(string $name, int $batch, string $checksum): void
     {
         $this->builder->from(table: $this->table)->insert(values: [
             'migration' => $name,
-            'batch'     => $batch,
-            'checksum'  => $checksum
+            'batch' => $batch,
+            'checksum' => $checksum,
         ]);
     }
 
     /**
      * @throws Throwable
      */
-    public function remove(string $name) : void
+    public function remove(string $name): void
     {
         $this->builder->from(table: $this->table)->where(column: 'migration', value: $name)->delete();
     }
@@ -76,7 +76,7 @@ final class MigrationRepository
     /**
      * @throws Throwable
      */
-    public function ensureTableExists() : void
+    public function ensureTableExists(): void
     {
         try {
             $this->builder->from(table: $this->table)->limit(limit: 1)->get();
@@ -88,7 +88,7 @@ final class MigrationRepository
     /**
      * @throws Throwable
      */
-    public function createRepository() : void
+    public function createRepository(): void
     {
         $this->builder->create(table: $this->table, callback: static function ($table) {
             $table->id();

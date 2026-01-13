@@ -28,15 +28,11 @@ interface AuthInterface
 
     /**
      * Get the currently authenticated user.
-     *
-     * @return UserInterface|null
      */
     public function user() : UserInterface|null;
 
     /**
      * Check if the user is authenticated.
-     *
-     * @return bool
      */
     public function check() : bool;
 }

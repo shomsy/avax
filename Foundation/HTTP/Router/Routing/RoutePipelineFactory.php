@@ -7,6 +7,8 @@ namespace Avax\HTTP\Router\Routing;
 use Avax\Container\Features\Core\Contracts\ContainerInterface;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Middleware\MiddlewareResolver;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * Factory class that constructs and initializes a complete route pipeline for dispatch.
@@ -32,6 +34,8 @@ final readonly class RoutePipelineFactory
         private ContainerInterface   $container,
         private ControllerDispatcher $dispatcher,
         private MiddlewareResolver   $middlewareResolver,
+        private StageChain           $stageChain,
+        private LoggerInterface      $logger = new NullLogger,
     ) {}
 
     /**
@@ -50,12 +54,20 @@ final readonly class RoutePipelineFactory
         // Resolving middleware definitions from the route into callable middleware instances.
         $resolvedMiddleware = $this->middlewareResolver->resolve(middleware: $route->middleware);
 
+        $this->logger->debug(message: 'Assembling route pipeline.', context: [
+            'route'      => $route->name ?: $route->path,
+            'middleware' => $resolvedMiddleware,
+            'stages'     => [],
+            'order'      => ['stages', 'middleware', 'dispatch'],
+        ]);
+
         // Constructing a new RoutePipeline with the resolved dependencies and injecting middleware.
         // This step prepares the pipeline to handle HTTP requests for the given route.
         return (new RoutePipeline(
-            route     : $route,       // Injecting the route definition into the pipeline.
-            dispatcher: $this->dispatcher, // Injecting the dispatcher for controller execution.
-            container : $this->container  // Injecting the IoC container for dependency resolution.
-        ))->through(middleware: $resolvedMiddleware); // Configuring the pipeline with the resolved middleware.
+            route     : $route,
+            dispatcher: $this->dispatcher,
+            container : $this->container,
+            stageChain: $this->stageChain
+        ))->through(middleware: $resolvedMiddleware);
     }
 }

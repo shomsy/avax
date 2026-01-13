@@ -24,8 +24,7 @@ final readonly class HeadRequestFallback
      *
      * @param Request $request Incoming HTTP request.
      *
-     * @return \Avax\HTTP\Request\Request
-     *
+     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
      */
     public function resolve(Request $request) : Request
     {

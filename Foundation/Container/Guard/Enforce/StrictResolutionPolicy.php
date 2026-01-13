@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Guard\Enforce;
 
 use Avax\Container\Guard\Rules\ContainerPolicy;
@@ -14,6 +15,7 @@ readonly class StrictResolutionPolicy implements ResolutionPolicy
 {
     /**
      * @param ContainerPolicy $policy Guard policy settings used to enforce strictness
+     *
      * @see docs/Guard/Enforce/StrictResolutionPolicy.md#method-__construct
      */
     public function __construct(
@@ -24,6 +26,7 @@ readonly class StrictResolutionPolicy implements ResolutionPolicy
      * @param string $abstract The requested abstract identifier (often a class name)
      *
      * @return bool True when allowed; otherwise false
+     *
      * @see docs/Guard/Enforce/StrictResolutionPolicy.md#method-isallowed
      */
     public function isAllowed(string $abstract) : bool

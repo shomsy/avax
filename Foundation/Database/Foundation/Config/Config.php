@@ -17,7 +17,7 @@ final class Config
     /**
      * Start the Settings Book with an initial list of items.
      *
-     * @param array<string, mixed> $items The starting dictionary of settings.
+     * @param  array<string, mixed>  $items  The starting dictionary of settings.
      */
     public function __construct(array $items = [])
     {
@@ -27,12 +27,10 @@ final class Config
     /**
      * Retrieve a setting by key with optional dot-notation.
      *
-     * @param string $key     Setting key or path.
-     * @param mixed  $default Default value if not found.
-     *
-     * @return mixed
+     * @param  string  $key  Setting key or path.
+     * @param  mixed  $default  Default value if not found.
      */
-    public function get(string $key, mixed $default = null) : mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         if (array_key_exists(key: $key, array: $this->items)) {
             return $this->items[$key];
@@ -57,10 +55,10 @@ final class Config
     /**
      * Add or change a setting during runtime.
      *
-     * @param string $key   The name of the setting.
-     * @param mixed  $value The new information to store.
+     * @param  string  $key  The name of the setting.
+     * @param  mixed  $value  The new information to store.
      */
-    public function set(string $key, mixed $value) : void
+    public function set(string $key, mixed $value): void
     {
         $this->items[$key] = $value;
     }
@@ -70,7 +68,7 @@ final class Config
      *
      * @return array<string, mixed> The raw list of everything inside.
      */
-    public function all() : array
+    public function all(): array
     {
         return $this->items;
     }

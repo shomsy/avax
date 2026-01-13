@@ -39,10 +39,10 @@ class Boolean
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (! is_bool(value: filter_var(value: $value, filter: FILTER_VALIDATE_BOOLEAN, options: FILTER_NULL_ON_FAILURE))) {
-            throw new ValidationException(message: $property . ' field must be true or false.');
+            throw new ValidationException(message: $property.' field must be true or false.');
         }
     }
 }

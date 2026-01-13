@@ -19,7 +19,7 @@ abstract class Identity
     /**
      * Construct the Identity with a UserSourceInterface instance.
      *
-     * @param UserSourceInterface $user The provider responsible for user retrieval and data operations.
+     * @param  UserSourceInterface  $user  The provider responsible for user retrieval and data operations.
      */
     public function __construct(protected UserSourceInterface $user) {}
 
@@ -29,14 +29,13 @@ abstract class Identity
      * This method retrieves a user using their credentials and verifies their password.
      * If the credentials are valid and the password matches, the user is authenticated.
      *
-     * @param CredentialsInterface $credentials The credentials used to authenticate the user.
-     *
+     * @param  CredentialsInterface  $credentials  The credentials used to authenticate the user.
      * @return UserInterface|string|null The authenticated user, or null if authentication fails.
      *
      * @throws \Exception|\Psr\SimpleCache\InvalidArgumentException If any issues arise during the authentication
      *                                                              process.
      */
-    protected function authenticate(#[SensitiveParameter] CredentialsInterface $credentials) : UserInterface|string|null
+    protected function authenticate(#[SensitiveParameter] CredentialsInterface $credentials): UserInterface|string|null
     {
         /** Retrieve the user based on the provided credentials */
         $user = $this->user->retrieveByCredentials(credentials: $credentials);

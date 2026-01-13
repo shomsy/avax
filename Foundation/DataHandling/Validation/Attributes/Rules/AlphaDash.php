@@ -32,11 +32,11 @@ class AlphaDash
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (in_array(needle: preg_match(pattern: '/^[\pL\pM\pN_-]+$/u', subject: (string) $value), haystack: [0, false], strict: true)) {
             throw new ValidationException(
-                message: $property . ' may only contain letters, numbers, dashes, and underscores.',
+                message: $property.' may only contain letters, numbers, dashes, and underscores.',
             );
         }
     }

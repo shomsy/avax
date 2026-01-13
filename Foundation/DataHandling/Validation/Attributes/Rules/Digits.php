@@ -29,7 +29,7 @@ readonly class Digits
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (in_array(needle: preg_match(pattern: sprintf('/^\d{%d}$/', $this->digits), subject: (string) $value), haystack: [0, false], strict: true)) {
             throw new ValidationException(message: sprintf('%s must be %d digits.', $property, $this->digits));

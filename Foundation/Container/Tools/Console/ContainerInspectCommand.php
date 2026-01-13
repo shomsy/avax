@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Tools\Console;
 
 use Avax\Commands\CommandDefinitions;
@@ -143,14 +144,13 @@ use Throwable;
  * - Cache performance optimization guidance
  * - Service validation error categorization
  *
- * @package Avax\Container\Tools\Console
  * @see     EnhancedMetricsCollector For performance and health metrics collection
  * @see     ServiceDefinitionRepository For service metadata access and statistics
  * @see     ServiceDiscovery For dependency analysis and service discovery
  * @see     ServiceValidator For service validation and integrity verification
  * @see     CacheManagerIntegration For cache diagnostics and management
  * @see     SymfonyStyle For enhanced console output formatting
- * @see docs/Tools/Console/ContainerInspectCommand.md#quick-summary
+ * @see     docs/Tools/Console/ContainerInspectCommand.md#quick-summary
  */
 #[CommandDefinitions(name: 'container:inspect')]
 class ContainerInspectCommand extends Command
@@ -159,6 +159,7 @@ class ContainerInspectCommand extends Command
      * @var string|null Default command name.
      */
     protected static $defaultName = 'container:inspect';
+
     /**
      * @var string|null Default command description.
      */
@@ -187,7 +188,6 @@ class ContainerInspectCommand extends Command
     /**
      * Configure CLI options and flags.
      *
-     * @return void
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-configure
      */
     protected function configure() : void
@@ -211,6 +211,7 @@ class ContainerInspectCommand extends Command
      * @param OutputInterface $output Output writer.
      *
      * @return int Command exit code.
+     *
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-execute
      */
     protected function execute(InputInterface $input, OutputInterface $output) : int
@@ -278,7 +279,6 @@ class ContainerInspectCommand extends Command
      * @param string       $format  Output format.
      * @param bool         $verbose Whether to show detailed output.
      *
-     * @return void
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-showhealthcheck
      */
     private function showHealthCheck(SymfonyStyle $io, string $format, bool $verbose) : void
@@ -306,7 +306,6 @@ class ContainerInspectCommand extends Command
      * @param array<string, mixed> $healthData Health data payload.
      * @param string               $format     Output format.
      *
-     * @return void
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-displayhealthdetails
      */
     private function displayHealthDetails(SymfonyStyle $io, array $healthData, string $format) : void
@@ -327,7 +326,6 @@ class ContainerInspectCommand extends Command
      * @param string       $format  Output format.
      * @param bool         $verbose Whether to show anomaly details.
      *
-     * @return void
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-showperformanceanalysis
      */
     private function showPerformanceAnalysis(SymfonyStyle $io, string $format, bool $verbose) : void
@@ -369,7 +367,6 @@ class ContainerInspectCommand extends Command
      * @param array<int, mixed> $anomalies Anomaly list.
      * @param string            $format    Output format.
      *
-     * @return void
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-displayanomalies
      */
     private function displayAnomalies(SymfonyStyle $io, array $anomalies, string $format) : void
@@ -381,7 +378,7 @@ class ContainerInspectCommand extends Command
                 return [
                     $anomaly['service'],
                     round($anomaly['duration'] * 1000, 2) . 'ms',
-                    $anomaly['strategy']
+                    $anomaly['strategy'],
                 ];
             }, $anomalies);
 
@@ -396,9 +393,8 @@ class ContainerInspectCommand extends Command
      * @param string       $format  Output format.
      * @param bool         $verbose Whether to show detailed service data.
      *
-     * @return void
-     *
      * @throws \Exception
+     *
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-showservicesoverview
      */
     private function showServicesOverview(SymfonyStyle $io, string $format, bool $verbose) : void
@@ -435,7 +431,6 @@ class ContainerInspectCommand extends Command
      * @param Arrhae       $services Service collection.
      * @param string       $format   Output format.
      *
-     * @return void
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-showservicedetails
      */
     private function showServiceDetails(SymfonyStyle $io, Arrhae $services, string $format) : void
@@ -449,7 +444,7 @@ class ContainerInspectCommand extends Command
                     $service->class,
                     $service->lifetime->value,
                     count($service->dependencies),
-                    $service->isActive ? 'Yes' : 'No'
+                    $service->isActive ? 'Yes' : 'No',
                 ];
             })->all();
 
@@ -464,9 +459,8 @@ class ContainerInspectCommand extends Command
      * @param string       $format  Output format.
      * @param bool         $verbose Whether to include detail sections.
      *
-     * @return void
-     *
      * @throws \Exception
+     *
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-showdependencyanalysis
      */
     private function showDependencyAnalysis(SymfonyStyle $io, string $format, bool $verbose) : void
@@ -508,7 +502,6 @@ class ContainerInspectCommand extends Command
      * @param array<string, mixed> $dependencyStats Dependency analysis data.
      * @param string               $format          Output format.
      *
-     * @return void
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-showdependencydetails
      */
     private function showDependencyDetails(SymfonyStyle $io, array $dependencyStats, string $format) : void
@@ -535,7 +528,6 @@ class ContainerInspectCommand extends Command
      * @param string       $format  Output format.
      * @param bool         $verbose Whether to include prototype cache stats.
      *
-     * @return void
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-showcachestatistics
      */
     private function showCacheStatistics(SymfonyStyle $io, string $format, bool $verbose) : void
@@ -581,9 +573,8 @@ class ContainerInspectCommand extends Command
      * @param string       $format  Output format.
      * @param bool         $verbose Whether to include full error breakdown.
      *
-     * @return void
-     *
      * @throws \Exception
+     *
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-showvalidationresults
      */
     private function showValidationResults(SymfonyStyle $io, string $format, bool $verbose) : void
@@ -631,9 +622,8 @@ class ContainerInspectCommand extends Command
      * @param SymfonyStyle $io     Console style helper.
      * @param string       $format Output format.
      *
-     * @return void
-     *
      * @throws \Exception
+     *
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-showrecommendations
      */
     private function showRecommendations(SymfonyStyle $io, string $format) : void

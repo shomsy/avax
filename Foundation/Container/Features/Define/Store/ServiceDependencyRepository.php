@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Container\Features\Define\Store;
 
-use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 use Avax\DataHandling\ArrayHandling\Arrhae;
 use Avax\Repository\Repository;
 use DateTimeImmutable;
@@ -67,10 +66,9 @@ use ReflectionNamedType;
  * - Supports atomic updates for relationship changes
  * - Maintains referential integrity with service definitions
  *
- * @package Avax\Container\Define\Store
  * @see     ServiceDependency For the managed entity type
  * @see     ServiceDefinitionRepository For service definition management
- * @see docs/Features/Define/Store/ServiceDependencyRepository.md#quick-summary
+ * @see     docs/Features/Define/Store/ServiceDependencyRepository.md#quick-summary
  */
 class ServiceDependencyRepository extends Repository
 {
@@ -88,10 +86,13 @@ class ServiceDependencyRepository extends Repository
      * @param string $serviceId The service to find dependents for
      *
      * @return Arrhae Collection of services that depend on the specified service
+     *
      * @throws \Exception
+     * @throws \Throwable
+     *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getdependentservices
      */
-    public function getDependentServices(string $serviceId): Arrhae
+    public function getDependentServices(string $serviceId) : Arrhae
     {
         return Arrhae::make(items: $this->findBy(conditions: ['depends_on_id' => $serviceId]));
     }
@@ -129,18 +130,26 @@ class ServiceDependencyRepository extends Repository
      * @param int    $maxDepth  Maximum depth to traverse (default: 5)
      *
      * @return array Hierarchical dependency chain structure
+     *
      * @throws \Exception
+     *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getdependencychains
      */
-    public function getDependencyChains(string $serviceId, int $maxDepth = 5): array
+    public function getDependencyChains(string $serviceId, int $maxDepth = 5) : array
     {
         return $this->buildDependencyChains(serviceId: $serviceId, visited: [], depth: 0, maxDepth: $maxDepth);
     }
 
     /**
-     * @throws \Exception
+     * @param string $serviceId
+     * @param array  $visited
+     * @param int    $depth
+     * @param int    $maxDepth
+     *
+     * @return array
+     * @throws \Throwable
      */
-    private function buildDependencyChains(string $serviceId, array $visited, int $depth, int $maxDepth): array
+    private function buildDependencyChains(string $serviceId, array $visited, int $depth, int $maxDepth) : array
     {
         if ($depth >= $maxDepth || in_array($serviceId, $visited)) {
             return [];
@@ -171,10 +180,13 @@ class ServiceDependencyRepository extends Repository
      * @param string $serviceId The service to get dependencies for
      *
      * @return Arrhae Collection of ServiceDependency entities
+     *
      * @throws \Exception
+     * @throws \Throwable
+     *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getservicedependencies
      */
-    public function getServiceDependencies(string $serviceId): Arrhae
+    public function getServiceDependencies(string $serviceId) : Arrhae
     {
         return Arrhae::make(items: $this->findBy(conditions: ['service_id' => $serviceId]));
     }
@@ -211,10 +223,15 @@ class ServiceDependencyRepository extends Repository
      * ```
      *
      * @return array Comprehensive dependency health analysis
+     *
      * @throws \Exception
+     * @throws \Throwable
+     * @throws \Throwable
+     * @throws \Throwable
+     *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-analyzedependencyhealth
      */
-    public function analyzeDependencyHealth(): array
+    public function analyzeDependencyHealth() : array
     {
         $analysis = [
             'cycles'        => $this->detectCircularDependencies(),
@@ -246,7 +263,7 @@ class ServiceDependencyRepository extends Repository
         // Check for services with too many dependencies
         $complexDeps = array_filter(
             $analysis['stats']['by_service'] ?? [],
-            static fn(int $count): bool => $count > 10
+            static fn(int $count) : bool => $count > 10
         );
 
         if (! empty($complexDeps)) {
@@ -287,10 +304,12 @@ class ServiceDependencyRepository extends Repository
      * - Memory efficient for large graphs
      *
      * @return array Array of detected cycle paths, each as an array of service IDs
+     *
      * @throws \Exception
+     *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-detectcirculardependencies
      */
-    public function detectCircularDependencies(): array
+    public function detectCircularDependencies() : array
     {
         $graph          = $this->getDependencyGraph();
         $cycles         = [];
@@ -330,10 +349,12 @@ class ServiceDependencyRepository extends Repository
      * - Complexity analysis
      *
      * @return array Associative array representing the dependency graph
+     *
      * @throws \Exception
+     *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getdependencygraph
      */
-    public function getDependencyGraph(): array
+    public function getDependencyGraph() : array
     {
         $dependencies = $this->findAll();
 
@@ -345,14 +366,14 @@ class ServiceDependencyRepository extends Repository
             $graph[$dep->serviceId][] = [
                 'service'  => $dep->dependsOnId,
                 'type'     => $dep->dependencyType,
-                'optional' => $dep->isOptional
+                'optional' => $dep->isOptional,
             ];
         }
 
         return $graph;
     }
 
-    private function dfsCycleDetection(string $node, array $graph, array &$visited, array &$recursionStack, array &$cycles): void
+    private function dfsCycleDetection(string $node, array $graph, array &$visited, array &$recursionStack, array &$cycles) : void
     {
         $visited[$node]        = true;
         $recursionStack[$node] = true;
@@ -370,7 +391,7 @@ class ServiceDependencyRepository extends Repository
         unset($recursionStack[$node]);
     }
 
-    private function extractCycle(string $start, string $end, array $recursionStack): array
+    private function extractCycle(string $start, string $end, array $recursionStack) : array
     {
         $cycle   = [];
         $current = $end;
@@ -387,7 +408,9 @@ class ServiceDependencyRepository extends Repository
                     break;
                 }
             }
-            if (! $found) break;
+            if (! $found) {
+                break;
+            }
         }
 
         array_unshift($cycle, $start);
@@ -414,9 +437,11 @@ class ServiceDependencyRepository extends Repository
      * - Supports continuous refactoring and cleanup efforts
      *
      * @return array Array of service IDs that have no dependents
+     *
+     * @throws \Throwable
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-findorphanedservices
      */
-    public function findOrphanedServices(): array
+    public function findOrphanedServices() : array
     {
         $allServices = $this->query()
             ->select('DISTINCT service_id')
@@ -453,15 +478,17 @@ class ServiceDependencyRepository extends Repository
      * @param int $limit Maximum number of results to return
      *
      * @return array Associative array mapping service IDs to usage counts
+     *
+     * @throws \Throwable
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getmostdependedservices
      */
-    public function getMostDependedServices(int $limit = 10): array
+    public function getMostDependedServices(int $limit = 10) : array
     {
         $results = $this->query()
             ->select('depends_on_id', 'COUNT(*) as usage_count')
             ->groupBy('depends_on_id')
-            ->orderBy('usage_count', 'DESC')
-            ->limit($limit)
+            ->orderBy(column: 'usage_count', direction: 'DESC')
+            ->limit(limit: $limit)
             ->get();
 
         return Arrhae::make(items: $results)->mapWithKeys(callback: static function ($row) {
@@ -495,9 +522,11 @@ class ServiceDependencyRepository extends Repository
      * - Capacity planning data
      *
      * @return array Comprehensive dependency statistics
+     *
+     * @throws \Throwable
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getdependencystats
      */
-    public function getDependencyStats(): array
+    public function getDependencyStats() : array
     {
         $totalDeps          = $this->query()->count();
         $uniqueServices     = $this->query()->distinct('service_id')->count();
@@ -507,14 +536,14 @@ class ServiceDependencyRepository extends Repository
         $depsPerService = $this->query()
             ->select('service_id', 'COUNT(*) as dep_count')
             ->groupBy('service_id')
-            ->orderBy('dep_count', 'DESC')
+            ->orderBy(column: 'dep_count', direction: 'DESC')
             ->get();
 
         // Services per dependency
         $servicesPerDep = $this->query()
             ->select('depends_on_id', 'COUNT(*) as service_count')
             ->groupBy('depends_on_id')
-            ->orderBy('service_count', 'DESC')
+            ->orderBy(column: 'service_count', direction: 'DESC')
             ->get();
 
         return [
@@ -527,18 +556,24 @@ class ServiceDependencyRepository extends Repository
                 ->all(),
             'by_dependency'        => Arrhae::make(items: $servicesPerDep)
                 ->mapWithKeys(callback: static fn($row) => [$row['depends_on_id'] => (int) $row['service_count']])
-                ->all()
+                ->all(),
         ];
     }
 
-    private function calculateHealthScore(array $issues): string
+    private function calculateHealthScore(array $issues) : string
     {
         $highIssues   = count(array_filter($issues, static fn($i) => ($i['severity'] ?? 'low') === 'high'));
         $mediumIssues = count(array_filter($issues, static fn($i) => ($i['severity'] ?? 'low') === 'medium'));
 
-        if ($highIssues > 0) return 'critical';
-        if ($mediumIssues > 2) return 'warning';
-        if (count($issues) > 0) return 'attention';
+        if ($highIssues > 0) {
+            return 'critical';
+        }
+        if ($mediumIssues > 2) {
+            return 'warning';
+        }
+        if (count($issues) > 0) {
+            return 'attention';
+        }
 
         return 'healthy';
     }
@@ -569,10 +604,12 @@ class ServiceDependencyRepository extends Repository
      * @param ServiceDefinitionRepository $serviceRepo Settings to get service definitions from
      *
      * @return array Array of discovered dependency relationships
-     * @throws \Exception
+     *
+     * @throws \ReflectionException
+     * @throws \Throwable
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-autodiscoverdependencies
      */
-    public function autoDiscoverDependencies(ServiceDefinitionRepository $serviceRepo): array
+    public function autoDiscoverDependencies(ServiceDefinitionRepository $serviceRepo) : array
     {
         $services   = $serviceRepo->findAll();
         $discovered = [];
@@ -581,15 +618,15 @@ class ServiceDependencyRepository extends Repository
             $deps = $this->analyzeServiceDependencies(service: $service);
             foreach ($deps as $dep) {
                 $this->trackDependency(
-                    serviceId: $service->id,
-                    dependsOnId: $dep['service_id'],
+                    serviceId     : $service->id,
+                    dependsOnId   : $dep['service_id'],
                     dependencyType: $dep['type'],
-                    isOptional: $dep['optional']
+                    isOptional    : $dep['optional']
                 );
                 $discovered[] = [
                     'service'    => $service->id,
                     'depends_on' => $dep['service_id'],
-                    'type'       => $dep['type']
+                    'type'       => $dep['type'],
                 ];
             }
         }
@@ -597,7 +634,7 @@ class ServiceDependencyRepository extends Repository
         return $discovered;
     }
 
-    private function analyzeServiceDependencies(ServiceDefinitionEntity $service): array
+    private function analyzeServiceDependencies(ServiceDefinitionEntity $service) : array
     {
         $deps = [];
 
@@ -617,7 +654,7 @@ class ServiceDependencyRepository extends Repository
                         $deps[]   = [
                             'service_id' => $typeName,
                             'type'       => 'constructor',
-                            'optional'   => $param->isOptional()
+                            'optional'   => $param->isOptional(),
                         ];
                     }
                 }
@@ -631,7 +668,7 @@ class ServiceDependencyRepository extends Repository
                     $deps[]   = [
                         'service_id' => $typeName,
                         'type'       => 'property',
-                        'optional'   => ! $property->getType()->allowsNull()
+                        'optional'   => ! $property->getType()->allowsNull(),
                     ];
                 }
             }
@@ -666,31 +703,36 @@ class ServiceDependencyRepository extends Repository
      * @param string $dependencyType The type of dependency relationship
      * @param bool   $isOptional     Whether this dependency is optional
      *
-     * @return void
      * @throws \Exception
+     * @throws \Throwable
+     * @throws \Throwable
+     * @throws \Throwable
+     *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-trackdependency
      */
     public function trackDependency(
-        string $serviceId,
-        string $dependsOnId,
-        string $dependencyType = 'constructor',
-        bool   $isOptional = false
-    ): void {
-        $existing = $this->findOneBy(conditions: [
+        string      $serviceId,
+        string      $dependsOnId,
+        string|null $dependencyType = null,
+        bool        $isOptional = false
+    ) : void
+    {
+        $dependencyType ??= 'constructor';
+        $existing       = $this->findOneBy(conditions: [
             'service_id'      => $serviceId,
             'depends_on_id'   => $dependsOnId,
-            'dependency_type' => $dependencyType
+            'dependency_type' => $dependencyType,
         ]);
 
         if ($existing) {
             // Update if optional flag changed
             if ($existing->isOptional !== $isOptional) {
                 $updated = new ServiceDependency(
-                    serviceId: $existing->serviceId,
-                    dependsOnId: $existing->dependsOnId,
+                    serviceId     : $existing->serviceId,
+                    dependsOnId   : $existing->dependsOnId,
                     dependencyType: $existing->dependencyType,
-                    isOptional: $isOptional,
-                    createdAt: $existing->createdAt
+                    isOptional    : $isOptional,
+                    createdAt     : $existing->createdAt
                 );
                 $this->save(entity: $updated);
             }
@@ -699,11 +741,11 @@ class ServiceDependencyRepository extends Repository
         }
 
         $dependency = new ServiceDependency(
-            serviceId: $serviceId,
-            dependsOnId: $dependsOnId,
+            serviceId     : $serviceId,
+            dependsOnId   : $dependsOnId,
             dependencyType: $dependencyType,
-            isOptional: $isOptional,
-            createdAt: new DateTimeImmutable()
+            isOptional    : $isOptional,
+            createdAt     : new DateTimeImmutable
         );
 
         $this->save(entity: $dependency);
@@ -741,10 +783,12 @@ class ServiceDependencyRepository extends Repository
      * @param ServiceDefinitionRepository $serviceRepo Settings to validate against
      *
      * @return array Array of validation issues found
+     *
      * @throws \Exception
+     *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-validatedependencies
      */
-    public function validateDependencies(ServiceDefinitionRepository $serviceRepo): array
+    public function validateDependencies(ServiceDefinitionRepository $serviceRepo) : array
     {
         $issues       = [];
         $dependencies = $this->findAll();
@@ -756,7 +800,7 @@ class ServiceDependencyRepository extends Repository
                 $issues[] = [
                     'type'    => 'missing_service',
                     'service' => $dep->serviceId,
-                    'message' => 'Service referenced in dependency does not exist'
+                    'message' => 'Service referenced in dependency does not exist',
                 ];
             }
 
@@ -765,7 +809,7 @@ class ServiceDependencyRepository extends Repository
                     'type'      => 'missing_dependency',
                     'service'   => $dep->dependsOnId,
                     'dependent' => $dep->serviceId,
-                    'message'   => 'Dependency service does not exist'
+                    'message'   => 'Dependency service does not exist',
                 ];
             }
         }
@@ -795,9 +839,10 @@ class ServiceDependencyRepository extends Repository
      * - Detailed reporting of cleanup actions
      *
      * @return array Cleanup operation results with counts and errors
+     *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-cleanuporphaneddependencies
      */
-    public function cleanupOrphanedDependencies(): array
+    public function cleanupOrphanedDependencies() : array
     {
         $results = ['deleted' => 0, 'errors' => []];
 
@@ -813,9 +858,10 @@ class ServiceDependencyRepository extends Repository
      * Must return the fully qualified class name of ServiceDependency.
      *
      * @return string The entity class name
+     *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getentityclass
      */
-    protected function getEntityClass(): string
+    protected function getEntityClass() : string
     {
         return ServiceDependency::class;
     }
@@ -829,17 +875,19 @@ class ServiceDependencyRepository extends Repository
      * @param array $data Raw data from database/cache
      *
      * @return ServiceDependency Hydrated entity instance
+     *
      * @throws \DateMalformedStringException
+     *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-maptoentity
      */
-    protected function mapToEntity(array $data): ServiceDependency
+    protected function mapToEntity(array $data) : ServiceDependency
     {
         return new ServiceDependency(
-            serviceId: $data['service_id'],
-            dependsOnId: $data['depends_on_id'],
+            serviceId     : $data['service_id'],
+            dependsOnId   : $data['depends_on_id'],
             dependencyType: $data['dependency_type'] ?? 'constructor',
-            isOptional: (bool) ($data['is_optional'] ?? false),
-            createdAt: isset($data['created_at']) ? new DateTimeImmutable(datetime: $data['created_at']) : null
+            isOptional    : (bool) ($data['is_optional'] ?? false),
+            createdAt     : isset($data['created_at']) ? new DateTimeImmutable(datetime: $data['created_at']) : null
         );
     }
 
@@ -852,9 +900,10 @@ class ServiceDependencyRepository extends Repository
      * @param object $entity The entity to map (must be ServiceDependency)
      *
      * @return array Database-compatible array representation
+     *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-maptodatabase
      */
-    protected function mapToDatabase(object $entity): array
+    protected function mapToDatabase(object $entity) : array
     {
         assert($entity instanceof ServiceDependency);
 

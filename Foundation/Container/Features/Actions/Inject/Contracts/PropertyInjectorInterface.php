@@ -18,11 +18,7 @@ interface PropertyInjectorInterface
     /**
      * Resolves an individual injectable property.
      *
-     * @param PropertyPrototype $property
-     * @param array $overrides
-     * @param KernelContext $context
-     * @param string $ownerClass
-     * @return PropertyResolution
+     *
      * @see docs/Features/Actions/Inject/Contracts/PropertyInjectorInterface.md#method-resolve
      */
     public function resolve(
@@ -30,5 +26,5 @@ interface PropertyInjectorInterface
         array             $overrides,
         KernelContext     $context,
         string            $ownerClass
-    ): PropertyResolution;
+    ) : PropertyResolution;
 }

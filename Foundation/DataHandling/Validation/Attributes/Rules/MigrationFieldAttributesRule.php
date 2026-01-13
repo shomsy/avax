@@ -25,8 +25,6 @@ readonly class MigrationFieldAttributesRule
     /**
      * Validates an array of enum-compatible modifiers.
      *
-     * @param mixed  $value
-     * @param string $property
      *
      * @throws ValidationException
      */
@@ -69,5 +67,4 @@ readonly class MigrationFieldAttributesRule
     {
         return is_array(value: $value) ? $value : null;
     }
-
 }

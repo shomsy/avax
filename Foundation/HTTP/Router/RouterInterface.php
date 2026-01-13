@@ -4,25 +4,27 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router;
 
-use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
-use Psr\Http\Message\ResponseInterface;
 
 /**
- * Interface RouterInterface
+ * Public API Contract: Router DSL Interface
  *
- * Provides a contract for a router implementation that handles HTTP route
- * registration and resolution while enabling fallback and fluent style registration methods.
+ * BC GUARANTEED: This interface defines the stable, public API for route registration.
+ * All methods are guaranteed to be backward compatible in future versions.
+ *
+ * Provides a contract for a router implementation that exposes the DSL helpers.
+ *
+ * @api
  */
 interface RouterInterface
 {
     /**
      * Registers a GET route.
      *
-     * @param string                $path   The URL path for the route.
-     * @param callable|array|string $action The action to be called when the route matches.
-     *                                      Can be a callable, an array (e.g., controller and method), or a string
-     *                                      (e.g., controller@method).
+     * @param string                $path      The URL path for the route.
+     * @param callable|array|string $action    The action to be called when the route matches.
+     *                                         Can be a callable, an array (e.g., controller and method), or a string
+     *                                         (e.g., controller@method).
      *
      * @return RouteRegistrarProxy Returns a proxy for chaining extra route configurations.
      */
@@ -96,7 +98,9 @@ interface RouterInterface
      *
      * @return RouteRegistrarProxy[] Array of proxies, each corresponding to the registered method.
      */
-    public function any(string $path, callable|array|string $action) : array;
+    public function any(string $path, callable|array|string $action) : RouteRegistrarProxy;
+
+    public function anyExpanded(string $path, callable|array|string $action) : array;
 
     /**
      * Sets a fallback route to be executed if no other routes match.
@@ -104,13 +108,4 @@ interface RouterInterface
      * @param callable|array|string $handler The fallback handler to be called when no route matches the request.
      */
     public function fallback(callable|array|string $handler) : void;
-
-    /**
-     * Resolves an incoming request into a response.
-     *
-     * @param Request $request The current HTTP request to be resolved.
-     *
-     * @return ResponseInterface The PSR-7 compliant response for the resolved request.
-     */
-    public function resolve(Request $request) : ResponseInterface;
 }

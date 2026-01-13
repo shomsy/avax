@@ -11,7 +11,8 @@ use BackedEnum;
 /**
  * Lifecycle Resolver
  *
- * Determines the appropriate lifecycle strategy based on service definition, enabling proper instance management and resource optimization.
+ * Determines the appropriate lifecycle strategy based on service definition, enabling proper instance management and
+ * resource optimization.
  *
  * @see docs/Core/Kernel/LifecycleResolver.md#quick-summary
  */
@@ -28,7 +29,9 @@ final readonly class LifecycleResolver
      * lifetime configuration, enabling proper instance sharing and resource optimization.
      *
      * @param ServiceDefinition|null $definition Service definition to resolve lifecycle for, or null for transient
+     *
      * @return LifecycleStrategy The resolved lifecycle strategy for managing service instances
+     *
      * @see docs/Core/Kernel/LifecycleResolver.md#method-resolve
      */
     public function resolve(ServiceDefinition|null $definition) : LifecycleStrategy
@@ -40,11 +43,11 @@ final readonly class LifecycleResolver
             $lifecycle = $lifecycle->value;
         }
 
-        if (! $this->registry->has($lifecycle)) {
+        if (! $this->registry->has(name: $lifecycle)) {
             // Fallback to transient if lifecycle not supported, or throw if in strict mode
-            return $this->registry->get('transient');
+            return $this->registry->get(name: 'transient');
         }
 
-        return $this->registry->get($lifecycle);
+        return $this->registry->get(name: $lifecycle);
     }
 }

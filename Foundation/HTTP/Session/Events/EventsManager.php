@@ -33,8 +33,8 @@ namespace Avax\HTTP\Session\Events;
  * - session.transaction.commit: When transaction commits
  * - session.transaction.rollback: When transaction rolls back
  *
- * @package Avax\HTTP\Session\Events
  * @author  Milos
+ *
  * @version 5.0
  */
 final readonly class EventsManager
@@ -62,8 +62,6 @@ final readonly class EventsManager
      * @param string   $event    Event name to listen for.
      * @param callable $callback Function to execute when event fires.
      *
-     * @return void
-     *
      * @example
      * ```php
      * $events->listen('session.stored', function($data) {
@@ -84,8 +82,6 @@ final readonly class EventsManager
      * @param string   $event    Event name to listen for.
      * @param callable $callback Function to execute when event fires.
      *
-     * @return void
-     *
      * @example
      * ```php
      * $events->once('session.login', function($data) {
@@ -103,8 +99,6 @@ final readonly class EventsManager
      *
      * @param string   $event    Event name.
      * @param callable $callback The callback to remove.
-     *
-     * @return void
      */
     public function removeListener(string $event, callable $callback) : void
     {
@@ -123,8 +117,6 @@ final readonly class EventsManager
      *
      * @param string               $event Event name.
      * @param array<string, mixed> $data  Event payload data.
-     *
-     * @return void
      */
     public function dispatchAsync(string $event, array $data = []) : void
     {
@@ -143,8 +135,6 @@ final readonly class EventsManager
      *
      * @param string               $event Event name.
      * @param array<string, mixed> $data  Event payload data.
-     *
-     * @return void
      */
     public function dispatch(string $event, array $data = []) : void
     {
@@ -159,8 +149,6 @@ final readonly class EventsManager
      * Enable event dispatching.
      *
      * Activates the event system.
-     *
-     * @return void
      */
     public function enable() : void
     {
@@ -171,8 +159,6 @@ final readonly class EventsManager
      * Disable event dispatching.
      *
      * Stops event processing and clears all listeners.
-     *
-     * @return void
      */
     public function disable() : void
     {

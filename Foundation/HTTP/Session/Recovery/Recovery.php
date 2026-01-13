@@ -315,7 +315,7 @@ final class Recovery
     public function import(string $data) : bool
     {
         try {
-            $serializer  = new Serializer();
+            $serializer  = new Serializer;
             $sessionData = $serializer->safeUnserialize(data: $data);
 
             if (! is_array(value: $sessionData)) {

@@ -29,8 +29,8 @@ use Throwable;
  * - Sanitizes input to prevent injection attacks
  * - Implements whitelist-based class filtering
  *
- * @package Avax\HTTP\Session\Shared\Serialization
  * @author  Milos
+ *
  * @version 1.0
  */
 final class Serializer
@@ -47,8 +47,6 @@ final class Serializer
 
     /**
      * Enable compression for large payloads.
-     *
-     * @var bool
      */
     private bool $compressionEnabled = false;
 
@@ -56,15 +54,11 @@ final class Serializer
      * Compression threshold in bytes.
      *
      * Data larger than this will be compressed.
-     *
-     * @var int
      */
     private int $compressionThreshold = 1024;
 
     /**
      * Enable integrity checking via checksums.
-     *
-     * @var bool
      */
     private bool $integrityCheckEnabled = true;
 

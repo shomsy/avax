@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\Providers\Database;
 
-use Avax\Container\Features\Operate\Boot\ServiceProvider;
+use Avax\Container\Providers\ServiceProvider;
 use Avax\Database\Connection\ConnectionManager;
 use Avax\Database\Events\EventBus;
 
@@ -18,7 +18,6 @@ class DatabaseServiceProvider extends ServiceProvider
     /**
      * Register database event bus, connection manager, and alias.
      *
-     * @return void
      * @see docs/Providers/Database/DatabaseServiceProvider.md#method-register
      */
     public function register() : void
@@ -27,17 +26,17 @@ class DatabaseServiceProvider extends ServiceProvider
 
         $this->app->singleton(abstract: ConnectionManager::class, concrete: function () {
             // Retrieve database configuration
-            $config = $this->app->get('config')->get('database', []);
+            $config = $this->app->get(id: 'config')->get(key: 'database', default: []);
 
             return new ConnectionManager(
                 config  : $config,
-                eventBus: $this->app->has(EventBus::class) ? $this->app->get(EventBus::class) : null
+                eventBus: $this->app->has(id: EventBus::class) ? $this->app->get(id: EventBus::class) : null
             );
         });
 
         // Bind 'db' alias
         $this->app->singleton(abstract: 'db', concrete: function () {
-            return $this->app->get(ConnectionManager::class);
+            return $this->app->get(id: ConnectionManager::class);
         });
     }
 }

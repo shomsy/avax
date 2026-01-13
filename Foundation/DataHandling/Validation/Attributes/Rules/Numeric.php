@@ -23,10 +23,10 @@ class Numeric
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (! is_numeric(value: $value)) {
-            throw new ValidationException(message: $property . ' must be a number.');
+            throw new ValidationException(message: $property.' must be a number.');
         }
     }
 }

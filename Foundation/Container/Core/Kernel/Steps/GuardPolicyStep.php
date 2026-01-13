@@ -17,13 +17,13 @@ use Avax\Container\Guard\Enforce\GuardResolution;
  * This step acts as a gatekeeper, validating that the requested service
  * can be resolved according to configured security rules and policies.
  *
- * @package Avax\Container\Core\Kernel\Steps
- * @see docs/Core/Kernel/Steps/GuardPolicyStep.md#quick-summary
+ * @see     docs/Core/Kernel/Steps/GuardPolicyStep.md#quick-summary
  */
 final readonly class GuardPolicyStep implements KernelStep
 {
     /**
      * @param GuardResolution $guard Guard policy evaluator.
+     *
      * @see docs/Core/Kernel/Steps/GuardPolicyStep.md#method-__construct
      */
     public function __construct(
@@ -34,13 +34,14 @@ final readonly class GuardPolicyStep implements KernelStep
      * Enforce security policies for the requested service.
      *
      * @param KernelContext $context The resolution context.
-     * @return void
+     *
      * @throws ContainerException If policy validation fails.
+     *
      * @see docs/Core/Kernel/Steps/GuardPolicyStep.md#method-__invoke
      */
-    public function __invoke(KernelContext $context): void
+    public function __invoke(KernelContext $context) : void
     {
-        if ($context->getMeta('inject', 'target', false)) {
+        if ($context->getMeta(namespace: 'inject', key: 'target', default: false)) {
             return;
         }
 
@@ -49,12 +50,12 @@ final readonly class GuardPolicyStep implements KernelStep
         if ($result instanceof ErrorDTO) {
             throw new ContainerException(
                 message: sprintf('Policy violation for service "%s": %s', $context->serviceId, $result->message),
-                code: (int) $result->code
+                code   : (int) $result->code
             );
         }
 
         // Add policy validation metadata
-        $context->setMeta('policy', 'checked', true);
-        $context->setMeta('policy', 'check_time', microtime(as_float: true));
+        $context->setMeta(namespace: 'policy', key: 'checked', value: true);
+        $context->setMeta(namespace: 'policy', key: 'check_time', value: microtime(as_float: true));
     }
 }

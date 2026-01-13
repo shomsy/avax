@@ -29,10 +29,10 @@ class MACAddress
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (! filter_var(value: $value, filter: FILTER_VALIDATE_MAC)) {
-            throw new ValidationException(message: $property . ' must be a valid MAC address.');
+            throw new ValidationException(message: $property.' must be a valid MAC address.');
         }
     }
 }

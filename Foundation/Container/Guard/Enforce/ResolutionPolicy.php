@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Guard\Enforce;
 
 /**
@@ -19,6 +20,7 @@ interface ResolutionPolicy
      * @param string $abstract The service identifier or contract name being resolved
      *
      * @return bool True when resolution is allowed; otherwise false
+     *
      * @see docs/Guard/Enforce/ResolutionPolicy.md#method-isallowed
      */
     public function isAllowed(string $abstract) : bool;

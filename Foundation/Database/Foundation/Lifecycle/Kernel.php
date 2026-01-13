@@ -15,18 +15,18 @@ use Avax\Database\Registry\ModuleRegistry;
 final readonly class Kernel
 {
     /**
-     * @param Container      $container The "Toolbox" where we store all our services.
-     * @param ModuleRegistry $registry  The "Librarian" who keeps track of which modules are active.
+     * @param  Container  $container  The "Toolbox" where we store all our services.
+     * @param  ModuleRegistry  $registry  The "Librarian" who keeps track of which modules are active.
      */
     public function __construct(
-        private Container      $container,
+        private Container $container,
         private ModuleRegistry $registry
     ) {}
 
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Architecture.md#kernel
      */
-    public function boot() : void
+    public function boot(): void
     {
         $modules = Manifest::getModules();
 
@@ -40,7 +40,7 @@ final readonly class Kernel
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/Architecture.md#kernel
      */
-    public function shutdown() : void
+    public function shutdown(): void
     {
         $this->registry->shutdown();
     }

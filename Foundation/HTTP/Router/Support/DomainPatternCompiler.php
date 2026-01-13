@@ -22,8 +22,8 @@ final class DomainPatternCompiler
      * Dynamic patterns are denoted using placeholders, e.g., `{account}.example.com`,
      * where `{account}` can match any subdomain name.
      *
-     * @param string $pattern The domain pattern string to compile.
-     *                        Placeholders should be wrapped in curly braces, e.g., `{name}`.
+     * @param string $pattern    The domain pattern string to compile.
+     *                           Placeholders should be wrapped in curly braces, e.g., `{name}`.
      *
      * @return string The compiled regular expression string, ready for use in pattern matching.
      *                Example: `{account}.example.com` becomes `/^(?P<account>[\w\-.]+)\.example\.com$/i`.

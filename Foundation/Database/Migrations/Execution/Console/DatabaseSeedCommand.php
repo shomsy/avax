@@ -26,7 +26,7 @@ final class DatabaseSeedCommand
 
         try {
             require_once $file;
-            $seeder = new $class();
+            $seeder = new $class;
             $seeder->run();
 
             echo "\033[32mDatabase seeding completed successfully!\033[0m\n";

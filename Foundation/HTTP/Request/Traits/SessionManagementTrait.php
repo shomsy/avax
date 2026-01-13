@@ -24,7 +24,7 @@ trait SessionManagementTrait
      * might be required for more advanced operations beyond the provided
      * methods in this trait.
      */
-    public function session() : SessionInterface
+    public function session(): SessionInterface
     {
         return $this->session;
     }
@@ -34,12 +34,11 @@ trait SessionManagementTrait
      *
      * Provides a default value if the key does not exist in the session.
      *
-     * @param string $key     The session key to retrieve.
-     * @param mixed  $default The default value to return if key doesn't exist (default: null).
-     *
+     * @param  string  $key  The session key to retrieve.
+     * @param  mixed  $default  The default value to return if key doesn't exist (default: null).
      * @return mixed The value stored in session or the default value.
      */
-    public function getSessionValue(string $key, mixed $default = null) : mixed
+    public function getSessionValue(string $key, mixed $default = null): mixed
     {
         return $this->session->has(key: $key) ? $this->session->get(key: $key) : $default;
     }
@@ -49,10 +48,10 @@ trait SessionManagementTrait
      *
      * This method assigns a given value to a specified session key.
      *
-     * @param string $key   The session key where the value should be stored.
-     * @param mixed  $value The value to store in session.
+     * @param  string  $key  The session key where the value should be stored.
+     * @param  mixed  $value  The value to store in session.
      */
-    public function setSessionValue(string $key, mixed $value) : void
+    public function setSessionValue(string $key, mixed $value): void
     {
         $this->session->set(key: $key, value: $value);
     }
@@ -62,11 +61,10 @@ trait SessionManagementTrait
      *
      * This method returns true if the specified key is present in the session.
      *
-     * @param string $key The session key to check for existence.
-     *
+     * @param  string  $key  The session key to check for existence.
      * @return bool True if the key exists in the session, false otherwise.
      */
-    public function hasSessionValue(string $key) : bool
+    public function hasSessionValue(string $key): bool
     {
         return $this->session->has(key: $key);
     }
@@ -77,12 +75,11 @@ trait SessionManagementTrait
      * Flash data is meant for short-lived session data, commonly used for
      * notifications that only need to survive for the next request.
      *
-     * @param string $key     The session key for the flash value.
-     * @param mixed  $default The default value to return if key doesn't exist (default: null).
-     *
+     * @param  string  $key  The session key for the flash value.
+     * @param  mixed  $default  The default value to return if key doesn't exist (default: null).
      * @return mixed The flashed value or the default value.
      */
-    public function getFlash(string $key, mixed $default = null) : mixed
+    public function getFlash(string $key, mixed $default = null): mixed
     {
         return $this->session->flash()->get(key: $key, default: $default) ?? $default;
     }
@@ -95,7 +92,7 @@ trait SessionManagementTrait
      *
      * @return mixed The user object or data stored in session, or `null` if not set.
      */
-    public function user() : mixed
+    public function user(): mixed
     {
         return $this->session->get(key: 'user');
     }
@@ -105,11 +102,10 @@ trait SessionManagementTrait
      *
      * This method assigns a user object or data to the 'user' key in the session.
      *
-     * @param mixed $user The user object or data to store.
+     * @param  mixed  $user  The user object or data to store.
      */
-    public function setUser(mixed $user) : void
+    public function setUser(mixed $user): void
     {
         $this->session->set(key: 'user', value: $user);
     }
 }
-

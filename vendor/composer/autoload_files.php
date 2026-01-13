@@ -59,4 +59,8 @@ return array(
     'e39a8b23c42d4e1452234d762b03835a' => $vendorDir . '/ramsey/uuid/src/functions.php',
     '38143a9afc50997d55e4815db8489d1c' => $vendorDir . '/rector/rector/bootstrap.php',
     'fb4ca2d97fe7ba6af750497425204e70' => $vendorDir . '/sentry/sentry/src/functions.php',
+    '58e06a6b861c5e602a95cf7765b29ff9' => $baseDir . '/Foundation/Helpers/helpers.php',
+    '92f54f961dc40dc358636e7000a338c2' => $baseDir . '/Foundation/Text/functions.php',
+    'ea8632818a60d3b775a73f0a220eb1c9' => $baseDir . '/Foundation/HTTP/Router/functions.php',
+    '6d283f801c1bd0cbf61a624f62a96625' => $baseDir . '/tests/TestCase.php',
 );

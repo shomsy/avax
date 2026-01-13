@@ -33,8 +33,7 @@ interface MapperInterface
      * This method decides whether to map to a single DTO or a collection of DTOs
      * based on the size of the response.
      *
-     * @param array $data The array of data sets to be mapped to DTOs.
-     *
+     * @param  array  $data  The array of data sets to be mapped to DTOs.
      * @return DTOInterface|DTOCollection Either a single DTO object or a DTOCollection.
      *
      * @throws \ReflectionException If an error occurs during reflection.
@@ -48,5 +47,5 @@ interface MapperInterface
      * }
      * ```
      */
-    public function map(array $data) : DTOInterface|DTOCollection;
+    public function map(array $data): DTOInterface|DTOCollection;
 }

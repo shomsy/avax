@@ -23,7 +23,7 @@ use Attribute;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 class Nullable
 {
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         // No validation needed; the property being null is acceptable.
     }

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Features\Core\Contracts;
 
 /**
@@ -9,8 +10,7 @@ namespace Avax\Container\Features\Core\Contracts;
  * This interface defines the contract for configuring contextual dependencies
  * where the implementation depends on the consumer class.
  *
- * @package Avax\Container\Core\Contracts
- * @see docs/Features/Core/Contracts/ContextBuilder.md#quick-summary
+ * @see     docs/Features/Core/Contracts/ContextBuilder.md#quick-summary
  */
 interface ContextBuilder
 {
@@ -19,7 +19,6 @@ interface ContextBuilder
      *
      * @param string $abstract The abstract type to bind
      *
-     * @return self
      * @see docs/Features/Core/Contracts/ContextBuilder.md#method-needs
      */
     public function needs(string $abstract) : self;
@@ -29,7 +28,6 @@ interface ContextBuilder
      *
      * @param mixed $concrete The concrete implementation
      *
-     * @return void
      * @see docs/Features/Core/Contracts/ContextBuilder.md#method-give
      */
     public function give(mixed $concrete) : void;

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Container\Features\Operate\Scope;
 
-use LogicException;
 use RuntimeException;
 
 /**
@@ -14,8 +13,7 @@ use RuntimeException;
  * life cycle of shared instances across different operational scopes (e.g., Application,
  * Request, Session). It provides ordered scope management and isolation.
  *
- * @package Avax\Container\Features\Operate\Scope
- * @see docs/Features/Operate/Scope/ScopeRegistry.md
+ * @see     docs/Features/Operate/Scope/ScopeRegistry.md
  */
 final class ScopeRegistry
 {
@@ -29,11 +27,12 @@ final class ScopeRegistry
      * Check whether an instance exists in the current active scope or singleton storage.
      *
      * @param string $abstract The service identifier to check.
+     *
      * @return bool True if a resolved instance is stored.
      *
      * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-has
      */
-    public function has(string $abstract): bool
+    public function has(string $abstract) : bool
     {
         if ($this->scopes !== []) {
             $currentScope = $this->scopes[array_key_last($this->scopes)];
@@ -49,11 +48,12 @@ final class ScopeRegistry
      * Retrieve a resolved instance from the current active scope or singleton storage.
      *
      * @param string $abstract The service identifier to retrieve.
+     *
      * @return mixed|null The instance or null if not yet resolved.
      *
      * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-get
      */
-    public function get(string $abstract): mixed
+    public function get(string $abstract) : mixed
     {
         if ($this->scopes !== []) {
             $currentScope = $this->scopes[array_key_last($this->scopes)];
@@ -76,10 +76,10 @@ final class ScopeRegistry
      *
      * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-set
      */
-    public function set(string $abstract, mixed $instance): void
+    public function set(string $abstract, mixed $instance) : void
     {
         if ($this->scopes !== []) {
-            $lastIndex = array_key_last($this->scopes);
+            $lastIndex                           = array_key_last($this->scopes);
             $this->scopes[$lastIndex][$abstract] = $instance;
         } else {
             $this->singletons[$abstract] = $instance;
@@ -94,7 +94,7 @@ final class ScopeRegistry
      *
      * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-addsingleton
      */
-    public function addSingleton(string $abstract, mixed $instance): void
+    public function addSingleton(string $abstract, mixed $instance) : void
     {
         $this->singletons[$abstract] = $instance;
     }
@@ -104,7 +104,7 @@ final class ScopeRegistry
      *
      * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-beginscope
      */
-    public function beginScope(): void
+    public function beginScope() : void
     {
         $this->scopes[] = [];
     }
@@ -113,9 +113,10 @@ final class ScopeRegistry
      * Exit the current operational scope and discard its stored instances.
      *
      * @throws RuntimeException If no active scope exists to end.
+     *
      * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-endscope
      */
-    public function endScope(): void
+    public function endScope() : void
     {
         if ($this->scopes === []) {
             throw new RuntimeException(message: 'Cannot end scope: No active scope found.');
@@ -129,7 +130,7 @@ final class ScopeRegistry
      *
      * @see docs/Features/Operate/Scope/ScopeRegistry.md#method-terminate
      */
-    public function terminate(): void
+    public function terminate() : void
     {
         $this->singletons = [];
         $this->scopes     = [];

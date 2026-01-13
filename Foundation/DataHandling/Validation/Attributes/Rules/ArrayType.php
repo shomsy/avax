@@ -33,10 +33,10 @@ class ArrayType
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (! is_array(value: $value)) {
-            throw new ValidationException(message: $property . ' must be an array.');
+            throw new ValidationException(message: $property.' must be an array.');
         }
     }
 }

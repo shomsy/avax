@@ -10,15 +10,14 @@ use Avax\Container\Features\Define\Store\ServiceDefinition;
 /**
  * Ahead-of-time (AOT) compiler for container service blueprints.
  *
- * The CompiledPrototypeDumper is responsible for transforming the "Living" 
- * container configuration into a "Cold", static PHP file. This process, known 
- * as "Dumping" or "Compiling", is a critical performance optimization for 
- * production environments. By converting definitions into a static PHP array, 
- * the container can bypass the entire "Think" phase (reflection and analysis) 
+ * The CompiledPrototypeDumper is responsible for transforming the "Living"
+ * container configuration into a "Cold", static PHP file. This process, known
+ * as "Dumping" or "Compiling", is a critical performance optimization for
+ * production environments. By converting definitions into a static PHP array,
+ * the container can bypass the entire "Think" phase (reflection and analysis)
  * at runtime, loading the pre-calculated plans instantly via PHP's opcache.
  *
- * @package Avax\Container\Features\Think\Prototype
- * @see docs/Features/Think/Prototype/CompiledPrototypeDumper.md
+ * @see     docs/Features/Think/Prototype/CompiledPrototypeDumper.md
  */
 final readonly class CompiledPrototypeDumper
 {
@@ -44,11 +43,11 @@ final readonly class CompiledPrototypeDumper
      *
      * @see docs/Features/Think/Prototype/CompiledPrototypeDumper.md#method-dump
      */
-    public function dump(): string
+    public function dump() : string
     {
         // 1. Transform definitions into serializable primitives
         $definitions = array_map(
-            static fn(ServiceDefinition $definition): array => $definition->toArray(),
+            static fn(ServiceDefinition $definition) : array => $definition->toArray(),
             $this->definitions->getAllDefinitions()
         );
 

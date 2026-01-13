@@ -25,8 +25,8 @@ use Throwable;
  * This manager ensures that session state can be safely backed up,
  * restored, and managed transactionally without affecting other domains.
  *
- * @package Avax\HTTP\Session\Recovery
  * @author  Milos
+ *
  * @version 5.0
  */
 final readonly class RecoveryManager
@@ -53,8 +53,6 @@ final readonly class RecoveryManager
      * Useful for implementing undo functionality or safe operations.
      *
      * @param string $name Snapshot identifier (default: 'default').
-     *
-     * @return void
      */
     public function snapshot(string $name = 'default') : void
     {
@@ -68,8 +66,6 @@ final readonly class RecoveryManager
      * Replaces current session data with the snapshot contents.
      *
      * @param string $name Snapshot identifier (default: 'default').
-     *
-     * @return void
      *
      * @throws \Avax\HTTP\Session\Exceptions\RecoveryException If snapshot doesn't exist or is corrupted.
      */
@@ -121,8 +117,6 @@ final readonly class RecoveryManager
      * Delete a specific snapshot.
      *
      * @param string $name Snapshot identifier.
-     *
-     * @return void
      */
     public function deleteBackup(string $name = 'default') : void
     {
@@ -134,8 +128,6 @@ final readonly class RecoveryManager
      * Clear all snapshots from memory.
      *
      * Removes all backup data. Use with caution.
-     *
-     * @return void
      */
     public function clearAllBackups() : void
     {
@@ -165,8 +157,6 @@ final readonly class RecoveryManager
      *
      * @param callable $callback The operation to execute.
      *
-     * @return void
-     *
      * @throws Throwable Re-throws the original exception after rollback.
      */
     public function transaction(callable $callback) : void
@@ -181,7 +171,7 @@ final readonly class RecoveryManager
                 event: 'recovery.transaction.failed',
                 data : [
                     'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
+                    'trace' => $e->getTraceAsString(),
                 ]);
 
             throw $e;
@@ -193,8 +183,6 @@ final readonly class RecoveryManager
      *
      * Creates an automatic snapshot that will be used for rollback
      * if the transaction fails.
-     *
-     * @return void
      */
     public function beginTransaction() : void
     {
@@ -207,7 +195,6 @@ final readonly class RecoveryManager
      *
      * Finalizes the transaction and removes the automatic snapshot.
      *
-     * @return void
      *
      * @throws \Avax\HTTP\Session\Exceptions\RecoveryException If no transaction is active.
      */
@@ -222,7 +209,6 @@ final readonly class RecoveryManager
      *
      * Restores session state to the snapshot taken at transaction start.
      *
-     * @return void
      *
      * @throws \Avax\HTTP\Session\Exceptions\RecoveryException If no transaction is active.
      */
@@ -262,8 +248,6 @@ final readonly class RecoveryManager
      * Uses safe unserialization to prevent object injection attacks.
      *
      * @param string $data Serialized session data.
-     *
-     * @return void
      */
     public function import(string $data) : void
     {

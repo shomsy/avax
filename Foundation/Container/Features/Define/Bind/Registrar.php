@@ -17,10 +17,9 @@ use Avax\Container\Features\Define\Store\ServiceDefinition;
  * service bindings, singletons, scoped services, and contextual injection rules.
  * It acts as the "Writer" to the {@see DefinitionStore}.
  *
- * @package Avax\Container\Features\Define\Bind
- * @see docs/Features/Define/Bind/Registrar.md
+ * @see     docs/Features/Define/Bind/Registrar.md
  */
-class Registrar
+readonly class Registrar
 {
     /**
      * Initializes the registrar with a target storage.
@@ -34,13 +33,39 @@ class Registrar
      *
      * @param string $abstract The service identifier.
      * @param mixed  $concrete The implementation (class name, closure, or null).
+     *
      * @return BindingBuilderInterface Fluent builder for advanced config.
      *
      * @see docs/Features/Define/Bind/Registrar.md#method-bind
      */
-    public function bind(string $abstract, mixed $concrete = null): BindingBuilderInterface
+    public function bind(string $abstract, mixed $concrete = null) : BindingBuilderInterface
     {
         return $this->register(abstract: $abstract, concrete: $concrete, lifetime: ServiceLifetime::Transient);
+    }
+
+    /**
+     * Internal helper to create and store blueprints.
+     *
+     * @param string          $abstract The service identifier.
+     * @param mixed           $concrete The implementation.
+     * @param ServiceLifetime $lifetime The resolution policy.
+     *
+     * @return BindingBuilderInterface The binding builder.
+     */
+    private function register(string $abstract, mixed $concrete, ServiceLifetime $lifetime) : BindingBuilderInterface
+    {
+        // Normalize concrete to abstract if null (self-binding)
+        if ($concrete === null) {
+            $concrete = $abstract;
+        }
+
+        $definition           = new ServiceDefinition(abstract: $abstract);
+        $definition->concrete = $concrete;
+        $definition->lifetime = $lifetime;
+
+        $this->definitions->add(definition: $definition);
+
+        return new BindingBuilder(store: $this->definitions, abstract: $abstract);
     }
 
     /**
@@ -48,11 +73,12 @@ class Registrar
      *
      * @param string $abstract The service identifier.
      * @param mixed  $concrete The implementation (class name, closure, or null).
+     *
      * @return BindingBuilderInterface Fluent builder for advanced config.
      *
      * @see docs/Features/Define/Bind/Registrar.md#method-singleton
      */
-    public function singleton(string $abstract, mixed $concrete = null): BindingBuilderInterface
+    public function singleton(string $abstract, mixed $concrete = null) : BindingBuilderInterface
     {
         return $this->register(abstract: $abstract, concrete: $concrete, lifetime: ServiceLifetime::Singleton);
     }
@@ -62,11 +88,12 @@ class Registrar
      *
      * @param string $abstract The service identifier.
      * @param mixed  $concrete The implementation (class name, closure, or null).
+     *
      * @return BindingBuilderInterface Fluent builder for advanced config.
      *
      * @see docs/Features/Define/Bind/Registrar.md#method-scoped
      */
-    public function scoped(string $abstract, mixed $concrete = null): BindingBuilderInterface
+    public function scoped(string $abstract, mixed $concrete = null) : BindingBuilderInterface
     {
         return $this->register(abstract: $abstract, concrete: $concrete, lifetime: ServiceLifetime::Scoped);
     }
@@ -79,7 +106,7 @@ class Registrar
      *
      * @see docs/Features/Define/Bind/Registrar.md#method-instance
      */
-    public function instance(string $abstract, object $instance): void
+    public function instance(string $abstract, object $instance) : void
     {
         $definition           = new ServiceDefinition(abstract: $abstract);
         $definition->concrete = $instance;
@@ -96,7 +123,7 @@ class Registrar
      *
      * @see docs/Features/Define/Bind/Registrar.md#method-extend
      */
-    public function extend(string $abstract, callable $closure): void
+    public function extend(string $abstract, callable $closure) : void
     {
         $this->definitions->addExtender(abstract: $abstract, extender: $closure(...));
     }
@@ -105,11 +132,12 @@ class Registrar
      * Begin a contextual binding definition.
      *
      * @param string $consumer The class name that receives the dependency.
+     *
      * @return ContextBuilderInterface Fluent builder for contextual rules.
      *
      * @see docs/Features/Define/Bind/Registrar.md#method-when
      */
-    public function when(string $consumer): ContextBuilderInterface
+    public function when(string $consumer) : ContextBuilderInterface
     {
         return new ContextBuilder(store: $this->definitions, consumer: $consumer);
     }
@@ -122,34 +150,10 @@ class Registrar
      *
      * @see docs/Features/Define/Bind/Registrar.md#method-tag
      */
-    public function tag(string|array $abstracts, string|array $tags): void
+    public function tag(string|array $abstracts, string|array $tags) : void
     {
         foreach ((array) $abstracts as $abstract) {
             $this->definitions->addTags(abstract: $abstract, tags: $tags);
         }
-    }
-
-    /**
-     * Internal helper to create and store blueprints.
-     *
-     * @param string          $abstract The service identifier.
-     * @param mixed           $concrete The implementation.
-     * @param ServiceLifetime $lifetime The resolution policy.
-     * @return BindingBuilderInterface The binding builder.
-     */
-    private function register(string $abstract, mixed $concrete, ServiceLifetime $lifetime): BindingBuilderInterface
-    {
-        // Normalize concrete to abstract if null (self-binding)
-        if ($concrete === null) {
-            $concrete = $abstract;
-        }
-
-        $definition           = new ServiceDefinition(abstract: $abstract);
-        $definition->concrete = $concrete;
-        $definition->lifetime = $lifetime;
-
-        $this->definitions->add(definition: $definition);
-
-        return new BindingBuilder(store: $this->definitions, abstract: $abstract);
     }
 }

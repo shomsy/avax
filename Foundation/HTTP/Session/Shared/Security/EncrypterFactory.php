@@ -16,8 +16,6 @@ use RuntimeException;
  *
  * Integrates KeyManager with encryption operations.
  * Supports key rotation by attempting decryption with all known keys.
- *
- * @package Avax\HTTP\Session\Security
  */
 final class EncrypterFactory
 {
@@ -30,7 +28,7 @@ final class EncrypterFactory
      */
     public function __construct(KeyManager|null $keyManager = null)
     {
-        $this->keyManager = $keyManager ?? new KeyManager();
+        $this->keyManager = $keyManager ?? new KeyManager;
     }
 
     /**

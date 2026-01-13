@@ -22,7 +22,7 @@ class IsValidColumnName extends AbstractRule
         private readonly string $message = 'The :attribute must be a valid column name (alphanumeric, underscore, optional dot, wildcard).'
     ) {}
 
-    public function validate(mixed $value, array $data, string $property) : void
+    public function validate(mixed $value, array $data, string $property): void
     {
         if (! is_string(value: $value)) {
             $this->fail(message: $this->message, property: $property);

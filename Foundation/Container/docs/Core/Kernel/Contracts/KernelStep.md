@@ -2,11 +2,13 @@
 
 ## Quick Summary
 
-Defines the contract every kernel pipeline step must follow: an invokable step that processes a `KernelContext` during service resolution. It exists to standardize how steps mutate context and coordinate in the pipeline.
+Defines the contract every kernel pipeline step must follow: an invokable step that processes a `KernelContext` during
+service resolution. It exists to standardize how steps mutate context and coordinate in the pipeline.
 
 ### For Humans: What This Means (Summary)
 
-Every step in the resolution pipeline must look the same—callable with a context. This interface makes sure all steps play by that rule.
+Every step in the resolution pipeline must look the same—callable with a context. This interface makes sure all steps
+play by that rule.
 
 ## Terminology (MANDATORY, EXPANSIVE)
 
@@ -17,11 +19,13 @@ Every step in the resolution pipeline must look the same—callable with a conte
 
 ### For Humans: What This Means (Terms)
 
-A step is just one action in the chain; the pipeline is the whole chain; the context is the baton they pass; being invokable means you can call the step like a function.
+A step is just one action in the chain; the pipeline is the whole chain; the context is the baton they pass; being
+invokable means you can call the step like a function.
 
 ## Think of It
 
-Like a relay race: each runner (step) grabs the baton (context), does their part, and hands it off. The interface defines the shape of each runner.
+Like a relay race: each runner (step) grabs the baton (context), does their part, and hands it off. The interface
+defines the shape of each runner.
 
 ### For Humans: What This Means (Think)
 
@@ -29,7 +33,8 @@ All runners must be able to run the same way with the same baton—this contract
 
 ## Story Example
 
-Before `KernelStep`, steps had inconsistent signatures, causing fragile pipelines. With the interface, every new step implements `__invoke(KernelContext $context)`, making pipelines predictable and composable.
+Before `KernelStep`, steps had inconsistent signatures, causing fragile pipelines. With the interface, every new step
+implements `__invoke(KernelContext $context)`, making pipelines predictable and composable.
 
 ### For Humans: What This Means (Story)
 
@@ -41,7 +46,8 @@ You no longer wonder how to call a step—every step uses the same signature, so
 - The pipeline calls each step in order, passing the context.
 - Implementations update the context (instances, metadata, errors).
 
-Common misconceptions: it doesn’t define pipeline order; it doesn’t resolve services itself; it just defines the shape of a step.
+Common misconceptions: it doesn’t define pipeline order; it doesn’t resolve services itself; it just defines the shape
+of a step.
 
 ### For Humans: What This Means (Dummies)
 
@@ -49,7 +55,8 @@ It’s just the template: “here’s how a step should look.” The actual work
 
 ## How It Works (Technical)
 
-The interface declares a single `__invoke` method taking a `KernelContext`. Implementations perform step-specific logic and may mutate context state.
+The interface declares a single `__invoke` method taking a `KernelContext`. Implementations perform step-specific logic
+and may mutate context state.
 
 ### For Humans: What This Means (How)
 
@@ -57,7 +64,8 @@ Every step class must provide one callable method that takes the context and doe
 
 ## Architecture Role
 
-Lives in Contracts to enforce uniform step signatures across the kernel pipeline. Pipeline builders depend on it; all concrete steps implement it; it depends only on `KernelContext`.
+Lives in Contracts to enforce uniform step signatures across the kernel pipeline. Pipeline builders depend on it; all
+concrete steps implement it; it depends only on `KernelContext`.
 
 ### For Humans: What This Means (Role)
 
@@ -69,37 +77,45 @@ This section is the API map of the file: it documents what each method does, why
 
 ### For Humans: What This Means (Methods)
 
-When you’re trying to use or debug this file, this is the part you’ll come back to. It’s your “what can I call, and what happens?” cheat sheet.
+When you’re trying to use or debug this file, this is the part you’ll come back to. It’s your “what can I call, and what
+happens?” cheat sheet.
 
 ### Method: __invoke(KernelContext $context): void
 
 #### Technical Explanation (Invoke)
 
-Executes the step against the provided context, potentially mutating it (resolving instances, adding metadata, handling errors).
+Executes the step against the provided context, potentially mutating it (resolving instances, adding metadata, handling
+errors).
 
 ##### For Humans: What This Means (Invoke)
 
 When the pipeline calls the step, it gets the context, does its work, and updates the context as needed.
 
 ##### Parameters (__invoke)
+
 - `KernelContext $context`: The current resolution state.
 
 ##### Returns (__invoke)
+
 - `void`: Work is done via side effects on context.
 
 ##### Throws (__invoke)
+
 - Implementation-specific exceptions if resolution work fails.
 
 ##### When to Use It (__invoke)
+
 - Implemented by every pipeline step class; the pipeline calls it for each step.
 
 ##### Common Mistakes (__invoke)
+
 - Treating context as immutable when it’s meant to be updated.
 - Throwing without enriching context with error info where appropriate.
 
 ## Risks, Trade-offs & Recommended Practices
 
-- **Risk: Inconsistent side effects**. Mutating context unpredictably can break downstream steps; document and standardize mutations.
+- **Risk: Inconsistent side effects**. Mutating context unpredictably can break downstream steps; document and
+  standardize mutations.
 - **Trade-off: Flexibility vs predictability**. Steps can do many things; keep responsibilities narrow for clarity.
 - **Practice: Idempotent behavior**. Where possible, make steps idempotent to avoid double-processing.
 
@@ -115,4 +131,5 @@ Keep step behavior clear and consistent, and avoid surprising changes to context
 
 ### For Humans: What This Means (Related)
 
-Read the overview for bigger picture, see the context you’ll mutate, and check the terminal marker for steps that can short-circuit.
+Read the overview for bigger picture, see the context you’ll mutate, and check the terminal marker for steps that can
+short-circuit.

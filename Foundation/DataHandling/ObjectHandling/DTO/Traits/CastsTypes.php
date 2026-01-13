@@ -213,8 +213,7 @@ trait CastsTypes
      * property for which to resolve the class.
      *
      * @return string|null The fully qualified class name of the DTO, or `null` if not found.
-     * "@var annotations"
-     *
+     *                     "@var annotations"
      */
     protected function resolveDTOClassFromAnnotationsOrAttributes(ReflectionProperty $property) : string|null
     {
@@ -282,7 +281,6 @@ trait CastsTypes
      * @param mixed              $value    The raw scalar value to be converted.
      *
      * @return BackedEnum|string|null The enum instance corresponding to the given value.
-     *
      */
     protected function castToEnum(ReflectionProperty $property, mixed $value) : BackedEnum|string|null
     {
@@ -314,7 +312,6 @@ trait CastsTypes
 
         return $enum;
     }
-
 
     /**
      * Asserts that the given type is a valid backed enum class.

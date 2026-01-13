@@ -27,8 +27,8 @@ readonly class RoleMiddleware
         $user = $this->guard->user();
 
         if (! $user instanceof UserInterface || ! $user->hasRole(
-                role: $role,
-            )) {
+            role: $role,
+        )) {
             throw new AuthorizationException(message: sprintf('AccessControl lacks the required role: %s.', $role));
         }
 

@@ -38,7 +38,7 @@ class ConnectionFailure extends DatabaseException
      */
     public function __construct(
         public readonly string $name,
-        string                 $message = "",
+        string                 $message = '',
         Throwable|null         $previous = null
     )
     {

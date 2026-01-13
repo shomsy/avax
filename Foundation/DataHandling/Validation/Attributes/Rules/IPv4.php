@@ -28,10 +28,10 @@ class IPv4
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (! filter_var(value: $value, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV4)) {
-            throw new ValidationException(message: $property . ' must be a valid IPv4 address.');
+            throw new ValidationException(message: $property.' must be a valid IPv4 address.');
         }
     }
 }

@@ -25,12 +25,11 @@ trait Macroable
      *
      * -- intent: facilitate bulk extension from external provider classes.
      *
-     * @param object|string $mixin Target class containing custom methods
+     * @param  object|string  $mixin  Target class containing custom methods
      *
-     * @return void
      * @throws ReflectionException If class analysis fails
      */
-    public static function mixin(object|string $mixin) : void
+    public static function mixin(object|string $mixin): void
     {
         $methods = (new ReflectionClass(objectOrClass: $mixin))->getMethods(
             filter: ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED
@@ -47,12 +46,10 @@ trait Macroable
      *
      * -- intent: provide a way to inject domain-specific helpers into the fluent API.
      *
-     * @param string          $name  Method technical name
-     * @param callable|object $macro Implementation closure or invokable object
-     *
-     * @return void
+     * @param  string  $name  Method technical name
+     * @param  callable|object  $macro  Implementation closure or invokable object
      */
-    public static function macro(string $name, callable|object $macro) : void
+    public static function macro(string $name, callable|object $macro): void
     {
         static::$macros[$name] = $macro;
     }
@@ -62,16 +59,15 @@ trait Macroable
      *
      * -- intent: automate the execution of injected methods via magic interceptor.
      *
-     * @param string $method     Target method name
-     * @param array  $parameters Call arguments
+     * @param  string  $method  Target method name
+     * @param  array  $parameters  Call arguments
      *
-     * @return mixed
      * @throws BadMethodCallException If method is not found in macros or class
      */
-    public function __call(string $method, array $parameters) : mixed
+    public function __call(string $method, array $parameters): mixed
     {
         if (! static::hasMacro(name: $method)) {
-            throw new BadMethodCallException(message: "Method [{$method}] does not exist on " . static::class);
+            throw new BadMethodCallException(message: "Method [{$method}] does not exist on ".static::class);
         }
 
         $macro = static::$macros[$method];
@@ -91,11 +87,9 @@ trait Macroable
      *
      * -- intent: provide a way to check for feature existence at runtime.
      *
-     * @param string $name Method name to check
-     *
-     * @return bool
+     * @param  string  $name  Method name to check
      */
-    public static function hasMacro(string $name) : bool
+    public static function hasMacro(string $name): bool
     {
         return isset(static::$macros[$name]);
     }

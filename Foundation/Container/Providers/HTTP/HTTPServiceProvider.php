@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Container\Providers\HTTP;
 
-use Avax\Container\Features\Operate\Boot\ServiceProvider;
+use Avax\Container\Providers\ServiceProvider;
+use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Response\Classes\Response;
 use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\Response\Classes\StreamFactory;
@@ -24,19 +25,21 @@ class HTTPServiceProvider extends ServiceProvider
     /**
      * Register PSR-7/17 response and stream bindings.
      *
-     * @return void
      * @see docs/Providers/HTTP/HTTPServiceProvider.md#method-register
      */
     public function register() : void
     {
-        $this->app->singleton(abstract: StreamInterface::class, concrete: function () {
+        // Core dispatcher for controllers (used by routing pipeline)
+        $this->app->singleton(abstract: ControllerDispatcher::class, concrete: ControllerDispatcher::class);
+
+        $this->app->singleton(abstract: StreamInterface::class, concrete: static function () {
             return new Stream(stream: fopen('php://temp', 'rw+'));
         });
 
         $this->app->singleton(abstract: StreamFactoryInterface::class, concrete: StreamFactory::class);
 
         $this->app->singleton(abstract: ResponseInterface::class, concrete: function () {
-            return new Response(stream: $this->app->get(StreamInterface::class));
+            return new Response(stream: $this->app->get(id: StreamInterface::class));
         });
 
         $this->app->singleton(abstract: ResponseFactoryInterface::class, concrete: ResponseFactory::class);

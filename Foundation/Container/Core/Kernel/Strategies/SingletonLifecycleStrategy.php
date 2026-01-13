@@ -29,10 +29,9 @@ final readonly class SingletonLifecycleStrategy implements LifecycleStrategy
      * @param string $abstract Service identifier
      * @param mixed  $instance Instance to cache
      *
-     * @return void
      * @see docs/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-storestring-abstract-mixed-instance-void
      */
-    public function store(string $abstract, mixed $instance): void
+    public function store(string $abstract, mixed $instance) : void
     {
         $this->scopeManager->set(abstract: $abstract, instance: $instance);
     }
@@ -43,9 +42,10 @@ final readonly class SingletonLifecycleStrategy implements LifecycleStrategy
      * @param string $abstract Service identifier
      *
      * @return bool True when cached
+     *
      * @see docs/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-hasstring-abstract-bool
      */
-    public function has(string $abstract): bool
+    public function has(string $abstract) : bool
     {
         return $this->scopeManager->has(abstract: $abstract);
     }
@@ -56,9 +56,10 @@ final readonly class SingletonLifecycleStrategy implements LifecycleStrategy
      * @param string $abstract Service identifier
      *
      * @return mixed|null Cached instance or null
+     *
      * @see docs/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-retrievestring-abstract-mixed
      */
-    public function retrieve(string $abstract): mixed
+    public function retrieve(string $abstract) : mixed
     {
         return $this->scopeManager->get(abstract: $abstract);
     }
@@ -66,8 +67,7 @@ final readonly class SingletonLifecycleStrategy implements LifecycleStrategy
     /**
      * No-op for singletons; retained for lifetime of the process.
      *
-     * @return void
      * @see docs/Core/Kernel/Strategies/SingletonLifecycleStrategy.md#method-clearvoid
      */
-    public function clear(): void {}
+    public function clear() : void {}
 }

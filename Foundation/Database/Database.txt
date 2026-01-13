@@ -225,8 +225,8 @@ use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Connection\Exceptions\ConnectionException;
 use Avax\Database\Connection\Exceptions\ConnectionFailure;
 use Avax\Database\Events\EventBus;
-use Avax\Database\Foundation\Connection\Pool\ConnectionPool;
-use Avax\Database\Foundation\Connection\Pool\PooledConnectionAuthority;
+use Avax\Database\Avax\Connection\Pool\ConnectionPool;
+use Avax\Database\Avax\Connection\Pool\PooledConnectionAuthority;
 use Avax\Database\Support\ExecutionScope;
 use PDO;
 use Throwable;
@@ -545,7 +545,7 @@ declare(strict_types=1);
 namespace Avax\Database\Connection;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
-use Avax\Database\Foundation\Connection\Pool\Contracts\ConnectionPoolInterface;
+use Avax\Database\Avax\Connection\Pool\Contracts\ConnectionPoolInterface;
 use Throwable;
 
 /**
@@ -1044,11 +1044,11 @@ final readonly class PdoConnection implements DatabaseConnection
 
 declare(strict_types=1);
 
-namespace Avax\Database\Foundation\Connection\Pool;
+namespace Avax\Database\Avax\Connection\Pool;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
-use Avax\Database\Foundation\Connection\Pool\Contracts\ConnectionPoolInterface;
-use Avax\Database\Foundation\Connection\Pool\Exceptions\ConnectionException;
+use Avax\Database\Avax\Connection\Pool\Contracts\ConnectionPoolInterface;
+use Avax\Database\Avax\Connection\Pool\Exceptions\ConnectionException;
 use PDO;
 
 /**
@@ -1169,15 +1169,15 @@ final class BorrowedConnection implements DatabaseConnection
 
 declare(strict_types=1);
 
-namespace Avax\Database\Foundation\Connection\Pool;
+namespace Avax\Database\Avax\Connection\Pool;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Connection\DirectConnectionFlow;
 use Avax\Database\Connection\Exceptions\PoolLimitReachedException;
 use Avax\Database\Events\ConnectionAcquired;
 use Avax\Database\Events\EventBus;
-use Avax\Database\Foundation\Connection\Pool\Contracts\ConnectionPoolInterface;
-use Avax\Database\Foundation\Connection\Pool\DTO\ConnectionPoolMetrics;
+use Avax\Database\Avax\Connection\Pool\Contracts\ConnectionPoolInterface;
+use Avax\Database\Avax\Connection\Pool\DTO\ConnectionPoolMetrics;
 use Avax\Database\Support\ExecutionScope;
 use SplQueue;
 use Throwable;
@@ -1497,7 +1497,7 @@ final class ConnectionPool implements ConnectionPoolInterface
 
 declare(strict_types=1);
 
-namespace Avax\Database\Foundation\Connection\Pool;
+namespace Avax\Database\Avax\Connection\Pool;
 
 /**
  * The "Pool Builder" (Wizard) for shared database connections.
@@ -1606,7 +1606,7 @@ final class ConnectionPoolFlow
 
 declare(strict_types=1);
 
-namespace Avax\Database\Foundation\Connection\Pool\Contracts;
+namespace Avax\Database\Avax\Connection\Pool\Contracts;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
 
@@ -1657,7 +1657,7 @@ interface ConnectionPoolInterface
 
 declare(strict_types=1);
 
-namespace Avax\Database\Foundation\Connection\Pool\DTO;
+namespace Avax\Database\Avax\Connection\Pool\DTO;
 
 use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
 use Avax\DataHandling\Validation\Attributes\Rules\IntegerRule;
@@ -1718,7 +1718,7 @@ final class ConnectionPoolMetrics extends AbstractDTO
 
 declare(strict_types=1);
 
-namespace Avax\Database\Foundation\Connection\Pool;
+namespace Avax\Database\Avax\Connection\Pool;
 
 /**
  * The "Ledger" (Internal Accountant) of the connection pool.
@@ -1824,10 +1824,10 @@ final class PoolState
 
 declare(strict_types=1);
 
-namespace Avax\Database\Foundation\Connection\Pool;
+namespace Avax\Database\Avax\Connection\Pool;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
-use Avax\Database\Foundation\Connection\Pool\Contracts\ConnectionPoolInterface;
+use Avax\Database\Avax\Connection\Pool\Contracts\ConnectionPoolInterface;
 use PDO;
 
 /**
@@ -12511,7 +12511,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Connection;
 
-use Avax\Database\Foundation\Connection\Pool\ConnectionPool;
+use Avax\Database\Avax\Connection\Pool\ConnectionPool;
 use Avax\Tests\TestCase;
 
 class ConnectionPoolTest extends TestCase
@@ -12689,8 +12689,8 @@ declare(strict_types=1);
 
 namespace Avax\Database\Tests\Stress;
 
-use Avax\Database\Foundation\Connection\Pool\ConnectionPool;
-use Avax\Database\Foundation\Connection\Pool\PooledConnectionAuthority;
+use Avax\Database\Avax\Connection\Pool\ConnectionPool;
+use Avax\Database\Avax\Connection\Pool\PooledConnectionAuthority;
 use PDO;
 use PHPUnit\Framework\TestCase;
 

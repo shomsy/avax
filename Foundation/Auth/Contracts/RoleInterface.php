@@ -11,17 +11,17 @@ namespace Avax\Auth\Contracts;
  */
 interface RoleInterface
 {
-    public function getRole() : string;
+    public function getRole(): string;
 
-    public function hasPermission(string $permission) : bool;
+    public function hasPermission(string $permission): bool;
 
     /**
      * Add a permission to the role.
      */
-    public function addPermission(PermissionInterface $permission) : void;
+    public function addPermission(PermissionInterface $permission): void;
 
     /**
      * Remove a permission from the role.
      */
-    public function removePermission(PermissionInterface $permission) : void;
+    public function removePermission(PermissionInterface $permission): void;
 }

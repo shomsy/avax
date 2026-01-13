@@ -147,14 +147,14 @@
 [2026-01-07 22:23:46] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
 
 [2026-01-07 22:23:46] ❌ [ERROR] No route matched and no fallback defined. {
-    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
     "line": 227,
     "exception": {
         "message": "No route matched and no fallback defined.",
-        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
         "line": 227,
         "trace": [
-            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Features\\Operate\\Boot\\Application.php(346): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Operate\\Boot\\Application.php(346): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
             "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Features\\Operate\\Boot\\Application->run()",
             "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
             "#3 {main}"
@@ -165,19 +165,19 @@
 }
 
 [2026-01-07 22:23:46] 🔥 [CRITICAL] ⚠️ Error handler crashed: Resolution pipeline failed at step 5 (Avax\Container\Core\Kernel\Steps\EnsureDefinitionExistsStep) for service "Infrastructure\Config\Service\Config": Strict Mode: Missing definition for service [Infrastructure\Config\Service\Config]. Auto-define is on but failed. {
-    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Core\\Kernel\\ResolutionPipeline.php",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php",
     "line": 135,
     "exception": {
         "message": "Resolution pipeline failed at step 5 (Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep) for service \"Infrastructure\\Config\\Service\\Config\": Strict Mode: Missing definition for service [Infrastructure\\Config\\Service\\Config]. Auto-define is on but failed.",
-        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Core\\Kernel\\ResolutionPipeline.php",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\ResolutionPipeline.php",
         "line": 135,
         "trace": [
-            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Core\\Kernel\\KernelRuntime.php(37): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
-            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Core\\Kernel\\KernelRuntime.php(29): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
-            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Core\\ContainerKernel.php(96): Avax\\Container\\Core\\Kernel\\KernelRuntime->get('Infrastructure\\\\...')",
-            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Container.php(31): Avax\\Container\\Core\\ContainerKernel->get('Infrastructure\\\\...')",
-            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(41): Avax\\Container\\Container->get('Infrastructure\\\\...')",
-            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Helpers\\helpers.php(233): app('Infrastructure\\\\...')",
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(37): Avax\\Container\\Core\\Kernel\\ResolutionPipeline->run(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\KernelRuntime.php(29): Avax\\Container\\Core\\Kernel\\KernelRuntime->resolveContext(Object(Avax\\Container\\Core\\Kernel\\Contracts\\KernelContext))",
+            "#2 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\ContainerKernel.php(96): Avax\\Container\\Core\\Kernel\\KernelRuntime->get('Infrastructure\\\\...')",
+            "#3 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Container.php(31): Avax\\Container\\Core\\ContainerKernel->get('Infrastructure\\\\...')",
+            "#4 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Helpers\\helpers.php(41): Avax\\Container\\Container->get('Infrastructure\\\\...')",
+            "#5 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Helpers\\helpers.php(233): app('Infrastructure\\\\...')",
             "#6 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\error-solutions\\src\\SolutionProviderRepository.php(97): config('ErrorSolutions....', Array)",
             "#7 [internal function]: Spatie\\ErrorSolutions\\SolutionProviderRepository->Spatie\\ErrorSolutions\\{closure}('Spatie\\\\ErrorSol...', 0)",
             "#8 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\illuminate\\collections\\Arr.php(930): array_filter(Array, Object(Closure), 1)",
@@ -195,15 +195,15 @@
             "#20 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\flare-client-php\\src\\Flare.php(460): Spatie\\FlareClient\\Flare->applyMiddlewareToReport(Object(Spatie\\FlareClient\\Report))",
             "#21 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(380): Spatie\\FlareClient\\Flare->createReport(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
             "#22 C:\\Users\\shomsy\\PhpstormProjects\\components\\vendor\\spatie\\ignition\\src\\Ignition.php(288): Spatie\\Ignition\\Ignition->createReport(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
-            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(203): Spatie\\Ignition\\Ignition->handleException(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
-            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Logging\\ErrorHandler.php(134): Avax\\Logging\\ErrorHandler->renderIgnition(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#23 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Logging\\ErrorHandler.php(203): Spatie\\Ignition\\Ignition->handleException(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
+            "#24 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Logging\\ErrorHandler.php(134): Avax\\Logging\\ErrorHandler->renderIgnition(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
             "#25 [internal function]: Avax\\Logging\\ErrorHandler->handle(Object(Avax\\HTTP\\Router\\Routing\\Exceptions\\RouteNotFoundException))",
             "#26 {main}"
         ],
         "code": 0,
         "previous": {
             "message": "Strict Mode: Missing definition for service [Infrastructure\\Config\\Service\\Config]. Auto-define is on but failed.",
-            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep.php",
+            "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Core\\Kernel\\Steps\\EnsureDefinitionExistsStep.php",
             "line": 55
         }
     }
@@ -358,14 +358,14 @@
 [2026-01-07 22:32:34] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
 
 [2026-01-07 22:32:34] ❌ [ERROR] No route matched and no fallback defined. {
-    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
     "line": 227,
     "exception": {
         "message": "No route matched and no fallback defined.",
-        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
         "line": 227,
         "trace": [
-            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Features\\Operate\\Boot\\Application.php(346): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Operate\\Boot\\Application.php(346): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
             "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Features\\Operate\\Boot\\Application->run()",
             "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
             "#3 {main}"
@@ -574,14 +574,14 @@
 [2026-01-07 23:35:57] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
 
 [2026-01-07 23:35:57] ❌ [ERROR] ❌ No route matched for [GET] /favicon.ico and no fallback defined. {
-    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
     "line": 227,
     "exception": {
         "message": "❌ No route matched for [GET] \/favicon.ico and no fallback defined.",
-        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
         "line": 227,
         "trace": [
-            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Features\\Operate\\Boot\\Application.php(352): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Operate\\Boot\\Application.php(352): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
             "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Features\\Operate\\Boot\\Application->run()",
             "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
             "#3 {main}"
@@ -690,14 +690,14 @@
 [2026-01-07 23:35:57] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
 
 [2026-01-07 23:35:57] ❌ [ERROR] ❌ No route matched for [GET] /favicon.ico and no fallback defined. {
-    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
     "line": 227,
     "exception": {
         "message": "❌ No route matched for [GET] \/favicon.ico and no fallback defined.",
-        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
         "line": 227,
         "trace": [
-            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Features\\Operate\\Boot\\Application.php(352): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Operate\\Boot\\Application.php(352): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
             "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Features\\Operate\\Boot\\Application->run()",
             "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
             "#3 {main}"
@@ -906,14 +906,14 @@
 [2026-01-07 23:55:58] ✅ [INFO] Booting service provider: Avax\Container\Providers\Auth\AuthenticationServiceProvider []
 
 [2026-01-07 23:55:58] ✅ [INFO] ❌ No route matched for [GET] /kiki and no fallback defined. {
-    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+    "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
     "line": 227,
     "exception": {
         "message": "❌ No route matched for [GET] \/kiki and no fallback defined.",
-        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\HTTP\\Router\\Router.php",
+        "file": "C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\HTTP\\Router\\Router.php",
         "line": 227,
         "trace": [
-            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Foundation\\Container\\Features\\Operate\\Boot\\Application.php(352): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
+            "#0 C:\\Users\\shomsy\\PhpstormProjects\\components\\Avax\\Container\\Features\\Operate\\Boot\\Application.php(352): Avax\\HTTP\\Router\\Router->resolve(Object(Avax\\HTTP\\Request\\Request))",
             "#1 C:\\Users\\shomsy\\PhpstormProjects\\components\\public\\index.php(6): Avax\\Container\\Features\\Operate\\Boot\\Application->run()",
             "#2 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('C:\\\\Users\\\\shomsy...')",
             "#3 {main}"

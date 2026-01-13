@@ -16,10 +16,10 @@ final readonly class DatabaseDropCommand
         private QueryBuilder $builder
     ) {}
 
-    public function handle(string $name) : int
+    public function handle(string $name): int
     {
         echo "\033[33mCAUTION: You are about to DROP the entire database: {$name}\033[0m\n";
-        echo "Are you sure you want to proceed? [y/N]: ";
+        echo 'Are you sure you want to proceed? [y/N]: ';
 
         $confirmation = trim(string: fgets(stream: STDIN));
         if (strtolower(string: $confirmation) !== 'y') {

@@ -16,7 +16,8 @@ In this codebase, instantiation and injection are implemented as reusable action
 
 ### For Humans: What This Means (Summary)
 
-Instantiation is “building the car”. Injection is “installing the GPS, radio, and safety systems after the car is built”.
+Instantiation is “building the car”. Injection is “installing the GPS, radio, and safety systems after the car is
+built”.
 
 ## The Main Actors You’ll Encounter
 
@@ -25,10 +26,12 @@ Instantiation is “building the car”. Injection is “installing the GPS, rad
 Common implementation points:
 
 - Instantiation: `Features/Actions/Instantiate/Instantiator.php`
-- Constructor/parameter resolution: `Features/Actions/Resolve/Resolvers/*`, `Features/Actions/Resolve/ParameterResolutionChain.php`, `Features/Actions/Resolve/TypeResolver.php`
+- Constructor/parameter resolution: `Features/Actions/Resolve/Resolvers/*`,
+  `Features/Actions/Resolve/ParameterResolutionChain.php`, `Features/Actions/Resolve/TypeResolver.php`
 - Property injection: `Features/Actions/Inject/PropertyInjector.php`
 - Dependency injection orchestration: `Features/Actions/Inject/InjectDependencies.php`
-- Invocation (methods, post-construct): `Features/Actions/Invoke/InvocationExecutor.php`, `Features/Actions/Invoke/InvokeAction.php`
+- Invocation (methods, post-construct): `Features/Actions/Invoke/InvocationExecutor.php`,
+  `Features/Actions/Invoke/InvokeAction.php`
 
 Kernel step entry points often include:
 
@@ -38,7 +41,8 @@ Kernel step entry points often include:
 
 ### For Humans: What This Means (Actors)
 
-If you want to understand “how does the container actually fill in the blanks?”, these are the classes that do the hands-on work.
+If you want to understand “how does the container actually fill in the blanks?”, these are the classes that do the
+hands-on work.
 
 ## Why the Container Separates These Phases
 
@@ -54,7 +58,8 @@ You can see this split reflected in the action folders: instantiate, inject, inv
 
 ### For Humans: What This Means (Rationale)
 
-When something fails, you don’t want “it didn’t work”. You want “it failed to pick constructor parameters” vs. “it failed to inject properties”. The phase split gives you that clarity.
+When something fails, you don’t want “it didn’t work”. You want “it failed to pick constructor parameters” vs. “it
+failed to inject properties”. The phase split gives you that clarity.
 
 ## Risks, Trade-offs & Recommended Practices
 
@@ -70,7 +75,8 @@ When something fails, you don’t want “it didn’t work”. You want “it fa
 
 ### For Humans: What This Means (Risks)
 
-Yes, it’s more “pieces”. But the pieces are simpler. That’s the point: lots of small Lego bricks instead of one giant mystery blob.
+Yes, it’s more “pieces”. But the pieces are simpler. That’s the point: lots of small Lego bricks instead of one giant
+mystery blob.
 
 ## Related Files & Jump Links
 
@@ -81,4 +87,5 @@ Yes, it’s more “pieces”. But the pieces are simpler. That’s the point: l
 
 ### For Humans: What This Means (Links)
 
-If you’re working on constructor wiring, live in the Resolve + Instantiate docs. If you’re working on property/setter wiring, live in Inject + Invoke docs.
+If you’re working on constructor wiring, live in the Resolve + Instantiate docs. If you’re working on property/setter
+wiring, live in Inject + Invoke docs.

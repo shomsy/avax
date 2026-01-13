@@ -20,8 +20,8 @@ use Avax\Exceptions\ValidationException;
  * whether the host of the URL has a DNS A record. This dual-check ensures that
  * the URL is both syntactically correct and points to an existing domain.
  *
- * @param mixed  $value    The value to be validated as an active URL.
- * @param string $property The name of the property being validated, used in the exception message.
+ * @param  mixed  $value  The value to be validated as an active URL.
+ * @param  string  $property  The name of the property being validated, used in the exception message.
  *
  * @throws \Avax\Exceptions\ValidationException if the value is not a valid or active URL.
  */
@@ -31,10 +31,10 @@ class ActiveURL
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (! filter_var(value: $value, filter: FILTER_VALIDATE_URL) || ! checkdnsrr(hostname: parse_url(url: (string) $value, component: PHP_URL_HOST), type: 'A')) {
-            throw new ValidationException(message: $property . ' must be an active URL.');
+            throw new ValidationException(message: $property.' must be an active URL.');
         }
     }
 }

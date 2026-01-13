@@ -1,20 +1,22 @@
 # 🩺 Troubleshooting Matrix
+
 >
 > **"Everything that can go wrong, will—here's how to fix it."**
 
-When the Container fails, it usually happens at a specific "Station" in the [Resolution Flow](./concepts/resolution-flow.md). Use this matrix to map your error to a solution.
+When the Container fails, it usually happens at a specific "Station" in
+the [Resolution Flow](./concepts/resolution-flow.md). Use this matrix to map your error to a solution.
 
 ---
 
 ## 🗺️ The Error Map
 
-| Exception | Stage | Most Likely Cause | ✅ How to Fix |
-| :--- | :--- | :--- | :--- |
-| `ServiceNotFoundException` | **Gatekeeper** | You asked for a class that doesn't exist or isn't autowirable. | Check the class name or [register it manually](./index.md). |
-| `RecursionException` | **Loop Detector** | Class A needs B, and B needs A. | Use **Lazy Loading** or reconsider your architecture. |
-| `ResolutionException` | **The Birth** | The constructor has a parameter that can't be resolved (e.g., an `int` without a default). | Add a default value or provide the parameter via [manual binding](./Container.md#make). |
-| `ResolutionException` | **The Wiring** | A property marked with `#[Inject]` has a type that doesn't exist. | Ensure the injected class is registered and autowired. |
-| `SecurityException` | **Gatekeeper** | A [Guard](./Guard/index.md) prevented access to this service. | Check your environment permissions or firewall rules. |
+| Exception                  | Stage             | Most Likely Cause                                                                          | ✅ How to Fix                                                                            |
+|:---------------------------|:------------------|:-------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
+| `ServiceNotFoundException` | **Gatekeeper**    | You asked for a class that doesn't exist or isn't autowirable.                             | Check the class name or [register it manually](./index.md).                             |
+| `RecursionException`       | **Loop Detector** | Class A needs B, and B needs A.                                                            | Use **Lazy Loading** or reconsider your architecture.                                   |
+| `ResolutionException`      | **The Birth**     | The constructor has a parameter that can't be resolved (e.g., an `int` without a default). | Add a default value or provide the parameter via [manual binding](./Container.md#make). |
+| `ResolutionException`      | **The Wiring**    | A property marked with `#[Inject]` has a type that doesn't exist.                          | Ensure the injected class is registered and autowired.                                  |
+| `SecurityException`        | **Gatekeeper**    | A [Guard](./Guard/index.md) prevented access to this service.                              | Check your environment permissions or firewall rules.                                   |
 
 ---
 
@@ -28,3 +30,16 @@ If the error isn't clear, use the **Black Box approach**:
 
 ---
 > **"A doctor's best tool is the X-ray; a developer's best tool is the Telemetry."** 🔭
+
+---
+
+## 🧪 PHPUnit Coverage Driver Warning
+
+Technical: PHPUnit will emit `No code coverage driver is available` when Xdebug/PCOV isn’t installed in the PHP
+runtime (Herd ships without one by default). Coverage reports will be empty until a driver is present.
+
+### For Humans: What This Means
+
+If you want coverage numbers, install Xdebug or PCOV in your PHP environment (e.g., enable Xdebug in Herd or add PCOV
+via PECL). If you don’t need coverage locally, ignore the warning or disable coverage collection in your phpunit
+command.

@@ -39,7 +39,7 @@ interface DatabaseConnection
      *
      * @return PDO The active, ready-to-work database engine.
      */
-    public function getConnection() : PDO;
+    public function getConnection(): PDO;
 
     /**
      * Check if the database is still "awake" and responsive.
@@ -50,7 +50,7 @@ interface DatabaseConnection
      *
      * @return bool True if the database is alive, false otherwise.
      */
-    public function ping() : bool;
+    public function ping(): bool;
 
     /**
      * Get the nickname of this specific connection.
@@ -61,5 +61,5 @@ interface DatabaseConnection
      *
      * @return string The technical label (name) of the connection.
      */
-    public function getName() : string;
+    public function getName(): string;
 }

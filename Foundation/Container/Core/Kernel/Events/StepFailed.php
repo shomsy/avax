@@ -16,13 +16,13 @@ use Throwable;
 final readonly class StepFailed
 {
     /**
-     * @param string      $stepClass  Class name of the step
-     * @param float       $startedAt  Start timestamp
-     * @param float       $endedAt    End timestamp
-     * @param float       $duration   Elapsed duration in seconds
-     * @param string      $serviceId  Service identifier being resolved
-     * @param Throwable   $exception  Thrown exception
-     * @param string|null $traceId    Optional trace correlation ID
+     * @param string      $stepClass Class name of the step
+     * @param float       $startedAt Start timestamp
+     * @param float       $endedAt   End timestamp
+     * @param float       $duration  Elapsed duration in seconds
+     * @param string      $serviceId Service identifier being resolved
+     * @param Throwable   $exception Thrown exception
+     * @param string|null $traceId   Optional trace correlation ID
      *
      * @see docs/Core/Kernel/Events/StepFailed.md#method-__construct
      */
@@ -32,7 +32,7 @@ final readonly class StepFailed
         public float       $endedAt,
         public float       $duration,
         public string      $serviceId,
-        public Throwable  $exception,
+        public Throwable   $exception,
         public string|null $traceId = null
     ) {}
 }

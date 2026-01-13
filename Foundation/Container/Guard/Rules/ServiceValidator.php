@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Guard\Rules;
 
 use Avax\Container\Features\Define\Store\ServiceDefinitionEntity;
@@ -79,11 +80,10 @@ use ReflectionException;
  * - Validation continues after individual failures
  * - Detailed diagnostic information for debugging
  *
- * @package Avax\Container\Guard\Rules
  * @see     ServiceDefinitionEntity For the validated service structure
  * @see     ServiceDefinitionRepository For service data access
  * @see     ServiceDependencyRepository For dependency relationship management
- * @see docs/Guard/Rules/ServiceValidator.md#quick-summary
+ * @see     docs/Guard/Rules/ServiceValidator.md#quick-summary
  */
 readonly class ServiceValidator
 {
@@ -104,6 +104,7 @@ readonly class ServiceValidator
      *
      * @param ServiceDefinitionRepository $serviceRepo    Settings for service definition access
      * @param ServiceDependencyRepository $dependencyRepo Settings for dependency relationship access
+     *
      * @see docs/Guard/Rules/ServiceValidator.md#method-__construct
      */
     public function __construct(
@@ -115,6 +116,7 @@ readonly class ServiceValidator
      * Get validation summary across all services.
      *
      * @throws \Exception
+     *
      * @see docs/Guard/Rules/ServiceValidator.md#method-getvalidationsummary
      */
     public function getValidationSummary() : array
@@ -129,7 +131,7 @@ readonly class ServiceValidator
             'total_errors'     => 0,
             'total_warnings'   => 0,
             'errors_by_rule'   => [],
-            'warnings_by_rule' => []
+            'warnings_by_rule' => [],
         ];
 
         foreach ($results as $result) {
@@ -160,6 +162,7 @@ readonly class ServiceValidator
      * Validate multiple services at once.
      *
      * @throws \Exception
+     *
      * @see docs/Guard/Rules/ServiceValidator.md#method-validateservices
      */
     public function validateServices(array $services) : array
@@ -227,7 +230,9 @@ readonly class ServiceValidator
      * @param ServiceDefinitionEntity $service The service definition to validate
      *
      * @return array Structured validation results with errors, warnings, and metadata
+     *
      * @throws \Exception When critical validation infrastructure fails
+     *
      * @see docs/Guard/Rules/ServiceValidator.md#method-validateservice
      */
     public function validateService(ServiceDefinitionEntity $service) : array
@@ -259,7 +264,7 @@ readonly class ServiceValidator
             'isValid'   => empty($errors),
             'errors'    => $errors,
             'warnings'  => $warnings,
-            'serviceId' => $service->id
+            'serviceId' => $service->id,
         ];
     }
 
@@ -286,7 +291,7 @@ readonly class ServiceValidator
                             'field'   => $property->getName(),
                             'rule'    => get_class($rule),
                             'message' => $rule->getErrorMessage(),
-                            'value'   => $value
+                            'value'   => $value,
                         ];
                     }
                 }
@@ -296,7 +301,7 @@ readonly class ServiceValidator
                 'field'   => 'reflection',
                 'rule'    => 'ReflectionException',
                 'message' => 'Could not reflect service class: ' . $e->getMessage(),
-                'value'   => get_class($service)
+                'value'   => get_class($service),
             ];
         }
 
@@ -318,7 +323,7 @@ readonly class ServiceValidator
             $errors[] = [
                 'rule'    => 'UniqueServiceId',
                 'message' => "Service ID '{$service->id}' already exists",
-                'value'   => $service->id
+                'value'   => $service->id,
             ];
         }
 
@@ -327,7 +332,7 @@ readonly class ServiceValidator
             $errors[] = [
                 'rule'    => 'LifetimeImmutability',
                 'message' => 'Service lifetime cannot be changed after creation',
-                'value'   => $service->lifetime->value
+                'value'   => $service->lifetime->value,
             ];
         }
 
@@ -336,7 +341,7 @@ readonly class ServiceValidator
             $errors[] = [
                 'rule'    => 'RequiredTags',
                 'message' => 'Services must have at least one tag for categorization',
-                'value'   => $service->tags
+                'value'   => $service->tags,
             ];
         }
 
@@ -345,7 +350,7 @@ readonly class ServiceValidator
             $errors[] = [
                 'rule'    => 'ValidEnvironment',
                 'message' => 'Environment must be one of: development, staging, production',
-                'value'   => $service->environment
+                'value'   => $service->environment,
             ];
         }
 
@@ -368,8 +373,9 @@ readonly class ServiceValidator
                 $errors[] = [
                     'rule'    => 'DependencyExists',
                     'message' => "Dependency '{$dependencyId}' does not exist",
-                    'value'   => $dependencyId
+                    'value'   => $dependencyId,
                 ];
+
                 continue;
             }
 
@@ -378,7 +384,7 @@ readonly class ServiceValidator
                 $errors[] = [
                     'rule'    => 'NoCircularDependencies',
                     'message' => "Dependency on '{$dependencyId}' would create circular reference",
-                    'value'   => $dependencyId
+                    'value'   => $dependencyId,
                 ];
             }
 
@@ -387,7 +393,7 @@ readonly class ServiceValidator
                 $errors[] = [
                     'rule'    => 'DependencyAvailability',
                     'message' => "Dependency '{$dependencyId}' not available in environment '{$service->environment}'",
-                    'value'   => $dependencyId
+                    'value'   => $dependencyId,
                 ];
             }
         }
@@ -398,8 +404,11 @@ readonly class ServiceValidator
     /**
      * Check if adding a dependency would create a circular reference.
      *
-     * @throws \Exception
-     * @throws \Exception
+     * @param string $serviceId
+     * @param string $dependencyId
+     *
+     * @return bool
+     * @throws \Throwable
      */
     private function createsCircularDependency(string $serviceId, string $dependencyId) : bool
     {
@@ -432,7 +441,7 @@ readonly class ServiceValidator
         // Check for potentially dangerous classes
         $dangerousClasses = [
             'exec', 'shell_exec', 'system', 'passthru', 'popen', 'proc_open',
-            'eval', 'create_function', 'assert', 'preg_replace'
+            'eval', 'create_function', 'assert', 'preg_replace',
         ];
 
         $className = strtolower($service->class);
@@ -441,7 +450,7 @@ readonly class ServiceValidator
                 $errors[] = [
                     'rule'    => 'SecurityPolicy',
                     'message' => "Service class contains potentially dangerous function '{$dangerous}'",
-                    'value'   => $service->class
+                    'value'   => $service->class,
                 ];
             }
         }
@@ -455,7 +464,7 @@ readonly class ServiceValidator
                         $errors[] = [
                             'rule'    => 'SensitiveDataProtection',
                             'message' => "Config contains sensitive data in key '{$key}'",
-                            'value'   => $key
+                            'value'   => $key,
                         ];
                     }
                 }
@@ -468,7 +477,10 @@ readonly class ServiceValidator
     /**
      * Validate performance implications.
      *
-     * @throws \Exception
+     * @param \Avax\Container\Features\Define\Store\ServiceDefinitionEntity $service
+     *
+     * @return array
+     * @throws \Throwable
      */
     private function validatePerformance(ServiceDefinitionEntity $service) : array
     {
@@ -480,7 +492,7 @@ readonly class ServiceValidator
             $warnings[] = [
                 'rule'    => 'PerformanceWarning',
                 'message' => "Service has high complexity score ({$complexity}), consider refactoring",
-                'value'   => $complexity
+                'value'   => $complexity,
             ];
         }
 
@@ -490,7 +502,7 @@ readonly class ServiceValidator
             $warnings[] = [
                 'rule'    => 'DependencyCount',
                 'message' => "Service has {$depCount} dependencies, consider reducing",
-                'value'   => $depCount
+                'value'   => $depCount,
             ];
         }
 
@@ -501,7 +513,7 @@ readonly class ServiceValidator
                 $warnings[] = [
                     'rule'    => 'SingletonUsage',
                     'message' => "Singleton service has {$dependents->count()} dependents, consider scoped lifetime",
-                    'value'   => $dependents->count()
+                    'value'   => $dependents->count(),
                 ];
             }
         }

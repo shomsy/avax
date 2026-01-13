@@ -9,28 +9,28 @@ At line:1 char:1
     + FullyQualifiedErrorId : NativeCommandError
  
 PHP Warning:  Undefined property: Avax\Container\Core\Kernel\Contracts\KernelCon
-text::$parameters in C:\Users\shomsy\PhpstormProjects\components\Foundation\Cont
+text::$parameters in C:\Users\shomsy\PhpstormProjects\components\Avax\Cont
 ainer\Features\Actions\Resolve\Engine.php on line 156
-Error: Resolution pipeline failed at step 7: Avax\Container\Features\Actions\Instantiate\Instantiator::build(): Argument #2 ($overrides) must be of type array, null given, called in C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Features\Actions\Resolve\Engine.php on line 156
-File: C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Core\Kernel\ResolutionPipeline.php:118
-#0 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Core\Kernel\KernelRuntime.php(59): Avax\Container\Core\Kernel\ResolutionPipeline->run()
-#1 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Core\Kernel\KernelRuntime.php(46): Avax\Container\Core\Kernel\KernelRuntime->resolveContext()
-#2 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Core\ContainerKernel.php(140): Avax\Container\Core\Kernel\KernelRuntime->get()
-#3 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Container.php(52): Avax\Container\Core\ContainerKernel->get()
-#4 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Features\Operate\Boot\Application.php(191): Avax\Container\Container->get()
-#5 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Providers\Core\LoggingServiceProvider.php(31): Avax\Container\Features\Operate\Boot\Application->get()
-#6 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Features\Actions\Resolve\Engine.php(145): Avax\Container\Providers\Core\LoggingServiceProvider->Avax\Container\Providers\Core\{closure}()
-#7 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Features\Actions\Resolve\Engine.php(117): Avax\Container\Features\Actions\Resolve\Engine->evaluateConcrete()
-#8 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Features\Actions\Resolve\Engine.php(93): Avax\Container\Features\Actions\Resolve\Engine->resolveFromBindings()
-#9 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Core\Kernel\Steps\ResolveInstanceStep.php(43): Avax\Container\Features\Actions\Resolve\Engine->resolve()
-#10 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Core\Kernel\ResolutionPipeline.php(81): Avax\Container\Core\Kernel\Steps\ResolveInstanceStep->__invoke()
-#11 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Core\Kernel\KernelRuntime.php(59): Avax\Container\Core\Kernel\ResolutionPipeline->run()
-#12 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Core\Kernel\KernelRuntime.php(46): Avax\Container\Core\Kernel\KernelRuntime->resolveContext()
-#13 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Core\ContainerKernel.php(140): Avax\Container\Core\Kernel\KernelRuntime->get()
-#14 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Container.php(52): Avax\Container\Core\ContainerKernel->get()
-#15 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Features\Operate\Boot\Application.php(167): Avax\Container\Container->get()
-#16 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Features\Operate\Boot\Application.php(350): Avax\Container\Features\Operate\Boot\Application->log()
-#17 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Features\Operate\Boot\ApplicationBuilder.php(356): Avax\Container\Features\Operate\Boot\Application->register()
-#18 C:\Users\shomsy\PhpstormProjects\components\Foundation\Container\Features\Operate\Boot\ApplicationBuilder.php(282): Avax\Container\Features\Operate\Boot\ApplicationBuilder->registerCoreProviders()
+Error: Resolution pipeline failed at step 7: Avax\Container\Features\Actions\Instantiate\Instantiator::build(): Argument #2 ($overrides) must be of type array, null given, called in C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Features\Actions\Resolve\Engine.php on line 156
+File: C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Core\Kernel\ResolutionPipeline.php:118
+#0 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Core\Kernel\KernelRuntime.php(59): Avax\Container\Core\Kernel\ResolutionPipeline->run()
+#1 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Core\Kernel\KernelRuntime.php(46): Avax\Container\Core\Kernel\KernelRuntime->resolveContext()
+#2 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Core\ContainerKernel.php(140): Avax\Container\Core\Kernel\KernelRuntime->get()
+#3 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Container.php(52): Avax\Container\Core\ContainerKernel->get()
+#4 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Features\Operate\Boot\Application.php(191): Avax\Container\Container->get()
+#5 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Providers\Core\LoggingServiceProvider.php(31): Avax\Container\Features\Operate\Boot\Application->get()
+#6 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Features\Actions\Resolve\Engine.php(145): Avax\Container\Providers\Core\LoggingServiceProvider->Avax\Container\Providers\Core\{closure}()
+#7 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Features\Actions\Resolve\Engine.php(117): Avax\Container\Features\Actions\Resolve\Engine->evaluateConcrete()
+#8 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Features\Actions\Resolve\Engine.php(93): Avax\Container\Features\Actions\Resolve\Engine->resolveFromBindings()
+#9 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Core\Kernel\Steps\ResolveInstanceStep.php(43): Avax\Container\Features\Actions\Resolve\Engine->resolve()
+#10 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Core\Kernel\ResolutionPipeline.php(81): Avax\Container\Core\Kernel\Steps\ResolveInstanceStep->__invoke()
+#11 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Core\Kernel\KernelRuntime.php(59): Avax\Container\Core\Kernel\ResolutionPipeline->run()
+#12 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Core\Kernel\KernelRuntime.php(46): Avax\Container\Core\Kernel\KernelRuntime->resolveContext()
+#13 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Core\ContainerKernel.php(140): Avax\Container\Core\Kernel\KernelRuntime->get()
+#14 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Container.php(52): Avax\Container\Core\ContainerKernel->get()
+#15 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Features\Operate\Boot\Application.php(167): Avax\Container\Container->get()
+#16 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Features\Operate\Boot\Application.php(350): Avax\Container\Features\Operate\Boot\Application->log()
+#17 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Features\Operate\Boot\ApplicationBuilder.php(356): Avax\Container\Features\Operate\Boot\Application->register()
+#18 C:\Users\shomsy\PhpstormProjects\components\Avax\Container\Features\Operate\Boot\ApplicationBuilder.php(282): Avax\Container\Features\Operate\Boot\ApplicationBuilder->registerCoreProviders()
 #19 C:\Users\shomsy\PhpstormProjects\components\debug_boot.php(8): Avax\Container\Features\Operate\Boot\ApplicationBuilder->build()
 #20 {main}

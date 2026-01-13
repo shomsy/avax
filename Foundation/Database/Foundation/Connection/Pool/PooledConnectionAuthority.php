@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\Foundation\Connection\Pool;
+namespace Avax\Database\Avax\Connection\Pool;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
-use Avax\Database\Foundation\Connection\Pool\Contracts\ConnectionPoolInterface;
+use Avax\Database\Avax\Connection\Pool\Contracts\ConnectionPoolInterface;
 use PDO;
 
 /**
@@ -45,7 +45,7 @@ use PDO;
  * if it were a real database connection, but behind the scenes, it's
  * just managing the real connection for you.
  */
-final class PooledConnectionAuthority implements DatabaseConnection, ConnectionPoolInterface
+final class PooledConnectionAuthority implements ConnectionPoolInterface, DatabaseConnection
 {
     /** @var DatabaseConnection|null The actual tool we've grabbed from the library (null if we haven't needed it yet). */
     private DatabaseConnection|null $borrowed = null;

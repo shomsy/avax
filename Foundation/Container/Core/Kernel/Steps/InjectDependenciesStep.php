@@ -14,13 +14,13 @@ use Avax\Container\Features\Actions\Inject\InjectDependencies;
  * This step performs post-instantiation dependency injection on the resolved
  * service, handling properties and methods marked for injection via attributes.
  *
- * @package Avax\Container\Core\Kernel\Steps
- * @see docs/Core/Kernel/Steps/InjectDependenciesStep.md#quick-summary
+ * @see     docs/Core/Kernel/Steps/InjectDependenciesStep.md#quick-summary
  */
 final readonly class InjectDependenciesStep implements KernelStep
 {
     /**
      * @param InjectDependencies $injector The dependency injection engine.
+     *
      * @see docs/Core/Kernel/Steps/InjectDependenciesStep.md#method-__construct
      */
     public function __construct(
@@ -31,16 +31,17 @@ final readonly class InjectDependenciesStep implements KernelStep
      * Perform property and method injection on the resolved instance.
      *
      * @param KernelContext $context The resolution context.
-     * @return void
+     *
      * @throws \ReflectionException If injection fails due to reflection errors.
+     *
      * @see docs/Core/Kernel/Steps/InjectDependenciesStep.md#method-__invoke
      */
-    public function __invoke(KernelContext $context): void
+    public function __invoke(KernelContext $context) : void
     {
         // Skip if freshly delegated to another service or already injected/cached
         if (
-            $context->getMeta('resolution', 'delegated', false) ||
-            $context->getMeta('resolution', 'cached', false)
+            $context->getMeta(namespace: 'resolution', key: 'delegated', default: false) ||
+            $context->getMeta(namespace: 'resolution', key: 'cached', default: false)
         ) {
             return;
         }
@@ -52,7 +53,7 @@ final readonly class InjectDependenciesStep implements KernelStep
 
         // Perform injection on the resolved instance, passing context to maintain chain
         $injectedInstance = $this->injector->execute(
-            target: $context->getInstance(),
+            target : $context->getInstance(),
             context: $context
         );
 
@@ -60,7 +61,7 @@ final readonly class InjectDependenciesStep implements KernelStep
         $context->overwriteWith(instance: $injectedInstance);
 
         // Add injection metadata
-        $context->setMeta('inject', 'performed', true);
-        $context->setMeta('inject', 'time', microtime(as_float: true));
+        $context->setMeta(namespace: 'inject', key: 'performed', value: true);
+        $context->setMeta(namespace: 'inject', key: 'time', value: microtime(as_float: true));
     }
 }

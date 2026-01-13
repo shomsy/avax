@@ -8,7 +8,6 @@ use Carbon\Carbon;
 use Closure;
 use Exception;
 use InvalidArgumentException;
-use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -19,8 +18,6 @@ use Ramsey\Uuid\Uuid;
  *
  * This trait enforces the implementation of `getItems()`, `setItems()`, `map()`, and `toArray()` methods
  * in the using class to manage and transform the underlying data collection.
- *
- * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait MetaInfoTrait
 {

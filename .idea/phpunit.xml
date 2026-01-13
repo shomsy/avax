@@ -5,6 +5,9 @@
       <list>
         <option value="$PROJECT_DIR$/Foundation/Container/tests" />
         <option value="$PROJECT_DIR$/tests/Feature" />
+        <option value="$PROJECT_DIR$/tests/Foundation/Container" />
+        <option value="$PROJECT_DIR$/tests/Foundation/Database" />
+        <option value="$PROJECT_DIR$/tests/Foundation/HTTP/Router" />
       </list>
     </option>
   </component>

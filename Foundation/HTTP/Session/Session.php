@@ -43,8 +43,8 @@ use Throwable;
  * Each manager is responsible for its own domain, ensuring clean
  * separation of concerns and modular architecture.
  *
- * @package Avax\HTTP\Session
  * @author  Milos
+ *
  * @version 5.0
  */
 final readonly class Session
@@ -77,8 +77,6 @@ final readonly class Session
      * @param string   $key   The session key.
      * @param mixed    $value The value to store.
      * @param int|null $ttl   Optional time-to-live in seconds.
-     *
-     * @return void
      */
     public function put(string $key, mixed $value, int|null $ttl = null) : void
     {
@@ -124,8 +122,6 @@ final readonly class Session
      * Triggers audit logging and event dispatching.
      *
      * @param string $key The session key to remove.
-     *
-     * @return void
      */
     public function forget(string $key) : void
     {
@@ -139,8 +135,6 @@ final readonly class Session
      *
      * This operation removes all keys from the session store.
      * Triggers audit logging and event dispatching.
-     *
-     * @return void
      */
     public function flush() : void
     {
@@ -250,6 +244,7 @@ final readonly class Session
      * @param PolicyInterface $policy The policy to register.
      *
      * @return self Fluent interface.
+     *
      * @throws \LogicException Always throws - policies are immutable.
      */
     public function registerPolicy(PolicyInterface $policy) : self
@@ -268,8 +263,6 @@ final readonly class Session
      * Create a snapshot of the current session state.
      *
      * @param string $name Snapshot identifier (default: 'default').
-     *
-     * @return void
      */
     public function snapshot(string $name = 'default') : void
     {
@@ -284,8 +277,6 @@ final readonly class Session
      * Restore session state from a named snapshot.
      *
      * @param string $name Snapshot identifier (default: 'default').
-     *
-     * @return void
      */
     public function restore(string $name = 'default') : void
     {
@@ -299,8 +290,6 @@ final readonly class Session
      * and commits on success or rolls back on failure.
      *
      * @param callable $callback The operation to execute.
-     *
-     * @return void
      *
      * @throws Throwable Re-throws the original exception after rollback.
      */
@@ -317,7 +306,6 @@ final readonly class Session
      * Critical security operation to prevent session fixation attacks.
      * Should be called on login, privilege elevation, etc.
      *
-     * @return void
      * @throws \Random\RandomException
      */
     public function regenerate() : void
@@ -337,8 +325,6 @@ final readonly class Session
      *
      * @param string $userId User identifier.
      * @param array  $data   Additional user data to store.
-     *
-     * @return void
      */
     public function login(string $userId, array $data = []) : void
     {
@@ -353,8 +339,6 @@ final readonly class Session
      * Securely destroys the session and clears all data.
      *
      * @param string $reason Termination reason (for audit logs).
-     *
-     * @return void
      */
     public function terminate(string $reason = 'logout') : void
     {

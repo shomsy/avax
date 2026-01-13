@@ -31,10 +31,10 @@ class Timezone
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (! in_array(needle: $value, haystack: DateTimeZone::listIdentifiers(), strict: true)) {
-            throw new ValidationException(message: $property . ' must be a valid timezone.');
+            throw new ValidationException(message: $property.' must be a valid timezone.');
         }
     }
 }

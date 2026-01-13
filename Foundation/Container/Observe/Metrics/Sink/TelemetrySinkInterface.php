@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Observe\Metrics\Sink;
 
 /**
@@ -17,7 +18,6 @@ interface TelemetrySinkInterface
      * @param float  $durationMs Resolution duration in milliseconds
      * @param string $strategy   Resolution strategy label (e.g., singleton/scoped/transient)
      *
-     * @return void
      * @see docs/Observe/Metrics/Sink/TelemetrySinkInterface.md#method-record
      */
     public function record(string $abstract, float $durationMs, string $strategy) : void;

@@ -4,36 +4,46 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Middleware;
 
-use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\ResponseFactory;
-use Closure;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Abstract base class for middleware that restricts access based on IP addresses.
+ * PSR-15 Abstract base class for middleware that restricts access based on IP addresses.
  *
  * Concrete subclasses can define specific business logic for allowable IPs,
  * such as office IPs or other access-controlled networks.
  */
-abstract class IpRestrictionMiddleware
+abstract class IpRestrictionMiddleware implements MiddlewareInterface
 {
     public function __construct(protected ResponseFactory $responseFactory) {}
 
     /**
-     * Main entry point for IP restriction middleware.
+     * PSR-15 process method: check IP restrictions before proceeding.
      *
-     * @param Request $request The incoming HTTP request.
-     * @param Closure $next    The next middleware or request handler.
+     * @param RequestInterface        $request The incoming HTTP request.
+     * @param RequestHandlerInterface $handler The next handler in the chain.
      *
-     * @return ResponseInterface A response if IP is disallowed, or proceeds to the next middleware.
+     * @return ResponseInterface A response if IP is disallowed, or proceeds to the next handler.
      */
-    public function handle(Request $request, Closure $next) : ResponseInterface
+    public function process(RequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
-        if (! $this->isAllowedIp(ipAddress: $request->getClientIp())) {
+        // Extract client IP from server parameters (PSR-7 compatible)
+        $clientIp = 'unknown';
+        if ($request instanceof ServerRequestInterface) {
+            $serverParams = $request->getServerParams();
+            $clientIp     = $serverParams['REMOTE_ADDR'] ??
+                $serverParams['HTTP_X_FORWARDED_FOR'] ??
+                $serverParams['HTTP_X_REAL_IP'] ??
+                'unknown';
+        }
+
+        if (! $this->isAllowedIp(ipAddress: $clientIp)) {
             return $this->createAccessDeniedResponse();
         }
 
-        return $next($request);
+        return $handler->handle(request: $request);
     }
 
     /**

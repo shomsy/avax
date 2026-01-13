@@ -20,9 +20,11 @@ final class DumpDebugger
      * @param mixed ...$args The variables to dump and inspect
      *
      * @return never Method terminates execution
+     *
      * @throws \RuntimeException If headers have already been sent
      *
      * @api
+     *
      * @since 8.3.0
      */
     public static function ddx(mixed ...$args) : never
@@ -76,6 +78,7 @@ final class DumpDebugger
      * @return string Complete HTML header markup with embedded styles and JavaScript
      *
      * @throws \InvalidArgumentException When a file path is empty or the line number is negative
+     *
      * @since 1.0.0
      */
     private static function renderHtmlHeader(string $file, int $line) : string

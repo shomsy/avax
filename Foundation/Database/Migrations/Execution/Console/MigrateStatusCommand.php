@@ -14,13 +14,13 @@ final readonly class MigrateStatusCommand
 {
     public function __construct(
         private MigrationRepository $repository,
-        private MigrationLoader     $loader
+        private MigrationLoader $loader
     ) {}
 
     /**
      * @throws \Throwable
      */
-    public function handle(string $path) : int
+    public function handle(string $path): int
     {
         $this->info(msg: 'Migration Status:');
         echo "\n";
@@ -34,18 +34,18 @@ final readonly class MigrateStatusCommand
             return 0;
         }
 
-        echo str_pad(string: 'Migration', length: 50) . " | Status  | Integrity\n";
-        echo str_repeat(string: '-', times: 80) . "\n";
+        echo str_pad(string: 'Migration', length: 50)." | Status  | Integrity\n";
+        echo str_repeat(string: '-', times: 80)."\n";
 
         $ranMap = array_column(array: $ran, column_key: 'checksum', index_key: 'migration');
 
         foreach ($all as $name => $migration) {
-            $isRan  = isset($ranMap[$name]);
+            $isRan = isset($ranMap[$name]);
             $status = $isRan ? "\033[32mRAN\033[0m" : "\033[33mPENDING\033[0m";
 
             $integrity = '---';
             if ($isRan) {
-                $dbChecksum   = $ranMap[$name];
+                $dbChecksum = $ranMap[$name];
                 $fileChecksum = $this->loader->getChecksum(name: $name, path: $path);
 
                 if (! $dbChecksum) {
@@ -57,7 +57,7 @@ final readonly class MigrateStatusCommand
                 }
             }
 
-            echo str_pad(string: $name, length: 50) . " | " . str_pad(string: $status, length: 15) . " | {$integrity}\n";
+            echo str_pad(string: $name, length: 50).' | '.str_pad(string: $status, length: 15)." | {$integrity}\n";
         }
 
         echo "\n";
@@ -66,7 +66,7 @@ final readonly class MigrateStatusCommand
         return 0;
     }
 
-    private function info(string $msg) : void
+    private function info(string $msg): void
     {
         echo "\033[36m{$msg}\033[0m\n";
     }

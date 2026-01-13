@@ -7,39 +7,9 @@ namespace Avax\Container\Features\Core\Contracts;
 use Avax\Container\Features\Think\Prototype\ServicePrototypeBuilder;
 
 /**
- * @package Avax\Container\Core\Contracts
- *
- * Contract for container compilation and preparation operations.
- *
- * CompilerInterface defines the capabilities for preparing and optimizing the container
- * before runtime usage. It focuses on analysis, validation, caching, and optimization
- * operations that happen during container bootstrap and compilation phases.
- *
- * WHY IT EXISTS:
- * - To provide a focused contract for container preparation operations
- * - To enable compilation of container configurations for production deployment
- * - To support analysis and validation of service definitions
- * - To facilitate caching and optimization of expensive operations
- *
- * COMPILATION PHASES:
- * 1. Analysis: Static analysis of service definitions and dependencies
- * 2. Validation: Verification of service configurations and injection points
- * 3. Optimization: Caching of analysis results and performance optimizations
- * 4. Compilation: Generation of optimized container artifacts
- *
- * COMPILATION SCENARIOS:
- * - Production deployment preparation
- * - Development-time validation
- * - CI/CD pipeline integration
- * - Startup performance optimization
- *
- * THREAD SAFETY:
- * Compilation operations should be performed before concurrent usage begins.
- * Implementations may not be thread-safe during compilation.
- *
- * @see docs/Features/Core/Contracts/CompilerInterface.md
- * @see ContainerInterface For the full container contract
- * @see ResolverInterface For service resolution operations
+ * @see     docs/Features/Core/Contracts/CompilerInterface.md
+ * @see     ContainerInterface For the full container contract
+ * @see     ResolverInterface For service resolution operations
  */
 interface CompilerInterface
 {
@@ -64,7 +34,7 @@ interface CompilerInterface
      *
      * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface If analysis fails
      */
-    public function analyzeDependenciesFor(string $class): ServicePrototypeBuilder;
+    public function analyzeDependenciesFor(string $class) : ServicePrototypeBuilder;
 
     /**
      * Validates all registered service definitions and prototypes.
@@ -84,7 +54,7 @@ interface CompilerInterface
      *
      * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface If validation fails
      */
-    public function validate(): self;
+    public function validate() : self;
 
     /**
      * Compiles and caches service prototypes for all registered services.
@@ -115,7 +85,7 @@ interface CompilerInterface
      *
      * @throws \Avax\Container\Features\Core\Exceptions\ContainerExceptionInterface If compilation fails
      */
-    public function compile(): array;
+    public function compile() : array;
 
     /**
      * Clears all cached compilation artifacts.
@@ -131,7 +101,7 @@ interface CompilerInterface
      *
      * @return self Returns $this for method chaining
      */
-    public function clearCache(): self;
+    public function clearCache() : self;
 
     /**
      * Gets compilation statistics and diagnostics.
@@ -148,5 +118,5 @@ interface CompilerInterface
      *
      * @return array Compilation statistics and diagnostic information
      */
-    public function getCompilationStats(): array;
+    public function getCompilationStats() : array;
 }

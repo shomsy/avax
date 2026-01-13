@@ -15,7 +15,7 @@ final readonly class RegisterController
 {
     public function __construct(private Register $registerAction) {}
 
-    public function register(Request $request) : ResponseInterface
+    public function register(Request $request): ResponseInterface
     {
         try {
             $data = new RegistrationDTO(data: $request->allInputs());
@@ -24,11 +24,11 @@ final readonly class RegisterController
             return response()->send(
                 data  : [
                     'status' => 'success',
-                    'user'   => [
-                        'id'       => $user->getId(),
-                        'email'    => $user->getEmail(),
+                    'user' => [
+                        'id' => $user->getId(),
+                        'email' => $user->getEmail(),
                         'username' => $user->getUsername(),
-                    ]
+                    ],
                 ],
                 status: 201
             );

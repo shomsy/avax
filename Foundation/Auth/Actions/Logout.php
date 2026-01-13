@@ -10,7 +10,7 @@ final readonly class Logout
 {
     public function __construct(private IdentityInterface $identity) {}
 
-    public function execute() : void
+    public function execute(): void
     {
         $this->identity->logout();
     }

@@ -20,6 +20,7 @@ trait SendsHttpRequestsTrait
      * @param array      $options Additional options for the request.
      *
      * @return ResponseInterface The raw HTTP response.
+     *
      * @throws \RuntimeException
      */
     public function sendRequest(

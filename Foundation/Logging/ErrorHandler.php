@@ -6,6 +6,7 @@ namespace Avax\Logging;
 
 use Avax\Exceptions\ValidationException;
 use Avax\HTTP\Response\JsonResponse;
+use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
 use ErrorException;
 use JetBrains\PhpStorm\NoReturn;
 use Psr\Log\LoggerInterface;
@@ -30,7 +31,7 @@ final readonly class ErrorHandler
     /**
      * Constructor with property promotion for dependency injection.
      *
-     * @param LoggerInterface $logger Logger for error logging.
+     * @param  LoggerInterface  $logger  Logger for error logging.
      */
     public function __construct(private LoggerInterface $logger) {}
 
@@ -52,8 +53,8 @@ final readonly class ErrorHandler
     private function registerCliSignalHandlers(): void
     {
         if (PHP_SAPI === 'cli' && function_exists(function: 'pcntl_signal')) {
-            pcntl_signal(signal: SIGTERM, handler: fn() => $this->exitGracefully(signal: 'SIGTERM'));
-            pcntl_signal(signal: SIGINT, handler: fn() => $this->exitGracefully(signal: 'SIGINT'));
+            pcntl_signal(signal: SIGTERM, handler: fn () => $this->exitGracefully(signal: 'SIGTERM'));
+            pcntl_signal(signal: SIGINT, handler: fn () => $this->exitGracefully(signal: 'SIGINT'));
         }
     }
 
@@ -77,17 +78,17 @@ final readonly class ErrorHandler
      * @throws ErrorException
      */
     public function convertErrorToException(
-        int    $severity,
+        int $severity,
         string $message,
         string $file,
-        int    $line
+        int $line
     ): never {
         throw new ErrorException(
-            message: $message,
-            code: 0,
+            message : $message,
+            code    : 0,
             severity: $severity,
             filename: $file,
-            line: $line
+            line    : $line
         );
     }
 
@@ -108,11 +109,11 @@ final readonly class ErrorHandler
 
             $this->handle(
                 throwable: new ErrorException(
-                    message: $error['message'],
-                    code: 0,
+                    message : $error['message'],
+                    code    : 0,
                     severity: $error['type'] ?? E_ERROR,
                     filename: $error['file'],
-                    line: $error['line']
+                    line    : $error['line']
                 )
             );
         }
@@ -130,7 +131,7 @@ final readonly class ErrorHandler
 
             match ($this->renderFormat()) {
                 self::RENDER_FORMAT_JSON => $this->renderJson(throwable: $throwable),
-                default                  => $this->renderIgnition(throwable: $throwable)
+                default => $this->renderIgnition(throwable: $throwable)
             };
         } catch (Throwable $e) {
             $this->logger->critical(
@@ -157,10 +158,10 @@ final readonly class ErrorHandler
             return;
         }
 
-        $level = $throwable instanceof \Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException ? 'info' : 'error';
+        $level = $throwable instanceof RouteNotFoundException ? 'info' : 'error';
 
         $this->logger->log(
-            level: $level,
+            level  : $level,
             message: $throwable->getMessage(),
             context: ['file' => $throwable->getFile(), 'line' => $throwable->getLine(), 'exception' => $throwable]
         );

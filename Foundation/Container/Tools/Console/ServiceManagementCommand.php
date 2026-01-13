@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Tools\Console;
 
 use Avax\Commands\CommandDefinitions;
@@ -166,13 +167,12 @@ use Throwable;
  * - Integration hooks for external service registries
  * - Custom command actions through extension points
  *
- * @package Avax\Container\Tools\Console
  * @see     ServiceDefinitionRepository For service persistence and retrieval operations
  * @see     ServiceDefinitionEntity For service metadata structure and validation
  * @see     ServiceLifetime For service lifetime scope definitions
  * @see     SymfonyStyle For enhanced console output and user interaction
  * @see     Arrhae For collection manipulation and data transformation utilities
- * @see docs/Tools/Console/ServiceManagementCommand.md#quick-summary
+ * @see     docs/Tools/Console/ServiceManagementCommand.md#quick-summary
  */
 #[CommandDefinitions(name: 'container:services')]
 class ServiceManagementCommand extends Command
@@ -181,6 +181,7 @@ class ServiceManagementCommand extends Command
      * @var string|null Default command name.
      */
     protected static $defaultName = 'container:services';
+
     /**
      * @var string|null Default command description.
      */
@@ -201,7 +202,6 @@ class ServiceManagementCommand extends Command
     /**
      * Configure CLI arguments and options.
      *
-     * @return void
      * @see docs/Tools/Console/ServiceManagementCommand.md#method-configure
      */
     protected function configure() : void
@@ -227,6 +227,7 @@ class ServiceManagementCommand extends Command
      * @param OutputInterface $output Output writer.
      *
      * @return int Command exit code.
+     *
      * @see docs/Tools/Console/ServiceManagementCommand.md#method-execute
      */
     protected function execute(InputInterface $input, OutputInterface $output) : int
@@ -262,9 +263,8 @@ class ServiceManagementCommand extends Command
      * @param SymfonyStyle   $io    Console style helper.
      * @param InputInterface $input Input options.
      *
-     * @return void
-     *
      * @throws \Exception
+     *
      * @see docs/Tools/Console/ServiceManagementCommand.md#method-listservices
      */
     private function listServices(SymfonyStyle $io, InputInterface $input) : void
@@ -292,7 +292,7 @@ class ServiceManagementCommand extends Command
                 count($service->dependencies),
                 implode(', ', array_slice($service->tags, 0, 3)) . (count($service->tags) > 3 ? '...' : ''),
                 $service->isActive ? 'âœ“' : 'âœ—',
-                $service->environment ?? 'all'
+                $service->environment ?? 'all',
             ];
         })->all();
 
@@ -311,9 +311,7 @@ class ServiceManagementCommand extends Command
      * @param SymfonyStyle   $io    Console style helper.
      * @param InputInterface $input Input options and arguments.
      *
-     * @return void
-     *
-     * @throws \Exception
+     * @throws \Throwable
      * @see docs/Tools/Console/ServiceManagementCommand.md#method-addservice
      */
     private function addService(SymfonyStyle $io, InputInterface $input) : void
@@ -348,7 +346,7 @@ class ServiceManagementCommand extends Command
             dependencies: $dependencies,
             environment : $environment,
             isActive    : true,
-            createdAt   : new DateTimeImmutable()
+            createdAt   : new DateTimeImmutable
         );
 
         $this->serviceRepo->saveServiceDefinition(service: $service);
@@ -361,6 +359,7 @@ class ServiceManagementCommand extends Command
      * @param string|null $value Comma-separated string.
      *
      * @return array<int, string>
+     *
      * @see docs/Tools/Console/ServiceManagementCommand.md#method-parsecommaseparated
      */
     private function parseCommaSeparated(string|null $value) : array
@@ -379,9 +378,7 @@ class ServiceManagementCommand extends Command
      * @param InputInterface $input     Input options and arguments.
      * @param string|null    $serviceId Service identifier.
      *
-     * @return void
-     *
-     * @throws \Exception
+     * @throws \Throwable
      * @see docs/Tools/Console/ServiceManagementCommand.md#method-updateservice
      */
     private function updateService(SymfonyStyle $io, InputInterface $input, string|null $serviceId) : void
@@ -443,9 +440,7 @@ class ServiceManagementCommand extends Command
      * @param SymfonyStyle $io        Console style helper.
      * @param string|null  $serviceId Service identifier.
      *
-     * @return void
-     *
-     * @throws \Exception
+     * @throws \Throwable
      * @see docs/Tools/Console/ServiceManagementCommand.md#method-removeservice
      */
     private function removeService(SymfonyStyle $io, string|null $serviceId) : void
@@ -471,7 +466,7 @@ class ServiceManagementCommand extends Command
             description : $service->description,
             isActive    : false,
             createdAt   : $service->createdAt,
-            updatedAt   : new DateTimeImmutable()
+            updatedAt   : new DateTimeImmutable
         );
 
         $this->serviceRepo->saveServiceDefinition(service: $inactive);
@@ -484,7 +479,6 @@ class ServiceManagementCommand extends Command
      * @param SymfonyStyle   $io    Console style helper.
      * @param InputInterface $input Input options and arguments.
      *
-     * @return void
      * @see docs/Tools/Console/ServiceManagementCommand.md#method-importservices
      */
     private function importServices(SymfonyStyle $io, InputInterface $input) : void
@@ -512,7 +506,7 @@ class ServiceManagementCommand extends Command
         if (! empty($results['errors'])) {
             $io->warning(message: 'Some services failed to import:');
             foreach ($results['errors'] as $error) {
-                $io->writeln(messages: "  â€¢ " . json_encode($error['data']) . ": {$error['error']}");
+                $io->writeln(messages: '  â€¢ ' . json_encode($error['data']) . ": {$error['error']}");
             }
         }
     }
@@ -523,8 +517,9 @@ class ServiceManagementCommand extends Command
      * @param SymfonyStyle   $io    Console style helper.
      * @param InputInterface $input Input options and arguments.
      *
-     * @return void
      * @throws \DateMalformedStringException
+     * @throws \ReflectionException
+     * @throws \Throwable
      * @see docs/Tools/Console/ServiceManagementCommand.md#method-exportservices
      */
     private function exportServices(SymfonyStyle $io, InputInterface $input) : void
@@ -546,7 +541,7 @@ class ServiceManagementCommand extends Command
             throw new RuntimeException(message: "Failed to write to file: {$filePath}");
         }
 
-        $io->success(message: "Exported " . count($servicesData) . " services to {$filePath}");
+        $io->success(message: 'Exported ' . count($servicesData) . " services to {$filePath}");
     }
 
     /**
@@ -556,9 +551,8 @@ class ServiceManagementCommand extends Command
      * @param string|null    $serviceId Service identifier.
      * @param InputInterface $input     Input options and arguments.
      *
-     * @return void
-     *
      * @throws \Exception
+     *
      * @see docs/Tools/Console/ServiceManagementCommand.md#method-showservice
      */
     private function showService(SymfonyStyle $io, string|null $serviceId, InputInterface $input) : void

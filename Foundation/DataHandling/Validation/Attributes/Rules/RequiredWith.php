@@ -32,7 +32,7 @@ readonly class RequiredWith
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, array $data, string $property) : void
+    public function validate(mixed $value, array $data, string $property): void
     {
         foreach ($this->fields as $field) {
             if (isset($data[$field]) && empty($value)) {

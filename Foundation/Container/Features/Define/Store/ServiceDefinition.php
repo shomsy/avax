@@ -13,8 +13,7 @@ use Avax\Container\Features\Core\Enum\ServiceLifetime;
  * its lifetime (singleton, transient, scoped), and any associated metadata including
  * tags and constructor argument overrides.
  *
- * @package Avax\Container\Features\Define\Store
- * @see docs/Features/Define/Store/ServiceDefinition.md
+ * @see     docs/Features/Define/Store/ServiceDefinition.md
  */
 class ServiceDefinition
 {
@@ -34,6 +33,7 @@ class ServiceDefinition
      * Initializes a new definition for the given abstract.
      *
      * @param string $abstract The unique identifier (class or alias) for the service.
+     *
      * @see docs/Features/Define/Store/ServiceDefinition.md#method-__construct
      */
     public function __construct(
@@ -44,15 +44,17 @@ class ServiceDefinition
      * Supports PHP's var_export for native evaluation during cache loading.
      *
      * @param array $array Raw data array.
+     *
      * @return self Hydrated instance.
+     *
      * @see docs/Features/Define/Store/ServiceDefinition.md#method-__set_state
      */
-    public static function __set_state(array $array): self
+    public static function __set_state(array $array) : self
     {
-        $definition = new self(abstract: $array['abstract']);
+        $definition            = new self(abstract: $array['abstract']);
         $definition->concrete  = $array['concrete'] ?? null;
         $definition->lifetime  = $array['lifetime'] ?? ServiceLifetime::Transient;
-        $definition->tags      = $array['tags']      ?? [];
+        $definition->tags      = $array['tags'] ?? [];
         $definition->arguments = $array['arguments'] ?? [];
 
         return $definition;

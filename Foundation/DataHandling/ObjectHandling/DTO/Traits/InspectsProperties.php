@@ -164,10 +164,10 @@ trait InspectsProperties
      *
      * Designed to optimize lookups when validating if a property contains any of several related attributes.
      *
-     * @param ReflectionProperty $property The property to inspect. Provides introspection features
-     *                                     for examining attribute metadata and existence.
-     * @param string[]           $fqns     A list of fully qualified attribute class names (FQNs) to check against.
-     *                                     Each entry should be a valid class-string.
+     * @param ReflectionProperty $property    The property to inspect. Provides introspection features
+     *                                        for examining attribute metadata and existence.
+     * @param string[]           $fqns        A list of fully qualified attribute class names (FQNs) to check against.
+     *                                        Each entry should be a valid class-string.
      *
      * @return bool True if at least one of the specified attributes is defined on the property,
      *              otherwise false.

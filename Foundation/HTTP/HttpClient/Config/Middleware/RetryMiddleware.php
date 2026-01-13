@@ -38,7 +38,6 @@ final class RetryMiddleware
                     && in_array(needle: $statusCode, haystack: $this->retryStatusCodes, strict: true)) {
                     $this->logger->info(message: '🔄 Retrying due to response status: ' . $statusCode);
 
-
                     return true;
                 }
 

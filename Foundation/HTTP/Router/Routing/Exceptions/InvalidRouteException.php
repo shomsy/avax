@@ -30,8 +30,6 @@ final class InvalidRouteException extends InvalidArgumentException
      * Creates an exception for a malformed route path.
      *
      * @param string $path The invalid route path.
-     *
-     * @return self
      */
     public static function forPath(string $path) : self
     {
@@ -48,8 +46,6 @@ final class InvalidRouteException extends InvalidArgumentException
      *
      * @param string $parameter Parameter name.
      * @param string $pattern   Invalid regex pattern.
-     *
-     * @return self
      */
     public static function forConstraint(string $parameter, string $pattern) : self
     {
@@ -62,8 +58,6 @@ final class InvalidRouteException extends InvalidArgumentException
      * Creates an exception for wildcard misuse in route patterns.
      *
      * @param string $path The full route path.
-     *
-     * @return self
      */
     public static function forInvalidWildcardUsage(string $path) : self
     {

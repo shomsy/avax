@@ -6,7 +6,7 @@ namespace Avax\Container\Core\Kernel\Steps;
 
 use Avax\Container\Core\Kernel\Contracts\KernelContext;
 use Avax\Container\Core\Kernel\Contracts\KernelStep;
-use Avax\Container\Core\Kernel\StepTelemetryCollector;
+use Avax\Container\Core\Kernel\StepTelemetryRecorder;
 
 /**
  * Collect Diagnostics Step - Final Pipeline Telemetry
@@ -15,27 +15,27 @@ use Avax\Container\Core\Kernel\StepTelemetryCollector;
  * including instance types and pipeline completion timestamps, providing
  * insights into the container's health and performance.
  *
- * @package Avax\Container\Core\Kernel\Steps
- * @see docs/Core/Kernel/Steps/CollectDiagnosticsStep.md#quick-summary
+ * @see     docs/Core/Kernel/Steps/CollectDiagnosticsStep.md#quick-summary
  */
 final readonly class CollectDiagnosticsStep implements KernelStep
 {
     /**
-     * @param StepTelemetryCollector $telemetry Collector for recording pipeline metrics.
+     * @param StepTelemetryRecorder $telemetry Collector for recording pipeline metrics.
+     *
      * @see docs/Core/Kernel/Steps/CollectDiagnosticsStep.md#method-__construct
      */
     public function __construct(
-        private StepTelemetryCollector $telemetry
+        private StepTelemetryRecorder $telemetry
     ) {}
 
     /**
      * Finalize resolution diagnostics and record pipeline completion.
      *
      * @param KernelContext $context The resolution context.
-     * @return void
+     *
      * @see docs/Core/Kernel/Steps/CollectDiagnosticsStep.md#method-__invoke
      */
-    public function __invoke(KernelContext $context): void
+    public function __invoke(KernelContext $context) : void
     {
         $traceId  = $context->traceId;
         $instance = $context->getInstance();
@@ -51,14 +51,14 @@ final readonly class CollectDiagnosticsStep implements KernelStep
         $context->setMeta(namespace: 'diagnostics', key: 'report', value: [
             'resolved'      => $context->isResolved(),
             'instance_type' => match (true) {
-                $instance === null => 'null',
+                $instance === null   => 'null',
                 is_object($instance) => $instance::class,
-                default => gettype(value: $instance)
+                default              => gettype(value: $instance)
             },
             'depth'         => $context->depth,
             'duration_ms'   => round(num: $totalTime * 1000, precision: 4),
             'steps_count'   => count(value: $stepTimings),
-            'path'          => $context->getPath()
+            'path'          => $context->getPath(),
         ]);
 
         // Detailed step breakdown
@@ -73,12 +73,14 @@ final readonly class CollectDiagnosticsStep implements KernelStep
      *
      * @param array  $stepMetrics Raw telemetry collector metrics.
      * @param string $serviceId   Current service ID to select per-service metrics.
+     *
      * @return array Normalized step timing data.
+     *
      * @see docs/Core/Kernel/Steps/CollectDiagnosticsStep.md#method-formatsteptimings
      */
-    private function formatStepTimings(array $stepMetrics, string $serviceId): array
+    private function formatStepTimings(array $stepMetrics, string $serviceId) : array
     {
-        // StepTelemetryCollector stores as $stepMetrics[$traceId][$serviceId][$stepClass]
+        // StepTelemetryRecorder stores as $stepMetrics[$traceId][$serviceId][$stepClass]
         // But getStepMetrics($traceId) returns $stepMetrics[$traceId]
         $serviceMetrics = $stepMetrics[$serviceId] ?? [];
         $formatted      = [];
@@ -89,7 +91,7 @@ final readonly class CollectDiagnosticsStep implements KernelStep
                 'status'      => $metrics['status'] ?? 'unknown',
                 'started_at'  => $metrics['started_at'] ?? 0,
                 'ended_at'    => $metrics['ended_at'] ?? 0,
-                'error'       => $metrics['error'] ?? null
+                'error'       => $metrics['error'] ?? null,
             ];
         }
 

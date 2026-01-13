@@ -34,10 +34,10 @@ interface RetryPolicyInterface
      * The primary intent behind this method is to encapsulate the logic for retrying a request,
      * taking into account specific business rules or conditions that warrant a retry.
      *
-     * @param ResponseInterface|null $response  The response object received from a request. This can be null
-     *                                          if the request failed without a response, such as network errors.
-     * @param Throwable|null         $exception The exception thrown during the request, if any. This can be null if
-     *                                          the request completed without throwing an exception.
+     * @param ResponseInterface|null $response    The response object received from a request. This can be null
+     *                                            if the request failed without a response, such as network errors.
+     * @param Throwable|null         $exception   The exception thrown during the request, if any. This can be null if
+     *                                            the request completed without throwing an exception.
      *
      * @return bool True if the request should be retried, false otherwise.
      *

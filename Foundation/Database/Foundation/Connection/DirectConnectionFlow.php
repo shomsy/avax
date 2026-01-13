@@ -34,12 +34,10 @@ final class DirectConnectionFlow
 
     /**
      * Start the setup wizard for a new database connection.
-     *
-     * @return self
      */
     public static function begin() : self
     {
-        return new self();
+        return new self;
     }
 
     /**
@@ -79,7 +77,6 @@ final class DirectConnectionFlow
     /**
      * Establish the physical connection with event dispatching.
      *
-     * @return DatabaseConnection
      * @throws Throwable
      */
     public function connect() : DatabaseConnection

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\Providers\HTTP;
 
-use Avax\Container\Features\Operate\Boot\ServiceProvider;
+use Avax\Container\Providers\ServiceProvider;
 use Avax\HTTP\Middleware\MiddlewareGroupResolver;
 use Avax\HTTP\Middleware\MiddlewarePipeline;
 use Avax\HTTP\Middleware\MiddlewareResolver;
@@ -19,7 +19,6 @@ class MiddlewareServiceProvider extends ServiceProvider
     /**
      * Register middleware pipeline and resolver services.
      *
-     * @return void
      * @see docs/Providers/HTTP/MiddlewareServiceProvider.md#method-register
      */
     public function register() : void

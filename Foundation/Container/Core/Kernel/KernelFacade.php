@@ -22,7 +22,8 @@ use InvalidArgumentException;
  * Kernel Facade - Public API Layer for Service Registration
  *
  * Provides the user-facing API for binding services, singletons, extensions, etc.
- * Separated from orchestration to keep ContainerKernel focused on runtime resolution, enabling clean separation between configuration and execution.
+ * Separated from orchestration to keep ContainerKernel focused on runtime resolution, enabling clean separation
+ * between configuration and execution.
  *
  * @see docs/Core/Kernel/KernelFacade.md#quick-summary
  */
@@ -31,23 +32,24 @@ final readonly class KernelFacade
     /**
      * Initialize the facade with its collaborators.
      *
-     * @param DefinitionStore            $definitions     Service registration store
-     * @param ScopeManager               $scopes          Lifetime management system
-     * @param ResolutionTimeline          $timeline        Resolution path tracker
-     * @param ServicePrototypeFactory     $prototypeFactory Reflection-based analyzer
-     * @param CollectMetrics|null         $metrics          Performance metrics collector
-     * @param TerminateContainer|null     $terminator       Shutdown and cleanup handler
-     * @param ContainerPolicy|null        $policy           Security and access policy
+     * @param DefinitionStore         $definitions      Service registration store
+     * @param ScopeManager            $scopes           Lifetime management system
+     * @param ResolutionTimeline      $timeline         Resolution path tracker
+     * @param ServicePrototypeFactory $prototypeFactory Reflection-based analyzer
+     * @param CollectMetrics|null     $metrics          Performance metrics collector
+     * @param TerminateContainer|null $terminator       Shutdown and cleanup handler
+     * @param ContainerPolicy|null    $policy           Security and access policy
+     *
      * @see docs/Core/Kernel/KernelFacade.md#method-__construct
      */
     public function __construct(
-        private DefinitionStore            $definitions,
-        private ScopeManager               $scopes,
-        public ResolutionTimeline          $timeline,
-        public ServicePrototypeFactory     $prototypeFactory,
-        public CollectMetrics|null         $metrics = null,
-        public TerminateContainer|null     $terminator = null,
-        public ContainerPolicy|null        $policy = null
+        private DefinitionStore        $definitions,
+        private ScopeManager           $scopes,
+        public ResolutionTimeline      $timeline,
+        public ServicePrototypeFactory $prototypeFactory,
+        public CollectMetrics|null     $metrics = null,
+        public TerminateContainer|null $terminator = null,
+        public ContainerPolicy|null    $policy = null
     ) {}
 
     /**
@@ -58,9 +60,10 @@ final readonly class KernelFacade
      * @param ServiceLifetime      $lifetime Service lifetime scope
      *
      * @return BindingBuilder Fluent binding builder for advanced configuration
+     *
      * @see docs/Core/Kernel/KernelFacade.md#method-bind
      */
-    public function bind(string $abstract, string|callable|null $concrete = null, ServiceLifetime $lifetime = ServiceLifetime::Transient): BindingBuilder
+    public function bind(string $abstract, string|callable|null $concrete = null, ServiceLifetime $lifetime = ServiceLifetime::Transient) : BindingBuilder
     {
         return $this->bindAs(abstract: $abstract, concrete: $concrete, lifetime: $lifetime);
     }
@@ -73,9 +76,10 @@ final readonly class KernelFacade
      * @param ServiceLifetime      $lifetime Service lifetime scope
      *
      * @return BindingBuilder Fluent binding builder
+     *
      * @see docs/Core/Kernel/KernelFacade.md#method-bindas
      */
-    private function bindAs(string $abstract, string|callable|null $concrete, ServiceLifetime $lifetime): BindingBuilder
+    private function bindAs(string $abstract, string|callable|null $concrete, ServiceLifetime $lifetime) : BindingBuilder
     {
         $definition           = new ServiceDefinition(abstract: $abstract);
         $definition->concrete = $concrete;
@@ -92,9 +96,10 @@ final readonly class KernelFacade
      * @param string|callable|null $concrete Concrete implementation or factory
      *
      * @return BindingBuilder Fluent binding builder for advanced configuration
+     *
      * @see docs/Core/Kernel/KernelFacade.md#method-singleton
      */
-    public function singleton(string $abstract, string|callable|null $concrete = null): BindingBuilder
+    public function singleton(string $abstract, string|callable|null $concrete = null) : BindingBuilder
     {
         return $this->bindAs(abstract: $abstract, concrete: $concrete, lifetime: ServiceLifetime::Singleton);
     }
@@ -106,9 +111,10 @@ final readonly class KernelFacade
      * @param string|callable|null $concrete Concrete implementation or factory
      *
      * @return BindingBuilder Fluent binding builder for advanced configuration
+     *
      * @see docs/Core/Kernel/KernelFacade.md#method-scoped
      */
-    public function scoped(string $abstract, string|callable|null $concrete = null): BindingBuilder
+    public function scoped(string $abstract, string|callable|null $concrete = null) : BindingBuilder
     {
         return $this->bindAs(abstract: $abstract, concrete: $concrete, lifetime: ServiceLifetime::Scoped);
     }
@@ -119,10 +125,9 @@ final readonly class KernelFacade
      * @param string   $abstract Abstract service identifier
      * @param callable $closure  Extension function that receives and returns the service instance
      *
-     * @return void
      * @see docs/Core/Kernel/KernelFacade.md#method-extend
      */
-    public function extend(string $abstract, callable $closure): void
+    public function extend(string $abstract, callable $closure) : void
     {
         $extender = $closure instanceof Closure ? $closure : $closure(...);
         $this->definitions->addExtender(abstract: $abstract, extender: $extender);
@@ -134,11 +139,11 @@ final readonly class KernelFacade
      * @param string|callable $abstract Abstract identifier or global callback
      * @param callable|null   $callback Resolving callback (required if abstract is string)
      *
-     * @return void
      * @throws InvalidArgumentException When parameters are invalid
+     *
      * @see docs/Core/Kernel/KernelFacade.md#method-resolving
      */
-    public function resolving(string|callable $abstract, callable|null $callback = null): void
+    public function resolving(string|callable $abstract, callable|null $callback = null) : void
     {
         if (! is_string($abstract)) {
             if ($callback !== null) {
@@ -169,9 +174,10 @@ final readonly class KernelFacade
      * @param string $consumer Consumer class that requires the dependency
      *
      * @return ContextBuilder Contextual binding builder for fluent configuration
+     *
      * @see docs/Core/Kernel/KernelFacade.md#method-when
      */
-    public function when(string $consumer): ContextBuilder
+    public function when(string $consumer) : ContextBuilder
     {
         return new ContextBuilder(store: $this->definitions, consumer: $consumer);
     }
@@ -182,10 +188,9 @@ final readonly class KernelFacade
      * @param string $abstract Abstract service identifier
      * @param object $instance Service instance to register
      *
-     * @return void
      * @see docs/Core/Kernel/KernelFacade.md#method-instance
      */
-    public function instance(string $abstract, object $instance): void
+    public function instance(string $abstract, object $instance) : void
     {
         $this->scopes->set(abstract: $abstract, instance: $instance);
         if (! $this->definitions->has(abstract: $abstract)) {
@@ -199,9 +204,10 @@ final readonly class KernelFacade
      * Get the definition store.
      *
      * @return DefinitionStore The definition store containing all service registrations
+     *
      * @see docs/Core/Kernel/KernelFacade.md#method-definitions
      */
-    public function definitions(): DefinitionStore
+    public function definitions() : DefinitionStore
     {
         return $this->definitions;
     }
@@ -210,9 +216,10 @@ final readonly class KernelFacade
      * Get the scope manager.
      *
      * @return ScopeManager The scope manager handling service lifetime boundaries
+     *
      * @see docs/Core/Kernel/KernelFacade.md#method-scopes
      */
-    public function scopes(): ScopeManager
+    public function scopes() : ScopeManager
     {
         return $this->scopes;
     }

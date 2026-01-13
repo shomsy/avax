@@ -27,6 +27,7 @@ final readonly class DatabaseExporter
      * @param string|null $table Optional specific table to export
      *
      * @return string Path to the exported file
+     *
      * @throws Throwable If export fails
      */
     public function exportToSql(string $path, string|null $table = null) : string
@@ -39,10 +40,10 @@ final readonly class DatabaseExporter
         }
 
         $output = "-- Avax Database Export\n";
-        $output .= "-- Generated: " . date(format: 'Y-m-d H:i:s') . "\n";
+        $output .= '-- Generated: ' . date(format: 'Y-m-d H:i:s') . "\n";
         $output .= $table ? "-- Table: {$table}\n\n" : "-- Scope: Full Database\n\n";
 
-        $tables = $table ? [['name' => $table]] : $this->builder->raw(value: "SHOW TABLES")->get();
+        $tables = $table ? [['name' => $table]] : $this->builder->raw(value: 'SHOW TABLES')->get();
 
         foreach ($tables as $tableRow) {
             $tableName = array_values(array: $tableRow)[0];

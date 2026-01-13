@@ -24,12 +24,10 @@ readonly class MigrationArrayRule
     /**
      * Validates that the value is either a PHP array or a valid JSON string representing an array.
      *
-     * @param mixed  $value
-     * @param string $property
      *
      * @throws ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if ($value === null) {
             return;
@@ -48,18 +46,17 @@ readonly class MigrationArrayRule
         }
 
         throw new ValidationException(
-            message: "{$property} must be a valid array or JSON array string. Got: " . get_debug_type(value: $value)
+            message: "{$property} must be a valid array or JSON array string. Got: ".get_debug_type(value: $value)
         );
     }
 
     /**
      * Converts value to PHP array if valid. Returns null if value is null.
      *
-     * @param mixed $value
      *
      * @return array|null
      */
-    public function apply(mixed $value) : mixed
+    public function apply(mixed $value): mixed
     {
         return $value;
     }

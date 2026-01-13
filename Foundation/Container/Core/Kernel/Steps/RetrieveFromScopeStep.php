@@ -33,13 +33,12 @@ final readonly class RetrieveFromScopeStep implements TerminalKernelStep
      *
      * @param KernelContext $context The resolution context
      *
-     * @return void
      * @see docs/Core/Kernel/Steps/RetrieveFromScopeStep.md#method-__invoke
      */
     public function __invoke(KernelContext $context) : void
     {
         // Skip for injectInto operations as they deal with existing instances
-        if ($context->getMeta('inject', 'target', false)) {
+        if ($context->getMeta(namespace: 'inject', key: 'target', default: false)) {
             return;
         }
 
@@ -47,8 +46,8 @@ final readonly class RetrieveFromScopeStep implements TerminalKernelStep
             $context->resolvedWith(instance: $this->scopeManager->get(abstract: $context->serviceId));
 
             // Mark as resolved from scope for telemetry
-            $context->setMeta('resolution', 'strategy', 'scope');
-            $context->setMeta('resolution', 'cached', true);
+            $context->setMeta(namespace: 'resolution', key: 'strategy', value: 'scope');
+            $context->setMeta(namespace: 'resolution', key: 'cached', value: true);
         }
     }
 }

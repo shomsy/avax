@@ -4,23 +4,21 @@ declare(strict_types=1);
 
 namespace Avax\Container\Features\Actions\Resolve;
 
+use Avax\Container\Core\Kernel\Contracts\KernelContext;
 use Avax\Container\Features\Actions\Resolve\Contracts\DependencyResolverInterface;
 use Avax\Container\Features\Core\Contracts\ContainerInternalInterface;
-use Avax\Container\Features\Core\Exceptions\ResolutionException;
 use Avax\Container\Features\Core\Exceptions\ServiceNotFoundException;
-use Avax\Container\Core\Kernel\Contracts\KernelContext;
 use Avax\Container\Features\Think\Model\ParameterPrototype;
 use Psr\Container\ContainerInterface;
 
 /**
  * Intelligent resolver for constructor and method dependencies.
  *
- * This component is responsible for "filling in the blanks" when a class needs 
- * to be instantiated. It analyzes the requirements of a method or constructor 
+ * This component is responsible for "filling in the blanks" when a class needs
+ * to be instantiated. It analyzes the requirements of a method or constructor
  * and attempts to satisfy them using a prioritized strategy.
  *
- * @package Avax\Container\Features\Actions\Resolve
- * @see docs/Features/Actions/Resolve/DependencyResolver.md
+ * @see     docs/Features/Actions/Resolve/DependencyResolver.md
  */
 final class DependencyResolver implements DependencyResolverInterface
 {
@@ -33,17 +31,18 @@ final class DependencyResolver implements DependencyResolverInterface
      * @param KernelContext|null             $context    The current resolution context (for loop detection).
      *
      * @return array<int, mixed> The resolved argument list, ordered correctly for invocation.
-     * @throws ServiceNotFoundException If a required dependency is missing from the container.
-     * @throws ResolutionException If a dependency exists but cannot be resolved.
      *
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      * @see docs/Features/Actions/Resolve/DependencyResolver.md#method-resolveparameters
      */
     public function resolveParameters(
-        array               $parameters,
-        array               $overrides,
-        ContainerInterface  $container,
-        ?KernelContext      $context = null
-    ): array {
+        array              $parameters,
+        array              $overrides,
+        ContainerInterface $container,
+        KernelContext|null $context = null
+    ) : array
+    {
         $resolved = [];
 
         foreach ($parameters as $parameter) {
@@ -51,7 +50,7 @@ final class DependencyResolver implements DependencyResolverInterface
                 parameter: $parameter,
                 overrides: $overrides,
                 container: $container,
-                context: $context
+                context  : $context
             );
         }
 
@@ -61,20 +60,23 @@ final class DependencyResolver implements DependencyResolverInterface
     /**
      * Resolve a single parameter prototype using the prioritized strategy.
      *
-     * @param ParameterPrototype  $parameter The requirement profile.
-     * @param array<string, mixed> $overrides  Available manual values.
-     * @param ContainerInterface  $container  The resolution source.
-     * @param KernelContext|null  $context    The current chain context.
+     * @param ParameterPrototype   $parameter The requirement profile.
+     * @param array<string, mixed> $overrides Available manual values.
+     * @param ContainerInterface   $container The resolution source.
+     * @param KernelContext|null   $context   The current chain context.
      *
      * @return mixed The resolved value.
-     * @throws ServiceNotFoundException If resolution fails and no default exists.
+     *
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     private function resolveParameter(
-        ParameterPrototype  $parameter,
-        array               $overrides,
-        ContainerInterface  $container,
-        ?KernelContext      $context
-    ): mixed {
+        ParameterPrototype $parameter,
+        array              $overrides,
+        ContainerInterface $container,
+        KernelContext|null $context
+    ) : mixed
+    {
         $name = $parameter->name;
 
         // 1. Explicit Override (Highest Priority)
@@ -113,7 +115,7 @@ final class DependencyResolver implements DependencyResolverInterface
         // 5. Final Failure: Cannot satisfy requirement
         throw new ServiceNotFoundException(
             serviceId: $parameter->type ?? 'mixed',
-            message: "Unresolvable dependency [{$name}] in resolution chain for [{$context?->serviceId}]."
+            message  : "Unresolvable dependency [{$name}] in resolution chain for [{$context?->serviceId}]."
         );
     }
 }

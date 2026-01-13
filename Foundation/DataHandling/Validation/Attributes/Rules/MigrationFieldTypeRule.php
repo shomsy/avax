@@ -23,12 +23,12 @@ readonly class MigrationFieldTypeRule
     /**
      * Validates the 'type' field value without casting.
      *
-     * @param mixed  $value    The raw or hydrated value of the property
-     * @param string $property The property name being validated
+     * @param  mixed  $value  The raw or hydrated value of the property
+     * @param  string  $property  The property name being validated
      *
      * @throws ValidationException If the value is not null or a FieldTypeEnum instance
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if ($value === null) {
             return;
@@ -36,12 +36,12 @@ readonly class MigrationFieldTypeRule
 
         if (! $value instanceof FieldTypeEnum) {
             throw new ValidationException(
-                message: "{$property} must be an instance of FieldTypeEnum or null. Got: " . get_debug_type(value: $value)
+                message: "{$property} must be an instance of FieldTypeEnum or null. Got: ".get_debug_type(value: $value)
             );
         }
     }
 
-    public function apply(mixed $value) : mixed
+    public function apply(mixed $value): mixed
     {
         return $value;
     }

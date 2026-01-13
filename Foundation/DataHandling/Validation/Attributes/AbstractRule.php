@@ -11,7 +11,7 @@ abstract class AbstractRule implements RuleValidator
     /**
      * Common error thrower.
      */
-    protected function fail(string $message, string $property) : never
+    protected function fail(string $message, string $property): never
     {
         throw new ValidationException("Validation failed on '{$property}': {$message}");
     }

@@ -18,7 +18,7 @@ final class Manifest
      *
      * @return array<string, string> Map of nicknames to class names.
      */
-    public static function getModules() : array
+    public static function getModules(): array
     {
         $potentialModules = [
             \Avax\Database\Transaction\Module::class,
@@ -30,7 +30,7 @@ final class Manifest
         foreach ($potentialModules as $class) {
             // We check if the class is actually there and if it follows our rules.
             if (class_exists(class: $class) && method_exists(object_or_class: $class, method: 'declare')) {
-                $declaration                    = $class::declare();
+                $declaration = $class::declare();
                 $registry[$declaration['name']] = $declaration['class'];
             }
         }

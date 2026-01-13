@@ -15,8 +15,6 @@ abstract class QueryBuilderEnum
      * Retrieve all defined values for the enumeration.
      *
      * -- intent: provide a programmatic way to list all valid enum cases.
-     *
-     * @return array
      */
-    abstract public static function values() : array;
+    abstract public static function values(): array;
 }

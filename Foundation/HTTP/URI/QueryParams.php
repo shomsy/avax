@@ -17,21 +17,21 @@ final class QueryParams
         }
     }
 
-    public function set(string $key, string $value) : void
+    public function set(string $key, string $value): void
     {
         if ($key === '' || $key === '0') {
-            throw new InvalidArgumentException(message: "Query parameter key cannot be empty.");
+            throw new InvalidArgumentException(message: 'Query parameter key cannot be empty.');
         }
 
         $this->params[$key] = $value;
     }
 
-    public function delete(string $key) : void
+    public function delete(string $key): void
     {
         unset($this->params[$key]);
     }
 
-    public function append(string $key, string $value) : void
+    public function append(string $key, string $value): void
     {
         if (! isset($this->params[$key])) {
             $this->params[$key] = $value;
@@ -42,12 +42,12 @@ final class QueryParams
         }
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return $this->params;
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         $query = [];
         foreach ($this->params as $key => $value) {
@@ -57,8 +57,7 @@ final class QueryParams
         return implode(separator: '&', array: $query);
     }
 
-
-    public function clear() : void
+    public function clear(): void
     {
         $this->params = [];
     }

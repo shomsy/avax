@@ -11,7 +11,7 @@ namespace Avax\HTTP\Enums;
  * Utilizing an enum class ensures all HTTP methods are handled uniformly
  * and reduces the likelihood of typos or unsupported methods being used.
  */
-enum HttpMethod : string
+enum HttpMethod: string
 {
     /**
      * HTTP method GET.
@@ -88,14 +88,13 @@ enum HttpMethod : string
     /**
      * Checks if the provided method is supported.
      *
-     * @param string $method The HTTP method to check.
-     *
+     * @param  string  $method  The HTTP method to check.
      * @return bool True if the method is supported, otherwise false.
      *
      * Rationale: Using a match expression ensures that the method
      * comparison is concise and clear, making it easy to read and maintain.
      */
-    public static function isSupported(string $method) : bool
+    public static function isSupported(string $method): bool
     {
         return match ($method) {
             self::GET->value,
@@ -107,7 +106,7 @@ enum HttpMethod : string
             self::OPTIONS->value,
             self::TRACE->value,
             self::PATCH->value => true,
-            default            => false,
+            default => false,
         };
     }
 
@@ -120,8 +119,8 @@ enum HttpMethod : string
      * making it easier to iterate over or validate against all possible HTTP methods
      * without hardcoding the values elsewhere.
      */
-    public static function getSupportedMethods() : array
+    public static function getSupportedMethods(): array
     {
-        return array_map(callback: static fn($case) => $case->value, array: self::cases());
+        return array_map(callback: static fn ($case) => $case->value, array: self::cases());
     }
 }

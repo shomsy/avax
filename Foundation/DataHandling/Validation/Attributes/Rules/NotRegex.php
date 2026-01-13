@@ -29,10 +29,10 @@ readonly class NotRegex
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (preg_match(pattern: $this->pattern, subject: (string) $value)) {
-            throw new ValidationException(message: $property . ' format is invalid.');
+            throw new ValidationException(message: $property.' format is invalid.');
         }
     }
 }

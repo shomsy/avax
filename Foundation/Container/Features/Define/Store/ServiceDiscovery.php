@@ -1,10 +1,12 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Features\Define\Store;
 
 use Avax\Container\Features\Core\Enum\ServiceLifetime;
 use Avax\DataHandling\ArrayHandling\Arrhae;
+use ReflectionClass;
 
 /**
  * Intelligent service discovery and analysis engine for the dependency injection container.
@@ -76,7 +78,7 @@ use Avax\DataHandling\ArrayHandling\Arrhae;
  * @package Avax\Container\Define\Store
  * @see     ServiceDefinitionRepository For underlying data access
  * @see     ServiceDefinitionEntity For service data structure
- * @see docs/Features/Define/Store/ServiceDiscovery.md#quick-summary
+ * @see     docs/Features/Define/Store/ServiceDiscovery.md#quick-summary
  */
 readonly class ServiceDiscovery
 {
@@ -87,170 +89,13 @@ readonly class ServiceDiscovery
      * repository, enabling all discovery and analysis operations.
      *
      * @param ServiceDefinitionRepository $repository The repository providing service data access
+     *
      * @see docs/Features/Define/Store/ServiceDiscovery.md#method-__construct
      */
     public function __construct(
         private ServiceDefinitionRepository $repository
     ) {}
 
-    /**
-     * Finds services that are eligible for caching based on their lifetime.
-     *
-     * Identifies services that can be safely cached because they have singleton
-     * or scoped lifetimes, meaning their instances can be reused across multiple
-     * resolutions within the appropriate scope boundaries.
-     *
-     * CACHEABLE LIFETIMES:
-     * - Singleton: Single shared instance for entire application
-     * - Scoped: Per-scope instance (request, session, etc.)
-     * - Transient: Not cacheable (new instance each time)
-     *
-     * USAGE FOR OPTIMIZATION:
-     * ```php
-     * // Pre-warm cache with cacheable services in production
-     * $cacheable = $discovery->findCacheableServices('production');
-     * foreach ($cacheable as $service) {
-     *     $container->get($service->id); // Force instantiation
-     * }
-     * ```
-     *
-     * @param string|null $environment Target environment, or null for all environments
-     *
-     * @return Arrhae Collection of cacheable ServiceDefinitionEntity instances
-     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-findcacheableservices
-     */
-    public function findCacheableServices(string|null $environment = null) : Arrhae
-    {
-        $services = $this->repository->findActiveServices(environment: $environment);
-
-        return $services->filter(callback: static function ($service) {
-            return $service->lifetime === ServiceLifetime::Singleton ||
-                $service->lifetime === ServiceLifetime::Scoped;
-        });
-    }
-
-    /**
-     * Finds services that implement multiple interfaces simultaneously (AND logic).
-     *
-     * Performs strict multi-interface matching where services must implement ALL
-     * specified interfaces. Useful for finding services with compound capabilities
-     * or multiple contractual obligations.
-     *
-     * MATCHING REQUIREMENTS:
-     * - Service must implement every interface in the array
-     * - Order of interfaces in array is irrelevant
-     * - Partial matches are rejected (all or nothing)
-     *
-     * USE CASES:
-     * ```php
-     * // Find services that are both loggable and serializable
-     * $services = $discovery->findServicesByInterfaces([
-     *     LoggableInterface::class,
-     *     SerializableInterface::class
-     * ]);
-     * ```
-     *
-     * @param array       $interfaces  Array of interface names that must all be implemented
-     * @param string|null $environment Environment filter, null for all environments
-     *
-     * @return Arrhae Collection of services implementing all specified interfaces
-     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-findservicesbyinterfaces
-     */
-    public function findServicesByInterfaces(array $interfaces, string|null $environment = null) : Arrhae
-    {
-        $services = $this->repository->findActiveServices(environment: $environment);
-
-        return $services->filter(callback: static function ($service) use ($interfaces) {
-            foreach ($interfaces as $interface) {
-                if (! is_subclass_of($service->class, $interface) &&
-                    ! in_array($interface, class_implements($service->class))) {
-                    return false;
-                }
-            }
-
-            return true;
-        });
-    }
-
-    /**
-     * Finds services tagged with specific capabilities (delegates to repository).
-     *
-     * Provides a semantic wrapper around tag-based service discovery, framing
-     * tags as "capabilities" for more intuitive API usage. Supports both AND
-     * and OR logical operators for flexible capability matching.
-     *
-     * CAPABILITY CONCEPT:
-     * Tags represent capabilities or characteristics that services provide,
-     * enabling discovery based on functionality rather than implementation.
-     *
-     * EXAMPLES:
-     * ```php
-     * // Find services with caching capability
-     * $caches = $discovery->findServicesWithCapabilities(['cache']);
-     *
-     * // Find services that are both cacheable AND serializable
-     * $specialized = $discovery->findServicesWithCapabilities(['cache', 'serializable'], 'AND');
-     * ```
-     *
-     * @param array  $capabilities Array of capability tags to match
-     * @param string $operator     Logical operator: 'AND' or 'OR' (default: 'AND')
-     *
-     * @return Arrhae Collection of services with the specified capabilities
-     * @throws \Exception
-     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-findserviceswithcapabilities
-     */
-    public function findServicesWithCapabilities(array $capabilities, string $operator = 'AND') : Arrhae
-    {
-        return $this->repository->findByTags(tags: $capabilities, operator: $operator);
-    }
-
-    /**
-     * Finds alternative services that could replace a given service.
-     *
-     * Discovers services that implement the same interfaces as the specified
-     * service, enabling failover scenarios, A/B testing, or service replacement
-     * without changing dependent code.
-     *
-     * ALTERNATIVE DISCOVERY:
-     * 1. Identifies all interfaces implemented by the original service
-     * 2. Finds all other services implementing those interfaces
-     * 3. Returns alternatives filtered by environment and excluding original
-     *
-     * USE CASES:
-     * - Failover service selection
-     * - Load balancing across multiple implementations
-     * - A/B testing with different service implementations
-     * - Graceful service migration
-     *
-     * @param string      $serviceId   ID of the service to find alternatives for
-     * @param string|null $environment Environment filter for alternatives
-     *
-     * @return Arrhae Collection of alternative ServiceDefinitionEntity instances
-     * @throws \Exception
-     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-findalternativeservices
-     */
-    public function findAlternativeServices(string $serviceId, string|null $environment = null) : Arrhae
-    {
-        $service = $this->repository->findById(id: $serviceId);
-        if (! $service) {
-            return Arrhae::make(items: []);
-        }
-
-        // Find all services implementing the same interfaces
-        $interfaces = class_implements($service->class) ?: [];
-        if (interface_exists($service->class)) {
-            $interfaces[] = $service->class;
-        }
-
-        $alternatives = Arrhae::make(items: []);
-        foreach ($interfaces as $interface) {
-            $implementations = $this->findServicesByInterface(interface: $interface, environment: $environment);
-            $alternatives    = $alternatives->merge(collection: $implementations);
-        }
-
-        // Remove the original service
-        return $alternatives->filter(callback: static fn($s) => $s->id !== $serviceId);
-    }
 
     /**
      * Finds all services that implement a specific interface or extend a base class.
@@ -282,166 +127,96 @@ readonly class ServiceDiscovery
      * @param string|null $environment Environment filter, null for all environments
      *
      * @return Arrhae Collection of services implementing the specified type
+     * @throws \ReflectionException
+     * @throws \Throwable
      * @see docs/Features/Define/Store/ServiceDiscovery.md#method-findservicesbyinterface
      */
     public function findServicesByInterface(string $interface, string|null $environment = null) : Arrhae
     {
-        $services = $this->repository->findActiveServices(environment: $environment);
+        $services = $this->repository->findActiveServices($environment);
 
-        return $services->filter(callback: static function ($service) use ($interface) {
+        return $services->filter(static function ($service) use ($interface) {
             return is_subclass_of($service->class, $interface) ||
                 in_array($interface, class_implements($service->class));
         });
     }
 
-    /**
-     * Generates service recommendations based on usage patterns and relationships.
-     *
-     * Analyzes the service ecosystem to provide recommendations for services that
-     * are likely related or commonly used together. This is a discovery feature:
-     * it’s meant to help you navigate a large service catalog, not to be “always correct”.
-     *
-     * RECOMMENDATION STRATEGIES:
-     * 1. Common Dependencies: services that share dependency sets
-     * 2. Similar Tags: services that share tags/capabilities
-     * 3. Same Domain: services that live in the same namespace “neighborhood”
-     *
-     * RECOMMENDATION STRUCTURE:
-     * ```php
-     * [
-     *     'common_dependencies' => ServiceDefinitionEntity[],
-     *     'similar_tags' => ServiceDefinitionEntity[],
-     *     'same_domain' => ServiceDefinitionEntity[],
-     * ]
-     * ```
-     *
-     * @param string $currentServiceId The service to generate recommendations for
-     *
-     * @return array Associative array with recommendation categories and service lists
-     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-getservicerecommendations
-     */
-    public function getServiceRecommendations(string $currentServiceId) : array
-    {
-        $service = $this->repository->findById($currentServiceId);
-        if (!$service) {
-            return [];
-        }
-
-        $recommendations = [];
-
-        // 1. Services that commonly depend on the same dependencies
-        $commonDependencies = $this->findServicesWithCommonDependencies($service);
-
-        // 2. Services with similar tags
-        $similarTagged = $this->findServicesWithSimilarTags($service);
-
-        // 3. Services in the same "domain" (by namespace)
-        $domainServices = $this->findServicesInSameDomain($service);
-
-        $recommendations['common_dependencies'] = $commonDependencies->take(5)->all();
-        $recommendations['similar_tags'] = $similarTagged->take(5)->all();
-        $recommendations['same_domain'] = $domainServices->take(5)->all();
-
-        return $recommendations;
-    }
 
     /**
-     * Performs comprehensive health analysis of the service ecosystem.
-     *
-     * Analyzes the entire service graph for potential issues, performance problems,
-     * and optimization opportunities. Provides actionable insights for maintaining
-     * a healthy, efficient service ecosystem.
-     *
-     * ANALYSIS CATEGORIES:
-     * - Circular Dependencies: Services with circular reference chains
-     * - Orphan Services: Services that are never depended upon
-     * - Complex Services: Services with high instantiation complexity
-     * - Unused Services: Services not appearing in dependency chains
-     *
-     * HEALTH SCORING:
-     * - healthy: No issues detected
-     * - attention: Minor issues present
-     * - warning: Medium severity issues
-     * - critical: High severity issues requiring immediate action
-     *
-     * RESULT STRUCTURE:
-     * ```php
-     * [
-     *     'overall_health' => 'healthy|attention|warning|critical',
-     *     'issues' => [/* issue entries */],
-     *     'suggestions' => [/* optimization suggestions */],
-     *     'stats' => [/* repository stats */],
-     * ]
-     * ```
-     *
-     * PERFORMANCE IMPACT:
-     * - Loads all services and performs complete dependency analysis
-     * - Complex algorithms: O(s^2) for cycle detection, O(s*d) for usage analysis
-     * - Consider caching results for monitoring dashboards
-     *
-     * @return array Comprehensive health analysis with issues, suggestions, and statistics
-     * @see docs/Features/Define/Store/ServiceDiscovery.md#method-analyzeservicehealth
+     * @throws \Exception
      */
-    public function analyzeServiceHealth(): array
+    public function analyzeServiceHealth() : array
     {
-        $stats = $this->repository->getServiceStats();
+        $stats              = $this->repository->getServiceStats();
         $dependencyAnalysis = $this->repository->analyzeDependencies();
 
-        $issues = [];
+        $issues      = [];
         $suggestions = [];
 
         // Check for circular dependencies
-        if (!empty($dependencyAnalysis['cycles'])) {
+        if (! empty($dependencyAnalysis['cycles'])) {
             $issues[] = [
-                'type' => 'circular_dependencies',
+                'type'     => 'circular_dependencies',
                 'severity' => 'high',
-                'message' => 'Circular dependencies detected',
-                'data' => $dependencyAnalysis['cycles']
+                'message'  => 'Circular dependencies detected',
+                'data'     => $dependencyAnalysis['cycles']
             ];
         }
 
         // Check for orphan services
-        if (!empty($dependencyAnalysis['orphans'])) {
+        if (! empty($dependencyAnalysis['orphans'])) {
             $issues[] = [
-                'type' => 'orphan_services',
+                'type'     => 'orphan_services',
                 'severity' => 'medium',
-                'message' => 'Services with no dependencies found',
-                'data' => $dependencyAnalysis['orphans']
+                'message'  => 'Services with no dependencies found',
+                'data'     => $dependencyAnalysis['orphans']
             ];
         }
 
         // Check for over-complex services
         $complexServices = Arrhae::make($dependencyAnalysis['complexity'])
-            ->filter(fn($s) => $s->getComplexityScore() > 10);
+            ->filter(static fn($s) => $s->getComplexityScore() > 10);
 
         if ($complexServices->isNotEmpty()) {
             $suggestions[] = [
-                'type' => 'complexity_reduction',
-                'message' => 'Consider breaking down complex services',
+                'type'     => 'complexity_reduction',
+                'message'  => 'Consider breaking down complex services',
                 'services' => $complexServices->pluck('id')->all()
             ];
         }
 
         // Check for unused services
-        $usage = $stats['most_used'] ?? [];
+        $usage       = $stats['most_used'] ?? [];
         $allServices = $this->repository->findAll()->pluck('id')->all();
-        $unused = array_diff($allServices, array_keys($usage));
+        $unused      = array_diff($allServices, array_keys($usage));
 
-        if (!empty($unused)) {
+        if (! empty($unused)) {
             $issues[] = [
-                'type' => 'unused_services',
+                'type'     => 'unused_services',
                 'severity' => 'low',
-                'message' => 'Potentially unused services detected',
-                'data' => array_slice($unused, 0, 10) // Limit to first 10
+                'message'  => 'Potentially unused services detected',
+                'data'     => array_slice($unused, 0, 10) // Limit to first 10
             ];
         }
 
         return [
             'overall_health' => $this->calculateHealthScore($issues),
-            'issues' => $issues,
-            'suggestions' => $suggestions,
-            'stats' => $stats
+            'issues'         => $issues,
+            'suggestions'    => $suggestions,
+            'stats'          => $stats
         ];
+    }
+
+    private function calculateHealthScore(array $issues) : string
+    {
+        $highSeverity   = count(array_filter($issues, static fn($i) => ($i['severity'] ?? 'low') === 'high'));
+        $mediumSeverity = count(array_filter($issues, static fn($i) => ($i['severity'] ?? 'low') === 'medium'));
+
+        if ($highSeverity > 0) return 'critical';
+        if ($mediumSeverity > 2) return 'warning';
+        if (count($issues) > 0) return 'attention';
+
+        return 'healthy';
     }
 
     /**
@@ -463,11 +238,12 @@ readonly class ServiceDiscovery
      * - Combine services using composite patterns
      *
      * @return Arrhae Collection of services that participate in interface conflicts
+     * @throws \Exception
      * @see docs/Features/Define/Store/ServiceDiscovery.md#method-findpotentialconflicts
      */
-    public function findPotentialConflicts(): Arrhae
+    public function findPotentialConflicts() : Arrhae
     {
-        $services = $this->repository->findAll();
+        $services  = $this->repository->findAll();
         $conflicts = [];
 
         // Group by interfaces
@@ -498,15 +274,6 @@ readonly class ServiceDiscovery
      *
      * TREE STRUCTURE:
      * ```php
-     * [
-     *     'service' => 'service.id',
-     *     'class' => 'App\\Services\\MyService',
-     *     'dependencies' => [
-     *         'dep1' => [/* subtree */],
-     *         'dep2' => [/* subtree */],
-     *     ],
-     * ]
-     * ```
      *
      * DEPTH LIMITATION:
      * - Prevents infinite recursion in circular dependencies
@@ -519,14 +286,48 @@ readonly class ServiceDiscovery
      * - Cycle detection prevents infinite loops
      *
      * @param string $serviceId Root service for tree construction
-     * @param int $maxDepth Maximum depth to traverse (default: 5)
+     * @param int    $maxDepth  Maximum depth to traverse (default: 5)
+     *
      * @return array Hierarchical dependency tree structure
+     * @throws \Exception
      * @see docs/Features/Define/Store/ServiceDiscovery.md#method-getdependencytree
      */
-    public function getDependencyTree(string $serviceId, int $maxDepth = 5): array
+    public function getDependencyTree(int $serviceId, int $maxDepth = 5) : array
     {
         return $this->buildDependencyTree($serviceId, [], 0, $maxDepth);
     }
+
+    /**
+     * @throws \Exception
+     */
+    private function buildDependencyTree(int $serviceId, array $visited, int $depth, int $maxDepth) : array
+    {
+        if ($depth >= $maxDepth || in_array($serviceId, $visited)) {
+            return [];
+        }
+
+        $service = $this->repository->findById($serviceId);
+        if (! $service) {
+            return [];
+        }
+
+        $visited[] = $serviceId;
+        $tree      = [
+            'service'      => $service->id,
+            'class'        => $service->class,
+            'dependencies' => []
+        ];
+
+        foreach ($service->dependencies as $depId) {
+            $tree['dependencies'][$depId] = $this->buildDependencyTree(
+                $depId, $visited, $depth + 1, $maxDepth
+            );
+        }
+
+        return $tree;
+    }
+
+    // Private helper methods
 
     /**
      * Performs advanced multi-criteria service search with complex filtering.
@@ -559,51 +360,47 @@ readonly class ServiceDiscovery
      * - Consider database-level filtering for production use
      *
      * @param array $filters Associative array of filter criteria
+     *
      * @return Arrhae Collection of services matching all filter criteria
+     * @throws \Exception
      * @see docs/Features/Define/Store/ServiceDiscovery.md#method-advancedsearch
      */
-    public function advancedSearch(array $filters): Arrhae
+    public function advancedSearch(array $filters) : Arrhae
     {
         $services = $this->repository->findAll();
 
         foreach ($filters as $filterType => $filterValue) {
             switch ($filterType) {
                 case 'tags':
-                    $services = $services->filter(fn($s) =>
-                        !empty(array_intersect($filterValue, $s->tags))
+                    $services = $services->filter(static fn($s) => ! empty(array_intersect($filterValue, $s->tags))
                     );
                     break;
 
                 case 'lifetime':
-                    $services = $services->filter(fn($s) =>
-                        $s->lifetime->value === $filterValue
+                    $services = $services->filter(static fn($s) => $s->lifetime->value === $filterValue
                     );
                     break;
 
                 case 'interface':
-                    $services = $services->filter(fn($s) =>
-                        is_subclass_of($s->class, $filterValue) ||
+                    $services = $services->filter(static fn($s) => is_subclass_of($s->class, $filterValue) ||
                         in_array($filterValue, class_implements($s->class))
                     );
                     break;
 
                 case 'namespace':
-                    $services = $services->filter(fn($s) =>
-                        str_starts_with($s->class, $filterValue)
+                    $services = $services->filter(static fn($s) => str_starts_with($s->class, $filterValue)
                     );
                     break;
 
                 case 'complexity_min':
                     $minComplexity = (int) $filterValue;
-                    $services = $services->filter(fn($s) =>
-                        $s->getComplexityScore() >= $minComplexity
+                    $services      = $services->filter(static fn($s) => $s->getComplexityScore() >= $minComplexity
                     );
                     break;
 
                 case 'has_dependencies':
-                    $hasDeps = (bool) $filterValue;
-                    $services = $services->filter(fn($s) =>
-                        !empty($s->dependencies) === $hasDeps
+                    $hasDeps  = (bool) $filterValue;
+                    $services = $services->filter(static fn($s) => ! empty($s->dependencies) === $hasDeps
                     );
                     break;
             }
@@ -631,13 +428,11 @@ readonly class ServiceDiscovery
      *
      * RESULT STRUCTURE:
      * ```php
-     * [
-     *     'service.id' => [
-     *         'change_lifetime' => 'scoped',
+     * [*     'service.id' => [*         'change_lifetime' => 'scoped',
      *         'add_tags' => ['logging', 'cache'],
      *         'add_dependencies' => ['dep.id'],
-     *     ],
-     * ]
+     *],
+     *]
      * ```
      *
      * IMPLEMENTATION NOTES:
@@ -646,11 +441,12 @@ readonly class ServiceDiscovery
      * - Automatic application requires careful validation
      *
      * @return array Associative array mapping service IDs to suggested changes
+     * @throws \Exception
      * @see docs/Features/Define/Store/ServiceDiscovery.md#method-suggestmigrations
      */
-    public function suggestMigrations(): array
+    public function suggestMigrations() : array
     {
-        $services = $this->repository->findAll();
+        $services    = $this->repository->findAll();
         $suggestions = [];
 
         foreach ($services as $service) {
@@ -665,18 +461,18 @@ readonly class ServiceDiscovery
             // Check for missing tags
             if (empty($service->tags)) {
                 $inferredTags = $this->inferTags($service);
-                if (!empty($inferredTags)) {
+                if (! empty($inferredTags)) {
                     $suggestion['add_tags'] = $inferredTags;
                 }
             }
 
             // Check for missing dependencies
             $missingDeps = $this->findMissingDependencies($service);
-            if (!empty($missingDeps)) {
+            if (! empty($missingDeps)) {
                 $suggestion['add_dependencies'] = $missingDeps;
             }
 
-            if (!empty($suggestion)) {
+            if (! empty($suggestion)) {
                 $suggestions[$service->id] = $suggestion;
             }
         }
@@ -684,88 +480,11 @@ readonly class ServiceDiscovery
         return $suggestions;
     }
 
-    // Private helper methods
-
-    private function findServicesWithCommonDependencies(ServiceDefinitionEntity $service): Arrhae
-    {
-        if (empty($service->dependencies)) {
-            return Arrhae::make([]);
-        }
-
-        $services = $this->repository->findAll();
-
-        return $services->filter(function($s) use ($service) {
-            if ($s->id === $service->id) return false;
-
-            $commonDeps = array_intersect($s->dependencies, $service->dependencies);
-            return count($commonDeps) >= 2; // At least 2 common dependencies
-        });
-    }
-
-    private function findServicesWithSimilarTags(ServiceDefinitionEntity $service): Arrhae
-    {
-        if (empty($service->tags)) {
-            return Arrhae::make([]);
-        }
-
-        return $this->repository->findByTags($service->tags, 'OR')
-            ->filter(fn($s) => $s->id !== $service->id);
-    }
-
-    private function findServicesInSameDomain(ServiceDefinitionEntity $service): Arrhae
-    {
-        $namespace = $this->extractNamespace($service->class);
-        $services = $this->repository->findAll();
-
-        return $services->filter(function($s) use ($namespace, $service) {
-            if ($s->id === $service->id) return false;
-            return str_starts_with($s->class, $namespace);
-        });
-    }
-
-    private function buildDependencyTree(string $serviceId, array $visited, int $depth, int $maxDepth): array
-    {
-        if ($depth >= $maxDepth || in_array($serviceId, $visited)) {
-            return [];
-        }
-
-        $service = $this->repository->findById($serviceId);
-        if (!$service) {
-            return [];
-        }
-
-        $visited[] = $serviceId;
-        $tree = [
-            'service' => $service->id,
-            'class' => $service->class,
-            'dependencies' => []
-        ];
-
-        foreach ($service->dependencies as $depId) {
-            $tree['dependencies'][$depId] = $this->buildDependencyTree(
-                $depId, $visited, $depth + 1, $maxDepth
-            );
-        }
-
-        return $tree;
-    }
-
-    private function calculateHealthScore(array $issues): string
-    {
-        $highSeverity = count(array_filter($issues, fn($i) => ($i['severity'] ?? 'low') === 'high'));
-        $mediumSeverity = count(array_filter($issues, fn($i) => ($i['severity'] ?? 'low') === 'medium'));
-
-        if ($highSeverity > 0) return 'critical';
-        if ($mediumSeverity > 2) return 'warning';
-        if (count($issues) > 0) return 'attention';
-        return 'healthy';
-    }
-
-    private function isRequestScoped(ServiceDefinitionEntity $service): bool
+    private function isRequestScoped(ServiceDefinitionEntity $service) : bool
     {
         // Simple heuristic: if class name contains 'Request', 'Controller', etc.
         $requestIndicators = ['Request', 'Controller', 'Handler', 'Middleware'];
-        $className = strtolower($service->class);
+        $className         = strtolower($service->class);
 
         foreach ($requestIndicators as $indicator) {
             if (str_contains($className, strtolower($indicator))) {
@@ -776,9 +495,9 @@ readonly class ServiceDiscovery
         return false;
     }
 
-    private function inferTags(ServiceDefinitionEntity $service): array
+    private function inferTags(ServiceDefinitionEntity $service) : array
     {
-        $tags = [];
+        $tags      = [];
         $className = strtolower($service->class);
 
         // Infer tags based on class name patterns
@@ -791,21 +510,21 @@ readonly class ServiceDiscovery
         return array_unique($tags);
     }
 
-    private function findMissingDependencies(ServiceDefinitionEntity $service): array
+    private function findMissingDependencies(ServiceDefinitionEntity $service) : array
     {
         $missing = [];
 
         // Analyze constructor for dependencies
         if (class_exists($service->class)) {
-            $reflection = new \ReflectionClass($service->class);
+            $reflection  = new ReflectionClass($service->class);
             $constructor = $reflection->getConstructor();
 
             if ($constructor) {
                 foreach ($constructor->getParameters() as $param) {
                     $type = $param->getType();
-                    if ($type && !$type->isBuiltin()) {
+                    if ($type && ! $type->isBuiltin()) {
                         $typeName = $type->getName();
-                        if (!in_array($typeName, $service->dependencies)) {
+                        if (! in_array($typeName, $service->dependencies)) {
                             $missing[] = $typeName;
                         }
                     }
@@ -816,10 +535,59 @@ readonly class ServiceDiscovery
         return $missing;
     }
 
-    private function extractNamespace(string $className): string
+    /**
+     * @throws \Exception
+     */
+    private function findServicesWithCommonDependencies(ServiceDefinitionEntity $service) : Arrhae
+    {
+        if (empty($service->dependencies)) {
+            return Arrhae::make([]);
+        }
+
+        $services = $this->repository->findAll();
+
+        return $services->filter(static function ($s) use ($service) {
+            if ($s->id === $service->id) return false;
+
+            $commonDeps = array_intersect($s->dependencies, $service->dependencies);
+
+            return count($commonDeps) >= 2; // At least 2 common dependencies
+        });
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function findServicesWithSimilarTags(ServiceDefinitionEntity $service) : Arrhae
+    {
+        if (empty($service->tags)) {
+            return Arrhae::make([]);
+        }
+
+        return $this->repository->findByTags($service->tags, 'OR')
+            ->filter(static fn($s) => $s->id !== $service->id);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function findServicesInSameDomain(ServiceDefinitionEntity $service) : Arrhae
+    {
+        $namespace = $this->extractNamespace($service->class);
+        $services  = $this->repository->findAll();
+
+        return $services->filter(static function ($s) use ($namespace, $service) {
+            if ($s->id === $service->id) return false;
+
+            return str_starts_with($s->class, $namespace);
+        });
+    }
+
+    private function extractNamespace(string $className) : string
     {
         $parts = explode('\\', $className);
         array_pop($parts); // Remove class name
+
         return implode('\\', $parts);
     }
 }

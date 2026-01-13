@@ -3,31 +3,37 @@
 ## Quick Summary
 
 - This file defines the configuration DTO for container observability and performance monitoring.
-- It exists to control how much data the container records about its own internal behavior (sampling, metrics, CPU/Memory tracking).
-- It removes the complexity of ad-hoc monitoring flags by consolidating them into a single, immutable "Dashcam" configuration.
+- It exists to control how much data the container records about its own internal behavior (sampling, metrics,
+  CPU/Memory tracking).
+- It removes the complexity of ad-hoc monitoring flags by consolidating them into a single, immutable "Dashcam"
+  configuration.
 
 ### For Humans: What This Means (Summary)
 
-This is the **Dashboard Settings** for your container's "Flight Recorder". It determines how much information you want to record: Do you want to know every single thing (Development), or just the highlights (Production)?
+This is the **Dashboard Settings** for your container's "Flight Recorder". It determines how much information you want
+to record: Do you want to know every single thing (Development), or just the highlights (Production)?
 
 ## Terminology (MANDATORY, EXPANSIVE)
 
 - **Sampling Rate**: The percentage of events that are actually recorded (0.0 to 1.0).
-  - In this file: The `$samplingRate` property.
-  - Why it matters: Recording 100% of events in a high-traffic site can slow it down. Sampling 10% gives you accurate data with almost zero overhead.
+    - In this file: The `$samplingRate` property.
+    - Why it matters: Recording 100% of events in a high-traffic site can slow it down. Sampling 10% gives you accurate
+      data with almost zero overhead.
 - **CPU Tracking**: Measuring how much "brain power" each resolution takes.
-  - In this file: The `$trackCpu` property.
-  - Why it matters: CPU tracking is expensive. You usually only turn this on when you're hunting for a "Bottleneck".
+    - In this file: The `$trackCpu` property.
+    - Why it matters: CPU tracking is expensive. You usually only turn this on when you're hunting for a "Bottleneck".
 - **Memory Tracking**: Measuring how much RAM each service uses.
-  - In this file: The `$trackMemory` property.
-  - Why it matters: Helps you find "Memory Leaks" or massive objects that shouldn't be singletons.
+    - In this file: The `$trackMemory` property.
+    - Why it matters: Helps you find "Memory Leaks" or massive objects that shouldn't be singletons.
 - **Internal Error Reporting**: Whether the container should log its own internal hiccups.
-  - In this file: The `$reportErrors` property.
-  - Why it matters: Even if your app doesn't crash, the container might be struggling internally (e.g., repeating reflections). This reports those hidden issues.
+    - In this file: The `$reportErrors` property.
+    - Why it matters: Even if your app doesn't crash, the container might be struggling internally (e.g., repeating
+      reflections). This reports those hidden issues.
 
 ### For Humans: What This Means (Terminology)
 
-These settings control the **Detail** (Sampling), **Depth** (CPU/Memory), and **Honesty** (Error Reporting) of the container's performance data.
+These settings control the **Detail** (Sampling), **Depth** (CPU/Memory), and **Honesty** (Error Reporting) of the
+container's performance data.
 
 ## Think of It
 
@@ -40,11 +46,15 @@ Think of a **Smart Thermostat** in your house:
 
 ### For Humans: What This Means (Analogy)
 
-You don't need all the data all the time. On a normal day, you just want to know the temp. When the AC breaks, you want all the sensors turned on to find the problem.
+You don't need all the data all the time. On a normal day, you just want to know the temp. When the AC breaks, you want
+all the sensors turned on to find the problem.
 
 ## Story Example
 
-Your app is suddenly running slow on Fridays. You check your logs, but they look fine. You go into `TelemetryConfig`, set the `samplingRate` to `1.0` (100%) and enable `trackCpu`. You run the app for a few minutes on Friday, and the container's metrics show you exactly which service is taking 500ms to build. You fix it, turn sampling back down to `0.1`, and the site is fast again.
+Your app is suddenly running slow on Fridays. You check your logs, but they look fine. You go into `TelemetryConfig`,
+set the `samplingRate` to `1.0` (100%) and enable `trackCpu`. You run the app for a few minutes on Friday, and the
+container's metrics show you exactly which service is taking 500ms to build. You fix it, turn sampling back down to
+`0.1`, and the site is fast again.
 
 ### For Humans: What This Means (Story)
 
@@ -64,7 +74,10 @@ If you're wondering "Why is my app slow?", this is the configuration you need to
 
 ## How It Works (Technical)
 
-`TelemetryConfig` is a simple, immutable DTO. Its most important technical feature is the `samplingRate` logic, which is used by the `MetricsCollector` to decide whether to skip a recording event. By providing `production()` and `development()` presets, we ensure that the container never accidentally "Over-Monitor" a production environment and cause its own performance degradation.
+`TelemetryConfig` is a simple, immutable DTO. Its most important technical feature is the `samplingRate` logic, which is
+used by the `MetricsCollector` to decide whether to skip a recording event. By providing `production()` and
+`development()` presets, we ensure that the container never accidentally "Over-Monitor" a production environment and
+cause its own performance degradation.
 
 ### For Humans: What This Means (Technical)
 
@@ -139,7 +152,8 @@ The bridge between your text-based configuration files and the container's inter
 
 ### For Humans: What This Means (Risks)
 
-Don't leave "X-Ray Mode" (Development) on in production. It’s like driving with your high-beams on in a rainstorm—it’s too much information and it might cause problems.
+Don't leave "X-Ray Mode" (Development) on in production. It’s like driving with your high-beams on in a rainstorm—it’s
+too much information and it might cause problems.
 
 ## Related Files & Folders
 

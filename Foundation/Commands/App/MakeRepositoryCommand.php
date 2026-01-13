@@ -12,16 +12,16 @@ final readonly class MakeRepositoryCommand
 {
     public function __construct(
         private RepositoryGenerator $repositoryGenerator,
-        private LoggerInterface     $logger
+        private LoggerInterface $logger
     ) {}
 
-    public function execute(array $arguments) : void
+    public function execute(array $arguments): void
     {
-        $name   = $arguments['name'] ?? null;
+        $name = $arguments['name'] ?? null;
         $entity = $arguments['entity'] ?? null;
 
         if (empty($name) || empty($entity)) {
-            $this->logger->error(message: "Settings name and entity are required.");
+            $this->logger->error(message: 'Settings name and entity are required.');
             echo "Error: Settings name and entity are required.\n";
 
             return;
@@ -37,7 +37,7 @@ final readonly class MakeRepositoryCommand
                 )
             );
         } catch (Throwable $throwable) {
-            $this->logger->error(message: 'Error creating repository: ' . $throwable->getMessage());
+            $this->logger->error(message: 'Error creating repository: '.$throwable->getMessage());
         }
     }
 }

@@ -13,10 +13,7 @@ interface RouteStage
     /**
      * Executes logic before the next pipeline stage.
      *
-     * @param Request                             $request
      * @param Closure(Request): ResponseInterface $next
-     *
-     * @return ResponseInterface
      */
     public function handle(Request $request, Closure $next) : ResponseInterface;
 }

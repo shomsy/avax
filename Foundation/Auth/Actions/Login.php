@@ -17,7 +17,7 @@ final readonly class Login
     /**
      * @throws AuthFailed
      */
-    public function execute(#[SensitiveParameter] Credentials $credentials) : UserInterface
+    public function execute(#[SensitiveParameter] Credentials $credentials): UserInterface
     {
         if (! $this->identity->attempt(credentials: $credentials)) {
             throw new AuthFailed(message: 'Invalid credentials provided.');

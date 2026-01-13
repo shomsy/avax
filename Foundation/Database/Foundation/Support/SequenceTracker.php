@@ -37,7 +37,7 @@ final class SequenceTracker
      *
      * @return int The next number in the chain.
      */
-    public static function next() : int
+    public static function next(): int
     {
         return ++self::$counter;
     }

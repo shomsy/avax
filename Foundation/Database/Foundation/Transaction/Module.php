@@ -43,18 +43,18 @@ use Avax\Database\Transaction\Contracts\TransactionManagerInterface;
 final readonly class Module implements LifecycleInterface
 {
     /**
-     * @param Container $container The "Toolbox" where we store the transaction recipes.
+     * @param  Container  $container  The "Toolbox" where we store the transaction recipes.
      */
     public function __construct(private Container $container) {}
 
     /**
      * Provide the "ID Card" (Metadata) for this feature.
      */
-    public static function declare() : array
+    public static function declare(): array
     {
         return [
-            'name'  => 'transaction',
-            'class' => self::class
+            'name' => 'transaction',
+            'class' => self::class,
         ];
     }
 
@@ -66,7 +66,7 @@ final readonly class Module implements LifecycleInterface
      * create a new `Transaction` object and link it to the active
      * database connection."
      */
-    public function register() : void
+    public function register(): void
     {
         $this->container->singleton(abstract: TransactionManagerInterface::class, concrete: static function ($c) {
             return Transaction::on(connection: $c->get(id: DatabaseConnection::class));
@@ -76,7 +76,7 @@ final readonly class Module implements LifecycleInterface
     /**
      * Optional "Wake up" logic.
      */
-    public function boot() : void
+    public function boot(): void
     {
         // No additional boot logic required for transactions.
     }
@@ -84,7 +84,7 @@ final readonly class Module implements LifecycleInterface
     /**
      * Optional "Cleanup" logic.
      */
-    public function shutdown() : void
+    public function shutdown(): void
     {
         // Internal clean-up logic if required.
     }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Features;
@@ -15,74 +16,74 @@ final class Flash implements FeatureInterface
      */
     private array $data = [];
 
-    public function boot() : void {}
+    public function boot(): void {}
 
-    public function terminate() : void
+    public function terminate(): void
     {
         $this->flush();
     }
 
-    public function flush() : void
+    public function flush(): void
     {
         $this->data = [];
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return 'flash';
     }
 
-    public function isEnabled() : bool
+    public function isEnabled(): bool
     {
         return true;
     }
 
-    public function get(string $key, mixed $default = null) : mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         return $this->data[$key] ?? $default;
     }
 
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         return array_key_exists($key, $this->data);
     }
 
-    public function forget(string $key) : void
+    public function forget(string $key): void
     {
         unset($this->data[$key]);
     }
 
-    public function all() : array
+    public function all(): array
     {
         return $this->data;
     }
 
-    public function success(string $message) : void
+    public function success(string $message): void
     {
         $this->put(key: 'success', value: $message);
     }
 
-    public function put(string $key, mixed $value) : void
+    public function put(string $key, mixed $value): void
     {
         $this->data[$key] = $value;
     }
 
-    public function error(string $message) : void
+    public function error(string $message): void
     {
         $this->put(key: 'error', value: $message);
     }
 
-    public function info(string $message) : void
+    public function info(string $message): void
     {
         $this->put(key: 'info', value: $message);
     }
 
-    public function warning(string $message) : void
+    public function warning(string $message): void
     {
         $this->put(key: 'warning', value: $message);
     }
 
-    public function keep(string $key) : void {}
+    public function keep(string $key): void {}
 
-    public function reflash() : void {}
+    public function reflash(): void {}
 }

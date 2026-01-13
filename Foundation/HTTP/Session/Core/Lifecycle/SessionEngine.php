@@ -38,8 +38,6 @@ use Throwable;
  *  - Integrates PSR-3 observability features (Audit, Metrics, etc.)
  *
  * 💬 Think of it as the “session OS kernel” — everything passes through it.
- *
- * @package Avax\HTTP\Session\Core
  */
 final readonly class SessionEngine
 {
@@ -250,8 +248,6 @@ final readonly class SessionEngine
      *
      * @param string $userId User identifier (username, email, or UUID).
      * @param array  $data   Additional user data to store in session.
-     *
-     * @return void
      */
     public function login(string $userId, array $data = []) : void
     {
@@ -281,7 +277,7 @@ final readonly class SessionEngine
             metadata : [
                 'ip'         => $clientIp,
                 'user_agent' => $userAgent,
-                'login_time' => time()
+                'login_time' => time(),
             ]
         );
 
@@ -291,7 +287,7 @@ final readonly class SessionEngine
             data : [
                 'user_id'   => $userId,
                 'timestamp' => time(),
-                'ip'        => $clientIp
+                'ip'        => $clientIp,
             ]
         );
 
@@ -334,7 +330,7 @@ final readonly class SessionEngine
             'last_activity' => time(),
             'created_at'    => $this->store->get(key: '_created_at', default: time()),
             'user_id'       => $userId ?? $this->store->get(key: 'user_id'),
-            '_client_ip'    => $this->store->get(key: 'ip_address')
+            '_client_ip'    => $this->store->get(key: 'ip_address'),
         ];
     }
 
@@ -405,8 +401,6 @@ final readonly class SessionEngine
      *
      * Critical security operation to prevent session fixation attacks.
      * Uses SessionIdProvider for proper ID regeneration.
-     *
-     * @return void
      */
     public function regenerate(string|null $userId = null) : void
     {
@@ -510,9 +504,6 @@ final readonly class SessionEngine
      * - 'concurrent' - Concurrent login limit exceeded
      *
      * @param string|null $reason Termination reason for audit purposes.
-     * @param string|null $userId
-     *
-     * @return void
      */
     public function terminate(string|null $reason = null, string|null $userId = null) : void
     {
@@ -533,7 +524,7 @@ final readonly class SessionEngine
                 'user_id'          => $userId,
                 'reason'           => $reason,
                 'timestamp'        => time(),
-                'session_duration' => time() - ($this->get(key: 'logged_in_at') ?? time())
+                'session_duration' => time() - ($this->get(key: 'logged_in_at') ?? time()),
             ]
         );
 

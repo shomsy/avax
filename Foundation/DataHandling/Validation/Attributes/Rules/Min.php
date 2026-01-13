@@ -25,7 +25,6 @@ class Min
 
     private const string ERROR_INVALID = 'Invalid value type for "%s". Expected a numeric, string, or countable value, but got "%s".';
 
-
     /**
      * Constructor for the Min attribute.
      *

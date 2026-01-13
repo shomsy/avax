@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Core\Kernel\Contracts;
 
 use Avax\Container\Core\Kernel\Events\StepFailed;
@@ -24,10 +25,10 @@ interface StepTelemetry
      * Useful for timing, logging, or tracing step initiation.
      *
      * @param StepStarted $event The step started event with context
-     * @return void
+     *
      * @see docs/Core/Kernel/Contracts/StepTelemetry.md#method-onstepstarted
      */
-    public function onStepStarted(StepStarted $event): void;
+    public function onStepStarted(StepStarted $event) : void;
 
     /**
      * Handle step succeeded event.
@@ -36,10 +37,10 @@ interface StepTelemetry
      * Useful for metrics collection, success logging, or performance tracking.
      *
      * @param StepSucceeded $event The step succeeded event with results
-     * @return void
+     *
      * @see docs/Core/Kernel/Contracts/StepTelemetry.md#method-onstepsucceeded
      */
-    public function onStepSucceeded(StepSucceeded $event): void;
+    public function onStepSucceeded(StepSucceeded $event) : void;
 
     /**
      * Handle step failed event.
@@ -48,8 +49,8 @@ interface StepTelemetry
      * Critical for error tracking, alerting, and debugging failed resolutions.
      *
      * @param StepFailed $event The step failed event with error details
-     * @return void
+     *
      * @see docs/Core/Kernel/Contracts/StepTelemetry.md#method-onstepfailed
      */
-    public function onStepFailed(StepFailed $event): void;
+    public function onStepFailed(StepFailed $event) : void;
 }

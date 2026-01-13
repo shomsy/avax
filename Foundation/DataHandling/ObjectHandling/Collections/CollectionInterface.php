@@ -16,7 +16,7 @@ use JsonSerializable;
  * and JsonSerializable. This ensures a standardized way to manipulate
  * collections across the application.
  */
-interface CollectionInterface extends Countable, ArrayAccess, IteratorAggregate, JsonSerializable
+interface CollectionInterface extends ArrayAccess, Countable, IteratorAggregate, JsonSerializable
 {
     /**
      * Retrieve all items in the collection.

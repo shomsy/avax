@@ -17,7 +17,6 @@ use Throwable;
  */
 final class QueryOrchestrator
 {
-    /** @var bool */
     private bool $isPretending = false;
 
     /**
@@ -82,7 +81,7 @@ final class QueryOrchestrator
     public function transaction(callable $callback) : mixed
     {
         if (! $this->transactionManager) {
-            throw new RuntimeException(message: "Transaction manager not available in Orchestrator.");
+            throw new RuntimeException(message: 'Transaction manager not available in Orchestrator.');
         }
 
         return $this->transactionManager->transaction(callback: function () use ($callback) {

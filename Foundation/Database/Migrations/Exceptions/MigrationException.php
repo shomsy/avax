@@ -38,8 +38,6 @@ final class MigrationException extends DatabaseException
      * Retrieve the problematic migration's class name.
      *
      * -- intent: identify the broken migration script.
-     *
-     * @return string
      */
     public function getMigrationClass() : string
     {
@@ -50,13 +48,9 @@ final class MigrationException extends DatabaseException
      * Retrieve the SQL statement that caused the structural failure.
      *
      * -- intent: facilitate manual correction of the schema.
-     *
-     * @return string|null
      */
     public function getSql() : string|null
     {
         return $this->sql;
     }
 }
-
-

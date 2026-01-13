@@ -15,15 +15,11 @@ class Required
 {
     /**
      * Path within the object to validate (e.g., 'schema.fields')
-     *
-     * @var string|null
      */
     private string|null $path;
 
     /**
      * Custom validation error message.
-     *
-     * @var string|null
      */
     private string|null $message;
 

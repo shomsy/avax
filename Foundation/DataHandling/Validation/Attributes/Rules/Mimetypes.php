@@ -27,14 +27,14 @@ readonly class Mimetypes
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
-        $finfo    = new finfo(flags: FILEINFO_MIME_TYPE);
+        $finfo = new finfo(flags: FILEINFO_MIME_TYPE);
         $mimeType = $finfo->file(filename: $value);
 
         if (! in_array(needle: $mimeType, haystack: $this->mimetypes, strict: true)) {
             throw new ValidationException(
-                message: $property . ' must be a file of type: ' . implode(
+                message: $property.' must be a file of type: '.implode(
                     separator: ', ',
                     array    : $this->mimetypes,
                 ),

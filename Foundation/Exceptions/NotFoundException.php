@@ -11,8 +11,6 @@ use Exception;
  *
  * A custom exception class used to indicate that a requested resource could not be found.
  * It extends the built-in Exceptions class and provides a default message and HTTP 404 code.
- *
- * @package Avax\Exceptions
  */
 class NotFoundException extends Exception
 {

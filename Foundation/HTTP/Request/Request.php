@@ -36,8 +36,8 @@ use Throwable;
 class Request extends AbsoluteServerRequest implements ServerRequestInterface
 {
     use InputManagementTrait;
-    use SessionManagementTrait;
     use JwtTrait;
+    use SessionManagementTrait;
 
     /**
      * The session instance for the request, defaults to a NullSession if no session is provided.
@@ -91,8 +91,7 @@ class Request extends AbsoluteServerRequest implements ServerRequestInterface
         );
 
         // Default to NullSession to avoid null-checks for session management.
-        $this->session = $session ?? new NullSession();
-
+        $this->session = $session ?? new NullSession;
 
         // Wrap uploaded files into a ParameterBag for easier management and access.
         $this->files = new ParameterBag(parameters: $uploadedFiles);
@@ -112,7 +111,7 @@ class Request extends AbsoluteServerRequest implements ServerRequestInterface
     public static function createFromGlobals() : self
     {
         try {
-            // Build the URI from the global variables ($_SERVER in this case). 
+            // Build the URI from the global variables ($_SERVER in this case).
             $uri     = self::buildUriFromGlobals();
             $session = null;
             try {
@@ -132,7 +131,7 @@ class Request extends AbsoluteServerRequest implements ServerRequestInterface
             } catch (Throwable $e) {
                 $session = null;
             }
-            $session ??= new NullSession();
+            $session ??= new NullSession;
 
             return new self(
                 session      : $session, // Use container session or fallback.
@@ -147,7 +146,7 @@ class Request extends AbsoluteServerRequest implements ServerRequestInterface
         } catch (Throwable $throwable) {
             // Catch unexpected exceptions during construction and wrap them in a runtime exception.
             throw new RuntimeException(
-                message : "Failed to create Request from globals.",
+                message : 'Failed to create Request from globals.',
                 code    : 0,
                 previous: $throwable
             );

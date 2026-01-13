@@ -15,8 +15,8 @@ use Avax\Exceptions\ValidationException;
 /**
  * Validates that the given value is a proper IPv6 address. If not, it throws a ValidationException.
  *
- * @param mixed  $value    The value to be validated as an IPv6 address.
- * @param string $property The name of the property being validated.
+ * @param  mixed  $value  The value to be validated as an IPv6 address.
+ * @param  string  $property  The name of the property being validated.
  *
  * @throws \Avax\Exceptions\ValidationException If the value is not a valid IPv6 address.
  *
@@ -29,10 +29,10 @@ class IPv6
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (! filter_var(value: $value, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV6)) {
-            throw new ValidationException(message: $property . ' must be a valid IPv6 address.');
+            throw new ValidationException(message: $property.' must be a valid IPv6 address.');
         }
     }
 }

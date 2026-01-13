@@ -2,7 +2,20 @@
   "autoload": {
     "psr-4": {
       "Avax\\": "Foundation/"
-    }
+    },
+    "files": [
+      "Foundation/Helpers/helpers.php",
+      "Foundation/Text/functions.php",
+      "Foundation/HTTP/Router/functions.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Avax\\\\Tests\\\\": "tests/"
+    },
+    "files": [
+      "tests/TestCase.php"
+    ]
   },
   "require-dev": {
     "nunomaduro/phpinsights": "^2.11",

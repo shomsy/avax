@@ -21,8 +21,8 @@ interface KernelStep
      * instances, metadata, or error information.
      *
      * @param KernelContext $context The resolution context to process
-     * @return void
+     *
      * @see docs/Core/Kernel/Contracts/KernelStep.md#method-__invoke
      */
-    public function __invoke(KernelContext $context): void;
+    public function __invoke(KernelContext $context) : void;
 }

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Observe\Metrics;
 
 use Avax\Container\Features\Operate\Config\TelemetryConfig;
@@ -108,26 +109,21 @@ use Throwable;
  * - MetricsCollector interface for polymorphism
  * - External monitoring systems via telemetry export
  *
- * @package Avax\Container\Observe\Metrics
  * @see     MetricsCollector Interface for metrics collection contract
  * @see     TelemetryConfig Configuration for telemetry behavior
  * @see     LoggerFactory PSR-3 compliant logging factory
  * @see     ErrorLogger Structured error logging capabilities
- * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#quick-summary
+ * @see     docs/Observe/Metrics/EnhancedMetricsCollector.md#quick-summary
  */
 class EnhancedMetricsCollector implements MetricsCollector
 {
     /**
      * PSR-3 compliant logger for structured metrics logging.
-     *
-     * @var ErrorLogger
      */
     private ErrorLogger $logger;
 
     /**
      * Raw metrics data storage for custom metrics.
-     *
-     * @var array
      */
     private array $metrics = [];
 
@@ -177,6 +173,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      *
      * @param LoggerFactory   $loggerFactory PSR-3 logger factory for structured logging
      * @param TelemetryConfig $config        Telemetry configuration for collection behavior
+     *
      * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-__construct
      */
     public function __construct(
@@ -235,7 +232,6 @@ class EnhancedMetricsCollector implements MetricsCollector
      *
      * @param array $data Resolution event data with service details and timing
      *
-     * @return void
      * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-recordresolution
      */
     public function recordResolution(array $data) : void
@@ -261,7 +257,7 @@ class EnhancedMetricsCollector implements MetricsCollector
             'strategy'    => $strategy,
             'timestamp'   => $timestamp,
             'memory_peak' => memory_get_peak_usage(true),
-            'has_error'   => false
+            'has_error'   => false,
         ];
 
         // Log to structured logger
@@ -270,7 +266,7 @@ class EnhancedMetricsCollector implements MetricsCollector
             'duration_ms' => round($duration * 1000, 2),
             'strategy'    => $strategy,
             'memory_mb'   => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
-            'timestamp'   => $timestamp
+            'timestamp'   => $timestamp,
         ]);
 
         // Keep only recent metrics in memory
@@ -298,7 +294,6 @@ class EnhancedMetricsCollector implements MetricsCollector
      * @param string    $serviceId Service identifier that failed to resolve
      * @param Throwable $error     The error/exception that occurred
      *
-     * @return void
      * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-recorderror
      */
     public function recordError(string $serviceId, Throwable $error) : void
@@ -308,14 +303,14 @@ class EnhancedMetricsCollector implements MetricsCollector
             'error_type' => get_class($error),
             'message'    => $error->getMessage(),
             'timestamp'  => microtime(true),
-            'trace'      => $this->config->includeStackTraces ? $error->getTraceAsString() : null
+            'trace'      => $this->config->includeStackTraces ? $error->getTraceAsString() : null,
         ];
 
         $this->logger->error(message: 'Service resolution failed', context: [
             'service'    => $serviceId,
             'error_type' => get_class($error),
             'message'    => $error->getMessage(),
-            'trace'      => $this->config->includeStackTraces ? $error->getTraceAsString() : null
+            'trace'      => $this->config->includeStackTraces ? $error->getTraceAsString() : null,
         ]);
 
         // Keep only recent errors
@@ -327,7 +322,6 @@ class EnhancedMetricsCollector implements MetricsCollector
     /**
      * Clears all collected metrics from memory.
      *
-     * @return void
      * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-reset
      */
     public function reset() : void
@@ -342,7 +336,6 @@ class EnhancedMetricsCollector implements MetricsCollector
     /**
      * Write telemetry data to configured sink.
      *
-     * @return void
      * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-flush
      */
     public function flush() : void
@@ -362,7 +355,7 @@ class EnhancedMetricsCollector implements MetricsCollector
         $this->logger->info(message: 'Telemetry flushed', context: [
             'sink'        => $this->config->sink,
             'resolutions' => count($this->resolutionStats),
-            'errors'      => count($this->errorStats)
+            'errors'      => count($this->errorStats),
         ]);
     }
 
@@ -370,6 +363,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      * Builds an export payload that summarizes recent resolutions, errors, and usage patterns.
      *
      * @return array Telemetry export payload
+     *
      * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-exporttelemetry
      */
     public function exportTelemetry() : array
@@ -379,25 +373,26 @@ class EnhancedMetricsCollector implements MetricsCollector
                 'total_resolutions'       => $this->getResolutionCount(),
                 'average_resolution_time' => $this->getAverageResolutionTime(),
                 'error_rate'              => $this->getErrorRate(),
-                'unique_services'         => count(array_unique(array_column($this->resolutionStats, 'service')))
+                'unique_services'         => count(array_unique(array_column($this->resolutionStats, 'service'))),
             ],
             'performance' => [
                 'top_slow_services' => $this->getTopSlowServices(limit: 5)->all(),
-                'anomalies'         => $this->detectPerformanceAnomalies()
+                'anomalies'         => $this->detectPerformanceAnomalies(),
             ],
             'errors'      => [
                 'recent_errors'      => $this->getRecentErrors(limit: 10)->all(),
                 'error_distribution' => Arrhae::make(items: $this->errorStats)
                     ->countBy(key: 'error_type')
-                    ->all()
+                    ->all(),
             ],
             'usage'       => $this->getServiceUsageStats(),
-            'exported_at' => microtime(true)
+            'exported_at' => microtime(true),
         ];
     }
 
     /**
      * @return int Number of recorded resolution events (may be sampled)
+     *
      * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-getresolutioncount
      */
     public function getResolutionCount() : int
@@ -407,6 +402,7 @@ class EnhancedMetricsCollector implements MetricsCollector
 
     /**
      * @return float Average resolution time (seconds) over recorded events
+     *
      * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-getaverageresolutiontime
      */
     public function getAverageResolutionTime() : float
@@ -422,6 +418,7 @@ class EnhancedMetricsCollector implements MetricsCollector
 
     /**
      * @return float Error rate percentage (0-100) over recorded events
+     *
      * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-geterrorrate
      */
     public function getErrorRate() : float
@@ -438,6 +435,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      * @param int $limit Maximum number of slow services to return
      *
      * @return Arrhae Collection of slow resolution entries
+     *
      * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-gettopslowservices
      */
     public function getTopSlowServices(int $limit = 10) : Arrhae
@@ -451,6 +449,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      * Detects anomalously slow resolution events based on simple statistical thresholds.
      *
      * @return array Anomaly entries
+     *
      * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-detectperformanceanomalies
      */
     public function detectPerformanceAnomalies() : array
@@ -476,6 +475,7 @@ class EnhancedMetricsCollector implements MetricsCollector
      * @param int $limit Maximum number of errors to return
      *
      * @return Arrhae Collection of recent errors
+     *
      * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-getrecenterrors
      */
     public function getRecentErrors(int $limit = 20) : Arrhae
@@ -487,6 +487,7 @@ class EnhancedMetricsCollector implements MetricsCollector
 
     /**
      * @return array Aggregated per-service usage statistics
+     *
      * @see docs/Observe/Metrics/EnhancedMetricsCollector.md#method-getserviceusagestats
      */
     public function getServiceUsageStats() : array
@@ -499,7 +500,7 @@ class EnhancedMetricsCollector implements MetricsCollector
                     'count'      => 0,
                     'total_time' => 0,
                     'avg_time'   => 0,
-                    'errors'     => 0
+                    'errors'     => 0,
                 ];
             }
             $usage[$service]['count']++;
@@ -533,7 +534,7 @@ class EnhancedMetricsCollector implements MetricsCollector
         $success = file_put_contents($this->config->outputPath, $json);
         if (! $success) {
             $this->logger->warning(message: 'Failed to write telemetry to file', context: [
-                'path' => $this->config->outputPath
+                'path' => $this->config->outputPath,
             ]);
         }
     }
@@ -543,7 +544,7 @@ class EnhancedMetricsCollector implements MetricsCollector
         // PSR logging is already handled by the ErrorLogger
         // Additional PSR telemetry would require PSR-3 logger injection
         $this->logger->info(message: 'PSR telemetry export requested', context: [
-            'data_points' => count($telemetry['summary'] ?? [])
+            'data_points' => count($telemetry['summary'] ?? []),
         ]);
     }
 }

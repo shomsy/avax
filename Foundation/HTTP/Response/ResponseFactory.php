@@ -28,9 +28,9 @@ readonly class ResponseFactory implements ResponseFactoryInterface
      * based on the type of `$data`. It provides a flexible mechanism to handle various types of responses, keeping the
      * controller concise and focused on defining only high-level response creation.
      *
-     * @param mixed $data   The data to be sent in the response. Supports different types such as arrays, objects,
-     *                      plain strings, or already-prepared `ResponseInterface` instances.
-     * @param int   $status The HTTP status code to be associated with the response. Defaults to 200 (OK).
+     * @param mixed $data    The data to be sent in the response. Supports different types such as arrays, objects,
+     *                       plain strings, or already-prepared `ResponseInterface` instances.
+     * @param int   $status  The HTTP status code to be associated with the response. Defaults to 200 (OK).
      *
      * @return ResponseInterface Returns a fully constructed HTTP response object.
      */
@@ -65,7 +65,7 @@ readonly class ResponseFactory implements ResponseFactoryInterface
         try {
             $json = json_encode(value: $data, flags: JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
         } catch (JsonException $jsonException) {
-            return $this->createErrorResponse(message: "JSON encoding failed: " . $jsonException->getMessage());
+            return $this->createErrorResponse(message: 'JSON encoding failed: ' . $jsonException->getMessage());
         }
 
         $stream = $this->streamFactory->createStream(content: $json);
@@ -83,6 +83,17 @@ readonly class ResponseFactory implements ResponseFactoryInterface
     private function createErrorResponse(string $message) : ResponseInterface
     {
         return $this->createJsonResponse(data: ['error' => $message], status: 500);
+    }
+
+    /**
+     * Creates an error response with custom status code.
+     *
+     * @param int    $statusCode HTTP status code
+     * @param string $message    Error message
+     */
+    public function createErrorResponse(int $statusCode, string $message) : ResponseInterface
+    {
+        return $this->createJsonResponse(data: ['error' => $message], status: $statusCode);
     }
 
     /**
@@ -183,5 +194,4 @@ readonly class ResponseFactory implements ResponseFactoryInterface
 
         return view(template: $template, data: $data);
     }
-
 }

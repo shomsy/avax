@@ -26,7 +26,7 @@ readonly class Size
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (strlen(string: (string) $value) !== $this->size) {
             throw new ValidationException(

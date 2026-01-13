@@ -28,13 +28,6 @@ use ReflectionException;
 abstract class AbstractDTO
 {
     /**
-     * Include the `HandlesHydration` trait.
-     *
-     * Provides functionality for mapping external data (like arrays) into object properties.
-     */
-    use HandlesHydration;
-
-    /**
      * Include the `CastsTypes` trait.
      *
      * Enables strict casting of properties into specified types, ensuring type safety when working
@@ -48,6 +41,13 @@ abstract class AbstractDTO
      * Adds methods to manipulate and interact with internal object attributes dynamically.
      */
     use HandlesAttributes;
+
+    /**
+     * Include the `HandlesHydration` trait.
+     *
+     * Provides functionality for mapping external data (like arrays) into object properties.
+     */
+    use HandlesHydration;
 
     /**
      * Include the `InspectsProperties` trait.
@@ -72,7 +72,7 @@ abstract class AbstractDTO
      * This constructor leverages the `HandlesHydration` trait to populate DTO properties
      * with data provided in the array.
      *
-     * @param array $data The associative array containing the initial properties of the DTO.
+     * @param  array  $data  The associative array containing the initial properties of the DTO.
      *
      * @throws ReflectionException If reflection fails to evaluate class or property metadata during hydration.
      */

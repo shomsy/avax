@@ -23,6 +23,7 @@ interface ExecutorInterface
      * @param ExecutionScope|null $scope    Optional context for correlation.
      *
      * @return array<array-key, mixed>
+     *
      * @throws Throwable If persistence connection failure occurs.
      */
     public function query(
@@ -38,7 +39,6 @@ interface ExecutorInterface
      * @param array               $bindings Secure tokens for parameterization.
      * @param ExecutionScope|null $scope    Optional context for correlation.
      *
-     * @return ExecutionResult
      * @throws Throwable If technical modification fails.
      */
     public function execute(

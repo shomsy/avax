@@ -12,16 +12,14 @@ namespace Avax\Database\Query;
 final readonly class QuotedIdentifier
 {
     /**
-     * @param string $value The pre-sanitized and dialect-aware quoted identifier technical string.
+     * @param  string  $value  The pre-sanitized and dialect-aware quoted identifier technical string.
      */
     public function __construct(public string $value) {}
 
     /**
      * Return the quoted identifier string.
-     *
-     * @return string
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->value;
     }

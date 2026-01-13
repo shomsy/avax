@@ -13,8 +13,7 @@ use Attribute;
  * When applied, the container will resolve and inject the specified dependency
  * during object construction or method invocation.
  *
- * @package Avax\Container\Features\Core\Attribute
- * @see docs/Features/Core/Attribute/Inject.md
+ * @see     docs/Features/Core/Attribute/Inject.md
  */
 #[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD | Attribute::TARGET_PARAMETER)]
 final class Inject

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\Providers\HTTP;
 
-use Avax\Container\Features\Operate\Boot\ServiceProvider;
+use Avax\Container\Providers\ServiceProvider;
 use Avax\HTTP\Session\Session;
 use Avax\HTTP\Session\SessionAdapter;
 
@@ -18,21 +18,20 @@ class SessionServiceProvider extends ServiceProvider
     /**
      * Register session manager, adapter, and alias.
      *
-     * @return void
      * @see docs/Providers/HTTP/SessionServiceProvider.md#method-register
      */
     public function register() : void
     {
-        $this->app->singleton(abstract: Session::class, concrete: function () {
+        $this->app->singleton(abstract: Session::class, concrete: static function () {
             // Configuration can be injected here
-            return new Session();
+            return new Session;
         });
 
         $this->app->singleton(abstract: SessionAdapter::class, concrete: SessionAdapter::class);
 
         // Alias 'session'
         $this->app->singleton(abstract: 'session', concrete: function () {
-            return $this->app->get(Session::class);
+            return $this->app->get(id: Session::class);
         });
     }
 }

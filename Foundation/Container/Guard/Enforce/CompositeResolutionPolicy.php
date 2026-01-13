@@ -18,11 +18,24 @@ final readonly class CompositeResolutionPolicy implements ResolutionPolicy
 
     /**
      * @param array $policies A list of policies; non-ResolutionPolicy values are ignored
+     *
      * @see docs/Guard/Enforce/CompositeResolutionPolicy.md#method-__construct
      */
     public function __construct(array $policies)
     {
-        $this->policies = array_values(array_filter($policies, fn($p) => $p instanceof ResolutionPolicy));
+        $this->policies = array_values(array_filter($policies, static fn($p) => $p instanceof ResolutionPolicy));
+    }
+
+    /**
+     * Convenience factory for composing policies.
+     *
+     * @param ResolutionPolicy ...$policies Policies to combine
+     *
+     * @see docs/Guard/Enforce/CompositeResolutionPolicy.md#method-with
+     */
+    public static function with(ResolutionPolicy ...$policies) : self
+    {
+        return new self(policies: $policies);
     }
 
     /**
@@ -31,29 +44,17 @@ final readonly class CompositeResolutionPolicy implements ResolutionPolicy
      * @param string $abstract The abstract/service identifier being resolved
      *
      * @return bool True when all policies allow the abstract; otherwise false
+     *
      * @see docs/Guard/Enforce/CompositeResolutionPolicy.md#method-isallowed
      */
-    public function isAllowed(string $abstract): bool
+    public function isAllowed(string $abstract) : bool
     {
         foreach ($this->policies as $policy) {
-            if (!$policy->isAllowed(abstract: $abstract)) {
+            if (! $policy->isAllowed(abstract: $abstract)) {
                 return false;
             }
         }
 
         return true;
-    }
-
-    /**
-     * Convenience factory for composing policies.
-     *
-     * @param ResolutionPolicy ...$policies Policies to combine
-     *
-     * @return self
-     * @see docs/Guard/Enforce/CompositeResolutionPolicy.md#method-with
-     */
-    public static function with(ResolutionPolicy ...$policies): self
-    {
-        return new self($policies);
     }
 }

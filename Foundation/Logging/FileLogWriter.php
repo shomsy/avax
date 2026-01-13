@@ -30,8 +30,7 @@ final class FileLogWriter implements LogWriterInterface
      * Constructor to initialize an instance with a specified file path
      * and perform initial log file setup.
      *
-     * @param string $filePath The path to the log file that needs to be initialized.
-     *
+     * @param  string  $filePath  The path to the log file that needs to be initialized.
      * @return void
      */
     public function __construct(private string $filePath)
@@ -45,7 +44,7 @@ final class FileLogWriter implements LogWriterInterface
      * This method checks and creates the directory if it does not exist.
      * It switches to a fallback path if the specified path cannot be accessed.
      */
-    private function initializeLogFile() : void
+    private function initializeLogFile(): void
     {
         $directory = dirname(path: $this->filePath);
         // Attempt to ensure the directory exists or use fallback if creation fails
@@ -67,7 +66,7 @@ final class FileLogWriter implements LogWriterInterface
      * This check ensures that writing logs does not fail silently by always
      * having a writable destination, either the target or fallback file.
      */
-    private function ensureWritable() : void
+    private function ensureWritable(): void
     {
         if (! Storage::exists(path: $this->filePath) && ! $this->attemptFileCreation()) {
             $this->filePath = self::FALLBACK_PATH;
@@ -80,7 +79,7 @@ final class FileLogWriter implements LogWriterInterface
      *
      * @return bool True if file creation is successful; false otherwise.
      */
-    private function attemptFileCreation() : bool
+    private function attemptFileCreation(): bool
     {
         Storage::write(path: $this->filePath, content: ''); // Create an empty file
         Storage::setPermissions(path: $this->filePath, permissions: 0644);
@@ -91,14 +90,14 @@ final class FileLogWriter implements LogWriterInterface
     /**
      * Writes the content to the file. Uses fallback if a primary path fails.
      *
-     * @param string $content The log entry content to write.
+     * @param  string  $content  The log entry content to write.
      */
-    public function write(string $content) : void
+    public function write(string $content): void
     {
         try {
-            Storage::write(path: $this->filePath, content: $content . PHP_EOL, append: true);
+            Storage::write(path: $this->filePath, content: $content.PHP_EOL, append: true);
         } catch (Exception) {
-            Storage::write(path: self::FALLBACK_PATH, content: $content . PHP_EOL, append: true);
+            Storage::write(path: self::FALLBACK_PATH, content: $content.PHP_EOL, append: true);
         }
     }
 }

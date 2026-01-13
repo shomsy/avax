@@ -25,19 +25,18 @@ use RuntimeException;
  *       new SecureOnlyPolicy(),
  *       new SessionIpPolicy()
  *   ]);
- *
  * @example With ANY mode
  *   $composite = CompositePolicy::any([
  *       new AdminRolePolicy(),
  *       new SuperuserPolicy()
  *   ]);
- *
- * @package Avax\HTTP\Session\Shared\Security\Policies
  */
 final class CompositePolicy implements PolicyInterface
 {
-    public const MODE_ALL  = 'all';
-    public const MODE_ANY  = 'any';
+    public const MODE_ALL = 'all';
+
+    public const MODE_ANY = 'any';
+
     public const MODE_NONE = 'none';
 
     /**
@@ -86,8 +85,6 @@ final class CompositePolicy implements PolicyInterface
      *
      * @param array<PolicyInterface> $policies Child policies.
      * @param string                 $name     Policy name.
-     *
-     * @return self
      */
     public static function all(array $policies, string $name = 'composite_all') : self
     {
@@ -101,8 +98,6 @@ final class CompositePolicy implements PolicyInterface
      *
      * @param array<PolicyInterface> $policies Child policies.
      * @param string                 $name     Policy name.
-     *
-     * @return self
      */
     public static function any(array $policies, string $name = 'composite_any') : self
     {
@@ -116,8 +111,6 @@ final class CompositePolicy implements PolicyInterface
      *
      * @param array<PolicyInterface> $policies Child policies.
      * @param string                 $name     Policy name.
-     *
-     * @return self
      */
     public static function none(array $policies, string $name = 'composite_none') : self
     {
@@ -146,7 +139,6 @@ final class CompositePolicy implements PolicyInterface
      *
      * @param array<string, mixed> $data Session data.
      *
-     * @return void
      * @throws \RuntimeException If any policy fails.
      */
     private function enforceAll(array $data) : void
@@ -189,7 +181,6 @@ final class CompositePolicy implements PolicyInterface
      *
      * @param array<string, mixed> $data Session data.
      *
-     * @return void
      * @throws \RuntimeException If all policies fail.
      */
     private function enforceAny(array $data) : void
@@ -225,7 +216,6 @@ final class CompositePolicy implements PolicyInterface
      *
      * @param array<string, mixed> $data Session data.
      *
-     * @return void
      * @throws \RuntimeException If any policy passes.
      */
     private function enforceNone(array $data) : void

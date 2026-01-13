@@ -40,10 +40,10 @@ final class JoinClause
      * Appends a new comparison constraint linked via the OR logical operator,
      * allowing for alternative relationship matches.
      *
-     * @param string      $first    The structural identifier of the left-hand column.
-     * @param string|null $operator The technical comparison operator (defaults to '=' if second is provided).
-     * @param string|null $second   The structural identifier of the right-hand column or the value (if operator is
-     *                              omitted).
+     * @param string      $first     The structural identifier of the left-hand column.
+     * @param string|null $operator  The technical comparison operator (defaults to '=' if second is provided).
+     * @param string|null $second    The structural identifier of the right-hand column or the value (if operator is
+     *                               omitted).
      *
      * @return self The current builder instance for further fluent configuration.
      */

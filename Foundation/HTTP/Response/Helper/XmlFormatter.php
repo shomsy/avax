@@ -17,13 +17,13 @@ class XmlFormatter
     /**
      * Converts an array to XML format, returning the XML content as a string.
      *
-     * @param array  $data     The data to be converted to XML.
-     * @param string $rootNode Root node for the XML (default is 'response').
-     *
+     * @param  array  $data  The data to be converted to XML.
+     * @param  string  $rootNode  Root node for the XML (default is 'response').
      * @return string XML string representation of the array.
+     *
      * @throws \Exception
      */
-    public static function format(array $data, string $rootNode = 'response') : string
+    public static function format(array $data, string $rootNode = 'response'): string
     {
         // Initialize a new SimpleXMLElement with the specified root node
         $xml = new SimpleXMLElement(data: sprintf('<%s/>', $rootNode));
@@ -38,14 +38,14 @@ class XmlFormatter
     /**
      * Recursively adds data to the XML object.
      *
-     * @param array            $data Data to convert to XML.
-     * @param SimpleXMLElement $xml  XML object to append data to.
+     * @param  array  $data  Data to convert to XML.
+     * @param  SimpleXMLElement  $xml  XML object to append data to.
      */
-    private static function arrayToXml(array $data, SimpleXMLElement $xml) : void
+    private static function arrayToXml(array $data, SimpleXMLElement $xml): void
     {
         foreach ($data as $key => $value) {
             // Handle numeric keys to ensure valid XML element names
-            $key = is_numeric(value: $key) ? 'item' . $key : htmlspecialchars(string: $key);
+            $key = is_numeric(value: $key) ? 'item'.$key : htmlspecialchars(string: $key);
 
             if (is_array(value: $value)) {
                 // Recurse if value is an array, creating a new child element

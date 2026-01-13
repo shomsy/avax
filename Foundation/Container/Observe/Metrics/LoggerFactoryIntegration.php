@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Observe\Metrics;
 
 use Avax\Container\Features\Operate\Config\TelemetryConfig;
@@ -138,12 +139,11 @@ use Throwable;
  * - Performance metrics integration
  * - Debug information for troubleshooting
  *
- * @package Avax\Container\Observe\Metrics
  * @see     LoggerFactory PSR-3 logger factory for channel management
  * @see     TelemetryConfig Configuration controlling logging behavior and security
  * @see     EnhancedMetricsCollector Metrics collection with integrated logging
  * @see     ErrorLogger PSR-3 compliant error logging interface
- * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#quick-summary
+ * @see     docs/Observe/Metrics/LoggerFactoryIntegration.md#quick-summary
  */
 class LoggerFactoryIntegration
 {
@@ -183,6 +183,7 @@ class LoggerFactoryIntegration
      *
      * @param LoggerFactory   $loggerFactory PSR-3 logger factory for component loggers
      * @param TelemetryConfig $config        Telemetry configuration for logging behavior
+     *
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-__construct
      */
     public function __construct(
@@ -211,6 +212,7 @@ class LoggerFactoryIntegration
      * - Centralized monitoring and alerting
      *
      * @return EnhancedMetricsCollector Metrics collector with logging integration
+     *
      * @see EnhancedMetricsCollector For detailed metrics collection capabilities
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-createmetricscollector
      */
@@ -266,7 +268,6 @@ class LoggerFactoryIntegration
      * @param string $event   Lifecycle event identifier
      * @param array  $context Additional context for the lifecycle event
      *
-     * @return void
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-loglifecycleevent
      */
     public function logLifecycleEvent(string $event, array $context = []) : void
@@ -275,7 +276,7 @@ class LoggerFactoryIntegration
 
         $logger->info(message: "Container {$event}", context: array_merge($context, [
             'event'     => $event,
-            'timestamp' => microtime(true)
+            'timestamp' => microtime(true),
         ]));
     }
 
@@ -311,6 +312,7 @@ class LoggerFactoryIntegration
      * @param string $component Container component name for logger scoping
      *
      * @return ErrorLogger PSR-3 compliant logger for the component
+     *
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-getcomponentlogger
      */
     public function getComponentLogger(string $component) : ErrorLogger
@@ -376,7 +378,6 @@ class LoggerFactoryIntegration
      * @param string $strategy  Resolution strategy used
      * @param array  $context   Additional context for the resolution event
      *
-     * @return void
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logserviceresolution
      */
     public function logServiceResolution(
@@ -392,7 +393,7 @@ class LoggerFactoryIntegration
             'service'     => $serviceId,
             'duration_ms' => round($duration * 1000, 2),
             'strategy'    => $strategy,
-            'memory_mb'   => round(memory_get_peak_usage(true) / 1024 / 1024, 2)
+            'memory_mb'   => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
         ]));
     }
 
@@ -446,7 +447,6 @@ class LoggerFactoryIntegration
      * @param string $lifetime  Service lifetime scope
      * @param array  $tags      Tags associated with the service
      *
-     * @return void
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logserviceregistration
      */
     public function logServiceRegistration(
@@ -463,7 +463,7 @@ class LoggerFactoryIntegration
             'class'     => $class,
             'lifetime'  => $lifetime,
             'tags'      => $tags,
-            'timestamp' => microtime(true)
+            'timestamp' => microtime(true),
         ]);
     }
 
@@ -524,7 +524,6 @@ class LoggerFactoryIntegration
      * @param bool   $success   Whether the cache operation succeeded
      * @param array  $context   Additional context for the cache operation
      *
-     * @return void
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logcacheoperation
      */
     public function logCacheOperation(
@@ -541,7 +540,7 @@ class LoggerFactoryIntegration
             'operation' => $operation,
             'key'       => $key,
             'success'   => $success,
-            'timestamp' => microtime(true)
+            'timestamp' => microtime(true),
         ]));
     }
 
@@ -601,7 +600,6 @@ class LoggerFactoryIntegration
      * @param string $event  Configuration event type
      * @param array  $config Configuration data to log (will be sanitized)
      *
-     * @return void
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logconfigurationevent
      */
     public function logConfigurationEvent(string $event, array $config = []) : void
@@ -614,7 +612,7 @@ class LoggerFactoryIntegration
         $logger->info(message: "Configuration {$event}", context: [
             'event'     => $event,
             'config'    => $sanitizedConfig,
-            'timestamp' => microtime(true)
+            'timestamp' => microtime(true),
         ]);
     }
 
@@ -756,7 +754,6 @@ class LoggerFactoryIntegration
      * @param float  $duration  Actual resolution duration in seconds
      * @param float  $threshold Expected maximum duration in seconds
      *
-     * @return void
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logperformancewarning
      */
     public function logPerformanceWarning(
@@ -772,7 +769,7 @@ class LoggerFactoryIntegration
             'duration_ms'       => round($duration * 1000, 2),
             'threshold_ms'      => round($threshold * 1000, 2),
             'exceeds_threshold' => $duration > $threshold,
-            'timestamp'         => microtime(true)
+            'timestamp'         => microtime(true),
         ]);
     }
 
@@ -839,7 +836,6 @@ class LoggerFactoryIntegration
      * @param \Throwable $error     Exception instance with error details
      * @param array      $context   Additional context for error diagnosis
      *
-     * @return void
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logcontainererror
      */
     public function logContainerError(
@@ -857,7 +853,7 @@ class LoggerFactoryIntegration
             'file'       => $error->getFile(),
             'line'       => $error->getLine(),
             'trace'      => $this->config->includeStackTraces ? $error->getTraceAsString() : null,
-            'timestamp'  => microtime(true)
+            'timestamp'  => microtime(true),
         ]));
     }
 
@@ -916,6 +912,7 @@ class LoggerFactoryIntegration
      * ```
      *
      * @return array Comprehensive logging system statistics and configuration
+     *
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-getloggingstats
      */
     public function getLoggingStats() : array
@@ -925,7 +922,7 @@ class LoggerFactoryIntegration
             'logger_channels'      => array_keys($this->loggers),
             'telemetry_enabled'    => $this->config->enabled,
             'stack_traces_enabled' => $this->config->includeStackTraces,
-            'tracked_events'       => $this->config->trackedEvents
+            'tracked_events'       => $this->config->trackedEvents,
         ];
     }
 
@@ -973,7 +970,6 @@ class LoggerFactoryIntegration
      * echo "All logs flushed to backends";
      * ```
      *
-     * @return void
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-flushall
      */
     public function flushAll() : void
@@ -1041,7 +1037,6 @@ class LoggerFactoryIntegration
      *
      * @param array $healthData Health check results and diagnostic information
      *
-     * @return void
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-loghealthcheck
      */
     public function logHealthCheck(array $healthData) : void
@@ -1059,7 +1054,7 @@ class LoggerFactoryIntegration
         $logger->$level('Container health check', [
             'status'    => $status,
             'checks'    => $healthData['checks'] ?? [],
-            'timestamp' => $healthData['timestamp'] ?? microtime(true)
+            'timestamp' => $healthData['timestamp'] ?? microtime(true),
         ]);
     }
 
@@ -1100,7 +1095,6 @@ class LoggerFactoryIntegration
      * @param string $sink       Telemetry export destination identifier
      * @param int    $dataPoints Number of data points exported
      *
-     * @return void
      * @see docs/Observe/Metrics/LoggerFactoryIntegration.md#method-logtelemetryexport
      */
     public function logTelemetryExport(string $sink, int $dataPoints) : void
@@ -1110,7 +1104,7 @@ class LoggerFactoryIntegration
         $logger->info(message: 'Telemetry exported', context: [
             'sink'        => $sink,
             'data_points' => $dataPoints,
-            'timestamp'   => microtime(true)
+            'timestamp'   => microtime(true),
         ]);
     }
 }

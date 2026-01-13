@@ -42,7 +42,6 @@ interface UserSourceInterface
 
     /**
      * Creates a new user based on the provided registration data.
-     *
      */
     public function createUser(RegistrationDTO $RegistrationDTO) : UserInterface;
 

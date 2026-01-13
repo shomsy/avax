@@ -15,10 +15,10 @@ class FilesystemService
     /**
      * Write content to a file.
      *
-     * @param string $fileName The file path.
-     * @param string $content  The content to write into the file.
+     * @param  string  $fileName  The file path.
+     * @param  string  $content  The content to write into the file.
      */
-    public function writeFile(string $fileName, string $content) : void
+    public function writeFile(string $fileName, string $content): void
     {
         file_put_contents(filename: $fileName, data: $content);
     }
@@ -29,9 +29,9 @@ class FilesystemService
      * This method checks if the specified directory is writable and, if not, it attempts to set the necessary
      * permissions (e.g., 0777) to allow writing.
      *
-     * @param string $directory The directory path to check.
+     * @param  string  $directory  The directory path to check.
      */
-    public function ensureDirectoryIsWritable(string $directory) : void
+    public function ensureDirectoryIsWritable(string $directory): void
     {
         if (! file_exists(filename: $directory)) {
             mkdir(

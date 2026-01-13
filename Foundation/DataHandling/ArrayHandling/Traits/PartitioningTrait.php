@@ -13,8 +13,6 @@ use InvalidArgumentException;
  * Provides methods to partition and group items within a collection.
  * This trait allows splitting collections based on conditions, grouping by keys or callbacks,
  * and dividing collections into specified numbers of groups or chunks.
- *
- * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait PartitioningTrait
 {
@@ -25,11 +23,10 @@ trait PartitioningTrait
      *
      * Classes using this trait must implement this method.
      *
-     * @param array $items The new collection of items.
-     *
+     * @param  array  $items  The new collection of items.
      * @return static A new instance with the updated collection.
      */
-    abstract public function setItems(array $items) : static;
+    abstract public function setItems(array $items): static;
 
     /**
      * Splits the collection into two groups based on a callback.
@@ -38,8 +35,7 @@ trait PartitioningTrait
      * one where items satisfy the provided callback condition,
      * and another where items do not.
      *
-     * @param Closure $callback The callback to determine the split condition.
-     *
+     * @param  Closure  $callback  The callback to determine the split condition.
      * @return array Two collections: one matching the condition, one not.
      *
      * ```
@@ -49,9 +45,9 @@ trait PartitioningTrait
      * // $fruitsWithoutA contains ['cherry']
      * ```
      */
-    public function partition(Closure $callback) : array
+    public function partition(Closure $callback): array
     {
-        $matches    = [];
+        $matches = [];
         $nonMatches = [];
 
         foreach ($this->getItems() as $item) {
@@ -74,7 +70,7 @@ trait PartitioningTrait
      *
      * @return array The current collection of items.
      */
-    abstract public function getItems() : array;
+    abstract public function getItems(): array;
 
     /**
      * Groups the collection items by a specific key or callback.
@@ -82,8 +78,7 @@ trait PartitioningTrait
      * This method organizes the collection into groups based on a specified key or a callback function.
      * Each group is represented as a sub-collection within the main collection.
      *
-     * @param Closure|string $key The key to group by, or a callback function to determine the group key.
-     *
+     * @param  Closure|string  $key  The key to group by, or a callback function to determine the group key.
      * @return static A collection containing grouped items.
      *
      * @throws InvalidArgumentException If a string key is provided but does not exist in one or more items.
@@ -116,7 +111,7 @@ trait PartitioningTrait
      * // ]
      * ```
      */
-    public function groupBy(Closure|string $key) : static
+    public function groupBy(Closure|string $key): static
     {
         $grouped = [];
 
@@ -138,7 +133,7 @@ trait PartitioningTrait
             $grouped[$groupKey][] = $item;
         }
 
-        return new static(items: array_map(callback: static fn($group) : static => new static(items: $group), array: $grouped));
+        return new static(items: array_map(callback: static fn ($group): static => new static(items: $group), array: $grouped));
     }
 
     /**
@@ -147,8 +142,7 @@ trait PartitioningTrait
      * This method divides the collection into the desired number of groups as evenly as possible.
      * Each group is represented as a sub-collection within the main collection.
      *
-     * @param int $numberOfGroups The number of groups to split into.
-     *
+     * @param  int  $numberOfGroups  The number of groups to split into.
      * @return static A collection containing the specified number of groups.
      *
      * @throws InvalidArgumentException If the number of groups is less than 1.
@@ -163,17 +157,17 @@ trait PartitioningTrait
      * // ]
      * ```
      */
-    public function split(int $numberOfGroups) : static
+    public function split(int $numberOfGroups): static
     {
         if ($numberOfGroups < 1) {
             throw new InvalidArgumentException(message: 'Number of groups must be at least 1.');
         }
 
         $totalItems = count(value: $this->getItems());
-        $groupSize  = (int) ceil(num: $totalItems / $numberOfGroups);
-        $groups     = array_chunk(array: $this->getItems(), length: $groupSize);
+        $groupSize = (int) ceil(num: $totalItems / $numberOfGroups);
+        $groups = array_chunk(array: $this->getItems(), length: $groupSize);
 
-        return new static(items: array_map(callback: static fn($group) : static => new static(items: $group), array: $groups));
+        return new static(items: array_map(callback: static fn ($group): static => new static(items: $group), array: $groups));
     }
 
     /**
@@ -182,8 +176,7 @@ trait PartitioningTrait
      * This method divides the collection into chunks, each containing a specified number of items.
      * Each chunk is represented as a sub-collection within the main collection.
      *
-     * @param int $size The size of each chunk.
-     *
+     * @param  int  $size  The size of each chunk.
      * @return static A collection containing the chunks.
      *
      * @throws InvalidArgumentException If the chunk size is less than 1.
@@ -199,7 +192,7 @@ trait PartitioningTrait
      * // ]
      * ```
      */
-    public function chunk(int $size) : static
+    public function chunk(int $size): static
     {
         if ($size < 1) {
             throw new InvalidArgumentException(message: 'Chunk size must be at least 1.');
@@ -207,6 +200,6 @@ trait PartitioningTrait
 
         $chunks = array_chunk(array: $this->getItems(), length: $size);
 
-        return new static(items: array_map(callback: static fn($chunk) : static => new static(items: $chunk), array: $chunks));
+        return new static(items: array_map(callback: static fn ($chunk): static => new static(items: $chunk), array: $chunks));
     }
 }

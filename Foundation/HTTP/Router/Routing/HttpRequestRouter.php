@@ -4,13 +4,35 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
+/**
+ * @phpstan-type RoutesMap array<string, array<string, RouteDefinition[]>>
+ * @phpstan-type RouteResolutionContext array{
+ *     route: RouteDefinition,
+ *     parameters: array<string, string>,
+ *     matchedDomain: string|null,
+ *     matchTimeMs: float,
+ *     resolutionPath: array<array{time: float, description: string}>
+ * }
+ * @phpstan-type RouteMethodMap array<string, array<string, RouteDefinition[]>>
+ */
+
 use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\Routing\Exceptions\InvalidRouteException;
+use Avax\HTTP\Router\Matching\RouteMatcherInterface;
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
+use Avax\HTTP\Router\Routing\Exceptions\MethodNotAllowedException;
 use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
-use Avax\HTTP\Router\Support\DomainPatternCompiler;
+use Avax\HTTP\Router\Support\RouteRequestInjector;
+use Avax\HTTP\Router\Tracing\RouterTrace;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
+ * INTERNAL: HTTP Request Router Engine
+ *
+ * This is an internal implementation detail. Behavior may change without notice.
+ * Do not depend on this class directly - use RouterInterface and Router instead.
+ *
  * Handles HTTP request routing by matching registered routes to incoming requests.
  *
  * Fully supports:
@@ -23,318 +45,46 @@ use Avax\HTTP\Router\Validation\RouteConstraintValidator;
  * - Route defaults for missing parameters
  * - Middleware and authorization metadata
  *
- * @internal This class acts as the internal route resolution engine.
+ * @internal
  */
 final class HttpRequestRouter
 {
+    private readonly LoggerInterface $logger;
     /**
-     * All registered routes, grouped by HTTP method.
+     * All registered routes, grouped by HTTP method and path.
+     * Supports multiple routes per path for domain-aware routing.
      *
-     * @var array<string, RouteDefinition[]>
+     * @var array<string, array<string, RouteDefinition[]>>
      */
     private array $routes = [];
-
     /**
-     * Current prefix (used for nested route groups).
+     * Prefix stack (used for nested route groups).
+     *
+     * @var string[]
      */
-    private string $currentPrefix = '';
-
+    private array $prefixStack = [];
     /**
      * A map of named routes for reverse routing.
      *
      * @var array<string, RouteDefinition>
      */
-    private array $namedRoutes = [];
-
+    private array                $namedRoutes   = [];
     /**
-     * Constructor for initializing the class with a RouteConstraintValidator.
+     * Route keys for deduplication.
      *
-     * @param RouteConstraintValidator $constraintValidator The route constraint validator instance.
+     * @var array<string, bool>
      */
-    public function __construct(private readonly RouteConstraintValidator $constraintValidator) {}
+    private array                $routeKeys     = [];
+    private RouteDefinition|null $fallbackRoute = null;
 
-    /**
-     * Sets the current prefix for subsequent routes.
-     *
-     * @param string $prefix URI path prefix (without trailing slash).
-     */
-    public function setPrefix(string $prefix): void
+    public function __construct(
+        private readonly RouteConstraintValidator $constraintValidator,
+        private readonly RouteMatcherInterface    $matcher,
+        LoggerInterface|null                      $logger = null,
+        private readonly RouterTrace|null         $trace = null
+    )
     {
-        $this->currentPrefix = rtrim(string: $prefix, characters: '/');
-    }
-
-    /**
-     * Clears any existing prefix used for route groupings.
-     */
-    public function clearPrefix(): void
-    {
-        $this->currentPrefix = '';
-    }
-
-    /**
-     * Registers all routes defined in a RouteGroupBuilder instance.
-     *
-     * @param RouteGroupBuilder $group
-     *
-     * @return void
-     */
-    public function registerGroup(RouteGroupBuilder $group): void
-    {
-        foreach ($group->build() as $route) {
-            $this->registerRoute(
-                method: $route->method,
-                path: $route->path,
-                action: $route->action,
-                middleware: $route->middleware,
-                name: $route->name,
-                constraints: $route->constraints,
-                defaults: $route->defaults,
-                domain: $route->domain,
-                attributes: $route->attributes,
-                authorization: $route->authorization
-            );
-        }
-    }
-
-    /**
-     * Registers a route to the internal route collection.
-     *
-     * @param string                $method        HTTP method (GET, POST, etc.)
-     * @param string                $path          Route path (e.g. /users/{id})
-     * @param callable|array|string $action        Route handler (controller, callable, etc.)
-     * @param array<string>         $middleware    Middleware stack
-     * @param string|null           $name          Optional route name
-     * @param array<string, string> $constraints   Param constraints via regex
-     * @param array<string, string> $defaults      Default values for optional parameters
-     * @param string|null           $domain        Optional domain pattern (e.g. admin.{org}.com)
-     * @param array<string, mixed>  $attributes    Arbitrary metadata for the route
-     * @param string|null           $authorization Authorization policy key (optional)
-     *
-     * @throws InvalidRouteException If the path is invalid.
-     */
-    public function registerRoute(
-        string                $method,
-        string                $path,
-        callable|array|string $action,
-        array|null            $middleware = null,
-        string|null           $name = null,
-        array|null            $constraints = null,
-        array|null            $defaults = null,
-        string|null           $domain = null,
-        array|null            $attributes = null,
-        string|null           $authorization = null
-    ): void {
-        $this->validateRoutePath(path: $path);
-
-        $route = new RouteDefinition(
-            method: strtoupper(string: $method),
-            path: $this->applyPrefix(path: $path),
-            action: $action,
-            middleware: $middleware ?? [],
-            name: $name ?? '',
-            constraints: $constraints ?? [],
-            defaults: $defaults ?? [],
-            domain: $domain,
-            attributes: $attributes ?? [],
-            authorization: $authorization
-        );
-
-        $this->routes[$route->method][] = $route;
-        if (! empty($route->name)) {
-            $this->namedRoutes[$route->name] = $route;
-        }
-    }
-
-    /**
-     * Validates that a route path begins with a slash and is not empty.
-     *
-     * @param string $path
-     *
-     * @throws InvalidRouteException
-     */
-    private function validateRoutePath(string $path): void
-    {
-        if (empty($path) || ! str_starts_with(haystack: $path, needle: '/')) {
-            throw new InvalidRouteException(message: 'Route path must start with a "/" and cannot be empty.');
-        }
-    }
-
-    /**
-     * Applies the currently active prefix to a path.
-     *
-     * @param string $path
-     *
-     * @return string
-     */
-    private function applyPrefix(string $path): string
-    {
-        return $this->currentPrefix . $path;
-    }
-
-    /**
-     * Resolves the given HTTP request and determines the corresponding route definition.
-     *
-     * @param Request $request The HTTP request to resolve, containing method, URI, and other details.
-     *
-     * @return RouteDefinition The resolved route definition that matches the request.
-     * @throws RouteNotFoundException If no matching route is found.
-     */
-    public function resolve(Request $request): RouteDefinition
-    {
-        // Retrieve the HTTP method of the request, convert it to uppercase for consistency.
-        $method = strtoupper(string: $request->getMethod());
-
-        // Retrieve the URI path of the request to determine the path being accessed.
-        $uriPath = $request->getUri()->getPath();
-
-        // Retrieve the host (domain name) from the request URI.
-        $host = $request->getUri()->getHost();
-
-        // Iterate over all registered routes corresponding to the HTTP method of the request.
-        foreach ($this->routes[$method] ?? [] as $route) {
-            // If the route specifies a domain and the domain does not match the current host, skip this route.
-            if ($route->domain !== null) {
-                $compiled = DomainPatternCompiler::compile(pattern: $route->domain);
-                if (! DomainPatternCompiler::match(host: $host, compiled: $compiled)) {
-                    continue;
-                }
-            }
-
-            // Compile the route's path into a regex pattern, taking into account any constraints defined.
-            $pattern = $this->compileRoutePattern(
-                template: $route->path,       // The route path (e.g., "/users/{id}").
-                constraints: $route->constraints // Route parameter constraints (e.g., regex for {id}).
-            );
-
-            // Check if the requested URI path matches the compiled route pattern.
-            if (preg_match(pattern: $pattern, subject: $uriPath, matches: $matches)) {
-                // Extract any parameters captured from the regex match (e.g., {id} = 123).
-                $parameters = $this->extractParameters(matches: $matches);
-
-                // Apply default route parameters and merge them with extracted parameters into the request object.
-                $request = $this->applyRouteDefaults(
-                    request: $request,
-                    defaults: $route->defaults,   // Default values (e.g., {lang} = "en" if not provided).
-                    parameters: $parameters         // Extracted parameters from the request URI path.
-                );
-
-                // Calls the validate method of the RouteConstraintValidator instance.
-                // This method ensures that all route parameter values in the request
-                // comply with the regex constraints defined in the RouteDefinition.
-                $this->constraintValidator->validate(route: $route, request: $request);
-
-                // 🧠 Return the same object, but bind modified request
-                return new RouteDefinition(
-                    method: $route->method,
-                    path: $route->path,
-                    action: $route->action,
-                    middleware: $route->middleware,
-                    name: $route->name,
-                    constraints: $route->constraints,
-                    defaults: $route->defaults,
-                    domain: $route->domain,
-                    attributes: $route->attributes,
-                    authorization: $route->authorization,
-                    parameters: $parameters
-                );
-            }
-        }
-
-        throw RouteNotFoundException::for(method: $method, path: $uriPath);
-    }
-
-    /**
-     * Builds a route-matching regular expression from a route path template.
-     *
-     * Supports:
-     * - Required parameters: `/users/{id}`
-     * - Optional segments:   `/users/{id?}`
-     * - Wildcard catch-all:  `/files/{path*}`
-     *
-     * @param string               $template
-     * @param array<string,string> $constraints
-     *
-     * @return string Regex pattern.
-     */
-    private function compileRoutePattern(string $template, array $constraints = []): string
-    {
-        return '#^' . preg_replace_callback(
-            pattern: '/\{(\w+)([?*]?)}/',
-            callback: static function (array $match) use ($constraints): string {
-                [$param, $modifier] = [$match[1], $match[2]];
-                $pattern = $constraints[$param] ?? '[^/]+';
-
-                return match ($modifier) {
-                    '?'     => '(?:/(?P<' . $param . '>' . $pattern . '))?',
-                    '*'     => '(?P<' . $param . '>.*)',
-                    default => '(?P<' . $param . '>' . $pattern . ')'
-                };
-            },
-            subject: $template
-        ) . '$#';
-    }
-
-    /**
-     * Filters out numeric keys from regex match results to isolate named route parameters.
-     *
-     * @param array $matches Regex matches from `preg_match`.
-     *
-     * @return array<string, string>
-     */
-    private function extractParameters(array $matches): array
-    {
-        return array_filter(array: $matches, callback: 'is_string', mode: ARRAY_FILTER_USE_KEY);
-    }
-
-    /**
-     * Applies both resolved route parameters and default values to the request object.
-     *
-     * @param Request              $request
-     * @param array<string,string> $defaults
-     * @param array<string,string> $parameters
-     *
-     * @return Request
-     */
-    private function applyRouteDefaults(Request $request, array $defaults, array $parameters): Request
-    {
-        foreach ($parameters as $key => $value) {
-            $request = $request->withAttribute(name: $key, value: $value);
-        }
-
-        foreach ($defaults as $key => $default) {
-            if ($request->getAttribute(name: $key) === null) {
-                $request = $request->withAttribute(name: $key, value: $default);
-            }
-        }
-
-        return $request;
-    }
-
-    /**
-     * Retrieves all registered routes.
-     *
-     * @return array<string, RouteDefinition[]>
-     */
-    public function allRoutes(): array
-    {
-        return $this->routes;
-    }
-
-    /**
-     * Directly adds a compiled route definition to the router's table.
-     * This bypasses validation and is used by the RouteCacheLoader.
-     *
-     * @param RouteDefinition $route The precompiled route to register.
-     */
-    public function add(RouteDefinition $route): void
-    {
-        $method = strtoupper(string: $route->method);
-
-        if (! array_key_exists(key: $method, array: $this->routes)) {
-            $this->routes[$method] = [];
-        }
-
-        $this->routes[$method][$route->path] = $route;
+        $this->logger = $logger ?? new NullLogger;
     }
 
     /**
@@ -342,14 +92,12 @@ final class HttpRequestRouter
      *
      * @param string $name The name of the route.
      *
-     * @return RouteDefinition
-     *
      * @throws RouteNotFoundException
      */
-    public function getByName(string $name): RouteDefinition
+    public function getByName(string $name) : RouteDefinition
     {
         if (! isset($this->namedRoutes[$name])) {
-            throw new RouteNotFoundException(message: "Named route [{$name}] not found.");
+            throw new RouteNotFoundException("Named route [{$name}] not found.", 404, [], false);
         }
 
         return $this->namedRoutes[$name];
@@ -357,12 +105,8 @@ final class HttpRequestRouter
 
     /**
      * Checks if a named route exists.
-     *
-     * @param string $name
-     *
-     * @return bool
      */
-    public function hasNamedRoute(string $name): bool
+    public function hasNamedRoute(string $name) : bool
     {
         return isset($this->namedRoutes[$name]);
     }
@@ -370,17 +114,371 @@ final class HttpRequestRouter
     /**
      * Sets the fallback handler to be used when no route matches.
      *
-     * @param callable|array|string $handler
-     *
-     * @return void
+     * @deprecated This method is deprecated. Use FallbackManager directly.
+     * Fallback handling should be unified through FallbackManager only.
      */
-    public function fallback(callable|array|string $handler): void
+    public function fallback(callable|array|string $handler) : void
     {
-        $this->registerRoute(
-            method: 'ANY',
-            path: '/__fallback__',
-            action: $handler,
-            name: '__router.fallback'
+        // Fallback is now handled exclusively through FallbackManager
+        // This method is kept for backward compatibility but does nothing
+        // TODO: Remove this method in a future version
+    }
+
+    /**
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     */
+    private function registerRoute(string $method, string $path, callable|array|string $action, string|null $name = null) : void
+    {
+        $route = new RouteDefinition(
+            method       : $method,
+            path         : $path,
+            action       : $action,
+            middleware   : [],
+            name         : $name,
+            constraints  : [],
+            defaults     : [],
+            domain       : null,
+            attributes   : [],
+            authorization: null
         );
+
+        $this->add(route: $route);
+    }
+
+    /**
+     * Registers a route from cache (bypasses validation).
+     *
+     * @param RouteDefinition $route The precompiled route to register.
+     *
+     * @internal This method is for internal cache loading only.
+     *
+     * @throws DuplicateRouteException
+     */
+    public function add(RouteDefinition $route) : void
+    {
+        $routeKey = RouteKey::fromRoute($route);
+        $keyString = $routeKey->toString();
+
+        // Check for duplicates based on configured policy
+        if (isset($this->routeKeys[$keyString])) {
+            $this->handleDuplicateRoute($routeKey, $route);
+            return; // If policy allows continuation
+        }
+
+        $this->routeKeys[$keyString] = true;
+
+        $method = strtoupper(string: $route->method);
+
+        // Support multiple routes per method+path for domain-aware routing
+        if (!isset($this->routes[$method][$route->path])) {
+            $this->routes[$method][$route->path] = [];
+        }
+        $this->routes[$method][$route->path][] = $route;
+
+        // Register named routes for quick lookup
+        if (! empty($route->name)) {
+            $this->namedRoutes[$route->name] = $route;
+        }
+    }
+
+    /**
+     * Builds a unique key for route deduplication.
+     */
+    private function buildRouteKey(RouteDefinition $route) : string
+    {
+        return sprintf(
+            '%s|%s|%s',
+            strtoupper($route->method),
+            $route->domain ?? '',
+            $route->path
+        );
+    }
+
+    /**
+     * Resolves the given HTTP request and returns structured resolution context.
+     *
+     * Provides comprehensive debugging information about how and why a route was selected,
+     * including timing, parameters, domain matching, and resolution path.
+     *
+     * @param Request $request The HTTP request to resolve
+     *
+     * @return RouteResolutionContext Structured context with route, parameters, timing, and debug info
+     *
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
+     */
+    public function resolve(Request $request) : RouteResolutionContext
+    {
+        $startTime = microtime(true);
+        $path      = $request->getUri()->getPath();
+        $method    = $request->getMethod();
+        $host      = $request->getUri()->getHost();
+
+        $resolutionPath = [
+            ['timestamp' => date('H:i:s.u'), 'description' => "Started resolution for {$method} {$path} from {$host}"],
+        ];
+
+        $this->trace?->log(event: 'resolve.start', context: ['path' => $path, 'method' => $method, 'host' => $host]);
+
+        try {
+            $matchResult = $this->matcher->match(routes: $this->routes, request: $request);
+
+            if ($matchResult === null) {
+                $resolutionPath[] = ['timestamp' => date('H:i:s.u'), 'description' => 'No route matched'];
+                $this->trace?->log(event: 'resolve.no_match', context: ['path' => $path, 'method' => $method]);
+
+                // No route matched - determine if it's 404 or 405
+                $allowedMethods   = $this->findAllowedMethodsForPath(path: $path);
+                $resolutionPath[] = ['timestamp' => date('H:i:s.u'), 'description' => 'Checked allowed methods: ' . implode(', ', $allowedMethods)];
+                $this->trace?->log(event: 'resolve.allowed_methods', context: ['allowed' => $allowedMethods]);
+
+                $failureReason = ! empty($allowedMethods)
+                    ? "Method {$method} not allowed (allowed: " . implode(', ', $allowedMethods) . ')'
+                    : "No route found for path {$path}";
+
+                $matchTime = (microtime(true) - $startTime) * 1000;
+
+                if (! empty($allowedMethods)) {
+                    $this->trace?->log(event: 'resolve.method_not_allowed');
+                    throw new MethodNotAllowedException(
+                        $failureReason,
+                        405,
+                        ['allowed_methods' => $allowedMethods],
+                        false
+                    );
+                } else {
+                    $this->trace?->log(event: 'resolve.route_not_found');
+                    throw new RouteNotFoundException($failureReason, 404, [], false);
+                }
+            }
+
+            [$route, $matches] = $matchResult;
+            $resolutionPath[] = ['timestamp' => date('H:i:s.u'), 'description' => "Matched route: {$route->method} {$route->path}"];
+            $this->trace?->log(event: 'resolve.match_found', context: [
+                'route'   => $route->name ?? $route->path,
+                'matches' => count($matches)
+            ]);
+
+            // Extract any parameters captured from the regex match (e.g., {id} = 123).
+            $parameters       = $this->extractParameters(matches: $matches);
+            $resolutionPath[] = ['timestamp' => date('H:i:s.u'), 'description' => 'Extracted parameters: ' . json_encode($parameters)];
+            $this->trace?->log(event: 'resolve.parameters_extracted', context: ['params' => $parameters]);
+
+            // Apply default route parameters and merge them with extracted parameters into the request object.
+            $request          = RouteRequestInjector::injectExtractedParameters(
+                request   : $request,
+                defaults  : $route->defaults,
+                parameters: $parameters
+            );
+            $resolutionPath[] = ['timestamp' => date('H:i:s.u'), 'description' => 'Injected parameters into request'];
+            $this->trace?->log(event: 'resolve.parameters_injected', context: ['defaults' => $route->defaults]);
+
+            // Calls the validate method of the RouteConstraintValidator instance.
+            $this->constraintValidator->validate(route: $route, request: $request);
+            $resolutionPath[] = ['timestamp' => date('H:i:s.u'), 'description' => 'Route validation completed'];
+            $this->trace?->log(event: 'resolve.validation_complete');
+
+            $matchTime     = (microtime(true) - $startTime) * 1000;
+            $matchedDomain = $route->domain ?? null;
+
+            $this->trace?->log(event: 'resolve.complete', context: ['route' => $route->name ?? $route->path]);
+
+            return RouteResolutionContext::success(
+                route         : $route,
+                parameters    : $parameters,
+                matchedDomain : $matchedDomain,
+                matchTimeMs   : $matchTime,
+                resolutionPath: $resolutionPath
+            );
+
+        } catch (RouteNotFoundException|MethodNotAllowedException $e) {
+            $matchTime = (microtime(true) - $startTime) * 1000;
+            $this->trace?->log(event: 'resolve.failed', context: ['reason' => $e->getMessage()]);
+
+            return RouteResolutionContext::failure(
+                failureReason : $e->getMessage(),
+                matchTimeMs   : $matchTime,
+                resolutionPath: $resolutionPath
+            );
+        }
+    }
+
+    /**
+     * Finds all HTTP methods that have routes for the given path.
+     *
+     * Used to determine if a 404 should be 405 (method not allowed) instead.
+     * Now considers pattern routes (e.g., /users/{id}) for proper 405 responses.
+     *
+     * @param string $path The request path to check
+     *
+     * @return string[] Array of allowed HTTP methods (uppercase)
+     */
+    private function findAllowedMethodsForPath(string $path) : array
+    {
+        $allowedMethods = [];
+
+        foreach ($this->routes as $method => $pathsForMethod) {
+            foreach ($pathsForMethod as $routesForPath) {
+                foreach ($routesForPath as $route) {
+                    // Check if this route's pattern could match the path
+                    if ($this->matchesIgnoringMethod(route: $route, path: $path)) {
+                        $allowedMethods[] = $method;
+                        break 2; // Found at least one route for this method
+                    }
+                }
+            }
+        }
+
+        // Remove duplicates and sort
+        $allowedMethods = array_unique($allowedMethods);
+        sort($allowedMethods);
+
+        return $allowedMethods;
+    }
+
+    /**
+     * Checks if a route pattern could match the given path, ignoring HTTP method.
+     *
+     * Used for 404/405 determination - if a pattern route exists for the path
+     * but with different methods, return 405 instead of 404.
+     *
+     * Uses precompiled regex pattern for performance.
+     *
+     * @param RouteDefinition $route The route to check
+     * @param string         $path  The request path
+     *
+     * @return bool True if the route pattern matches the path
+     */
+    private function matchesIgnoringMethod(RouteDefinition $route, string $path) : bool
+    {
+        // Use precompiled regex pattern for performance
+        return preg_match($route->compiledPathRegex, $path) === 1;
+    }
+
+    /**
+     * Compiles a route path template into a regex pattern.
+     *
+     * @param string $template    The route template (e.g., "/users/{id}")
+     * @param array  $constraints Parameter constraints
+     *
+     * @return string The compiled regex pattern
+     */
+    private function compileRoutePattern(string $template, array $constraints) : string
+    {
+        $pattern = preg_replace_callback(
+            '/\{([^}]+)\}/',
+            static function ($matches) use ($constraints) {
+                $param      = $matches[1];
+                $isOptional = str_ends_with($param, '?');
+                $isWildcard = str_ends_with($param, '*');
+
+                $paramName  = preg_replace('/[?*]$/', '', $param);
+                $constraint = $constraints[$paramName] ?? '[^/]+';
+
+                $segment = "(?P<{$paramName}>{$constraint})";
+
+                if ($isWildcard) {
+                    $segment = "(?P<{$paramName}>.*)";
+                }
+
+                if ($isOptional) {
+                    $segment = "(?:/{$segment})?";
+                } else {
+                    $segment = "/{$segment}";
+                }
+
+                return $segment;
+            },
+            $template
+        );
+
+        return "#^{$pattern}$#";
+    }
+
+    private function extractParameters(array $matches) : array
+    {
+        return array_filter($matches, static fn($key) => ! is_int($key), ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
+     * Returns all registered routes grouped by HTTP method.
+     * Flattens the internal structure for backward compatibility.
+     *
+     * @return array<string, RouteDefinition[]>
+     */
+    public function allRoutes() : array
+    {
+        $flattened = [];
+        foreach ($this->routes as $method => $pathsForMethod) {
+            $flattened[$method] = [];
+            foreach ($pathsForMethod as $routesForPath) {
+                foreach ($routesForPath as $route) {
+                    $flattened[$method][] = $route;
+                }
+            }
+        }
+        return $flattened;
+    }
+
+    /**
+     * Handle duplicate route registration based on configured policy.
+     *
+     * @throws DuplicateRouteException
+     */
+    private function handleDuplicateRoute(RouteKey $existingKey, RouteDefinition $newRoute) : void
+    {
+        // Default policy - can be made configurable in future versions
+        $policy = DuplicatePolicy::THROW;
+
+        match ($policy) {
+            DuplicatePolicy::THROW => throw new DuplicateRouteException(
+                "Duplicate route: {$newRoute->method} {$newRoute->path}",
+                409,
+                [
+                    'method' => $newRoute->method,
+                    'path' => $newRoute->path,
+                    'domain' => $newRoute->domain,
+                    'name' => $newRoute->name
+                ],
+                false
+            ),
+            DuplicatePolicy::REPLACE => $this->replaceRoute($existingKey, $newRoute),
+            DuplicatePolicy::IGNORE => null, // Do nothing, keep existing route
+        };
+    }
+
+    /**
+     * Replace an existing route with a new one.
+     */
+    private function replaceRoute(RouteKey $key, RouteDefinition $newRoute) : void
+    {
+        $method = strtoupper($key->method);
+
+        // Remove existing route
+        if (isset($this->routes[$method][$key->path])) {
+            $this->routes[$method][$key->path] = array_filter(
+                $this->routes[$method][$key->path],
+                static fn(RouteDefinition $route) => $route->domain !== $key->domain
+            );
+        }
+
+        // Add new route
+        if (!isset($this->routes[$method][$key->path])) {
+            $this->routes[$method][$key->path] = [];
+        }
+        $this->routes[$method][$key->path][] = $newRoute;
+
+        // Update named routes if applicable
+        if (! empty($newRoute->name)) {
+            $this->namedRoutes[$newRoute->name] = $newRoute;
+        }
+    }
+
+    /**
+     * Gets the current trace instance for debugging and profiling.
+     */
+    public function getTrace() : RouterTrace|null
+    {
+        return $this->trace;
     }
 }

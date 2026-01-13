@@ -17,13 +17,13 @@ use Throwable;
  * (e.g., init, setup, postConstruct) on the resolved instance after
  * all dependencies have been injected.
  *
- * @package Avax\Container\Core\Kernel\Steps
- * @see docs/Core/Kernel/Steps/InvokePostConstructStep.md#quick-summary
+ * @see     docs/Core/Kernel/Steps/InvokePostConstructStep.md#quick-summary
  */
 final readonly class InvokePostConstructStep implements KernelStep
 {
     /**
      * @param InvokeAction $invoker Helper for executing method calls.
+     *
      * @see docs/Core/Kernel/Steps/InvokePostConstructStep.md#method-__construct
      */
     public function __construct(
@@ -34,12 +34,12 @@ final readonly class InvokePostConstructStep implements KernelStep
      * Invoke conventional post-construct hooks on the resolved instance.
      *
      * @param KernelContext $context The resolution context.
-     * @return void
+     *
      * @see docs/Core/Kernel/Steps/InvokePostConstructStep.md#method-__invoke
      */
-    public function __invoke(KernelContext $context): void
+    public function __invoke(KernelContext $context) : void
     {
-        if ($context->getMeta('inject', 'target', false) || $context->getMeta('resolution', 'delegated', false)) {
+        if ($context->getMeta(namespace: 'inject', key: 'target', default: false) || $context->getMeta(namespace: 'resolution', key: 'delegated', default: false)) {
             return;
         }
 
@@ -58,16 +58,16 @@ final readonly class InvokePostConstructStep implements KernelStep
                 if ($class->hasMethod(name: $methodName) && $class->getMethod(name: $methodName)->isPublic()) {
                     try {
                         $this->invoker->invoke(target: [$context->getInstance(), $methodName]);
-                        $context->setMeta('lifecycle', 'methods', [...($context->getMeta('lifecycle', 'methods') ?? []), $methodName]);
+                        $context->setMeta(namespace: 'lifecycle', key: 'methods', value: [...($context->getMeta(namespace: 'lifecycle', key: 'methods') ?? []), $methodName]);
                     } catch (Throwable $e) {
-                        $context->setMeta('lifecycle', 'post_construct_error', $e);
-                        $context->setMeta('lifecycle', 'errors', [...($context->getMeta('lifecycle', 'errors') ?? []), $methodName => $e->getMessage()]);
+                        $context->setMeta(namespace: 'lifecycle', key: 'post_construct_error', value: $e);
+                        $context->setMeta(namespace: 'lifecycle', key: 'errors', value: [...($context->getMeta(namespace: 'lifecycle', key: 'errors') ?? []), $methodName => $e->getMessage()]);
                     }
                 }
             }
 
-            $context->setMeta('lifecycle', 'invoked', true);
-            $context->setMeta('lifecycle', 'completed_at', microtime(as_float: true));
+            $context->setMeta(namespace: 'lifecycle', key: 'invoked', value: true);
+            $context->setMeta(namespace: 'lifecycle', key: 'completed_at', value: microtime(as_float: true));
         } catch (Throwable) {
             // If we can't reflect it, skip (shouldn't happen with is_object check but good for safety)
         }

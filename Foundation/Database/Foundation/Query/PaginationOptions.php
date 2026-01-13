@@ -24,8 +24,6 @@ final readonly class PaginationOptions
 
     /**
      * Calculate the SQL OFFSET for the current page.
-     *
-     * @return int
      */
     public function getOffset() : int
     {

@@ -8,7 +8,7 @@ use Avax\Config\Configurator\ConfiguratorInterface;
 use Avax\Config\Configurator\FileLoader\ConfigFileLoader;
 use Avax\Config\Configurator\FileLoader\ConfigLoaderInterface;
 use Avax\Config\Service\Config;
-use Avax\Container\Features\Operate\Boot\ServiceProvider;
+use Avax\Container\Providers\ServiceProvider;
 
 /**
  * Service Provider for application configuration.
@@ -20,7 +20,6 @@ class ConfigurationServiceProvider extends ServiceProvider
     /**
      * Register configuration bindings into the container.
      *
-     * @return void
      * @see docs/Providers/Core/ConfigurationServiceProvider.md#method-register
      */
     public function register() : void
@@ -35,7 +34,7 @@ class ConfigurationServiceProvider extends ServiceProvider
 
         // Bind 'config' alias
         $this->app->singleton(abstract: 'config', concrete: function () {
-            return $this->app->get(Config::class);
+            return $this->app->get(id: Config::class);
         });
     }
 }

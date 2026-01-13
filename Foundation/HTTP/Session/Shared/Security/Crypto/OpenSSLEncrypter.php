@@ -20,10 +20,10 @@ final class OpenSSLEncrypter implements Encrypter
         private readonly string $key
     ) {}
 
-    public function encrypt(mixed $value) : string
+    public function encrypt(mixed $value): string
     {
         $ivLength = openssl_cipher_iv_length(cipher_algo: self::CIPHER);
-        $iv       = openssl_random_pseudo_bytes(length: $ivLength);
+        $iv = openssl_random_pseudo_bytes(length: $ivLength);
 
         $serialized = serialize(value: $value);
 
@@ -40,10 +40,10 @@ final class OpenSSLEncrypter implements Encrypter
         }
 
         // Return combined IV + Ciphertext (base64 encoded)
-        return base64_encode(string: $iv . $ciphertext);
+        return base64_encode(string: $iv.$ciphertext);
     }
 
-    public function decrypt(string $encrypted) : mixed
+    public function decrypt(string $encrypted): mixed
     {
         $data = base64_decode(string: $encrypted, strict: true);
         if ($data === false) {
@@ -56,7 +56,7 @@ final class OpenSSLEncrypter implements Encrypter
             throw new EncryptionException(message: 'Decryption failed: Payload too short');
         }
 
-        $iv         = substr(string: $data, offset: 0, length: $ivLength);
+        $iv = substr(string: $data, offset: 0, length: $ivLength);
         $ciphertext = substr(string: $data, offset: $ivLength);
 
         $serialized = openssl_decrypt(

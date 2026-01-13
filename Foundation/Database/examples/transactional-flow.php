@@ -24,16 +24,16 @@ use Avax\Database\Transaction\TransactionManager;
 $pdo = new PDO(dsn: 'mysql:host=localhost;dbname=example', username: 'user', password: 'pass');
 $pdo->setAttribute(attribute: PDO::ATTR_ERRMODE, value: PDO::ERRMODE_EXCEPTION);
 
-$grammar        = new MySQLGrammar();
-$executor       = new PDOExecutor(pdo: $pdo, connectionName: 'primary');
+$grammar = new MySQLGrammar;
+$executor = new PDOExecutor(pdo: $pdo, connectionName: 'primary');
 $transactionMgr = new TransactionManager(pdo: $pdo);
-$orchestrator   = new QueryOrchestrator(
+$orchestrator = new QueryOrchestrator(
     executor          : $executor,
     transactionManager: $transactionMgr
 );
 
 // 2. Create an execution scope for correlation tracking
-$scope = ExecutionScope::fresh(correlationId: 'req_' . bin2hex(string: random_bytes(length: 8)));
+$scope = ExecutionScope::fresh(correlationId: 'req_'.bin2hex(string: random_bytes(length: 8)));
 
 // 3. Initialize the Query Builder
 $builder = new QueryBuilder(grammar: $grammar, orchestrator: $orchestrator->withScope(scope: $scope));
@@ -43,8 +43,8 @@ $builder->transaction(callback: function (QueryBuilder $query) {
 
     // Standard INSERT
     $query->from(table: 'users')->insert(values: [
-        'name'     => 'John Doe',
-        'email'    => 'john@example.com',
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
         'password' => password_hash(password: 'secret', algo: PASSWORD_BCRYPT), // This will be redacted in logs
     ]);
 

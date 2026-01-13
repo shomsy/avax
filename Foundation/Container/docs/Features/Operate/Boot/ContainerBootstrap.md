@@ -2,35 +2,46 @@
 
 ## Quick Summary
 
-- This file defines a higher-level “enterprise bootstrap orchestrator” for building a full container with integrated infrastructure and environment-specific settings.
-- It exists so you can bootstrap a container in a profile-driven way (development, production, or custom config) while automatically handling database-backed service definitions and telemetry.
-- It removes the complexity of low-level wiring by delegating to the `ContainerBuilder` while managing high-level application lifecycle steps.
+- This file defines a higher-level “enterprise bootstrap orchestrator” for building a full container with integrated
+  infrastructure and environment-specific settings.
+- It exists so you can bootstrap a container in a profile-driven way (development, production, or custom config) while
+  automatically handling database-backed service definitions and telemetry.
+- It removes the complexity of low-level wiring by delegating to the `ContainerBuilder` while managing high-level
+  application lifecycle steps.
 
 ### For Humans: What This Means (Summary)
 
-This is the "General Manager" of your application's startup. It doesn't do the heavy lifting of building the engine itself (the `ContainerBuilder` does that), but it makes sure the right fuel is selected (profile), the seats are installed (database definitions), and the flight recorder is on (telemetry).
+This is the "General Manager" of your application's startup. It doesn't do the heavy lifting of building the engine
+itself (the `ContainerBuilder` does that), but it makes sure the right fuel is selected (profile), the seats are
+installed (database definitions), and the flight recorder is on (telemetry).
 
 ## Terminology (MANDATORY, EXPANSIVE)
 
-- **Bootstrap Profile**: A bundled configuration object that tells the orchestrator how to behave in different environments.
-  - In this file: Represented by the `BootstrapProfile` class.
-  - Why it matters: It allows you to switch between "Development Mode" (lots of logs, slow) and "Production Mode" (fast, secure) with one line of code.
+- **Bootstrap Profile**: A bundled configuration object that tells the orchestrator how to behave in different
+  environments.
+    - In this file: Represented by the `BootstrapProfile` class.
+    - Why it matters: It allows you to switch between "Development Mode" (lots of logs, slow) and "Production Mode" (
+      fast, secure) with one line of code.
 - **Container Builder**: The low-level architect that actually puts the container together.
-  - In this file: Used via `\Avax\Container\Features\Core\ContainerBuilder`.
-  - Why it matters: It separates the *definition* of services from the actual *execution* of the application.
+    - In this file: Used via `\Avax\Container\Features\Core\ContainerBuilder`.
+    - Why it matters: It separates the *definition* of services from the actual *execution* of the application.
 - **Base Bindings**: Core objects that are registered into the container before anything else.
-  - In this file: The profile and config objects are registered as singletons.
-  - Why it matters: These objects are needed by almost every other service during the boot process.
+    - In this file: The profile and config objects are registered as singletons.
+    - Why it matters: These objects are needed by almost every other service during the boot process.
 - **Service Definition Repository**: A database-backed store that contains descriptions of your app's services.
-  - In this file: Initialized if a `QueryBuilder` is provided.
-  - Why it matters: It allows you to change how your app wires itself together without changing a single line of PHP code—just update a row in the database.
+    - In this file: Initialized if a `QueryBuilder` is provided.
+    - Why it matters: It allows you to change how your app wires itself together without changing a single line of PHP
+      code—just update a row in the database.
 - **Telemetry & Monitoring**: The systems that watch how the container performs.
-  - In this file: Initialized in `initializeMonitoring()`.
-  - Why it matters: In a complex enterprise app, you need to know if the container is slowing down or if a specific service is failing to load.
+    - In this file: Initialized in `initializeMonitoring()`.
+    - Why it matters: In a complex enterprise app, you need to know if the container is slowing down or if a specific
+      service is failing to load.
 
 ### For Humans: What This Means (Terminology)
 
-This class uses a few high-level concepts to make sure your app starts up professionally. It uses "Profiles" for environment settings, a "Builder" to do the assembly, "Repositories" to load service lists from a database, and "Telemetry" to make sure everything stays healthy.
+This class uses a few high-level concepts to make sure your app starts up professionally. It uses "Profiles" for
+environment settings, a "Builder" to do the assembly, "Repositories" to load service lists from a database, and "
+Telemetry" to make sure everything stays healthy.
 
 ## Think of It
 
@@ -48,7 +59,10 @@ The Designer (this class) coordinates everyone else to make sure that when the c
 
 ## Story Example
 
-Imagine you are launching a new e-commerce site. In your `index.php`, you don't want to manually set up loggers and database connections. You simply call `ContainerBootstrap::production($db)->bootstrap()`. The orchestrator picks the production rules, tells the builder to start assembly, pulls your "PaymentService" and "CatalogService" definitions from the database, checks that they are valid, and starts recording metrics so you can see how fast the site loads.
+Imagine you are launching a new e-commerce site. In your `index.php`, you don't want to manually set up loggers and
+database connections. You simply call `ContainerBootstrap::production($db)->bootstrap()`. The orchestrator picks the
+production rules, tells the builder to start assembly, pulls your "PaymentService" and "CatalogService" definitions from
+the database, checks that they are valid, and starts recording metrics so you can see how fast the site loads.
 
 ### For Humans: What This Means (Story)
 
@@ -70,7 +84,8 @@ This is the "Start" button for your entire application.
 
 ### For Humans: What This Means (Walkthrough)
 
-It’s like a smart startup sequence for your computer—you just turn it on, and it handles the BIOS, the OS, and the Background Apps automatically.
+It’s like a smart startup sequence for your computer—you just turn it on, and it handles the BIOS, the OS, and the
+Background Apps automatically.
 
 ## How It Works (Technical)
 
@@ -78,24 +93,29 @@ The `bootstrap()` method executes a strict linear pipeline:
 
 1. **Builder Creation**: It instantiates a `ContainerBuilder`.
 2. **configureBuilder()**: It registers the configuration and infrastructure (Cache/Log) into the builder.
-3. **loadServiceDefinitions()**: It queries the database (if provided) and registers every service found into the builder.
+3. **loadServiceDefinitions()**: It queries the database (if provided) and registers every service found into the
+   builder.
 4. **build()**: It triggers the builder to create the final immutable `Container`.
-5. **Post-Build**: It runs `validateConfiguration()` to catch "dangling" dependencies and `initializeMonitoring()` to start the telemetry sink.
+5. **Post-Build**: It runs `validateConfiguration()` to catch "dangling" dependencies and `initializeMonitoring()` to
+   start the telemetry sink.
 
 ### For Humans: What This Means (Technical)
 
-It follows a "Define-then-Execute" pattern. We define all the rules and services in the "Builder" first, then we "Seal" it into a final container that the app uses to run.
+It follows a "Define-then-Execute" pattern. We define all the rules and services in the "Builder" first, then we "Seal"
+it into a final container that the app uses to run.
 
 ## Architecture Role
 
 - **Lives in**: `Features/Operate/Boot`
-- **Why?**: It acts as the bridge between "Library Code" (The Container internals) and "Application Code" (Your business logic).
+- **Why?**: It acts as the bridge between "Library Code" (The Container internals) and "Application Code" (Your business
+  logic).
 - **Dependencies**: It relies on the `Core` builder, `Config` DTOs, and `Observe` telemetry systems.
 - **Role**: Orchestrator. It doesn't "do" the logic; it "commands" other components to do their part in order.
 
 ### For Humans: What This Means (Architecture)
 
-If the application fails to start or your services aren't loading, this class is your "Black Box" recorder and command center.
+If the application fails to start or your services aren't loading, this class is your "Black Box" recorder and command
+center.
 
 ## Methods
 
@@ -103,7 +123,8 @@ If the application fails to start or your services aren't loading, this class is
 
 #### Technical Explanation: __construct
 
-Initializes the orchestrator with a static configuration profile and an optional query builder for database-backed operations.
+Initializes the orchestrator with a static configuration profile and an optional query builder for database-backed
+operations.
 
 #### For Humans: What This Means
 
@@ -123,7 +144,8 @@ Allows you to keep your app settings in a simple `.php` file and load them easil
 
 #### Technical Explanation: development
 
-Static factory that returns an instance pre-configured with the `development` profile defaults (high logging, no compilation).
+Static factory that returns an instance pre-configured with the `development` profile defaults (high logging, no
+compilation).
 
 #### For Humans: What This Means
 
@@ -133,7 +155,8 @@ The "Fast Start" for developers who want to see errors and work quickly.
 
 #### Technical Explanation: production
 
-Static factory that returns an instance pre-configured with the `production` profile defaults (compilation enabled, maximum performance).
+Static factory that returns an instance pre-configured with the `production` profile defaults (compilation enabled,
+maximum performance).
 
 #### For Humans: What This Means
 
@@ -143,7 +166,8 @@ The "Golden Rule" for your live servers—it’s optimized for speed and securit
 
 #### Technical Explanation: bootstrap
 
-The main entry point. Orchestrates the 5-step lifecycle: configure builder, load definitions, build container, validate, and monitor.
+The main entry point. Orchestrates the 5-step lifecycle: configure builder, load definitions, build container, validate,
+and monitor.
 
 #### For Humans: What This Means
 
@@ -163,7 +187,8 @@ Sets up the "Internal Tools" like logging and caching into the builder's memory.
 
 #### Technical Explanation: bindInfrastructure
 
-Initializes and binds singleton instances for `CacheManagerIntegration`, `LoggerFactoryIntegration`, and DB-backed repositories.
+Initializes and binds singleton instances for `CacheManagerIntegration`, `LoggerFactoryIntegration`, and DB-backed
+repositories.
 
 #### For Humans: What This Means
 
@@ -183,7 +208,8 @@ Creates "Nicknames" for services so you can just ask for 'cache' instead of a su
 
 #### Technical Explanation: loadServiceDefinitions
 
-Fetches active service definitions from the database based on the current environment and registers them with the builder.
+Fetches active service definitions from the database based on the current environment and registers them with the
+builder.
 
 #### For Humans: What This Means
 
@@ -193,7 +219,8 @@ Opens the "Inventory List" in the database and tells the builder what classes it
 
 #### Technical Explanation: registerService
 
-Maps a database record (`ServiceDefinitionEntity`) into the appropriate builder method (`singleton`, `scoped`, or `bind`) based on lifetime.
+Maps a database record (`ServiceDefinitionEntity`) into the appropriate builder method (`singleton`, `scoped`, or
+`bind`) based on lifetime.
 
 #### For Humans: What This Means
 
@@ -222,12 +249,14 @@ Turns on the "Dashcam" and "Performance Monitoring" so you can see how the app i
 ## Risks & Trade-offs
 
 - **Performance**: Loading definitions from a database adds a small overhead at startup.
-- **Complexity**: This orchestrator assumes a specific structure (Profiles, QueryBuilder). If your app is extremely simple, this might be overkill.
+- **Complexity**: This orchestrator assumes a specific structure (Profiles, QueryBuilder). If your app is extremely
+  simple, this might be overkill.
 - **Dependency**: It ties your container startup to a database connection if you use repository-backed services.
 
 ### For Humans: What This Means (Risks)
 
-It’s built for "Grown Up" enterprise apps. It might feel a bit heavy if you're just building a tiny script, but it’s a lifesaver for anything bigger.
+It’s built for "Grown Up" enterprise apps. It might feel a bit heavy if you're just building a tiny script, but it’s a
+lifesaver for anything bigger.
 
 ## Related Files & Folders
 
@@ -238,4 +267,5 @@ It’s built for "Grown Up" enterprise apps. It might feel a bit heavy if you're
 
 ### For Humans: What This Means (Relationships)
 
-This class is the "Conductor" of the orchestra—it doesn't play the instruments, but it tells the "Profile", "Builder", and "Metrics" exactly when to start playing.
+This class is the "Conductor" of the orchestra—it doesn't play the instruments, but it tells the "Profile", "Builder",
+and "Metrics" exactly when to start playing.

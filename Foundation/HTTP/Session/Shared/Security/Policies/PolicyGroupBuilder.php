@@ -18,7 +18,6 @@ use RuntimeException;
  *           ->add(new MaxIdlePolicy(900))
  *           ->add(new SecureOnlyPolicy())
  *       ->build();
- *
  * @example Complex groups
  *   $policies = PolicyGroupBuilder::create()
  *       ->requireAll()
@@ -29,8 +28,6 @@ use RuntimeException;
  *               ->userAgentBinding()
  *           ->endGroup()
  *       ->build();
- *
- * @package Avax\HTTP\Session\Shared\Security\Policies
  */
 final class PolicyGroupBuilder
 {
@@ -107,7 +104,7 @@ final class PolicyGroupBuilder
      */
     public function userAgentBinding() : self
     {
-        return $this->add(policy: new CrossAgentPolicy());
+        return $this->add(policy: new CrossAgentPolicy);
     }
 
     /**
@@ -147,7 +144,7 @@ final class PolicyGroupBuilder
      */
     public function secureOnly() : self
     {
-        return $this->add(policy: new SecureOnlyPolicy());
+        return $this->add(policy: new SecureOnlyPolicy);
     }
 
     /**
@@ -225,12 +222,10 @@ final class PolicyGroupBuilder
 
     /**
      * Create a new builder instance.
-     *
-     * @return self
      */
     public static function create() : self
     {
-        return new self();
+        return new self;
     }
 
     /**

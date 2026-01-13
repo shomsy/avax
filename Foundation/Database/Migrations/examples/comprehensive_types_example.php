@@ -11,13 +11,12 @@ use Illuminate\Database\Migrations\Migration;
  *
  * -- intent: showcase all available column types and modifiers.
  */
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Execute the migration to create the example table.
-     *
-     * @return void
      */
-    public function up() : void
+    public function up(): void
     {
         $this->create(table: 'comprehensive_example', callback: function (Blueprint $table) {
             // ========================================
@@ -86,10 +85,8 @@ return new class extends Migration {
 
     /**
      * Reverse the migration by dropping the table.
-     *
-     * @return void
      */
-    public function down() : void
+    public function down(): void
     {
         $this->drop(table: 'comprehensive_example');
     }

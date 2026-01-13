@@ -18,10 +18,10 @@ final readonly class DatabaseExportCommand
 
     public function handle(string $path, string|null $table = null) : int
     {
-        $target = $table ? "table: {$table}" : "full database";
+        $target = $table ? "table: {$table}" : 'full database';
 
         echo "\033[33mNOTICE: You are about to export {$target}.\033[0m\n";
-        echo "This might take some time depending on your data size. Proceed? [y/N]: ";
+        echo 'This might take some time depending on your data size. Proceed? [y/N]: ';
 
         $confirmation = trim(string: fgets(stream: STDIN));
         if (strtolower(string: $confirmation) !== 'y') {

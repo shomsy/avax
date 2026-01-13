@@ -16,8 +16,6 @@ use OutOfBoundsException;
  *
  * The trait enforces the implementation of `getItems` and `setItems` methods
  * in the using class to manage the underlying data collection.
- *
- * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait ManageItemsTrait
 {
@@ -207,7 +205,7 @@ trait ManageItemsTrait
         $items = $this->getItems();
 
         if (! array_key_exists(key: $index, array: $items)) {
-            throw new OutOfBoundsException(message: "Invalid index " . $index . ".");
+            throw new OutOfBoundsException(message: 'Invalid index ' . $index . '.');
         }
 
         unset($items[$index]);
@@ -243,7 +241,7 @@ trait ManageItemsTrait
         $items = $this->getItems();
 
         if (! array_key_exists(key: $index, array: $items)) {
-            throw new OutOfBoundsException(message: "Invalid index " . $index . ".");
+            throw new OutOfBoundsException(message: 'Invalid index ' . $index . '.');
         }
 
         $items[$index] = $value;
@@ -257,9 +255,9 @@ trait ManageItemsTrait
      * This method returns a new instance containing a subset of the collection based on the provided offset and
      * length.
      *
-     * @param int      $offset The starting index of the slice.
-     * @param int|null $length The number of items to include in the slice. If null, slices to the end of the
-     *                         collection.
+     * @param int      $offset    The starting index of the slice.
+     * @param int|null $length    The number of items to include in the slice. If null, slices to the end of the
+     *                            collection.
      *
      * @return static A new instance containing the sliced portion.
      *

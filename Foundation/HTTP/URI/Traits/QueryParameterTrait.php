@@ -6,7 +6,7 @@ namespace Avax\HTTP\URI\Traits;
 
 trait QueryParameterTrait
 {
-    public function addParam(string $key, string $value) : self
+    public function addParam(string $key, string $value): self
     {
         $clone = clone $this;
         $clone->queryParams->set(key: rawurldecode(string: $key), value: rawurldecode(string: $value));
@@ -14,8 +14,7 @@ trait QueryParameterTrait
         return $clone;
     }
 
-
-    public function addParams(array $params) : self
+    public function addParams(array $params): self
     {
         $clone = clone $this;
         foreach ($params as $key => $value) {
@@ -25,12 +24,12 @@ trait QueryParameterTrait
         return $clone;
     }
 
-    public function getParams() : array
+    public function getParams(): array
     {
         return $this->queryParams->toArray();
     }
 
-    public function removeParam(string $key) : self
+    public function removeParam(string $key): self
     {
         $clone = clone $this;
         $clone->queryParams->delete(key: $key);
@@ -38,7 +37,7 @@ trait QueryParameterTrait
         return $clone;
     }
 
-    public function buildQuery() : string
+    public function buildQuery(): string
     {
         return $this->queryParams->toString();
     }

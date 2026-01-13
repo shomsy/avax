@@ -23,7 +23,6 @@ readonly class DTOArrayOf
     /**
      * Transforms the input array into DTO instances
      *
-     * @param array|null $value
      *
      * @return array<int, AbstractDTO>
      */

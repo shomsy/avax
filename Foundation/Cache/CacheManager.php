@@ -18,10 +18,10 @@ readonly class CacheManager implements CacheInterface
 {
     public function __construct(
         private CacheBackendInterface $cacheBackend,
-        private LoggerInterface       $logger
+        private LoggerInterface $logger
     ) {}
 
-    public function get(string $key, mixed $default = null) : mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         try {
             return $this->cacheBackend->get(key: $key, default: $default);
@@ -32,7 +32,7 @@ readonly class CacheManager implements CacheInterface
         }
     }
 
-    public function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
+    public function set(string $key, mixed $value, int|DateInterval|null $ttl = null): bool
     {
         try {
             return $this->cacheBackend->set(key: $key, value: $value, ttl: $ttl);
@@ -43,7 +43,7 @@ readonly class CacheManager implements CacheInterface
         }
     }
 
-    public function delete(string $key) : bool
+    public function delete(string $key): bool
     {
         try {
             return $this->cacheBackend->delete(key: $key);
@@ -54,7 +54,7 @@ readonly class CacheManager implements CacheInterface
         }
     }
 
-    public function clear() : bool
+    public function clear(): bool
     {
         try {
             return $this->cacheBackend->clear();
@@ -65,7 +65,7 @@ readonly class CacheManager implements CacheInterface
         }
     }
 
-    public function getMultiple(iterable $keys, mixed $default = null) : iterable
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         try {
             return $this->cacheBackend->getMultiple(keys: $keys, default: $default);
@@ -76,7 +76,7 @@ readonly class CacheManager implements CacheInterface
         }
     }
 
-    public function setMultiple(iterable $values, int|DateInterval|null $ttl = null) : bool
+    public function setMultiple(iterable $values, int|DateInterval|null $ttl = null): bool
     {
         try {
             return $this->cacheBackend->setMultiple(values: $values, ttl: $ttl);
@@ -87,7 +87,7 @@ readonly class CacheManager implements CacheInterface
         }
     }
 
-    public function deleteMultiple(iterable $keys) : bool
+    public function deleteMultiple(iterable $keys): bool
     {
         try {
             return $this->cacheBackend->deleteMultiple(keys: $keys);
@@ -98,7 +98,7 @@ readonly class CacheManager implements CacheInterface
         }
     }
 
-    public function has(string $key) : bool
+    public function has(string $key): bool
     {
         try {
             return $this->cacheBackend->has(key: $key);
@@ -109,7 +109,7 @@ readonly class CacheManager implements CacheInterface
         }
     }
 
-    public function getBackend() : CacheBackendInterface
+    public function getBackend(): CacheBackendInterface
     {
         return $this->cacheBackend;
     }

@@ -4,21 +4,18 @@ declare(strict_types=1);
 
 namespace Avax\Container\Features\Think\Model;
 
-use Avax\Container\Features\Think\Flow\DesignFlow;
-
 /**
  * The "Audit Tool" for inspecting and visualizing class blueprints.
  *
- * PrototypeReport is a diagnostic utility that converts complex, multi-level 
- * {@see ServicePrototype} objects into human-readable data maps. It is 
- * used primarily by the CLI (e.g. `avax container:inspect`) to help 
- * developers understand the "Dependency Graph" of their application and 
- * identify potential issues like high complexity or excessive injection 
+ * PrototypeReport is a diagnostic utility that converts complex, multi-level
+ * {@see ServicePrototype} objects into human-readable data maps. It is
+ * used primarily by the CLI (e.g. `avax container:inspect`) to help
+ * developers understand the "Dependency Graph" of their application and
+ * identify potential issues like high complexity or excessive injection
  * points.
  *
- * @package Avax\Container\Features\Think\Model
- * @see docs/Features/Think/Model/PrototypeReport.md
- * @see ServicePrototype For the source data being analyzed.
+ * @see     docs/Features/Think/Model/PrototypeReport.md
+ * @see     ServicePrototype For the source data being analyzed.
  */
 class PrototypeReport
 {
@@ -29,11 +26,12 @@ class PrototypeReport
      * Generate an aggregate report for a collection of blueprints.
      *
      * @param iterable<ServicePrototype> $prototypes The blueprints to audit.
+     *
      * @return array<string, mixed> A structured map containing global statistics and individual reports.
      *
      * @see docs/Features/Think/Model/PrototypeReport.md#method-generatebulkreport
      */
-    public function generateBulkReport(iterable $prototypes): array
+    public function generateBulkReport(iterable $prototypes) : array
     {
         $reports = [];
         $stats   = [
@@ -77,11 +75,12 @@ class PrototypeReport
      * Generate a deep-dive report for one specific blueprint.
      *
      * @param ServicePrototype $prototype The blueprint to audit.
+     *
      * @return array<string, mixed> Detailed metadata, dependency lists, and complexity metrics.
      *
      * @see docs/Features/Think/Model/PrototypeReport.md#method-generateforprototype
      */
-    public function generateForPrototype(ServicePrototype $prototype): array
+    public function generateForPrototype(ServicePrototype $prototype) : array
     {
         return [
             'class'        => $prototype->class,
@@ -101,7 +100,7 @@ class PrototypeReport
     /**
      * Decomposes a method blueprint into reporting-friendly primitives.
      */
-    private function analyzeMethod(MethodPrototype $method): array
+    private function analyzeMethod(MethodPrototype $method) : array
     {
         return [
             'name'       => $method->name,
@@ -121,7 +120,7 @@ class PrototypeReport
     /**
      * Decomposes property blueprints into reporting-friendly primitives.
      */
-    private function analyzeProperties(array $properties): array
+    private function analyzeProperties(array $properties) : array
     {
         $result = [];
         foreach ($properties as $name => $property) {
@@ -138,7 +137,7 @@ class PrototypeReport
     /**
      * Decomposes multiple method blueprints.
      */
-    private function analyzeMethods(array $methods): array
+    private function analyzeMethods(array $methods) : array
     {
         return array_map(callback: [$this, 'analyzeMethod'], array: $methods);
     }
@@ -146,7 +145,7 @@ class PrototypeReport
     /**
      * Scans the entire prototype tree to extract unique dependency class names.
      */
-    private function extractDependencies(ServicePrototype $prototype): array
+    private function extractDependencies(ServicePrototype $prototype) : array
     {
         $dependencies = [];
 
@@ -178,7 +177,7 @@ class PrototypeReport
     /**
      * Heuristic calculator for "Dependency Complexity".
      */
-    private function calculateComplexity(ServicePrototype $prototype): array
+    private function calculateComplexity(ServicePrototype $prototype) : array
     {
         $constructorParams = $prototype->constructor ? count($prototype->constructor->parameters) : 0;
         $propertyCount     = count($prototype->injectedProperties);
@@ -196,11 +195,11 @@ class PrototypeReport
         return [
             'total_injection_points' => $totalInjectionPoints,
             'complexity_level'       => $complexity,
-            'breakdown' => [
+            'breakdown'              => [
                 'constructor' => $constructorParams,
                 'properties'  => $propertyCount,
                 'methods'     => $methodCount,
-            ]
+            ],
         ];
     }
 
@@ -208,11 +207,10 @@ class PrototypeReport
      * Export a report as a pretty JSON string.
      *
      * @param array<string, mixed> $report The report data.
-     * @return string
      *
      * @see docs/Features/Think/Model/PrototypeReport.md#method-tojson
      */
-    public function toJson(array $report): string
+    public function toJson(array $report) : string
     {
         return json_encode(value: $report, flags: JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
@@ -221,25 +219,24 @@ class PrototypeReport
      * Export a human-readable text summary of a report.
      *
      * @param array<string, mixed> $report The report data.
-     * @return string
      *
      * @see docs/Features/Think/Model/PrototypeReport.md#method-tosummary
      */
-    public function toSummary(array $report): string
+    public function toSummary(array $report) : string
     {
         if (isset($report['summary'])) {
             $stats = $report['statistics'];
 
             return sprintf(
                 "Container Prototype Report\n" .
-                    "==========================\n" .
-                    "Total Prototypes: %d\n" .
-                    "Instantiable Classes: %d\n" .
-                    "Total Dependencies: %d\n" .
-                    "Constructor Injection: %d\n" .
-                    "Property Injection: %d\n" .
-                    "Method Injection: %d\n" .
-                    "Generated: %s\n",
+                "==========================\n" .
+                "Total Prototypes: %d\n" .
+                "Instantiable Classes: %d\n" .
+                "Total Dependencies: %d\n" .
+                "Constructor Injection: %d\n" .
+                "Property Injection: %d\n" .
+                "Method Injection: %d\n" .
+                "Generated: %s\n",
                 $stats['total_prototypes'],
                 $stats['instantiable_classes'],
                 $stats['total_dependencies'],
@@ -252,9 +249,9 @@ class PrototypeReport
 
         return sprintf(
             "Prototype: %s\n" .
-                "Instantiable: %s\n" .
-                "Unique Dependencies: %d\n" .
-                "Complexity: %s (%d points)\n",
+            "Instantiable: %s\n" .
+            "Unique Dependencies: %d\n" .
+            "Complexity: %s (%d points)\n",
             $report['class'],
             $report['instantiable'] ? 'Yes' : 'No',
             count($report['dependencies']),

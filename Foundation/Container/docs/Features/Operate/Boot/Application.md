@@ -3,30 +3,33 @@
 ## Quick Summary
 
 - This file implements an HTTP-oriented application façade that wraps the container and provider lifecycle.
-- It exists so your app has one “entry point” for booting providers, loading routes, handling requests, and managing scopes.
+- It exists so your app has one “entry point” for booting providers, loading routes, handling requests, and managing
+  scopes.
 - It removes the complexity of gluing together router + container + provider boot order by centralizing the lifecycle.
 
 ### For Humans: What This Means (Summary)
 
-This is the “main control center” of your web app: it starts up, loads routes, runs providers, handles a request, and then cleans up.
+This is the “main control center” of your web app: it starts up, loads routes, runs providers, handles a request, and
+then cleans up.
 
 ## Terminology (MANDATORY, EXPANSIVE)
 
 - **Application façade**: A friendly API surface over deeper systems.
-  - In this file: `Application` wraps a `ContainerInternalInterface` and exposes helper methods.
-  - Why it matters: you don’t want every part of the app talking to kernel internals.
+    - In this file: `Application` wraps a `ContainerInternalInterface` and exposes helper methods.
+    - Why it matters: you don’t want every part of the app talking to kernel internals.
 - **Provider lifecycle**: Register then boot providers.
-  - In this file: `register()` adds providers; `boot()` boots them; `bootProvider()` calls provider boot through container invocation.
-  - Why it matters: correct boot order prevents missing dependencies.
+    - In this file: `register()` adds providers; `boot()` boots them; `bootProvider()` calls provider boot through
+      container invocation.
+    - Why it matters: correct boot order prevents missing dependencies.
 - **Scope**: A runtime boundary for scoped lifetimes (typically per request).
-  - In this file: `run()` begins scope; `terminate()` ends scope.
-  - Why it matters: request-specific state shouldn’t leak across requests.
+    - In this file: `run()` begins scope; `terminate()` ends scope.
+    - Why it matters: request-specific state shouldn’t leak across requests.
 - **Route loading**: Loading route definitions from file, optionally from cache.
-  - In this file: `loadRoutes()` supports cached routes via `RouteCacheLoader`.
-  - Why it matters: route registration can be expensive; caching helps.
+    - In this file: `loadRoutes()` supports cached routes via `RouteCacheLoader`.
+    - Why it matters: route registration can be expensive; caching helps.
 - **PSR-11 container delegation**: Implementing `ContainerInterface` by delegating to an internal container.
-  - In this file: `has()` and `get()` delegate.
-  - Why it matters: it makes the app usable wherever a PSR container is expected.
+    - In this file: `has()` and `get()` delegate.
+    - Why it matters: it makes the app usable wherever a PSR container is expected.
 
 ### For Humans: What This Means (Terminology)
 
@@ -47,7 +50,9 @@ You don’t want actors improvising setup; the stage manager makes everything pr
 
 ## Story Example
 
-You call `Application::start($root)` to get an `ApplicationBuilder`, configure routes, then build the app. At runtime, you call `$app->run()`. The app starts a scope, boots providers, creates a request object, routes it, sends the response, then ends the scope.
+You call `Application::start($root)` to get an `ApplicationBuilder`, configure routes, then build the app. At runtime,
+you call `$app->run()`. The app starts a scope, boots providers, creates a request object, routes it, sends the
+response, then ends the scope.
 
 ### For Humans: What This Means (Story)
 
@@ -59,7 +64,8 @@ This section gives you a slow, step-by-step mental model and a beginner-safe wal
 
 ### For Humans: What This Means (Walkthrough)
 
-If you’re new to this area, read this first. It helps you avoid getting lost in terminology and lets you use the code with confidence.
+If you’re new to this area, read this first. It helps you avoid getting lost in terminology and lets you use the code
+with confidence.
 
 1. Create app (usually via builder).
 2. Register providers.
@@ -69,7 +75,11 @@ If you’re new to this area, read this first. It helps you avoid getting lost i
 
 ## How It Works (Technical)
 
-The constructor registers base bindings (including config via `Settings`) and stores references in the container (`app` alias). Route loading uses a cache file when available; otherwise it evaluates the routes file and flushes buffered route definitions into `HttpRequestRouter`. Provider registration stores providers by class name and runs `register()`, then runs `boot()` once the app is booted. `run()` controls scope boundaries and dispatches request handling through the `Router`.
+The constructor registers base bindings (including config via `Settings`) and stores references in the container (`app`
+alias). Route loading uses a cache file when available; otherwise it evaluates the routes file and flushes buffered
+route definitions into `HttpRequestRouter`. Provider registration stores providers by class name and runs `register()`,
+then runs `boot()` once the app is booted. `run()` controls scope boundaries and dispatches request handling through the
+`Router`.
 
 ### For Humans: What This Means (Technical)
 
@@ -92,7 +102,8 @@ This section is the API map of the file: it documents what each method does, why
 
 ### For Humans: What This Means (Methods)
 
-When you’re trying to use or debug this file, this is the part you’ll come back to. It’s your “what can I call, and what happens?” cheat sheet.
+When you’re trying to use or debug this file, this is the part you’ll come back to. It’s your “what can I call, and what
+happens?” cheat sheet.
 
 ### Method: __construct(string $basePath, ContainerInternalInterface $container)
 
@@ -374,7 +385,8 @@ It learns what URLs exist and what they should do.
 
 #### Technical Explanation: register
 
-Registers a provider (by class name or instance), runs its register hook, and boots it immediately if the app is already booted.
+Registers a provider (by class name or instance), runs its register hook, and boots it immediately if the app is already
+booted.
 
 ##### For Humans: What This Means: register
 
@@ -646,9 +658,9 @@ Checks if a service is registered in the underlying container (PSR-11).
 ## Risks, Trade-offs & Recommended Practices
 
 - Risk: This class is “big” and can accumulate responsibilities.
-  - Why it matters: it can become hard to evolve.
-  - Design stance: treat it as an orchestrator; push specialized logic into dedicated services.
-  - Recommended practice: keep route, provider, and scope logic testable via collaborators.
+    - Why it matters: it can become hard to evolve.
+    - Design stance: treat it as an orchestrator; push specialized logic into dedicated services.
+    - Recommended practice: keep route, provider, and scope logic testable via collaborators.
 
 ### For Humans: What This Means (Risks)
 

@@ -18,8 +18,6 @@ use InvalidArgumentException;
  * This trait is intended to be used within classes that manage collections of data,
  * such as arrays of associative arrays or objects. It leverages the `AbstractDependenciesTrait`
  * for dependency management, ensuring that the underlying data collection is properly handled.
- *
- * @package Avax\DataHandling\ArrayHandling\Traits
  */
 trait LazyEvaluationTrait
 {
@@ -30,9 +28,8 @@ trait LazyEvaluationTrait
      *
      * Creates a new collection taking elements while the specified condition is met.
      *
-     * @param Closure $callback The condition used to continue taking items. It should accept the item and its key as
-     *                          parameters and return a boolean.
-     *
+     * @param  Closure  $callback  The condition used to continue taking items. It should accept the item and its key as
+     *                             parameters and return a boolean.
      * @return static A new lazy collection containing items while the callback returns true.
      *
      * @throws InvalidArgumentException If the callback does not return a boolean.
@@ -43,7 +40,7 @@ trait LazyEvaluationTrait
      * // $result yields 1, 2, 3
      * ```
      */
-    public function takeWhile(Closure $callback) : static
+    public function takeWhile(Closure $callback): static
     {
         return new static(function () use ($callback) {
             foreach ($this->getItems() as $key => $item) {
@@ -63,15 +60,13 @@ trait LazyEvaluationTrait
 
     /** ***Traversal and Filtering Methods*** */
 
-
     /**
      * Skip items in the collection while the callback returns true.
      *
      * Creates a new collection that skips initial elements while the specified condition is met.
      *
-     * @param Closure $callback The condition used to skip items. It should accept the item and its key as parameters
-     *                          and return a boolean.
-     *
+     * @param  Closure  $callback  The condition used to skip items. It should accept the item and its key as parameters
+     *                             and return a boolean.
      * @return static A new lazy collection skipping items while the callback returns true.
      *
      * @throws InvalidArgumentException If the callback does not return a boolean.
@@ -82,7 +77,7 @@ trait LazyEvaluationTrait
      * // $result yields 3, 4, 5
      * ```
      */
-    public function skipWhile(Closure $callback) : static
+    public function skipWhile(Closure $callback): static
     {
         return new static(function () use ($callback) {
             $yielding = false;
@@ -109,8 +104,7 @@ trait LazyEvaluationTrait
      *
      * Useful for scenarios where sampling at regular intervals is required.
      *
-     * @param int $step The interval at which items are retrieved. Must be a positive integer.
-     *
+     * @param  int  $step  The interval at which items are retrieved. Must be a positive integer.
      * @return static A new lazy collection containing every nth item.
      *
      * @throws InvalidArgumentException If $step is not a positive integer.
@@ -121,7 +115,7 @@ trait LazyEvaluationTrait
      * // $result yields 1, 3, 5
      * ```
      */
-    public function nth(int $step) : static
+    public function nth(int $step): static
     {
         if ($step <= 0) {
             throw new InvalidArgumentException(message: 'Step must be a positive integer.');
@@ -142,9 +136,8 @@ trait LazyEvaluationTrait
      *
      * Creates a new collection taking elements until the specified condition is met.
      *
-     * @param Closure $callback The condition that stops the taking of items. It should accept the item and its key as
-     *                          parameters and return a boolean.
-     *
+     * @param  Closure  $callback  The condition that stops the taking of items. It should accept the item and its key as
+     *                             parameters and return a boolean.
      * @return static A new lazy collection containing items until the callback returns true.
      *
      * @throws InvalidArgumentException If the callback does not return a boolean.
@@ -155,7 +148,7 @@ trait LazyEvaluationTrait
      * // $result yields 1, 2, 3
      * ```
      */
-    public function takeUntil(Closure $callback) : static
+    public function takeUntil(Closure $callback): static
     {
         return new static(function () use ($callback) {
             foreach ($this->getItems() as $key => $item) {
@@ -179,9 +172,8 @@ trait LazyEvaluationTrait
      * Creates a new collection that starts taking elements once the specified
      * condition is met.
      *
-     * @param Closure $callback The condition that starts the taking of items. It should accept the item and its key as
-     *                          parameters and return a boolean.
-     *
+     * @param  Closure  $callback  The condition that starts the taking of items. It should accept the item and its key as
+     *                             parameters and return a boolean.
      * @return static A new lazy collection skipping items until the callback returns true.
      *
      * @throws InvalidArgumentException If the callback does not return a boolean.
@@ -192,7 +184,7 @@ trait LazyEvaluationTrait
      * // $result yields 3, 4, 5
      * ```
      */
-    public function skipUntil(Closure $callback) : static
+    public function skipUntil(Closure $callback): static
     {
         return new static(function () use ($callback) {
             $yielding = false;
@@ -220,9 +212,8 @@ trait LazyEvaluationTrait
      * Produces sub-arrays (chunks) of size specified, sliding by step count.
      * Useful for windowed computations or batch processing.
      *
-     * @param int $size The size of each sliding window. Must be a positive integer.
-     * @param int $step The step by which the window slides. Must be a positive integer. Defaults to 1.
-     *
+     * @param  int  $size  The size of each sliding window. Must be a positive integer.
+     * @param  int  $step  The step by which the window slides. Must be a positive integer. Defaults to 1.
      * @return static A new lazy collection containing sliding windows of items.
      *
      * @throws InvalidArgumentException If $size or $step are not positive integers.
@@ -233,7 +224,7 @@ trait LazyEvaluationTrait
      * // $result yields [1, 2, 3], [2, 3, 4], [3, 4, 5]
      * ```
      */
-    public function sliding(int $size = 2, int $step = 1) : static
+    public function sliding(int $size = 2, int $step = 1): static
     {
         if ($size <= 0 || $step <= 0) {
             throw new InvalidArgumentException(message: 'Size and step must be positive integers.');
@@ -262,9 +253,8 @@ trait LazyEvaluationTrait
      * This method uses generator functions to yield only the specified number of items,
      * promoting memory efficiency for large datasets.
      *
-     * @param int $limit The number of items to take from the beginning of the collection. Must be a non-negative
-     *                   integer.
-     *
+     * @param  int  $limit  The number of items to take from the beginning of the collection. Must be a non-negative
+     *                      integer.
      * @return static A new lazy collection with the first $limit items.
      *
      * @throws InvalidArgumentException If $limit is negative.
@@ -275,7 +265,7 @@ trait LazyEvaluationTrait
      * // $result yields 1, 2, 3
      * ```
      */
-    public function take(int $limit) : static
+    public function take(int $limit): static
     {
         if ($limit < 0) {
             throw new InvalidArgumentException(message: 'Limit must be a non-negative integer.');
@@ -307,9 +297,8 @@ trait LazyEvaluationTrait
      * This method utilizes generator functions to skip a certain number of items,
      * promoting memory efficiency for large datasets.
      *
-     * @param int $offset The number of items to skip from the beginning of the collection. Must be a non-negative
-     *                    integer.
-     *
+     * @param  int  $offset  The number of items to skip from the beginning of the collection. Must be a non-negative
+     *                       integer.
      * @return static A new lazy collection with items starting from the $offset position.
      *
      * @throws InvalidArgumentException If $offset is negative.
@@ -320,7 +309,7 @@ trait LazyEvaluationTrait
      * // $result yields 3, 4, 5
      * ```
      */
-    public function skip(int $offset) : static
+    public function skip(int $offset): static
     {
         if ($offset < 0) {
             throw new InvalidArgumentException(message: 'Offset must be a non-negative integer.');
@@ -397,10 +386,8 @@ trait LazyEvaluationTrait
      * ]
      * ```
      */
-    public function toEager() : static
+    public function toEager(): static
     {
         return new static(iterator_to_array(iterator: $this->getItems()));
     }
-
-
 }

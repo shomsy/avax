@@ -22,7 +22,7 @@ final readonly class Path implements Stringable
     /**
      * Constructor.
      *
-     * @param string $path The URI path to normalize and store.
+     * @param  string  $path  The URI path to normalize and store.
      *
      * Ensures the path is normalized upon instantiation to maintain consistency
      * and avoid dealing with non-normalized paths later in the usage.
@@ -35,13 +35,12 @@ final readonly class Path implements Stringable
     /**
      * Normalizes a path.
      *
-     * @param string $path The path to normalize.
-     *
+     * @param  string  $path  The path to normalize.
      * @return string The normalized path, ensuring segments like ".." and "." are properly handled.
      */
-    private function normalize(string $path) : string
+    private function normalize(string $path): string
     {
-        $segments   = explode(separator: '/', string: $path);
+        $segments = explode(separator: '/', string: $path);
         $normalized = [];
 
         foreach ($segments as $segment) {
@@ -62,23 +61,22 @@ final readonly class Path implements Stringable
             }
         }
 
-        return '/' . implode(separator: '/', array: $normalized);
+        return '/'.implode(separator: '/', array: $normalized);
     }
 
     /**
      * Normalizes a path intended for file systems.
      *
-     * @param string $path The file system path to normalize.
-     *
+     * @param  string  $path  The file system path to normalize.
      * @return string The normalized path with Windows file paths converted to Unix format.
      *
      * Handles specific file path converted to be compatible with URI paths.
      */
-    public function normalizeForFile(string $path) : string
+    public function normalizeForFile(string $path): string
     {
         if (preg_match(pattern: '#^[a-zA-Z]:\\\\#', subject: $path)) {
             // Convert Windows paths to Unix format.
-            $path = '/' . str_replace(search: '\\', replace: '/', subject: ltrim(string: $path, characters: '/'));
+            $path = '/'.str_replace(search: '\\', replace: '/', subject: ltrim(string: $path, characters: '/'));
         }
 
         return $this->normalize(path: $path);
@@ -89,7 +87,7 @@ final readonly class Path implements Stringable
      *
      * @return string The normalized path as a string.
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->path;
     }

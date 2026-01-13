@@ -176,6 +176,7 @@ trait InputManagementTrait
      * @param mixed       $default Optional default value.
      *
      * @return mixed The value of the JSON data or default.
+     *
      * @throws RuntimeException If JSON decoding fails.
      */
     public function json(string|null $key = null, mixed $default = null) : mixed
@@ -201,7 +202,6 @@ trait InputManagementTrait
         // Return an entire array if no key, or safely fetch nested value using Arrhae
         return is_null(value: $key) ? $arrhae->all() : $arrhae->get(key: $key, default: $default);
     }
-
 
     /**
      * Retrieve the raw content of the request body.
@@ -348,5 +348,4 @@ trait InputManagementTrait
 
         return [];
     }
-
 }

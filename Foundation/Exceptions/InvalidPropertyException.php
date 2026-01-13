@@ -16,7 +16,7 @@ class InvalidPropertyException extends Exception
     /**
      * InvalidPropertyException constructor.
      *
-     * @param string $propertyName The name of the missing or invalid property.
+     * @param  string  $propertyName  The name of the missing or invalid property.
      */
     public function __construct(string $propertyName)
     {

@@ -80,7 +80,6 @@ class Stream implements StreamInterface
      *
      * @param string $content The content to be written into the stream.
      *
-     *
      * @throws RuntimeException If the temporary stream cannot be opened.
      */
     public static function fromString(string $content) : self
@@ -239,12 +238,12 @@ class Stream implements StreamInterface
         $this->ensureStreamIsOpen();
 
         if (! $this->isReadable()) {
-            throw new StreamNotReadableException(message: "Attempted to read from a non-readable stream.");
+            throw new StreamNotReadableException(message: 'Attempted to read from a non-readable stream.');
         }
 
         $result = fread(stream: $this->stream, length: $length);
         if ($result === false) {
-            throw new RuntimeException(message: "Failed to read from the stream.");
+            throw new RuntimeException(message: 'Failed to read from the stream.');
         }
 
         return $result;

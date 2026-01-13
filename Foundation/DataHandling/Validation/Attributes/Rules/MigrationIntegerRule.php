@@ -30,12 +30,10 @@ readonly class MigrationIntegerRule
     /**
      * Validates the value against integer or digit-only string formats.
      *
-     * @param mixed  $value
-     * @param string $property
      *
      * @throws ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if ($value === null || is_int(value: $value)) {
             return;
@@ -46,11 +44,11 @@ readonly class MigrationIntegerRule
         }
 
         throw new ValidationException(
-            message: "{$property} must be an integer or numeric string. Got: " . get_debug_type(value: $value)
+            message: "{$property} must be an integer or numeric string. Got: ".get_debug_type(value: $value)
         );
     }
 
-    public function apply(mixed $value) : mixed
+    public function apply(mixed $value): mixed
     {
         return $value;
     }

@@ -32,10 +32,10 @@ class UUID
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if (in_array(needle: preg_match(pattern: self::UUID_REGEX, subject: (string) $value), haystack: [0, false], strict: true)) {
-            throw new ValidationException(message: $property . ' must be a valid UUID.');
+            throw new ValidationException(message: $property.' must be a valid UUID.');
         }
     }
 }

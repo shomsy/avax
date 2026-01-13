@@ -2,11 +2,14 @@
 
 ## Quick Summary
 
-This script walks the project tree, builds a navigation model, and emits documentation skeletons so you can fill in book-like content later. It exists to keep documentation structure in lockstep with the filesystem, eliminating manual folder-by-folder setup and reducing the chance of missing files.
+This script walks the project tree, builds a navigation model, and emits documentation skeletons so you can fill in
+book-like content later. It exists to keep documentation structure in lockstep with the filesystem, eliminating manual
+folder-by-folder setup and reducing the chance of missing files.
 
 ### For Humans: What This Means (Summary)
 
-You run one script and instantly get a ready-to-edit set of docs that match the codebase. No more creating folders or index files by hand—the script does the boring setup so you can focus on writing.
+You run one script and instantly get a ready-to-edit set of docs that match the codebase. No more creating folders or
+index files by hand—the script does the boring setup so you can focus on writing.
 
 ## Terminology (MANDATORY, EXPANSIVE)
 
@@ -18,11 +21,13 @@ You run one script and instantly get a ready-to-edit set of docs that match the 
 
 ### For Humans: What This Means (Terminology)
 
-These terms are the moving parts of the generator. It crawls everything, maps relationships, builds correct links, and pre-populates sections that force clear explanations.
+These terms are the moving parts of the generator. It crawls everything, maps relationships, builds correct links, and
+pre-populates sections that force clear explanations.
 
 ## Think of It
 
-Treat this script like a contractor that frames a house. It doesn’t finish the interior, but it builds the walls, rooms, and hallways in the right places so you can focus on finishing touches.
+Treat this script like a contractor that frames a house. It doesn’t finish the interior, but it builds the walls, rooms,
+and hallways in the right places so you can focus on finishing touches.
 
 ### For Humans: What This Means (Analogy)
 
@@ -30,7 +35,9 @@ You get the framing done for you. The layout matches the blueprint (your folders
 
 ## Story Example
 
-Before this script, documenting a new folder meant manually creating indexes, writing boilerplate sections, and worrying about links. Now you run `php tools/generate_docs.php`, and the entire structure appears with placeholders and correct navigation.
+Before this script, documenting a new folder meant manually creating indexes, writing boilerplate sections, and worrying
+about links. Now you run `php tools/generate_docs.php`, and the entire structure appears with placeholders and correct
+navigation.
 
 ### For Humans: What This Means (Story)
 
@@ -61,11 +68,13 @@ It walks the tree, remembers where everything lives, and then writes matching do
 
 ## Architecture Role
 
-The script lives in `Tools/` because it’s a development utility, not runtime logic. It depends on PHP’s filesystem iterators and minimal project knowledge.
+The script lives in `Tools/` because it’s a development utility, not runtime logic. It depends on PHP’s filesystem
+iterators and minimal project knowledge.
 
 ### For Humans: What This Means (Architecture)
 
-This is part of the tooling toolkit: it prepares docs so the rest of the team can write them without thinking about structure.
+This is part of the tooling toolkit: it prepares docs so the rest of the team can write them without thinking about
+structure.
 
 ## Methods
 

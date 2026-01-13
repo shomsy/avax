@@ -1,4 +1,5 @@
 <?php
+
 // Infrastructure/Config/middleware.php
 
 declare(strict_types=1);

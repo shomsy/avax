@@ -11,16 +11,15 @@ use RuntimeException;
 /**
  * The "Quality Assurance" engine for class blueprints.
  *
- * VerifyPrototype is responsible for performing a 
- * "Post-Analysis Health Check" on every {@see ServicePrototype} created. 
- * While the Analyzer (Think/Analyze) is good at reading code, it doesn't 
- * judge it. This service takes those raw readings and ensures they meet 
- * strict architectural requirements—for example, ensuring that every 
+ * VerifyPrototype is responsible for performing a
+ * "Post-Analysis Health Check" on every {@see ServicePrototype} created.
+ * While the Analyzer (Think/Analyze) is good at reading code, it doesn't
+ * judge it. This service takes those raw readings and ensures they meet
+ * strict architectural requirements—for example, ensuring that every
  * injection point actually has a valid type hint.
  *
- * @package Avax\Container\Features\Think\Verify
- * @see docs/Features/Think/Verify/VerifyPrototype.md
- * @see ServicePrototype The object being validated.
+ * @see     docs/Features/Think/Verify/VerifyPrototype.md
+ * @see     ServicePrototype The object being validated.
  */
 final readonly class VerifyPrototype
 {
@@ -28,11 +27,13 @@ final readonly class VerifyPrototype
      * Perform a batch validation on a list of blueprints.
      *
      * @param ServicePrototype[] $prototypes The list of blueprints to audit.
-     * @return array{valid: ServicePrototype[], invalid: array<string, string>, summary: array{total: int, valid: int, invalid: int}}
+     *
+     * @return array{valid: ServicePrototype[], invalid: array<string, string>, summary: array{total: int, valid: int,
+     *                      invalid: int}}
      *
      * @see docs/Features/Think/Verify/VerifyPrototype.md#method-validatebatch
      */
-    public function validateBatch(array $prototypes): array
+    public function validateBatch(array $prototypes) : array
     {
         $valid   = [];
         $invalid = [];
@@ -67,11 +68,12 @@ final readonly class VerifyPrototype
      * 4. An injected method parameter lacks a resolvable type.
      *
      * @param ServicePrototype $prototype The blueprint to audit.
+     *
      * @throws RuntimeException If any rule is violated.
      *
      * @see docs/Features/Think/Verify/VerifyPrototype.md#method-validate
      */
-    public function validate(ServicePrototype $prototype): void
+    public function validate(ServicePrototype $prototype) : void
     {
         if (! $prototype->isInstantiable) {
             throw new RuntimeException(message: "Cannot validate non-instantiable prototype for class: {$prototype->class}");
@@ -95,7 +97,7 @@ final readonly class VerifyPrototype
     /**
      * Recursive validator for method signatures.
      */
-    private function validateMethodPrototype(MethodPrototype $method, string $context, string $class): void
+    private function validateMethodPrototype(MethodPrototype $method, string $context, string $class) : void
     {
         foreach ($method->parameters as $parameter) {
             if (! $parameter->type) {

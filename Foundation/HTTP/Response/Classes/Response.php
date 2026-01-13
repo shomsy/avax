@@ -24,6 +24,7 @@ class Response implements ResponseInterface
 
     /**
      * @constant {str} DEFAULT_PROTOCOL_VERSION
+     *
      * @default '1.1'
      *
      * The default protocol version used throughout the application. This is based on the assumption that most clients
@@ -110,8 +111,8 @@ class Response implements ResponseInterface
      * Converts header names to lowercase and ensures all header values are arrays.
      * This normalization helps in case-insensitive lookups and consistent internal data handling.
      *
-     * @param array $headers An associative array of headers where the key is the header name and the value is the
-     *                       header value.
+     * @param array $headers    An associative array of headers where the key is the header name and the value is the
+     *                          header value.
      *
      * @return array An associative array with header names in lowercase and values as arrays.
      */
@@ -169,9 +170,9 @@ class Response implements ResponseInterface
      */
     public function withStatus(int $code, string $reasonPhrase = '') : ResponseInterface
     {
-//        if ($code < 100 || $code >= 600) {
-//            throw new InvalidArgumentException(message: 'Invalid status code.');
-//        }
+        //        if ($code < 100 || $code >= 600) {
+        //            throw new InvalidArgumentException(message: 'Invalid status code.');
+        //        }
 
         $new               = clone $this;
         $new->statusCode   = $code;
@@ -207,8 +208,8 @@ class Response implements ResponseInterface
     /**
      * Returns a new instance with the specified HTTP protocol version.
      *
-     * @param string $version The HTTP protocol version to set, e.g., '1.1', '2.0'.
-     *                        Ensure the version is valid and supported by your application.
+     * @param string $version    The HTTP protocol version to set, e.g., '1.1', '2.0'.
+     *                           Ensure the version is valid and supported by your application.
      *
      * @return ResponseInterface A new instance with the updated protocol version.
      */
@@ -238,10 +239,10 @@ class Response implements ResponseInterface
     /**
      * Check if the specified header exists in the request.
      *
-     * @param string $name         The name of the header to check.
-     *                             The method converts the header name to lowercase to ensure case-insensitive matching.
-     *                             HTTP header names are case-insensitive by specification (RFC 2616), so it's important
-     *                             to normalize the case to maintain consistency.
+     * @param string $name    The name of the header to check.
+     *                        The method converts the header name to lowercase to ensure case-insensitive matching.
+     *                        HTTP header names are case-insensitive by specification (RFC 2616), so it's important
+     *                        to normalize the case to maintain consistency.
      *
      * @return bool Returns true if the header exists, false otherwise.
      */
@@ -300,8 +301,8 @@ class Response implements ResponseInterface
      * This method is designed to ensure immutability by cloning the current
      * instance and applying the headers to the new instance.
      *
-     * @param array $headers An associative array of headers where the key is the
-     *                       header name and the value is the header value.
+     * @param array $headers    An associative array of headers where the key is the
+     *                          header name and the value is the header value.
      *
      * @return self A new instance with the specified headers.
      */

@@ -53,20 +53,19 @@ abstract class BaseGrammar implements GrammarInterface
      * 4. WHERE conditions...
      * ...and so on.
      *
-     * @param QueryState $state The object containing all your query settings.
-     *
+     * @param  QueryState  $state  The object containing all your query settings.
      * @return string The final SQL sentence.
      */
-    public function compileSelect(QueryState $state) : string
+    public function compileSelect(QueryState $state): string
     {
         $components = [
             'select' => $this->compileColumns(state: $state),
-            'from'   => $this->compileFrom(state: $state),
-            'joins'  => $this->compileJoins(state: $state),
+            'from' => $this->compileFrom(state: $state),
+            'joins' => $this->compileJoins(state: $state),
             'wheres' => $this->compileWheres(state: $state),
             'groups' => $this->compileGroups(state: $state),
             'orders' => $this->compileOrders(state: $state),
-            'limit'  => $this->compileLimit(state: $state),
+            'limit' => $this->compileLimit(state: $state),
             'offset' => $this->compileOffset(state: $state),
         ];
 
@@ -77,12 +76,12 @@ abstract class BaseGrammar implements GrammarInterface
     /**
      * Build the "SELECT column1, column2" part.
      */
-    protected function compileColumns(QueryState $state) : string
+    protected function compileColumns(QueryState $state): string
     {
-        $select  = $state->distinct ? 'SELECT DISTINCT ' : 'SELECT ';
-        $columns = array_map(callback: fn($c) => $this->wrap(value: $c), array: $state->columns);
+        $select = $state->distinct ? 'SELECT DISTINCT ' : 'SELECT ';
+        $columns = array_map(callback: fn ($c) => $this->wrap(value: $c), array: $state->columns);
 
-        return $select . implode(separator: ', ', array: $columns);
+        return $select.implode(separator: ', ', array: $columns);
     }
 
     /**
@@ -92,7 +91,7 @@ abstract class BaseGrammar implements GrammarInterface
      * To prevent "SQL Keyword Collisions". If you have a column named
      * `order`, SQL will get confused unless we wrap it in quotes (`"order"`).
      */
-    public function wrap(mixed $value) : string
+    public function wrap(mixed $value): string
     {
         if ($value instanceof Expression) {
             return $value->getValue();
@@ -109,7 +108,7 @@ abstract class BaseGrammar implements GrammarInterface
             return implode(
                 separator: '.',
                 array    : array_map(
-                    callback: fn($segment) => $this->wrapSegment(segment: $segment),
+                    callback: fn ($segment) => $this->wrapSegment(segment: $segment),
                     array   : explode(separator: '.', string: $value)
                 )
             );
@@ -121,23 +120,23 @@ abstract class BaseGrammar implements GrammarInterface
     /**
      * Securely wrap a single part of a name (e.g., the 'users' bit).
      */
-    protected function wrapSegment(string $segment) : string
+    protected function wrapSegment(string $segment): string
     {
         if ($segment === '*') {
             return $segment;
         }
 
         // Default is to use double quotes (") which is standard SQL.
-        return '"' . str_replace(search: '"', replace: '""', subject: $segment) . '"';
+        return '"'.str_replace(search: '"', replace: '""', subject: $segment).'"';
     }
 
     /**
      * Build the "FROM table_name" part.
      */
-    protected function compileFrom(QueryState $state) : string
+    protected function compileFrom(QueryState $state): string
     {
         if ($state->from) {
-            return 'FROM ' . $this->wrap(value: $state->from);
+            return 'FROM '.$this->wrap(value: $state->from);
         }
 
         return '';
@@ -146,7 +145,7 @@ abstract class BaseGrammar implements GrammarInterface
     /**
      * Build all the JOIN parts (e.g., INNER JOIN users ON ...).
      */
-    protected function compileJoins(QueryState $state) : string
+    protected function compileJoins(QueryState $state): string
     {
         if (empty($state->joins)) {
             return '';
@@ -155,11 +154,12 @@ abstract class BaseGrammar implements GrammarInterface
         $sql = [];
 
         foreach ($state->joins as $node) {
-            $type  = strtoupper(string: $node->type);
+            $type = strtoupper(string: $node->type);
             $table = $this->wrap(value: $node->table);
 
             if ($node->type === 'cross') {
                 $sql[] = "{$type} JOIN {$table}";
+
                 continue;
             }
 
@@ -171,14 +171,15 @@ abstract class BaseGrammar implements GrammarInterface
                 } else {
                     $sql[] = "{$type} JOIN {$table}";
                 }
+
                 continue;
             }
 
             // Simple "column1 = column2" join.
             if ($node->first !== null && $node->second !== null) {
-                $first    = $this->wrap(value: $node->first);
+                $first = $this->wrap(value: $node->first);
                 $operator = $node->operator ?? '=';
-                $second   = $this->wrap(value: $node->second);
+                $second = $this->wrap(value: $node->second);
 
                 $sql[] = "{$type} JOIN {$table} ON {$first} {$operator} {$second}";
             }
@@ -194,7 +195,7 @@ abstract class BaseGrammar implements GrammarInterface
      * It handles "Nested" filters by putting them in parentheses.
      * It also uses "?" placeholders for values to keep the SQL secure.
      */
-    protected function compileWheres(QueryState $state) : string
+    protected function compileWheres(QueryState $state): string
     {
         if (empty($state->wheres)) {
             return '';
@@ -202,50 +203,55 @@ abstract class BaseGrammar implements GrammarInterface
 
         $sql = [];
         foreach ($state->wheres as $i => $node) {
-            $prefix  = $i === 0 ? 'WHERE ' : '';
-            $boolean = $i === 0 ? '' : ($this->getWhereBoolean(node: $node) . ' ');
+            $prefix = $i === 0 ? 'WHERE ' : '';
+            $boolean = $i === 0 ? '' : ($this->getWhereBoolean(node: $node).' ');
 
             // If this is a nested block: (condition1 OR condition2).
             if ($node instanceof NestedWhereNode) {
                 $nestedSql = $this->compileWheres(state: $node->query->getState());
                 if ($nestedSql !== '') {
-                    $sql[] = $prefix . $boolean . '(' . ltrim(string: $nestedSql, characters: 'WHERE ') . ')';
+                    $sql[] = $prefix.$boolean.'('.ltrim(string: $nestedSql, characters: 'WHERE ').')';
                 }
+
                 continue;
             }
 
             if ($node instanceof WhereNode) {
-                $column   = $this->wrap(value: $node->column);
+                $column = $this->wrap(value: $node->column);
                 $operator = $node->operator;
 
                 // Handle specialized null checks: IS NULL / IS NOT NULL.
                 if ($node->type === 'Null') {
-                    $sql[] = $prefix . $boolean . "{$column} {$operator}";
+                    $sql[] = $prefix.$boolean."{$column} {$operator}";
+
                     continue;
                 }
 
                 // Handle raw SQL provided by the user.
                 if ($node->type === 'Raw') {
-                    $sql[] = $prefix . $boolean . $node->column;
+                    $sql[] = $prefix.$boolean.$node->column;
+
                     continue;
                 }
 
                 // Handle "IN" clauses: column IN (?, ?, ?).
                 if (in_array(needle: $operator, haystack: ['IN', 'NOT IN']) && is_array(value: $node->value)) {
-                    $count        = count(value: $node->value);
+                    $count = count(value: $node->value);
                     $placeholders = $count > 0 ? implode(separator: ', ', array: array_fill(start_index: 0, count: $count, value: '?')) : '';
-                    $sql[]        = $prefix . $boolean . "{$column} {$operator} ({$placeholders})";
+                    $sql[] = $prefix.$boolean."{$column} {$operator} ({$placeholders})";
+
                     continue;
                 }
 
                 // Handle "BETWEEN" clauses: column BETWEEN ? AND ?.
                 if (in_array(needle: $operator, haystack: ['BETWEEN', 'NOT BETWEEN']) && is_array(value: $node->value)) {
-                    $sql[] = $prefix . $boolean . "{$column} {$operator} ? AND ?";
+                    $sql[] = $prefix.$boolean."{$column} {$operator} ? AND ?";
+
                     continue;
                 }
 
                 // Basic comparison: column = ?.
-                $sql[] = $prefix . $boolean . "{$column} {$operator} ?";
+                $sql[] = $prefix.$boolean."{$column} {$operator} ?";
             }
         }
 
@@ -255,7 +261,7 @@ abstract class BaseGrammar implements GrammarInterface
     /**
      * Get the boolean joiner (AND/OR) for a specific filter.
      */
-    protected function getWhereBoolean(mixed $node) : string
+    protected function getWhereBoolean(mixed $node): string
     {
         return $node->boolean ?? 'AND';
     }
@@ -263,21 +269,21 @@ abstract class BaseGrammar implements GrammarInterface
     /**
      * Build the "GROUP BY column1, column2" part.
      */
-    protected function compileGroups(QueryState $state) : string
+    protected function compileGroups(QueryState $state): string
     {
         if (empty($state->groups)) {
             return '';
         }
 
-        $columns = array_map(callback: fn($column) => $this->wrap(value: $column), array: $state->groups);
+        $columns = array_map(callback: fn ($column) => $this->wrap(value: $column), array: $state->groups);
 
-        return 'GROUP BY ' . implode(separator: ', ', array: $columns);
+        return 'GROUP BY '.implode(separator: ', ', array: $columns);
     }
 
     /**
      * Build the "ORDER BY column DESC" part.
      */
-    protected function compileOrders(QueryState $state) : string
+    protected function compileOrders(QueryState $state): string
     {
         if (empty($state->orders)) {
             return '';
@@ -287,25 +293,26 @@ abstract class BaseGrammar implements GrammarInterface
         foreach ($state->orders as $node) {
             if ($node->type === 'Raw') {
                 $orders[] = $node->sql ?? '';
+
                 continue;
             }
 
-            $column    = $this->wrap(value: $node->column);
+            $column = $this->wrap(value: $node->column);
             $direction = strtoupper(string: $node->direction);
-            $orders[]  = "{$column} {$direction}";
+            $orders[] = "{$column} {$direction}";
         }
 
         if (empty($orders)) {
             return '';
         }
 
-        return 'ORDER BY ' . implode(separator: ', ', array: $orders);
+        return 'ORDER BY '.implode(separator: ', ', array: $orders);
     }
 
     /**
      * Build the "LIMIT 10" part.
      */
-    protected function compileLimit(QueryState $state) : string
+    protected function compileLimit(QueryState $state): string
     {
         if ($state->limit) {
             return "LIMIT {$state->limit}";
@@ -317,7 +324,7 @@ abstract class BaseGrammar implements GrammarInterface
     /**
      * Build the "OFFSET 5" part.
      */
-    protected function compileOffset(QueryState $state) : string
+    protected function compileOffset(QueryState $state): string
     {
         if ($state->offset) {
             return "OFFSET {$state->offset}";
@@ -329,17 +336,17 @@ abstract class BaseGrammar implements GrammarInterface
     /**
      * Build a full INSERT sentence.
      */
-    public function compileInsert(QueryState $state) : string
+    public function compileInsert(QueryState $state): string
     {
-        $table   = $this->wrap(value: $state->from);
+        $table = $this->wrap(value: $state->from);
         $columns = implode(
             separator: ', ',
             array    : array_map(
-                callback: fn($c) => $this->wrap(value: $c),
+                callback: fn ($c) => $this->wrap(value: $c),
                 array   : array_keys(array: $state->values)
             )
         );
-        $values  = implode(
+        $values = implode(
             separator: ', ',
             array    : array_fill(
                 start_index: 0,
@@ -359,18 +366,18 @@ abstract class BaseGrammar implements GrammarInterface
     /**
      * Build a full UPDATE sentence.
      */
-    public function compileUpdate(QueryState $state) : string
+    public function compileUpdate(QueryState $state): string
     {
         $table = $this->wrap(value: $state->from);
 
         $sets = [];
         foreach ($state->values as $column => $value) {
-            $sets[] = $this->wrap(value: $column) . ' = ?';
+            $sets[] = $this->wrap(value: $column).' = ?';
             $state->addBinding(value: $value);
         }
 
-        $setClause = 'SET ' . implode(separator: ', ', array: $sets);
-        $wheres    = $this->compileWheres(state: $state);
+        $setClause = 'SET '.implode(separator: ', ', array: $sets);
+        $wheres = $this->compileWheres(state: $state);
 
         return trim(string: "UPDATE {$table} {$setClause} {$wheres}");
     }
@@ -378,9 +385,9 @@ abstract class BaseGrammar implements GrammarInterface
     /**
      * Build a full DELETE sentence.
      */
-    public function compileDelete(QueryState $state) : string
+    public function compileDelete(QueryState $state): string
     {
-        $table  = $this->wrap(value: $state->from);
+        $table = $this->wrap(value: $state->from);
         $wheres = $this->compileWheres(state: $state);
 
         return trim(string: "DELETE FROM {$table} {$wheres}");
@@ -394,47 +401,47 @@ abstract class BaseGrammar implements GrammarInterface
      * the Base class can't do it. Children (like MySQLGrammar) must
      * provide the implementation.
      */
-    public function compileUpsert(QueryState $state, array $uniqueBy, array $update) : string
+    public function compileUpsert(QueryState $state, array $uniqueBy, array $update): string
     {
-        throw new RuntimeException(message: "UPSERT is not supported by this database dialect.");
+        throw new RuntimeException(message: 'UPSERT is not supported by this database dialect.');
     }
 
     /**
      * Build the command to completely empty a table.
      */
-    public function compileTruncate(string $table) : string
+    public function compileTruncate(string $table): string
     {
-        return 'TRUNCATE ' . $this->wrap(value: $table);
+        return 'TRUNCATE '.$this->wrap(value: $table);
     }
 
     /**
      * Build the command to delete a table if it exists.
      */
-    public function compileDropIfExists(string $table) : string
+    public function compileDropIfExists(string $table): string
     {
-        return 'DROP TABLE IF EXISTS ' . $this->wrap(value: $table);
+        return 'DROP TABLE IF EXISTS '.$this->wrap(value: $table);
     }
 
     /**
      * Build the command to create a new database.
      */
-    public function compileCreateDatabase(string $name) : string
+    public function compileCreateDatabase(string $name): string
     {
-        return "CREATE DATABASE " . $this->wrap(value: $name);
+        return 'CREATE DATABASE '.$this->wrap(value: $name);
     }
 
     /**
      * Build the command to delete an entire database.
      */
-    public function compileDropDatabase(string $name) : string
+    public function compileDropDatabase(string $name): string
     {
-        return "DROP DATABASE " . $this->wrap(value: $name);
+        return 'DROP DATABASE '.$this->wrap(value: $name);
     }
 
     /**
      * Provide a generic random sorting snippet.
      */
-    public function compileRandomOrder() : string
+    public function compileRandomOrder(): string
     {
         return 'RANDOM()';
     }

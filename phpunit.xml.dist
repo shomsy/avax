@@ -8,11 +8,15 @@
     </coverage>
     <testsuites>
         <testsuite name="Container">
-            <directory>Foundation/Container/tests</directory>
+            <directory>tests/Foundation/Container</directory>
         </testsuite>
-        <testsuite name="Feature">
-            <directory>tests/Feature</directory>
+        <testsuite name="Database">
+            <directory>tests/Foundation/Database</directory>
         </testsuite>
+        <testsuite name="Router">
+            <directory>tests/Foundation/HTTP/Router</directory>
+        </testsuite>
+
     </testsuites>
     <logging/>
     <source/>

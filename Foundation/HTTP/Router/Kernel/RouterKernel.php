@@ -6,9 +6,11 @@ namespace Avax\HTTP\Router\Kernel;
 
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
-use Avax\HTTP\Router\Routing\RouteDefinition;
+use Avax\HTTP\Router\Routing\RouteExecutor;
 use Avax\HTTP\Router\Routing\RoutePipelineFactory;
 use Avax\HTTP\Router\Support\HeadRequestFallback;
+use Avax\HTTP\Router\Support\RouteRequestInjector;
+use Avax\HTTP\Router\Tracing\RouterTrace;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -29,16 +31,21 @@ final readonly class RouterKernel
      * @param HttpRequestRouter    $httpRequestRouter   Responsible for resolving HTTP routes.
      * @param RoutePipelineFactory $pipelineFactory     Creates pipelines to process route handling.
      * @param HeadRequestFallback  $headRequestFallback Provides fallback processing for HEAD requests.
+     * @param RouterTrace|null     $trace               Optional trace instance for debugging and profiling.
      */
     public function __construct(
         private HttpRequestRouter    $httpRequestRouter,
         private RoutePipelineFactory $pipelineFactory,
-        private HeadRequestFallback  $headRequestFallback
+        private HeadRequestFallback  $headRequestFallback,
+        private RouteExecutor        $routeExecutor,
+        private RouterTrace|null     $trace = null
     ) {}
 
     /**
      * Handles an incoming HTTP request by resolving the corresponding route,
      * applying middleware, and processing the pipeline.
+     *
+     * Provides comprehensive tracing for debugging and profiling.
      *
      * @param Request $request The HTTP request to be processed.
      *
@@ -47,51 +54,87 @@ final readonly class RouterKernel
      * @throws \ReflectionException Signals issues with runtime reflection in the pipeline processing.
      * @throws \Psr\Container\ContainerExceptionInterface Indicates a container-related error occurred.
      * @throws \Psr\Container\NotFoundExceptionInterface Indicates a requested service was not found.
+     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
      */
     public function handle(Request $request) : ResponseInterface
     {
-        // Apply fallback logic for HEAD requests, converting them to GET if needed.
-        $request = $this->headRequestFallback->resolve(request: $request);
+        $startTime = microtime(true);
+        $method    = $request->getMethod();
+        $path      = $request->getUri()->getPath();
 
-        // Resolve the current request into a matching route definition.
-        $route = $this->httpRequestRouter->resolve(request: $request);
+        // Trace: Request resolution started
+        $this->trace?->log('kernel.resolve.start', [
+            'method' => $method,
+            'path'   => $path,
+            'host'   => $request->getUri()->getHost(),
+        ]);
 
-        // Inject route parameters and defaults into the request as attributes.
-        $request = $this->injectRouteAttributes(request: $request, route: $route);
+        try {
+            // Apply fallback logic for HEAD requests, converting them to GET if needed.
+            $request = $this->headRequestFallback->resolve(request: $request);
 
-        // Create a middleware pipeline based on the resolved route.
-        $pipeline = $this->pipelineFactory->create(route: $route);
+            // Resolve the current request into structured resolution context.
+            $resolutionContext = $this->httpRequestRouter->resolve(request: $request);
 
-        // Process the pipeline and dispatch the final response.
-        return $pipeline->dispatch(request: $request);
-    }
+            // Extract route from resolution context
+            $route = $resolutionContext->route;
 
-    /**
-     * Injects route parameters and default values into the request as attributes.
-     *
-     * This method ensures the request contains all the attributes defined
-     * in the route and sets default values where attributes are missing.
-     *
-     * @param Request         $request The current HTTP request.
-     * @param RouteDefinition $route   The route definition containing parameters and defaults.
-     *
-     * @return Request A new request object with the injected attributes.
-     */
-    private function injectRouteAttributes(Request $request, RouteDefinition $route) : Request
-    {
-        // Inject route parameters as attributes into the request.
-        foreach ($route->parameters as $key => $value) {
-            $request = $request->withAttribute(name: $key, value: $value);
-        }
+            // Trace: Route matched successfully
+            $this->trace?->log('kernel.route.matched', [
+                'route'     => $route->name ?? $route->path,
+                'method'    => $route->method,
+                'path'      => $route->path,
+                'domain'    => $route->domain,
+                'duration'  => round((microtime(true) - $startTime) * 1000, 2) . 'ms',
+            ]);
 
-        // Inject default values for attributes that are not already set in the request.
-        foreach ($route->defaults as $key => $value) {
-            if ($request->getAttribute(name: $key) === null) {
-                $request = $request->withAttribute(name: $key, value: $value);
+            // Inject route parameters from resolution context into the request as attributes.
+            $request = RouteRequestInjector::injectWithContext(
+                request   : $request,
+                route     : $route,
+                parameters: $resolutionContext->parameters
+            );
+
+            // Create a middleware pipeline based on the resolved route.
+            $pipeline = $this->pipelineFactory->create(route: $route);
+
+            // Process the pipeline and dispatch the final response.
+            $response = $pipeline->dispatch(request: $request);
+
+            // Trace: Request handled successfully
+            $this->trace?->log('kernel.request.complete', [
+                'route'    => $route->name ?? $route->path,
+                'status'   => $response->getStatusCode(),
+                'duration' => round((microtime(true) - $startTime) * 1000, 2) . 'ms',
+            ]);
+
+            return $response;
+
+        } catch (\Throwable $exception) {
+            // Trace: Request failed with fallback or error
+            $this->trace?->log('kernel.request.failed', [
+                'method'    => $method,
+                'path'      => $path,
+                'exception' => get_class($exception),
+                'message'   => $exception->getMessage(),
+                'duration'  => round((microtime(true) - $startTime) * 1000, 2) . 'ms',
+            ]);
+
+            // Check if this is a routing exception that should trigger fallback
+            if ($exception instanceof \Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException ||
+                $exception instanceof \Avax\HTTP\Router\Routing\Exceptions\MethodNotAllowedException) {
+
+                $this->trace?->log('kernel.fallback.triggered', [
+                    'reason'   => get_class($exception),
+                    'message'  => $exception->getMessage(),
+                ]);
+
+                // Re-throw to let Router handle fallback
+                throw $exception;
             }
-        }
 
-        // Return a modified request containing all the injected attributes.
-        return $request;
+            // Re-throw other exceptions
+            throw $exception;
+        }
     }
 }

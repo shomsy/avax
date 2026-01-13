@@ -21,14 +21,14 @@ final readonly class CircularDependencyStep implements KernelStep
     /**
      * @param KernelContext $context Shared resolution context
      *
-     * @return void
      * @throws ResolutionException When a circular dependency is detected
+     *
      * @see docs/Core/Kernel/Steps/CircularDependencyStep.md#method-__invokekernelcontext-context-void
      */
-    public function __invoke(KernelContext $context): void
+    public function __invoke(KernelContext $context) : void
     {
         // Don't check the current service against itself (context->parent is the start of the chain)
-        if ($context->parent !== null && $context->parent->contains($context->serviceId)) {
+        if ($context->parent !== null && $context->parent->contains(serviceId: $context->serviceId)) {
             throw new ResolutionException(
                 message: sprintf('Circular dependency detected: %s', $context->getPath())
             );

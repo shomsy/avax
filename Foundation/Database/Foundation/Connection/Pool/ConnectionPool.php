@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Database\Foundation\Connection\Pool;
+namespace Avax\Database\Avax\Connection\Pool;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Connection\DirectConnectionFlow;
 use Avax\Database\Connection\Exceptions\PoolLimitReachedException;
 use Avax\Database\Events\ConnectionAcquired;
 use Avax\Database\Events\EventBus;
-use Avax\Database\Foundation\Connection\Pool\Contracts\ConnectionPoolInterface;
-use Avax\Database\Foundation\Connection\Pool\DTO\ConnectionPoolMetrics;
+use Avax\Database\Avax\Connection\Pool\Contracts\ConnectionPoolInterface;
+use Avax\Database\Avax\Connection\Pool\DTO\ConnectionPoolMetrics;
 use Avax\Database\Support\ExecutionScope;
 use ReflectionException;
 use SplQueue;
@@ -41,7 +41,7 @@ final class ConnectionPool implements ConnectionPoolInterface
         private readonly EventBus|null $eventBus = null
     )
     {
-        $this->pool  = new SplQueue();
+        $this->pool  = new SplQueue;
         $this->state = new PoolState(
             maxConnections: (int) ($this->config['pool']['max_connections'] ?? 10)
         );
@@ -50,7 +50,6 @@ final class ConnectionPool implements ConnectionPoolInterface
     /**
      * Borrow a healthy connection from the pool.
      *
-     * @return DatabaseConnection
      * @throws Throwable
      * @throws PoolLimitReachedException If pool capacity is exceeded.
      */
@@ -120,7 +119,7 @@ final class ConnectionPool implements ConnectionPoolInterface
         $currentTime = microtime(as_float: true);
         $prunedCount = 0;
 
-        $validConnections = new SplQueue();
+        $validConnections = new SplQueue;
 
         while (! $this->pool->isEmpty()) {
             $item     = $this->pool->dequeue();
@@ -130,6 +129,7 @@ final class ConnectionPool implements ConnectionPoolInterface
             if ($idleTime > $maxIdleTime || ! $this->validateConnection(connection: $item['connection'])) {
                 $this->state->releaseSlot();
                 $prunedCount++;
+
                 continue;
             }
 
@@ -234,6 +234,7 @@ final class ConnectionPool implements ConnectionPoolInterface
      * Get a "Status Report" (Metrics) of how the garage is doing.
      *
      * @return ConnectionPoolMetrics A report containing counts of idle/active cars.
+     *
      * @throws ReflectionException
      */
     public function getMetrics() : ConnectionPoolMetrics

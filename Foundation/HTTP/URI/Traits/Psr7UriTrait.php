@@ -20,7 +20,7 @@ trait Psr7UriTrait
 
     public function getUserInfo() : string
     {
-        return sprintf("%s%s", $this->user, $this->password !== null ? ':' . $this->password : '');
+        return sprintf('%s%s', $this->user, $this->password !== null ? ':' . $this->password : '');
     }
 
     public function getHost() : string
@@ -153,6 +153,4 @@ trait Psr7UriTrait
 
         return $authority;
     }
-
-
 }

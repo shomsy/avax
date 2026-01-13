@@ -23,7 +23,8 @@ final readonly class Telemetry
      * Create a new Telemetry instance for container observability.
      *
      * @param ContainerInterface $container The container instance to monitor.
-     * @param CollectMetrics $metrics The metrics collector for telemetry data.
+     * @param CollectMetrics     $metrics   The metrics collector for telemetry data.
+     *
      * @see docs/Features/Actions/Advanced/Observe/Telemetry.md#method-__construct
      */
     public function __construct(
@@ -38,10 +39,12 @@ final readonly class Telemetry
      * suitable for external monitoring systems, logging, or analysis tools.
      *
      * @return string JSON-encoded metrics data with timestamp.
+     *
      * @throws RuntimeException If JSON encoding fails.
+     *
      * @see docs/Features/Actions/Advanced/Observe/Telemetry.md#method-exportMetrics
      */
-    public function exportMetrics(): string
+    public function exportMetrics() : string
     {
         $metrics = $this->metrics->collect();
         $data    = ['metrics' => $metrics, 'timestamp' => time()];
@@ -50,7 +53,7 @@ final readonly class Telemetry
         if ($json === false) {
             throw new RuntimeException(
                 message: 'Failed to encode container metrics to JSON: ' . json_last_error_msg(),
-                code: json_last_error()
+                code   : json_last_error()
             );
         }
 
@@ -64,9 +67,10 @@ final readonly class Telemetry
      * and analysis within the application.
      *
      * @return array Raw metrics data organized by metric type and values.
+     *
      * @see docs/Features/Actions/Advanced/Observe/Telemetry.md#method-getMetrics
      */
-    public function getMetrics(): array
+    public function getMetrics() : array
     {
         return $this->metrics->collect();
     }
@@ -78,17 +82,18 @@ final readonly class Telemetry
      * operational status, metrics count, and last update timestamp.
      *
      * @return array Health status data including status, timestamp, and metrics summary.
+     *
      * @see docs/Features/Actions/Advanced/Observe/Telemetry.md#method-getHealthStatus
      */
-    public function getHealthStatus(): array
+    public function getHealthStatus() : array
     {
         $metrics = $this->metrics->collect();
 
         return [
-            'status'         => 'healthy',
-            'timestamp'      => time(),
-            'metrics_count'  => count($metrics),
-            'last_updated'   => time(),
+            'status'        => 'healthy',
+            'timestamp'     => time(),
+            'metrics_count' => count($metrics),
+            'last_updated'  => time(),
         ];
     }
 }

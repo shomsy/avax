@@ -14,8 +14,7 @@ use Avax\Container\Features\Operate\Scope\ScopeManager;
  * in long-running processes (e.g., Workers, Sockets, Daemons) by ensuring a clean
  * state between execution cycles.
  *
- * @package Avax\Container\Features\Operate\Shutdown
- * @see docs/Features/Operate/Shutdown/TerminateContainer.md
+ * @see     docs/Features/Operate/Shutdown/TerminateContainer.md
  */
 final readonly class TerminateContainer
 {
@@ -23,6 +22,7 @@ final readonly class TerminateContainer
      * Initializes the terminator with a scope management facade.
      *
      * @param ScopeManager $manager The manager responsible for instance storage.
+     *
      * @see docs/Features/Operate/Shutdown/TerminateContainer.md#method-__construct
      */
     public function __construct(private ScopeManager $manager) {}
@@ -33,10 +33,9 @@ final readonly class TerminateContainer
      * Clears all registered instances within the scope registry, effectively
      * resetting the container to its post-bootstrap, pre-resolution state.
      *
-     * @return void
      * @see docs/Features/Operate/Shutdown/TerminateContainer.md#method-__invoke
      */
-    public function __invoke(): void
+    public function __invoke() : void
     {
         $this->manager->terminate();
     }

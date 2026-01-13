@@ -86,6 +86,7 @@ trait JwtTrait
      * Extracts the Bearer token from the Authorization header.
      *
      * @return string|null The JWT if present, otherwise null.
+     *
      * @throws RuntimeException If the `getHeaderLine` method is not defined in the class using this trait.
      */
     private function extractBearerToken() : string|null
@@ -121,6 +122,7 @@ trait JwtTrait
      * @param string $token The JWT to decode.
      *
      * @return object|null The decoded payload if the JWT is valid, null otherwise.
+     *
      * @throws RuntimeException If the token is malformed or invalid.
      */
     public function decodeJwt(#[SensitiveParameter] string $token) : object|null

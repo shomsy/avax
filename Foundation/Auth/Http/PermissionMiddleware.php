@@ -27,8 +27,8 @@ readonly class PermissionMiddleware
         $user = $this->guard->user();
 
         if (! $user instanceof UserInterface || ! $user->hasPermission(
-                permission: $permission,
-            )) {
+            permission: $permission,
+        )) {
             throw new AuthorizationException(
                 message: sprintf(
                     'AccessControl lacks the required permission: %s.',

@@ -22,12 +22,10 @@ readonly class MigrationForeignActionRule
     /**
      * Validates that the input is either null or a valid ForeignActionEnum (or castable string).
      *
-     * @param mixed  $value
-     * @param string $property
      *
      * @throws ValidationException If an invalid type or unknown enum case is given.
      */
-    public function validate(mixed $value, string $property) : void
+    public function validate(mixed $value, string $property): void
     {
         if ($value === null || $value instanceof ForeignActionEnum) {
             return;
@@ -39,12 +37,12 @@ readonly class MigrationForeignActionRule
 
         if (ForeignActionEnum::tryFrom(value: $value) === null) {
             throw new ValidationException(
-                message: "{$property} is not a valid ForeignActionEnum. Got: " . var_export(value: $value, return: true)
+                message: "{$property} is not a valid ForeignActionEnum. Got: ".var_export(value: $value, return: true)
             );
         }
     }
 
-    public function apply(mixed $value) : mixed
+    public function apply(mixed $value): mixed
     {
         return $value;
     }

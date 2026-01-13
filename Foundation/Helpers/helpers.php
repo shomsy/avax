@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require __DIR__ . '/app_instance.php';
+
 use Avax\Auth\Contracts\AuthInterface;
 use Avax\Config\Architecture\DDD\AppPath;
 use Avax\Config\Service\Config;
@@ -10,7 +12,7 @@ use Avax\DataHandling\ArrayHandling\Arrhae;
 use Avax\DataHandling\ObjectHandling\Collections\Collection;
 use Avax\DumpDebugger;
 use Avax\HTTP\Response\ResponseFactory;
-use Avax\HTTP\Router\Router;
+use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\Security\CsrfTokenManager;
 use Avax\HTTP\Session\Shared\Contracts\SessionInterface;
 use Avax\View\BladeTemplateEngine;
@@ -98,7 +100,7 @@ if (! function_exists(function: 'csrf_token')) {
         $csrfManager = app(abstract: CsrfTokenManager::class);
 
         if (! $csrfManager instanceof CsrfTokenManager) {
-            throw new RuntimeException(message: "CsrfTokenManager is not registered in the container.");
+            throw new RuntimeException(message: 'CsrfTokenManager is not registered in the container.');
         }
 
         return $csrfManager->getToken();
@@ -113,9 +115,8 @@ if (! function_exists(function: 'route')) {
     function route(string $name, array $parameters = []) : string|null
     {
         try {
-            // Retrieve the `Router` instance from the dependency injection container.
-            // The `app` function resolves a service by its class (or abstract type).
-            $router = app(abstract: Router::class);
+            // Retrieve the runtime router instance from the dependency injection container.
+            $router = app(abstract: RouterRuntimeInterface::class);
 
             // Fetch the route definition by its name using the retrieved `Router` instance.
             // This name is typically associated with a specific route you defined earlier in the application.
@@ -126,11 +127,11 @@ if (! function_exists(function: 'route')) {
 
             // Inject parameters into the path
             foreach ($parameters as $key => $value) {
-                $path = preg_replace(pattern: "/\{{$key}(?:[?*]?)}/", replacement: $value, subject: $path);
+                $path = rx_replace(pattern: "\\{{$key}(?:[?*]?)}", replacement: $value, subject: $path);
             }
 
             // Clean up any optional params not provided
-            $path = preg_replace(pattern: '/\{[^}]+\}/', replacement: '', subject: $path);
+            $path = rx_replace(pattern: '\{[^}]+\}', replacement: '', subject: $path);
 
             return $path;
         } catch (Throwable $throwable) {
@@ -198,10 +199,10 @@ if (! function_exists(function: 'session')) {
         }
 
         if ($value === null) {
-            return $session->get($key);
+            return $session->get(key: $key);
         }
 
-        $session->set($key, $value);
+        $session->set(key: $key, value: $value);
 
         return null;
     }
@@ -230,7 +231,7 @@ if (! function_exists(function: 'logger')) {
 if (! function_exists(function: 'config')) {
     function config(string $key, mixed $default = null) : mixed
     {
-        return app(abstract: Config::class)->get($key, $default);
+        return app(abstract: Config::class)->get(key: $key, default: $default);
     }
 }
 
@@ -316,10 +317,11 @@ if (! function_exists(function: 'connection')) {
      * @param string|null $connectionName The name of the database connection to retrieve. Defaults to null for the default connection.
      *
      * @return \PDO The PDO database connection instance.
+     *
      * @throws RuntimeException If the database connection service is not available in the dependency injection container.
      * @throws \Throwable
      */
-    function connection(string $connectionName = null) : PDO
+    function connection(string|null $connectionName = null) : PDO
     {
         /** @var ConnectionManager $databaseManager */
         $databaseManager = app(abstract: ConnectionManager::class);
@@ -336,8 +338,7 @@ if (! function_exists(function: 'preview_text')) {
     /**
      * Shortens the given text for preview purposes.
      *
-     * @param string $text
-     * @param int    $limit Number of characters to show
+     * @param int $limit Number of characters to show
      *
      * @return string Truncated text with ellipsis if necessary.
      */

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Tools\Console;
 
 use Avax\Container\Container;
@@ -124,6 +125,7 @@ readonly class InspectCommand
      * @param string $abstract The service identifier to inspect
      *
      * @return void Outputs detailed service inspection report to stdout
+     *
      * @see docs/Tools/Console/InspectCommand.md#method-execute
      */
     public function execute(string $abstract) : void
@@ -132,17 +134,17 @@ readonly class InspectCommand
 
         $inspector = $this->container->diagnostics()->inspect(id: $abstract);
 
-        echo "Defined:  " . ($inspector['defined'] ? "Yes" : "No") . "\n";
-        echo "Cached:   " . ($inspector['cached'] ? "Yes" : "No") . "\n";
-        echo "Scope:    " . strtoupper($inspector['scope']) . "\n";
+        echo 'Defined:  ' . ($inspector['defined'] ? 'Yes' : 'No') . "\n";
+        echo 'Cached:   ' . ($inspector['cached'] ? 'Yes' : 'No') . "\n";
+        echo 'Scope:    ' . strtoupper($inspector['scope']) . "\n";
 
         if (! empty($inspector['tags'])) {
-            echo "Tags:     " . implode(', ', $inspector['tags']) . "\n";
+            echo 'Tags:     ' . implode(', ', $inspector['tags']) . "\n";
         }
 
         try {
             $prototype = $this->container->getPrototypeFactory()->analyzeReflectionFor(class: $abstract);
-            $dumper    = new CliPrototypeDumper();
+            $dumper    = new CliPrototypeDumper;
             echo $dumper->dump(prototype: $prototype);
         } catch (Throwable $throwable) {
             echo "\n[!] Could not generate prototype: {$throwable->getMessage()}\n";

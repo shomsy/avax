@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Avax\Container\Guard\Enforce;
 
 use Avax\Container\Features\Actions\Resolve\Contracts\ResolutionContextInterface;
@@ -105,12 +106,11 @@ use Throwable;
  * - Incident response integration points
  * - Configurable security policies for different environments
  *
- * @package Avax\Container\Guard\Enforce
  * @see     \Avax\Container\Features\Actions\Resolve\Contracts\ResolutionContextInterface For resolution request context
  * @see     ContainerConfig For container configuration access
  * @see     LoggerFactoryIntegration For security logging integration
  * @see     Encrypter For encryption service interface
- * @see docs/Guard/Enforce/SecureServiceResolver.md#quick-summary
+ * @see     docs/Guard/Enforce/SecureServiceResolver.md#quick-summary
  */
 class SecureServiceResolver
 {
@@ -149,6 +149,7 @@ class SecureServiceResolver
      * @param Encrypter                $encrypter Encryption service for secure data handling
      * @param ContainerConfig          $config    Container configuration with security settings
      * @param LoggerFactoryIntegration $logger    Security event logging integration
+     *
      * @see docs/Guard/Enforce/SecureServiceResolver.md#method-__construct
      */
     public function __construct(
@@ -201,8 +202,10 @@ class SecureServiceResolver
      * @param ResolutionContextInterface $context Resolution request with service details and caller context
      *
      * @return mixed Resolved service instance with security hardening applied
+     *
      * @throws \RuntimeException When access is denied or security violations occur
      * @throws \ReflectionException When service reflection fails during security checks
+     *
      * @see docs/Guard/Enforce/SecureServiceResolver.md#method-resolvesecure
      */
     public function resolveSecure(ResolutionContextInterface $context) : mixed
@@ -270,7 +273,9 @@ class SecureServiceResolver
      * @param mixed $service Resolved service instance or any value
      *
      * @return mixed The decrypted service (or original value when non-object)
+     *
      * @throws \ReflectionException
+     *
      * @see docs/Guard/Enforce/SecureServiceResolver.md#method-decryptserviceconfig
      */
     public function decryptServiceConfig(mixed $service) : mixed
@@ -323,7 +328,7 @@ class SecureServiceResolver
             context  : [
                 'security_applied' => true,
                 'service_type'     => is_object($service) ? get_class($service) : gettype($service),
-                'encrypted'        => $this->isEncryptedService(serviceId: $serviceId)
+                'encrypted'        => $this->isEncryptedService(serviceId: $serviceId),
             ]
         );
     }
@@ -334,7 +339,6 @@ class SecureServiceResolver
      * @param string   $serviceId The service identifier to protect
      * @param callable $policy    Callable that receives the resolution context and returns allowed/denied
      *
-     * @return void
      * @see docs/Guard/Enforce/SecureServiceResolver.md#method-setaccesspolicy
      */
     public function setAccessPolicy(string $serviceId, callable $policy) : void
@@ -349,7 +353,6 @@ class SecureServiceResolver
      *
      * @param string $serviceId The service identifier that should be treated as encrypted
      *
-     * @return void
      * @see docs/Guard/Enforce/SecureServiceResolver.md#method-markasencrypted
      */
     public function markAsEncrypted(string $serviceId) : void
@@ -363,7 +366,9 @@ class SecureServiceResolver
      * @param array $config Configuration array to encrypt
      *
      * @return string Encrypted payload string
+     *
      * @throws \RuntimeException When JSON encoding fails
+     *
      * @see docs/Guard/Enforce/SecureServiceResolver.md#method-encryptserviceconfig
      */
     public function encryptServiceConfig(array $config) : string
@@ -383,6 +388,7 @@ class SecureServiceResolver
      * @param object $service   Resolved service instance to validate
      *
      * @return array Array of issue entries describing detected security risks
+     *
      * @see docs/Guard/Enforce/SecureServiceResolver.md#method-validateservicesecurity
      */
     public function validateServiceSecurity(string $serviceId, object $service) : array
@@ -399,7 +405,7 @@ class SecureServiceResolver
             // Check for potentially dangerous method names
             $dangerousMethods = [
                 'exec', 'shell_exec', 'system', 'eval', 'create_function',
-                'unserialize', 'file_get_contents', 'file_put_contents'
+                'unserialize', 'file_get_contents', 'file_put_contents',
             ];
 
             foreach ($dangerousMethods as $dangerous) {
@@ -408,7 +414,7 @@ class SecureServiceResolver
                         'type'     => 'dangerous_method',
                         'severity' => 'high',
                         'message'  => "Service contains potentially dangerous method '{$methodName}'",
-                        'method'   => $methodName
+                        'method'   => $methodName,
                     ];
                 }
             }
@@ -420,7 +426,7 @@ class SecureServiceResolver
                 'type'           => 'filesystem_access',
                 'severity'       => 'medium',
                 'message'        => 'Service has file system access capabilities',
-                'recommendation' => 'Ensure proper permission checks are in place'
+                'recommendation' => 'Ensure proper permission checks are in place',
             ];
         }
 
@@ -434,7 +440,7 @@ class SecureServiceResolver
 
         $filesystemMethods = [
             'file_get_contents', 'file_put_contents', 'fopen', 'fwrite',
-            'unlink', 'mkdir', 'rmdir', 'chmod', 'chown'
+            'unlink', 'mkdir', 'rmdir', 'chmod', 'chown',
         ];
 
         foreach ($methods as $method) {
@@ -455,6 +461,7 @@ class SecureServiceResolver
      * @param string $serviceId Service identifier
      *
      * @return array Audit snapshot for the service
+     *
      * @see docs/Guard/Enforce/SecureServiceResolver.md#method-getsecurityaudit
      */
     public function getSecurityAudit(string $serviceId) : array
@@ -466,7 +473,7 @@ class SecureServiceResolver
             'access_count'     => 0,
             'last_access'      => null,
             'authorized_users' => [],
-            'security_events'  => []
+            'security_events'  => [],
         ];
     }
 
@@ -476,6 +483,7 @@ class SecureServiceResolver
      * @param object $service Service instance to harden
      *
      * @return object The (potentially hardened) service instance
+     *
      * @see docs/Guard/Enforce/SecureServiceResolver.md#method-hardenservice
      */
     public function hardenService(object $service) : object

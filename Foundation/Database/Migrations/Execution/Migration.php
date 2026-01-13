@@ -14,10 +14,10 @@ interface Migration
     /**
      * Apply the structural database modifications.
      */
-    public function up() : void;
+    public function up(): void;
 
     /**
      * Revert the structural database modifications.
      */
-    public function down() : void;
+    public function down(): void;
 }

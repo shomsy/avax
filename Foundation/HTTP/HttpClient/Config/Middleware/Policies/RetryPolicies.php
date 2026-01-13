@@ -11,13 +11,13 @@ use Avax\HTTP\HttpClient\Config\Middleware\Policies\Concrats\RetryPolicyInterfac
  */
 class RetryPolicies
 {
-    public function getServerErrorPolicy() : RetryPolicyInterface
+    public function getServerErrorPolicy(): RetryPolicyInterface
     {
-        return new ServerErrorRetryPolicy();
+        return new ServerErrorRetryPolicy;
     }
 
-    public function getNetworkFailurePolicy() : RetryPolicyInterface
+    public function getNetworkFailurePolicy(): RetryPolicyInterface
     {
-        return new NetworkFailureRetryPolicy();
+        return new NetworkFailureRetryPolicy;
     }
 }

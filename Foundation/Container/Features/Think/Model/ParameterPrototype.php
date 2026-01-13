@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace Avax\Container\Features\Think\Model;
 
-use Avax\Container\Features\Actions\Inject\InjectDependencies;
-
 /**
  * Immutable blueprint for a single method parameter's injection requirements.
  *
- * A ParameterPrototype captures the granular details of one single argument 
- * in a method signature. It records the name, type-hint, default value, 
- * nullability, and variadic status. This information is used by the 
- * {@see DependencyResolver} to decide exactly what value should be passed 
+ * A ParameterPrototype captures the granular details of one single argument
+ * in a method signature. It records the name, type-hint, default value,
+ * nullability, and variadic status. This information is used by the
+ * {@see DependencyResolver} to decide exactly what value should be passed
  * into the method at runtime.
  *
- * @package Avax\Container\Features\Think\Model
- * @see docs/Features/Think/Model/ParameterPrototype.md
- * @see MethodPrototype For the collection of these models.
+ * @see     docs/Features/Think/Model/ParameterPrototype.md
+ * @see     MethodPrototype For the collection of these models.
  */
 readonly class ParameterPrototype
 {
@@ -48,9 +45,10 @@ readonly class ParameterPrototype
      * Enables high-performance AOT compilation.
      *
      * @param array<string, mixed> $array State data for reconstruction.
+     *
      * @return self The reconstructed blueprint.
      */
-    public static function __set_state(array $array): self
+    public static function __set_state(array $array) : self
     {
         return self::fromArray(data: $array);
     }
@@ -59,20 +57,21 @@ readonly class ParameterPrototype
      * Hydrate a parameter blueprint from a raw configuration array.
      *
      * @param array<string, mixed> $data Raw source data.
+     *
      * @return self The resulting model.
      *
      * @see docs/Features/Think/Model/ParameterPrototype.md#method-fromarray
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data) : self
     {
         return new self(
-            name: $data['name'],
-            type: $data['type'] ?? null,
+            name      : $data['name'],
+            type      : $data['type'] ?? null,
             hasDefault: $data['hasDefault'] ?? false,
-            default: $data['default'] ?? null,
+            default   : $data['default'] ?? null,
             isVariadic: $data['isVariadic'] ?? false,
             allowsNull: $data['allowsNull'] ?? false,
-            required: $data['required'] ?? true
+            required  : $data['required'] ?? true
         );
     }
 
@@ -80,9 +79,10 @@ readonly class ParameterPrototype
      * Flatten the parameter blueprint into a serializable array.
      *
      * @return array<string, mixed> Descriptive metadata array.
+     *
      * @see docs/Features/Think/Model/ParameterPrototype.md#method-toarray
      */
-    public function toArray(): array
+    public function toArray() : array
     {
         return [
             'name'       => $this->name,

@@ -2,57 +2,57 @@
 
 declare(strict_types=1);
 
+use Avax\Facade\Facades\Route;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\Classes\Response;
 use Avax\HTTP\Response\Classes\Stream;
-use Avax\HTTP\Router\Routing\RouteBuilder;
-use Avax\HTTP\Router\Support\RouteCollector;
 use Psr\Http\Message\ResponseInterface;
 
-RouteCollector::add(
-    builder: RouteBuilder::make(method: 'GET', path: '/')
-        ->action(action: static function (Request $request): ResponseInterface {
-            $body = 'Avax components router is up.';
+Route::get('/', static function (Request $request) : ResponseInterface {
+    $body = 'HTTP Foundation v2.0 - Router is Working!';
 
-            return new Response(
-                stream: Stream::fromString(content: $body),
-                statusCode: 200,
-                headers: ['Content-Type' => 'text/plain'],
-            );
-        })
-        ->name(name: 'home')
-);
+    return new Response(Stream::fromString($body), null, 200, ['Content-Type' => 'text/plain']);
+})->name(name: 'home');
 
-RouteCollector::add(
-    builder: RouteBuilder::make(method: 'GET', path: '/health')
-        ->action(action: static function (Request $request): ResponseInterface {
-            $body = 'ok';
+Route::get('/health', static function (Request $request) : ResponseInterface {
+    $body = 'ok';
 
-            return new Response(
-                stream: Stream::fromString(content: $body),
-                statusCode: 200,
-                headers: ['Content-Type' => 'text/plain'],
-            );
-        })
-        ->name(name: 'health')
-);
+    return new Response(
+        stream    : Stream::fromString(content: $body),
+        statusCode: 200,
+        headers   : ['Content-Type' => 'text/plain'],
+    );
+})->name(name: 'health');
 
-RouteCollector::add(
-    builder: RouteBuilder::make(method: 'GET', path: '/favicon.ico')
-        ->action(action: static function (): ResponseInterface {
-            return new Response(
-                stream: Stream::fromString(content: ''),
-                statusCode: 204,
-                headers: ['Content-Type' => 'image/x-icon'],
-            );
-        })
-);
+Route::get('/test', static function (Request $request) : ResponseInterface {
+    $body = 'Test route - Enterprise Router Active! =�';
 
-RouteCollector::fallback(
-    handler: static function (Request $request): ResponseInterface {
-        throw \Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException::for(
-            method: $request->getMethod(),
-            path: $request->getUri()->getPath()
-        );
-    }
-);
+    return new Response(
+        stream    : Stream::fromString(content: $body),
+        statusCode: 200,
+        headers   : ['Content-Type' => 'text/plain'],
+    );
+})->name(name: 'test');
+
+Route::get('/favicon.ico', static function (Request $request) : ResponseInterface {
+    error_log("Favicon route called");
+    return new Response(
+        stream    : Stream::fromString(content: ''),
+        statusCode: 204,
+        headers   : ['Content-Type' => 'image/x-icon'],
+    );
+});
+
+Route::fallback(static function (Request $request) : ResponseInterface {
+    $message = sprintf(
+        'Route not found for [%s] %s',
+        $request->getMethod(),
+        $request->getUri()->getPath()
+    );
+    error_log("Fallback called, returning message: " . $message);
+    return new Response(
+        stream: Stream::fromString(content: $message),
+        statusCode: 404,
+        headers: ['Content-Type' => 'text/plain'],
+    );
+});

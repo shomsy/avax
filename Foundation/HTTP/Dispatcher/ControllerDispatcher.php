@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\HTTP\Dispatcher;
 
 use Avax\HTTP\Request\Request;
+use Avax\HTTP\Response\Classes\Response;
+use Avax\HTTP\Response\Classes\Stream;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -24,8 +26,7 @@ final readonly class ControllerDispatcher
     /**
      * Constructs the class with a dependency injection container.
      *
-     * @param ContainerInterface $container The container instance used for dependency injection.
-     *
+     * @param  ContainerInterface  $container  The container instance used for dependency injection.
      * @return void
      */
     public function __construct(private ContainerInterface $container) {}
@@ -33,10 +34,9 @@ final readonly class ControllerDispatcher
     /**
      * Dispatches a controller action or callable based on the route action definition.
      *
-     * @param callable|array|string $action  The route's target action (controller, method, or callable).
-     * @param Request               $request The PSR-7 compatible HTTP request instance.
+     * @param  callable|array|string  $action  The route's target action (controller, method, or callable).
+     * @param  Request  $request  The PSR-7 compatible HTTP request instance.
      *
-     * @return ResponseInterface
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \ReflectionException
@@ -44,16 +44,14 @@ final readonly class ControllerDispatcher
     /**
      * Dispatches a controller action or callable based on the route action definition.
      *
-     * @param callable|array|string $action  The route's target action (controller, method, or callable).
-     * @param Request               $request The PSR-7 compatible HTTP request instance.
-     *
-     * @return ResponseInterface
+     * @param  callable|array|string  $action  The route's target action (controller, method, or callable).
+     * @param  Request  $request  The PSR-7 compatible HTTP request instance.
      *
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \ReflectionException
      */
-    public function dispatch(callable|array|string $action, Request $request) : ResponseInterface
+    public function dispatch(callable|array|string $action, Request $request): ResponseInterface
     {
         // Delegate to the appropriate handler based on action type
         // Evaluate the expression based on the provided $action input using the `match` expression.
@@ -64,47 +62,56 @@ final readonly class ControllerDispatcher
 
             // If $action is an array (typically [ControllerClass, "method"] format),
             // invoke `dispatchControllerAndMethod`, passing $action and the $request.
-            is_array(value: $action)    => $this->dispatchControllerAndMethod(action: $action, request: $request),
+            is_array(value: $action) => $this->dispatchControllerAndMethod(action: $action, request: $request),
 
             // If $action is a string (usually indicating an invokable controller class name),
             // invoke `dispatchInvokableController`, passing the $action and $request.
-            is_string(value: $action)   => $this->dispatchInvokableController(controller: $action, request: $request),
+            is_string(value: $action) => $this->dispatchInvokableController(controller: $action, request: $request),
 
             // If none of the above conditions match, throw an exception because the action provided
             // is invalid or unsupported.
-            default                     => throw new InvalidArgumentException(message: 'Invalid route action provided.')
+            default => throw new InvalidArgumentException(message: 'Invalid route action provided.')
         };
     }
-
 
     /**
      * Handles a directly callable action (e.g., anonymous function or Closure).
      *
-     * @param callable $callable The callable to invoke.
-     * @param Request  $request  The PSR-7 compatible HTTP request instance.
-     *
-     * @return ResponseInterface
+     * @param  callable  $callable  The callable to invoke.
+     * @param  Request  $request  The PSR-7 compatible HTTP request instance.
      */
-    private function dispatchCallable(callable $callable, Request $request) : ResponseInterface
+    private function dispatchCallable(callable $callable, Request $request): ResponseInterface
     {
         // Passes the $request object to the provided callable function and
         // immediately returns the resulting ResponseInterface instance.
-        return $callable($request);
+        $result = $callable($request);
+
+        if ($result === null) {
+            $result = new Response(Stream::fromString('Callable returned null. Must return a ResponseInterface.'));
+        }
+
+        if (is_string($result)) {
+            return new Response(Stream::fromString($result));
+        }
+
+        if (!$result instanceof ResponseInterface) {
+            throw new RuntimeException('Callable must return a ResponseInterface.');
+        }
+
+        return $result;
     }
 
     /**
      * Handles an action that specifies a controller class and method.
      *
-     * @param array   $action  [ControllerClass::class, 'method'].
-     * @param Request $request The PSR-7 compatible HTTP request instance.
-     *
-     * @return ResponseInterface
+     * @param  array  $action  [ControllerClass::class, 'method'].
+     * @param  Request  $request  The PSR-7 compatible HTTP request instance.
      *
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \ReflectionException
      */
-    private function dispatchControllerAndMethod(array $action, Request $request) : ResponseInterface
+    private function dispatchControllerAndMethod(array $action, Request $request): ResponseInterface
     {
         // Check if the `$action` array has exactly 2 elements ([Class, "method"] format).
         if (count(value: $action) !== 2) {
@@ -152,6 +159,7 @@ final readonly class ControllerDispatcher
                 if (is_a(object_or_class: $typeName, class: Request::class, allow_string: true)) {
                     // Inject the `$request` instance as the value for this parameter.
                     $arguments[] = $request;
+
                     continue;
                 }
 
@@ -159,6 +167,7 @@ final readonly class ControllerDispatcher
                 if ($this->container->has(id: $typeName)) {
                     // Fetch the dependency from the container and add it to the arguments array.
                     $arguments[] = $this->container->get(id: $typeName);
+
                     continue;
                 }
             }
@@ -169,6 +178,7 @@ final readonly class ControllerDispatcher
             if ($attributeValue !== null) {
                 // Add the attribute value to the arguments array if found.
                 $arguments[] = $attributeValue;
+
                 continue;
             }
 
@@ -176,6 +186,7 @@ final readonly class ControllerDispatcher
             if ($param->isDefaultValueAvailable()) {
                 // Use the default value for the parameter and add it to the arguments array.
                 $arguments[] = $param->getDefaultValue();
+
                 continue;
             }
 
@@ -186,27 +197,39 @@ final readonly class ControllerDispatcher
         }
 
         // Invoke the controller's method with the resolved arguments using reflection.
-        return $reflection->invokeArgs(object: $instance, args: $arguments);
+        $result = $reflection->invokeArgs(object: $instance, args: $arguments);
+
+        if ($result === null) {
+            return new Response(Stream::fromString("Controller returned null"));
+        }
+
+        if (is_string($result)) {
+            return new Response(Stream::fromString($result));
+        }
+
+        if (!$result instanceof ResponseInterface) {
+            throw new RuntimeException("Method {$method} in {$controller} must return a ResponseInterface.");
+        }
+
+        return $result;
     }
 
     /**
      * Resolves a controller instance using the DI container.
      *
-     * @param string $className The fully qualified name of the controller class.
-     *
-     * @return object
+     * @param  string  $className  The fully qualified name of the controller class.
      *
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    private function resolveController(string $className) : object
+    private function resolveController(string $className): object
     {
         if ($this->container->has(id: $className)) {
             return $this->container->get(id: $className);
         }
 
         if (class_exists(class: $className)) {
-            return new $className();
+            return new $className;
         }
 
         throw new RuntimeException(message: "Unable to resolve controller class '{$className}'.");
@@ -215,14 +238,13 @@ final readonly class ControllerDispatcher
     /**
      * Handles an action represented by an invokable controller.
      *
-     * @param string  $controller The fully qualified name of the invokable controller class.
-     * @param Request $request    The PSR-7 compatible HTTP request instance.
+     * @param  string  $controller  The fully qualified name of the invokable controller class.
+     * @param  Request  $request  The PSR-7 compatible HTTP request instance.
      *
-     * @return ResponseInterface
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    private function dispatchInvokableController(string $controller, Request $request) : ResponseInterface
+    private function dispatchInvokableController(string $controller, Request $request): ResponseInterface
     {
         // Check if the specified controller class exists.
         // If the class is not found, throw a RuntimeException with a descriptive error message.
@@ -242,6 +264,20 @@ final readonly class ControllerDispatcher
 
         // If the controller is valid and invokable, call it and pass the incoming request as an argument.
         // The return value of the controller (usually a Response object) is returned as the method's result.
-        return $instance($request);
+        $result = $instance($request);
+
+        if ($result === null) {
+            return new Response(Stream::fromString("Controller returned null"));
+        }
+
+        if (is_string($result)) {
+            return new Response(Stream::fromString($result));
+        }
+
+        if (!$result instanceof ResponseInterface) {
+            throw new RuntimeException("Invokable controller {$controller} must return a ResponseInterface.");
+        }
+
+        return $result;
     }
 }

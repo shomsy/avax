@@ -8,9 +8,8 @@ use Avax\Auth\Interface\HTTP\Middleware\AuthorizeMiddleware;
 use Avax\Container\Features\Core\Contracts\ContainerInterface;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;
-use Closure;
+use Laravel\SerializableClosure\SerializableClosure;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
 
 /**
  * Class RoutePipeline
@@ -51,7 +50,8 @@ final class RoutePipeline
     public function __construct(
         private readonly RouteDefinition      $route,
         private readonly ControllerDispatcher $dispatcher,
-        private readonly ContainerInterface   $container
+        private readonly ContainerInterface   $container,
+        private readonly StageChain           $stageChain
     ) {}
 
     /**
@@ -61,7 +61,7 @@ final class RoutePipeline
      * @param RouteDefinition      $route      The route definition to be handled.
      * @param ControllerDispatcher $dispatcher Used to invoke controller methods.
      *
-     * @return self                        A new instance of RoutePipeline.
+     * @return self A new instance of RoutePipeline.
      */
     public static function for(
         RouteDefinition      $route,
@@ -121,57 +121,48 @@ final class RoutePipeline
      *
      * @return ResponseInterface The final HTTP response from the dispatched route.
      *
-     * @throws \ReflectionException                     If reflection fails during middleware creation.
+     * @throws \ReflectionException If reflection fails during middleware creation.
      * @throws \Psr\Container\ContainerExceptionInterface If the DI container encounters an issue.
-     * @throws \Psr\Container\NotFoundExceptionInterface  If a middleware class cannot be resolved.
+     * @throws \Psr\Container\NotFoundExceptionInterface If a middleware class cannot be resolved.
      */
     public function dispatch(Request $request) : ResponseInterface
     {
-        // Inject route authorization into the request if a policy is defined.
-        if ($this->route->authorization !== null) {
-            // Attach the authorization policy as a request attribute.
-            $request = $request->withAttribute(name: 'route:authorization', value: $this->route->authorization);
+        try {
+            // Inject route authorization into the request if a policy is defined.
+            if ($this->route->authorization !== null) {
+                // Attach the authorization policy as a request attribute.
+                $request = $request->withAttribute(name: 'route:authorization', value: $this->route->authorization);
 
-            // Prepend the authorization middleware to the pipeline.
-            array_unshift($this->middleware, AuthorizeMiddleware::class);
+                // Prepend the authorization middleware to the pipeline.
+                array_unshift($this->middleware, AuthorizeMiddleware::class);
+            }
+
+            // Unserialize the route action if it's a SerializableClosure
+            $route = $this->route;
+            if ($route->action instanceof SerializableClosure) {
+                $route = $route->withUnserializedAction();
+            }
+
+            // Define the core execution logic for the pipeline - dispatching the route's action.
+            $core = fn(Request $request) : ResponseInterface => $this->dispatcher->dispatch(
+                action : $route->action,
+                request: $request
+            );
+
+            // Build the ordered pipeline using StageChain diagnostics.
+            $stack = $this->stageChain->create(
+                stages    : $this->stages,
+                middleware: $this->middleware,
+                core      : $core
+            );
+
+            return $stack($request);
+        } catch (\Throwable $e) {
+            // Return 500 Response on exceptions
+            return new \Avax\HTTP\Response\Classes\Response(
+                stream: \Avax\HTTP\Response\Classes\Stream::fromString('Internal Server Error'),
+                statusCode: 500
+            );
         }
-
-        // Define the core execution logic for the pipeline - dispatching the route's action.
-        $core = fn(Request $request) : ResponseInterface => $this->dispatcher->dispatch(
-            action : $this->route->action,
-            request: $request
-        );
-
-        // Combine stages and middleware into a unified processing pipeline.
-        $pipeline = array_merge($this->stages, $this->middleware);
-
-        // Reduce the middleware and stages into a single processing stack (chain of responsibility).
-        $stack = array_reduce(
-        // Reverse the pipeline to ensure middleware are applied in the correct order.
-            array   : array_reverse(array: $pipeline),
-            // Accumulate middleware execution into the next stack function.
-            callback: fn(Closure $next, string $class) => function (Request $request) use (
-                $class,
-                $next
-            ) : ResponseInterface {
-                // Resolve the middleware or stage instance from the container.
-                $instance = $this->container->get(id: $class);
-
-                // Ensure the middleware or stage has a `handle()` method.
-                if (! method_exists(object_or_class: $instance, method: 'handle')) {
-                    throw new RuntimeException(
-                        message: "Middleware or stage [{$class}] must have a handle() method."
-                    );
-                }
-
-                // Call the middleware or stage's handle method, passing the request and next closure.
-                return $instance->handle($request, $next);
-            },
-            // Start from the core action dispatcher.
-            initial : $core
-        );
-
-        // Execute the complete middleware stack with the initial request.
-        return $stack($request);
     }
 }

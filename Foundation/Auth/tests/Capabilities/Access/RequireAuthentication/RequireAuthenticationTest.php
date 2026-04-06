@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Capabilities\Access\RequireAuthentication;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\Capabilities\Access\RequireAuthentication\RequireAuthentication;
-use Avax\Auth\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\Flows\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
 use Mockery;
 
 /**

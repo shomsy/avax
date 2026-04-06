@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capabilities\Access\RequireRole;
 
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Capabilities\User\UserRole;
 
@@ -19,13 +20,18 @@ final readonly class RequireRole
     ) {}
 
     /**
+     * @throws Unauthenticated
      * @throws RoleDenied
      */
     public function execute(UserRole $requiredRole) : void
     {
         $user = $this->readCurrentUser->execute();
 
-        if ($user === null || ! $user->hasRole(role: $requiredRole)) {
+        if ($user === null) {
+            throw new Unauthenticated();
+        }
+
+        if (! $user->hasRole(role: $requiredRole)) {
             throw new RoleDenied(requirement: $requiredRole);
         }
     }

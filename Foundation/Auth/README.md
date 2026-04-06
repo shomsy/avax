@@ -24,9 +24,9 @@ composer require avax/auth
 ### Configuration
 
 ```php
-use Avax\Auth\Auth;
+use Avax\Auth\System\Auth;
 
-$auth = Auth()::configuration()
+$auth = Auth::configuration()
     ->forUser($userSource)
     ->withSession($sessionIdentity)
     ->protectFromBruteForce($protection)
@@ -36,7 +36,8 @@ $auth = Auth()::configuration()
 ### Authentication Flow (Flows)
 
 ```php
-use Avax\Auth\Flows\UserLogin\Credentials;
+use Avax\Auth\System\Flows\Login\Credentials;
+use Avax\Auth\System\Flows\Register\RegistrationData;
 
 // Login
 $user = $auth->login(new Credentials(
@@ -62,11 +63,11 @@ $auth->logout();
 ### Authorization (Access)
 
 ```php
-use Avax\Auth\Access\EnforceRole;
-use Avax\Auth\User\UserRole;
+use Avax\Auth\System\Capabilities\User\UserPermission;
+use Avax\Auth\System\Capabilities\User\UserRole;
 
-$enforcer = new EnforceRole($auth->getReadFlow());
-$enforcer->execute(UserRole::ADMIN); // Throws Unauthorized exception if fails
+$auth->access()->requireRole(UserRole::ADMIN);
+$auth->access()->requirePermission(new UserPermission('delete_user'));
 ```
 
 ## Architecture
@@ -74,15 +75,18 @@ $enforcer->execute(UserRole::ADMIN); // Throws Unauthorized exception if fails
 This framework uses a **feature-first** architecture where each business flow lives in its own owner-centric folder:
 
 ```
-Auth/
+System/
+├── Auth.php
+├── AuthInterface.php
 ├── Configuration/     # Composition Root & Fluent Builder
 ├── Flows/             # Verb-Noun Business Actions (Login, Register, etc.)
-├── Identity/          # Unified Identity Analyzers (Session, Jwt)
-├── Access/            # Consolidated Authorization Boundaries (Enforce*)
-├── Security/          # Cryptography & Protection (Hashing, Brute Force)
-├── User/              # Core Domain Data & Value Objects
-├── UserSource/        # User Data Storage Interface
-└── Support/           # Core Utilities & Global Helpers
+├── Capabilities/
+│   ├── Access/        # Root authorization façade plus specialized checks
+│   ├── Identity/      # Unified authentication façade plus adapters
+│   ├── PasswordHashing/
+│   ├── User/          # Core Domain Data & Value Objects
+│   └── UserSource/    # User Data Storage Port
+└── Foundation/        # Core Primitives
 ```
 
 ## Documentation

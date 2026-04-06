@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System;
 
+use Avax\Auth\System\Capabilities\Access\AccessInterface;
 use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\System\Flows\ChangePassword\ChangePasswordData;
@@ -20,6 +21,7 @@ interface AuthInterface
     public function logout() : void;
     public function check() : bool;
     public function user() : User|null;
+    public function access() : AccessInterface;
     public function changePassword(User $user, ChangePasswordData $data) : void;
     public function register(RegistrationData $data) : User;
 }

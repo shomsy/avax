@@ -4,25 +4,25 @@ This document describes the access control system in Avax Auth (v2.0+).
 
 ## Overview
 
-Unlike older frameworks, authorization in Avax Auth is handled through the **`Access/`** layer, which provides specialized **Enforce** actions.
+Unlike older frameworks, authorization in Avax Auth is handled through the **`Access/`** layer, which provides a root façade plus specialized **require** actions.
 
 ## 1. Authentication vs Authorization
 
-- **`EnforceAuthentication`** (401 - Unauthenticated): Checks if the user is who they say they are.
-- **`EnforceRole`** (403 - Unauthorized): Checks if the authenticated user has the required business role.
-- **`EnforcePermission`** (403 - Unauthorized): Checks if the authenticated user has granular action-level permissions.
+- **`RequireAuthentication`** (401 - Unauthenticated): Checks if the user is who they say they are.
+- **`RequireRole`** (401 / 403): Checks if the current user exists and has the required business role.
+- **`RequirePermission`** (401 / 403): Checks if the current user exists and has granular action-level permissions.
 
 ## 2. Sequence Diagram
 
 ```mermaid
 sequenceDiagram
     participant Request
-    participant Access as Access Enforcer
-    participant Identity as Identity Analyzer
+    participant Access as Access Facade
+    participant Identity as Identity Facade
     participant DB as UserSource
     participant Logic as Business Logic
 
-    Request->>Access: execute(EnforceRole::ADMIN)
+    Request->>Access: requireRole(UserRole::ADMIN)
     Access->>Identity: getCurrentUser()
     Identity->>DB: findById(UserId)
     DB-->>Identity: User
@@ -33,7 +33,7 @@ sequenceDiagram
         Access-->>Request: (void)
         Request->>Logic: proceed
     ELSE Failure
-        Access-->>Request: throw Unauthorized(403)
+        Access-->>Request: throw RoleDenied / PermissionDenied / Unauthenticated
     END
 ```
 
@@ -49,26 +49,22 @@ sequenceDiagram
 ### Role Enforcement
 
 ```php
-use Avax\Auth\Access\EnforceRole;
-use Avax\Auth\User\UserRole;
+use Avax\Auth\System\Capabilities\User\UserRole;
 
-$enforcer = new EnforceRole($auth->getReadFlow());
-$enforcer->execute(UserRole::ADMIN);
+$auth->access()->requireRole(UserRole::ADMIN);
 ```
 
 ### Permission Enforcement
 
 ```php
-use Avax\Auth\Access\EnforcePermission;
-use Avax\Auth\User\UserPermission;
+use Avax\Auth\System\Capabilities\User\UserPermission;
 
-$enforcer = new EnforcePermission($auth->getReadFlow());
-$enforcer->execute(new UserPermission('delete_user'));
+$auth->access()->requirePermission(new UserPermission('delete_user'));
 ```
 
 ## 5. Metadata Resolution
 
-Authorization requirements can be discovered via PSR-7 request attributes, PHP 8 Attributes, or manual injection into the **`Access`** enforcers.
+Authorization requirements can be discovered via PSR-7 request attributes, PHP 8 Attributes, or manual injection into the **`Access`** façade.
 
 ---
 *Least privilege by design.*

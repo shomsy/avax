@@ -18,7 +18,7 @@ The core logic is divided into four primary lanes:
 
 1.  **`Flows/`**: High-level business use-cases following the **Verb-Noun** naming pattern (e.g., `Login`, `Register`, `ChangePassword`). These are the primary entry points.
 2.  **`Capabilities/`**: Domain enablers and internal subsystems that the flows orchestrate.
-    -   `Access`: Authorization logic (Roles, Permissions).
+    -   `Access`: Root access façade plus specialized authorization boundaries.
     -   `Identity`: Unified authentication façade plus protocol-specific adapters (Session, JWT).
     -   `User`: The core User entity and its specific Value Objects (Email, Id, etc.).
     -   `UserSource`: The persistence bridge/gateway.
@@ -31,12 +31,12 @@ The core logic is divided into four primary lanes:
 | Folder | Category | Role |
 |:---|:---|:---|
 | **[`System/Flows/`](./System/Flows/)** | **Features** | Core business processes and API entry points. |
-| **[`System/Capabilities/Access/`](./System/Capabilities/Access/)** | Domain | Requirement boundaries for Role/Permission validation. |
-| **[`System/Capabilities/Identity/`](./System/Capabilities/Identity/)** | Adapter | Unified identity façade with JWT and Session persistence adapters. |
+| **[`System/Capabilities/Access/`](./System/Capabilities/Access/)** | Facade | Root authorization boundary plus specialized requirement units. |
+| **[`System/Capabilities/Identity/`](./System/Capabilities/Identity/)** | Facade | Unified identity façade with JWT and Session persistence adapters. |
 | **[`System/Capabilities/User/`](./System/Capabilities/User/)** | Domain | Immutability-first User entity and its Value Objects. |
-| **[`System/Capabilities/UserSource/`](./System/Capabilities/UserSource/)** | Gateway | Interface for accessing the external data store. |
+| **[`System/Capabilities/UserSource/`](./System/Capabilities/UserSource/)** | Port | Interface for accessing the external data store. |
 | **[`System/Configuration/`](./System/Configuration/)** | Infra | Fluent DSL Builder for setting up Auth system instances. |
-| **[`System/Foundation/`](./System/Foundation/)** | Tooling | Shared low-level utilities (Clock, IdGen). |
+| **[`System/Foundation/`](./System/Foundation/)** | Primitives | Shared low-level primitives (Clock, IdGen). |
 
 ## Dependency Graph
 
@@ -44,7 +44,9 @@ The core logic is divided into four primary lanes:
 graph TD
     Facade[Auth Facade] --> Builder[AuthBuilder]
     Facade --> Flows[Business Flows]
+    Facade --> Access[Access Facade]
     Flows --> Capabilities[Capabilities]
+    Access --> Capabilities
     Capabilities --> Foundation[Foundation Primitives]
 ```
 

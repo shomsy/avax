@@ -44,7 +44,8 @@ class ControllerDispatcherUnitTest extends TestCase
     {
         // Given: A controller with a method that returns null
         $controller = new class {
-            public function testMethod(Request $request): ?ResponseInterface {
+            public function testMethod(Request $request): ResponseInterface|null
+            {
                 return null;
             }
         };
@@ -71,7 +72,8 @@ class ControllerDispatcherUnitTest extends TestCase
     {
         // Given: An invokable controller that returns null
         $controller = new class {
-            public function __invoke(Request $request): ?ResponseInterface {
+            public function __invoke(Request $request): ResponseInterface|null
+            {
                 return null;
             }
         };

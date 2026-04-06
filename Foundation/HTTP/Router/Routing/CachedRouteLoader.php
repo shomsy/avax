@@ -26,6 +26,7 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
      * Performs integrity validation before loading to prevent cache poisoning.
      *
      * @throws \RuntimeException If cache is invalid or corrupted
+     * @throws \Avax\Contracts\FilesystemException
      */
     public function loadInto(RouteCollection $collection) : void
     {

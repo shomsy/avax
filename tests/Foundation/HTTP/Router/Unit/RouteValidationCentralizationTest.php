@@ -68,6 +68,7 @@ class RouteValidationCentralizationTest extends TestCase
 
     /**
      * @test
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function route_builder_validates_constraints_without_suppression() : void
     {
@@ -107,6 +108,7 @@ class RouteValidationCentralizationTest extends TestCase
 
     /**
      * @test
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function route_builder_where_in_validates_all_constraints() : void
     {

@@ -49,6 +49,7 @@ final readonly class Container implements ContainerInternalInterface
      *
      * @throws ResolutionException When the service cannot be resolved due to dependency issues
      * @throws ServiceNotFoundException When the requested service identifier is not registered
+     * @throws \Throwable
      *
      * @see docs/Container.md#method-get
      */
@@ -126,6 +127,7 @@ final readonly class Container implements ContainerInternalInterface
      * @return mixed The resolved service instance
      *
      * @throws ResolutionException When the prototype cannot be resolved
+     * @throws \Throwable
      *
      * @see docs/Container.md#method-resolve
      */

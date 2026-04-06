@@ -95,6 +95,10 @@ final class PropertyInjectorTest extends TestCase
         $this->assertNull(actual: $result->value);
     }
 
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function test_resolve_throws_for_required_unresolvable_property() : void
     {
         $container = $this->createMock(ContainerInterface::class);

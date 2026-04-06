@@ -174,6 +174,8 @@ final readonly class RouteBootstrapper
      * Loads routes from the cache file.
      *
      * @param string $cachePath Path to the route cache file.
+     *
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     private function loadRoutesFromCache(string $cachePath, string $routesPath) : void
     {
@@ -195,6 +197,8 @@ final readonly class RouteBootstrapper
      * - Registers the fallback route, if it exists.
      *
      * @param string $baseDir Base directory containing route definition files.
+     *
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     private function loadRoutesFromDisk(string $baseDir, bool $closuresOnly = false) : void
     {

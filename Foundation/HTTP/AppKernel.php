@@ -131,7 +131,7 @@ final readonly class AppKernel implements Kernel
     private function createOfficeIpRestriction(ResponseFactory $responseFactory) : MiddlewareInterface
     {
         return new class($responseFactory) extends IpRestrictionMiddleware {
-            protected function isAllowedIp(string $ipAddress) : bool
+            protected function isAllowedIp(#[\SensitiveParameter] string $ipAddress) : bool
             {
                 // Example: Allow local development and office IPs
                 $allowed = ['127.0.0.1', '::1', '192.168.1.0/24'];
@@ -322,6 +322,8 @@ final readonly class AppKernel implements Kernel
 
     /**
      * Add middleware to the global pipeline.
+     *
+     * @throws \ReflectionException
      */
     public function withMiddleware(MiddlewareInterface $middleware) : self
     {

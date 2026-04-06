@@ -40,6 +40,7 @@ final class ContainerKernelTest extends TestCase
      * Verify that the kernel delegates retrieval to the runtime engine.
      *
      * @see docs_md/tests/Kernel/ContainerKernelTest.md#method-testgetdelegatestoruntime
+     * @throws \Throwable
      */
     public function test_get_delegates_to_runtime() : void
     {

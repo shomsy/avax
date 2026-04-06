@@ -134,6 +134,8 @@ final readonly class AsyncRouteCacheLoader
 
     /**
      * Registers routes with the router.
+     *
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     private function registerRoutes(array $routes) : void
     {
@@ -148,6 +150,8 @@ final readonly class AsyncRouteCacheLoader
 
     /**
      * Synchronous fallback for load operation.
+     *
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     private function loadSync(string $cachePath, string $routesPath) : void
     {

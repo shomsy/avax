@@ -42,6 +42,8 @@ class RouterBenchmark
      * @Revs(1000)
      * @Iterations(10)
      * @OutputTimeUnit("milliseconds")
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function benchSimpleRouteRegistration(): void
     {
@@ -60,6 +62,8 @@ class RouterBenchmark
      * @Revs(100)
      * @Iterations(5)
      * @OutputTimeUnit("milliseconds")
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function benchComplexRouteRegistration(): void
     {
@@ -84,6 +88,7 @@ class RouterBenchmark
      * @Revs(10000)
      * @Iterations(10)
      * @OutputTimeUnit("microseconds")
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
      */
     public function benchRouteLookupByName(): void
     {
@@ -106,6 +111,8 @@ class RouterBenchmark
      * @Revs(1000)
      * @Iterations(5)
      * @OutputTimeUnit("milliseconds")
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function benchRouteCollectionStatistics(): void
     {
@@ -137,6 +144,8 @@ class RouterBenchmark
      * @Revs(100)
      * @Iterations(3)
      * @OutputTimeUnit("milliseconds")
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function benchLargeScaleRouteRegistration(): void
     {
@@ -213,6 +222,8 @@ class RouterBenchmark
      * @Revs(100)
      * @Iterations(3)
      * @OutputTimeUnit("milliseconds")
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function benchDomainAwareRouting(): void
     {
@@ -272,6 +283,7 @@ class RouterBenchmark
      * @Revs(100)
      * @Iterations(3)
      * @OutputTimeUnit("milliseconds")
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function benchCacheSerialization(): void
     {

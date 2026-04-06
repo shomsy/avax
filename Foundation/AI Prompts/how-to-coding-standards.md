@@ -1,6 +1,4 @@
-Naravno Miloš — evo **kompletno rekonstruisanog i finalno formatiranog MASTER PROMPT-a**, tačno onako kako si ga napisao, ali ispeglan kao perfektan `.md` dokument bez ijedne greške, spreman za GitHub, za AI alate, ili za tvoje sopstvene instrukcije.
 
-Sve tvoje dopune su pažljivo integrisane.
 
 ---
 
@@ -24,59 +22,161 @@ You must **NEVER** use Canvas or special code modes — always output plain text
 
 ---
 
-# ⭐ 1. PRIMARY PHILOSOPHY — PRAGMATIC FEATURE-SLICED DDD
+# ⭐ 1. PRIMARY PHILOSOPHY — SCREAMING ARCHITECTURE BUT AS PRAGMATIC FEATURE-SLICED DDD
 
 (DDD/Clean Architecture are NOT required — only their principles)
 
 ## ✔ Priority #1: Feature-Sliced Pragmatic DDD
 
-Code structure must be **feature-first**, intuitive, and immediately understandable:
+Architecture that screams flow. Vertical slice architecture, with a feature-first orientation:
 
-```
-/features/Auth
-    /Domain
-    /Application
-    /Infrastructure
-    /Interface
-```
+The folder expresses the flow, the file expresses the responsibility, and the function expresses the exact action.
 
-- Do **NOT** force classical DDD or Clean Architecture unless the project already uses it.
+That is what I would prefer most. It should have that kind of absurd simplicity, while still maintaining enterprise-grade quality. Folder names, file names, and function names should be intuitive and predictable to read. They should be descriptive and follow the business flow, from the very first to the very last feature. This applies both to the technical part of the application and its slices, as well as to the feature slices.
 
-- **Extract useful architectural principles only**:
-  
-  - clear boundaries
-  
-  - separation of concerns
-  
-  - dependency direction
-  
-  - maintainability through simplicity
+The core rule is this: the structure should be viewed as:
+flow → feature slice → file → functions.
+
+The root of every feature slice:
+
+There should be a pipeline file in the root of the feature if the flow is sequential. If it is not, then it should be a facade or an orchestrator that contains the complete feature flow. If that is still not the best solution, then it should use another design pattern, or another file, or even just a function that wraps that whole unit and gathers the complete flow of the folder, or subfolders, because everything should be modular from the root to the final feature, and distributed according to SDLC rules and principles such as SOLID, DRY, YAGNI, KISS, Composition over Inheritance, the Law of Demeter (Principle of Least Knowledge), Clean Code principles, maximum performance, security practices (OWASP, authentication and authorization, data encryption, vulnerability management, secure APIs), usability, cost efficiency, interoperability, flexibility, scalability, caching, rate limiting, checksums, latency vs throughput, CAP, consistency patterns, long polling vs WebSockets, and low-level design (LLD) rules.
+
+Avoid: tight coupling, ignoring reusability, over-engineering, and insufficient abstraction.
+
+The naming convention in general must be extremely simple, almost banal, intuitive, and predictable, as if you were explaining it to a child sitting at a table. That way, it is always clear what something is, what it is used for, when it is used, and what exactly it does. Screaming architecture, but in my simplified style.
+
+I believe all of these should become architectural rules whose ultimate goal is high-quality simplicity
 
 ### ✔ DSL Naming and Fluent Chaining
 
 Classes and methods must form a readable “domain-specific language”:
 
-```php
-$auth->start()
-     ->withCredentials($dto)
-     ->validate()
-     ->issueToken()
-     ->finish();
-```
+✔ DSL Naming and Fluent Chaining
 
-Short, intuitive, expressive names:
+The DSL must read like a clear sentence.
+Each call should feel natural, predictable, and domain-driven.
+The goal is not cleverness. The goal is clarity, flow, and safe composition.
 
-- `LoginAction`
+Naming Rules
 
-- `UserFinder`
+Use domain language, not framework language.
+Method names must reflect the business action, not internal implementation details.
 
-- `AuthSession`
+Good:
+project.useDatabase("postgres")
+gateway.exposePort(8080)
 
-- `TokenGenerator`
+Bad:
+project.handleDatabaseDriver("postgres")
+gateway.processPortConfiguration(8080)
 
-- `ResolveUser`
+The name must reveal intent immediately.
+A developer should understand what the method does without opening the implementation.
 
-- `IssueToken`
+Prefer simple verbs and concrete nouns.
+Use names like:
+use, enable, disable, add, remove, with, from, for, save, build, run, publish
+
+Avoid names like:
+handle, manage, process, executeAction, doStuff
+
+One method, one intention.
+A method must represent exactly one responsibility.
+Do not overload a name with multiple meanings.
+
+Avoid synonyms for the same action.
+Pick one word and keep it everywhere.
+
+Good:
+always use add
+
+Bad:
+addPlugin(), registerPlugin(), attachPlugin() for the same concept
+
+Keep names predictable across the whole system.
+If one part uses withCache(), another part should not use enableCaching() unless there is a real semantic difference.
+
+Prefer explicitness over shortness.
+Slightly longer is better than vague.
+
+Good:
+withRetryPolicy()
+
+Bad:
+retry()
+
+Fluent Chaining Rules
+
+Every step in the chain must move the story forward.
+The chain should read left to right like a sequence of meaningful decisions.
+
+Good:
+app.create("billing").useDatabase("postgres").enableCache().run()
+
+The chain must follow natural order.
+Configuration comes before execution.
+Definition comes before build.
+Build comes before run.
+Run comes before deploy.
+Terminal operations must be explicit.
+Side effects should happen only in clearly named terminal methods such as:
+build(), run(), apply(), deploy(), save()
+Intermediate methods should be pure configuration whenever possible.
+They should prepare state, not trigger hidden work.
+Do not hide side effects inside innocent-looking methods.
+A method like withDatabase() should not silently connect, migrate, and seed.
+Each chained method must return the next meaningful context.
+The returned object should make the next valid step obvious.
+The API should make invalid flows hard or impossible.
+Fluent chaining should guide the developer toward valid sequences by design.
+Prefer narrow, context-aware chaining over giant god-objects.
+After a step, return only what is relevant next.
+Keep chains short and readable.
+If the chain becomes too long, branching, or mentally heavy, stop and introduce a builder, facade, or orchestrator.
+Design Discipline
+The chain must be readable without documentation.
+Documentation should confirm understanding, not rescue bad naming.
+Do not use fluent chaining just because it looks elegant.
+Use it only when it improves readability and flow.
+Avoid boolean arguments in fluent APIs.
+They make chains ambiguous.
+
+Bad:
+cache.enable(true)
+
+Good:
+cache.enable()
+cache.disable()
+
+Prefer explicit variants over magic behavior.
+A developer should not guess what happens next.
+Do not leak technical noise into the DSL.
+Internal terms, low-level engine details, and implementation jargon should stay behind the API boundary.
+Use fluent chaining for composition, not for hiding complexity.
+If the underlying behavior is complex, the naming must still remain simple and honest.
+Be consistent with grammar.
+If the DSL starts with verbs, continue with verbs.
+If it starts with nouns plus actions, keep that structure stable.
+A fluent chain must feel safe.
+It should encourage correct usage, reduce ambiguity, and minimize accidental misuse.
+What to Avoid
+Generic verbs with weak meaning
+Hidden side effects
+Mixed naming styles
+Inconsistent order of operations
+Chains that read like implementation instead of intent
+Over-engineered fluent APIs that are harder to read than plain functions
+Returning overly broad objects that expose unrelated actions
+Quality Standard
+
+A good fluent DSL should feel like this:
+
+easy to read
+easy to predict
+easy to extend
+hard to misuse
+aligned with the business flow
+boring in the best possible way
 
 ### ✔ Pragmatism FIRST, Theory SECOND
 

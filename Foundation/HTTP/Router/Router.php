@@ -52,6 +52,12 @@ final readonly class Router implements RouterRuntimeInterface
         private RouteRegistry|null   $routeRegistry = null
     ) {}
 
+    /**
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \ReflectionException
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
+     */
     public function resolve(Request $request) : ResponseInterface
     {
         try {

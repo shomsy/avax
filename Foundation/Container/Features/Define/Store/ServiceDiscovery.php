@@ -144,6 +144,7 @@ readonly class ServiceDiscovery
 
     /**
      * @throws \Exception
+     * @throws \Throwable
      */
     public function analyzeServiceHealth() : array
     {
@@ -239,6 +240,7 @@ readonly class ServiceDiscovery
      *
      * @return Arrhae Collection of services that participate in interface conflicts
      * @throws \Exception
+     * @throws \Throwable
      * @see docs/Features/Define/Store/ServiceDiscovery.md#method-findpotentialconflicts
      */
     public function findPotentialConflicts() : Arrhae
@@ -299,6 +301,7 @@ readonly class ServiceDiscovery
 
     /**
      * @throws \Exception
+     * @throws \Throwable
      */
     private function buildDependencyTree(int $serviceId, array $visited, int $depth, int $maxDepth) : array
     {
@@ -363,6 +366,7 @@ readonly class ServiceDiscovery
      *
      * @return Arrhae Collection of services matching all filter criteria
      * @throws \Exception
+     * @throws \Throwable
      * @see docs/Features/Define/Store/ServiceDiscovery.md#method-advancedsearch
      */
     public function advancedSearch(array $filters) : Arrhae
@@ -442,6 +446,7 @@ readonly class ServiceDiscovery
      *
      * @return array Associative array mapping service IDs to suggested changes
      * @throws \Exception
+     * @throws \Throwable
      * @see docs/Features/Define/Store/ServiceDiscovery.md#method-suggestmigrations
      */
     public function suggestMigrations() : array
@@ -537,6 +542,7 @@ readonly class ServiceDiscovery
 
     /**
      * @throws \Exception
+     * @throws \Throwable
      */
     private function findServicesWithCommonDependencies(ServiceDefinitionEntity $service) : Arrhae
     {
@@ -570,6 +576,7 @@ readonly class ServiceDiscovery
 
     /**
      * @throws \Exception
+     * @throws \Throwable
      */
     private function findServicesInSameDomain(ServiceDefinitionEntity $service) : Arrhae
     {

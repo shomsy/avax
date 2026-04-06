@@ -29,6 +29,7 @@ final readonly class RouteRegistrar
      *
      * @see docs/Http/RouteRegistrar.md#method-load
      * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
      */
     public function load(string $path, string $cacheDir) : void
     {

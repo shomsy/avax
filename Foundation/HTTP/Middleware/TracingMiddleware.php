@@ -21,11 +21,15 @@ class TracingMiddleware implements MiddlewareInterface
 
     public function __construct(
         private LoggerInterface $logger,
-        private string $requestIdHeader = 'X-Request-ID'
+        #[\SensitiveParameter] private string $requestIdHeader = 'X-Request-ID'
     ) {
         $this->startTime = microtime(true);
     }
 
+    /**
+     * @throws \Throwable
+     * @throws \Random\RandomException
+     */
     public function process(ServerRequestInterface $request, callable $next): ResponseInterface
     {
         $requestId = $this->generateRequestId();
@@ -94,6 +98,9 @@ class TracingMiddleware implements MiddlewareInterface
         ];
     }
 
+    /**
+     * @throws \Random\RandomException
+     */
     private function generateRequestId(): string
     {
         return sprintf(

@@ -31,6 +31,7 @@ final readonly class RouteCacheLoader
      * @param string $routesPath
      *
      * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws \Avax\Contracts\FilesystemException
      */
     public function load(string $cachePath, string $routesPath) : void
     {

@@ -125,6 +125,9 @@ final readonly class RouterDsl implements RouterInterface
         $this->registry->setFallback(handler: $callable);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function registerAttributes(object|string $controller) : void
     {
         (new AttributeRouteRegistrar(router: $this->router))->register(controller: $controller);

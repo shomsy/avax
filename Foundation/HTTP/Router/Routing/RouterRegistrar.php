@@ -33,6 +33,7 @@ final readonly class RouterRegistrar
     // Fallback method removed - fallbacks are handled exclusively through FallbackManager
 
     /**
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
      * @internal For cache loader use only.
      */
     public function registerRouteFromCache(RouteDefinition $definition) : void

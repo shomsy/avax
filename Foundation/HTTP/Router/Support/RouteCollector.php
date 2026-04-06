@@ -66,7 +66,9 @@ final class RouteCollector
      * Eliminates global state by passing collector as closure parameter.
      *
      * @param Closure $closure The closure to execute with scoped collection
+     *
      * @return RouteCollector The collector instance used for the scope
+     * @throws \Throwable
      */
     public static function scoped(Closure $closure) : self
     {
@@ -92,7 +94,7 @@ final class RouteCollector
      * @param string $code The PHP code containing DSL function calls
      * @return void
      */
-    public function executeDsl(string $code) : void
+    public function executeDsl(#[\SensitiveParameter] string $code) : void
     {
         // Bind this collector instance to the execution context
         $collector = $this;

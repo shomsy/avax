@@ -11,10 +11,10 @@ final readonly class RouteCacheManifest
 {
     /** @param array<string, int> $files */
     private function __construct(
-        private array  $files,
-        private string $hash,
-        private int    $generatedAt,
-        private string $checksum
+        private array                         $files,
+        #[\SensitiveParameter] private string $hash,
+        private int                           $generatedAt,
+        private string                        $checksum
     ) {}
 
     public static function buildFromDirectory(string $baseDir) : self

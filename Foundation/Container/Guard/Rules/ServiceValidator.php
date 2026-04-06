@@ -116,6 +116,7 @@ readonly class ServiceValidator
      * Get validation summary across all services.
      *
      * @throws \Exception
+     * @throws \Throwable
      *
      * @see docs/Guard/Rules/ServiceValidator.md#method-getvalidationsummary
      */
@@ -232,6 +233,7 @@ readonly class ServiceValidator
      * @return array Structured validation results with errors, warnings, and metadata
      *
      * @throws \Exception When critical validation infrastructure fails
+     * @throws \Throwable
      *
      * @see docs/Guard/Rules/ServiceValidator.md#method-validateservice
      */
@@ -312,6 +314,7 @@ readonly class ServiceValidator
      * Validate business rules for service definitions.
      *
      * @throws \Exception
+     * @throws \Throwable
      */
     private function validateBusinessRules(ServiceDefinitionEntity $service) : array
     {
@@ -361,6 +364,8 @@ readonly class ServiceValidator
      * Validate service dependencies.
      *
      * @throws \Exception
+     * @throws \Throwable
+     * @throws \Throwable
      */
     private function validateDependencies(ServiceDefinitionEntity $service) : array
     {

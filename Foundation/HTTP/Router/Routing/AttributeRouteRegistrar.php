@@ -57,6 +57,9 @@ final readonly class AttributeRouteRegistrar
         );
     }
 
+    /**
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     */
     private function registerFromAttributes(
         string              $controllerClass,
         string              $methodName,

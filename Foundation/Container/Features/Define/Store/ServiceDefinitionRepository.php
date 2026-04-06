@@ -154,6 +154,7 @@ class ServiceDefinitionRepository extends Repository
      * @return Arrhae Collection of matching ServiceDefinitionEntity instances
      *
      * @throws \Exception
+     * @throws \Throwable
      *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-findbytags
      */
@@ -216,6 +217,7 @@ class ServiceDefinitionRepository extends Repository
      * @return Arrhae Collection of services implementing/extending the specified type
      *
      * @throws \Exception
+     * @throws \Throwable
      *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-findbytype
      */
@@ -277,6 +279,7 @@ class ServiceDefinitionRepository extends Repository
      * @return array Associative array containing various service statistics
      *
      * @throws \Exception
+     * @throws \Throwable
      *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-getservicestats
      */
@@ -356,6 +359,7 @@ class ServiceDefinitionRepository extends Repository
      * @return array Analysis results with cycles, orphans, most_depended, and complexity data
      *
      * @throws \Exception
+     * @throws \Throwable
      *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-analyzedependencies
      */
@@ -491,6 +495,7 @@ class ServiceDefinitionRepository extends Repository
      * @return Arrhae Collection of services matching the search criteria
      *
      * @throws \Exception
+     * @throws \Throwable
      *
      * @see docs/Features/Define/Store/ServiceDefinitionRepository.md#method-searchservices
      */

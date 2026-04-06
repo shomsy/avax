@@ -38,7 +38,7 @@ Orchestrates the entire login flow:
 ### Identity Action
 - Reads user by credentials
 - Verifies password hash
-- Starts authenticated session
+- Updates the unified identity state
 
 ### Rate Limiting
 - Prevents brute-force attacks
@@ -48,10 +48,17 @@ Orchestrates the entire login flow:
 ## Usage
 
 ```php
-$auth = Auth::createSession(
-    userSource: $userSource,
-    sessionIdentity: $session
-);
+use Avax\Auth\System\Auth;
+use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use Avax\Auth\System\Flows\Login\Credentials;
+
+$auth = Auth::configuration()
+    ->forUser($userSource)
+    ->withIdentity(new Identity(sessionIdentity: new SessionIdentity(
+        sessionKey: 'user_id'
+    )))
+    ->ready();
 
 $user = $auth->login(new Credentials(
     identifier: 'user@example.com',

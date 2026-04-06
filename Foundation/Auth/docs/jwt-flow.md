@@ -32,18 +32,19 @@ sequenceDiagram
 
 ## Setup
 
-To use JWT authentication, initialize the `Auth` instance using the `createJwt` factory method:
+To use JWT authentication, initialize the `Auth` instance with a JWT-backed `Identity` façade:
 
 ```php
 use Avax\Auth\System\Auth;
+use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
 
 $auth = Auth::configuration()
     ->forUser($userSource)
-    ->withJwt(new JwtIdentity(
+    ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
         userSource: $userSource,
         secret: 'your-256-bit-secret'
-    ))
+    )))
     ->ready();
 ```
 

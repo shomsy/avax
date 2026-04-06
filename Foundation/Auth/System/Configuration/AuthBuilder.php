@@ -4,22 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Configuration;
 
-use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Access\Access;
 use Avax\Auth\System\Capabilities\Access\RequireAuthentication\RequireAuthentication;
 use Avax\Auth\System\Capabilities\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capabilities\Access\RequireRole\RequireRole;
-use Avax\Auth\System\Flows\Login\Login;
-use Avax\Auth\System\Flows\Logout\Logout;
-use Avax\Auth\System\Flows\Register\Register;
+use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Auth\System\Auth;
 use Avax\Auth\System\Flows\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\System\Flows\Login\Login;
+use Avax\Auth\System\Flows\Logout\Logout;
 use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
-use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
-use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flows\Register\Register;
 use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Foundation\IdGenerator;
 
@@ -30,11 +28,10 @@ use Avax\Auth\System\Foundation\IdGenerator;
  */
 final class AuthBuilder
 {
-    private UserSourceInterface|null  $userSource      = null;
-    private SessionIdentityInterface|null $sessionIdentity = null;
-    private JwtIdentityInterface|null $jwtIdentity     = null;
-    private LoginRateLimit|null       $rateLimit       = null;
-    private PasswordHasher|null       $passwordHasher  = null;
+    private UserSourceInterface|null $userSource = null;
+    private IdentityInterface|null    $identity = null;
+    private LoginRateLimit|null       $rateLimit = null;
+    private PasswordHasher|null       $passwordHasher = null;
 
     /**
      * Define the data source for users.
@@ -46,20 +43,11 @@ final class AuthBuilder
     }
 
     /**
-     * Enable session identification.
+     * Define the composed identity façade for authentication state.
      */
-    public function withSession(#[\SensitiveParameter] SessionIdentityInterface $sessionIdentity) : self
+    public function withIdentity(#[\SensitiveParameter] IdentityInterface $identity) : self
     {
-        $this->sessionIdentity = $sessionIdentity;
-        return $this;
-    }
-
-    /**
-     * Enable JWT identification.
-     */
-    public function withJwt(#[\SensitiveParameter] JwtIdentityInterface $jwtIdentity) : self
-    {
-        $this->jwtIdentity = $jwtIdentity;
+        $this->identity = $identity;
         return $this;
     }
 
@@ -90,15 +78,12 @@ final class AuthBuilder
             throw new \RuntimeException('Data source is required (forUser).');
         }
 
-        if ($this->sessionIdentity === null && $this->jwtIdentity === null) {
-            throw new \RuntimeException('At least one identity adapter is required.');
+        if ($this->identity === null) {
+            throw new \RuntimeException('Identity is required (withIdentity).');
         }
 
+        $identity = $this->identity;
         $passwordHasher = $this->passwordHasher ?? new PasswordHasher();
-        $identity = new Identity(
-            sessionIdentity: $this->sessionIdentity,
-            jwtIdentity: $this->jwtIdentity
-        );
         $checkAuthentication = new CheckAuthentication(identity: $identity);
         $readCurrentUser = new ReadCurrentUser(
             identity: $identity,

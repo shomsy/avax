@@ -8,8 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
-use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
 use Mockery;
 use RuntimeException;
 
@@ -31,25 +30,25 @@ class AuthBuilderTest extends TestCase
         $builder->ready();
     }
 
-    public function testAuthBuilderThrowsExceptionWithoutIdentityProviders() : void
+    public function testAuthBuilderThrowsExceptionWithoutIdentity() : void
     {
         $userSource = Mockery::mock(UserSourceInterface::class);
         $builder = new AuthBuilder();
         $builder->forUser(userSource: $userSource);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('At least one identity adapter is required.');
+        $this->expectExceptionMessage('Identity is required (withIdentity).');
         $builder->ready();
     }
 
     public function testAuthBuilderBuildsAuthInstance() : void
     {
         $userSource = Mockery::mock(UserSourceInterface::class);
-        $session = Mockery::mock(SessionIdentityInterface::class);
+        $identity = Mockery::mock(IdentityInterface::class);
 
         $builder = new AuthBuilder();
         $builder->forUser(userSource: $userSource)
-            ->withSession(sessionIdentity: $session);
+            ->withIdentity(identity: $identity);
 
         $auth = $builder->ready();
 

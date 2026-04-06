@@ -6,12 +6,10 @@ namespace Avax\Auth\Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserRole;
-use Avax\Auth\System\Capabilities\User\UserPermission;
 use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Auth\System\Flows\Register\RegistrationData;
 use Avax\Auth\System\Flows\ChangePassword\ChangePasswordData;
@@ -33,10 +31,11 @@ class AuthLifecycleTest extends TestCase
     {
         $this->userSource = new InMemoryUserSource();
         $this->jwtIdentity = Mockery::mock(JwtIdentityInterface::class);
+        $identity = new Identity(jwtIdentity: $this->jwtIdentity);
 
         $this->auth = Auth::configuration()
             ->forUser($this->userSource)
-            ->withJwt($this->jwtIdentity)
+            ->withIdentity($identity)
             ->ready();
     }
 

@@ -25,10 +25,14 @@ composer require avax/auth
 
 ```php
 use Avax\Auth\System\Auth;
+use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
 
 $auth = Auth::configuration()
     ->forUser($userSource)
-    ->withSession($sessionIdentity)
+    ->withIdentity(new Identity(sessionIdentity: new SessionIdentity(
+        sessionKey: 'user_id'
+    )))
     ->protectFromBruteForce($protection)
     ->ready();
 ```

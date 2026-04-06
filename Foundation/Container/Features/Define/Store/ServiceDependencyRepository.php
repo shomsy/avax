@@ -132,6 +132,7 @@ class ServiceDependencyRepository extends Repository
      * @return array Hierarchical dependency chain structure
      *
      * @throws \Exception
+     * @throws \Throwable
      *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getdependencychains
      */
@@ -351,6 +352,7 @@ class ServiceDependencyRepository extends Repository
      * @return array Associative array representing the dependency graph
      *
      * @throws \Exception
+     * @throws \Throwable
      *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-getdependencygraph
      */
@@ -785,6 +787,8 @@ class ServiceDependencyRepository extends Repository
      * @return array Array of validation issues found
      *
      * @throws \Exception
+     * @throws \Throwable
+     * @throws \Throwable
      *
      * @see docs/Features/Define/Store/ServiceDependencyRepository.md#method-validatedependencies
      */

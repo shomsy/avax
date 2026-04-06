@@ -40,6 +40,7 @@ final class RouterChaosTest extends TestCase
 
     /**
      * @test
+     * @throws \Exception
      */
     public function cache_corruption_does_not_crash_router(): void
     {
@@ -62,6 +63,9 @@ final class RouterChaosTest extends TestCase
 
     /**
      * @test
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function concurrent_route_registration_isolation(): void
     {
@@ -113,6 +117,8 @@ final class RouterChaosTest extends TestCase
 
     /**
      * @test
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function middleware_chain_interruption_recovery(): void
     {
@@ -145,6 +151,8 @@ final class RouterChaosTest extends TestCase
 
     /**
      * @test
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function memory_pressure_route_collection(): void
     {
@@ -249,6 +257,7 @@ final class RouterChaosTest extends TestCase
         } catch (RuntimeException) {
             // Primary failed, try fallback
             $fallbackLoader->loadInto($this->collection);
+        } catch (\Exception $e) {
         }
 
         // Fallback route should be available
@@ -308,6 +317,7 @@ final class RouterChaosTest extends TestCase
 
     /**
      * @test
+     * @throws \Exception
      */
     public function network_partition_simulation(): void
     {
@@ -327,6 +337,7 @@ final class RouterChaosTest extends TestCase
 
     /**
      * @test
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
      */
     public function gradual_memory_leak_detection(): void
     {

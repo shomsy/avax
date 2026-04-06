@@ -34,8 +34,8 @@ final readonly class CsrfTokenManager
      * @param LoggerInterface $logger  Responsible for logging important events.
      */
     public function __construct(
-        private Session         $session,
-        private LoggerInterface $logger
+        #[\SensitiveParameter] private Session $session,
+        private LoggerInterface                $logger
     ) {}
 
     /**
@@ -88,12 +88,12 @@ final readonly class CsrfTokenManager
         return $tokens;
     }
 
-    private function storeTokens(array $tokens) : void
+    private function storeTokens(#[\SensitiveParameter] array $tokens) : void
     {
         $this->session->put(key: self::SESSION_KEY, value: $tokens);
     }
 
-    private function pruneExpiredTokens(array $tokens) : array
+    private function pruneExpiredTokens(#[\SensitiveParameter] array $tokens) : array
     {
         $currentTime = time();
 
@@ -114,7 +114,7 @@ final readonly class CsrfTokenManager
     /**
      * @throws \Random\RandomException
      */
-    public function validateToken(string|null $token) : bool
+    public function validateToken(#[\SensitiveParameter] string|null $token) : bool
     {
         $tokens = $this->getTokens();
 

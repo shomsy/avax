@@ -47,6 +47,8 @@ final class RouterBootstrapper
 
     /**
      * Register multiple routes for different HTTP methods on the same path.
+     *
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function match(array $methods, string $path, callable|array|string $handler) : self
     {
@@ -78,6 +80,8 @@ final class RouterBootstrapper
 
     /**
      * Register GET route.
+     *
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function get(string $path, callable|array|string $handler) : self
     {
@@ -86,6 +90,8 @@ final class RouterBootstrapper
 
     /**
      * Register POST route.
+     *
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function post(string $path, callable|array|string $handler) : self
     {
@@ -94,6 +100,8 @@ final class RouterBootstrapper
 
     /**
      * Register PUT route.
+     *
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function put(string $path, callable|array|string $handler) : self
     {
@@ -102,6 +110,8 @@ final class RouterBootstrapper
 
     /**
      * Register DELETE route.
+     *
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function delete(string $path, callable|array|string $handler) : self
     {
@@ -110,6 +120,8 @@ final class RouterBootstrapper
 
     /**
      * Register PATCH route.
+     *
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function patch(string $path, callable|array|string $handler) : self
     {
@@ -212,6 +224,8 @@ final class RouterBootstrapper
 
     /**
      * Create a complete HTTP application with routes and middleware.
+     *
+     * @throws \ReflectionException
      */
     public function createApp(
         ControllerDispatcher $dispatcher,

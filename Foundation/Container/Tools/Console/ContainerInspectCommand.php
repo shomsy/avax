@@ -394,6 +394,7 @@ class ContainerInspectCommand extends Command
      * @param bool         $verbose Whether to show detailed service data.
      *
      * @throws \Exception
+     * @throws \Throwable
      *
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-showservicesoverview
      */
@@ -574,6 +575,7 @@ class ContainerInspectCommand extends Command
      * @param bool         $verbose Whether to include full error breakdown.
      *
      * @throws \Exception
+     * @throws \Throwable
      *
      * @see docs/Tools/Console/ContainerInspectCommand.md#method-showvalidationresults
      */

@@ -137,6 +137,7 @@ final class HttpRouterRoutingTest extends TestCase
 
     /**
      * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function test_fallback_route_is_returned_when_no_match() : void
     {
@@ -155,6 +156,7 @@ final class HttpRouterRoutingTest extends TestCase
 
     /**
      * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function test_fallback_handles_different_http_method() : void
     {
@@ -201,6 +203,9 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->resolve(request: $requestMiss);
     }
 
+    /**
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     */
     public function test_wildcard_must_be_final_segment() : void
     {
         $this->expectException(exception: InvalidRouteException::class);
@@ -212,6 +217,9 @@ final class HttpRouterRoutingTest extends TestCase
         );
     }
 
+    /**
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     */
     public function test_only_one_wildcard_allowed() : void
     {
         $this->expectException(exception: InvalidRouteException::class);
@@ -223,6 +231,9 @@ final class HttpRouterRoutingTest extends TestCase
         );
     }
 
+    /**
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     */
     public function test_wildcard_must_be_named() : void
     {
         $this->expectException(exception: InvalidRouteException::class);
@@ -256,6 +267,9 @@ final class HttpRouterRoutingTest extends TestCase
         $this->router->resolve(request: $request);
     }
 
+    /**
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     */
     public function test_named_route_lookup() : void
     {
         $this->router->registerRoute(
@@ -271,6 +285,9 @@ final class HttpRouterRoutingTest extends TestCase
         $this->assertTrue(condition: $this->router->hasNamedRoute(name: 'named.route'));
     }
 
+    /**
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     */
     public function test_prefix_is_applied_and_cleared() : void
     {
         $this->router->setPrefix('/api');
@@ -294,6 +311,9 @@ final class HttpRouterRoutingTest extends TestCase
         $this->assertContains(needle: '/raw', haystack: $paths);
     }
 
+    /**
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     */
     public function test_invalid_path_throws_exception() : void
     {
         $this->expectException(exception: InvalidRouteException::class);

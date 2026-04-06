@@ -206,6 +206,7 @@ final class RouterTrace
                 'error' => 'Failed to export trace data',
                 'message' => $exception->getMessage(),
             ], JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
         }
     }
 

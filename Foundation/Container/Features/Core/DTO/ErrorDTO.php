@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Container\Features\Core\DTO;
 
+use SensitiveParameter;
+
 /**
  * Error Data Transfer Object
  *
@@ -16,8 +18,8 @@ namespace Avax\Container\Features\Core\DTO;
 final readonly class ErrorDTO
 {
     public function __construct(
-        public string $message,
-        public string $code = 'ERROR',
-        public mixed  $context = null
+        public string                       $message,
+        #[SensitiveParameter] public string $code = 'ERROR',
+        public mixed                        $context = null
     ) {}
 }

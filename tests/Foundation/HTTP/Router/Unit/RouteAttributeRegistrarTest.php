@@ -20,6 +20,9 @@ final class SampleAttributeController
 
 final class RouteAttributeRegistrarTest extends TestCase
 {
+    /**
+     * @throws \ReflectionException
+     */
     public function test_registers_routes_from_attributes() : void
     {
         $router     = new HttpRequestRouter(constraintValidator: new RouteConstraintValidator);

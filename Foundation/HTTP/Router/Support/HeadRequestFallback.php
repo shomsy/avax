@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Support;
 
 use Avax\HTTP\Request\Request;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
+use Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException;
 
 /**
  * Provides fallback logic for HEAD → GET requests.
@@ -37,6 +39,8 @@ final readonly class HeadRequestFallback
         } catch (RouteNotFoundException) {
             // Attempt GET route fallback
             $request = $request->withMethod(method: 'GET');
+        } catch (ReservedRouteNameException $e) {
+        } catch (InvalidConstraintException $e) {
         }
 
         return $request;

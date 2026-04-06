@@ -264,6 +264,7 @@ class ServiceManagementCommand extends Command
      * @param InputInterface $input Input options.
      *
      * @throws \Exception
+     * @throws \Throwable
      *
      * @see docs/Tools/Console/ServiceManagementCommand.md#method-listservices
      */
@@ -552,6 +553,7 @@ class ServiceManagementCommand extends Command
      * @param InputInterface $input     Input options and arguments.
      *
      * @throws \Exception
+     * @throws \Throwable
      *
      * @see docs/Tools/Console/ServiceManagementCommand.md#method-showservice
      */

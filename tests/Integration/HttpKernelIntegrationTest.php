@@ -127,7 +127,7 @@ class HttpKernelIntegrationTest extends TestCase
     {
         // Given: IP restriction middleware that blocks
         $ipMiddleware = new class($this->responseFactory) extends IpRestrictionMiddleware {
-            protected function isAllowedIp(string $ipAddress) : bool
+            protected function isAllowedIp(#[\SensitiveParameter] string $ipAddress) : bool
             {
                 return $ipAddress !== '192.168.1.100'; // Block this IP
             }

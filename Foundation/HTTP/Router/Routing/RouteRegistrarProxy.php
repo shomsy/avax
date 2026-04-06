@@ -62,6 +62,7 @@ final class RouteRegistrarProxy
     /**
      * Finalizes and returns the RouteDefinition (registers first).
      *
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      * @internal Use fluent methods instead.
      */
     public function build() : RouteDefinition

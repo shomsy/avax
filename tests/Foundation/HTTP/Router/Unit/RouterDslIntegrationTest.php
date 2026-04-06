@@ -70,6 +70,7 @@ class RouterCoreFunctionalityTest extends TestCase
 
     /**
      * @test
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function route_builder_fluent_api_works() : void
     {

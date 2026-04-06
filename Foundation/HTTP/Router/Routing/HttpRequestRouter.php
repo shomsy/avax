@@ -126,6 +126,7 @@ final class HttpRequestRouter
 
     /**
      * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
      */
     private function registerRoute(string $method, string $path, callable|array|string $action, string|null $name = null) : void
     {

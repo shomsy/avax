@@ -22,7 +22,7 @@ readonly class CsrfVerificationMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private ResponseFactory $responseFactory,
-        private string          $tokenAttribute = '_csrf_token'
+        #[\SensitiveParameter] private string $tokenAttribute = '_csrf_token'
     ) {}
 
     /**
@@ -94,7 +94,7 @@ readonly class CsrfVerificationMiddleware implements MiddlewareInterface
      * - Check token expiration
      * - Use cryptographically secure comparison
      */
-    private function isValidToken(string|null $token) : bool
+    private function isValidToken(#[\SensitiveParameter] string|null $token) : bool
     {
         if ($token === null || strlen($token) < 32) {
             return false;

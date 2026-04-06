@@ -34,7 +34,9 @@ final class ReflectionCache
      *
      * @template T of object
      * @param class-string<T> $className
+     *
      * @return \ReflectionClass<T>
+     * @throws \ReflectionException
      */
     public static function getClass(string $className) : \ReflectionClass
     {
@@ -46,8 +48,10 @@ final class ReflectionCache
      *
      * @template T of object
      * @param class-string<T>|T $classOrObject
-     * @param string $methodName
+     * @param string            $methodName
+     *
      * @return \ReflectionMethod
+     * @throws \ReflectionException
      */
     public static function getMethod($classOrObject, string $methodName) : \ReflectionMethod
     {
@@ -62,8 +66,10 @@ final class ReflectionCache
      *
      * @template T of object
      * @param class-string<T>|T $classOrObject
-     * @param string $propertyName
+     * @param string            $propertyName
+     *
      * @return \ReflectionProperty
+     * @throws \ReflectionException
      */
     public static function getProperty($classOrObject, string $propertyName) : \ReflectionProperty
     {

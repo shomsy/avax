@@ -7,9 +7,8 @@
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Container/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests/Feature" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="Avax\\Tests\\" />
-      <sourceFolder url="file://$MODULE_DIR$/tests/Foundation/Container" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/tests/Foundation/Database" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/tests/Foundation/HTTP/Router" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/System" isTestSource="false" packagePrefix="Avax\Auth\System\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests" isTestSource="true" packagePrefix="Avax\Auth\Tests\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/amphp/amp" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/amphp/byte-stream" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/amphp/cache" />
@@ -175,6 +174,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/webmozart/assert" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/wyndow/fuzzywuzzy" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/var/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/_laravel_idea" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

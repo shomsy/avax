@@ -27,6 +27,9 @@ final class ApplicationRegistrationTest extends TestCase
 {
     private HttpApplication $app;
 
+    /**
+     * @throws \Throwable
+     */
     public function test_singleton_registration() : void
     {
         $this->app->getContainer()->singleton(abstract: 'shared_service', concrete: static function () {
@@ -40,6 +43,9 @@ final class ApplicationRegistrationTest extends TestCase
         $this->assertSame(expected: $instance1, actual: $instance2);
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function test_bind_registration() : void
     {
         $this->app->getContainer()->bind(abstract: 'transient_service', concrete: static function () {
@@ -52,6 +58,9 @@ final class ApplicationRegistrationTest extends TestCase
         $this->assertNotSame(expected: $instance1, actual: $instance2);
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function test_scoped_registration() : void
     {
         $this->app->getContainer()->singleton(abstract: 'scoped_service', concrete: static function () {

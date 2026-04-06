@@ -67,6 +67,9 @@ abstract class Repository
         }
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     protected function query() : QueryBuilder
     {
         return $this->queryBuilder->newQuery()->table($this->getTableName());

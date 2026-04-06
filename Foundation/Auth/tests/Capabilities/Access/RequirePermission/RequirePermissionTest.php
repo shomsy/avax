@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Capabilities\Access\RequirePermission;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\Capabilities\Access\RequirePermission\RequirePermission;
-use Avax\Auth\Capabilities\Access\RequirePermission\PermissionDenied;
-use Avax\Auth\Flows\ReadCurrentUser\ReadCurrentUser;
-use Avax\Auth\Capabilities\User\User;
-use Avax\Auth\Capabilities\User\UserPermission;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capabilities\Access\RequirePermission\RequirePermission;
+use Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
+use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capabilities\User\UserPermission;
 use Mockery;
 
 /**
@@ -53,6 +54,20 @@ class RequirePermissionTest extends TestCase
         $requirement = new RequirePermission(readCurrentUser: $readCurrentUser);
 
         $this->expectException(PermissionDenied::class);
+
+        $requirement->execute(permission: $permission);
+    }
+
+    public function testRequirePermissionFailureUserNotLoggedIn() : void
+    {
+        $permission = new UserPermission('delete_user');
+
+        $readCurrentUser = Mockery::mock(ReadCurrentUser::class);
+        $readCurrentUser->shouldReceive('execute')->andReturn(null);
+
+        $requirement = new RequirePermission(readCurrentUser: $readCurrentUser);
+
+        $this->expectException(Unauthenticated::class);
 
         $requirement->execute(permission: $permission);
     }

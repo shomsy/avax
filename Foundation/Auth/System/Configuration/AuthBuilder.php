@@ -6,6 +6,10 @@ namespace Avax\Auth\System\Configuration;
 
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capabilities\Identity\Identity;
+use Avax\Auth\System\Capabilities\Access\Access;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capabilities\Access\RequirePermission\RequirePermission;
+use Avax\Auth\System\Capabilities\Access\RequireRole\RequireRole;
 use Avax\Auth\System\Flows\Login\Login;
 use Avax\Auth\System\Flows\Logout\Logout;
 use Avax\Auth\System\Flows\Register\Register;
@@ -95,6 +99,20 @@ final class AuthBuilder
             sessionIdentity: $this->sessionIdentity,
             jwtIdentity: $this->jwtIdentity
         );
+        $checkAuthentication = new CheckAuthentication(identity: $identity);
+        $readCurrentUser = new ReadCurrentUser(
+            identity: $identity,
+            userSource: $this->userSource
+        );
+        $access = new Access(
+            requireAuthentication: new RequireAuthentication(
+                checkAuthentication: $checkAuthentication
+            ),
+            requireRole: new RequireRole(readCurrentUser: $readCurrentUser),
+            requirePermission: new RequirePermission(
+                readCurrentUser: $readCurrentUser
+            )
+        );
 
         return new Auth(
             login: new Login(
@@ -104,11 +122,9 @@ final class AuthBuilder
                 rateLimit: $this->rateLimit
             ),
             logout: new Logout(identity: $identity),
-            checkAuthentication: new CheckAuthentication(identity: $identity),
-            readCurrentUser: new ReadCurrentUser(
-                identity: $identity,
-                userSource: $this->userSource
-            ),
+            checkAuthentication: $checkAuthentication,
+            readCurrentUser: $readCurrentUser,
+            access: $access,
             changePassword: new ChangePassword(
                 userSource: $this->userSource,
                 passwordHasher: $passwordHasher

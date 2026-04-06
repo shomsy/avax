@@ -9,6 +9,7 @@ use Avax\Auth\System\Auth;
 use Avax\Auth\System\Flows\Login\Login;
 use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Auth\System\Flows\Logout\Logout;
+use Avax\Auth\System\Capabilities\Access\AccessInterface;
 use Avax\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
 use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Flows\ChangePassword\ChangePassword;
@@ -34,6 +35,7 @@ class AuthTest extends TestCase
         $logoutFlow = Mockery::mock(Logout::class);
         $checkFlow = Mockery::mock(CheckAuthentication::class);
         $readUserFlow = Mockery::mock(ReadCurrentUser::class);
+        $access = Mockery::mock(AccessInterface::class);
         $changePasswordFlow = Mockery::mock(ChangePassword::class);
         $registerFlow = Mockery::mock(Register::class);
 
@@ -42,6 +44,7 @@ class AuthTest extends TestCase
             logout: $logoutFlow,
             checkAuthentication: $checkFlow,
             readCurrentUser: $readUserFlow,
+            access: $access,
             changePassword: $changePasswordFlow,
             register: $registerFlow
         );
@@ -59,6 +62,8 @@ class AuthTest extends TestCase
 
         $readUserFlow->shouldReceive('execute')->andReturn($user);
         $this->assertSame($user, $auth->user());
+
+        $this->assertSame($access, $auth->access());
 
         $cpData = new ChangePasswordData('old', 'new');
         $changePasswordFlow->shouldReceive('execute')->with($user, $cpData)->once();

@@ -7,6 +7,7 @@ namespace Avax\Auth\Tests\Capabilities\Access\RequireRole;
 use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Capabilities\Access\RequireRole\RequireRole;
 use Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
+use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Capabilities\User\User;
 use Avax\Auth\System\Capabilities\User\UserRole;
@@ -56,6 +57,20 @@ class RequireRoleTest extends TestCase
         $requirement = new RequireRole(readCurrentUser: $readCurrentUser);
 
         $this->expectException(RoleDenied::class);
+
+        $requirement->execute(requiredRole: $role);
+    }
+
+    public function testRequireRoleFailureUserNotLoggedIn() : void
+    {
+        $role = UserRole::ADMIN;
+
+        $readCurrentUser = Mockery::mock(ReadCurrentUser::class);
+        $readCurrentUser->shouldReceive('execute')->andReturn(null);
+
+        $requirement = new RequireRole(readCurrentUser: $readCurrentUser);
+
+        $this->expectException(Unauthenticated::class);
 
         $requirement->execute(requiredRole: $role);
     }

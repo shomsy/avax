@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System;
 
+use Avax\Auth\System\Capabilities\Access\AccessInterface;
 use Avax\Auth\System\Flows\Login\Login;
 use Avax\Auth\System\Flows\Login\Credentials;
 use Avax\Auth\System\Flows\Logout\Logout;
@@ -28,6 +29,7 @@ final readonly class Auth implements AuthInterface
         private Logout                                     $logout,
         #[\SensitiveParameter] private CheckAuthentication $checkAuthentication,
         private ReadCurrentUser                            $readCurrentUser,
+        private AccessInterface                            $access,
         #[\SensitiveParameter] private ChangePassword      $changePassword,
         private Register                                   $register
     ) {}
@@ -61,6 +63,11 @@ final readonly class Auth implements AuthInterface
     public function user() : User|null
     {
         return $this->readCurrentUser->execute();
+    }
+
+    public function access() : AccessInterface
+    {
+        return $this->access;
     }
 
     /**

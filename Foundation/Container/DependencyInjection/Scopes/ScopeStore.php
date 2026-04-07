@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Scopes;
 
-use RuntimeException;
+use Avax\Container\Errors\ContainerException;
 
 final class ScopeStore
 {
@@ -41,7 +41,7 @@ final class ScopeStore
     public function set(string $abstract, mixed $instance) : void
     {
         if ($this->scopes === []) {
-            throw new RuntimeException(message: 'Cannot store a scoped instance without an active scope.');
+            throw new ContainerException(message: 'Cannot store a scoped instance without an active scope.');
         }
 
         $lastIndex = array_key_last($this->scopes);
@@ -61,7 +61,7 @@ final class ScopeStore
     public function close() : void
     {
         if ($this->scopes === []) {
-            throw new RuntimeException(message: 'Cannot close scope without an active scope.');
+            throw new ContainerException(message: 'Cannot close scope without an active scope.');
         }
 
         array_pop($this->scopes);
@@ -73,18 +73,4 @@ final class ScopeStore
         $this->scopes = [];
     }
 
-    public function addSingleton(string $abstract, mixed $instance) : void
-    {
-        $this->share(abstract: $abstract, instance: $instance);
-    }
-
-    public function beginScope() : void
-    {
-        $this->open();
-    }
-
-    public function endScope() : void
-    {
-        $this->close();
-    }
 }

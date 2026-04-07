@@ -12,7 +12,7 @@ $container = makeTestContainer();
 $container->scoped(ScopedService::class, ScopedService::class);
 
 assertThrows(
-    RuntimeException::class,
+    \Avax\Container\Errors\ContainerException::class,
     static fn() => $container->get(ScopedService::class),
     'Scoped services must fail closed without an active scope.'
 );
@@ -28,13 +28,13 @@ $fromWithinScope = $container->scopes()->withinScope(
     }
 );
 
-$container->beginScope();
+$container->openScope();
 $firstScope = $container->get(ScopedService::class);
-$container->endScope();
+$container->closeScope();
 
-$container->beginScope();
+$container->openScope();
 $secondScope = $container->get(ScopedService::class);
-$container->endScope();
+$container->closeScope();
 
 assertInstanceOf(ScopedService::class, $fromWithinScope, 'Scope callback should return the resolved service.');
 assertNotSame($firstScope, $secondScope, 'Scoped services should not leak across scopes.');

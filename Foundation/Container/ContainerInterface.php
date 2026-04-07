@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Container;
 
-use Avax\Container\DependencyInjection\Injection\InjectionReport;
-use Avax\Container\DependencyInjection\Registrations\ServiceRegistryInterface;
+use Avax\Container\DependencyInjection\Injection\Reports\InjectionReport;
+use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistryInterface;
 use Avax\Container\DependencyInjection\Scopes\ScopeInterface;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
@@ -24,9 +24,9 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
 
     public function inspectInjection(object $target) : InjectionReport;
 
-    public function beginScope() : void;
+    public function openScope() : void;
 
-    public function endScope() : void;
+    public function closeScope() : void;
 
     public function scopes() : ScopeInterface;
 

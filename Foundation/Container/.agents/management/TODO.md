@@ -25,6 +25,28 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: TODO-004
+  `created_at`: 2026-04-07 15:20 CEST
+  `updated_at`: 2026-04-07 23:45 CEST
+  `status`: done
+  `estimate`: medium
+  `actual`: medium
+  `outcome`: Collapse the last fake abstractions and repo noise after the main
+    convergence pass by deleting dead `ResolvePlan` and duplicate aliases,
+    tightening scope naming to `openScope` / `closeScope`, wiring `Clock` into
+    timeline recording, hardening scope errors to the explicit
+    `ContainerException` boundary, trimming redundant DTO/config/store surface,
+    extending direct work-area smoke coverage, and rerunning a strict review
+    plus validation loop.
+  `acceptance`: No dead owner types remain in the shipped runtime path; the
+    timeline uses the foundation clock; duplicate alias methods are removed;
+    scope APIs use `openScope` / `closeScope`; direct work-area smoke tests
+    cover registrations, resolution, calls, scopes, configuration, provider
+    contract, and error boundaries; Docker PHP lint stays green;
+    `tests/run-smoke-tests.sh` stays green; no open strict-review findings
+    remain in scope.
+  `links`: `DependencyInjection/Flows/CreateContainer.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `DependencyInjection/Observability/ResolutionTimeline.php`, `tests/DependencyInjection/Flows/CreateContainer/CreateContainerSmokeTest.php`, `tests/DependencyInjection/Dependencies/Bindings/ServiceRegistrySmokeTest.php`, `tests/DependencyInjection/Dependencies/Blueprints/CreateServiceBlueprintSmokeTest.php`, `tests/DependencyInjection/Injection/Invocation/ResolveCallArgumentsSmokeTest.php`, `tests/DependencyInjection/Scopes/ScopeStoreSmokeTest.php`
+
 - `id`: TODO-003
   `created_at`: 2026-04-07 13:30 CEST
   `updated_at`: 2026-04-07 15:44 CEST

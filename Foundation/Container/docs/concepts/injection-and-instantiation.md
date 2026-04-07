@@ -8,10 +8,10 @@ Instantiation creates the object itself.
 
 Main files:
 
-- `Resolution/BuildService.php`
-- `Resolution/CreateServiceBlueprint.php`
-- `Resolution/ResolveDependencies.php`
-- `Resolution/ServiceBlueprint.php`
+- `DependencyInjection/Dependencies/Resolution/BuildService.php`
+- `DependencyInjection/Dependencies/Blueprints/CreateServiceBlueprint.php`
+- `DependencyInjection/Dependencies/Resolution/ResolveDependencies.php`
+- `DependencyInjection/Dependencies/Blueprints/ServiceBlueprint.php`
 
 Constructor arguments are resolved first. If the object cannot be created, the resolver fails before any late wiring starts.
 
@@ -21,17 +21,17 @@ Injection happens after the object exists.
 
 Main files:
 
-- `Injection/InjectProperties.php`
-- `Injection/InjectMethods.php`
-- `Injection/InjectionReport.php`
-- `Calls/ResolveCallArguments.php`
-- `Calls/FunctionCaller.php`
+- `DependencyInjection/Injection/Properties/InjectProperties.php`
+- `DependencyInjection/Injection/Methods/InjectMethods.php`
+- `DependencyInjection/Injection/Reports/InjectionReport.php`
+- `DependencyInjection/Injection/Invocation/ResolveCallArguments.php`
+- `DependencyInjection/Injection/Invocation/FunctionCaller.php`
 
 Current rules:
 
 - injectable properties and methods are marked with `#[Inject]`
 - property injection and method injection stay separate
-- callable argument resolution stays in `Calls/`, not in the facade
+- callable argument resolution stays inside the invocation area, not in the facade
 
 ## Why The Split Matters
 

@@ -30,37 +30,27 @@ final readonly class ManageScopes implements ScopeInterface
 
     public function withinScope(callable $callback) : mixed
     {
-        $this->open();
+        $this->openScope();
 
         try {
             return $callback();
         } finally {
-            $this->close();
+            $this->closeScope();
         }
     }
 
-    public function beginScope() : void
+    public function openScope() : void
     {
-        $this->open();
+        $this->store->open();
     }
 
-    public function endScope() : void
+    public function closeScope() : void
     {
-        $this->close();
+        $this->store->close();
     }
 
     public function terminate() : void
     {
         $this->store->terminate();
-    }
-
-    public function open() : void
-    {
-        $this->store->open();
-    }
-
-    public function close() : void
-    {
-        $this->store->close();
     }
 }

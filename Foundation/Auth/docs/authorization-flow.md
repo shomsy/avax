@@ -27,7 +27,7 @@ sequenceDiagram
     Identity->>DB: findById(UserId)
     DB-->>Identity: User
     Identity-->>Access: User
-    Access->>Access: user->hasRole(ADMIN)
+    Access->>Access: user->canAccessRole(ADMIN)
     
     ALT Success
         Access-->>Request: (void)

@@ -22,9 +22,7 @@ final class SessionIdentity implements SessionIdentityInterface
 
     public function issue(int $userId) : void
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
+        $this->ensureSessionAvailable();
 
         session_regenerate_id(delete_old_session: true);
         $_SESSION[$this->sessionKey] = $userId;
@@ -32,25 +30,60 @@ final class SessionIdentity implements SessionIdentityInterface
 
     public function getUserId() : int|null
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
+        $this->ensureSessionAvailable();
+
+        $storedUserId = $_SESSION[$this->sessionKey] ?? null;
+
+        if (is_int($storedUserId)) {
+            return $storedUserId;
         }
 
-        return $_SESSION[$this->sessionKey] ?? null;
+        if (is_string($storedUserId) && ctype_digit($storedUserId)) {
+            return (int) $storedUserId;
+        }
+
+        return null;
     }
 
     public function clear() : void
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
+        $this->ensureSessionAvailable();
+
+        $_SESSION = [];
+
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            $options = [
+                'expires' => time() - 42000,
+                'path' => $params['path'],
+                'domain' => $params['domain'],
+                'secure' => (bool) $params['secure'],
+                'httponly' => (bool) $params['httponly'],
+            ];
+
+            if (isset($params['samesite']) && $params['samesite'] !== '') {
+                $options['samesite'] = $params['samesite'];
+            }
+
+            setcookie(session_name(), '', $options);
         }
 
-        unset($_SESSION[$this->sessionKey]);
         session_destroy();
     }
 
     public function check() : bool
     {
         return $this->getUserId() !== null;
+    }
+
+    private function ensureSessionAvailable() : void
+    {
+        if (session_status() === PHP_SESSION_DISABLED) {
+            throw new \RuntimeException('Session support is disabled.');
+        }
+
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
     }
 }

@@ -37,13 +37,14 @@ class RegisterTest extends TestCase
 
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('emailExists')->with($data->email)->andReturn(false);
+        $userSource->shouldReceive('usernameExists')->with($data->username)->andReturn(false);
         $userSource->shouldReceive('create')->once()->andReturnUsing(fn($user) => $user);
 
         $passwordHasher = Mockery::mock(PasswordHasher::class);
         $passwordHasher->shouldReceive('hash')->with('password')->andReturn('hashed_password');
 
         $idGenerator = Mockery::mock(IdGeneratorInterface::class);
-        $idGenerator->shouldReceive('generate')->andReturn('uuid-123');
+        $idGenerator->shouldReceive('generate')->andReturn(123456);
 
         $register = new Register(
             userSource: $userSource,
@@ -55,7 +56,7 @@ class RegisterTest extends TestCase
 
         $this->assertInstanceOf(User::class, $user);
         $this->assertEquals('new@example.com', $user->getEmail()->value);
-        $this->assertEquals('uuid-123', $user->getId()->value);
+        $this->assertEquals(123456, $user->getId()->value);
     }
 
     public function testRegisterFailureEmailTaken() : void
@@ -68,6 +69,7 @@ class RegisterTest extends TestCase
 
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('emailExists')->with($data->email)->andReturn(true);
+        $userSource->shouldNotReceive('usernameExists');
 
         $passwordHasher = Mockery::mock(PasswordHasher::class);
         $idGenerator = Mockery::mock(IdGeneratorInterface::class);
@@ -80,6 +82,34 @@ class RegisterTest extends TestCase
 
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Email is already taken.');
+        $this->expectExceptionCode(409);
+
+        $register->execute(data: $data);
+    }
+
+    public function testRegisterFailureUsernameTaken() : void
+    {
+        $data = new RegistrationData(
+            email: 'taken-username@example.com',
+            username: 'taken-user',
+            password: 'password'
+        );
+
+        $userSource = Mockery::mock(UserSourceInterface::class);
+        $userSource->shouldReceive('emailExists')->with($data->email)->andReturn(false);
+        $userSource->shouldReceive('usernameExists')->with($data->username)->andReturn(true);
+
+        $passwordHasher = Mockery::mock(PasswordHasher::class);
+        $idGenerator = Mockery::mock(IdGeneratorInterface::class);
+
+        $register = new Register(
+            userSource: $userSource,
+            passwordHasher: $passwordHasher,
+            idGenerator: $idGenerator
+        );
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Username is already taken.');
         $this->expectExceptionCode(409);
 
         $register->execute(data: $data);

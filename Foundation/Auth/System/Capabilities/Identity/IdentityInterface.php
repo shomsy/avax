@@ -13,9 +13,13 @@ interface IdentityInterface
 {
     public function issue(User $user) : string|null;
 
+    public function authenticate(#[\SensitiveParameter] string $token) : void;
+
     public function clear() : void;
 
     public function check() : bool;
+
+    public function token() : string|null;
 
     public function getCurrentUser() : User|null;
 

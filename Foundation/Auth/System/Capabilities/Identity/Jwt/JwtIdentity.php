@@ -16,6 +16,7 @@ use Firebase\JWT\Key;
 final class JwtIdentity implements JwtIdentityInterface
 {
     private User|null $currentUser = null;
+    private string|null $currentToken = null;
 
     public function __construct(
         private UserSourceInterface           $userSource,
@@ -26,6 +27,10 @@ final class JwtIdentity implements JwtIdentityInterface
 
     public function issue(User $user) : string
     {
+        if (! $user->isActive()) {
+            throw new \InvalidArgumentException('Inactive users cannot be authenticated.');
+        }
+
         $payload = [
             'iss' => 'avax-auth-system',
             'sub' => $user->getId()->value,
@@ -35,6 +40,7 @@ final class JwtIdentity implements JwtIdentityInterface
         ];
 
         $token = JWT::encode($payload, $this->secret, $this->algorithm);
+        $this->currentToken = $token;
         $this->currentUser = $user;
 
         return $token;
@@ -44,29 +50,63 @@ final class JwtIdentity implements JwtIdentityInterface
     {
         try {
             $decoded = JWT::decode($token, new Key($this->secret, $this->algorithm));
-            return $this->userSource->findById(id: new UserId((int) $decoded->sub));
+            $user = $this->userSource->findById(id: new UserId((int) $decoded->sub));
+
+            if ($user !== null && $user->isActive()) {
+                return $user;
+            }
+
+            return null;
         } catch (\Exception) {
             return null;
         }
     }
 
+    public function token() : string|null
+    {
+        return $this->refreshCurrentUser() !== null ? $this->currentToken : null;
+    }
+
     public function getCurrentUser() : User|null
     {
-        return $this->currentUser;
+        return $this->refreshCurrentUser();
     }
 
     public function clear() : void
     {
+        $this->currentToken = null;
         $this->currentUser = null;
     }
 
     public function check() : bool
     {
-        return $this->currentUser !== null;
+        return $this->refreshCurrentUser() !== null;
     }
 
     public function authenticate(#[\SensitiveParameter] string $token) : void
     {
+        $this->currentToken = $token;
         $this->currentUser = $this->validate(token: $token);
+
+        if ($this->currentUser === null) {
+            $this->currentToken = null;
+        }
+    }
+
+    private function refreshCurrentUser() : User|null
+    {
+        if ($this->currentToken === null) {
+            $this->currentUser = null;
+
+            return null;
+        }
+
+        $this->currentUser = $this->validate(token: $this->currentToken);
+
+        if ($this->currentUser === null) {
+            $this->currentToken = null;
+        }
+
+        return $this->currentUser;
     }
 }

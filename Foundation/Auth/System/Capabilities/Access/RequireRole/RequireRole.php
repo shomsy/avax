@@ -31,7 +31,7 @@ final readonly class RequireRole
             throw new Unauthenticated();
         }
 
-        if (! $user->hasRole(role: $requiredRole)) {
+        if (! $user->canAccessRole(requiredRole: $requiredRole)) {
             throw new RoleDenied(requirement: $requiredRole);
         }
     }

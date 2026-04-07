@@ -25,8 +25,13 @@ class InMemoryUserSource implements UserSourceInterface
 
     public function findByCredentials(#[\SensitiveParameter] Credentials $credentials) : User|null
     {
+        $identifier = strtolower($credentials->identifier);
+
         foreach ($this->users as $user) {
-            if ($user->getEmail()->value === $credentials->identifier || $user->getUsername() === $credentials->identifier) {
+            if (
+                strtolower($user->getEmail()->value) === $identifier
+                || strtolower($user->getUsername()) === $identifier
+            ) {
                 return $user;
             }
         }

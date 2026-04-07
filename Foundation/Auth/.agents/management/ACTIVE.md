@@ -10,7 +10,6 @@ flowchart LR
         R1["AUTH-006 | Implementation of missing tests | 2026-04-06 16:30 CET"]
         R2["AUTH-007 | Docs Audit | 2026-04-06 16:30 CET"]
         R3["AUTH-008 | Examples Audit | 2026-04-06 16:30 CET"]
-        R4["AUTH-009 | RateLimit Storage | 2026-04-06 16:30 CET"]
     end
 
     subgraph InProgress["In Progress"]

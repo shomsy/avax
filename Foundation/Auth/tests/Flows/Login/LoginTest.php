@@ -122,6 +122,7 @@ class LoginTest extends TestCase
 
         $rateLimit = Mockery::mock(LoginRateLimit::class);
         $rateLimit->shouldReceive('check')->once();
+        $rateLimit->shouldReceive('recordFailed')->once();
 
         $login = new Login(
             userSource: $userSource,
@@ -131,7 +132,7 @@ class LoginTest extends TestCase
         );
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Account is inactive.');
+        $this->expectExceptionMessage('Invalid credentials.');
 
         $login->execute(credentials: $credentials);
     }

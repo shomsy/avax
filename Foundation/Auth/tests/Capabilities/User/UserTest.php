@@ -78,6 +78,7 @@ class UserTest extends TestCase
             roles: [UserRole::ADMIN]
         );
         $this->assertTrue($adminUser->hasRole(UserRole::ADMIN));
+        $this->assertTrue($adminUser->canAccessRole(UserRole::USER));
     }
 
     public function testUserPermissions() : void

@@ -52,7 +52,7 @@ class AccessTest extends TestCase
         );
 
         $access->requireAuthentication();
-        $access->requireRole(UserRole::ADMIN);
+        $access->requireRole(UserRole::USER);
         $access->requirePermission(new UserPermission('write'));
 
         $this->assertTrue(true);

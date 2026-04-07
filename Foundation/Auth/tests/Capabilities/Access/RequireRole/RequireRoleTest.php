@@ -30,7 +30,7 @@ class RequireRoleTest extends TestCase
     {
         $role = UserRole::ADMIN;
         $user = Mockery::mock(User::class);
-        $user->shouldReceive('hasRole')
+        $user->shouldReceive('canAccessRole')
             ->with($role)
             ->andReturn(true);
 
@@ -47,7 +47,7 @@ class RequireRoleTest extends TestCase
     {
         $role = UserRole::ADMIN;
         $user = Mockery::mock(User::class);
-        $user->shouldReceive('hasRole')
+        $user->shouldReceive('canAccessRole')
             ->with($role)
             ->andReturn(false);
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Dependencies\Resolution;
 
+use Avax\Container\Compilation\CompileContainer;
 use Avax\Container\ContainerInterface;
 use Avax\Container\Errors\ContainerException;
 use Avax\Container\Errors\ServiceNotFoundException;
@@ -20,10 +21,9 @@ use Avax\Container\DependencyInjection\Scopes\Lifetimes\ScopedLifetime;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\SharedLifetime;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\TransientLifetime;
 use Avax\Container\DependencyInjection\Scopes\ManageScopes;
+use Avax\Container\Runtime\HotPathInliner;
+use Avax\Container\Runtime\LazyProxy;
 use Closure;
-use ReflectionClass;
-use ReflectionNamedType;
-use ReflectionUnionType;
 use Throwable;
 
 final class ServiceResolver
@@ -32,26 +32,36 @@ final class ServiceResolver
 
     private ContainerInterface|null $container = null;
 
+    private readonly ResolutionPolicy $policy;
+
+    private readonly CompileContainer|null $compiler;
+
+    private readonly HotPathInliner $inliner;
+
+    private int $compiledRevision = -1;
+
     public function __construct(
-        private readonly ServiceRegistry      $registrations,
-        private readonly ManageScopes         $scopes,
-        private readonly BuildService         $builder,
+        private readonly ServiceRegistry        $registrations,
+        private readonly ManageScopes           $scopes,
+        private readonly BuildService           $builder,
         private readonly CreateServiceBlueprint $blueprints,
-        private readonly InjectProperties     $injectProperties,
-        private readonly InjectMethods        $injectMethods,
+        private readonly InjectProperties       $injectProperties,
+        private readonly InjectMethods          $injectMethods,
         private readonly \Avax\Container\DependencyInjection\Injection\Invocation\FunctionCaller $caller,
-        ResolutionMetrics|null               $metrics = null,
-        ResolutionTimeline|null              $timeline = null,
-        ResolutionPolicy|null                $policy = null
+        ResolutionMetrics|null                 $metrics = null,
+        ResolutionTimeline|null                $timeline = null,
+        ResolutionPolicy|null                  $policy = null,
+        CompileContainer|null                  $compiler = null,
+        HotPathInliner|null                    $inliner = null
     ) {
         $this->telemetry = new ResolutionTelemetry(
             metrics : $metrics ?? new ResolutionMetrics,
             timeline: $timeline ?? new ResolutionTimeline
         );
         $this->policy = $policy ?? new ResolutionPolicy;
+        $this->compiler = $compiler;
+        $this->inliner = $inliner ?? new HotPathInliner;
     }
-
-    private readonly ResolutionPolicy $policy;
 
     public function setContainer(ContainerInterface $container) : void
     {
@@ -81,6 +91,8 @@ final class ServiceResolver
 
     public function has(string $id) : bool
     {
+        $id = $this->registrations->resolveAlias(abstract: $id);
+
         if ($this->scopes->has(abstract: $id) || $this->registrations->has(abstract: $id)) {
             return true;
         }
@@ -90,7 +102,7 @@ final class ServiceResolver
         }
 
         try {
-            return (new ReflectionClass($id))->isInstantiable();
+            return $this->blueprints->createFor(class: $id)->instantiable;
         } catch (Throwable) {
             return false;
         }
@@ -98,13 +110,18 @@ final class ServiceResolver
 
     public function get(string $id) : mixed
     {
-        return $this->resolveRequest(request: new ResolveRequest(serviceId: $id));
+        return $this->resolveRequest(
+            request: new ResolveRequest(serviceId: $this->registrations->resolveAlias(abstract: $id))
+        );
     }
 
     public function make(string $id, array $parameters = []) : object
     {
         $resolved = $this->resolveRequest(
-            request: new ResolveRequest(serviceId: $id, overrides: $parameters)
+            request: new ResolveRequest(
+                serviceId: $this->registrations->resolveAlias(abstract: $id),
+                overrides: $parameters
+            )
         );
 
         if (! is_object($resolved)) {
@@ -160,13 +177,13 @@ final class ServiceResolver
         return new InjectionReport(
             target            : $target,
             injectedProperties: array_map(
-                fn($property) => $this->propertyServiceId(property: $property),
+                static fn(array $property) => $property['serviceId'],
                 $blueprint->injectableProperties
             ),
             injectedMethods   : array_map(
-                fn($method) => array_map(
-                    fn($parameter) => $this->parameterServiceId(parameter: $parameter),
-                    $method->getParameters()
+                static fn(array $method) => array_map(
+                    static fn(array $parameter) => $parameter['serviceId'],
+                    $method['plan']->parameters
                 ),
                 $blueprint->injectableMethods
             ),
@@ -190,8 +207,72 @@ final class ServiceResolver
         $this->scopes->closeScope();
     }
 
+    /**
+     * @param list<string> $serviceIds
+     */
+    public function compileContainer(array $serviceIds = []) : void
+    {
+        $classes = $this->classesForWarmup(serviceIds: $serviceIds);
+        $this->blueprints->warm(classes: $classes);
+
+        if ($this->compiler !== null) {
+            $this->inliner->attach($this->compiler->compile(serviceIds: $serviceIds));
+            $this->compiledRevision = $this->registrations->revision();
+        }
+
+        $this->telemetry->metrics()->increment(name: 'container_compile_total');
+    }
+
+    /**
+     * @param list<string> $serviceIds
+     */
+    public function warmCompiled(array $serviceIds = []) : void
+    {
+        $this->compileContainer(serviceIds: $serviceIds);
+        $this->telemetry->metrics()->increment(name: 'container_compiled_warmups_total');
+    }
+
+    public function flushCompiled() : void
+    {
+        $this->blueprints->flush();
+        $this->compiler?->flush();
+        $this->inliner->detach();
+        $this->compiledRevision = -1;
+        $this->telemetry->metrics()->increment(name: 'container_compiled_flushes_total');
+    }
+
+    /**
+     * @param list<string> $serviceIds
+     */
+    public function rebuildCompiled(array $serviceIds = []) : void
+    {
+        $this->flushCompiled();
+        $this->compileContainer(serviceIds: $serviceIds);
+        $this->telemetry->metrics()->increment(name: 'container_compiled_rebuilds_total');
+    }
+
+    public function tagged(string $tag) : array
+    {
+        return array_map(
+            fn(string $serviceId) => $this->get(id: $serviceId),
+            $this->registrations->getTaggedIds(tag: $tag)
+        );
+    }
+
+    public function lazy(string $abstract) : LazyProxy
+    {
+        $serviceId = $this->registrations->resolveAlias(abstract: $abstract);
+
+        return new LazyProxy(
+            serviceId: $serviceId,
+            factory  : fn() => $this->make(id: $serviceId)
+        );
+    }
+
     public function resolveRequest(ResolveRequest $request) : mixed
     {
+        $request = $this->normalizeRequest(request: $request);
+
         $this->telemetry->timeline()->record(
             action   : 'resolve',
             serviceId: $request->serviceId,
@@ -220,24 +301,9 @@ final class ServiceResolver
             }
 
             $registration = $this->registrationFor(request: $request);
-            $candidate    = $this->candidateFor(request: $request, registration: $registration);
-
-            if ($candidate === null) {
-                throw new ServiceNotFoundException(
-                    message: "Service [{$request->serviceId}] is not registered and cannot be autowired."
-                );
-            }
-
-            $resolved = $this->evaluateCandidate(
-                candidate   : $candidate,
-                request     : $request,
-                registration: $registration
-            );
-
-            $resolved = $this->applyExtenders(
-                abstract: $request->serviceId,
-                instance: $resolved
-            );
+            $resolved = $this->shouldUseCompiled(request: $request)
+                ? $this->resolveCompiledRequest(request: $request)
+                : $this->resolveDynamicRequest(request: $request);
 
             if (is_object($resolved)) {
                 $this->storeResolved(
@@ -264,6 +330,76 @@ final class ServiceResolver
 
             throw $exception;
         }
+    }
+
+    public function resolveDynamicRequest(ResolveRequest $request) : mixed
+    {
+        $request = $this->normalizeRequest(request: $request);
+        $registration = $this->registrationFor(request: $request);
+        $candidate = $this->candidateFor(request: $request, registration: $registration);
+
+        if ($candidate === null) {
+            throw new ServiceNotFoundException(
+                message: "Service [{$request->serviceId}] is not registered and cannot be autowired."
+            );
+        }
+
+        $resolved = $this->evaluateCandidate(
+            candidate   : $candidate,
+            request     : $request,
+            registration: $registration
+        );
+
+        return $this->applyExtenders(
+            abstract: $request->serviceId,
+            instance: $resolved
+        );
+    }
+
+    public function resolveCompiledDependency(string $serviceId, ResolveRequest $request) : mixed
+    {
+        return $this->resolveRequest(request: $request->child(serviceId: $serviceId));
+    }
+
+    /**
+     * @param array<string, mixed> $overrides
+     */
+    public function finishCompiledService(
+        string $serviceId,
+        object $instance,
+        string $class,
+        ResolveRequest $request,
+        array $overrides = []
+    ) : object {
+        $blueprint = $this->blueprints->createFor(class: $class);
+
+        if ($blueprint->injectableProperties !== []) {
+            $this->injectProperties->inject(
+                target   : $instance,
+                blueprint: $blueprint,
+                overrides: $overrides,
+                resolver : $this,
+                request  : $request
+            );
+        }
+
+        if ($blueprint->injectableMethods !== []) {
+            $this->injectMethods->inject(
+                target   : $instance,
+                blueprint: $blueprint,
+                overrides: $overrides,
+                resolver : $this,
+                request  : $request
+            );
+        }
+
+        $resolved = $this->applyExtenders(abstract: $serviceId, instance: $instance);
+
+        if (! is_object($resolved)) {
+            throw new ContainerException(message: "Compiled service [{$serviceId}] did not resolve to an object.");
+        }
+
+        return $resolved;
     }
 
     private function registrationFor(ResolveRequest $request) : ServiceRegistration|null
@@ -404,57 +540,106 @@ final class ServiceResolver
         }
     }
 
-    private function propertyServiceId(\ReflectionProperty $property) : string|null
+    /**
+     * @param list<string> $serviceIds
+     * @return list<string>
+     */
+    private function classesForWarmup(array $serviceIds) : array
     {
-        $attributes = $property->getAttributes(
-            \Avax\Container\DependencyInjection\Injection\Attributes\Inject::class
-        );
-        if ($attributes !== []) {
-            $inject = $attributes[0]->newInstance();
-            if (is_string($inject->abstract) && $inject->abstract !== '') {
-                return $inject->abstract;
+        $classes = [];
+
+        foreach ($serviceIds as $serviceId) {
+            $classes[] = $serviceId;
+
+            $registration = $this->registrations->get(abstract: $serviceId);
+            if ($registration !== null && is_string($registration->concrete)) {
+                $classes[] = $registration->concrete;
             }
         }
 
-        $type = $property->getType();
-        if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
-            return $type->getName();
-        }
-        if ($type instanceof ReflectionUnionType) {
-            foreach ($type->getTypes() as $namedType) {
-                if ($namedType instanceof ReflectionNamedType && ! $namedType->isBuiltin()) {
-                    return $namedType->getName();
+        if ($classes === []) {
+            foreach ($this->registrations->all() as $registration) {
+                $classes[] = $registration->abstract;
+                if (is_string($registration->concrete)) {
+                    $classes[] = $registration->concrete;
                 }
             }
         }
 
-        return null;
+        $classes = array_values(array_unique(array_filter(
+            $classes,
+            static fn(string $class) : bool => class_exists($class)
+        )));
+
+        return $classes;
     }
 
-    private function parameterServiceId(\ReflectionParameter $parameter) : string|null
+    private function normalizeRequest(ResolveRequest $request) : ResolveRequest
     {
-        $attributes = $parameter->getAttributes(
-            \Avax\Container\DependencyInjection\Injection\Attributes\Inject::class
+        $serviceId = $this->registrations->resolveAlias(abstract: $request->serviceId);
+        if ($serviceId === $request->serviceId) {
+            return $request;
+        }
+
+        return new ResolveRequest(
+            serviceId       : $serviceId,
+            overrides       : $request->overrides,
+            parent          : $request->parent,
+            manualInjection : $request->manualInjection,
+            consumer        : $request->consumer
         );
-        if ($attributes !== []) {
-            $inject = $attributes[0]->newInstance();
-            if (is_string($inject->abstract) && $inject->abstract !== '') {
-                return $inject->abstract;
-            }
+    }
+
+    private function refreshCompiledRuntime(string|null $serviceId = null) : void
+    {
+        if ($this->compiler === null) {
+            return;
         }
 
-        $type = $parameter->getType();
-        if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
-            return $type->getName();
-        }
-        if ($type instanceof ReflectionUnionType) {
-            foreach ($type->getTypes() as $namedType) {
-                if ($namedType instanceof ReflectionNamedType && ! $namedType->isBuiltin()) {
-                    return $namedType->getName();
-                }
-            }
+        $revision = $this->registrations->revision();
+        if ($revision === $this->compiledRevision && ($serviceId === null || $this->inliner->has(serviceId: $serviceId))) {
+            return;
         }
 
-        return null;
+        $compiled = $this->compiler->load(
+            serviceIds: $serviceId !== null ? [$serviceId] : []
+        );
+        if ($compiled !== null) {
+            $this->inliner->attach($compiled);
+        } else {
+            $this->inliner->detach();
+        }
+
+        $this->compiledRevision = $revision;
+    }
+
+    private function shouldUseCompiled(ResolveRequest $request) : bool
+    {
+        $this->refreshCompiledRuntime(serviceId: $request->serviceId);
+
+        if (! $this->inliner->has(serviceId: $request->serviceId)) {
+            return false;
+        }
+
+        $consumer = $request->parent?->serviceId ?? $request->consumer;
+        if ($consumer === null) {
+            return true;
+        }
+
+        return $this->registrations->getContextualMatch(
+            consumer: $consumer,
+            needs   : $request->serviceId
+        ) === null;
+    }
+
+    private function resolveCompiledRequest(ResolveRequest $request) : mixed
+    {
+        $this->telemetry->metrics()->increment(name: 'container_compiled_container_resolve_total');
+
+        return $this->inliner->resolve(
+            serviceId: $request->serviceId,
+            resolver : $this,
+            request  : $request
+        );
     }
 }

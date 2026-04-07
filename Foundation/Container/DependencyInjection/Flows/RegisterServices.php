@@ -19,6 +19,11 @@ final readonly class RegisterServices implements ServiceRegistryInterface
         private ServiceResolver $resolver
     ) {}
 
+    public function alias(string $alias, string $abstract) : void
+    {
+        $this->registrations()->alias(alias: $alias, abstract: $abstract);
+    }
+
     public function bind(string $abstract, mixed $concrete = null) : ServiceRegistration
     {
         return $this->registrations()->bind(abstract: $abstract, concrete: $concrete);
@@ -42,6 +47,11 @@ final readonly class RegisterServices implements ServiceRegistryInterface
     public function extend(string $abstract, callable $closure) : void
     {
         $this->registrations()->extend(abstract: $abstract, closure: $closure);
+    }
+
+    public function decorate(string $abstract, callable|object|string $decorator) : void
+    {
+        $this->registrations()->decorate(abstract: $abstract, decorator: $decorator);
     }
 
     public function tag(string|array $abstracts, string|array $tags) : void

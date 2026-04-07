@@ -6,11 +6,13 @@
 
 Registration:
 
+- `alias()`
 - `bind()`
 - `singleton()`
 - `scoped()`
 - `when()`
 - `extend()`
+- `decorate()`
 - `tag()`
 - `instance()`
 
@@ -20,12 +22,18 @@ Resolution and execution:
 - `has()`
 - `make()`
 - `call()`
+- `tagged()`
+- `lazy()`
 - `injectInto()`
 
 Scopes and diagnostics:
 
+- `compileContainer()`
 - `openScope()`
 - `closeScope()`
+- `warmCompiled()`
+- `flushCompiled()`
+- `rebuildCompiled()`
 - `scopes()`
 - `canInject()`
 - `inspectInjection()`
@@ -46,6 +54,14 @@ The facade does not own resolution internals, storage, blueprint creation, or te
 - `get()` resolves or returns a cached service
 - `make()` resolves an object with explicit constructor overrides
 - `call()` supports closures, callable arrays, `Class@method`, `Class::method`, and invokable class strings
+- `alias()` maps an alternate id onto one canonical service id
+- `tagged()` resolves all services carrying one tag
+- `lazy()` returns a lazy proxy that resolves the target service on first use
+- `decorate()` appends a post-build decoration step to one service id
+- `compileContainer()` writes a generated compiled runtime artifact plus compiled blueprint metadata
+- `warmCompiled()` preserves the same public intent and records warmup metrics on top of the compile path
+- `flushCompiled()` removes compiled artifacts for the current cache version
+- `rebuildCompiled()` flushes then warms compiled artifacts again
 - scoped services require an active scope
 - missing services throw `ServiceNotFoundException`
 

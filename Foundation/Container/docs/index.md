@@ -26,3 +26,9 @@ Local validation:
 
 - lint: `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`
 - smoke suite: [`tests/run-smoke-tests.sh`](../tests/run-smoke-tests.sh)
+
+Performance model:
+
+- reflect once
+- compile once
+- run many times from memory or versioned disk artifacts

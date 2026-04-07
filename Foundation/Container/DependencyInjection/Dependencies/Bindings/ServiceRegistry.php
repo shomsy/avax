@@ -8,6 +8,7 @@ use Avax\Container\DependencyInjection\Scopes\Lifetimes\ScopedLifetime;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\SharedLifetime;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\TransientLifetime;
 use Closure;
+use LogicException;
 
 /**
  * Store service registrations, tags, extenders, and target-specific overrides.
@@ -16,6 +17,9 @@ final class ServiceRegistry implements ServiceRegistryInterface
 {
     /** @var array<string, ServiceRegistration> */
     private array $services = [];
+
+    /** @var array<string, string> */
+    private array $aliases = [];
 
     /** @var array<string, array<string, mixed>> */
     private array $contextual = [];
@@ -31,6 +35,27 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
     /** @var array<string, list<Closure>> */
     private array $extenders = [];
+
+    private int $revision = 0;
+
+    public function alias(string $alias, string $abstract) : void
+    {
+        if ($alias === '' || $abstract === '') {
+            return;
+        }
+
+        if ($alias === $abstract || $this->aliasChainContains(alias: $alias, target: $abstract)) {
+            throw new LogicException(message: "Alias cycle detected for [{$alias}] -> [{$abstract}].");
+        }
+
+        $target = $this->resolveAlias(abstract: $abstract);
+        if ($alias === $target) {
+            return;
+        }
+
+        $this->aliases[$alias] = $target;
+        $this->touch();
+    }
 
     public function bind(string $abstract, mixed $concrete = null) : ServiceRegistration
     {
@@ -61,6 +86,36 @@ final class ServiceRegistry implements ServiceRegistryInterface
         $this->addExtender(abstract: $abstract, extender: Closure::fromCallable($closure));
     }
 
+    public function decorate(string $abstract, callable|object|string $decorator) : void
+    {
+        if (is_callable($decorator)) {
+            $this->extend(abstract: $abstract, closure: $decorator(...));
+            return;
+        }
+
+        $this->addExtender(
+            abstract: $abstract,
+            extender: static function (mixed $instance, mixed $container = null) use ($decorator) : mixed {
+                $resolved = $decorator;
+
+                if (is_string($resolved) && class_exists($resolved)) {
+                    $resolved = $container?->make($resolved, ['inner' => $instance, 'decorated' => $instance])
+                        ?? new $resolved($instance);
+                }
+
+                if (is_object($resolved) && method_exists($resolved, 'decorate')) {
+                    return $resolved->decorate($instance, $container);
+                }
+
+                if (is_callable($resolved)) {
+                    return $resolved($instance, $container);
+                }
+
+                return $instance;
+            }
+        );
+    }
+
     public function when(string $consumer) : RegisterForTarget
     {
         return new RegisterForTarget(registry: $this, consumer: $consumer);
@@ -76,17 +131,17 @@ final class ServiceRegistry implements ServiceRegistryInterface
     public function add(ServiceRegistration $definition) : void
     {
         $this->services[$definition->abstract] = $definition;
-        $this->resolvedCache = [];
+        $this->touch();
     }
 
     public function has(string $abstract) : bool
     {
-        return isset($this->services[$abstract]);
+        return isset($this->services[$this->resolveAlias(abstract: $abstract)]);
     }
 
     public function get(string $abstract) : ServiceRegistration|null
     {
-        return $this->services[$abstract] ?? null;
+        return $this->services[$this->resolveAlias(abstract: $abstract)] ?? null;
     }
 
     /**
@@ -107,6 +162,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
     public function getContextualMatch(string $consumer, string $needs) : mixed
     {
+        $needs = $this->resolveAlias(abstract: $needs);
         $cacheKey = $consumer . '@' . $needs;
         if (array_key_exists($cacheKey, $this->resolvedCache)) {
             return $this->resolvedCache[$cacheKey];
@@ -139,18 +195,21 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
     public function addContextual(string $consumer, string $needs, mixed $give) : void
     {
+        $needs = $this->resolveAlias(abstract: $needs);
+
         if (str_contains($consumer, '*')) {
             $this->wildcardContextual[$consumer][$needs] = $give;
         } else {
             $this->contextual[$consumer][$needs] = $give;
         }
 
-        $this->resolvedCache = [];
+        $this->touch();
     }
 
     public function addExtender(string $abstract, Closure $extender) : void
     {
-        $this->extenders[$abstract][] = $extender;
+        $this->extenders[$this->resolveAlias(abstract: $abstract)][] = $extender;
+        $this->touch();
     }
 
     /**
@@ -158,16 +217,19 @@ final class ServiceRegistry implements ServiceRegistryInterface
      */
     public function getExtenders(string $abstract) : array
     {
-        return $this->extenders[$abstract] ?? [];
+        return $this->extenders[$this->resolveAlias(abstract: $abstract)] ?? [];
     }
 
     public function addTags(string $abstract, string|array $tags) : void
     {
+        $abstract = $this->resolveAlias(abstract: $abstract);
+
         if (! isset($this->services[$abstract])) {
             return;
         }
 
         $this->services[$abstract]->tag(tags: $tags);
+        $this->touch();
     }
 
     /**
@@ -176,6 +238,53 @@ final class ServiceRegistry implements ServiceRegistryInterface
     public function all() : array
     {
         return $this->services;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function allAliases() : array
+    {
+        return $this->aliases;
+    }
+
+    public function hasExtenders(string $abstract) : bool
+    {
+        return ($this->extenders[$this->resolveAlias(abstract: $abstract)] ?? []) !== [];
+    }
+
+    public function revision() : int
+    {
+        return $this->revision;
+    }
+
+    public function resolveAlias(string $abstract) : string
+    {
+        $seen = [];
+        $current = $abstract;
+
+        while (isset($this->aliases[$current])) {
+            if (isset($seen[$current])) {
+                break;
+            }
+
+            $seen[$current] = true;
+            $current = $this->aliases[$current];
+        }
+
+        return $current;
+    }
+
+    public function flush() : void
+    {
+        $this->services = [];
+        $this->aliases = [];
+        $this->contextual = [];
+        $this->wildcardContextual = [];
+        $this->resolvedCache = [];
+        $this->classHierarchyCache = [];
+        $this->extenders = [];
+        $this->touch();
     }
 
     /**
@@ -204,5 +313,28 @@ final class ServiceRegistry implements ServiceRegistryInterface
         $this->add(definition: $registration);
 
         return $registration;
+    }
+
+    private function touch() : void
+    {
+        $this->resolvedCache = [];
+        $this->revision++;
+    }
+
+    private function aliasChainContains(string $alias, string $target) : bool
+    {
+        $seen = [];
+        $current = $target;
+
+        while (isset($this->aliases[$current])) {
+            if ($current === $alias || isset($seen[$current])) {
+                return true;
+            }
+
+            $seen[$current] = true;
+            $current = $this->aliases[$current];
+        }
+
+        return $current === $alias;
     }
 }

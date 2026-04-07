@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Flows;
 
+use Avax\Container\Compilation\CompileContainer;
+use Avax\Container\Compilation\ServiceCompiler;
 use Avax\Container\Container;
 use Avax\Container\ContainerInterface;
 use Avax\Container\DependencyInjection\Injection\Invocation\FunctionCaller;
@@ -27,6 +29,8 @@ use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
 use Avax\Container\DependencyInjection\Scopes\ManageScopes;
 use Avax\Container\DependencyInjection\Scopes\ScopeInterface;
 use Avax\Container\DependencyInjection\Scopes\ScopeStore;
+use Avax\Container\Runtime\HotPathInliner;
+use Avax\Container\Runtime\ServicePool;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 final class CreateContainer
@@ -48,17 +52,37 @@ final class CreateContainer
 
         $registrations = new ServiceRegistry;
         $scopeStore    = new ScopeStore;
-        $scopes        = new ManageScopes(store: $scopeStore);
+        $servicePool   = new ServicePool;
+        $scopes        = new ManageScopes(store: $scopeStore, pool: $servicePool);
         $clock         = new Clock;
         $metrics       = new ResolutionMetrics;
         $timeline      = new ResolutionTimeline(clock: $clock);
-        $blueprints    = new CreateServiceBlueprint(cache: new BlueprintCache);
         $dependencies  = new ResolveDependencies;
+        $blueprints    = new CreateServiceBlueprint(
+            cache       : new BlueprintCache(
+                cacheDir    : $config->cacheDir,
+                cacheVersion: $config->cacheVersion,
+                debug       : $config->debug,
+                metrics     : $metrics
+            ),
+            dependencies: $dependencies
+        );
         $callArguments = new ResolveCallArguments(dependencies: $dependencies);
         $caller        = new FunctionCaller(arguments: $callArguments);
         $policy        = new ResolutionPolicy(
             strict: $config->strict,
             debug : $config->debug
+        );
+        $compiler      = new CompileContainer(
+            registrations: $registrations,
+            blueprints   : $blueprints,
+            cacheDir     : $config->cacheDir,
+            cacheVersion : $config->cacheVersion,
+            metrics      : $metrics,
+            services     : new ServiceCompiler(
+                registrations: $registrations,
+                blueprints   : $blueprints
+            )
         );
         $resolver      = new ServiceResolver(
             registrations   : $registrations,
@@ -73,7 +97,9 @@ final class CreateContainer
             caller          : $caller,
             metrics         : $metrics,
             timeline        : $timeline,
-            policy          : $policy
+            policy          : $policy,
+            compiler        : $compiler,
+            inliner         : new HotPathInliner
         );
         $telemetry = $resolver->telemetry();
 
@@ -85,6 +111,7 @@ final class CreateContainer
             container     : $container,
             scopes        : $scopes,
             scopeStore    : $scopeStore,
+            servicePool   : $servicePool,
             registrations : $registrations,
             settings      : new ContainerSettings(items: $config->settings),
             config        : $config,
@@ -104,6 +131,7 @@ final class CreateContainer
         Container $container,
         ManageScopes $scopes,
         ScopeStore $scopeStore,
+        ServicePool $servicePool,
         ServiceRegistry $registrations,
         ContainerSettings $settings,
         CreateContainerConfig $config,
@@ -122,6 +150,7 @@ final class CreateContainer
         $resolver->instance(abstract: ScopeInterface::class, instance: $scopes);
         $resolver->instance(abstract: ManageScopes::class, instance: $scopes);
         $resolver->instance(abstract: ScopeStore::class, instance: $scopeStore);
+        $resolver->instance(abstract: ServicePool::class, instance: $servicePool);
         $resolver->instance(abstract: ServiceRegistry::class, instance: $registrations);
         $resolver->instance(abstract: CreateContainerConfig::class, instance: $config);
         $resolver->instance(abstract: ContainerSettings::class, instance: $settings);

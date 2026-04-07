@@ -14,6 +14,27 @@ final class ResolveDependencies
 {
     /**
      * @param list<ReflectionParameter> $parameters
+     */
+    public function createPlan(array $parameters) : ResolvePlan
+    {
+        $compiled = [];
+
+        foreach ($parameters as $parameter) {
+            $compiled[] = [
+                'name' => $parameter->getName(),
+                'serviceId' => $this->serviceIdFor(parameter: $parameter),
+                'hasDefault' => $parameter->isDefaultValueAvailable(),
+                'default' => $parameter->isDefaultValueAvailable()
+                    ? base64_encode(serialize($parameter->getDefaultValue()))
+                    : '',
+                'allowsNull' => $parameter->allowsNull(),
+            ];
+        }
+
+        return new ResolvePlan(parameters: $compiled);
+    }
+
+    /**
      * @param array<string, mixed> $overrides
      * @return array<int, mixed>
      */
@@ -23,10 +44,28 @@ final class ResolveDependencies
         ServiceResolver $resolver,
         ResolveRequest|null $request = null
     ) : array {
+        return $this->resolvePlan(
+            plan     : $this->createPlan(parameters: $parameters),
+            overrides: $overrides,
+            resolver : $resolver,
+            request  : $request
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $overrides
+     * @return array<int, mixed>
+     */
+    public function resolvePlan(
+        ResolvePlan $plan,
+        array $overrides,
+        ServiceResolver $resolver,
+        ResolveRequest|null $request
+    ) : array {
         $resolved = [];
 
-        foreach ($parameters as $parameter) {
-            $resolved[] = $this->resolveParameter(
+        foreach ($plan->parameters as $parameter) {
+            $resolved[] = $this->resolveCompiledParameter(
                 parameter: $parameter,
                 overrides: $overrides,
                 resolver : $resolver,
@@ -37,33 +76,37 @@ final class ResolveDependencies
         return $resolved;
     }
 
-    private function resolveParameter(
-        ReflectionParameter $parameter,
+    /**
+     * @param array{name: string, serviceId: string|null, hasDefault: bool, default: string, allowsNull: bool} $parameter
+     * @param array<string, mixed> $overrides
+     */
+    private function resolveCompiledParameter(
+        array $parameter,
         array $overrides,
         ServiceResolver $resolver,
         ResolveRequest|null $request
     ) : mixed {
-        if (array_key_exists($parameter->getName(), $overrides)) {
-            return $overrides[$parameter->getName()];
+        if (array_key_exists($parameter['name'], $overrides)) {
+            return $overrides[$parameter['name']];
         }
 
-        $serviceId = $this->serviceIdFor(parameter: $parameter);
-        if ($serviceId !== null) {
+        if ($parameter['serviceId'] !== null) {
             return $resolver->resolveRequest(
-                request: $request?->child(serviceId: $serviceId) ?? new ResolveRequest(serviceId: $serviceId)
+                request: $request?->child(serviceId: $parameter['serviceId'])
+                    ?? new ResolveRequest(serviceId: $parameter['serviceId'])
             );
         }
 
-        if ($parameter->isDefaultValueAvailable()) {
-            return $parameter->getDefaultValue();
+        if ($parameter['hasDefault']) {
+            return unserialize(base64_decode($parameter['default']), ['allowed_classes' => true]);
         }
 
-        if ($parameter->allowsNull()) {
+        if ($parameter['allowsNull']) {
             return null;
         }
 
         throw new ContainerException(
-            message: "Cannot resolve parameter [\${$parameter->getName()}] for service [{$request?->serviceId}]."
+            message: "Cannot resolve parameter [\${$parameter['name']}] for service [{$request?->serviceId}]."
         );
     }
 

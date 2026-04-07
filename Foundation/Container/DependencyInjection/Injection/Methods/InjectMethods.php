@@ -8,9 +8,13 @@ use Avax\Container\DependencyInjection\Injection\Invocation\ResolveCallArguments
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ResolveRequest;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\ServiceBlueprint;
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
+use Closure;
 
-final readonly class InjectMethods
+final class InjectMethods
 {
+    /** @var array<string, Closure(object, array): mixed> */
+    private array $invokers = [];
+
     public function __construct(
         private ResolveCallArguments $arguments
     ) {}
@@ -26,15 +30,34 @@ final readonly class InjectMethods
         ResolveRequest $request
     ) : void {
         foreach ($blueprint->injectableMethods as $method) {
-            $method->setAccessible(true);
-            $arguments = $this->arguments->resolve(
-                parameters: $method->getParameters(),
+            $arguments = $this->arguments->resolvePlan(
+                plan     : $method['plan'],
                 overrides : $overrides,
                 resolver  : $resolver,
                 request   : $request
             );
 
-            $method->invokeArgs($target, $arguments);
+            ($this->invokerFor(class: $blueprint->class, method: $method['name']))($target, $arguments);
         }
+    }
+
+    /**
+     * @return Closure(object, array): mixed
+     */
+    private function invokerFor(string $class, string $method) : Closure
+    {
+        $key = $class . '::' . $method;
+
+        if (isset($this->invokers[$key])) {
+            return $this->invokers[$key];
+        }
+
+        return $this->invokers[$key] = Closure::bind(
+            static function (object $target, array $arguments) use ($method) : mixed {
+                return $target->{$method}(...$arguments);
+            },
+            null,
+            $class
+        );
     }
 }

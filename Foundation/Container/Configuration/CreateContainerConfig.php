@@ -14,6 +14,7 @@ final readonly class CreateContainerConfig
      */
     public function __construct(
         public string $cacheDir = '',
+        public string $cacheVersion = 'container-v1',
         public bool $debug = false,
         public array $settings = [],
         public bool $strict = false
@@ -24,16 +25,18 @@ final readonly class CreateContainerConfig
      */
     public static function create(
         string $cacheDir = '',
+        string $cacheVersion = 'container-v1',
         bool $debug = false,
         array $settings = [],
         bool $strict = false
     ) : self
     {
         return new self(
-            cacheDir: $cacheDir,
-            debug   : $debug,
-            settings: $settings,
-            strict  : $strict
+            cacheDir    : $cacheDir,
+            cacheVersion: $cacheVersion,
+            debug       : $debug,
+            settings    : $settings,
+            strict      : $strict
         );
     }
 
@@ -43,41 +46,55 @@ final readonly class CreateContainerConfig
     public function withSettings(array $settings) : self
     {
         return new self(
-            cacheDir: $this->cacheDir,
-            debug   : $this->debug,
-            settings: $settings,
-            strict  : $this->strict
+            cacheDir    : $this->cacheDir,
+            cacheVersion: $this->cacheVersion,
+            debug       : $this->debug,
+            settings    : $settings,
+            strict      : $this->strict
         );
     }
 
     public function withDebug(bool $debug) : self
     {
         return new self(
-            cacheDir: $this->cacheDir,
-            debug   : $debug,
-            settings: $this->settings,
-            strict  : $this->strict
+            cacheDir    : $this->cacheDir,
+            cacheVersion: $this->cacheVersion,
+            debug       : $debug,
+            settings    : $this->settings,
+            strict      : $this->strict
         );
     }
 
     public function withStrict(bool $strict) : self
     {
         return new self(
-            cacheDir: $this->cacheDir,
-            debug   : $this->debug,
-            settings: $this->settings,
-            strict  : $strict
+            cacheDir    : $this->cacheDir,
+            cacheVersion: $this->cacheVersion,
+            debug       : $this->debug,
+            settings    : $this->settings,
+            strict      : $strict
         );
     }
 
     public function withCacheDir(string $cacheDir) : self
     {
         return new self(
-            cacheDir: $cacheDir,
-            debug   : $this->debug,
-            settings: $this->settings,
-            strict  : $this->strict
+            cacheDir    : $cacheDir,
+            cacheVersion: $this->cacheVersion,
+            debug       : $this->debug,
+            settings    : $this->settings,
+            strict      : $this->strict
         );
     }
 
+    public function withCacheVersion(string $cacheVersion) : self
+    {
+        return new self(
+            cacheDir    : $this->cacheDir,
+            cacheVersion: $cacheVersion,
+            debug       : $this->debug,
+            settings    : $this->settings,
+            strict      : $this->strict
+        );
+    }
 }

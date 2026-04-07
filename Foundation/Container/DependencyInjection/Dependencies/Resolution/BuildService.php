@@ -6,7 +6,6 @@ namespace Avax\Container\DependencyInjection\Dependencies\Resolution;
 
 use Avax\Container\Errors\ContainerException;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\CreateServiceBlueprint;
-use ReflectionClass;
 use Throwable;
 
 final readonly class BuildService
@@ -23,22 +22,21 @@ final readonly class BuildService
         ResolveRequest|null $request = null
     ) : object {
         try {
-            $reflection = new ReflectionClass($class);
-            if (! $reflection->isInstantiable()) {
+            $blueprint = $this->blueprints->createFor(class: $class);
+            if (! $blueprint->instantiable) {
                 throw new ContainerException(message: "Class [{$class}] is not instantiable.");
             }
 
-            $blueprint = $this->blueprints->createFor(class: $class);
             $arguments = $blueprint->constructor !== null
-                ? $this->dependencies->resolveParameters(
-                    parameters: $blueprint->constructor->getParameters(),
-                    overrides : $overrides,
-                    resolver  : $resolver,
-                    request   : $request
+                ? $this->dependencies->resolvePlan(
+                    plan     : $blueprint->constructor,
+                    overrides: $overrides,
+                    resolver : $resolver,
+                    request  : $request
                 )
                 : [];
 
-            return $reflection->newInstanceArgs($arguments);
+            return new $class(...$arguments);
         } catch (Throwable $exception) {
             if ($exception instanceof ContainerException) {
                 throw $exception;

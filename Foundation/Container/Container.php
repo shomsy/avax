@@ -14,6 +14,7 @@ use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistration
 use Avax\Container\DependencyInjection\Flows\ResolveService;
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
 use Avax\Container\DependencyInjection\Scopes\ScopeInterface;
+use Avax\Container\Runtime\LazyProxy;
 
 /**
  * Stable public facade for the container component.
@@ -64,6 +65,26 @@ final readonly class Container implements ContainerInterface
         $this->closeScopeFlow()->close();
     }
 
+    public function compileContainer(array $serviceIds = []) : void
+    {
+        $this->resolver->compileContainer(serviceIds: $serviceIds);
+    }
+
+    public function warmCompiled(array $serviceIds = []) : void
+    {
+        $this->resolver->warmCompiled(serviceIds: $serviceIds);
+    }
+
+    public function flushCompiled() : void
+    {
+        $this->resolver->flushCompiled();
+    }
+
+    public function rebuildCompiled(array $serviceIds = []) : void
+    {
+        $this->resolver->rebuildCompiled(serviceIds: $serviceIds);
+    }
+
     public function canInject(object $target) : bool
     {
         $report = $this->inspectInjection(target: $target);
@@ -84,6 +105,11 @@ final readonly class Container implements ContainerInterface
     public function exportMetrics() : string
     {
         return $this->resolver->exportMetrics();
+    }
+
+    public function alias(string $alias, string $abstract) : void
+    {
+        $this->registerServices()->alias(alias: $alias, abstract: $abstract);
     }
 
     public function bind(string $abstract, mixed $concrete = null) : ServiceRegistration
@@ -111,9 +137,24 @@ final readonly class Container implements ContainerInterface
         $this->registerServices()->extend(abstract: $abstract, closure: $closure);
     }
 
+    public function decorate(string $abstract, callable|object|string $decorator) : void
+    {
+        $this->registerServices()->decorate(abstract: $abstract, decorator: $decorator);
+    }
+
     public function tag(string|array $abstracts, string|array $tags) : void
     {
         $this->registerServices()->tag(abstracts: $abstracts, tags: $tags);
+    }
+
+    public function tagged(string $tag) : array
+    {
+        return $this->resolver->tagged(tag: $tag);
+    }
+
+    public function lazy(string $abstract) : LazyProxy
+    {
+        return $this->resolver->lazy(abstract: $abstract);
     }
 
     private function registerServices() : RegisterServices

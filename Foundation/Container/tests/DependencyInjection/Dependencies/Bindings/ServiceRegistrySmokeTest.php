@@ -19,4 +19,13 @@ assertSame(['logger'], $registry->getTaggedIds('infra'), 'Tags should resolve ba
 assertSame(DirectoryIterator::class, $registry->getContextualMatch('Consumer', 'logger'), 'Target overrides should resolve.');
 assertTrue(isset($registry->all()['cache']), 'Registry should expose stored registrations.');
 
+assertThrows(
+    LogicException::class,
+    static function () use ($registry) : void {
+        $registry->alias('logger.alias', 'logger');
+        $registry->alias('logger', 'logger.alias');
+    },
+    'Alias cycles should fail fast at registration time.'
+);
+
 echo basename(__FILE__) . " ok\n";

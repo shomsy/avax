@@ -9,7 +9,8 @@ Read the component in this order:
 3. dependency owners under `DependencyInjection/Dependencies/`
 4. injection owners under `DependencyInjection/Injection/`
 5. scope owners under `DependencyInjection/Scopes/`
-6. root support areas: `Configuration/`, `Observability/`, `Errors/`, `Foundation/`
+6. compiled runtime owners under `Compilation/` and `Runtime/`
+7. root support areas: `Configuration/`, `Observability/`, `Errors/`, `Foundation/`
 7. tests under `tests/`
 
 That order matches the intended mental model:
@@ -62,8 +63,21 @@ Each flow entry owns one obvious user action:
 
 `DependencyInjection/Dependencies/Blueprints/`
 
-- creates cached reflection blueprints
-- stores constructor and injection metadata
+- reflects classes once, then writes compiled blueprints to disk
+- stores constructor and injection metadata plus compiled resolve plans
+- serves memory hits first, then versioned disk artifacts
+
+`Compilation/`
+
+- writes and reads the generated compiled runtime artifact
+- turns compiled blueprints into direct service methods
+- owns compile-time fingerprinting for the hot path
+
+`Runtime/`
+
+- owns shared singleton storage
+- owns lazy proxy behavior
+- owns compiled method call caching
 
 `DependencyInjection/Dependencies/Providers/`
 
@@ -97,7 +111,7 @@ Each flow entry owns one obvious user action:
 
 `DependencyInjection/Scopes/`
 
-- owns shared and scoped storage
+- owns scoped storage and scope lifecycle
 - exposes scope lifecycle control
 - defines lifetime names
 
@@ -105,7 +119,7 @@ Each flow entry owns one obvious user action:
 
 `Configuration/`
 
-- owns assembly options and runtime settings
+- owns assembly options, cache versioning, and runtime settings
 
 `Observability/`
 

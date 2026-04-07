@@ -98,8 +98,15 @@ PHP;
 
         foreach ($plan->parameters as $parameter) {
             $expression = 'array_key_exists(' . $this->export($parameter['name']) . ', $arguments)'
-                . ' ? $arguments[' . $this->export($parameter['name']) . ']'
-                . ' : ' . $this->fallbackExpression(parameter: $parameter, serviceId: $serviceId);
+                . ' ? $arguments[' . $this->export($parameter['name']) . ']';
+
+            if ($parameter['serviceId'] === null) {
+                $expression .= ' : (array_key_exists(' . $this->export($parameter['name']) . ', $request->context)'
+                    . ' ? $request->context[' . $this->export($parameter['name']) . ']'
+                    . ' : ' . $this->fallbackExpression(parameter: $parameter, serviceId: $serviceId) . ')';
+            } else {
+                $expression .= ' : ' . $this->fallbackExpression(parameter: $parameter, serviceId: $serviceId);
+            }
 
             $arguments[] = '(' . $expression . ')';
         }

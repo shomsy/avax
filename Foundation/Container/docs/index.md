@@ -7,6 +7,7 @@ This component has one canonical story:
 - concepts: [`concepts/index.md`](./concepts/index.md)
 - glossary: [`glossary.md`](./glossary.md)
 - failure handling: [`troubleshooting.md`](./troubleshooting.md)
+- benchmark harness: [`../tests/run-benchmarks.sh`](../tests/run-benchmarks.sh)
 
 Canonical source tree:
 
@@ -26,6 +27,7 @@ Local validation:
 
 - lint: `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`
 - smoke suite: [`tests/run-smoke-tests.sh`](../tests/run-smoke-tests.sh)
+- benchmarks: [`tests/run-benchmarks.sh`](../tests/run-benchmarks.sh)
 
 Performance model:
 

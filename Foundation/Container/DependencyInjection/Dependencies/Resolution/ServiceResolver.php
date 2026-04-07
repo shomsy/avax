@@ -6,9 +6,11 @@ namespace Avax\Container\DependencyInjection\Dependencies\Resolution;
 
 use Avax\Container\Compilation\CompileContainer;
 use Avax\Container\ContainerInterface;
+use Avax\Container\Configuration\ContainerSettings;
 use Avax\Container\Errors\ContainerException;
 use Avax\Container\Errors\ServiceNotFoundException;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\CreateServiceBlueprint;
+use Avax\Container\DependencyInjection\Dependencies\Blueprints\ServiceBlueprint;
 use Avax\Container\DependencyInjection\Injection\Methods\InjectMethods;
 use Avax\Container\DependencyInjection\Injection\Properties\InjectProperties;
 use Avax\Container\DependencyInjection\Injection\Reports\InjectionReport;
@@ -74,6 +76,16 @@ final class ServiceResolver
         return $this->registrations;
     }
 
+    public function settings() : ContainerSettings
+    {
+        $settings = $this->registrations->get(abstract: ContainerSettings::class);
+        if ($settings !== null && is_object($settings->concrete) && $settings->concrete instanceof ContainerSettings) {
+            return $settings->concrete;
+        }
+
+        return new ContainerSettings;
+    }
+
     public function scopes() : ManageScopes
     {
         return $this->scopes;
@@ -87,6 +99,163 @@ final class ServiceResolver
     public function exportMetrics() : string
     {
         return $this->telemetry->exportMetrics();
+    }
+
+    public function flush() : void
+    {
+        $this->blueprints->flush();
+        $this->compiler?->flush();
+        $this->inliner->detach();
+        $this->registrations->flush();
+        $this->scopes->terminate();
+        $this->caller->clearCache();
+        $this->telemetry->reset();
+        $this->compiledRevision = -1;
+    }
+
+    public function reset() : void
+    {
+        $this->flush();
+    }
+
+    /**
+     * @param list<string> $serviceIds
+     * @return list<string>
+     */
+    public function validate(array $serviceIds = []) : array
+    {
+        $issues = [];
+
+        foreach ($this->classesForValidation(serviceIds: $serviceIds) as $class) {
+            try {
+                $blueprint = $this->blueprints->createFor(class: $class);
+                if (! $blueprint->instantiable) {
+                    $issues[] = "Service [{$class}] is not instantiable.";
+                }
+            } catch (Throwable $throwable) {
+                $issues[] = "Service [{$class}] cannot be analyzed: {$throwable->getMessage()}";
+            }
+        }
+
+        foreach ($this->registrations->allAliases() as $alias => $target) {
+            if (! $this->registrations->has(abstract: $target)) {
+                $issues[] = "Alias [{$alias}] points to missing service [{$target}].";
+            }
+        }
+
+        foreach ($this->registrations->all() as $abstract => $registration) {
+            if ($registration->concrete === null) {
+                $issues[] = "Service [{$abstract}] has no concrete target.";
+            }
+        }
+
+        return array_values(array_unique($issues));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function describeService(string $id) : array
+    {
+        $resolved = $this->registrations->resolveAlias(abstract: $id);
+        $registration = $this->registrations->get(abstract: $resolved);
+        $blueprint = $resolved !== '' && class_exists($resolved) ? $this->blueprints->createFor(class: $resolved) : null;
+
+        return [
+            'id' => $id,
+            'resolvedId' => $resolved,
+            'registered' => $registration !== null,
+            'concrete' => is_object($registration?->concrete)
+                ? $registration?->concrete::class
+                : $registration?->concrete,
+            'lifetime' => $registration?->lifetime,
+            'deferred' => $registration?->deferred ?? false,
+            'tags' => $registration?->tags ?? [],
+            'aliases' => array_keys(array_filter(
+                $this->registrations->allAliases(),
+                static fn(string $target) : bool => $target === $resolved
+            )),
+            'blueprint' => $blueprint !== null ? [
+                'instantiable' => $blueprint->instantiable,
+                'shared' => $blueprint->shared,
+                'constructor' => $blueprint->constructor?->parameters ?? [],
+                'injectableProperties' => $blueprint->injectableProperties,
+                'injectableMethods' => $blueprint->injectableMethods,
+                'fingerprint' => $blueprint->fingerprint,
+            ] : null,
+            'compiled' => $this->inliner->has(serviceId: $resolved),
+        ];
+    }
+
+    public function debugService(string $id) : array
+    {
+        return $this->describeService(id: $id);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugPlan(string $id) : array
+    {
+        $resolved = $this->registrations->resolveAlias(abstract: $id);
+        if ($resolved === '' || ! class_exists($resolved)) {
+            return ['id' => $id, 'resolvedId' => $resolved, 'constructor' => null, 'methods' => []];
+        }
+
+        $blueprint = $this->blueprints->createFor(class: $resolved);
+
+        return [
+            'id' => $id,
+            'resolvedId' => $resolved,
+            'constructor' => $blueprint->constructor?->parameters ?? [],
+            'methods' => $blueprint->injectableMethods,
+            'properties' => $blueprint->injectableProperties,
+            'shared' => $blueprint->shared,
+            'deferred' => $this->registrations->get(abstract: $resolved)?->deferred ?? false,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugTags(string $tag) : array
+    {
+        $ids = $this->registrations->getTaggedIds(tag: $tag);
+
+        return [
+            'tag' => $tag,
+            'ids' => $ids,
+            'services' => array_map(
+                fn(string $id) => $this->describeService(id: $id),
+                $ids
+            ),
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function debugAliases() : array
+    {
+        return $this->registrations->allAliases();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugScope() : array
+    {
+        $snapshot = $this->scopes->snapshot();
+
+        return [
+            'shared' => $snapshot['shared'],
+            'scoped' => $snapshot['scoped'],
+        ];
+    }
+
+    public function env(string $key, mixed $default = null) : mixed
+    {
+        return $this->settings()->env(key: $key, default: $default);
     }
 
     public function has(string $id) : bool
@@ -110,8 +279,16 @@ final class ServiceResolver
 
     public function get(string $id) : mixed
     {
+        return $this->resolveRequest(request: new ResolveRequest(serviceId: $this->registrations->resolveAlias(abstract: $id)));
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function getInContext(string $id, array $context) : mixed
+    {
         return $this->resolveRequest(
-            request: new ResolveRequest(serviceId: $this->registrations->resolveAlias(abstract: $id))
+            request: (new ResolveRequest(serviceId: $this->registrations->resolveAlias(abstract: $id)))->withContext(context: $context)
         );
     }
 
@@ -131,6 +308,35 @@ final class ServiceResolver
         return $resolved;
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function makeInContext(string $id, array $parameters, array $context) : object
+    {
+        $resolved = $this->resolveRequest(
+            request: (new ResolveRequest(
+                serviceId: $this->registrations->resolveAlias(abstract: $id),
+                overrides: $parameters
+            ))->withContext(context: $context)
+        );
+
+        if (! is_object($resolved)) {
+            throw new ContainerException(message: "Service [{$id}] did not resolve to an object.");
+        }
+
+        return $resolved;
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function hasInContext(string $id, array $context) : bool
+    {
+        $request = (new ResolveRequest(serviceId: $this->registrations->resolveAlias(abstract: $id)))->withContext(context: $context);
+
+        return $this->has(id: $request->serviceId);
+    }
+
     public function call(callable|string $callable, array $parameters = []) : mixed
     {
         $this->telemetry->metrics()->increment(name: 'container_calls_total');
@@ -138,29 +344,37 @@ final class ServiceResolver
         return $this->caller->call(target: $callable, parameters: $parameters);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function callInContext(callable|string $callable, array $parameters, array $context) : mixed
+    {
+        $this->telemetry->metrics()->increment(name: 'container_calls_total');
+
+        return $this->caller->call(
+            target    : $callable,
+            parameters: $parameters,
+            request   : (new ResolveRequest(serviceId: $this->callableName(callable: $callable)))->withContext(context: $context)
+        );
+    }
+
     public function injectInto(object $target) : object
     {
-        $blueprint = $this->blueprints->createFor(class: $target::class);
-        $request   = new ResolveRequest(serviceId: $target::class, manualInjection: true);
-
-        $this->injectProperties->inject(
-            target   : $target,
-            blueprint: $blueprint,
-            overrides: [],
-            resolver : $this,
-            request  : $request
+        return $this->injectTarget(
+            target : $target,
+            request: new ResolveRequest(serviceId: $target::class, manualInjection: true)
         );
-        $this->injectMethods->inject(
-            target   : $target,
-            blueprint: $blueprint,
-            overrides: [],
-            resolver : $this,
-            request  : $request
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function injectIntoInContext(object $target, array $context) : object
+    {
+        return $this->injectTarget(
+            target : $target,
+            request: (new ResolveRequest(serviceId: $target::class, manualInjection: true))->withContext(context: $context)
         );
-
-        $this->telemetry->metrics()->increment(name: 'container_injections_total');
-
-        return $target;
     }
 
     public function canInject(object $target) : bool
@@ -269,6 +483,19 @@ final class ServiceResolver
         );
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function lazyInContext(string $abstract, array $context) : LazyProxy
+    {
+        $serviceId = $this->registrations->resolveAlias(abstract: $abstract);
+
+        return new LazyProxy(
+            serviceId: $serviceId,
+            factory  : fn() => $this->makeInContext(id: $serviceId, parameters: [], context: $context)
+        );
+    }
+
     public function resolveRequest(ResolveRequest $request) : mixed
     {
         $request = $this->normalizeRequest(request: $request);
@@ -362,6 +589,19 @@ final class ServiceResolver
     }
 
     /**
+     * @param array<string, mixed> $context
+     */
+    public function resolveInContext(string $id, array $context, array $parameters = []) : mixed
+    {
+        return $this->resolveRequest(
+            request: (new ResolveRequest(
+                serviceId: $this->registrations->resolveAlias(abstract: $id),
+                overrides: $parameters
+            ))->withContext(context: $context)
+        );
+    }
+
+    /**
      * @param array<string, mixed> $overrides
      */
     public function finishCompiledService(
@@ -424,7 +664,7 @@ final class ServiceResolver
 
     private function candidateFor(ResolveRequest $request, ServiceRegistration|null $registration) : mixed
     {
-        $consumer = $request->parent?->serviceId ?? $request->consumer;
+        $consumer = $this->contextualConsumer(request: $request);
         if ($consumer !== null) {
             $contextual = $this->registrations->getContextualMatch(
                 consumer: $consumer,
@@ -436,6 +676,11 @@ final class ServiceResolver
         }
 
         return $registration?->concrete;
+    }
+
+    private function contextualConsumer(ResolveRequest $request) : string|null
+    {
+        return $request->parent?->serviceId ?? $request->consumer;
     }
 
     private function evaluateCandidate(mixed $candidate, ResolveRequest $request, ServiceRegistration|null $registration) : mixed
@@ -540,38 +785,138 @@ final class ServiceResolver
         }
     }
 
+    private function isCompilable(string $serviceId) : bool
+    {
+        $registration = $this->registrations->get(abstract: $serviceId);
+        $candidate = $registration?->concrete;
+
+        if (is_string($candidate) && class_exists($candidate)) {
+            return true;
+        }
+
+        if ($candidate instanceof Closure || is_object($candidate)) {
+            return true;
+        }
+
+        return class_exists($serviceId);
+    }
+
     /**
      * @param list<string> $serviceIds
      * @return list<string>
      */
     private function classesForWarmup(array $serviceIds) : array
     {
+        $queue = [];
+
+        if ($serviceIds !== []) {
+            foreach (array_values(array_unique($serviceIds)) as $serviceId) {
+                $queue[] = $serviceId;
+            }
+        } else {
+            foreach ($this->registrations->all() as $registration) {
+                if ($registration->deferred) {
+                    continue;
+                }
+
+                $queue[] = $registration->abstract;
+            }
+        }
+
+        $compiled = [];
         $classes = [];
 
-        foreach ($serviceIds as $serviceId) {
+        while ($queue !== []) {
+            $serviceId = $this->registrations->resolveAlias(abstract: array_shift($queue));
+            if (isset($compiled[$serviceId])) {
+                continue;
+            }
+
+            if (! $this->isCompilable(serviceId: $serviceId)) {
+                continue;
+            }
+
+            $compiled[$serviceId] = true;
             $classes[] = $serviceId;
 
             $registration = $this->registrations->get(abstract: $serviceId);
-            if ($registration !== null && is_string($registration->concrete)) {
-                $classes[] = $registration->concrete;
+            $candidate = $registration?->concrete;
+
+            if ($candidate === null && class_exists($serviceId)) {
+                $candidate = $serviceId;
+            }
+
+            if (! is_string($candidate) || ! class_exists($candidate)) {
+                continue;
+            }
+
+            $blueprint = $this->blueprints->createFor(class: $candidate);
+            foreach ($this->dependenciesForWarmup(blueprint: $blueprint) as $dependency) {
+                $queue[] = $dependency;
             }
         }
 
-        if ($classes === []) {
-            foreach ($this->registrations->all() as $registration) {
-                $classes[] = $registration->abstract;
-                if (is_string($registration->concrete)) {
-                    $classes[] = $registration->concrete;
-                }
-            }
-        }
-
-        $classes = array_values(array_unique(array_filter(
+        return array_values(array_unique(array_filter(
             $classes,
             static fn(string $class) : bool => class_exists($class)
         )));
+    }
 
-        return $classes;
+    /**
+     * @param list<string> $serviceIds
+     * @return list<string>
+     */
+    private function classesForValidation(array $serviceIds) : array
+    {
+        $queue = [];
+
+        if ($serviceIds !== []) {
+            foreach (array_values(array_unique($serviceIds)) as $serviceId) {
+                $queue[] = $serviceId;
+            }
+        } else {
+            foreach ($this->registrations->all() as $registration) {
+                $queue[] = $registration->abstract;
+            }
+        }
+
+        $compiled = [];
+        $classes = [];
+
+        while ($queue !== []) {
+            $serviceId = $this->registrations->resolveAlias(abstract: array_shift($queue));
+            if (isset($compiled[$serviceId])) {
+                continue;
+            }
+
+            if (! $this->isCompilable(serviceId: $serviceId)) {
+                continue;
+            }
+
+            $compiled[$serviceId] = true;
+            $classes[] = $serviceId;
+
+            $registration = $this->registrations->get(abstract: $serviceId);
+            $candidate = $registration?->concrete;
+
+            if ($candidate === null && class_exists($serviceId)) {
+                $candidate = $serviceId;
+            }
+
+            if (! is_string($candidate) || ! class_exists($candidate)) {
+                continue;
+            }
+
+            $blueprint = $this->blueprints->createFor(class: $candidate);
+            foreach ($this->dependenciesForWarmup(blueprint: $blueprint) as $dependency) {
+                $queue[] = $dependency;
+            }
+        }
+
+        return array_values(array_unique(array_filter(
+            $classes,
+            static fn(string $class) : bool => class_exists($class)
+        )));
     }
 
     private function normalizeRequest(ResolveRequest $request) : ResolveRequest
@@ -584,6 +929,7 @@ final class ServiceResolver
         return new ResolveRequest(
             serviceId       : $serviceId,
             overrides       : $request->overrides,
+            context         : $request->context,
             parent          : $request->parent,
             manualInjection : $request->manualInjection,
             consumer        : $request->consumer
@@ -597,7 +943,7 @@ final class ServiceResolver
         }
 
         $revision = $this->registrations->revision();
-        if ($revision === $this->compiledRevision && ($serviceId === null || $this->inliner->has(serviceId: $serviceId))) {
+        if ($revision === $this->compiledRevision && $this->inliner->isAttached()) {
             return;
         }
 
@@ -641,5 +987,98 @@ final class ServiceResolver
             resolver : $this,
             request  : $request
         );
+    }
+
+    public function defer(string $abstract, mixed $concrete = null) : ServiceRegistration
+    {
+        return $this->registrations->defer(abstract: $abstract, concrete: $concrete);
+    }
+
+    private function injectTarget(object $target, ResolveRequest $request) : object
+    {
+        $blueprint = $this->blueprints->createFor(class: $target::class);
+
+        $this->injectProperties->inject(
+            target   : $target,
+            blueprint: $blueprint,
+            overrides: [],
+            resolver : $this,
+            request  : $request
+        );
+        $this->injectMethods->inject(
+            target   : $target,
+            blueprint: $blueprint,
+            overrides: [],
+            resolver : $this,
+            request  : $request
+        );
+
+        $this->telemetry->metrics()->increment(name: 'container_injections_total');
+
+        return $target;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function dependenciesForWarmup(ServiceBlueprint $blueprint) : array
+    {
+        $dependencies = [];
+
+        foreach ($blueprint->constructor?->parameters ?? [] as $parameter) {
+            if (is_string($parameter['serviceId'] ?? null)) {
+                $dependencies[] = $parameter['serviceId'];
+            }
+        }
+
+        foreach ($blueprint->injectableProperties ?? [] as $property) {
+            if (is_string($property['serviceId'] ?? null)) {
+                $dependencies[] = $property['serviceId'];
+            }
+        }
+
+        foreach ($blueprint->injectableMethods ?? [] as $method) {
+            foreach ($method['plan']->parameters as $parameter) {
+                if (is_string($parameter['serviceId'] ?? null)) {
+                    $dependencies[] = $parameter['serviceId'];
+                }
+            }
+        }
+
+        return array_values(array_unique($dependencies));
+    }
+
+    private function callableName(callable|string $callable) : string
+    {
+        if (is_string($callable)) {
+            return 'call:' . $callable;
+        }
+
+        if (is_array($callable)) {
+            $target = $callable[0] ?? null;
+            $method = (string) ($callable[1] ?? '__invoke');
+
+            if (is_object($target)) {
+                return 'call:' . $target::class . '::' . $method;
+            }
+
+            if (is_string($target)) {
+                return 'call:' . $target . '::' . $method;
+            }
+        }
+
+        if ($callable instanceof Closure) {
+            $reflection = new \ReflectionFunction($callable);
+
+            return 'call:closure:' . ($reflection->getFileName() ?: 'internal')
+                . ':' . $reflection->getStartLine()
+                . ':' . $reflection->getEndLine();
+        }
+
+        if (is_object($callable)) {
+            return 'call:' . $callable::class;
+        }
+
+        return 'call:unknown';
     }
 }

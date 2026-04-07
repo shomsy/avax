@@ -30,4 +30,9 @@ final class ResolutionMetrics
 
         return implode(PHP_EOL, $lines);
     }
+
+    public function reset() : void
+    {
+        $this->counters = [];
+    }
 }

@@ -142,23 +142,23 @@ final class CreateContainer
         ResolutionTelemetry $telemetry,
         FunctionCaller $caller
     ) : void {
-        $resolver->instance(abstract: PsrContainerInterface::class, instance: $container);
-        $resolver->instance(abstract: ContainerInterface::class, instance: $container);
-        $resolver->instance(abstract: Container::class, instance: $container);
-        $resolver->instance(abstract: ServiceResolver::class, instance: $resolver);
-        $resolver->instance(abstract: ServiceRegistryInterface::class, instance: $registrations);
-        $resolver->instance(abstract: ScopeInterface::class, instance: $scopes);
-        $resolver->instance(abstract: ManageScopes::class, instance: $scopes);
-        $resolver->instance(abstract: ScopeStore::class, instance: $scopeStore);
-        $resolver->instance(abstract: ServicePool::class, instance: $servicePool);
-        $resolver->instance(abstract: ServiceRegistry::class, instance: $registrations);
-        $resolver->instance(abstract: CreateContainerConfig::class, instance: $config);
-        $resolver->instance(abstract: ContainerSettings::class, instance: $settings);
-        $resolver->instance(abstract: ResolutionPolicy::class, instance: $policy);
-        $resolver->instance(abstract: Clock::class, instance: $clock);
-        $resolver->instance(abstract: ResolutionMetrics::class, instance: $metrics);
-        $resolver->instance(abstract: ResolutionTimeline::class, instance: $timeline);
-        $resolver->instance(abstract: ResolutionTelemetry::class, instance: $telemetry);
-        $resolver->instance(abstract: FunctionCaller::class, instance: $caller);
+        $registrations->bootstrapInstance(abstract: PsrContainerInterface::class, instance: $container);
+        $registrations->bootstrapInstance(abstract: ContainerInterface::class, instance: $container);
+        $registrations->bootstrapInstance(abstract: Container::class, instance: $container);
+        $registrations->bootstrapInstance(abstract: ServiceResolver::class, instance: $resolver);
+        $registrations->bootstrapInstance(abstract: ServiceRegistryInterface::class, instance: $registrations);
+        $registrations->bootstrapInstance(abstract: ScopeInterface::class, instance: $scopes);
+        $registrations->bootstrapInstance(abstract: ManageScopes::class, instance: $scopes);
+        $registrations->bootstrapInstance(abstract: ScopeStore::class, instance: $scopeStore);
+        $registrations->bootstrapInstance(abstract: ServicePool::class, instance: $servicePool);
+        $registrations->bootstrapInstance(abstract: ServiceRegistry::class, instance: $registrations);
+        $registrations->bootstrapInstance(abstract: CreateContainerConfig::class, instance: $config);
+        $registrations->bootstrapInstance(abstract: ContainerSettings::class, instance: $settings);
+        $registrations->bootstrapInstance(abstract: ResolutionPolicy::class, instance: $policy);
+        $registrations->bootstrapInstance(abstract: Clock::class, instance: $clock);
+        $registrations->bootstrapInstance(abstract: ResolutionMetrics::class, instance: $metrics);
+        $registrations->bootstrapInstance(abstract: ResolutionTimeline::class, instance: $timeline);
+        $registrations->bootstrapInstance(abstract: ResolutionTelemetry::class, instance: $telemetry);
+        $registrations->bootstrapInstance(abstract: FunctionCaller::class, instance: $caller);
     }
 }

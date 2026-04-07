@@ -62,4 +62,14 @@ final class ScopeStore
         $this->scopes = [];
     }
 
+    /**
+     * @return array{scoped: array<int, array<string, mixed>>}
+     */
+    public function snapshot() : array
+    {
+        return [
+            'scoped' => $this->scopes,
+        ];
+    }
+
 }

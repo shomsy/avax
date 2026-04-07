@@ -80,6 +80,24 @@ final class ContainerSettings
         return true;
     }
 
+    public function env(string $key, mixed $default = null) : mixed
+    {
+        if ($key === '') {
+            return $default;
+        }
+
+        $value = getenv($key);
+        if ($value !== false) {
+            return $value;
+        }
+
+        if ($this->has(key: 'env.' . $key)) {
+            return $this->get(key: 'env.' . $key, default: $default);
+        }
+
+        return $default;
+    }
+
     /**
      * @return array<string, mixed>
      */

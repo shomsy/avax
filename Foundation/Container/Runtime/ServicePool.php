@@ -33,4 +33,12 @@ final class ServicePool
     {
         $this->items = [];
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function snapshot() : array
+    {
+        return $this->items;
+    }
 }

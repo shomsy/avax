@@ -8,6 +8,7 @@ Public entry:
 
 - `Container::get()`
 - `Container::make()`
+- `Container::forContext()`
 
 Flow entry:
 
@@ -46,13 +47,14 @@ Resolution runs in this order:
 5. try the generated compiled runtime artifact for the requested service id
 6. if no compiled hot path applies, find a registration or fall back to autowiring
 7. apply target-specific overrides when present
-8. load a compiled blueprint and resolve plan from memory or disk
-9. build constructor arguments from the compiled plan
-10. create the object or invoke a factory
-11. inject properties and methods from compiled metadata
-12. apply extenders and decorators
-13. store the result according to lifetime in the shared pool or active scope
-14. record success or failure
+8. read context values for matching scalar arguments when a `forContext()` view is in play
+9. load a compiled blueprint and resolve plan from memory or disk
+10. build constructor arguments from the compiled plan
+11. create the object or invoke a factory
+12. inject properties and methods from compiled metadata
+13. apply extenders and decorators
+14. store the result according to lifetime in the shared pool or active scope
+15. record success or failure
 
 ## Missing Service Behavior
 
@@ -66,10 +68,27 @@ The resolver exports:
 - `container_resolve_cached_total`
 - `container_resolve_failures_total`
 - `container_compile_total`
+- `container_compiled_warmups_total`
+- `container_compiled_flushes_total`
+- `container_compiled_rebuilds_total`
 - `container_compiled_container_hits_total`
 - `container_compiled_container_misses_total`
 - `container_compiled_container_resolve_total`
+- `container_calls_total`
+- `container_injections_total`
 - `container_blueprint_cache_memory_hits_total`
 - `container_blueprint_cache_disk_hits_total`
 - `container_blueprint_cache_misses_total`
 - `container_blueprint_compiles_total`
+
+## Deferred Services
+
+`defer()` keeps a registration out of the default compile warmup unless it is explicitly requested or pulled in by a compiled dependency.
+
+Deferred services still resolve on demand. They just do not get promoted into the hot path unless the runtime actually needs them.
+
+## Context Views
+
+`forContext()` returns a view over the same container that can feed scalar constructor, callable, and injection arguments by name.
+
+The same context values work in both the dynamic resolver and the compiled runtime path.

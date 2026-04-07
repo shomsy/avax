@@ -33,6 +33,11 @@ final class HotPathInliner
         $this->calls = [];
     }
 
+    public function isAttached() : bool
+    {
+        return $this->compiled !== null;
+    }
+
     public function has(string $serviceId) : bool
     {
         return $this->compiled?->has(serviceId: $serviceId) ?? false;

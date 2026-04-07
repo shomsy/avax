@@ -29,6 +29,11 @@ final readonly class RegisterServices implements ServiceRegistryInterface
         return $this->registrations()->bind(abstract: $abstract, concrete: $concrete);
     }
 
+    public function defer(string $abstract, mixed $concrete = null) : ServiceRegistration
+    {
+        return $this->registrations()->defer(abstract: $abstract, concrete: $concrete);
+    }
+
     public function singleton(string $abstract, mixed $concrete = null) : ServiceRegistration
     {
         return $this->registrations()->singleton(abstract: $abstract, concrete: $concrete);

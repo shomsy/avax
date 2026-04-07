@@ -25,6 +25,73 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: TODO-007
+  `created_at`: 2026-04-08 00:50 CEST
+  `updated_at`: 2026-04-08 01:23 CEST
+  `status`: done
+  `estimate`: medium
+  `actual`: medium
+  `outcome`: Add explicit lifecycle control with `flush()` / `reset()` so the
+    container can clear bindings, pools, scopes, and compiled artifacts safely
+    for tests, worker processes, and repeated bootstrap cycles.
+  `acceptance`: `Container` exposes `flush()` and `reset()`; flush clears
+    bindings, scopes, runtime pools, and compiled artifacts; reset restores a
+    clean runtime; repeated bootstrap/resolve cycles remain deterministic;
+    docs explain the lifecycle behavior; Docker PHP lint is green;
+    `tests/run-smoke-tests.sh` is green.
+  `links`: `Container.php`, `ContainerInterface.php`, `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`, `DependencyInjection/Scopes/ScopeStore.php`, `Runtime/ServicePool.php`, `Compilation/CompileContainer.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`
+
+- `id`: TODO-008
+  `created_at`: 2026-04-08 00:50 CEST
+  `updated_at`: 2026-04-08 01:23 CEST
+  `status`: done
+  `estimate`: large
+  `actual`: large
+  `outcome`: Add deferred service loading and provider composition so the
+    container can defer expensive services, compose provider lifecycles, and
+    support env-backed binding and configuration hooks without reintroducing
+    shadow architecture.
+  `acceptance`: Deferred registration/loading works end-to-end; provider
+    composition or extension is explicit and deterministic; env-backed binding
+    or configuration hooks exist; lazy/deferred behavior is reflected in the
+    compiled runtime path; docs and smoke coverage describe the surface; Docker
+    PHP lint is green; `tests/run-smoke-tests.sh` is green.
+  `links`: `Container.php`, `ContainerInterface.php`, `Configuration/CreateContainerConfig.php`, `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`, `DependencyInjection/Dependencies/Providers/ServiceProviderInterface.php`, `DependencyInjection/Flows/BootProviders.php`, `Runtime/LazyProxy.php`
+
+- `id`: TODO-009
+  `created_at`: 2026-04-08 00:50 CEST
+  `updated_at`: 2026-04-08 01:23 CEST
+  `status`: done
+  `estimate`: large
+  `actual`: large
+  `outcome`: Add the context and diagnostics surface so the container can
+    explain itself with `validate()`, `describeService()`, and debug helpers
+    for services, plans, tags, aliases, and scope state while keeping the
+    public API DX-first.
+  `acceptance`: The public facade exposes an explicit context entrypoint or
+    equivalent, a validation path, and debug helpers for service, plan, tags,
+    aliases, and scope state; diagnostics explain compiled versus dynamic
+    resolution paths; docs describe the new surface; Docker PHP lint is green;
+    `tests/run-smoke-tests.sh` is green.
+  `links`: `Container.php`, `ContainerInterface.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`, `docs/Container.md`, `docs/concepts/resolution-flow.md`
+
+- `id`: TODO-010
+  `created_at`: 2026-04-08 00:50 CEST
+  `updated_at`: 2026-04-08 01:23 CEST
+  `status`: done
+  `estimate`: large
+  `actual`: large
+  `outcome`: Build a benchmark and performance gate suite that can measure
+    cold, warm, and hot container paths, deep and wide object graphs,
+    compiled-runtime memory cost, and worker-safe runtime behavior so the
+    "fastest container" claim has a concrete regression harness.
+  `acceptance`: Benchmark scripts exist for cold boot, warm boot, cached get,
+    uncached resolve, deep graph, wide graph, scoped service, lazy service,
+    and compile-time paths; the suite records memory cost and runtime
+    behavior; docs explain how to run it; Docker PHP lint remains green;
+    `tests/run-smoke-tests.sh` remains green after the related changes.
+  `links`: `tests/`, `tests/run-smoke-tests.sh`, `docs/architecture.md`, `docs/concepts/resolution-flow.md`
+
 - `id`: TODO-006
   `created_at`: 2026-04-08 00:30 CEST
   `updated_at`: 2026-04-08 00:50 CEST

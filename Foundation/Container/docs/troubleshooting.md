@@ -45,6 +45,8 @@ Provider order is deterministic:
 
 If boot fails, verify that register phase wrote the required services first.
 
+If providers depend on each other, make sure each provider reports the dependency in `dependsOn()`.
+
 ## Compiled Cache Issues
 
 If compiled artifacts are not being used:
@@ -56,7 +58,29 @@ If compiled artifacts are not being used:
 
 If artifacts look stale, use `flushCompiled()` or bump `cacheVersion`.
 
+If a compiled service is still resolving dynamically, it may be outside the compiled hot path on purpose. Check `describeService()` and `debugPlan()` before assuming a cache miss.
+
+## Context Views
+
+If `forContext()` does not feed a scalar argument:
+
+1. make sure the parameter name matches the context key exactly
+2. make sure the target actually expects a scalar or non-service argument
+3. check whether the service is a singleton that was already resolved with an earlier context
+
+Context values are used as named fallbacks, not as a second service registry.
+
+## Lifecycle Reset
+
+If tests or long-running workers need a clean slate:
+
+1. call `flush()` to clear user registrations, pools, scopes, and compiled artifacts
+2. call `reset()` when you want the same clean-runtime boundary under a clearer name
+
+Both operations are deterministic and leave the container ready for a fresh bootstrap.
+
 ## Validation Commands
 
 - lint: `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`
 - smoke suite: `./tests/run-smoke-tests.sh`
+- benchmarks: `./tests/run-benchmarks.sh`

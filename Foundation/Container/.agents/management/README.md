@@ -7,6 +7,7 @@ This folder is the execution memory layer.
 - Agent Harness installed into `Foundation/Container`
 - PHP language profile selected
 - architecture repack completed into explicit `Flows/`, `Capabilities/`, `Configuration/`, and `Foundation/` lanes
+- second-pass architecture refinement completed with `KernelFacade`, `ContainerConfig`, `EngineInterface`, and explicit injection `Methods/` + `Parameters/` lanes
 - one TODO item tracks migration of legacy root `how-to-*.md` docs
 - legacy generated docs and legacy test buckets removed in favor of a smaller canonical docs set and mirrored test lanes
 - no active bug items yet

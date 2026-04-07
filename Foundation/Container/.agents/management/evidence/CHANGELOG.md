@@ -17,4 +17,4 @@ Update rules:
 
 ## Current Ledger
 
-No completed evidence recorded yet.
+- `2026-04-07 04:05 CEST` | architecture refinement | accepted second-pass alignment with `KernelFacade`, `ContainerConfig`, `EngineInterface`, explicit injection `Methods/` + `Parameters/`, and reserved `Foundation/Time` + `Foundation/Ids`

@@ -22,6 +22,8 @@ Main units:
 
 - `Capabilities/Injection/InjectDependencies.php`
 - `Capabilities/Injection/Properties/PropertyInjector.php`
+- `Capabilities/Injection/Methods/MethodInjector.php`
+- `Capabilities/Injection/Parameters/ResolveMethodParameters.php`
 - `Capabilities/Invocation/InvokeAction.php`
 - `Capabilities/Invocation/CallableInvocation/InvocationExecutor.php`
 
@@ -29,6 +31,7 @@ This phase handles:
 
 - injectable properties
 - injectable methods
+- method parameter lists for post-instantiation calls
 - post-construct style callable execution
 
 ## Why The Split Exists

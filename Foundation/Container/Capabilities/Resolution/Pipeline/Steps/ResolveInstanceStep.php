@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\Capabilities\Resolution\Pipeline\Steps;
 
-use Avax\Container\Capabilities\Resolution\Engine\ResolutionEngineInterface;
+use Avax\Container\Capabilities\Resolution\Engine\EngineInterface;
 use Avax\Container\Capabilities\Resolution\Kernel\KernelContext;
 use Avax\Container\Capabilities\Resolution\Pipeline\Contracts\KernelStep;
 
@@ -14,7 +14,7 @@ use Avax\Container\Capabilities\Resolution\Pipeline\Contracts\KernelStep;
 final readonly class ResolveInstanceStep implements KernelStep
 {
     public function __construct(
-        private ResolutionEngineInterface $engine
+        private EngineInterface $engine
     ) {}
 
     public function __invoke(KernelContext $context) : void

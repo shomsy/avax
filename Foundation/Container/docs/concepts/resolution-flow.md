@@ -8,7 +8,10 @@ Public entry:
 
 - `Container::get()`
 - `Container::make()`
-- `Container::resolveContext()`
+
+Runtime entry:
+
+- `ContainerRuntimeInterface::resolveContext()`
 
 Flow entry:
 
@@ -17,6 +20,7 @@ Flow entry:
 Runtime owner:
 
 - `Capabilities/Resolution/Kernel/ContainerKernel.php`
+- `Capabilities/Resolution/Kernel/KernelFacade.php`
 
 Ordered execution:
 

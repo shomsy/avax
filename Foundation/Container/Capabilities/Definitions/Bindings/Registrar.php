@@ -6,6 +6,7 @@ namespace Avax\Container\Capabilities\Definitions\Bindings;
 
 use Avax\Container\Capabilities\Definitions\Contracts\BindingBuilderInterface as BindingBuilderInterface;
 use Avax\Container\Capabilities\Definitions\Contracts\ContextBuilderInterface as ContextBuilderInterface;
+use Avax\Container\Capabilities\Definitions\Contracts\RegistryInterface;
 use Avax\Container\Capabilities\Scopes\Lifetimes\ServiceLifetime;
 use Avax\Container\Capabilities\Definitions\Store\DefinitionStore;
 use Avax\Container\Capabilities\Definitions\Store\ServiceDefinition;
@@ -18,7 +19,7 @@ use Avax\Container\Capabilities\Definitions\Store\ServiceDefinition;
  * It acts as the "Writer" to the {@see DefinitionStore}.
  *
  */
-readonly class Registrar
+readonly class Registrar implements RegistryInterface
 {
     /**
      * Initializes the registrar with a target storage.

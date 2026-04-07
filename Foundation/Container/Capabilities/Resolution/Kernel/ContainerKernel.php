@@ -5,17 +5,12 @@ declare(strict_types=1);
 namespace Avax\Container\Capabilities\Resolution\Kernel;
 
 use Avax\Container\Capabilities\Definitions\Store\DefinitionStore;
-use Avax\Container\Capabilities\Definitions\Store\ServiceDefinition;
 use Avax\Container\Capabilities\Injection\Reports\InjectionReport;
 use Avax\Container\Capabilities\Observability\Telemetry\Telemetry;
 use Avax\Container\Capabilities\Prototypes\Model\ServicePrototype;
-use Avax\Container\Capabilities\Resolution\Errors\ContainerException;
-use Avax\Container\Capabilities\Resolution\Pipeline\ResolutionPipelineFactory;
-use Avax\Container\Capabilities\Scopes\Lifetimes\ServiceLifetime;
 use Avax\Container\Capabilities\Scopes\ScopeManager;
 use Avax\Container\Configuration\KernelConfig;
-use ReflectionClass;
-use Throwable;
+use Avax\Container\Capabilities\Resolution\Pipeline\ResolutionPipelineFactory;
 
 /**
  * Internal runtime owner for resolution, invocation, scopes, and diagnostics.
@@ -25,6 +20,8 @@ final readonly class ContainerKernel
     private KernelRuntime $runtime;
 
     private KernelState $state;
+
+    private KernelFacade $facade;
 
     public function __construct(
         private DefinitionStore $definitions,
@@ -37,133 +34,91 @@ final readonly class ContainerKernel
 
         $this->runtime = new KernelRuntime(pipeline: $pipeline, invoker: $config->invoker);
         $this->state   = new KernelState;
+        $this->facade  = new KernelFacade(
+            definitions: $definitions,
+            config     : $config,
+            runtime    : $this->runtime,
+            state      : $this->state
+        );
     }
 
     public function resolveContext(KernelContext $context) : mixed
     {
-        if ($this->scopes()->has(abstract: $context->serviceId)) {
-            return $this->scopes()->get(abstract: $context->serviceId);
-        }
-
-        return $this->runtime->resolveContext(context: $context);
+        return $this->facade->resolveContext(context: $context);
     }
 
     public function has(string $id) : bool
     {
-        if ($this->definitions->has(abstract: $id) || $this->scopes()->has(abstract: $id)) {
-            return true;
-        }
-
-        if (! class_exists(class: $id)) {
-            return false;
-        }
-
-        try {
-            return (new ReflectionClass(objectOrClass: $id))->isInstantiable();
-        } catch (Throwable) {
-            return false;
-        }
+        return $this->facade->has(id: $id);
     }
 
     public function scopes() : ScopeManager
     {
-        return $this->config->scopes;
+        return $this->facade->scopes();
     }
 
     public function get(string $id) : mixed
     {
-        if ($this->scopes()->has(abstract: $id)) {
-            return $this->scopes()->get(abstract: $id);
-        }
-
-        return $this->runtime->get(id: $id);
+        return $this->facade->get(id: $id);
     }
 
     public function instance(string $abstract, object $instance) : void
     {
-        $this->scopes()->instance(abstract: $abstract, instance: $instance);
-
-        $definition = $this->definitions->get(abstract: $abstract) ?? new ServiceDefinition(abstract: $abstract);
-        $definition->concrete = $instance;
-        $definition->lifetime = ServiceLifetime::Singleton;
-
-        $this->definitions->add(definition: $definition);
+        $this->facade->instance(abstract: $abstract, instance: $instance);
     }
 
     public function make(string $id, array $parameters = []) : object
     {
-        return $this->runtime->make(id: $id, parameters: $parameters);
+        return $this->facade->make(id: $id, parameters: $parameters);
     }
 
     public function resolve(ServicePrototype $prototype) : mixed
     {
-        return $this->runtime->resolve(prototype: $prototype);
+        return $this->facade->resolve(prototype: $prototype);
     }
 
     public function call(callable|string $callable, array $parameters = []) : mixed
     {
-        return $this->runtime->call(callable: $callable, parameters: $parameters);
+        return $this->facade->call(callable: $callable, parameters: $parameters);
     }
 
     public function injectInto(object $target) : object
     {
-        return $this->runtime->injectInto(target: $target);
+        return $this->facade->injectInto(target: $target);
     }
 
     public function beginScope() : void
     {
-        $this->scopes()->beginScope();
+        $this->facade->beginScope();
     }
 
     public function endScope() : void
     {
-        $this->scopes()->endScope();
+        $this->facade->endScope();
     }
 
     public function canInject(object $target) : bool
     {
-        $report = $this->inspectInjection(target: $target);
-
-        return $report->injectedProperties !== [] || $report->injectedMethods !== [];
+        return $this->facade->canInject(target: $target);
     }
 
     public function inspectInjection(object|null $target = null) : InjectionReport
     {
-        if ($target === null) {
-            throw new ContainerException(message: 'inspectInjection requires a target object.');
-        }
-
-        $prototype = $this->config->prototypeFactory->createFor(class: $target::class);
-
-        $properties = array_map(static fn($property) => $property->type ?? 'mixed', $prototype->injectedProperties);
-        $methods    = array_map(
-            static fn($method) => array_map(static fn($parameter) => $parameter->type ?? 'mixed', $method->parameters),
-            $prototype->injectedMethods
-        );
-
-        return new InjectionReport(
-            target            : $target,
-            injectedProperties: $properties,
-            injectedMethods   : $methods,
-            success           : $properties !== [] || $methods !== []
-        );
+        return $this->facade->inspectInjection(target: $target);
     }
 
     public function exportMetrics() : string
     {
-        return $this->telemetry()->exportMetrics();
+        return $this->facade->exportMetrics();
     }
 
     public function telemetry() : Telemetry
     {
-        return $this->state->getOrInit(
-            property: 'telemetry',
-            factory : fn() => new Telemetry(metrics: $this->config->metrics)
-        );
+        return $this->facade->telemetry();
     }
 
     public function definitions() : DefinitionStore
     {
-        return $this->definitions;
+        return $this->facade->definitions();
     }
 }

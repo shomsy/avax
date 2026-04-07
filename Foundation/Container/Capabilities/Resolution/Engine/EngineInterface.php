@@ -11,7 +11,7 @@ use Avax\Container\Capabilities\Resolution\Kernel\KernelContext;
 /**
  * Internal contract for the shared resolution engine.
  */
-interface ResolutionEngineInterface
+interface EngineInterface
 {
     public function setContainer(ContainerRuntimeInterface $container) : void;
 

@@ -38,8 +38,6 @@ Resolution and execution:
 - `get()`
 - `has()`
 - `make()`
-- `resolveContext()`
-- `resolve()`
 - `call()`
 - `injectInto()`
 
@@ -58,3 +56,9 @@ If a feature can stay behind the facade, keep it there.
 
 If a feature needs shared runtime mechanics, move that logic into the correct capability slice and keep `Container`
 thin.
+
+`resolveContext()` exists on the runtime-facing contract used by nested resolution chains. It is not part of the
+public `ContainerInterface`.
+
+`resolve(ServicePrototype)` remains a concrete-class helper for prototype-driven runtime flows. It is not part of the
+public `ContainerInterface`.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Capabilities\Resolution\Pipeline\Steps;
 
-use Avax\Container\Capabilities\Resolution\Engine\ResolutionEngineInterface;
+use Avax\Container\Capabilities\Resolution\Engine\EngineInterface;
 use Avax\Container\Capabilities\Resolution\Kernel\KernelContext;
 use Avax\Container\Capabilities\Resolution\Pipeline\Steps\ResolveInstanceStep;
 use PHPUnit\Framework\TestCase;
@@ -18,7 +18,7 @@ final class ResolveInstanceStepTest extends TestCase
         $expectedInstance       = new stdClass;
         $expectedInstance->test = 'value';
 
-        $engine = $this->createMock(ResolutionEngineInterface::class);
+        $engine = $this->createMock(EngineInterface::class);
         $engine->expects(invocationRule: $this->once())
             ->method(constraint: 'resolve')
             ->with($this->isInstanceOf(className: KernelContext::class))
@@ -35,7 +35,7 @@ final class ResolveInstanceStepTest extends TestCase
 
     public function test_step_handles_engine_exceptions() : void
     {
-        $engine = $this->createMock(ResolutionEngineInterface::class);
+        $engine = $this->createMock(EngineInterface::class);
         $engine->expects(invocationRule: $this->once())
             ->method(constraint: 'resolve')
             ->willThrowException(exception: new RuntimeException(message: 'Engine failed'));

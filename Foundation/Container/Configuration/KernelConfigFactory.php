@@ -10,7 +10,7 @@ use Avax\Container\Capabilities\Observability\Metrics\CollectMetrics;
 use Avax\Container\Capabilities\Observability\Timeline\ResolutionTimeline;
 use Avax\Container\Capabilities\Policies\ContainerPolicy;
 use Avax\Container\Capabilities\Prototypes\Contracts\ServicePrototypeFactoryInterface;
-use Avax\Container\Capabilities\Resolution\Engine\ResolutionEngineInterface;
+use Avax\Container\Capabilities\Resolution\Engine\EngineInterface;
 use Avax\Container\Capabilities\Scopes\ScopeManager;
 
 /**
@@ -19,7 +19,7 @@ use Avax\Container\Capabilities\Scopes\ScopeManager;
 final class KernelConfigFactory
 {
     public function create(
-        ResolutionEngineInterface        $engine,
+        EngineInterface                  $engine,
         InjectDependencies               $injector,
         InvokeAction                     $invoker,
         ScopeManager                     $scopes,

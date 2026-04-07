@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\Container\Tests\Capabilities\Injection;
 
 use Avax\Container\Capabilities\Injection\InjectDependencies;
+use Avax\Container\Capabilities\Injection\Methods\MethodInjector;
+use Avax\Container\Capabilities\Injection\Parameters\ResolveMethodParameters;
 use Avax\Container\Capabilities\Injection\Properties\PropertyInjector;
 use Avax\Container\Capabilities\Prototypes\Contracts\ServicePrototypeFactoryInterface;
 use Avax\Container\Capabilities\Prototypes\Model\MethodPrototype;
@@ -37,7 +39,9 @@ final class InjectDependenciesTest extends TestCase
         $injector  = new InjectDependencies(
             servicePrototypeFactory: $factory,
             propertyInjector       : new PropertyInjector(container: $container),
-            resolver               : new DependencyResolver,
+            methodInjector         : new MethodInjector(
+                parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver)
+            ),
             container              : $container
         );
 
@@ -66,7 +70,9 @@ final class InjectDependenciesTest extends TestCase
         $injector  = new InjectDependencies(
             servicePrototypeFactory: $factory,
             propertyInjector       : new PropertyInjector(container: $container),
-            resolver               : new DependencyResolver,
+            methodInjector         : new MethodInjector(
+                parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver)
+            ),
             container              : $container
         );
 

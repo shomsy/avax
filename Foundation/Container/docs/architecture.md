@@ -2,114 +2,116 @@
 
 ## Reading Order
 
-Read this component in this order:
+Read the component in this order:
 
 1. `Container.php`
-2. `DependencyInjection/Flow/`
-3. `DependencyInjection/Capability/`
-4. `DependencyInjection/Configuration/`
-5. `DependencyInjection/Foundation/`
+2. root flow entries under `DependencyInjection/`
+3. internal work areas under `DependencyInjection/*`
+4. tests under `tests/DependencyInjection/*`
 
-That is the canonical mental model:
+That order matches the intended mental model:
 
-- folder says flow or capability
-- unit says responsibility
-- function says exact action
-
-## Repo Root vs System Root
-
-The component root is the operational repo root.
-
-The system root is `DependencyInjection/`.
-
-Repo-root concerns such as docs, agents, root compatibility guides, and the public
-surface stay outside the structural story. Inside `DependencyInjection/`, the
-architecture must scream.
+- file says the action
+- folder says the owned work area
+- `Container` stays thin
 
 ## Public Surface
 
 - `Container.php`: stable facade
 - `ContainerInterface.php`: public contract
-- `BindingBuilderInterface.php`, `ContextBuilderInterface.php`, `RegistryInterface.php`: stable write-side contracts
-- `ScopeManagerInterface.php`, `InjectionReport.php`: stable diagnostics and scope contracts
 
-`Container` is intentionally thin. It delegates to explicit flow entry units and does not own runtime machinery.
+The facade delegates to small flow owners:
 
-## Flow
+- `RegisterServices`
+- `ResolveService`
+- `CallFunction`
+- `OpenScope`
+- `CloseScope`
 
-Flow are system behaviors, not business use cases.
+`BootProviders` and `CreateContainer` stay explicit but outside the facade because they are assembly and lifecycle flows, not always-on facade methods.
 
-- `DependencyInjection/Flow/RegisterBindings`: write-side registration flow
-- `DependencyInjection/Flow/BootProviders`: deterministic register-then-boot provider lifecycle
-- `DependencyInjection/Flow/ResolveService`: service lookup and build flow
-- `DependencyInjection/Flow/InvokeCallable`: callable execution flow
-- `DependencyInjection/Flow/BeginScope`: scope entry flow
-- `DependencyInjection/Flow/EndScope`: scope exit flow
+## Flow Entries
 
-## Capability
+Every root file under `DependencyInjection/` owns one obvious action:
 
-Capability are shared runtime abilities used by more than one flow.
+- `CreateContainer`: assemble the runtime
+- `RegisterServices`: write registrations
+- `ResolveService`: read and build services
+- `CallFunction`: execute callables through the container
+- `OpenScope`: enter a scope
+- `CloseScope`: leave a scope
+- `BootProviders`: register then boot providers
 
-- `DependencyInjection/Capability/Definitions`: bindings, contextual rules, extenders, definition storage
-- `DependencyInjection/Capability/Providers`: provider contracts and built-in provider implementations
-- `DependencyInjection/Capability/Resolution`: kernel runtime, kernel facade, engine, pipeline, resolution errors
-- `DependencyInjection/Capability/Injection`: property, method, and parameter injection support
-- `DependencyInjection/Capability/Invocation`: callable normalization and execution
-- `DependencyInjection/Capability/Scopes`: scope storage and lifetime strategies
-- `DependencyInjection/Capability/Prototypes`: reflection analysis, prototype cache, prototype models, factories
-- `DependencyInjection/Capability/Policies`: resolution policy decisions
-- `DependencyInjection/Capability/Observability`: metrics, trace, timeline, telemetry
+## Internal Work Areas
 
-## Configuration
+`DependencyInjection/Registrations/`
 
-`DependencyInjection/Configuration/` assembles the runtime. It owns:
+- stores service registrations
+- stores tags and extenders
+- stores target-specific overrides
 
-- `ContainerBuilder`
-- `ContainerConfig`
-- `KernelConfig`
-- `KernelConfigFactory`
-- `AppFactory`
-- `Settings`
+`DependencyInjection/Resolution/`
 
-Configuration wires collaborators. It must not absorb business or runtime behavior that belongs to flows/capabilities.
+- owns the runtime resolver
+- builds constructor arguments
+- creates and caches blueprints
+- decides storage after resolution
 
-## Foundation
+`DependencyInjection/Calls/`
 
-`DependencyInjection/Foundation/` is reserved for tiny neutral primitives only.
+- normalizes callables
+- resolves callable arguments
 
-The current placeholders are:
+`DependencyInjection/Injection/`
 
-- `DependencyInjection/Foundation/Time`
-- `DependencyInjection/Foundation/Ids`
+- injects properties
+- injects methods
+- reports injectable targets
 
-They are intentionally quiet until real primitives exist. The point is to reserve honest homes without inventing fake
-helpers.
+`DependencyInjection/Scopes/`
 
-## Root Owner Patterns
+- owns shared and scoped storage
+- exposes scope lifecycle control
+- defines lifetime names
 
-- `Container`: facade
-- `RegisterBindings`: coordinator
-- `BootProviders`: coordinator
-- `ResolveService`: flow entry over the resolution capability
-- `ContainerKernel`: kernel owner
-- `KernelFacade`: internal kernel facade over runtime/state/stores
-- `ResolutionPipeline`: pipeline
-- provider interfaces: ports
-- most capability units: explicit owner units, not forced facades
+`DependencyInjection/Providers/`
 
-## Removed Legacy Shape
+- keeps only the provider contract
 
-These roots are no longer canonical:
+`DependencyInjection/Configuration/`
 
-- `Core/`
-- `Features/`
-- `Guard/`
-- `Observe/`
-- `Http/`
-- `Providers/` as a top-level story
-- `Tools/`
+- keeps assembly options and settings
 
-Those names described technical buckets. The new tree describes ownership.
+`DependencyInjection/Observability/`
 
-The `DependencyInjection/` root stays intentionally. It is the system root, not
-a compatibility layer.
+- records metrics
+- records timeline events
+- exports telemetry
+
+`DependencyInjection/Policies/`
+
+- decides whether a resolution request is allowed
+
+`DependencyInjection/Errors/`
+
+- owns container-facing exception boundaries
+
+`DependencyInjection/Foundation/`
+
+- keeps tiny neutral primitives only
+
+## Naming Rules In This Repo
+
+- root flow files use verb-first names
+- work areas use plain nouns
+- method names describe the exact action
+- generic buckets such as `Core`, `Features`, `Builder`, and old `Flow/Capability/` halls are not canonical anymore
+
+## Current Quality Boundary
+
+The shipped boundary is defended by:
+
+- Docker PHP lint across all repo PHP files
+- Docker smoke tests under `tests/DependencyInjection/*`
+
+There is no Composer or PHPUnit harness in this component root today.

@@ -1,8 +1,15 @@
-Naravno Miloš — evo **kompletno rekonstruisanog i finalno formatiranog MASTER PROMPT-a**, tačno onako kako si ga
-napisao, ali ispeglan kao perfektan `.md` dokument bez ijedne greške, spreman za GitHub, za AI alate, ili za tvoje
-sopstvene instrukcije.
+## Legacy Compatibility Note
 
-Sve tvoje dopune su pažljivo integrisane.
+This file is retained only for backward compatibility.
+
+Authoritative coding and naming guidance for this repository lives in:
+
+- `.agents/.rules/governance/standards/coding/how-to-coding-standards.md`
+- `.agents/.rules/governance/standards/coding/naming-standard.md`
+- `docs/architecture.md`
+- `docs/glossary.md`
+
+The content below is historical and must not be treated as the active repository standard.
 
 ---
 
@@ -1323,6 +1330,5 @@ If a structure looks impressive but reads worse, it failed.
 If a structure looks simple and remains strong under pressure, it succeeded.
 
 ```
-
 
 

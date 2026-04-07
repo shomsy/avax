@@ -1,34 +1,40 @@
 # Container Docs
 
-This component is organized as a screaming runtime architecture.
+This component ships one container story:
 
-- Public surface: [`Container`](./Container.md)
-- Structural overview: [`architecture.md`](./architecture.md)
-- Concepts:
-  - [`resolution-flow.md`](./concepts/resolution-flow.md)
-  - [`injection-and-instantiation.md`](./concepts/injection-and-instantiation.md)
-  - [`scopes.md`](./concepts/scopes.md)
-  - [`lifetimes.md`](./concepts/lifetimes.md)
-  - [`policies-and-guards.md`](./concepts/policies-and-guards.md)
-- Reference terms: [`glossary.md`](./glossary.md)
-- Failure handling: [`troubleshooting.md`](./troubleshooting.md)
-
-The component root is the operational repo root for this library component.
+- public facade: [`Container.md`](./Container.md)
+- structural map: [`architecture.md`](./architecture.md)
+- concepts: [`concepts/index.md`](./concepts/index.md)
+- reference terms: [`glossary.md`](./glossary.md)
+- failure handling: [`troubleshooting.md`](./troubleshooting.md)
 
 The system root is `DependencyInjection/`.
 
-Production code is split into four lanes:
+Root files under `DependencyInjection/` are public flow entries:
 
-- `DependencyInjection/Flow/`: what the container system does
-- `DependencyInjection/Capability/`: what flows use to do it
-- `DependencyInjection/Configuration/`: how the runtime is assembled
-- `DependencyInjection/Foundation/`: tiny neutral primitives only
+- `CreateContainer.php`
+- `RegisterServices.php`
+- `ResolveService.php`
+- `CallFunction.php`
+- `OpenScope.php`
+- `CloseScope.php`
+- `BootProviders.php`
 
-Current public/system flow entries:
+Subfolders under `DependencyInjection/` are internal work areas:
 
-- `RegisterBindings`
-- `BootProviders`
-- `ResolveService`
-- `InvokeCallable`
-- `BeginScope`
-- `EndScope`
+- `Registrations/`
+- `Resolution/`
+- `Calls/`
+- `Injection/`
+- `Scopes/`
+- `Providers/`
+- `Configuration/`
+- `Observability/`
+- `Policies/`
+- `Errors/`
+- `Foundation/`
+
+Local validation and smoke checks:
+
+- Docker PHP lint: `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`
+- Docker smoke suite: [`tests/run-smoke-tests.sh`](../tests/run-smoke-tests.sh)

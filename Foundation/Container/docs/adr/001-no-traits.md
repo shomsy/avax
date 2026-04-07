@@ -16,8 +16,8 @@ The Avax Container aims for maximum observability and strict separation of conce
 
 We decided to prohibit the use of Traits for core resolution logic. Instead, we use **Composition**.
 
-- If logic needs to be shared, it must be extracted into a separate **Action** or **Service** class.
-- The consumer then receives this service via the constructor or the Pipeline.
+- If logic needs to be shared, it must be extracted into a separate owner class.
+- The consumer then receives that collaborator through explicit constructor wiring.
 
 ## Consequences
 

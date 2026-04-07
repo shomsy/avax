@@ -1,29 +1,35 @@
 # Scopes
 
-Scopes are the runtime isolation mechanism of the container.
+Scopes are the isolation boundary for scoped services.
 
-## Main Units
+## Main Files
 
-- `DependencyInjection/Capability/Scopes/ScopeManager.php`
-- `DependencyInjection/Capability/Scopes/ScopeRegistry.php`
-- `DependencyInjection/Flow/BeginScope/BeginScope.php`
-- `DependencyInjection/Flow/EndScope/EndScope.php`
+- `DependencyInjection/OpenScope.php`
+- `DependencyInjection/CloseScope.php`
+- `DependencyInjection/Scopes/ScopeInterface.php`
+- `DependencyInjection/Scopes/ManageScopes.php`
+- `DependencyInjection/Scopes/ScopeStore.php`
 
 ## Behavior
 
-- singleton instances live across the whole runtime
-- scoped instances live only inside the current active scope
-- transient instances are not stored
+- shared services live in global runtime storage
+- scoped services live only in the current active scope
+- transient services are never stored
+
+## Important Rule
+
+Scoped services fail closed when no scope is active.
+
+The resolver will not silently store a scoped instance in shared storage.
 
 ## Public Usage
 
 - `Container::beginScope()`
 - `Container::endScope()`
-- `Container::scopes()`
+- `Container::scopes()->withinScope(...)`
 
-## Ownership Rule
+## Ownership Split
 
-Scope mechanics stay in `DependencyInjection/Capability/Scopes`.
-
-Scope entry and exit stay in `DependencyInjection/Flow/BeginScope` and `DependencyInjection/Flow/EndScope`
-because they are public system actions.
+- flow entry files own entering and leaving scopes
+- `ManageScopes` owns scope control
+- `ScopeStore` owns actual stored instances

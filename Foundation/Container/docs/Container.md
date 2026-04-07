@@ -1,30 +1,8 @@
 # Container
 
-`Container` is the stable public facade of the component.
+`Container` is the stable public facade of this component.
 
-Its contract stays in the root `Avax\Container\...` namespace even though the
-runtime implementation lives under `DependencyInjection/`.
-
-## What It Owns
-
-It exposes the public API for:
-
-- binding services
-- resolving services
-- invoking callables
-- injecting into existing objects
-- beginning and ending scopes
-- exporting metrics
-
-It does not own low-level runtime logic. It delegates to:
-
-- `DependencyInjection/Flow/RegisterBindings`
-- `DependencyInjection/Flow/ResolveService`
-- `DependencyInjection/Flow/InvokeCallable`
-- `DependencyInjection/Flow/BeginScope`
-- `DependencyInjection/Flow/EndScope`
-
-## Public API Shape
+## What It Exposes
 
 Registration:
 
@@ -53,12 +31,29 @@ Scopes and diagnostics:
 - `inspectInjection()`
 - `exportMetrics()`
 
-## Ownership Rule
+## What It Delegates To
 
-If a feature can stay behind the facade, keep it there.
+- `RegisterServices`
+- `ResolveService`
+- `CallFunction`
+- `OpenScope`
+- `CloseScope`
 
-If a feature needs shared runtime mechanics, move that logic into the correct capability slice and keep `Container`
-thin.
+The facade does not own resolution internals, storage, blueprint creation, or telemetry wiring.
 
-`resolveContext()` exists on the runtime-facing contract used by nested resolution chains. It is not part of the
-public `ContainerInterface`.
+## Public Behavior Rules
+
+- `get()` resolves or returns a cached service
+- `make()` resolves an object with explicit constructor overrides
+- `call()` supports closures, callable arrays, `Class@method`, `Class::method`, and invokable class strings
+- scoped services require an active scope
+- missing services throw a not-found exception
+
+## Public Companion Types
+
+The facade uses a small set of explicit companion types under `DependencyInjection/`:
+
+- `Registrations/ServiceRegistration.php`
+- `Registrations/RegisterForTarget.php`
+- `Injection/InjectionReport.php`
+- `Scopes/ScopeInterface.php`

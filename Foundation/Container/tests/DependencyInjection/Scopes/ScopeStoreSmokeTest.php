@@ -7,11 +7,7 @@ require_once dirname(__DIR__, 2) . '/bootstrap.php';
 use Avax\Container\DependencyInjection\Scopes\ScopeStore;
 
 $store = new ScopeStore();
-$shared = new stdClass();
 $scoped = new ArrayObject();
-
-$store->share('shared', $shared);
-assertSame($shared, $store->get('shared'), 'Shared values should be readable without a scope.');
 
 assertThrows(
     \Avax\Container\Errors\ContainerException::class,
@@ -27,6 +23,6 @@ $store->close();
 assertSame(null, $store->get('scoped'), 'Scoped values should disappear after scope close.');
 
 $store->terminate();
-assertSame(null, $store->get('shared'), 'Terminate should clear shared values.');
+assertSame(null, $store->get('scoped'), 'Terminate should leave the scoped store empty.');
 
 echo basename(__FILE__) . " ok\n";

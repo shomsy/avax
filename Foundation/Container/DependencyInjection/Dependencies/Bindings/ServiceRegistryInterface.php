@@ -9,6 +9,8 @@ namespace Avax\Container\DependencyInjection\Dependencies\Bindings;
  */
 interface ServiceRegistryInterface
 {
+    public function alias(string $alias, string $abstract) : void;
+
     public function bind(string $abstract, mixed $concrete = null) : ServiceRegistration;
 
     public function singleton(string $abstract, mixed $concrete = null) : ServiceRegistration;
@@ -18,6 +20,8 @@ interface ServiceRegistryInterface
     public function instance(string $abstract, object $instance) : void;
 
     public function extend(string $abstract, callable $closure) : void;
+
+    public function decorate(string $abstract, callable|object|string $decorator) : void;
 
     public function when(string $consumer) : RegisterForTarget;
 

@@ -25,6 +25,44 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: TODO-006
+  `created_at`: 2026-04-08 00:30 CEST
+  `updated_at`: 2026-04-08 00:50 CEST
+  `status`: done
+  `estimate`: large
+  `actual`: large
+  `outcome`: Ship the generated compiled runtime layer by adding
+    `Compilation/` plus `Runtime/` owners, compiling direct service methods
+    into a container artifact, routing hot-path resolution through the
+    compiled runtime, separating shared singleton storage into `ServicePool`,
+    and completing the missing DX surface for `alias()`, `tagged()`,
+    `decorate()`, `lazy()`, and `compileContainer()`.
+  `acceptance`: Generated compiled runtime artifacts are written and loaded
+    from disk; compiled hot-path metrics are emitted; aliases, tags,
+    decoration, lazy proxies, and explicit compile commands are exposed on the
+    public facade; Docker PHP lint is green; `tests/run-smoke-tests.sh` is
+    green; no open strict-review findings remain in scope.
+  `links`: `Compilation/CompileContainer.php`, `Compilation/MethodEmitter.php`, `Compilation/ServiceCompiler.php`, `Runtime/HotPathInliner.php`, `Runtime/LazyProxy.php`, `Runtime/ServicePool.php`, `Container.php`, `ContainerInterface.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `tests/DependencyInjection/Flows/CreateContainer/CompiledContainerSmokeTest.php`, `tests/DependencyInjection/Flows/RegisterServices/RegisterServicesSmokeTest.php`, `tests/Runtime/ServicePoolSmokeTest.php`
+
+- `id`: TODO-005
+  `created_at`: 2026-04-07 23:50 CEST
+  `updated_at`: 2026-04-08 00:16 CEST
+  `status`: done
+  `estimate`: large
+  `actual`: large
+  `outcome`: Ship a production-grade compile/cache layer by compiling service
+    blueprints plus resolve plans into versioned disk artifacts, moving the
+    runtime build and injection path onto compiled metadata, exposing
+    warm/flush/rebuild commands, and extending telemetry plus smoke coverage
+    for compiled cache hits and lifecycle control.
+  `acceptance`: The runtime resolves constructor and injection metadata from
+    compiled plans instead of reflection objects; compiled artifacts are
+    written under `cacheDir` with `cacheVersion`; public API exposes
+    `warmCompiled()`, `flushCompiled()`, and `rebuildCompiled()`; Docker PHP
+    lint is green; `tests/run-smoke-tests.sh` is green; no open strict-review
+    findings remain in scope.
+  `links`: `Configuration/CreateContainerConfig.php`, `Container.php`, `ContainerInterface.php`, `DependencyInjection/Dependencies/Blueprints/BlueprintCache.php`, `DependencyInjection/Dependencies/Blueprints/CreateServiceBlueprint.php`, `DependencyInjection/Dependencies/Resolution/ResolvePlan.php`, `DependencyInjection/Dependencies/Resolution/BuildService.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `tests/DependencyInjection/Flows/CreateContainer/CompiledCacheSmokeTest.php`
+
 - `id`: TODO-004
   `created_at`: 2026-04-07 15:20 CEST
   `updated_at`: 2026-04-07 23:45 CEST

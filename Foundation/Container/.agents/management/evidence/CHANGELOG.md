@@ -17,6 +17,8 @@ Update rules:
 
 ## Current Ledger
 
+- `2026-04-08 00:50 CEST` | generated compiled runtime | closed `TODO-006` by shipping `Compilation/` plus `Runtime/`, generating a compiled container artifact for hot-path resolution, splitting shared singleton storage into `ServicePool`, adding alias/tagged/decorate/lazy/compile surface, and rerunning Docker lint plus the full smoke suite
+- `2026-04-08 00:16 CEST` | production compile cache | closed `TODO-005` by shipping compiled blueprints plus resolve plans, versioned disk artifacts, public warm/flush/rebuild commands, compiled runtime execution paths, and smoke coverage for cache lifecycle plus disk hits
 - `2026-04-07 23:45 CEST` | strict convergence review | hardened the scope boundary to raise `ContainerException`, kept the `openScope` / `closeScope` rename, and reran Docker lint plus the full smoke suite with no open findings
 - `2026-04-07 23:43 CEST` | strict convergence review | finalized the scope API rename to `openScope` / `closeScope`, reran the full Docker lint sweep and smoke suite, and verified there are no blocking findings left in the container refactor
 - `2026-04-07 22:24 CEST` | strict convergence review | refreshed `TODO-004` evidence after adding direct work-area smoke coverage for registrations, resolution, calls, scopes, configuration, providers, and PSR error boundaries, then reran Docker lint plus the full smoke suite with no open findings

@@ -4,18 +4,27 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Scopes;
 
+use Avax\Container\Runtime\ServicePool;
+
 final readonly class ManageScopes implements ScopeInterface
 {
-    public function __construct(private ScopeStore $store) {}
+    public function __construct(
+        private ScopeStore $store,
+        private ServicePool $pool
+    ) {}
 
     public function has(string $abstract) : bool
     {
-        return $this->store->has(abstract: $abstract);
+        return $this->store->has(abstract: $abstract) || $this->pool->has(abstract: $abstract);
     }
 
     public function get(string $abstract) : mixed
     {
-        return $this->store->get(abstract: $abstract);
+        if ($this->store->has(abstract: $abstract)) {
+            return $this->store->get(abstract: $abstract);
+        }
+
+        return $this->pool->get(abstract: $abstract);
     }
 
     public function set(string $abstract, mixed $instance) : void
@@ -25,7 +34,7 @@ final readonly class ManageScopes implements ScopeInterface
 
     public function instance(string $abstract, mixed $instance) : void
     {
-        $this->store->share(abstract: $abstract, instance: $instance);
+        $this->pool->set(abstract: $abstract, instance: $instance);
     }
 
     public function withinScope(callable $callback) : mixed
@@ -51,6 +60,7 @@ final readonly class ManageScopes implements ScopeInterface
 
     public function terminate() : void
     {
+        $this->pool->flush();
         $this->store->terminate();
     }
 }

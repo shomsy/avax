@@ -45,6 +45,17 @@ Provider order is deterministic:
 
 If boot fails, verify that register phase wrote the required services first.
 
+## Compiled Cache Issues
+
+If compiled artifacts are not being used:
+
+1. set `CreateContainerConfig::$cacheDir` to a writable directory
+2. keep `cacheVersion` stable for the deployment you want to serve
+3. call `warmCompiled()` after registrations are complete
+4. call `rebuildCompiled()` after deploys that change class structure
+
+If artifacts look stale, use `flushCompiled()` or bump `cacheVersion`.
+
 ## Validation Commands
 
 - lint: `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`

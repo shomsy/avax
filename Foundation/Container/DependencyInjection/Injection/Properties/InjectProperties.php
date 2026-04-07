@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Avax\Container\DependencyInjection\Injection\Properties;
 
 use Avax\Container\Errors\ContainerException;
-use Avax\Container\DependencyInjection\Injection\Attributes\Inject;
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ResolveRequest;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\ServiceBlueprint;
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
-use ReflectionNamedType;
-use ReflectionProperty;
-use ReflectionUnionType;
+use Closure;
 
 final class InjectProperties
 {
+    /** @var array<string, Closure(object, mixed): void> */
+    private array $writers = [];
+
     /**
      * @param array<string, mixed> $overrides
      */
@@ -26,52 +26,46 @@ final class InjectProperties
         ResolveRequest $request
     ) : void {
         foreach ($blueprint->injectableProperties as $property) {
-            $name = $property->getName();
-            $property->setAccessible(true);
+            $name = $property['name'];
 
-            if ($property->isReadOnly()) {
+            if ($property['readonly']) {
                 throw new ContainerException(message: "Cannot inject readonly property [{$name}] on [{$blueprint->class}].");
             }
 
             if (array_key_exists($name, $overrides)) {
-                $property->setValue($target, $overrides[$name]);
+                ($this->writerFor(class: $blueprint->class, property: $name))($target, $overrides[$name]);
                 continue;
             }
 
-            $serviceId = $this->serviceIdFor(property: $property);
+            $serviceId = $property['serviceId'];
             if ($serviceId === null) {
                 continue;
             }
 
-            $property->setValue(
+            ($this->writerFor(class: $blueprint->class, property: $name))(
                 $target,
                 $resolver->resolveRequest(request: $request->child(serviceId: $serviceId))
             );
         }
     }
 
-    private function serviceIdFor(ReflectionProperty $property) : string|null
+    /**
+     * @return Closure(object, mixed): void
+     */
+    private function writerFor(string $class, string $property) : Closure
     {
-        $attributes = $property->getAttributes(Inject::class);
-        if ($attributes !== []) {
-            $inject = $attributes[0]->newInstance();
-            if (is_string($inject->abstract) && $inject->abstract !== '') {
-                return $inject->abstract;
-            }
+        $key = $class . '::$' . $property;
+
+        if (isset($this->writers[$key])) {
+            return $this->writers[$key];
         }
 
-        $type = $property->getType();
-        if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
-            return $type->getName();
-        }
-        if ($type instanceof ReflectionUnionType) {
-            foreach ($type->getTypes() as $namedType) {
-                if ($namedType instanceof ReflectionNamedType && ! $namedType->isBuiltin()) {
-                    return $namedType->getName();
-                }
-            }
-        }
-
-        return null;
+        return $this->writers[$key] = Closure::bind(
+            static function (object $target, mixed $value) use ($property) : void {
+                $target->{$property} = $value;
+            },
+            null,
+            $class
+        );
     }
 }

@@ -8,9 +8,6 @@ use Avax\Container\Errors\ContainerException;
 
 final class ScopeStore
 {
-    /** @var array<string, mixed> */
-    private array $shared = [];
-
     /** @var array<int, array<string, mixed>> */
     private array $scopes = [];
 
@@ -18,12 +15,10 @@ final class ScopeStore
     {
         if ($this->scopes !== []) {
             $currentScope = $this->scopes[array_key_last($this->scopes)];
-            if (array_key_exists($abstract, $currentScope)) {
-                return true;
-            }
+            return array_key_exists($abstract, $currentScope);
         }
 
-        return array_key_exists($abstract, $this->shared);
+        return false;
     }
 
     public function get(string $abstract) : mixed
@@ -35,7 +30,7 @@ final class ScopeStore
             }
         }
 
-        return $this->shared[$abstract] ?? null;
+        return null;
     }
 
     public function set(string $abstract, mixed $instance) : void
@@ -46,11 +41,6 @@ final class ScopeStore
 
         $lastIndex = array_key_last($this->scopes);
         $this->scopes[$lastIndex][$abstract] = $instance;
-    }
-
-    public function share(string $abstract, mixed $instance) : void
-    {
-        $this->shared[$abstract] = $instance;
     }
 
     public function open() : void
@@ -69,7 +59,6 @@ final class ScopeStore
 
     public function terminate() : void
     {
-        $this->shared = [];
         $this->scopes = [];
     }
 

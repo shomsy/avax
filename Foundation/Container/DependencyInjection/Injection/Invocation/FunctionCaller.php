@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Container\DependencyInjection\Injection\Invocation;
 
 use Avax\Container\Errors\ContainerException;
+use Avax\Container\DependencyInjection\Dependencies\Resolution\ResolvePlan;
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ResolveRequest;
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
 use Closure;
@@ -15,6 +16,9 @@ use ReflectionMethod;
 final class FunctionCaller
 {
     private ServiceResolver|null $resolver = null;
+
+    /** @var array<string, ResolvePlan> */
+    private array $plans = [];
 
     public function __construct(
         private readonly ResolveCallArguments $arguments
@@ -36,8 +40,8 @@ final class FunctionCaller
 
         $normalized = $this->normalizeTarget(target: $target);
         $reflection = $this->reflect(target: $normalized);
-        $arguments  = $this->arguments->resolve(
-            parameters: $reflection->getParameters(),
+        $arguments  = $this->arguments->resolvePlan(
+            plan     : $this->planFor(reflection: $reflection),
             overrides : $parameters,
             resolver  : $this->resolver,
             request   : $request ?? new ResolveRequest(serviceId: $this->nameOf(reflection: $reflection))
@@ -110,5 +114,29 @@ final class FunctionCaller
         }
 
         return 'call:' . $reflection->getName();
+    }
+
+    private function planFor(ReflectionFunctionAbstract $reflection) : ResolvePlan
+    {
+        $key = $this->planKeyOf(reflection: $reflection);
+
+        if (isset($this->plans[$key])) {
+            return $this->plans[$key];
+        }
+
+        return $this->plans[$key] = $this->arguments->createPlan(parameters: $reflection->getParameters());
+    }
+
+    private function planKeyOf(ReflectionFunctionAbstract $reflection) : string
+    {
+        if ($reflection instanceof ReflectionMethod) {
+            return 'method:' . $reflection->class . '::' . $reflection->getName();
+        }
+
+        if ($reflection instanceof ReflectionFunction && $reflection->isClosure()) {
+            return 'closure:' . ($reflection->getFileName() ?: 'internal') . ':' . $reflection->getStartLine() . ':' . $reflection->getEndLine();
+        }
+
+        return 'function:' . $reflection->getName();
     }
 }

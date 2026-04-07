@@ -1,6 +1,6 @@
 <?php
 
-use Avax\Container\Features\Think\Model\ServicePrototype;
+use Avax\Container\Capabilities\Prototypes\Model\ServicePrototype;
 
 return ServicePrototype::__set_state(array: [
     'class'              => 'stdClass',

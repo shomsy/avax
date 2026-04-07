@@ -23320,8 +23320,8 @@ Agents MUST follow this order:
 3. **Canonical Release or Publish Entrypoint**: `composer publish` (composer package)
 4. **Project-Specific Architecture Boundaries**: `Foundation/Auth/` - pure PHP authentication/authorization framework.
    - **Root Taxonomy**:
-     - `Auth/Flows/`: High-level business use-cases (Verb-Noun).
-     - `Auth/Capabilities/`: Domain enablers (Access, Identity, User, etc.).
+     - `Auth/Flow/`: High-level business use-cases (Verb-Noun).
+     - `Auth/Capability/`: Domain enablers (Access, Identity, User, etc.).
      - `Auth/Foundation/`: Low-level primitives (Clock, ID generation).
      - `Auth/Configuration/`: Setup and wiring logic.
 5. **Applied Governance Stack**:
@@ -23353,17 +23353,17 @@ declare(strict_types=1);
 
 namespace Avax\Auth;
 
-use Avax\Auth\Flows\Login\Login;
-use Avax\Auth\Flows\Login\Credentials;
-use Avax\Auth\Flows\Logout\Logout;
-use Avax\Auth\Flows\Register\Register;
-use Avax\Auth\Flows\Register\RegistrationData;
-use Avax\Auth\Flows\ChangePassword\ChangePassword;
-use Avax\Auth\Flows\ChangePassword\ChangePasswordData;
-use Avax\Auth\Flows\CheckAuthentication\CheckAuthentication;
-use Avax\Auth\Flows\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\Flow\Login\Login;
+use Avax\Auth\Flow\Login\Credentials;
+use Avax\Auth\Flow\Logout\Logout;
+use Avax\Auth\Flow\Register\Register;
+use Avax\Auth\Flow\Register\RegistrationData;
+use Avax\Auth\Flow\ChangePassword\ChangePassword;
+use Avax\Auth\Flow\ChangePassword\ChangePasswordData;
+use Avax\Auth\Flow\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\Flow\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\Configuration\AuthBuilder;
-use Avax\Auth\Capabilities\User\User;
+use Avax\Auth\Capability\User\User;
 
 /**
  * Main entry point for Avax Auth framework.
@@ -23427,10 +23427,10 @@ declare(strict_types=1);
 
 namespace Avax\Auth;
 
-use Avax\Auth\Flows\Login\Credentials;
-use Avax\Auth\Flows\Register\RegistrationData;
-use Avax\Auth\Flows\ChangePassword\ChangePasswordData;
-use Avax\Auth\Capabilities\User\User;
+use Avax\Auth\Flow\Login\Credentials;
+use Avax\Auth\Flow\Register\RegistrationData;
+use Avax\Auth\Flow\ChangePassword\ChangePasswordData;
+use Avax\Auth\Capability\User\User;
 
 /**
  * Interface AuthInterface
@@ -23452,14 +23452,14 @@ interface AuthInterface
 
 Read and follow all rules in `.agents/AGENTS.md`.
 
-=== Capabilities/Access/RequireAuthentication/RequireAuthentication.php ===
+=== Capability/Access/RequireAuthentication/RequireAuthentication.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\Access\RequireAuthentication;
+namespace Avax\Auth\Capability\Access\RequireAuthentication;
 
-use Avax\Auth\Flows\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\Flow\CheckAuthentication\CheckAuthentication;
 
 /**
  * Requirement for authentication presence.
@@ -23483,12 +23483,12 @@ final readonly class RequireAuthentication
     }
 }
 
-=== Capabilities/Access/RequireAuthentication/Unauthenticated.php ===
+=== Capability/Access/RequireAuthentication/Unauthenticated.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\Access\RequireAuthentication;
+namespace Avax\Auth\Capability\Access\RequireAuthentication;
 
 use Exception;
 
@@ -23503,15 +23503,15 @@ class Unauthenticated extends Exception
     }
 }
 
-=== Capabilities/Access/RequirePermission/PermissionDenied.php ===
+=== Capability/Access/RequirePermission/PermissionDenied.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\Access\RequirePermission;
+namespace Avax\Auth\Capability\Access\RequirePermission;
 
 use Exception;
-use Avax\Auth\Capabilities\User\UserPermission;
+use Avax\Auth\Capability\User\UserPermission;
 
 /**
  * Exception for missing permission.
@@ -23532,15 +23532,15 @@ class PermissionDenied extends Exception
     }
 }
 
-=== Capabilities/Access/RequirePermission/RequirePermission.php ===
+=== Capability/Access/RequirePermission/RequirePermission.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\Access\RequirePermission;
+namespace Avax\Auth\Capability\Access\RequirePermission;
 
-use Avax\Auth\Flows\ReadCurrentUser\ReadCurrentUser;
-use Avax\Auth\Capabilities\User\UserPermission;
+use Avax\Auth\Flow\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\Capability\User\UserPermission;
 
 /**
  * Requirement for specific permissions.
@@ -23566,15 +23566,15 @@ final readonly class RequirePermission
     }
 }
 
-=== Capabilities/Access/RequireRole/RequireRole.php ===
+=== Capability/Access/RequireRole/RequireRole.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\Access\RequireRole;
+namespace Avax\Auth\Capability\Access\RequireRole;
 
-use Avax\Auth\Flows\ReadCurrentUser\ReadCurrentUser;
-use Avax\Auth\Capabilities\User\UserRole;
+use Avax\Auth\Flow\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\Capability\User\UserRole;
 
 /**
  * Requirement for specific roles.
@@ -23600,15 +23600,15 @@ final readonly class RequireRole
     }
 }
 
-=== Capabilities/Access/RequireRole/RoleDenied.php ===
+=== Capability/Access/RequireRole/RoleDenied.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\Access\RequireRole;
+namespace Avax\Auth\Capability\Access\RequireRole;
 
 use Exception;
-use Avax\Auth\Capabilities\User\UserRole;
+use Avax\Auth\Capability\User\UserRole;
 
 /**
  * Exception for insufficient role.
@@ -23629,16 +23629,16 @@ class RoleDenied extends Exception
     }
 }
 
-=== Capabilities/Identity/Jwt/JwtIdentity.php ===
+=== Capability/Identity/Jwt/JwtIdentity.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\Identity\Jwt;
+namespace Avax\Auth\Capability\Identity\Jwt;
 
-use Avax\Auth\Capabilities\User\User;
-use Avax\Auth\Capabilities\User\UserId;
-use Avax\Auth\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\Capability\User\User;
+use Avax\Auth\Capability\User\UserId;
+use Avax\Auth\Capability\UserSource\UserSourceInterface;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -23695,14 +23695,14 @@ final class JwtIdentity implements JwtIdentityInterface
     }
 }
 
-=== Capabilities/Identity/Jwt/JwtIdentityInterface.php ===
+=== Capability/Identity/Jwt/JwtIdentityInterface.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\Identity\Jwt;
+namespace Avax\Auth\Capability\Identity\Jwt;
 
-use Avax\Auth\Capabilities\User\User;
+use Avax\Auth\Capability\User\User;
 
 /**
  * JWT identity interface.
@@ -23730,12 +23730,12 @@ interface JwtIdentityInterface
     public function check() : bool;
 }
 
-=== Capabilities/Identity/Session/SessionIdentity.php ===
+=== Capability/Identity/Session/SessionIdentity.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\Identity\Session;
+namespace Avax\Auth\Capability\Identity\Session;
 
 /**
  * Standard implementation of session-based identity storage.
@@ -23786,12 +23786,12 @@ final class SessionIdentity implements SessionIdentityInterface
     }
 }
 
-=== Capabilities/Identity/Session/SessionIdentityInterface.php ===
+=== Capability/Identity/Session/SessionIdentityInterface.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\Identity\Session;
+namespace Avax\Auth\Capability\Identity\Session;
 
 /**
  * Interface for session-based identity storage.
@@ -23819,12 +23819,12 @@ interface SessionIdentityInterface
     public function check() : bool;
 }
 
-=== Capabilities/PasswordHashing/PasswordHasher.php ===
+=== Capability/PasswordHashing/PasswordHasher.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\PasswordHashing;
+namespace Avax\Auth\Capability\PasswordHashing;
 
 /**
  * Standard utility for password hashing and verification.
@@ -23854,12 +23854,12 @@ final readonly class PasswordHasher
     }
 }
 
-=== Capabilities/User/User.php ===
+=== Capability/User/User.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\User;
+namespace Avax\Auth\Capability\User;
 
 use Stringable;
 
@@ -24006,12 +24006,12 @@ final class User implements UserInterface, Stringable
     }
 }
 
-=== Capabilities/User/UserEmail.php ===
+=== Capability/User/UserEmail.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\User;
+namespace Avax\Auth\Capability\User;
 
 use Stringable;
 
@@ -24041,12 +24041,12 @@ final class UserEmail implements Stringable
     }
 }
 
-=== Capabilities/User/UserId.php ===
+=== Capability/User/UserId.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\User;
+namespace Avax\Auth\Capability\User;
 
 use Stringable;
 
@@ -24070,12 +24070,12 @@ final class UserId implements Stringable
     }
 }
 
-=== Capabilities/User/UserInterface.php ===
+=== Capability/User/UserInterface.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\User;
+namespace Avax\Auth\Capability\User;
 
 /**
  * Interface UserInterface
@@ -24139,12 +24139,12 @@ interface UserInterface
     public function isActive() : bool;
 }
 
-=== Capabilities/User/UserPermission.php ===
+=== Capability/User/UserPermission.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\User;
+namespace Avax\Auth\Capability\User;
 
 /**
  * Value object representing a permission.
@@ -24166,12 +24166,12 @@ final class UserPermission
     }
 }
 
-=== Capabilities/User/UserRole.php ===
+=== Capability/User/UserRole.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\User;
+namespace Avax\Auth\Capability\User;
 
 /**
  * Enum representing user roles.
@@ -24209,16 +24209,16 @@ enum UserRole: string
     }
 }
 
-=== Capabilities/UserSource/UserSourceInterface.php ===
+=== Capability/UserSource/UserSourceInterface.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Capabilities\UserSource;
+namespace Avax\Auth\Capability\UserSource;
 
-use Avax\Auth\Capabilities\User\User;
-use Avax\Auth\Capabilities\User\UserId;
-use Avax\Auth\Flows\Login\Credentials;
+use Avax\Auth\Capability\User\User;
+use Avax\Auth\Capability\User\UserId;
+use Avax\Auth\Flow\Login\Credentials;
 
 /**
  * Interface for user data operations.
@@ -24269,17 +24269,17 @@ declare(strict_types=1);
 namespace Avax\Auth\Configuration;
 
 use Avax\Auth\Auth;
-use Avax\Auth\Flows\Login\Login;
-use Avax\Auth\Flows\Logout\Logout;
-use Avax\Auth\Flows\Register\Register;
-use Avax\Auth\Flows\ChangePassword\ChangePassword;
-use Avax\Auth\Flows\CheckAuthentication\CheckAuthentication;
-use Avax\Auth\Flows\ReadCurrentUser\ReadCurrentUser;
-use Avax\Auth\Capabilities\Identity\Session\SessionIdentity;
-use Avax\Auth\Capabilities\Identity\Jwt\JwtIdentityInterface;
-use Avax\Auth\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\Flows\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\Flow\Login\Login;
+use Avax\Auth\Flow\Logout\Logout;
+use Avax\Auth\Flow\Register\Register;
+use Avax\Auth\Flow\ChangePassword\ChangePassword;
+use Avax\Auth\Flow\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\Flow\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\Capability\Identity\Session\SessionIdentity;
+use Avax\Auth\Capability\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\Flow\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\Foundation\IdGenerator;
 
 /**
@@ -24389,16 +24389,16 @@ final class AuthBuilder
     }
 }
 
-=== Flows/ChangePassword/ChangePassword.php ===
+=== Flow/ChangePassword/ChangePassword.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Flows\ChangePassword;
+namespace Avax\Auth\Flow\ChangePassword;
 
-use Avax\Auth\Capabilities\User\User;
-use Avax\Auth\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\Capability\User\User;
+use Avax\Auth\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\Capability\PasswordHashing\PasswordHasher;
 
 /**
  * High-level orchestrator for the password change process.
@@ -24424,12 +24424,12 @@ final readonly class ChangePassword
     }
 }
 
-=== Flows/ChangePassword/ChangePasswordData.php ===
+=== Flow/ChangePassword/ChangePasswordData.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Flows\ChangePassword;
+namespace Avax\Auth\Flow\ChangePassword;
 
 use SensitiveParameter;
 
@@ -24446,15 +24446,15 @@ final readonly class ChangePasswordData
     ) {}
 }
 
-=== Flows/CheckAuthentication/CheckAuthentication.php ===
+=== Flow/CheckAuthentication/CheckAuthentication.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Flows\CheckAuthentication;
+namespace Avax\Auth\Flow\CheckAuthentication;
 
-use Avax\Auth\Capabilities\Identity\Session\SessionIdentity;
-use Avax\Auth\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Auth\Capability\Identity\Session\SessionIdentity;
+use Avax\Auth\Capability\Identity\Jwt\JwtIdentity;
 
 /**
  * Check if there is an active authentication state.
@@ -24482,12 +24482,12 @@ final readonly class CheckAuthentication
     }
 }
 
-=== Flows/Login/Credentials.php ===
+=== Flow/Login/Credentials.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Flows\Login;
+namespace Avax\Auth\Flow\Login;
 
 use SensitiveParameter;
 
@@ -24504,19 +24504,19 @@ final readonly class Credentials
     ) {}
 }
 
-=== Flows/Login/Login.php ===
+=== Flow/Login/Login.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Flows\Login;
+namespace Avax\Auth\Flow\Login;
 
-use Avax\Auth\Capabilities\User\User;
-use Avax\Auth\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\Capabilities\Identity\Session\SessionIdentity;
-use Avax\Auth\Capabilities\Identity\Jwt\JwtIdentity;
-use Avax\Auth\Flows\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\Capability\User\User;
+use Avax\Auth\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\Capability\Identity\Session\SessionIdentity;
+use Avax\Auth\Capability\Identity\Jwt\JwtIdentity;
+use Avax\Auth\Flow\Login\RateLimit\LoginRateLimit;
 use Exception;
 
 /**
@@ -24575,12 +24575,12 @@ final readonly class Login
     }
 }
 
-=== Flows/Login/RateLimit/CheckLoginRateLimit.php ===
+=== Flow/Login/RateLimit/CheckLoginRateLimit.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Flows\Login\RateLimit;
+namespace Avax\Auth\Flow\Login\RateLimit;
 
 use Avax\Auth\Support\Clock;
 
@@ -24630,12 +24630,12 @@ final readonly class CheckLoginRateLimit
     }
 }
 
-=== Flows/Login/RateLimit/LoginRateLimit.php ===
+=== Flow/Login/RateLimit/LoginRateLimit.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Flows\Login\RateLimit;
+namespace Avax\Auth\Flow\Login\RateLimit;
 
 use Avax\Auth\Support\Clock;
 
@@ -24684,12 +24684,12 @@ final readonly class LoginRateLimit
     }
 }
 
-=== Flows/Login/RateLimit/LoginRateLimitStorageInterface.php ===
+=== Flow/Login/RateLimit/LoginRateLimitStorageInterface.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Flows\Login\RateLimit;
+namespace Avax\Auth\Flow\Login\RateLimit;
 
 /**
  * Persist attempted logins for brute force protection.
@@ -24707,12 +24707,12 @@ interface LoginRateLimitStorageInterface
     public function getLastAttemptTime(string $identifier) : int;
 }
 
-=== Flows/Login/RateLimit/RateLimitException.php ===
+=== Flow/Login/RateLimit/RateLimitException.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Flows\Login\RateLimit;
+namespace Avax\Auth\Flow\Login\RateLimit;
 
 use Exception;
 
@@ -24734,15 +24734,15 @@ class RateLimitException extends Exception
     }
 }
 
-=== Flows/Logout/Logout.php ===
+=== Flow/Logout/Logout.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Flows\Logout;
+namespace Avax\Auth\Flow\Logout;
 
-use Avax\Auth\Capabilities\Identity\Session\SessionIdentity;
-use Avax\Auth\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Auth\Capability\Identity\Session\SessionIdentity;
+use Avax\Auth\Capability\Identity\Jwt\JwtIdentity;
 
 /**
  * High-level orchestrator for the logout process.
@@ -24768,18 +24768,18 @@ final readonly class Logout
     }
 }
 
-=== Flows/ReadCurrentUser/ReadCurrentUser.php ===
+=== Flow/ReadCurrentUser/ReadCurrentUser.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Flows\ReadCurrentUser;
+namespace Avax\Auth\Flow\ReadCurrentUser;
 
-use Avax\Auth\Capabilities\User\User;
-use Avax\Auth\Capabilities\User\UserId;
-use Avax\Auth\Capabilities\Identity\Session\SessionIdentity;
-use Avax\Auth\Capabilities\Identity\Jwt\JwtIdentity;
-use Avax\Auth\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\Capability\User\User;
+use Avax\Auth\Capability\User\UserId;
+use Avax\Auth\Capability\Identity\Session\SessionIdentity;
+use Avax\Auth\Capability\Identity\Jwt\JwtIdentity;
+use Avax\Auth\Capability\UserSource\UserSourceInterface;
 
 /**
  * Retrieve the currently authenticated user entity.
@@ -24811,18 +24811,18 @@ final readonly class ReadCurrentUser
     }
 }
 
-=== Flows/Register/Register.php ===
+=== Flow/Register/Register.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Flows\Register;
+namespace Avax\Auth\Flow\Register;
 
-use Avax\Auth\Capabilities\User\User;
-use Avax\Auth\Capabilities\User\UserId;
-use Avax\Auth\Capabilities\User\UserEmail;
-use Avax\Auth\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\Capability\User\User;
+use Avax\Auth\Capability\User\UserId;
+use Avax\Auth\Capability\User\UserEmail;
+use Avax\Auth\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\Foundation\IdGeneratorInterface;
 
 /**
@@ -24857,12 +24857,12 @@ final readonly class Register
     }
 }
 
-=== Flows/Register/RegistrationData.php ===
+=== Flow/Register/RegistrationData.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Flows\Register;
+namespace Avax\Auth\Flow\Register;
 
 use SensitiveParameter;
 
@@ -24979,10 +24979,10 @@ $auth = Auth()::configuration()
     ->ready();
 ```
 
-### Authentication Flow (Flows)
+### Authentication Flow (Flow)
 
 ```php
-use Avax\Auth\Flows\UserLogin\Credentials;
+use Avax\Auth\Flow\UserLogin\Credentials;
 
 // Login
 $user = $auth->login(new Credentials(
@@ -25022,7 +25022,7 @@ This framework uses a **feature-first** architecture where each business flow li
 ```
 Auth/
 ├── Configuration/     # Composition Root & Fluent Builder
-├── Flows/             # Verb-Noun Business Actions (Login, Register, etc.)
+├── Flow/             # Verb-Noun Business Actions (Login, Register, etc.)
 ├── Identity/          # Unified Identity Analyzers (Session, Jwt)
 ├── Access/            # Consolidated Authorization Boundaries (Enforce*)
 ├── Security/          # Cryptography & Protection (Hashing, Brute Force)
@@ -25166,8 +25166,8 @@ This framework is built on **vertical-slice, feature-first** architectural laws.
 
 The project root is structured into four primary lanes:
 
-1.  **`Flows/`**: High-level business use-cases following the **Verb-Noun** naming pattern (e.g., `Login`, `Register`, `ChangePassword`). These are the entry points for the package's functionality.
-2.  **`Capabilities/`**: Domain enablers and internal subsystems that the flows orchestrate.
+1.  **`Flow/`**: High-level business use-cases following the **Verb-Noun** naming pattern (e.g., `Login`, `Register`, `ChangePassword`). These are the entry points for the package's functionality.
+2.  **`Capability/`**: Domain enablers and internal subsystems that the flows orchestrate.
     -   `Access`: Authorization logic (Roles, Permissions).
     -   `Identity`: Protocol-specific authentication state (Session, JWT).
     -   `User`: The core User entity and its specific Value Objects (Email, Id, etc.).
@@ -25180,11 +25180,11 @@ The project root is structured into four primary lanes:
 
 | Folder | Category | Role |
 |:---|:---|:---|
-| **[`Flows/`](./Flows/)** | **Features** | Core business processes and API entry points. |
-| **[`Capabilities/Access/`](./Capabilities/Access/)** | Domain | Requirement boundaries for Role/Permission validation. |
-| **[`Capabilities/Identity/`](./Capabilities/Identity/)** | Adapter | State management for JWT and Session persistence. |
-| **[`Capabilities/User/`](./Capabilities/User/)** | Domain | Immutability-first User entity and its Value Objects. |
-| **[`Capabilities/UserSource/`](./Capabilities/UserSource/)** | Gateway | Interface for accessing the external data store. |
+| **[`Flow/`](./Flow/)** | **Features** | Core business processes and API entry points. |
+| **[`Capability/Access/`](./Capability/Access/)** | Domain | Requirement boundaries for Role/Permission validation. |
+| **[`Capability/Identity/`](./Capability/Identity/)** | Adapter | State management for JWT and Session persistence. |
+| **[`Capability/User/`](./Capability/User/)** | Domain | Immutability-first User entity and its Value Objects. |
+| **[`Capability/UserSource/`](./Capability/UserSource/)** | Gateway | Interface for accessing the external data store. |
 | **[`Configuration/`](./Configuration/)** | Infra | Fluent DSL Builder for setting up Auth instances. |
 | **[`Foundation/`](./Foundation/)** | Tooling | Shared low-level utilities (Clock, IdGen). |
 
@@ -25193,9 +25193,9 @@ The project root is structured into four primary lanes:
 ```mermaid
 graph TD
     Facade[Auth Facade] --> Builder[AuthBuilder]
-    Facade --> Flows[Business Flows]
-    Flows --> Capabilities[Capabilities]
-    Capabilities --> Foundation[Foundation Primitives]
+    Facade --> Flow[Business Flow]
+    Flow --> Capability[Capability]
+    Capability --> Foundation[Foundation Primitives]
 ```
 
 ## Evolution Log
@@ -25203,7 +25203,7 @@ graph TD
 ### v3.0 (Target Architecture - SCREAMING)
 - Migrated to a **Capability-centric root taxonomy**.
 - Consolidated "Support" and technical helpers into **`Foundation/`**.
-- Grouped domain enablers under **`Capabilities/`** to improve discoverability and ownership.
+- Grouped domain enablers under **`Capability/`** to improve discoverability and ownership.
 - Enforced **Banal, Predictive, and Intuitive** naming across all layers.
 - Wired **IdGenerator** as a foundational requirement for user creation flow.
 
@@ -25917,17 +25917,17 @@ EOF
     </source>
 </phpunit>
 
-=== tests/Capabilities/Access/RequireAuthentication/RequireAuthenticationTest.php ===
+=== tests/Capability/Access/RequireAuthentication/RequireAuthenticationTest.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capabilities\Access\RequireAuthentication;
+namespace Avax\Auth\Tests\Capability\Access\RequireAuthentication;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\Capabilities\Access\RequireAuthentication\RequireAuthentication;
-use Avax\Auth\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\Flows\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\Capability\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\Capability\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\Flow\CheckAuthentication\CheckAuthentication;
 use Mockery;
 
 /**
@@ -25964,19 +25964,19 @@ class RequireAuthenticationTest extends TestCase
     }
 }
 
-=== tests/Capabilities/Access/RequirePermission/RequirePermissionTest.php ===
+=== tests/Capability/Access/RequirePermission/RequirePermissionTest.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capabilities\Access\RequirePermission;
+namespace Avax\Auth\Tests\Capability\Access\RequirePermission;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\Capabilities\Access\RequirePermission\RequirePermission;
-use Avax\Auth\Capabilities\Access\RequirePermission\PermissionDenied;
-use Avax\Auth\Flows\ReadCurrentUser\ReadCurrentUser;
-use Avax\Auth\Capabilities\User\User;
-use Avax\Auth\Capabilities\User\UserPermission;
+use Avax\Auth\Capability\Access\RequirePermission\RequirePermission;
+use Avax\Auth\Capability\Access\RequirePermission\PermissionDenied;
+use Avax\Auth\Flow\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\Capability\User\User;
+use Avax\Auth\Capability\User\UserPermission;
 use Mockery;
 
 /**
@@ -26025,19 +26025,19 @@ class RequirePermissionTest extends TestCase
     }
 }
 
-=== tests/Capabilities/Access/RequireRole/RequireRoleTest.php ===
+=== tests/Capability/Access/RequireRole/RequireRoleTest.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capabilities\Access\RequireRole;
+namespace Avax\Auth\Tests\Capability\Access\RequireRole;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\Capabilities\Access\RequireRole\RequireRole;
-use Avax\Auth\Capabilities\Access\RequireRole\RoleDenied;
-use Avax\Auth\Flows\ReadCurrentUser\ReadCurrentUser;
-use Avax\Auth\Capabilities\User\User;
-use Avax\Auth\Capabilities\User\UserRole;
+use Avax\Auth\Capability\Access\RequireRole\RequireRole;
+use Avax\Auth\Capability\Access\RequireRole\RoleDenied;
+use Avax\Auth\Flow\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\Capability\User\User;
+use Avax\Auth\Capability\User\UserRole;
 use Mockery;
 
 /**
@@ -26096,9 +26096,9 @@ namespace Avax\Auth\Tests\Configuration;
 use PHPUnit\Framework\TestCase;
 use Avax\Auth\Auth;
 use Avax\Auth\Configuration\AuthBuilder;
-use Avax\Auth\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\Capabilities\Identity\Session\SessionIdentity;
-use Avax\Auth\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\Capability\Identity\Session\SessionIdentity;
+use Avax\Auth\Capability\Identity\Jwt\JwtIdentityInterface;
 use Mockery;
 
 /**
@@ -26145,21 +26145,21 @@ class AuthBuilderTest extends TestCase
     }
 }
 
-=== tests/Flows/Login/LoginTest.php ===
+=== tests/Flow/Login/LoginTest.php ===
 <?php
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flows\Login;
+namespace Avax\Auth\Tests\Flow\Login;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\Flows\Login\Login;
-use Avax\Auth\Flows\Login\Credentials;
-use Avax\Auth\Flows\Login\RateLimit\LoginRateLimit;
-use Avax\Auth\Capabilities\User\User;
-use Avax\Auth\Capabilities\User\UserId;
-use Avax\Auth\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\Flow\Login\Login;
+use Avax\Auth\Flow\Login\Credentials;
+use Avax\Auth\Flow\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\Capability\User\User;
+use Avax\Auth\Capability\User\UserId;
+use Avax\Auth\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\Capability\PasswordHashing\PasswordHasher;
 use Mockery;
 use Exception;
 

@@ -97,7 +97,7 @@ final class HttpRequestRouter
     public function getByName(string $name) : RouteDefinition
     {
         if (! isset($this->namedRoutes[$name])) {
-            throw new RouteNotFoundException("Named route [{$name}] not found.", 404, [], false);
+            throw new RouteNotFoundException(message: "Named route [{$name}] not found.", httpStatusCode: 404, context: [], isRetryable: false);
         }
 
         return $this->namedRoutes[$name];
@@ -157,12 +157,12 @@ final class HttpRequestRouter
      */
     public function add(RouteDefinition $route) : void
     {
-        $routeKey = RouteKey::fromRoute($route);
+        $routeKey = RouteKey::fromRoute(route: $route);
         $keyString = $routeKey->toString();
 
         // Check for duplicates based on configured policy
         if (isset($this->routeKeys[$keyString])) {
-            $this->handleDuplicateRoute($routeKey, $route);
+            $this->handleDuplicateRoute(existingKey: $routeKey, newRoute: $route);
             return; // If policy allows continuation
         }
 
@@ -249,7 +249,7 @@ final class HttpRequestRouter
                     );
                 } else {
                     $this->trace?->log(event: 'resolve.route_not_found');
-                    throw new RouteNotFoundException($failureReason, 404, [], false);
+                    throw new RouteNotFoundException(message: $failureReason, httpStatusCode: 404, context: [], isRetryable: false);
                 }
             }
 
@@ -433,17 +433,17 @@ final class HttpRequestRouter
 
         match ($policy) {
             DuplicatePolicy::THROW => throw new DuplicateRouteException(
-                "Duplicate route: {$newRoute->method} {$newRoute->path}",
-                409,
-                [
+                method: "Duplicate route: {$newRoute->method} {$newRoute->path}",
+                path  : 409,
+                domain: [
                     'method' => $newRoute->method,
                     'path' => $newRoute->path,
                     'domain' => $newRoute->domain,
                     'name' => $newRoute->name
                 ],
-                false
+                name  : false
             ),
-            DuplicatePolicy::REPLACE => $this->replaceRoute($existingKey, $newRoute),
+            DuplicatePolicy::REPLACE => $this->replaceRoute(key: $existingKey, newRoute: $newRoute),
             DuplicatePolicy::IGNORE => null, // Do nothing, keep existing route
         };
     }

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capabilities\Prototypes\Factory;
+namespace Avax\Container\Tests\Capability\Prototypes\Factory;
 
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Factory\ServicePrototypeBuilder;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\MethodPrototype;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\ParameterPrototype;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\PropertyPrototype;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Factory\ServicePrototypeBuilder;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Model\MethodPrototype;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ParameterPrototype;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Model\PropertyPrototype;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

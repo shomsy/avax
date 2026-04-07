@@ -51,9 +51,9 @@ Rules:
 Example mapping:
 
 ```
-DependencyInjection/Capabilities/Resolution/Kernel/ContainerKernel.php
+DependencyInjection/Capability/Resolution/Kernel/ContainerKernel.php
 →
-docs/DependencyInjection/Capabilities/Resolution/Kernel/ContainerKernel.md
+docs/DependencyInjection/Capability/Resolution/Kernel/ContainerKernel.md
 ```
 
 This rule is **non-negotiable**.

@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\User;
+
+use Stringable;
+
+/**
+ * Value object representing a user's email within the Auth System.
+ */
+final class UserEmail implements Stringable
+{
+    public function __construct(
+        public readonly string $value
+    ) {
+        if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException(message: "Invalid email format: {$value}");
+        }
+    }
+
+    public function __toString() : string
+    {
+        return $this->value;
+    }
+
+    public function equals(UserEmail $other) : bool
+    {
+        return strtolower($this->value) === strtolower($other->value);
+    }
+}

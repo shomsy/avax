@@ -42,8 +42,8 @@ To use JWT authentication, initialize the `Auth` instance with a JWT-backed `Ide
 
 ```php
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capabilities\Identity\Identity;
-use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capability\Identity\Identity;
+use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
 
 $identity = new Identity(jwtIdentity: new JwtIdentity(
     userSource: $userSource,

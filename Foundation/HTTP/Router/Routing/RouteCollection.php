@@ -45,7 +45,7 @@ final class RouteCollection
      */
     public function addRoute(RouteDefinition $route) : void
     {
-        $key = $this->generateRouteKey($route);
+        $key = $this->generateRouteKey(route: $route);
 
         if (isset($this->routeKeys[$key])) {
             throw new DuplicateRouteException(
@@ -61,7 +61,7 @@ final class RouteCollection
         $method = strtoupper($route->method);
 
         // Check if path contains parameters (indicating pattern route)
-        if ($this->isPatternRoute($route->path)) {
+        if ($this->isPatternRoute(path: $route->path)) {
             $this->patternRoutes[$method][] = $route;
         } else {
             // Exact path match
@@ -120,7 +120,7 @@ final class RouteCollection
         $allRoutes = [];
 
         foreach (array_keys($this->exactRoutes + $this->patternRoutes) as $method) {
-            $allRoutes[$method] = $this->getAllRoutesForMethod($method);
+            $allRoutes[$method] = $this->getAllRoutesForMethod(method: $method);
         }
 
         return $allRoutes;

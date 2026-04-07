@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System;
 
-use Avax\Auth\System\Capabilities\Access\AccessInterface;
-use Avax\Auth\System\Flows\Login\Login;
-use Avax\Auth\System\Flows\Login\Credentials;
-use Avax\Auth\System\Flows\Logout\Logout;
-use Avax\Auth\System\Flows\Register\Register;
-use Avax\Auth\System\Flows\Register\RegistrationData;
-use Avax\Auth\System\Flows\ChangePassword\ChangePassword;
-use Avax\Auth\System\Flows\ChangePassword\ChangePasswordData;
-use Avax\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
-use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\System\Capability\Access\AccessInterface;
+use Avax\Auth\System\Flow\Login\Login;
+use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Flow\Logout\Logout;
+use Avax\Auth\System\Flow\Register\Register;
+use Avax\Auth\System\Flow\Register\RegistrationData;
+use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
+use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
+use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Configuration\AuthBuilder;
-use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capability\User\User;
 
 /**
  * Main entry point for Avax Auth System.

@@ -19,8 +19,8 @@ The system root is `DependencyInjection/`.
 
 Production code is split into four lanes:
 
-- `DependencyInjection/Flows/`: what the container system does
-- `DependencyInjection/Capabilities/`: what flows use to do it
+- `DependencyInjection/Flow/`: what the container system does
+- `DependencyInjection/Capability/`: what flows use to do it
 - `DependencyInjection/Configuration/`: how the runtime is assembled
 - `DependencyInjection/Foundation/`: tiny neutral primitives only
 

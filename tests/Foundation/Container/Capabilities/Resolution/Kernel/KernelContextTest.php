@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capabilities\Resolution\Kernel;
+namespace Avax\Container\Tests\Capability\Resolution\Kernel;
 
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\KernelContext;
+use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use stdClass;

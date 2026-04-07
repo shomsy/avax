@@ -12,8 +12,8 @@ foreach ($dirs as $dir) {
     $path = __DIR__ . '/Foundation/Auth/' . $dir;
     if (is_dir($path)) {
         // Recursive delete
-        $it = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
-        $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+        $it = new RecursiveDirectoryIterator(directory: $path, flags: RecursiveDirectoryIterator::SKIP_DOTS);
+        $files = new RecursiveIteratorIterator(iterator: $it, mode: RecursiveIteratorIterator::CHILD_FIRST);
         foreach($files as $file) {
             if ($file->isDir()){
                 rmdir($file->getRealPath());

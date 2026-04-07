@@ -47,7 +47,7 @@ final class RouteGroupContext
         }
 
         if (! empty($this->namePrefix)) {
-            $builder->name($this->namePrefix);
+            $builder->name(name: $this->namePrefix);
         }
 
         if ($this->domain !== null) {
@@ -55,23 +55,23 @@ final class RouteGroupContext
         }
 
         if ($this->authorization !== null) {
-            $builder->authorize($this->authorization);
+            $builder->authorize(policy: $this->authorization);
         }
 
         if (! empty($this->middleware)) {
-            $builder->middleware($this->middleware);
+            $builder->middleware(middleware: $this->middleware);
         }
 
         if (! empty($this->constraints)) {
-            $builder->where($this->constraints);
+            $builder->where(parameter: $this->constraints);
         }
 
         if (! empty($this->defaults)) {
-            $builder->defaults($this->defaults);
+            $builder->defaults(defaults: $this->defaults);
         }
 
         if (! empty($this->attributes)) {
-            $builder->attributes($this->attributes);
+            $builder->attributes(attributes: $this->attributes);
         }
 
         return $builder;

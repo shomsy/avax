@@ -7,11 +7,11 @@ namespace Avax\Auth\Tests\Configuration;
 use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\AuthInterface;
 use Avax\Auth\System\Configuration\AuthServiceProvider;
-use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
-use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
-use Avax\Auth\System\Capabilities\UserSource\InMemoryUserSource;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\Register\RegistrationData;
+use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
+use Avax\Auth\System\Capability\Identity\Session\SessionIdentityInterface;
+use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Avax\Container\Core\AppFactory;
 use Avax\Container\Providers\ServiceProvider;
@@ -47,15 +47,15 @@ class AuthServiceProviderTest extends TestCase
 
         $auth = $container->get(AuthInterface::class);
 
-        $this->assertInstanceOf(AuthInterface::class, $auth);
+        $this->assertInstanceOf(expected: AuthInterface::class, actual: $auth);
 
-        $user = $auth->register(new RegistrationData(
+        $user = $auth->register(data: new RegistrationData(
             email: 'provider@example.com',
             username: 'provider',
             password: 'password'
         ));
 
-        $this->assertSame(424242, $user->getId()->value);
+        $this->assertSame(expected: 424242, actual: $user->getId()->value);
     }
 
     public function testAuthServiceProviderFailsWithoutIdentityBackend() : void
@@ -81,9 +81,9 @@ class AuthServiceProviderTest extends TestCase
             cacheDir: sys_get_temp_dir()
         );
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(exception: \RuntimeException::class);
         $this->expectExceptionMessage(
-            'AuthServiceProvider requires a SessionIdentityInterface or JwtIdentityInterface binding.'
+            message: 'AuthServiceProvider requires a SessionIdentityInterface or JwtIdentityInterface binding.'
         );
 
         $container->get(AuthInterface::class);

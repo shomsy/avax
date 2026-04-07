@@ -6,14 +6,14 @@ namespace Avax\Auth\System\Configuration;
 
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\AuthInterface;
-use Avax\Auth\System\Capabilities\Identity\Identity;
-use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
-use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
-use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimitStorageInterface;
+use Avax\Auth\System\Capability\Identity\Identity;
+use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capability\Identity\Session\SessionIdentityInterface;
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimitStorageInterface;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGenerator;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
@@ -67,7 +67,7 @@ final class AuthServiceProvider extends ServiceProvider
 
                 if ($sessionIdentity === null && $jwtIdentity === null) {
                     throw new \RuntimeException(
-                        'AuthServiceProvider requires a SessionIdentityInterface or JwtIdentityInterface binding.'
+                        message: 'AuthServiceProvider requires a SessionIdentityInterface or JwtIdentityInterface binding.'
                     );
                 }
 
@@ -84,15 +84,15 @@ final class AuthServiceProvider extends ServiceProvider
         if (! $this->app->has(AuthInterface::class)) {
             $this->app->singleton(AuthInterface::class, function () {
                 $builder = Auth::configuration()
-                    ->forUser($this->app->get(UserSourceInterface::class))
-                    ->withIdentity($this->app->get(IdentityInterface::class))
-                    ->usingHasher($this->app->get(PasswordHasher::class))
-                    ->usingIdGenerator($this->app->get(IdGeneratorInterface::class));
+                    ->forUser(userSource: $this->app->get(UserSourceInterface::class))
+                    ->withIdentity(identity: $this->app->get(IdentityInterface::class))
+                    ->usingHasher(passwordHasher: $this->app->get(PasswordHasher::class))
+                    ->usingIdGenerator(idGenerator: $this->app->get(IdGeneratorInterface::class));
 
                 $rateLimit = $this->resolveLoginRateLimit();
 
                 if ($rateLimit !== null) {
-                    $builder->protectFromBruteForce($rateLimit);
+                    $builder->protectFromBruteForce(rateLimit: $rateLimit);
                 }
 
                 return $builder->ready();

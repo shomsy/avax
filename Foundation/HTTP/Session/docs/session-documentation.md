@@ -382,7 +382,7 @@ Whether you're working on an SPA, a classic MVC app, an API backend, or a multi-
 
 ---
 
-## 🔧 Key Capabilities at a Glance
+## 🔧 Key Capability at a Glance
 
 | Feature                         | Description                                                        |
 |---------------------------------|--------------------------------------------------------------------|

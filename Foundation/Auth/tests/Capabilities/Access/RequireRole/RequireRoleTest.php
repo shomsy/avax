@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capabilities\Access\RequireRole;
+namespace Avax\Auth\Tests\Capability\Access\RequireRole;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Capabilities\Access\RequireRole\RequireRole;
-use Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied;
-use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserRole;
+use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
+use Avax\Auth\System\Capability\Access\RequireRole\RoleDenied;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserRole;
 use Mockery;
 
 /**
@@ -24,7 +24,7 @@ class RequireRoleTest extends TestCase
     }
 
     /**
-     * @throws \Avax\Auth\System\Capabilities\Access\RequireRole\RoleDenied
+     * @throws \Avax\Auth\System\Capability\Access\RequireRole\RoleDenied
      */
     public function testRequireRoleSuccess() : void
     {
@@ -40,7 +40,7 @@ class RequireRoleTest extends TestCase
         $requirement = new RequireRole(readCurrentUser: $readCurrentUser);
         $requirement->execute(requiredRole: $role);
 
-        $this->assertTrue(true); // No exception thrown
+        $this->assertTrue(condition: true); // No exception thrown
     }
 
     public function testRequireRoleFailure() : void
@@ -56,7 +56,7 @@ class RequireRoleTest extends TestCase
 
         $requirement = new RequireRole(readCurrentUser: $readCurrentUser);
 
-        $this->expectException(RoleDenied::class);
+        $this->expectException(exception: RoleDenied::class);
 
         $requirement->execute(requiredRole: $role);
     }
@@ -70,7 +70,7 @@ class RequireRoleTest extends TestCase
 
         $requirement = new RequireRole(readCurrentUser: $readCurrentUser);
 
-        $this->expectException(Unauthenticated::class);
+        $this->expectException(exception: Unauthenticated::class);
 
         $requirement->execute(requiredRole: $role);
     }

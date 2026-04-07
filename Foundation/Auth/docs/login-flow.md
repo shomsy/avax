@@ -49,9 +49,9 @@ Orchestrates the entire login flow:
 
 ```php
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capabilities\Identity\Identity;
-use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
-use Avax\Auth\System\Flows\Login\Credentials;
+use Avax\Auth\System\Capability\Identity\Identity;
+use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
+use Avax\Auth\System\Flow\Login\Credentials;
 
 $auth = Auth::configuration()
     ->forUser($userSource)

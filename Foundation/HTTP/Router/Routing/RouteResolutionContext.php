@@ -56,15 +56,15 @@ final readonly class RouteResolutionContext
     {
         return new self(
             route         : new RouteDefinition(
-                'GET',
-                '/__resolution_failed__',
-                static fn() => new \Avax\HTTP\Response\Classes\Response(
-                    stream: \Avax\HTTP\Response\Classes\Stream::fromString('Route resolution failed'),
+                                method    : 'GET',
+                                path      : '/__resolution_failed__',
+                                action    : static fn() => new \Avax\HTTP\Response\Classes\Response(
+                    stream: \Avax\HTTP\Response\Classes\Stream::fromString(content: 'Route resolution failed'),
                     statusCode: 500,
                     headers: ['Content-Type' => 'text/plain']
                 ),
-                [],
-                '__failed_route__'
+                                middleware: [],
+                                name      : '__failed_route__'
             ),
             parameters    : [],
             matchedDomain : null,

@@ -34,7 +34,7 @@ final class PathNormalizer
         $path = preg_replace('#/+#', '/', $path);
 
         if ($path === null) {
-            throw new \InvalidArgumentException('Invalid path format for normalization');
+            throw new \InvalidArgumentException(message: 'Invalid path format for normalization');
         }
 
         // Ensure leading slash
@@ -60,6 +60,6 @@ final class PathNormalizer
      */
     public static function areEquivalent(string $path1, string $path2) : bool
     {
-        return self::normalize($path1) === self::normalize($path2);
+        return self::normalize(path: $path1) === self::normalize(path: $path2);
     }
 }

@@ -63,7 +63,7 @@ final readonly class RouterKernel
         $path      = $request->getUri()->getPath();
 
         // Trace: Request resolution started
-        $this->trace?->log('kernel.resolve.start', [
+        $this->trace?->log(event: 'kernel.resolve.start', context: [
             'method' => $method,
             'path'   => $path,
             'host'   => $request->getUri()->getHost(),
@@ -80,7 +80,7 @@ final readonly class RouterKernel
             $route = $resolutionContext->route;
 
             // Trace: Route matched successfully
-            $this->trace?->log('kernel.route.matched', [
+            $this->trace?->log(event: 'kernel.route.matched', context: [
                 'route'     => $route->name ?? $route->path,
                 'method'    => $route->method,
                 'path'      => $route->path,
@@ -102,7 +102,7 @@ final readonly class RouterKernel
             $response = $pipeline->dispatch(request: $request);
 
             // Trace: Request handled successfully
-            $this->trace?->log('kernel.request.complete', [
+            $this->trace?->log(event: 'kernel.request.complete', context: [
                 'route'    => $route->name ?? $route->path,
                 'status'   => $response->getStatusCode(),
                 'duration' => round((microtime(true) - $startTime) * 1000, 2) . 'ms',
@@ -112,7 +112,7 @@ final readonly class RouterKernel
 
         } catch (\Throwable $exception) {
             // Trace: Request failed with fallback or error
-            $this->trace?->log('kernel.request.failed', [
+            $this->trace?->log(event: 'kernel.request.failed', context: [
                 'method'    => $method,
                 'path'      => $path,
                 'exception' => get_class($exception),
@@ -124,7 +124,7 @@ final readonly class RouterKernel
             if ($exception instanceof \Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException ||
                 $exception instanceof \Avax\HTTP\Router\Routing\Exceptions\MethodNotAllowedException) {
 
-                $this->trace?->log('kernel.fallback.triggered', [
+                $this->trace?->log(event: 'kernel.fallback.triggered', context: [
                     'reason'   => get_class($exception),
                     'message'  => $exception->getMessage(),
                 ]);

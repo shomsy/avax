@@ -49,7 +49,7 @@ sequenceDiagram
 ### Role Enforcement
 
 ```php
-use Avax\Auth\System\Capabilities\User\UserRole;
+use Avax\Auth\System\Capability\User\UserRole;
 
 $auth->access()->requireRole(UserRole::ADMIN);
 ```
@@ -57,7 +57,7 @@ $auth->access()->requireRole(UserRole::ADMIN);
 ### Permission Enforcement
 
 ```php
-use Avax\Auth\System\Capabilities\User\UserPermission;
+use Avax\Auth\System\Capability\User\UserPermission;
 
 $auth->access()->requirePermission(new UserPermission('delete_user'));
 ```

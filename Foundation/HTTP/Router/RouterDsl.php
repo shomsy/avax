@@ -39,7 +39,7 @@ final readonly class RouterDsl implements RouterInterface
     public function get(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         if (empty($path)) {
-            throw new \InvalidArgumentException('Route path cannot be empty in get() method');
+            throw new \InvalidArgumentException(message: 'Route path cannot be empty in get() method');
         }
         return $this->register(method: HttpMethod::GET->value, path: $path, action: $action);
     }
@@ -47,7 +47,7 @@ final readonly class RouterDsl implements RouterInterface
     private function register(string $method, string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         if (empty($path)) {
-            throw new \InvalidArgumentException("Route path cannot be empty for method {$method}");
+            throw new \InvalidArgumentException(message: "Route path cannot be empty for method {$method}");
         }
 
         $builder = RouteBuilder::make(method: $method, path: $path);
@@ -226,9 +226,9 @@ final readonly class RouterDsl implements RouterInterface
     {
         // Check if this might be an HTTP method (all uppercase)
         if (strtoupper($method) === $method && strlen($method) > 0) {
-            throw new \BadMethodCallException("HTTP method '{$method}' is not supported or route path is empty");
+            throw new \BadMethodCallException(message: "HTTP method '{$method}' is not supported or route path is empty");
         }
 
-        throw new \BadMethodCallException("Method '{$method}' does not exist on RouterDsl");
+        throw new \BadMethodCallException(message: "Method '{$method}' does not exist on RouterDsl");
     }
 }

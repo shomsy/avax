@@ -39,22 +39,22 @@ class RouterIntegrationTest extends TestCase
     public function get_root_route_returns_200_with_correct_body_and_headers() : void
     {
         // Given: A GET request to the root path
-        $request = $this->createRequest('GET', '/');
+        $request = $this->createRequest(method: 'GET', path: '/');
 
         // When: The router resolves the request
         $response = $this->getRouter()->resolve($request);
 
         // Then: Returns status 200
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(expected: 200, actual: $response->getStatusCode());
 
         // And: Returns correct body
-        $this->assertStringContainsString('Router is Working!', (string) $response->getBody());
+        $this->assertStringContainsString(needle: 'Router is Working!', haystack: (string) $response->getBody());
 
         // And: Implements ResponseInterface
-        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
 
         // And: Has Content-Type header
-        $this->assertStringContainsString('text/plain', $response->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString(needle: 'text/plain', haystack: $response->getHeaderLine(name: 'Content-Type'));
     }
 
     /**
@@ -63,19 +63,19 @@ class RouterIntegrationTest extends TestCase
     public function get_health_route_returns_ok_body() : void
     {
         // Given: A GET request to /health
-        $request = $this->createRequest('GET', '/health');
+        $request = $this->createRequest(method: 'GET', path: '/health');
 
         // When: The router resolves the request
         $response = $this->getRouter()->resolve($request);
 
         // Then: Returns correct body
-        $this->assertEquals('ok', (string) $response->getBody());
+        $this->assertEquals(expected: 'ok', actual: (string) $response->getBody());
 
         // And: Implements ResponseInterface
-        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
 
         // And: Has Content-Type header
-        $this->assertStringContainsString('text/plain', $response->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString(needle: 'text/plain', haystack: $response->getHeaderLine(name: 'Content-Type'));
     }
 
     /**
@@ -84,19 +84,19 @@ class RouterIntegrationTest extends TestCase
     public function get_test_route_returns_enterprise_router_message() : void
     {
         // Given: A GET request to /test
-        $request = $this->createRequest('GET', '/test');
+        $request = $this->createRequest(method: 'GET', path: '/test');
 
         // When: The router resolves the request
         $response = $this->getRouter()->resolve($request);
 
         // Then: Returns correct body
-        $this->assertStringContainsString('Enterprise Router Active!', (string) $response->getBody());
+        $this->assertStringContainsString(needle: 'Enterprise Router Active!', haystack: (string) $response->getBody());
 
         // And: Implements ResponseInterface
-        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
 
         // And: Has Content-Type header
-        $this->assertStringContainsString('text/plain', $response->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString(needle: 'text/plain', haystack: $response->getHeaderLine(name: 'Content-Type'));
     }
 
     /**
@@ -105,19 +105,19 @@ class RouterIntegrationTest extends TestCase
     public function get_nonexistent_route_returns_500_due_to_exception_handling() : void
     {
         // Given: A GET request to a non-existing route
-        $request = $this->createRequest('GET', '/missing');
+        $request = $this->createRequest(method: 'GET', path: '/missing');
 
         // When: The router resolves the request
         $response = $this->getRouter()->resolve($request);
 
         // Then: Returns status 500 (our exception handling converts exceptions to 500)
-        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertEquals(expected: 500, actual: $response->getStatusCode());
 
         // And: Returns error message
-        $this->assertStringContainsString('Route resolution failed', (string) $response->getBody());
+        $this->assertStringContainsString(needle: 'Route resolution failed', haystack: (string) $response->getBody());
 
         // And: Implements ResponseInterface
-        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
     }
 
     /**
@@ -125,7 +125,7 @@ class RouterIntegrationTest extends TestCase
      */
     public function post_to_get_only_route_returns_500_due_to_exception_handling() : void
     {
-        $this->markTestSkipped('MethodNotAllowedException is thrown before reaching RoutePipeline try-catch');
+        $this->markTestSkipped(message: 'MethodNotAllowedException is thrown before reaching RoutePipeline try-catch');
     }
 
     /**
@@ -134,16 +134,16 @@ class RouterIntegrationTest extends TestCase
     public function favicon_route_returns_204_no_content() : void
     {
         // Given: A GET request to /favicon.ico
-        $request = $this->createRequest('GET', '/favicon.ico');
+        $request = $this->createRequest(method: 'GET', path: '/favicon.ico');
 
         // When: The router resolves the request
         $response = $this->getRouter()->resolve($request);
 
         // Then: Returns status 204
-        $this->assertEquals(204, $response->getStatusCode());
+        $this->assertEquals(expected: 204, actual: $response->getStatusCode());
 
         // And: Has correct Content-Type
-        $this->assertStringContainsString('image/x-icon', $response->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString(needle: 'image/x-icon', haystack: $response->getHeaderLine('Content-Type'));
     }
 
     /**
@@ -155,16 +155,16 @@ class RouterIntegrationTest extends TestCase
 
         foreach ($routes as $route) {
             // Given: A request to each route
-            $request = $this->createRequest('GET', $route);
+            $request = $this->createRequest(method: 'GET', path: $route);
 
             // When: The router resolves the request
             $response = $this->getRouter()->resolve($request);
 
             // Then: Response implements ResponseInterface
             $this->assertInstanceOf(
-                ResponseInterface::class,
-                $response,
-                "Route {$route} did not return a ResponseInterface"
+                expected: ResponseInterface::class,
+                actual  : $response,
+                message : "Route {$route} did not return a ResponseInterface"
             );
         }
     }
@@ -178,15 +178,15 @@ class RouterIntegrationTest extends TestCase
 
         foreach ($routes as $route) {
             // Given: A request to each route
-            $request = $this->createRequest('GET', $route);
+            $request = $this->createRequest(method: 'GET', path: $route);
 
             // When: The router resolves the request
             $response = $this->getRouter()->resolve($request);
 
             // Then: Response has Content-Type header
             $this->assertNotEmpty(
-                $response->getHeaderLine('Content-Type'),
-                "Route {$route} missing Content-Type header"
+                actual : $response->getHeaderLine('Content-Type'),
+                message: "Route {$route} missing Content-Type header"
             );
         }
     }
@@ -226,7 +226,7 @@ class RouterIntegrationTest extends TestCase
 
     private function createRequest(string $method, string $path): Request
     {
-        $uri = UriBuilder::createFromString("http://localhost{$path}");
+        $uri = UriBuilder::createFromString(uri: "http://localhost{$path}");
         return new Request(
             serverParams: ['REQUEST_METHOD' => $method],
             uri: $uri

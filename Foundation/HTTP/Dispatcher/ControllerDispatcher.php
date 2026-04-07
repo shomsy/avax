@@ -87,15 +87,15 @@ final readonly class ControllerDispatcher
         $result = $callable($request);
 
         if ($result === null) {
-            $result = new Response(Stream::fromString('Callable returned null. Must return a ResponseInterface.'));
+            $result = new Response(stream: Stream::fromString(content: 'Callable returned null. Must return a ResponseInterface.'));
         }
 
         if (is_string($result)) {
-            return new Response(Stream::fromString($result));
+            return new Response(stream: Stream::fromString(content: $result));
         }
 
         if (!$result instanceof ResponseInterface) {
-            throw new RuntimeException('Callable must return a ResponseInterface.');
+            throw new RuntimeException(message: 'Callable must return a ResponseInterface.');
         }
 
         return $result;
@@ -200,15 +200,15 @@ final readonly class ControllerDispatcher
         $result = $reflection->invokeArgs(object: $instance, args: $arguments);
 
         if ($result === null) {
-            return new Response(Stream::fromString("Controller returned null"));
+            return new Response(stream: Stream::fromString(content: "Controller returned null"));
         }
 
         if (is_string($result)) {
-            return new Response(Stream::fromString($result));
+            return new Response(stream: Stream::fromString(content: $result));
         }
 
         if (!$result instanceof ResponseInterface) {
-            throw new RuntimeException("Method {$method} in {$controller} must return a ResponseInterface.");
+            throw new RuntimeException(message: "Method {$method} in {$controller} must return a ResponseInterface.");
         }
 
         return $result;
@@ -267,15 +267,15 @@ final readonly class ControllerDispatcher
         $result = $instance($request);
 
         if ($result === null) {
-            return new Response(Stream::fromString("Controller returned null"));
+            return new Response(stream: Stream::fromString(content: "Controller returned null"));
         }
 
         if (is_string($result)) {
-            return new Response(Stream::fromString($result));
+            return new Response(stream: Stream::fromString(content: $result));
         }
 
         if (!$result instanceof ResponseInterface) {
-            throw new RuntimeException("Invokable controller {$controller} must return a ResponseInterface.");
+            throw new RuntimeException(message: "Invokable controller {$controller} must return a ResponseInterface.");
         }
 
         return $result;

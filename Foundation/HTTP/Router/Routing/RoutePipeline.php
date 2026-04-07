@@ -160,7 +160,7 @@ final class RoutePipeline
         } catch (\Throwable $e) {
             // Return 500 Response on exceptions
             return new \Avax\HTTP\Response\Classes\Response(
-                stream: \Avax\HTTP\Response\Classes\Stream::fromString('Internal Server Error'),
+                stream: \Avax\HTTP\Response\Classes\Stream::fromString(content: 'Internal Server Error'),
                 statusCode: 500
             );
         }

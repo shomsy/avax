@@ -10,7 +10,7 @@ use Avax\Container\ContainerInterface;
 use Avax\Container\ContextBuilderInterface;
 use Avax\Container\InjectionReport;
 use Avax\Container\ScopeManagerInterface;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Contracts\ContainerRuntimeInterface;
+use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
@@ -20,19 +20,19 @@ final class ContainerPublicSurfaceTest extends TestCase
     {
         $this->assertSame(
             expected: BindingBuilderInterface::class,
-            actual  : $this->returnType(new ReflectionMethod(ContainerInterface::class, 'bind'))
+            actual  : $this->returnType(method: new ReflectionMethod(objectOrMethod: ContainerInterface::class, method: 'bind'))
         );
         $this->assertSame(
             expected: ContextBuilderInterface::class,
-            actual  : $this->returnType(new ReflectionMethod(ContainerInterface::class, 'when'))
+            actual  : $this->returnType(method: new ReflectionMethod(objectOrMethod: ContainerInterface::class, method: 'when'))
         );
         $this->assertSame(
             expected: InjectionReport::class,
-            actual  : $this->returnType(new ReflectionMethod(ContainerInterface::class, 'inspectInjection'))
+            actual  : $this->returnType(method: new ReflectionMethod(objectOrMethod: ContainerInterface::class, method: 'inspectInjection'))
         );
         $this->assertSame(
             expected: ScopeManagerInterface::class,
-            actual  : $this->returnType(new ReflectionMethod(ContainerInterface::class, 'scopes'))
+            actual  : $this->returnType(method: new ReflectionMethod(objectOrMethod: ContainerInterface::class, method: 'scopes'))
         );
     }
 

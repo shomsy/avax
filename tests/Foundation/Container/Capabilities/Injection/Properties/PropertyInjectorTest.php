@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capabilities\Injection\Properties;
+namespace Avax\Container\Tests\Capability\Injection\Properties;
 
 use Avax\Container\ContainerInterface;
-use Avax\Container\DependencyInjection\Capabilities\Injection\Properties\PropertyInjector;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\PropertyPrototype;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Contracts\ContainerRuntimeInterface;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Errors\ResolutionException;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\KernelContext;
+use Avax\Container\DependencyInjection\Capability\Injection\Properties\PropertyInjector;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Model\PropertyPrototype;
+use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
+use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionException;
+use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -40,7 +40,7 @@ final class PropertyInjectorTest extends TestCase
         $container = $this->createMock(ContainerRuntimeInterface::class);
         $container->expects(invocationRule: $this->once())
             ->method(constraint: 'resolveContext')
-            ->with($this->callback(static function (KernelContext $context) : bool {
+            ->with($this->callback(callback: static function (KernelContext $context) : bool {
                 return $context->serviceId === stdClass::class;
             }))
             ->willReturn(value: new stdClass);

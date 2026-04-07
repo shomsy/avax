@@ -19,15 +19,15 @@ Canonical active implementation queue.
 - `updated_at`: 2026-04-07 01:11 CEST
 - `status`: done
 - `outcome`: Unify authentication identity behind a single façade
-- `acceptance`: AuthBuilder wires flows through `System/Capabilities/Identity/IdentityInterface` with session and JWT adapters hidden behind `Identity`
-- `links`: System/Capabilities/Identity/
+- `acceptance`: AuthBuilder wires flows through `System/Capability/Identity/IdentityInterface` with session and JWT adapters hidden behind `Identity`
+- `links`: System/Capability/Identity/
 
 - `id`: AUTH-010
 - `created_at`: 2026-04-06 16:50 CET
 - `updated_at`: 2026-04-06 16:50 CET
 - `status`: todo
 - `outcome`: Refactor repository structure - introduce src/ boundary
-- `acceptance`: src/ contains all source slices (Flows, Capabilities, Foundation, Configuration), tests/ and docs/ stay at root
+- `acceptance`: src/ contains all source slices (Flow, Capability, Foundation, Configuration), tests/ and docs/ stay at root
 - `links`: src/
 
 - `id`: AUTH-009
@@ -36,14 +36,14 @@ Canonical active implementation queue.
 - `status`: done
 - `outcome`: Implement In-Memory Rate Limit Storage
 - `acceptance`: Add `InMemoryLoginRateLimitStorage` class and unit test for LoginRateLimit gatekeeping
-- `links`: System/Flows/Login/RateLimit/
+- `links`: System/Flow/Login/RateLimit/
 
 - `id`: AUTH-008
 - `created_at`: 2026-04-06 16:30 CET
 - `updated_at`: 2026-04-06 16:30 CET
 - `status`: todo
 - `outcome`: Fix outdated Examples
-- `acceptance`: `examples/session-login.php` using new `AuthBuilder` and `Capabilities` namespaces
+- `acceptance`: `examples/session-login.php` using new `AuthBuilder` and `Capability` namespaces
 - `links`: examples/
 
 - `id`: AUTH-007
@@ -58,7 +58,7 @@ Canonical active implementation queue.
 - `created_at`: 2026-04-06 16:30 CET
 - `updated_at`: 2026-04-06 16:30 CET
 - `status`: in_progress
-- `outcome`: Implement missing tests for Flows, Capabilities, and Foundation
+- `outcome`: Implement missing tests for Flow, Capability, and Foundation
 - `acceptance`: 100% logic coverage for all files in src/
 - `links`: tests/
 

@@ -7,10 +7,10 @@ namespace Avax\Auth\Tests\Configuration;
 use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Flows\Register\RegistrationData;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Mockery;
 use RuntimeException;
@@ -28,8 +28,8 @@ class AuthBuilderTest extends TestCase
     public function testAuthBuilderThrowsExceptionWithoutUserSource() : void
     {
         $builder = new AuthBuilder();
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Data source is required (forUser).');
+        $this->expectException(exception: RuntimeException::class);
+        $this->expectExceptionMessage(message: 'Data source is required (forUser).');
         $builder->ready();
     }
 
@@ -39,8 +39,8 @@ class AuthBuilderTest extends TestCase
         $builder = new AuthBuilder();
         $builder->forUser(userSource: $userSource);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Identity is required (withIdentity).');
+        $this->expectException(exception: RuntimeException::class);
+        $this->expectExceptionMessage(message: 'Identity is required (withIdentity).');
         $builder->ready();
     }
 
@@ -55,7 +55,7 @@ class AuthBuilderTest extends TestCase
 
         $auth = $builder->ready();
 
-        $this->assertInstanceOf(Auth::class, $auth);
+        $this->assertInstanceOf(expected: Auth::class, actual: $auth);
     }
 
     public function testAuthBuilderUsesConfiguredIdGenerator() : void
@@ -83,12 +83,12 @@ class AuthBuilderTest extends TestCase
         $auth = $builder
             ->forUser(userSource: $userSource)
             ->withIdentity(identity: $identity)
-            ->usingIdGenerator($idGenerator)
-            ->usingHasher($passwordHasher)
+            ->usingIdGenerator(idGenerator: $idGenerator)
+            ->usingHasher(passwordHasher: $passwordHasher)
             ->ready();
 
         $user = $auth->register(data: $data);
 
-        $this->assertSame(987654, $user->getId()->value);
+        $this->assertSame(expected: 987654, actual: $user->getId()->value);
     }
 }

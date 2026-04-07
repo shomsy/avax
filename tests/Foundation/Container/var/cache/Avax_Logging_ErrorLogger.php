@@ -1,8 +1,8 @@
 <?php
 
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\MethodPrototype;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\ParameterPrototype;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\ServicePrototype;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Model\MethodPrototype;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ParameterPrototype;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
 
 return ServicePrototype::__set_state(array: [
     'class'              => 'Avax\\Logging\\ErrorLogger',

@@ -87,9 +87,7 @@ final class QueryOrchestrator
         return $this->transactionManager->transaction(callback: function () use ($callback) {
             $result = $callback($this);
 
-            if ($this->identityMap !== null) {
-                $this->identityMap->execute();
-            }
+            $this->identityMap?->execute();
 
             return $result;
         });

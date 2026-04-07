@@ -347,7 +347,7 @@ if (! function_exists('get')) {
     function get(string $path, callable|array|string $action)
     {
         return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make('GET', $path)->action($action)
+            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'GET', path: $path)->action(action: $action)
         );
     }
 }
@@ -363,7 +363,7 @@ if (! function_exists('post')) {
     function post(string $path, callable|array|string $action)
     {
         return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make('POST', $path)->action($action)
+            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'POST', path: $path)->action(action: $action)
         );
     }
 }
@@ -379,7 +379,7 @@ if (! function_exists('put')) {
     function put(string $path, callable|array|string $action)
     {
         return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make('PUT', $path)->action($action)
+            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'PUT', path: $path)->action(action: $action)
         );
     }
 }
@@ -395,7 +395,7 @@ if (! function_exists('patch')) {
     function patch(string $path, callable|array|string $action)
     {
         return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make('PATCH', $path)->action($action)
+            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'PATCH', path: $path)->action(action: $action)
         );
     }
 }
@@ -411,7 +411,7 @@ if (! function_exists('delete')) {
     function delete(string $path, callable|array|string $action)
     {
         return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make('DELETE', $path)->action($action)
+            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'DELETE', path: $path)->action(action: $action)
         );
     }
 }
@@ -427,7 +427,7 @@ if (! function_exists('options')) {
     function options(string $path, callable|array|string $action)
     {
         return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make('OPTIONS', $path)->action($action)
+            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'OPTIONS', path: $path)->action(action: $action)
         );
     }
 }
@@ -443,7 +443,7 @@ if (! function_exists('head')) {
     function head(string $path, callable|array|string $action)
     {
         return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make('HEAD', $path)->action($action)
+            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'HEAD', path: $path)->action(action: $action)
         );
     }
 }
@@ -459,7 +459,7 @@ if (! function_exists('any')) {
     function any(string $path, callable|array|string $action)
     {
         return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make('ANY', $path)->action($action)
+            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'ANY', path: $path)->action(action: $action)
         );
     }
 }
@@ -523,14 +523,14 @@ if (! function_exists('route_any')) {
         $proxies = [];
         foreach ($methods as $method) {
             $proxies[] = match (strtolower($method)) {
-                'get' => get($path, $handler),
-                'post' => post($path, $handler),
-                'put' => put($path, $handler),
-                'patch' => patch($path, $handler),
-                'delete' => delete($path, $handler),
-                'options' => options($path, $handler),
-                'head' => head($path, $handler),
-                default => throw new \InvalidArgumentException("Unsupported HTTP method: {$method}")
+                'get' => get(path: $path, action: $handler),
+                'post' => post(path: $path, action: $handler),
+                'put' => put(path: $path, action: $handler),
+                'patch' => patch(path: $path, action: $handler),
+                'delete' => delete(path: $path, action: $handler),
+                'options' => options(path: $path, action: $handler),
+                'head' => head(path: $path, action: $handler),
+                default => throw new \InvalidArgumentException(message: "Unsupported HTTP method: {$method}")
             };
         }
         return $proxies;
@@ -603,10 +603,10 @@ if (! function_exists('route_resource')) {
                 }
 
                 $routes[] = match (strtolower($method)) {
-                    'get' => get($path, is_string($controller) ? "{$controller}@{$handler}" : $controller)->where($constraints),
-                    'post' => post($path, is_string($controller) ? "{$controller}@{$handler}" : $controller),
-                    'put' => put($path, is_string($controller) ? "{$controller}@{$handler}" : $controller)->where($constraints),
-                    'delete' => delete($path, is_string($controller) ? "{$controller}@{$handler}" : $controller)->where($constraints),
+                    'get' => get(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
+                    'post' => post(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller),
+                    'put' => put(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
+                    'delete' => delete(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
                 };
             }
         }

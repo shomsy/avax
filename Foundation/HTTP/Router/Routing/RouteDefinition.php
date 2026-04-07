@@ -93,14 +93,14 @@ final readonly class RouteDefinition
         array              $metadata = []
     )
     {
-        $this->validateMethod($method);
-        $this->validatePath($path);
-        $this->validateAction($action);
-        $this->validateRouteName($name);
-        $this->validateConstraints($constraints);
+        $this->validateMethod(method: $method);
+        $this->validatePath(path: $path);
+        $this->validateAction(action: $action);
+        $this->validateRouteName(name: $name);
+        $this->validateConstraints(constraints: $constraints);
 
         // Normalize path for consistent routing
-        $path = PathNormalizer::normalize($path);
+        $path = PathNormalizer::normalize(path: $path);
 
         // Calculate route specificity: (segment count) - (parameter count)
         // Higher specificity = more specific routes matched first
@@ -109,7 +109,7 @@ final readonly class RouteDefinition
         $specificity = $segmentCount - $parameterCount;
 
         // Precompile regex pattern for performance
-        $compiledPathRegex = $this->compileRoutePattern($path, $constraints);
+        $compiledPathRegex = $this->compileRoutePattern(template: $path, constraints: $constraints);
 
         $this->method = $method;
         $this->path = $path;
@@ -135,8 +135,8 @@ final readonly class RouteDefinition
      */
     private function validateMethod(string $method) : void
     {
-        if (! HttpMethod::isSupported($method)) {
-            throw new InvalidArgumentException(sprintf('Invalid HTTP method: %s', $method));
+        if (! HttpMethod::isSupported(method: $method)) {
+            throw new InvalidArgumentException(message: sprintf('Invalid HTTP method: %s', $method));
         }
     }
 
@@ -149,11 +149,11 @@ final readonly class RouteDefinition
     private function validatePath(string $path) : void
     {
         if (empty($path)) {
-            throw new InvalidArgumentException('Route path cannot be empty');
+            throw new InvalidArgumentException(message: 'Route path cannot be empty');
         }
 
         if (! str_starts_with($path, '/')) {
-            throw new InvalidArgumentException('Route path must start with /');
+            throw new InvalidArgumentException(message: 'Route path must start with /');
         }
     }
 
@@ -165,15 +165,15 @@ final readonly class RouteDefinition
     private function validateAction(mixed $action) : void
     {
         if ($action === null) {
-            throw new InvalidArgumentException('Route action cannot be null');
+            throw new InvalidArgumentException(message: 'Route action cannot be null');
         }
 
         if (! is_callable($action) && ! is_string($action) && ! is_array($action)) {
-            throw new InvalidArgumentException('Route action must be callable, string, or array');
+            throw new InvalidArgumentException(message: 'Route action must be callable, string, or array');
         }
 
         if (is_array($action) && count($action) !== 2) {
-            throw new InvalidArgumentException('Route action array must have exactly 2 elements [class, method]');
+            throw new InvalidArgumentException(message: 'Route action array must have exactly 2 elements [class, method]');
         }
     }
 
@@ -186,7 +186,7 @@ final readonly class RouteDefinition
     private function validateRouteName(string $name) : void
     {
         if (! empty($name) && str_starts_with($name, '__avax.')) {
-            throw new ReservedRouteNameException($name);
+            throw new ReservedRouteNameException(name: $name);
         }
     }
 
@@ -199,7 +199,7 @@ final readonly class RouteDefinition
     private function validateConstraints(array $constraints) : void
     {
         foreach ($constraints as $pattern) {
-            $this->validateConstraintPattern($pattern);
+            $this->validateConstraintPattern(pattern: $pattern);
         }
     }
 
@@ -224,7 +224,7 @@ final readonly class RouteDefinition
         restore_error_handler();
 
         if ($result === false || $error !== null) {
-            throw new InvalidArgumentException("Invalid constraint pattern: {$pattern}");
+            throw new InvalidArgumentException(message: "Invalid constraint pattern: {$pattern}");
         }
     }
 
@@ -274,21 +274,21 @@ final readonly class RouteDefinition
     public static function __set_state(array $properties) : self
     {
         // Normalize path for consistency during unserialization
-        $normalizedPath = PathNormalizer::normalize($properties['path']);
+        $normalizedPath = PathNormalizer::normalize(path: $properties['path']);
 
         return new self(
-            $properties['method'],
-            $normalizedPath,
-            $properties['action'],
-            $properties['middleware'],
-            $properties['name'],
-            $properties['constraints'],
-            $properties['defaults'],
-            $properties['domain'],
-            $properties['attributes'],
-            $properties['authorization'],
-            $properties['parameters'] ?? [],
-            $properties['metadata'] ?? []
+            method       : $properties['method'],
+            path         : $normalizedPath,
+            action       : $properties['action'],
+            middleware   : $properties['middleware'],
+            name         : $properties['name'],
+            constraints  : $properties['constraints'],
+            defaults     : $properties['defaults'],
+            domain       : $properties['domain'],
+            attributes   : $properties['attributes'],
+            authorization: $properties['authorization'],
+            parameters   : $properties['parameters'] ?? [],
+            metadata     : $properties['metadata'] ?? []
         );
     }
 
@@ -302,29 +302,29 @@ final readonly class RouteDefinition
     public static function fromArray(array $payload) : self
     {
         if (! isset($payload['method'], $payload['path'], $payload['action'])) {
-            throw new InvalidArgumentException('Cached route payload is missing required fields.');
+            throw new InvalidArgumentException(message: 'Cached route payload is missing required fields.');
         }
 
         if ($payload['action'] instanceof Closure || $payload['action'] instanceof SerializableClosure) {
-            throw new RuntimeException('Cached route action must not be a closure.');
+            throw new RuntimeException(message: 'Cached route action must not be a closure.');
         }
 
         // Normalize path for consistency (though cached paths should already be normalized)
-        $normalizedPath = PathNormalizer::normalize($payload['path']);
+        $normalizedPath = PathNormalizer::normalize(path: $payload['path']);
 
         return new self(
-            $payload['method'],
-            $normalizedPath,
-            $payload['action'],
-            $payload['middleware'] ?? [],
-            $payload['name'] ?? '',
-            $payload['constraints'] ?? [],
-            $payload['defaults'] ?? [],
-            $payload['domain'] ?? null,
-            $payload['attributes'] ?? [],
-            $payload['authorization'] ?? null,
-            [],
-            $payload['metadata'] ?? []
+            method       : $payload['method'],
+            path         : $normalizedPath,
+            action       : $payload['action'],
+            middleware   : $payload['middleware'] ?? [],
+            name         : $payload['name'] ?? '',
+            constraints  : $payload['constraints'] ?? [],
+            defaults     : $payload['defaults'] ?? [],
+            domain       : $payload['domain'] ?? null,
+            attributes   : $payload['attributes'] ?? [],
+            authorization: $payload['authorization'] ?? null,
+            parameters   : [],
+            metadata     : $payload['metadata'] ?? []
         );
     }
 
@@ -341,16 +341,16 @@ final readonly class RouteDefinition
             : $this->action;
 
         return new self(
-            $this->method,
-            $this->path,
-            $action,
-            $this->middleware,
-            $this->name,
-            $this->constraints,
-            $this->defaults,
-            $this->domain,
-            $this->attributes,
-            $this->authorization
+            method       : $this->method,
+            path         : $this->path,
+            action       : $action,
+            middleware   : $this->middleware,
+            name         : $this->name,
+            constraints  : $this->constraints,
+            defaults     : $this->defaults,
+            domain       : $this->domain,
+            attributes   : $this->attributes,
+            authorization: $this->authorization
         );
     }
 
@@ -367,16 +367,16 @@ final readonly class RouteDefinition
             : $this->action;
 
         return new self(
-            $this->method,
-            $this->path,
-            $action,
-            $this->middleware,
-            $this->name,
-            $this->constraints,
-            $this->defaults,
-            $this->domain,
-            $this->attributes,
-            $this->authorization
+            method       : $this->method,
+            path         : $this->path,
+            action       : $action,
+            middleware   : $this->middleware,
+            name         : $this->name,
+            constraints  : $this->constraints,
+            defaults     : $this->defaults,
+            domain       : $this->domain,
+            attributes   : $this->attributes,
+            authorization: $this->authorization
         );
     }
 
@@ -413,18 +413,18 @@ final readonly class RouteDefinition
         $metadata[$key] = $value;
 
         return new self(
-            $this->method,
-            $this->path,
-            $this->action,
-            $this->middleware,
-            $this->name,
-            $this->constraints,
-            $this->defaults,
-            $this->domain,
-            $this->attributes,
-            $this->authorization,
-            $this->parameters,
-            $metadata
+            method       : $this->method,
+            path         : $this->path,
+            action       : $this->action,
+            middleware   : $this->middleware,
+            name         : $this->name,
+            constraints  : $this->constraints,
+            defaults     : $this->defaults,
+            domain       : $this->domain,
+            attributes   : $this->attributes,
+            authorization: $this->authorization,
+            parameters   : $this->parameters,
+            metadata     : $metadata
         );
     }
 
@@ -462,7 +462,7 @@ final readonly class RouteDefinition
     public function toArray() : array
     {
         if ($this->usesClosure() || $this->action instanceof SerializableClosure) {
-            throw new RuntimeException('Cannot cache routes that use closures.');
+            throw new RuntimeException(message: 'Cannot cache routes that use closures.');
         }
 
         return [

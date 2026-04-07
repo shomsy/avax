@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capabilities\Access\RequireAuthentication;
+namespace Avax\Auth\Tests\Capability\Access\RequireAuthentication;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Capabilities\Access\RequireAuthentication\RequireAuthentication;
-use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
 use Mockery;
 
 /**
@@ -28,7 +28,7 @@ class RequireAuthenticationTest extends TestCase
         $requirement = new RequireAuthentication(checkAuthentication: $checkAuthentication);
         $requirement->execute();
 
-        $this->assertTrue(true); // No exception thrown
+        $this->assertTrue(condition: true); // No exception thrown
     }
 
     public function testRequireAuthenticationFailure() : void
@@ -38,7 +38,7 @@ class RequireAuthenticationTest extends TestCase
 
         $requirement = new RequireAuthentication(checkAuthentication: $checkAuthentication);
 
-        $this->expectException(Unauthenticated::class);
+        $this->expectException(exception: Unauthenticated::class);
 
         $requirement->execute();
     }

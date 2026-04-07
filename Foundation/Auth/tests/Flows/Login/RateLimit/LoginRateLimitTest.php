@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flows\Login\RateLimit;
+namespace Avax\Auth\Tests\Flow\Login\RateLimit;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Flows\Login\RateLimit\InMemoryLoginRateLimitStorage;
-use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
-use Avax\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Auth\System\Flow\Login\RateLimit\InMemoryLoginRateLimitStorage;
+use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Foundation\Clock;
 
 /**
@@ -20,9 +20,9 @@ class LoginRateLimitTest extends TestCase
         $storage = new InMemoryLoginRateLimitStorage();
         $rateLimit = new LoginRateLimit(storage: $storage, clock: new Clock(), maxAttempts: 2, decaySeconds: 60);
 
-        $rateLimit->check('alice');
+        $rateLimit->check(identifier: 'alice');
 
-        $this->assertSame(0, $storage->get('alice'));
+        $this->assertSame(expected: 0, actual: $storage->get(identifier: 'alice'));
     }
 
     public function testLoginRateLimitBlocksWithinDecayWindow() : void
@@ -30,10 +30,10 @@ class LoginRateLimitTest extends TestCase
         $storage = new InMemoryLoginRateLimitStorage();
         $rateLimit = new LoginRateLimit(storage: $storage, clock: new Clock(), maxAttempts: 1, decaySeconds: 60);
 
-        $rateLimit->recordFailed('alice');
+        $rateLimit->recordFailed(identifier: 'alice');
 
-        $this->expectException(RateLimitException::class);
-        $rateLimit->check('alice');
+        $this->expectException(exception: RateLimitException::class);
+        $rateLimit->check(identifier: 'alice');
     }
 
     public function testLoginRateLimitResetsAfterDecayWindow() : void
@@ -41,11 +41,11 @@ class LoginRateLimitTest extends TestCase
         $storage = new InMemoryLoginRateLimitStorage();
         $rateLimit = new LoginRateLimit(storage: $storage, clock: new Clock(), maxAttempts: 1, decaySeconds: 0);
 
-        $rateLimit->recordFailed('alice');
-        $rateLimit->check('alice');
+        $rateLimit->recordFailed(identifier: 'alice');
+        $rateLimit->check(identifier: 'alice');
 
-        $this->assertSame(0, $storage->get('alice'));
-        $this->assertSame(0, $storage->getLastAttemptTime('alice'));
+        $this->assertSame(expected: 0, actual: $storage->get(identifier: 'alice'));
+        $this->assertSame(expected: 0, actual: $storage->getLastAttemptTime(identifier: 'alice'));
     }
 
     public function testLoginRateLimitNormalizesIdentifiers() : void
@@ -53,9 +53,9 @@ class LoginRateLimitTest extends TestCase
         $storage = new InMemoryLoginRateLimitStorage();
         $rateLimit = new LoginRateLimit(storage: $storage, clock: new Clock(), maxAttempts: 1, decaySeconds: 60);
 
-        $rateLimit->recordFailed('Alice@Example.com');
+        $rateLimit->recordFailed(identifier: 'Alice@Example.com');
 
-        $this->expectException(RateLimitException::class);
-        $rateLimit->check('alice@example.com');
+        $this->expectException(exception: RateLimitException::class);
+        $rateLimit->check(identifier: 'alice@example.com');
     }
 }

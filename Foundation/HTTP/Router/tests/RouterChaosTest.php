@@ -49,16 +49,16 @@ final class RouterChaosTest extends TestCase
 
         $cacheLoader = $this->createMock(RouteSourceLoaderInterface::class);
         $cacheLoader->method('loadInto')
-            ->willThrowException(new RuntimeException('Cache corruption detected'));
+            ->willThrowException(exception: new RuntimeException(message: 'Cache corruption detected'));
 
         $cacheLoader->method('isAvailable')
-            ->willReturn(true);
+            ->willReturn(value: true);
 
         // Router should handle cache corruption gracefully
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cache corruption detected');
+        $this->expectException(exception: RuntimeException::class);
+        $this->expectExceptionMessage(message: 'Cache corruption detected');
 
-        $cacheLoader->loadInto($this->collection);
+        $cacheLoader->loadInto(collection: $this->collection);
     }
 
     /**
@@ -77,11 +77,11 @@ final class RouterChaosTest extends TestCase
         $thread1 = function () use (&$routes1) {
             for ($i = 1; $i <= 100; $i++) {
                 $route = new RouteDefinition(
-                    'GET',
-                    "/api/v1/resource{$i}",
-                    "Controller{$i}@action",
-                    ['api', 'auth'],
-                    "api.resource{$i}"
+                    method    : 'GET',
+                    path      : "/api/v1/resource{$i}",
+                    action    : "Controller{$i}@action",
+                    middleware: ['api', 'auth'],
+                    name      : "api.resource{$i}"
                 );
                 $routes1[] = $route;
             }
@@ -91,11 +91,11 @@ final class RouterChaosTest extends TestCase
         $thread2 = function () use (&$routes2) {
             for ($i = 1; $i <= 100; $i++) {
                 $route = new RouteDefinition(
-                    'GET',
-                    "/web/resource{$i}",
-                    "WebController{$i}@action",
-                    ['web', 'session'],
-                    "web.resource{$i}"
+                    method    : 'GET',
+                    path      : "/web/resource{$i}",
+                    action    : "WebController{$i}@action",
+                    middleware: ['web', 'session'],
+                    name      : "web.resource{$i}"
                 );
                 $routes2[] = $route;
             }
@@ -107,12 +107,12 @@ final class RouterChaosTest extends TestCase
 
         // Register all routes
         foreach (array_merge($routes1, $routes2) as $route) {
-            $this->router->add($route);
+            $this->router->add(route: $route);
         }
 
         // Verify isolation - no conflicts between API and web routes
-        $this->assertInstanceOf(RouteDefinition::class, $this->router->getByName('api.resource50'));
-        $this->assertInstanceOf(RouteDefinition::class, $this->router->getByName('web.resource50'));
+        $this->assertInstanceOf(expected: RouteDefinition::class, actual: $this->router->getByName(name: 'api.resource50'));
+        $this->assertInstanceOf(expected: RouteDefinition::class, actual: $this->router->getByName(name: 'web.resource50'));
     }
 
     /**
@@ -128,7 +128,7 @@ final class RouterChaosTest extends TestCase
             $callCount++;
 
             if ($callCount === 2) { // Fail on second call
-                throw new RuntimeException('Middleware chain interruption');
+                throw new RuntimeException(message: 'Middleware chain interruption');
             }
 
             return $next($request);
@@ -136,17 +136,17 @@ final class RouterChaosTest extends TestCase
 
         // Create route with failing middleware chain
         $route = new RouteDefinition(
-            'GET',
-            '/test',
-            function () { return 'success'; },
-            [$failingMiddleware, $failingMiddleware, $failingMiddleware]
+            method    : 'GET',
+            path      : '/test',
+            action    : function () { return 'success'; },
+            middleware: [$failingMiddleware, $failingMiddleware, $failingMiddleware]
         );
 
-        $this->router->add($route);
+        $this->router->add(route: $route);
 
         // Router should handle middleware failures gracefully
         // (In real implementation, this would be handled by middleware pipeline)
-        $this->assertTrue(true); // Placeholder - actual middleware testing would be in pipeline tests
+        $this->assertTrue(condition: true); // Placeholder - actual middleware testing would be in pipeline tests
     }
 
     /**
@@ -162,11 +162,11 @@ final class RouterChaosTest extends TestCase
         // Create 10,000 routes to simulate memory pressure
         for ($i = 1; $i <= 10000; $i++) {
             $route = new RouteDefinition(
-                'GET',
-                "/stress/route{$i}/with/very/long/path/segments",
-                "StressController{$i}@handle",
-                ['auth', 'cache', 'log', 'metrics'],
-                "stress.route{$i}"
+                method    : 'GET',
+                path      : "/stress/route{$i}/with/very/long/path/segments",
+                action    : "StressController{$i}@handle",
+                middleware: ['auth', 'cache', 'log', 'metrics'],
+                name      : "stress.route{$i}"
             );
 
             $largeRoutes[] = $route;
@@ -177,7 +177,7 @@ final class RouterChaosTest extends TestCase
 
         // Register routes
         foreach ($largeRoutes as $route) {
-            $this->router->add($route);
+            $this->router->add(route: $route);
         }
 
         // Measure memory after
@@ -185,12 +185,12 @@ final class RouterChaosTest extends TestCase
         $memoryUsed = $memoryAfter - $memoryBefore;
 
         // Memory usage should be reasonable (< 50MB for 10k routes)
-        $this->assertLessThan(50 * 1024 * 1024, $memoryUsed,
-            'Memory usage under stress test should be reasonable');
+        $this->assertLessThan(expected: 50 * 1024 * 1024, actual: $memoryUsed,
+                              message : 'Memory usage under stress test should be reasonable');
 
         // Routes should still be accessible
-        $this->assertInstanceOf(RouteDefinition::class, $this->router->getByName('stress.route5000'));
-        $this->assertInstanceOf(RouteDefinition::class, $this->router->getByName('stress.route9999'));
+        $this->assertInstanceOf(expected: RouteDefinition::class, actual: $this->router->getByName(name: 'stress.route5000'));
+        $this->assertInstanceOf(expected: RouteDefinition::class, actual: $this->router->getByName(name: 'stress.route9999'));
     }
 
     /**
@@ -213,24 +213,24 @@ final class RouterChaosTest extends TestCase
         foreach ($invalidRoutes as $routeData) {
             try {
                 $route = new RouteDefinition(
-                    $routeData['method'],
-                    $routeData['path'],
-                    $routeData['action']
+                    method: $routeData['method'],
+                    path  : $routeData['path'],
+                    action: $routeData['action']
                 );
 
-                $this->router->add($route);
+                $this->router->add(route: $route);
                 $validRoutesAdded++;
             } catch (\Throwable $exception) {
                 // Expected - invalid routes should throw exceptions
-                $this->assertInstanceOf(\Throwable::class, $exception);
+                $this->assertInstanceOf(expected: \Throwable::class, actual: $exception);
             }
         }
 
         // No invalid routes should have been added
-        $this->assertEquals(0, $validRoutesAdded);
+        $this->assertEquals(expected: 0, actual: $validRoutesAdded);
 
         // Collection should remain clean
-        $this->assertEmpty($this->router->allRoutes());
+        $this->assertEmpty(actual: $this->router->allRoutes());
     }
 
     /**
@@ -240,30 +240,30 @@ final class RouterChaosTest extends TestCase
     {
         // Simulate primary loader failure
         $primaryLoader = $this->createMock(RouteSourceLoaderInterface::class);
-        $primaryLoader->method('isAvailable')->willReturn(true);
-        $primaryLoader->method('loadInto')->willThrowException(new RuntimeException('Primary loader failed'));
+        $primaryLoader->method('isAvailable')->willReturn(value: true);
+        $primaryLoader->method('loadInto')->willThrowException(exception: new RuntimeException(message: 'Primary loader failed'));
 
         // Fallback loader succeeds
         $fallbackLoader = $this->createMock(RouteSourceLoaderInterface::class);
-        $fallbackLoader->method('isAvailable')->willReturn(true);
-        $fallbackLoader->method('loadInto')->willReturnCallback(function (RouteCollection $collection) {
-            $route = new RouteDefinition('GET', '/fallback', 'FallbackController@action');
-            $collection->addRoute($route);
+        $fallbackLoader->method('isAvailable')->willReturn(value: true);
+        $fallbackLoader->method('loadInto')->willReturnCallback(callback: function (RouteCollection $collection) {
+            $route = new RouteDefinition(method: 'GET', path: '/fallback', action: 'FallbackController@action');
+            $collection->addRoute(route: $route);
         });
 
         // Simulate loader chain with fallback
         try {
-            $primaryLoader->loadInto($this->collection);
+            $primaryLoader->loadInto(collection: $this->collection);
         } catch (RuntimeException) {
             // Primary failed, try fallback
-            $fallbackLoader->loadInto($this->collection);
+            $fallbackLoader->loadInto(collection: $this->collection);
         } catch (\Exception $e) {
         }
 
         // Fallback route should be available
-        $route = $this->collection->findExactRoute('GET', '/fallback');
-        $this->assertNotNull($route);
-        $this->assertEquals('FallbackController@action', $route->action);
+        $route = $this->collection->findExactRoute(method: 'GET', path: '/fallback');
+        $this->assertNotNull(actual: $route);
+        $this->assertEquals(expected: 'FallbackController@action', actual: $route->action);
     }
 
     /**
@@ -283,15 +283,15 @@ final class RouterChaosTest extends TestCase
                 for ($i = 0; $i < $routesPerOperation; $i++) {
                     $routeId = ($op * $routesPerOperation) + $i;
                     $route = new RouteDefinition(
-                        'GET',
-                        "/concurrent/{$routeId}",
-                        "ConcurrentController{$routeId}@action",
-                        [],
-                        "concurrent.{$routeId}"
+                        method    : 'GET',
+                        path      : "/concurrent/{$routeId}",
+                        action    : "ConcurrentController{$routeId}@action",
+                        middleware: [],
+                        name      : "concurrent.{$routeId}"
                     );
 
                     try {
-                        $this->router->add($route);
+                        $this->router->add(route: $route);
                     } catch (\Throwable $exception) {
                         // In real concurrency, some operations might fail due to race conditions
                         // This is expected behavior we're testing for
@@ -307,12 +307,12 @@ final class RouterChaosTest extends TestCase
 
         // Verify system stability - should have some routes registered
         $allRoutes = $this->router->allRoutes();
-        $this->assertNotEmpty($allRoutes);
+        $this->assertNotEmpty(actual: $allRoutes);
 
         // Total routes should be reasonable (allowing for some race condition failures)
         $totalRoutes = array_sum(array_map('count', $allRoutes));
-        $this->assertGreaterThan(0, $totalRoutes);
-        $this->assertLessThanOrEqual($concurrentOperations * $routesPerOperation, $totalRoutes);
+        $this->assertGreaterThan(expected: 0, actual: $totalRoutes);
+        $this->assertLessThanOrEqual(expected: $concurrentOperations * $routesPerOperation, actual: $totalRoutes);
     }
 
     /**
@@ -324,15 +324,15 @@ final class RouterChaosTest extends TestCase
         // Simulate network partition affecting external dependencies
         $networkDependentLoader = $this->createMock(RouteSourceLoaderInterface::class);
         $networkDependentLoader->method('isAvailable')
-            ->willThrowException(new RuntimeException('Network timeout'));
+            ->willThrowException(exception: new RuntimeException(message: 'Network timeout'));
 
         $networkDependentLoader->method('loadInto')
-            ->willThrowException(new RuntimeException('Connection failed'));
+            ->willThrowException(exception: new RuntimeException(message: 'Connection failed'));
 
         // Router should handle network failures gracefully
-        $this->expectException(RuntimeException::class);
+        $this->expectException(exception: RuntimeException::class);
 
-        $networkDependentLoader->loadInto($this->collection);
+        $networkDependentLoader->loadInto(collection: $this->collection);
     }
 
     /**
@@ -348,12 +348,12 @@ final class RouterChaosTest extends TestCase
         for ($i = 0; $i < $iterations; $i++) {
             // Create and register route
             $route = new RouteDefinition(
-                'GET',
-                "/memory/test/{$i}",
-                "MemoryController{$i}@action"
+                method: 'GET',
+                path  : "/memory/test/{$i}",
+                action: "MemoryController{$i}@action"
             );
 
-            $this->router->add($route);
+            $this->router->add(route: $route);
 
             // Periodic cleanup simulation
             if ($i % 100 === 0) {
@@ -365,9 +365,9 @@ final class RouterChaosTest extends TestCase
 
                 // Memory increase should be bounded (allow some growth for route storage)
                 $this->assertLessThan(
-                    10 * 1024 * 1024, // 10MB limit
-                    $memoryIncrease,
-                    "Memory leak detected at iteration {$i}"
+                    expected: 10 * 1024 * 1024, // 10MB limit
+                    actual  : $memoryIncrease,
+                    message : "Memory leak detected at iteration {$i}"
                 );
             }
         }
@@ -378,9 +378,9 @@ final class RouterChaosTest extends TestCase
 
         // Total memory increase should be reasonable for 1000 routes
         $this->assertLessThan(
-            50 * 1024 * 1024, // 50MB limit
-            $totalIncrease,
-            'Excessive memory usage indicates potential leak'
+            expected: 50 * 1024 * 1024, // 50MB limit
+            actual  : $totalIncrease,
+            message : 'Excessive memory usage indicates potential leak'
         );
     }
 }

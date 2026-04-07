@@ -202,7 +202,7 @@ final readonly class RouteBootstrapper
      */
     private function loadRoutesFromDisk(string $baseDir, bool $closuresOnly = false) : void
     {
-        $this->routeRegistry->scoped(function () use ($baseDir, $closuresOnly) : void {
+        $this->routeRegistry->scoped(callback: function () use ($baseDir, $closuresOnly) : void {
             foreach ($this->getRouteFilesFromDirectory(baseDir: $baseDir) as $file) {
                 $this->processRouteFile(file: $file, closuresOnly: $closuresOnly);
             }

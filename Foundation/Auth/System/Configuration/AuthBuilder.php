@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Configuration;
 
-use Avax\Auth\System\Capabilities\Access\Access;
-use Avax\Auth\System\Capabilities\Access\RequireAuthentication\RequireAuthentication;
-use Avax\Auth\System\Capabilities\Access\RequirePermission\RequirePermission;
-use Avax\Auth\System\Capabilities\Access\RequireRole\RequireRole;
-use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\Access\Access;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
+use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
+use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Flows\ChangePassword\ChangePassword;
-use Avax\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
-use Avax\Auth\System\Flows\Login\Login;
-use Avax\Auth\System\Flows\Logout\Logout;
-use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
-use Avax\Auth\System\Flows\Register\Register;
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
+use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\System\Flow\Login\Login;
+use Avax\Auth\System\Flow\Logout\Logout;
+use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\System\Flow\Register\Register;
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Foundation\IdGenerator;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 
@@ -86,11 +86,11 @@ final class AuthBuilder
     public function ready() : Auth
     {
         if ($this->userSource === null) {
-            throw new \RuntimeException('Data source is required (forUser).');
+            throw new \RuntimeException(message: 'Data source is required (forUser).');
         }
 
         if ($this->identity === null) {
-            throw new \RuntimeException('Identity is required (withIdentity).');
+            throw new \RuntimeException(message: 'Identity is required (withIdentity).');
         }
 
         $identity = $this->identity;

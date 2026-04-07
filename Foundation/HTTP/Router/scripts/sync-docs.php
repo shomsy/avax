@@ -140,9 +140,9 @@ class DocsSync
 
             if (class_exists($fullClass)) {
                 try {
-                    $reflection = new ReflectionClass($fullClass);
+                    $reflection = new ReflectionClass(objectOrClass: $fullClass);
 
-                    if ($reflection->implementsInterface(RouterExceptionInterface::class)) {
+                    if ($reflection->implementsInterface(interface: RouterExceptionInterface::class)) {
                         $instance = $reflection->newInstanceWithoutConstructor();
 
                         $exceptions[] = [
@@ -153,7 +153,7 @@ class DocsSync
                             'retryable' => method_exists($instance, 'isRetryable')
                                 ? ($instance->isRetryable() ? 'Yes' : 'No')
                                 : 'Unknown',
-                            'description' => $this->extractClassDescription($reflection),
+                            'description' => $this->extractClassDescription(reflection: $reflection),
                         ];
                     }
                 } catch (ReflectionException) {
@@ -229,7 +229,7 @@ class DocsSync
         foreach ($interfaceFiles as $file) {
             if (file_exists($file)) {
                 $content = file_get_contents($file);
-                $interfaces[] = $this->parseInterface($content, $file);
+                $interfaces[] = $this->parseInterface(content: $content, file: $file);
             }
         }
 

@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Configuration;
 
-use Avax\Container\DependencyInjection\Capabilities\Injection\InjectDependencies;
-use Avax\Container\DependencyInjection\Capabilities\Injection\Methods\MethodInjector;
-use Avax\Container\DependencyInjection\Capabilities\Injection\Parameters\ResolveMethodParameters;
-use Avax\Container\DependencyInjection\Capabilities\Injection\Properties\PropertyInjector;
-use Avax\Container\DependencyInjection\Capabilities\Invocation\InvokeAction;
-use Avax\Container\DependencyInjection\Capabilities\Observability\Metrics\CollectMetrics;
-use Avax\Container\DependencyInjection\Capabilities\Observability\Timeline\ResolutionTimeline;
-use Avax\Container\DependencyInjection\Capabilities\Policies\ContainerPolicy;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Analyze\PrototypeAnalyzer;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Analyze\ReflectionTypeAnalyzer;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Cache\FilePrototypeCache;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Factory\ServicePrototypeFactory;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\DependencyResolver;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\EngineInterface;
-use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeManager;
-use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeRegistry;
+use Avax\Container\DependencyInjection\Capability\Injection\InjectDependencies;
+use Avax\Container\DependencyInjection\Capability\Injection\Methods\MethodInjector;
+use Avax\Container\DependencyInjection\Capability\Injection\Parameters\ResolveMethodParameters;
+use Avax\Container\DependencyInjection\Capability\Injection\Properties\PropertyInjector;
+use Avax\Container\DependencyInjection\Capability\Invocation\InvokeAction;
+use Avax\Container\DependencyInjection\Capability\Observability\Metrics\CollectMetrics;
+use Avax\Container\DependencyInjection\Capability\Observability\Timeline\ResolutionTimeline;
+use Avax\Container\DependencyInjection\Capability\Policies\ContainerPolicy;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Analyze\PrototypeAnalyzer;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Analyze\ReflectionTypeAnalyzer;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Cache\FilePrototypeCache;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Factory\ServicePrototypeFactory;
+use Avax\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
+use Avax\Container\DependencyInjection\Capability\Resolution\Engine\EngineInterface;
+use Avax\Container\DependencyInjection\Capability\Scopes\ScopeManager;
+use Avax\Container\DependencyInjection\Capability\Scopes\ScopeRegistry;
 use Avax\Container\DependencyInjection\Configuration\KernelConfigFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -28,7 +28,7 @@ final class KernelConfigFactoryTest extends TestCase
     public function test_debug_true_config() : void
     {
         $config = $this->makeFactory()->create(
-            engine          : $this->createStub(EngineInterface::class),
+            engine          : $this->createStub(originalClassName: EngineInterface::class),
             injector        : $this->makeInjector(),
             invoker         : $this->makeInvoker(),
             scopes          : new ScopeManager(registry: new ScopeRegistry),
@@ -47,7 +47,7 @@ final class KernelConfigFactoryTest extends TestCase
     public function test_debug_false_config() : void
     {
         $config = $this->makeFactory()->create(
-            engine          : $this->createStub(EngineInterface::class),
+            engine          : $this->createStub(originalClassName: EngineInterface::class),
             injector        : $this->makeInjector(),
             invoker         : $this->makeInvoker(),
             scopes          : new ScopeManager(registry: new ScopeRegistry),
@@ -66,7 +66,7 @@ final class KernelConfigFactoryTest extends TestCase
     public function test_override_honored() : void
     {
         $config = $this->makeFactory()->create(
-            engine          : $this->createStub(EngineInterface::class),
+            engine          : $this->createStub(originalClassName: EngineInterface::class),
             injector        : $this->makeInjector(),
             invoker         : $this->makeInvoker(),
             scopes          : new ScopeManager(registry: new ScopeRegistry),

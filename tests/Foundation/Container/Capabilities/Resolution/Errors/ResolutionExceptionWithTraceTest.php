@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capabilities\Resolution\Errors;
+namespace Avax\Container\Tests\Capability\Resolution\Errors;
 
-use Avax\Container\DependencyInjection\Capabilities\Observability\Trace\ResolutionTrace;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Errors\ResolutionExceptionWithTrace;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Strategies\ResolutionState;
+use Avax\Container\DependencyInjection\Capability\Observability\Trace\ResolutionTrace;
+use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionExceptionWithTrace;
+use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionState;
 use PHPUnit\Framework\TestCase;
 
 final class ResolutionExceptionWithTraceTest extends TestCase

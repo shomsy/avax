@@ -48,9 +48,9 @@ final class RouterMetricsCollector
         float $durationMs,
         int $statusCode = 200
     ): void {
-        $this->increment('route_resolutions_total', ['method' => $method, 'status' => $statusCode]);
-        $this->observe('route_resolution_duration', $durationMs, ['method' => $method]);
-        $this->setGauge('route_last_resolution_time', microtime(true));
+        $this->increment(name: 'route_resolutions_total', labels: ['method' => $method, 'status' => $statusCode]);
+        $this->observe(name: 'route_resolution_duration', value: $durationMs, labels: ['method' => $method]);
+        $this->setGauge(name: 'route_last_resolution_time', value: microtime(true));
     }
 
     /**
@@ -62,11 +62,11 @@ final class RouterMetricsCollector
         string $failureReason,
         float $durationMs
     ): void {
-        $this->increment('route_resolution_failures_total', [
+        $this->increment(name: 'route_resolution_failures_total', labels: [
             'method' => $method,
             'reason' => $failureReason
         ]);
-        $this->observe('route_resolution_duration', $durationMs, ['method' => $method, 'failed' => 'true']);
+        $this->observe(name: 'route_resolution_duration', value: $durationMs, labels: ['method' => $method, 'failed' => 'true']);
     }
 
     /**
@@ -77,20 +77,20 @@ final class RouterMetricsCollector
         string $cacheType = 'routes',
         float $durationMs = 0.0
     ): void {
-        $this->increment('cache_operations_total', [
+        $this->increment(name: 'cache_operations_total', labels: [
             'operation' => $operation,
             'type' => $cacheType
         ]);
 
         if ($durationMs > 0) {
-            $this->observe('cache_operation_duration', $durationMs, [
+            $this->observe(name: 'cache_operation_duration', value: $durationMs, labels: [
                 'operation' => $operation,
                 'type' => $cacheType
             ]);
         }
 
         if ($operation === 'invalidate') {
-            $this->increment('cache_invalidations_total', ['type' => $cacheType]);
+            $this->increment(name: 'cache_invalidations_total', labels: ['type' => $cacheType]);
         }
     }
 
@@ -102,18 +102,18 @@ final class RouterMetricsCollector
         float $durationMs,
         bool $passed = true
     ): void {
-        $this->increment('middleware_executions_total', [
+        $this->increment(name: 'middleware_executions_total', labels: [
             'middleware' => $middlewareClass,
             'result' => $passed ? 'passed' : 'failed'
         ]);
-        $this->observe('middleware_execution_duration', $durationMs, ['middleware' => $middlewareClass]);
+        $this->observe(name: 'middleware_execution_duration', value: $durationMs, labels: ['middleware' => $middlewareClass]);
     }
 
     /**
      * Record concurrent request metrics.
      */
     public function recordConcurrentRequests(int $count): void {
-        $this->setGauge('concurrent_requests', $count);
+        $this->setGauge(name: 'concurrent_requests', value: $count);
     }
 
     /**
@@ -132,7 +132,7 @@ final class RouterMetricsCollector
         $output = '';
 
         foreach ($this->metrics as $name => $metric) {
-            $output .= $this->formatPrometheusMetric($name, $metric);
+            $output .= $this->formatPrometheusMetric(key: $name, metric: $metric);
         }
 
         return $output;
@@ -148,7 +148,7 @@ final class RouterMetricsCollector
         $alerts = [];
 
         // Check route resolution failures
-        $failures = $this->getCounterValue('route_resolution_failures_total', 60); // per minute
+        $failures = $this->getCounterValue(name: 'route_resolution_failures_total', windowSeconds: 60); // per minute
         if ($failures >= $this->alertThresholds['route_resolution_failures']['critical']) {
             $alerts['route_resolution_failures'] = [
                 'level' => 'critical',
@@ -166,7 +166,7 @@ final class RouterMetricsCollector
         }
 
         // Check cache invalidations
-        $invalidations = $this->getCounterValue('cache_invalidations_total', 60);
+        $invalidations = $this->getCounterValue(name: 'cache_invalidations_total', windowSeconds: 60);
         if ($invalidations >= $this->alertThresholds['cache_invalidations']['critical']) {
             $alerts['cache_invalidations'] = [
                 'level' => 'critical',
@@ -184,7 +184,7 @@ final class RouterMetricsCollector
         }
 
         // Check route resolution time (95th percentile)
-        $resolutionTime = $this->getPercentile('route_resolution_duration', 95);
+        $resolutionTime = $this->getPercentile(name: 'route_resolution_duration', percentile: 95);
         if ($resolutionTime >= $this->alertThresholds['route_resolution_time']['critical']) {
             $alerts['route_resolution_time'] = [
                 'level' => 'critical',
@@ -202,7 +202,7 @@ final class RouterMetricsCollector
         }
 
         // Check concurrent requests
-        $concurrent = $this->getGaugeValue('concurrent_requests');
+        $concurrent = $this->getGaugeValue(name: 'concurrent_requests');
         if ($concurrent >= $this->alertThresholds['concurrent_requests']['critical']) {
             $alerts['concurrent_requests'] = [
                 'level' => 'critical',
@@ -232,7 +232,7 @@ final class RouterMetricsCollector
     // Internal metric collection methods
 
     private function increment(string $name, array $labels = []): void {
-        $key = $this->metricKey($name, $labels);
+        $key = $this->metricKey(name: $name, labels: $labels);
         $this->metrics[$key]['value'] = ($this->metrics[$key]['value'] ?? 0) + 1;
         $this->metrics[$key]['type'] = 'counter';
         $this->metrics[$key]['name'] = $name;
@@ -241,7 +241,7 @@ final class RouterMetricsCollector
     }
 
     private function observe(string $name, float $value, array $labels = []): void {
-        $key = $this->metricKey($name, $labels);
+        $key = $this->metricKey(name: $name, labels: $labels);
 
         if (!isset($this->metrics[$key]['values'])) {
             $this->metrics[$key]['values'] = [];
@@ -254,7 +254,7 @@ final class RouterMetricsCollector
     }
 
     private function setGauge(string $name, float $value, array $labels = []): void {
-        $key = $this->metricKey($name, $labels);
+        $key = $this->metricKey(name: $name, labels: $labels);
         $this->metrics[$key]['value'] = $value;
         $this->metrics[$key]['type'] = 'gauge';
         $this->metrics[$key]['name'] = $name;

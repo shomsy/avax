@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 $finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__)
-    ->exclude([
+    ->in(dirs: __DIR__)
+    ->exclude(dirs: [
         'vendor',
         'tests',
         'storage',
@@ -15,14 +15,14 @@ $finder = PhpCsFixer\Finder::create()
         '.idea',
         '.git',
     ])
-    ->name('*.php')
-    ->notName('*.blade.php')
-    ->ignoreDotFiles(true)
-    ->ignoreVCS(true);
+    ->name(patterns: '*.php')
+    ->notName(patterns: '*.blade.php')
+    ->ignoreDotFiles(ignoreDotFiles: true)
+    ->ignoreVCS(ignoreVCS: true);
 
 $config = new PhpCsFixer\Config();
 return $config
-    ->setRules([
+    ->setRules(rules: [
         // PSR-12 coding standard
         '@PSR12' => true,
 
@@ -166,6 +166,6 @@ return $config
         'phpdoc_to_return_type' => false,   // Keep PHPDoc for complex return types
         'phpdoc_to_param_type' => false,    // Keep PHPDoc for complex param types
     ])
-    ->setFinder($finder)
-    ->setRiskyAllowed(true)
-    ->setUsingCache(true);
+    ->setFinder(finder: $finder)
+    ->setRiskyAllowed(isRiskyAllowed: true)
+    ->setUsingCache(usingCache: true);

@@ -6,17 +6,17 @@ namespace Avax\Auth\Tests\System;
 
 use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Flows\Login\Login;
-use Avax\Auth\System\Flows\Login\Credentials;
-use Avax\Auth\System\Flows\Logout\Logout;
-use Avax\Auth\System\Capabilities\Access\AccessInterface;
-use Avax\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
-use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
-use Avax\Auth\System\Flows\ChangePassword\ChangePassword;
-use Avax\Auth\System\Flows\ChangePassword\ChangePasswordData;
-use Avax\Auth\System\Flows\Register\Register;
-use Avax\Auth\System\Flows\Register\RegistrationData;
-use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Flow\Login\Login;
+use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Flow\Logout\Logout;
+use Avax\Auth\System\Capability\Access\AccessInterface;
+use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
+use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
+use Avax\Auth\System\Flow\Register\Register;
+use Avax\Auth\System\Flow\Register\RegistrationData;
+use Avax\Auth\System\Capability\User\User;
 use Mockery;
 
 /**
@@ -50,27 +50,27 @@ class AuthTest extends TestCase
         );
 
         $user = Mockery::mock(User::class);
-        $credentials = new Credentials('user', 'pass');
+        $credentials = new Credentials(identifier: 'user', password: 'pass');
         $loginFlow->shouldReceive('execute')->with($credentials)->andReturn($user);
-        $this->assertSame($user, $auth->login($credentials));
+        $this->assertSame(expected: $user, actual: $auth->login(credentials: $credentials));
 
         $logoutFlow->shouldReceive('execute')->once();
         $auth->logout();
 
         $checkFlow->shouldReceive('execute')->andReturn(true);
-        $this->assertTrue($auth->check());
+        $this->assertTrue(condition: $auth->check());
 
         $readUserFlow->shouldReceive('execute')->andReturn($user);
-        $this->assertSame($user, $auth->user());
+        $this->assertSame(expected: $user, actual: $auth->user());
 
-        $this->assertSame($access, $auth->access());
+        $this->assertSame(expected: $access, actual: $auth->access());
 
-        $cpData = new ChangePasswordData('old', 'new');
+        $cpData = new ChangePasswordData(currentPassword: 'old', newPassword: 'new');
         $changePasswordFlow->shouldReceive('execute')->with($user, $cpData)->once();
-        $auth->changePassword($user, $cpData);
+        $auth->changePassword(user: $user, data: $cpData);
 
-        $regData = new RegistrationData('email', 'nick', 'pass');
+        $regData = new RegistrationData(email: 'email', username: 'nick', password: 'pass');
         $registerFlow->shouldReceive('execute')->with($regData)->andReturn($user);
-        $this->assertSame($user, $auth->register($regData));
+        $this->assertSame(expected: $user, actual: $auth->register(data: $regData));
     }
 }

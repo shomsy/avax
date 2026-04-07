@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Avax\Container\DependencyInjection\Configuration;
 
 use Avax\Container\Container;
-use Avax\Container\DependencyInjection\Capabilities\Providers\Contracts\ServiceProviderInterface;
-use Avax\Container\DependencyInjection\Capabilities\Providers\Runtime\Http\HttpApplication;
-use Avax\Container\DependencyInjection\Flows\BootProviders\BootProviders;
+use Avax\Container\DependencyInjection\Capability\Providers\Contracts\ServiceProviderInterface;
+use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\HttpApplication;
+use Avax\Container\DependencyInjection\Flow\BootProviders\BootProviders;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;

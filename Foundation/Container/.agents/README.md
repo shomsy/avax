@@ -10,8 +10,8 @@ folder is project-specific state, guidance, or runtime memory.
 
 - `Container.php` is the public facade.
 - `DependencyInjection/` is the system root.
-- `DependencyInjection/Flows/` holds public system flows.
-- `DependencyInjection/Capabilities/` holds shared runtime capabilities.
+- `DependencyInjection/Flow/` holds public system flows.
+- `DependencyInjection/Capability/` holds shared runtime capabilities.
 - `DependencyInjection/Configuration/` holds assembly and wiring.
 - `DependencyInjection/Foundation/` is reserved for tiny neutral primitives.
 - `docs/` is the canonical documentation tree for this component.

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capabilities\Providers\Runtime\Http;
+namespace Avax\Container\Tests\Capability\Providers\Runtime\Http;
 
 use Avax\Container\BindingBuilderInterface;
 use Avax\Container\ContainerInterface;
-use Avax\Container\DependencyInjection\Capabilities\Providers\Runtime\Http\ViewServiceProvider;
+use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\ViewServiceProvider;
 use Avax\Container\DependencyInjection\Configuration\Settings;
 use Avax\View\BladeTemplateEngine;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +34,7 @@ final class ViewServiceProviderTest extends TestCase
             $container
                 ->method('singleton')
                 ->willReturnCallback(
-                    function (string $abstract, mixed $concrete = null) use (&$registrations, $builder) : BindingBuilderInterface {
+                    callback: function (string $abstract, mixed $concrete = null) use (&$registrations, $builder) : BindingBuilderInterface {
                         $registrations[$abstract] = $concrete;
 
                         return $builder;
@@ -43,14 +43,14 @@ final class ViewServiceProviderTest extends TestCase
             $container
                 ->method('get')
                 ->with('config')
-                ->willReturn(new Settings);
+                ->willReturn(value: new Settings);
 
-            $provider = new ViewServiceProvider($container);
+            $provider = new ViewServiceProvider(app: $container);
             $provider->register();
 
             $factory = $registrations[BladeTemplateEngine::class] ?? null;
 
-            $this->assertIsCallable($factory);
+            $this->assertIsCallable(actual: $factory);
             $this->assertInstanceOf(expected: BladeTemplateEngine::class, actual: $factory());
         } finally {
             if (is_string($previousCwd) && $previousCwd !== '') {

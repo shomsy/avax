@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capabilities\Resolution\Pipeline\Strategies;
+namespace Avax\Container\Tests\Capability\Resolution\Pipeline\Strategies;
 
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Errors\ContainerException;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Strategies\ResolutionState;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Strategies\ResolutionStateMachine;
+use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ContainerException;
+use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionState;
+use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Strategies\ResolutionStateMachine;
 use PHPUnit\Framework\TestCase;
 
 final class ResolutionStateMachineTest extends TestCase

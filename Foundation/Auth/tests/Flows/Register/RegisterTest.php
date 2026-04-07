@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flows\Register;
+namespace Avax\Auth\Tests\Flow\Register;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Flows\Register\Register;
-use Avax\Auth\System\Flows\Register\RegistrationData;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Flow\Register\Register;
+use Avax\Auth\System\Flow\Register\RegistrationData;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Mockery;
 use Exception;
@@ -54,9 +54,9 @@ class RegisterTest extends TestCase
 
         $user = $register->execute(data: $data);
 
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals('new@example.com', $user->getEmail()->value);
-        $this->assertEquals(123456, $user->getId()->value);
+        $this->assertInstanceOf(expected: User::class, actual: $user);
+        $this->assertEquals(expected: 'new@example.com', actual: $user->getEmail()->value);
+        $this->assertEquals(expected: 123456, actual: $user->getId()->value);
     }
 
     public function testRegisterFailureEmailTaken() : void
@@ -80,9 +80,9 @@ class RegisterTest extends TestCase
             idGenerator: $idGenerator
         );
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Email is already taken.');
-        $this->expectExceptionCode(409);
+        $this->expectException(exception: Exception::class);
+        $this->expectExceptionMessage(message: 'Email is already taken.');
+        $this->expectExceptionCode(code: 409);
 
         $register->execute(data: $data);
     }
@@ -108,9 +108,9 @@ class RegisterTest extends TestCase
             idGenerator: $idGenerator
         );
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Username is already taken.');
-        $this->expectExceptionCode(409);
+        $this->expectException(exception: Exception::class);
+        $this->expectExceptionMessage(message: 'Username is already taken.');
+        $this->expectExceptionCode(code: 409);
 
         $register->execute(data: $data);
     }

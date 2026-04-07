@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capabilities\Identity;
+namespace Avax\Auth\Tests\Capability\Identity;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Capabilities\Identity\Identity;
-use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
-use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserEmail;
-use Avax\Auth\System\Capabilities\User\UserId;
+use Avax\Auth\System\Capability\Identity\Identity;
+use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capability\Identity\Session\SessionIdentityInterface;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserEmail;
+use Avax\Auth\System\Capability\User\UserId;
 use InvalidArgumentException;
 use Mockery;
 
@@ -26,8 +26,8 @@ class IdentityTest extends TestCase
 
     public function testIdentityRequiresAtLeastOneBackend() : void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Identity requires at least one backend.');
+        $this->expectException(exception: InvalidArgumentException::class);
+        $this->expectExceptionMessage(message: 'Identity requires at least one backend.');
 
         new Identity();
     }
@@ -35,8 +35,8 @@ class IdentityTest extends TestCase
     public function testIdentityRejectsInactiveUsersWhenIssuing() : void
     {
         $user = new User(
-            id: new UserId(10),
-            email: new UserEmail('inactive@example.com'),
+            id: new UserId(value: 10),
+            email: new UserEmail(value: 'inactive@example.com'),
             username: 'inactive',
             passwordHash: 'hash',
             isActive: false
@@ -47,17 +47,17 @@ class IdentityTest extends TestCase
 
         $identity = new Identity(jwtIdentity: $jwt);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Inactive users cannot be authenticated.');
+        $this->expectException(exception: InvalidArgumentException::class);
+        $this->expectExceptionMessage(message: 'Inactive users cannot be authenticated.');
 
-        $identity->issue($user);
+        $identity->issue(user: $user);
     }
 
     public function testIdentityIssuesAllConfiguredBackends() : void
     {
         $user = new User(
-            id: new UserId(10),
-            email: new UserEmail('identity@example.com'),
+            id: new UserId(value: 10),
+            email: new UserEmail(value: 'identity@example.com'),
             username: 'identity',
             passwordHash: 'hash'
         );
@@ -73,7 +73,7 @@ class IdentityTest extends TestCase
             jwtIdentity: $jwt
         );
 
-        $this->assertSame('token-10', $identity->issue($user));
+        $this->assertSame(expected: 'token-10', actual: $identity->issue(user: $user));
     }
 
     public function testIdentityCheckReturnsTrueWhenAnyBackendIsAuthenticated() : void
@@ -89,14 +89,14 @@ class IdentityTest extends TestCase
             jwtIdentity: $jwt
         );
 
-        $this->assertTrue($identity->check());
+        $this->assertTrue(condition: $identity->check());
     }
 
     public function testIdentityResolvesCurrentUserAndUserId() : void
     {
         $user = new User(
-            id: new UserId(25),
-            email: new UserEmail('current@example.com'),
+            id: new UserId(value: 25),
+            email: new UserEmail(value: 'current@example.com'),
             username: 'current',
             passwordHash: 'hash'
         );
@@ -112,8 +112,8 @@ class IdentityTest extends TestCase
             jwtIdentity: $jwt
         );
 
-        $this->assertSame($user, $identity->getCurrentUser());
-        $this->assertSame(25, $identity->getUserId());
+        $this->assertSame(expected: $user, actual: $identity->getCurrentUser());
+        $this->assertSame(expected: 25, actual: $identity->getUserId());
     }
 
     public function testIdentityClearsAllConfiguredBackends() : void
@@ -131,7 +131,7 @@ class IdentityTest extends TestCase
 
         $identity->clear();
 
-        $this->assertTrue(true);
+        $this->assertTrue(condition: true);
     }
 
     public function testIdentityAuthenticatesJwtAndReturnsToken() : void
@@ -142,8 +142,8 @@ class IdentityTest extends TestCase
 
         $identity = new Identity(jwtIdentity: $jwt);
 
-        $identity->authenticate('token-42');
+        $identity->authenticate(token: 'token-42');
 
-        $this->assertSame('token-42', $identity->token());
+        $this->assertSame(expected: 'token-42', actual: $identity->token());
     }
 }

@@ -248,7 +248,7 @@ Handles creation, extraction, and decoding of **JWT tokens**.
 
 ---
 
-### ✅ Capabilities
+### ✅ Capability
 
 | Method                             | Description             |
 |------------------------------------|-------------------------|

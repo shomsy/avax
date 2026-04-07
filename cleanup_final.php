@@ -21,7 +21,7 @@ function rrmdir($dir) {
         foreach ($objects as $object) {
             if ($object != "." && $object != "..") {
                 if (is_dir($dir . DIRECTORY_SEPARATOR . $object) && !is_link($dir . DIRECTORY_SEPARATOR . $object)) {
-                    rrmdir($dir . DIRECTORY_SEPARATOR . $object);
+                    rrmdir(dir: $dir . DIRECTORY_SEPARATOR . $object);
                 } else {
                     unlink($dir . DIRECTORY_SEPARATOR . $object);
                 }
@@ -35,7 +35,7 @@ function rrmdir($dir) {
 
 foreach ($dirs as $dir) {
     $path = $base . DIRECTORY_SEPARATOR . $dir;
-    if (rrmdir($path)) {
+    if (rrmdir(dir: $path)) {
         echo "Deleted Legacy: $dir\n";
     }
 }

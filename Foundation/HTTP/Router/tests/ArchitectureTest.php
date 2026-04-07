@@ -69,15 +69,15 @@ final class ArchitectureTest extends TestCase
                 continue; // Skip interfaces or non-existent classes
             }
 
-            $reflection = new ReflectionClass($className);
-            $staticProperties = $reflection->getProperties(ReflectionProperty::IS_STATIC);
+            $reflection = new ReflectionClass(objectOrClass: $className);
+            $staticProperties = $reflection->getProperties(filter: ReflectionProperty::IS_STATIC);
 
             foreach ($staticProperties as $property) {
                 // Allow static constants (immutable by definition)
                 if ($property->isPublic() && $property->isStatic()) {
                     $this->assertTrue(
-                        $property->isReadOnly() || $property->isFinal(),
-                        sprintf(
+                        condition: $property->isReadOnly() || $property->isFinal(),
+                        message  : sprintf(
                             'Static property %s::%s must be readonly or final to prevent mutable global state',
                             $className,
                             $property->getName()
@@ -87,7 +87,7 @@ final class ArchitectureTest extends TestCase
             }
         }
 
-        $this->assertTrue(true, 'All Router classes passed static mutability validation');
+        $this->assertTrue(condition: true, message: 'All Router classes passed static mutability validation');
     }
 
     /**
@@ -103,7 +103,7 @@ final class ArchitectureTest extends TestCase
                 continue;
             }
 
-            $reflection = new ReflectionClass($className);
+            $reflection = new ReflectionClass(objectOrClass: $className);
 
             // Check constructor parameters for bootstrap dependencies
             $constructor = $reflection->getConstructor();
@@ -115,7 +115,7 @@ final class ArchitectureTest extends TestCase
 
                         // Check if parameter type is from Bootstrap namespace
                         if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
-                            $this->fail(sprintf(
+                            $this->fail(message: sprintf(
                                 'Router class %s depends on Bootstrap layer (%s) in constructor, violating architectural boundaries',
                                 $className,
                                 $typeName
@@ -132,7 +132,7 @@ final class ArchitectureTest extends TestCase
                     $typeName = $type->getName();
 
                     if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
-                        $this->fail(sprintf(
+                        $this->fail(message: sprintf(
                             'Router class %s has Bootstrap dependency (%s) as property, violating architectural boundaries',
                             $className,
                             $typeName
@@ -148,7 +148,7 @@ final class ArchitectureTest extends TestCase
                     $typeName = $returnType->getName();
 
                     if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
-                        $this->fail(sprintf(
+                        $this->fail(message: sprintf(
                             'Router method %s::%s() returns Bootstrap type (%s), violating architectural boundaries',
                             $className,
                             $method->getName(),
@@ -164,7 +164,7 @@ final class ArchitectureTest extends TestCase
                         $typeName = $type->getName();
 
                         if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
-                            $this->fail(sprintf(
+                            $this->fail(message: sprintf(
                                 'Router method %s::%s() accepts Bootstrap type (%s) as parameter, violating architectural boundaries',
                                 $className,
                                 $method->getName(),
@@ -176,7 +176,7 @@ final class ArchitectureTest extends TestCase
             }
         }
 
-        $this->assertTrue(true, 'All Router classes passed Bootstrap dependency validation');
+        $this->assertTrue(condition: true, message: 'All Router classes passed Bootstrap dependency validation');
     }
 
     /**
@@ -192,13 +192,13 @@ final class ArchitectureTest extends TestCase
             }
 
             $this->assertStringStartsWith(
-                'Avax\\HTTP\\Router',
-                $className,
-                sprintf('Class %s is not properly namespaced under Avax\\HTTP\\Router', $className)
+                prefix : 'Avax\\HTTP\\Router',
+                string : $className,
+                message: sprintf('Class %s is not properly namespaced under Avax\\HTTP\\Router', $className)
             );
         }
 
-        $this->assertTrue(true, 'All Router classes have proper namespacing');
+        $this->assertTrue(condition: true, message: 'All Router classes have proper namespacing');
     }
 
     /**
@@ -218,16 +218,16 @@ final class ArchitectureTest extends TestCase
                 continue;
             }
 
-            $reflection = new ReflectionClass($className);
+            $reflection = new ReflectionClass(objectOrClass: $className);
 
             // Check if class is readonly (PHP 8.2+ feature)
             $this->assertTrue(
-                $reflection->isReadOnly(),
-                sprintf('Class %s should be readonly to ensure immutability', $className)
+                condition: $reflection->isReadOnly(),
+                message  : sprintf('Class %s should be readonly to ensure immutability', $className)
             );
         }
 
-        $this->assertTrue(true, 'All specified Router classes follow immutability principles');
+        $this->assertTrue(condition: true, message: 'All specified Router classes follow immutability principles');
     }
 
     /**
@@ -246,7 +246,7 @@ final class ArchitectureTest extends TestCase
                 continue;
             }
 
-            $reflection = new ReflectionClass($interfaceName);
+            $reflection = new ReflectionClass(objectOrClass: $interfaceName);
 
             // Interfaces should not depend on concrete implementations
             foreach ($reflection->getMethods() as $method) {
@@ -257,8 +257,8 @@ final class ArchitectureTest extends TestCase
 
                         // Interfaces should not reference concrete Bootstrap classes
                         $this->assertFalse(
-                            str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap'),
-                            sprintf(
+                            condition: str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap'),
+                            message  : sprintf(
                                 'Interface %s method %s() references Bootstrap class %s, violating interface segregation',
                                 $interfaceName,
                                 $method->getName(),
@@ -270,6 +270,6 @@ final class ArchitectureTest extends TestCase
             }
         }
 
-        $this->assertTrue(true, 'All Router interfaces follow proper segregation principles');
+        $this->assertTrue(condition: true, message: 'All Router interfaces follow proper segregation principles');
     }
 }

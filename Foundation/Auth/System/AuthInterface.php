@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System;
 
-use Avax\Auth\System\Capabilities\Access\AccessInterface;
-use Avax\Auth\System\Flows\Login\Credentials;
-use Avax\Auth\System\Flows\Register\RegistrationData;
-use Avax\Auth\System\Flows\ChangePassword\ChangePasswordData;
-use Avax\Auth\System\Capabilities\User\User;
+use Avax\Auth\System\Capability\Access\AccessInterface;
+use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Flow\Register\RegistrationData;
+use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
+use Avax\Auth\System\Capability\User\User;
 
 /**
  * Interface AuthInterface

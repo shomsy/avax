@@ -55,7 +55,7 @@ class RouterBenchmark
             constraints: ['id' => '[0-9]+']
         );
 
-        $this->router->add($route);
+        $this->router->add(route: $route);
     }
 
     /**
@@ -80,7 +80,7 @@ class RouterBenchmark
                 name: "api.resource.{$i}.action"
             );
 
-            $this->router->add($route);
+            $this->router->add(route: $route);
         }
     }
 
@@ -100,11 +100,11 @@ class RouterBenchmark
                 action: "BenchmarkController{$i}@action",
                 name: "benchmark.route.{$i}"
             );
-            $this->router->add($route);
+            $this->router->add(route: $route);
         }
 
         // Benchmark lookup
-        $this->router->getByName('benchmark.route.500');
+        $this->router->getByName(name: 'benchmark.route.500');
     }
 
     /**
@@ -133,7 +133,7 @@ class RouterBenchmark
                 middleware: ['middleware' . ($i % 5)],
                 name: "route.{$i}"
             );
-            $this->router->add($route);
+            $this->router->add(route: $route);
         }
 
         // Benchmark statistics calculation
@@ -158,7 +158,7 @@ class RouterBenchmark
                 middleware: ['auth', 'log', 'metrics'],
                 name: "enterprise.resource.{$i}"
             );
-            $this->router->add($route);
+            $this->router->add(route: $route);
         }
     }
 
@@ -199,7 +199,7 @@ class RouterBenchmark
         // Simulate middleware stack processing
         $result = 'initial';
         foreach ($middleware as $mw) {
-            $result = $this->simulateMiddleware($result, $mw);
+            $result = $this->simulateMiddleware(input: $result, middleware: $mw);
         }
     }
 
@@ -240,13 +240,13 @@ class RouterBenchmark
                     domain: $domain,
                     name: "{$domain}.{$path}"
                 );
-                $this->router->add($route);
+                $this->router->add(route: $route);
             }
         }
 
         // Benchmark domain-aware lookups
-        $this->router->getByName('api.example.com./users');
-        $this->router->getByName('admin.example.com./dashboard');
+        $this->router->getByName(name: 'api.example.com./users');
+        $this->router->getByName(name: 'admin.example.com./dashboard');
     }
 
     /**
@@ -324,11 +324,11 @@ class RouterBenchmark
         };
 
         // Benchmark cached reflection operations
-        \Avax\HTTP\Router\Routing\ReflectionCache::getClass($testClass::class);
-        \Avax\HTTP\Router\Routing\ReflectionCache::getMethod($testClass, 'testMethod');
-        \Avax\HTTP\Router\Routing\ReflectionCache::getProperty($testClass, 'testProperty');
-        \Avax\HTTP\Router\Routing\ReflectionCache::hasMethod($testClass, 'testMethod');
-        \Avax\HTTP\Router\Routing\ReflectionCache::isMethodPublic($testClass, 'testMethod');
+        \Avax\HTTP\Router\Routing\ReflectionCache::getClass(className: $testClass::class);
+        \Avax\HTTP\Router\Routing\ReflectionCache::getMethod(classOrObject: $testClass, methodName: 'testMethod');
+        \Avax\HTTP\Router\Routing\ReflectionCache::getProperty(classOrObject: $testClass, propertyName: 'testProperty');
+        \Avax\HTTP\Router\Routing\ReflectionCache::hasMethod(classOrObject: $testClass, methodName: 'testMethod');
+        \Avax\HTTP\Router\Routing\ReflectionCache::isMethodPublic(classOrObject: $testClass, methodName: 'testMethod');
     }
 
     /**

@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 Route::get('/', static function (Request $request) : ResponseInterface {
     $body = 'HTTP Foundation v2.0 - Router is Working!';
 
-    return new Response(Stream::fromString($body), null, 200, ['Content-Type' => 'text/plain']);
+    return new Response(stream: Stream::fromString(content: $body), protocolVersion: null, statusCode: 200, headers: ['Content-Type' => 'text/plain']);
 })->name(name: 'home');
 
 Route::get('/health', static function (Request $request) : ResponseInterface {

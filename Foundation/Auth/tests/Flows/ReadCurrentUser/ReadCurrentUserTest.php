@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flows\ReadCurrentUser;
+namespace Avax\Auth\Tests\Flow\ReadCurrentUser;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
-use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Mockery;
 
 /**
@@ -44,7 +44,7 @@ class ReadCurrentUserTest extends TestCase
 
         $result = $readCurrentUser->execute();
 
-        $this->assertSame($user, $result);
+        $this->assertSame(expected: $user, actual: $result);
     }
 
     public function testReadCurrentUserFromJwtSuccess() : void
@@ -63,7 +63,7 @@ class ReadCurrentUserTest extends TestCase
 
         $result = $readCurrentUser->execute();
 
-        $this->assertSame($user, $result);
+        $this->assertSame(expected: $user, actual: $result);
     }
 
     public function testReadCurrentUserReturnsNullWhenNoSessionFound() : void
@@ -81,7 +81,7 @@ class ReadCurrentUserTest extends TestCase
 
         $result = $readCurrentUser->execute();
 
-        $this->assertNull($result);
+        $this->assertNull(actual: $result);
     }
 
     public function testReadCurrentUserReturnsNullForInactiveUser() : void
@@ -91,8 +91,8 @@ class ReadCurrentUserTest extends TestCase
         $identity->shouldReceive('getUserId')->andReturn(555);
 
         $inactiveUser = new User(
-            id: new UserId(555),
-            email: new \Avax\Auth\System\Capabilities\User\UserEmail('inactive@example.com'),
+            id: new UserId(value: 555),
+            email: new \Avax\Auth\System\Capability\User\UserEmail(value: 'inactive@example.com'),
             username: 'inactive',
             passwordHash: 'hash',
             isActive: false
@@ -111,6 +111,6 @@ class ReadCurrentUserTest extends TestCase
 
         $result = $readCurrentUser->execute();
 
-        $this->assertNull($result);
+        $this->assertNull(actual: $result);
     }
 }

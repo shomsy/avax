@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flows\ChangePassword;
+namespace Avax\Auth\Tests\Flow\ChangePassword;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Flows\ChangePassword\ChangePassword;
-use Avax\Auth\System\Flows\ChangePassword\ChangePasswordData;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
+use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Mockery;
 use Exception;
 
@@ -31,7 +31,7 @@ class ChangePasswordTest extends TestCase
     {
         $user = Mockery::mock(User::class);
         $user->shouldReceive('getPasswordHash')->andReturn('old_hash');
-        $user->shouldReceive('getId')->andReturn(new UserId(1));
+        $user->shouldReceive('getId')->andReturn(new UserId(value: 1));
 
         $data = new ChangePasswordData(
             currentPassword: 'old_password',
@@ -52,7 +52,7 @@ class ChangePasswordTest extends TestCase
 
         $changePassword->execute(user: $user, data: $data);
 
-        $this->assertTrue(true);
+        $this->assertTrue(condition: true);
     }
 
     public function testChangePasswordFailureIncorrectCurrentPassword() : void
@@ -75,9 +75,9 @@ class ChangePasswordTest extends TestCase
             passwordHasher: $passwordHasher
         );
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Current password is incorrect.');
-        $this->expectExceptionCode(403);
+        $this->expectException(exception: Exception::class);
+        $this->expectExceptionMessage(message: 'Current password is incorrect.');
+        $this->expectExceptionCode(code: 403);
 
         $changePassword->execute(user: $user, data: $data);
     }

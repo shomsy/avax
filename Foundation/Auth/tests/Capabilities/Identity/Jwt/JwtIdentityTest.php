@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capabilities\Identity\Jwt;
+namespace Avax\Auth\Tests\Capability\Identity\Jwt;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserEmail;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
+use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserEmail;
+use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use InvalidArgumentException;
 use Mockery;
 
@@ -26,8 +26,8 @@ class JwtIdentityTest extends TestCase
     public function testJwtIdentityIssueAuthenticateAndClearCycle() : void
     {
         $user = new User(
-            id: new UserId(7),
-            email: new UserEmail('jwt@example.com'),
+            id: new UserId(value: 7),
+            email: new UserEmail(value: 'jwt@example.com'),
             username: 'jwt-user',
             passwordHash: 'hash'
         );
@@ -42,31 +42,31 @@ class JwtIdentityTest extends TestCase
             secret: 'super-secret-key'
         );
 
-        $token = $jwt->issue($user);
+        $token = $jwt->issue(user: $user);
 
-        $this->assertIsString($token);
-        $this->assertSame($token, $jwt->token());
-        $this->assertTrue($jwt->check());
-        $this->assertSame($user, $jwt->getCurrentUser());
+        $this->assertIsString(actual: $token);
+        $this->assertSame(expected: $token, actual: $jwt->token());
+        $this->assertTrue(condition: $jwt->check());
+        $this->assertSame(expected: $user, actual: $jwt->getCurrentUser());
 
         $jwt->clear();
 
-        $this->assertFalse($jwt->check());
-        $this->assertNull($jwt->getCurrentUser());
-        $this->assertNull($jwt->token());
+        $this->assertFalse(condition: $jwt->check());
+        $this->assertNull(actual: $jwt->getCurrentUser());
+        $this->assertNull(actual: $jwt->token());
 
-        $jwt->authenticate($token);
+        $jwt->authenticate(token: $token);
 
-        $this->assertTrue($jwt->check());
-        $this->assertSame($user, $jwt->getCurrentUser());
-        $this->assertSame($token, $jwt->token());
+        $this->assertTrue(condition: $jwt->check());
+        $this->assertSame(expected: $user, actual: $jwt->getCurrentUser());
+        $this->assertSame(expected: $token, actual: $jwt->token());
     }
 
     public function testJwtIdentityRejectsInactiveUsersWhenIssuing() : void
     {
         $inactiveUser = new User(
-            id: new UserId(8),
-            email: new UserEmail('inactive-issue@example.com'),
+            id: new UserId(value: 8),
+            email: new UserEmail(value: 'inactive-issue@example.com'),
             username: 'inactive-issue',
             passwordHash: 'hash',
             isActive: false
@@ -77,24 +77,24 @@ class JwtIdentityTest extends TestCase
             secret: 'super-secret-key'
         );
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Inactive users cannot be authenticated.');
+        $this->expectException(exception: InvalidArgumentException::class);
+        $this->expectExceptionMessage(message: 'Inactive users cannot be authenticated.');
 
-        $jwt->issue($inactiveUser);
+        $jwt->issue(user: $inactiveUser);
     }
 
     public function testJwtIdentityRejectsInactiveUserTokens() : void
     {
         $activeUser = new User(
-            id: new UserId(9),
-            email: new UserEmail('active-jwt@example.com'),
+            id: new UserId(value: 9),
+            email: new UserEmail(value: 'active-jwt@example.com'),
             username: 'active-jwt',
             passwordHash: 'hash'
         );
 
         $inactiveUser = new User(
-            id: new UserId(9),
-            email: new UserEmail('inactive-jwt@example.com'),
+            id: new UserId(value: 9),
+            email: new UserEmail(value: 'inactive-jwt@example.com'),
             username: 'inactive-jwt',
             passwordHash: 'hash',
             isActive: false
@@ -110,12 +110,12 @@ class JwtIdentityTest extends TestCase
             secret: 'super-secret-key'
         );
 
-        $token = $jwt->issue($activeUser);
+        $token = $jwt->issue(user: $activeUser);
 
-        $jwt->authenticate($token);
+        $jwt->authenticate(token: $token);
 
-        $this->assertFalse($jwt->check());
-        $this->assertNull($jwt->getCurrentUser());
-        $this->assertNull($jwt->token());
+        $this->assertFalse(condition: $jwt->check());
+        $this->assertNull(actual: $jwt->getCurrentUser());
+        $this->assertNull(actual: $jwt->token());
     }
 }

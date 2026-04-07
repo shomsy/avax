@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Container;
 
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Errors\ContainerException;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\ContainerKernel;
-use Avax\Container\DependencyInjection\Flows\BeginScope\BeginScope;
-use Avax\Container\DependencyInjection\Flows\EndScope\EndScope;
-use Avax\Container\DependencyInjection\Flows\InvokeCallable\InvokeCallable;
-use Avax\Container\DependencyInjection\Flows\RegisterBindings\RegisterBindings;
-use Avax\Container\DependencyInjection\Flows\ResolveService\ResolveService;
+use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ContainerException;
+use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\ContainerKernel;
+use Avax\Container\DependencyInjection\Flow\BeginScope\BeginScope;
+use Avax\Container\DependencyInjection\Flow\EndScope\EndScope;
+use Avax\Container\DependencyInjection\Flow\InvokeCallable\InvokeCallable;
+use Avax\Container\DependencyInjection\Flow\RegisterBindings\RegisterBindings;
+use Avax\Container\DependencyInjection\Flow\ResolveService\ResolveService;
 
 /**
  * Stable public facade for the container component.

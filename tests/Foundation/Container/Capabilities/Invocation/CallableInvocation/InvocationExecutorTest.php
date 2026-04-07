@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capabilities\Invocation\CallableInvocation;
+namespace Avax\Container\Tests\Capability\Invocation\CallableInvocation;
 
-use Avax\Container\DependencyInjection\Capabilities\Invocation\CallableInvocation\InvocationContext;
-use Avax\Container\DependencyInjection\Capabilities\Invocation\CallableInvocation\InvocationExecutor;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Contracts\ContainerRuntimeInterface;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\DependencyResolver;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\KernelContext;
+use Avax\Container\DependencyInjection\Capability\Invocation\CallableInvocation\InvocationContext;
+use Avax\Container\DependencyInjection\Capability\Invocation\CallableInvocation\InvocationExecutor;
+use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
+use Avax\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
+use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use stdClass;
@@ -23,7 +23,7 @@ final class InvocationExecutorTest extends TestCase
 
         $container->expects(invocationRule: $this->once())
             ->method(constraint: 'resolveContext')
-            ->with($this->callback(static function (KernelContext $context) use ($parentContext) : bool {
+            ->with($this->callback(callback: static function (KernelContext $context) use ($parentContext) : bool {
                 return $context->parent === $parentContext && $context->serviceId === stdClass::class;
             }))
             ->willReturn(value: new stdClass);
@@ -55,7 +55,7 @@ final class InvocationExecutorTest extends TestCase
 
         $container->expects(invocationRule: $this->once())
             ->method(constraint: 'resolveContext')
-            ->with($this->callback(static function (KernelContext $context) use ($parentContext) : bool {
+            ->with($this->callback(callback: static function (KernelContext $context) use ($parentContext) : bool {
                 return $context->parent?->parent === $parentContext || $context->parent === $parentContext;
             }))
             ->willReturn(value: new stdClass);

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capabilities\Resolution\Pipeline\Steps;
+namespace Avax\Container\Tests\Capability\Resolution\Pipeline\Steps;
 
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\KernelContext;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Events\StepStarted;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Events\StepSucceeded;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Steps\CollectDiagnosticsStep;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Telemetry\StepTelemetryRecorder;
+use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
+use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Events\StepStarted;
+use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Events\StepSucceeded;
+use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Steps\CollectDiagnosticsStep;
+use Avax\Container\DependencyInjection\Capability\Resolution\Pipeline\Telemetry\StepTelemetryRecorder;
 use PHPUnit\Framework\TestCase;
 
 final class CollectDiagnosticsStepTest extends TestCase

@@ -42,7 +42,7 @@ final class RouterIntegrationTest extends TestCase
     protected function tearDown() : void
     {
         // Clean up cache directory
-        $this->removeDirectory($this->cacheDir);
+        $this->removeDirectory(dir: $this->cacheDir);
     }
 
     /**
@@ -60,7 +60,7 @@ final class RouterIntegrationTest extends TestCase
         $cacheRoutes = $this->loadRoutesViaCache();
 
         // Verify consistency
-        $this->assertRouteSetsAreIdentical($runtimeRoutes, $cacheRoutes);
+        $this->assertRouteSetsAreIdentical(runtimeRoutes: $runtimeRoutes, cacheRoutes: $cacheRoutes);
     }
 
     /**
@@ -75,9 +75,9 @@ final class RouterIntegrationTest extends TestCase
         $cacheCount = count($this->loadRoutesViaCache());
 
         $this->assertEquals(
-            $runtimeCount,
-            $cacheCount,
-            sprintf(
+            expected: $runtimeCount,
+            actual  : $cacheCount,
+            message : sprintf(
                 'Route count mismatch: runtime=%d, cache=%d. Cache loading should preserve all routes.',
                 $runtimeCount,
                 $cacheCount
@@ -98,16 +98,16 @@ final class RouterIntegrationTest extends TestCase
 
         // Check that specificity values are identical
         foreach ($runtimeRoutes as $method => $routes) {
-            $this->assertArrayHasKey($method, $cacheRoutes, "Method {$method} missing from cache");
+            $this->assertArrayHasKey(key: $method, array: $cacheRoutes, message: "Method {$method} missing from cache");
 
             foreach ($routes as $index => $runtimeRoute) {
                 $cacheRoute = $cacheRoutes[$method][$index] ?? null;
-                $this->assertNotNull($cacheRoute, "Route at index {$index} for method {$method} missing from cache");
+                $this->assertNotNull(actual: $cacheRoute, message: "Route at index {$index} for method {$method} missing from cache");
 
                 $this->assertEquals(
-                    $runtimeRoute->specificity,
-                    $cacheRoute->specificity,
-                    sprintf(
+                    expected: $runtimeRoute->specificity,
+                    actual  : $cacheRoute->specificity,
+                    message : sprintf(
                         'Specificity mismatch for %s %s: runtime=%d, cache=%d',
                         $method,
                         $runtimeRoute->path,
@@ -135,9 +135,9 @@ final class RouterIntegrationTest extends TestCase
                 $cacheRoute = $cacheRoutes[$method][$index];
 
                 $this->assertEquals(
-                    $runtimeRoute->middleware,
-                    $cacheRoute->middleware,
-                    sprintf(
+                    expected: $runtimeRoute->middleware,
+                    actual  : $cacheRoute->middleware,
+                    message : sprintf(
                         'Middleware mismatch for %s %s',
                         $method,
                         $runtimeRoute->path
@@ -163,9 +163,9 @@ final class RouterIntegrationTest extends TestCase
                 $cacheRoute = $cacheRoutes[$method][$index];
 
                 $this->assertEquals(
-                    $runtimeRoute->domain,
-                    $cacheRoute->domain,
-                    sprintf(
+                    expected: $runtimeRoute->domain,
+                    actual  : $cacheRoute->domain,
+                    message : sprintf(
                         'Domain constraint mismatch for %s %s: runtime=%s, cache=%s',
                         $method,
                         $runtimeRoute->path,
@@ -182,9 +182,9 @@ final class RouterIntegrationTest extends TestCase
     private function initializeRouterComponents() : void
     {
         // Create simple router instance for testing
-        $matcher = new DomainAwareMatcher(new RouteMatcher($this->createMock(\Psr\Log\LoggerInterface::class)));
+        $matcher = new DomainAwareMatcher(baseMatcher: new RouteMatcher(logger: $this->createMock(\Psr\Log\LoggerInterface::class)));
         $constraintValidator = new RouteConstraintValidator;
-        $this->router = new HttpRequestRouter($constraintValidator, $matcher);
+        $this->router = new HttpRequestRouter(constraintValidator: $constraintValidator, matcher: $matcher);
 
         // Don't use cache loader in integration tests to avoid mocking final classes
         $this->cacheLoader = null;
@@ -206,34 +206,34 @@ final class RouterIntegrationTest extends TestCase
     private function assertRouteSetsAreIdentical(array $runtimeRoutes, array $cacheRoutes) : void
     {
         $this->assertEquals(
-            count($runtimeRoutes),
-            count($cacheRoutes),
-            'Different number of HTTP methods between runtime and cache'
+            expected: count($runtimeRoutes),
+            actual  : count($cacheRoutes),
+            message : 'Different number of HTTP methods between runtime and cache'
         );
 
         foreach ($runtimeRoutes as $method => $routes) {
-            $this->assertArrayHasKey($method, $cacheRoutes, "Method {$method} missing from cache");
-            $this->assertCount(count($routes), $cacheRoutes[$method], "Different route count for method {$method}");
+            $this->assertArrayHasKey(key: $method, array: $cacheRoutes, message: "Method {$method} missing from cache");
+            $this->assertCount(expectedCount: count($routes), haystack: $cacheRoutes[$method], message: "Different route count for method {$method}");
 
             foreach ($routes as $index => $runtimeRoute) {
                 $cacheRoute = $cacheRoutes[$method][$index];
 
                 $this->assertEquals(
-                    $runtimeRoute->method,
-                    $cacheRoute->method,
-                    "Method mismatch at index {$index}"
+                    expected: $runtimeRoute->method,
+                    actual  : $cacheRoute->method,
+                    message : "Method mismatch at index {$index}"
                 );
 
                 $this->assertEquals(
-                    $runtimeRoute->path,
-                    $cacheRoute->path,
-                    "Path mismatch at index {$index} for method {$method}"
+                    expected: $runtimeRoute->path,
+                    actual  : $cacheRoute->path,
+                    message : "Path mismatch at index {$index} for method {$method}"
                 );
 
                 $this->assertEquals(
-                    $runtimeRoute->action,
-                    $cacheRoute->action,
-                    "Action mismatch at index {$index} for method {$method}"
+                    expected: $runtimeRoute->action,
+                    actual  : $cacheRoute->action,
+                    message : "Action mismatch at index {$index} for method {$method}"
                 );
             }
         }
@@ -263,7 +263,7 @@ PHP;
         $files = array_diff(scandir($dir), ['.', '..']);
         foreach ($files as $file) {
             $path = $dir . DIRECTORY_SEPARATOR . $file;
-            is_dir($path) ? $this->removeDirectory($path) : unlink($path);
+            is_dir($path) ? $this->removeDirectory(dir: $path) : unlink($path);
         }
 
         rmdir($dir);

@@ -6,7 +6,7 @@ Canonical review findings and follow-up observations for the
 ## Review Focus
 
 - public API behavior of `Container.php`
-- kernel and pipeline invariants under `DependencyInjection/Capabilities/Resolution/`
+- kernel and pipeline invariants under `DependencyInjection/Capability/Resolution/`
 - safety of guards, providers, and injection surfaces
 - documentation correctness in `docs/`
 

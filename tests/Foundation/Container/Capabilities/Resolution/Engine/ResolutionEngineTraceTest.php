@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capabilities\Resolution\Engine;
+namespace Avax\Container\Tests\Capability\Resolution\Engine;
 
 use Avax\Container\Container;
-use Avax\Container\DependencyInjection\Capabilities\Observability\Trace\ResolutionTrace;
-use Avax\Container\DependencyInjection\Capabilities\Observability\Trace\TraceObserverInterface;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\ResolutionEngine;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\ContainerKernel;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\KernelContext;
+use Avax\Container\DependencyInjection\Capability\Observability\Trace\ResolutionTrace;
+use Avax\Container\DependencyInjection\Capability\Observability\Trace\TraceObserverInterface;
+use Avax\Container\DependencyInjection\Capability\Resolution\Engine\ResolutionEngine;
+use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\ContainerKernel;
+use Avax\Container\DependencyInjection\Capability\Resolution\Kernel\KernelContext;
 use Avax\Container\DependencyInjection\Configuration\ContainerBuilder;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;

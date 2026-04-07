@@ -36,14 +36,14 @@ class TracingMiddleware implements MiddlewareInterface
         $startTime = microtime(true);
 
         // Add request ID to request
-        $request = $request->withHeader($this->requestIdHeader, $requestId);
+        $request = $request->withHeader(name: $this->requestIdHeader, value: $requestId);
 
-        $this->logger->info('Request started', [
+        $this->logger->info(message: 'Request started', context: [
             'request_id' => $requestId,
             'method' => $request->getMethod(),
             'path' => $request->getUri()->getPath(),
             'query' => $request->getUri()->getQuery(),
-            'headers' => $this->getSafeHeaders($request),
+            'headers' => $this->getSafeHeaders(request: $request),
         ]);
 
         try {
@@ -56,7 +56,7 @@ class TracingMiddleware implements MiddlewareInterface
             $this->metrics['total_latency_ms'] += $latency;
             $this->metrics['uptime_seconds'] = microtime(true) - $this->startTime;
 
-            $this->logger->info('Request completed', [
+            $this->logger->info(message: 'Request completed', context: [
                 'request_id' => $requestId,
                 'method' => $request->getMethod(),
                 'path' => $request->getUri()->getPath(),
@@ -71,7 +71,7 @@ class TracingMiddleware implements MiddlewareInterface
         } catch (\Throwable $e) {
             $latency = (microtime(true) - $startTime) * 1000;
 
-            $this->logger->error('Request failed', [
+            $this->logger->error(message: 'Request failed', context: [
                 'request_id' => $requestId,
                 'method' => $request->getMethod(),
                 'path' => $request->getUri()->getPath(),

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flows\Login;
+namespace Avax\Auth\Tests\Flow\Login;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Flows\Login\Login;
-use Avax\Auth\System\Flows\Login\Credentials;
-use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
-use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
-use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Flow\Login\Login;
+use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Mockery;
 use Exception;
 
@@ -34,7 +34,7 @@ class LoginTest extends TestCase
     public function testLoginSuccess() : void
     {
         $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
-        $userId = new UserId(1);
+        $userId = new UserId(value: 1);
         $user = Mockery::mock(User::class);
         $user->shouldReceive('isActive')->andReturn(true);
         $user->shouldReceive('getPasswordHash')->andReturn('hashed_password');
@@ -67,7 +67,7 @@ class LoginTest extends TestCase
         );
         $result = $login->execute(credentials: $credentials);
 
-        $this->assertSame($user, $result);
+        $this->assertSame(expected: $user, actual: $result);
     }
 
     public function testLoginFailedWithInvalidCredentials() : void
@@ -94,8 +94,8 @@ class LoginTest extends TestCase
             rateLimit: $rateLimit
         );
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Invalid credentials.');
+        $this->expectException(exception: Exception::class);
+        $this->expectExceptionMessage(message: 'Invalid credentials.');
 
         $login->execute(credentials: $credentials);
     }
@@ -131,8 +131,8 @@ class LoginTest extends TestCase
             rateLimit: $rateLimit
         );
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Invalid credentials.');
+        $this->expectException(exception: Exception::class);
+        $this->expectExceptionMessage(message: 'Invalid credentials.');
 
         $login->execute(credentials: $credentials);
     }
@@ -149,7 +149,7 @@ class LoginTest extends TestCase
         $rateLimit = Mockery::mock(LoginRateLimit::class);
         $rateLimit->shouldReceive('check')
             ->once()
-            ->andThrow(new Exception('Too many login attempts.'));
+            ->andThrow(new Exception(message: 'Too many login attempts.'));
 
         $login = new Login(
             userSource: $userSource,
@@ -158,8 +158,8 @@ class LoginTest extends TestCase
             rateLimit: $rateLimit
         );
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Too many login attempts.');
+        $this->expectException(exception: Exception::class);
+        $this->expectExceptionMessage(message: 'Too many login attempts.');
 
         $login->execute(credentials: $credentials);
     }

@@ -157,13 +157,11 @@ final class Recovery
         $this->currentTransaction = null;
         $this->inTransaction      = false;
 
-        if ($this->audit !== null) {
-            $this->audit->record(event: 'transaction_rollback', data: [
-                'backup'    => $backupName,
-                'timestamp' => time(),
-                'reason'    => 'rollback',
-            ]);
-        }
+        $this->audit?->record(event: 'transaction_rollback', data: [
+            'backup'    => $backupName,
+            'timestamp' => time(),
+            'reason'    => 'rollback',
+        ]);
     }
 
     /**
@@ -270,25 +268,21 @@ final class Recovery
             $result = $operation();
             $this->deleteBackup(name: $backupName);
 
-            if ($this->audit !== null) {
-                $this->audit->record(event: 'transaction_committed', data: [
-                    'backup'    => $backupName,
-                    'timestamp' => time(),
-                ]);
-            }
+            $this->audit?->record(event: 'transaction_committed', data: [
+                'backup'    => $backupName,
+                'timestamp' => time(),
+            ]);
 
             return $result;
         } catch (Throwable $e) {
             $this->restore(name: $backupName);
             $this->deleteBackup(name: $backupName);
 
-            if ($this->audit !== null) {
-                $this->audit->record(event: 'transaction_rolled_back', data: [
-                    'backup'    => $backupName,
-                    'timestamp' => time(),
-                    'error'     => $e->getMessage(),
-                ]);
-            }
+            $this->audit?->record(event: 'transaction_rolled_back', data: [
+                'backup'    => $backupName,
+                'timestamp' => time(),
+                'error'     => $e->getMessage(),
+            ]);
 
             throw RecoveryException::transactionFailed(reason: $e->getMessage());
         }

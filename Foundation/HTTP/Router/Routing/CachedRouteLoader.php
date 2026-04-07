@@ -31,12 +31,12 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
     public function loadInto(RouteCollection $collection) : void
     {
         if (! $this->isAvailable()) {
-            throw new \RuntimeException('Cache file not available or invalid');
+            throw new \RuntimeException(message: 'Cache file not available or invalid');
         }
 
         // Validate cache integrity before loading
         if (! $this->manifest->validateSignatureFile($this->cachePath)) {
-            throw new \RuntimeException('Cache signature validation failed - possible tampering detected');
+            throw new \RuntimeException(message: 'Cache signature validation failed - possible tampering detected');
         }
 
         // Load and validate JSON content
@@ -46,27 +46,27 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
             /** @var array<array<string, mixed>> $routesData */
             $routesData = json_decode($cacheContent, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
-            throw new \RuntimeException('Invalid cache JSON format', 0, $exception);
+            throw new \RuntimeException(message: 'Invalid cache JSON format', code: 0, previous: $exception);
         }
 
         if (! is_array($routesData)) {
-            throw new \RuntimeException('Cache file does not contain valid route array');
+            throw new \RuntimeException(message: 'Cache file does not contain valid route array');
         }
 
         // Populate collection with cached routes
         foreach ($routesData as $routeData) {
             if (! is_array($routeData)) {
-                throw new \RuntimeException('Invalid route data in cache');
+                throw new \RuntimeException(message: 'Invalid route data in cache');
             }
 
             try {
-                $route = RouteDefinition::fromArray($routeData);
-                $collection->addRoute($route);
+                $route = RouteDefinition::fromArray(payload: $routeData);
+                $collection->addRoute(route: $route);
             } catch (\Throwable $exception) {
                 throw new \RuntimeException(
-                    'Failed to load route from cache: ' . $exception->getMessage(),
-                    0,
-                    $exception
+                    message : 'Failed to load route from cache: ' . $exception->getMessage(),
+                    code    : 0,
+                    previous: $exception
                 );
             }
         }

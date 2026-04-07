@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capabilities\Injection;
+namespace Avax\Container\Tests\Capability\Injection;
 
 use Avax\Container\ContainerInterface;
-use Avax\Container\DependencyInjection\Capabilities\Injection\InjectDependencies;
-use Avax\Container\DependencyInjection\Capabilities\Injection\Methods\MethodInjector;
-use Avax\Container\DependencyInjection\Capabilities\Injection\Parameters\ResolveMethodParameters;
-use Avax\Container\DependencyInjection\Capabilities\Injection\Properties\PropertyInjector;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Contracts\ServicePrototypeFactoryInterface;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\MethodPrototype;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\ParameterPrototype;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\PropertyPrototype;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\ServicePrototype;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\DependencyResolver;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Errors\ResolutionException;
+use Avax\Container\DependencyInjection\Capability\Injection\InjectDependencies;
+use Avax\Container\DependencyInjection\Capability\Injection\Methods\MethodInjector;
+use Avax\Container\DependencyInjection\Capability\Injection\Parameters\ResolveMethodParameters;
+use Avax\Container\DependencyInjection\Capability\Injection\Properties\PropertyInjector;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Contracts\ServicePrototypeFactoryInterface;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Model\MethodPrototype;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ParameterPrototype;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Model\PropertyPrototype;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Model\ServicePrototype;
+use Avax\Container\DependencyInjection\Capability\Resolution\Engine\DependencyResolver;
+use Avax\Container\DependencyInjection\Capability\Resolution\Errors\ResolutionException;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 

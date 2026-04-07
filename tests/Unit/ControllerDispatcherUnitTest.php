@@ -30,11 +30,11 @@ class ControllerDispatcherUnitTest extends TestCase
         $request = $this->createMock(Request::class);
 
         // When: Dispatching the callable
-        $response = $this->dispatcher->dispatch($callable, $request);
+        $response = $this->dispatcher->dispatch(action: $callable, request: $request);
 
         // Then: Returns a Response with "Callable returned null" message
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals('Callable returned null. Must return a ResponseInterface.', (string) $response->getBody());
+        $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
+        $this->assertEquals(expected: 'Callable returned null. Must return a ResponseInterface.', actual: (string) $response->getBody());
     }
 
     /**
@@ -51,18 +51,18 @@ class ControllerDispatcherUnitTest extends TestCase
         };
 
         // Mock container to return the controller instance
-        $this->container->method('has')->willReturn(true);
-        $this->container->method('get')->willReturn($controller);
+        $this->container->method('has')->willReturn(value: true);
+        $this->container->method('get')->willReturn(value: $controller);
 
         // Mock request
         $request = $this->createMock(Request::class);
 
         // When: Dispatching the controller method
-        $response = $this->dispatcher->dispatch([get_class($controller), 'testMethod'], $request);
+        $response = $this->dispatcher->dispatch(action: [get_class($controller), 'testMethod'], request: $request);
 
         // Then: Returns a Response with "Controller returned null" message
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals('Controller returned null', (string) $response->getBody());
+        $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
+        $this->assertEquals(expected: 'Controller returned null', actual: (string) $response->getBody());
     }
 
     /**
@@ -82,16 +82,16 @@ class ControllerDispatcherUnitTest extends TestCase
         $request = $this->createMock(Request::class);
 
         // When: Dispatching the invokable controller
-        $response = $this->dispatcher->dispatch($controller::class, $request);
+        $response = $this->dispatcher->dispatch(action: $controller::class, request: $request);
 
         // Then: Returns a Response with "Controller returned null" message
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals('Controller returned null', (string) $response->getBody());
+        $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
+        $this->assertEquals(expected: 'Controller returned null', actual: (string) $response->getBody());
     }
 
     protected function setUp() : void
     {
         $this->container = $this->createMock(ContainerInterface::class);
-        $this->dispatcher = new ControllerDispatcher($this->container);
+        $this->dispatcher = new ControllerDispatcher(container: $this->container);
     }
 }

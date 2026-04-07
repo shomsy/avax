@@ -105,30 +105,30 @@ final class RouteCollector
             // This replaces the global state approach
             $dslFunctions = [
                 'get' => fn($path, $action) => $collector->addRouteBuilder(
-                    \Avax\HTTP\Router\Routing\RouteBuilder::make('GET', $path)->action($action)
+                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'GET', path: $path)->action(action: $action)
                 ),
                 'post' => fn($path, $action) => $collector->addRouteBuilder(
-                    \Avax\HTTP\Router\Routing\RouteBuilder::make('POST', $path)->action($action)
+                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'POST', path: $path)->action(action: $action)
                 ),
                 'put' => fn($path, $action) => $collector->addRouteBuilder(
-                    \Avax\HTTP\Router\Routing\RouteBuilder::make('PUT', $path)->action($action)
+                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'PUT', path: $path)->action(action: $action)
                 ),
                 'patch' => fn($path, $action) => $collector->addRouteBuilder(
-                    \Avax\HTTP\Router\Routing\RouteBuilder::make('PATCH', $path)->action($action)
+                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'PATCH', path: $path)->action(action: $action)
                 ),
                 'delete' => fn($path, $action) => $collector->addRouteBuilder(
-                    \Avax\HTTP\Router\Routing\RouteBuilder::make('DELETE', $path)->action($action)
+                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'DELETE', path: $path)->action(action: $action)
                 ),
                 'options' => fn($path, $action) => $collector->addRouteBuilder(
-                    \Avax\HTTP\Router\Routing\RouteBuilder::make('OPTIONS', $path)->action($action)
+                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'OPTIONS', path: $path)->action(action: $action)
                 ),
                 'head' => fn($path, $action) => $collector->addRouteBuilder(
-                    \Avax\HTTP\Router\Routing\RouteBuilder::make('HEAD', $path)->action($action)
+                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'HEAD', path: $path)->action(action: $action)
                 ),
                 'any' => fn($path, $action) => $collector->addRouteBuilder(
-                    \Avax\HTTP\Router\Routing\RouteBuilder::make('ANY', $path)->action($action)
+                    routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'ANY', path: $path)->action(action: $action)
                 ),
-                'fallback' => fn($handler) => $collector->setFallback($handler),
+                'fallback' => fn($handler) => $collector->setFallback(fallback: $handler),
             ];
 
             // Extract variables for the DSL execution
@@ -161,7 +161,7 @@ final class RouteCollector
      */
     public function addRouteBuilder(RouteBuilder $routeBuilder) : \Avax\HTTP\Router\Routing\RouteRegistrarProxy
     {
-        $this->add($routeBuilder);
+        $this->add(routeBuilder: $routeBuilder);
 
         return new \Avax\HTTP\Router\Routing\RouteRegistrarProxy(
             router: null, // Will be set by RouterDsl

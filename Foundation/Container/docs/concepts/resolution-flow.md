@@ -12,20 +12,20 @@ Public entry:
 Runtime entry:
 
 - `ContainerRuntimeInterface::resolveContext()`
-- `DependencyInjection/Capabilities/Resolution/Kernel/RuntimeContainer.php`
+- `DependencyInjection/Capability/Resolution/Kernel/RuntimeContainer.php`
 
 Flow entry:
 
-- `DependencyInjection/Flows/ResolveService/ResolveService.php`
+- `DependencyInjection/Flow/ResolveService/ResolveService.php`
 
 Runtime owner:
 
-- `DependencyInjection/Capabilities/Resolution/Kernel/ContainerKernel.php`
-- `DependencyInjection/Capabilities/Resolution/Kernel/KernelFacade.php`
+- `DependencyInjection/Capability/Resolution/Kernel/ContainerKernel.php`
+- `DependencyInjection/Capability/Resolution/Kernel/KernelFacade.php`
 
 Ordered execution:
 
-- `DependencyInjection/Capabilities/Resolution/Pipeline/ResolutionPipeline.php`
+- `DependencyInjection/Capability/Resolution/Pipeline/ResolutionPipeline.php`
 
 ## What Happens
 

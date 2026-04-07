@@ -5,8 +5,8 @@
 Read this component in this order:
 
 1. `Container.php`
-2. `DependencyInjection/Flows/`
-3. `DependencyInjection/Capabilities/`
+2. `DependencyInjection/Flow/`
+3. `DependencyInjection/Capability/`
 4. `DependencyInjection/Configuration/`
 5. `DependencyInjection/Foundation/`
 
@@ -35,30 +35,30 @@ architecture must scream.
 
 `Container` is intentionally thin. It delegates to explicit flow entry units and does not own runtime machinery.
 
-## Flows
+## Flow
 
-Flows are system behaviors, not business use cases.
+Flow are system behaviors, not business use cases.
 
-- `DependencyInjection/Flows/RegisterBindings`: write-side registration flow
-- `DependencyInjection/Flows/BootProviders`: deterministic register-then-boot provider lifecycle
-- `DependencyInjection/Flows/ResolveService`: service lookup and build flow
-- `DependencyInjection/Flows/InvokeCallable`: callable execution flow
-- `DependencyInjection/Flows/BeginScope`: scope entry flow
-- `DependencyInjection/Flows/EndScope`: scope exit flow
+- `DependencyInjection/Flow/RegisterBindings`: write-side registration flow
+- `DependencyInjection/Flow/BootProviders`: deterministic register-then-boot provider lifecycle
+- `DependencyInjection/Flow/ResolveService`: service lookup and build flow
+- `DependencyInjection/Flow/InvokeCallable`: callable execution flow
+- `DependencyInjection/Flow/BeginScope`: scope entry flow
+- `DependencyInjection/Flow/EndScope`: scope exit flow
 
-## Capabilities
+## Capability
 
-Capabilities are shared runtime abilities used by more than one flow.
+Capability are shared runtime abilities used by more than one flow.
 
-- `DependencyInjection/Capabilities/Definitions`: bindings, contextual rules, extenders, definition storage
-- `DependencyInjection/Capabilities/Providers`: provider contracts and built-in provider implementations
-- `DependencyInjection/Capabilities/Resolution`: kernel runtime, kernel facade, engine, pipeline, resolution errors
-- `DependencyInjection/Capabilities/Injection`: property, method, and parameter injection support
-- `DependencyInjection/Capabilities/Invocation`: callable normalization and execution
-- `DependencyInjection/Capabilities/Scopes`: scope storage and lifetime strategies
-- `DependencyInjection/Capabilities/Prototypes`: reflection analysis, prototype cache, prototype models, factories
-- `DependencyInjection/Capabilities/Policies`: resolution policy decisions
-- `DependencyInjection/Capabilities/Observability`: metrics, trace, timeline, telemetry
+- `DependencyInjection/Capability/Definitions`: bindings, contextual rules, extenders, definition storage
+- `DependencyInjection/Capability/Providers`: provider contracts and built-in provider implementations
+- `DependencyInjection/Capability/Resolution`: kernel runtime, kernel facade, engine, pipeline, resolution errors
+- `DependencyInjection/Capability/Injection`: property, method, and parameter injection support
+- `DependencyInjection/Capability/Invocation`: callable normalization and execution
+- `DependencyInjection/Capability/Scopes`: scope storage and lifetime strategies
+- `DependencyInjection/Capability/Prototypes`: reflection analysis, prototype cache, prototype models, factories
+- `DependencyInjection/Capability/Policies`: resolution policy decisions
+- `DependencyInjection/Capability/Observability`: metrics, trace, timeline, telemetry
 
 ## Configuration
 

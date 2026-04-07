@@ -16,8 +16,8 @@ The project repository is structured with a clean boundary between the core logi
 
 The core logic is divided into four primary lanes:
 
-1.  **`Flows/`**: High-level business use-cases following the **Verb-Noun** naming pattern (e.g., `Login`, `Register`, `ChangePassword`). These are the primary entry points.
-2.  **`Capabilities/`**: Domain enablers and internal subsystems that the flows orchestrate.
+1.  **`Flow/`**: High-level business use-cases following the **Verb-Noun** naming pattern (e.g., `Login`, `Register`, `ChangePassword`). These are the primary entry points.
+2.  **`Capability/`**: Domain enablers and internal subsystems that the flows orchestrate.
     -   `Access`: Root access façade plus specialized authorization boundaries.
     -   `Identity`: Unified authentication façade plus protocol-specific adapters (Session, JWT).
     -   `User`: The core User entity and its specific Value Objects (Email, Id, etc.).
@@ -30,11 +30,11 @@ The core logic is divided into four primary lanes:
 
 | Folder | Category | Role |
 |:---|:---|:---|
-| **[`System/Flows/`](./System/Flows/)** | **Features** | Core business processes and API entry points. |
-| **[`System/Capabilities/Access/`](./System/Capabilities/Access/)** | Facade | Root authorization boundary plus specialized requirement units. |
-| **[`System/Capabilities/Identity/`](./System/Capabilities/Identity/)** | Facade | Unified identity façade with JWT and Session persistence adapters. |
-| **[`System/Capabilities/User/`](./System/Capabilities/User/)** | Domain | Immutability-first User entity and its Value Objects. |
-| **[`System/Capabilities/UserSource/`](./System/Capabilities/UserSource/)** | Port | Interface for accessing the external data store. |
+| **[`System/Flow/`](./System/Flow/)** | **Features** | Core business processes and API entry points. |
+| **[`System/Capability/Access/`](./System/Capability/Access/)** | Facade | Root authorization boundary plus specialized requirement units. |
+| **[`System/Capability/Identity/`](./System/Capability/Identity/)** | Facade | Unified identity façade with JWT and Session persistence adapters. |
+| **[`System/Capability/User/`](./System/Capability/User/)** | Domain | Immutability-first User entity and its Value Objects. |
+| **[`System/Capability/UserSource/`](./System/Capability/UserSource/)** | Port | Interface for accessing the external data store. |
 | **[`System/Configuration/`](./System/Configuration/)** | Infra | Fluent DSL Builder for setting up Auth system instances. |
 | **[`System/Foundation/`](./System/Foundation/)** | Primitives | Shared low-level primitives (Clock, IdGen). |
 
@@ -43,11 +43,11 @@ The core logic is divided into four primary lanes:
 ```mermaid
 graph TD
     Facade[Auth Facade] --> Builder[AuthBuilder]
-    Facade --> Flows[Business Flows]
+    Facade --> Flow[Business Flow]
     Facade --> Access[Access Facade]
-    Flows --> Capabilities[Capabilities]
-    Access --> Capabilities
-    Capabilities --> Foundation[Foundation Primitives]
+    Flow --> Capability[Capability]
+    Access --> Capability
+    Capability --> Foundation[Foundation Primitives]
 ```
 
 ## Evolution Log

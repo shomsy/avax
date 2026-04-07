@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capabilities\Access;
+namespace Avax\Auth\Tests\Capability\Access;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Capabilities\Access\RequireAuthentication\RequireAuthentication;
-use Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capabilities\Access\RequirePermission\RequirePermission;
-use Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserPermission;
-use Avax\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
-use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
+use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserPermission;
+use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Mockery;
 
 /**
@@ -26,7 +26,7 @@ class AccessBoundaryTest extends TestCase
     }
 
     /**
-     * @throws \Avax\Auth\System\Capabilities\Access\RequireAuthentication\Unauthenticated
+     * @throws \Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated
      */
     public function testRequireAuthenticationSuccess() : void
     {
@@ -35,7 +35,7 @@ class AccessBoundaryTest extends TestCase
 
         $boundary = new RequireAuthentication(checkAuthentication: $check);
         $boundary->execute();
-        $this->assertTrue(true); // No exception thrown
+        $this->assertTrue(condition: true); // No exception thrown
     }
 
     public function testRequireAuthenticationFailure() : void
@@ -45,16 +45,16 @@ class AccessBoundaryTest extends TestCase
 
         $boundary = new RequireAuthentication(checkAuthentication: $check);
 
-        $this->expectException(Unauthenticated::class);
+        $this->expectException(exception: Unauthenticated::class);
         $boundary->execute();
     }
 
     /**
-     * @throws \Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied
+     * @throws \Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied
      */
     public function testRequirePermissionSuccess() : void
     {
-        $permission = new UserPermission('write');
+        $permission = new UserPermission(value: 'write');
         $user = Mockery::mock(User::class);
         $user->shouldReceive('hasPermission')->with(Mockery::on(fn($p) => $p->value === 'write'))->andReturn(true);
 
@@ -62,12 +62,12 @@ class AccessBoundaryTest extends TestCase
         $readCurrentUser->shouldReceive('execute')->andReturn($user);
 
         $boundary = new RequirePermission(readCurrentUser: $readCurrentUser);
-        $boundary->execute($permission);
-        $this->assertTrue(true);
+        $boundary->execute(permission: $permission);
+        $this->assertTrue(condition: true);
     }
 
     /**
-     * @throws \Avax\Auth\System\Capabilities\Access\RequirePermission\PermissionDenied
+     * @throws \Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied
      */
     public function testRequirePermissionFailureUserNotLoggedIn() : void
     {
@@ -76,13 +76,13 @@ class AccessBoundaryTest extends TestCase
 
         $boundary = new RequirePermission(readCurrentUser: $readCurrentUser);
 
-        $this->expectException(Unauthenticated::class);
-        $boundary->execute(new UserPermission('any'));
+        $this->expectException(exception: Unauthenticated::class);
+        $boundary->execute(permission: new UserPermission(value: 'any'));
     }
 
     public function testRequirePermissionFailurePermissionMissing() : void
     {
-        $permission = new UserPermission('write');
+        $permission = new UserPermission(value: 'write');
         $user = Mockery::mock(User::class);
         $user->shouldReceive('hasPermission')->with(Mockery::on(fn($p) => $p->value === 'write'))->andReturn(false);
 
@@ -91,7 +91,7 @@ class AccessBoundaryTest extends TestCase
 
         $boundary = new RequirePermission(readCurrentUser: $readCurrentUser);
 
-        $this->expectException(PermissionDenied::class);
-        $boundary->execute($permission);
+        $this->expectException(exception: PermissionDenied::class);
+        $boundary->execute(permission: $permission);
     }
 }

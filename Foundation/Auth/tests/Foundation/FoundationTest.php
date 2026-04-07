@@ -16,14 +16,14 @@ class FoundationTest extends TestCase
     public function testClockReturnsDateTime() : void
     {
         $clock = new Clock();
-        $this->assertInstanceOf(\DateTimeImmutable::class, $clock->now());
+        $this->assertInstanceOf(expected: \DateTimeImmutable::class, actual: $clock->now());
     }
 
     public function testIdGeneratorGeneratesPositiveInt() : void
     {
         $generator = new IdGenerator();
         $id = $generator->generate();
-        $this->assertIsInt($id);
-        $this->assertGreaterThan(0, $id);
+        $this->assertIsInt(actual: $id);
+        $this->assertGreaterThan(expected: 0, actual: $id);
     }
 }

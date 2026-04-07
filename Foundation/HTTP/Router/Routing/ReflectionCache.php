@@ -40,7 +40,7 @@ final class ReflectionCache
      */
     public static function getClass(string $className) : \ReflectionClass
     {
-        return self::$classCache[$className] ??= new \ReflectionClass($className);
+        return self::$classCache[$className] ??= new \ReflectionClass(objectOrClass: $className);
     }
 
     /**
@@ -58,7 +58,7 @@ final class ReflectionCache
         $className = is_string($classOrObject) ? $classOrObject : $classOrObject::class;
         $key = $className . '::' . $methodName;
 
-        return self::$methodCache[$key] ??= self::getClass($className)->getMethod($methodName);
+        return self::$methodCache[$key] ??= self::getClass(className: $className)->getMethod(name: $methodName);
     }
 
     /**
@@ -76,7 +76,7 @@ final class ReflectionCache
         $className = is_string($classOrObject) ? $classOrObject : $classOrObject::class;
         $key = $className . '::$' . $propertyName;
 
-        return self::$propertyCache[$key] ??= self::getClass($className)->getProperty($propertyName);
+        return self::$propertyCache[$key] ??= self::getClass(className: $className)->getProperty(name: $propertyName);
     }
 
     /**
@@ -89,7 +89,7 @@ final class ReflectionCache
     public static function hasMethod($classOrObject, string $methodName) : bool
     {
         try {
-            self::getMethod($classOrObject, $methodName);
+            self::getMethod(classOrObject: $classOrObject, methodName: $methodName);
             return true;
         } catch (\ReflectionException) {
             return false;
@@ -106,7 +106,7 @@ final class ReflectionCache
     public static function hasProperty($classOrObject, string $propertyName) : bool
     {
         try {
-            self::getProperty($classOrObject, $propertyName);
+            self::getProperty(classOrObject: $classOrObject, propertyName: $propertyName);
             return true;
         } catch (\ReflectionException) {
             return false;
@@ -123,7 +123,7 @@ final class ReflectionCache
     public static function isMethodPublic($classOrObject, string $methodName) : bool
     {
         try {
-            $method = self::getMethod($classOrObject, $methodName);
+            $method = self::getMethod(classOrObject: $classOrObject, methodName: $methodName);
             return $method->isPublic();
         } catch (\ReflectionException) {
             return false;
@@ -140,7 +140,7 @@ final class ReflectionCache
     public static function isPropertyPublic($classOrObject, string $propertyName) : bool
     {
         try {
-            $property = self::getProperty($classOrObject, $propertyName);
+            $property = self::getProperty(classOrObject: $classOrObject, propertyName: $propertyName);
             return $property->isPublic();
         } catch (\ReflectionException) {
             return false;

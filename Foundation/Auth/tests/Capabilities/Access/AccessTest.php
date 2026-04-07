@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Capabilities\Access;
+namespace Avax\Auth\Tests\Capability\Access;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Capabilities\Access\Access;
-use Avax\Auth\System\Capabilities\Access\RequireAuthentication\RequireAuthentication;
-use Avax\Auth\System\Capabilities\Access\RequirePermission\RequirePermission;
-use Avax\Auth\System\Capabilities\Access\RequireRole\RequireRole;
-use Avax\Auth\System\Capabilities\User\User;
-use Avax\Auth\System\Capabilities\User\UserEmail;
-use Avax\Auth\System\Capabilities\User\UserPermission;
-use Avax\Auth\System\Capabilities\User\UserId;
-use Avax\Auth\System\Capabilities\User\UserRole;
-use Avax\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
-use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\System\Capability\Access\Access;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
+use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserEmail;
+use Avax\Auth\System\Capability\User\UserPermission;
+use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Capability\User\UserRole;
+use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Mockery;
 
 /**
@@ -31,12 +31,12 @@ class AccessTest extends TestCase
     public function testAccessFacadeDelegatesToBoundaries() : void
     {
         $user = new User(
-            id: new UserId(42),
-            email: new UserEmail('access@example.com'),
+            id: new UserId(value: 42),
+            email: new UserEmail(value: 'access@example.com'),
             username: 'access',
             passwordHash: 'hash',
             roles: [UserRole::ADMIN],
-            permissions: [new UserPermission('write')]
+            permissions: [new UserPermission(value: 'write')]
         );
 
         $checkAuthentication = Mockery::mock(CheckAuthentication::class);
@@ -52,9 +52,9 @@ class AccessTest extends TestCase
         );
 
         $access->requireAuthentication();
-        $access->requireRole(UserRole::USER);
-        $access->requirePermission(new UserPermission('write'));
+        $access->requireRole(requiredRole: UserRole::USER);
+        $access->requirePermission(permission: new UserPermission(value: 'write'));
 
-        $this->assertTrue(true);
+        $this->assertTrue(condition: true);
     }
 }

@@ -79,7 +79,7 @@ final class RouterTrace
 
         // Auto-enrich with route information if available in context
         if (in_array('route', $autoEnrich, true)) {
-            $enrichedContext = $this->enrichWithRouteContext($event, $enrichedContext);
+            $enrichedContext = $this->enrichWithRouteContext(event: $event, context: $enrichedContext);
         }
 
         // Auto-enrich with system context
@@ -87,7 +87,7 @@ final class RouterTrace
         $enrichedContext['timestamp'] = microtime(true);
         $enrichedContext['process_id'] = getmypid();
 
-        $this->log($event, $enrichedContext);
+        $this->log(event: $event, context: $enrichedContext);
     }
 
     /**

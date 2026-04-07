@@ -25,8 +25,8 @@ composer require avax/auth
 
 ```php
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capabilities\Identity\Identity;
-use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use Avax\Auth\System\Capability\Identity\Identity;
+use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
 
 $auth = Auth::configuration()
     ->forUser($userSource)
@@ -39,11 +39,11 @@ $auth = Auth::configuration()
 
 If you bootstrap through the container, register `System/Configuration/AuthServiceProvider.php` and bind a `UserSourceInterface` plus the identity backend you want to expose. Rate limiting stays opt-in until you provide a `LoginRateLimitStorageInterface`.
 
-### Authentication Flow (Flows)
+### Authentication Flow (Flow)
 
 ```php
-use Avax\Auth\System\Flows\Login\Credentials;
-use Avax\Auth\System\Flows\Register\RegistrationData;
+use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Flow\Register\RegistrationData;
 
 // Login
 $user = $auth->login(new Credentials(
@@ -69,8 +69,8 @@ $auth->logout();
 ### Authorization (Access)
 
 ```php
-use Avax\Auth\System\Capabilities\User\UserPermission;
-use Avax\Auth\System\Capabilities\User\UserRole;
+use Avax\Auth\System\Capability\User\UserPermission;
+use Avax\Auth\System\Capability\User\UserRole;
 
 $auth->access()->requireRole(UserRole::ADMIN);
 $auth->access()->requirePermission(new UserPermission('delete_user'));
@@ -85,8 +85,8 @@ System/
 ├── Auth.php
 ├── AuthInterface.php
 ├── Configuration/     # Composition Root & Fluent Builder
-├── Flows/             # Verb-Noun Business Actions (Login, Register, etc.)
-├── Capabilities/
+├── Flow/             # Verb-Noun Business Actions (Login, Register, etc.)
+├── Capability/
 │   ├── Access/        # Root authorization façade plus specialized checks
 │   ├── Identity/      # Unified authentication façade plus adapters
 │   ├── PasswordHashing/

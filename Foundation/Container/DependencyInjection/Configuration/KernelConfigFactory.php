@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Configuration;
 
-use Avax\Container\DependencyInjection\Capabilities\Injection\InjectDependencies;
-use Avax\Container\DependencyInjection\Capabilities\Invocation\InvokeAction;
-use Avax\Container\DependencyInjection\Capabilities\Observability\Metrics\CollectMetrics;
-use Avax\Container\DependencyInjection\Capabilities\Observability\Timeline\ResolutionTimeline;
-use Avax\Container\DependencyInjection\Capabilities\Policies\ContainerPolicy;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Contracts\ServicePrototypeFactoryInterface;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\EngineInterface;
-use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeManager;
+use Avax\Container\DependencyInjection\Capability\Injection\InjectDependencies;
+use Avax\Container\DependencyInjection\Capability\Invocation\InvokeAction;
+use Avax\Container\DependencyInjection\Capability\Observability\Metrics\CollectMetrics;
+use Avax\Container\DependencyInjection\Capability\Observability\Timeline\ResolutionTimeline;
+use Avax\Container\DependencyInjection\Capability\Policies\ContainerPolicy;
+use Avax\Container\DependencyInjection\Capability\Prototypes\Contracts\ServicePrototypeFactoryInterface;
+use Avax\Container\DependencyInjection\Capability\Resolution\Engine\EngineInterface;
+use Avax\Container\DependencyInjection\Capability\Scopes\ScopeManager;
 
 /**
  * Factory that normalizes default kernel flags.

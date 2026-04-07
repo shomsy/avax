@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\Tests\Flows\Logout;
+namespace Avax\Auth\Tests\Flow\Logout;
 
 use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Flows\Logout\Logout;
-use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Auth\System\Flow\Logout\Logout;
+use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Mockery;
 
 /**
@@ -27,6 +27,6 @@ class LogoutTest extends TestCase
         $logout = new Logout(identity: $identity);
         $logout->execute();
 
-        $this->assertTrue(true);
+        $this->assertTrue(condition: true);
     }
 }

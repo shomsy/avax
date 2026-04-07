@@ -8,9 +8,9 @@ Instantiation creates the object itself.
 
 Main units:
 
-- `DependencyInjection/Capabilities/Resolution/Engine/Instantiator.php`
-- `DependencyInjection/Capabilities/Resolution/Engine/DependencyResolver.php`
-- `DependencyInjection/Capabilities/Prototypes/*`
+- `DependencyInjection/Capability/Resolution/Engine/Instantiator.php`
+- `DependencyInjection/Capability/Resolution/Engine/DependencyResolver.php`
+- `DependencyInjection/Capability/Prototypes/*`
 
 This phase decides constructor arguments and creates the instance.
 
@@ -20,12 +20,12 @@ Injection wires dependencies after the object already exists.
 
 Main units:
 
-- `DependencyInjection/Capabilities/Injection/InjectDependencies.php`
-- `DependencyInjection/Capabilities/Injection/Properties/PropertyInjector.php`
-- `DependencyInjection/Capabilities/Injection/Methods/MethodInjector.php`
-- `DependencyInjection/Capabilities/Injection/Parameters/ResolveMethodParameters.php`
-- `DependencyInjection/Capabilities/Invocation/InvokeAction.php`
-- `DependencyInjection/Capabilities/Invocation/CallableInvocation/InvocationExecutor.php`
+- `DependencyInjection/Capability/Injection/InjectDependencies.php`
+- `DependencyInjection/Capability/Injection/Properties/PropertyInjector.php`
+- `DependencyInjection/Capability/Injection/Methods/MethodInjector.php`
+- `DependencyInjection/Capability/Injection/Parameters/ResolveMethodParameters.php`
+- `DependencyInjection/Capability/Invocation/InvokeAction.php`
+- `DependencyInjection/Capability/Invocation/CallableInvocation/InvocationExecutor.php`
 
 This phase handles:
 

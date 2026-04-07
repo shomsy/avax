@@ -27,7 +27,7 @@ final readonly class DiskRouteLoader implements RouteSourceLoaderInterface
     public function loadInto(RouteCollection $collection) : void
     {
         if (! $this->isAvailable()) {
-            throw new \RuntimeException("Routes file not found: {$this->routesPath}");
+            throw new \RuntimeException(message: "Routes file not found: {$this->routesPath}");
         }
 
         // Execute routes in scoped collector context to prevent global pollution
@@ -36,15 +36,15 @@ final readonly class DiskRouteLoader implements RouteSourceLoaderInterface
                 // Read file content and execute DSL
                 $code = file_get_contents($this->routesPath);
                 if ($code === false) {
-                    throw new \RuntimeException("Cannot read routes file: {$this->routesPath}");
+                    throw new \RuntimeException(message: "Cannot read routes file: {$this->routesPath}");
                 }
 
                 $collector->executeDsl($code);
             } catch (\Throwable $exception) {
                 throw new \RuntimeException(
-                    "Failed to load routes from {$this->routesPath}: " . $exception->getMessage(),
-                    0,
-                    $exception
+                    message : "Failed to load routes from {$this->routesPath}: " . $exception->getMessage(),
+                    code    : 0,
+                    previous: $exception
                 );
             }
         });
@@ -53,12 +53,12 @@ final readonly class DiskRouteLoader implements RouteSourceLoaderInterface
         foreach ($collector->flush() as $routeBuilder) {
             try {
                 $route = $routeBuilder->build();
-                $collection->addRoute($route);
+                $collection->addRoute(route: $route);
             } catch (\Throwable $exception) {
                 throw new \RuntimeException(
-                    'Failed to build route from file: ' . $exception->getMessage(),
-                    0,
-                    $exception
+                    message : 'Failed to build route from file: ' . $exception->getMessage(),
+                    code    : 0,
+                    previous: $exception
                 );
             }
         }

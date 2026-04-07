@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Capabilities\Policies;
+namespace Avax\Container\Tests\Capability\Policies;
 
-use Avax\Container\DependencyInjection\Capabilities\Policies\CheckResolutionPolicy;
-use Avax\Container\DependencyInjection\Capabilities\Policies\ContainerPolicy;
-use Avax\Container\DependencyInjection\Capabilities\Policies\Decisions\ResolutionAllowed;
-use Avax\Container\DependencyInjection\Capabilities\Policies\Decisions\ResolutionBlocked;
-use Avax\Container\DependencyInjection\Capabilities\Policies\StrictResolutionPolicy;
+use Avax\Container\DependencyInjection\Capability\Policies\CheckResolutionPolicy;
+use Avax\Container\DependencyInjection\Capability\Policies\ContainerPolicy;
+use Avax\Container\DependencyInjection\Capability\Policies\Decisions\ResolutionAllowed;
+use Avax\Container\DependencyInjection\Capability\Policies\Decisions\ResolutionBlocked;
+use Avax\Container\DependencyInjection\Capability\Policies\StrictResolutionPolicy;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

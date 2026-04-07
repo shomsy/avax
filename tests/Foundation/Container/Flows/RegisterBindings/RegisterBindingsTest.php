@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Container\Tests\Flows\RegisterBindings;
+namespace Avax\Container\Tests\Flow\RegisterBindings;
 
-use Avax\Container\DependencyInjection\Capabilities\Providers\Runtime\Http\HttpApplication;
-use Avax\Container\DependencyInjection\Capabilities\Providers\Runtime\Http\MiddlewareServiceProvider;
-use Avax\Container\DependencyInjection\Capabilities\Providers\Runtime\Http\RouterServiceProvider;
+use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\HttpApplication;
+use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\MiddlewareServiceProvider;
+use Avax\Container\DependencyInjection\Capability\Providers\Runtime\Http\RouterServiceProvider;
 use Avax\Container\DependencyInjection\Configuration\AppFactory;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\RouterInterface;

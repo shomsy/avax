@@ -31,7 +31,7 @@ ADR-lite decision log for non-trivial choices.
   `consequences`: Public API types stay stable and banal, provider ports depend
     on `ContainerInterface`, and internal resolution/injection machinery keeps
     `resolveContext()` behind the runtime boundary.
-  `links`: `Container.php`, `ContainerInterface.php`, `BindingBuilderInterface.php`, `ContextBuilderInterface.php`, `RegistryInterface.php`, `ScopeManagerInterface.php`, `InjectionReport.php`, `DependencyInjection/Capabilities/Resolution/Kernel/RuntimeContainer.php`
+  `links`: `Container.php`, `ContainerInterface.php`, `BindingBuilderInterface.php`, `ContextBuilderInterface.php`, `RegistryInterface.php`, `ScopeManagerInterface.php`, `InjectionReport.php`, `DependencyInjection/Capability/Resolution/Kernel/RuntimeContainer.php`
 
 - `id`: DEC-004
   `recorded_at`: 2026-04-07 04:05 CEST
@@ -42,7 +42,7 @@ ADR-lite decision log for non-trivial choices.
     user explicitly requires `DependencyInjection/` to remain as the structural
     system root for the runtime implementation.
   `decision`: Keep `DependencyInjection/` as the system root, with
-    `Flows/`, `Capabilities/`, `Configuration/`, and `Foundation/` nested
+    `Flow/`, `Capability/`, `Configuration/`, and `Foundation/` nested
     inside it; keep `Container.php` and `ContainerInterface.php` at the
     component root as the public surface.
   `consequences`: The repo root remains operational, the system root remains
@@ -69,7 +69,7 @@ ADR-lite decision log for non-trivial choices.
     options have an owned configuration model, injection has honest internal
     lanes, and the architecture reserves `DependencyInjection/Foundation/Time`
     and `DependencyInjection/Foundation/Ids` without inventing fake primitives.
-  `links`: `DependencyInjection/Capabilities/Resolution/Kernel/KernelFacade.php`, `DependencyInjection/Configuration/ContainerConfig.php`, `DependencyInjection/Capabilities/Resolution/Engine/EngineInterface.php`, `DependencyInjection/Capabilities/Injection/Methods/MethodInjector.php`, `DependencyInjection/Capabilities/Injection/Parameters/ResolveMethodParameters.php`, `docs/architecture.md`
+  `links`: `DependencyInjection/Capability/Resolution/Kernel/KernelFacade.php`, `DependencyInjection/Configuration/ContainerConfig.php`, `DependencyInjection/Capability/Resolution/Engine/EngineInterface.php`, `DependencyInjection/Capability/Injection/Methods/MethodInjector.php`, `DependencyInjection/Capability/Injection/Parameters/ResolveMethodParameters.php`, `docs/architecture.md`
 
 - `id`: DEC-002
   `recorded_at`: 2026-04-07 04:05 CEST
@@ -83,7 +83,7 @@ ADR-lite decision log for non-trivial choices.
     configuration, and foundation lanes.
   `consequences`: Superseded by `DEC-004`, which keeps `DependencyInjection/`
     as the system root while preserving the same ownership model.
-  `links`: `Container.php`, `DependencyInjection/`, `docs/architecture.md`, `../../tests/Foundation/Container/Capabilities/`
+  `links`: `Container.php`, `DependencyInjection/`, `docs/architecture.md`, `../../tests/Foundation/Container/Capability/`
 
 - `id`: DEC-001
   `recorded_at`: 2026-04-07 02:11 CEST

@@ -69,8 +69,8 @@ Agents MUST follow this order:
      - `Auth/tooling/`: Local automation, codegen, dev infra.
    - **Source Root Taxonomy (inside `System/`)**:
      - **Namespace Parent**: `Avax\Auth\System\`
-     - `Flows/`: High-level business use-cases (Verb-Noun).
-     - `Capabilities/`: Domain enablers (Access, Identity, User, etc.).
+     - `Flow/`: High-level business use-cases (Verb-Noun).
+     - `Capability/`: Domain enablers (Access, Identity, User, etc.).
      - `Foundation/`: Low-level primitives (Clock, ID generation).
      - `Configuration/`: Setup and wiring logic.
      - `Auth.php`, `AuthInterface.php`: Root entry points.

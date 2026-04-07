@@ -4,12 +4,12 @@ Policy checks decide whether a resolution request is allowed.
 
 ## Main Units
 
-- `DependencyInjection/Capabilities/Policies/ContainerPolicy.php`
-- `DependencyInjection/Capabilities/Policies/ResolutionPolicy.php`
-- `DependencyInjection/Capabilities/Policies/StrictResolutionPolicy.php`
-- `DependencyInjection/Capabilities/Policies/CompositeResolutionPolicy.php`
-- `DependencyInjection/Capabilities/Policies/CheckResolutionPolicy.php`
-- `DependencyInjection/Capabilities/Resolution/Pipeline/Steps/EnforcePolicyStep.php`
+- `DependencyInjection/Capability/Policies/ContainerPolicy.php`
+- `DependencyInjection/Capability/Policies/ResolutionPolicy.php`
+- `DependencyInjection/Capability/Policies/StrictResolutionPolicy.php`
+- `DependencyInjection/Capability/Policies/CompositeResolutionPolicy.php`
+- `DependencyInjection/Capability/Policies/CheckResolutionPolicy.php`
+- `DependencyInjection/Capability/Resolution/Pipeline/Steps/EnforcePolicyStep.php`
 
 ## Current Shape
 
@@ -19,7 +19,7 @@ Policy is now an explicit capability slice. The pipeline consumes it through `En
 
 ## Ownership Rule
 
-- policy rules live in `DependencyInjection/Capabilities/Policies`
+- policy rules live in `DependencyInjection/Capability/Policies`
 - enforcement during resolution lives in the resolution pipeline
 
 That split keeps the policy decision reusable while keeping pipeline ownership explicit.

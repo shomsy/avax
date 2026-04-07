@@ -1,0 +1,61 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Container\Tests\Capabilities\Providers\Runtime\Http;
+
+use Avax\Container\BindingBuilderInterface;
+use Avax\Container\ContainerInterface;
+use Avax\Container\DependencyInjection\Capabilities\Providers\Runtime\Http\ViewServiceProvider;
+use Avax\Container\DependencyInjection\Configuration\Settings;
+use Avax\View\BladeTemplateEngine;
+use PHPUnit\Framework\TestCase;
+
+final class ViewServiceProviderTest extends TestCase
+{
+    public function test_register_uses_defaults_without_base_path_helper() : void
+    {
+        $previousCwd   = getcwd();
+        $temporaryBase = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'avax-view-provider-' . uniqid();
+        $defaultCache  = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'avax' . DIRECTORY_SEPARATOR . 'views';
+        $registrations = [];
+        $builder       = $this->createMock(BindingBuilderInterface::class);
+        $builder->method('to')->willReturnSelf();
+        $builder->method('tag')->willReturnSelf();
+        $builder->method('withArguments')->willReturnSelf();
+        $builder->method('withArgument')->willReturnSelf();
+
+        @mkdir($temporaryBase . DIRECTORY_SEPARATOR . 'Presentation' . DIRECTORY_SEPARATOR . 'Views', 0777, true);
+        @mkdir($defaultCache, 0777, true);
+        chdir($temporaryBase);
+
+        try {
+            $container = $this->createMock(ContainerInterface::class);
+            $container
+                ->method('singleton')
+                ->willReturnCallback(
+                    function (string $abstract, mixed $concrete = null) use (&$registrations, $builder) : BindingBuilderInterface {
+                        $registrations[$abstract] = $concrete;
+
+                        return $builder;
+                    }
+                );
+            $container
+                ->method('get')
+                ->with('config')
+                ->willReturn(new Settings);
+
+            $provider = new ViewServiceProvider($container);
+            $provider->register();
+
+            $factory = $registrations[BladeTemplateEngine::class] ?? null;
+
+            $this->assertIsCallable($factory);
+            $this->assertInstanceOf(expected: BladeTemplateEngine::class, actual: $factory());
+        } finally {
+            if (is_string($previousCwd) && $previousCwd !== '') {
+                chdir($previousCwd);
+            }
+        }
+    }
+}

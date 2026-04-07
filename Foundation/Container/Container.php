@@ -4,15 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Container;
 
-use Avax\Container\DependencyInjection\Capabilities\Definitions\Contracts\BindingBuilderInterface;
-use Avax\Container\DependencyInjection\Capabilities\Definitions\Contracts\ContextBuilderInterface;
-use Avax\Container\DependencyInjection\Capabilities\Injection\Reports\InjectionReport;
-use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\ServicePrototype;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Contracts\ContainerRuntimeInterface;
 use Avax\Container\DependencyInjection\Capabilities\Resolution\Errors\ContainerException;
 use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\ContainerKernel;
-use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\KernelContext;
-use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeManager;
 use Avax\Container\DependencyInjection\Flows\BeginScope\BeginScope;
 use Avax\Container\DependencyInjection\Flows\EndScope\EndScope;
 use Avax\Container\DependencyInjection\Flows\InvokeCallable\InvokeCallable;
@@ -22,7 +15,7 @@ use Avax\Container\DependencyInjection\Flows\ResolveService\ResolveService;
 /**
  * Stable public facade for the container component.
  */
-final readonly class Container implements ContainerInterface, ContainerRuntimeInterface
+final readonly class Container implements ContainerInterface
 {
     public function __construct(
         private ContainerKernel $kernel
@@ -51,16 +44,6 @@ final readonly class Container implements ContainerInterface, ContainerRuntimeIn
     public function injectInto(object $target) : object
     {
         return $this->kernel->injectInto(target: $target);
-    }
-
-    public function resolve(ServicePrototype $prototype) : mixed
-    {
-        return $this->resolveService()->resolve(prototype: $prototype);
-    }
-
-    public function resolveContext(KernelContext $context) : mixed
-    {
-        return $this->resolveService()->resolveContext(context: $context);
     }
 
     public function instance(string $abstract, object $instance) : void
@@ -94,7 +77,7 @@ final readonly class Container implements ContainerInterface, ContainerRuntimeIn
         return $this->kernel->inspectInjection(target: $target);
     }
 
-    public function scopes() : ScopeManager
+    public function scopes() : ScopeManagerInterface
     {
         return $this->kernel->scopes();
     }

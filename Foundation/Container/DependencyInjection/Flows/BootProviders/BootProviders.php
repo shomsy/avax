@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Flows\BootProviders;
 
-use Avax\Container\Container;
+use Avax\Container\ContainerInterface;
 use Avax\Container\DependencyInjection\Capabilities\Providers\Contracts\ServiceProviderInterface;
 use InvalidArgumentException;
 
@@ -14,7 +14,7 @@ use InvalidArgumentException;
 final readonly class BootProviders
 {
     public function __construct(
-        private Container $container
+        private ContainerInterface $container
     ) {}
 
     /** @param array<int, string|ServiceProviderInterface> $providers */

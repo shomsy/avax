@@ -30,6 +30,8 @@ architecture must scream.
 
 - `Container.php`: stable facade
 - `ContainerInterface.php`: public contract
+- `BindingBuilderInterface.php`, `ContextBuilderInterface.php`, `RegistryInterface.php`: stable write-side contracts
+- `ScopeManagerInterface.php`, `InjectionReport.php`: stable diagnostics and scope contracts
 
 `Container` is intentionally thin. It delegates to explicit flow entry units and does not own runtime machinery.
 

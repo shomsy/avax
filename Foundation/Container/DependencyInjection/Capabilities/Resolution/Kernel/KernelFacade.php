@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel;
 
+use Avax\Container\InjectionReport;
 use Avax\Container\DependencyInjection\Capabilities\Definitions\Store\DefinitionStore;
 use Avax\Container\DependencyInjection\Capabilities\Definitions\Store\ServiceDefinition;
-use Avax\Container\DependencyInjection\Capabilities\Injection\Reports\InjectionReport;
 use Avax\Container\DependencyInjection\Capabilities\Observability\Telemetry\Telemetry;
 use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\ServicePrototype;
 use Avax\Container\DependencyInjection\Capabilities\Resolution\Errors\ContainerException;
@@ -79,11 +79,6 @@ final readonly class KernelFacade
         return $this->runtime->make(id: $id, parameters: $parameters);
     }
 
-    public function resolve(ServicePrototype $prototype) : mixed
-    {
-        return $this->runtime->resolve(prototype: $prototype);
-    }
-
     public function call(callable|string $callable, array $parameters = []) : mixed
     {
         return $this->runtime->call(callable: $callable, parameters: $parameters);
@@ -154,5 +149,10 @@ final readonly class KernelFacade
     public function scopes() : ScopeManager
     {
         return $this->config->scopes;
+    }
+
+    public function resolve(ServicePrototype $prototype) : mixed
+    {
+        return $this->runtime->resolve(prototype: $prototype);
     }
 }

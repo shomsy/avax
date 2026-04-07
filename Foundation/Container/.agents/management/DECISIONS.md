@@ -16,6 +16,23 @@ ADR-lite decision log for non-trivial choices.
 
 ## Decisions
 
+- `id`: DEC-005
+  `recorded_at`: 2026-04-07 04:40 CEST
+  `decision_at`: 2026-04-07 04:40 CEST
+  `updated_at`: 2026-04-07 04:40 CEST
+  `status`: accepted
+  `context`: The component keeps `DependencyInjection/` as the system root, but
+    the public facade and provider SPI cannot leak runtime-only types or force
+    consumers onto the concrete `Container`.
+  `decision`: Keep the public surface rooted in `Avax\Container\...` via stable
+    root contracts and DTOs, and introduce an internal `RuntimeContainer`
+    adapter for nested resolution chains instead of making `Container` itself
+    the runtime contract.
+  `consequences`: Public API types stay stable and banal, provider ports depend
+    on `ContainerInterface`, and internal resolution/injection machinery keeps
+    `resolveContext()` behind the runtime boundary.
+  `links`: `Container.php`, `ContainerInterface.php`, `BindingBuilderInterface.php`, `ContextBuilderInterface.php`, `RegistryInterface.php`, `ScopeManagerInterface.php`, `InjectionReport.php`, `DependencyInjection/Capabilities/Resolution/Kernel/RuntimeContainer.php`
+
 - `id`: DEC-004
   `recorded_at`: 2026-04-07 04:05 CEST
   `decision_at`: 2026-04-07 04:05 CEST

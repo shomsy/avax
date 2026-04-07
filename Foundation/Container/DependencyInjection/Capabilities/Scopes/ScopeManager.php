@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Capabilities\Scopes;
 
+use Avax\Container\ScopeManagerInterface;
+
 /**
  * Public-facing manager for container service scopes and shared instances.
  *
@@ -11,7 +13,7 @@ namespace Avax\Container\DependencyInjection\Capabilities\Scopes;
  * exiting, and clearing operational scopes across the application lifecycle.
  *
  */
-final readonly class ScopeManager
+final readonly class ScopeManager implements ScopeManagerInterface
 {
     /**
      * Initializes the manager with a scope storage backend.

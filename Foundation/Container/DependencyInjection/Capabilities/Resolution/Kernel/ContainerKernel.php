@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel;
 
+use Avax\Container\InjectionReport;
 use Avax\Container\DependencyInjection\Capabilities\Definitions\Store\DefinitionStore;
-use Avax\Container\DependencyInjection\Capabilities\Injection\Reports\InjectionReport;
 use Avax\Container\DependencyInjection\Capabilities\Observability\Telemetry\Telemetry;
 use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\ServicePrototype;
 use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\ResolutionPipelineFactory;
@@ -72,11 +72,6 @@ final readonly class ContainerKernel
         return $this->facade->make(id: $id, parameters: $parameters);
     }
 
-    public function resolve(ServicePrototype $prototype) : mixed
-    {
-        return $this->facade->resolve(prototype: $prototype);
-    }
-
     public function call(callable|string $callable, array $parameters = []) : mixed
     {
         return $this->facade->call(callable: $callable, parameters: $parameters);
@@ -120,5 +115,10 @@ final readonly class ContainerKernel
     public function definitions() : DefinitionStore
     {
         return $this->facade->definitions();
+    }
+
+    public function resolve(ServicePrototype $prototype) : mixed
+    {
+        return $this->facade->resolve(prototype: $prototype);
     }
 }

@@ -21,10 +21,14 @@ class ViewServiceProvider extends ServiceProvider
     {
         $this->app->singleton(abstract: BladeTemplateEngine::class, concrete: function () {
             $config = $this->app->get(id: 'config');
+            $base   = getcwd();
+
+            $defaultViewsPath = ($base === false ? 'Presentation/Views' : rtrim($base, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Presentation/Views');
+            $defaultCachePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'avax' . DIRECTORY_SEPARATOR . 'views';
 
             return new BladeTemplateEngine(
-                viewsPath: $config->get(key: 'views.views_path') ?? $this->app->basePath('Presentation/Views'),
-                cachePath: $config->get(key: 'views.cache_path') ?? $this->app->basePath('var/cache/views')
+                viewsPath: $config->get(key: 'views.views_path', default: $defaultViewsPath),
+                cachePath: $config->get(key: 'views.cache_path', default: $defaultCachePath)
             );
         });
 

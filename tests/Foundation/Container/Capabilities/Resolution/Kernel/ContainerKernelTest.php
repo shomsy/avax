@@ -21,6 +21,7 @@ use Avax\Container\DependencyInjection\Capabilities\Prototypes\Factory\ServicePr
 use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\DependencyResolver;
 use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\Instantiator;
 use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\ResolutionEngine;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\RuntimeContainer;
 use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeManager;
 use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeRegistry;
 use Avax\Container\DependencyInjection\Configuration\KernelConfig;
@@ -94,12 +95,13 @@ final class ContainerKernelTest extends TestCase
             autoDefine      : true
         );
 
-        $this->kernel = new ContainerKernel(definitions: $this->definitions, config: $this->config);
-        $container    = new Container(kernel: $this->kernel);
+        $this->kernel       = new ContainerKernel(definitions: $this->definitions, config: $this->config);
+        $container          = new Container(kernel: $this->kernel);
+        $runtimeContainer   = new RuntimeContainer(container: $container, kernel: $this->kernel);
 
-        $engine->setContainer(container: $container);
-        $injector->setContainer(container: $container);
-        $propertyInjector->setContainer(container: $container);
-        $invoker->setContainer(container: $container);
+        $engine->setContainer(container: $runtimeContainer);
+        $injector->setContainer(container: $runtimeContainer);
+        $propertyInjector->setContainer(container: $runtimeContainer);
+        $invoker->setContainer(container: $runtimeContainer);
     }
 }

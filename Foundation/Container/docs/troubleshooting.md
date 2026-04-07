@@ -1,45 +1,44 @@
-# 🩺 Troubleshooting Matrix
+# Troubleshooting
 
->
-> **"Everything that can go wrong, will—here's how to fix it."**
+## Service Not Found
 
-When the Container fails, it usually happens at a specific "Station" in
-the [Resolution Flow](./concepts/resolution-flow.md). Use this matrix to map your error to a solution.
+Check these in order:
 
----
+1. Is the service explicitly bound in `RegisterBindings`?
+2. Is the class instantiable?
+3. Is strict mode blocking fallback autowiring?
+4. Is there a contextual binding changing the expected concrete?
 
-## 🗺️ The Error Map
+## Scope Surprises
 
-| Exception                  | Stage             | Most Likely Cause                                                                          | ✅ How to Fix                                                                            |
-|:---------------------------|:------------------|:-------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|
-| `ServiceNotFoundException` | **Gatekeeper**    | You asked for a class that doesn't exist or isn't autowirable.                             | Check the class name or [register it manually](./index.md).                             |
-| `RecursionException`       | **Loop Detector** | Class A needs B, and B needs A.                                                            | Use **Lazy Loading** or reconsider your architecture.                                   |
-| `ResolutionException`      | **The Birth**     | The constructor has a parameter that can't be resolved (e.g., an `int` without a default). | Add a default value or provide the parameter via [manual binding](./Container.md#make). |
-| `ResolutionException`      | **The Wiring**    | A property marked with `#[Inject]` has a type that doesn't exist.                          | Ensure the injected class is registered and autowired.                                  |
-| `SecurityException`        | **Gatekeeper**    | A [Guard](./Guard/index.md) prevented access to this service.                              | Check your environment permissions or firewall rules.                                   |
+If a value appears reused unexpectedly:
 
----
+1. Check the lifetime on the definition
+2. Check whether a scope is already open
+3. Check whether `instance()` or singleton registration stored a global object
 
-## 🛠️ The "Black Box" Strategy
+## Property Injection Missing
 
-If the error isn't clear, use the **Black Box approach**:
+Check:
 
-1. **Check Telemetry**: Look at the output of `exportMetrics()`. It shows the resolution depth.
-2. **Inspect Injection**: Use `$container->inspectInjection($obj)` to see what the container thinks it should be doing.
-3. **Verify Context**: If using complex resolution, check the `KernelContext` state.
+1. the property prototype is marked injectable
+2. the property type can be resolved
+3. the property is not readonly
+4. the container instance was wired into the injection capability
 
----
-> **"A doctor's best tool is the X-ray; a developer's best tool is the Telemetry."** 🔭
+## Callable Invocation Fails
 
----
+Check:
 
-## 🧪 PHPUnit Coverage Driver Warning
+1. whether the target is a valid PHP callable or `Class@method`
+2. whether the target class itself can be resolved
+3. whether parameter types are available in the container
 
-Technical: PHPUnit will emit `No code coverage driver is available` when Xdebug/PCOV isn’t installed in the PHP
-runtime (Herd ships without one by default). Coverage reports will be empty until a driver is present.
+## Provider Lifecycle Issues
 
-### For Humans: What This Means
+Provider boot order is deterministic:
 
-If you want coverage numbers, install Xdebug or PCOV in your PHP environment (e.g., enable Xdebug in Herd or add PCOV
-via PECL). If you don’t need coverage locally, ignore the warning or disable coverage collection in your phpunit
-command.
+1. all providers `register()`
+2. then all providers `boot()`
+
+If boot fails, verify the dependency was registered during the register phase rather than lazily during boot.

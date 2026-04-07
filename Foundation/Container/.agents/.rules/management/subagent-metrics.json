@@ -1,0 +1,49 @@
+{
+  "version": "1.0.0",
+  "description": "Sub-agent system metrics and tracking",
+  "last_updated": null,
+  "metrics": {
+    "total_tasks": 0,
+    "tasks_by_type": {
+      "map": 0,
+      "research": 0,
+      "execute": 0,
+      "review": 0
+    },
+    "tasks_by_status": {
+      "success": 0,
+      "failed": 0,
+      "partial": 0,
+      "escalated": 0
+    },
+    "routing_decisions": {
+      "mapper_selected": 0,
+      "researcher_selected": 0,
+      "executor_selected": 0,
+      "reviewer_selected": 0,
+      "direct_to_executor": 0
+    },
+    "token_usage": {
+      "total_tokens": 0,
+      "mapper_tokens": 0,
+      "researcher_tokens": 0,
+      "executor_tokens": 0,
+      "reviewer_tokens": 0,
+      "avg_codex_input": 0
+    },
+    "cost_savings": {
+      "solved_without_codex": 0,
+      "solved_with_codex": 0,
+      "codex_only_tasks": 0,
+      "reduction_rate": 0.0
+    },
+    "validation": {
+      "valid_artifacts": 0,
+      "invalid_artifacts": 0,
+      "validation_failures": 0,
+      "retry_count": 0
+    }
+  },
+  "recent_tasks": [],
+  "sessions": {}
+}

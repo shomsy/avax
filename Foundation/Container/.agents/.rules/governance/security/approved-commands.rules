@@ -1,0 +1,55 @@
+# Auto-Approved Command Prefixes
+# ================================
+# Managed by: approval-policy.md
+# Authority: Human only — agents MUST NOT modify this file directly
+#
+# Format: ALLOW: <command prefix>
+# Matching: Prefix match — "ALLOW: npm run" approves "npm run build" etc.
+# Exclusion: DENY: <pattern> overrides any ALLOW rule
+#
+# Dangerous operations (per approval-policy.md §2) can NEVER appear here.
+
+# ─── Git Read Operations ─────────────────────────────────────────────
+ALLOW: git status
+ALLOW: git log
+ALLOW: git diff
+ALLOW: git show
+ALLOW: git branch
+ALLOW: git remote -v
+ALLOW: git describe
+
+# ─── File Viewing Operations ─────────────────────────────────────────
+ALLOW: cat
+ALLOW: head
+ALLOW: tail
+ALLOW: wc
+ALLOW: file
+ALLOW: stat
+
+# ─── File Search Operations ──────────────────────────────────────────
+ALLOW: find . -name
+ALLOW: find . -type
+ALLOW: grep -r
+ALLOW: grep -n
+ALLOW: rg
+
+# ─── Directory Listing ───────────────────────────────────────────────
+ALLOW: ls
+ALLOW: tree
+ALLOW: du -sh
+
+# ─── Package Read Operations ─────────────────────────────────────────
+ALLOW: npm list
+ALLOW: npm outdated
+ALLOW: npm view
+ALLOW: npm info
+ALLOW: npm audit
+
+# ─── Build & Test (add project-specific entries below) ───────────────
+# ALLOW: npm run build
+# ALLOW: npm run test
+# ALLOW: npm run lint
+
+# ─── Explicit Denials (override any ALLOW above) ─────────────────────
+# DENY: rm -rf
+# DENY: sudo

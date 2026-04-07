@@ -1,66 +1,32 @@
-# 🏗️ Avax Container: The Universal Orchestrator
+# Container Docs
 
-> **The engine that powers object lifecycle and dependency management in Avax.**
+This component is organized as a screaming runtime architecture.
 
----
+- Public surface: [`Container`](./Container.md)
+- Structural overview: [`architecture.md`](./architecture.md)
+- Concepts:
+  - [`resolution-flow.md`](./concepts/resolution-flow.md)
+  - [`injection-and-instantiation.md`](./concepts/injection-and-instantiation.md)
+  - [`scopes.md`](./concepts/scopes.md)
+  - [`lifetimes.md`](./concepts/lifetimes.md)
+  - [`policies-and-guards.md`](./concepts/policies-and-guards.md)
+- Reference terms: [`glossary.md`](./glossary.md)
+- Failure handling: [`troubleshooting.md`](./troubleshooting.md)
 
-## 🌟 Why Avax Container?
+The component root is also the system root. There is no extra `src/` hallway.
 
-In a complex application, managing when and how objects are created can become a nightmare. The Avax Container isn't
-just a [Service Locator](https://en.wikipedia.org/wiki/Service_locator_pattern) — it's a sophisticated **Resolution
-Engine** designed for:
+Production code is split into four lanes:
 
-- **Zero-Config Injection**: Use `#[Inject]` and let the container do the rest.
-- **Deep Observability**: Every micro-second of object creation is recorded for telemetry.
-- **Strict Guarding**: Advanced security policies decide who gets which service.
-- **Enterprise Lifetimes**: Manage singletons, clones, and custom scopes with ease.
+- `Flows/`: what the container system does
+- `Capabilities/`: what flows use to do it
+- `Configuration/`: how the runtime is assembled
+- `Foundation/`: tiny neutral primitives only
 
----
+Current public/system flow entries:
 
-## 🧠 Mental Model: "Flow-First"
-
-The most important thing to understand about the container is that **Everything is a Flow**. We don't just "new up"
-classes; we move a service request through a sequence of specialized stations.
-
-1. **Think**: Analyze the class structure.
-2. **Act**: Perform discrete building actions.
-3. **Resolve**: Orchestrate the pipeline steps.
-4. **Cache**: Remember the result for efficiency.
-5. **Observe**: Record the outcome.
-
----
-
-## 🗺️ Navigation Map (The Explorer's Guide)
-
-| Station          | Location                  | Mental Model     | Role                                      |
-|:-----------------|:--------------------------|:-----------------|:------------------------------------------|
-| **The Brain**    | `Core/`                   | The Orchestrator | Kernel, Pipeline, and main logic.         |
-| **The Alatnica** | `Features/`               | The Skills       | Actions like Instantiate, Inject, Invoke. |
-| **The Vault**    | `Features/Operate/Scope/` | The Memory       | Managing lifetimes and singletons.        |
-| **The Guard**    | `Guard/`                  | The Security     | Deciding what is allowed and what isn't.  |
-| **The Eyes**     | `Observe/`                | The Telemetry    | Performance recording and debugging.      |
-| **The Bridge**   | `Providers/`              | The Integration  | Ready-to-use Service Providers.           |
-
----
-
-## 📕 Educational Resources
-
-- **[A-Z Glossary](./glossary.md)**: Every technical term (DI, IoC, PSR) explained.
-- **[Resolution Story](./concepts/resolution-flow.md)**: A narrative walk-through of a service request.
-- **[Architecture Blueprint](./architecture.md)**: The map of how all files work together.
-
----
-
-## 🚫 What Does NOT Belong Here
-
-This is a **machinery layer**. Keep your "ingredients" (Business Logic, DB Schemas, Views) elsewhere. This folder only
-cares about **how to put them together**.
-
-### For Humans: What This Means
-
-This is the kitchen's architecture and the chef's expertise. The actual "Pasta" and "Sauce" recipes live in the
-Application layer. We just provide the stove, the pans, and the skill to make the dish perfectly every time.
-
----
-> **Tip**: If you're new here, start with the **[Resolution Story](./concepts/resolution-flow.md)**. It's the easiest
-> way to understand the system.
+- `RegisterBindings`
+- `BootProviders`
+- `ResolveService`
+- `InvokeCallable`
+- `BeginScope`
+- `EndScope`

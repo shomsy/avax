@@ -1,3 +1,15 @@
+## Legacy Compatibility Note
+
+This file is retained only for backward compatibility.
+
+Authoritative review guidance for this repository lives in:
+
+- `.agents/.rules/governance/standards/review/how-to-code-review.md`
+- `AGENTS.md`
+- `docs/architecture.md`
+
+The content below is historical and must not be treated as the active repository standard.
+
 ```markdown
 # Enterprise-Grade System Code Review
 ## Architecture, Design, and Foundational Assessment

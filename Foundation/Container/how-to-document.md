@@ -1,3 +1,15 @@
+## Legacy Compatibility Note
+
+This file is retained only for backward compatibility.
+
+Authoritative documentation guidance for this repository lives in:
+
+- `.agents/.rules/governance/standards/documentation/how-to-document.md`
+- `AGENTS.md`
+- `docs/`
+
+The content below is historical and must not be treated as the active repository standard.
+
 # AGENT INSTRUCTIONS (GLOBAL, NON-NEGOTIABLE)
 
 These instructions are **GLOBAL** and apply to **ALL future documentation and PHPDoc work** in this repository.

@@ -1,25 +1,22 @@
 # Policies and Guards
 
-Policy checks decide whether a resolution request is allowed.
+The container now has one policy file:
 
-## Main Units
+- `DependencyInjection/Policies/ResolutionPolicy.php`
 
-- `DependencyInjection/Capability/Policies/ContainerPolicy.php`
-- `DependencyInjection/Capability/Policies/ResolutionPolicy.php`
-- `DependencyInjection/Capability/Policies/StrictResolutionPolicy.php`
-- `DependencyInjection/Capability/Policies/CompositeResolutionPolicy.php`
-- `DependencyInjection/Capability/Policies/CheckResolutionPolicy.php`
-- `DependencyInjection/Capability/Resolution/Pipeline/Steps/EnforcePolicyStep.php`
+## What It Owns
 
-## Current Shape
+`ResolutionPolicy` decides whether a requested id is allowed to flow into autowiring.
 
-The old `Guard/*` language is gone.
+Today the main switch is `strict`:
 
-Policy is now an explicit capability slice. The pipeline consumes it through `EnforcePolicyStep`.
+- relaxed mode: unknown aliases may continue deeper into resolution
+- strict mode: only real classes and interfaces are allowed through policy
 
-## Ownership Rule
+## Where It Is Enforced
 
-- policy rules live in `DependencyInjection/Capability/Policies`
-- enforcement during resolution lives in the resolution pipeline
+Policy is enforced in:
 
-That split keeps the policy decision reusable while keeping pipeline ownership explicit.
+- `DependencyInjection/Resolution/ServiceResolver.php`
+
+There is no separate policy pipeline, guard folder, or kernel stage map in the shipped architecture.

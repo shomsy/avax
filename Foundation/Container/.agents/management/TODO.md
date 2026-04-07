@@ -25,6 +25,23 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: TODO-003
+  `created_at`: 2026-04-07 13:30 CEST
+  `updated_at`: 2026-04-07 15:44 CEST
+  `status`: done
+  `estimate`: large
+  `actual`: large
+  `outcome`: Converge `Foundation/Container` to the final DX-first
+    `DependencyInjection/` architecture, remove the legacy
+    `Flow/` + `Capability/` tree, harden runtime behavior, rewrite shipped
+    docs to the new vocabulary, and add Docker-backed smoke coverage for the
+    final flow entries and work areas.
+  `acceptance`: The public facade stays thin; only the final canonical tree and
+    namespace remain; no legacy architectural vocabulary survives in `docs/`;
+    Docker PHP lint is green; `tests/run-smoke-tests.sh` passes across the
+    shipped flow entries and internal work areas.
+  `links`: `Container.php`, `ContainerInterface.php`, `DependencyInjection/`, `docs/architecture.md`, `docs/Container.md`, `tests/run-smoke-tests.sh`
+
 - `id`: TODO-002
   `created_at`: 2026-04-07 02:21 CEST
   `updated_at`: 2026-04-07 04:05 CEST
@@ -45,13 +62,13 @@ Canonical active implementation queue.
 
 - `id`: TODO-001
   `created_at`: 2026-04-07 02:11 CEST
-  `updated_at`: 2026-04-07 02:11 CEST
-  `status`: todo
+  `updated_at`: 2026-04-07 12:47 CEST
+  `status`: done
   `estimate`: small
-  `actual`:
-  `outcome`: Migrate legacy root `how-to-*.md` documentation into `docs/`
-    when those docs are next touched.
-  `acceptance`: New documentation only lands under `docs/`; the root
-    compatibility docs are either migrated or explicitly marked legacy
-    in place.
-  `links`: `AGENTS.md`, `docs/`
+  `actual`: small
+  `outcome`: Mark the legacy root `how-to-*.md` documentation as compatibility
+    references and point contributors to the governed standards in
+    `.agents/.rules` and `docs/`.
+  `acceptance`: The root compatibility docs are explicitly legacy in place,
+    and authoritative guidance is under `.agents/.rules` plus `docs/`.
+  `links`: `AGENTS.md`, `how-to-coding-standards.md`, `how-to-code-review.md`, `how-to-document.md`, `docs/`

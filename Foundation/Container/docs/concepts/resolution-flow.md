@@ -1,6 +1,6 @@
 # Resolution Flow
 
-`ResolveService` is the system flow for turning an identifier into a value or object.
+`ResolveService` is the public flow for turning an id into a value or object.
 
 ## Entry Path
 
@@ -9,54 +9,52 @@ Public entry:
 - `Container::get()`
 - `Container::make()`
 
-Runtime entry:
-
-- `ContainerRuntimeInterface::resolveContext()`
-- `DependencyInjection/Capability/Resolution/Kernel/RuntimeContainer.php`
-
 Flow entry:
 
-- `DependencyInjection/Flow/ResolveService/ResolveService.php`
+- `DependencyInjection/ResolveService.php`
 
 Runtime owner:
 
-- `DependencyInjection/Capability/Resolution/Kernel/ContainerKernel.php`
-- `DependencyInjection/Capability/Resolution/Kernel/KernelFacade.php`
+- `DependencyInjection/Resolution/ServiceResolver.php`
 
-Ordered execution:
+Main collaborators:
 
-- `DependencyInjection/Capability/Resolution/Pipeline/ResolutionPipeline.php`
+- `Resolution/ResolveRequest.php`
+- `Resolution/ResolveDependencies.php`
+- `Resolution/BuildService.php`
+- `Resolution/CreateServiceBlueprint.php`
+- `Resolution/BlueprintCache.php`
+- `Injection/InjectProperties.php`
+- `Injection/InjectMethods.php`
+- `Scopes/ManageScopes.php`
+- `Policies/ResolutionPolicy.php`
+- `Observability/ResolutionTelemetry.php`
 
 ## What Happens
 
-The resolution pipeline runs these concerns in order:
+Resolution runs in this order:
 
-1. check current scope storage
-2. guard depth and circular chains
+1. record resolution start
+2. check shared or scoped storage
 3. enforce policy
-4. ensure a definition exists or decide whether autowiring is allowed
-5. analyze or load prototype metadata
-6. ask the resolution engine for an instance
-7. inject properties and methods
-8. apply extenders
-9. invoke post-construct hooks
-10. store the instance according to lifetime
+4. detect circular chains
+5. find a registration or fall back to autowiring
+6. apply target-specific overrides when present
+7. build constructor arguments
+8. create the object or invoke a factory
+9. inject properties and methods
+10. apply extenders
+11. store the result according to lifetime
+12. record success or failure
 
-## Shared Machinery
+## Missing Service Behavior
 
-The flow depends on these capability slices:
+If the resolver cannot find a registration and cannot autowire the id, it throws `ServiceNotFoundException`.
 
-- `Definitions`
-- `Resolution`
-- `Prototypes`
-- `Injection`
-- `Invocation`
-- `Scopes`
-- `Policies`
-- `Observability`
+## Observability
 
-## Why It Is A Flow
+The resolver exports:
 
-`ResolveService` is a real system behavior with one public intent: resolve something.
-
-The pipeline, engine, policies, and scopes are not the flow. They are the shared abilities the flow uses.
+- `container_resolve_total`
+- `container_resolve_cached_total`
+- `container_resolve_failures_total`

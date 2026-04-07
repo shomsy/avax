@@ -4,41 +4,48 @@
 
 Check these in order:
 
-1. Is the service explicitly bound in `RegisterBindings`?
-2. Is the class instantiable?
-3. Is strict mode blocking fallback autowiring?
-4. Is there a contextual binding changing the expected concrete?
+1. Is the id explicitly registered?
+2. Is the target a real class or interface?
+3. Is the target class instantiable?
+4. Is a target-specific override pointing somewhere unexpected?
 
-## Scope Surprises
+Missing services now raise `ServiceNotFoundException`.
 
-If a value appears reused unexpectedly:
+## Scoped Service Fails
 
-1. Check the lifetime on the definition
-2. Check whether a scope is already open
-3. Check whether `instance()` or singleton registration stored a global object
+If a scoped service throws during storage:
 
-## Property Injection Missing
+1. open a scope first with `beginScope()`
+2. or run the work inside `scopes()->withinScope(...)`
+
+Scoped services do not fall back to shared storage anymore.
+
+## Property Or Method Injection Missing
 
 Check:
 
-1. the property prototype is marked injectable
-2. the property type can be resolved
-3. the property is not readonly
-4. the container instance was wired into the injection capability
+1. the member is marked with `#[Inject]`
+2. the dependency id can be resolved
+3. readonly properties are not being targeted
 
 ## Callable Invocation Fails
 
 Check:
 
-1. whether the target is a valid PHP callable or `Class@method`
-2. whether the target class itself can be resolved
-3. whether parameter types are available in the container
+1. the target is a closure, callable array, `Class@method`, `Class::method`, or invokable class string
+2. the target class itself can be resolved
+3. required arguments can be resolved or overridden
 
 ## Provider Lifecycle Issues
 
-Provider boot order is deterministic:
+Provider order is deterministic:
 
-1. all providers `register()`
-2. then all providers `boot()`
+1. every provider `register()`
+2. then every provider `boot()`
 
-If boot fails, verify the dependency was registered during the register phase rather than lazily during boot.
+If boot fails, verify that register phase wrote the required services first.
+
+## Validation Commands
+
+- lint: `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`
+- smoke suite: `./tests/run-smoke-tests.sh`

@@ -9,6 +9,7 @@ Unlike session-based auth, JWT authentication is stateless. The client passes a 
 ```mermaid
 sequenceDiagram
     participant Client
+    participant Identity as Identity (Facade)
     participant Auth as Auth (Facade)
     participant Login as Login (Action)
     participant JWT as JwtIdentity (Adapter)
@@ -19,14 +20,19 @@ sequenceDiagram
     Login->>DB: findByIdentifier(email)
     Login->>JWT: issue(User)
     JWT-->>Login: token
-    Login-->>Auth: token
-    Auth-->>Client: { token: "..." }
+    Login-->>Auth: User
+    Auth-->>Client: User
+    Client->>Identity: token()
+    Identity-->>Client: token
 
     Note over Client, JWT: Subsequent Request
+    Client->>Identity: authenticate(token)
+    Identity->>JWT: authenticate(token)
+    JWT->>DB: validate(token)
+    JWT-->>Identity: currentUser
     Client->>Auth: check()
-    Auth->>JWT: check()
-    JWT->>JWT: decode & validate(token)
-    JWT-->>Auth: bool
+    Auth->>Identity: check()
+    Identity-->>Auth: bool
     Auth-->>Client: OK
 ```
 
@@ -39,27 +45,31 @@ use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capabilities\Identity\Identity;
 use Avax\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
 
+$identity = new Identity(jwtIdentity: new JwtIdentity(
+    userSource: $userSource,
+    secret: 'your-256-bit-secret'
+));
+
 $auth = Auth::configuration()
     ->forUser($userSource)
-    ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
-        userSource: $userSource,
-        secret: 'your-256-bit-secret'
-    )))
+    ->withIdentity($identity)
     ->ready();
 ```
 
 ## Issuing Tokens
 
 When a user logs in successfully, the `Identity` façade delegates to `JwtIdentity::issue(User)`.
-The resulting token is usually returned as a string.
+The resulting token is available through the same `Identity` instance via `token()`.
 
 ## Validating Tokens
 
 The `JwtIdentity` adapter is responsible for:
-1. Extracting the token from the request header.
+1. Receiving a bearer token from the application boundary.
 2. Validating the signature.
 3. Checking for expiration.
-4. Returning a `User` entity if the token is valid.
+4. Hydrating the current `User` when the token is valid.
+
+The application should pass the bearer token into `Identity::authenticate($token)` before calling `check()` or `user()`.
 
 ## Implementation Details
 

@@ -9,6 +9,9 @@ use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
 use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Flows\Register\RegistrationData;
+use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Mockery;
 use RuntimeException;
 
@@ -53,5 +56,39 @@ class AuthBuilderTest extends TestCase
         $auth = $builder->ready();
 
         $this->assertInstanceOf(Auth::class, $auth);
+    }
+
+    public function testAuthBuilderUsesConfiguredIdGenerator() : void
+    {
+        $data = new RegistrationData(
+            email: 'builder@example.com',
+            username: 'builder',
+            password: 'password'
+        );
+
+        $userSource = Mockery::mock(UserSourceInterface::class);
+        $userSource->shouldReceive('emailExists')->with($data->email)->andReturn(false);
+        $userSource->shouldReceive('usernameExists')->with($data->username)->andReturn(false);
+        $userSource->shouldReceive('create')->once()->andReturnUsing(fn($user) => $user);
+
+        $identity = Mockery::mock(IdentityInterface::class);
+
+        $idGenerator = Mockery::mock(IdGeneratorInterface::class);
+        $idGenerator->shouldReceive('generate')->once()->andReturn(987654);
+
+        $passwordHasher = Mockery::mock(PasswordHasher::class);
+        $passwordHasher->shouldReceive('hash')->with('password')->andReturn('hashed_password');
+
+        $builder = new AuthBuilder();
+        $auth = $builder
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: $identity)
+            ->usingIdGenerator($idGenerator)
+            ->usingHasher($passwordHasher)
+            ->ready();
+
+        $user = $auth->register(data: $data);
+
+        $this->assertSame(987654, $user->getId()->value);
     }
 }

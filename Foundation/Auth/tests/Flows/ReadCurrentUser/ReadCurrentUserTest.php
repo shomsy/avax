@@ -83,4 +83,34 @@ class ReadCurrentUserTest extends TestCase
 
         $this->assertNull($result);
     }
+
+    public function testReadCurrentUserReturnsNullForInactiveUser() : void
+    {
+        $identity = Mockery::mock(IdentityInterface::class);
+        $identity->shouldReceive('getCurrentUser')->andReturn(null);
+        $identity->shouldReceive('getUserId')->andReturn(555);
+
+        $inactiveUser = new User(
+            id: new UserId(555),
+            email: new \Avax\Auth\System\Capabilities\User\UserEmail('inactive@example.com'),
+            username: 'inactive',
+            passwordHash: 'hash',
+            isActive: false
+        );
+
+        $userSource = Mockery::mock(UserSourceInterface::class);
+        $userSource->shouldReceive('findById')
+            ->once()
+            ->with(Mockery::on(fn($id) => $id instanceof UserId && $id->value === 555))
+            ->andReturn($inactiveUser);
+
+        $readCurrentUser = new ReadCurrentUser(
+            identity: $identity,
+            userSource: $userSource
+        );
+
+        $result = $readCurrentUser->execute();
+
+        $this->assertNull($result);
+    }
 }

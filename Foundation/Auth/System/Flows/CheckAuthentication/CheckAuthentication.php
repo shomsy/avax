@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flows\CheckAuthentication;
 
-use Avax\Auth\System\Capabilities\Identity\IdentityInterface;
+use Avax\Auth\System\Flows\ReadCurrentUser\ReadCurrentUser;
 use SensitiveParameter;
 
 /**
@@ -15,11 +15,11 @@ use SensitiveParameter;
 final readonly class CheckAuthentication
 {
     public function __construct(
-        #[SensitiveParameter] private IdentityInterface $identity
+        #[SensitiveParameter] private ReadCurrentUser $readCurrentUser
     ) {}
 
     public function execute() : bool
     {
-        return $this->identity->check();
+        return $this->readCurrentUser->execute() !== null;
     }
 }

@@ -9,6 +9,7 @@ use Avax\Auth\System\Capabilities\User\UserId;
 use Avax\Auth\System\Capabilities\User\UserEmail;
 use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
 use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 
 /**
@@ -21,7 +22,8 @@ final readonly class Register
     public function __construct(
         private UserSourceInterface                   $userSource,
         #[\SensitiveParameter] private PasswordHasher $passwordHasher,
-        private IdGeneratorInterface                  $idGenerator
+        private IdGeneratorInterface                  $idGenerator,
+        private LoginRateLimit|null                   $rateLimit = null
     ) {}
 
     /**
@@ -29,8 +31,24 @@ final readonly class Register
      */
     public function execute(RegistrationData $data) : User
     {
+        if ($this->rateLimit !== null) {
+            $this->rateLimit->check(identifier: $data->email);
+        }
+
         if ($this->userSource->emailExists(email: $data->email)) {
+            if ($this->rateLimit !== null) {
+                $this->rateLimit->recordFailed(identifier: $data->email);
+            }
+
             throw new \Exception(message: 'Email is already taken.', code: 409);
+        }
+
+        if ($this->userSource->usernameExists(username: $data->username)) {
+            if ($this->rateLimit !== null) {
+                $this->rateLimit->recordFailed(identifier: $data->email);
+            }
+
+            throw new \Exception(message: 'Username is already taken.', code: 409);
         }
 
         $passwordHash = $this->passwordHasher->hash(password: $data->password);
@@ -42,6 +60,12 @@ final readonly class Register
             passwordHash: $passwordHash
         );
 
-        return $this->userSource->create(user: $user);
+        $createdUser = $this->userSource->create(user: $user);
+
+        if ($this->rateLimit !== null) {
+            $this->rateLimit->reset(identifier: $data->email);
+        }
+
+        return $createdUser;
     }
 }

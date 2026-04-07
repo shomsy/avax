@@ -20,6 +20,7 @@ use Avax\Auth\System\Capabilities\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Foundation\IdGenerator;
+use Avax\Auth\System\Foundation\IdGeneratorInterface;
 
 /**
  * Fluent builder for creating Auth system instances.
@@ -32,6 +33,7 @@ final class AuthBuilder
     private IdentityInterface|null    $identity = null;
     private LoginRateLimit|null       $rateLimit = null;
     private PasswordHasher|null       $passwordHasher = null;
+    private IdGeneratorInterface|null $idGenerator = null;
 
     /**
      * Define the data source for users.
@@ -70,6 +72,15 @@ final class AuthBuilder
     }
 
     /**
+     * Configure a custom identifier generator for registrations.
+     */
+    public function usingIdGenerator(IdGeneratorInterface $idGenerator) : self
+    {
+        $this->idGenerator = $idGenerator;
+        return $this;
+    }
+
+    /**
      * Build the final Auth instance.
      */
     public function ready() : Auth
@@ -84,10 +95,12 @@ final class AuthBuilder
 
         $identity = $this->identity;
         $passwordHasher = $this->passwordHasher ?? new PasswordHasher();
-        $checkAuthentication = new CheckAuthentication(identity: $identity);
         $readCurrentUser = new ReadCurrentUser(
             identity: $identity,
             userSource: $this->userSource
+        );
+        $checkAuthentication = new CheckAuthentication(
+            readCurrentUser: $readCurrentUser
         );
         $access = new Access(
             requireAuthentication: new RequireAuthentication(
@@ -112,12 +125,14 @@ final class AuthBuilder
             access: $access,
             changePassword: new ChangePassword(
                 userSource: $this->userSource,
-                passwordHasher: $passwordHasher
+                passwordHasher: $passwordHasher,
+                rateLimit: $this->rateLimit
             ),
             register: new Register(
                 userSource: $this->userSource,
                 passwordHasher: $passwordHasher,
-                idGenerator: new IdGenerator()
+                idGenerator: $this->idGenerator ?? new IdGenerator(),
+                rateLimit: $this->rateLimit
             )
         );
     }

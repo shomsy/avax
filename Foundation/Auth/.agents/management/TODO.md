@@ -32,11 +32,11 @@ Canonical active implementation queue.
 
 - `id`: AUTH-009
 - `created_at`: 2026-04-06 16:30 CET
-- `updated_at`: 2026-04-06 16:30 CET
-- `status`: todo
+- `updated_at`: 2026-04-07 01:51 CEST
+- `status`: done
 - `outcome`: Implement In-Memory Rate Limit Storage
 - `acceptance`: Add `InMemoryLoginRateLimitStorage` class and unit test for LoginRateLimit gatekeeping
-- `links`: src/Flows/Login/RateLimit/
+- `links`: System/Flows/Login/RateLimit/
 
 - `id`: AUTH-008
 - `created_at`: 2026-04-06 16:30 CET

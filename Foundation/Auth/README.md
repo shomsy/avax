@@ -37,6 +37,8 @@ $auth = Auth::configuration()
     ->ready();
 ```
 
+If you bootstrap through the container, register `System/Configuration/AuthServiceProvider.php` and bind a `UserSourceInterface` plus the identity backend you want to expose. Rate limiting stays opt-in until you provide a `LoginRateLimitStorageInterface`.
+
 ### Authentication Flow (Flows)
 
 ```php

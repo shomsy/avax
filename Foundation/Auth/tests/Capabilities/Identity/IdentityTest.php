@@ -11,6 +11,7 @@ use Avax\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
 use Avax\Auth\System\Capabilities\User\User;
 use Avax\Auth\System\Capabilities\User\UserEmail;
 use Avax\Auth\System\Capabilities\User\UserId;
+use InvalidArgumentException;
 use Mockery;
 
 /**
@@ -21,6 +22,35 @@ class IdentityTest extends TestCase
     protected function tearDown() : void
     {
         Mockery::close();
+    }
+
+    public function testIdentityRequiresAtLeastOneBackend() : void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Identity requires at least one backend.');
+
+        new Identity();
+    }
+
+    public function testIdentityRejectsInactiveUsersWhenIssuing() : void
+    {
+        $user = new User(
+            id: new UserId(10),
+            email: new UserEmail('inactive@example.com'),
+            username: 'inactive',
+            passwordHash: 'hash',
+            isActive: false
+        );
+
+        $jwt = Mockery::mock(JwtIdentityInterface::class);
+        $jwt->shouldNotReceive('issue');
+
+        $identity = new Identity(jwtIdentity: $jwt);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Inactive users cannot be authenticated.');
+
+        $identity->issue($user);
     }
 
     public function testIdentityIssuesAllConfiguredBackends() : void
@@ -102,5 +132,18 @@ class IdentityTest extends TestCase
         $identity->clear();
 
         $this->assertTrue(true);
+    }
+
+    public function testIdentityAuthenticatesJwtAndReturnsToken() : void
+    {
+        $jwt = Mockery::mock(JwtIdentityInterface::class);
+        $jwt->shouldReceive('authenticate')->once()->with('token-42');
+        $jwt->shouldReceive('token')->once()->andReturn('token-42');
+
+        $identity = new Identity(jwtIdentity: $jwt);
+
+        $identity->authenticate('token-42');
+
+        $this->assertSame('token-42', $identity->token());
     }
 }

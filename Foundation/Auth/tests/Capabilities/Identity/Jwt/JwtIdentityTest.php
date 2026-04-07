@@ -10,6 +10,7 @@ use Avax\Auth\System\Capabilities\User\User;
 use Avax\Auth\System\Capabilities\User\UserEmail;
 use Avax\Auth\System\Capabilities\User\UserId;
 use Avax\Auth\System\Capabilities\UserSource\UserSourceInterface;
+use InvalidArgumentException;
 use Mockery;
 
 /**
@@ -33,7 +34,6 @@ class JwtIdentityTest extends TestCase
 
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('findById')
-            ->once()
             ->with(Mockery::on(fn($id) => $id instanceof UserId && $id->value === 7))
             ->andReturn($user);
 
@@ -45,6 +45,7 @@ class JwtIdentityTest extends TestCase
         $token = $jwt->issue($user);
 
         $this->assertIsString($token);
+        $this->assertSame($token, $jwt->token());
         $this->assertTrue($jwt->check());
         $this->assertSame($user, $jwt->getCurrentUser());
 
@@ -52,10 +53,69 @@ class JwtIdentityTest extends TestCase
 
         $this->assertFalse($jwt->check());
         $this->assertNull($jwt->getCurrentUser());
+        $this->assertNull($jwt->token());
 
         $jwt->authenticate($token);
 
         $this->assertTrue($jwt->check());
         $this->assertSame($user, $jwt->getCurrentUser());
+        $this->assertSame($token, $jwt->token());
+    }
+
+    public function testJwtIdentityRejectsInactiveUsersWhenIssuing() : void
+    {
+        $inactiveUser = new User(
+            id: new UserId(8),
+            email: new UserEmail('inactive-issue@example.com'),
+            username: 'inactive-issue',
+            passwordHash: 'hash',
+            isActive: false
+        );
+
+        $jwt = new JwtIdentity(
+            userSource: Mockery::mock(UserSourceInterface::class),
+            secret: 'super-secret-key'
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Inactive users cannot be authenticated.');
+
+        $jwt->issue($inactiveUser);
+    }
+
+    public function testJwtIdentityRejectsInactiveUserTokens() : void
+    {
+        $activeUser = new User(
+            id: new UserId(9),
+            email: new UserEmail('active-jwt@example.com'),
+            username: 'active-jwt',
+            passwordHash: 'hash'
+        );
+
+        $inactiveUser = new User(
+            id: new UserId(9),
+            email: new UserEmail('inactive-jwt@example.com'),
+            username: 'inactive-jwt',
+            passwordHash: 'hash',
+            isActive: false
+        );
+
+        $userSource = Mockery::mock(UserSourceInterface::class);
+        $userSource->shouldReceive('findById')
+            ->with(Mockery::on(fn($id) => $id instanceof UserId && $id->value === 9))
+            ->andReturn($inactiveUser);
+
+        $jwt = new JwtIdentity(
+            userSource: $userSource,
+            secret: 'super-secret-key'
+        );
+
+        $token = $jwt->issue($activeUser);
+
+        $jwt->authenticate($token);
+
+        $this->assertFalse($jwt->check());
+        $this->assertNull($jwt->getCurrentUser());
+        $this->assertNull($jwt->token());
     }
 }

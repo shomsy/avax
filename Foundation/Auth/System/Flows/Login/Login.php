@@ -38,16 +38,16 @@ final readonly class Login
 
         $user = $this->userSource->findByCredentials(credentials: $credentials);
 
-        if ($user === null || ! $this->passwordHasher->verify(password: $credentials->password, hash: $user->getPasswordHash())) {
+        if (
+            $user === null
+            || ! $this->passwordHasher->verify(password: $credentials->password, hash: $user->getPasswordHash())
+            || ! $user->isActive()
+        ) {
             if ($this->rateLimit !== null) {
                 $this->rateLimit->recordFailed(identifier: $credentials->identifier);
             }
 
             throw new Exception(message: 'Invalid credentials.', code: 401);
-        }
-
-        if (! $user->isActive()) {
-            throw new Exception(message: 'Account is inactive.', code: 403);
         }
 
         $this->identity->issue(user: $user);

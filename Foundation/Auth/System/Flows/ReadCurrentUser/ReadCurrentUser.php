@@ -26,13 +26,17 @@ final readonly class ReadCurrentUser
         $currentUser = $this->identity->getCurrentUser();
 
         if ($currentUser !== null) {
-            return $currentUser;
+            return $currentUser->isActive() ? $currentUser : null;
         }
 
         $userId = $this->identity->getUserId();
 
         if ($userId !== null) {
-            return $this->userSource->findById(id: new UserId($userId));
+            $user = $this->userSource->findById(id: new UserId($userId));
+
+            if ($user !== null && $user->isActive()) {
+                return $user;
+            }
         }
 
         return null;

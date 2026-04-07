@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Capabilities\Definitions\Contracts;
 
+use Avax\Container\ContextBuilderInterface as PublicContextBuilderInterface;
+
 /**
  * Fluent write-side configuration for contextual bindings.
  */
-interface ContextBuilderInterface
+interface ContextBuilderInterface extends PublicContextBuilderInterface
 {
-    public function needs(string $abstract) : self;
-
-    public function give(mixed $concrete) : void;
 }

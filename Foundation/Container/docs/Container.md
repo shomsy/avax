@@ -2,6 +2,9 @@
 
 `Container` is the stable public facade of the component.
 
+Its contract stays in the root `Avax\Container\...` namespace even though the
+runtime implementation lives under `DependencyInjection/`.
+
 ## What It Owns
 
 It exposes the public API for:
@@ -58,7 +61,4 @@ If a feature needs shared runtime mechanics, move that logic into the correct ca
 thin.
 
 `resolveContext()` exists on the runtime-facing contract used by nested resolution chains. It is not part of the
-public `ContainerInterface`.
-
-`resolve(ServicePrototype)` remains a concrete-class helper for prototype-driven runtime flows. It is not part of the
 public `ContainerInterface`.

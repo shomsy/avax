@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Capabilities\Providers\Runtime;
 
-use Avax\Container\Container;
+use Avax\Container\ContainerInterface;
 use Avax\Container\DependencyInjection\Capabilities\Providers\Contracts\ServiceProviderInterface;
 
 /**
@@ -13,7 +13,7 @@ use Avax\Container\DependencyInjection\Capabilities\Providers\Contracts\ServiceP
  */
 abstract class ServiceProvider implements ServiceProviderInterface
 {
-    public function __construct(protected Container $app) {}
+    public function __construct(protected ContainerInterface $app) {}
 
     public function register() : void
     {

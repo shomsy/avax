@@ -6,6 +6,7 @@ namespace Avax\Container\DependencyInjection\Configuration;
 
 use Avax\Container\Container;
 use Avax\Container\ContainerInterface;
+use Avax\Container\ScopeManagerInterface;
 use Avax\Container\DependencyInjection\Capabilities\Definitions\Bindings\Registrar;
 use Avax\Container\DependencyInjection\Capabilities\Definitions\Store\DefinitionStore;
 use Avax\Container\DependencyInjection\Capabilities\Injection\InjectDependencies;
@@ -25,6 +26,7 @@ use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\Dependency
 use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\Instantiator;
 use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\ResolutionEngine;
 use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\ContainerKernel;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\RuntimeContainer;
 use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeManager;
 use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeRegistry;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
@@ -105,19 +107,22 @@ final class ContainerBuilder
             debug           : $containerConfig->debug
         );
 
-        $kernel    = new ContainerKernel(definitions: $definitions, config: $kernelConfig);
-        $container = new Container(kernel: $kernel);
+        $kernel           = new ContainerKernel(definitions: $definitions, config: $kernelConfig);
+        $container        = new Container(kernel: $kernel);
+        $runtimeContainer = new RuntimeContainer(container: $container, kernel: $kernel);
 
-        $engine->setContainer(container: $container);
-        $injector->setContainer(container: $container);
-        $propertyInjector->setContainer(container: $container);
-        $invoker->setContainer(container: $container);
+        $engine->setContainer(container: $runtimeContainer);
+        $injector->setContainer(container: $runtimeContainer);
+        $propertyInjector->setContainer(container: $runtimeContainer);
+        $invoker->setContainer(container: $runtimeContainer);
 
         $scopeRegistry->addSingleton(abstract: PsrContainerInterface::class, instance: $container);
         $scopeRegistry->addSingleton(abstract: ContainerInterface::class, instance: $container);
-        $scopeRegistry->addSingleton(abstract: ContainerRuntimeInterface::class, instance: $container);
+        $scopeRegistry->addSingleton(abstract: ContainerRuntimeInterface::class, instance: $runtimeContainer);
+        $scopeRegistry->addSingleton(abstract: ScopeManagerInterface::class, instance: $scopeManager);
         $scopeRegistry->addSingleton(abstract: Container::class, instance: $container);
         $scopeRegistry->addSingleton(abstract: ContainerKernel::class, instance: $kernel);
+        $scopeRegistry->addSingleton(abstract: ScopeManager::class, instance: $scopeManager);
         $scopeRegistry->addSingleton(abstract: DefinitionStore::class, instance: $definitions);
         $scopeRegistry->addSingleton(abstract: ScopeRegistry::class, instance: $scopeRegistry);
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Capabilities\Providers\Runtime\Http;
 
-use Avax\Container\Container;
+use Avax\Container\ContainerInterface;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\RouterRuntimeInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -14,12 +14,12 @@ use Psr\Http\Message\ResponseInterface;
  */
 final readonly class HttpApplication
 {
-    public function __construct(private Container $container, private RouterRuntimeInterface $router) {}
+    public function __construct(private ContainerInterface $container, private RouterRuntimeInterface $router) {}
 
     /**
      * Expose the underlying container instance.
      */
-    public function getContainer() : Container
+    public function getContainer() : ContainerInterface
     {
         return $this->container;
     }

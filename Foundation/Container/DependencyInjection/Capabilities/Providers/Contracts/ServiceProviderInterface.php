@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Capabilities\Providers\Contracts;
 
-use Avax\Container\Container;
+use Avax\Container\ContainerInterface;
 
 /**
  * Service provider contract for deterministic registration.
@@ -12,7 +12,7 @@ use Avax\Container\Container;
  */
 interface ServiceProviderInterface
 {
-    public function __construct(Container $app);
+    public function __construct(ContainerInterface $app);
 
     public function register() : void;
 

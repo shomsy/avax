@@ -12,6 +12,7 @@ Public entry:
 Runtime entry:
 
 - `ContainerRuntimeInterface::resolveContext()`
+- `DependencyInjection/Capabilities/Resolution/Kernel/RuntimeContainer.php`
 
 Flow entry:
 

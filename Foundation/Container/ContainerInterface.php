@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Container;
 
-use Avax\Container\DependencyInjection\Capabilities\Definitions\Contracts\RegistryInterface;
-use Avax\Container\DependencyInjection\Capabilities\Injection\Reports\InjectionReport;
-use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeManager;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 /**
@@ -28,7 +25,7 @@ interface ContainerInterface extends PsrContainerInterface, RegistryInterface
 
     public function endScope() : void;
 
-    public function scopes() : ScopeManager;
+    public function scopes() : ScopeManagerInterface;
 
     public function exportMetrics() : string;
 }

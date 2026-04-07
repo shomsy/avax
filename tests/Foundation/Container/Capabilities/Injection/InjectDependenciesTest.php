@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Capabilities\Injection;
 
-use Avax\Container\Capabilities\Injection\InjectDependencies;
-use Avax\Container\Capabilities\Injection\Methods\MethodInjector;
-use Avax\Container\Capabilities\Injection\Parameters\ResolveMethodParameters;
-use Avax\Container\Capabilities\Injection\Properties\PropertyInjector;
-use Avax\Container\Capabilities\Prototypes\Contracts\ServicePrototypeFactoryInterface;
-use Avax\Container\Capabilities\Prototypes\Model\MethodPrototype;
-use Avax\Container\Capabilities\Prototypes\Model\ParameterPrototype;
-use Avax\Container\Capabilities\Prototypes\Model\PropertyPrototype;
-use Avax\Container\Capabilities\Prototypes\Model\ServicePrototype;
-use Avax\Container\Capabilities\Resolution\Engine\DependencyResolver;
-use Avax\Container\Capabilities\Resolution\Errors\ResolutionException;
 use Avax\Container\ContainerInterface;
+use Avax\Container\DependencyInjection\Capabilities\Injection\InjectDependencies;
+use Avax\Container\DependencyInjection\Capabilities\Injection\Methods\MethodInjector;
+use Avax\Container\DependencyInjection\Capabilities\Injection\Parameters\ResolveMethodParameters;
+use Avax\Container\DependencyInjection\Capabilities\Injection\Properties\PropertyInjector;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Contracts\ServicePrototypeFactoryInterface;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\MethodPrototype;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\ParameterPrototype;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\PropertyPrototype;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\ServicePrototype;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\DependencyResolver;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Errors\ResolutionException;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 

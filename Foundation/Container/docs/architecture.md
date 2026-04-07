@@ -5,10 +5,10 @@
 Read this component in this order:
 
 1. `Container.php`
-2. `Flows/`
-3. `Capabilities/`
-4. `Configuration/`
-5. `Foundation/`
+2. `DependencyInjection/Flows/`
+3. `DependencyInjection/Capabilities/`
+4. `DependencyInjection/Configuration/`
+5. `DependencyInjection/Foundation/`
 
 That is the canonical mental model:
 
@@ -16,12 +16,15 @@ That is the canonical mental model:
 - unit says responsibility
 - function says exact action
 
-## System Root
+## Repo Root vs System Root
 
-The component root is the system root.
+The component root is the operational repo root.
 
-Repo root concerns such as tests, docs, agents, and tooling stay outside the structural story. Inside the component
-root, the architecture must scream.
+The system root is `DependencyInjection/`.
+
+Repo-root concerns such as docs, agents, root compatibility guides, and the public
+surface stay outside the structural story. Inside `DependencyInjection/`, the
+architecture must scream.
 
 ## Public Surface
 
@@ -34,30 +37,30 @@ root, the architecture must scream.
 
 Flows are system behaviors, not business use cases.
 
-- `Flows/RegisterBindings`: write-side registration flow
-- `Flows/BootProviders`: deterministic register-then-boot provider lifecycle
-- `Flows/ResolveService`: service lookup and build flow
-- `Flows/InvokeCallable`: callable execution flow
-- `Flows/BeginScope`: scope entry flow
-- `Flows/EndScope`: scope exit flow
+- `DependencyInjection/Flows/RegisterBindings`: write-side registration flow
+- `DependencyInjection/Flows/BootProviders`: deterministic register-then-boot provider lifecycle
+- `DependencyInjection/Flows/ResolveService`: service lookup and build flow
+- `DependencyInjection/Flows/InvokeCallable`: callable execution flow
+- `DependencyInjection/Flows/BeginScope`: scope entry flow
+- `DependencyInjection/Flows/EndScope`: scope exit flow
 
 ## Capabilities
 
 Capabilities are shared runtime abilities used by more than one flow.
 
-- `Capabilities/Definitions`: bindings, contextual rules, extenders, definition storage
-- `Capabilities/Providers`: provider contracts and built-in provider implementations
-- `Capabilities/Resolution`: kernel runtime, kernel facade, engine, pipeline, resolution errors
-- `Capabilities/Injection`: property, method, and parameter injection support
-- `Capabilities/Invocation`: callable normalization and execution
-- `Capabilities/Scopes`: scope storage and lifetime strategies
-- `Capabilities/Prototypes`: reflection analysis, prototype cache, prototype models, factories
-- `Capabilities/Policies`: resolution policy decisions
-- `Capabilities/Observability`: metrics, trace, timeline, telemetry
+- `DependencyInjection/Capabilities/Definitions`: bindings, contextual rules, extenders, definition storage
+- `DependencyInjection/Capabilities/Providers`: provider contracts and built-in provider implementations
+- `DependencyInjection/Capabilities/Resolution`: kernel runtime, kernel facade, engine, pipeline, resolution errors
+- `DependencyInjection/Capabilities/Injection`: property, method, and parameter injection support
+- `DependencyInjection/Capabilities/Invocation`: callable normalization and execution
+- `DependencyInjection/Capabilities/Scopes`: scope storage and lifetime strategies
+- `DependencyInjection/Capabilities/Prototypes`: reflection analysis, prototype cache, prototype models, factories
+- `DependencyInjection/Capabilities/Policies`: resolution policy decisions
+- `DependencyInjection/Capabilities/Observability`: metrics, trace, timeline, telemetry
 
 ## Configuration
 
-`Configuration/` assembles the runtime. It owns:
+`DependencyInjection/Configuration/` assembles the runtime. It owns:
 
 - `ContainerBuilder`
 - `ContainerConfig`
@@ -70,12 +73,12 @@ Configuration wires collaborators. It must not absorb business or runtime behavi
 
 ## Foundation
 
-`Foundation/` is reserved for tiny neutral primitives only.
+`DependencyInjection/Foundation/` is reserved for tiny neutral primitives only.
 
 The current placeholders are:
 
-- `Foundation/Time`
-- `Foundation/Ids`
+- `DependencyInjection/Foundation/Time`
+- `DependencyInjection/Foundation/Ids`
 
 They are intentionally quiet until real primitives exist. The point is to reserve honest homes without inventing fake
 helpers.
@@ -105,3 +108,6 @@ These roots are no longer canonical:
 - `Tools/`
 
 Those names described technical buckets. The new tree describes ownership.
+
+The `DependencyInjection/` root stays intentionally. It is the system root, not
+a compatibility layer.

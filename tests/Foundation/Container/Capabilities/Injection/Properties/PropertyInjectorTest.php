@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Capabilities\Injection\Properties;
 
-use Avax\Container\Capabilities\Injection\Properties\PropertyInjector;
-use Avax\Container\Capabilities\Prototypes\Model\PropertyPrototype;
-use Avax\Container\Capabilities\Resolution\Contracts\ContainerRuntimeInterface;
-use Avax\Container\Capabilities\Resolution\Errors\ResolutionException;
-use Avax\Container\Capabilities\Resolution\Kernel\KernelContext;
 use Avax\Container\ContainerInterface;
+use Avax\Container\DependencyInjection\Capabilities\Injection\Properties\PropertyInjector;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\PropertyPrototype;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Contracts\ContainerRuntimeInterface;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Errors\ResolutionException;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\KernelContext;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

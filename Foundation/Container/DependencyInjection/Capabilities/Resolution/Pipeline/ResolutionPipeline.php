@@ -1,0 +1,208 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline;
+
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Errors\ContainerException;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\KernelContext;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Contracts\KernelStep;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Contracts\StepTelemetry;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Events\StepFailed;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Events\StepStarted;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Events\StepSucceeded;
+use Throwable;
+
+/**
+ * Resolution Pipeline - Sequential Execution Engine
+ *
+ * Orchestrates the execution of multiple KernelSteps to resolve a service.
+ * Manages the flow, telemetry via StepTelemetry observer, and error handling for the entire resolution lifecycle,
+ * ensuring each step has the opportunity to transform the resolution context.
+ *
+ *
+ * @internal This class is not intended for public usage.
+ */
+final readonly class ResolutionPipeline
+{
+    /** @var KernelStep[] Sequence of steps to execute */
+    private array $steps;
+
+    /**
+     * Initialize the pipeline with steps and telemetry.
+     *
+     * @param array              $steps     List of KernelStep implementations
+     * @param StepTelemetry|null $telemetry Optional telemetry observer
+     *
+     * @throws ContainerException If a step does not implement KernelStep or if steps are empty
+     *
+     */
+    public function __construct(
+        array                      $steps,
+        private StepTelemetry|null $telemetry = null
+    )
+    {
+        if (empty($steps)) {
+            throw new ContainerException(message: 'Resolution pipeline cannot be empty');
+        }
+
+        foreach ($steps as $index => $step) {
+            if (! $step instanceof KernelStep) {
+                throw new ContainerException(message: sprintf('Step at index %d must implement KernelStep interface, %s given.', $index, is_object($step) ? $step::class : gettype($step)));
+            }
+        }
+
+        $this->steps = $steps;
+    }
+
+    /**
+     * Execute the resolution pipeline.
+     *
+     * @param KernelContext $context The resolution state to process.
+     *
+     * @throws ContainerException If execution fails catastrophically.
+     * @throws Throwable From any individual step.
+     *
+     */
+    public function run(KernelContext $context) : void
+    {
+        $pipelineStartTime = microtime(as_float: true);
+        $context->setMetaOnce(namespace: 'telemetry', key: 'step_timings', value: []);
+
+        foreach ($this->steps as $index => $step) {
+            $stepStartTime = microtime(as_float: true);
+
+            // Notify telemetry about step initiation
+            $this->telemetry?->onStepStarted(event: new StepStarted(
+                stepClass: $step::class,
+                timestamp: $stepStartTime,
+                serviceId: $context->serviceId,
+                traceId  : $context->traceId
+            ));
+
+            try {
+                $step(context: $context);
+
+                $stepEndTime = microtime(as_float: true);
+                $duration    = round(($stepEndTime - $stepStartTime) * 1000, 4);
+
+                $timings               = $context->getMeta(namespace: 'telemetry', key: 'step_timings');
+                $timings[$step::class] = $duration;
+                $context->putMeta(namespace: 'telemetry', key: 'step_timings', value: $timings);
+
+                // Notify telemetry about successful step completion
+                $this->telemetry?->onStepSucceeded(event: new StepSucceeded(
+                    stepClass: $step::class,
+                    startedAt: $stepStartTime,
+                    endedAt  : $stepEndTime,
+                    duration : $duration / 1000,
+                    serviceId: $context->serviceId,
+                    traceId  : $context->traceId
+                ));
+            } catch (Throwable $e) {
+                $stepEndTime = microtime(as_float: true);
+                $duration    = round(($stepEndTime - $stepStartTime) * 1000, 4);
+
+                // Notify telemetry about step failure
+                $this->telemetry?->onStepFailed(event: new StepFailed(
+                    stepClass: $step::class,
+                    startedAt: $stepStartTime,
+                    endedAt  : $stepEndTime,
+                    duration : $duration / 1000,
+                    serviceId: $context->serviceId,
+                    exception: $e,
+                    traceId  : $context->traceId
+                ));
+
+                // Re-wrap non-container exceptions if necessary, or just throw if it's already a ContainerException
+                // But the test expects "Resolution pipeline failed at step X"
+                if (! ($e instanceof ContainerException)) {
+                    throw new ContainerException(
+                        message : sprintf('Resolution pipeline failed at step %d: %s', $index + 1, $e->getMessage()),
+                        previous: $e
+                    );
+                }
+
+                throw $e;
+            }
+        }
+
+        $pipelineEndTime = microtime(as_float: true);
+        $totalDuration   = round(($pipelineEndTime - $pipelineStartTime) * 1000, 4);
+
+        $context->setMeta(namespace: 'telemetry', key: 'duration_ms', value: $totalDuration);
+    }
+
+    /**
+     * Get the number of steps in the pipeline.
+     *
+     */
+    public function count() : int
+    {
+        return count(value: $this->steps);
+    }
+
+    /**
+     * Get a specific step by index.
+     *
+     *
+     * @throws ContainerException If index is out of bounds
+     *
+     */
+    public function getStep(int $index) : KernelStep
+    {
+        if (! isset($this->steps[$index])) {
+            throw new ContainerException(message: sprintf('Step index %d is out of bounds', $index));
+        }
+
+        return $this->steps[$index];
+    }
+
+    /**
+     * Create a new pipeline with an additional step at the end.
+     *
+     *
+     */
+    public function withStep(KernelStep $step) : self
+    {
+        $steps   = $this->steps;
+        $steps[] = $step;
+
+        return new self(steps: $steps, telemetry: $this->telemetry);
+    }
+
+    /**
+     * Create a new pipeline with an additional step at the beginning.
+     *
+     *
+     */
+    public function withStepFirst(KernelStep $step) : self
+    {
+        $steps = $this->steps;
+        array_unshift($steps, $step);
+
+        return new self(steps: $steps, telemetry: $this->telemetry);
+    }
+
+    /**
+     * Get all steps in the pipeline.
+     *
+     * @return KernelStep[]
+     *
+     */
+    public function getSteps() : array
+    {
+        return $this->steps;
+    }
+
+    /**
+     * String representation of the pipeline sequence.
+     *
+     */
+    public function __toString() : string
+    {
+        $stepNames = array_map(static fn($s) => $s::class, $this->steps);
+
+        return 'ResolutionPipeline[' . implode(separator: ' -> ', array: $stepNames) . ']';
+    }
+}

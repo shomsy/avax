@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Capabilities\Prototypes\Factory;
 
-use Avax\Container\Capabilities\Prototypes\Analyze\PrototypeAnalyzer;
-use Avax\Container\Capabilities\Prototypes\Analyze\ReflectionTypeAnalyzer;
-use Avax\Container\Capabilities\Prototypes\Cache\PrototypeCache;
-use Avax\Container\Capabilities\Prototypes\Factory\ServicePrototypeFactory;
-use Avax\Container\Capabilities\Prototypes\Model\ServicePrototype;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Analyze\PrototypeAnalyzer;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Analyze\ReflectionTypeAnalyzer;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Cache\PrototypeCache;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Factory\ServicePrototypeFactory;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\ServicePrototype;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;

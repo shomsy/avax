@@ -16,16 +16,33 @@ ADR-lite decision log for non-trivial choices.
 
 ## Decisions
 
+- `id`: DEC-004
+  `recorded_at`: 2026-04-07 04:05 CEST
+  `decision_at`: 2026-04-07 04:05 CEST
+  `updated_at`: 2026-04-07 04:05 CEST
+  `status`: accepted
+  `context`: The component has a thin public surface at the repo root, but the
+    user explicitly requires `DependencyInjection/` to remain as the structural
+    system root for the runtime implementation.
+  `decision`: Keep `DependencyInjection/` as the system root, with
+    `Flows/`, `Capabilities/`, `Configuration/`, and `Foundation/` nested
+    inside it; keep `Container.php` and `ContainerInterface.php` at the
+    component root as the public surface.
+  `consequences`: The repo root remains operational, the system root remains
+    explicit, and docs, tests, and agent metadata must reference
+    `DependencyInjection/` as the canonical implementation tree.
+  `links`: `Container.php`, `ContainerInterface.php`, `DependencyInjection/`, `docs/architecture.md`
+
 - `id`: DEC-003
   `recorded_at`: 2026-04-07 04:05 CEST
   `decision_at`: 2026-04-07 04:05 CEST
   `updated_at`: 2026-04-07 04:05 CEST
   `status`: accepted
-  `context`: The first repack established `Flows/`, `Capabilities/`,
-    `Configuration/`, and `Foundation/`, but the runtime still lacked a few
-    explicit owner units required by the target architecture: `KernelFacade`,
-    `ContainerConfig`, the `Methods/` and `Parameters/` injection lanes, and a
-    canonical `EngineInterface`.
+  `context`: The repack established explicit flow/capability/configuration/
+    foundation lanes inside the `DependencyInjection/` system root, but the
+    runtime still lacked a few explicit owner units required by the target
+    architecture: `KernelFacade`, `ContainerConfig`, the `Methods/` and
+    `Parameters/` injection lanes, and a canonical `EngineInterface`.
   `decision`: Refine the repacked architecture by introducing `KernelFacade`
     as the internal kernel boundary, `ContainerConfig` as the assembly options
     root, `EngineInterface` as the engine contract name, and explicit
@@ -33,26 +50,23 @@ ADR-lite decision log for non-trivial choices.
     capability.
   `consequences`: The runtime now reads more directly in the target DSL, build
     options have an owned configuration model, injection has honest internal
-    lanes, and the architecture reserves `Foundation/Time` and
-    `Foundation/Ids` without inventing fake primitives.
-  `links`: `Capabilities/Resolution/Kernel/KernelFacade.php`, `Configuration/ContainerConfig.php`, `Capabilities/Resolution/Engine/EngineInterface.php`, `Capabilities/Injection/Methods/MethodInjector.php`, `Capabilities/Injection/Parameters/ResolveMethodParameters.php`, `docs/architecture.md`
+    lanes, and the architecture reserves `DependencyInjection/Foundation/Time`
+    and `DependencyInjection/Foundation/Ids` without inventing fake primitives.
+  `links`: `DependencyInjection/Capabilities/Resolution/Kernel/KernelFacade.php`, `DependencyInjection/Configuration/ContainerConfig.php`, `DependencyInjection/Capabilities/Resolution/Engine/EngineInterface.php`, `DependencyInjection/Capabilities/Injection/Methods/MethodInjector.php`, `DependencyInjection/Capabilities/Injection/Parameters/ResolveMethodParameters.php`, `docs/architecture.md`
 
 - `id`: DEC-002
   `recorded_at`: 2026-04-07 04:05 CEST
   `decision_at`: 2026-04-07 04:05 CEST
   `updated_at`: 2026-04-07 04:05 CEST
-  `status`: accepted
+  `status`: superseded
   `context`: The container component had drifted into `Core/`, `Features/`,
     `Guard/`, and `Observe/` buckets that hid ownership and duplicated runtime
     vocabulary.
-  `decision`: Treat the component root as the system root and reorganize the
-    code into explicit public surface, `Flows/`, `Capabilities/`,
-    `Configuration/`, and `Foundation/` lanes; mirror the same story in docs
-    and tests.
-  `consequences`: Old root buckets are no longer canonical, flow names are the
-    primary reading model, and future additions must choose flow/capability
-    ownership before adding new folders.
-  `links`: `Container.php`, `Flows/`, `Capabilities/`, `Configuration/`, `docs/architecture.md`, `../../tests/Foundation/Container/Capabilities/`
+  `decision`: Reorganize the implementation into explicit flow, capability,
+    configuration, and foundation lanes.
+  `consequences`: Superseded by `DEC-004`, which keeps `DependencyInjection/`
+    as the system root while preserving the same ownership model.
+  `links`: `Container.php`, `DependencyInjection/`, `docs/architecture.md`, `../../tests/Foundation/Container/Capabilities/`
 
 - `id`: DEC-001
   `recorded_at`: 2026-04-07 02:11 CEST

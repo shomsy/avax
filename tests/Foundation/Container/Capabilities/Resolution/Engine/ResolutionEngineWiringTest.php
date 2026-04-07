@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Capabilities\Resolution\Engine;
 
-use Avax\Container\Capabilities\Definitions\Store\DefinitionStore;
-use Avax\Container\Capabilities\Observability\Metrics\CollectMetrics;
-use Avax\Container\Capabilities\Prototypes\Contracts\ServicePrototypeFactoryInterface;
-use Avax\Container\Capabilities\Resolution\Contracts\ContainerRuntimeInterface;
-use Avax\Container\Capabilities\Resolution\Engine\DependencyResolver;
-use Avax\Container\Capabilities\Resolution\Engine\Instantiator;
-use Avax\Container\Capabilities\Resolution\Engine\ResolutionEngine;
-use Avax\Container\Capabilities\Resolution\Errors\ContainerException;
-use Avax\Container\Capabilities\Scopes\ScopeRegistry;
+use Avax\Container\DependencyInjection\Capabilities\Definitions\Store\DefinitionStore;
+use Avax\Container\DependencyInjection\Capabilities\Observability\Metrics\CollectMetrics;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Contracts\ServicePrototypeFactoryInterface;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Contracts\ContainerRuntimeInterface;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\DependencyResolver;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\Instantiator;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\ResolutionEngine;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Errors\ContainerException;
+use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

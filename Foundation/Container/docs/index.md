@@ -13,14 +13,16 @@ This component is organized as a screaming runtime architecture.
 - Reference terms: [`glossary.md`](./glossary.md)
 - Failure handling: [`troubleshooting.md`](./troubleshooting.md)
 
-The component root is also the system root. There is no extra `src/` hallway.
+The component root is the operational repo root for this library component.
+
+The system root is `DependencyInjection/`.
 
 Production code is split into four lanes:
 
-- `Flows/`: what the container system does
-- `Capabilities/`: what flows use to do it
-- `Configuration/`: how the runtime is assembled
-- `Foundation/`: tiny neutral primitives only
+- `DependencyInjection/Flows/`: what the container system does
+- `DependencyInjection/Capabilities/`: what flows use to do it
+- `DependencyInjection/Configuration/`: how the runtime is assembled
+- `DependencyInjection/Foundation/`: tiny neutral primitives only
 
 Current public/system flow entries:
 

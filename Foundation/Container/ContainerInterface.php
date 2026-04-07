@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Container;
 
-use Avax\Container\Capabilities\Definitions\Contracts\RegistryInterface;
-use Avax\Container\Capabilities\Injection\Reports\InjectionReport;
-use Avax\Container\Capabilities\Scopes\ScopeManager;
+use Avax\Container\DependencyInjection\Capabilities\Definitions\Contracts\RegistryInterface;
+use Avax\Container\DependencyInjection\Capabilities\Injection\Reports\InjectionReport;
+use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeManager;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 /**

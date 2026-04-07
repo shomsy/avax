@@ -4,8 +4,8 @@ Scopes are the isolation boundary for scoped services.
 
 ## Main Files
 
-- `DependencyInjection/OpenScope.php`
-- `DependencyInjection/CloseScope.php`
+- `DependencyInjection/Flows/OpenScope.php`
+- `DependencyInjection/Flows/CloseScope.php`
 - `DependencyInjection/Scopes/ScopeInterface.php`
 - `DependencyInjection/Scopes/ManageScopes.php`
 - `DependencyInjection/Scopes/ScopeStore.php`
@@ -24,8 +24,8 @@ The resolver will not silently store a scoped instance in shared storage.
 
 ## Public Usage
 
-- `Container::beginScope()`
-- `Container::endScope()`
+- `Container::openScope()`
+- `Container::closeScope()`
 - `Container::scopes()->withinScope(...)`
 
 ## Ownership Split

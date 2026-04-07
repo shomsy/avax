@@ -19,9 +19,9 @@ interface ScopeInterface
 
     public function withinScope(callable $callback) : mixed;
 
-    public function beginScope() : void;
+    public function openScope() : void;
 
-    public function endScope() : void;
+    public function closeScope() : void;
 
     public function terminate() : void;
 }

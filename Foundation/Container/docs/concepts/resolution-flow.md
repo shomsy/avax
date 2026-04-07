@@ -11,23 +11,24 @@ Public entry:
 
 Flow entry:
 
-- `DependencyInjection/ResolveService.php`
+- `DependencyInjection/Flows/ResolveService.php`
 
 Runtime owner:
 
-- `DependencyInjection/Resolution/ServiceResolver.php`
+- `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`
 
 Main collaborators:
 
-- `Resolution/ResolveRequest.php`
-- `Resolution/ResolveDependencies.php`
-- `Resolution/BuildService.php`
-- `Resolution/CreateServiceBlueprint.php`
-- `Resolution/BlueprintCache.php`
-- `Injection/InjectProperties.php`
-- `Injection/InjectMethods.php`
-- `Scopes/ManageScopes.php`
-- `Policies/ResolutionPolicy.php`
+- `DependencyInjection/Dependencies/Resolution/ResolveRequest.php`
+- `DependencyInjection/Dependencies/Resolution/ResolveDependencies.php`
+- `DependencyInjection/Dependencies/Resolution/BuildService.php`
+- `DependencyInjection/Dependencies/Blueprints/CreateServiceBlueprint.php`
+- `DependencyInjection/Dependencies/Blueprints/BlueprintCache.php`
+- `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`
+- `DependencyInjection/Scopes/ManageScopes.php`
+- `DependencyInjection/Injection/Properties/InjectProperties.php`
+- `DependencyInjection/Injection/Methods/InjectMethods.php`
+- `DependencyInjection/Dependencies/Resolution/ResolutionPolicy.php`
 - `Observability/ResolutionTelemetry.php`
 
 ## What Happens

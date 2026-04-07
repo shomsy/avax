@@ -4,10 +4,13 @@
 
 Read the component in this order:
 
-1. `Container.php`
-2. root flow entries under `DependencyInjection/`
-3. internal work areas under `DependencyInjection/*`
-4. tests under `tests/DependencyInjection/*`
+1. [`Container.php`](../Container.php)
+2. flow entries under `DependencyInjection/Flows/`
+3. dependency owners under `DependencyInjection/Dependencies/`
+4. injection owners under `DependencyInjection/Injection/`
+5. scope owners under `DependencyInjection/Scopes/`
+6. root support areas: `Configuration/`, `Observability/`, `Errors/`, `Foundation/`
+7. tests under `tests/`
 
 That order matches the intended mental model:
 
@@ -20,19 +23,19 @@ That order matches the intended mental model:
 - `Container.php`: stable facade
 - `ContainerInterface.php`: public contract
 
-The facade delegates to small flow owners:
+The facade delegates to the explicit flow owners:
 
+- `CreateContainer`
 - `RegisterServices`
 - `ResolveService`
 - `CallFunction`
 - `OpenScope`
 - `CloseScope`
-
-`BootProviders` and `CreateContainer` stay explicit but outside the facade because they are assembly and lifecycle flows, not always-on facade methods.
+- `BootProviders`
 
 ## Flow Entries
 
-Every root file under `DependencyInjection/` owns one obvious action:
+Each flow entry owns one obvious user action:
 
 - `CreateContainer`: assemble the runtime
 - `RegisterServices`: write registrations
@@ -42,31 +45,55 @@ Every root file under `DependencyInjection/` owns one obvious action:
 - `CloseScope`: leave a scope
 - `BootProviders`: register then boot providers
 
-## Internal Work Areas
+## Dependency Areas
 
-`DependencyInjection/Registrations/`
+`DependencyInjection/Dependencies/Bindings/`
 
 - stores service registrations
-- stores tags and extenders
 - stores target-specific overrides
+- stores tags and extenders
 
-`DependencyInjection/Resolution/`
+`DependencyInjection/Dependencies/Resolution/`
 
 - owns the runtime resolver
-- builds constructor arguments
-- creates and caches blueprints
-- decides storage after resolution
+- resolves constructor arguments
+- decides whether a request is allowed
+- owns the runtime storage and build path
 
-`DependencyInjection/Calls/`
+`DependencyInjection/Dependencies/Blueprints/`
 
-- normalizes callables
+- creates cached reflection blueprints
+- stores constructor and injection metadata
+
+`DependencyInjection/Dependencies/Providers/`
+
+- keeps the provider contract boundary
+
+## Injection Area
+
+`DependencyInjection/Injection/Properties/`
+
+- injects public and non-public properties
+
+`DependencyInjection/Injection/Methods/`
+
+- injects marked methods after construction
+
+`DependencyInjection/Injection/Reports/`
+
+- describes what can be injected
+
+`DependencyInjection/Injection/Invocation/`
+
 - resolves callable arguments
+- normalizes call targets
+- invokes callables through the container
 
-`DependencyInjection/Injection/`
+`DependencyInjection/Injection/Attributes/`
 
-- injects properties
-- injects methods
-- reports injectable targets
+- keeps opt-in injection markers
+
+## Scopes
 
 `DependencyInjection/Scopes/`
 
@@ -74,44 +101,38 @@ Every root file under `DependencyInjection/` owns one obvious action:
 - exposes scope lifecycle control
 - defines lifetime names
 
-`DependencyInjection/Providers/`
+## Root Support Areas
 
-- keeps only the provider contract
+`Configuration/`
 
-`DependencyInjection/Configuration/`
+- owns assembly options and runtime settings
 
-- keeps assembly options and settings
-
-`DependencyInjection/Observability/`
+`Observability/`
 
 - records metrics
 - records timeline events
 - exports telemetry
 
-`DependencyInjection/Policies/`
-
-- decides whether a resolution request is allowed
-
-`DependencyInjection/Errors/`
+`Errors/`
 
 - owns container-facing exception boundaries
 
-`DependencyInjection/Foundation/`
+`Foundation/`
 
 - keeps tiny neutral primitives only
 
 ## Naming Rules In This Repo
 
-- root flow files use verb-first names
+- flow files use verb-first names
 - work areas use plain nouns
 - method names describe the exact action
-- generic buckets such as `Core`, `Features`, `Builder`, and old `Flow/Capability/` halls are not canonical anymore
+- generic buckets are not canonical anymore
 
-## Current Quality Boundary
+## Quality Boundary
 
 The shipped boundary is defended by:
 
 - Docker PHP lint across all repo PHP files
-- Docker smoke tests under `tests/DependencyInjection/*`
+- Docker smoke tests under `tests/`
 
 There is no Composer or PHPUnit harness in this component root today.

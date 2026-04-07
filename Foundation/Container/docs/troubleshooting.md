@@ -15,7 +15,7 @@ Missing services now raise `ServiceNotFoundException`.
 
 If a scoped service throws during storage:
 
-1. open a scope first with `beginScope()`
+1. open a scope first with `openScope()`
 2. or run the work inside `scopes()->withinScope(...)`
 
 Scoped services do not fall back to shared storage anymore.

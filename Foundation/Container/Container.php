@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Container;
 
-use Avax\Container\DependencyInjection\CallFunction;
-use Avax\Container\DependencyInjection\CloseScope;
-use Avax\Container\DependencyInjection\Injection\InjectionReport;
-use Avax\Container\DependencyInjection\OpenScope;
-use Avax\Container\DependencyInjection\RegisterServices;
-use Avax\Container\DependencyInjection\Registrations\RegisterForTarget;
-use Avax\Container\DependencyInjection\Registrations\ServiceRegistration;
-use Avax\Container\DependencyInjection\ResolveService;
-use Avax\Container\DependencyInjection\Resolution\ServiceResolver;
+use Avax\Container\DependencyInjection\Flows\CallFunction;
+use Avax\Container\DependencyInjection\Flows\CloseScope;
+use Avax\Container\DependencyInjection\Injection\Reports\InjectionReport;
+use Avax\Container\DependencyInjection\Flows\OpenScope;
+use Avax\Container\DependencyInjection\Flows\RegisterServices;
+use Avax\Container\DependencyInjection\Dependencies\Bindings\RegisterForTarget;
+use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistration;
+use Avax\Container\DependencyInjection\Flows\ResolveService;
+use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
 use Avax\Container\DependencyInjection\Scopes\ScopeInterface;
 
 /**
@@ -54,14 +54,14 @@ final readonly class Container implements ContainerInterface
         $this->registerServices()->instance(abstract: $abstract, instance: $instance);
     }
 
-    public function beginScope() : void
+    public function openScope() : void
     {
-        $this->openScope()->open();
+        $this->openScopeFlow()->open();
     }
 
-    public function endScope() : void
+    public function closeScope() : void
     {
-        $this->closeScope()->close();
+        $this->closeScopeFlow()->close();
     }
 
     public function canInject(object $target) : bool
@@ -131,12 +131,12 @@ final readonly class Container implements ContainerInterface
         return new CallFunction(resolver: $this->resolver);
     }
 
-    private function openScope() : OpenScope
+    private function openScopeFlow() : OpenScope
     {
         return new OpenScope(resolver: $this->resolver);
     }
 
-    private function closeScope() : CloseScope
+    private function closeScopeFlow() : CloseScope
     {
         return new CloseScope(resolver: $this->resolver);
     }

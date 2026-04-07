@@ -1,0 +1,135 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Container\DependencyInjection\Flows;
+
+use Avax\Container\Container;
+use Avax\Container\ContainerInterface;
+use Avax\Container\DependencyInjection\Injection\Invocation\FunctionCaller;
+use Avax\Container\DependencyInjection\Injection\Invocation\ResolveCallArguments;
+use Avax\Container\Configuration\ContainerSettings;
+use Avax\Container\Configuration\CreateContainerConfig;
+use Avax\Container\Foundation\Time\Clock;
+use Avax\Container\DependencyInjection\Injection\Methods\InjectMethods;
+use Avax\Container\DependencyInjection\Injection\Properties\InjectProperties;
+use Avax\Container\Observability\ResolutionMetrics;
+use Avax\Container\Observability\ResolutionTelemetry;
+use Avax\Container\Observability\ResolutionTimeline;
+use Avax\Container\DependencyInjection\Dependencies\Resolution\ResolutionPolicy;
+use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistry;
+use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistryInterface;
+use Avax\Container\DependencyInjection\Dependencies\Blueprints\BlueprintCache;
+use Avax\Container\DependencyInjection\Dependencies\Resolution\BuildService;
+use Avax\Container\DependencyInjection\Dependencies\Blueprints\CreateServiceBlueprint;
+use Avax\Container\DependencyInjection\Dependencies\Resolution\ResolveDependencies;
+use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
+use Avax\Container\DependencyInjection\Scopes\ManageScopes;
+use Avax\Container\DependencyInjection\Scopes\ScopeInterface;
+use Avax\Container\DependencyInjection\Scopes\ScopeStore;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
+
+final class CreateContainer
+{
+    /**
+     * @param array<string, mixed> $settings
+     */
+    public function create(
+        string $cacheDir = '',
+        bool $debug = false,
+        array $settings = [],
+        CreateContainerConfig|null $config = null
+    ) : Container {
+        $config ??= new CreateContainerConfig(
+            cacheDir: $cacheDir,
+            debug   : $debug,
+            settings: $settings
+        );
+
+        $registrations = new ServiceRegistry;
+        $scopeStore    = new ScopeStore;
+        $scopes        = new ManageScopes(store: $scopeStore);
+        $clock         = new Clock;
+        $metrics       = new ResolutionMetrics;
+        $timeline      = new ResolutionTimeline(clock: $clock);
+        $blueprints    = new CreateServiceBlueprint(cache: new BlueprintCache);
+        $dependencies  = new ResolveDependencies;
+        $callArguments = new ResolveCallArguments(dependencies: $dependencies);
+        $caller        = new FunctionCaller(arguments: $callArguments);
+        $policy        = new ResolutionPolicy(
+            strict: $config->strict,
+            debug : $config->debug
+        );
+        $resolver      = new ServiceResolver(
+            registrations   : $registrations,
+            scopes          : $scopes,
+            builder         : new BuildService(
+                blueprints  : $blueprints,
+                dependencies: $dependencies
+            ),
+            blueprints      : $blueprints,
+            injectProperties: new InjectProperties,
+            injectMethods   : new InjectMethods(arguments: $callArguments),
+            caller          : $caller,
+            metrics         : $metrics,
+            timeline        : $timeline,
+            policy          : $policy
+        );
+        $telemetry = $resolver->telemetry();
+
+        $container = new Container(resolver: $resolver);
+        $resolver->setContainer(container: $container);
+
+        $this->seedSystemServices(
+            resolver      : $resolver,
+            container     : $container,
+            scopes        : $scopes,
+            scopeStore    : $scopeStore,
+            registrations : $registrations,
+            settings      : new ContainerSettings(items: $config->settings),
+            config        : $config,
+            policy        : $policy,
+            clock         : $clock,
+            metrics       : $metrics,
+            timeline      : $timeline,
+            telemetry     : $telemetry,
+            caller        : $caller
+        );
+
+        return $container;
+    }
+
+    private function seedSystemServices(
+        ServiceResolver $resolver,
+        Container $container,
+        ManageScopes $scopes,
+        ScopeStore $scopeStore,
+        ServiceRegistry $registrations,
+        ContainerSettings $settings,
+        CreateContainerConfig $config,
+        ResolutionPolicy $policy,
+        Clock $clock,
+        ResolutionMetrics $metrics,
+        ResolutionTimeline $timeline,
+        ResolutionTelemetry $telemetry,
+        FunctionCaller $caller
+    ) : void {
+        $resolver->instance(abstract: PsrContainerInterface::class, instance: $container);
+        $resolver->instance(abstract: ContainerInterface::class, instance: $container);
+        $resolver->instance(abstract: Container::class, instance: $container);
+        $resolver->instance(abstract: ServiceResolver::class, instance: $resolver);
+        $resolver->instance(abstract: ServiceRegistryInterface::class, instance: $registrations);
+        $resolver->instance(abstract: ScopeInterface::class, instance: $scopes);
+        $resolver->instance(abstract: ManageScopes::class, instance: $scopes);
+        $resolver->instance(abstract: ScopeStore::class, instance: $scopeStore);
+        $resolver->instance(abstract: ServiceRegistry::class, instance: $registrations);
+        $resolver->instance(abstract: CreateContainerConfig::class, instance: $config);
+        $resolver->instance(abstract: ContainerSettings::class, instance: $settings);
+        $resolver->instance(abstract: ResolutionPolicy::class, instance: $policy);
+        $resolver->instance(abstract: Clock::class, instance: $clock);
+        $resolver->instance(abstract: ResolutionMetrics::class, instance: $metrics);
+        $resolver->instance(abstract: ResolutionTimeline::class, instance: $timeline);
+        $resolver->instance(abstract: ResolutionTelemetry::class, instance: $telemetry);
+        $resolver->instance(abstract: FunctionCaller::class, instance: $caller);
+    }
+}

@@ -1,4 +1,4 @@
-# ADR-001: Avoid Traits for Core Logic
+# ADR-001: Avoid Traits for Runtime Logic
 
 ## Status
 
@@ -7,14 +7,14 @@
 ## Context
 
 In many large PHP projects, [Traits](https://en.wikipedia.org/wiki/Trait_(computer_programming)) are used to share logic
-between classes. However, they often lead to "invisible" dependencies, naming collisions, and difficulty in unit testing
+between classes. However, they often lead to invisible dependencies, naming collisions, and difficulty in unit testing
 because they cannot be mocked independently.
 
 The Avax Container aims for maximum observability and strict separation of concerns.
 
 ## Decision
 
-We decided to prohibit the use of Traits for core resolution logic. Instead, we use **Composition**.
+We decided to prohibit the use of Traits for runtime logic. Instead, we use **Composition**.
 
 - If logic needs to be shared, it must be extracted into a separate owner class.
 - The consumer then receives that collaborator through explicit constructor wiring.
@@ -30,7 +30,7 @@ We decided to prohibit the use of Traits for core resolution logic. Instead, we 
 ### Negative ❌
 
 - **More Files**: We have more small classes instead of fewer large ones.
-- **Boilerplate**: Some extra "wiring" code is needed to pass services along.
+- **Boilerplate**: Some extra wiring code is needed to pass services along.
 
 ## References
 

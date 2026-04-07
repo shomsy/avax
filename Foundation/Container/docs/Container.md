@@ -24,8 +24,8 @@ Resolution and execution:
 
 Scopes and diagnostics:
 
-- `beginScope()`
-- `endScope()`
+- `openScope()`
+- `closeScope()`
 - `scopes()`
 - `canInject()`
 - `inspectInjection()`
@@ -33,11 +33,11 @@ Scopes and diagnostics:
 
 ## What It Delegates To
 
-- `RegisterServices`
-- `ResolveService`
-- `CallFunction`
-- `OpenScope`
-- `CloseScope`
+- `DependencyInjection/Flows/RegisterServices.php`
+- `DependencyInjection/Flows/ResolveService.php`
+- `DependencyInjection/Flows/CallFunction.php`
+- `DependencyInjection/Flows/OpenScope.php`
+- `DependencyInjection/Flows/CloseScope.php`
 
 The facade does not own resolution internals, storage, blueprint creation, or telemetry wiring.
 
@@ -47,13 +47,13 @@ The facade does not own resolution internals, storage, blueprint creation, or te
 - `make()` resolves an object with explicit constructor overrides
 - `call()` supports closures, callable arrays, `Class@method`, `Class::method`, and invokable class strings
 - scoped services require an active scope
-- missing services throw a not-found exception
+- missing services throw `ServiceNotFoundException`
 
 ## Public Companion Types
 
-The facade uses a small set of explicit companion types under `DependencyInjection/`:
+The facade uses a small set of explicit companion types:
 
-- `Registrations/ServiceRegistration.php`
-- `Registrations/RegisterForTarget.php`
-- `Injection/InjectionReport.php`
-- `Scopes/ScopeInterface.php`
+- `DependencyInjection/Dependencies/Bindings/ServiceRegistration.php`
+- `DependencyInjection/Dependencies/Bindings/RegisterForTarget.php`
+- `DependencyInjection/Injection/Reports/InjectionReport.php`
+- `DependencyInjection/Scopes/ScopeInterface.php`

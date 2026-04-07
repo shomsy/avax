@@ -21,50 +21,21 @@ namespace Psr\Container {
 
 namespace {
     $root = dirname(__DIR__);
-    $priority = [
-        $root . '/DependencyInjection/Registrations/ServiceRegistryInterface.php' => 0,
-        $root . '/DependencyInjection/Scopes/ScopeInterface.php' => 10,
-        $root . '/DependencyInjection/Injection/InjectionReport.php' => 20,
-        $root . '/ContainerInterface.php' => 30,
-        $root . '/DependencyInjection/Providers/ServiceProviderInterface.php' => 40,
-        $root . '/DependencyInjection/Errors/ContainerException.php' => 50,
-        $root . '/DependencyInjection/Errors/ServiceNotFoundException.php' => 60,
-        $root . '/Container.php' => 1000,
-    ];
-
-    $files = [];
-    $iterator = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)
-    );
-
-    foreach ($iterator as $file) {
-        $path = $file->getPathname();
-        if ($file->getExtension() !== 'php') {
-            continue;
-        }
-        if (str_contains($path, '/.agents/') || str_contains($path, '/tests/')) {
-            continue;
-        }
-        $files[] = $path;
-    }
-
-    usort(
-        $files,
-        static function (string $left, string $right) use ($priority) : int {
-            $leftPriority = $priority[$left] ?? 100;
-            $rightPriority = $priority[$right] ?? 100;
-
-            if ($leftPriority !== $rightPriority) {
-                return $leftPriority <=> $rightPriority;
+    spl_autoload_register(
+        static function (string $class) use ($root) : void {
+            $prefix = 'Avax\\Container\\';
+            if (! str_starts_with($class, $prefix)) {
+                return;
             }
 
-            return $left <=> $right;
+            $relative = substr($class, strlen($prefix));
+            $path = $root . '/' . str_replace('\\', '/', $relative) . '.php';
+
+            if (is_file($path)) {
+                require_once $path;
+            }
         }
     );
-
-    foreach ($files as $file) {
-        require_once $file;
-    }
 
     function assertTrue(bool $condition, string $message) : void
     {
@@ -116,8 +87,8 @@ namespace {
     }
 
     function makeTestContainer(
-        \Avax\Container\DependencyInjection\Configuration\CreateContainerConfig|null $config = null
+        \Avax\Container\Configuration\CreateContainerConfig|null $config = null
     ) : \Avax\Container\Container {
-        return (new \Avax\Container\DependencyInjection\CreateContainer())->create(config: $config);
+        return (new \Avax\Container\DependencyInjection\Flows\CreateContainer())->create(config: $config);
     }
 }

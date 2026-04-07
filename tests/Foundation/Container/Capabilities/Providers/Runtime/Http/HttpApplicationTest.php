@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Capabilities\Providers\Runtime\Http;
 
-use Avax\Container\Capabilities\Providers\Runtime\Http\MiddlewareServiceProvider;
-use Avax\Container\Capabilities\Providers\Runtime\Http\RouterServiceProvider;
-use Avax\Container\Configuration\AppFactory;
+use Avax\Container\DependencyInjection\Capabilities\Providers\Runtime\Http\MiddlewareServiceProvider;
+use Avax\Container\DependencyInjection\Capabilities\Providers\Runtime\Http\RouterServiceProvider;
+use Avax\Container\DependencyInjection\Configuration\AppFactory;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\Classes\Response;
 use Avax\HTTP\Response\Classes\Stream;

@@ -4,10 +4,10 @@ Scopes are the runtime isolation mechanism of the container.
 
 ## Main Units
 
-- `Capabilities/Scopes/ScopeManager.php`
-- `Capabilities/Scopes/ScopeRegistry.php`
-- `Flows/BeginScope/BeginScope.php`
-- `Flows/EndScope/EndScope.php`
+- `DependencyInjection/Capabilities/Scopes/ScopeManager.php`
+- `DependencyInjection/Capabilities/Scopes/ScopeRegistry.php`
+- `DependencyInjection/Flows/BeginScope/BeginScope.php`
+- `DependencyInjection/Flows/EndScope/EndScope.php`
 
 ## Behavior
 
@@ -23,6 +23,7 @@ Scopes are the runtime isolation mechanism of the container.
 
 ## Ownership Rule
 
-Scope mechanics stay in `Capabilities/Scopes`.
+Scope mechanics stay in `DependencyInjection/Capabilities/Scopes`.
 
-Scope entry and exit stay in `Flows/BeginScope` and `Flows/EndScope` because they are public system actions.
+Scope entry and exit stay in `DependencyInjection/Flows/BeginScope` and `DependencyInjection/Flows/EndScope`
+because they are public system actions.

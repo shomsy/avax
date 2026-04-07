@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Capabilities\Resolution\Pipeline\Strategies;
 
-use Avax\Container\Capabilities\Resolution\Errors\ContainerException;
-use Avax\Container\Capabilities\Resolution\Pipeline\Strategies\ResolutionState;
-use Avax\Container\Capabilities\Resolution\Pipeline\Strategies\ResolutionStateMachine;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Errors\ContainerException;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Strategies\ResolutionState;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Strategies\ResolutionStateMachine;
 use PHPUnit\Framework\TestCase;
 
 final class ResolutionStateMachineTest extends TestCase

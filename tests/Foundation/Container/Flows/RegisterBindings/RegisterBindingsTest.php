@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Flows\RegisterBindings;
 
-use Avax\Container\Capabilities\Providers\Runtime\Http\HttpApplication;
-use Avax\Container\Capabilities\Providers\Runtime\Http\MiddlewareServiceProvider;
-use Avax\Container\Capabilities\Providers\Runtime\Http\RouterServiceProvider;
-use Avax\Container\Configuration\AppFactory;
+use Avax\Container\DependencyInjection\Capabilities\Providers\Runtime\Http\HttpApplication;
+use Avax\Container\DependencyInjection\Capabilities\Providers\Runtime\Http\MiddlewareServiceProvider;
+use Avax\Container\DependencyInjection\Capabilities\Providers\Runtime\Http\RouterServiceProvider;
+use Avax\Container\DependencyInjection\Configuration\AppFactory;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\Routing\RouteRegistrarProxy;

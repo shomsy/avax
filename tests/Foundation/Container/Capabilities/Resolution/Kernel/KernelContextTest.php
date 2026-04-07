@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Capabilities\Resolution\Kernel;
 
-use Avax\Container\Capabilities\Resolution\Kernel\KernelContext;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\KernelContext;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use stdClass;

@@ -10,10 +10,10 @@ Lifetime decides where a resolved instance is reused.
 
 ## Main Units
 
-- `Capabilities/Scopes/Lifetimes/ServiceLifetime.php`
-- `Capabilities/Scopes/Lifetimes/LifecycleResolver.php`
-- `Capabilities/Scopes/Lifetimes/LifecycleStrategyRegistry.php`
-- `Capabilities/Scopes/Lifetimes/Strategies/*`
+- `DependencyInjection/Capabilities/Scopes/Lifetimes/ServiceLifetime.php`
+- `DependencyInjection/Capabilities/Scopes/Lifetimes/LifecycleResolver.php`
+- `DependencyInjection/Capabilities/Scopes/Lifetimes/LifecycleStrategyRegistry.php`
+- `DependencyInjection/Capabilities/Scopes/Lifetimes/Strategies/*`
 
 ## Practical Meaning
 

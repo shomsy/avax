@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Capabilities\Scopes;
 
-use Avax\Container\Capabilities\Scopes\ScopeManager;
-use Avax\Container\Capabilities\Scopes\ScopeRegistry;
+use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeManager;
+use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeRegistry;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;

@@ -62,7 +62,7 @@ Project-specific truth for this repository:
 1. **Canonical Validation Entrypoint**: `find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l`
 2. **Canonical Local Development Entrypoint**: `None; this is a library component with no standalone runtime.`
 3. **Canonical Release or Publish Entrypoint**: `None; release and publish are handled at the parent package or release process level.`
-4. **Project-Specific Architecture Boundaries**: `Container.php`, `Config/`, `Core/`, `Features/`, `Guard/`, `Http/`, `Observe/`, `Providers/`, `Tools/`, `docs/`
+4. **Project-Specific Architecture Boundaries**: `Container.php`, `ContainerInterface.php`, `DependencyInjection/`, `docs/`
 5. **Applied Governance Stack**:
    - **Delivery Kind**: `library`
    - **Applied Repository Profiles**: `none`

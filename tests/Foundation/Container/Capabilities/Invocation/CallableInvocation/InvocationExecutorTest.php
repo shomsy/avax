@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Capabilities\Invocation\CallableInvocation;
 
-use Avax\Container\Capabilities\Invocation\CallableInvocation\InvocationContext;
-use Avax\Container\Capabilities\Invocation\CallableInvocation\InvocationExecutor;
-use Avax\Container\Capabilities\Resolution\Contracts\ContainerRuntimeInterface;
-use Avax\Container\Capabilities\Resolution\Engine\DependencyResolver;
-use Avax\Container\Capabilities\Resolution\Kernel\KernelContext;
+use Avax\Container\DependencyInjection\Capabilities\Invocation\CallableInvocation\InvocationContext;
+use Avax\Container\DependencyInjection\Capabilities\Invocation\CallableInvocation\InvocationExecutor;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Contracts\ContainerRuntimeInterface;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\DependencyResolver;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\KernelContext;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use stdClass;

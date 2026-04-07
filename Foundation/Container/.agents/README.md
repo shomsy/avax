@@ -9,10 +9,11 @@ folder is project-specific state, guidance, or runtime memory.
 ## This Repository
 
 - `Container.php` is the public facade.
-- `Core/` holds kernel orchestration and container bootstrapping.
-- `Features/` holds the resolution pipeline and feature slices.
-- `Guard/`, `Observe/`, `Providers/`, `Http/`, and `Tools/` are support
-  surfaces around the container core.
+- `DependencyInjection/` is the system root.
+- `DependencyInjection/Flows/` holds public system flows.
+- `DependencyInjection/Capabilities/` holds shared runtime capabilities.
+- `DependencyInjection/Configuration/` holds assembly and wiring.
+- `DependencyInjection/Foundation/` is reserved for tiny neutral primitives.
 - `docs/` is the canonical documentation tree for this component.
 
 ## Use This Folder For

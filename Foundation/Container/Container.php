@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Container;
 
-use Avax\Container\Capabilities\Definitions\Contracts\BindingBuilderInterface;
-use Avax\Container\Capabilities\Definitions\Contracts\ContextBuilderInterface;
-use Avax\Container\Capabilities\Injection\Reports\InjectionReport;
-use Avax\Container\Capabilities\Resolution\Contracts\ContainerRuntimeInterface;
-use Avax\Container\Capabilities\Resolution\Kernel\ContainerKernel;
-use Avax\Container\Capabilities\Scopes\ScopeManager;
-use Avax\Container\Capabilities\Prototypes\Model\ServicePrototype;
-use Avax\Container\Capabilities\Resolution\Errors\ContainerException;
-use Avax\Container\Capabilities\Resolution\Kernel\KernelContext;
-use Avax\Container\Flows\BeginScope\BeginScope;
-use Avax\Container\Flows\EndScope\EndScope;
-use Avax\Container\Flows\InvokeCallable\InvokeCallable;
-use Avax\Container\Flows\RegisterBindings\RegisterBindings;
-use Avax\Container\Flows\ResolveService\ResolveService;
+use Avax\Container\DependencyInjection\Capabilities\Definitions\Contracts\BindingBuilderInterface;
+use Avax\Container\DependencyInjection\Capabilities\Definitions\Contracts\ContextBuilderInterface;
+use Avax\Container\DependencyInjection\Capabilities\Injection\Reports\InjectionReport;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\ServicePrototype;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Contracts\ContainerRuntimeInterface;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Errors\ContainerException;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\ContainerKernel;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\KernelContext;
+use Avax\Container\DependencyInjection\Capabilities\Scopes\ScopeManager;
+use Avax\Container\DependencyInjection\Flows\BeginScope\BeginScope;
+use Avax\Container\DependencyInjection\Flows\EndScope\EndScope;
+use Avax\Container\DependencyInjection\Flows\InvokeCallable\InvokeCallable;
+use Avax\Container\DependencyInjection\Flows\RegisterBindings\RegisterBindings;
+use Avax\Container\DependencyInjection\Flows\ResolveService\ResolveService;
 
 /**
  * Stable public facade for the container component.

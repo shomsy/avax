@@ -32,13 +32,16 @@ Canonical active implementation queue.
   `estimate`: large
   `actual`: large
   `outcome`: Repackage `Foundation/Container` into explicit
-    `Configuration/`, `Flows/`, `Capabilities/`, and `Foundation/` lanes,
-    removing `Core/` and `Features/` as canonical roots.
+    `DependencyInjection/Configuration/`, `DependencyInjection/Flows/`,
+    `DependencyInjection/Capabilities/`, and
+    `DependencyInjection/Foundation/` lanes, removing `Core/` and
+    `Features/` as canonical roots.
   `acceptance`: `Container.php` stays the public facade; runtime resolution
-    lives under `Capabilities/Resolution/Kernel`; assembly lives under
-    `Configuration/`; system flows are named explicitly; old generic buckets
-    are no longer the canonical architecture roots.
-  `links`: `Container.php`, `Flows/`, `Capabilities/`, `Configuration/`, `docs/architecture.md`, `docs/concepts/injection-and-instantiation.md`
+    lives under `DependencyInjection/Capabilities/Resolution/Kernel`;
+    assembly lives under `DependencyInjection/Configuration/`; system flows are
+    named explicitly; old generic buckets are no longer the canonical
+    architecture roots.
+  `links`: `Container.php`, `DependencyInjection/Flows/`, `DependencyInjection/Capabilities/`, `DependencyInjection/Configuration/`, `docs/architecture.md`, `docs/concepts/injection-and-instantiation.md`
 
 - `id`: TODO-001
   `created_at`: 2026-04-07 02:11 CEST

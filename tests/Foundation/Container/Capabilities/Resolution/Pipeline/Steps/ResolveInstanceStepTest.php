@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Capabilities\Resolution\Pipeline\Steps;
 
-use Avax\Container\Capabilities\Resolution\Engine\EngineInterface;
-use Avax\Container\Capabilities\Resolution\Kernel\KernelContext;
-use Avax\Container\Capabilities\Resolution\Pipeline\Steps\ResolveInstanceStep;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Engine\EngineInterface;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Kernel\KernelContext;
+use Avax\Container\DependencyInjection\Capabilities\Resolution\Pipeline\Steps\ResolveInstanceStep;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;

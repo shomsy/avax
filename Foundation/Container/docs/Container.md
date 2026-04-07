@@ -15,11 +15,11 @@ It exposes the public API for:
 
 It does not own low-level runtime logic. It delegates to:
 
-- `Flows/RegisterBindings`
-- `Flows/ResolveService`
-- `Flows/InvokeCallable`
-- `Flows/BeginScope`
-- `Flows/EndScope`
+- `DependencyInjection/Flows/RegisterBindings`
+- `DependencyInjection/Flows/ResolveService`
+- `DependencyInjection/Flows/InvokeCallable`
+- `DependencyInjection/Flows/BeginScope`
+- `DependencyInjection/Flows/EndScope`
 
 ## Public API Shape
 

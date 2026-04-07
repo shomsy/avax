@@ -15,16 +15,16 @@ Runtime entry:
 
 Flow entry:
 
-- `Flows/ResolveService/ResolveService.php`
+- `DependencyInjection/Flows/ResolveService/ResolveService.php`
 
 Runtime owner:
 
-- `Capabilities/Resolution/Kernel/ContainerKernel.php`
-- `Capabilities/Resolution/Kernel/KernelFacade.php`
+- `DependencyInjection/Capabilities/Resolution/Kernel/ContainerKernel.php`
+- `DependencyInjection/Capabilities/Resolution/Kernel/KernelFacade.php`
 
 Ordered execution:
 
-- `Capabilities/Resolution/Pipeline/ResolutionPipeline.php`
+- `DependencyInjection/Capabilities/Resolution/Pipeline/ResolutionPipeline.php`
 
 ## What Happens
 

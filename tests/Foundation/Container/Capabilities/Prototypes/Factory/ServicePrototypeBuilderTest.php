@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Container\Tests\Capabilities\Prototypes\Factory;
 
-use Avax\Container\Capabilities\Prototypes\Factory\ServicePrototypeBuilder;
-use Avax\Container\Capabilities\Prototypes\Model\MethodPrototype;
-use Avax\Container\Capabilities\Prototypes\Model\ParameterPrototype;
-use Avax\Container\Capabilities\Prototypes\Model\PropertyPrototype;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Factory\ServicePrototypeBuilder;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\MethodPrototype;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\ParameterPrototype;
+use Avax\Container\DependencyInjection\Capabilities\Prototypes\Model\PropertyPrototype;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

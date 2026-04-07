@@ -15,6 +15,8 @@ final class ServiceRegistration
 
     public string $lifetime = TransientLifetime::NAME;
 
+    public bool $deferred = false;
+
     /** @var list<string> */
     public array $tags = [];
 
@@ -54,11 +56,19 @@ final class ServiceRegistration
         return $this->withArguments(arguments: [$name => $value]);
     }
 
+    public function defer(bool $deferred = true) : self
+    {
+        $this->deferred = $deferred;
+
+        return $this;
+    }
+
     public static function __set_state(array $array) : self
     {
         $registration = new self(abstract: $array['abstract']);
         $registration->concrete = $array['concrete'] ?? null;
         $registration->lifetime = $array['lifetime'] ?? TransientLifetime::NAME;
+        $registration->deferred = $array['deferred'] ?? false;
         $registration->tags = $array['tags'] ?? [];
         $registration->arguments = $array['arguments'] ?? [];
 

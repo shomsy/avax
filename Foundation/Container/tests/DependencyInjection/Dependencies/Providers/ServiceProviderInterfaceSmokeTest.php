@@ -9,11 +9,14 @@ use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInt
 
 $reflection = new ReflectionClass(ServiceProviderInterface::class);
 $constructor = $reflection->getMethod('__construct');
+$dependsOn = $reflection->getMethod('dependsOn');
 $register = $reflection->getMethod('register');
 $boot = $reflection->getMethod('boot');
 
 assertSame(1, $constructor->getNumberOfParameters(), 'Provider contract should require the container boundary.');
 assertSame(ContainerInterface::class, $constructor->getParameters()[0]->getType()?->getName(), 'Provider contract should depend on ContainerInterface.');
+assertSame('dependsOn', $dependsOn->getName(), 'Provider contract should expose dependsOn().');
+assertSame('array', $dependsOn->getReturnType()?->getName(), 'Provider dependencies should be returned as an array.');
 assertSame('register', $register->getName(), 'Provider contract should expose register().');
 assertSame('boot', $boot->getName(), 'Provider contract should expose boot().');
 

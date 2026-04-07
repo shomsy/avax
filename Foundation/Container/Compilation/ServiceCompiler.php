@@ -37,6 +37,7 @@ final readonly class ServiceCompiler
                     'serviceId' => $serviceId,
                     'candidate' => $candidate,
                     'lifetime' => $registration?->lifetime,
+                    'deferred' => $registration?->deferred ?? false,
                     'arguments' => $registration?->arguments ?? [],
                     'blueprint' => $blueprint->fingerprint,
                     'finish' => $blueprint->injectableProperties !== []
@@ -63,6 +64,7 @@ final readonly class ServiceCompiler
                 'serviceId' => $serviceId,
                 'candidate' => $this->dynamicSignature(candidate: $candidate),
                 'lifetime' => $registration?->lifetime,
+                'deferred' => $registration?->deferred ?? false,
                 'arguments' => $registration?->arguments ?? [],
             ])),
             'source' => $this->emitter->emitDynamicMethod(methodName: $methodName),

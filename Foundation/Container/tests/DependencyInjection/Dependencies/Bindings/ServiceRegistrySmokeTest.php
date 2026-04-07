@@ -9,12 +9,14 @@ use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistry;
 $registry = new ServiceRegistry();
 
 $registry->bind('logger', DateTimeImmutable::class)->tag('infra');
+$deferred = $registry->defer('deferred.logger', ArrayObject::class);
 $registry->singleton('cache', ArrayObject::class);
 $registry->scoped('request', stdClass::class);
 $registry->when('Consumer')->needs('logger')->give(DirectoryIterator::class);
 
 assertTrue($registry->has('logger'), 'Service registry should store bindings.');
 assertSame(DateTimeImmutable::class, $registry->get('logger')?->concrete, 'Bindings should keep their concrete target.');
+assertTrue($deferred->deferred, 'Deferred registrations should be marked as deferred.');
 assertSame(['logger'], $registry->getTaggedIds('infra'), 'Tags should resolve back to registered ids.');
 assertSame(DirectoryIterator::class, $registry->getContextualMatch('Consumer', 'logger'), 'Target overrides should resolve.');
 assertTrue(isset($registry->all()['cache']), 'Registry should expose stored registrations.');

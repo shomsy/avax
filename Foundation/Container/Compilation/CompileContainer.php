@@ -64,12 +64,19 @@ final class CompileContainer
             return null;
         }
 
-        $snapshot = $this->snapshot(serviceIds: $serviceIds);
         $loaded = require $path;
-        if (! $loaded instanceof CompiledContainer || $loaded->fingerprint() !== $snapshot['fingerprint']) {
+        if (! $loaded instanceof CompiledContainer) {
             $this->metrics?->increment(name: 'container_compiled_container_misses_total');
 
             return null;
+        }
+
+        foreach (array_values(array_unique($serviceIds)) as $serviceId) {
+            if (! $loaded->has(serviceId: $serviceId)) {
+                $this->metrics?->increment(name: 'container_compiled_container_misses_total');
+
+                return null;
+            }
         }
 
         $this->metrics?->increment(name: 'container_compiled_container_hits_total');
@@ -131,10 +138,22 @@ final class CompileContainer
      */
     private function collectServiceIds(array $serviceIds) : array
     {
-        $queue = array_values(array_unique(array_merge(
-            array_keys($this->registrations->all()),
-            $serviceIds
-        )));
+        $queue = [];
+
+        if ($serviceIds !== []) {
+            foreach (array_values(array_unique($serviceIds)) as $serviceId) {
+                $queue[] = $serviceId;
+            }
+        } else {
+            foreach ($this->registrations->all() as $registration) {
+                if ($registration->deferred) {
+                    continue;
+                }
+
+                $queue[] = $registration->abstract;
+            }
+        }
+
         $compiled = [];
 
         while ($queue !== []) {

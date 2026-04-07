@@ -14,6 +14,11 @@ interface ServiceProviderInterface
 {
     public function __construct(ContainerInterface $app);
 
+    /**
+     * @return list<class-string<ServiceProviderInterface>>
+     */
+    public function dependsOn() : array;
+
     public function register() : void;
 
     public function boot() : void;

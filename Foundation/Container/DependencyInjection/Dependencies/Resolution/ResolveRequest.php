@@ -12,6 +12,7 @@ final class ResolveRequest
     public function __construct(
         public readonly string $serviceId,
         public readonly array $overrides = [],
+        public readonly array $context = [],
         public readonly ResolveRequest|null $parent = null,
         public readonly bool $manualInjection = false,
         public readonly string|null $consumer = null
@@ -25,8 +26,25 @@ final class ResolveRequest
         return new self(
             serviceId: $serviceId,
             overrides: $overrides,
+            context  : $this->context,
             parent   : $this,
+            manualInjection: $this->manualInjection,
             consumer : $this->serviceId
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function withContext(array $context) : self
+    {
+        return new self(
+            serviceId : $this->serviceId,
+            overrides : $this->overrides,
+            context   : $context,
+            parent    : $this->parent,
+            manualInjection: $this->manualInjection,
+            consumer  : $this->consumer
         );
     }
 

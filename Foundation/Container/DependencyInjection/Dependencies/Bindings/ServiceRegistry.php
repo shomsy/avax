@@ -18,6 +18,9 @@ final class ServiceRegistry implements ServiceRegistryInterface
     /** @var array<string, ServiceRegistration> */
     private array $services = [];
 
+    /** @var array<string, ServiceRegistration> */
+    private array $systemServices = [];
+
     /** @var array<string, string> */
     private array $aliases = [];
 
@@ -62,6 +65,16 @@ final class ServiceRegistry implements ServiceRegistryInterface
         return $this->register(abstract: $abstract, concrete: $concrete, lifetime: TransientLifetime::NAME);
     }
 
+    public function defer(string $abstract, mixed $concrete = null) : ServiceRegistration
+    {
+        return $this->register(
+            abstract: $abstract,
+            concrete: $concrete,
+            lifetime : TransientLifetime::NAME,
+            deferred : true
+        );
+    }
+
     public function singleton(string $abstract, mixed $concrete = null) : ServiceRegistration
     {
         return $this->register(abstract: $abstract, concrete: $concrete, lifetime: SharedLifetime::NAME);
@@ -79,6 +92,20 @@ final class ServiceRegistry implements ServiceRegistryInterface
         $registration->lifetime = SharedLifetime::NAME;
 
         $this->add(definition: $registration);
+    }
+
+    public function bootstrapInstance(string $abstract, object $instance) : void
+    {
+        $registration = new ServiceRegistration(abstract: $abstract);
+        $registration->concrete = $instance;
+        $registration->lifetime = SharedLifetime::NAME;
+
+        $this->addSystem(definition: $registration);
+    }
+
+    public function bootstrap(ServiceRegistration $definition) : void
+    {
+        $this->addSystem(definition: $definition);
     }
 
     public function extend(string $abstract, callable $closure) : void
@@ -136,12 +163,16 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
     public function has(string $abstract) : bool
     {
-        return isset($this->services[$this->resolveAlias(abstract: $abstract)]);
+        $abstract = $this->resolveAlias(abstract: $abstract);
+
+        return isset($this->services[$abstract]) || isset($this->systemServices[$abstract]);
     }
 
     public function get(string $abstract) : ServiceRegistration|null
     {
-        return $this->services[$this->resolveAlias(abstract: $abstract)] ?? null;
+        $abstract = $this->resolveAlias(abstract: $abstract);
+
+        return $this->services[$abstract] ?? $this->systemServices[$abstract] ?? null;
     }
 
     /**
@@ -151,7 +182,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
     {
         $tagged = [];
 
-        foreach ($this->services as $abstract => $service) {
+        foreach ($this->all() as $abstract => $service) {
             if (in_array($tag, $service->tags, true)) {
                 $tagged[] = $abstract;
             }
@@ -241,6 +272,14 @@ final class ServiceRegistry implements ServiceRegistryInterface
     }
 
     /**
+     * @return array<string, ServiceRegistration>
+     */
+    public function allIncludingSystem() : array
+    {
+        return $this->services + $this->systemServices;
+    }
+
+    /**
      * @return array<string, string>
      */
     public function allAliases() : array
@@ -256,6 +295,14 @@ final class ServiceRegistry implements ServiceRegistryInterface
     public function revision() : int
     {
         return $this->revision;
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function contextual() : array
+    {
+        return $this->contextual + $this->wildcardContextual;
     }
 
     public function resolveAlias(string $abstract) : string
@@ -304,15 +351,21 @@ final class ServiceRegistry implements ServiceRegistryInterface
         ];
     }
 
-    private function register(string $abstract, mixed $concrete, string $lifetime) : ServiceRegistration
+    private function register(string $abstract, mixed $concrete, string $lifetime, bool $deferred = false) : ServiceRegistration
     {
         $registration = $this->services[$abstract] ?? new ServiceRegistration(abstract: $abstract);
         $registration->concrete = $concrete ?? $abstract;
         $registration->lifetime = $lifetime;
+        $registration->deferred = $deferred;
 
         $this->add(definition: $registration);
 
         return $registration;
+    }
+
+    private function addSystem(ServiceRegistration $definition) : void
+    {
+        $this->systemServices[$definition->abstract] = $definition;
     }
 
     private function touch() : void

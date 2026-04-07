@@ -25,6 +25,48 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
 
     public function inspectInjection(object $target) : InjectionReport;
 
+    public function flush() : void;
+
+    public function reset() : void;
+
+    /**
+     * @param array<int, string|\Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface> $providers
+     */
+    public function bootProviders(array $providers) : void;
+
+    /**
+     * @param list<string> $serviceIds
+     * @return list<string>
+     */
+    public function validate(array $serviceIds = []) : array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function describeService(string $id) : array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugPlan(string $id) : array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugTags(string $tag) : array;
+
+    /**
+     * @return array<string, string>
+     */
+    public function debugAliases() : array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugScope() : array;
+
+    public function env(string $key, mixed $default = null) : mixed;
+
     public function openScope() : void;
 
     public function closeScope() : void;
@@ -53,4 +95,6 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
     public function lazy(string $abstract) : LazyProxy;
 
     public function exportMetrics() : string;
+
+    public function forContext(array $context) : ContainerInterface;
 }

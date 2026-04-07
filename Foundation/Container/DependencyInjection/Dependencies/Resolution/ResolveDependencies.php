@@ -90,6 +90,14 @@ final class ResolveDependencies
             return $overrides[$parameter['name']];
         }
 
+        if (
+            $request !== null
+            && $parameter['serviceId'] === null
+            && array_key_exists($parameter['name'], $request->context)
+        ) {
+            return $request->context[$parameter['name']];
+        }
+
         if ($parameter['serviceId'] !== null) {
             return $resolver->resolveRequest(
                 request: $request?->child(serviceId: $parameter['serviceId'])

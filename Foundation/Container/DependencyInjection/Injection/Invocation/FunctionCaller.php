@@ -38,7 +38,7 @@ final class FunctionCaller
             throw new ContainerException(message: 'FunctionCaller is not attached to a resolver.');
         }
 
-        $normalized = $this->normalizeTarget(target: $target);
+        $normalized = $this->normalizeTarget(target: $target, request: $request);
         $reflection = $this->reflect(target: $normalized);
         $arguments  = $this->arguments->resolvePlan(
             plan     : $this->planFor(reflection: $reflection),
@@ -59,16 +59,25 @@ final class FunctionCaller
         return $reflection->invokeArgs($arguments);
     }
 
-    private function normalizeTarget(callable|string $target) : callable|string|array
+    private function normalizeTarget(callable|string $target, ResolveRequest|null $request = null) : callable|string|array
     {
+        $context = $request?->context ?? [];
+
         if (is_string($target) && class_exists($target) && method_exists($target, '__invoke')) {
-            return $this->resolver->get(id: $target);
+            return $context !== []
+                ? $this->resolver->makeInContext(id: $target, parameters: [], context: $context)
+                : $this->resolver->get(id: $target);
         }
 
         if (is_string($target) && str_contains($target, '@')) {
             [$class, $method] = explode('@', $target, 2);
 
-            return [$this->resolver->get(id: $class), $method];
+            return [
+                $context !== []
+                    ? $this->resolver->makeInContext(id: $class, parameters: [], context: $context)
+                    : $this->resolver->get(id: $class),
+                $method
+            ];
         }
 
         if (is_string($target) && str_contains($target, '::')) {
@@ -77,13 +86,23 @@ final class FunctionCaller
 
             return $reflection->isStatic()
                 ? [$class, $method]
-                : [$this->resolver->get(id: $class), $method];
+                : [
+                    $context !== []
+                        ? $this->resolver->makeInContext(id: $class, parameters: [], context: $context)
+                        : $this->resolver->get(id: $class),
+                    $method
+                ];
         }
 
         if (is_array($target) && is_string($target[0]) && class_exists($target[0])) {
             $reflection = new ReflectionMethod($target[0], (string) $target[1]);
             if (! $reflection->isStatic()) {
-                return [$this->resolver->get(id: $target[0]), $target[1]];
+                return [
+                    $context !== []
+                        ? $this->resolver->makeInContext(id: $target[0], parameters: [], context: $context)
+                        : $this->resolver->get(id: $target[0]),
+                    $target[1]
+                ];
             }
         }
 
@@ -138,5 +157,10 @@ final class FunctionCaller
         }
 
         return 'function:' . $reflection->getName();
+    }
+
+    public function clearCache() : void
+    {
+        $this->plans = [];
     }
 }

@@ -13,6 +13,8 @@ interface ServiceRegistryInterface
 
     public function bind(string $abstract, mixed $concrete = null) : ServiceRegistration;
 
+    public function defer(string $abstract, mixed $concrete = null) : ServiceRegistration;
+
     public function singleton(string $abstract, mixed $concrete = null) : ServiceRegistration;
 
     public function scoped(string $abstract, mixed $concrete = null) : ServiceRegistration;

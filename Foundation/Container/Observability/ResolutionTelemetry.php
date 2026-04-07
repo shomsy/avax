@@ -32,4 +32,10 @@ final readonly class ResolutionTelemetry
     {
         return $this->metrics->export();
     }
+
+    public function reset() : void
+    {
+        $this->metrics->reset();
+        $this->timeline->reset();
+    }
 }

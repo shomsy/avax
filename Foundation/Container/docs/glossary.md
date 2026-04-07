@@ -7,10 +7,20 @@
 - `Resolve Request`: one in-flight request for a service id plus overrides and parent chain
 - `Service Blueprint`: cached reflection view of constructor, injectable properties, injectable methods, and shared marker
 - `Injection Report`: a summary of what a target can receive
+- `Context View`: a container view created by `forContext()` that feeds scalar named arguments into resolution and invocation
+- `Deferred Service`: a registration that stays out of the default compile warmup until it is explicitly requested or needed by another compiled service
+- `Compiled Runtime Artifact`: the generated container file that holds direct hot-path service methods
 - `Scope`: an isolated storage frame for scoped instances
 - `Shared Lifetime`: one instance reused across the whole runtime
 - `Scoped Lifetime`: one instance reused only inside the current active scope
 - `Transient Lifetime`: no reuse; resolve again each time
 - `Resolution Policy`: rule set that allows or blocks a resolve request
+- `Validate`: the diagnostics pass that checks obvious registration and blueprint issues without resolving services
+- `Describe Service`: the human-readable service inspection surface
+- `Debug Plan`: the human-readable plan view for a service
+- `Debug Tags`: the human-readable tag view for a tag
+- `Debug Scope`: the human-readable scope storage snapshot
+- `Boot Providers`: the deterministic provider lifecycle that registers then boots providers in dependency order
 - `Telemetry`: runtime counters and timeline events emitted by the resolver
 - `Clock`: the neutral time source used by observability
+- `Environment Hook`: a container-owned env lookup such as `Container::env()`

@@ -63,4 +63,15 @@ final readonly class ManageScopes implements ScopeInterface
         $this->pool->flush();
         $this->store->terminate();
     }
+
+    /**
+     * @return array{shared: array<string, mixed>, scoped: array<int, array<string, mixed>>}
+     */
+    public function snapshot() : array
+    {
+        return [
+            'shared' => $this->pool->snapshot(),
+            'scoped' => $this->store->snapshot()['scoped'],
+        ];
+    }
 }

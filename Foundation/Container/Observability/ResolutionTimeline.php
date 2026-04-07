@@ -29,4 +29,9 @@ final class ResolutionTimeline
     {
         return $this->entries;
     }
+
+    public function reset() : void
+    {
+        $this->entries = [];
+    }
 }

@@ -11,7 +11,8 @@ Read the component in this order:
 5. scope owners under `DependencyInjection/Scopes/`
 6. compiled runtime owners under `Compilation/` and `Runtime/`
 7. root support areas: `Configuration/`, `Observability/`, `Errors/`, `Foundation/`
-7. tests under `tests/`
+8. tests under `tests/`
+9. benchmark harnesses under `tests/benchmarks/`
 
 That order matches the intended mental model:
 
@@ -34,6 +35,15 @@ The facade delegates to the explicit flow owners:
 - `CloseScope`
 - `BootProviders`
 
+The facade also exposes lifecycle, context, and diagnostics helpers:
+
+- `flush()` / `reset()`
+- `bootProviders()`
+- `forContext()`
+- `validate()`
+- `describeService()` and the `debug*()` helpers
+- `env()`
+
 ## Flow Entries
 
 Each flow entry owns one obvious user action:
@@ -45,6 +55,7 @@ Each flow entry owns one obvious user action:
 - `OpenScope`: enter a scope
 - `CloseScope`: leave a scope
 - `BootProviders`: register then boot providers
+- `RegisterServices` also carries `defer()` for lazy compilation/loading
 
 ## Dependency Areas
 
@@ -60,6 +71,8 @@ Each flow entry owns one obvious user action:
 - resolves constructor arguments
 - decides whether a request is allowed
 - owns the runtime storage and build path
+- keeps the compiled runtime attached when it is still valid for the current revision
+- falls back to dynamic resolution for services that stay outside the compiled hot path
 
 `DependencyInjection/Dependencies/Blueprints/`
 
@@ -120,6 +133,7 @@ Each flow entry owns one obvious user action:
 `Configuration/`
 
 - owns assembly options, cache versioning, and runtime settings
+- includes env-backed lookups for container-owned configuration hooks
 
 `Observability/`
 
@@ -148,5 +162,16 @@ The shipped boundary is defended by:
 
 - Docker PHP lint across all repo PHP files
 - Docker smoke tests under `tests/`
+- benchmark harnesses under `tests/benchmarks/`
 
 There is no Composer or PHPUnit harness in this component root today.
+
+## Performance Model
+
+The runtime is designed around one rule:
+
+- reflect once
+- compile once
+- run many times from memory or versioned disk artifacts
+
+Deferred services stay out of the default compile warmup unless they are explicitly requested or needed by a compiled dependency.

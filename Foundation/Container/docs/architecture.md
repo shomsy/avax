@@ -47,8 +47,8 @@ Capabilities are shared runtime abilities used by more than one flow.
 
 - `Capabilities/Definitions`: bindings, contextual rules, extenders, definition storage
 - `Capabilities/Providers`: provider contracts and built-in provider implementations
-- `Capabilities/Resolution`: kernel runtime, engine, pipeline, resolution errors
-- `Capabilities/Injection`: property and method injection
+- `Capabilities/Resolution`: kernel runtime, kernel facade, engine, pipeline, resolution errors
+- `Capabilities/Injection`: property, method, and parameter injection support
 - `Capabilities/Invocation`: callable normalization and execution
 - `Capabilities/Scopes`: scope storage and lifetime strategies
 - `Capabilities/Prototypes`: reflection analysis, prototype cache, prototype models, factories
@@ -60,6 +60,7 @@ Capabilities are shared runtime abilities used by more than one flow.
 `Configuration/` assembles the runtime. It owns:
 
 - `ContainerBuilder`
+- `ContainerConfig`
 - `KernelConfig`
 - `KernelConfigFactory`
 - `AppFactory`
@@ -71,7 +72,13 @@ Configuration wires collaborators. It must not absorb business or runtime behavi
 
 `Foundation/` is reserved for tiny neutral primitives only.
 
-It is intentionally empty right now. That is correct. A placeholder folder is cheaper than a fake utility bucket.
+The current placeholders are:
+
+- `Foundation/Time`
+- `Foundation/Ids`
+
+They are intentionally quiet until real primitives exist. The point is to reserve honest homes without inventing fake
+helpers.
 
 ## Root Owner Patterns
 
@@ -79,6 +86,8 @@ It is intentionally empty right now. That is correct. A placeholder folder is ch
 - `RegisterBindings`: coordinator
 - `BootProviders`: coordinator
 - `ResolveService`: flow entry over the resolution capability
+- `ContainerKernel`: kernel owner
+- `KernelFacade`: internal kernel facade over runtime/state/stores
 - `ResolutionPipeline`: pipeline
 - provider interfaces: ports
 - most capability units: explicit owner units, not forced facades

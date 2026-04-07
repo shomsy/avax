@@ -8,12 +8,13 @@ use Avax\Container\Capabilities\Definitions\Bindings\ContextBuilder;
 use Avax\Container\Capabilities\Definitions\Bindings\Registrar;
 use Avax\Container\Capabilities\Definitions\Contracts\BindingBuilderInterface;
 use Avax\Container\Capabilities\Definitions\Contracts\ContextBuilderInterface;
+use Avax\Container\Capabilities\Definitions\Contracts\RegistryInterface;
 use Avax\Container\Capabilities\Resolution\Kernel\ContainerKernel;
 
 /**
  * Public write-side flow for registering bindings into the container.
  */
-final readonly class RegisterBindings
+final readonly class RegisterBindings implements RegistryInterface
 {
     public function __construct(
         private ContainerKernel $kernel

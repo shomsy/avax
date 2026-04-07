@@ -7,6 +7,8 @@ namespace Avax\Container\Configuration;
 use Avax\Container\Capabilities\Definitions\Bindings\Registrar;
 use Avax\Container\Capabilities\Definitions\Store\DefinitionStore;
 use Avax\Container\Capabilities\Injection\InjectDependencies;
+use Avax\Container\Capabilities\Injection\Methods\MethodInjector;
+use Avax\Container\Capabilities\Injection\Parameters\ResolveMethodParameters;
 use Avax\Container\Capabilities\Injection\Properties\PropertyInjector;
 use Avax\Container\Capabilities\Invocation\InvokeAction;
 use Avax\Container\Capabilities\Observability\Metrics\CollectMetrics;
@@ -32,15 +34,28 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
  */
 final class ContainerBuilder
 {
-    public function build(string $cacheDir, bool $debug = false) : Container
+    /**
+     * @param array<string, mixed> $settings
+     */
+    public function build(
+        string $cacheDir = '',
+        bool $debug = false,
+        array $settings = [],
+        ContainerConfig|null $config = null
+    ) : Container
     {
+        $containerConfig = $config ?? new ContainerConfig(
+            cacheDir: $cacheDir,
+            debug   : $debug,
+            settings: $settings
+        );
         $definitions   = new DefinitionStore;
         $scopeRegistry = new ScopeRegistry;
         $registrar     = new Registrar(definitions: $definitions);
 
         $timeline  = new ResolutionTimeline;
         $metrics   = new CollectMetrics;
-        $cache     = new FilePrototypeCache(directory: $cacheDir !== '' ? $cacheDir : sys_get_temp_dir());
+        $cache     = new FilePrototypeCache(directory: $containerConfig->cacheDirectory());
         $analyzer  = new ReflectionTypeAnalyzer;
         $inspector = new PrototypeAnalyzer(typeAnalyzer: $analyzer);
         $factory   = new ServicePrototypeFactory(cache: $cache, analyzer: $inspector);
@@ -63,10 +78,13 @@ final class ContainerBuilder
             container   : null,
             typeAnalyzer: $analyzer
         );
+        $methodInjector   = new MethodInjector(
+            parameterResolver: new ResolveMethodParameters(resolver: $resolver)
+        );
         $injector         = new InjectDependencies(
             servicePrototypeFactory: $factory,
             propertyInjector       : $propertyInjector,
-            resolver               : $resolver
+            methodInjector         : $methodInjector
         );
 
         $invoker = new InvokeAction(
@@ -75,7 +93,7 @@ final class ContainerBuilder
         );
 
         $scopeManager = new ScopeManager(registry: $scopeRegistry);
-        $config       = (new KernelConfigFactory)->create(
+        $kernelConfig = (new KernelConfigFactory)->create(
             engine          : $engine,
             injector        : $injector,
             invoker         : $invoker,
@@ -84,10 +102,10 @@ final class ContainerBuilder
             timeline        : $timeline,
             metrics         : $metrics,
             policy          : new ContainerPolicy,
-            debug           : $debug
+            debug           : $containerConfig->debug
         );
 
-        $kernel    = new ContainerKernel(definitions: $definitions, config: $config);
+        $kernel    = new ContainerKernel(definitions: $definitions, config: $kernelConfig);
         $container = new Container(kernel: $kernel);
 
         $engine->setContainer(container: $container);
@@ -103,7 +121,7 @@ final class ContainerBuilder
         $scopeRegistry->addSingleton(abstract: DefinitionStore::class, instance: $definitions);
         $scopeRegistry->addSingleton(abstract: ScopeRegistry::class, instance: $scopeRegistry);
 
-        $settings = new Settings(items: []);
+        $settings = new Settings(items: $containerConfig->settings);
         $registrar->instance(abstract: Settings::class, instance: $settings);
         $registrar->instance(abstract: 'config', instance: $settings);
 

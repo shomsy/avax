@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Container;
 
+use Avax\Container\Capabilities\Definitions\Contracts\BindingBuilderInterface;
+use Avax\Container\Capabilities\Definitions\Contracts\ContextBuilderInterface;
 use Avax\Container\Capabilities\Injection\Reports\InjectionReport;
 use Avax\Container\Capabilities\Resolution\Contracts\ContainerRuntimeInterface;
 use Avax\Container\Capabilities\Resolution\Kernel\ContainerKernel;
@@ -102,22 +104,22 @@ final readonly class Container implements ContainerInterface, ContainerRuntimeIn
         return $this->kernel->exportMetrics();
     }
 
-    public function bind(string $abstract, mixed $concrete = null) : \Avax\Container\Capabilities\Definitions\Contracts\BindingBuilderInterface
+    public function bind(string $abstract, mixed $concrete = null) : BindingBuilderInterface
     {
         return $this->registerBindings()->bind(abstract: $abstract, concrete: $concrete);
     }
 
-    public function singleton(string $abstract, mixed $concrete = null) : \Avax\Container\Capabilities\Definitions\Contracts\BindingBuilderInterface
+    public function singleton(string $abstract, mixed $concrete = null) : BindingBuilderInterface
     {
         return $this->registerBindings()->singleton(abstract: $abstract, concrete: $concrete);
     }
 
-    public function scoped(string $abstract, mixed $concrete = null) : \Avax\Container\Capabilities\Definitions\Contracts\BindingBuilderInterface
+    public function scoped(string $abstract, mixed $concrete = null) : BindingBuilderInterface
     {
         return $this->registerBindings()->scoped(abstract: $abstract, concrete: $concrete);
     }
 
-    public function when(string $consumer) : \Avax\Container\Capabilities\Definitions\Contracts\ContextBuilderInterface
+    public function when(string $consumer) : ContextBuilderInterface
     {
         return $this->registerBindings()->when(consumer: $consumer);
     }

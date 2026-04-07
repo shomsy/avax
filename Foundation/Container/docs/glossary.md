@@ -1,6 +1,8 @@
 # Glossary
 
 - `Flow`: a system behavior entry such as `ResolveService` or `BootProviders`
+- `Sub-flow`: a recognizable inner part of a flow when that extra level reduces noise
+- `Step`: one ordered piece inside a pipeline or other explicit sequence
 - `Capability`: a shared runtime ability used by flows
 - `Configuration`: assembly and wiring of the container runtime
 - `Foundation`: tiny neutral primitives with no stronger home

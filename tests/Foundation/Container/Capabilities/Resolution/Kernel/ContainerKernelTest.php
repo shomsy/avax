@@ -7,6 +7,8 @@ namespace Avax\Container\Tests\Capabilities\Resolution\Kernel;
 use Avax\Container\Capabilities\Definitions\Store\DefinitionStore;
 use Avax\Container\Capabilities\Definitions\Store\ServiceDefinition;
 use Avax\Container\Capabilities\Injection\InjectDependencies;
+use Avax\Container\Capabilities\Injection\Methods\MethodInjector;
+use Avax\Container\Capabilities\Injection\Parameters\ResolveMethodParameters;
 use Avax\Container\Capabilities\Injection\Properties\PropertyInjector;
 use Avax\Container\Capabilities\Invocation\InvokeAction;
 use Avax\Container\Capabilities\Observability\Metrics\CollectMetrics;
@@ -76,7 +78,9 @@ final class ContainerKernelTest extends TestCase
         $injector         = new InjectDependencies(
             servicePrototypeFactory: $factory,
             propertyInjector       : $propertyInjector,
-            resolver               : $resolver
+            methodInjector         : new MethodInjector(
+                parameterResolver: new ResolveMethodParameters(resolver: $resolver)
+            )
         );
         $invoker          = new InvokeAction(container: null, resolver: $resolver);
 

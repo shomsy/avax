@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\Container\Tests\Configuration;
 
 use Avax\Container\Capabilities\Injection\InjectDependencies;
+use Avax\Container\Capabilities\Injection\Methods\MethodInjector;
+use Avax\Container\Capabilities\Injection\Parameters\ResolveMethodParameters;
 use Avax\Container\Capabilities\Injection\Properties\PropertyInjector;
 use Avax\Container\Capabilities\Invocation\InvokeAction;
 use Avax\Container\Capabilities\Observability\Metrics\CollectMetrics;
@@ -15,7 +17,7 @@ use Avax\Container\Capabilities\Prototypes\Analyze\ReflectionTypeAnalyzer;
 use Avax\Container\Capabilities\Prototypes\Cache\FilePrototypeCache;
 use Avax\Container\Capabilities\Prototypes\Factory\ServicePrototypeFactory;
 use Avax\Container\Capabilities\Resolution\Engine\DependencyResolver;
-use Avax\Container\Capabilities\Resolution\Engine\ResolutionEngineInterface;
+use Avax\Container\Capabilities\Resolution\Engine\EngineInterface;
 use Avax\Container\Capabilities\Scopes\ScopeManager;
 use Avax\Container\Capabilities\Scopes\ScopeRegistry;
 use Avax\Container\Configuration\KernelConfigFactory;
@@ -26,7 +28,7 @@ final class KernelConfigFactoryTest extends TestCase
     public function test_debug_true_config() : void
     {
         $config = $this->makeFactory()->create(
-            engine          : $this->createStub(ResolutionEngineInterface::class),
+            engine          : $this->createStub(EngineInterface::class),
             injector        : $this->makeInjector(),
             invoker         : $this->makeInvoker(),
             scopes          : new ScopeManager(registry: new ScopeRegistry),
@@ -45,7 +47,7 @@ final class KernelConfigFactoryTest extends TestCase
     public function test_debug_false_config() : void
     {
         $config = $this->makeFactory()->create(
-            engine          : $this->createStub(ResolutionEngineInterface::class),
+            engine          : $this->createStub(EngineInterface::class),
             injector        : $this->makeInjector(),
             invoker         : $this->makeInvoker(),
             scopes          : new ScopeManager(registry: new ScopeRegistry),
@@ -64,7 +66,7 @@ final class KernelConfigFactoryTest extends TestCase
     public function test_override_honored() : void
     {
         $config = $this->makeFactory()->create(
-            engine          : $this->createStub(ResolutionEngineInterface::class),
+            engine          : $this->createStub(EngineInterface::class),
             injector        : $this->makeInjector(),
             invoker         : $this->makeInvoker(),
             scopes          : new ScopeManager(registry: new ScopeRegistry),
@@ -103,7 +105,9 @@ final class KernelConfigFactoryTest extends TestCase
         return new InjectDependencies(
             servicePrototypeFactory: $this->makePrototypeFactory(),
             propertyInjector       : new PropertyInjector(container: null),
-            resolver               : $resolver
+            methodInjector         : new MethodInjector(
+                parameterResolver: new ResolveMethodParameters(resolver: $resolver)
+            )
         );
     }
 

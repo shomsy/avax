@@ -16,6 +16,27 @@ ADR-lite decision log for non-trivial choices.
 
 ## Decisions
 
+- `id`: DEC-003
+  `recorded_at`: 2026-04-07 04:05 CEST
+  `decision_at`: 2026-04-07 04:05 CEST
+  `updated_at`: 2026-04-07 04:05 CEST
+  `status`: accepted
+  `context`: The first repack established `Flows/`, `Capabilities/`,
+    `Configuration/`, and `Foundation/`, but the runtime still lacked a few
+    explicit owner units required by the target architecture: `KernelFacade`,
+    `ContainerConfig`, the `Methods/` and `Parameters/` injection lanes, and a
+    canonical `EngineInterface`.
+  `decision`: Refine the repacked architecture by introducing `KernelFacade`
+    as the internal kernel boundary, `ContainerConfig` as the assembly options
+    root, `EngineInterface` as the engine contract name, and explicit
+    `MethodInjector` and `ResolveMethodParameters` units inside the injection
+    capability.
+  `consequences`: The runtime now reads more directly in the target DSL, build
+    options have an owned configuration model, injection has honest internal
+    lanes, and the architecture reserves `Foundation/Time` and
+    `Foundation/Ids` without inventing fake primitives.
+  `links`: `Capabilities/Resolution/Kernel/KernelFacade.php`, `Configuration/ContainerConfig.php`, `Capabilities/Resolution/Engine/EngineInterface.php`, `Capabilities/Injection/Methods/MethodInjector.php`, `Capabilities/Injection/Parameters/ResolveMethodParameters.php`, `docs/architecture.md`
+
 - `id`: DEC-002
   `recorded_at`: 2026-04-07 04:05 CEST
   `decision_at`: 2026-04-07 04:05 CEST

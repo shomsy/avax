@@ -22,7 +22,7 @@ use Throwable;
 /**
  * Shared engine that turns one resolution request into a value or object.
  */
-final class ResolutionEngine implements ResolutionEngineInterface
+final class ResolutionEngine implements EngineInterface
 {
     private ContainerRuntimeInterface|null $container = null;
 

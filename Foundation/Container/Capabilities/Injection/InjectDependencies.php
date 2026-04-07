@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Container\Capabilities\Injection;
 
+use Avax\Container\Capabilities\Injection\Methods\MethodInjector;
 use Avax\Container\Capabilities\Injection\Properties\PropertyInjector;
 use Avax\Container\Capabilities\Prototypes\Contracts\ServicePrototypeFactoryInterface;
 use Avax\Container\Capabilities\Prototypes\Model\ServicePrototype;
-use Avax\Container\Capabilities\Resolution\Engine\DependencyResolver;
 use Avax\Container\Capabilities\Resolution\Errors\ContainerException;
 use Avax\Container\Capabilities\Resolution\Errors\ResolutionException;
 use Avax\Container\Capabilities\Resolution\Kernel\KernelContext;
@@ -22,7 +22,7 @@ final class InjectDependencies
     public function __construct(
         private readonly ServicePrototypeFactoryInterface $servicePrototypeFactory,
         private readonly PropertyInjector                 $propertyInjector,
-        private readonly DependencyResolver               $resolver,
+        private readonly MethodInjector                   $methodInjector,
         private ContainerInterface|null                   $container = null
     ) {}
 
@@ -111,16 +111,13 @@ final class InjectDependencies
             throw new ContainerException(message: 'Container not available for method injection.');
         }
 
-        foreach ($prototype->injectedMethods as $methodPrototype) {
-            $arguments = $this->resolver->resolveParameters(
-                parameters: $methodPrototype->parameters,
-                overrides : $overrides,
-                container : $this->container,
-                context   : $context,
-            );
-
-            $method = $reflection->getMethod(name: $methodPrototype->name);
-            $method->invoke($target, ...$arguments);
-        }
+        $this->methodInjector->inject(
+            target    : $target,
+            prototype : $prototype,
+            reflection: $reflection,
+            overrides : $overrides,
+            container : $this->container,
+            context   : $context
+        );
     }
 }

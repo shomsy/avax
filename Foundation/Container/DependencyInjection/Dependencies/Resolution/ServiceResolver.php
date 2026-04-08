@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Dependencies\Resolution;
 
-use Avax\Container\Compilation\CompileContainer;
 use Avax\Container\Compilation\CompileReport;
 use Avax\Container\ContainerInterface;
 use Avax\Container\Configuration\CreateContainerConfig;
@@ -13,6 +12,7 @@ use Avax\Container\Errors\ContainerException;
 use Avax\Container\Errors\ServiceNotFoundException;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\CreateServiceBlueprint;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\ServiceBlueprint;
+use Avax\Container\DependencyInjection\Dependencies\Providers\DeferredProviderRegistry;
 use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface;
 use Avax\Container\DependencyInjection\Injection\Invocation\FunctionCaller;
 use Avax\Container\DependencyInjection\Injection\Methods\InjectMethods;
@@ -27,7 +27,6 @@ use Avax\Container\DependencyInjection\Scopes\Lifetimes\ScopedLifetime;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\SharedLifetime;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\TransientLifetime;
 use Avax\Container\DependencyInjection\Scopes\ManageScopes;
-use Avax\Container\Runtime\HotPathInliner;
 use Avax\Container\Runtime\LazyProxy;
 use Avax\Container\Observability\RuntimeReport;
 use Closure;
@@ -44,23 +43,12 @@ final class ServiceResolver
 
     private readonly ResolutionPolicy $policy;
 
-    private readonly CompileContainer|null $compiler;
+    private readonly CompiledRuntime $compiledRuntime;
 
-    private readonly HotPathInliner $inliner;
-
-    private int $compiledRevision = -1;
+    private readonly DeferredProviderRegistry $deferredProviders;
 
     /** @var array<string, true> */
     private array $lazyServices = [];
-
-    /** @var array<class-string<ServiceProviderInterface>, ServiceProviderInterface> */
-    private array $deferredProviders = [];
-
-    /** @var array<string, class-string<ServiceProviderInterface>> */
-    private array $deferredProviderServices = [];
-
-    /** @var array<class-string<ServiceProviderInterface>, true> */
-    private array $bootedProviders = [];
 
     public function __construct(
         private readonly ServiceRegistry        $registrations,
@@ -73,8 +61,8 @@ final class ServiceResolver
         ResolutionMetrics|null                 $metrics = null,
         ResolutionTimeline|null                $timeline = null,
         ResolutionPolicy|null                  $policy = null,
-        CompileContainer|null                  $compiler = null,
-        HotPathInliner|null                    $inliner = null,
+        CompiledRuntime|null                   $compiledRuntime = null,
+        DeferredProviderRegistry|null          $deferredProviders = null,
         private readonly string                $diagnosticsMode = CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL
     ) {
         $this->telemetry = new ResolutionTelemetry(
@@ -82,8 +70,8 @@ final class ServiceResolver
             timeline: $timeline ?? new ResolutionTimeline
         );
         $this->policy = $policy ?? new ResolutionPolicy;
-        $this->compiler = $compiler;
-        $this->inliner = $inliner ?? new HotPathInliner;
+        $this->compiledRuntime = $compiledRuntime ?? new CompiledRuntime(metrics: $metrics);
+        $this->deferredProviders = $deferredProviders ?? new DeferredProviderRegistry;
     }
 
     /**
@@ -141,30 +129,30 @@ final class ServiceResolver
     }
 
     /**
-     * Clears authored registrations, runtime state, and compiled attachments.
+     * Clears derived caches, runtime state, and compiled artifacts.
      */
     public function flush() : void
     {
         $this->blueprints->flush();
-        $this->compiler?->flush();
-        $this->inliner->detach();
-        $this->registrations->flush();
+        $this->compiledRuntime->flush();
+        $this->registrations->resetDerivedState();
         $this->scopes->terminate();
         $this->caller->clearCache();
         $this->telemetry->reset();
         $this->lazyServices = [];
-        $this->deferredProviders = [];
-        $this->deferredProviderServices = [];
-        $this->bootedProviders = [];
-        $this->compiledRevision = -1;
     }
 
     /**
-     * Resets the resolver to an empty runtime state.
+     * Resets disposable runtime state without mutating canonical registrations.
      */
     public function reset() : void
     {
-        $this->flush();
+        $this->compiledRuntime->reset();
+        $this->registrations->resetDerivedState();
+        $this->scopes->terminate();
+        $this->caller->clearCache();
+        $this->telemetry->reset();
+        $this->lazyServices = [];
     }
 
     /**
@@ -198,7 +186,7 @@ final class ServiceResolver
         foreach ($this->registrations->allAliases() as $alias => $target) {
             if (
                 ! $this->registrations->has(abstract: $target)
-                && ! isset($this->deferredProviderServices[$target])
+                && ! $this->deferredProviders->isDeferred(serviceId: $target)
                 && ! class_exists($target)
                 && ! interface_exists($target)
             ) {
@@ -244,7 +232,7 @@ final class ServiceResolver
         $blueprint = is_string($blueprintClass)
             ? $this->blueprints->createFor(class: $blueprintClass)
             : null;
-        $compiledArtifact = $this->compiler?->report(serviceIds: [$resolved]);
+        $compiledArtifact = $this->compiledRuntime->report(serviceIds: [$resolved]);
         $concrete = $registration?->concrete;
 
         return [
@@ -257,8 +245,8 @@ final class ServiceResolver
                 : $concrete,
             'lifetime' => $lifetimePlan->name,
             'lifetimePlan' => $lifetimePlan->toArray(),
-            'deferred' => ($registration?->deferred ?? false) || isset($this->deferredProviderServices[$resolved]),
-            'deferredProvider' => $this->deferredProviderServices[$resolved] ?? null,
+            'deferred' => ($registration?->deferred ?? false) || $this->deferredProviders->isDeferred(serviceId: $resolved),
+            'deferredProvider' => $this->deferredProviders->ownerOf(serviceId: $resolved),
             'tags' => $registration?->tags ?? [],
             'aliases' => array_keys(array_filter(
                 $this->registrations->allAliases(),
@@ -274,11 +262,11 @@ final class ServiceResolver
                 'injectableMethods' => $blueprint->injectableMethods,
                 'fingerprint' => $blueprint->fingerprint,
             ] : null,
-            'compiled' => $this->isCompiled(id: $resolved),
-            'warmedUp' => $this->isWarmedUp(),
+            'compiled' => $this->compiledRuntime->isCompiled(registrations: $this->registrations, serviceId: $resolved),
+            'warmedUp' => $this->compiledRuntime->isWarmedUp(),
             'lazy' => $this->isLazy(id: $resolved),
             'cacheState' => $this->cacheStateFor(serviceId: $resolved),
-            'compiledState' => $this->compiledStateFor(serviceId: $resolved),
+            'compiledState' => $this->compiledRuntime->state(registrations: $this->registrations, serviceId: $resolved),
             'compiledArtifact' => $compiledArtifact?->toArray() ?? ['available' => false],
         ];
     }
@@ -309,7 +297,7 @@ final class ServiceResolver
         $resolved = $this->registrations->resolveAlias(abstract: $id);
 
         return ($this->registrations->get(abstract: $resolved)?->deferred ?? false)
-            || isset($this->deferredProviderServices[$resolved]);
+            || $this->deferredProviders->isDeferred(serviceId: $resolved);
     }
 
     /**
@@ -328,10 +316,8 @@ final class ServiceResolver
     public function isCompiled(string $id) : bool
     {
         $resolved = $this->registrations->resolveAlias(abstract: $id);
-        $this->refreshCompiledRuntime(serviceId: $resolved);
 
-        return $this->inliner->has(serviceId: $resolved)
-            || ($this->compiler?->contains(serviceId: $resolved) ?? false);
+        return $this->compiledRuntime->isCompiled(registrations: $this->registrations, serviceId: $resolved);
     }
 
     /**
@@ -339,11 +325,7 @@ final class ServiceResolver
      */
     public function isWarmedUp() : bool
     {
-        if ($this->inliner->isAttached()) {
-            return true;
-        }
-
-        return $this->compiler?->report()->available ?? false;
+        return $this->compiledRuntime->isWarmedUp();
     }
 
     /**
@@ -351,7 +333,7 @@ final class ServiceResolver
      */
     public function compileReport(array $serviceIds = []) : CompileReport|null
     {
-        return $this->compiler?->report(serviceIds: $serviceIds);
+        return $this->compiledRuntime->report(serviceIds: $serviceIds);
     }
 
     /**
@@ -361,15 +343,15 @@ final class ServiceResolver
     {
         $lazyServices = array_keys($this->lazyServices);
         sort($lazyServices);
-        $deferredProviders = $this->deferredProviderServices;
+        $deferredProviders = $this->deferredProviders->services();
         ksort($deferredProviders);
         $scopeSnapshot = $this->scopes->snapshot();
 
         return new RuntimeReport(
             registrationRevision: $this->registrations->revision(),
-            compiledRevision    : $this->compiledRevision,
-            compiledAttached    : $this->inliner->isAttached(),
-            warmedUp            : $this->isWarmedUp(),
+            compiledRevision    : $this->compiledRuntime->compiledRevision(),
+            compiledAttached    : $this->compiledRuntime->isAttached(),
+            warmedUp            : $this->compiledRuntime->isWarmedUp(),
             diagnosticsMode     : $this->diagnosticsMode,
             lazyServices        : $lazyServices,
             aliases             : $this->registrations->allAliases(),
@@ -384,7 +366,7 @@ final class ServiceResolver
                     $scopeSnapshot['scoped']
                 ),
             ],
-            compiled            : $this->compiler?->report()
+            compiled            : $this->compiledRuntime->report()
         );
     }
 
@@ -477,7 +459,7 @@ final class ServiceResolver
         if (
             $this->scopes->has(abstract: $id)
             || $this->registrations->has(abstract: $id)
-            || isset($this->deferredProviderServices[$id])
+            || $this->deferredProviders->isDeferred(serviceId: $id)
         ) {
             return true;
         }
@@ -697,7 +679,7 @@ final class ServiceResolver
         $this->bootDeferredProvidersFor(serviceIds: $serviceIds);
 
         $validationIssues = [];
-        if ($this->compiler !== null && $this->compiler->shouldValidateBeforeCompile()) {
+        if ($this->compiledRuntime->shouldValidateBeforeCompile()) {
             $validationIssues = $this->validate(serviceIds: $serviceIds);
             if ($validationIssues !== []) {
                 throw new ContainerException(
@@ -709,11 +691,15 @@ final class ServiceResolver
         $classes = $this->classesForWarmup(serviceIds: $serviceIds);
         $this->blueprints->warm(classes: $classes);
 
-        if ($this->compiler !== null) {
-            $this->inliner->attach(
-                $this->compiler->compile(serviceIds: $serviceIds, validationIssues: $validationIssues)
+        $compiled = $this->compiledRuntime->compile(
+            serviceIds       : $serviceIds,
+            validationIssues : $validationIssues
+        );
+        if ($compiled !== null) {
+            $this->compiledRuntime->attach(
+                compiled: $compiled,
+                revision: $this->registrations->revision()
             );
-            $this->compiledRevision = $this->registrations->revision();
         }
 
         $this->telemetry->metrics()->increment(name: 'container_compile_total');
@@ -737,9 +723,7 @@ final class ServiceResolver
     public function flushCompiled() : void
     {
         $this->blueprints->flush();
-        $this->compiler?->flush();
-        $this->inliner->detach();
-        $this->compiledRevision = -1;
+        $this->compiledRuntime->flush();
         $this->telemetry->metrics()->increment(name: 'container_compiled_flushes_total');
     }
 
@@ -811,7 +795,10 @@ final class ServiceResolver
     public function resolveRequest(ResolveRequest $request) : mixed
     {
         $request = $this->normalizeRequest(request: $request);
-        $this->bootDeferredProviderIfNeeded(serviceId: $request->serviceId);
+        $this->deferredProviders->bootIfNeeded(
+            serviceId: $request->serviceId,
+            metrics  : $this->telemetry->metrics()
+        );
 
         $this->telemetry->timeline()->record(
             action   : 'resolve',
@@ -841,7 +828,7 @@ final class ServiceResolver
             }
 
             $registration = $this->registrationFor(request: $request);
-            $resolved = $this->shouldUseCompiled(request: $request)
+            $resolved = $this->compiledRuntime->shouldUse(registrations: $this->registrations, request: $request)
                 ? $this->resolveCompiledRequest(request: $request)
                 : $this->resolveDynamicRequest(request: $request);
 
@@ -1274,38 +1261,6 @@ final class ServiceResolver
         );
     }
 
-    private function refreshCompiledRuntime(string|null $serviceId = null) : void
-    {
-        if ($this->compiler === null) {
-            return;
-        }
-
-        $revision = $this->registrations->revision();
-        if ($revision === $this->compiledRevision && $this->inliner->isAttached()) {
-            return;
-        }
-
-        $compiled = $this->compiler->load(
-            serviceIds: $serviceId !== null ? [$serviceId] : []
-        );
-        if ($compiled !== null) {
-            $this->inliner->attach($compiled);
-        } else {
-            $artifactAvailable = $this->compiler->report()->available;
-            $requestedIsCompiled = $serviceId !== null && $this->compiler->contains(serviceId: $serviceId);
-
-            if (! $artifactAvailable || $requestedIsCompiled) {
-                $this->inliner->detach();
-            }
-        }
-
-        if (! $this->inliner->isAttached() && ! $this->compiler->report()->available) {
-            $this->inliner->detach();
-        }
-
-        $this->compiledRevision = $revision;
-    }
-
     /**
      * @return array<string, mixed>
      */
@@ -1316,36 +1271,17 @@ final class ServiceResolver
         return [
             'cached' => $this->scopes->has(abstract: $serviceId),
             'lazy' => isset($this->lazyServices[$serviceId]),
-            'deferred' => isset($this->deferredProviderServices[$serviceId]),
+            'deferred' => $this->deferredProviders->isDeferred(serviceId: $serviceId),
             'scopeDepth' => count($snapshot['scoped']),
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function compiledStateFor(string $serviceId) : array
-    {
-        $this->refreshCompiledRuntime(serviceId: $serviceId);
-        $report = $this->compiler?->report(serviceIds: [$serviceId]);
-
-        return [
-            'attached' => $this->inliner->isAttached(),
-            'entryAttached' => $this->inliner->has(serviceId: $serviceId),
-            'containsEntry' => $this->compiler?->contains(serviceId: $serviceId) ?? false,
-            'artifactAvailable' => $report?->available ?? false,
-            'compileMode' => $report?->compileMode ?? '',
         ];
     }
 
     private function bootDeferredProviderIfNeeded(string $serviceId) : void
     {
-        $providerClass = $this->deferredProviderServices[$serviceId] ?? null;
-        if ($providerClass === null || isset($this->bootedProviders[$providerClass])) {
-            return;
-        }
-
-        $this->bootDeferredProviderClass(providerClass: $providerClass);
+        $this->deferredProviders->bootIfNeeded(
+            serviceId: $serviceId,
+            metrics  : $this->telemetry->metrics()
+        );
     }
 
     /**
@@ -1353,64 +1289,16 @@ final class ServiceResolver
      */
     private function bootDeferredProvidersFor(array $serviceIds) : void
     {
-        foreach (array_values(array_unique($serviceIds)) as $serviceId) {
-            $resolved = $this->registrations->resolveAlias(abstract: $serviceId);
-            $this->bootDeferredProviderIfNeeded(serviceId: $resolved);
-        }
-    }
-
-    /**
-     * @param class-string<ServiceProviderInterface> $providerClass
-     */
-    private function bootDeferredProviderClass(string $providerClass) : void
-    {
-        $provider = $this->deferredProviders[$providerClass] ?? null;
-        if (! $provider instanceof ServiceProviderInterface) {
-            throw new ContainerException(message: "Deferred provider [{$providerClass}] is not registered.");
-        }
-
-        foreach ($provider->dependsOn() as $dependencyClass) {
-            if (isset($this->deferredProviders[$dependencyClass]) && ! isset($this->bootedProviders[$dependencyClass])) {
-                $this->bootDeferredProviderClass(providerClass: $dependencyClass);
-            }
-        }
-
-        $provider->register();
-        $this->telemetry->metrics()->increment(name: 'container_provider_register_total');
-        $provider->boot();
-        $this->telemetry->metrics()->increment(name: 'container_provider_boot_total');
-        $this->telemetry->metrics()->increment(name: 'container_provider_deferred_boot_total');
-        $this->bootedProviders[$providerClass] = true;
-    }
-
-    private function shouldUseCompiled(ResolveRequest $request) : bool
-    {
-        $this->refreshCompiledRuntime(serviceId: $request->serviceId);
-
-        if (! $this->inliner->has(serviceId: $request->serviceId)) {
-            return false;
-        }
-
-        $consumer = $request->parent?->serviceId ?? $request->consumer;
-        if ($consumer === null) {
-            return true;
-        }
-
-        return $this->registrations->getContextualMatch(
-            consumer: $consumer,
-            needs   : $request->serviceId
-        ) === null;
+        $this->deferredProviders->bootFor(
+            serviceIds    : $serviceIds,
+            registrations : $this->registrations,
+            metrics       : $this->telemetry->metrics()
+        );
     }
 
     private function resolveCompiledRequest(ResolveRequest $request) : mixed
     {
-        $this->telemetry->metrics()->increment(name: 'container_compiled_container_resolve_total');
-
-        return $this->inliner->resolve(
-            serviceId: $request->serviceId,
-            resolver : $this,
-            request  : $request
-        );
+        return $this->compiledRuntime->resolve(resolver: $this, request: $request);
     }
 
     /**
@@ -1429,36 +1317,12 @@ final class ServiceResolver
      */
     public function registerDeferredProvider(ServiceProviderInterface $provider, array $serviceIds) : void
     {
-        $providerClass = $provider::class;
-        $ids = array_values(array_unique(array_filter(
-            array_map(
-                fn(string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId),
-                $serviceIds
-            ),
-            static fn(string $serviceId) : bool => $serviceId !== ''
-        )));
-
-        sort($ids);
-
-        if ($ids === []) {
-            throw new ContainerException(message: "Deferred provider [{$providerClass}] must declare at least one provided service.");
-        }
-
-        $this->deferredProviders[$providerClass] = $provider;
-
-        foreach ($ids as $serviceId) {
-            $existing = $this->deferredProviderServices[$serviceId] ?? null;
-            if ($existing !== null && $existing !== $providerClass) {
-                throw new ContainerException(
-                    message: "Deferred provider conflict for service [{$serviceId}] between [{$existing}] and [{$providerClass}]."
-                );
-            }
-
-            $this->deferredProviderServices[$serviceId] = $providerClass;
-        }
-
-        $this->telemetry->metrics()->increment(name: 'container_provider_deferred_total');
-        $this->telemetry->metrics()->increment(name: 'container_provider_deferred_services_total', by: count($ids));
+        $this->deferredProviders->register(
+            provider      : $provider,
+            serviceIds    : $serviceIds,
+            registrations : $this->registrations,
+            metrics       : $this->telemetry->metrics()
+        );
     }
 
     private function injectTarget(object $target, ResolveRequest $request) : object

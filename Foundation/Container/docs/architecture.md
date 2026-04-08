@@ -46,6 +46,8 @@ The facade also exposes lifecycle, context, and diagnostics helpers:
 - `hasAlias()` / `isDeferred()` / `isLazy()` / `isCompiled()` / `isWarmedUp()`
 - `env()`
 
+`CreateContainer` stays the only public assembly flow, while internal collaborator wiring is split under `Configuration/Assembly/`.
+
 ## Flow Entries
 
 Each flow entry owns one obvious user action:
@@ -72,7 +74,9 @@ Each flow entry owns one obvious user action:
 - owns the runtime resolver
 - resolves constructor arguments
 - decides whether a request is allowed
-- owns the runtime storage and build path
+- delegates compiled hot-path attachment to `CompiledRuntime`
+- delegates deferred provider ownership and lazy boot to `DeferredProviderRegistry`
+- coordinates runtime storage and build path
 - keeps the compiled runtime attached when it is still valid for the current revision
 - falls back to dynamic resolution for services that stay outside the compiled hot path
 
@@ -86,6 +90,7 @@ Each flow entry owns one obvious user action:
 
 - writes and reads the generated compiled runtime artifact
 - writes sidecar metadata with checksum, config hash, environment, lifetime plans, and per-service signatures
+- enforces artifact compatibility across cache version, config hash, environment, compile mode, and strictness
 - records reused and invalidated services plus invalidation reasons for incremental recompilation
 - quarantines corrupt artifacts before they can silently drift into the hot path
 - turns compiled blueprints into direct service methods
@@ -97,6 +102,11 @@ Each flow entry owns one obvious user action:
 - owns shared singleton storage
 - owns lazy proxy behavior
 - owns compiled method call caching
+
+`Configuration/Assembly/`
+
+- keeps assembly internals out of `CreateContainer`
+- wires observability, runtime, and seeded system services into one container instance
 
 `DependencyInjection/Dependencies/Providers/`
 
@@ -193,5 +203,5 @@ Deferred services stay out of the default compile warmup unless they are explici
 Compile-time discipline is mode-aware:
 
 - `production`: fastest path, checksum-validated artifacts, fail closed on corruption
-- `dev`: checksum-validated artifacts with dynamic fallback on corruption or staleness
+- `dev`: checksum-validated artifacts with dynamic fallback on corruption, staleness, or compatibility mismatch
 - `ci` / `warmup`: validate before compile and reject invalid graphs before a compiled artifact is accepted

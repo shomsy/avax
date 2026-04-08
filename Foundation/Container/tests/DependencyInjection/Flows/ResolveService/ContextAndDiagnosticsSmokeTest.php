@@ -87,6 +87,7 @@ assertTrue(! $container->isDeferred(DiagnosticsContract::class), 'Non-deferred s
 assertTrue($container->isCompiled(DiagnosticsContract::class), 'Public compiled status helpers should reflect compiled entries.');
 assertTrue($container->isWarmedUp(), 'Public warmup status helpers should reflect the compiled artifact state.');
 assertTrue($compileReport !== null && $compileReport->available, 'Compile report should expose the active compiled artifact.');
+assertTrue($compileReport?->compatible ?? false, 'Compile report should expose artifact compatibility.');
 assertTrue(str_contains($compileReport?->toJson() ?? '', '"available": true'), 'Compile report should be JSON serializable.');
 assertSame($compileReport?->fingerprint, $runtimeReport->compiled?->fingerprint, 'Runtime report should point to the same compiled artifact report.');
 assertTrue($runtimeReport->compiledAttached || $runtimeReport->warmedUp, 'Runtime report should expose compiled runtime state.');

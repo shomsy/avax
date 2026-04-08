@@ -64,6 +64,13 @@ If compiled artifacts are not being used:
 
 If artifacts look stale, use `flushCompiled()` or bump `cacheVersion`.
 
+If the compiled artifact is incompatible with the current runtime:
+
+1. inspect `compileReport()->compatible`
+2. inspect `compileReport()->compatibilityIssues`
+3. confirm whether `configHash`, `environment`, `compileMode`, or `strict` changed between compile and load
+4. rebuild the artifact instead of assuming the hot path is still valid
+
 If the compiled artifact is corrupt:
 
 1. production-style compile modes fail closed and quarantine the artifact
@@ -92,10 +99,11 @@ Context values are used as named fallbacks, not as a second service registry.
 
 If tests or long-running workers need a clean slate:
 
-1. call `flush()` to clear user registrations, pools, scopes, and compiled artifacts
-2. call `reset()` when you want the same clean-runtime boundary under a clearer name
+1. call `reset()` to clear pools, scopes, lazy markers, telemetry state, and other disposable runtime caches while keeping registrations and compiled artifacts
+2. call `flush()` when you also want compiled artifacts and derived caches cleared
+3. authored registrations stay intact across both operations
 
-Both operations are deterministic and leave the container ready for a fresh bootstrap.
+Both operations are deterministic and leave the container ready for another resolve cycle.
 
 ## Status Helpers
 

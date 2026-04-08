@@ -52,23 +52,20 @@ $container->flush();
 assertTrue(! is_file($artifact), 'Flush should remove the compiled runtime artifact.');
 assertSame([], $container->debugScope()['shared'], 'Flush should clear shared runtime storage.');
 assertSame([], $container->debugScope()['scoped'], 'Flush should clear scoped runtime storage.');
-assertThrows(
-    ServiceNotFoundException::class,
-    static fn() => $container->get(LifecycleContract::class),
-    'Flush should clear user registrations.'
-);
-
-$container->singleton(LifecycleContract::class, LifecycleService::class);
+assertSame('lifecycle', $container->get(LifecycleContract::class)->id(), 'Flush should preserve canonical registrations.');
 $container->openScope();
+assertSame('scoped', $container->get(LifecycleScopedService::class)->name, 'Flush should preserve scoped registrations.');
+$container->closeScope();
+
+$container->compileContainer([LifecycleContract::class, LifecycleScopedService::class]);
 $container->get(LifecycleContract::class);
+$container->openScope();
+$container->get(LifecycleScopedService::class);
 $container->reset();
 
+assertTrue(is_file($artifact), 'Reset should preserve compiled artifacts on disk.');
 assertSame([], $container->debugScope()['shared'], 'Reset should also leave shared runtime storage empty.');
 assertSame([], $container->debugScope()['scoped'], 'Reset should also leave scoped runtime storage empty.');
-assertThrows(
-    ServiceNotFoundException::class,
-    static fn() => $container->get(LifecycleContract::class),
-    'Reset should restore a clean runtime.'
-);
+assertSame('lifecycle', $container->get(LifecycleContract::class)->id(), 'Reset should preserve canonical registrations.');
 
 echo basename(__FILE__) . " ok\n";

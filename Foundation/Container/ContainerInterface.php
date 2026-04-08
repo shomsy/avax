@@ -59,12 +59,16 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
     public function inspectInjection(object $target) : InjectionReport;
 
     /**
-     * Clears user registrations, runtime state, and compiled artifacts.
+     * Clears derived caches, runtime state, and compiled artifacts.
+     *
+     * Canonical authored registrations stay intact.
      */
     public function flush() : void;
 
     /**
-     * Resets the container runtime to a clean state.
+     * Resets disposable runtime state to a clean boundary.
+     *
+     * Canonical registrations and compiled artifacts stay intact.
      */
     public function reset() : void;
 
@@ -184,7 +188,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
     public function isCompiled(string $id) : bool;
 
     /**
-     * Reports whether the compiled artifact is attached and ready.
+     * Reports whether the compiled runtime is attached or an artifact is available to attach.
      */
     public function isWarmedUp() : bool;
 

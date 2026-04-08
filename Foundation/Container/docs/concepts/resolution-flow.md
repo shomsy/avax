@@ -31,6 +31,8 @@ Main collaborators:
 - `Compilation/CompileContainer.php`
 - `Compilation/ArtifactMetadata.php`
 - `Compilation/CompileReport.php`
+- `DependencyInjection/Dependencies/Resolution/CompiledRuntime.php`
+- `DependencyInjection/Dependencies/Providers/DeferredProviderRegistry.php`
 - `Runtime/HotPathInliner.php`
 - `Runtime/ServicePool.php`
 - `DependencyInjection/Injection/Properties/InjectProperties.php`
@@ -61,6 +63,7 @@ Resolution runs in this order:
 Compiled artifact handling is mode-aware:
 
 - checksum or metadata corruption quarantines the artifact
+- config, environment, compile-mode, and strictness mismatches make the artifact incompatible instead of available
 - development mode can fall back to dynamic resolution
 - production-style modes fail closed on corrupt compiled artifacts
 - artifact freshness can be revalidated against per-service signatures before the hot path is reused

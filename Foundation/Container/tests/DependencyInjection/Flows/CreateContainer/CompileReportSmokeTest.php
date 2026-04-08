@@ -49,6 +49,8 @@ $report = $container->compileReport([CompileReportContract::class]);
 
 assertTrue($report !== null, 'Compile report should exist when compiler support is configured.');
 assertTrue($report->available, 'Compile report should mark the artifact as available.');
+assertTrue($report->compatible, 'Compile report should expose runtime compatibility for the attached artifact.');
+assertSame([], $report->compatibilityIssues, 'Healthy compile reports should have no compatibility issues.');
 assertTrue(in_array(CompileReportContract::class, $report->entries, true), 'Compile report should expose compiled service ids.');
 assertSame(
     'shared',

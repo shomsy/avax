@@ -22,6 +22,7 @@ final readonly class CompileReport implements JsonSerializable
      */
     public function __construct(
         public bool $available,
+        public bool $compatible,
         public string $path,
         public string $metadataPath,
         public string $cacheVersion,
@@ -33,6 +34,7 @@ final readonly class CompileReport implements JsonSerializable
         public array $changedServices,
         public array $invalidatedServices,
         public array $validationIssues,
+        public array $compatibilityIssues,
         public array $invalidationReasons,
         public array $statistics,
         public ArtifactMetadata|null $metadata = null
@@ -45,6 +47,7 @@ final readonly class CompileReport implements JsonSerializable
     {
         return [
             'available' => $this->available,
+            'compatible' => $this->compatible,
             'path' => $this->path,
             'metadataPath' => $this->metadataPath,
             'cacheVersion' => $this->cacheVersion,
@@ -57,6 +60,7 @@ final readonly class CompileReport implements JsonSerializable
             'changedServices' => $this->changedServices,
             'invalidatedServices' => $this->invalidatedServices,
             'validationIssues' => $this->validationIssues,
+            'compatibilityIssues' => $this->compatibilityIssues,
             'invalidationReasons' => $this->invalidationReasons,
             'statistics' => $this->statistics,
             'metadata' => $this->metadata?->toArray(),

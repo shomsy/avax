@@ -482,6 +482,15 @@ final class ServiceRegistry implements ServiceRegistryInterface
     }
 
     /**
+     * Clears derived lookup caches without mutating canonical registrations.
+     */
+    public function resetDerivedState() : void
+    {
+        $this->resolvedCache = [];
+        $this->classHierarchyCache = [];
+    }
+
+    /**
      * @return array{parents: string[], interfaces: string[]}
      */
     private function getClassHierarchy(string $class) : array

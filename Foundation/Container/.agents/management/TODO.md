@@ -104,18 +104,20 @@ Canonical active implementation queue.
 
 - `id`: TODO-007
   `created_at`: 2026-04-08 00:50 CEST
-  `updated_at`: 2026-04-08 01:23 CEST
+  `updated_at`: 2026-04-08 15:10 CEST
   `status`: done
   `estimate`: medium
   `actual`: medium
   `outcome`: Add explicit lifecycle control with `flush()` / `reset()` so the
-    container can clear bindings, pools, scopes, and compiled artifacts safely
-    for tests, worker processes, and repeated bootstrap cycles.
+    container can clear disposable runtime state and compiled artifacts safely
+    for tests, worker processes, and repeated resolve cycles without mutating
+    canonical authored registrations.
   `acceptance`: `Container` exposes `flush()` and `reset()`; flush clears
-    bindings, scopes, runtime pools, and compiled artifacts; reset restores a
-    clean runtime; repeated bootstrap/resolve cycles remain deterministic;
-    docs explain the lifecycle behavior; Docker PHP lint is green;
-    `tests/run-smoke-tests.sh` is green.
+    derived caches, scopes, runtime pools, and compiled artifacts while
+    preserving canonical registrations; reset restores a clean disposable
+    runtime while preserving registrations and compiled artifacts; repeated
+    resolve cycles remain deterministic; docs explain the lifecycle behavior;
+    Docker PHP lint is green; `tests/run-smoke-tests.sh` is green.
   `links`: `Container.php`, `ContainerInterface.php`, `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`, `DependencyInjection/Scopes/ScopeStore.php`, `Runtime/ServicePool.php`, `Compilation/CompileContainer.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`
 
 - `id`: TODO-008

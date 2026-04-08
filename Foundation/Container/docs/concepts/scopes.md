@@ -15,7 +15,8 @@ Scopes are the isolation boundary for scoped services.
 - shared services live in global runtime storage
 - scoped services live only in the current active scope
 - transient services are never stored
-- `flush()` and `reset()` clear both shared and scoped runtime storage as part of the clean-runtime boundary
+- `flush()` clears shared and scoped runtime storage, derived caches, and compiled artifacts without removing canonical registrations
+- `reset()` clears shared and scoped runtime storage plus other disposable runtime state while keeping registrations and compiled artifacts
 
 ## Important Rule
 

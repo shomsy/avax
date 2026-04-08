@@ -1,0 +1,170 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Container\DependencyInjection\Dependencies\Resolution;
+
+use Avax\Container\Compilation\CompileContainer;
+use Avax\Container\Compilation\CompileReport;
+use Avax\Container\Compilation\CompiledContainer;
+use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistry;
+use Avax\Container\Observability\ResolutionMetrics;
+use Avax\Container\Runtime\HotPathInliner;
+
+/**
+ * Owns compiled runtime attachment, refresh, and hot-path decisions.
+ */
+final class CompiledRuntime
+{
+    private int $compiledRevision = -1;
+
+    public function __construct(
+        private readonly CompileContainer|null $compiler = null,
+        private readonly HotPathInliner $inliner = new HotPathInliner,
+        private readonly ResolutionMetrics|null $metrics = null
+    ) {}
+
+    public function compiledRevision() : int
+    {
+        return $this->compiledRevision;
+    }
+
+    public function isAttached() : bool
+    {
+        return $this->inliner->isAttached();
+    }
+
+    public function attach(CompiledContainer $compiled, int $revision) : void
+    {
+        $this->inliner->attach($compiled);
+        $this->compiledRevision = $revision;
+    }
+
+    public function reset() : void
+    {
+        $this->inliner->detach();
+        $this->compiledRevision = -1;
+    }
+
+    public function flush() : void
+    {
+        $this->compiler?->flush();
+        $this->reset();
+    }
+
+    public function report(array $serviceIds = []) : CompileReport|null
+    {
+        return $this->compiler?->report(serviceIds: $serviceIds);
+    }
+
+    public function shouldValidateBeforeCompile() : bool
+    {
+        return $this->compiler?->shouldValidateBeforeCompile() ?? false;
+    }
+
+    public function compile(array $serviceIds = [], array $validationIssues = []) : CompiledContainer|null
+    {
+        return $this->compiler?->compile(
+            serviceIds       : $serviceIds,
+            validationIssues : $validationIssues
+        );
+    }
+
+    public function isWarmedUp() : bool
+    {
+        if ($this->inliner->isAttached()) {
+            return true;
+        }
+
+        return $this->compiler?->report()->available ?? false;
+    }
+
+    public function isCompiled(ServiceRegistry $registrations, string $serviceId) : bool
+    {
+        $this->refresh(registrations: $registrations, serviceId: $serviceId);
+
+        return $this->inliner->has(serviceId: $serviceId)
+            || ($this->compiler?->contains(serviceId: $serviceId) ?? false);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function state(ServiceRegistry $registrations, string $serviceId) : array
+    {
+        $this->refresh(registrations: $registrations, serviceId: $serviceId);
+        $report = $this->compiler?->report(serviceIds: [$serviceId]);
+
+        return [
+            'attached' => $this->inliner->isAttached(),
+            'entryAttached' => $this->inliner->has(serviceId: $serviceId),
+            'containsEntry' => $this->compiler?->contains(serviceId: $serviceId) ?? false,
+            'artifactAvailable' => $report?->available ?? false,
+            'compatible' => $report?->compatible ?? false,
+            'compatibilityIssues' => $report?->compatibilityIssues ?? [],
+            'compileMode' => $report?->compileMode ?? '',
+        ];
+    }
+
+    public function shouldUse(ServiceRegistry $registrations, ResolveRequest $request) : bool
+    {
+        $this->refresh(registrations: $registrations, serviceId: $request->serviceId);
+
+        if (! $this->inliner->has(serviceId: $request->serviceId)) {
+            return false;
+        }
+
+        $consumer = $request->parent?->serviceId ?? $request->consumer;
+        if ($consumer === null) {
+            return true;
+        }
+
+        return $registrations->getContextualMatch(
+            consumer: $consumer,
+            needs   : $request->serviceId
+        ) === null;
+    }
+
+    public function resolve(ServiceResolver $resolver, ResolveRequest $request) : mixed
+    {
+        $this->metrics?->increment(name: 'container_compiled_container_resolve_total');
+
+        return $this->inliner->resolve(
+            serviceId: $request->serviceId,
+            resolver : $resolver,
+            request  : $request
+        );
+    }
+
+    public function refresh(ServiceRegistry $registrations, string|null $serviceId = null) : void
+    {
+        if ($this->compiler === null) {
+            return;
+        }
+
+        $revision = $registrations->revision();
+        if ($revision === $this->compiledRevision && $this->inliner->isAttached()) {
+            return;
+        }
+
+        $compiled = $this->compiler->load(
+            serviceIds: $serviceId !== null ? [$serviceId] : []
+        );
+        if ($compiled !== null) {
+            $this->inliner->attach($compiled);
+        } else {
+            $artifactAvailable = $this->compiler->report()->available;
+            $requestedIsCompiled = $serviceId !== null && $this->compiler->contains(serviceId: $serviceId);
+
+            if (! $artifactAvailable || $requestedIsCompiled) {
+                $this->inliner->detach();
+            }
+        }
+
+        if (! $this->inliner->isAttached() && ! $this->compiler->report()->available) {
+            $this->inliner->detach();
+        }
+
+        $this->compiledRevision = $revision;
+    }
+}

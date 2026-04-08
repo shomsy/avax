@@ -117,6 +117,14 @@ final class CompileContainer
 
         $this->lastMetadata = $metadata;
 
+        $compatibilityIssues = $this->compatibilityIssuesFor(metadata: $metadata);
+        if ($compatibilityIssues !== []) {
+            $this->metrics?->increment(name: 'container_compiled_container_incompatible_total');
+            $this->metrics?->increment(name: 'container_compiled_container_misses_total');
+
+            return null;
+        }
+
         if (! $this->servicesAreAvailable(metadata: $metadata, serviceIds: $serviceIds)) {
             $this->metrics?->increment(name: 'container_compiled_container_misses_total');
 
@@ -176,7 +184,9 @@ final class CompileContainer
     {
         $metadata = $this->reportMetadata();
 
-        return $metadata?->hasEntry(serviceId: $serviceId) ?? false;
+        return $metadata !== null
+            && $this->compatibilityIssuesFor(metadata: $metadata) === []
+            && $metadata->hasEntry(serviceId: $serviceId);
     }
 
     /**
@@ -187,24 +197,32 @@ final class CompileContainer
     public function report(array $serviceIds = []) : CompileReport
     {
         $metadata = $this->reportMetadata();
-        $available = $metadata !== null
+        $compatibilityIssues = $metadata !== null
+            ? $this->compatibilityIssuesFor(metadata: $metadata)
+            : ['compiled metadata is missing'];
+        $compatible = $metadata !== null && $compatibilityIssues === [];
+        $checksumValid = $metadata !== null
+            && ($this->cacheDir === '' || $this->sourceMatchesChecksum(path: $this->path(), checksum: $metadata->checksum));
+        $available = $compatible
             && $this->servicesAreAvailable(metadata: $metadata, serviceIds: $serviceIds)
-            && ($this->cacheDir === '' || is_file($this->path()));
+            && ($this->cacheDir === '' || is_file($this->path()))
+            && $checksumValid;
 
         return new CompileReport(
             available       : $available,
+            compatible      : $compatible,
             path            : $this->path(),
             metadataPath    : $this->metadataPath(),
             cacheVersion    : $this->cacheVersion,
             compileMode     : $this->compileMode,
             environment     : $this->environment,
             fingerprint     : $metadata?->fingerprint ?? '',
-            checksumValid   : $metadata !== null
-                && ($this->cacheDir === '' || $this->sourceMatchesChecksum(path: $this->path(), checksum: $metadata->checksum)),
+            checksumValid   : $checksumValid,
             entries         : $metadata?->entryIds() ?? [],
             changedServices : $metadata?->changedServices ?? [],
             invalidatedServices: $metadata?->invalidatedServices ?? [],
             validationIssues: $metadata?->validationIssues ?? [],
+            compatibilityIssues: $compatible ? [] : $compatibilityIssues,
             invalidationReasons: $metadata?->invalidationReasons ?? [],
             statistics      : $metadata?->statistics ?? [],
             metadata        : $metadata
@@ -648,6 +666,7 @@ PHP;
         $current = $this->loadMetadata(quarantineOnFailure: false);
 
         return $current instanceof ArtifactMetadata
+            && $this->compatibilityIssuesFor(metadata: $current) === []
             && $current->fingerprint === $metadata->fingerprint
             && $this->sourceMatchesChecksum(path: $this->path(), checksum: $current->checksum);
     }
@@ -758,6 +777,32 @@ PHP;
         }
 
         return $reasons;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function compatibilityIssuesFor(ArtifactMetadata $metadata) : array
+    {
+        $issues = [];
+
+        if ($metadata->cacheVersion !== $this->cacheVersion) {
+            $issues[] = 'cache version mismatch';
+        }
+        if ($metadata->configHash !== $this->configHash) {
+            $issues[] = 'config hash mismatch';
+        }
+        if ($metadata->environment !== $this->environment) {
+            $issues[] = 'environment mismatch';
+        }
+        if ($metadata->compileMode !== $this->compileMode) {
+            $issues[] = 'compile mode mismatch';
+        }
+        if ($metadata->strict !== $this->strict) {
+            $issues[] = 'strict mode mismatch';
+        }
+
+        return $issues;
     }
 
     private function handleCorruption(string $reason) : void

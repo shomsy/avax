@@ -2,6 +2,8 @@
 
 `Container` is the stable public facade of this component.
 
+See [`public-contract-matrix.md`](./public-contract-matrix.md) for the frozen public surface ledger.
+
 ## What It Exposes
 
 Registration:
@@ -84,11 +86,11 @@ The facade does not own resolution internals, storage, blueprint creation, or te
 - `bootProviders()` resolves provider dependencies, registers them, then boots them in deterministic order
 - providers that implement `DeferredProviderInterface` are registered lazily and boot on first matching service resolve
 - deferred providers should implement `DeferredProviderInterface` so lazy provider ownership stays explicit and reviewable
-- `flush()` clears user registrations, scopes, runtime pools, and compiled artifacts
-- `reset()` is the same clean-runtime boundary as `flush()`
+- `flush()` clears derived caches, scopes, runtime pools, lazy markers, telemetry state, and compiled artifacts without mutating canonical registrations
+- `reset()` clears disposable runtime state and derived caches but keeps canonical registrations and compiled artifacts
 - `validate()` reports obvious registration and blueprint issues without resolving values
 - `describeService()` and the `debug*()` helpers explain how a service, tag set, alias map, scope state, and compiled artifact state look right now
-- `compileReport()` returns the machine-readable compiled artifact status for the current cache version or requested service ids
+- `compileReport()` returns the machine-readable compiled artifact status for the current cache version or requested service ids, including compatibility state and compatibility issues
 - `runtimeReport()` returns the current runtime state, including revision numbers, diagnostics mode, deferred provider ownership, lazy services, scope snapshot, metrics, timeline, and the attached compile report
 - `hasAlias()`, `isDeferred()`, `isLazy()`, `isCompiled()`, and `isWarmedUp()` expose the container's current runtime and compiled-artifact status without making the caller inspect internals
 - `env()` reads env-backed configuration hooks from `ContainerSettings`
@@ -98,6 +100,7 @@ The facade does not own resolution internals, storage, blueprint creation, or te
 - `rebuildCompiled()` flushes then warms compiled artifacts again
 - compiled container metadata includes checksum, config hash, environment, service signatures, and changed service ids
 - compiled container metadata also records reused services, invalidated services, dependency graphs, and invalidation reasons for incremental compile reuse
+- incompatible compiled artifacts are not reported as available and fall back to the dynamic runtime path
 - corrupted compiled artifacts are quarantined; production-style modes fail closed, while development mode can fall back to dynamic resolution
 - diagnostics mode is explicit: `minimal` keeps timeline overhead near zero, while `detailed` keeps richer traces for CI and debugging
 - deferred services stay out of the default warm compile path unless they are explicit or needed by a compiled dependency

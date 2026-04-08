@@ -3,10 +3,13 @@
 This component has one canonical story:
 
 - public facade: [`Container.md`](./Container.md)
+- public contract matrix: [`public-contract-matrix.md`](./public-contract-matrix.md)
 - architecture map: [`architecture.md`](./architecture.md)
 - concepts: [`concepts/index.md`](./concepts/index.md)
 - glossary: [`glossary.md`](./glossary.md)
+- ADRs: [`adr/index.md`](./adr/index.md)
 - failure handling: [`troubleshooting.md`](./troubleshooting.md)
+- benchmark governance: [`benchmark-governance.md`](./benchmark-governance.md)
 - benchmark harness: [`../tests/run-benchmarks.sh`](../tests/run-benchmarks.sh)
 - benchmark guard: [`../tests/check-benchmarks.sh`](../tests/check-benchmarks.sh)
 - benchmark comparison: [`../tests/run-benchmark-comparison.sh`](../tests/run-benchmark-comparison.sh)
@@ -38,6 +41,7 @@ Performance model:
 - reflect once
 - compile once
 - run many times from memory or versioned disk artifacts
+- keep canonical registrations separate from disposable runtime state
 - choose `minimal` diagnostics for low-overhead production runtime state
 - choose `detailed` diagnostics for CI, debugging, and richer timeline output
 - use the benchmark guard for threshold enforcement; it evaluates median timing across repeated runs to reduce CI noise

@@ -54,7 +54,8 @@ final class AssembleRuntime
         $caller = new FunctionCaller(arguments: $callArguments);
         $policy = new ResolutionPolicy(
             strict: $config->strict,
-            debug : $config->debug
+            debug : $config->debug,
+            profile: $config->policyProfile
         );
         $compiler = new CompileContainer(
             registrations           : $registrations,
@@ -68,6 +69,8 @@ final class AssembleRuntime
             strict                  : $config->strict,
             settingsFingerprint     : $config->settingsFingerprint(),
             benchmarkBuildMarker    : $config->benchmarkBuildMarker(),
+            executionMode           : $config->executionMode,
+            pruneMode               : $config->pruneMode,
             validateOnLoad          : $config->validatesCompiledArtifactsOnLoad(),
             failClosedOnCorruption  : $config->failsClosedOnCompiledCorruption(),
             validateBeforeCompile   : $config->validatesBeforeCompile(),
@@ -92,9 +95,10 @@ final class AssembleRuntime
             timeline        : $observability->timeline,
             policy          : $policy,
             compiledRuntime : new CompiledRuntime(
-                compiler: $compiler,
-                inliner : new HotPathInliner,
-                metrics : $observability->metrics
+                compiler     : $compiler,
+                inliner      : new HotPathInliner,
+                metrics      : $observability->metrics,
+                executionMode: $config->executionMode
             ),
             deferredProviders: new DeferredProviderRegistry,
             diagnosticsMode : $config->diagnosticsMode

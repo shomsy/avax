@@ -237,6 +237,15 @@ final class RegistrationMetadata
         return $this->copy(overrides: ['fallback' => $fallback]);
     }
 
+    public function hasConditions() : bool
+    {
+        return $this->profiles !== []
+            || $this->flags !== []
+            || $this->tenants !== []
+            || $this->regions !== []
+            || $this->modes !== [];
+    }
+
     public function supportsEnvironment(string $environment) : bool
     {
         if ($this->profiles === [] || $environment === '') {

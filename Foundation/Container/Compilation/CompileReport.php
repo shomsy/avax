@@ -12,7 +12,7 @@ use JsonSerializable;
  */
 final readonly class CompileReport implements JsonSerializable
 {
-    public const SCHEMA_VERSION = 1;
+    public const SCHEMA_VERSION = 2;
 
     /**
      * @param list<string> $entries
@@ -31,6 +31,8 @@ final readonly class CompileReport implements JsonSerializable
         public string $metadataPath,
         public string $cacheVersion,
         public string $compileMode,
+        public string $executionMode,
+        public string $pruneMode,
         public string $environment,
         public string $fingerprint,
         public bool $checksumValid,
@@ -52,6 +54,7 @@ final readonly class CompileReport implements JsonSerializable
         public array $compatibilityIssues,
         public array $invalidationReasons,
         public array $statistics,
+        public array $pruning,
         public ArtifactMetadata|null $metadata = null
     ) {}
 
@@ -70,6 +73,8 @@ final readonly class CompileReport implements JsonSerializable
             'metadataPath' => $this->metadataPath,
             'cacheVersion' => $this->cacheVersion,
             'compileMode' => $this->compileMode,
+            'executionMode' => $this->executionMode,
+            'pruneMode' => $this->pruneMode,
             'environment' => $this->environment,
             'fingerprint' => $this->fingerprint,
             'checksumValid' => $this->checksumValid,
@@ -92,6 +97,7 @@ final readonly class CompileReport implements JsonSerializable
             'compatibilityIssues' => $this->compatibilityIssues,
             'invalidationReasons' => $this->invalidationReasons,
             'statistics' => $this->statistics,
+            'pruning' => $this->pruning,
             'metadata' => $this->metadata?->toArray(),
         ];
     }

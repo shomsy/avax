@@ -19,11 +19,29 @@ Use:
 - `POL-003`: foundation unit depends on too many services and may be overgrown
 - `POL-004`: one flow depends directly on another flow
 - `POL-005`: concept naming is too generic for honest ownership diagnostics
+- `POL-006`: flow unit uses shared or public visibility without entry intent
+- `POL-007`: pooled lifetime contract violation (missing class-backed build or `ResettableInterface`)
+- `POL-008`: service depends on container runtime internals (service locator drift)
+- `POL-009`: service depends on raw settings/config globals outside configuration ownership
 
 ## Severity Model
 
 - `warn`: review and justify before the shape calcifies
 - `error`: treat as an architectural violation unless there is an explicit exception
+
+Current severity assignments:
+
+| Code | Severity |
+|---|---|
+| POL-001 | `warn` |
+| POL-002 | `warn` |
+| POL-003 | `warn` |
+| POL-004 | `error` |
+| POL-005 | `warn` |
+| POL-006 | `warn` |
+| POL-007 | `error` |
+| POL-008 | `error` |
+| POL-009 | `warn` |
 
 ## Structural Diff
 

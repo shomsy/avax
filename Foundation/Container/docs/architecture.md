@@ -40,6 +40,7 @@ The facade also exposes lifecycle, context, and diagnostics helpers:
 - `flush()` / `reset()`
 - `bootProviders()`
 - `forContext()`
+- `forSlice()`
 - `validate()`
 - `describeService()` and the `debug*()` helpers
 - `compileReport()` and `runtimeReport()`
@@ -101,6 +102,8 @@ Each flow entry owns one obvious user action:
 `Runtime/`
 
 - owns shared singleton storage
+- owns pooled service storage with bounded buckets, checkout/release, and reset-before-reuse semantics
+- owns `ResettableInterface` for explicit reset contracts
 - owns lazy proxy behavior
 - owns compiled method call caching
 - exposes hot-path attachment state and entry presence without pushing reflection back into the resolve path
@@ -146,7 +149,8 @@ Each flow entry owns one obvious user action:
 
 - owns scoped storage and scope lifecycle
 - exposes scope lifecycle control
-- defines lifetime names
+- defines lifetime names including pooled lifetime
+- owns `DisposableInterface` and `ResettableInterface` contracts
 
 ## Root Support Areas
 

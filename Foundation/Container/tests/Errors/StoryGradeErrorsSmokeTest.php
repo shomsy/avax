@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/bootstrap.php';
 
+use Avax\Container\ContainerInterface;
 use Avax\Container\DependencyInjection\Injection\Attributes\RuntimeInput;
 use Avax\Container\Errors\ContainerException;
 
@@ -33,6 +34,13 @@ final class RequestOnlyStoryService
 final class StoryRuntimeInputConsumer
 {
     public function __construct(#[RuntimeInput('token')] public string $token)
+    {
+    }
+}
+
+final class StoryLocatorDrift
+{
+    public function __construct(public ContainerInterface $container)
     {
     }
 }
@@ -114,6 +122,26 @@ try {
     assertTrue(
         str_contains($exception->getMessage(), 'Likely fix: pass an explicit override, use forContext(), or add a default value.'),
         'Runtime-input failures should remain fix-oriented.'
+    );
+}
+
+$locatorDriftContainer = makeTestContainer();
+$locatorDriftContainer->bind(StoryLocatorDrift::class, StoryLocatorDrift::class)
+    ->asCapability('checkout')
+    ->asShared()
+    ->export();
+
+try {
+    $locatorDriftContainer->get(StoryLocatorDrift::class);
+    throw new RuntimeException('Service locator drift should fail fast.');
+} catch (ContainerException $exception) {
+    assertTrue(
+        str_contains($exception->getMessage(), 'Service locator drift blocked'),
+        'Service locator failures should name the anti-pattern explicitly.'
+    );
+    assertTrue(
+        str_contains($exception->getMessage(), 'inject the concrete dependency boundary instead of the container'),
+        'Service locator failures should suggest an ownership-safe fix.'
     );
 }
 

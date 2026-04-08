@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 3) . '/bootstrap.php';
 
+use Avax\Container\ContainerInterface;
 use Avax\Container\Configuration\CreateContainerConfig;
 
 final class PolicyDependencyA
@@ -62,6 +63,13 @@ final class StructureDiffService
 {
 }
 
+final class LocatorDriftService
+{
+    public function __construct(public ContainerInterface $container)
+    {
+    }
+}
+
 $cacheDir = sys_get_temp_dir() . '/container-policy-diff-' . uniqid('', true);
 $config = CreateContainerConfig::create(cacheDir: $cacheDir);
 $container = makeTestContainer($config);
@@ -92,6 +100,10 @@ $container->singleton(StructureDiffService::class, StructureDiffService::class)
     ->asCapability('billing')
     ->asShared()
     ->export();
+$container->bind(LocatorDriftService::class, LocatorDriftService::class)
+    ->asCapability('billing')
+    ->asShared()
+    ->export();
 
 $container->compileContainer([StructureDiffService::class]);
 $container->singleton(StructureDiffService::class, StructureDiffService::class)
@@ -106,15 +118,18 @@ $issues = implode("\n", $container->validate([
     FlowToFlowEntry::class,
     GenericHelperService::class,
     StructureDiffService::class,
+    LocatorDriftService::class,
 ]));
 
 $overInjectedCodes = array_column($graph['policyFindings'][OverInjectedPolicyService::class] ?? [], 'code');
 $flowCodes = array_column($graph['policyFindings'][FlowToFlowEntry::class] ?? [], 'code');
 $genericCodes = array_column($graph['policyFindings'][GenericHelperService::class] ?? [], 'code');
+$locatorCodes = array_column($graph['policyFindings'][LocatorDriftService::class] ?? [], 'code');
 
 assertTrue(in_array('POL-001', $overInjectedCodes, true), 'Policy diagnostics should flag over-injected constructors.');
 assertTrue(in_array('POL-004', $flowCodes, true), 'Policy diagnostics should flag direct flow-to-flow dependencies.');
 assertTrue(in_array('POL-005', $genericCodes, true), 'Policy diagnostics should flag generic concept naming.');
+assertTrue(in_array('POL-008', $locatorCodes, true), 'Policy diagnostics should flag service locator drift.');
 assertTrue(
     ($serviceGraph['structureDiff']['ownership']['changed'] ?? false) === true,
     'Structure diff diagnostics should detect ownership changes after compilation.'

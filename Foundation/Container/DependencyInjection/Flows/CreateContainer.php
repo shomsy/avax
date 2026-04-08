@@ -9,6 +9,7 @@ use Avax\Container\Configuration\Assembly\AssembleRuntime;
 use Avax\Container\Configuration\Assembly\SeedSystemServices;
 use Avax\Container\Container;
 use Avax\Container\Configuration\CreateContainerConfig;
+use InvalidArgumentException;
 
 /**
  * Assembles one fully wired container instance and its system services.
@@ -31,6 +32,13 @@ final class CreateContainer
             debug   : $debug,
             settings: $settings
         );
+
+        if (! $config->supportsAsyncTarget()) {
+            throw new InvalidArgumentException(
+                message: "Async target [{$config->asyncTarget}] is not supported by this container runtime. "
+                    . 'Supported targets are [fpm, worker].'
+            );
+        }
 
         $observability = (new AssembleObservability)->assemble(config: $config);
         $runtime = (new AssembleRuntime)->assemble(

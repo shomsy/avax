@@ -13,7 +13,7 @@ use JsonSerializable;
  */
 final readonly class RuntimeReport implements JsonSerializable
 {
-    public const SCHEMA_VERSION = 1;
+    public const SCHEMA_VERSION = 3;
 
     /**
      * @param list<string> $lazyServices
@@ -32,6 +32,7 @@ final readonly class RuntimeReport implements JsonSerializable
         public int $compiledRevision,
         public bool $compiledAttached,
         public bool $warmedUp,
+        public string $executionMode,
         public string $diagnosticsMode,
         public bool $timelineEnabled,
         public array $lazyServices,
@@ -57,6 +58,7 @@ final readonly class RuntimeReport implements JsonSerializable
             'compiledRevision' => $this->compiledRevision,
             'compiledAttached' => $this->compiledAttached,
             'warmedUp' => $this->warmedUp,
+            'executionMode' => $this->executionMode,
             'diagnosticsMode' => $this->diagnosticsMode,
             'timelineEnabled' => $this->timelineEnabled,
             'lazyServices' => $this->lazyServices,

@@ -96,13 +96,33 @@ assertSame(
     'Compile reports should expose the active compile mode.'
 );
 assertSame(
+    CreateContainerConfig::EXECUTION_MODE_COMPILED,
+    $report->executionMode,
+    'Compile reports should expose the active execution mode.'
+);
+assertSame(
+    CreateContainerConfig::PRUNE_MODE_NONE,
+    $report->pruneMode,
+    'Compile reports should expose the active prune mode.'
+);
+assertSame(
     CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL,
     $report->metadata?->diagnosticsMode,
     'Compile metadata should expose the diagnostics mode that produced the artifact.'
 );
 assertTrue($report->metadata?->warmed ?? false, 'Warm compilation should mark the artifact metadata as warmed.');
-assertSame(6, $report->metadata?->schemaVersion, 'Compile metadata should expose a stable schema version.');
+assertSame(8, $report->metadata?->schemaVersion, 'Compile metadata should expose a stable schema version.');
 assertTrue(($report->metadata?->dependencyGraphRevision ?? '') !== '', 'Compile metadata should expose dependency graph provenance.');
+assertSame(
+    CreateContainerConfig::EXECUTION_MODE_COMPILED,
+    $report->metadata?->executionMode,
+    'Compile metadata should expose the execution mode that produced the artifact.'
+);
+assertSame(
+    CreateContainerConfig::PRUNE_MODE_NONE,
+    $report->metadata?->pruneMode,
+    'Compile metadata should expose the prune mode that produced the artifact.'
+);
 assertSame(
     'default',
     $report->metadata?->ownership[CompileReportContract::class]['ownerSlice'] ?? null,
@@ -124,6 +144,11 @@ assertTrue(
 assertTrue(
     ($report->statistics['reusedServices'] ?? 0) >= 1,
     'Repeated compilation should reuse stable compiled service sources when signatures stay unchanged.'
+);
+assertSame(
+    CreateContainerConfig::PRUNE_MODE_NONE,
+    $report->pruning['mode'] ?? null,
+    'Compile reports should expose pruning posture even when pruning is disabled.'
 );
 assertSame(
     $report->invalidatedServices,

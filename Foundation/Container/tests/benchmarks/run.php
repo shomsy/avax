@@ -9,6 +9,7 @@ use Avax\Container\Configuration\CreateContainerConfig;
 use Avax\Container\DependencyInjection\Dependencies\Providers\DeferredProviderInterface;
 use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface;
 use Avax\Container\DependencyInjection\Injection\Attributes\Inject;
+use Avax\Container\DependencyInjection\Scopes\ResettableInterface;
 use Avax\Container\Runtime\LazyProxy;
 
 const BENCHMARK_DOCKER_IMAGE = 'php:8.3-cli';
@@ -35,6 +36,18 @@ final class BenchScopedService
     public function value() : string
     {
         return 'scoped';
+    }
+}
+
+final class BenchPooledService implements ResettableInterface
+{
+    public function value() : string
+    {
+        return 'pooled';
+    }
+
+    public function reset() : void
+    {
     }
 }
 
@@ -194,7 +207,8 @@ function benchContainer(
     array $settings = [],
     string $compileMode = CreateContainerConfig::COMPILE_MODE_PRODUCTION,
     bool $debug = false,
-    string $diagnosticsMode = CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL
+    string $diagnosticsMode = CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL,
+    string $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED
 ) : \Avax\Container\Container
 {
     return makeTestContainer(CreateContainerConfig::create(
@@ -203,7 +217,8 @@ function benchContainer(
         debug: $debug,
         settings: $settings,
         compileMode: $compileMode,
-        diagnosticsMode: $diagnosticsMode
+        diagnosticsMode: $diagnosticsMode,
+        executionMode: $executionMode
     ));
 }
 
@@ -366,6 +381,17 @@ function benchmarkScenarios() : array
             },
         ],
         [
+            'name' => 'pooled_service',
+            'iterations' => 5000,
+            'callback' => static function () : void {
+                $container = benchContainer();
+                $container->bind(BenchPooledService::class, BenchPooledService::class)->pooled(maxSize: 8);
+                $container->openScope();
+                $container->get(BenchPooledService::class);
+                $container->closeScope();
+            },
+        ],
+        [
             'name' => 'lazy_service',
             'iterations' => 10000,
             'callback' => static function () : void {
@@ -450,6 +476,24 @@ function benchmarkScenarios() : array
                 if ($container === null) {
                     $container = benchContainer(
                         compileMode: CreateContainerConfig::COMPILE_MODE_PRODUCTION
+                    );
+                    $container->singleton(BenchSharedService::class, BenchSharedService::class);
+                    $container->warmCompiled([BenchSharedService::class]);
+                }
+
+                $container->get(BenchSharedService::class);
+            },
+        ],
+        [
+            'name' => 'generated_get',
+            'iterations' => 10000,
+            'callback' => static function () : void {
+                static $container = null;
+
+                if ($container === null) {
+                    $container = benchContainer(
+                        compileMode: CreateContainerConfig::COMPILE_MODE_PRODUCTION,
+                        executionMode: CreateContainerConfig::EXECUTION_MODE_GENERATED
                     );
                     $container->singleton(BenchSharedService::class, BenchSharedService::class);
                     $container->warmCompiled([BenchSharedService::class]);

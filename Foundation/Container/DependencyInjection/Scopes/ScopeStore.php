@@ -16,7 +16,8 @@ final class ScopeStore
      *     kind: string,
      *     id: string,
      *     items: array<string, mixed>,
-     *     disposable: array<string, bool>
+     *     disposable: array<string, bool>,
+     *     pooled: array<string, array{maxSize: int, resetBeforeReuse: bool, disposable: bool}>
      * }>
      */
     private array $scopes = [];
@@ -57,6 +58,7 @@ final class ScopeStore
             'id' => trim($scopeId),
             'items' => [],
             'disposable' => [],
+            'pooled' => [],
         ];
     }
 
@@ -68,7 +70,8 @@ final class ScopeStore
      *     kind: string,
      *     id: string,
      *     items: array<string, mixed>,
-     *     disposable: array<string, bool>
+     *     disposable: array<string, bool>,
+     *     pooled: array<string, array{maxSize: int, resetBeforeReuse: bool, disposable: bool}>
      * }
      */
     public function close(string|null $kind = null) : array
@@ -148,12 +151,54 @@ final class ScopeStore
 
         $this->scopes[$index]['items'][$abstract] = $instance;
         $this->scopes[$index]['disposable'][$abstract] = $disposable;
+        unset($this->scopes[$index]['pooled'][$abstract]);
+    }
+
+    /**
+     * @throws ContainerException
+     */
+    public function setPooledFor(
+        string $abstract,
+        mixed $instance,
+        string $kind,
+        int $maxSize,
+        bool $resetBeforeReuse = true,
+        bool $disposable = false
+    ) : void {
+        $index = $this->frameIndex(kind: $kind);
+        if ($index === null) {
+            $required = ScopeKind::normalize(kind: $kind);
+
+            throw new ContainerException(
+                message: "Cannot checkout pooled instance [{$abstract}] without an active [{$required}] scope."
+            );
+        }
+
+        $this->scopes[$index]['items'][$abstract] = $instance;
+        $this->scopes[$index]['disposable'][$abstract] = $disposable;
+        $this->scopes[$index]['pooled'][$abstract] = [
+            'maxSize' => max(1, $maxSize),
+            'resetBeforeReuse' => $resetBeforeReuse,
+            'disposable' => $disposable,
+        ];
+    }
+
+    public function hasPooledFor(string $abstract, string $kind = ScopeKind::ANY) : bool
+    {
+        $index = $this->frameIndex(kind: $kind);
+        if ($index === null) {
+            return false;
+        }
+
+        return isset($this->scopes[$index]['pooled'][$abstract]);
     }
 
     /**
      * @return array{
      *     scoped: array<int, array<string, mixed>>,
-     *     frames: array<int, array{kind: string, id: string, services: list<string>}>
+     *     pooled: array<string, list<string>>,
+     *     pooledStats: array<string, mixed>,
+     *     frames: array<int, array{kind: string, id: string, services: list<string>, pooledServices: list<string>}>
      * }
      */
     public function snapshot() : array
@@ -162,11 +207,14 @@ final class ScopeStore
             static function (array $frame) : array {
                 $services = array_keys($frame['items']);
                 sort($services);
+                $pooledServices = array_keys($frame['pooled']);
+                sort($pooledServices);
 
                 return [
                     'kind' => $frame['kind'],
                     'id' => $frame['id'],
                     'services' => $services,
+                    'pooledServices' => $pooledServices,
                 ];
             },
             $this->scopes
@@ -177,6 +225,18 @@ final class ScopeStore
                 static fn(array $frame) : array => $frame['items'],
                 $this->scopes
             ),
+            'pooled' => array_reduce(
+                $this->scopes,
+                static function (array $carry, array $frame) : array {
+                    foreach ($frame['pooled'] as $serviceId => $options) {
+                        $carry[$serviceId][] = $frame['kind'] . ($frame['id'] !== '' ? ':' . $frame['id'] : '');
+                    }
+
+                    return $carry;
+                },
+                []
+            ),
+            'pooledStats' => [],
             'frames' => $frames,
         ];
     }

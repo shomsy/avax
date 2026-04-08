@@ -25,6 +25,16 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: TODO-017
+  `created_at`: 2026-04-08 20:39 CEST
+  `updated_at`: 2026-04-08 20:45 CEST
+  `status`: done
+  `estimate`: medium
+  `actual`: medium
+  `outcome`: Converge canonical docs and governance artifacts with the already-implemented pooled lifetime, slice views, and expanded policy engine. The runtime was complete but docs and management artifacts were stale, creating an audit gap.
+  `acceptance`: `docs/lifetimes-and-scopes.md` documents pooled lifetime including registration, validation, disposal, and diagnostics; `docs/policy-engine.md` documents POL-006 through POL-009 with severity assignments; `docs/architecture.md` references pooled storage, `PooledServiceInterface`, `forSlice()`, and scope ownership; `docs/ownership-model.md` documents slice views and `SliceContext`; management artifacts reflect the current state; Docker PHP lint stays green.
+  `links`: `docs/lifetimes-and-scopes.md`, `docs/policy-engine.md`, `docs/architecture.md`, `docs/ownership-model.md`, `.agents/management/TODO.md`, `.agents/management/DECISIONS.md`, `.agents/management/ACTIVE.md`
+
 - `id`: TODO-016
   `created_at`: 2026-04-08 17:04 CEST
   `updated_at`: 2026-04-08 18:16 CEST

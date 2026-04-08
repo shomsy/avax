@@ -25,6 +25,42 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: TODO-012
+  `created_at`: 2026-04-08 02:20 CEST
+  `updated_at`: 2026-04-08 02:32 CEST
+  `status`: done
+  `estimate`: medium
+  `actual`: medium
+  `outcome`: Close the remaining compile/runtime discipline gaps by wiring
+    explicit diagnostics modes, automatic incremental compile reuse metadata,
+    deferred provider loading, richer service/runtime diagnostics, and a wider
+    benchmark matrix for worker, request-lifecycle, and mode-specific paths.
+  `acceptance`: `CreateContainerConfig` exposes diagnostics modes; runtime
+    timeline honors low-overhead versus detailed mode; deferred providers boot
+    on first owned service resolve; compile reports expose invalidation and
+    reuse details; benchmark scenarios cover worker, request lifecycle,
+    deferred provider, and dev/prod compiled paths; Docker PHP lint is green;
+    `tests/run-smoke-tests.sh` is green; `tests/check-benchmarks.sh` is green;
+    `tests/run-benchmarks.sh` is green.
+  `links`: `Configuration/CreateContainerConfig.php`, `DependencyInjection/Flows/CreateContainer.php`, `DependencyInjection/Flows/BootProviders.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`, `Observability/ResolutionTimeline.php`, `Observability/RuntimeReport.php`, `tests/DependencyInjection/Flows/BootProviders/BootProvidersSmokeTest.php`, `tests/DependencyInjection/Flows/ResolveService/ContextAndDiagnosticsSmokeTest.php`, `tests/benchmarks/run.php`
+
+- `id`: TODO-011
+  `created_at`: 2026-04-08 01:50 CEST
+  `updated_at`: 2026-04-08 02:05 CEST
+  `status`: done
+  `estimate`: medium
+  `actual`: medium
+  `outcome`: Replace implicit compile/runtime array schemas with typed report and
+    plan owners so compiled metadata, runtime state, provider ordering, and
+    lifetime behavior are explicit, deterministic, and machine-readable.
+  `acceptance`: `ArtifactMetadata`, `CompileReport`, `RuntimeReport`,
+    `ProviderBootPlan`, and `LifetimePlan` exist and are wired into the public
+    facade plus runtime owner; `compileReport()` and `runtimeReport()` expose
+    stable machine-readable output; provider boot metrics remain deterministic;
+    Docker PHP lint is green; `tests/run-smoke-tests.sh` is green;
+    `tests/check-benchmarks.sh` is green.
+  `links`: `Compilation/ArtifactMetadata.php`, `Compilation/CompileReport.php`, `Observability/RuntimeReport.php`, `DependencyInjection/Dependencies/Providers/ProviderBootPlan.php`, `DependencyInjection/Dependencies/Resolution/LifetimePlan.php`, `Container.php`, `ContainerInterface.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `DependencyInjection/Flows/BootProviders.php`
+
 - `id`: TODO-007
   `created_at`: 2026-04-08 00:50 CEST
   `updated_at`: 2026-04-08 01:23 CEST

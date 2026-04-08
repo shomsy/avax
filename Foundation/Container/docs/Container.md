@@ -39,12 +39,20 @@ Lifecycle, scopes, and diagnostics:
 - `warmCompiled()`
 - `flushCompiled()`
 - `rebuildCompiled()`
+- `compileReport()`
+- `runtimeReport()`
 - `validate()`
 - `describeService()`
+- `debugService()`
 - `debugPlan()`
 - `debugTags()`
 - `debugAliases()`
 - `debugScope()`
+- `hasAlias()`
+- `isDeferred()`
+- `isLazy()`
+- `isCompiled()`
+- `isWarmedUp()`
 - `env()`
 - `scopes()`
 - `canInject()`
@@ -74,15 +82,23 @@ The facade does not own resolution internals, storage, blueprint creation, or te
 - `lazy()` returns a lazy proxy that resolves the target service on first use
 - `decorate()` appends a post-build decoration step to one service id
 - `bootProviders()` resolves provider dependencies, registers them, then boots them in deterministic order
+- providers that declare `deferred()` and `provides()` are registered lazily and boot on first matching service resolve
 - `flush()` clears user registrations, scopes, runtime pools, and compiled artifacts
 - `reset()` is the same clean-runtime boundary as `flush()`
 - `validate()` reports obvious registration and blueprint issues without resolving values
-- `describeService()` and the `debug*()` helpers explain how a service, tag set, alias map, or scope state looks right now
+- `describeService()` and the `debug*()` helpers explain how a service, tag set, alias map, scope state, and compiled artifact state look right now
+- `compileReport()` returns the machine-readable compiled artifact status for the current cache version or requested service ids
+- `runtimeReport()` returns the current runtime state, including revision numbers, diagnostics mode, deferred provider ownership, lazy services, scope snapshot, metrics, timeline, and the attached compile report
+- `hasAlias()`, `isDeferred()`, `isLazy()`, `isCompiled()`, and `isWarmedUp()` expose the container's current runtime and compiled-artifact status without making the caller inspect internals
 - `env()` reads env-backed configuration hooks from `ContainerSettings`
 - `compileContainer()` writes a generated compiled runtime artifact plus compiled blueprint metadata
 - `warmCompiled()` preserves the same public intent and records warmup metrics on top of the compile path
 - `flushCompiled()` removes compiled artifacts for the current cache version
 - `rebuildCompiled()` flushes then warms compiled artifacts again
+- compiled container metadata includes checksum, config hash, environment, service signatures, and changed service ids
+- compiled container metadata also records reused services, invalidated services, dependency graphs, and invalidation reasons for incremental compile reuse
+- corrupted compiled artifacts are quarantined; production-style modes fail closed, while development mode can fall back to dynamic resolution
+- diagnostics mode is explicit: `minimal` keeps timeline overhead near zero, while `detailed` keeps richer traces for CI and debugging
 - deferred services stay out of the default warm compile path unless they are explicit or needed by a compiled dependency
 - scoped services require an active scope
 - missing services throw `ServiceNotFoundException`
@@ -95,3 +111,5 @@ The facade uses a small set of explicit companion types:
 - `DependencyInjection/Dependencies/Bindings/RegisterForTarget.php`
 - `DependencyInjection/Injection/Reports/InjectionReport.php`
 - `DependencyInjection/Scopes/ScopeInterface.php`
+- `Compilation/CompileReport.php`
+- `Observability/RuntimeReport.php`

@@ -9,6 +9,18 @@ namespace Avax\Container\Configuration;
  */
 final readonly class CreateContainerConfig
 {
+    public const COMPILE_MODE_DEV = 'dev';
+
+    public const COMPILE_MODE_CI = 'ci';
+
+    public const COMPILE_MODE_PRODUCTION = 'production';
+
+    public const COMPILE_MODE_WARMUP = 'warmup';
+
+    public const DIAGNOSTICS_MODE_MINIMAL = 'minimal';
+
+    public const DIAGNOSTICS_MODE_DETAILED = 'detailed';
+
     /**
      * @param array<string, mixed> $settings
      */
@@ -17,7 +29,9 @@ final readonly class CreateContainerConfig
         public string $cacheVersion = 'container-v1',
         public bool $debug = false,
         public array $settings = [],
-        public bool $strict = false
+        public bool $strict = false,
+        public string $compileMode = self::COMPILE_MODE_PRODUCTION,
+        public string $diagnosticsMode = self::DIAGNOSTICS_MODE_MINIMAL
     ) {}
 
     /**
@@ -28,7 +42,9 @@ final readonly class CreateContainerConfig
         string $cacheVersion = 'container-v1',
         bool $debug = false,
         array $settings = [],
-        bool $strict = false
+        bool $strict = false,
+        string $compileMode = self::COMPILE_MODE_PRODUCTION,
+        string $diagnosticsMode = self::DIAGNOSTICS_MODE_MINIMAL
     ) : self
     {
         return new self(
@@ -36,7 +52,9 @@ final readonly class CreateContainerConfig
             cacheVersion: $cacheVersion,
             debug       : $debug,
             settings    : $settings,
-            strict      : $strict
+            strict      : $strict,
+            compileMode : self::normalizeCompileMode(mode: $compileMode),
+            diagnosticsMode: self::normalizeDiagnosticsMode(mode: $diagnosticsMode)
         );
     }
 
@@ -50,7 +68,9 @@ final readonly class CreateContainerConfig
             cacheVersion: $this->cacheVersion,
             debug       : $this->debug,
             settings    : $settings,
-            strict      : $this->strict
+            strict      : $this->strict,
+            compileMode : $this->compileMode,
+            diagnosticsMode: $this->diagnosticsMode
         );
     }
 
@@ -61,7 +81,9 @@ final readonly class CreateContainerConfig
             cacheVersion: $this->cacheVersion,
             debug       : $debug,
             settings    : $this->settings,
-            strict      : $this->strict
+            strict      : $this->strict,
+            compileMode : $this->compileMode,
+            diagnosticsMode: $this->diagnosticsMode
         );
     }
 
@@ -72,7 +94,9 @@ final readonly class CreateContainerConfig
             cacheVersion: $this->cacheVersion,
             debug       : $this->debug,
             settings    : $this->settings,
-            strict      : $strict
+            strict      : $strict,
+            compileMode : $this->compileMode,
+            diagnosticsMode: $this->diagnosticsMode
         );
     }
 
@@ -83,7 +107,9 @@ final readonly class CreateContainerConfig
             cacheVersion: $this->cacheVersion,
             debug       : $this->debug,
             settings    : $this->settings,
-            strict      : $this->strict
+            strict      : $this->strict,
+            compileMode : $this->compileMode,
+            diagnosticsMode: $this->diagnosticsMode
         );
     }
 
@@ -94,7 +120,123 @@ final readonly class CreateContainerConfig
             cacheVersion: $cacheVersion,
             debug       : $this->debug,
             settings    : $this->settings,
-            strict      : $this->strict
+            strict      : $this->strict,
+            compileMode : $this->compileMode,
+            diagnosticsMode: $this->diagnosticsMode
         );
+    }
+
+    public function withCompileMode(string $compileMode) : self
+    {
+        return new self(
+            cacheDir    : $this->cacheDir,
+            cacheVersion: $this->cacheVersion,
+            debug       : $this->debug,
+            settings    : $this->settings,
+            strict      : $this->strict,
+            compileMode : self::normalizeCompileMode(mode: $compileMode),
+            diagnosticsMode: $this->diagnosticsMode
+        );
+    }
+
+    public function withDiagnosticsMode(string $diagnosticsMode) : self
+    {
+        return new self(
+            cacheDir    : $this->cacheDir,
+            cacheVersion: $this->cacheVersion,
+            debug       : $this->debug,
+            settings    : $this->settings,
+            strict      : $this->strict,
+            compileMode : $this->compileMode,
+            diagnosticsMode: self::normalizeDiagnosticsMode(mode: $diagnosticsMode)
+        );
+    }
+
+    public function environment() : string
+    {
+        $configured = $this->settings['app_env']
+            ?? $this->settings['APP_ENV']
+            ?? null;
+
+        if (is_string($configured) && $configured !== '') {
+            return $configured;
+        }
+
+        $environment = getenv('APP_ENV');
+
+        return is_string($environment) ? $environment : '';
+    }
+
+    public function configHash() : string
+    {
+        return sha1(serialize([
+            'cacheVersion' => $this->cacheVersion,
+            'debug' => $this->debug,
+            'strict' => $this->strict,
+            'compileMode' => $this->compileMode,
+            'diagnosticsMode' => $this->diagnosticsMode,
+            'environment' => $this->environment(),
+            'settings' => $this->settings,
+        ]));
+    }
+
+    public function usesDetailedDiagnostics() : bool
+    {
+        if ($this->diagnosticsMode === self::DIAGNOSTICS_MODE_DETAILED) {
+            return true;
+        }
+
+        return $this->debug || in_array(
+            $this->compileMode,
+            [self::COMPILE_MODE_CI, self::COMPILE_MODE_WARMUP],
+            true
+        );
+    }
+
+    public function validatesCompiledArtifactsOnLoad() : bool
+    {
+        return $this->debug || $this->strict || in_array(
+            $this->compileMode,
+            [self::COMPILE_MODE_DEV, self::COMPILE_MODE_CI, self::COMPILE_MODE_WARMUP],
+            true
+        );
+    }
+
+    public function validatesBeforeCompile() : bool
+    {
+        return $this->strict || in_array(
+            $this->compileMode,
+            [self::COMPILE_MODE_CI, self::COMPILE_MODE_WARMUP],
+            true
+        );
+    }
+
+    public function failsClosedOnCompiledCorruption() : bool
+    {
+        return $this->strict || in_array(
+            $this->compileMode,
+            [self::COMPILE_MODE_CI, self::COMPILE_MODE_PRODUCTION, self::COMPILE_MODE_WARMUP],
+            true
+        );
+    }
+
+    private static function normalizeCompileMode(string $mode) : string
+    {
+        return match ($mode) {
+            self::COMPILE_MODE_DEV,
+            self::COMPILE_MODE_CI,
+            self::COMPILE_MODE_PRODUCTION,
+            self::COMPILE_MODE_WARMUP => $mode,
+            default => self::COMPILE_MODE_PRODUCTION,
+        };
+    }
+
+    private static function normalizeDiagnosticsMode(string $mode) : string
+    {
+        return match ($mode) {
+            self::DIAGNOSTICS_MODE_MINIMAL,
+            self::DIAGNOSTICS_MODE_DETAILED => $mode,
+            default => self::DIAGNOSTICS_MODE_MINIMAL,
+        };
     }
 }

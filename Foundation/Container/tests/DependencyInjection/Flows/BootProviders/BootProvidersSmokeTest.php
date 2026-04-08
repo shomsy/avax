@@ -76,6 +76,52 @@ final class DemoProvider implements ServiceProviderInterface
     }
 }
 
+interface DeferredProvidedContract
+{
+    public function id() : string;
+}
+
+final class DeferredProvidedService implements DeferredProvidedContract
+{
+    public function id() : string
+    {
+        return 'deferred-provider';
+    }
+}
+
+final class DeferredDemoProvider implements ServiceProviderInterface
+{
+    public function __construct(private ContainerInterface $app)
+    {
+    }
+
+    public function dependsOn() : array
+    {
+        return [];
+    }
+
+    public function deferred() : bool
+    {
+        return true;
+    }
+
+    public function provides() : array
+    {
+        return [DeferredProvidedContract::class];
+    }
+
+    public function register() : void
+    {
+        ProviderState::$events[] = 'deferred-register';
+        $this->app->singleton(DeferredProvidedContract::class, DeferredProvidedService::class);
+    }
+
+    public function boot() : void
+    {
+        ProviderState::$events[] = 'deferred-boot';
+    }
+}
+
 final class CycleProviderA implements ServiceProviderInterface
 {
     public function __construct(private ContainerInterface $app)
@@ -130,6 +176,41 @@ assertSame(
     'Providers must compose deterministically and boot in dependency order.'
 );
 assertSame('demo-booted', $state->message, 'Boot phase should run against the dependency-composed service graph.');
+assertTrue(
+    str_contains($container->exportMetrics(), 'container_provider_boot_total 2'),
+    'Provider boot metrics should record each booted provider.'
+);
+assertTrue(
+    str_contains($container->exportMetrics(), 'container_provider_register_total 2'),
+    'Provider register metrics should record each registered provider.'
+);
+
+ProviderState::$events = [];
+$deferredContainer = makeTestContainer();
+
+(new BootProviders($deferredContainer))->boot([DeferredDemoProvider::class]);
+
+$deferredDescription = $deferredContainer->describeService(DeferredProvidedContract::class);
+assertSame([], ProviderState::$events, 'Deferred providers must not register or boot during eager provider boot flow.');
+assertTrue($deferredDescription['deferred'], 'Deferred provider services should report deferred state before first resolve.');
+assertSame(
+    DeferredDemoProvider::class,
+    $deferredDescription['deferredProvider'],
+    'Service diagnostics should expose the deferred provider owner.'
+);
+
+$deferredService = $deferredContainer->get(DeferredProvidedContract::class);
+
+assertSame('deferred-provider', $deferredService->id(), 'Deferred providers should register and boot on first service resolve.');
+assertSame(
+    ['deferred-register', 'deferred-boot'],
+    ProviderState::$events,
+    'Deferred providers should register and boot exactly once on first resolve.'
+);
+assertTrue(
+    str_contains($deferredContainer->exportMetrics(), 'container_provider_deferred_boot_total 1'),
+    'Deferred provider metrics should record lazy provider boots.'
+);
 
 assertThrows(
     LogicException::class,

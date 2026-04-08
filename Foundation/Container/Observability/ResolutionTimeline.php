@@ -12,17 +12,27 @@ final class ResolutionTimeline
     private array $entries = [];
 
     public function __construct(
-        private readonly Clock $clock = new Clock
+        private readonly Clock $clock = new Clock,
+        private readonly bool $enabled = true
     ) {}
 
     public function record(string $action, string $serviceId, string $outcome) : void
     {
+        if (! $this->enabled) {
+            return;
+        }
+
         $this->entries[] = [
             'time'     => $this->clock->now(),
             'action'   => $action,
             'serviceId'=> $serviceId,
             'outcome'  => $outcome,
         ];
+    }
+
+    public function enabled() : bool
+    {
+        return $this->enabled;
     }
 
     public function all() : array

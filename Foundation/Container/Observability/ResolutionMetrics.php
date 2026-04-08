@@ -17,14 +17,17 @@ final class ResolutionMetrics
     /** @return array<string, int> */
     public function all() : array
     {
-        return $this->counters;
+        $counters = $this->counters;
+        ksort($counters);
+
+        return $counters;
     }
 
     public function export() : string
     {
         $lines = [];
 
-        foreach ($this->counters as $name => $value) {
+        foreach ($this->all() as $name => $value) {
             $lines[] = $name . ' ' . $value;
         }
 

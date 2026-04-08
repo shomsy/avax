@@ -10,6 +10,9 @@
 - `Context View`: a container view created by `forContext()` that feeds scalar named arguments into resolution and invocation
 - `Deferred Service`: a registration that stays out of the default compile warmup until it is explicitly requested or needed by another compiled service
 - `Compiled Runtime Artifact`: the generated container file that holds direct hot-path service methods
+- `Compiled Metadata`: the JSON sidecar that records checksum, config hash, environment, changed service ids, and per-service signatures for the compiled runtime artifact
+- `Compile Mode`: the build/runtime policy for compiled artifacts such as `dev`, `ci`, `production`, or `warmup`
+- `Diagnostics Mode`: the observability policy for runtime reports and timeline recording, such as `minimal` or `detailed`
 - `Scope`: an isolated storage frame for scoped instances
 - `Shared Lifetime`: one instance reused across the whole runtime
 - `Scoped Lifetime`: one instance reused only inside the current active scope
@@ -17,10 +20,13 @@
 - `Resolution Policy`: rule set that allows or blocks a resolve request
 - `Validate`: the diagnostics pass that checks obvious registration and blueprint issues without resolving services
 - `Describe Service`: the human-readable service inspection surface
+- `Debug Service`: the alias for service inspection when a caller wants explicit debug wording
 - `Debug Plan`: the human-readable plan view for a service
 - `Debug Tags`: the human-readable tag view for a tag
+- `Debug Aliases`: the human-readable alias map view
 - `Debug Scope`: the human-readable scope storage snapshot
 - `Boot Providers`: the deterministic provider lifecycle that registers then boots providers in dependency order
+- `Deferred Provider`: a provider that declares `deferred()` plus `provides()` and is booted only when one of its owned services is first resolved
 - `Telemetry`: runtime counters and timeline events emitted by the resolver
 - `Clock`: the neutral time source used by observability
 - `Environment Hook`: a container-owned env lookup such as `Container::env()`

@@ -8,6 +8,7 @@ This component has one canonical story:
 - glossary: [`glossary.md`](./glossary.md)
 - failure handling: [`troubleshooting.md`](./troubleshooting.md)
 - benchmark harness: [`../tests/run-benchmarks.sh`](../tests/run-benchmarks.sh)
+- benchmark guard: [`../tests/check-benchmarks.sh`](../tests/check-benchmarks.sh)
 
 Canonical source tree:
 
@@ -28,9 +29,12 @@ Local validation:
 - lint: `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`
 - smoke suite: [`tests/run-smoke-tests.sh`](../tests/run-smoke-tests.sh)
 - benchmarks: [`tests/run-benchmarks.sh`](../tests/run-benchmarks.sh)
+- benchmark guard: [`tests/check-benchmarks.sh`](../tests/check-benchmarks.sh)
 
 Performance model:
 
 - reflect once
 - compile once
 - run many times from memory or versioned disk artifacts
+- choose `minimal` diagnostics for low-overhead production runtime state
+- choose `detailed` diagnostics for CI, debugging, and richer timeline output

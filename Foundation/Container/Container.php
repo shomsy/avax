@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container;
 
+use Avax\Container\Compilation\CompileReport;
 use Avax\Container\DependencyInjection\Flows\CallFunction;
 use Avax\Container\DependencyInjection\Flows\BootProviders;
 use Avax\Container\DependencyInjection\Flows\CloseScope;
@@ -14,6 +15,7 @@ use Avax\Container\DependencyInjection\Dependencies\Bindings\RegisterForTarget;
 use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistration;
 use Avax\Container\DependencyInjection\Flows\ResolveService;
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
+use Avax\Container\Observability\RuntimeReport;
 use Avax\Container\DependencyInjection\Scopes\ScopeInterface;
 use Avax\Container\Runtime\LazyProxy;
 
@@ -94,6 +96,14 @@ final readonly class Container implements ContainerInterface
     /**
      * @return array<string, mixed>
      */
+    public function debugService(string $id) : array
+    {
+        return $this->resolver->debugService(id: $id);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     public function debugPlan(string $id) : array
     {
         return $this->resolver->debugPlan(id: $id);
@@ -156,6 +166,41 @@ final readonly class Container implements ContainerInterface
     public function rebuildCompiled(array $serviceIds = []) : void
     {
         $this->resolver->rebuildCompiled(serviceIds: $serviceIds);
+    }
+
+    public function compileReport(array $serviceIds = []) : CompileReport|null
+    {
+        return $this->resolver->compileReport(serviceIds: $serviceIds);
+    }
+
+    public function runtimeReport() : RuntimeReport
+    {
+        return $this->resolver->runtimeReport();
+    }
+
+    public function hasAlias(string $alias) : bool
+    {
+        return $this->resolver->hasAlias(alias: $alias);
+    }
+
+    public function isDeferred(string $id) : bool
+    {
+        return $this->resolver->isDeferred(id: $id);
+    }
+
+    public function isLazy(string $id) : bool
+    {
+        return $this->resolver->isLazy(id: $id);
+    }
+
+    public function isCompiled(string $id) : bool
+    {
+        return $this->resolver->isCompiled(id: $id);
+    }
+
+    public function isWarmedUp() : bool
+    {
+        return $this->resolver->isWarmedUp();
     }
 
     public function canInject(object $target) : bool
@@ -312,6 +357,11 @@ final readonly class Container implements ContainerInterface
                 return $this->base->describeService(id: $id);
             }
 
+            public function debugService(string $id) : array
+            {
+                return $this->base->debugService(id: $id);
+            }
+
             public function debugPlan(string $id) : array
             {
                 return $this->base->debugPlan(id: $id);
@@ -365,6 +415,41 @@ final readonly class Container implements ContainerInterface
             public function rebuildCompiled(array $serviceIds = []) : void
             {
                 $this->base->rebuildCompiled(serviceIds: $serviceIds);
+            }
+
+            public function compileReport(array $serviceIds = []) : CompileReport|null
+            {
+                return $this->base->compileReport(serviceIds: $serviceIds);
+            }
+
+            public function runtimeReport() : RuntimeReport
+            {
+                return $this->base->runtimeReport();
+            }
+
+            public function hasAlias(string $alias) : bool
+            {
+                return $this->base->hasAlias(alias: $alias);
+            }
+
+            public function isDeferred(string $id) : bool
+            {
+                return $this->base->isDeferred(id: $id);
+            }
+
+            public function isLazy(string $id) : bool
+            {
+                return $this->base->isLazy(id: $id);
+            }
+
+            public function isCompiled(string $id) : bool
+            {
+                return $this->base->isCompiled(id: $id);
+            }
+
+            public function isWarmedUp() : bool
+            {
+                return $this->base->isWarmedUp();
             }
 
             public function scopes() : ScopeInterface

@@ -47,6 +47,12 @@ If boot fails, verify that register phase wrote the required services first.
 
 If providers depend on each other, make sure each provider reports the dependency in `dependsOn()`.
 
+If a provider should boot lazily instead of during `bootProviders()`:
+
+1. declare `deferred(): bool` and return `true`
+2. declare `provides(): array` with every service id the provider owns
+3. resolve one of those services to trigger the deferred provider boot
+
 ## Compiled Cache Issues
 
 If compiled artifacts are not being used:
@@ -58,7 +64,19 @@ If compiled artifacts are not being used:
 
 If artifacts look stale, use `flushCompiled()` or bump `cacheVersion`.
 
+If the compiled artifact is corrupt:
+
+1. production-style compile modes fail closed and quarantine the artifact
+2. development mode quarantines the artifact and falls back to dynamic resolution
+3. inspect `describeService()` or `debugService()` to confirm whether the service is still compiled or running dynamically
+
 If a compiled service is still resolving dynamically, it may be outside the compiled hot path on purpose. Check `describeService()` and `debugPlan()` before assuming a cache miss.
+
+If a compile report shows invalidated services:
+
+1. inspect `compileReport()->invalidatedServices`
+2. inspect `compileReport()->invalidationReasons`
+3. confirm whether the change was a service signature change, dependency graph change, or missing previous compiled source
 
 ## Context Views
 
@@ -79,8 +97,20 @@ If tests or long-running workers need a clean slate:
 
 Both operations are deterministic and leave the container ready for a fresh bootstrap.
 
+## Status Helpers
+
+If you need to know what the container thinks right now:
+
+1. `hasAlias()` checks alias presence without resolving anything
+2. `isDeferred()` reports deferred registration state
+3. `isLazy()` reports whether a lazy proxy has been requested in this runtime
+4. `isCompiled()` reports whether one service id is present in the compiled artifact
+5. `isWarmedUp()` reports whether a compiled artifact is available for this runtime
+6. `runtimeReport()` exposes whether diagnostics mode is `minimal` or `detailed`
+
 ## Validation Commands
 
 - lint: `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`
 - smoke suite: `./tests/run-smoke-tests.sh`
 - benchmarks: `./tests/run-benchmarks.sh`
+- benchmark guard: `./tests/check-benchmarks.sh`

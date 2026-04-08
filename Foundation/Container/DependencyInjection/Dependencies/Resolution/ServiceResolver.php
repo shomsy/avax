@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Avax\Container\DependencyInjection\Dependencies\Resolution;
 
 use Avax\Container\Compilation\CompileContainer;
+use Avax\Container\Compilation\CompileReport;
 use Avax\Container\ContainerInterface;
+use Avax\Container\Configuration\CreateContainerConfig;
 use Avax\Container\Configuration\ContainerSettings;
 use Avax\Container\Errors\ContainerException;
 use Avax\Container\Errors\ServiceNotFoundException;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\CreateServiceBlueprint;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\ServiceBlueprint;
+use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface;
 use Avax\Container\DependencyInjection\Injection\Methods\InjectMethods;
 use Avax\Container\DependencyInjection\Injection\Properties\InjectProperties;
 use Avax\Container\DependencyInjection\Injection\Reports\InjectionReport;
@@ -25,6 +28,7 @@ use Avax\Container\DependencyInjection\Scopes\Lifetimes\TransientLifetime;
 use Avax\Container\DependencyInjection\Scopes\ManageScopes;
 use Avax\Container\Runtime\HotPathInliner;
 use Avax\Container\Runtime\LazyProxy;
+use Avax\Container\Observability\RuntimeReport;
 use Closure;
 use Throwable;
 
@@ -42,6 +46,18 @@ final class ServiceResolver
 
     private int $compiledRevision = -1;
 
+    /** @var array<string, true> */
+    private array $lazyServices = [];
+
+    /** @var array<class-string<ServiceProviderInterface>, ServiceProviderInterface> */
+    private array $deferredProviders = [];
+
+    /** @var array<string, class-string<ServiceProviderInterface>> */
+    private array $deferredProviderServices = [];
+
+    /** @var array<class-string<ServiceProviderInterface>, true> */
+    private array $bootedProviders = [];
+
     public function __construct(
         private readonly ServiceRegistry        $registrations,
         private readonly ManageScopes           $scopes,
@@ -54,7 +70,8 @@ final class ServiceResolver
         ResolutionTimeline|null                $timeline = null,
         ResolutionPolicy|null                  $policy = null,
         CompileContainer|null                  $compiler = null,
-        HotPathInliner|null                    $inliner = null
+        HotPathInliner|null                    $inliner = null,
+        private readonly string                $diagnosticsMode = CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL
     ) {
         $this->telemetry = new ResolutionTelemetry(
             metrics : $metrics ?? new ResolutionMetrics,
@@ -110,6 +127,10 @@ final class ServiceResolver
         $this->scopes->terminate();
         $this->caller->clearCache();
         $this->telemetry->reset();
+        $this->lazyServices = [];
+        $this->deferredProviders = [];
+        $this->deferredProviderServices = [];
+        $this->bootedProviders = [];
         $this->compiledRevision = -1;
     }
 
@@ -125,6 +146,7 @@ final class ServiceResolver
     public function validate(array $serviceIds = []) : array
     {
         $issues = [];
+        $graph = [];
 
         foreach ($this->classesForValidation(serviceIds: $serviceIds) as $class) {
             try {
@@ -132,13 +154,23 @@ final class ServiceResolver
                 if (! $blueprint->instantiable) {
                     $issues[] = "Service [{$class}] is not instantiable.";
                 }
+
+                $graph[$class] = $this->dependenciesForValidation(
+                    serviceId: $class,
+                    blueprint: $blueprint,
+                    issues   : $issues
+                );
             } catch (Throwable $throwable) {
                 $issues[] = "Service [{$class}] cannot be analyzed: {$throwable->getMessage()}";
             }
         }
 
         foreach ($this->registrations->allAliases() as $alias => $target) {
-            if (! $this->registrations->has(abstract: $target)) {
+            if (
+                ! $this->registrations->has(abstract: $target)
+                && ! class_exists($target)
+                && ! interface_exists($target)
+            ) {
                 $issues[] = "Alias [{$alias}] points to missing service [{$target}].";
             }
         }
@@ -147,6 +179,18 @@ final class ServiceResolver
             if ($registration->concrete === null) {
                 $issues[] = "Service [{$abstract}] has no concrete target.";
             }
+        }
+
+        foreach ($this->registrations->contextual() as $consumer => $rules) {
+            foreach ($rules as $needs => $give) {
+                if (! $this->isResolvableBinding(binding: $give)) {
+                    $issues[] = "Contextual binding [{$consumer}] -> [{$needs}] points to an invalid target.";
+                }
+            }
+        }
+
+        foreach ($this->detectCircularDependencies(graph: $graph) as $cycle) {
+            $issues[] = $cycle;
         }
 
         return array_values(array_unique($issues));
@@ -159,22 +203,37 @@ final class ServiceResolver
     {
         $resolved = $this->registrations->resolveAlias(abstract: $id);
         $registration = $this->registrations->get(abstract: $resolved);
-        $blueprint = $resolved !== '' && class_exists($resolved) ? $this->blueprints->createFor(class: $resolved) : null;
+        $lifetimePlan = LifetimePlan::fromRegistration(
+            serviceId   : $resolved,
+            registration: $registration
+        );
+        $blueprintClass = is_string($registration?->concrete) && class_exists($registration->concrete)
+            ? $registration->concrete
+            : (class_exists($resolved) ? $resolved : null);
+        $blueprint = is_string($blueprintClass)
+            ? $this->blueprints->createFor(class: $blueprintClass)
+            : null;
+        $compiledArtifact = $this->compiler?->report(serviceIds: [$resolved]);
 
         return [
             'id' => $id,
             'resolvedId' => $resolved,
             'registered' => $registration !== null,
+            'diagnosticsMode' => $this->diagnosticsMode,
             'concrete' => is_object($registration?->concrete)
                 ? $registration?->concrete::class
                 : $registration?->concrete,
-            'lifetime' => $registration?->lifetime,
-            'deferred' => $registration?->deferred ?? false,
+            'lifetime' => $lifetimePlan->name,
+            'lifetimePlan' => $lifetimePlan->toArray(),
+            'deferred' => ($registration?->deferred ?? false) || isset($this->deferredProviderServices[$resolved]),
+            'deferredProvider' => $this->deferredProviderServices[$resolved] ?? null,
             'tags' => $registration?->tags ?? [],
             'aliases' => array_keys(array_filter(
                 $this->registrations->allAliases(),
                 static fn(string $target) : bool => $target === $resolved
             )),
+            'aliasChain' => $this->registrations->aliasChain(abstract: $id),
+            'decorationChain' => $this->registrations->decorationChain(abstract: $resolved),
             'blueprint' => $blueprint !== null ? [
                 'instantiable' => $blueprint->instantiable,
                 'shared' => $blueprint->shared,
@@ -183,7 +242,12 @@ final class ServiceResolver
                 'injectableMethods' => $blueprint->injectableMethods,
                 'fingerprint' => $blueprint->fingerprint,
             ] : null,
-            'compiled' => $this->inliner->has(serviceId: $resolved),
+            'compiled' => $this->isCompiled(id: $resolved),
+            'warmedUp' => $this->isWarmedUp(),
+            'lazy' => $this->isLazy(id: $resolved),
+            'cacheState' => $this->cacheStateFor(serviceId: $resolved),
+            'compiledState' => $this->compiledStateFor(serviceId: $resolved),
+            'compiledArtifact' => $compiledArtifact?->toArray() ?? ['available' => false],
         ];
     }
 
@@ -192,17 +256,96 @@ final class ServiceResolver
         return $this->describeService(id: $id);
     }
 
+    public function hasAlias(string $alias) : bool
+    {
+        return $this->registrations->hasAlias(alias: $alias);
+    }
+
+    public function isDeferred(string $id) : bool
+    {
+        $resolved = $this->registrations->resolveAlias(abstract: $id);
+
+        return ($this->registrations->get(abstract: $resolved)?->deferred ?? false)
+            || isset($this->deferredProviderServices[$resolved]);
+    }
+
+    public function isLazy(string $id) : bool
+    {
+        $resolved = $this->registrations->resolveAlias(abstract: $id);
+
+        return isset($this->lazyServices[$resolved]);
+    }
+
+    public function isCompiled(string $id) : bool
+    {
+        $resolved = $this->registrations->resolveAlias(abstract: $id);
+        $this->refreshCompiledRuntime(serviceId: $resolved);
+
+        return $this->inliner->has(serviceId: $resolved)
+            || ($this->compiler?->contains(serviceId: $resolved) ?? false);
+    }
+
+    public function isWarmedUp() : bool
+    {
+        if ($this->inliner->isAttached()) {
+            return true;
+        }
+
+        return $this->compiler?->report()->available ?? false;
+    }
+
+    public function compileReport(array $serviceIds = []) : CompileReport|null
+    {
+        return $this->compiler?->report(serviceIds: $serviceIds);
+    }
+
+    public function runtimeReport() : RuntimeReport
+    {
+        $lazyServices = array_keys($this->lazyServices);
+        sort($lazyServices);
+        $deferredProviders = $this->deferredProviderServices;
+        ksort($deferredProviders);
+        $scopeSnapshot = $this->scopes->snapshot();
+
+        return new RuntimeReport(
+            registrationRevision: $this->registrations->revision(),
+            compiledRevision    : $this->compiledRevision,
+            compiledAttached    : $this->inliner->isAttached(),
+            warmedUp            : $this->isWarmedUp(),
+            diagnosticsMode     : $this->diagnosticsMode,
+            lazyServices        : $lazyServices,
+            aliases             : $this->registrations->allAliases(),
+            deferredProviders   : $deferredProviders,
+            metrics             : $this->telemetry->metrics()->all(),
+            timeline            : $this->telemetry->timeline()->all(),
+            scopes              : [
+                'shared' => $this->summarizeScopeEntries(entries: $scopeSnapshot['shared']),
+                'scopedDepth' => count($scopeSnapshot['scoped']),
+                'scoped' => array_map(
+                    fn(array $scope) : array => $this->summarizeScopeEntries(entries: $scope),
+                    $scopeSnapshot['scoped']
+                ),
+            ],
+            compiled            : $this->compiler?->report()
+        );
+    }
+
     /**
      * @return array<string, mixed>
      */
     public function debugPlan(string $id) : array
     {
         $resolved = $this->registrations->resolveAlias(abstract: $id);
-        if ($resolved === '' || ! class_exists($resolved)) {
+        $registration = $this->registrations->get(abstract: $resolved);
+        $blueprintClass = is_string($registration?->concrete) && class_exists($registration->concrete)
+            ? $registration->concrete
+            : (class_exists($resolved) ? $resolved : null);
+
+        if ($resolved === '' || ! is_string($blueprintClass)) {
             return ['id' => $id, 'resolvedId' => $resolved, 'constructor' => null, 'methods' => []];
         }
 
-        $blueprint = $this->blueprints->createFor(class: $resolved);
+        $blueprint = $this->blueprints->createFor(class: $blueprintClass);
 
         return [
             'id' => $id,
@@ -224,6 +367,7 @@ final class ServiceResolver
 
         return [
             'tag' => $tag,
+            'ordered' => true,
             'ids' => $ids,
             'services' => array_map(
                 fn(string $id) => $this->describeService(id: $id),
@@ -248,8 +392,12 @@ final class ServiceResolver
         $snapshot = $this->scopes->snapshot();
 
         return [
-            'shared' => $snapshot['shared'],
-            'scoped' => $snapshot['scoped'],
+            'depth' => count($snapshot['scoped']),
+            'shared' => $this->summarizeScopeEntries(entries: $snapshot['shared']),
+            'scoped' => array_map(
+                fn(array $scope) : array => $this->summarizeScopeEntries(entries: $scope),
+                $snapshot['scoped']
+            ),
         ];
     }
 
@@ -262,7 +410,11 @@ final class ServiceResolver
     {
         $id = $this->registrations->resolveAlias(abstract: $id);
 
-        if ($this->scopes->has(abstract: $id) || $this->registrations->has(abstract: $id)) {
+        if (
+            $this->scopes->has(abstract: $id)
+            || $this->registrations->has(abstract: $id)
+            || isset($this->deferredProviderServices[$id])
+        ) {
             return true;
         }
 
@@ -426,11 +578,23 @@ final class ServiceResolver
      */
     public function compileContainer(array $serviceIds = []) : void
     {
+        $validationIssues = [];
+        if ($this->compiler !== null && $this->compiler->shouldValidateBeforeCompile()) {
+            $validationIssues = $this->validate(serviceIds: $serviceIds);
+            if ($validationIssues !== []) {
+                throw new ContainerException(
+                    message: "Container compile failed:\n- " . implode("\n- ", $validationIssues)
+                );
+            }
+        }
+
         $classes = $this->classesForWarmup(serviceIds: $serviceIds);
         $this->blueprints->warm(classes: $classes);
 
         if ($this->compiler !== null) {
-            $this->inliner->attach($this->compiler->compile(serviceIds: $serviceIds));
+            $this->inliner->attach(
+                $this->compiler->compile(serviceIds: $serviceIds, validationIssues: $validationIssues)
+            );
             $this->compiledRevision = $this->registrations->revision();
         }
 
@@ -476,6 +640,8 @@ final class ServiceResolver
     public function lazy(string $abstract) : LazyProxy
     {
         $serviceId = $this->registrations->resolveAlias(abstract: $abstract);
+        $this->lazyServices[$serviceId] = true;
+        $this->telemetry->metrics()->increment(name: 'container_lazy_proxy_requests_total');
 
         return new LazyProxy(
             serviceId: $serviceId,
@@ -489,6 +655,8 @@ final class ServiceResolver
     public function lazyInContext(string $abstract, array $context) : LazyProxy
     {
         $serviceId = $this->registrations->resolveAlias(abstract: $abstract);
+        $this->lazyServices[$serviceId] = true;
+        $this->telemetry->metrics()->increment(name: 'container_lazy_proxy_requests_total');
 
         return new LazyProxy(
             serviceId: $serviceId,
@@ -499,6 +667,7 @@ final class ServiceResolver
     public function resolveRequest(ResolveRequest $request) : mixed
     {
         $request = $this->normalizeRequest(request: $request);
+        $this->bootDeferredProviderIfNeeded(serviceId: $request->serviceId);
 
         $this->telemetry->timeline()->record(
             action   : 'resolve',
@@ -773,14 +942,17 @@ final class ServiceResolver
 
     private function storeResolved(string $abstract, object $instance, ServiceRegistration|null $registration) : void
     {
-        $lifetime = $registration?->lifetime ?? TransientLifetime::NAME;
+        $lifetime = LifetimePlan::fromRegistration(
+            serviceId   : $abstract,
+            registration: $registration
+        );
 
-        if ($lifetime === SharedLifetime::NAME) {
+        if ($lifetime->isShared()) {
             $this->scopes->instance(abstract: $abstract, instance: $instance);
             return;
         }
 
-        if ($lifetime === ScopedLifetime::NAME) {
+        if ($lifetime->isScoped()) {
             $this->scopes->set(abstract: $abstract, instance: $instance);
         }
     }
@@ -953,10 +1125,85 @@ final class ServiceResolver
         if ($compiled !== null) {
             $this->inliner->attach($compiled);
         } else {
+            $artifactAvailable = $this->compiler->report()->available;
+            $requestedIsCompiled = $serviceId !== null && $this->compiler->contains(serviceId: $serviceId);
+
+            if (! $artifactAvailable || $requestedIsCompiled) {
+                $this->inliner->detach();
+            }
+        }
+
+        if (! $this->inliner->isAttached() && ! $this->compiler->report()->available) {
             $this->inliner->detach();
         }
 
         $this->compiledRevision = $revision;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function cacheStateFor(string $serviceId) : array
+    {
+        $snapshot = $this->scopes->snapshot();
+
+        return [
+            'cached' => $this->scopes->has(abstract: $serviceId),
+            'lazy' => isset($this->lazyServices[$serviceId]),
+            'deferred' => isset($this->deferredProviderServices[$serviceId]),
+            'scopeDepth' => count($snapshot['scoped']),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function compiledStateFor(string $serviceId) : array
+    {
+        $this->refreshCompiledRuntime(serviceId: $serviceId);
+        $report = $this->compiler?->report(serviceIds: [$serviceId]);
+
+        return [
+            'attached' => $this->inliner->isAttached(),
+            'entryAttached' => $this->inliner->has(serviceId: $serviceId),
+            'containsEntry' => $this->compiler?->contains(serviceId: $serviceId) ?? false,
+            'artifactAvailable' => $report?->available ?? false,
+            'compileMode' => $report?->compileMode ?? '',
+        ];
+    }
+
+    private function bootDeferredProviderIfNeeded(string $serviceId) : void
+    {
+        $providerClass = $this->deferredProviderServices[$serviceId] ?? null;
+        if ($providerClass === null || isset($this->bootedProviders[$providerClass])) {
+            return;
+        }
+
+        $this->bootDeferredProviderClass(providerClass: $providerClass);
+    }
+
+    /**
+     * @param class-string<ServiceProviderInterface> $providerClass
+     */
+    private function bootDeferredProviderClass(string $providerClass) : void
+    {
+        $provider = $this->deferredProviders[$providerClass] ?? null;
+        if (! $provider instanceof ServiceProviderInterface) {
+            throw new ContainerException(message: "Deferred provider [{$providerClass}] is not registered.");
+        }
+
+        foreach ($provider->dependsOn() as $dependencyClass) {
+            if (isset($this->deferredProviders[$dependencyClass]) && ! isset($this->bootedProviders[$dependencyClass])) {
+                $this->bootDeferredProviderClass(providerClass: $dependencyClass);
+            }
+        }
+
+        $provider->register();
+        $this->telemetry->metrics()->increment(name: 'container_provider_register_total');
+        $provider->boot();
+        $this->telemetry->metrics()->increment(name: 'container_provider_boot_total');
+        $this->telemetry->metrics()->increment(name: 'container_provider_deferred_boot_total');
+        $this->bootedProviders[$providerClass] = true;
     }
 
     private function shouldUseCompiled(ResolveRequest $request) : bool
@@ -992,6 +1239,43 @@ final class ServiceResolver
     public function defer(string $abstract, mixed $concrete = null) : ServiceRegistration
     {
         return $this->registrations->defer(abstract: $abstract, concrete: $concrete);
+    }
+
+    /**
+     * @param list<string> $serviceIds
+     */
+    public function registerDeferredProvider(ServiceProviderInterface $provider, array $serviceIds) : void
+    {
+        $providerClass = $provider::class;
+        $ids = array_values(array_unique(array_filter(
+            array_map(
+                fn(string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId),
+                $serviceIds
+            ),
+            static fn(string $serviceId) : bool => $serviceId !== ''
+        )));
+
+        sort($ids);
+
+        if ($ids === []) {
+            throw new ContainerException(message: "Deferred provider [{$providerClass}] must declare at least one provided service.");
+        }
+
+        $this->deferredProviders[$providerClass] = $provider;
+
+        foreach ($ids as $serviceId) {
+            $existing = $this->deferredProviderServices[$serviceId] ?? null;
+            if ($existing !== null && $existing !== $providerClass) {
+                throw new ContainerException(
+                    message: "Deferred provider conflict for service [{$serviceId}] between [{$existing}] and [{$providerClass}]."
+                );
+            }
+
+            $this->deferredProviderServices[$serviceId] = $providerClass;
+        }
+
+        $this->telemetry->metrics()->increment(name: 'container_provider_deferred_total');
+        $this->telemetry->metrics()->increment(name: 'container_provider_deferred_services_total', by: count($ids));
     }
 
     private function injectTarget(object $target, ResolveRequest $request) : object
@@ -1046,6 +1330,161 @@ final class ServiceResolver
         }
 
         return array_values(array_unique($dependencies));
+    }
+
+    /**
+     * @param list<string> $issues
+     * @return list<string>
+     */
+    private function dependenciesForValidation(string $serviceId, ServiceBlueprint $blueprint, array &$issues) : array
+    {
+        $dependencies = [];
+
+        foreach ($blueprint->constructor?->parameters ?? [] as $parameter) {
+            if (! is_string($parameter['serviceId'] ?? null)) {
+                continue;
+            }
+
+            $dependency = $this->registrations->resolveAlias(abstract: $parameter['serviceId']);
+            $dependencies[] = $dependency;
+
+            if (! $this->registrations->has(abstract: $dependency) && ! class_exists($dependency)) {
+                $issues[] = "Service [{$serviceId}] depends on missing service [{$dependency}].";
+            }
+        }
+
+        foreach ($blueprint->injectableProperties ?? [] as $property) {
+            if (! is_string($property['serviceId'] ?? null)) {
+                continue;
+            }
+
+            $dependency = $this->registrations->resolveAlias(abstract: $property['serviceId']);
+            $dependencies[] = $dependency;
+
+            if (! $this->registrations->has(abstract: $dependency) && ! class_exists($dependency)) {
+                $issues[] = "Service [{$serviceId}] injects missing property dependency [{$dependency}].";
+            }
+        }
+
+        foreach ($blueprint->injectableMethods ?? [] as $method) {
+            foreach ($method['plan']->parameters as $parameter) {
+                if (! is_string($parameter['serviceId'] ?? null)) {
+                    continue;
+                }
+
+                $dependency = $this->registrations->resolveAlias(abstract: $parameter['serviceId']);
+                $dependencies[] = $dependency;
+
+                if (! $this->registrations->has(abstract: $dependency) && ! class_exists($dependency)) {
+                    $issues[] = "Service [{$serviceId}] injects missing method dependency [{$dependency}].";
+                }
+            }
+        }
+
+        return array_values(array_unique($dependencies));
+    }
+
+    /**
+     * @param array<string, list<string>> $graph
+     * @return list<string>
+     */
+    private function detectCircularDependencies(array $graph) : array
+    {
+        $issues = [];
+        $state = [];
+
+        foreach (array_keys($graph) as $serviceId) {
+            $this->visitDependency(
+                serviceId: $serviceId,
+                graph    : $graph,
+                state    : $state,
+                stack    : [],
+                issues   : $issues
+            );
+        }
+
+        return array_values(array_unique($issues));
+    }
+
+    /**
+     * @param array<string, list<string>> $graph
+     * @param array<string, string> $state
+     * @param list<string> $stack
+     * @param list<string> $issues
+     */
+    private function visitDependency(
+        string $serviceId,
+        array $graph,
+        array &$state,
+        array $stack,
+        array &$issues
+    ) : void {
+        $currentState = $state[$serviceId] ?? 'new';
+        if ($currentState === 'done') {
+            return;
+        }
+
+        if ($currentState === 'visiting') {
+            $cycleStart = array_search($serviceId, $stack, true);
+            $path = $cycleStart === false ? array_merge($stack, [$serviceId]) : array_slice($stack, $cycleStart);
+            $path[] = $serviceId;
+            $issues[] = 'Circular dependency detected: ' . implode(' -> ', $path);
+
+            return;
+        }
+
+        $state[$serviceId] = 'visiting';
+        $stack[] = $serviceId;
+
+        foreach ($graph[$serviceId] ?? [] as $dependency) {
+            if (! isset($graph[$dependency])) {
+                continue;
+            }
+
+            $this->visitDependency(
+                serviceId: $dependency,
+                graph    : $graph,
+                state    : $state,
+                stack    : $stack,
+                issues   : $issues
+            );
+        }
+
+        $state[$serviceId] = 'done';
+    }
+
+    private function isResolvableBinding(mixed $binding) : bool
+    {
+        if ($binding instanceof Closure || is_object($binding)) {
+            return true;
+        }
+
+        if (! is_string($binding) || $binding === '') {
+            return false;
+        }
+
+        return class_exists($binding)
+            || interface_exists($binding)
+            || $this->registrations->has(abstract: $binding)
+            || str_contains($binding, '::')
+            || str_contains($binding, '@');
+    }
+
+    /**
+     * @param array<string, mixed> $entries
+     * @return array<string, string>
+     */
+    private function summarizeScopeEntries(array $entries) : array
+    {
+        $summary = [];
+
+        foreach ($entries as $serviceId => $instance) {
+            $summary[$serviceId] = is_object($instance) ? $instance::class : get_debug_type($instance);
+        }
+
+        ksort($summary);
+
+        return $summary;
     }
 
     private function callableName(callable|string $callable) : string

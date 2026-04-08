@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Avax\Container\DependencyInjection\Flows;
 
 use Avax\Container\ContainerInterface;
+use Avax\Container\DependencyInjection\Dependencies\Providers\ProviderBootPlan;
 use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface;
+use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
+use Avax\Container\Observability\ResolutionMetrics;
 use InvalidArgumentException;
-use LogicException;
 
 /**
  * Deterministic provider lifecycle flow: register first, then boot.
@@ -22,14 +24,39 @@ final readonly class BootProviders
     public function boot(array $providers) : void
     {
         $instances = $this->resolveProviders(providers: $providers);
-        $ordered = $this->orderProviders(instances: $instances);
+        $plan = ProviderBootPlan::build(instances: $instances);
+        $ordered = $plan->orderedInstances(instances: $instances);
+        $eagerProviders = $this->eagerProviderClasses(plan: $plan, instances: $instances);
+        $metrics = $this->metrics();
+        $resolver = $this->resolver();
+
+        $metrics?->increment(name: 'container_provider_plan_total');
+        $metrics?->increment(name: 'container_provider_plan_entries_total', by: count($plan->order));
 
         foreach ($ordered as $provider) {
+            if (! in_array($provider::class, $eagerProviders, true)) {
+                if (! $resolver instanceof ServiceResolver) {
+                    throw new InvalidArgumentException(message: 'Deferred providers require an available ServiceResolver.');
+                }
+
+                $resolver?->registerDeferredProvider(
+                    provider  : $provider,
+                    serviceIds: $this->providedServices(provider: $provider)
+                );
+                continue;
+            }
+
             $provider->register();
+            $metrics?->increment(name: 'container_provider_register_total');
         }
 
         foreach ($ordered as $provider) {
+            if (! in_array($provider::class, $eagerProviders, true)) {
+                continue;
+            }
+
             $provider->boot();
+            $metrics?->increment(name: 'container_provider_boot_total');
         }
     }
 
@@ -88,69 +115,101 @@ final readonly class BootProviders
 
     /**
      * @param array<class-string<ServiceProviderInterface>, ServiceProviderInterface> $instances
-     * @return list<ServiceProviderInterface>
+     * @return list<class-string<ServiceProviderInterface>>
      */
-    private function orderProviders(array $instances) : array
+    private function eagerProviderClasses(ProviderBootPlan $plan, array $instances) : array
     {
-        $ordered = [];
-        $state = [];
+        $eager = [];
 
-        foreach (array_keys($instances) as $class) {
-            $this->visitProvider(
-                class   : $class,
-                instances: $instances,
-                ordered : $ordered,
-                state   : $state,
-                stack   : []
+        foreach ($instances as $class => $provider) {
+            if ($this->isDeferredProvider(provider: $provider)) {
+                continue;
+            }
+
+            $eager[$class] = true;
+            $this->markDependenciesAsEager(
+                class       : $class,
+                dependencies: $plan->dependencies,
+                eager       : $eager
             );
         }
 
-        return $ordered;
+        $classes = array_keys($eager);
+        sort($classes);
+
+        return $classes;
     }
 
     /**
-     * @param array<class-string<ServiceProviderInterface>, ServiceProviderInterface> $instances
-     * @param list<ServiceProviderInterface> $ordered
-     * @param array<class-string<ServiceProviderInterface>, string> $state
-     * @param list<class-string<ServiceProviderInterface>> $stack
+     * @param array<class-string<ServiceProviderInterface>, list<class-string<ServiceProviderInterface>>> $dependencies
+     * @param array<class-string<ServiceProviderInterface>, true> $eager
      */
-    private function visitProvider(
-        string $class,
-        array $instances,
-        array &$ordered,
-        array &$state,
-        array $stack
-    ) : void {
-        $currentState = $state[$class] ?? 'new';
-        if ($currentState === 'done') {
-            return;
-        }
-
-        if ($currentState === 'visiting') {
-            $stack[] = $class;
-            throw new LogicException(
-                message: 'Provider dependency cycle detected: ' . implode(' -> ', $stack)
-            );
-        }
-
-        $state[$class] = 'visiting';
-        $stack[] = $class;
-
-        foreach ($instances[$class]->dependsOn() as $dependencyClass) {
-            if (! isset($instances[$dependencyClass])) {
-                throw new InvalidArgumentException(message: "Provider dependency [{$dependencyClass}] does not exist.");
+    private function markDependenciesAsEager(string $class, array $dependencies, array &$eager) : void
+    {
+        foreach ($dependencies[$class] ?? [] as $dependencyClass) {
+            if (isset($eager[$dependencyClass])) {
+                continue;
             }
 
-            $this->visitProvider(
-                class    : $dependencyClass,
-                instances: $instances,
-                ordered  : $ordered,
-                state    : $state,
-                stack    : $stack
+            $eager[$dependencyClass] = true;
+            $this->markDependenciesAsEager(
+                class       : $dependencyClass,
+                dependencies: $dependencies,
+                eager       : $eager
             );
         }
+    }
 
-        $state[$class] = 'done';
-        $ordered[] = $instances[$class];
+    private function isDeferredProvider(ServiceProviderInterface $provider) : bool
+    {
+        if (! method_exists($provider, 'deferred')) {
+            return false;
+        }
+
+        return (bool) $provider->deferred();
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function providedServices(ServiceProviderInterface $provider) : array
+    {
+        if (! method_exists($provider, 'provides')) {
+            return [];
+        }
+
+        $services = array_values(array_unique(array_filter(
+            array_map(
+                static fn(mixed $serviceId) : string => is_string($serviceId) ? $serviceId : '',
+                $provider->provides()
+            ),
+            static fn(string $serviceId) : bool => $serviceId !== ''
+        )));
+
+        sort($services);
+
+        return $services;
+    }
+
+    private function resolver() : ServiceResolver|null
+    {
+        try {
+            $resolver = $this->container->get(ServiceResolver::class);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        return $resolver instanceof ServiceResolver ? $resolver : null;
+    }
+
+    private function metrics() : ResolutionMetrics|null
+    {
+        try {
+            $metrics = $this->container->get(ResolutionMetrics::class);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        return $metrics instanceof ResolutionMetrics ? $metrics : null;
     }
 }

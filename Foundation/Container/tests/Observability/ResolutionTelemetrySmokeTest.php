@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/bootstrap.php';
 
+use Avax\Container\Configuration\CreateContainerConfig;
 use Avax\Container\Observability\ResolutionTimeline;
 
 final class ObservableService
@@ -18,7 +19,10 @@ final class ObservableAction
     }
 }
 
-$container = makeTestContainer();
+$container = makeTestContainer(CreateContainerConfig::create(
+    debug: true,
+    diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_DETAILED
+));
 
 $container->get(ObservableService::class);
 $container->call(ObservableAction::class);

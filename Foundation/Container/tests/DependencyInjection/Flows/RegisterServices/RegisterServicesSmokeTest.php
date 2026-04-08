@@ -96,12 +96,18 @@ $special = $container->get(NeedsSpecialLogger::class);
 $aliased = $container->get('register.logger');
 $message = $container->get(ExtensibleMessage::class);
 $tagged = $container->tagged('logger');
+$messageDescription = $container->describeService(ExtensibleMessage::class);
 
 assertSame('default', $default->logger->channel(), 'Default registration should remain default.');
 assertSame('special', $special->logger->channel(), 'Target-specific override should win for the matching consumer.');
 assertSame('default', $aliased->channel(), 'Aliases should resolve to their target service.');
 assertSame('configured', $message->name, 'Registration arguments should reach closure bindings.');
 assertSame('decorated:extended-again', $message->value, 'Decorators should wrap the resolved instance after extenders.');
+assertSame(
+    ['extender', 'extender', MessageDecorator::class],
+    $messageDescription['decorationChain'],
+    'Decoration diagnostics should preserve deterministic decoration ordering.'
+);
 assertSame(2, count($tagged), 'Tagged services should resolve back into service instances.');
 assertInstanceOf(DefaultRegisterLogger::class, $tagged[0], 'Tagged resolution should return the registered service.');
 

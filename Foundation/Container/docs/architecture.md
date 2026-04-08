@@ -42,6 +42,8 @@ The facade also exposes lifecycle, context, and diagnostics helpers:
 - `forContext()`
 - `validate()`
 - `describeService()` and the `debug*()` helpers
+- `compileReport()` and `runtimeReport()`
+- `hasAlias()` / `isDeferred()` / `isLazy()` / `isCompiled()` / `isWarmedUp()`
 - `env()`
 
 ## Flow Entries
@@ -83,8 +85,12 @@ Each flow entry owns one obvious user action:
 `Compilation/`
 
 - writes and reads the generated compiled runtime artifact
+- writes sidecar metadata with checksum, config hash, environment, lifetime plans, and per-service signatures
+- records reused and invalidated services plus invalidation reasons for incremental recompilation
+- quarantines corrupt artifacts before they can silently drift into the hot path
 - turns compiled blueprints into direct service methods
 - owns compile-time fingerprinting for the hot path
+- exposes typed artifact metadata and compile reports instead of implicit array schemas
 
 `Runtime/`
 
@@ -95,6 +101,8 @@ Each flow entry owns one obvious user action:
 `DependencyInjection/Dependencies/Providers/`
 
 - keeps the provider contract boundary
+- owns the deterministic provider boot plan
+- supports deferred provider loading when a provider declares `deferred()` and `provides()`
 
 ## Injection Area
 
@@ -140,6 +148,8 @@ Each flow entry owns one obvious user action:
 - records metrics
 - records timeline events
 - exports telemetry
+- exposes a machine-readable runtime report
+- supports `minimal` and `detailed` diagnostics modes so production can stay low-overhead while CI/debug runs keep richer traces
 
 `Errors/`
 
@@ -163,6 +173,8 @@ The shipped boundary is defended by:
 - Docker PHP lint across all repo PHP files
 - Docker smoke tests under `tests/`
 - benchmark harnesses under `tests/benchmarks/`
+- benchmark regression guard under `tests/check-benchmarks.sh`
+- worker and request-lifecycle benchmark scenarios inside the benchmark harness
 
 There is no Composer or PHPUnit harness in this component root today.
 
@@ -175,3 +187,9 @@ The runtime is designed around one rule:
 - run many times from memory or versioned disk artifacts
 
 Deferred services stay out of the default compile warmup unless they are explicitly requested or needed by a compiled dependency.
+
+Compile-time discipline is mode-aware:
+
+- `production`: fastest path, checksum-validated artifacts, fail closed on corruption
+- `dev`: checksum-validated artifacts with dynamic fallback on corruption or staleness
+- `ci` / `warmup`: validate before compile and reject invalid graphs before a compiled artifact is accepted

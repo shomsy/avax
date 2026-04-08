@@ -29,6 +29,8 @@ Main collaborators:
 - `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`
 - `DependencyInjection/Scopes/ManageScopes.php`
 - `Compilation/CompileContainer.php`
+- `Compilation/ArtifactMetadata.php`
+- `Compilation/CompileReport.php`
 - `Runtime/HotPathInliner.php`
 - `Runtime/ServicePool.php`
 - `DependencyInjection/Injection/Properties/InjectProperties.php`
@@ -56,6 +58,15 @@ Resolution runs in this order:
 14. store the result according to lifetime in the shared pool or active scope
 15. record success or failure
 
+Compiled artifact handling is mode-aware:
+
+- checksum or metadata corruption quarantines the artifact
+- development mode can fall back to dynamic resolution
+- production-style modes fail closed on corrupt compiled artifacts
+- artifact freshness can be revalidated against per-service signatures before the hot path is reused
+- `compileReport()` exposes the current artifact fingerprint, changed service ids, invalidated service ids, invalidation reasons, validation issues, and typed lifetime plans
+- `runtimeReport()` exposes the current runtime revisions, diagnostics mode, deferred provider ownership, scope snapshot, lazy service set, metrics, and timeline
+
 ## Missing Service Behavior
 
 If the resolver cannot find a registration and cannot autowire the id, it throws `ServiceNotFoundException`.
@@ -73,9 +84,14 @@ The resolver exports:
 - `container_compiled_rebuilds_total`
 - `container_compiled_container_hits_total`
 - `container_compiled_container_misses_total`
+- `container_compiled_container_stale_total`
+- `container_compiled_container_corrupt_total`
+- `container_compiled_container_quarantines_total`
+- `container_compiled_container_reuses_total`
 - `container_compiled_container_resolve_total`
 - `container_calls_total`
 - `container_injections_total`
+- `container_lazy_proxy_requests_total`
 - `container_blueprint_cache_memory_hits_total`
 - `container_blueprint_cache_disk_hits_total`
 - `container_blueprint_cache_misses_total`
@@ -86,6 +102,8 @@ The resolver exports:
 `defer()` keeps a registration out of the default compile warmup unless it is explicitly requested or pulled in by a compiled dependency.
 
 Deferred services still resolve on demand. They just do not get promoted into the hot path unless the runtime actually needs them.
+
+Providers can also be deferred. When a provider declares `deferred()` and `provides()`, the provider stays out of eager boot and registers or boots only when one of its declared service ids is resolved for the first time.
 
 ## Context Views
 

@@ -56,7 +56,10 @@ final class CreateContainer
         $scopes        = new ManageScopes(store: $scopeStore, pool: $servicePool);
         $clock         = new Clock;
         $metrics       = new ResolutionMetrics;
-        $timeline      = new ResolutionTimeline(clock: $clock);
+        $timeline      = new ResolutionTimeline(
+            clock  : $clock,
+            enabled: $config->usesDetailedDiagnostics()
+        );
         $dependencies  = new ResolveDependencies;
         $blueprints    = new CreateServiceBlueprint(
             cache       : new BlueprintCache(
@@ -78,6 +81,13 @@ final class CreateContainer
             blueprints   : $blueprints,
             cacheDir     : $config->cacheDir,
             cacheVersion : $config->cacheVersion,
+            configHash   : $config->configHash(),
+            environment  : $config->environment(),
+            compileMode  : $config->compileMode,
+            strict       : $config->strict,
+            validateOnLoad: $config->validatesCompiledArtifactsOnLoad(),
+            failClosedOnCorruption: $config->failsClosedOnCompiledCorruption(),
+            validateBeforeCompile: $config->validatesBeforeCompile(),
             metrics      : $metrics,
             services     : new ServiceCompiler(
                 registrations: $registrations,
@@ -99,7 +109,8 @@ final class CreateContainer
             timeline        : $timeline,
             policy          : $policy,
             compiler        : $compiler,
-            inliner         : new HotPathInliner
+            inliner         : new HotPathInliner,
+            diagnosticsMode : $config->diagnosticsMode
         );
         $telemetry = $resolver->telemetry();
 

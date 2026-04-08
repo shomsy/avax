@@ -39,6 +39,9 @@ final class ServiceRegistry implements ServiceRegistryInterface
     /** @var array<string, list<Closure>> */
     private array $extenders = [];
 
+    /** @var array<string, list<string>> */
+    private array $decorationDescriptors = [];
+
     private int $revision = 0;
 
     public function alias(string $alias, string $abstract) : void
@@ -110,13 +113,21 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
     public function extend(string $abstract, callable $closure) : void
     {
-        $this->addExtender(abstract: $abstract, extender: Closure::fromCallable($closure));
+        $this->addExtender(
+            abstract  : $abstract,
+            extender  : Closure::fromCallable($closure),
+            descriptor: 'extender'
+        );
     }
 
     public function decorate(string $abstract, callable|object|string $decorator) : void
     {
         if (is_callable($decorator)) {
-            $this->extend(abstract: $abstract, closure: $decorator(...));
+            $this->addExtender(
+                abstract  : $abstract,
+                extender  : Closure::fromCallable($decorator),
+                descriptor: $this->describeDecorator(decorator: $decorator)
+            );
             return;
         }
 
@@ -139,7 +150,8 @@ final class ServiceRegistry implements ServiceRegistryInterface
                 }
 
                 return $instance;
-            }
+            },
+            descriptor: $this->describeDecorator(decorator: $decorator)
         );
     }
 
@@ -188,7 +200,10 @@ final class ServiceRegistry implements ServiceRegistryInterface
             }
         }
 
-        return array_values(array_unique($tagged));
+        $tagged = array_values(array_unique($tagged));
+        sort($tagged);
+
+        return $tagged;
     }
 
     public function getContextualMatch(string $consumer, string $needs) : mixed
@@ -237,9 +252,11 @@ final class ServiceRegistry implements ServiceRegistryInterface
         $this->touch();
     }
 
-    public function addExtender(string $abstract, Closure $extender) : void
+    public function addExtender(string $abstract, Closure $extender, string $descriptor = 'extender') : void
     {
-        $this->extenders[$this->resolveAlias(abstract: $abstract)][] = $extender;
+        $resolved = $this->resolveAlias(abstract: $abstract);
+        $this->extenders[$resolved][] = $extender;
+        $this->decorationDescriptors[$resolved][] = $descriptor;
         $this->touch();
     }
 
@@ -284,12 +301,52 @@ final class ServiceRegistry implements ServiceRegistryInterface
      */
     public function allAliases() : array
     {
-        return $this->aliases;
+        $aliases = $this->aliases;
+        ksort($aliases);
+
+        return $aliases;
+    }
+
+    public function hasAlias(string $alias) : bool
+    {
+        return isset($this->aliases[$alias]);
     }
 
     public function hasExtenders(string $abstract) : bool
     {
         return ($this->extenders[$this->resolveAlias(abstract: $abstract)] ?? []) !== [];
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function aliasChain(string $abstract) : array
+    {
+        if (! isset($this->aliases[$abstract])) {
+            return [];
+        }
+
+        $chain = [$abstract];
+        $seen = [];
+        $current = $abstract;
+
+        while (isset($this->aliases[$current]) && ! isset($seen[$current])) {
+            $seen[$current] = true;
+            $current = $this->aliases[$current];
+            $chain[] = $current;
+        }
+
+        return $chain;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function decorationChain(string $abstract) : array
+    {
+        $resolved = $this->resolveAlias(abstract: $abstract);
+
+        return $this->decorationDescriptors[$resolved] ?? [];
     }
 
     public function revision() : int
@@ -303,6 +360,78 @@ final class ServiceRegistry implements ServiceRegistryInterface
     public function contextual() : array
     {
         return $this->contextual + $this->wildcardContextual;
+    }
+
+    /**
+     * @return array<string, list<string>>
+     */
+    public function tagIndex() : array
+    {
+        $index = [];
+
+        foreach ($this->all() as $abstract => $registration) {
+            foreach ($registration->tags as $tag) {
+                $index[$tag][] = $abstract;
+            }
+        }
+
+        foreach ($index as $tag => $ids) {
+            $values = array_values(array_unique($ids));
+            sort($values);
+            $index[$tag] = $values;
+        }
+
+        ksort($index);
+
+        return $index;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function lifetimeMap() : array
+    {
+        $lifetimes = [];
+
+        foreach ($this->all() as $abstract => $registration) {
+            $lifetimes[$abstract] = $registration->lifetime;
+        }
+
+        ksort($lifetimes);
+
+        return $lifetimes;
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    public function deferredMap() : array
+    {
+        $deferred = [];
+
+        foreach ($this->all() as $abstract => $registration) {
+            $deferred[$abstract] = $registration->deferred;
+        }
+
+        ksort($deferred);
+
+        return $deferred;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    public function decorationChains() : array
+    {
+        $chains = [];
+
+        foreach ($this->extenders as $abstract => $extenders) {
+            $chains[$abstract] = count($extenders);
+        }
+
+        ksort($chains);
+
+        return $chains;
     }
 
     public function resolveAlias(string $abstract) : string
@@ -331,6 +460,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
         $this->resolvedCache = [];
         $this->classHierarchyCache = [];
         $this->extenders = [];
+        $this->decorationDescriptors = [];
         $this->touch();
     }
 
@@ -389,5 +519,18 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         return $current === $alias;
+    }
+
+    private function describeDecorator(callable|object|string $decorator) : string
+    {
+        if (is_string($decorator) && $decorator !== '') {
+            return $decorator;
+        }
+
+        if (is_object($decorator) && ! $decorator instanceof Closure) {
+            return $decorator::class;
+        }
+
+        return 'callable';
     }
 }

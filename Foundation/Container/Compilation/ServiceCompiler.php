@@ -19,9 +19,18 @@ final readonly class ServiceCompiler
     ) {}
 
     /**
-     * @return array{serviceId: string, method: string, signature: string, source: string}
+     * @return array{
+     *   serviceId: string,
+     *   method: string,
+     *   signature: string,
+     *   direct: bool,
+     *   class: string|null,
+     *   plan: \Avax\Container\DependencyInjection\Dependencies\Resolution\ResolvePlan|null,
+     *   registrationArguments: array<string, mixed>,
+     *   needsFinish: bool
+     * }
      */
-    public function compile(string $serviceId) : array
+    public function describe(string $serviceId) : array
     {
         $methodName = $this->emitter->methodNameFor(serviceId: $serviceId);
         $registration = $this->registrations->get(abstract: $serviceId);
@@ -29,6 +38,9 @@ final readonly class ServiceCompiler
 
         if (is_string($candidate) && class_exists($candidate)) {
             $blueprint = $this->blueprints->createFor(class: $candidate);
+            $needsFinish = $blueprint->injectableProperties !== []
+                || $blueprint->injectableMethods !== []
+                || $this->registrations->hasExtenders(abstract: $serviceId);
 
             return [
                 'serviceId' => $serviceId,
@@ -40,20 +52,13 @@ final readonly class ServiceCompiler
                     'deferred' => $registration?->deferred ?? false,
                     'arguments' => $registration?->arguments ?? [],
                     'blueprint' => $blueprint->fingerprint,
-                    'finish' => $blueprint->injectableProperties !== []
-                        || $blueprint->injectableMethods !== []
-                        || $this->registrations->hasExtenders(abstract: $serviceId),
+                    'finish' => $needsFinish,
                 ])),
-                'source' => $this->emitter->emitDirectMethod(
-                    methodName : $methodName,
-                    serviceId  : $serviceId,
-                    class      : $candidate,
-                    plan       : $blueprint->constructor,
-                    registrationArguments: $registration?->arguments ?? [],
-                    needsFinish: $blueprint->injectableProperties !== []
-                        || $blueprint->injectableMethods !== []
-                        || $this->registrations->hasExtenders(abstract: $serviceId)
-                ),
+                'direct' => true,
+                'class' => $candidate,
+                'plan' => $blueprint->constructor,
+                'registrationArguments' => $registration?->arguments ?? [],
+                'needsFinish' => $needsFinish,
             ];
         }
 
@@ -67,8 +72,54 @@ final readonly class ServiceCompiler
                 'deferred' => $registration?->deferred ?? false,
                 'arguments' => $registration?->arguments ?? [],
             ])),
-            'source' => $this->emitter->emitDynamicMethod(methodName: $methodName),
+            'direct' => false,
+            'class' => null,
+            'plan' => null,
+            'registrationArguments' => $registration?->arguments ?? [],
+            'needsFinish' => false,
         ];
+    }
+
+    /**
+     * @param array{
+     *   serviceId: string,
+     *   method: string,
+     *   signature: string,
+     *   direct: bool,
+     *   class: string|null,
+     *   plan: \Avax\Container\DependencyInjection\Dependencies\Resolution\ResolvePlan|null,
+     *   registrationArguments: array<string, mixed>,
+     *   needsFinish: bool
+     * } $description
+     * @return array{serviceId: string, method: string, signature: string, source: string}
+     */
+    public function compileFromDescription(array $description) : array
+    {
+        $source = $description['direct']
+            ? $this->emitter->emitDirectMethod(
+                methodName           : $description['method'],
+                serviceId            : $description['serviceId'],
+                class                : (string) $description['class'],
+                plan                 : $description['plan'],
+                registrationArguments: $description['registrationArguments'],
+                needsFinish          : $description['needsFinish']
+            )
+            : $this->emitter->emitDynamicMethod(methodName: $description['method']);
+
+        return [
+            'serviceId' => $description['serviceId'],
+            'method' => $description['method'],
+            'signature' => $description['signature'],
+            'source' => $source,
+        ];
+    }
+
+    /**
+     * @return array{serviceId: string, method: string, signature: string, source: string}
+     */
+    public function compile(string $serviceId) : array
+    {
+        return $this->compileFromDescription(description: $this->describe(serviceId: $serviceId));
     }
 
     private function candidateFor(string $serviceId, ServiceRegistration|null $registration) : mixed

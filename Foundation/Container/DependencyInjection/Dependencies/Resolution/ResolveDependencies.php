@@ -6,6 +6,7 @@ namespace Avax\Container\DependencyInjection\Dependencies\Resolution;
 
 use Avax\Container\Errors\ContainerException;
 use Avax\Container\DependencyInjection\Injection\Attributes\Inject;
+use Avax\Container\DependencyInjection\Injection\Attributes\RuntimeInput;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
@@ -26,6 +27,8 @@ final class ResolveDependencies
             $compiled[] = [
                 'name' => $parameter->getName(),
                 'serviceId' => $this->serviceIdFor(parameter: $parameter),
+                'source' => $this->sourceFor(parameter: $parameter),
+                'inputName' => $this->inputNameFor(parameter: $parameter),
                 'hasDefault' => $parameter->isDefaultValueAvailable(),
                 'default' => $parameter->isDefaultValueAvailable()
                     ? base64_encode(serialize($parameter->getDefaultValue()))
@@ -82,7 +85,7 @@ final class ResolveDependencies
     }
 
     /**
-     * @param array{name: string, serviceId: string|null, hasDefault: bool, default: string, allowsNull: bool} $parameter
+     * @param array{name: string, serviceId: string|null, source: string, inputName: string, hasDefault: bool, default: string, allowsNull: bool} $parameter
      * @param array<string, mixed> $overrides
      * @throws ContainerException
      */
@@ -99,9 +102,9 @@ final class ResolveDependencies
         if (
             $request !== null
             && $parameter['serviceId'] === null
-            && array_key_exists($parameter['name'], $request->context)
+            && array_key_exists($parameter['inputName'], $request->context)
         ) {
-            return $request->context[$parameter['name']];
+            return $request->context[$parameter['inputName']];
         }
 
         if ($parameter['serviceId'] !== null) {
@@ -120,7 +123,11 @@ final class ResolveDependencies
         }
 
         throw new ContainerException(
-            message: "Cannot resolve parameter [\${$parameter['name']}] for service [{$request?->serviceId}]."
+            message: $parameter['source'] === 'runtime'
+                ? "Runtime input [\${$parameter['inputName']}] is missing for [{$request?->serviceId}]. "
+                    . "Dependency path [{$request?->getPath()}]. Likely fix: pass an explicit override, use forContext(), or add a default value."
+                : "Cannot resolve parameter [\${$parameter['name']}] for service [{$request?->serviceId}]. "
+                    . "Dependency path [{$request?->getPath()}]. Likely fix: register the dependency, add an Inject attribute, or provide an override."
         );
     }
 
@@ -129,6 +136,10 @@ final class ResolveDependencies
      */
     private function serviceIdFor(ReflectionParameter $parameter) : string|null
     {
+        if ($parameter->getAttributes(RuntimeInput::class) !== []) {
+            return null;
+        }
+
         $attributes = $parameter->getAttributes(Inject::class);
         if ($attributes !== []) {
             $inject = $attributes[0]->newInstance();
@@ -150,5 +161,25 @@ final class ResolveDependencies
         }
 
         return null;
+    }
+
+    private function sourceFor(ReflectionParameter $parameter) : string
+    {
+        return $this->serviceIdFor(parameter: $parameter) !== null ? 'service' : 'runtime';
+    }
+
+    private function inputNameFor(ReflectionParameter $parameter) : string
+    {
+        $attributes = $parameter->getAttributes(RuntimeInput::class);
+        if ($attributes === []) {
+            return $parameter->getName();
+        }
+
+        $input = $attributes[0]->newInstance();
+        if (is_string($input->name) && trim($input->name) !== '') {
+            return trim($input->name);
+        }
+
+        return $parameter->getName();
     }
 }

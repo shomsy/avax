@@ -103,6 +103,11 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
     /**
      * @return array<string, mixed>
      */
+    public function debugGraph(string $id = '') : array;
+
+    /**
+     * @return array<string, mixed>
+     */
     public function debugTags(string $tag) : array;
 
     /**
@@ -125,14 +130,14 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
      *
      * @throws ContainerException
      */
-    public function openScope() : void;
+    public function openScope(string $kind = \Avax\Container\DependencyInjection\Scopes\ScopeKind::OPERATION, string $scopeId = '') : void;
 
     /**
      * Closes the current scope frame.
      *
      * @throws ContainerException
      */
-    public function closeScope() : void;
+    public function closeScope(string|null $kind = null) : void;
 
     /**
      * @param list<string> $serviceIds
@@ -204,6 +209,14 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
      * @throws ServiceNotFoundException
      */
     public function tagged(string $tag) : array;
+
+    /**
+     * Resolves every service in one ordered group.
+     *
+     * @throws ContainerException
+     * @throws ServiceNotFoundException
+     */
+    public function grouped(string $group) : array;
 
     /**
      * Returns one lazy proxy for the requested service.

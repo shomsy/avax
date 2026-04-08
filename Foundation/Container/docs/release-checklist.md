@@ -40,6 +40,7 @@ Do not claim "world-class" from this component root until:
 - docs index links the canonical operator docs
 - public contract matrix matches the actual surface
 - diagnostics contracts are versioned and validated
+- lifetime/scope, conditional composition, policy engine, and error-model docs are up to date
 - benchmark thresholds are green
 - peer comparison policy is documented
 - world-class readiness dossier is up to date

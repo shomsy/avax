@@ -38,6 +38,8 @@ The artifact pair can be deleted and regenerated without re-registering services
 - `benchmarkBuildMarker`
 - ordered service entries and per-service signatures
 - aliases, tags, lifetimes, deferred flags, decoration counts
+- lifetime plan details including `scopeKind`, `warm`, `lazy`, and `disposable`
+- derived ownership maps and derived slice manifests
 - changed services, invalidated services, invalidation reasons
 - statistics and checksum
 
@@ -52,6 +54,8 @@ The compiler keeps stable ordering for:
 - deferred maps
 - decoration counts
 - per-service dependency lists
+- ownership maps
+- slice manifests
 
 `compiledAt` and artifact paths are intentionally environment-specific. They are not part of the semantic ordering proof.
 

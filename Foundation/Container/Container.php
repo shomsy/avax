@@ -114,6 +114,14 @@ final readonly class Container implements ContainerInterface
     /**
      * @return array<string, mixed>
      */
+    public function debugGraph(string $id = '') : array
+    {
+        return $this->resolver->debugGraph(id: $id);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     public function debugTags(string $tag) : array
     {
         return $this->resolver->debugTags(tag: $tag);
@@ -140,14 +148,14 @@ final readonly class Container implements ContainerInterface
         return $this->resolver->env(key: $key, default: $default);
     }
 
-    public function openScope() : void
+    public function openScope(string $kind = \Avax\Container\DependencyInjection\Scopes\ScopeKind::OPERATION, string $scopeId = '') : void
     {
-        $this->openScopeFlow()->open();
+        $this->openScopeFlow()->open(kind: $kind, scopeId: $scopeId);
     }
 
-    public function closeScope() : void
+    public function closeScope(string|null $kind = null) : void
     {
-        $this->closeScopeFlow()->close();
+        $this->closeScopeFlow()->close(kind: $kind);
     }
 
     public function compileContainer(array $serviceIds = []) : void
@@ -270,6 +278,11 @@ final readonly class Container implements ContainerInterface
     public function tagged(string $tag) : array
     {
         return $this->resolver->tagged(tag: $tag);
+    }
+
+    public function grouped(string $group) : array
+    {
+        return $this->resolver->grouped(group: $group);
     }
 
     public function lazy(string $abstract) : LazyProxy

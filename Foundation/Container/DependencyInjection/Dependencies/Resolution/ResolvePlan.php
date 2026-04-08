@@ -13,6 +13,8 @@ final readonly class ResolvePlan
      * @param list<array{
      *     name: string,
      *     serviceId: string|null,
+     *     source: string,
+     *     inputName: string,
      *     hasDefault: bool,
      *     default: string,
      *     allowsNull: bool

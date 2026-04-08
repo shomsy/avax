@@ -8,6 +8,13 @@ This component has one canonical story:
 - runtime mode: [`runtime-mode.md`](./runtime-mode.md)
 - compile artifact model: [`compile-artifact-model.md`](./compile-artifact-model.md)
 - runtime state model: [`runtime-state-model.md`](./runtime-state-model.md)
+- lifetimes and scopes: [`lifetimes-and-scopes.md`](./lifetimes-and-scopes.md)
+- conditional composition: [`conditional-composition.md`](./conditional-composition.md)
+- ownership-aware composition program: [`ownership-aware-composition-program.md`](./ownership-aware-composition-program.md)
+- ownership model: [`ownership-model.md`](./ownership-model.md)
+- testing composition: [`testing-composition.md`](./testing-composition.md)
+- policy engine: [`policy-engine.md`](./policy-engine.md)
+- error model: [`error-model.md`](./error-model.md)
 - diagnostics contracts: [`diagnostics-contracts.md`](./diagnostics-contracts.md)
 - artifact compatibility: [`compile-artifact-compatibility.md`](./compile-artifact-compatibility.md)
 - worker/request lifecycle: [`worker-request-lifecycle.md`](./worker-request-lifecycle.md)
@@ -56,6 +63,8 @@ Performance model:
 - compile once
 - run many times from memory or versioned disk artifacts
 - keep canonical registrations separate from disposable runtime state
+- keep lifetime, condition, and override truth authored in registrations and only projected into derived diagnostics
 - choose `minimal` diagnostics for low-overhead production runtime state
 - choose `detailed` or `ci` diagnostics for debugging, CI, and richer timeline output
 - use the benchmark guard for threshold enforcement; it evaluates median timing across repeated runs to reduce CI noise
+- keep ownership truth authored in registrations and derived in compiled diagnostics only

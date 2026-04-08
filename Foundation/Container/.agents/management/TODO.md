@@ -25,6 +25,26 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: TODO-016
+  `created_at`: 2026-04-08 17:04 CEST
+  `updated_at`: 2026-04-08 18:16 CEST
+  `status`: done
+  `estimate`: large
+  `actual`: large
+  `outcome`: Close the remaining ownership-aware composition gaps by turning advanced lifetimes, conditional composition, first-class test composition helpers, broader policy rules, and anti-pattern-hardening into fully proven runtime and docs surface instead of partial diagnostics-only coverage.
+  `acceptance`: Operation-aware lifetime variants beyond shared/scoped/transient are real and validated; conditional composition covers flags/tenant/region/mode with explain output and explicit unsupported-boundary docs; test composition helpers exist as first-class ergonomics; policy rules catch more structural anti-patterns than the current warning set; error messages are story-grade and fix-oriented on the relevant runtime and validation paths; release docs and readiness evidence can honestly mark the ownership-aware program complete.
+  `links`: `DependencyInjection/Scopes/`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `Configuration/Testing/TestComposition.php`, `docs/lifetimes-and-scopes.md`, `docs/conditional-composition.md`, `docs/policy-engine.md`, `docs/error-model.md`, `docs/world-class-readiness.md`
+
+- `id`: TODO-015
+  `created_at`: 2026-04-08 16:54 CEST
+  `updated_at`: 2026-04-08 17:04 CEST
+  `status`: done
+  `estimate`: large
+  `actual`: large
+  `outcome`: Implement the ownership-aware composition wave by adding first-class registration ownership metadata, slice visibility and import/export rules, runtime and validation enforcement, graph diagnostics, derived ownership data in compile artifacts, and canonical docs for the new system shape.
+  `acceptance`: Every registration can carry explicit ownership metadata; slice access is explained and validated; top-level surface and internal/private boundaries stay honest; graph diagnostics expose slices, dependents, dead registrations, duplicates, and impact; compiled metadata records derived ownership shape; Docker PHP lint is green; `tests/run-smoke-tests.sh` is green; `tests/check-diagnostics-contracts.sh` is green.
+  `links`: `DependencyInjection/Dependencies/Ownership/RegistrationMetadata.php`, `DependencyInjection/Dependencies/Bindings/ServiceRegistration.php`, `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `Compilation/ArtifactMetadata.php`, `Compilation/CompileContainer.php`, `docs/ownership-aware-composition-program.md`, `docs/ownership-model.md`, `docs/testing-composition.md`
+
 - `id`: TODO-014
   `created_at`: 2026-04-08 03:01 CEST
   `updated_at`: 2026-04-08 03:01 CEST

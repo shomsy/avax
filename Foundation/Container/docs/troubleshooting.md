@@ -20,6 +20,12 @@ If a scoped service throws during storage:
 
 Scoped services do not fall back to shared storage anymore.
 
+If the service uses `request`, `job`, `tenant`, or `operation` lifetime:
+
+1. open the matching scope kind explicitly
+2. inspect the error message for the required scope kind
+3. inspect `describeService()['lifetimePlan']` when the active scope is unclear
+
 ## Property Or Method Injection Missing
 
 Check:
@@ -59,6 +65,12 @@ If deferred or lazy behavior looks inconsistent:
 2. inspect `debugService()['explain']['fallback']` to see why the compiled path was skipped or why dynamic fallback is active
 3. inspect `debugService()['explain']['dependencyChain']` when a deferred provider owns a transitive dependency
 4. rebuild compiled artifacts if the deferred graph changed after warmup
+
+If warm versus lazy shared behavior is surprising:
+
+1. inspect `describeService()['lifetimePlan']['warm']`
+2. inspect `describeService()['lifetimePlan']['lazy']`
+3. remember that `warmCompiled()` skips lazy shared services on purpose
 
 ## Compiled Cache Issues
 
@@ -111,6 +123,13 @@ If `forContext()` does not feed a scalar argument:
 
 Context values are used as named fallbacks, not as a second service registry.
 
+If a runtime input is missing:
+
+1. inspect the error message for the missing input name
+2. pass the value through `make(..., ['name' => ...])`
+3. or create a `forContext([...])` view
+4. or add a default value when the input is optional
+
 ## Lifecycle Reset
 
 If tests or long-running workers need a clean slate:
@@ -128,6 +147,37 @@ If worker or request state appears to leak:
 3. inspect `runtimeReport()->sharedServiceCount` and `runtimeReport()->scopedServiceCount`
 4. inspect `debugScope()` to confirm there is no leftover scoped frame
 
+## Ownership And Slice Violations
+
+If a service fails with an ownership or slice error:
+
+1. inspect `describeService()['ownership']`
+2. inspect `debugGraph()` for slice manifests, dependents, and policy warnings
+3. make sure shared cross-slice dependencies are both `export()`-ed and `import()`-ed
+4. keep `private` and `internal` services inside the owning slice
+5. if the service is profile-bound, confirm `profiles([...])` matches the active environment
+
+Common failure patterns:
+
+1. a flow depends on a capability internal instead of its exported shared surface
+2. a shared dependency is not explicitly exported
+3. a consumer slice forgot to declare its import
+4. a shared service captures a scoped dependency and fails validation
+5. two slices declare the same concept name and trigger duplicate-concept diagnostics
+
+If composition conditions are involved:
+
+1. inspect `describeService()['conditions']`
+2. inspect `debugGraph()['conditions']`
+3. verify `app_env`, `composition.flags`, `composition.tenant`, `composition.region`, and `composition.mode`
+4. inspect `describeService()['overrides']` when a rebound abstract changed ownership or visibility posture
+
+If override diagnostics appear:
+
+1. inspect `debugGraph()['overrides']`
+2. make the override explicit with `overrideSource()`
+3. avoid overlapping ownership posture changes under the same composition conditions
+
 ## Status Helpers
 
 If you need to know what the container thinks right now:
@@ -139,6 +189,14 @@ If you need to know what the container thinks right now:
 5. `isWarmedUp()` reports whether a compiled artifact is available for this runtime
 6. `runtimeReport()` exposes whether diagnostics mode is `minimal`, `detailed`, or `ci`
 7. `runtimeReport()` also exposes whether the timeline is enabled plus shared/scoped counts and the current hot-path summary
+
+## Policy And Structure Diff
+
+If the graph looks wrong even though resolution still works:
+
+1. inspect `debugGraph()['policyFindings']`
+2. inspect `debugGraph()['structureDiff']`
+3. compile once, change the authored graph, then use structure diff to see what drifted from the compiled artifact
 
 ## Validation Commands
 

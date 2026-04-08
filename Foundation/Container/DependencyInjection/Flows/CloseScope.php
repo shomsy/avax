@@ -18,8 +18,8 @@ final readonly class CloseScope
     /**
      * Closes the current scope frame.
      */
-    public function close() : void
+    public function close(string|null $kind = null) : void
     {
-        $this->resolver->closeScope();
+        $this->resolver->closeScope(kind: $kind);
     }
 }

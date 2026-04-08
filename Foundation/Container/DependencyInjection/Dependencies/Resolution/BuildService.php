@@ -28,10 +28,17 @@ final readonly class BuildService
         array $overrides = [],
         ResolveRequest|null $request = null
     ) : object {
+        $serviceId = $request?->serviceId ?? $class;
+        $path = $request?->getPath() ?? $serviceId;
+
         try {
             $blueprint = $this->blueprints->createFor(class: $class);
             if (! $blueprint->instantiable) {
-                throw new ContainerException(message: "Class [{$class}] is not instantiable.");
+                throw new ContainerException(
+                    message: "Class [{$class}] is not instantiable for service [{$serviceId}]. "
+                        . "Dependency path [{$path}]. "
+                        . 'Likely fix: bind an instantiable concrete class or replace the abstract target.'
+                );
             }
 
             $arguments = $blueprint->constructor !== null
@@ -50,7 +57,10 @@ final readonly class BuildService
             }
 
             throw new ContainerException(
-                message : "Failed to build service [{$class}]: {$exception->getMessage()}",
+                message : "Failed to build service [{$serviceId}] with class [{$class}]. "
+                    . "Dependency path [{$path}]. "
+                    . "Failure: {$exception->getMessage()}. "
+                    . 'Likely fix: fix the constructor graph, provide missing runtime input, or replace the concrete class.',
                 previous: $exception
             );
         }

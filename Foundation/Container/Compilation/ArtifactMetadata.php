@@ -21,6 +21,8 @@ final readonly class ArtifactMetadata
      * @param array<string, array{name: string, shared: bool, scoped: bool, transient: bool}> $lifetimes
      * @param array<string, bool> $deferred
      * @param array<string, int> $decorations
+     * @param array<string, array<string, mixed>> $ownership
+     * @param array<string, array<string, mixed>> $slices
      * @param list<string> $changedServices
      * @param list<string> $invalidatedServices
      * @param list<string> $validationIssues
@@ -52,6 +54,8 @@ final readonly class ArtifactMetadata
         public array $lifetimes,
         public array $deferred,
         public array $decorations,
+        public array $ownership,
+        public array $slices,
         public array $changedServices,
         public array $invalidatedServices,
         public array $validationIssues,
@@ -90,6 +94,8 @@ final readonly class ArtifactMetadata
             lifetimes       : self::lifetimes($state['lifetimes'] ?? []),
             deferred        : self::boolMap($state['deferred'] ?? []),
             decorations     : self::intMap($state['decorations'] ?? []),
+            ownership       : self::mapOfMaps($state['ownership'] ?? []),
+            slices          : self::mapOfMaps($state['slices'] ?? []),
             changedServices : self::stringList($state['changedServices'] ?? []),
             invalidatedServices: self::stringList($state['invalidatedServices'] ?? []),
             validationIssues: self::stringList($state['validationIssues'] ?? []),
@@ -129,6 +135,8 @@ final readonly class ArtifactMetadata
             'lifetimes' => $this->lifetimes,
             'deferred' => $this->deferred,
             'decorations' => $this->decorations,
+            'ownership' => $this->ownership,
+            'slices' => $this->slices,
             'changedServices' => $this->changedServices,
             'invalidatedServices' => $this->invalidatedServices,
             'validationIssues' => $this->validationIssues,
@@ -249,6 +257,32 @@ final readonly class ArtifactMetadata
             }
 
             $items[$key] = (int) $value;
+        }
+
+        ksort($items);
+
+        return $items;
+    }
+
+    /**
+     * @param mixed $state
+     * @return array<string, array<string, mixed>>
+     */
+    private static function mapOfMaps(mixed $state) : array
+    {
+        if (! is_array($state)) {
+            return [];
+        }
+
+        $items = [];
+
+        foreach ($state as $key => $value) {
+            if (! is_string($key) || ! is_array($value)) {
+                continue;
+            }
+
+            ksort($value);
+            $items[$key] = $value;
         }
 
         ksort($items);

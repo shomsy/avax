@@ -13,6 +13,12 @@ Concrete records of executed verification.
 
 ## Reports
 
+- `executed_at`: `2026-04-08 22:15 CEST`
+  `scope`: `governance-separated slice-boundary and explorer wave`
+  `environment`: `docker php:8.3-cli`
+  `checks`: `canonical php lint`, `tests/run-smoke-tests.sh`, `tests/check-diagnostics-contracts.sh`, `tests/check-analysis-hints.sh`, `tests/check-generated-artifacts.sh`, `tests/check-benchmarks.sh`, `git diff --check`
+  `result`: `pass`
+  `notes`: `Strict slice-boundary mutation enforcement, governance-stage policy reporting, HTML graph explorer export, architecture/selection diagnostics, generated artifact tooling, and the expanded public facade all passed local verification. Parent Composer autoload was present and is now optionally available to the test bootstrap for future integration lanes.`
 - `executed_at`: `2026-04-08 18:16 CEST`
   `scope`: `ownership-aware composition closure`
   `environment`: `docker php:8.3-cli`

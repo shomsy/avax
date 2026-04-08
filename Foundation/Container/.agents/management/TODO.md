@@ -25,6 +25,16 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: TODO-018
+  `created_at`: 2026-04-08 22:15 CEST
+  `updated_at`: 2026-04-08 22:15 CEST
+  `status`: done
+  `estimate`: large
+  `actual`: large
+  `outcome`: Harden the ownership-aware runtime into a stricter architecture governor by separating policy execution into a dedicated governance stage, enforcing strict slice-boundary mutation rules, exposing richer architecture and selection diagnostics, shipping an HTML graph explorer plus architecture/governance tool commands, and adding a generated-artifact tool lane with smoke and CI-style checks.
+  `acceptance`: `CreateContainerConfig` exposes policy fail mode, environment-specific policy profiles, and slice boundary mode; strict slice views block global mutation and cross-slice mutation while still compiling visible services; `debugGovernance()`, `debugArchitecture()`, `debugGroup()`, `debugSelection()`, and `factory()` exist on the public surface; graph tooling exports HTML explorer and architecture/governance outputs; generated artifact tool and `tests/check-generated-artifacts.sh` are green; canonical PHP lint, smoke tests, diagnostics contracts, analysis hints, benchmark guard, and `git diff --check` are green.
+  `links`: `Configuration/CreateContainerConfig.php`, `DependencyInjection/Dependencies/Ownership/GovernComposition.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `ContextContainer.php`, `Observability/GraphExporter.php`, `tools/graph.php`, `tools/generate-runtime-artifacts.php`, `tests/Observability/GraphToolingSmokeTest.php`, `tests/Observability/GeneratedArtifactsSmokeTest.php`
+
 - `id`: TODO-017
   `created_at`: 2026-04-08 20:39 CEST
   `updated_at`: 2026-04-08 20:45 CEST

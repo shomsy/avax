@@ -45,3 +45,11 @@ Use snapshots in this shape:
   `smoke_reference`: `.agents/management/evidence/TEST_REPORTS.md`
   `risk_reference`: `.agents/management/evidence/RISK_REGISTER.md`
   `notes`: `All ownership-aware closure criteria now have code, tests, docs, and green validation evidence. Peer benchmark targets remain optional and were not configured in this local run.`
+
+- `snapshot_at`: `2026-04-08 22:15 CEST`
+  `release_scope`: `governance-separated slice-boundary and explorer wave`
+  `decision`: `go`
+  `rollback_path`: `revert the slice-boundary/governance/explorer/tooling wave commits and rebuild generated artifacts`
+  `smoke_reference`: `.agents/management/evidence/TEST_REPORTS.md`
+  `risk_reference`: `.agents/management/evidence/RISK_REGISTER.md`
+  `notes`: `The new wave keeps the compiled hot path green while making governance explicit, slice mutation stricter, graph tooling human-readable, and generated artifact tooling auditable. The async target posture remains explicit: fpm and worker are supported, coroutine and fiber stay fail-fast.`

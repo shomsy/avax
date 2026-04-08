@@ -55,7 +55,9 @@ final class AssembleRuntime
         $policy = new ResolutionPolicy(
             strict: $config->strict,
             debug : $config->debug,
-            profile: $config->policyProfile
+            profile: $config->effectivePolicyProfile(),
+            failMode: $config->policyFailMode,
+            profiles: $config->policyProfiles
         );
         $compiler = new CompileContainer(
             registrations           : $registrations,
@@ -101,7 +103,10 @@ final class AssembleRuntime
                 executionMode: $config->executionMode
             ),
             deferredProviders: new DeferredProviderRegistry,
-            diagnosticsMode : $config->diagnosticsMode
+            diagnosticsMode : $config->diagnosticsMode,
+            environment     : $config->environment(),
+            sliceBoundaryMode: $config->sliceBoundaryMode,
+            asyncTarget     : $config->asyncTarget
         );
 
         return new RuntimeAssembly(

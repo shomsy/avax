@@ -15,10 +15,17 @@ final readonly class ResolutionPolicy
 
     public const PROFILE_STRICT = 'strict';
 
+    public const FAIL_MODE_OPEN = 'open';
+
+    public const FAIL_MODE_CLOSED = 'closed';
+
     public function __construct(
         public bool $strict = false,
         public bool $debug = false,
-        public string $profile = self::PROFILE_BALANCED
+        public string $profile = self::PROFILE_BALANCED,
+        public string $failMode = self::FAIL_MODE_CLOSED,
+        /** @var array<string, string> */
+        public array $profiles = []
     ) {}
 
     public function isAllowed(string $abstract) : bool
@@ -43,5 +50,32 @@ final readonly class ResolutionPolicy
             },
             default => $defaultSeverity,
         };
+    }
+
+    public function forEnvironment(string $environment) : self
+    {
+        $normalized = trim($environment);
+        if ($normalized === '' || ! isset($this->profiles[$normalized])) {
+            return $this;
+        }
+
+        return new self(
+            strict  : $this->strict,
+            debug   : $this->debug,
+            profile : $this->profiles[$normalized],
+            failMode: $this->failMode,
+            profiles: $this->profiles
+        );
+    }
+
+    public function shouldFailOn(string $severity) : bool
+    {
+        return $this->failMode === self::FAIL_MODE_CLOSED
+            && strtolower(trim($severity)) === 'error';
+    }
+
+    public function isFailClosed() : bool
+    {
+        return $this->failMode === self::FAIL_MODE_CLOSED;
     }
 }

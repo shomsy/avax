@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Container\Observability;
 
+/**
+ * Bundles low-cost metrics and optional timeline diagnostics.
+ */
 final readonly class ResolutionTelemetry
 {
     private ResolutionMetrics $metrics;
@@ -18,21 +21,33 @@ final readonly class ResolutionTelemetry
         $this->timeline = $timeline ?? new ResolutionTimeline;
     }
 
+    /**
+     * Returns the metrics sink for container events.
+     */
     public function metrics() : ResolutionMetrics
     {
         return $this->metrics;
     }
 
+    /**
+     * Returns the timeline sink for detailed resolution traces.
+     */
     public function timeline() : ResolutionTimeline
     {
         return $this->timeline;
     }
 
+    /**
+     * Exports metrics in a machine-readable format.
+     */
     public function exportMetrics() : string
     {
         return $this->metrics->export();
     }
 
+    /**
+     * Clears all collected observability state.
+     */
     public function reset() : void
     {
         $this->metrics->reset();

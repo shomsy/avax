@@ -103,7 +103,7 @@ The resolver exports:
 
 Deferred services still resolve on demand. They just do not get promoted into the hot path unless the runtime actually needs them.
 
-Providers can also be deferred. When a provider declares `deferred()` and `provides()`, the provider stays out of eager boot and registers or boots only when one of its declared service ids is resolved for the first time.
+Providers can also be deferred. When a provider implements `DeferredProviderInterface`, it stays out of eager boot and registers or boots only when one of its declared service ids is resolved for the first time.
 
 ## Context Views
 

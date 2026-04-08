@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__, 3) . '/bootstrap.php';
 
 use Avax\Container\ContainerInterface;
+use Avax\Container\DependencyInjection\Dependencies\Providers\DeferredProviderInterface;
 use Avax\Container\DependencyInjection\Flows\BootProviders;
 use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface;
 
@@ -89,7 +90,14 @@ final class DeferredProvidedService implements DeferredProvidedContract
     }
 }
 
-final class DeferredDemoProvider implements ServiceProviderInterface
+final class DeferredProviderConsumer
+{
+    public function __construct(public DeferredProvidedContract $dependency)
+    {
+    }
+}
+
+final class DeferredDemoProvider implements DeferredProviderInterface
 {
     public function __construct(private ContainerInterface $app)
     {
@@ -210,6 +218,32 @@ assertSame(
 assertTrue(
     str_contains($deferredContainer->exportMetrics(), 'container_provider_deferred_boot_total 1'),
     'Deferred provider metrics should record lazy provider boots.'
+);
+
+ProviderState::$events = [];
+$compiledDeferredContainer = makeTestContainer();
+$compiledDeferredContainer->singleton(DeferredProviderConsumer::class, DeferredProviderConsumer::class);
+
+(new BootProviders($compiledDeferredContainer))->boot([DeferredDemoProvider::class]);
+$compiledDeferredContainer->compileContainer([DeferredProviderConsumer::class]);
+
+$compiledDeferredReport = $compiledDeferredContainer->compileReport([
+    DeferredProviderConsumer::class,
+    DeferredProvidedContract::class,
+]);
+
+assertSame(
+    ['deferred-register', 'deferred-boot'],
+    ProviderState::$events,
+    'Explicit compile paths must boot deferred providers when compiled services depend on them.'
+);
+assertTrue(
+    $compiledDeferredReport !== null && in_array(DeferredProvidedContract::class, $compiledDeferredReport->entries, true),
+    'Deferred provider services required by compiled dependencies must be compiled into the artifact.'
+);
+assertTrue(
+    $compiledDeferredContainer->isCompiled(DeferredProvidedContract::class),
+    'Deferred provider services required by compiled dependencies should report compiled state.'
 );
 
 assertThrows(

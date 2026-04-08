@@ -8,6 +8,9 @@ use Avax\Container\Errors\ContainerException;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\CreateServiceBlueprint;
 use Throwable;
 
+/**
+ * Builds one object from its blueprint and resolved constructor dependencies.
+ */
 final readonly class BuildService
 {
     public function __construct(
@@ -15,6 +18,10 @@ final readonly class BuildService
         private ResolveDependencies    $dependencies
     ) {}
 
+    /**
+     * @param array<string, mixed> $overrides
+     * @throws ContainerException
+     */
     public function build(
         string $class,
         ServiceResolver $resolver,

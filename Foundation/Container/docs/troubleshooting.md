@@ -50,7 +50,7 @@ If providers depend on each other, make sure each provider reports the dependenc
 If a provider should boot lazily instead of during `bootProviders()`:
 
 1. declare `deferred(): bool` and return `true`
-2. declare `provides(): array` with every service id the provider owns
+2. implement `DeferredProviderInterface` and declare `provides(): array` with every service id the provider owns
 3. resolve one of those services to trigger the deferred provider boot
 
 ## Compiled Cache Issues
@@ -114,3 +114,5 @@ If you need to know what the container thinks right now:
 - smoke suite: `./tests/run-smoke-tests.sh`
 - benchmarks: `./tests/run-benchmarks.sh`
 - benchmark guard: `./tests/check-benchmarks.sh`
+- benchmark comparison: `./tests/run-benchmark-comparison.sh peer=/absolute/path/to/peer-report.json`
+- benchmark comparison writes its temporary artifacts outside the repo and cleans them up automatically

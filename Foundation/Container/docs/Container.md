@@ -82,7 +82,8 @@ The facade does not own resolution internals, storage, blueprint creation, or te
 - `lazy()` returns a lazy proxy that resolves the target service on first use
 - `decorate()` appends a post-build decoration step to one service id
 - `bootProviders()` resolves provider dependencies, registers them, then boots them in deterministic order
-- providers that declare `deferred()` and `provides()` are registered lazily and boot on first matching service resolve
+- providers that implement `DeferredProviderInterface` are registered lazily and boot on first matching service resolve
+- deferred providers should implement `DeferredProviderInterface` so lazy provider ownership stays explicit and reviewable
 - `flush()` clears user registrations, scopes, runtime pools, and compiled artifacts
 - `reset()` is the same clean-runtime boundary as `flush()`
 - `validate()` reports obvious registration and blueprint issues without resolving values

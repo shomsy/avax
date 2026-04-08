@@ -13,6 +13,9 @@ use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
 
+/**
+ * Calls functions, closures, and methods with container-resolved arguments.
+ */
 final class FunctionCaller
 {
     private ServiceResolver|null $resolver = null;
@@ -24,11 +27,20 @@ final class FunctionCaller
         private readonly ResolveCallArguments $arguments
     ) {}
 
+    /**
+     * Attaches the runtime resolver used for argument resolution.
+     */
     public function setResolver(ServiceResolver $resolver) : void
     {
         $this->resolver = $resolver;
     }
 
+    /**
+     * Calls one target with container-resolved arguments.
+     *
+     * @param array<string, mixed> $parameters
+     * @throws ContainerException
+     */
     public function call(
         callable|string $target,
         array $parameters = [],
@@ -159,6 +171,9 @@ final class FunctionCaller
         return 'function:' . $reflection->getName();
     }
 
+    /**
+     * Clears cached argument plans for previous callable reflections.
+     */
     public function clearCache() : void
     {
         $this->plans = [];

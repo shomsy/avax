@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Dependencies\Resolution;
 
+/**
+ * Carries one service resolution request and its local context.
+ */
 final class ResolveRequest
 {
     /**
@@ -34,6 +37,8 @@ final class ResolveRequest
     }
 
     /**
+     * Returns a copy with one updated resolution context.
+     *
      * @param array<string, mixed> $context
      */
     public function withContext(array $context) : self
@@ -48,6 +53,9 @@ final class ResolveRequest
         );
     }
 
+    /**
+     * Returns whether one service id already exists in the parent request chain.
+     */
     public function contains(string $serviceId) : bool
     {
         $current = $this->parent;
@@ -61,6 +69,9 @@ final class ResolveRequest
         return false;
     }
 
+    /**
+     * Returns the full dependency path for diagnostics.
+     */
     public function getPath() : string
     {
         $path = $this->parent?->getPath() ?? '';

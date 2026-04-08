@@ -7,9 +7,13 @@ namespace Avax\Container\Compilation;
 use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistration;
 use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistry;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\CreateServiceBlueprint;
+use Avax\Container\DependencyInjection\Dependencies\Resolution\ResolvePlan;
 use Closure;
 use ReflectionFunction;
 
+/**
+ * Describes and compiles service entries for the generated runtime artifact.
+ */
 final readonly class ServiceCompiler
 {
     public function __construct(
@@ -25,7 +29,7 @@ final readonly class ServiceCompiler
      *   signature: string,
      *   direct: bool,
      *   class: string|null,
-     *   plan: \Avax\Container\DependencyInjection\Dependencies\Resolution\ResolvePlan|null,
+     *   plan: ResolvePlan|null,
      *   registrationArguments: array<string, mixed>,
      *   needsFinish: bool
      * }
@@ -35,8 +39,9 @@ final readonly class ServiceCompiler
         $methodName = $this->emitter->methodNameFor(serviceId: $serviceId);
         $registration = $this->registrations->get(abstract: $serviceId);
         $candidate = $this->candidateFor(serviceId: $serviceId, registration: $registration);
+        $registrationArguments = $registration?->arguments ?? [];
 
-        if (is_string($candidate) && class_exists($candidate)) {
+        if (is_string($candidate) && class_exists($candidate) && $this->supportsCompiledArguments(arguments: $registrationArguments)) {
             $blueprint = $this->blueprints->createFor(class: $candidate);
             $needsFinish = $blueprint->injectableProperties !== []
                 || $blueprint->injectableMethods !== []
@@ -50,14 +55,14 @@ final readonly class ServiceCompiler
                     'candidate' => $candidate,
                     'lifetime' => $registration?->lifetime,
                     'deferred' => $registration?->deferred ?? false,
-                    'arguments' => $registration?->arguments ?? [],
+                    'arguments' => $registrationArguments,
                     'blueprint' => $blueprint->fingerprint,
                     'finish' => $needsFinish,
                 ])),
                 'direct' => true,
                 'class' => $candidate,
                 'plan' => $blueprint->constructor,
-                'registrationArguments' => $registration?->arguments ?? [],
+                'registrationArguments' => $registrationArguments,
                 'needsFinish' => $needsFinish,
             ];
         }
@@ -70,12 +75,12 @@ final readonly class ServiceCompiler
                 'candidate' => $this->dynamicSignature(candidate: $candidate),
                 'lifetime' => $registration?->lifetime,
                 'deferred' => $registration?->deferred ?? false,
-                'arguments' => $registration?->arguments ?? [],
+                'arguments' => $registrationArguments,
             ])),
             'direct' => false,
             'class' => null,
             'plan' => null,
-            'registrationArguments' => $registration?->arguments ?? [],
+            'registrationArguments' => $registrationArguments,
             'needsFinish' => false,
         ];
     }
@@ -87,7 +92,7 @@ final readonly class ServiceCompiler
      *   signature: string,
      *   direct: bool,
      *   class: string|null,
-     *   plan: \Avax\Container\DependencyInjection\Dependencies\Resolution\ResolvePlan|null,
+     *   plan: ResolvePlan|null,
      *   registrationArguments: array<string, mixed>,
      *   needsFinish: bool
      * } $description
@@ -146,5 +151,38 @@ final readonly class ServiceCompiler
         }
 
         return get_debug_type($candidate) . ':' . var_export($candidate, true);
+    }
+
+    /**
+     * @param array<string, mixed> $arguments
+     */
+    private function supportsCompiledArguments(array $arguments) : bool
+    {
+        foreach ($arguments as $value) {
+            if (! $this->supportsCompiledValue(value: $value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function supportsCompiledValue(mixed $value) : bool
+    {
+        if ($value === null || is_scalar($value)) {
+            return true;
+        }
+
+        if (! is_array($value)) {
+            return false;
+        }
+
+        foreach ($value as $item) {
+            if (! $this->supportsCompiledValue(value: $item)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

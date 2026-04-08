@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 3) . '/bootstrap.php';
 
+use Avax\Container\ContainerInterface;
+use Avax\Container\DependencyInjection\Dependencies\Bindings\DecoratorInterface;
+
 interface RegisterLoggerContract
 {
     public function channel() : string;
@@ -48,10 +51,12 @@ final class ExtensibleMessage
     }
 }
 
-final class MessageDecorator
+final class MessageDecorator implements DecoratorInterface
 {
-    public function decorate(ExtensibleMessage $message) : ExtensibleMessage
+    public function decorate(mixed $instance, ContainerInterface|null $container = null) : mixed
     {
+        assertInstanceOf(ExtensibleMessage::class, $instance, 'Decorator contract should receive the resolved service instance.');
+        $message = $instance;
         $message->value = 'decorated:' . $message->value;
 
         return $message;
@@ -62,9 +67,9 @@ $container = makeTestContainer();
 $container->bind(RegisterLoggerContract::class, DefaultRegisterLogger::class);
 $container->alias('register.logger', RegisterLoggerContract::class);
 $container->when(NeedsSpecialLogger::class)->needs(RegisterLoggerContract::class)->give(SpecialRegisterLogger::class);
- $container->singleton(DefaultRegisterLogger::class, DefaultRegisterLogger::class);
- $container->singleton(SpecialRegisterLogger::class, SpecialRegisterLogger::class);
- $container->tag([DefaultRegisterLogger::class, SpecialRegisterLogger::class], 'logger');
+$container->singleton(DefaultRegisterLogger::class, DefaultRegisterLogger::class);
+$container->singleton(SpecialRegisterLogger::class, SpecialRegisterLogger::class);
+$container->tag([DefaultRegisterLogger::class, SpecialRegisterLogger::class], 'logger');
 
 $container
     ->singleton(

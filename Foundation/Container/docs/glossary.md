@@ -26,7 +26,8 @@
 - `Debug Aliases`: the human-readable alias map view
 - `Debug Scope`: the human-readable scope storage snapshot
 - `Boot Providers`: the deterministic provider lifecycle that registers then boots providers in dependency order
-- `Deferred Provider`: a provider that declares `deferred()` plus `provides()` and is booted only when one of its owned services is first resolved
+- `Deferred Provider`: a provider that implements `DeferredProviderInterface` and is booted only when one of its owned services is first resolved
+- `Benchmark Comparison`: a normalized comparison report between this container's benchmark artifact and one or more peer benchmark artifacts
 - `Telemetry`: runtime counters and timeline events emitted by the resolver
 - `Clock`: the neutral time source used by observability
 - `Environment Hook`: a container-owned env lookup such as `Container::env()`

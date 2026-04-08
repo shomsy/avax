@@ -44,6 +44,9 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
     private int $revision = 0;
 
+    /**
+     * @throws LogicException
+     */
     public function alias(string $alias, string $abstract) : void
     {
         if ($alias === '' || $abstract === '') {
@@ -120,7 +123,12 @@ final class ServiceRegistry implements ServiceRegistryInterface
         );
     }
 
-    public function decorate(string $abstract, callable|object|string $decorator) : void
+    /**
+     * Registers one explicit decorator chain step.
+     *
+     * @throws LogicException
+     */
+    public function decorate(string $abstract, callable|DecoratorInterface|string $decorator) : void
     {
         if (is_callable($decorator)) {
             $this->addExtender(
@@ -141,7 +149,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
                         ?? new $resolved($instance);
                 }
 
-                if (is_object($resolved) && method_exists($resolved, 'decorate')) {
+                if ($resolved instanceof DecoratorInterface) {
                     return $resolved->decorate($instance, $container);
                 }
 
@@ -149,7 +157,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
                     return $resolved($instance, $container);
                 }
 
-                return $instance;
+                throw new LogicException(message: 'Decorator must be callable, implement DecoratorInterface, or resolve to one of them.');
             },
             descriptor: $this->describeDecorator(decorator: $decorator)
         );
@@ -206,6 +214,9 @@ final class ServiceRegistry implements ServiceRegistryInterface
         return $tagged;
     }
 
+    /**
+     * Returns the matching target-specific binding for one consumer and need.
+     */
     public function getContextualMatch(string $consumer, string $needs) : mixed
     {
         $needs = $this->resolveAlias(abstract: $needs);
@@ -239,6 +250,9 @@ final class ServiceRegistry implements ServiceRegistryInterface
         return $this->resolvedCache[$cacheKey] = null;
     }
 
+    /**
+     * Adds one target-specific binding rule.
+     */
     public function addContextual(string $consumer, string $needs, mixed $give) : void
     {
         $needs = $this->resolveAlias(abstract: $needs);
@@ -252,6 +266,9 @@ final class ServiceRegistry implements ServiceRegistryInterface
         $this->touch();
     }
 
+    /**
+     * Adds one extender to the decoration chain.
+     */
     public function addExtender(string $abstract, Closure $extender, string $descriptor = 'extender') : void
     {
         $resolved = $this->resolveAlias(abstract: $abstract);

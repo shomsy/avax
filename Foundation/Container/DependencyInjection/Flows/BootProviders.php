@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Avax\Container\DependencyInjection\Flows;
 
 use Avax\Container\ContainerInterface;
+use Avax\Container\DependencyInjection\Dependencies\Providers\DeferredProviderInterface;
 use Avax\Container\DependencyInjection\Dependencies\Providers\ProviderBootPlan;
 use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface;
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
+use Avax\Container\Errors\ContainerException;
 use Avax\Container\Observability\ResolutionMetrics;
 use InvalidArgumentException;
 
@@ -20,7 +22,11 @@ final readonly class BootProviders
         private ContainerInterface $container
     ) {}
 
-    /** @param array<int, string|ServiceProviderInterface> $providers */
+    /**
+     * @param array<int, string|ServiceProviderInterface> $providers
+     * @throws InvalidArgumentException
+     * @throws ContainerException
+     */
     public function boot(array $providers) : void
     {
         $instances = $this->resolveProviders(providers: $providers);
@@ -39,7 +45,7 @@ final readonly class BootProviders
                     throw new InvalidArgumentException(message: 'Deferred providers require an available ServiceResolver.');
                 }
 
-                $resolver?->registerDeferredProvider(
+                $resolver->registerDeferredProvider(
                     provider  : $provider,
                     serviceIds: $this->providedServices(provider: $provider)
                 );
@@ -63,6 +69,8 @@ final readonly class BootProviders
     /**
      * @param array<int, string|ServiceProviderInterface> $providers
      * @return array<class-string<ServiceProviderInterface>, ServiceProviderInterface>
+     * @throws InvalidArgumentException
+     * @throws ContainerException
      */
     private function resolveProviders(array $providers) : array
     {
@@ -93,6 +101,8 @@ final readonly class BootProviders
     /**
      * @param array<int, string|ServiceProviderInterface> $providers
      * @return ServiceProviderInterface
+     * @throws InvalidArgumentException
+     * @throws ContainerException
      */
     private function instanceFor(string|ServiceProviderInterface $provider) : ServiceProviderInterface
     {
@@ -101,7 +111,7 @@ final readonly class BootProviders
                 throw new InvalidArgumentException(message: "Provider class [{$provider}] does not exist.");
             }
 
-            $instance = new $provider($this->container);
+            $instance = $this->container->make($provider);
         } else {
             $instance = $provider;
         }
@@ -162,35 +172,30 @@ final readonly class BootProviders
 
     private function isDeferredProvider(ServiceProviderInterface $provider) : bool
     {
-        if (! method_exists($provider, 'deferred')) {
-            return false;
-        }
-
-        return (bool) $provider->deferred();
+        return $provider instanceof DeferredProviderInterface
+            && $provider->deferred();
     }
 
     /**
+     * Returns the service ids owned by one deferred provider.
+     *
      * @return list<string>
      */
     private function providedServices(ServiceProviderInterface $provider) : array
     {
-        if (! method_exists($provider, 'provides')) {
+        if (! $provider instanceof DeferredProviderInterface) {
             return [];
         }
 
-        $services = array_values(array_unique(array_filter(
-            array_map(
-                static fn(mixed $serviceId) : string => is_string($serviceId) ? $serviceId : '',
-                $provider->provides()
-            ),
-            static fn(string $serviceId) : bool => $serviceId !== ''
-        )));
-
+        $services = $provider->provides();
         sort($services);
 
-        return $services;
+        return array_values(array_unique($services));
     }
 
+    /**
+     * Returns the resolver system service when available.
+     */
     private function resolver() : ServiceResolver|null
     {
         try {
@@ -202,6 +207,9 @@ final readonly class BootProviders
         return $resolver instanceof ServiceResolver ? $resolver : null;
     }
 
+    /**
+     * Returns the metrics system service when available.
+     */
     private function metrics() : ResolutionMetrics|null
     {
         try {

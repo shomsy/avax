@@ -15,6 +15,9 @@ use JsonException;
 use RuntimeException;
 use Throwable;
 
+/**
+ * Builds, loads, and invalidates the compiled container artifact set.
+ */
 final class CompileContainer
 {
     private const FORMAT = 'compiled-container-v3';
@@ -44,14 +47,20 @@ final class CompileContainer
         );
     }
 
+    /**
+     * Returns whether this compiler must validate before writing artifacts.
+     */
     public function shouldValidateBeforeCompile() : bool
     {
         return $this->validateBeforeCompile;
     }
 
     /**
+     * Compiles one container artifact for the requested service set.
+     *
      * @param list<string> $serviceIds
      * @param list<string> $validationIssues
+     * @throws ContainerException
      */
     public function compile(array $serviceIds = [], array $validationIssues = []) : CompiledContainer
     {
@@ -89,6 +98,8 @@ final class CompileContainer
     }
 
     /**
+     * Loads one compiled container artifact when it is available and fresh.
+     *
      * @param list<string> $serviceIds
      */
     public function load(array $serviceIds = []) : CompiledContainer|null
@@ -143,6 +154,9 @@ final class CompileContainer
         return $compiled;
     }
 
+    /**
+     * Removes all compiled container artifacts.
+     */
     public function flush() : void
     {
         $this->lastMetadata = null;
@@ -155,6 +169,9 @@ final class CompileContainer
         $this->deleteDirectory(directory: $directory);
     }
 
+    /**
+     * Returns whether one service is present in the current compiled metadata.
+     */
     public function contains(string $serviceId) : bool
     {
         $metadata = $this->reportMetadata();
@@ -163,6 +180,8 @@ final class CompileContainer
     }
 
     /**
+     * Returns the current compile status for the requested service set.
+     *
      * @param list<string> $serviceIds
      */
     public function report(array $serviceIds = []) : CompileReport

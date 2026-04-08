@@ -8,10 +8,15 @@ use Avax\Container\DependencyInjection\Dependencies\Resolution\ResolveDependenci
 use Avax\Container\DependencyInjection\Injection\Attributes\Inject;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\Attributes\Singleton;
 use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionProperty;
 use ReflectionUnionType;
 
+/**
+ * Creates and caches reflection-derived service blueprints.
+ */
 final readonly class CreateServiceBlueprint
 {
     private BlueprintCache $cache;
@@ -25,6 +30,9 @@ final readonly class CreateServiceBlueprint
         $this->dependencies ??= new ResolveDependencies;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function createFor(string $class) : ServiceBlueprint
     {
         $fingerprint = $this->cache->shouldValidateSource()
@@ -62,7 +70,7 @@ final readonly class CreateServiceBlueprint
                 $properties
             ),
             injectableMethods   : array_map(
-                fn($method) => [
+                fn(ReflectionMethod $method) => [
                     'name' => $method->getName(),
                     'plan' => $this->dependencies->createPlan(parameters: $method->getParameters()),
                 ],
@@ -75,6 +83,7 @@ final readonly class CreateServiceBlueprint
 
     /**
      * @param list<string> $classes
+     * @throws ReflectionException
      */
     public function warm(array $classes) : void
     {
@@ -87,16 +96,25 @@ final readonly class CreateServiceBlueprint
         }
     }
 
+    /**
+     * Removes one cached blueprint.
+     */
     public function forget(string $class) : void
     {
         $this->cache->forget(class: $class);
     }
 
+    /**
+     * Clears all cached blueprints.
+     */
     public function flush() : void
     {
         $this->cache->flush();
     }
 
+    /**
+     * Infers one service id from the property attribute or object type.
+     */
     private function serviceIdFor(ReflectionProperty $property) : string|null
     {
         $attributes = $property->getAttributes(Inject::class);
@@ -122,11 +140,17 @@ final readonly class CreateServiceBlueprint
         return null;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function cacheFingerprintFor(string $class) : string
     {
         return $this->cacheFingerprintForReflection(reflection: new ReflectionClass($class));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function cacheFingerprintForReflection(ReflectionClass $reflection) : string
     {
         $files = $this->filesFor(reflection: $reflection);

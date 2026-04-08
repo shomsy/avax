@@ -7,6 +7,9 @@ namespace Avax\Container\DependencyInjection\Dependencies\Blueprints;
 use Avax\Container\Errors\ContainerException;
 use Avax\Container\Observability\ResolutionMetrics;
 
+/**
+ * Caches service blueprints in memory and optional disk artifacts.
+ */
 final class BlueprintCache
 {
     /** @var array<string, ServiceBlueprint> */
@@ -19,11 +22,17 @@ final class BlueprintCache
         private readonly ResolutionMetrics|null $metrics = null
     ) {}
 
+    /**
+     * Returns whether source freshness should be rechecked on reads.
+     */
     public function shouldValidateSource() : bool
     {
         return $this->debug;
     }
 
+    /**
+     * Reads one blueprint from memory or disk cache.
+     */
     public function get(string $class, string $fingerprint = '') : ServiceBlueprint|null
     {
         $cached = $this->items[$class] ?? null;
@@ -70,6 +79,11 @@ final class BlueprintCache
         return $loaded;
     }
 
+    /**
+     * Stores one blueprint in memory and optional disk cache.
+     *
+     * @throws ContainerException
+     */
     public function put(ServiceBlueprint $blueprint) : ServiceBlueprint
     {
         $this->items[$blueprint->class] = $blueprint;
@@ -100,6 +114,9 @@ final class BlueprintCache
         return $blueprint;
     }
 
+    /**
+     * Removes one blueprint from memory and disk cache.
+     */
     public function forget(string $class) : void
     {
         unset($this->items[$class]);
@@ -110,6 +127,9 @@ final class BlueprintCache
         }
     }
 
+    /**
+     * Clears the full blueprint cache.
+     */
     public function flush() : void
     {
         $this->items = [];

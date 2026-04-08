@@ -6,6 +6,7 @@ require_once dirname(__DIR__) . '/bootstrap.php';
 
 use Avax\Container\ContainerInterface;
 use Avax\Container\Configuration\CreateContainerConfig;
+use Avax\Container\DependencyInjection\Dependencies\Providers\DeferredProviderInterface;
 use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface;
 use Avax\Container\DependencyInjection\Injection\Attributes\Inject;
 use Avax\Container\Runtime\LazyProxy;
@@ -63,7 +64,7 @@ final class BenchDeferredProviderService implements BenchDeferredProviderContrac
     }
 }
 
-final class BenchDeferredProvider implements ServiceProviderInterface
+final class BenchDeferredProvider implements DeferredProviderInterface
 {
     public function __construct(private ContainerInterface $app)
     {
@@ -222,6 +223,45 @@ function measureScenario(array $scenario) : array
         'ops_per_s' => $timeMs > 0 ? ($iterations / $timeMs) * 1000 : 0.0,
         'peak_mb' => $result['peak_mb'],
         'memory_per_op_kb' => ($result['peak_mb'] * 1024) / $iterations,
+    ];
+}
+
+/**
+ * @param array{name: string, iterations: int, callback: callable(): void} $scenario
+ * @return array<string, mixed>
+ */
+function measureScenarioForGuard(array $scenario, int $runs = 3) : array
+{
+    $samples = [];
+
+    for ($index = 0; $index < $runs; $index++) {
+        $samples[] = measureScenario(scenario: $scenario);
+    }
+
+    $timeSamples = array_values(array_map(
+        static fn(array $sample) : float => (float) $sample['time_ms'],
+        $samples
+    ));
+    sort($timeSamples);
+
+    $peakSamples = array_values(array_map(
+        static fn(array $sample) : float => (float) $sample['peak_mb'],
+        $samples
+    ));
+    sort($peakSamples);
+
+    $iterations = max(1, $scenario['iterations']);
+    $middle = intdiv(count($timeSamples), 2);
+    $timeMs = $timeSamples[$middle] ?? 0.0;
+    $peakMb = $peakSamples[$middle] ?? 0.0;
+
+    return [
+        'iterations' => $iterations,
+        'runs' => $runs,
+        'time_ms' => $timeMs,
+        'ops_per_s' => $timeMs > 0 ? ($iterations / $timeMs) * 1000 : 0.0,
+        'peak_mb' => $peakMb,
+        'memory_per_op_kb' => ($peakMb * 1024) / $iterations,
     ];
 }
 
@@ -467,10 +507,19 @@ function assertThresholds(array $thresholds, array $results) : void
 
 $jsonOutput = in_array('--json', $argv, true);
 $guard = in_array('--guard', $argv, true);
+$outputPath = null;
+
+foreach ($argv as $argument) {
+    if (str_starts_with($argument, '--output=')) {
+        $outputPath = substr($argument, strlen('--output='));
+    }
+}
 
 $results = [];
 foreach (benchmarkScenarios() as $scenario) {
-    $results[$scenario['name']] = measureScenario(scenario: $scenario);
+    $results[$scenario['name']] = $guard
+        ? measureScenarioForGuard(scenario: $scenario)
+        : measureScenario(scenario: $scenario);
 }
 
 if ($guard) {
@@ -479,8 +528,8 @@ if ($guard) {
     assertThresholds(thresholds: $thresholds, results: $results);
 }
 
-if ($jsonOutput) {
-    echo json_encode([
+if ($jsonOutput || is_string($outputPath)) {
+    $payload = json_encode([
         'meta' => [
             'php' => PHP_VERSION,
             'sapi' => PHP_SAPI,
@@ -488,7 +537,22 @@ if ($jsonOutput) {
         ],
         'results' => $results,
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
-    exit(0);
+
+    if (is_string($outputPath) && $outputPath !== '') {
+        $directory = dirname($outputPath);
+        if (! is_dir($directory) && ! mkdir($directory, 0775, true) && ! is_dir($directory)) {
+            throw new RuntimeException("Cannot create benchmark artifact directory [{$directory}].");
+        }
+
+        if (file_put_contents($outputPath, $payload, LOCK_EX) === false) {
+            throw new RuntimeException("Cannot write benchmark artifact [{$outputPath}].");
+        }
+    }
+
+    if ($jsonOutput) {
+        echo $payload;
+        exit(0);
+    }
 }
 
 foreach ($results as $name => $result) {

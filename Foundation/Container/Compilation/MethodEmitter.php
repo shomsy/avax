@@ -6,13 +6,22 @@ namespace Avax\Container\Compilation;
 
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ResolvePlan;
 
+/**
+ * Emits deterministic PHP methods for compiled service resolution.
+ */
 final class MethodEmitter
 {
+    /**
+     * Derives one stable method name from one service id.
+     */
     public function methodNameFor(string $serviceId) : string
     {
         return 'service_' . substr(sha1($serviceId), 0, 16);
     }
 
+    /**
+     * Emits a fallback method that delegates back to dynamic resolution.
+     */
     public function emitDynamicMethod(string $methodName) : string
     {
         return <<<PHP
@@ -24,6 +33,11 @@ final class MethodEmitter
 PHP;
     }
 
+    /**
+     * Emits one direct service-construction method for the compiled artifact.
+     *
+     * @param array<string, mixed> $registrationArguments
+     */
     public function emitDirectMethod(
         string $methodName,
         string $serviceId,
@@ -40,7 +54,7 @@ PHP;
     public function {$methodName}(\\Avax\\Container\\DependencyInjection\\Dependencies\\Resolution\\ServiceResolver \$resolver, \\Avax\\Container\\DependencyInjection\\Dependencies\\Resolution\\ResolveRequest \$request, array \$overrides = []) : mixed
     {
         \$arguments = \\array_replace(
-            \\unserialize(\\base64_decode({$compiledRegistrationArguments}), ['allowed_classes' => true]),
+            \\unserialize(\\base64_decode({$compiledRegistrationArguments}), ['allowed_classes' => false]),
             \$overrides
         );
 PHP;
@@ -128,7 +142,7 @@ PHP;
         if ($parameter['hasDefault']) {
             return '\\unserialize(\\base64_decode('
                 . $this->export($parameter['default'])
-                . '), [\'allowed_classes\' => true])';
+                . '), [\'allowed_classes\' => false])';
         }
 
         if ($parameter['allowsNull']) {

@@ -25,4 +25,20 @@ abstract class CompiledContainer
     {
         return $this->entries[$serviceId] ?? null;
     }
+
+    /**
+     * @return list<string>
+     */
+    public function entryIds() : array
+    {
+        $ids = array_keys($this->entries);
+        sort($ids);
+
+        return $ids;
+    }
+
+    public function entryCount() : int
+    {
+        return count($this->entries);
+    }
 }

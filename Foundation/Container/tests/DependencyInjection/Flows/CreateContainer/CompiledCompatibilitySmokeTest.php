@@ -39,6 +39,7 @@ $reloaded = makeTestContainer(CreateContainerConfig::create(
     compileMode : CreateContainerConfig::COMPILE_MODE_DEV,
     settings    : ['app_env' => 'dev'],
     debug       : true,
+    diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_DETAILED,
 ));
 $reloaded->singleton(CompatibilityDependency::class, CompatibilityDependency::class);
 
@@ -48,6 +49,7 @@ $resolved = $reloaded->get(CompatibilityTarget::class);
 assertTrue($report !== null, 'Compile reports should still exist for incompatible artifacts.');
 assertTrue(! $report->available, 'Incompatible compiled artifacts must not be reported as available.');
 assertTrue(! $report->compatible, 'Incompatible compiled artifacts must report compatibility failure.');
+assertSame('incompatible', $report->freshnessState, 'Incompatible compiled artifacts must expose an incompatible freshness state.');
 assertTrue(
     in_array('config hash mismatch', $report->compatibilityIssues, true),
     'Compile reports should expose config compatibility mismatches.'
@@ -55,6 +57,10 @@ assertTrue(
 assertTrue(
     in_array('compile mode mismatch', $report->compatibilityIssues, true),
     'Compile reports should expose compile mode compatibility mismatches.'
+);
+assertTrue(
+    in_array('diagnostics mode mismatch', $report->compatibilityIssues, true),
+    'Compile reports should expose diagnostics mode compatibility mismatches.'
 );
 assertTrue(! $reloaded->isCompiled(CompatibilityTarget::class), 'Incompatible artifacts must not report compiled service availability.');
 assertSame('compatibility', $resolved->dependency->id(), 'Runtime should fall back to dynamic resolution for incompatible artifacts.');

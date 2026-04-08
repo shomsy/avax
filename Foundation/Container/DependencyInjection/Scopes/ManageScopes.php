@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Scopes;
 
+use Avax\Container\Observability\ResolutionMetrics;
 use Avax\Container\Runtime\ServicePool;
 
 /**
@@ -13,7 +14,8 @@ final readonly class ManageScopes implements ScopeInterface
 {
     public function __construct(
         private ScopeStore $store,
-        private ServicePool $pool
+        private ServicePool $pool,
+        private ResolutionMetrics|null $metrics = null
     ) {}
 
     /**
@@ -72,6 +74,7 @@ final readonly class ManageScopes implements ScopeInterface
     public function openScope() : void
     {
         $this->store->open();
+        $this->metrics?->increment(name: 'container_scope_open_total');
     }
 
     /**
@@ -80,6 +83,7 @@ final readonly class ManageScopes implements ScopeInterface
     public function closeScope() : void
     {
         $this->store->close();
+        $this->metrics?->increment(name: 'container_scope_close_total');
     }
 
     /**
@@ -89,6 +93,7 @@ final readonly class ManageScopes implements ScopeInterface
     {
         $this->pool->flush();
         $this->store->terminate();
+        $this->metrics?->increment(name: 'container_scope_terminate_total');
     }
 
     /**

@@ -55,8 +55,12 @@ assertThrows(
     'Production mode should fail closed when the compiled artifact is corrupted.'
 );
 assertTrue(
-    glob($productionArtifactDir . '/container.php.quarantine.*') !== [],
+    glob($productionArtifactDir . '/quarantine/*.php') !== [],
     'Corrupted production artifacts should be quarantined instead of silently reused.'
+);
+assertTrue(
+    glob($productionArtifactDir . '/quarantine/*.json') !== [],
+    'Corrupted production metadata should also be quarantined.'
 );
 
 $developmentCache = sys_get_temp_dir() . '/container-integrity-dev-' . uniqid();

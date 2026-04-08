@@ -53,6 +53,13 @@ If a provider should boot lazily instead of during `bootProviders()`:
 2. implement `DeferredProviderInterface` and declare `provides(): array` with every service id the provider owns
 3. resolve one of those services to trigger the deferred provider boot
 
+If deferred or lazy behavior looks inconsistent:
+
+1. check `debugService()` for `deferred`, `lazy`, `cacheState`, and `compiledState`
+2. inspect `debugService()['explain']['fallback']` to see why the compiled path was skipped or why dynamic fallback is active
+3. inspect `debugService()['explain']['dependencyChain']` when a deferred provider owns a transitive dependency
+4. rebuild compiled artifacts if the deferred graph changed after warmup
+
 ## Compiled Cache Issues
 
 If compiled artifacts are not being used:
@@ -68,16 +75,25 @@ If the compiled artifact is incompatible with the current runtime:
 
 1. inspect `compileReport()->compatible`
 2. inspect `compileReport()->compatibilityIssues`
-3. confirm whether `configHash`, `environment`, `compileMode`, or `strict` changed between compile and load
+3. inspect `compileReport()->freshnessState`
+4. confirm whether `configHash`, `environment`, `compileMode`, `diagnosticsMode`, or `strict` changed between compile and load
 4. rebuild the artifact instead of assuming the hot path is still valid
 
 If the compiled artifact is corrupt:
 
 1. production-style compile modes fail closed and quarantine the artifact
 2. development mode quarantines the artifact and falls back to dynamic resolution
-3. inspect `describeService()` or `debugService()` to confirm whether the service is still compiled or running dynamically
+3. quarantined artifacts move under the compiled artifact `quarantine/` directory instead of being silently overwritten
+4. inspect `describeService()` or `debugService()` to confirm whether the service is still compiled or running dynamically
 
 If a compiled service is still resolving dynamically, it may be outside the compiled hot path on purpose. Check `describeService()` and `debugPlan()` before assuming a cache miss.
+
+If `debugService()` shows `decision=dynamic`, inspect:
+
+1. `debugService()['compiledState']['reason']`
+2. `debugService()['explain']['fallback']`
+3. `debugService()['compiledArtifact']['compatibilityIssues']`
+4. `debugService()['compiledArtifact']['warnings']`
 
 If a compile report shows invalidated services:
 
@@ -105,6 +121,13 @@ If tests or long-running workers need a clean slate:
 
 Both operations are deterministic and leave the container ready for another resolve cycle.
 
+If worker or request state appears to leak:
+
+1. confirm each request opens and closes its own scope
+2. call `reset()` between jobs in a long-running worker
+3. inspect `runtimeReport()->sharedServiceCount` and `runtimeReport()->scopedServiceCount`
+4. inspect `debugScope()` to confirm there is no leftover scoped frame
+
 ## Status Helpers
 
 If you need to know what the container thinks right now:
@@ -114,7 +137,8 @@ If you need to know what the container thinks right now:
 3. `isLazy()` reports whether a lazy proxy has been requested in this runtime
 4. `isCompiled()` reports whether one service id is present in the compiled artifact
 5. `isWarmedUp()` reports whether a compiled artifact is available for this runtime
-6. `runtimeReport()` exposes whether diagnostics mode is `minimal` or `detailed`
+6. `runtimeReport()` exposes whether diagnostics mode is `minimal`, `detailed`, or `ci`
+7. `runtimeReport()` also exposes whether the timeline is enabled plus shared/scoped counts and the current hot-path summary
 
 ## Validation Commands
 

@@ -31,5 +31,6 @@ assertSame(0, $compareStatus, 'Benchmark comparison runner should compare benchm
 $json = implode(PHP_EOL, $compareOutput);
 assertTrue(str_contains($json, '"scenarioCount"'), 'Benchmark comparison output should expose the scenario count.');
 assertTrue(str_contains($json, '"baseline": "current"'), 'Benchmark comparison output should expose the baseline target.');
+assertTrue(str_contains($json, '"targetMeta"'), 'Benchmark comparison output should expose benchmark artifact metadata for each target.');
 
 echo basename(__FILE__) . " ok\n";

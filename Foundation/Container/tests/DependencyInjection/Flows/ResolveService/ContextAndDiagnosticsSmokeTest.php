@@ -88,9 +88,16 @@ assertTrue($container->isCompiled(DiagnosticsContract::class), 'Public compiled 
 assertTrue($container->isWarmedUp(), 'Public warmup status helpers should reflect the compiled artifact state.');
 assertTrue($compileReport !== null && $compileReport->available, 'Compile report should expose the active compiled artifact.');
 assertTrue($compileReport?->compatible ?? false, 'Compile report should expose artifact compatibility.');
+assertSame('fresh', $compileReport?->freshnessState, 'Compile reports should expose artifact freshness.');
+assertSame(1, $compileReport?->toArray()['schemaVersion'] ?? null, 'Compile reports should expose a stable JSON schema version.');
 assertTrue(str_contains($compileReport?->toJson() ?? '', '"available": true'), 'Compile report should be JSON serializable.');
 assertSame($compileReport?->fingerprint, $runtimeReport->compiled?->fingerprint, 'Runtime report should point to the same compiled artifact report.');
 assertTrue($runtimeReport->compiledAttached || $runtimeReport->warmedUp, 'Runtime report should expose compiled runtime state.');
+assertSame(1, $runtimeReport->toArray()['schemaVersion'] ?? null, 'Runtime reports should expose a stable JSON schema version.');
+assertTrue($runtimeReport->timelineEnabled === false, 'Minimal diagnostics mode should disable timeline recording.');
+assertSame(0, $runtimeReport->sharedServiceCount, 'Runtime report should summarize shared service counts without inventing unresolved shared instances.');
+assertSame(1, $runtimeReport->scopedServiceCount, 'Runtime report should summarize scoped service counts.');
+assertSame('fresh', $runtimeReport->hotPath['freshnessState'], 'Runtime report should expose hot-path artifact freshness.');
 assertTrue(str_contains($runtimeReport->toJson(), '"metrics"'), 'Runtime report should be JSON serializable.');
 assertSame(CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL, $runtimeReport->diagnosticsMode, 'Runtime report should expose the active diagnostics mode.');
 assertSame(CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL, $description['diagnosticsMode'], 'Service diagnostics should expose the active diagnostics mode.');
@@ -98,6 +105,32 @@ assertSame(['diagnostics.service', DiagnosticsContract::class], $aliasDescriptio
 assertSame([], $description['decorationChain'], 'Undecorated services should expose an empty decoration chain.');
 assertTrue(isset($description['cacheState']['cached']), 'Service diagnostics should expose cache state.');
 assertTrue(isset($description['compiledState']['artifactAvailable']), 'Service diagnostics should expose compiled state.');
+assertSame('compiled', $description['compiledState']['decision'], 'Compiled diagnostics should explain when the compiled path is usable.');
+assertSame(
+    ['diagnostics.service', DiagnosticsContract::class],
+    $aliasDescription['explain']['aliasExpansion']['chain'],
+    'Explain diagnostics should expose alias expansion chains.'
+);
+assertTrue(
+    isset($description['explain']['dependencyChain']['dependencies']),
+    'Explain diagnostics should expose dependency chain output.'
+);
+assertSame(
+    'no contextual override is registered for this service',
+    $description['explain']['contextualWinner']['reason'],
+    'Explain diagnostics should expose contextual winner output even when there is no active contextual override.'
+);
+assertSame(
+    'compiled hot path is attached and usable',
+    $description['explain']['compiled']['reason'],
+    'Explain diagnostics should expose why the compiled path was selected.'
+);
+assertSame(
+    'service will resolve through a fresh build path and then enter lifetime storage if needed',
+    $description['explain']['cache']['reason'],
+    'Explain diagnostics should expose cache hit and miss reasoning.'
+);
+assertSame([], $description['explain']['failureChain'], 'Healthy diagnostics should expose an empty failure chain.');
 assertTrue($tags['ordered'], 'Debug tags should declare deterministic ordering.');
 assertSame(1, $scope['depth'], 'Debug scope should expose the active scope depth.');
 assertSame([], $plan['methods'], 'Debug plans should expose a simple constructor-only service.');
@@ -107,6 +140,9 @@ assertTrue($scope['scoped'] !== [], 'Debug scope should expose active scoped ins
 assertSame('from-context', $contextual->name, 'Context views should feed scalar constructor values into compiled services.');
 assertSame('from-call', $called, 'Context views should feed scalar callable arguments.');
 assertSame('from-injection', $injected->name, 'Context views should feed scalar injection arguments.');
+$container->closeScope();
+assertTrue(str_contains($container->exportMetrics(), 'container_scope_open_total'), 'Scope lifecycle metrics should be exported.');
+assertTrue(str_contains($container->exportMetrics(), 'container_scope_close_total'), 'Scope lifecycle metrics should be exported.');
 
 $lazyProxy = $container->lazy(DiagnosticsContract::class);
 assertSame('diagnostics', $lazyProxy->label(), 'Lazy proxies should still resolve the target service.');
@@ -121,5 +157,15 @@ $detailedReport = $detailedContainer->runtimeReport();
 
 assertSame(CreateContainerConfig::DIAGNOSTICS_MODE_DETAILED, $detailedReport->diagnosticsMode, 'Detailed runtime reports should expose detailed diagnostics mode.');
 assertTrue($detailedReport->timeline !== [], 'Detailed diagnostics mode should keep timeline events enabled.');
+assertTrue($detailedReport->timelineEnabled, 'Detailed diagnostics mode should report timeline state as enabled.');
+
+$ciContainer = makeTestContainer(CreateContainerConfig::create(
+    diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_CI
+));
+$ciContainer->get(DiagnosticsService::class);
+$ciReport = $ciContainer->runtimeReport();
+
+assertSame(CreateContainerConfig::DIAGNOSTICS_MODE_CI, $ciReport->diagnosticsMode, 'CI diagnostics mode should be preserved in runtime reports.');
+assertTrue($ciReport->timelineEnabled, 'CI diagnostics mode should keep timeline recording enabled.');
 
 echo basename(__FILE__) . " ok\n";

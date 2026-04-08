@@ -13,6 +13,8 @@ use JsonSerializable;
  */
 final readonly class RuntimeReport implements JsonSerializable
 {
+    public const SCHEMA_VERSION = 1;
+
     /**
      * @param list<string> $lazyServices
      * @param array<string, string> $aliases
@@ -31,12 +33,16 @@ final readonly class RuntimeReport implements JsonSerializable
         public bool $compiledAttached,
         public bool $warmedUp,
         public string $diagnosticsMode,
+        public bool $timelineEnabled,
         public array $lazyServices,
         public array $aliases,
         public array $deferredProviders,
+        public int $sharedServiceCount,
+        public int $scopedServiceCount,
         public array $metrics,
         public array $timeline,
         public array $scopes,
+        public array $hotPath,
         public CompileReport|null $compiled = null
     ) {}
 
@@ -46,17 +52,22 @@ final readonly class RuntimeReport implements JsonSerializable
     public function toArray() : array
     {
         return [
+            'schemaVersion' => self::SCHEMA_VERSION,
             'registrationRevision' => $this->registrationRevision,
             'compiledRevision' => $this->compiledRevision,
             'compiledAttached' => $this->compiledAttached,
             'warmedUp' => $this->warmedUp,
             'diagnosticsMode' => $this->diagnosticsMode,
+            'timelineEnabled' => $this->timelineEnabled,
             'lazyServices' => $this->lazyServices,
             'aliases' => $this->aliases,
             'deferredProviders' => $this->deferredProviders,
+            'sharedServiceCount' => $this->sharedServiceCount,
+            'scopedServiceCount' => $this->scopedServiceCount,
             'metrics' => $this->metrics,
             'timeline' => $this->timeline,
             'scopes' => $this->scopes,
+            'hotPath' => $this->hotPath,
             'compiled' => $this->compiled?->toArray(),
         ];
     }

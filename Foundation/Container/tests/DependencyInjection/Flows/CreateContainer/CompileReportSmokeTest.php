@@ -101,8 +101,17 @@ assertSame(
     'Compile metadata should expose the diagnostics mode that produced the artifact.'
 );
 assertTrue($report->metadata?->warmed ?? false, 'Warm compilation should mark the artifact metadata as warmed.');
-assertSame(4, $report->metadata?->schemaVersion, 'Compile metadata should expose a stable schema version.');
+assertSame(6, $report->metadata?->schemaVersion, 'Compile metadata should expose a stable schema version.');
 assertTrue(($report->metadata?->dependencyGraphRevision ?? '') !== '', 'Compile metadata should expose dependency graph provenance.');
+assertSame(
+    'default',
+    $report->metadata?->ownership[CompileReportContract::class]['ownerSlice'] ?? null,
+    'Compile metadata should expose derived ownership maps.'
+);
+assertTrue(
+    isset($report->metadata?->slices['default']),
+    'Compile metadata should expose derived slice manifests.'
+);
 assertSame(
     $report->path,
     $report->metadata?->artifactPaths['compiled'] ?? null,

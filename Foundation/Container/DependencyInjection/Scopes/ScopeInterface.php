@@ -17,11 +17,11 @@ interface ScopeInterface
 
     public function instance(string $abstract, mixed $instance) : void;
 
-    public function withinScope(callable $callback) : mixed;
+    public function withinScope(callable $callback, string $kind = ScopeKind::OPERATION, string $scopeId = '') : mixed;
 
-    public function openScope() : void;
+    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = '') : void;
 
-    public function closeScope() : void;
+    public function closeScope(string|null $kind = null) : void;
 
     public function terminate() : void;
 }

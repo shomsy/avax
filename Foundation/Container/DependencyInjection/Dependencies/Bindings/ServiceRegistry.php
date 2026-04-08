@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Dependencies\Bindings;
 
+use Avax\Container\DependencyInjection\Dependencies\Ownership\RegistrationCategory;
+use Avax\Container\DependencyInjection\Dependencies\Ownership\RegistrationMetadata;
+use Avax\Container\DependencyInjection\Dependencies\Ownership\RegistrationVisibility;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\ScopedLifetime;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\SharedLifetime;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\TransientLifetime;
@@ -41,6 +44,9 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
     /** @var array<string, list<string>> */
     private array $decorationDescriptors = [];
+
+    /** @var array<string, list<array<string, mixed>>> */
+    private array $overrideHistory = [];
 
     private int $revision = 0;
 
@@ -177,6 +183,11 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
     public function add(ServiceRegistration $definition) : void
     {
+        $existing = $this->services[$definition->abstract] ?? null;
+        if ($existing instanceof ServiceRegistration && $existing !== $definition) {
+            $this->overrideHistory[$definition->abstract][] = $this->registrationState(registration: $existing);
+        }
+
         $this->services[$definition->abstract] = $definition;
         $this->touch();
     }
@@ -212,6 +223,33 @@ final class ServiceRegistry implements ServiceRegistryInterface
         sort($tagged);
 
         return $tagged;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getGroupedIds(string $group) : array
+    {
+        $items = [];
+
+        foreach ($this->all() as $abstract => $registration) {
+            if ($registration->group !== $group) {
+                continue;
+            }
+
+            $items[] = [
+                'serviceId' => $abstract,
+                'order' => $registration->groupOrder,
+            ];
+        }
+
+        usort(
+            $items,
+            static fn(array $left, array $right) : int => [$left['order'], $left['serviceId']]
+                <=> [$right['order'], $right['serviceId']]
+        );
+
+        return array_column($items, 'serviceId');
     }
 
     /**
@@ -302,7 +340,10 @@ final class ServiceRegistry implements ServiceRegistryInterface
      */
     public function all() : array
     {
-        return $this->services;
+        $services = $this->services;
+        ksort($services);
+
+        return $services;
     }
 
     /**
@@ -310,7 +351,10 @@ final class ServiceRegistry implements ServiceRegistryInterface
      */
     public function allIncludingSystem() : array
     {
-        return $this->services + $this->systemServices;
+        $services = $this->services + $this->systemServices;
+        ksort($services);
+
+        return $services;
     }
 
     /**
@@ -329,9 +373,283 @@ final class ServiceRegistry implements ServiceRegistryInterface
         return isset($this->aliases[$alias]);
     }
 
+    public function ownership(string $abstract) : RegistrationMetadata|null
+    {
+        return $this->get(abstract: $abstract)?->metadata;
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function ownershipMap() : array
+    {
+        $ownership = [];
+
+        foreach ($this->all() as $abstract => $registration) {
+            $ownership[$abstract] = $registration->metadata->toArray();
+        }
+
+        ksort($ownership);
+
+        return $ownership;
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function sliceManifests() : array
+    {
+        $manifests = [];
+
+        foreach ($this->all() as $abstract => $registration) {
+            $metadata = $registration->metadata;
+            $slice = $metadata->ownerSlice;
+
+            $manifests[$slice] ??= [
+                'slice' => $slice,
+                'category' => $metadata->category,
+                'categories' => [],
+                'services' => [],
+                'exports' => [],
+                'public' => [],
+                'shared' => [],
+                'private' => [],
+                'internal' => [],
+                'imports' => [],
+            ];
+
+            $manifests[$slice]['categories'][$metadata->category] = true;
+            $manifests[$slice]['services'][] = $abstract;
+            $manifests[$slice]['imports'] = array_values(array_unique(array_merge(
+                $manifests[$slice]['imports'],
+                $metadata->imports
+            )));
+
+            if ($metadata->exported) {
+                $manifests[$slice]['exports'][] = $abstract;
+            }
+
+            $manifests[$slice][$metadata->visibility][] = $abstract;
+        }
+
+        foreach ($manifests as $slice => $manifest) {
+            foreach (['services', 'exports', 'public', 'shared', 'private', 'internal', 'imports'] as $key) {
+                $values = array_values(array_unique($manifest[$key]));
+                sort($values);
+                $manifests[$slice][$key] = $values;
+            }
+
+            $categories = array_keys($manifest['categories']);
+            sort($categories);
+            $manifests[$slice]['categories'] = $categories;
+            $manifests[$slice]['category'] = count($categories) === 1 ? $categories[0] : 'mixed';
+        }
+
+        ksort($manifests);
+
+        return $manifests;
+    }
+
+    /**
+     * @return list<array{concept: string, services: list<array{serviceId: string, ownerSlice: string, visibility: string}>}>
+     */
+    public function duplicateConcepts() : array
+    {
+        $concepts = [];
+
+        foreach ($this->all() as $abstract => $registration) {
+            $metadata = $registration->metadata;
+            $concepts[$metadata->concept][] = [
+                'serviceId' => $abstract,
+                'ownerSlice' => $metadata->ownerSlice,
+                'visibility' => $metadata->visibility,
+            ];
+        }
+
+        $duplicates = [];
+
+        foreach ($concepts as $concept => $services) {
+            if (count($services) <= 1) {
+                continue;
+            }
+
+            usort(
+                $services,
+                static fn(array $left, array $right) : int => [$left['ownerSlice'], $left['serviceId']]
+                    <=> [$right['ownerSlice'], $right['serviceId']]
+            );
+
+            $duplicates[] = [
+                'concept' => $concept,
+                'services' => $services,
+            ];
+        }
+
+        usort(
+            $duplicates,
+            static fn(array $left, array $right) : int => $left['concept'] <=> $right['concept']
+        );
+
+        return $duplicates;
+    }
+
+    /**
+     * @return array<string, list<array<string, mixed>>>
+     */
+    public function overrideHistory(string $abstract = '') : array
+    {
+        if ($abstract !== '') {
+            $resolved = $this->resolveAlias(abstract: $abstract);
+
+            return [$resolved => $this->overrideHistory[$resolved] ?? []];
+        }
+
+        $history = $this->overrideHistory;
+        ksort($history);
+
+        return $history;
+    }
+
     public function hasExtenders(string $abstract) : bool
     {
         return ($this->extenders[$this->resolveAlias(abstract: $abstract)] ?? []) !== [];
+    }
+
+    /**
+     * @return array{allowed: bool, reason: string, consumer: array<string, mixed>, dependency: array<string, mixed>}
+     */
+    public function accessTo(string $consumerId, string $dependencyId) : array
+    {
+        $consumer = $this->metadataFor(serviceId: $consumerId);
+        $dependency = $this->metadataFor(serviceId: $dependencyId);
+
+        if ($consumer->ownerSlice === $dependency->ownerSlice) {
+            return [
+                'allowed' => true,
+                'reason' => 'consumer and dependency live in the same slice',
+                'consumer' => $consumer->toArray(),
+                'dependency' => $dependency->toArray(),
+            ];
+        }
+
+        if ($dependency->ownerSlice === 'foundation.system') {
+            return [
+                'allowed' => true,
+                'reason' => 'foundation system services remain injectable infrastructure for the assembled runtime',
+                'consumer' => $consumer->toArray(),
+                'dependency' => $dependency->toArray(),
+            ];
+        }
+
+        if ($dependency->visibility === RegistrationVisibility::PUBLIC) {
+            return [
+                'allowed' => true,
+                'reason' => 'dependency is part of the public surface',
+                'consumer' => $consumer->toArray(),
+                'dependency' => $dependency->toArray(),
+            ];
+        }
+
+        if ($dependency->visibility === RegistrationVisibility::SHARED) {
+            if (! $dependency->exported) {
+                return [
+                    'allowed' => false,
+                    'reason' => 'shared dependency is not exported by its owning slice',
+                    'consumer' => $consumer->toArray(),
+                    'dependency' => $dependency->toArray(),
+                ];
+            }
+
+            if (! in_array($dependency->ownerSlice, $consumer->imports, true)) {
+                return [
+                    'allowed' => false,
+                    'reason' => "consumer slice [{$consumer->ownerSlice}] does not declare an import for [{$dependency->ownerSlice}]",
+                    'consumer' => $consumer->toArray(),
+                    'dependency' => $dependency->toArray(),
+                ];
+            }
+
+            return [
+                'allowed' => true,
+                'reason' => 'dependency is explicitly exported and the consumer slice imports it',
+                'consumer' => $consumer->toArray(),
+                'dependency' => $dependency->toArray(),
+            ];
+        }
+
+        return [
+            'allowed' => false,
+            'reason' => match ($dependency->visibility) {
+                RegistrationVisibility::PRIVATE => 'private dependencies cannot cross slice boundaries',
+                RegistrationVisibility::INTERNAL => 'internal dependencies cannot be used outside their owning slice',
+                default => 'dependency is not accessible from the consumer slice',
+            },
+            'consumer' => $consumer->toArray(),
+            'dependency' => $dependency->toArray(),
+        ];
+    }
+
+    /**
+     * @return array{allowed: bool, reason: string, dependency: array<string, mixed>}
+     */
+    public function topLevelAccessTo(string $serviceId) : array
+    {
+        $dependency = $this->metadataFor(serviceId: $serviceId);
+
+        if ($dependency->ownerSlice === 'foundation.system') {
+            return [
+                'allowed' => true,
+                'reason' => 'foundation system services remain available to internal container flows and diagnostics',
+                'dependency' => $dependency->toArray(),
+            ];
+        }
+
+        if (
+            $dependency->category === RegistrationCategory::FLOW
+            && $dependency->intent === 'entry'
+        ) {
+            return [
+                'allowed' => true,
+                'reason' => 'flow entry owners remain valid top-level entry points even when their internals stay local',
+                'dependency' => $dependency->toArray(),
+            ];
+        }
+
+        if ($dependency->ownerSlice === 'default' && $dependency->visibility === RegistrationVisibility::PUBLIC) {
+            return [
+                'allowed' => true,
+                'reason' => 'service uses the default public registration posture',
+                'dependency' => $dependency->toArray(),
+            ];
+        }
+
+        if ($dependency->visibility === RegistrationVisibility::PUBLIC) {
+            return [
+                'allowed' => true,
+                'reason' => 'service is part of the public surface',
+                'dependency' => $dependency->toArray(),
+            ];
+        }
+
+        if ($dependency->visibility === RegistrationVisibility::SHARED && $dependency->exported) {
+            return [
+                'allowed' => true,
+                'reason' => 'service is shared and explicitly exported',
+                'dependency' => $dependency->toArray(),
+            ];
+        }
+
+        return [
+            'allowed' => false,
+            'reason' => $dependency->category === RegistrationCategory::FLOW && $dependency->intent !== 'entry'
+                ? 'flow-local services must be marked entry() before they become top-level surface'
+                : match ($dependency->visibility) {
+                RegistrationVisibility::PRIVATE => 'private services are not part of the top-level container surface',
+                RegistrationVisibility::INTERNAL => 'internal services are implementation details of their owning slice',
+                default => 'shared services must be exported before they become top-level surface',
+            },
+            'dependency' => $dependency->toArray(),
+        ];
     }
 
     /**
@@ -396,6 +714,38 @@ final class ServiceRegistry implements ServiceRegistryInterface
             $values = array_values(array_unique($ids));
             sort($values);
             $index[$tag] = $values;
+        }
+
+        ksort($index);
+
+        return $index;
+    }
+
+    /**
+     * @return array<string, list<array{serviceId: string, order: int}>>
+     */
+    public function groupIndex() : array
+    {
+        $index = [];
+
+        foreach ($this->all() as $abstract => $registration) {
+            if ($registration->group === null || $registration->group === '') {
+                continue;
+            }
+
+            $index[$registration->group][] = [
+                'serviceId' => $abstract,
+                'order' => $registration->groupOrder,
+            ];
+        }
+
+        foreach ($index as $group => $items) {
+            usort(
+                $items,
+                static fn(array $left, array $right) : int => [$left['order'], $left['serviceId']]
+                    <=> [$right['order'], $right['serviceId']]
+            );
+            $index[$group] = $items;
         }
 
         ksort($index);
@@ -510,6 +860,9 @@ final class ServiceRegistry implements ServiceRegistryInterface
     private function register(string $abstract, mixed $concrete, string $lifetime, bool $deferred = false) : ServiceRegistration
     {
         $registration = $this->services[$abstract] ?? new ServiceRegistration(abstract: $abstract);
+        if (isset($this->services[$abstract])) {
+            $this->overrideHistory[$abstract][] = $this->registrationState(registration: $registration);
+        }
         $registration->concrete = $concrete ?? $abstract;
         $registration->lifetime = $lifetime;
         $registration->deferred = $deferred;
@@ -521,6 +874,16 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
     private function addSystem(ServiceRegistration $definition) : void
     {
+        if ($definition->metadata->ownerSlice === 'default') {
+            $definition->metadata = $definition->metadata
+                ->withOwnerSlice(ownerSlice: 'foundation.system')
+                ->withCategory(category: RegistrationCategory::FOUNDATION)
+                ->withVisibility(visibility: RegistrationVisibility::INTERNAL)
+                ->withReason(reason: 'bootstrapped system service')
+                ->withIntent(intent: 'system')
+                ->withProvenance(provenance: 'CreateContainer');
+        }
+
         $this->systemServices[$definition->abstract] = $definition;
     }
 
@@ -528,6 +891,28 @@ final class ServiceRegistry implements ServiceRegistryInterface
     {
         $this->resolvedCache = [];
         $this->revision++;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function registrationState(ServiceRegistration $registration) : array
+    {
+        return [
+            'abstract' => $registration->abstract,
+            'concrete' => is_object($registration->concrete)
+                ? $registration->concrete::class
+                : $registration->concrete,
+            'lifetime' => $registration->lifetime,
+            'deferred' => $registration->deferred,
+            'warm' => $registration->warm,
+            'lazy' => $registration->lazy,
+            'disposable' => $registration->disposable,
+            'group' => $registration->group,
+            'groupOrder' => $registration->groupOrder,
+            'tags' => $registration->tags,
+            'metadata' => $registration->metadata->toArray(),
+        ];
     }
 
     private function aliasChainContains(string $alias, string $target) : bool
@@ -558,5 +943,10 @@ final class ServiceRegistry implements ServiceRegistryInterface
         }
 
         return 'callable';
+    }
+
+    private function metadataFor(string $serviceId) : RegistrationMetadata
+    {
+        return $this->get(abstract: $serviceId)?->metadata ?? RegistrationMetadata::for(unitId: $serviceId);
     }
 }

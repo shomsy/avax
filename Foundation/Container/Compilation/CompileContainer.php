@@ -22,7 +22,7 @@ final class CompileContainer
 {
     private const FORMAT = 'compiled-container';
 
-    private const SCHEMA_VERSION = 4;
+    private const SCHEMA_VERSION = 6;
 
     private ServiceCompiler $services;
 
@@ -360,6 +360,8 @@ final class CompileContainer
             'lifetimes' => $lifetimePlans,
             'deferred' => $this->registrations->deferredMap(),
             'decorations' => $this->registrations->decorationChains(),
+            'ownership' => $this->registrations->ownershipMap(),
+            'slices' => $this->registrations->sliceManifests(),
             'reusedServices' => $reusedServices,
         ]));
 
@@ -375,6 +377,8 @@ final class CompileContainer
             'lifetimes' => $lifetimePlans,
             'deferred' => $this->registrations->deferredMap(),
             'decorations' => $this->registrations->decorationChains(),
+            'ownership' => $this->registrations->ownershipMap(),
+            'slices' => $this->registrations->sliceManifests(),
             'statistics' => [
                 'reusedServices' => $reusedServices,
             ],
@@ -623,6 +627,8 @@ PHP;
      *     lifetimes: array<string, array{name: string, shared: bool, scoped: bool, transient: bool}>,
      *     deferred: array<string, bool>,
      *     decorations: array<string, int>,
+     *     ownership: array<string, array<string, mixed>>,
+     *     slices: array<string, array<string, mixed>>,
      *     statistics: array<string, int>,
      *     invalidationReasons: list<string>
      * } $snapshot
@@ -685,6 +691,8 @@ PHP;
             lifetimes       : $snapshot['lifetimes'],
             deferred        : $snapshot['deferred'],
             decorations     : $snapshot['decorations'],
+            ownership       : $snapshot['ownership'],
+            slices          : $snapshot['slices'],
             changedServices : $changedServices,
             invalidatedServices: $invalidatedServices,
             validationIssues: array_values(array_unique($validationIssues)),
@@ -701,6 +709,8 @@ PHP;
                     $snapshot['decorations'],
                     static fn(int $count) : bool => $count > 0
                 )),
+                'ownershipUnits' => count($snapshot['ownership']),
+                'sliceCount' => count($snapshot['slices']),
                 'providerBootPlanSize' => 0,
                 'lifetimePlans' => count($snapshot['lifetimes']),
                 'dependencyGraphEdges' => array_sum(array_map(

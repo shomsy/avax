@@ -23,10 +23,19 @@ None of this is authored truth.
 ## Lifecycle Semantics
 
 - worker start: container may attach a compiled artifact and fill shared scope state
-- request start: open a scope or use `withinScope(...)`
+- operation start: open an `operation` scope or use `withinScope(...)`
+- request start: open a `request` scope when request-bound services exist
+- job start: open a `job` scope when worker/job-bound services exist
+- tenant start: open a `tenant` scope when tenant-bound services exist
 - request end: close the scope so scoped instances are dropped
 - worker boundary: call `reset()` to clear shared instances, scoped frames, lazy markers, telemetry state, and callable caches
 - full runtime clear: call `flush()` when you also want compiled artifacts and derived caches gone
+
+Shared services can now carry explicit lifecycle modifiers:
+
+- `warm`: eager shared warmup during `warmCompiled()`
+- `lazy`: shared singleton that stays out of warmup until first resolve
+- `disposable`: shared or scoped instance whose disposal is owned by the runtime boundary
 
 ## Runtime Report Contract
 
@@ -50,5 +59,7 @@ The runtime stays disposable between jobs because:
 - shared instances are owned by runtime storage, not the registry
 - scope frames are explicit and can be terminated in one call
 - compiled artifacts survive `reset()`, so workers can keep warmup state without leaking resolved objects across jobs
+- ownership rules stay authored in registrations, so resetting runtime state never loses slice visibility truth
 
 See [`worker-request-lifecycle.md`](./worker-request-lifecycle.md) for the operator view.
+See [`lifetimes-and-scopes.md`](./lifetimes-and-scopes.md) for the full lifetime model.

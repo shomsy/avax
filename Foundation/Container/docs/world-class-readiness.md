@@ -9,6 +9,8 @@ Proven:
 - thin public facade
 - `CreateContainer` as the single flow owner
 - compile/runtime separation with authored state, generated artifacts, and disposable runtime state
+- first-class ownership metadata with slice categories, visibility, imports, and exports
+- first-class lifetime, scope, disposal, and conditional-composition rules
 - canonical tree under `DependencyInjection/`, `Compilation/`, `Runtime/`, `Configuration/`, `Observability/`, `Errors/`, and `Foundation/`
 
 Proof:
@@ -24,7 +26,8 @@ Proven:
 - versioned `CompileReport` and `RuntimeReport`
 - compile artifact compatibility checks
 - hot-path state and fallback reasons
-- explainability for alias, decoration, cache, compiled decisions, dependency chain, and failure chain
+- explainability for alias, decoration, cache, compiled decisions, dependency chain, failure chain, slice ownership, and impact
+- explainability for conditions, override history, grouped bindings, structure diff, and policy findings
 - worker/request lifecycle reset semantics
 
 Proof:
@@ -51,9 +54,12 @@ Proof:
 ## What Is Proven Today
 
 - deterministic ordering of provider, tag, decoration, and compiled artifact metadata
+- deterministic ordering of grouped multi-bindings
 - corrupt, stale, incompatible, and schema-mismatched artifact handling
 - operator-grade docs for compile artifact model, runtime state, troubleshooting, and benchmark governance
+- operator-grade docs for lifetime/scope, conditional composition, policy engine, and error posture
 - CI-readable diagnostics contracts
+- ownership-aware validation for slice access, imports/exports, duplicate concepts, lifetime capture, conditional composition, override collisions, disposal semantics, and grouped/decorator conflicts
 
 ## What Is Not Claimed Automatically
 

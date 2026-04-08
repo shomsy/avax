@@ -12,11 +12,16 @@ use Avax\Container\Runtime\ServicePool;
  */
 final readonly class ManageScopes implements ScopeInterface
 {
+    private DisposeInstances $disposer;
+
     public function __construct(
         private ScopeStore $store,
         private ServicePool $pool,
+        DisposeInstances|null $disposer = null,
         private ResolutionMetrics|null $metrics = null
-    ) {}
+    ) {
+        $this->disposer = $disposer ?? new DisposeInstances;
+    }
 
     /**
      * Returns whether one instance is available in shared or scoped storage.
@@ -57,32 +62,36 @@ final readonly class ManageScopes implements ScopeInterface
     /**
      * Runs one callback inside a temporary active scope.
      */
-    public function withinScope(callable $callback) : mixed
+    public function withinScope(callable $callback, string $kind = ScopeKind::OPERATION, string $scopeId = '') : mixed
     {
-        $this->openScope();
+        $this->openScope(kind: $kind, scopeId: $scopeId);
 
         try {
             return $callback();
         } finally {
-            $this->closeScope();
+            $this->closeScope(kind: $kind);
         }
     }
 
     /**
      * Opens one new scope layer.
      */
-    public function openScope() : void
+    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = '') : void
     {
-        $this->store->open();
+        $this->store->open(kind: $kind, scopeId: $scopeId);
         $this->metrics?->increment(name: 'container_scope_open_total');
     }
 
     /**
      * Closes the current scope layer.
      */
-    public function closeScope() : void
+    public function closeScope(string|null $kind = null) : void
     {
-        $this->store->close();
+        $frame = $this->store->close(kind: $kind);
+        $this->disposer?->disposeMany(
+            instances  : $frame['items'],
+            disposable : $frame['disposable']
+        );
         $this->metrics?->increment(name: 'container_scope_close_total');
     }
 
@@ -91,19 +100,79 @@ final readonly class ManageScopes implements ScopeInterface
      */
     public function terminate() : void
     {
-        $this->pool->flush();
-        $this->store->terminate();
+        $shared = $this->pool->drain();
+        $this->disposer?->disposeMany(instances: $shared['items'], disposable: $shared['disposable']);
+
+        $frames = $this->store->terminate();
+        foreach (array_reverse($frames) as $frame) {
+            $this->disposer?->disposeMany(
+                instances  : $frame['items'],
+                disposable : $frame['disposable']
+            );
+        }
+
         $this->metrics?->increment(name: 'container_scope_terminate_total');
     }
 
     /**
-     * @return array{shared: array<string, mixed>, scoped: array<int, array<string, mixed>>}
+     * @return array{
+     *     shared: array<string, mixed>,
+     *     scoped: array<int, array<string, mixed>>,
+     *     frames: array<int, array{kind: string, id: string, services: list<string>}>
+     * }
      */
     public function snapshot() : array
     {
+        $snapshot = $this->store->snapshot();
+
         return [
             'shared' => $this->pool->snapshot(),
-            'scoped' => $this->store->snapshot()['scoped'],
+            'scoped' => $snapshot['scoped'],
+            'frames' => $snapshot['frames'],
         ];
+    }
+
+    public function hasShared(string $abstract) : bool
+    {
+        return $this->pool->has(abstract: $abstract);
+    }
+
+    public function getShared(string $abstract) : mixed
+    {
+        return $this->pool->get(abstract: $abstract);
+    }
+
+    public function hasScoped(string $abstract, string $kind = ScopeKind::ANY) : bool
+    {
+        return $this->store->hasFor(abstract: $abstract, kind: $kind);
+    }
+
+    public function getScoped(string $abstract, string $kind = ScopeKind::ANY) : mixed
+    {
+        return $this->store->getFor(abstract: $abstract, kind: $kind);
+    }
+
+    public function setScoped(
+        string $abstract,
+        mixed $instance,
+        string $kind = ScopeKind::ANY,
+        bool $disposable = false
+    ) : void {
+        $this->store->setFor(
+            abstract   : $abstract,
+            instance   : $instance,
+            kind       : $kind,
+            disposable : $disposable
+        );
+    }
+
+    public function setShared(string $abstract, mixed $instance, bool $disposable = false) : void
+    {
+        $this->pool->set(abstract: $abstract, instance: $instance, disposable: $disposable);
+    }
+
+    public function hasActiveScope(string $kind = ScopeKind::ANY) : bool
+    {
+        return $this->store->hasActive(kind: $kind);
     }
 }

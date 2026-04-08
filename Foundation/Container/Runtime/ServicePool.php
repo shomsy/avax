@@ -12,6 +12,9 @@ final class ServicePool
     /** @var array<string, mixed> */
     private array $items = [];
 
+    /** @var array<string, bool> */
+    private array $disposable = [];
+
     /**
      * Reports whether one shared instance exists.
      */
@@ -31,9 +34,10 @@ final class ServicePool
     /**
      * Stores one shared instance.
      */
-    public function set(string $abstract, mixed $instance) : void
+    public function set(string $abstract, mixed $instance, bool $disposable = false) : void
     {
         $this->items[$abstract] = $instance;
+        $this->disposable[$abstract] = $disposable;
     }
 
     /**
@@ -42,6 +46,7 @@ final class ServicePool
     public function forget(string $abstract) : void
     {
         unset($this->items[$abstract]);
+        unset($this->disposable[$abstract]);
     }
 
     /**
@@ -50,6 +55,22 @@ final class ServicePool
     public function flush() : void
     {
         $this->items = [];
+        $this->disposable = [];
+    }
+
+    /**
+     * @return array{items: array<string, mixed>, disposable: array<string, bool>}
+     */
+    public function drain() : array
+    {
+        $drained = [
+            'items' => $this->items,
+            'disposable' => $this->disposable,
+        ];
+
+        $this->flush();
+
+        return $drained;
     }
 
     /**
@@ -77,5 +98,13 @@ final class ServicePool
     public function snapshot() : array
     {
         return $this->items;
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    public function disposableMap() : array
+    {
+        return $this->disposable;
     }
 }

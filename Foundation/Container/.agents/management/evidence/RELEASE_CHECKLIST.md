@@ -30,4 +30,18 @@ Use snapshots in this shape:
 - `risk_reference`:
 - `notes`:
 
-No release snapshot recorded yet.
+- `snapshot_at`: `2026-04-08 17:04 CEST`
+  `release_scope`: `ownership-aware composition foundations`
+  `decision`: `hold`
+  `rollback_path`: `revert the ownership-aware composition wave commits and rebuild compiled artifacts`
+  `smoke_reference`: `.agents/management/evidence/TEST_REPORTS.md`
+  `risk_reference`: `.agents/management/evidence/RISK_REGISTER.md`
+  `notes`: `Verification is green, but the full ownership-aware program still has follow-up work captured in TODO-016 before a complete 12/10 claim should be made.`
+
+- `snapshot_at`: `2026-04-08 18:16 CEST`
+  `release_scope`: `ownership-aware composition closure`
+  `decision`: `go`
+  `rollback_path`: `revert the ownership-aware composition closure commits and rebuild compiled artifacts`
+  `smoke_reference`: `.agents/management/evidence/TEST_REPORTS.md`
+  `risk_reference`: `.agents/management/evidence/RISK_REGISTER.md`
+  `notes`: `All ownership-aware closure criteria now have code, tests, docs, and green validation evidence. Peer benchmark targets remain optional and were not configured in this local run.`

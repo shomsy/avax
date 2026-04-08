@@ -245,15 +245,16 @@ final class ServiceResolver
             ? $this->blueprints->createFor(class: $blueprintClass)
             : null;
         $compiledArtifact = $this->compiler?->report(serviceIds: [$resolved]);
+        $concrete = $registration?->concrete;
 
         return [
             'id' => $id,
             'resolvedId' => $resolved,
             'registered' => $registration !== null,
             'diagnosticsMode' => $this->diagnosticsMode,
-            'concrete' => is_object($registration?->concrete)
-                ? $registration?->concrete::class
-                : $registration?->concrete,
+            'concrete' => is_object($concrete)
+                ? $concrete::class
+                : $concrete,
             'lifetime' => $lifetimePlan->name,
             'lifetimePlan' => $lifetimePlan->toArray(),
             'deferred' => ($registration?->deferred ?? false) || isset($this->deferredProviderServices[$resolved]),

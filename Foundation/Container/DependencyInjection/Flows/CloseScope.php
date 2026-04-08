@@ -15,6 +15,9 @@ final readonly class CloseScope
         private ServiceResolver $resolver
     ) {}
 
+    /**
+     * Closes the current scope frame.
+     */
     public function close() : void
     {
         $this->resolver->closeScope();

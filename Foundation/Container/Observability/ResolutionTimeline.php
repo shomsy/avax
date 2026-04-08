@@ -6,6 +6,9 @@ namespace Avax\Container\Observability;
 
 use Avax\Container\Foundation\Time\Clock;
 
+/**
+ * Records ordered resolution events when diagnostics require them.
+ */
 final class ResolutionTimeline
 {
     /** @var list<array{time: float, action: string, serviceId: string, outcome: string}> */
@@ -16,6 +19,9 @@ final class ResolutionTimeline
         private readonly bool $enabled = true
     ) {}
 
+    /**
+     * Records one timeline event when diagnostics are enabled.
+     */
     public function record(string $action, string $serviceId, string $outcome) : void
     {
         if (! $this->enabled) {
@@ -30,16 +36,25 @@ final class ResolutionTimeline
         ];
     }
 
+    /**
+     * Reports whether timeline recording is enabled.
+     */
     public function enabled() : bool
     {
         return $this->enabled;
     }
 
+    /**
+     * Returns the recorded timeline entries.
+     */
     public function all() : array
     {
         return $this->entries;
     }
 
+    /**
+     * Clears all recorded timeline entries.
+     */
     public function reset() : void
     {
         $this->entries = [];

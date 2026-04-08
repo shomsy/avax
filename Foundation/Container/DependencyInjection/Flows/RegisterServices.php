@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Flows;
 
+use Avax\Container\DependencyInjection\Dependencies\Bindings\DecoratorInterface;
 use Avax\Container\DependencyInjection\Dependencies\Bindings\RegisterForTarget;
 use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistration;
 use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistry;
@@ -54,7 +55,10 @@ final readonly class RegisterServices implements ServiceRegistryInterface
         $this->registrations()->extend(abstract: $abstract, closure: $closure);
     }
 
-    public function decorate(string $abstract, callable|object|string $decorator) : void
+    /**
+     * Registers one explicit decorator for one service id.
+     */
+    public function decorate(string $abstract, callable|DecoratorInterface|string $decorator) : void
     {
         $this->registrations()->decorate(abstract: $abstract, decorator: $decorator);
     }

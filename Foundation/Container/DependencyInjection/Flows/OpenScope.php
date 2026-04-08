@@ -15,6 +15,9 @@ final readonly class OpenScope
         private ServiceResolver $resolver
     ) {}
 
+    /**
+     * Opens one new scope frame.
+     */
     public function open() : void
     {
         $this->resolver->openScope();

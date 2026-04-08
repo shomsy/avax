@@ -14,6 +14,7 @@ use Avax\Container\Errors\ServiceNotFoundException;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\CreateServiceBlueprint;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\ServiceBlueprint;
 use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface;
+use Avax\Container\DependencyInjection\Injection\Invocation\FunctionCaller;
 use Avax\Container\DependencyInjection\Injection\Methods\InjectMethods;
 use Avax\Container\DependencyInjection\Injection\Properties\InjectProperties;
 use Avax\Container\DependencyInjection\Injection\Reports\InjectionReport;
@@ -32,6 +33,9 @@ use Avax\Container\Observability\RuntimeReport;
 use Closure;
 use Throwable;
 
+/**
+ * Owns service resolution, compilation state, scopes, and runtime diagnostics.
+ */
 final class ServiceResolver
 {
     private ResolutionTelemetry $telemetry;
@@ -65,7 +69,7 @@ final class ServiceResolver
         private readonly CreateServiceBlueprint $blueprints,
         private readonly InjectProperties       $injectProperties,
         private readonly InjectMethods          $injectMethods,
-        private readonly \Avax\Container\DependencyInjection\Injection\Invocation\FunctionCaller $caller,
+        private readonly FunctionCaller       $caller,
         ResolutionMetrics|null                 $metrics = null,
         ResolutionTimeline|null                $timeline = null,
         ResolutionPolicy|null                  $policy = null,
@@ -82,17 +86,26 @@ final class ServiceResolver
         $this->inliner = $inliner ?? new HotPathInliner;
     }
 
+    /**
+     * Attaches the thin public container facade to this runtime owner.
+     */
     public function setContainer(ContainerInterface $container) : void
     {
         $this->container = $container;
         $this->caller->setResolver(resolver: $this);
     }
 
+    /**
+     * Returns the canonical service registration store.
+     */
     public function registrations() : ServiceRegistry
     {
         return $this->registrations;
     }
 
+    /**
+     * Returns runtime container settings.
+     */
     public function settings() : ContainerSettings
     {
         $settings = $this->registrations->get(abstract: ContainerSettings::class);
@@ -103,21 +116,33 @@ final class ServiceResolver
         return new ContainerSettings;
     }
 
+    /**
+     * Returns the owned scope runtime.
+     */
     public function scopes() : ManageScopes
     {
         return $this->scopes;
     }
 
+    /**
+     * Returns the observability surface for this resolver.
+     */
     public function telemetry() : ResolutionTelemetry
     {
         return $this->telemetry;
     }
 
+    /**
+     * Exports low-overhead runtime metrics.
+     */
     public function exportMetrics() : string
     {
         return $this->telemetry->exportMetrics();
     }
 
+    /**
+     * Clears authored registrations, runtime state, and compiled attachments.
+     */
     public function flush() : void
     {
         $this->blueprints->flush();
@@ -134,6 +159,9 @@ final class ServiceResolver
         $this->compiledRevision = -1;
     }
 
+    /**
+     * Resets the resolver to an empty runtime state.
+     */
     public function reset() : void
     {
         $this->flush();
@@ -145,6 +173,8 @@ final class ServiceResolver
      */
     public function validate(array $serviceIds = []) : array
     {
+        $this->bootDeferredProvidersFor(serviceIds: $serviceIds);
+
         $issues = [];
         $graph = [];
 
@@ -168,6 +198,7 @@ final class ServiceResolver
         foreach ($this->registrations->allAliases() as $alias => $target) {
             if (
                 ! $this->registrations->has(abstract: $target)
+                && ! isset($this->deferredProviderServices[$target])
                 && ! class_exists($target)
                 && ! interface_exists($target)
             ) {
@@ -251,16 +282,27 @@ final class ServiceResolver
         ];
     }
 
+    /**
+     * Returns the full diagnostics view for one service id.
+     *
+     * @return array<string, mixed>
+     */
     public function debugService(string $id) : array
     {
         return $this->describeService(id: $id);
     }
 
+    /**
+     * Returns whether one alias is registered.
+     */
     public function hasAlias(string $alias) : bool
     {
         return $this->registrations->hasAlias(alias: $alias);
     }
 
+    /**
+     * Returns whether one service resolves through a deferred registration path.
+     */
     public function isDeferred(string $id) : bool
     {
         $resolved = $this->registrations->resolveAlias(abstract: $id);
@@ -269,6 +311,9 @@ final class ServiceResolver
             || isset($this->deferredProviderServices[$resolved]);
     }
 
+    /**
+     * Returns whether one service has been marked lazy.
+     */
     public function isLazy(string $id) : bool
     {
         $resolved = $this->registrations->resolveAlias(abstract: $id);
@@ -276,6 +321,9 @@ final class ServiceResolver
         return isset($this->lazyServices[$resolved]);
     }
 
+    /**
+     * Returns whether one service id is present in compiled runtime artifacts.
+     */
     public function isCompiled(string $id) : bool
     {
         $resolved = $this->registrations->resolveAlias(abstract: $id);
@@ -285,6 +333,9 @@ final class ServiceResolver
             || ($this->compiler?->contains(serviceId: $resolved) ?? false);
     }
 
+    /**
+     * Returns whether a compiled runtime is currently available.
+     */
     public function isWarmedUp() : bool
     {
         if ($this->inliner->isAttached()) {
@@ -294,11 +345,17 @@ final class ServiceResolver
         return $this->compiler?->report()->available ?? false;
     }
 
+    /**
+     * Returns the current compile report when compilation is enabled.
+     */
     public function compileReport(array $serviceIds = []) : CompileReport|null
     {
         return $this->compiler?->report(serviceIds: $serviceIds);
     }
 
+    /**
+     * Returns the current disposable runtime state report.
+     */
     public function runtimeReport() : RuntimeReport
     {
         $lazyServices = array_keys($this->lazyServices);
@@ -401,11 +458,17 @@ final class ServiceResolver
         ];
     }
 
+    /**
+     * Reads one environment-backed setting value.
+     */
     public function env(string $key, mixed $default = null) : mixed
     {
         return $this->settings()->env(key: $key, default: $default);
     }
 
+    /**
+     * Returns whether one service can be resolved.
+     */
     public function has(string $id) : bool
     {
         $id = $this->registrations->resolveAlias(abstract: $id);
@@ -429,6 +492,12 @@ final class ServiceResolver
         }
     }
 
+    /**
+     * Resolves one service by id.
+     *
+     * @throws ContainerException
+     * @throws ServiceNotFoundException
+     */
     public function get(string $id) : mixed
     {
         return $this->resolveRequest(request: new ResolveRequest(serviceId: $this->registrations->resolveAlias(abstract: $id)));
@@ -444,6 +513,13 @@ final class ServiceResolver
         );
     }
 
+    /**
+     * Resolves one service and asserts that the result is an object.
+     *
+     * @param array<string, mixed> $parameters
+     * @throws ContainerException
+     * @throws ServiceNotFoundException
+     */
     public function make(string $id, array $parameters = []) : object
     {
         $resolved = $this->resolveRequest(
@@ -462,6 +538,9 @@ final class ServiceResolver
 
     /**
      * @param array<string, mixed> $context
+     * @param array<string, mixed> $parameters
+     * @throws ContainerException
+     * @throws ServiceNotFoundException
      */
     public function makeInContext(string $id, array $parameters, array $context) : object
     {
@@ -489,6 +568,13 @@ final class ServiceResolver
         return $this->has(id: $request->serviceId);
     }
 
+    /**
+     * Calls one function, method, or invokable object through the resolver.
+     *
+     * @param array<string, mixed> $parameters
+     * @throws ContainerException
+     * @throws ServiceNotFoundException
+     */
     public function call(callable|string $callable, array $parameters = []) : mixed
     {
         $this->telemetry->metrics()->increment(name: 'container_calls_total');
@@ -498,6 +584,9 @@ final class ServiceResolver
 
     /**
      * @param array<string, mixed> $context
+     * @param array<string, mixed> $parameters
+     * @throws ContainerException
+     * @throws ServiceNotFoundException
      */
     public function callInContext(callable|string $callable, array $parameters, array $context) : mixed
     {
@@ -510,6 +599,12 @@ final class ServiceResolver
         );
     }
 
+    /**
+     * Applies property and method injection to one existing object.
+     *
+     * @throws ContainerException
+     * @throws ServiceNotFoundException
+     */
     public function injectInto(object $target) : object
     {
         return $this->injectTarget(
@@ -520,6 +615,8 @@ final class ServiceResolver
 
     /**
      * @param array<string, mixed> $context
+     * @throws ContainerException
+     * @throws ServiceNotFoundException
      */
     public function injectIntoInContext(object $target, array $context) : object
     {
@@ -529,6 +626,9 @@ final class ServiceResolver
         );
     }
 
+    /**
+     * Returns whether one object has injectable members.
+     */
     public function canInject(object $target) : bool
     {
         $report = $this->inspectInjection(target: $target);
@@ -536,6 +636,9 @@ final class ServiceResolver
         return $report->injectedProperties !== [] || $report->injectedMethods !== [];
     }
 
+    /**
+     * Returns the injectable members discovered on one object.
+     */
     public function inspectInjection(object $target) : InjectionReport
     {
         $blueprint = $this->blueprints->createFor(class: $target::class);
@@ -557,17 +660,26 @@ final class ServiceResolver
         );
     }
 
+    /**
+     * Registers one prebuilt shared instance.
+     */
     public function instance(string $abstract, object $instance) : void
     {
         $this->scopes->instance(abstract: $abstract, instance: $instance);
         $this->registrations->instance(abstract: $abstract, instance: $instance);
     }
 
+    /**
+     * Opens one new scope layer.
+     */
     public function openScope() : void
     {
         $this->scopes->openScope();
     }
 
+    /**
+     * Closes the current scope layer.
+     */
     public function closeScope() : void
     {
         $this->scopes->closeScope();
@@ -575,9 +687,14 @@ final class ServiceResolver
 
     /**
      * @param list<string> $serviceIds
+     * Builds compiled runtime artifacts for the requested service set.
+     *
+     * @throws ContainerException
      */
     public function compileContainer(array $serviceIds = []) : void
     {
+        $this->bootDeferredProvidersFor(serviceIds: $serviceIds);
+
         $validationIssues = [];
         if ($this->compiler !== null && $this->compiler->shouldValidateBeforeCompile()) {
             $validationIssues = $this->validate(serviceIds: $serviceIds);
@@ -603,6 +720,9 @@ final class ServiceResolver
 
     /**
      * @param list<string> $serviceIds
+     * Compiles and marks the runtime as warmed up.
+     *
+     * @throws ContainerException
      */
     public function warmCompiled(array $serviceIds = []) : void
     {
@@ -610,6 +730,9 @@ final class ServiceResolver
         $this->telemetry->metrics()->increment(name: 'container_compiled_warmups_total');
     }
 
+    /**
+     * Clears compiled blueprint and container artifacts.
+     */
     public function flushCompiled() : void
     {
         $this->blueprints->flush();
@@ -621,6 +744,9 @@ final class ServiceResolver
 
     /**
      * @param list<string> $serviceIds
+     * Rebuilds compiled artifacts from scratch.
+     *
+     * @throws ContainerException
      */
     public function rebuildCompiled(array $serviceIds = []) : void
     {
@@ -629,6 +755,13 @@ final class ServiceResolver
         $this->telemetry->metrics()->increment(name: 'container_compiled_rebuilds_total');
     }
 
+    /**
+     * Resolves every service registered under one tag.
+     *
+     * @return list<mixed>
+     * @throws ContainerException
+     * @throws ServiceNotFoundException
+     */
     public function tagged(string $tag) : array
     {
         return array_map(
@@ -637,6 +770,9 @@ final class ServiceResolver
         );
     }
 
+    /**
+     * Returns one lazy proxy for one service.
+     */
     public function lazy(string $abstract) : LazyProxy
     {
         $serviceId = $this->registrations->resolveAlias(abstract: $abstract);
@@ -651,6 +787,7 @@ final class ServiceResolver
 
     /**
      * @param array<string, mixed> $context
+     * Returns one context-aware lazy proxy.
      */
     public function lazyInContext(string $abstract, array $context) : LazyProxy
     {
@@ -664,6 +801,12 @@ final class ServiceResolver
         );
     }
 
+    /**
+     * Resolves one normalized request through compiled or dynamic runtime.
+     *
+     * @throws ContainerException
+     * @throws ServiceNotFoundException
+     */
     public function resolveRequest(ResolveRequest $request) : mixed
     {
         $request = $this->normalizeRequest(request: $request);
@@ -728,6 +871,12 @@ final class ServiceResolver
         }
     }
 
+    /**
+     * Resolves one request without using compiled runtime methods.
+     *
+     * @throws ContainerException
+     * @throws ServiceNotFoundException
+     */
     public function resolveDynamicRequest(ResolveRequest $request) : mixed
     {
         $request = $this->normalizeRequest(request: $request);
@@ -752,6 +901,12 @@ final class ServiceResolver
         );
     }
 
+    /**
+     * Resolves one dependency from an existing parent request.
+     *
+     * @throws ContainerException
+     * @throws ServiceNotFoundException
+     */
     public function resolveCompiledDependency(string $serviceId, ResolveRequest $request) : mixed
     {
         return $this->resolveRequest(request: $request->child(serviceId: $serviceId));
@@ -759,6 +914,9 @@ final class ServiceResolver
 
     /**
      * @param array<string, mixed> $context
+     * @param array<string, mixed> $parameters
+     * @throws ContainerException
+     * @throws ServiceNotFoundException
      */
     public function resolveInContext(string $id, array $context, array $parameters = []) : mixed
     {
@@ -772,6 +930,9 @@ final class ServiceResolver
 
     /**
      * @param array<string, mixed> $overrides
+     * Finishes one compiled object by running injections and decorators.
+     *
+     * @throws ContainerException
      */
     public function finishCompiledService(
         string $serviceId,
@@ -1004,6 +1165,8 @@ final class ServiceResolver
                 continue;
             }
 
+            $this->bootDeferredProviderIfNeeded(serviceId: $serviceId);
+
             if (! $this->isCompilable(serviceId: $serviceId)) {
                 continue;
             }
@@ -1060,6 +1223,8 @@ final class ServiceResolver
             if (isset($compiled[$serviceId])) {
                 continue;
             }
+
+            $this->bootDeferredProviderIfNeeded(serviceId: $serviceId);
 
             if (! $this->isCompilable(serviceId: $serviceId)) {
                 continue;
@@ -1183,6 +1348,17 @@ final class ServiceResolver
     }
 
     /**
+     * @param list<string> $serviceIds
+     */
+    private function bootDeferredProvidersFor(array $serviceIds) : void
+    {
+        foreach (array_values(array_unique($serviceIds)) as $serviceId) {
+            $resolved = $this->registrations->resolveAlias(abstract: $serviceId);
+            $this->bootDeferredProviderIfNeeded(serviceId: $resolved);
+        }
+    }
+
+    /**
      * @param class-string<ServiceProviderInterface> $providerClass
      */
     private function bootDeferredProviderClass(string $providerClass) : void
@@ -1236,6 +1412,9 @@ final class ServiceResolver
         );
     }
 
+    /**
+     * Registers one deferred transient service.
+     */
     public function defer(string $abstract, mixed $concrete = null) : ServiceRegistration
     {
         return $this->registrations->defer(abstract: $abstract, concrete: $concrete);
@@ -1243,6 +1422,9 @@ final class ServiceResolver
 
     /**
      * @param list<string> $serviceIds
+     * Registers one deferred provider and its owned service ids.
+     *
+     * @throws ContainerException
      */
     public function registerDeferredProvider(ServiceProviderInterface $provider, array $serviceIds) : void
     {

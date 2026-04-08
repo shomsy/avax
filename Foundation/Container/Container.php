@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Container;
 
 use Avax\Container\Compilation\CompileReport;
+use Avax\Container\DependencyInjection\Dependencies\Bindings\DecoratorInterface;
 use Avax\Container\DependencyInjection\Flows\CallFunction;
 use Avax\Container\DependencyInjection\Flows\BootProviders;
 use Avax\Container\DependencyInjection\Flows\CloseScope;
@@ -13,6 +14,7 @@ use Avax\Container\DependencyInjection\Flows\OpenScope;
 use Avax\Container\DependencyInjection\Flows\RegisterServices;
 use Avax\Container\DependencyInjection\Dependencies\Bindings\RegisterForTarget;
 use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistration;
+use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface;
 use Avax\Container\DependencyInjection\Flows\ResolveService;
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
 use Avax\Container\Observability\RuntimeReport;
@@ -69,7 +71,7 @@ final readonly class Container implements ContainerInterface
     }
 
     /**
-     * @param array<int, string|\Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface> $providers
+     * @param array<int, string|ServiceProviderInterface> $providers
      */
     public function bootProviders(array $providers) : void
     {
@@ -255,7 +257,7 @@ final readonly class Container implements ContainerInterface
         $this->registerServices()->extend(abstract: $abstract, closure: $closure);
     }
 
-    public function decorate(string $abstract, callable|object|string $decorator) : void
+    public function decorate(string $abstract, callable|DecoratorInterface|string $decorator) : void
     {
         $this->registerServices()->decorate(abstract: $abstract, decorator: $decorator);
     }
@@ -507,7 +509,7 @@ final readonly class Container implements ContainerInterface
                 $this->base->extend(abstract: $abstract, closure: $closure);
             }
 
-            public function decorate(string $abstract, callable|object|string $decorator) : void
+            public function decorate(string $abstract, callable|DecoratorInterface|string $decorator) : void
             {
                 $this->base->decorate(abstract: $abstract, decorator: $decorator);
             }

@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Avax\Container\DependencyInjection\Injection\Methods;
 
 use Avax\Container\DependencyInjection\Injection\Invocation\ResolveCallArguments;
+use Avax\Container\Errors\ContainerException;
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ResolveRequest;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\ServiceBlueprint;
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
 use Closure;
 
+/**
+ * Invokes blueprint-marked method injections on resolved instances.
+ */
 final class InjectMethods
 {
     /** @var array<string, Closure(object, array): mixed> */
@@ -21,6 +25,7 @@ final class InjectMethods
 
     /**
      * @param array<string, mixed> $overrides
+     * @throws ContainerException
      */
     public function inject(
         object $target,
@@ -42,6 +47,8 @@ final class InjectMethods
     }
 
     /**
+     * Returns or creates the bound method invoker.
+     *
      * @return Closure(object, array): mixed
      */
     private function invokerFor(string $class, string $method) : Closure

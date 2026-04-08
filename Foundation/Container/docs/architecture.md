@@ -102,7 +102,7 @@ Each flow entry owns one obvious user action:
 
 - keeps the provider contract boundary
 - owns the deterministic provider boot plan
-- supports deferred provider loading when a provider declares `deferred()` and `provides()`
+- supports deferred provider loading when a provider implements `DeferredProviderInterface`
 
 ## Injection Area
 
@@ -175,6 +175,8 @@ The shipped boundary is defended by:
 - benchmark harnesses under `tests/benchmarks/`
 - benchmark regression guard under `tests/check-benchmarks.sh`
 - worker and request-lifecycle benchmark scenarios inside the benchmark harness
+- benchmark artifact comparison under `tests/run-benchmark-comparison.sh`
+- benchmark guard uses repeated runs with median timing so CI thresholds are reproducible instead of single-shot noisy
 
 There is no Composer or PHPUnit harness in this component root today.
 

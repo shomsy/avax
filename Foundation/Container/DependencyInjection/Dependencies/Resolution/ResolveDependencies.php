@@ -10,6 +10,9 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 
+/**
+ * Compiles and resolves parameter plans for constructors, methods, and calls.
+ */
 final class ResolveDependencies
 {
     /**
@@ -37,6 +40,7 @@ final class ResolveDependencies
     /**
      * @param array<string, mixed> $overrides
      * @return array<int, mixed>
+     * @throws ContainerException
      */
     public function resolveParameters(
         array $parameters,
@@ -55,6 +59,7 @@ final class ResolveDependencies
     /**
      * @param array<string, mixed> $overrides
      * @return array<int, mixed>
+     * @throws ContainerException
      */
     public function resolvePlan(
         ResolvePlan $plan,
@@ -79,6 +84,7 @@ final class ResolveDependencies
     /**
      * @param array{name: string, serviceId: string|null, hasDefault: bool, default: string, allowsNull: bool} $parameter
      * @param array<string, mixed> $overrides
+     * @throws ContainerException
      */
     private function resolveCompiledParameter(
         array $parameter,
@@ -106,7 +112,7 @@ final class ResolveDependencies
         }
 
         if ($parameter['hasDefault']) {
-            return unserialize(base64_decode($parameter['default']), ['allowed_classes' => true]);
+            return unserialize(base64_decode($parameter['default']), ['allowed_classes' => false]);
         }
 
         if ($parameter['allowsNull']) {
@@ -118,6 +124,9 @@ final class ResolveDependencies
         );
     }
 
+    /**
+     * Infers one service id from the parameter attribute or object type.
+     */
     private function serviceIdFor(ReflectionParameter $parameter) : string|null
     {
         $attributes = $parameter->getAttributes(Inject::class);

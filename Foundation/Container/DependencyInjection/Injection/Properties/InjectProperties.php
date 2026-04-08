@@ -10,6 +10,9 @@ use Avax\Container\DependencyInjection\Dependencies\Blueprints\ServiceBlueprint;
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
 use Closure;
 
+/**
+ * Applies property injection from one compiled or reflected service blueprint.
+ */
 final class InjectProperties
 {
     /** @var array<string, Closure(object, mixed): void> */
@@ -17,6 +20,7 @@ final class InjectProperties
 
     /**
      * @param array<string, mixed> $overrides
+     * @throws ContainerException
      */
     public function inject(
         object $target,

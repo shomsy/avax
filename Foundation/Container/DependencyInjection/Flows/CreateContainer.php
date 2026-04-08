@@ -33,9 +33,14 @@ use Avax\Container\Runtime\HotPathInliner;
 use Avax\Container\Runtime\ServicePool;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
+/**
+ * Assembles one fully wired container instance and its system services.
+ */
 final class CreateContainer
 {
     /**
+     * Returns one ready-to-use container instance.
+     *
      * @param array<string, mixed> $settings
      */
     public function create(

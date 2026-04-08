@@ -7,12 +7,7 @@ namespace Avax\Container\DependencyInjection\Scopes\Lifetimes\Attributes;
 use Attribute;
 
 /**
- * Singleton Lifecycle Marker Attribute
- *
- * Marks a class to be managed as a singleton service in the container.
- * When applied, only one instance of the class will be created and shared
- * across all resolution requests.
- *
+ * Marks one class as shared across the container lifetime.
  */
 #[Attribute(flags: Attribute::TARGET_CLASS)]
 final class Singleton {}

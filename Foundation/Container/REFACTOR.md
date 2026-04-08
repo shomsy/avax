@@ -22,6 +22,8 @@
 - singleton storage is split into `Runtime/ServicePool.php`; scoped storage stays in `DependencyInjection/Scopes/ScopeStore.php`.
 - benchmark harnesses exist for cold, warm, hot, worker, request lifecycle, deep, wide, scoped, lazy, deferred service, deferred provider, call, property injection, method injection, and compile-time paths.
 - benchmark regression guard exists under `tests/check-benchmarks.sh`.
+- benchmark artifact comparison now exists under `tests/run-benchmark-comparison.sh` and `tests/benchmarks/compare.php`.
+- benchmark guard now uses repeated runs with median timing, and benchmark comparison no longer writes generated artifacts into the repository tree.
 
 ## Completed
 

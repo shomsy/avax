@@ -11,10 +11,19 @@ use Avax\Container\DependencyInjection\Scopes\Lifetimes\TransientLifetime;
  */
 final class ServiceRegistration
 {
+    /**
+     * Stores the concrete binding target.
+     */
     public mixed $concrete = null;
 
+    /**
+     * Stores the configured service lifetime name.
+     */
     public string $lifetime = TransientLifetime::NAME;
 
+    /**
+     * Marks the registration as deferred.
+     */
     public bool $deferred = false;
 
     /** @var list<string> */
@@ -27,6 +36,9 @@ final class ServiceRegistration
         public readonly string $abstract
     ) {}
 
+    /**
+     * Sets the concrete binding target.
+     */
     public function to(string|callable|null $concrete) : self
     {
         $this->concrete = $concrete;
@@ -34,6 +46,9 @@ final class ServiceRegistration
         return $this;
     }
 
+    /**
+     * Adds one or more tags.
+     */
     public function tag(string|array $tags) : self
     {
         $this->tags = array_values(array_unique(array_merge($this->tags, (array) $tags)));
@@ -51,11 +66,17 @@ final class ServiceRegistration
         return $this;
     }
 
+    /**
+     * Adds one named argument override.
+     */
     public function withArgument(string $name, mixed $value) : self
     {
         return $this->withArguments(arguments: [$name => $value]);
     }
 
+    /**
+     * Marks the registration as deferred or eager.
+     */
     public function defer(bool $deferred = true) : self
     {
         $this->deferred = $deferred;
@@ -63,6 +84,9 @@ final class ServiceRegistration
         return $this;
     }
 
+    /**
+     * Restores the registration from generated PHP state.
+     */
     public static function __set_state(array $array) : self
     {
         $registration = new self(abstract: $array['abstract']);

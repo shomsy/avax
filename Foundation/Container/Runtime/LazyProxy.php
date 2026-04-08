@@ -6,6 +6,9 @@ namespace Avax\Container\Runtime;
 
 use Closure;
 
+/**
+ * Resolves one service lazily and forwards calls to the resolved instance.
+ */
 final class LazyProxy
 {
     /** @var WeakMap<object, object> */
@@ -18,6 +21,9 @@ final class LazyProxy
         self::$instances ??= new \WeakMap();
     }
 
+    /**
+     * Resolves and returns the proxied service instance.
+     */
     public function resolve() : object
     {
         if (! isset(self::$instances[$this])) {
@@ -27,36 +33,57 @@ final class LazyProxy
         return self::$instances[$this];
     }
 
+    /**
+     * Returns the proxied service id.
+     */
     public function serviceId() : string
     {
         return $this->serviceId;
     }
 
+    /**
+     * Forwards one method call to the resolved service.
+     */
     public function __call(string $name, array $arguments) : mixed
     {
         return $this->resolve()->{$name}(...$arguments);
     }
 
+    /**
+     * Forwards one property read to the resolved service.
+     */
     public function __get(string $name) : mixed
     {
         return $this->resolve()->{$name};
     }
 
+    /**
+     * Forwards one property write to the resolved service.
+     */
     public function __set(string $name, mixed $value) : void
     {
         $this->resolve()->{$name} = $value;
     }
 
+    /**
+     * Reports whether one proxied property is set.
+     */
     public function __isset(string $name) : bool
     {
         return isset($this->resolve()->{$name});
     }
 
+    /**
+     * Forwards one invocation to the resolved service.
+     */
     public function __invoke(mixed ...$arguments) : mixed
     {
         return ($this->resolve())(...$arguments);
     }
 
+    /**
+     * Exposes safe debug metadata for the proxy.
+     */
     public function __debugInfo() : array
     {
         return [

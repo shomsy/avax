@@ -25,6 +25,47 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: TODO-014
+  `created_at`: 2026-04-08 03:01 CEST
+  `updated_at`: 2026-04-08 03:01 CEST
+  `status`: done
+  `estimate`: medium
+  `actual`: medium
+  `outcome`: Close the final strict-review production gaps by fixing deferred
+    provider compilation on explicit and dependency-driven warmup paths,
+    moving benchmark comparison artifacts out of the repository tree,
+    stabilizing the benchmark guard with repeated median runs, aligning the
+    benchmark harness with `DeferredProviderInterface`, and removing foreign
+    tool-specific root files.
+  `acceptance`: Explicit compile and warmup can pull in deferred-provider-owned
+    dependencies without silently skipping them; benchmark comparison works
+    from temporary host artifacts without leaving generated files in the repo;
+    benchmark guard is reproducible instead of single-shot noisy; deferred
+    provider docs and benchmark fixtures prefer the explicit contract; Docker
+    PHP lint is green; `tests/run-smoke-tests.sh` is green;
+    `tests/check-benchmarks.sh` is green; `tests/run-benchmarks.sh` is green;
+    `git diff --check` is clean.
+  `links`: `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `tests/DependencyInjection/Flows/BootProviders/BootProvidersSmokeTest.php`, `tests/run-benchmark-comparison.sh`, `tests/benchmarks/run.php`, `docs/Container.md`, `docs/architecture.md`, `docs/troubleshooting.md`
+
+- `id`: TODO-013
+  `created_at`: 2026-04-08 02:45 CEST
+  `updated_at`: 2026-04-08 02:56 CEST
+  `status`: done
+  `estimate`: medium
+  `actual`: medium
+  `outcome`: Close the remaining benchmark-governance and provider-contract gap
+    by making deferred providers explicit via a dedicated contract, adding
+    benchmark artifact output, and shipping a comparison runner that can
+    compare this container against peer benchmark artifacts without dragging
+    peer dependencies into the component itself.
+  `acceptance`: Deferred providers can implement an explicit contract;
+    benchmark runs can emit JSON artifacts to disk; comparison runner can
+    compare at least two benchmark artifacts and report normalized ratios;
+    docs describe the comparison flow; Docker PHP lint is green;
+    `tests/run-smoke-tests.sh` is green; `tests/check-benchmarks.sh` is green;
+    `tests/run-benchmarks.sh` is green.
+  `links`: `DependencyInjection/Dependencies/Providers/DeferredProviderInterface.php`, `DependencyInjection/Flows/BootProviders.php`, `tests/benchmarks/run.php`, `tests/benchmarks/compare.php`, `tests/run-benchmark-comparison.sh`, `tests/benchmarks/BenchmarkComparisonSmokeTest.php`
+
 - `id`: TODO-012
   `created_at`: 2026-04-08 02:20 CEST
   `updated_at`: 2026-04-08 02:32 CEST

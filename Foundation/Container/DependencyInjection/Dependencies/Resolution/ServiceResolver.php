@@ -233,6 +233,10 @@ final class ServiceResolver
             ? $this->blueprints->createFor(class: $blueprintClass)
             : null;
         $compiledArtifact = $this->compiledRuntime->report(serviceIds: [$resolved]);
+        $compiledState = $this->compiledRuntime->state(registrations: $this->registrations, serviceId: $resolved);
+        $cacheState = $this->cacheStateFor(serviceId: $resolved);
+        $aliasChain = $this->registrations->aliasChain(abstract: $id);
+        $decorationChain = $this->registrations->decorationChain(abstract: $resolved);
         $concrete = $registration?->concrete;
 
         return [
@@ -252,8 +256,8 @@ final class ServiceResolver
                 $this->registrations->allAliases(),
                 static fn(string $target) : bool => $target === $resolved
             )),
-            'aliasChain' => $this->registrations->aliasChain(abstract: $id),
-            'decorationChain' => $this->registrations->decorationChain(abstract: $resolved),
+            'aliasChain' => $aliasChain,
+            'decorationChain' => $decorationChain,
             'blueprint' => $blueprint !== null ? [
                 'instantiable' => $blueprint->instantiable,
                 'shared' => $blueprint->shared,
@@ -265,9 +269,21 @@ final class ServiceResolver
             'compiled' => $this->compiledRuntime->isCompiled(registrations: $this->registrations, serviceId: $resolved),
             'warmedUp' => $this->compiledRuntime->isWarmedUp(),
             'lazy' => $this->isLazy(id: $resolved),
-            'cacheState' => $this->cacheStateFor(serviceId: $resolved),
-            'compiledState' => $this->compiledRuntime->state(registrations: $this->registrations, serviceId: $resolved),
+            'cacheState' => $cacheState,
+            'compiledState' => $compiledState,
             'compiledArtifact' => $compiledArtifact?->toArray() ?? ['available' => false],
+            'contextualBindings' => $this->contextualBindingsFor(serviceId: $resolved),
+            'explain' => $this->explainService(
+                id              : $id,
+                resolvedId      : $resolved,
+                registration    : $registration,
+                blueprint       : $blueprint,
+                compiledState   : $compiledState,
+                compiledArtifact: $compiledArtifact?->toArray() ?? ['available' => false],
+                cacheState      : $cacheState,
+                aliasChain      : $aliasChain,
+                decorationChain : $decorationChain
+            ),
         ];
     }
 
@@ -346,6 +362,11 @@ final class ServiceResolver
         $deferredProviders = $this->deferredProviders->services();
         ksort($deferredProviders);
         $scopeSnapshot = $this->scopes->snapshot();
+        $sharedServiceCount = count($scopeSnapshot['shared']);
+        $scopedServiceCount = array_sum(array_map(
+            static fn(array $scope) : int => count($scope),
+            $scopeSnapshot['scoped']
+        ));
 
         return new RuntimeReport(
             registrationRevision: $this->registrations->revision(),
@@ -353,9 +374,12 @@ final class ServiceResolver
             compiledAttached    : $this->compiledRuntime->isAttached(),
             warmedUp            : $this->compiledRuntime->isWarmedUp(),
             diagnosticsMode     : $this->diagnosticsMode,
+            timelineEnabled     : $this->telemetry->timeline()->enabled(),
             lazyServices        : $lazyServices,
             aliases             : $this->registrations->allAliases(),
             deferredProviders   : $deferredProviders,
+            sharedServiceCount  : $sharedServiceCount,
+            scopedServiceCount  : $scopedServiceCount,
             metrics             : $this->telemetry->metrics()->all(),
             timeline            : $this->telemetry->timeline()->all(),
             scopes              : [
@@ -366,6 +390,7 @@ final class ServiceResolver
                     $scopeSnapshot['scoped']
                 ),
             ],
+            hotPath             : $this->compiledRuntime->summary(),
             compiled            : $this->compiledRuntime->report()
         );
     }
@@ -676,33 +701,7 @@ final class ServiceResolver
      */
     public function compileContainer(array $serviceIds = []) : void
     {
-        $this->bootDeferredProvidersFor(serviceIds: $serviceIds);
-
-        $validationIssues = [];
-        if ($this->compiledRuntime->shouldValidateBeforeCompile()) {
-            $validationIssues = $this->validate(serviceIds: $serviceIds);
-            if ($validationIssues !== []) {
-                throw new ContainerException(
-                    message: "Container compile failed:\n- " . implode("\n- ", $validationIssues)
-                );
-            }
-        }
-
-        $classes = $this->classesForWarmup(serviceIds: $serviceIds);
-        $this->blueprints->warm(classes: $classes);
-
-        $compiled = $this->compiledRuntime->compile(
-            serviceIds       : $serviceIds,
-            validationIssues : $validationIssues
-        );
-        if ($compiled !== null) {
-            $this->compiledRuntime->attach(
-                compiled: $compiled,
-                revision: $this->registrations->revision()
-            );
-        }
-
-        $this->telemetry->metrics()->increment(name: 'container_compile_total');
+        $this->compileArtifacts(serviceIds: $serviceIds, warmed: false);
     }
 
     /**
@@ -713,7 +712,7 @@ final class ServiceResolver
      */
     public function warmCompiled(array $serviceIds = []) : void
     {
-        $this->compileContainer(serviceIds: $serviceIds);
+        $this->compileArtifacts(serviceIds: $serviceIds, warmed: true);
         $this->telemetry->metrics()->increment(name: 'container_compiled_warmups_total');
     }
 
@@ -1276,6 +1275,196 @@ final class ServiceResolver
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    private function explainService(
+        string $id,
+        string $resolvedId,
+        ServiceRegistration|null $registration,
+        ServiceBlueprint|null $blueprint,
+        array $compiledState,
+        array $compiledArtifact,
+        array $cacheState,
+        array $aliasChain,
+        array $decorationChain
+    ) : array {
+        $contextualBindings = $this->contextualBindingsFor(serviceId: $resolvedId);
+        $fallback = $compiledState['decision'] === 'dynamic'
+            ? [
+                'active' => true,
+                'reason' => $compiledState['reason'],
+            ]
+            : [
+                'active' => false,
+                'reason' => 'compiled hot path is active',
+            ];
+
+        return [
+            'failureChain' => $this->failureChainFor(
+                resolvedId      : $resolvedId,
+                registration    : $registration,
+                compiledState   : $compiledState,
+                compiledArtifact: $compiledArtifact
+            ),
+            'dependencyChain' => $this->dependencyChainFor(serviceId: $resolvedId, seen: []),
+            'contextualWinner' => [
+                'activeConsumer' => null,
+                'winner' => null,
+                'bindings' => $contextualBindings,
+                'reason' => $contextualBindings === []
+                    ? 'no contextual override is registered for this service'
+                    : 'contextual overrides exist, but no active consumer selected one for this direct diagnostics request',
+            ],
+            'aliasExpansion' => [
+                'requestedId' => $id,
+                'resolvedId' => $resolvedId,
+                'chain' => $aliasChain,
+                'reason' => count($aliasChain) > 1
+                    ? 'requested id resolves through the alias chain shown here'
+                    : 'requested id is already canonical',
+            ],
+            'decoration' => [
+                'chain' => $decorationChain,
+                'count' => count($decorationChain),
+                'reason' => $decorationChain === []
+                    ? 'no decorators or extenders are registered for this service'
+                    : 'decorators and extenders will run in the listed order',
+            ],
+            'cache' => [
+                'state' => $cacheState,
+                'reason' => match (true) {
+                    $cacheState['cached'] => 'service is already stored in shared or scoped runtime state',
+                    $cacheState['deferred'] => 'service will boot through a deferred provider before the build path runs',
+                    $cacheState['lazy'] => 'a lazy proxy has been requested; the real service resolves on first use',
+                    default => 'service will resolve through a fresh build path and then enter lifetime storage if needed',
+                },
+            ],
+            'compiled' => [
+                'state' => $compiledState,
+                'reason' => $compiledState['reason'],
+            ],
+            'fallback' => $fallback,
+            'blueprint' => [
+                'available' => $blueprint !== null,
+                'reason' => $blueprint !== null
+                    ? 'compiled and dynamic resolution can explain constructor and injection metadata from the blueprint'
+                    : 'no class-backed blueprint is available for this service',
+            ],
+        ];
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function failureChainFor(
+        string $resolvedId,
+        ServiceRegistration|null $registration,
+        array $compiledState,
+        array $compiledArtifact
+    ) : array {
+        $failures = [];
+
+        if ($registration === null && ! class_exists($resolvedId)) {
+            $failures[] = "service [{$resolvedId}] is not registered and cannot be autowired";
+        }
+
+        if (($compiledState['decision'] ?? '') === 'dynamic' && is_string($compiledState['reason'] ?? null)) {
+            $failures[] = $compiledState['reason'];
+        }
+
+        foreach ($compiledArtifact['compatibilityIssues'] ?? [] as $issue) {
+            if (is_string($issue) && $issue !== '') {
+                $failures[] = $issue;
+            }
+        }
+
+        foreach ($compiledArtifact['warnings'] ?? [] as $warning) {
+            if (is_string($warning) && $warning !== '') {
+                $failures[] = $warning;
+            }
+        }
+
+        $failures = array_values(array_unique($failures));
+        sort($failures);
+
+        return $failures;
+    }
+
+    /**
+     * @param list<string> $seen
+     * @return array<string, mixed>
+     */
+    private function dependencyChainFor(string $serviceId, array $seen) : array
+    {
+        $resolvedId = $this->registrations->resolveAlias(abstract: $serviceId);
+        if (in_array($resolvedId, $seen, true)) {
+            return [
+                'serviceId' => $resolvedId,
+                'cycle' => true,
+                'dependencies' => [],
+            ];
+        }
+
+        $registration = $this->registrations->get(abstract: $resolvedId);
+        $candidate = $registration?->concrete;
+
+        if ($candidate === null && class_exists($resolvedId)) {
+            $candidate = $resolvedId;
+        }
+
+        $node = [
+            'serviceId' => $resolvedId,
+            'class' => is_object($candidate) ? $candidate::class : $candidate,
+            'dependencies' => [],
+        ];
+
+        if (! is_string($candidate) || ! class_exists($candidate)) {
+            return $node;
+        }
+
+        $blueprint = $this->blueprints->createFor(class: $candidate);
+        $dependencies = $this->dependenciesForWarmup(blueprint: $blueprint);
+        sort($dependencies);
+        $node['dependencies'] = array_map(
+            fn(string $dependency) : array => $this->dependencyChainFor(
+                serviceId: $dependency,
+                seen     : array_merge($seen, [$resolvedId])
+            ),
+            $dependencies
+        );
+
+        return $node;
+    }
+
+    /**
+     * @return list<array{consumer: string, target: string}>
+     */
+    private function contextualBindingsFor(string $serviceId) : array
+    {
+        $matches = [];
+
+        foreach ($this->registrations->contextual() as $consumer => $rules) {
+            foreach ($rules as $needs => $give) {
+                if ($this->registrations->resolveAlias(abstract: (string) $needs) !== $serviceId) {
+                    continue;
+                }
+
+                $matches[] = [
+                    'consumer' => $consumer,
+                    'target' => is_object($give) ? $give::class : (string) $give,
+                ];
+            }
+        }
+
+        usort(
+            $matches,
+            static fn(array $left, array $right) : int => [$left['consumer'], $left['target']] <=> [$right['consumer'], $right['target']]
+        );
+
+        return $matches;
+    }
+
     private function bootDeferredProviderIfNeeded(string $serviceId) : void
     {
         $this->deferredProviders->bootIfNeeded(
@@ -1299,6 +1488,42 @@ final class ServiceResolver
     private function resolveCompiledRequest(ResolveRequest $request) : mixed
     {
         return $this->compiledRuntime->resolve(resolver: $this, request: $request);
+    }
+
+    /**
+     * @param list<string> $serviceIds
+     * @throws ContainerException
+     */
+    private function compileArtifacts(array $serviceIds, bool $warmed) : void
+    {
+        $this->bootDeferredProvidersFor(serviceIds: $serviceIds);
+
+        $validationIssues = [];
+        if ($this->compiledRuntime->shouldValidateBeforeCompile()) {
+            $validationIssues = $this->validate(serviceIds: $serviceIds);
+            if ($validationIssues !== []) {
+                throw new ContainerException(
+                    message: "Container compile failed:\n- " . implode("\n- ", $validationIssues)
+                );
+            }
+        }
+
+        $classes = $this->classesForWarmup(serviceIds: $serviceIds);
+        $this->blueprints->warm(classes: $classes);
+
+        $compiled = $this->compiledRuntime->compile(
+            serviceIds       : $serviceIds,
+            validationIssues : $validationIssues,
+            warmed           : $warmed
+        );
+        if ($compiled !== null) {
+            $this->compiledRuntime->attach(
+                compiled: $compiled,
+                revision: $this->registrations->revision()
+            );
+        }
+
+        $this->telemetry->metrics()->increment(name: 'container_compile_total');
     }
 
     /**

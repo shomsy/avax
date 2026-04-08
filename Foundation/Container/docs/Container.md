@@ -3,6 +3,7 @@
 `Container` is the stable public facade of this component.
 
 See [`public-contract-matrix.md`](./public-contract-matrix.md) for the frozen public surface ledger.
+See [`compile-artifact-model.md`](./compile-artifact-model.md) and [`runtime-state-model.md`](./runtime-state-model.md) for the operator view of generated and disposable state.
 
 ## What It Exposes
 
@@ -89,9 +90,9 @@ The facade does not own resolution internals, storage, blueprint creation, or te
 - `flush()` clears derived caches, scopes, runtime pools, lazy markers, telemetry state, and compiled artifacts without mutating canonical registrations
 - `reset()` clears disposable runtime state and derived caches but keeps canonical registrations and compiled artifacts
 - `validate()` reports obvious registration and blueprint issues without resolving values
-- `describeService()` and the `debug*()` helpers explain how a service, tag set, alias map, scope state, and compiled artifact state look right now
+- `describeService()` and the `debug*()` helpers explain alias expansion, decoration order, dependency chain, cache state, compiled-path decisions, fallback reasons, and current scope state
 - `compileReport()` returns the machine-readable compiled artifact status for the current cache version or requested service ids, including compatibility state and compatibility issues
-- `runtimeReport()` returns the current runtime state, including revision numbers, diagnostics mode, deferred provider ownership, lazy services, scope snapshot, metrics, timeline, and the attached compile report
+- `runtimeReport()` returns the current runtime state, including its schema version, revision numbers, diagnostics mode, timeline-enabled state, shared/scoped counts, deferred provider ownership, lazy services, scope snapshot, hot-path summary, metrics, timeline, and the attached compile report
 - `hasAlias()`, `isDeferred()`, `isLazy()`, `isCompiled()`, and `isWarmedUp()` expose the container's current runtime and compiled-artifact status without making the caller inspect internals
 - `env()` reads env-backed configuration hooks from `ContainerSettings`
 - `compileContainer()` writes a generated compiled runtime artifact plus compiled blueprint metadata
@@ -99,10 +100,10 @@ The facade does not own resolution internals, storage, blueprint creation, or te
 - `flushCompiled()` removes compiled artifacts for the current cache version
 - `rebuildCompiled()` flushes then warms compiled artifacts again
 - compiled container metadata includes checksum, config hash, environment, service signatures, and changed service ids
-- compiled container metadata also records reused services, invalidated services, dependency graphs, and invalidation reasons for incremental compile reuse
+- compiled container metadata also records schema version, settings fingerprint, diagnostics mode, warmed state, artifact paths, dependency-graph revision, reused services, invalidated services, dependency graphs, and invalidation reasons for incremental compile reuse
 - incompatible compiled artifacts are not reported as available and fall back to the dynamic runtime path
 - corrupted compiled artifacts are quarantined; production-style modes fail closed, while development mode can fall back to dynamic resolution
-- diagnostics mode is explicit: `minimal` keeps timeline overhead near zero, while `detailed` keeps richer traces for CI and debugging
+- diagnostics mode is explicit: `minimal` keeps timeline overhead near zero, while `detailed` and `ci` keep richer traces for debugging and CI analysis
 - deferred services stay out of the default warm compile path unless they are explicit or needed by a compiled dependency
 - scoped services require an active scope
 - missing services throw `ServiceNotFoundException`

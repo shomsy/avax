@@ -90,6 +90,7 @@ Each flow entry owns one obvious user action:
 
 - writes and reads the generated compiled runtime artifact
 - writes sidecar metadata with checksum, config hash, environment, lifetime plans, and per-service signatures
+- records schema version, settings fingerprint, diagnostics mode, warmed state, artifact paths, and dependency-graph revision
 - enforces artifact compatibility across cache version, config hash, environment, compile mode, and strictness
 - records reused and invalidated services plus invalidation reasons for incremental recompilation
 - quarantines corrupt artifacts before they can silently drift into the hot path
@@ -102,6 +103,7 @@ Each flow entry owns one obvious user action:
 - owns shared singleton storage
 - owns lazy proxy behavior
 - owns compiled method call caching
+- exposes hot-path attachment state and entry presence without pushing reflection back into the resolve path
 
 `Configuration/Assembly/`
 
@@ -186,7 +188,9 @@ The shipped boundary is defended by:
 - benchmark regression guard under `tests/check-benchmarks.sh`
 - worker and request-lifecycle benchmark scenarios inside the benchmark harness
 - benchmark artifact comparison under `tests/run-benchmark-comparison.sh`
+- peer benchmark matrix under `tests/run-peer-benchmark-matrix.sh`
 - benchmark guard uses repeated runs with median timing so CI thresholds are reproducible instead of single-shot noisy
+- diagnostics contracts are versioned and validated through `tests/check-diagnostics-contracts.sh`
 
 There is no Composer or PHPUnit harness in this component root today.
 
@@ -205,3 +209,12 @@ Compile-time discipline is mode-aware:
 - `production`: fastest path, checksum-validated artifacts, fail closed on corruption
 - `dev`: checksum-validated artifacts with dynamic fallback on corruption, staleness, or compatibility mismatch
 - `ci` / `warmup`: validate before compile and reject invalid graphs before a compiled artifact is accepted
+
+See also:
+
+- [`build-mode.md`](./build-mode.md)
+- [`runtime-mode.md`](./runtime-mode.md)
+- [`compile-artifact-model.md`](./compile-artifact-model.md)
+- [`runtime-state-model.md`](./runtime-state-model.md)
+- [`compile-artifact-compatibility.md`](./compile-artifact-compatibility.md)
+- [`create-container-audit.md`](./create-container-audit.md)

@@ -35,7 +35,11 @@ final class AssembleRuntime
         $registrations = new ServiceRegistry;
         $scopeStore = new ScopeStore;
         $servicePool = new ServicePool;
-        $scopes = new ManageScopes(store: $scopeStore, pool: $servicePool);
+        $scopes = new ManageScopes(
+            store  : $scopeStore,
+            pool   : $servicePool,
+            metrics: $observability->metrics
+        );
         $dependencies = new ResolveDependencies;
         $blueprints = new CreateServiceBlueprint(
             cache       : new BlueprintCache(
@@ -58,9 +62,12 @@ final class AssembleRuntime
             cacheDir                : $config->cacheDir,
             cacheVersion            : $config->cacheVersion,
             configHash              : $config->configHash(),
+            diagnosticsMode         : $config->diagnosticsMode,
             environment             : $config->environment(),
             compileMode             : $config->compileMode,
             strict                  : $config->strict,
+            settingsFingerprint     : $config->settingsFingerprint(),
+            benchmarkBuildMarker    : $config->benchmarkBuildMarker(),
             validateOnLoad          : $config->validatesCompiledArtifactsOnLoad(),
             failClosedOnCorruption  : $config->failsClosedOnCompiledCorruption(),
             validateBeforeCompile   : $config->validatesBeforeCompile(),

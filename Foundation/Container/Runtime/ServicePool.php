@@ -53,6 +53,25 @@ final class ServicePool
     }
 
     /**
+     * Returns the number of shared runtime instances.
+     */
+    public function count() : int
+    {
+        return count($this->items);
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function ids() : array
+    {
+        $ids = array_keys($this->items);
+        sort($ids);
+
+        return $ids;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function snapshot() : array

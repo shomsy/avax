@@ -4,6 +4,16 @@ This component has one canonical story:
 
 - public facade: [`Container.md`](./Container.md)
 - public contract matrix: [`public-contract-matrix.md`](./public-contract-matrix.md)
+- build mode: [`build-mode.md`](./build-mode.md)
+- runtime mode: [`runtime-mode.md`](./runtime-mode.md)
+- compile artifact model: [`compile-artifact-model.md`](./compile-artifact-model.md)
+- runtime state model: [`runtime-state-model.md`](./runtime-state-model.md)
+- diagnostics contracts: [`diagnostics-contracts.md`](./diagnostics-contracts.md)
+- artifact compatibility: [`compile-artifact-compatibility.md`](./compile-artifact-compatibility.md)
+- worker/request lifecycle: [`worker-request-lifecycle.md`](./worker-request-lifecycle.md)
+- CreateContainer audit: [`create-container-audit.md`](./create-container-audit.md)
+- release checklist: [`release-checklist.md`](./release-checklist.md)
+- world-class readiness: [`world-class-readiness.md`](./world-class-readiness.md)
 - architecture map: [`architecture.md`](./architecture.md)
 - concepts: [`concepts/index.md`](./concepts/index.md)
 - glossary: [`glossary.md`](./glossary.md)
@@ -13,6 +23,8 @@ This component has one canonical story:
 - benchmark harness: [`../tests/run-benchmarks.sh`](../tests/run-benchmarks.sh)
 - benchmark guard: [`../tests/check-benchmarks.sh`](../tests/check-benchmarks.sh)
 - benchmark comparison: [`../tests/run-benchmark-comparison.sh`](../tests/run-benchmark-comparison.sh)
+- peer benchmark matrix: [`../tests/run-peer-benchmark-matrix.sh`](../tests/run-peer-benchmark-matrix.sh)
+- peer benchmark gate: [`../tests/check-peer-benchmarks.sh`](../tests/check-peer-benchmarks.sh)
 
 Canonical source tree:
 
@@ -35,6 +47,8 @@ Local validation:
 - benchmarks: [`tests/run-benchmarks.sh`](../tests/run-benchmarks.sh)
 - benchmark guard: [`tests/check-benchmarks.sh`](../tests/check-benchmarks.sh)
 - benchmark comparison: [`tests/run-benchmark-comparison.sh`](../tests/run-benchmark-comparison.sh)
+- diagnostics contracts: [`tests/check-diagnostics-contracts.sh`](../tests/check-diagnostics-contracts.sh)
+- peer benchmark gate: [`tests/check-peer-benchmarks.sh`](../tests/check-peer-benchmarks.sh)
 
 Performance model:
 
@@ -43,5 +57,5 @@ Performance model:
 - run many times from memory or versioned disk artifacts
 - keep canonical registrations separate from disposable runtime state
 - choose `minimal` diagnostics for low-overhead production runtime state
-- choose `detailed` diagnostics for CI, debugging, and richer timeline output
+- choose `detailed` or `ci` diagnostics for debugging, CI, and richer timeline output
 - use the benchmark guard for threshold enforcement; it evaluates median timing across repeated runs to reduce CI noise

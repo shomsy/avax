@@ -62,11 +62,12 @@ final class CompiledRuntime
         return $this->compiler?->shouldValidateBeforeCompile() ?? false;
     }
 
-    public function compile(array $serviceIds = [], array $validationIssues = []) : CompiledContainer|null
+    public function compile(array $serviceIds = [], array $validationIssues = [], bool $warmed = false) : CompiledContainer|null
     {
         return $this->compiler?->compile(
             serviceIds       : $serviceIds,
-            validationIssues : $validationIssues
+            validationIssues : $validationIssues,
+            warmed           : $warmed
         );
     }
 
@@ -94,15 +95,103 @@ final class CompiledRuntime
     {
         $this->refresh(registrations: $registrations, serviceId: $serviceId);
         $report = $this->compiler?->report(serviceIds: [$serviceId]);
+        $decision = $this->decision(
+            registrations: $registrations,
+            request      : new ResolveRequest(serviceId: $serviceId)
+        );
+        $inlinerState = $this->inliner->state(serviceId: $serviceId);
 
         return [
-            'attached' => $this->inliner->isAttached(),
+            'attached' => $inlinerState['attached'],
             'entryAttached' => $this->inliner->has(serviceId: $serviceId),
+            'entryCount' => $inlinerState['entryCount'],
             'containsEntry' => $this->compiler?->contains(serviceId: $serviceId) ?? false,
             'artifactAvailable' => $report?->available ?? false,
             'compatible' => $report?->compatible ?? false,
             'compatibilityIssues' => $report?->compatibilityIssues ?? [],
+            'freshnessState' => $report?->freshnessState ?? 'missing',
             'compileMode' => $report?->compileMode ?? '',
+            'decision' => $decision['decision'],
+            'reason' => $decision['reason'],
+            'hotPath' => $inlinerState,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function summary() : array
+    {
+        $report = $this->compiler?->report();
+        $inlinerState = $this->inliner->state();
+
+        return [
+            'attached' => $this->inliner->isAttached(),
+            'entryCount' => $inlinerState['entryCount'],
+            'artifactAvailable' => $report?->available ?? false,
+            'compatible' => $report?->compatible ?? false,
+            'freshnessState' => $report?->freshnessState ?? 'missing',
+            'reason' => $inlinerState['reason'],
+        ];
+    }
+
+    /**
+     * @return array{useCompiled: bool, decision: string, reason: string}
+     */
+    public function decision(ServiceRegistry $registrations, ResolveRequest $request) : array
+    {
+        $this->refresh(registrations: $registrations, serviceId: $request->serviceId);
+        $report = $this->compiler?->report(serviceIds: [$request->serviceId]);
+
+        if ($this->compiler === null) {
+            return [
+                'useCompiled' => false,
+                'decision' => 'dynamic',
+                'reason' => 'compiled runtime is not configured',
+            ];
+        }
+
+        if (! ($report?->available ?? false)) {
+            $state = $report?->freshnessState ?? 'missing';
+
+            return [
+                'useCompiled' => false,
+                'decision' => 'dynamic',
+                'reason' => match ($state) {
+                    'missing' => 'compiled artifact is missing',
+                    'incompatible' => 'compiled artifact is incompatible with the current runtime',
+                    'partial' => 'compiled artifact does not contain the requested entry',
+                    'corrupt' => 'compiled artifact is corrupt',
+                    'stale' => 'compiled artifact is stale',
+                    default => 'compiled artifact is unavailable',
+                },
+            ];
+        }
+
+        if (! $this->inliner->has(serviceId: $request->serviceId)) {
+            return [
+                'useCompiled' => false,
+                'decision' => 'dynamic',
+                'reason' => 'compiled runtime is attached but the requested entry is missing',
+            ];
+        }
+
+        $consumer = $request->parent?->serviceId ?? $request->consumer;
+        if (
+            $consumer !== null
+            && $registrations->getContextualMatch(consumer: $consumer, needs: $request->serviceId) !== null
+        ) {
+            return [
+                'useCompiled' => false,
+                'decision' => 'dynamic',
+                'reason' => 'contextual binding overrides the compiled path',
+            ];
+        }
+
+        return [
+            'useCompiled' => true,
+            'decision' => 'compiled',
+            'reason' => 'compiled hot path is attached and usable',
         ];
     }
 

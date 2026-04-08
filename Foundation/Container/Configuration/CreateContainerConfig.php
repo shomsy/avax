@@ -21,6 +21,8 @@ final readonly class CreateContainerConfig
 
     public const DIAGNOSTICS_MODE_DETAILED = 'detailed';
 
+    public const DIAGNOSTICS_MODE_CI = 'ci';
+
     /**
      * @param array<string, mixed> $settings
      */
@@ -180,9 +182,30 @@ final readonly class CreateContainerConfig
         ]));
     }
 
+    public function settingsFingerprint() : string
+    {
+        return sha1(serialize($this->settings));
+    }
+
+    public function benchmarkBuildMarker() : string
+    {
+        $configured = $this->settings['benchmarkBuildMarker']
+            ?? $this->settings['benchmark']['build_marker']
+            ?? $this->settings['BENCHMARK_BUILD_MARKER']
+            ?? null;
+
+        if (is_string($configured) && $configured !== '') {
+            return $configured;
+        }
+
+        $environment = getenv('BENCHMARK_BUILD_MARKER');
+
+        return is_string($environment) ? $environment : '';
+    }
+
     public function usesDetailedDiagnostics() : bool
     {
-        if ($this->diagnosticsMode === self::DIAGNOSTICS_MODE_DETAILED) {
+        if (in_array($this->diagnosticsMode, [self::DIAGNOSTICS_MODE_DETAILED, self::DIAGNOSTICS_MODE_CI], true)) {
             return true;
         }
 
@@ -195,11 +218,7 @@ final readonly class CreateContainerConfig
 
     public function validatesCompiledArtifactsOnLoad() : bool
     {
-        return $this->debug || $this->strict || in_array(
-            $this->compileMode,
-            [self::COMPILE_MODE_DEV, self::COMPILE_MODE_CI, self::COMPILE_MODE_WARMUP],
-            true
-        );
+        return true;
     }
 
     public function validatesBeforeCompile() : bool
@@ -235,7 +254,8 @@ final readonly class CreateContainerConfig
     {
         return match ($mode) {
             self::DIAGNOSTICS_MODE_MINIMAL,
-            self::DIAGNOSTICS_MODE_DETAILED => $mode,
+            self::DIAGNOSTICS_MODE_DETAILED,
+            self::DIAGNOSTICS_MODE_CI => $mode,
             default => self::DIAGNOSTICS_MODE_MINIMAL,
         };
     }

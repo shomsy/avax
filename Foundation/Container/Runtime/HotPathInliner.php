@@ -59,6 +59,30 @@ final class HotPathInliner
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function state(string|null $serviceId = null) : array
+    {
+        $attached = $this->compiled !== null;
+        $hasEntry = $attached && is_string($serviceId) && $serviceId !== ''
+            ? $this->compiled->has(serviceId: $serviceId)
+            : false;
+
+        return [
+            'attached' => $attached,
+            'entryCount' => $this->compiled?->entryCount() ?? 0,
+            'entryIds' => $this->compiled?->entryIds() ?? [],
+            'hasEntry' => $hasEntry,
+            'reason' => match (true) {
+                ! $attached => 'no compiled runtime is attached',
+                $serviceId === null || $serviceId === '' => 'compiled runtime is attached',
+                $hasEntry => 'compiled entry is attached',
+                default => 'compiled runtime is attached but the requested entry is missing',
+            },
+        ];
+    }
+
+    /**
      * Resolves one service through the compiled runtime.
      *
      * @throws ContainerException

@@ -20,7 +20,9 @@ use Throwable;
  */
 final class CompileContainer
 {
-    private const FORMAT = 'compiled-container-v3';
+    private const FORMAT = 'compiled-container';
+
+    private const SCHEMA_VERSION = 4;
 
     private ServiceCompiler $services;
 
@@ -32,9 +34,12 @@ final class CompileContainer
         private readonly string $cacheDir = '',
         private readonly string $cacheVersion = 'container-v1',
         private readonly string $configHash = '',
+        private readonly string $diagnosticsMode = 'minimal',
         private readonly string $environment = '',
         private readonly string $compileMode = 'production',
         private readonly bool $strict = false,
+        private readonly string $settingsFingerprint = '',
+        private readonly string $benchmarkBuildMarker = '',
         private readonly bool $validateOnLoad = false,
         private readonly bool $failClosedOnCorruption = true,
         private readonly bool $validateBeforeCompile = false,
@@ -62,13 +67,14 @@ final class CompileContainer
      * @param list<string> $validationIssues
      * @throws ContainerException
      */
-    public function compile(array $serviceIds = [], array $validationIssues = []) : CompiledContainer
+    public function compile(array $serviceIds = [], array $validationIssues = [], bool $warmed = false) : CompiledContainer
     {
         $snapshot = $this->snapshot(serviceIds: $serviceIds);
         $metadata = $this->metadataFor(
             snapshot        : $snapshot,
             validationIssues: $validationIssues,
-            previous        : $this->loadMetadata(quarantineOnFailure: false)
+            previous        : $this->loadMetadata(quarantineOnFailure: false),
+            warmed          : $warmed
         );
 
         if ($this->cacheDir !== '' && $this->artifactMatches(metadata: $metadata)) {
@@ -182,11 +188,9 @@ final class CompileContainer
      */
     public function contains(string $serviceId) : bool
     {
-        $metadata = $this->reportMetadata();
+        $report = $this->report(serviceIds: [$serviceId]);
 
-        return $metadata !== null
-            && $this->compatibilityIssuesFor(metadata: $metadata) === []
-            && $metadata->hasEntry(serviceId: $serviceId);
+        return $report->available && in_array($serviceId, $report->entries, true);
     }
 
     /**
@@ -201,16 +205,26 @@ final class CompileContainer
             ? $this->compatibilityIssuesFor(metadata: $metadata)
             : ['compiled metadata is missing'];
         $compatible = $metadata !== null && $compatibilityIssues === [];
+        $freshnessState = $this->freshnessStateFor(metadata: $metadata, serviceIds: $serviceIds);
         $checksumValid = $metadata !== null
             && ($this->cacheDir === '' || $this->sourceMatchesChecksum(path: $this->path(), checksum: $metadata->checksum));
         $available = $compatible
-            && $this->servicesAreAvailable(metadata: $metadata, serviceIds: $serviceIds)
+            && $freshnessState === 'fresh'
             && ($this->cacheDir === '' || is_file($this->path()))
             && $checksumValid;
+        $warnings = $this->warningsFor(
+            metadata            : $metadata,
+            freshnessState      : $freshnessState,
+            compatibilityIssues : $compatibilityIssues,
+            checksumValid       : $checksumValid,
+            available           : $available
+        );
 
         return new CompileReport(
             available       : $available,
             compatible      : $compatible,
+            freshnessState  : $freshnessState,
+            warnings        : $warnings,
             path            : $this->path(),
             metadataPath    : $this->metadataPath(),
             cacheVersion    : $this->cacheVersion,
@@ -218,6 +232,20 @@ final class CompileContainer
             environment     : $this->environment,
             fingerprint     : $metadata?->fingerprint ?? '',
             checksumValid   : $checksumValid,
+            totalServices   : count($metadata?->services ?? []),
+            compiledServicesCount: count($metadata?->entries ?? []),
+            reusedServicesCount: (int) ($metadata?->statistics['reusedServices'] ?? 0),
+            invalidatedServicesCount: count($metadata?->invalidatedServices ?? []),
+            deferredServicesCount: (int) ($metadata?->statistics['deferredServices'] ?? 0),
+            lazyServicesCount: (int) ($metadata?->statistics['lazyServices'] ?? 0),
+            tagIndexSize    : count($metadata?->tags ?? []),
+            aliasMapSize    : count($metadata?->aliases ?? []),
+            decorationMapSize: count(array_filter(
+                $metadata?->decorations ?? [],
+                static fn(int $count) : bool => $count > 0
+            )),
+            providerBootPlanSize: (int) ($metadata?->statistics['providerBootPlanSize'] ?? 0),
+            lifetimePlanSummary: $this->lifetimePlanSummaryFor(metadata: $metadata),
             entries         : $metadata?->entryIds() ?? [],
             changedServices : $metadata?->changedServices ?? [],
             invalidatedServices: $metadata?->invalidatedServices ?? [],
@@ -315,6 +343,9 @@ final class CompileContainer
         }
         ksort($lifetimePlans);
 
+        ksort($sources);
+        ksort($dependencies);
+
         $fingerprint = sha1(serialize([
             'cacheVersion' => $this->cacheVersion,
             'configHash' => $this->configHash,
@@ -331,9 +362,6 @@ final class CompileContainer
             'decorations' => $this->registrations->decorationChains(),
             'reusedServices' => $reusedServices,
         ]));
-
-        ksort($sources);
-        ksort($dependencies);
 
         return [
             'fingerprint' => $fingerprint,
@@ -600,7 +628,12 @@ PHP;
      * } $snapshot
      * @param list<string> $validationIssues
      */
-    private function metadataFor(array $snapshot, array $validationIssues, ArtifactMetadata|null $previous) : ArtifactMetadata
+    private function metadataFor(
+        array $snapshot,
+        array $validationIssues,
+        ArtifactMetadata|null $previous,
+        bool $warmed
+    ) : ArtifactMetadata
     {
         $previousServices = $previous?->services ?? [];
         $changedServices = [];
@@ -620,16 +653,29 @@ PHP;
 
         $invalidatedServices = array_values(array_unique(array_merge($changedServices, $removedServices)));
         sort($invalidatedServices);
+        $dependencyGraphRevision = sha1(serialize($snapshot['dependencies']));
 
         return new ArtifactMetadata(
             format          : self::FORMAT,
+            schemaVersion   : self::SCHEMA_VERSION,
             compiledAt      : gmdate('c'),
             cacheVersion    : $this->cacheVersion,
             configHash      : $this->configHash,
+            settingsFingerprint: $this->settingsFingerprint,
             environment     : $this->environment,
             compileMode     : $this->compileMode,
+            diagnosticsMode : $this->diagnosticsMode,
             strict          : $this->strict,
             fingerprint     : $snapshot['fingerprint'],
+            dependencyGraphRevision: $dependencyGraphRevision,
+            artifactPaths   : [
+                'compiled' => $this->path(),
+                'metadata' => $this->metadataPath(),
+                'compiledDirectory' => $this->compiledDirectory(),
+                'quarantineDirectory' => $this->quarantineDirectory(),
+            ],
+            warmed          : $warmed,
+            benchmarkBuildMarker: $this->benchmarkBuildMarker,
             entries         : $snapshot['entries'],
             services        : $snapshot['services'],
             sources         : $snapshot['sources'],
@@ -650,9 +696,16 @@ PHP;
                 'aliases' => count($snapshot['aliases']),
                 'tags' => count($snapshot['tags']),
                 'deferredServices' => count(array_filter($snapshot['deferred'])),
+                'lazyServices' => 0,
                 'decoratedServices' => count(array_filter(
                     $snapshot['decorations'],
                     static fn(int $count) : bool => $count > 0
+                )),
+                'providerBootPlanSize' => 0,
+                'lifetimePlans' => count($snapshot['lifetimes']),
+                'dependencyGraphEdges' => array_sum(array_map(
+                    static fn(array $dependencies) : int => count($dependencies),
+                    $snapshot['dependencies']
                 )),
                 'reusedServices' => (int) ($snapshot['statistics']['reusedServices'] ?? 0),
                 'validationIssues' => count(array_values(array_unique($validationIssues))),
@@ -666,7 +719,13 @@ PHP;
         $current = $this->loadMetadata(quarantineOnFailure: false);
 
         return $current instanceof ArtifactMetadata
+            && $current->schemaVersion === $metadata->schemaVersion
             && $this->compatibilityIssuesFor(metadata: $current) === []
+            && $current->diagnosticsMode === $metadata->diagnosticsMode
+            && $current->settingsFingerprint === $metadata->settingsFingerprint
+            && $current->dependencyGraphRevision === $metadata->dependencyGraphRevision
+            && $current->warmed === $metadata->warmed
+            && $current->benchmarkBuildMarker === $metadata->benchmarkBuildMarker
             && $current->fingerprint === $metadata->fingerprint
             && $this->sourceMatchesChecksum(path: $this->path(), checksum: $current->checksum);
     }
@@ -678,18 +737,51 @@ PHP;
 
     private function requestedServicesAreFresh(ArtifactMetadata $metadata, array $serviceIds) : bool
     {
-        $ids = $serviceIds !== []
-            ? array_values(array_unique($serviceIds))
-            : array_keys($metadata->services);
+        $ids = $this->requestedServiceClosure(metadata: $metadata, serviceIds: $serviceIds);
 
         foreach ($ids as $serviceId) {
             $current = $this->services->describe(serviceId: $serviceId);
             if (($metadata->services[$serviceId]['signature'] ?? null) !== $current['signature']) {
                 return false;
             }
+
+            if (($metadata->dependencies[$serviceId] ?? []) !== $this->dependenciesForService(serviceId: $serviceId)) {
+                return false;
+            }
         }
 
         return true;
+    }
+
+    /**
+     * @param list<string> $serviceIds
+     * @return list<string>
+     */
+    private function requestedServiceClosure(ArtifactMetadata $metadata, array $serviceIds) : array
+    {
+        $queue = $serviceIds !== []
+            ? array_values(array_unique($serviceIds))
+            : array_keys($metadata->services);
+        $seen = [];
+
+        while ($queue !== []) {
+            $serviceId = (string) array_shift($queue);
+            if (isset($seen[$serviceId])) {
+                continue;
+            }
+
+            $seen[$serviceId] = true;
+            foreach ($metadata->dependencies[$serviceId] ?? [] as $dependency) {
+                if (! isset($seen[$dependency])) {
+                    $queue[] = $dependency;
+                }
+            }
+        }
+
+        $ids = array_keys($seen);
+        sort($ids);
+
+        return $ids;
     }
 
     private function sourceMatchesChecksum(string $path, string $checksum) : bool
@@ -789,6 +881,9 @@ PHP;
         if ($metadata->cacheVersion !== $this->cacheVersion) {
             $issues[] = 'cache version mismatch';
         }
+        if ($metadata->schemaVersion !== self::SCHEMA_VERSION) {
+            $issues[] = 'schema version mismatch';
+        }
         if ($metadata->configHash !== $this->configHash) {
             $issues[] = 'config hash mismatch';
         }
@@ -797,6 +892,9 @@ PHP;
         }
         if ($metadata->compileMode !== $this->compileMode) {
             $issues[] = 'compile mode mismatch';
+        }
+        if ($metadata->diagnosticsMode !== $this->diagnosticsMode) {
+            $issues[] = 'diagnostics mode mismatch';
         }
         if ($metadata->strict !== $this->strict) {
             $issues[] = 'strict mode mismatch';
@@ -819,14 +917,19 @@ PHP;
     {
         $compiledPath = $this->path();
         $metadataPath = $this->metadataPath();
-        $suffix = '.quarantine.' . gmdate('YmdHis') . '.' . substr(sha1(uniqid('', true)), 0, 8);
+        $quarantineDirectory = $this->quarantineDirectory();
+        if (! is_dir($quarantineDirectory) && ! mkdir($quarantineDirectory, 0775, true) && ! is_dir($quarantineDirectory)) {
+            return;
+        }
+
+        $suffix = 'container.' . gmdate('YmdHis') . '.' . substr(sha1(uniqid('', true)), 0, 8);
 
         if (is_file($compiledPath)) {
-            @rename($compiledPath, $compiledPath . $suffix);
+            @rename($compiledPath, $quarantineDirectory . '/' . $suffix . '.php');
         }
 
         if (is_file($metadataPath)) {
-            @rename($metadataPath, $metadataPath . $suffix);
+            @rename($metadataPath, $quarantineDirectory . '/' . $suffix . '.json');
         }
 
         $this->metrics?->increment(name: 'container_compiled_container_quarantines_total');
@@ -850,6 +953,106 @@ PHP;
     private function metadataPath() : string
     {
         return $this->compiledDirectory() . '/container.json';
+    }
+
+    private function quarantineDirectory() : string
+    {
+        return $this->compiledDirectory() . '/quarantine';
+    }
+
+    /**
+     * @param list<string> $serviceIds
+     */
+    private function freshnessStateFor(ArtifactMetadata|null $metadata, array $serviceIds) : string
+    {
+        if (! $metadata instanceof ArtifactMetadata) {
+            return 'missing';
+        }
+
+        if ($this->compatibilityIssuesFor(metadata: $metadata) !== []) {
+            return 'incompatible';
+        }
+
+        if (! $this->servicesAreAvailable(metadata: $metadata, serviceIds: $serviceIds)) {
+            return 'partial';
+        }
+
+        if ($this->cacheDir === '') {
+            return 'fresh';
+        }
+
+        if (! $this->sourceMatchesChecksum(path: $this->path(), checksum: $metadata->checksum)) {
+            return 'corrupt';
+        }
+
+        if ($this->validateOnLoad && ! $this->requestedServicesAreFresh(metadata: $metadata, serviceIds: $serviceIds)) {
+            return 'stale';
+        }
+
+        return 'fresh';
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private function lifetimePlanSummaryFor(ArtifactMetadata|null $metadata) : array
+    {
+        $summary = [];
+
+        foreach ($metadata?->lifetimes ?? [] as $plan) {
+            $name = (string) ($plan['name'] ?? '');
+            if ($name === '') {
+                continue;
+            }
+
+            $summary[$name] = ($summary[$name] ?? 0) + 1;
+        }
+
+        ksort($summary);
+
+        return $summary;
+    }
+
+    /**
+     * @param list<string> $compatibilityIssues
+     * @return list<string>
+     */
+    private function warningsFor(
+        ArtifactMetadata|null $metadata,
+        string $freshnessState,
+        array $compatibilityIssues,
+        bool $checksumValid,
+        bool $available
+    ) : array {
+        $warnings = [];
+
+        if (! $available) {
+            $warnings[] = match ($freshnessState) {
+                'missing' => 'compiled artifact is missing',
+                'incompatible' => 'compiled artifact is incompatible with the current runtime',
+                'partial' => 'compiled artifact does not contain every requested service',
+                'corrupt' => 'compiled artifact checksum is invalid',
+                'stale' => 'compiled artifact signatures are stale',
+                default => 'compiled artifact is unavailable',
+            };
+        }
+
+        foreach ($compatibilityIssues as $issue) {
+            $warnings[] = $issue;
+        }
+
+        if (! $checksumValid && $metadata instanceof ArtifactMetadata) {
+            $warnings[] = 'compiled artifact checksum is invalid';
+        }
+
+        foreach ($metadata?->validationIssues ?? [] as $issue) {
+            $warnings[] = $issue;
+        }
+
+        $warnings = array_values(array_unique($warnings));
+        sort($warnings);
+
+        return $warnings;
     }
 
     private function deleteDirectory(string $directory) : void

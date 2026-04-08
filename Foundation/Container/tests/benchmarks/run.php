@@ -11,6 +11,9 @@ use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInt
 use Avax\Container\DependencyInjection\Injection\Attributes\Inject;
 use Avax\Container\Runtime\LazyProxy;
 
+const BENCHMARK_DOCKER_IMAGE = 'php:8.3-cli';
+const BENCHMARK_SUITE_VERSION = '2026-04-08';
+
 final class BenchSharedService
 {
     public function value() : string
@@ -478,6 +481,18 @@ function benchmarkScenarios() : array
 }
 
 /**
+ * @return array<string, string|int|false>
+ */
+function benchmarkPhpSettings() : array
+{
+    return [
+        'memory_limit' => (string) ini_get('memory_limit'),
+        'opcache.enable_cli' => (string) ini_get('opcache.enable_cli'),
+        'zend.assertions' => (string) ini_get('zend.assertions'),
+    ];
+}
+
+/**
  * @param array<string, array{max_time_ms: float, max_peak_mb: float}> $thresholds
  * @param array<string, array<string, mixed>> $results
  */
@@ -534,6 +549,13 @@ if ($jsonOutput || is_string($outputPath)) {
             'php' => PHP_VERSION,
             'sapi' => PHP_SAPI,
             'timestamp' => gmdate('c'),
+            'dockerImage' => BENCHMARK_DOCKER_IMAGE,
+            'phpSettings' => benchmarkPhpSettings(),
+            'suiteVersion' => BENCHMARK_SUITE_VERSION,
+            'buildMarker' => (string) (getenv('BENCHMARK_BUILD_MARKER') ?: ''),
+            'guard' => $guard,
+            'scenarioCount' => count($results),
+            'scenarios' => array_keys($results),
         ],
         'results' => $results,
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;

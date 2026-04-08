@@ -12,6 +12,8 @@ use JsonSerializable;
  */
 final readonly class CompileReport implements JsonSerializable
 {
+    public const SCHEMA_VERSION = 1;
+
     /**
      * @param list<string> $entries
      * @param list<string> $changedServices
@@ -23,6 +25,8 @@ final readonly class CompileReport implements JsonSerializable
     public function __construct(
         public bool $available,
         public bool $compatible,
+        public string $freshnessState,
+        public array $warnings,
         public string $path,
         public string $metadataPath,
         public string $cacheVersion,
@@ -30,6 +34,17 @@ final readonly class CompileReport implements JsonSerializable
         public string $environment,
         public string $fingerprint,
         public bool $checksumValid,
+        public int $totalServices,
+        public int $compiledServicesCount,
+        public int $reusedServicesCount,
+        public int $invalidatedServicesCount,
+        public int $deferredServicesCount,
+        public int $lazyServicesCount,
+        public int $tagIndexSize,
+        public int $aliasMapSize,
+        public int $decorationMapSize,
+        public int $providerBootPlanSize,
+        public array $lifetimePlanSummary,
         public array $entries,
         public array $changedServices,
         public array $invalidatedServices,
@@ -46,8 +61,11 @@ final readonly class CompileReport implements JsonSerializable
     public function toArray() : array
     {
         return [
+            'schemaVersion' => self::SCHEMA_VERSION,
             'available' => $this->available,
             'compatible' => $this->compatible,
+            'freshnessState' => $this->freshnessState,
+            'warnings' => $this->warnings,
             'path' => $this->path,
             'metadataPath' => $this->metadataPath,
             'cacheVersion' => $this->cacheVersion,
@@ -55,6 +73,17 @@ final readonly class CompileReport implements JsonSerializable
             'environment' => $this->environment,
             'fingerprint' => $this->fingerprint,
             'checksumValid' => $this->checksumValid,
+            'totalServices' => $this->totalServices,
+            'compiledServicesCount' => $this->compiledServicesCount,
+            'reusedServicesCount' => $this->reusedServicesCount,
+            'invalidatedServicesCount' => $this->invalidatedServicesCount,
+            'deferredServicesCount' => $this->deferredServicesCount,
+            'lazyServicesCount' => $this->lazyServicesCount,
+            'tagIndexSize' => $this->tagIndexSize,
+            'aliasMapSize' => $this->aliasMapSize,
+            'decorationMapSize' => $this->decorationMapSize,
+            'providerBootPlanSize' => $this->providerBootPlanSize,
+            'lifetimePlanSummary' => $this->lifetimePlanSummary,
             'serviceCount' => count($this->entries),
             'entries' => $this->entries,
             'changedServices' => $this->changedServices,

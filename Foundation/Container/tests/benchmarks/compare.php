@@ -5,9 +5,9 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/bootstrap.php';
 
 /**
- * @return array<string, array<string, mixed>>
+ * @return array{meta: array<string, mixed>, results: array<string, array<string, mixed>>}
  */
-function readBenchmarkResults(string $path) : array
+function readBenchmarkArtifact(string $path) : array
 {
     if (! is_file($path)) {
         throw new RuntimeException("Benchmark artifact [{$path}] does not exist.");
@@ -23,12 +23,20 @@ function readBenchmarkResults(string $path) : array
         throw new RuntimeException("Benchmark artifact [{$path}] is invalid.");
     }
 
+    $meta = $decoded['meta'] ?? [];
+    if (! is_array($meta)) {
+        $meta = [];
+    }
+
     $results = $decoded['results'] ?? $decoded;
     if (! is_array($results)) {
         throw new RuntimeException("Benchmark artifact [{$path}] does not contain benchmark results.");
     }
 
-    return $results;
+    return [
+        'meta' => $meta,
+        'results' => $results,
+    ];
 }
 
 /**
@@ -83,11 +91,15 @@ function commonScenarios(array $reports) : array
 }
 
 /**
- * @param array<string, array<string, array<string, mixed>>> $reports
+ * @param array<string, array{meta: array<string, mixed>, results: array<string, array<string, mixed>>}> $artifacts
  * @return array<string, mixed>
  */
-function comparisonPayload(array $reports, string $baselineName) : array
+function comparisonPayload(array $artifacts, string $baselineName) : array
 {
+    $reports = array_map(
+        static fn(array $artifact) : array => $artifact['results'],
+        $artifacts
+    );
     $common = commonScenarios(reports: $reports);
     $baseline = $reports[$baselineName] ?? null;
     if (! is_array($baseline)) {
@@ -129,6 +141,10 @@ function comparisonPayload(array $reports, string $baselineName) : array
     return [
         'baseline' => $baselineName,
         'targets' => array_keys($reports),
+        'targetMeta' => array_map(
+            static fn(array $artifact) : array => $artifact['meta'],
+            $artifacts
+        ),
         'commonScenarios' => $common,
         'scenarioCount' => count($common),
         'scenarios' => $scenarios,
@@ -145,13 +161,13 @@ foreach ($argv as $argument) {
 }
 
 $targets = benchmarkTargets(arguments: array_slice($argv, 1));
-$reports = [];
+$artifacts = [];
 
 foreach ($targets as $name => $path) {
-    $reports[$name] = readBenchmarkResults(path: $path);
+    $artifacts[$name] = readBenchmarkArtifact(path: $path);
 }
 
-$comparison = comparisonPayload(reports: $reports, baselineName: $baselineName);
+$comparison = comparisonPayload(artifacts: $artifacts, baselineName: $baselineName);
 
 if ($jsonOutput) {
     echo json_encode($comparison, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;

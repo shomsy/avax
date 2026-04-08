@@ -6,6 +6,11 @@ namespace Avax\Container;
 
 use Avax\Container\Compilation\CompileReport;
 use Avax\Container\DependencyInjection\Dependencies\Bindings\DecoratorInterface;
+use Avax\Container\DependencyInjection\Dependencies\Ownership\Views\CapabilitySliceView;
+use Avax\Container\DependencyInjection\Dependencies\Ownership\Views\ConfigurationSliceView;
+use Avax\Container\DependencyInjection\Dependencies\Ownership\Views\FlowSliceView;
+use Avax\Container\DependencyInjection\Dependencies\Ownership\Views\FoundationSliceView;
+use Avax\Container\DependencyInjection\Dependencies\Ownership\Views\RootCompositionView;
 use Avax\Container\DependencyInjection\Flows\CallFunction;
 use Avax\Container\DependencyInjection\Flows\BootProviders;
 use Avax\Container\DependencyInjection\Flows\CloseScope;
@@ -14,6 +19,7 @@ use Avax\Container\DependencyInjection\Flows\OpenScope;
 use Avax\Container\DependencyInjection\Flows\RegisterServices;
 use Avax\Container\DependencyInjection\Dependencies\Bindings\RegisterForTarget;
 use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistration;
+use Avax\Container\DependencyInjection\Dependencies\Ownership\SliceContext;
 use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface;
 use Avax\Container\DependencyInjection\Flows\ResolveService;
 use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
@@ -117,6 +123,26 @@ final readonly class Container implements ContainerInterface
     public function debugGraph(string $id = '') : array
     {
         return $this->resolver->debugGraph(id: $id);
+    }
+
+    public function debugSlice(string $slice = '') : array
+    {
+        return $this->resolver->debugSlice(slice: $slice);
+    }
+
+    public function debugImports(string $slice = '') : array
+    {
+        return $this->resolver->debugImports(slice: $slice);
+    }
+
+    public function debugExports(string $slice = '') : array
+    {
+        return $this->resolver->debugExports(slice: $slice);
+    }
+
+    public function debugVisibilityViolations(array $serviceIds = []) : array
+    {
+        return $this->resolver->debugVisibilityViolations(serviceIds: $serviceIds);
     }
 
     /**
@@ -235,6 +261,41 @@ final readonly class Container implements ContainerInterface
         return $this->resolver->exportMetrics();
     }
 
+    public function exportGraph(string $format = 'json', string $kind = 'dependency', string $id = '') : string
+    {
+        return $this->resolver->exportGraph(format: $format, kind: $kind, id: $id);
+    }
+
+    public function diffGraph(string $format = 'json', string $id = '') : string
+    {
+        return $this->resolver->diffGraph(format: $format, id: $id);
+    }
+
+    public function why(string $id) : array
+    {
+        return $this->resolver->why(id: $id);
+    }
+
+    public function whoUses(string $id) : array
+    {
+        return $this->resolver->whoUses(id: $id);
+    }
+
+    public function whatBreaksIf(string $id) : array
+    {
+        return $this->resolver->whatBreaksIf(id: $id);
+    }
+
+    public function showOwner(string $id) : array
+    {
+        return $this->resolver->showOwner(id: $id);
+    }
+
+    public function showSlice(string $slice = '') : array
+    {
+        return $this->resolver->debugSlice(slice: $slice);
+    }
+
     public function alias(string $alias, string $abstract) : void
     {
         $this->registerServices()->alias(alias: $alias, abstract: $abstract);
@@ -304,9 +365,37 @@ final readonly class Container implements ContainerInterface
         return new ContextContainer(base: $this, resolver: $this->resolver, context: $context);
     }
 
+    public function forSlice(string $slice) : ContainerInterface
+    {
+        if (SliceContext::isRoot(slice: $slice)) {
+            return new RootCompositionView(base: $this, resolver: $this->resolver, context: []);
+        }
+
+        $context = SliceContext::with(context: [], slice: $slice);
+        if ($context === []) {
+            return $this;
+        }
+
+        return $this->sliceView(context: $context);
+    }
+
     private function registerServices() : RegisterServices
     {
         return new RegisterServices(resolver: $this->resolver);
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     */
+    private function sliceView(array $context) : ContainerInterface
+    {
+        return match (SliceContext::category(slice: SliceContext::from(context: $context))) {
+            'flow' => new FlowSliceView(base: $this, resolver: $this->resolver, context: $context),
+            'capability' => new CapabilitySliceView(base: $this, resolver: $this->resolver, context: $context),
+            'configuration' => new ConfigurationSliceView(base: $this, resolver: $this->resolver, context: $context),
+            'foundation' => new FoundationSliceView(base: $this, resolver: $this->resolver, context: $context),
+            default => new ContextContainer(base: $this, resolver: $this->resolver, context: $context),
+        };
     }
 
     private function resolveService() : ResolveService

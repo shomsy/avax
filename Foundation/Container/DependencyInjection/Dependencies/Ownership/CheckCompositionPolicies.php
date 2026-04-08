@@ -4,8 +4,18 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Dependencies\Ownership;
 
+use Avax\Container\Configuration\ContainerSettings;
+use Avax\Container\Configuration\CreateContainerConfig;
+use Avax\Container\Container;
+use Avax\Container\ContainerInterface;
 use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistry;
+use Avax\Container\DependencyInjection\Dependencies\Bindings\ServiceRegistryInterface;
 use Avax\Container\DependencyInjection\Dependencies\Blueprints\CreateServiceBlueprint;
+use Avax\Container\DependencyInjection\Dependencies\Resolution\LifetimePlan;
+use Avax\Container\DependencyInjection\Dependencies\Resolution\ResolutionPolicy;
+use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
+use Avax\Container\DependencyInjection\Scopes\ResettableInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 /**
  * Evaluates structural composition policies and returns machine-readable findings.
@@ -21,7 +31,8 @@ final readonly class CheckCompositionPolicies
         array $graph,
         array $dependents,
         ServiceRegistry $registrations,
-        CreateServiceBlueprint $blueprints
+        CreateServiceBlueprint $blueprints,
+        ResolutionPolicy $policy
     ) : array {
         $findings = [];
 
@@ -40,6 +51,7 @@ final readonly class CheckCompositionPolicies
                 $constructorArity = count($blueprint->constructor?->parameters ?? []);
                 if ($constructorArity >= 6) {
                     $findings[$serviceId][] = $this->finding(
+                        policy   : $policy,
                         code     : 'POL-001',
                         severity : 'warn',
                         category : 'composition',
@@ -53,6 +65,7 @@ final readonly class CheckCompositionPolicies
                 && count($dependents[$serviceId] ?? []) <= 1
             ) {
                 $findings[$serviceId][] = $this->finding(
+                    policy   : $policy,
                     code     : 'POL-002',
                     severity : 'warn',
                     category : 'ownership',
@@ -62,6 +75,7 @@ final readonly class CheckCompositionPolicies
 
             if ($metadata->category === RegistrationCategory::FOUNDATION && count($dependencies) >= 5) {
                 $findings[$serviceId][] = $this->finding(
+                    policy   : $policy,
                     code     : 'POL-003',
                     severity : 'warn',
                     category : 'architecture',
@@ -79,20 +93,137 @@ final readonly class CheckCompositionPolicies
                     && $metadata->ownerSlice !== $dependencyMetadata->ownerSlice
                 ) {
                     $findings[$serviceId][] = $this->finding(
+                        policy   : $policy,
                         code     : 'POL-004',
                         severity : 'error',
                         category : 'architecture',
                         message  : "flow slice [{$metadata->ownerSlice}] depends directly on flow slice [{$dependencyMetadata->ownerSlice}]"
                     );
                 }
+
+                if (in_array($dependency, [
+                    PsrContainerInterface::class,
+                    ContainerInterface::class,
+                    Container::class,
+                    ServiceResolver::class,
+                    ServiceRegistryInterface::class,
+                ], true)) {
+                    $findings[$serviceId][] = $this->finding(
+                        policy   : $policy,
+                        code     : 'POL-008',
+                        severity : 'error',
+                        category : 'runtime',
+                        message  : 'service depends on container runtime internals; this is service locator drift'
+                    );
+                }
+
+                if (in_array($dependency, [
+                    ContainerSettings::class,
+                    CreateContainerConfig::class,
+                ], true) && $metadata->category !== RegistrationCategory::CONFIGURATION) {
+                    $findings[$serviceId][] = $this->finding(
+                        policy   : $policy,
+                        code     : 'POL-009',
+                        severity : 'warn',
+                        category : 'runtime',
+                        message  : 'service depends on raw settings/config globals outside configuration ownership'
+                    );
+                }
             }
 
             if (in_array($metadata->concept, ['service', 'manager', 'helper', 'util', 'common', 'misc', 'core', 'base', 'shared'], true)) {
                 $findings[$serviceId][] = $this->finding(
+                    policy   : $policy,
                     code     : 'POL-005',
                     severity : 'warn',
                     category : 'naming',
                     message  : "concept name [{$metadata->concept}] is too generic for ownership-aware diagnostics"
+                );
+            }
+
+            $sliceTail = strtolower((string) basename(str_replace('.', '/', $metadata->ownerSlice)));
+            if (
+                $metadata->category === RegistrationCategory::CAPABILITY
+                && in_array($sliceTail, ['misc', 'common', 'shared', 'core', 'helpers', 'utils'], true)
+            ) {
+                $findings[$serviceId][] = $this->finding(
+                    policy   : $policy,
+                    code     : 'POL-010',
+                    severity : 'warn',
+                    category : 'architecture',
+                    message  : "capability slice [{$metadata->ownerSlice}] reads like a generic bucket"
+                );
+            }
+
+            if (
+                $metadata->category === RegistrationCategory::FLOW
+                && in_array($metadata->visibility, [RegistrationVisibility::PUBLIC, RegistrationVisibility::SHARED], true)
+                && $metadata->intent !== 'entry'
+            ) {
+                $findings[$serviceId][] = $this->finding(
+                    policy   : $policy,
+                    code     : 'POL-006',
+                    severity : 'warn',
+                    category : 'ownership',
+                    message  : 'flow unit uses shared or public visibility without entry intent; this may be an everything-shared-by-default smell'
+                );
+            }
+
+            if (
+                $metadata->ownerSlice === 'default'
+                && ($metadata->category !== RegistrationCategory::CONFIGURATION || $metadata->visibility !== RegistrationVisibility::PUBLIC)
+            ) {
+                $findings[$serviceId][] = $this->finding(
+                    policy   : $policy,
+                    code     : 'POL-011',
+                    severity : 'warn',
+                    category : 'ownership',
+                    message  : 'ownership posture still depends on the default slice; clarify the owning slice explicitly'
+                );
+            }
+
+            if (
+                $metadata->hasConditions()
+                && $metadata->visibility === RegistrationVisibility::INTERNAL
+                && ! $metadata->exported
+            ) {
+                $findings[$serviceId][] = $this->finding(
+                    policy   : $policy,
+                    code     : 'POL-013',
+                    severity : 'warn',
+                    category : 'runtime',
+                    message  : 'conditional registration is hidden behind internal runtime-only posture'
+                );
+            }
+
+            $lifetime = LifetimePlan::fromRegistration(serviceId: $serviceId, registration: $registration);
+            if ($lifetime->isPooled()) {
+                if (! is_string($candidate) || ! class_exists($candidate)) {
+                    $findings[$serviceId][] = $this->finding(
+                        policy   : $policy,
+                        code     : 'POL-007',
+                        severity : 'error',
+                        category : 'runtime',
+                        message  : 'pooled lifetime requires a class-backed container-owned object'
+                    );
+                } elseif ($lifetime->poolResetBeforeReuse && ! is_subclass_of($candidate, ResettableInterface::class)) {
+                    $findings[$serviceId][] = $this->finding(
+                        policy   : $policy,
+                        code     : 'POL-007',
+                        severity : 'error',
+                        category : 'runtime',
+                        message  : 'pooled lifetime enables reset-before-reuse but the class does not implement ResettableInterface'
+                    );
+                }
+            }
+
+            if (count($registrations->decorationChain(abstract: $serviceId)) >= 4) {
+                $findings[$serviceId][] = $this->finding(
+                    policy   : $policy,
+                    code     : 'POL-012',
+                    severity : 'warn',
+                    category : 'composition',
+                    message  : 'service has a long decorator chain; check for decorator sprawl'
                 );
             }
 
@@ -111,11 +242,17 @@ final readonly class CheckCompositionPolicies
     /**
      * @return array{code: string, severity: string, category: string, message: string}
      */
-    private function finding(string $code, string $severity, string $category, string $message) : array
+    private function finding(
+        ResolutionPolicy $policy,
+        string $code,
+        string $severity,
+        string $category,
+        string $message
+    ) : array
     {
         return [
             'code' => $code,
-            'severity' => $severity,
+            'severity' => $policy->severityFor(code: $code, defaultSeverity: $severity),
             'category' => $category,
             'message' => $message,
         ];

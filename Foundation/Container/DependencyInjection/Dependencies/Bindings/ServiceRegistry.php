@@ -451,6 +451,161 @@ final class ServiceRegistry implements ServiceRegistryInterface
     }
 
     /**
+     * @return array<string, mixed>|null
+     */
+    public function sliceManifest(string $slice) : array|null
+    {
+        $normalized = trim($slice);
+        if ($normalized === '') {
+            return null;
+        }
+
+        return $this->sliceManifests()[$normalized] ?? null;
+    }
+
+    /**
+     * @return array{allowed: bool, reason: string, viewer: array<string, mixed>, dependency: array<string, mixed>}
+     */
+    public function sliceAccessTo(string $viewerSlice, string $serviceId) : array
+    {
+        $normalized = trim($viewerSlice);
+        $manifest = $this->sliceManifest(slice: $normalized);
+        $dependency = $this->metadataFor(serviceId: $serviceId);
+
+        $viewer = [
+            'slice' => $normalized,
+            'exists' => $manifest !== null,
+            'category' => (string) ($manifest['category'] ?? ''),
+            'imports' => $manifest['imports'] ?? [],
+            'exports' => $manifest['exports'] ?? [],
+        ];
+
+        if ($manifest === null) {
+            return [
+                'allowed' => false,
+                'reason' => "slice view [{$normalized}] is not part of the current composition",
+                'viewer' => $viewer,
+                'dependency' => $dependency->toArray(),
+            ];
+        }
+
+        if ($dependency->ownerSlice === $normalized) {
+            return [
+                'allowed' => true,
+                'reason' => 'service belongs to the active slice view',
+                'viewer' => $viewer,
+                'dependency' => $dependency->toArray(),
+            ];
+        }
+
+        if ($dependency->visibility === RegistrationVisibility::PUBLIC) {
+            return [
+                'allowed' => true,
+                'reason' => 'service is part of the public surface',
+                'viewer' => $viewer,
+                'dependency' => $dependency->toArray(),
+            ];
+        }
+
+        if (
+            $dependency->visibility === RegistrationVisibility::SHARED
+            && $dependency->exported
+            && in_array($dependency->ownerSlice, $manifest['imports'] ?? [], true)
+        ) {
+            return [
+                'allowed' => true,
+                'reason' => 'service is shared, exported, and imported by the active slice view',
+                'viewer' => $viewer,
+                'dependency' => $dependency->toArray(),
+            ];
+        }
+
+        return [
+            'allowed' => false,
+            'reason' => match ($dependency->visibility) {
+                RegistrationVisibility::PRIVATE => 'private services stay inside their owning slice',
+                RegistrationVisibility::INTERNAL => 'internal services are implementation details of their owning slice',
+                RegistrationVisibility::SHARED => $dependency->exported
+                    ? "active slice [{$normalized}] does not import [{$dependency->ownerSlice}]"
+                    : 'shared service is not exported by its owning slice',
+                default => 'service is not visible from the active slice view',
+            },
+            'viewer' => $viewer,
+            'dependency' => $dependency->toArray(),
+        ];
+    }
+
+    public function allowsSliceAccess(string $viewerSlice, string $serviceId) : bool
+    {
+        $normalized = trim($viewerSlice);
+        if ($normalized === '') {
+            return false;
+        }
+
+        $manifest = $this->sliceManifest(slice: $normalized);
+        if ($manifest === null) {
+            return false;
+        }
+
+        $dependency = $this->metadataFor(serviceId: $serviceId);
+        if ($dependency->ownerSlice === $normalized) {
+            return true;
+        }
+
+        if ($dependency->visibility === RegistrationVisibility::PUBLIC) {
+            return true;
+        }
+
+        return $dependency->visibility === RegistrationVisibility::SHARED
+            && $dependency->exported
+            && in_array($dependency->ownerSlice, $manifest['imports'] ?? [], true);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function sliceView(string $slice) : array
+    {
+        $manifest = $this->sliceManifest(slice: $slice);
+        $visible = [];
+        $hidden = [];
+
+        foreach ($this->all() as $serviceId => $registration) {
+            $access = $this->sliceAccessTo(viewerSlice: $slice, serviceId: $serviceId);
+            $row = [
+                'serviceId' => $serviceId,
+                'ownerSlice' => $registration->metadata->ownerSlice,
+                'visibility' => $registration->metadata->visibility,
+                'reason' => $access['reason'],
+            ];
+
+            if ($access['allowed']) {
+                $visible[] = $row;
+                continue;
+            }
+
+            $hidden[] = $row;
+        }
+
+        usort(
+            $visible,
+            static fn(array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']
+        );
+        usort(
+            $hidden,
+            static fn(array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']
+        );
+
+        return [
+            'slice' => trim($slice),
+            'exists' => $manifest !== null,
+            'manifest' => $manifest,
+            'visible' => $visible,
+            'hidden' => $hidden,
+        ];
+    }
+
+    /**
      * @return list<array{concept: string, services: list<array{serviceId: string, ownerSlice: string, visibility: string}>}>
      */
     public function duplicateConcepts() : array
@@ -589,6 +744,28 @@ final class ServiceRegistry implements ServiceRegistryInterface
         ];
     }
 
+    public function allowsAccess(string $consumerId, string $dependencyId) : bool
+    {
+        $consumer = $this->metadataFor(serviceId: $consumerId);
+        $dependency = $this->metadataFor(serviceId: $dependencyId);
+
+        if ($consumer->ownerSlice === $dependency->ownerSlice) {
+            return true;
+        }
+
+        if ($dependency->ownerSlice === 'foundation.system') {
+            return true;
+        }
+
+        if ($dependency->visibility === RegistrationVisibility::PUBLIC) {
+            return true;
+        }
+
+        return $dependency->visibility === RegistrationVisibility::SHARED
+            && $dependency->exported
+            && in_array($dependency->ownerSlice, $consumer->imports, true);
+    }
+
     /**
      * @return array{allowed: bool, reason: string, dependency: array<string, mixed>}
      */
@@ -650,6 +827,29 @@ final class ServiceRegistry implements ServiceRegistryInterface
             },
             'dependency' => $dependency->toArray(),
         ];
+    }
+
+    public function allowsTopLevelAccess(string $serviceId) : bool
+    {
+        $dependency = $this->metadataFor(serviceId: $serviceId);
+
+        if ($dependency->ownerSlice === 'foundation.system') {
+            return true;
+        }
+
+        if (
+            $dependency->category === RegistrationCategory::FLOW
+            && $dependency->intent === 'entry'
+        ) {
+            return true;
+        }
+
+        if ($dependency->visibility === RegistrationVisibility::PUBLIC) {
+            return true;
+        }
+
+        return $dependency->visibility === RegistrationVisibility::SHARED
+            && $dependency->exported;
     }
 
     /**
@@ -908,6 +1108,9 @@ final class ServiceRegistry implements ServiceRegistryInterface
             'warm' => $registration->warm,
             'lazy' => $registration->lazy,
             'disposable' => $registration->disposable,
+            'poolSize' => $registration->poolSize,
+            'poolResetBeforeReuse' => $registration->poolResetBeforeReuse,
+            'poolScopeKind' => $registration->poolScopeKind,
             'group' => $registration->group,
             'groupOrder' => $registration->groupOrder,
             'tags' => $registration->tags,

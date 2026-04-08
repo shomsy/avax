@@ -89,11 +89,13 @@ assertTrue($container->isWarmedUp(), 'Public warmup status helpers should reflec
 assertTrue($compileReport !== null && $compileReport->available, 'Compile report should expose the active compiled artifact.');
 assertTrue($compileReport?->compatible ?? false, 'Compile report should expose artifact compatibility.');
 assertSame('fresh', $compileReport?->freshnessState, 'Compile reports should expose artifact freshness.');
-assertSame(1, $compileReport?->toArray()['schemaVersion'] ?? null, 'Compile reports should expose a stable JSON schema version.');
+assertSame(2, $compileReport?->toArray()['schemaVersion'] ?? null, 'Compile reports should expose a stable JSON schema version.');
+assertSame(CreateContainerConfig::EXECUTION_MODE_COMPILED, $compileReport?->executionMode, 'Compile reports should expose execution mode.');
 assertTrue(str_contains($compileReport?->toJson() ?? '', '"available": true'), 'Compile report should be JSON serializable.');
 assertSame($compileReport?->fingerprint, $runtimeReport->compiled?->fingerprint, 'Runtime report should point to the same compiled artifact report.');
 assertTrue($runtimeReport->compiledAttached || $runtimeReport->warmedUp, 'Runtime report should expose compiled runtime state.');
-assertSame(1, $runtimeReport->toArray()['schemaVersion'] ?? null, 'Runtime reports should expose a stable JSON schema version.');
+assertSame(3, $runtimeReport->toArray()['schemaVersion'] ?? null, 'Runtime reports should expose a stable JSON schema version.');
+assertSame(CreateContainerConfig::EXECUTION_MODE_COMPILED, $runtimeReport->executionMode, 'Runtime reports should expose execution mode.');
 assertTrue($runtimeReport->timelineEnabled === false, 'Minimal diagnostics mode should disable timeline recording.');
 assertSame(0, $runtimeReport->sharedServiceCount, 'Runtime report should summarize shared service counts without inventing unresolved shared instances.');
 assertSame(1, $runtimeReport->scopedServiceCount, 'Runtime report should summarize scoped service counts.');
@@ -124,6 +126,11 @@ assertSame(
     'compiled hot path is attached and usable',
     $description['explain']['compiled']['reason'],
     'Explain diagnostics should expose why the compiled path was selected.'
+);
+assertSame(
+    CreateContainerConfig::EXECUTION_MODE_COMPILED,
+    $description['compiledState']['executionMode'],
+    'Service diagnostics should expose compiled execution mode.'
 );
 assertSame(
     'service will resolve through a fresh build path and then enter lifetime storage if needed',

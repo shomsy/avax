@@ -1,0 +1,51 @@
+<?php
+
+declare(strict_types=1);
+
+require_once dirname(__DIR__) . '/bootstrap.php';
+
+final class GraphToolIdentityService
+{
+}
+
+final class GraphToolIdentitySecret
+{
+}
+
+final class GraphToolLoginEntry
+{
+    public function __construct(public GraphToolIdentityService $identity)
+    {
+    }
+}
+
+final class GraphToolStructureTarget
+{
+}
+
+$cacheDir = sys_get_temp_dir() . '/container-graph-tool-' . uniqid('', true);
+$container = makeTestContainer(\Avax\Container\Configuration\CreateContainerConfig::create(cacheDir: $cacheDir));
+
+$container->singleton(GraphToolIdentityService::class, GraphToolIdentityService::class)
+    ->asCapability('capability.identity')
+    ->asShared()
+    ->export();
+$container->bind(GraphToolIdentitySecret::class, GraphToolIdentitySecret::class)
+    ->asCapability('capability.identity')
+    ->asInternal();
+$container->bind(GraphToolLoginEntry::class, GraphToolLoginEntry::class)
+    ->asFlow('flow.login')
+    ->asPrivate()
+    ->entry()
+    ->import('capability.identity');
+$container->singleton(GraphToolStructureTarget::class, GraphToolStructureTarget::class)
+    ->asCapability('capability.graph')
+    ->asShared()
+    ->export();
+
+$container->compileContainer([GraphToolStructureTarget::class, GraphToolLoginEntry::class, GraphToolIdentityService::class]);
+$container->singleton(GraphToolStructureTarget::class, GraphToolStructureTarget::class)
+    ->asFoundation('foundation.graph')
+    ->asPublic();
+
+return $container;

@@ -27,4 +27,24 @@ This table is the canonical public surface ledger for the shipped container.
 | `validate()` | `ServiceResolver` validation | Validate obvious service graph issues without resolving values | Boots deferred providers for the validated slice and returns human-readable issues for ownership, lifetime, conditional composition, disposal, grouped order, decorators, and policy violations | none | [`ContextAndDiagnosticsSmokeTest.php`](../tests/DependencyInjection/Flows/ResolveService/ContextAndDiagnosticsSmokeTest.php), [`AdvancedLifetimeSmokeTest.php`](../tests/DependencyInjection/Scopes/AdvancedLifetimeSmokeTest.php), [`DecoratorAndRuntimeInputSmokeTest.php`](../tests/DependencyInjection/Flows/ResolveService/DecoratorAndRuntimeInputSmokeTest.php), [`ConditionalCompositionSmokeTest.php`](../tests/DependencyInjection/Flows/ResolveService/ConditionalCompositionSmokeTest.php), [`PolicyAndStructureDiffSmokeTest.php`](../tests/DependencyInjection/Flows/ResolveService/PolicyAndStructureDiffSmokeTest.php) | compile gate support |
 | `env()` / `exportMetrics()` | `ContainerSettings` + `Observability` | Read env-backed settings and export runtime counters | Metrics stay low-overhead in minimal mode; env lookups stay configuration-only | none | [`ContextAndDiagnosticsSmokeTest.php`](../tests/DependencyInjection/Flows/ResolveService/ContextAndDiagnosticsSmokeTest.php), [`CompiledCacheSmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/CompiledCacheSmokeTest.php) | operational visibility |
 
+## Slice View Surfaces
+
+| Surface | Owner | Effect | Compile/runtime behavior | Throws | Smoke evidence | Benchmark relevance |
+|:--|:--|:--|:--|:--|:--|:--|
+| `debugGraph('slice-id')` | `ServiceResolver` | Return filtered graph for specific slice | Runtime filter over authored registrations | none | [`SliceVisibilitySmokeTest.php`](../tests/DependencyInjection/Flows/SliceView/SliceVisibilitySmokeTest.php) | slice diagnostics |
+| `validate(['slice-id', ...])` | `ServiceResolver` | Validate specific slice(s) | Runtime validation | none | [`SliceValidationSmokeTest.php`](../tests/DependencyInjection/Flows/SliceView/SliceValidationSmokeTest.php) | compile gate |
+| `debugGraph()['slices']` | `ServiceResolver` | Return all slice manifests | Runtime | none | [`SliceDiagnosticsSmokeTest.php`](../tests/DependencyInjection/Flows/SliceView/SliceDiagnosticsSmokeTest.php) | diagnostics |
+
+## Pooled Lifetime Surfaces
+
+| Surface | Owner | Effect | Compile/runtime behavior | Throws | Smoke evidence | Benchmark relevance |
+|:--|:--|:--|:--|:--|:--|:--|
+| `pooled()` | `RegisterServices` | Register with pooled lifetime | Authored state only | none | [`PooledLifetimeSmokeTest.php`](../tests/DependencyInjection/Flows/RegisterServices/PooledLifetimeSmokeTest.php) | `pooled_reuse`, `pooled_reset` |
+| `maxPoolSize(int)` | `RegisterServices` | Configure pool size | Authored state only | none | [`PooledLifetimeSmokeTest.php`](../tests/DependencyInjection/Flows/RegisterServices/PooledLifetimeSmokeTest.php) | pool sizing |
+| `onOverflow(strategy)` | `RegisterServices` | Configure overflow behavior | Authored state only | none | [`PooledLifetimeSmokeTest.php`](../tests/DependencyInjection/Flows/RegisterServices/PooledLifetimeSmokeTest.php) | overflow handling |
+| `resetWith(callable)` | `RegisterServices` | Declare reset behavior | Authored state only | none | [`PooledLifetimeSmokeTest.php`](../tests/DependencyInjection/Flows/RegisterServices/PooledLifetimeSmokeTest.php) | pool reset |
+| `resettable()` | `RegisterServices` | Use class reset() method | Authored state only | none | [`PooledLifetimeSmokeTest.php`](../tests/DependencyInjection/Flows/RegisterServices/PooledLifetimeSmokeTest.php) | pool reset |
+| `debugScope()['pooled']` | `ServiceResolver` | Return pooled service state | Runtime | none | [`PooledDiagnosticsSmokeTest.php`](../tests/DependencyInjection/Diagnostics/PooledDiagnosticsSmokeTest.php) | pool visibility |
+| `runtimeReport()['poolStats']` | `ResolutionMetrics` | Return pool metrics | Runtime | none | [`PooledDiagnosticsSmokeTest.php`](../tests/DependencyInjection/Diagnostics/PooledDiagnosticsSmokeTest.php) | pool telemetry |
+
 The contract is also frozen by [`PublicContractSmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/PublicContractSmokeTest.php), which asserts the expected public method surface on both `ContainerInterface` and `Container`.

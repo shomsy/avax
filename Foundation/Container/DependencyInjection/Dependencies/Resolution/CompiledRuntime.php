@@ -21,7 +21,8 @@ final class CompiledRuntime
     public function __construct(
         private readonly CompileContainer|null $compiler = null,
         private readonly HotPathInliner $inliner = new HotPathInliner,
-        private readonly ResolutionMetrics|null $metrics = null
+        private readonly ResolutionMetrics|null $metrics = null,
+        private readonly string $executionMode = \Avax\Container\Configuration\CreateContainerConfig::EXECUTION_MODE_COMPILED
     ) {}
 
     public function compiledRevision() : int
@@ -111,6 +112,7 @@ final class CompiledRuntime
             'compatibilityIssues' => $report?->compatibilityIssues ?? [],
             'freshnessState' => $report?->freshnessState ?? 'missing',
             'compileMode' => $report?->compileMode ?? '',
+            'executionMode' => $report?->executionMode ?? $this->executionMode,
             'decision' => $decision['decision'],
             'reason' => $decision['reason'],
             'hotPath' => $inlinerState,
@@ -131,6 +133,7 @@ final class CompiledRuntime
             'artifactAvailable' => $report?->available ?? false,
             'compatible' => $report?->compatible ?? false,
             'freshnessState' => $report?->freshnessState ?? 'missing',
+            'executionMode' => $report?->executionMode ?? $this->executionMode,
             'reason' => $inlinerState['reason'],
         ];
     }
@@ -148,6 +151,14 @@ final class CompiledRuntime
                 'useCompiled' => false,
                 'decision' => 'dynamic',
                 'reason' => 'compiled runtime is not configured',
+            ];
+        }
+
+        if ($this->executionMode === \Avax\Container\Configuration\CreateContainerConfig::EXECUTION_MODE_DYNAMIC) {
+            return [
+                'useCompiled' => false,
+                'decision' => 'dynamic',
+                'reason' => 'execution mode is dynamic',
             ];
         }
 
@@ -190,13 +201,21 @@ final class CompiledRuntime
 
         return [
             'useCompiled' => true,
-            'decision' => 'compiled',
-            'reason' => 'compiled hot path is attached and usable',
+            'decision' => $this->executionMode === \Avax\Container\Configuration\CreateContainerConfig::EXECUTION_MODE_GENERATED
+                ? 'generated'
+                : 'compiled',
+            'reason' => $this->executionMode === \Avax\Container\Configuration\CreateContainerConfig::EXECUTION_MODE_GENERATED
+                ? 'generated execution path is attached and usable'
+                : 'compiled hot path is attached and usable',
         ];
     }
 
     public function shouldUse(ServiceRegistry $registrations, ResolveRequest $request) : bool
     {
+        if ($this->executionMode === \Avax\Container\Configuration\CreateContainerConfig::EXECUTION_MODE_DYNAMIC) {
+            return false;
+        }
+
         $this->refresh(registrations: $registrations, serviceId: $request->serviceId);
 
         if (! $this->inliner->has(serviceId: $request->serviceId)) {
@@ -227,6 +246,13 @@ final class CompiledRuntime
 
     public function refresh(ServiceRegistry $registrations, string|null $serviceId = null) : void
     {
+        if ($this->executionMode === \Avax\Container\Configuration\CreateContainerConfig::EXECUTION_MODE_DYNAMIC) {
+            $this->inliner->detach();
+            $this->compiledRevision = $registrations->revision();
+
+            return;
+        }
+
         if ($this->compiler === null) {
             return;
         }

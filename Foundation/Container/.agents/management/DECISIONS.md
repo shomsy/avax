@@ -16,6 +16,45 @@ ADR-lite decision log for non-trivial choices.
 
 ## Decisions
 
+- `id`: DEC-007
+  `recorded_at`: 2026-04-08 20:39 CEST
+  `decision_at`: 2026-04-08 20:39 CEST
+  `updated_at`: 2026-04-08 20:45 CEST
+  `status`: accepted
+  `context`: The container needed ownership-scoped resolution without creating a
+    separate `SliceContainer` class that would diverge from the existing
+    `ContextContainer` pattern.
+  `decision`: Implement slice views via `SliceContext` inside the existing context
+    system. `forSlice()` on `Container` and `ContextContainer` sets a slice key
+    in the context array, and `ServiceResolver` reads it via `SliceContext::from()`
+    to filter resolution, diagnostics, and access enforcement.
+  `consequences`: Slice views compose with context views by merging context
+    arrays. No new container class is needed. The existing `ContextContainer`
+    already implements the full `ContainerInterface` including `forSlice()`.
+    All diagnostics methods (describe, debug, validate) respect the slice
+    context when present.
+  `links`: `Container.php`, `ContextContainer.php`, `DependencyInjection/Dependencies/Ownership/SliceContext.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `docs/slice-view-contracts.md`, `docs/ownership-model.md`
+
+- `id`: DEC-006
+  `recorded_at`: 2026-04-08 20:39 CEST
+  `decision_at`: 2026-04-08 20:39 CEST
+  `updated_at`: 2026-04-08 20:45 CEST
+  `status`: accepted
+  `context`: The container needed a reusable instance lifetime that is neither
+    singleton (one instance forever) nor transient (fresh every time). Workers,
+    HTTP pools, and connection adapters need bounded reuse with explicit reset.
+  `decision`: Implement pooled lifetime as a bounded bucket inside `ServicePool`
+    with checkout/release semantics, scope-anchored usage, and a mandatory
+    `PooledServiceInterface::resetForReuse()` contract when reset-before-reuse is
+    enabled. Pooled services are built on first resolve, stored in the active
+    scope, returned to the idle bucket on scope close, and disposed on overflow
+    or unsafe return.
+  `consequences`: New `PooledLifetime`, `PooledServiceInterface`, and pool
+    methods on `ServicePool` and `ManageScopes`. Validation covers pooled
+    contract violations (POL-007), lifetime capture rules, warm/lazy conflicts,
+    and prebuilt instance rejection. Benchmarks include pooled scenarios.
+  `links`: `DependencyInjection/Scopes/Lifetimes/PooledLifetime.php`, `Runtime/PooledServiceInterface.php`, `Runtime/ServicePool.php`, `DependencyInjection/Scopes/ManageScopes.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `docs/pooled-lifetime-contracts.md`, `docs/lifetimes-and-scopes.md`
+
 - `id`: DEC-005
   `recorded_at`: 2026-04-07 04:40 CEST
   `decision_at`: 2026-04-07 04:40 CEST

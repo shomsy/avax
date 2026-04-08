@@ -108,6 +108,27 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
     /**
      * @return array<string, mixed>
      */
+    public function debugSlice(string $slice = '') : array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugImports(string $slice = '') : array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugExports(string $slice = '') : array;
+
+    /**
+     * @param list<string> $serviceIds
+     * @return array<string, mixed>
+     */
+    public function debugVisibilityViolations(array $serviceIds = []) : array;
+
+    /**
+     * @return array<string, mixed>
+     */
     public function debugTags(string $tag) : array;
 
     /**
@@ -229,9 +250,49 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
     public function exportMetrics() : string;
 
     /**
+     * Exports one graph artifact in the requested format.
+     */
+    public function exportGraph(string $format = 'json', string $kind = 'dependency', string $id = '') : string;
+
+    /**
+     * Exports one structural graph diff artifact.
+     */
+    public function diffGraph(string $format = 'json', string $id = '') : string;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function why(string $id) : array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function whoUses(string $id) : array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function whatBreaksIf(string $id) : array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function showOwner(string $id) : array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function showSlice(string $slice = '') : array;
+
+    /**
      * Returns a contextual view over the same container.
      *
      * @param array<string, mixed> $context
      */
     public function forContext(array $context) : ContainerInterface;
+
+    /**
+     * Returns one slice-aware view over the same container runtime.
+     */
+    public function forSlice(string $slice) : ContainerInterface;
 }

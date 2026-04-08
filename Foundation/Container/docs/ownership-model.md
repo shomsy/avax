@@ -92,6 +92,27 @@ This means the container can explain:
 - which units depend on it
 - what else is impacted if it changes
 
+## Slice Views
+
+`forSlice()` returns a container facade scoped to one slice:
+
+```php
+$billing = $container->forSlice('flow.billing');
+$payment = $billing->get(PaymentGateway::class);
+```
+
+The slice view uses `SliceContext` to filter resolution and diagnostics to the
+services visible from the named slice. Registration writes are not blocked but
+inherit the slice context for ownership-aware tracing.
+
+Slice views compose with context views:
+
+```php
+$container->forSlice('flow.billing')->forContext(['tenant' => 'acme']);
+```
+
+See also: [`slice-view-contracts.md`](./slice-view-contracts.md)
+
 ## Compile Boundary
 
 Ownership truth stays authored in `ServiceRegistry`.

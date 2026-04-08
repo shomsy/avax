@@ -18,11 +18,12 @@ final readonly class ArtifactMetadata
      * @param array<string, list<string>> $dependencies
      * @param array<string, string> $aliases
      * @param array<string, list<string>> $tags
-     * @param array<string, array{name: string, shared: bool, scoped: bool, transient: bool}> $lifetimes
+     * @param array<string, array{name: string, shared: bool, scoped: bool, transient: bool, pooled: bool, poolSize: int, poolResetBeforeReuse: bool}> $lifetimes
      * @param array<string, bool> $deferred
      * @param array<string, int> $decorations
      * @param array<string, array<string, mixed>> $ownership
      * @param array<string, array<string, mixed>> $slices
+     * @param array<string, mixed> $pruning
      * @param list<string> $changedServices
      * @param list<string> $invalidatedServices
      * @param list<string> $validationIssues
@@ -38,6 +39,8 @@ final readonly class ArtifactMetadata
         public string $settingsFingerprint,
         public string $environment,
         public string $compileMode,
+        public string $executionMode,
+        public string $pruneMode,
         public string $diagnosticsMode,
         public bool $strict,
         public string $fingerprint,
@@ -56,6 +59,7 @@ final readonly class ArtifactMetadata
         public array $decorations,
         public array $ownership,
         public array $slices,
+        public array $pruning,
         public array $changedServices,
         public array $invalidatedServices,
         public array $validationIssues,
@@ -78,6 +82,8 @@ final readonly class ArtifactMetadata
             settingsFingerprint: (string) ($state['settingsFingerprint'] ?? ''),
             environment     : (string) ($state['environment'] ?? ''),
             compileMode     : (string) ($state['compileMode'] ?? ''),
+            executionMode   : (string) ($state['executionMode'] ?? ''),
+            pruneMode       : (string) ($state['pruneMode'] ?? ''),
             diagnosticsMode : (string) ($state['diagnosticsMode'] ?? ''),
             strict          : (bool) ($state['strict'] ?? false),
             fingerprint     : (string) ($state['fingerprint'] ?? ''),
@@ -96,6 +102,7 @@ final readonly class ArtifactMetadata
             decorations     : self::intMap($state['decorations'] ?? []),
             ownership       : self::mapOfMaps($state['ownership'] ?? []),
             slices          : self::mapOfMaps($state['slices'] ?? []),
+            pruning         : self::map($state['pruning'] ?? []),
             changedServices : self::stringList($state['changedServices'] ?? []),
             invalidatedServices: self::stringList($state['invalidatedServices'] ?? []),
             validationIssues: self::stringList($state['validationIssues'] ?? []),
@@ -119,6 +126,8 @@ final readonly class ArtifactMetadata
             'settingsFingerprint' => $this->settingsFingerprint,
             'environment' => $this->environment,
             'compileMode' => $this->compileMode,
+            'executionMode' => $this->executionMode,
+            'pruneMode' => $this->pruneMode,
             'diagnosticsMode' => $this->diagnosticsMode,
             'strict' => $this->strict,
             'fingerprint' => $this->fingerprint,
@@ -137,6 +146,7 @@ final readonly class ArtifactMetadata
             'decorations' => $this->decorations,
             'ownership' => $this->ownership,
             'slices' => $this->slices,
+            'pruning' => $this->pruning,
             'changedServices' => $this->changedServices,
             'invalidatedServices' => $this->invalidatedServices,
             'validationIssues' => $this->validationIssues,
@@ -257,6 +267,31 @@ final readonly class ArtifactMetadata
             }
 
             $items[$key] = (int) $value;
+        }
+
+        ksort($items);
+
+        return $items;
+    }
+
+    /**
+     * @param mixed $state
+     * @return array<string, mixed>
+     */
+    private static function map(mixed $state) : array
+    {
+        if (! is_array($state)) {
+            return [];
+        }
+
+        $items = [];
+
+        foreach ($state as $key => $value) {
+            if (! is_string($key)) {
+                continue;
+            }
+
+            $items[$key] = $value;
         }
 
         ksort($items);

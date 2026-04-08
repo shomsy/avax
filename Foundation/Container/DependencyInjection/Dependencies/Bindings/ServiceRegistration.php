@@ -9,9 +9,11 @@ use Avax\Container\DependencyInjection\Dependencies\Ownership\RegistrationMetada
 use Avax\Container\DependencyInjection\Dependencies\Ownership\RegistrationVisibility;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\JobLifetime;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\OperationLifetime;
+use Avax\Container\DependencyInjection\Scopes\Lifetimes\PooledLifetime;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\RequestLifetime;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\TenantLifetime;
 use Avax\Container\DependencyInjection\Scopes\Lifetimes\TransientLifetime;
+use Avax\Container\DependencyInjection\Scopes\ScopeKind;
 
 /**
  * One stored service registration.
@@ -47,6 +49,12 @@ final class ServiceRegistration
      * Marks the runtime instance as explicitly disposable.
      */
     public bool $disposable = false;
+
+    public int $poolSize = 8;
+
+    public bool $poolResetBeforeReuse = true;
+
+    public string $poolScopeKind = ScopeKind::OPERATION;
 
     public string|null $group = null;
 
@@ -321,6 +329,20 @@ final class ServiceRegistration
         return $this;
     }
 
+    public function pooled(
+        int $maxSize = 8,
+        string $scopeKind = ScopeKind::OPERATION,
+        bool $resetBeforeReuse = true
+    ) : self {
+        $this->lifetime = PooledLifetime::NAME;
+        $this->poolSize = max(1, $maxSize);
+        $this->poolScopeKind = ScopeKind::normalize(kind: $scopeKind);
+        $this->poolResetBeforeReuse = $resetBeforeReuse;
+        $this->warm = false;
+
+        return $this;
+    }
+
     public function dispose(bool $disposable = true) : self
     {
         $this->disposable = $disposable;
@@ -349,6 +371,11 @@ final class ServiceRegistration
         $registration->warm = $array['warm'] ?? false;
         $registration->lazy = $array['lazy'] ?? false;
         $registration->disposable = $array['disposable'] ?? false;
+        $registration->poolSize = max(1, (int) ($array['poolSize'] ?? 8));
+        $registration->poolResetBeforeReuse = (bool) ($array['poolResetBeforeReuse'] ?? true);
+        $registration->poolScopeKind = ScopeKind::normalize(
+            kind: (string) ($array['poolScopeKind'] ?? ScopeKind::OPERATION)
+        );
         $registration->group = is_string($array['group'] ?? null) ? $array['group'] : null;
         $registration->groupOrder = (int) ($array['groupOrder'] ?? 0);
         $registration->tags = $array['tags'] ?? [];

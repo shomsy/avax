@@ -31,3 +31,25 @@
 - `Telemetry`: runtime counters and timeline events emitted by the resolver
 - `Clock`: the neutral time source used by observability
 - `Environment Hook`: a container-owned env lookup such as `Container::env()`
+- `Slice View`: a read-only projection of the container's service graph filtered by a specific slice (flow, capability, configuration, or foundation)
+- `Root Composition View`: the full container view without filtering; exposes all services
+- `Flow Slice`: a slice category for end-to-end system behavior (e.g., 'flow.login')
+- `Capability Slice`: a slice category for shared abilities that support multiple flows (e.g., 'capability.payments')
+- `Configuration Slice`: a slice category for assembly, composition, setup, and wiring
+- `Foundation Slice`: a slice category for low-level primitives and technical atoms
+- `Slice Visibility`: the rule set that determines which services a slice can access
+- `Export`: a declaration that makes a shared service available to importing slices
+- `Import`: a declaration that a slice requires access to a capability or shared service
+- `Private Visibility`: service stays inside the owning slice; not accessible cross-slice
+- `Internal Visibility`: implementation detail of the owning slice; not accessible cross-slice
+- `Shared Visibility`: reusable across slices when explicitly exported and imported
+- `Public Visibility`: part of the stable top-level surface
+- `Pooled Lifetime`: a service lifetime model where instances are reset and reused from a pool rather than disposed
+- `Pool Reset`: the action of clearing a pooled instance's state before returning it for reuse
+- `Overflow Strategy`: the policy for handling pool exhaustion (FAIL, EVICT, CREATE_NEW, BLOCK)
+- `Pool Statistics`: runtime metrics about pool utilization (hits, misses, resets, evictions)
+- `ResettableInterface`: the contract that marks a class as having a safe `reset()` method for pooled reuse
+- `Structural Diff`: the comparison between authored service graph and compiled/derived state
+- `Dead Registration`: a service that is registered but not reachable from any entry point
+- `Duplicate Concept`: multiple services claiming the same logical concept name
+- `Impact Analysis`: the diagnostic that shows what would be affected if a service changed

@@ -22,7 +22,7 @@ final class CompileContainer
 {
     private const FORMAT = 'compiled-container';
 
-    private const SCHEMA_VERSION = 6;
+    private const SCHEMA_VERSION = 8;
 
     private ServiceCompiler $services;
 
@@ -40,6 +40,8 @@ final class CompileContainer
         private readonly bool $strict = false,
         private readonly string $settingsFingerprint = '',
         private readonly string $benchmarkBuildMarker = '',
+        private readonly string $executionMode = \Avax\Container\Configuration\CreateContainerConfig::EXECUTION_MODE_COMPILED,
+        private readonly string $pruneMode = \Avax\Container\Configuration\CreateContainerConfig::PRUNE_MODE_NONE,
         private readonly bool $validateOnLoad = false,
         private readonly bool $failClosedOnCorruption = true,
         private readonly bool $validateBeforeCompile = false,
@@ -229,6 +231,8 @@ final class CompileContainer
             metadataPath    : $this->metadataPath(),
             cacheVersion    : $this->cacheVersion,
             compileMode     : $this->compileMode,
+            executionMode   : $metadata?->executionMode ?? $this->executionMode,
+            pruneMode       : $metadata?->pruneMode ?? $this->pruneMode,
             environment     : $this->environment,
             fingerprint     : $metadata?->fingerprint ?? '',
             checksumValid   : $checksumValid,
@@ -253,6 +257,12 @@ final class CompileContainer
             compatibilityIssues: $compatible ? [] : $compatibilityIssues,
             invalidationReasons: $metadata?->invalidationReasons ?? [],
             statistics      : $metadata?->statistics ?? [],
+            pruning         : $metadata?->pruning ?? [
+                'mode' => $this->pruneMode,
+                'rootServices' => [],
+                'prunedServices' => [],
+                'reasons' => [],
+            ],
             metadata        : $metadata
         );
     }
@@ -268,7 +278,7 @@ final class CompileContainer
      *     dependencies: array<string, list<string>>,
      *     aliases: array<string, string>,
      *     tags: array<string, list<string>>,
-     *     lifetimes: array<string, array{name: string, shared: bool, scoped: bool, transient: bool}>,
+     *     lifetimes: array<string, array{name: string, shared: bool, scoped: bool, transient: bool, pooled: bool, poolSize: int, poolResetBeforeReuse: bool}>,
      *     deferred: array<string, bool>,
      *     decorations: array<string, int>
      * }
@@ -276,13 +286,14 @@ final class CompileContainer
     private function snapshot(array $serviceIds) : array
     {
         $previous = $this->loadMetadata(quarantineOnFailure: false);
+        $selectedServiceIds = $this->collectServiceIds(serviceIds: $serviceIds);
         $services = [];
         $sources = [];
         $dependencies = [];
         $reusedServices = 0;
         $invalidationReasons = [];
 
-        foreach ($this->collectServiceIds(serviceIds: $serviceIds) as $serviceId) {
+        foreach ($selectedServiceIds as $serviceId) {
             $description = $this->services->describe(serviceId: $serviceId);
             $compiled = $this->services->compileFromDescription(description: $description);
             $services[] = $compiled;
@@ -351,6 +362,8 @@ final class CompileContainer
             'configHash' => $this->configHash,
             'environment' => $this->environment,
             'compileMode' => $this->compileMode,
+            'executionMode' => $this->executionMode,
+            'pruneMode' => $this->pruneMode,
             'strict' => $this->strict,
             'services' => $compiledServices,
             'sources' => $sources,
@@ -362,6 +375,11 @@ final class CompileContainer
             'decorations' => $this->registrations->decorationChains(),
             'ownership' => $this->registrations->ownershipMap(),
             'slices' => $this->registrations->sliceManifests(),
+            'pruning' => [
+                'mode' => $this->pruneMode,
+                'rootServices' => $this->pruneRoots(serviceIds: $serviceIds),
+                'prunedServices' => array_values(array_diff(array_keys($this->registrations->all()), $selectedServiceIds)),
+            ],
             'reusedServices' => $reusedServices,
         ]));
 
@@ -379,6 +397,17 @@ final class CompileContainer
             'decorations' => $this->registrations->decorationChains(),
             'ownership' => $this->registrations->ownershipMap(),
             'slices' => $this->registrations->sliceManifests(),
+            'pruning' => [
+                'mode' => $this->pruneMode,
+                'rootServices' => $this->pruneRoots(serviceIds: $serviceIds),
+                'prunedServices' => array_values(array_diff(array_keys($this->registrations->all()), $selectedServiceIds)),
+                'reasons' => $this->pruneMode === \Avax\Container\Configuration\CreateContainerConfig::PRUNE_MODE_STRICT
+                    ? [
+                        'strict pruning keeps only safe root services and their proven transitive closure',
+                        'deferred, conditional, grouped, tagged, aliased, contextual, and fallback services remain roots to avoid unsafe pruning',
+                    ]
+                    : [],
+            ],
             'statistics' => [
                 'reusedServices' => $reusedServices,
             ],
@@ -392,21 +421,7 @@ final class CompileContainer
      */
     private function collectServiceIds(array $serviceIds) : array
     {
-        $queue = [];
-
-        if ($serviceIds !== []) {
-            foreach (array_values(array_unique($serviceIds)) as $serviceId) {
-                $queue[] = $serviceId;
-            }
-        } else {
-            foreach ($this->registrations->all() as $registration) {
-                if ($registration->deferred) {
-                    continue;
-                }
-
-                $queue[] = $registration->abstract;
-            }
-        }
+        $queue = $this->pruneRoots(serviceIds: $serviceIds);
 
         $compiled = [];
 
@@ -440,6 +455,85 @@ final class CompileContainer
         }
 
         return array_keys($compiled);
+    }
+
+    /**
+     * @param list<string> $serviceIds
+     * @return list<string>
+     */
+    private function pruneRoots(array $serviceIds) : array
+    {
+        if ($serviceIds !== []) {
+            $roots = array_values(array_unique(array_map(
+                fn(string $serviceId) : string => $this->registrations->resolveAlias(abstract: $serviceId),
+                $serviceIds
+            )));
+            sort($roots);
+
+            return $roots;
+        }
+
+        if ($this->pruneMode !== \Avax\Container\Configuration\CreateContainerConfig::PRUNE_MODE_STRICT) {
+            $roots = [];
+
+            foreach ($this->registrations->all() as $registration) {
+                if ($registration->deferred) {
+                    continue;
+                }
+
+                $roots[] = $registration->abstract;
+            }
+
+            sort($roots);
+
+            return $roots;
+        }
+
+        $roots = [];
+
+        foreach ($this->registrations->all() as $serviceId => $registration) {
+            if (($this->registrations->topLevelAccessTo(serviceId: $serviceId)['allowed'] ?? false) === true) {
+                $roots[] = $serviceId;
+            }
+
+            if (
+                $registration->deferred
+                || $registration->metadata->hasConditions()
+                || $registration->metadata->fallback
+                || $registration->group !== null
+                || $registration->tags !== []
+            ) {
+                $roots[] = $serviceId;
+            }
+
+            foreach ($this->registrations->decorationChain(abstract: $serviceId) as $descriptor) {
+                if (is_string($descriptor) && $this->registrations->has(abstract: $descriptor)) {
+                    $roots[] = $descriptor;
+                }
+            }
+        }
+
+        foreach ($this->registrations->allAliases() as $target) {
+            $roots[] = $target;
+        }
+
+        foreach ($this->registrations->contextual() as $consumer => $rules) {
+            $roots[] = $consumer;
+
+            foreach ($rules as $candidate) {
+                if (is_string($candidate)) {
+                    $roots[] = $this->registrations->resolveAlias(abstract: $candidate);
+                }
+            }
+        }
+
+        $roots = array_values(array_unique(array_filter(
+            $roots,
+            static fn(string $serviceId) : bool => $serviceId !== ''
+        )));
+        sort($roots);
+
+        return $roots;
     }
 
     private function isCompilable(string $serviceId) : bool
@@ -624,11 +718,12 @@ PHP;
      *     dependencies: array<string, list<string>>,
      *     aliases: array<string, string>,
      *     tags: array<string, list<string>>,
-     *     lifetimes: array<string, array{name: string, shared: bool, scoped: bool, transient: bool}>,
+     *     lifetimes: array<string, array{name: string, shared: bool, scoped: bool, transient: bool, pooled: bool, poolSize: int, poolResetBeforeReuse: bool}>,
      *     deferred: array<string, bool>,
      *     decorations: array<string, int>,
      *     ownership: array<string, array<string, mixed>>,
      *     slices: array<string, array<string, mixed>>,
+     *     pruning: array<string, mixed>,
      *     statistics: array<string, int>,
      *     invalidationReasons: list<string>
      * } $snapshot
@@ -670,6 +765,8 @@ PHP;
             settingsFingerprint: $this->settingsFingerprint,
             environment     : $this->environment,
             compileMode     : $this->compileMode,
+            executionMode   : $this->executionMode,
+            pruneMode       : $this->pruneMode,
             diagnosticsMode : $this->diagnosticsMode,
             strict          : $this->strict,
             fingerprint     : $snapshot['fingerprint'],
@@ -693,6 +790,7 @@ PHP;
             decorations     : $snapshot['decorations'],
             ownership       : $snapshot['ownership'],
             slices          : $snapshot['slices'],
+            pruning         : $snapshot['pruning'],
             changedServices : $changedServices,
             invalidatedServices: $invalidatedServices,
             validationIssues: array_values(array_unique($validationIssues)),
@@ -713,6 +811,10 @@ PHP;
                 'sliceCount' => count($snapshot['slices']),
                 'providerBootPlanSize' => 0,
                 'lifetimePlans' => count($snapshot['lifetimes']),
+                'pooledServices' => count(array_filter(
+                    $snapshot['lifetimes'],
+                    static fn(array $plan) : bool => (bool) ($plan['pooled'] ?? false)
+                )),
                 'dependencyGraphEdges' => array_sum(array_map(
                     static fn(array $dependencies) : int => count($dependencies),
                     $snapshot['dependencies']
@@ -732,6 +834,8 @@ PHP;
             && $current->schemaVersion === $metadata->schemaVersion
             && $this->compatibilityIssuesFor(metadata: $current) === []
             && $current->diagnosticsMode === $metadata->diagnosticsMode
+            && $current->executionMode === $metadata->executionMode
+            && $current->pruneMode === $metadata->pruneMode
             && $current->settingsFingerprint === $metadata->settingsFingerprint
             && $current->dependencyGraphRevision === $metadata->dependencyGraphRevision
             && $current->warmed === $metadata->warmed
@@ -902,6 +1006,12 @@ PHP;
         }
         if ($metadata->compileMode !== $this->compileMode) {
             $issues[] = 'compile mode mismatch';
+        }
+        if ($metadata->executionMode !== $this->executionMode) {
+            $issues[] = 'execution mode mismatch';
+        }
+        if ($metadata->pruneMode !== $this->pruneMode) {
+            $issues[] = 'prune mode mismatch';
         }
         if ($metadata->diagnosticsMode !== $this->diagnosticsMode) {
             $issues[] = 'diagnostics mode mismatch';

@@ -89,6 +89,8 @@ assertSchemaKeys(
         'warmedUp',
         'diagnosticsMode',
         'executionMode',
+        'asyncTarget',
+        'sliceBoundaryMode',
         'timelineEnabled',
         'sharedServiceCount',
         'scopedServiceCount',

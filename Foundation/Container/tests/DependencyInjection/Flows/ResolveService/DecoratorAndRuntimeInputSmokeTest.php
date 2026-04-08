@@ -102,12 +102,17 @@ $container->singleton(SecondGroupedStep::class, SecondGroupedStep::class)
     ->export()
     ->group('checkout.steps', 10);
 
+$runtimeFactory = $container->factory(RuntimeInputConsumer::class);
 $consumer = $container->make(RuntimeInputConsumer::class, ['name' => 'Ada']);
+$factoryConsumer = $runtimeFactory(['name' => 'Grace']);
 $description = $container->describeService(DecoratedContract::class);
 $grouped = $container->grouped('checkout.steps');
 $graph = $container->debugGraph();
+$groupReport = $container->debugGroup('checkout.steps');
+$selectionReport = $container->debugSelection(DecoratedContract::class);
 
 assertSame('Ada', $consumer->name, 'Runtime input should come from explicit caller overrides.');
+assertSame('Grace', $factoryConsumer->name, 'Factory closures should resolve the same authored selection path with caller overrides.');
 assertTrue($consumer->service instanceof DecoratedService && $consumer->service->decorated, 'Decorators should still run before runtime-input consumers receive the service.');
 assertSame(
     [SecondGroupedStep::class, FirstGroupedStep::class],
@@ -119,8 +124,15 @@ assertSame(
     array_column($graph['groups']['checkout.steps'], 'serviceId'),
     'Graph diagnostics should expose grouped binding order.'
 );
+assertSame(
+    [SecondGroupedStep::class, FirstGroupedStep::class],
+    array_column($groupReport['items'], 'serviceId'),
+    'Group diagnostics should expose grouped binding order.'
+);
 assertSame(OwnedDecorator::class, $description['decorationDetails'][0]['descriptor'] ?? null, 'Decorator diagnostics should expose the registered decorator descriptor.');
 assertSame('billing', $description['decorationDetails'][0]['owner'] ?? null, 'Decorator diagnostics should expose the decorator owner slice.');
+assertSame(DecoratedContract::class, $selectionReport['service'] ?? null, 'Selection diagnostics should expose the selected service id.');
+assertSame(OwnedDecorator::class, $selectionReport['decorators'][0]['descriptor'] ?? null, 'Selection diagnostics should expose decorator wiring.');
 assertTrue(
     ($description['decorationDetails'][0]['access']['allowed'] ?? false) === true,
     'Decorator diagnostics should explain that visible decorators are allowed from the owning slice.'

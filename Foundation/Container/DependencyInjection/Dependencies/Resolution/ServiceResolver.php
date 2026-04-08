@@ -16,6 +16,7 @@ use Avax\Container\DependencyInjection\Dependencies\Blueprints\ServiceBlueprint;
 use Avax\Container\DependencyInjection\Dependencies\Providers\DeferredProviderRegistry;
 use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface;
 use Avax\Container\DependencyInjection\Dependencies\Ownership\CheckCompositionPolicies;
+use Avax\Container\DependencyInjection\Dependencies\Ownership\GovernComposition;
 use Avax\Container\DependencyInjection\Dependencies\Ownership\RegistrationCategory;
 use Avax\Container\DependencyInjection\Dependencies\Ownership\RegistrationMetadata;
 use Avax\Container\DependencyInjection\Dependencies\Ownership\RegistrationVisibility;
@@ -58,6 +59,8 @@ final class ServiceResolver
 
     private readonly DeferredProviderRegistry $deferredProviders;
 
+    private readonly GovernComposition $governor;
+
     /** @var array<string, true> */
     private array $lazyServices = [];
 
@@ -77,7 +80,11 @@ final class ServiceResolver
         ResolutionPolicy|null                  $policy = null,
         CompiledRuntime|null                   $compiledRuntime = null,
         DeferredProviderRegistry|null          $deferredProviders = null,
-        private readonly string                $diagnosticsMode = CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL
+        private readonly string                $diagnosticsMode = CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL,
+        private readonly string                $environment = '',
+        private readonly string                $sliceBoundaryMode = CreateContainerConfig::SLICE_BOUNDARY_MODE_STRICT,
+        private readonly string                $asyncTarget = CreateContainerConfig::ASYNC_TARGET_FPM,
+        GovernComposition|null                 $governor = null
     ) {
         $this->telemetry = new ResolutionTelemetry(
             metrics : $metrics ?? new ResolutionMetrics,
@@ -86,6 +93,7 @@ final class ServiceResolver
         $this->policy = $policy ?? new ResolutionPolicy;
         $this->compiledRuntime = $compiledRuntime ?? new CompiledRuntime(metrics: $metrics);
         $this->deferredProviders = $deferredProviders ?? new DeferredProviderRegistry;
+        $this->governor = $governor ?? new GovernComposition;
     }
 
     /**
@@ -243,10 +251,15 @@ final class ServiceResolver
         $this->validateGroupConflicts(issues: $issues);
         $this->validateEnvironmentProfiles(serviceIds: $validationServiceIds, issues: $issues);
         $this->validateDisposalSemantics(issues: $issues);
-        foreach ($this->policyFindings(graph: $graph, dependents: $this->buildDependents(graph: $graph)) as $serviceId => $findings) {
-            foreach ($findings as $finding) {
-                $issues[] = strtoupper($finding['severity']) . " {$finding['code']} [{$serviceId}]: {$finding['message']}.";
-            }
+        $governance = $this->governanceReport(
+            graph     : $graph,
+            dependents: $this->buildDependents(graph: $graph)
+        );
+        foreach ($this->governor->messages(report: $governance) as $message) {
+            $issues[] = $message . '.';
+        }
+        if (($governance['blocked'] ?? false) === true) {
+            $issues[] = 'Policy governance blocked the current composition under fail-closed enforcement.';
         }
 
         return array_values(array_unique($issues));
@@ -429,6 +442,16 @@ final class ServiceResolver
         return $this->compiledRuntime->report(serviceIds: $serviceIds);
     }
 
+    public function sliceBoundaryMode() : string
+    {
+        return $this->sliceBoundaryMode;
+    }
+
+    public function asyncTarget() : string
+    {
+        return $this->asyncTarget;
+    }
+
     /**
      * Returns the current disposable runtime state report.
      */
@@ -451,6 +474,8 @@ final class ServiceResolver
             compiledAttached    : $this->compiledRuntime->isAttached(),
             warmedUp            : $this->compiledRuntime->isWarmedUp(),
             executionMode       : (string) ($this->compiledRuntime->summary()['executionMode'] ?? \Avax\Container\Configuration\CreateContainerConfig::EXECUTION_MODE_DYNAMIC),
+            asyncTarget         : $this->asyncTarget,
+            sliceBoundaryMode   : $this->sliceBoundaryMode,
             diagnosticsMode     : $this->diagnosticsMode,
             timelineEnabled     : $this->telemetry->timeline()->enabled(),
             lazyServices        : $lazyServices,
@@ -475,6 +500,78 @@ final class ServiceResolver
             hotPath             : $this->compiledRuntime->summary(),
             compiled            : $this->compiledRuntime->report()
         );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugGovernance(string $id = '') : array
+    {
+        $graph = $this->buildDependencyGraph(serviceIds: $id !== '' ? [$id] : []);
+        $dependents = $this->buildDependents(graph: $graph);
+        $report = $this->governanceReport(graph: $graph, dependents: $dependents);
+
+        if ($id === '') {
+            return $report;
+        }
+
+        $resolved = $this->registrations->resolveAlias(abstract: $id);
+
+        return [
+            'service' => $resolved,
+            'profile' => $report['profile'],
+            'failMode' => $report['failMode'],
+            'blocked' => $report['blocked'],
+            'summary' => $report['summary'],
+            'findings' => $report['findings'][$resolved] ?? [],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugArchitecture(string $id = '') : array
+    {
+        $graph = $this->buildDependencyGraph(serviceIds: $id !== '' ? [$id] : []);
+        $dependents = $this->buildDependents(graph: $graph);
+        $governance = $this->governanceReport(graph: $graph, dependents: $dependents);
+        $insights = $this->architectureInsights(
+            graph      : $graph,
+            dependents : $dependents,
+            governance : $governance,
+            structureDiff: $this->structureDiff(graph: $graph)
+        );
+
+        if ($id === '') {
+            return $insights;
+        }
+
+        $resolved = $this->registrations->resolveAlias(abstract: $id);
+
+        return [
+            'service' => $resolved,
+            'singleConsumerShared' => array_values(array_filter(
+                $insights['singleConsumerShared'] ?? [],
+                static fn(array $item) : bool => $item['serviceId'] === $resolved
+            )),
+            'fakeFoundations' => array_values(array_filter(
+                $insights['fakeFoundations'] ?? [],
+                static fn(array $item) : bool => $item['serviceId'] === $resolved
+            )),
+            'speculativeShared' => array_values(array_filter(
+                $insights['speculativeShared'] ?? [],
+                static fn(array $item) : bool => $item['serviceId'] === $resolved
+            )),
+            'promotionCandidates' => array_values(array_filter(
+                $insights['promotionCandidates'] ?? [],
+                static fn(array $item) : bool => $item['serviceId'] === $resolved
+            )),
+            'namingSmells' => array_values(array_filter(
+                $insights['namingSmells'] ?? [],
+                static fn(array $item) : bool => $item['serviceId'] === $resolved
+            )),
+            'governance' => $governance['findings'][$resolved] ?? [],
+        ];
     }
 
     /**
@@ -546,9 +643,16 @@ final class ServiceResolver
         $dependents = $this->buildDependents(graph: $graph);
         $dead = $this->deadRegistrations(graph: $graph, dependents: $dependents);
         $duplicates = $this->registrations->duplicateConcepts();
-        $warnings = $this->policyWarnings(graph: $graph, dependents: $dependents);
-        $findings = $this->policyFindings(graph: $graph, dependents: $dependents);
+        $governance = $this->governanceReport(graph: $graph, dependents: $dependents);
+        $warnings = $this->policyWarnings(governance: $governance);
+        $findings = $governance['findings'];
         $structureDiff = $this->structureDiff(graph: $graph);
+        $architecture = $this->architectureInsights(
+            graph        : $graph,
+            dependents   : $dependents,
+            governance   : $governance,
+            structureDiff: $structureDiff
+        );
 
         if ($id === '') {
             $conditions = [];
@@ -565,6 +669,8 @@ final class ServiceResolver
                 'deadRegistrations' => $dead,
                 'duplicateConcepts' => $duplicates,
                 'structureDiff' => $structureDiff,
+                'governance' => $governance,
+                'architecture' => $architecture,
                 'policyFindings' => $findings,
                 'groups' => $this->registrations->groupIndex(),
                 'policyWarnings' => $warnings,
@@ -591,6 +697,17 @@ final class ServiceResolver
                 $duplicates,
                 static fn(array $duplicate) : bool => in_array($resolved, array_column($duplicate['services'], 'serviceId'), true)
             )),
+            'governance' => [
+                'profile' => $governance['profile'],
+                'failMode' => $governance['failMode'],
+                'blocked' => $governance['blocked'],
+                'summary' => $governance['summary'],
+            ],
+            'architecture' => $this->architectureForService(
+                serviceId    : $resolved,
+                architecture : $architecture,
+                governance   : $governance
+            ),
             'policyFindings' => $findings[$resolved] ?? [],
             'policyWarnings' => $warnings[$resolved] ?? [],
             'dead' => in_array($resolved, $dead, true),
@@ -622,15 +739,30 @@ final class ServiceResolver
                 $filteredDependents[$serviceId] = array_values(array_intersect($dependents, $visibleIds));
             }
             $filteredFindings = array_intersect_key($graph['policyFindings'] ?? [], array_fill_keys($visibleIds, true));
+            $filteredGroups = [];
+            foreach (($graph['groups'] ?? []) as $group => $items) {
+                $filteredItems = array_values(array_filter(
+                    $items,
+                    static fn(array $item) : bool => in_array((string) ($item['serviceId'] ?? ''), $visibleIds, true)
+                ));
+                if ($filteredItems !== []) {
+                    $filteredGroups[$group] = $filteredItems;
+                }
+            }
 
             return [
                 'sliceView' => $view,
                 'graph' => $filteredGraph,
                 'dependents' => $filteredDependents,
+                'governance' => array_merge(
+                    $graph['governance'] ?? [],
+                    ['findings' => $filteredFindings]
+                ),
+                'architecture' => $this->debugArchitectureInContext(id: '', context: $context),
                 'policyFindings' => $filteredFindings,
                 'hiddenServices' => $view['hidden'],
                 'structureDiff' => $graph['structureDiff'] ?? [],
-                'groups' => $graph['groups'] ?? [],
+                'groups' => $filteredGroups,
             ];
         }
 
@@ -642,6 +774,79 @@ final class ServiceResolver
         );
 
         return $graph;
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     * @return array<string, mixed>
+     */
+    public function debugGovernanceInContext(string $id, array $context) : array
+    {
+        $report = $this->debugGovernance(id: $id);
+        $slice = SliceContext::from(context: $context);
+
+        if ($slice === '') {
+            return $report;
+        }
+
+        if ($id !== '') {
+            $resolved = $this->registrations->resolveAlias(abstract: $id);
+
+            return array_merge(
+                $report,
+                [
+                    'sliceView' => $this->registrations->sliceView(slice: $slice),
+                    'viewAccess' => $this->registrations->sliceAccessTo(viewerSlice: $slice, serviceId: $resolved),
+                ]
+            );
+        }
+
+        $visible = array_fill_keys($this->visibleServiceIdsForSlice(slice: $slice), true);
+        $report['findings'] = array_intersect_key($report['findings'] ?? [], $visible);
+        $report['sliceView'] = $this->registrations->sliceView(slice: $slice);
+
+        return $report;
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     * @return array<string, mixed>
+     */
+    public function debugArchitectureInContext(string $id, array $context) : array
+    {
+        $report = $this->debugArchitecture(id: $id);
+        $slice = SliceContext::from(context: $context);
+
+        if ($slice === '') {
+            return $report;
+        }
+
+        if ($id !== '') {
+            $resolved = $this->registrations->resolveAlias(abstract: $id);
+
+            return array_merge(
+                $report,
+                [
+                    'sliceView' => $this->registrations->sliceView(slice: $slice),
+                    'viewAccess' => $this->registrations->sliceAccessTo(viewerSlice: $slice, serviceId: $resolved),
+                ]
+            );
+        }
+
+        $visible = array_fill_keys($this->visibleServiceIdsForSlice(slice: $slice), true);
+        foreach (['singleConsumerShared', 'fakeFoundations', 'speculativeShared', 'promotionCandidates', 'namingSmells'] as $key) {
+            $report[$key] = array_values(array_filter(
+                $report[$key] ?? [],
+                static fn(array $item) : bool => isset($visible[(string) ($item['serviceId'] ?? '')])
+            ));
+        }
+        $report['privateLeaks'] = array_values(array_filter(
+            $report['privateLeaks'] ?? [],
+            static fn(array $item) : bool => isset($visible[(string) ($item['consumerId'] ?? '')])
+        ));
+        $report['sliceView'] = $this->registrations->sliceView(slice: $slice);
+
+        return $report;
     }
 
     /**
@@ -980,6 +1185,108 @@ final class ServiceResolver
                 $ids
             ),
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugGroup(string $group) : array
+    {
+        $serviceIds = $this->registrations->getGroupedIds(group: $group);
+        $items = [];
+
+        foreach ($serviceIds as $serviceId) {
+            $registration = $this->registrations->get(abstract: $serviceId);
+            $items[] = [
+                'serviceId' => $serviceId,
+                'order' => $registration?->groupOrder ?? 0,
+                'ownerSlice' => $registration?->metadata->ownerSlice ?? 'default',
+                'visibility' => $registration?->metadata->visibility ?? RegistrationVisibility::PUBLIC,
+            ];
+        }
+
+        return [
+            'group' => $group,
+            'items' => $items,
+            'services' => array_map(
+                fn(string $serviceId) : array => $this->describeService(id: $serviceId),
+                $serviceIds
+            ),
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     * @return array<string, mixed>
+     */
+    public function debugGroupInContext(string $group, array $context) : array
+    {
+        $report = $this->debugGroup(group: $group);
+        $slice = SliceContext::from(context: $context);
+
+        if ($slice === '') {
+            return $report;
+        }
+
+        $visible = array_fill_keys($this->visibleServiceIdsForSlice(slice: $slice), true);
+        $report['items'] = array_values(array_filter(
+            $report['items'],
+            static fn(array $item) : bool => isset($visible[(string) ($item['serviceId'] ?? '')])
+        ));
+        $report['services'] = array_values(array_filter(
+            $report['services'],
+            static fn(array $service) : bool => isset($visible[(string) ($service['resolvedId'] ?? '')])
+        ));
+        $report['sliceView'] = $this->registrations->sliceView(slice: $slice);
+
+        return $report;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugSelection(string $id) : array
+    {
+        $description = $this->describeService(id: $id);
+        $resolved = (string) ($description['resolvedId'] ?? $id);
+        $registration = $this->registrations->get(abstract: $resolved);
+        $groupName = $registration?->group;
+        $tags = $registration?->tags ?? [];
+
+        return [
+            'service' => $resolved,
+            'aliasChain' => $description['aliasChain'] ?? [],
+            'conditions' => $description['conditions'] ?? [],
+            'contextualBindings' => $description['contextualBindings'] ?? [],
+            'group' => $groupName !== null ? $this->debugGroup(group: $groupName) : null,
+            'tags' => array_map(
+                fn(string $tag) : array => $this->debugTags(tag: $tag),
+                $tags
+            ),
+            'decorators' => $description['decorationDetails'] ?? [],
+            'compiledState' => $description['compiledState'] ?? [],
+            'topLevelAccess' => $description['topLevelAccess'] ?? [],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     * @return array<string, mixed>
+     */
+    public function debugSelectionInContext(string $id, array $context) : array
+    {
+        $report = $this->debugSelection(id: $id);
+        $slice = SliceContext::from(context: $context);
+
+        if ($slice === '') {
+            return $report;
+        }
+
+        $resolved = (string) ($report['service'] ?? $id);
+        $report['sliceView'] = $this->registrations->sliceView(slice: $slice);
+        $report['viewAccess'] = $this->registrations->sliceAccessTo(viewerSlice: $slice, serviceId: $resolved);
+
+        return $report;
     }
 
     /**
@@ -2680,6 +2987,8 @@ final class ServiceResolver
             'owner' => $this->ownerGraphArtifact(slice: $slice),
             'slice' => $this->sliceGraphArtifact(slice: $slice),
             'override' => $this->overrideGraphArtifact(id: $id, slice: $slice),
+            'architecture' => $this->architectureGraphArtifact(id: $id, slice: $slice),
+            'governance' => $this->policyGraphArtifact(id: $id, slice: $slice),
             'policy' => $this->policyGraphArtifact(id: $id, slice: $slice),
             default => $this->dependencyGraphArtifact(id: $id, slice: $slice),
         };
@@ -2999,7 +3308,11 @@ final class ServiceResolver
             $graph = $this->filterGraphToVisibleSlice(graph: $graph, slice: $slice);
         }
 
-        $findings = $this->policyFindings(graph: $graph, dependents: $this->buildDependents(graph: $graph));
+        $governance = $this->governanceReport(
+            graph     : $graph,
+            dependents: $this->buildDependents(graph: $graph)
+        );
+        $findings = $governance['findings'] ?? [];
         $nodes = [];
         $edges = [];
 
@@ -3024,7 +3337,76 @@ final class ServiceResolver
             'nodes' => array_values($nodes),
             'edges' => $edges,
             'meta' => [
+                'governance' => $governance,
                 'findings' => $findings,
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function architectureGraphArtifact(string $id, string $slice) : array
+    {
+        $graph = $this->buildDependencyGraph(serviceIds: $id !== '' ? [$id] : []);
+        if ($slice !== '') {
+            $graph = $this->filterGraphToVisibleSlice(graph: $graph, slice: $slice);
+        }
+
+        $dependents = $this->buildDependents(graph: $graph);
+        $governance = $this->governanceReport(graph: $graph, dependents: $dependents);
+        $architecture = $this->architectureInsights(
+            graph        : $graph,
+            dependents   : $dependents,
+            governance   : $governance,
+            structureDiff: $this->structureDiff(graph: $graph)
+        );
+
+        $nodes = [];
+        $edges = [];
+        $buckets = [
+            'singleConsumerShared',
+            'fakeFoundations',
+            'speculativeShared',
+            'promotionCandidates',
+            'namingSmells',
+        ];
+
+        foreach ($buckets as $bucket) {
+            $nodes['bucket:' . $bucket] = [
+                'id' => 'bucket:' . $bucket,
+                'label' => $bucket,
+                'type' => 'bucket',
+            ];
+
+            foreach ($architecture[$bucket] ?? [] as $item) {
+                $serviceId = (string) ($item['serviceId'] ?? '');
+                if ($serviceId === '') {
+                    continue;
+                }
+
+                $nodes[$serviceId] = [
+                    'id' => $serviceId,
+                    'label' => $serviceId,
+                    'type' => 'service',
+                ];
+                $edges[] = [
+                    'from' => 'bucket:' . $bucket,
+                    'to' => $serviceId,
+                    'label' => 'recommends',
+                ];
+            }
+        }
+
+        return [
+            'schemaVersion' => 1,
+            'kind' => 'architecture',
+            'scope' => $slice !== '' ? $slice : ($id !== '' ? $id : 'global'),
+            'nodes' => array_values($nodes),
+            'edges' => $edges,
+            'meta' => [
+                'governance' => $governance,
+                'architecture' => $architecture,
             ],
         ];
     }
@@ -3125,10 +3507,10 @@ final class ServiceResolver
      * @param array<string, list<string>> $dependents
      * @return array<string, list<string>>
      */
-    private function policyWarnings(array $graph, array $dependents) : array
+    private function policyWarnings(array $governance) : array
     {
         $warnings = [];
-        foreach ($this->policyFindings(graph: $graph, dependents: $dependents) as $serviceId => $findings) {
+        foreach ($governance['findings'] ?? [] as $serviceId => $findings) {
             $warnings[$serviceId] = array_map(
                 static fn(array $finding) : string => $finding['message'],
                 $findings
@@ -3145,13 +3527,159 @@ final class ServiceResolver
      */
     private function policyFindings(array $graph, array $dependents) : array
     {
-        return (new CheckCompositionPolicies)->check(
-            graph         : $graph,
-            dependents    : $dependents,
-            registrations : $this->registrations,
-            blueprints    : $this->blueprints,
-            policy        : $this->policy
+        return $this->governanceReport(graph: $graph, dependents: $dependents)['findings'] ?? [];
+    }
+
+    /**
+     * @param array<string, list<string>> $graph
+     * @param array<string, list<string>> $dependents
+     * @return array<string, mixed>
+     */
+    private function governanceReport(array $graph, array $dependents) : array
+    {
+        return $this->governor->report(
+            graph        : $graph,
+            dependents   : $dependents,
+            registrations: $this->registrations,
+            blueprints   : $this->blueprints,
+            policy       : $this->policy,
+            environment  : $this->environment
         );
+    }
+
+    /**
+     * @param array<string, list<string>> $graph
+     * @param array<string, list<string>> $dependents
+     * @param array<string, mixed> $governance
+     * @param array<string, mixed> $structureDiff
+     * @return array<string, mixed>
+     */
+    private function architectureInsights(
+        array $graph,
+        array $dependents,
+        array $governance,
+        array $structureDiff
+    ) : array {
+        $singleConsumerShared = [];
+        $fakeFoundations = [];
+        $speculativeShared = [];
+        $promotionCandidates = [];
+        $namingSmells = [];
+        $privateLeaks = [];
+
+        foreach ($this->registrations->all() as $serviceId => $registration) {
+            $metadata = $registration->metadata;
+            $consumers = $dependents[$serviceId] ?? [];
+            $consumerSlices = array_values(array_unique(array_map(
+                fn(string $consumerId) : string => ($this->registrations->ownership(abstract: $consumerId)?->ownerSlice ?? 'default'),
+                $consumers
+            )));
+            sort($consumerSlices);
+
+            if (
+                $metadata->visibility === RegistrationVisibility::SHARED
+                && count($consumers) <= 1
+            ) {
+                $singleConsumerShared[] = [
+                    'serviceId' => $serviceId,
+                    'ownerSlice' => $metadata->ownerSlice,
+                    'consumerCount' => count($consumers),
+                    'consumers' => $consumers,
+                ];
+                $speculativeShared[] = [
+                    'serviceId' => $serviceId,
+                    'ownerSlice' => $metadata->ownerSlice,
+                    'reason' => 'shared visibility has one or zero known consumers',
+                ];
+            }
+
+            if (
+                $metadata->category === RegistrationCategory::FOUNDATION
+                && count($graph[$serviceId] ?? []) >= 5
+            ) {
+                $fakeFoundations[] = [
+                    'serviceId' => $serviceId,
+                    'ownerSlice' => $metadata->ownerSlice,
+                    'dependencyCount' => count($graph[$serviceId] ?? []),
+                ];
+            }
+
+            if (
+                count($consumerSlices) >= 2
+                && ! in_array($metadata->visibility, [RegistrationVisibility::SHARED, RegistrationVisibility::PUBLIC], true)
+            ) {
+                $promotionCandidates[] = [
+                    'serviceId' => $serviceId,
+                    'ownerSlice' => $metadata->ownerSlice,
+                    'consumerSlices' => $consumerSlices,
+                    'reason' => 'multiple slices depend on this unit while it remains local-only',
+                ];
+            }
+
+            foreach ($governance['findings'][$serviceId] ?? [] as $finding) {
+                if (($finding['category'] ?? '') === 'naming') {
+                    $namingSmells[] = [
+                        'serviceId' => $serviceId,
+                        'ownerSlice' => $metadata->ownerSlice,
+                        'code' => $finding['code'],
+                        'message' => $finding['message'],
+                    ];
+                }
+            }
+        }
+
+        foreach ($this->debugVisibilityViolations()['violations'] ?? [] as $violation) {
+            $privateLeaks[] = [
+                'consumerId' => $violation['consumerId'],
+                'dependencyId' => $violation['dependencyId'],
+                'reason' => $violation['reason'],
+            ];
+        }
+
+        usort($singleConsumerShared, static fn(array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
+        usort($fakeFoundations, static fn(array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
+        usort($speculativeShared, static fn(array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
+        usort($promotionCandidates, static fn(array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
+        usort($namingSmells, static fn(array $left, array $right) : int => $left['serviceId'] <=> $right['serviceId']);
+        usort($privateLeaks, static fn(array $left, array $right) : int => [$left['consumerId'], $left['dependencyId']] <=> [$right['consumerId'], $right['dependencyId']]);
+
+        return [
+            'singleConsumerShared' => $singleConsumerShared,
+            'fakeFoundations' => $fakeFoundations,
+            'speculativeShared' => $speculativeShared,
+            'promotionCandidates' => $promotionCandidates,
+            'privateLeaks' => $privateLeaks,
+            'namingSmells' => $namingSmells,
+            'structuralDrift' => [
+                'changedDependencies' => count(array_filter(
+                    $structureDiff['dependencies'] ?? [],
+                    static fn(array $change) : bool => (bool) ($change['changed'] ?? false)
+                )),
+                'changedOwnership' => count(array_filter(
+                    $structureDiff['ownership'] ?? [],
+                    static fn(array $change) : bool => (bool) ($change['changed'] ?? false)
+                )),
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $architecture
+     * @param array<string, mixed> $governance
+     * @return array<string, mixed>
+     */
+    private function architectureForService(string $serviceId, array $architecture, array $governance) : array
+    {
+        $filter = static fn(array $item) : bool => ($item['serviceId'] ?? null) === $serviceId;
+
+        return [
+            'singleConsumerShared' => array_values(array_filter($architecture['singleConsumerShared'] ?? [], $filter)),
+            'fakeFoundations' => array_values(array_filter($architecture['fakeFoundations'] ?? [], $filter)),
+            'speculativeShared' => array_values(array_filter($architecture['speculativeShared'] ?? [], $filter)),
+            'promotionCandidates' => array_values(array_filter($architecture['promotionCandidates'] ?? [], $filter)),
+            'namingSmells' => array_values(array_filter($architecture['namingSmells'] ?? [], $filter)),
+            'governance' => $governance['findings'][$serviceId] ?? [],
+        ];
     }
 
     private function bootDeferredProviderIfNeeded(string $serviceId) : void

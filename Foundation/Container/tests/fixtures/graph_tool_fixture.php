@@ -23,6 +23,14 @@ final class GraphToolStructureTarget
 {
 }
 
+final class GraphToolStepOne
+{
+}
+
+final class GraphToolStepTwo
+{
+}
+
 $cacheDir = sys_get_temp_dir() . '/container-graph-tool-' . uniqid('', true);
 $container = makeTestContainer(\Avax\Container\Configuration\CreateContainerConfig::create(cacheDir: $cacheDir));
 
@@ -42,8 +50,24 @@ $container->singleton(GraphToolStructureTarget::class, GraphToolStructureTarget:
     ->asCapability('capability.graph')
     ->asShared()
     ->export();
+$container->singleton(GraphToolStepOne::class, GraphToolStepOne::class)
+    ->asCapability('capability.graph')
+    ->asShared()
+    ->export()
+    ->group('graph.steps', 20);
+$container->singleton(GraphToolStepTwo::class, GraphToolStepTwo::class)
+    ->asCapability('capability.graph')
+    ->asShared()
+    ->export()
+    ->group('graph.steps', 10);
 
-$container->compileContainer([GraphToolStructureTarget::class, GraphToolLoginEntry::class, GraphToolIdentityService::class]);
+$container->compileContainer([
+    GraphToolStructureTarget::class,
+    GraphToolLoginEntry::class,
+    GraphToolIdentityService::class,
+    GraphToolStepOne::class,
+    GraphToolStepTwo::class,
+]);
 $container->singleton(GraphToolStructureTarget::class, GraphToolStructureTarget::class)
     ->asFoundation('foundation.graph')
     ->asPublic();

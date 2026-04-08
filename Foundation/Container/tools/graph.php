@@ -49,6 +49,12 @@ switch ($command) {
         $print($container->exportGraph(format: $format, kind: $kind, id: $id));
         exit(0);
 
+    case 'graph:explore':
+        $kind = (string) ($argv[3] ?? 'dependency');
+        $id = (string) ($argv[4] ?? '');
+        $print($container->exportGraph(format: 'html', kind: $kind, id: $id));
+        exit(0);
+
     case 'graph:diff':
         $format = (string) ($argv[3] ?? 'json');
         $id = (string) ($argv[4] ?? '');
@@ -64,6 +70,16 @@ switch ($command) {
         $format = (string) ($argv[3] ?? 'json');
         $id = (string) ($argv[4] ?? '');
         $print($container->exportGraph(format: $format, kind: 'policy', id: $id));
+        exit(0);
+
+    case 'graph:architecture':
+        $format = (string) ($argv[3] ?? 'json');
+        $id = (string) ($argv[4] ?? '');
+        $print($container->exportGraph(format: $format, kind: 'architecture', id: $id));
+        exit(0);
+
+    case 'graph:governance':
+        $print($container->debugGovernance(id: (string) ($argv[3] ?? '')));
         exit(0);
 
     case 'why':
@@ -84,6 +100,18 @@ switch ($command) {
 
     case 'show-slice':
         $print($container->showSlice(slice: (string) ($argv[3] ?? '')));
+        exit(0);
+
+    case 'group':
+        $print($container->debugGroup(group: (string) ($argv[3] ?? '')));
+        exit(0);
+
+    case 'selection':
+        $print($container->debugSelection(id: (string) ($argv[3] ?? '')));
+        exit(0);
+
+    case 'architecture:debug':
+        $print($container->debugArchitecture(id: (string) ($argv[3] ?? '')));
         exit(0);
 
     default:

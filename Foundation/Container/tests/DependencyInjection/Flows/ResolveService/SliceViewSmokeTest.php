@@ -5,7 +5,6 @@ declare(strict_types=1);
 require_once dirname(__DIR__, 3) . '/bootstrap.php';
 
 use Avax\Container\Errors\ContainerException;
-
 interface SlicePaymentGateway
 {
     public function label() : string;
@@ -43,6 +42,10 @@ final class SliceConfigProbe
 }
 
 final class SliceClock
+{
+}
+
+final class SliceBillingOwnedService
 {
 }
 
@@ -108,6 +111,8 @@ $billingSlice = $billing->debugSlice();
 $billingImports = $billing->debugImports();
 $paymentsExports = $payments->debugExports();
 $violations = $billing->debugVisibilityViolations([SliceInternalAudit::class]);
+$billingGovernance = $billing->debugGovernance();
+$billingArchitecture = $billing->debugArchitecture();
 
 assertSame('flow.billing', $billingGraph['sliceView']['slice'] ?? null, 'Slice graph diagnostics should expose the active slice view.');
 assertSame('flow.billing', $globalBillingGraph['sliceView']['slice'] ?? null, 'Global graph diagnostics should be able to pivot into one slice view.');
@@ -130,8 +135,47 @@ assertTrue(
     in_array(SliceInternalAudit::class, array_column($violations['violations'] ?? [], 'dependencyId'), true),
     'debugVisibilityViolations() should report blocked slice access attempts.'
 );
+assertSame('flow.billing', $billingGovernance['sliceView']['slice'] ?? null, 'Slice governance diagnostics should expose the active slice view.');
+assertSame('flow.billing', $billingArchitecture['sliceView']['slice'] ?? null, 'Slice architecture diagnostics should expose the active slice view.');
 assertSame(false, $billingServiceGraph['viewAccess']['allowed'] ?? true, 'Per-service slice graph diagnostics should explain blocked access.');
 assertSame(false, $billingDescription['viewAccess']['allowed'] ?? true, 'Slice-aware descriptions should expose blocked view access.');
+
+$ownedRegistration = $billing->bind(SliceBillingOwnedService::class, SliceBillingOwnedService::class);
+
+assertSame('flow.billing', $ownedRegistration->metadata->ownerSlice, 'Strict slice views should stamp new registrations with the active slice owner.');
+assertSame('flow', $ownedRegistration->metadata->category, 'Strict slice views should stamp new registrations with the active slice category.');
+
+assertThrows(
+    LogicException::class,
+    static function () use ($ownedRegistration) : void {
+        $ownedRegistration->asCapability('capability.payments');
+    },
+    'Strict slice views should lock registration ownership against cross-slice mutation.'
+);
+
+assertThrows(
+    InvalidArgumentException::class,
+    static function () use ($billing) : void {
+        $billing->tag(SlicePaymentGateway::class, 'illegal');
+    },
+    'Strict slice views should block mutating imported services.'
+);
+
+assertThrows(
+    InvalidArgumentException::class,
+    static function () use ($billing) : void {
+        $billing->alias('billing.gateway', SlicePaymentGateway::class);
+    },
+    'Strict slice views should block global alias mutation.'
+);
+
+assertThrows(
+    InvalidArgumentException::class,
+    static function () use ($billing) : void {
+        $billing->flushCompiled();
+    },
+    'Strict slice views should block global compiled artifact mutation.'
+);
 
 assertThrows(
     ContainerException::class,

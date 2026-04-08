@@ -25,6 +25,14 @@ final readonly class CreateContainerConfig
 
     public const POLICY_PROFILE_STRICT = 'strict';
 
+    public const POLICY_FAIL_MODE_OPEN = 'open';
+
+    public const POLICY_FAIL_MODE_CLOSED = 'closed';
+
+    public const SLICE_BOUNDARY_MODE_PROJECTED = 'projected';
+
+    public const SLICE_BOUNDARY_MODE_STRICT = 'strict';
+
     public const ASYNC_TARGET_FPM = 'fpm';
 
     public const ASYNC_TARGET_WORKER = 'worker';
@@ -61,6 +69,10 @@ final readonly class CreateContainerConfig
         public string $executionMode = self::EXECUTION_MODE_COMPILED,
         public string $pruneMode = self::PRUNE_MODE_NONE,
         public string $policyProfile = self::POLICY_PROFILE_BALANCED,
+        public string $policyFailMode = self::POLICY_FAIL_MODE_CLOSED,
+        /** @var array<string, string> */
+        public array $policyProfiles = [],
+        public string $sliceBoundaryMode = self::SLICE_BOUNDARY_MODE_STRICT,
         public string $asyncTarget = self::ASYNC_TARGET_FPM
     ) {}
 
@@ -78,6 +90,9 @@ final readonly class CreateContainerConfig
         string $executionMode = self::EXECUTION_MODE_COMPILED,
         string $pruneMode = self::PRUNE_MODE_NONE,
         string $policyProfile = self::POLICY_PROFILE_BALANCED,
+        string $policyFailMode = self::POLICY_FAIL_MODE_CLOSED,
+        array $policyProfiles = [],
+        string $sliceBoundaryMode = self::SLICE_BOUNDARY_MODE_STRICT,
         string $asyncTarget = self::ASYNC_TARGET_FPM
     ) : self
     {
@@ -92,7 +107,51 @@ final readonly class CreateContainerConfig
             executionMode: self::normalizeExecutionMode(mode: $executionMode),
             pruneMode   : self::normalizePruneMode(mode: $pruneMode),
             policyProfile: self::normalizePolicyProfile(profile: $policyProfile),
+            policyFailMode: self::normalizePolicyFailMode(mode: $policyFailMode),
+            policyProfiles: self::normalizePolicyProfiles(profiles: $policyProfiles),
+            sliceBoundaryMode: self::normalizeSliceBoundaryMode(mode: $sliceBoundaryMode),
             asyncTarget : self::normalizeAsyncTarget(target: $asyncTarget)
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $overrides
+     */
+    private function copy(array $overrides = []) : self
+    {
+        return new self(
+            cacheDir    : (string) ($overrides['cacheDir'] ?? $this->cacheDir),
+            cacheVersion: (string) ($overrides['cacheVersion'] ?? $this->cacheVersion),
+            debug       : (bool) ($overrides['debug'] ?? $this->debug),
+            settings    : $overrides['settings'] ?? $this->settings,
+            strict      : (bool) ($overrides['strict'] ?? $this->strict),
+            compileMode : isset($overrides['compileMode'])
+                ? self::normalizeCompileMode(mode: (string) $overrides['compileMode'])
+                : $this->compileMode,
+            diagnosticsMode: isset($overrides['diagnosticsMode'])
+                ? self::normalizeDiagnosticsMode(mode: (string) $overrides['diagnosticsMode'])
+                : $this->diagnosticsMode,
+            executionMode: isset($overrides['executionMode'])
+                ? self::normalizeExecutionMode(mode: (string) $overrides['executionMode'])
+                : $this->executionMode,
+            pruneMode   : isset($overrides['pruneMode'])
+                ? self::normalizePruneMode(mode: (string) $overrides['pruneMode'])
+                : $this->pruneMode,
+            policyProfile: isset($overrides['policyProfile'])
+                ? self::normalizePolicyProfile(profile: (string) $overrides['policyProfile'])
+                : $this->policyProfile,
+            policyFailMode: isset($overrides['policyFailMode'])
+                ? self::normalizePolicyFailMode(mode: (string) $overrides['policyFailMode'])
+                : $this->policyFailMode,
+            policyProfiles: array_key_exists('policyProfiles', $overrides)
+                ? self::normalizePolicyProfiles(profiles: $overrides['policyProfiles'])
+                : $this->policyProfiles,
+            sliceBoundaryMode: isset($overrides['sliceBoundaryMode'])
+                ? self::normalizeSliceBoundaryMode(mode: (string) $overrides['sliceBoundaryMode'])
+                : $this->sliceBoundaryMode,
+            asyncTarget : isset($overrides['asyncTarget'])
+                ? self::normalizeAsyncTarget(target: (string) $overrides['asyncTarget'])
+                : $this->asyncTarget
         );
     }
 
@@ -101,189 +160,75 @@ final readonly class CreateContainerConfig
      */
     public function withSettings(array $settings) : self
     {
-        return new self(
-            cacheDir    : $this->cacheDir,
-            cacheVersion: $this->cacheVersion,
-            debug       : $this->debug,
-            settings    : $settings,
-            strict      : $this->strict,
-            compileMode : $this->compileMode,
-            diagnosticsMode: $this->diagnosticsMode,
-            executionMode: $this->executionMode,
-            pruneMode   : $this->pruneMode,
-            policyProfile: $this->policyProfile,
-            asyncTarget : $this->asyncTarget
-        );
+        return $this->copy(overrides: ['settings' => $settings]);
     }
 
     public function withDebug(bool $debug) : self
     {
-        return new self(
-            cacheDir    : $this->cacheDir,
-            cacheVersion: $this->cacheVersion,
-            debug       : $debug,
-            settings    : $this->settings,
-            strict      : $this->strict,
-            compileMode : $this->compileMode,
-            diagnosticsMode: $this->diagnosticsMode,
-            executionMode: $this->executionMode,
-            pruneMode   : $this->pruneMode,
-            policyProfile: $this->policyProfile,
-            asyncTarget : $this->asyncTarget
-        );
+        return $this->copy(overrides: ['debug' => $debug]);
     }
 
     public function withStrict(bool $strict) : self
     {
-        return new self(
-            cacheDir    : $this->cacheDir,
-            cacheVersion: $this->cacheVersion,
-            debug       : $this->debug,
-            settings    : $this->settings,
-            strict      : $strict,
-            compileMode : $this->compileMode,
-            diagnosticsMode: $this->diagnosticsMode,
-            executionMode: $this->executionMode,
-            pruneMode   : $this->pruneMode,
-            policyProfile: $this->policyProfile,
-            asyncTarget : $this->asyncTarget
-        );
+        return $this->copy(overrides: ['strict' => $strict]);
     }
 
     public function withCacheDir(string $cacheDir) : self
     {
-        return new self(
-            cacheDir    : $cacheDir,
-            cacheVersion: $this->cacheVersion,
-            debug       : $this->debug,
-            settings    : $this->settings,
-            strict      : $this->strict,
-            compileMode : $this->compileMode,
-            diagnosticsMode: $this->diagnosticsMode,
-            executionMode: $this->executionMode,
-            pruneMode   : $this->pruneMode,
-            policyProfile: $this->policyProfile,
-            asyncTarget : $this->asyncTarget
-        );
+        return $this->copy(overrides: ['cacheDir' => $cacheDir]);
     }
 
     public function withCacheVersion(string $cacheVersion) : self
     {
-        return new self(
-            cacheDir    : $this->cacheDir,
-            cacheVersion: $cacheVersion,
-            debug       : $this->debug,
-            settings    : $this->settings,
-            strict      : $this->strict,
-            compileMode : $this->compileMode,
-            diagnosticsMode: $this->diagnosticsMode,
-            executionMode: $this->executionMode,
-            pruneMode   : $this->pruneMode,
-            policyProfile: $this->policyProfile,
-            asyncTarget : $this->asyncTarget
-        );
+        return $this->copy(overrides: ['cacheVersion' => $cacheVersion]);
     }
 
     public function withCompileMode(string $compileMode) : self
     {
-        return new self(
-            cacheDir    : $this->cacheDir,
-            cacheVersion: $this->cacheVersion,
-            debug       : $this->debug,
-            settings    : $this->settings,
-            strict      : $this->strict,
-            compileMode : self::normalizeCompileMode(mode: $compileMode),
-            diagnosticsMode: $this->diagnosticsMode,
-            executionMode: $this->executionMode,
-            pruneMode   : $this->pruneMode,
-            policyProfile: $this->policyProfile,
-            asyncTarget : $this->asyncTarget
-        );
+        return $this->copy(overrides: ['compileMode' => $compileMode]);
     }
 
     public function withDiagnosticsMode(string $diagnosticsMode) : self
     {
-        return new self(
-            cacheDir    : $this->cacheDir,
-            cacheVersion: $this->cacheVersion,
-            debug       : $this->debug,
-            settings    : $this->settings,
-            strict      : $this->strict,
-            compileMode : $this->compileMode,
-            diagnosticsMode: self::normalizeDiagnosticsMode(mode: $diagnosticsMode),
-            executionMode: $this->executionMode,
-            pruneMode   : $this->pruneMode,
-            policyProfile: $this->policyProfile,
-            asyncTarget : $this->asyncTarget
-        );
+        return $this->copy(overrides: ['diagnosticsMode' => $diagnosticsMode]);
     }
 
     public function withExecutionMode(string $executionMode) : self
     {
-        return new self(
-            cacheDir    : $this->cacheDir,
-            cacheVersion: $this->cacheVersion,
-            debug       : $this->debug,
-            settings    : $this->settings,
-            strict      : $this->strict,
-            compileMode : $this->compileMode,
-            diagnosticsMode: $this->diagnosticsMode,
-            executionMode: self::normalizeExecutionMode(mode: $executionMode),
-            pruneMode   : $this->pruneMode,
-            policyProfile: $this->policyProfile,
-            asyncTarget : $this->asyncTarget
-        );
+        return $this->copy(overrides: ['executionMode' => $executionMode]);
     }
 
     public function withPruneMode(string $pruneMode) : self
     {
-        return new self(
-            cacheDir    : $this->cacheDir,
-            cacheVersion: $this->cacheVersion,
-            debug       : $this->debug,
-            settings    : $this->settings,
-            strict      : $this->strict,
-            compileMode : $this->compileMode,
-            diagnosticsMode: $this->diagnosticsMode,
-            executionMode: $this->executionMode,
-            pruneMode   : self::normalizePruneMode(mode: $pruneMode),
-            policyProfile: $this->policyProfile,
-            asyncTarget : $this->asyncTarget
-        );
+        return $this->copy(overrides: ['pruneMode' => $pruneMode]);
     }
 
     public function withPolicyProfile(string $policyProfile) : self
     {
-        return new self(
-            cacheDir    : $this->cacheDir,
-            cacheVersion: $this->cacheVersion,
-            debug       : $this->debug,
-            settings    : $this->settings,
-            strict      : $this->strict,
-            compileMode : $this->compileMode,
-            diagnosticsMode: $this->diagnosticsMode,
-            executionMode: $this->executionMode,
-            pruneMode   : $this->pruneMode,
-            policyProfile: self::normalizePolicyProfile(profile: $policyProfile),
-            asyncTarget : $this->asyncTarget
-        );
+        return $this->copy(overrides: ['policyProfile' => $policyProfile]);
+    }
+
+    public function withPolicyFailMode(string $policyFailMode) : self
+    {
+        return $this->copy(overrides: ['policyFailMode' => $policyFailMode]);
+    }
+
+    /**
+     * @param array<string, string> $policyProfiles
+     */
+    public function withPolicyProfiles(array $policyProfiles) : self
+    {
+        return $this->copy(overrides: ['policyProfiles' => $policyProfiles]);
+    }
+
+    public function withSliceBoundaryMode(string $sliceBoundaryMode) : self
+    {
+        return $this->copy(overrides: ['sliceBoundaryMode' => $sliceBoundaryMode]);
     }
 
     public function withAsyncTarget(string $asyncTarget) : self
     {
-        return new self(
-            cacheDir    : $this->cacheDir,
-            cacheVersion: $this->cacheVersion,
-            debug       : $this->debug,
-            settings    : $this->settings,
-            strict      : $this->strict,
-            compileMode : $this->compileMode,
-            diagnosticsMode: $this->diagnosticsMode,
-            executionMode: $this->executionMode,
-            pruneMode   : $this->pruneMode,
-            policyProfile: $this->policyProfile,
-            asyncTarget : self::normalizeAsyncTarget(target: $asyncTarget)
-        );
+        return $this->copy(overrides: ['asyncTarget' => $asyncTarget]);
     }
 
     public function environment() : string
@@ -312,10 +257,21 @@ final readonly class CreateContainerConfig
             'executionMode' => $this->executionMode,
             'pruneMode' => $this->pruneMode,
             'policyProfile' => $this->policyProfile,
+            'policyFailMode' => $this->policyFailMode,
+            'policyProfiles' => $this->policyProfiles,
+            'sliceBoundaryMode' => $this->sliceBoundaryMode,
             'asyncTarget' => $this->asyncTarget,
             'environment' => $this->environment(),
             'settings' => $this->settings,
         ]));
+    }
+
+    public function effectivePolicyProfile() : string
+    {
+        $environment = $this->environment();
+
+        return $this->policyProfiles[$environment]
+            ?? $this->policyProfile;
     }
 
     public function settingsFingerprint() : string
@@ -390,6 +346,16 @@ final readonly class CreateContainerConfig
         return $this->pruneMode === self::PRUNE_MODE_STRICT;
     }
 
+    public function failsClosedOnPolicy() : bool
+    {
+        return $this->policyFailMode === self::POLICY_FAIL_MODE_CLOSED;
+    }
+
+    public function usesStrictSliceBoundaries() : bool
+    {
+        return $this->sliceBoundaryMode === self::SLICE_BOUNDARY_MODE_STRICT;
+    }
+
     public function supportsAsyncTarget() : bool
     {
         return in_array($this->asyncTarget, [self::ASYNC_TARGET_FPM, self::ASYNC_TARGET_WORKER], true);
@@ -432,6 +398,54 @@ final readonly class CreateContainerConfig
             self::POLICY_PROFILE_BALANCED,
             self::POLICY_PROFILE_STRICT => $profile,
             default => self::POLICY_PROFILE_BALANCED,
+        };
+    }
+
+    private static function normalizePolicyFailMode(string $mode) : string
+    {
+        return match ($mode) {
+            self::POLICY_FAIL_MODE_OPEN,
+            self::POLICY_FAIL_MODE_CLOSED => $mode,
+            default => self::POLICY_FAIL_MODE_CLOSED,
+        };
+    }
+
+    /**
+     * @param mixed $profiles
+     * @return array<string, string>
+     */
+    private static function normalizePolicyProfiles(mixed $profiles) : array
+    {
+        if (! is_array($profiles)) {
+            return [];
+        }
+
+        $normalized = [];
+
+        foreach ($profiles as $environment => $profile) {
+            if (! is_string($environment) || ! is_string($profile)) {
+                continue;
+            }
+
+            $environment = trim($environment);
+            if ($environment === '') {
+                continue;
+            }
+
+            $normalized[$environment] = self::normalizePolicyProfile(profile: $profile);
+        }
+
+        ksort($normalized);
+
+        return $normalized;
+    }
+
+    private static function normalizeSliceBoundaryMode(string $mode) : string
+    {
+        return match ($mode) {
+            self::SLICE_BOUNDARY_MODE_PROJECTED,
+            self::SLICE_BOUNDARY_MODE_STRICT => $mode,
+            default => self::SLICE_BOUNDARY_MODE_STRICT,
         };
     }
 

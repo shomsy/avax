@@ -26,6 +26,7 @@ use Avax\Container\DependencyInjection\Dependencies\Resolution\ServiceResolver;
 use Avax\Container\Observability\RuntimeReport;
 use Avax\Container\DependencyInjection\Scopes\ScopeInterface;
 use Avax\Container\Runtime\LazyProxy;
+use Closure;
 
 /**
  * Stable public facade for the container component.
@@ -49,6 +50,14 @@ final readonly class Container implements ContainerInterface
     public function make(string $abstract, array $parameters = []) : object
     {
         return $this->resolveService()->make(abstract: $abstract, parameters: $parameters);
+    }
+
+    public function factory(string $abstract) : Closure
+    {
+        return fn(array $parameters = []) : object => $this->make(
+            abstract  : $abstract,
+            parameters: $parameters
+        );
     }
 
     public function call(callable|string $callable, array $parameters = []) : mixed
@@ -125,6 +134,16 @@ final readonly class Container implements ContainerInterface
         return $this->resolver->debugGraph(id: $id);
     }
 
+    public function debugGovernance(string $id = '') : array
+    {
+        return $this->resolver->debugGovernance(id: $id);
+    }
+
+    public function debugArchitecture(string $id = '') : array
+    {
+        return $this->resolver->debugArchitecture(id: $id);
+    }
+
     public function debugSlice(string $slice = '') : array
     {
         return $this->resolver->debugSlice(slice: $slice);
@@ -151,6 +170,16 @@ final readonly class Container implements ContainerInterface
     public function debugTags(string $tag) : array
     {
         return $this->resolver->debugTags(tag: $tag);
+    }
+
+    public function debugGroup(string $group) : array
+    {
+        return $this->resolver->debugGroup(group: $group);
+    }
+
+    public function debugSelection(string $id) : array
+    {
+        return $this->resolver->debugSelection(id: $id);
     }
 
     /**

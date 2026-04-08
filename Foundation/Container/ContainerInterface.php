@@ -14,6 +14,7 @@ use Avax\Container\Errors\ServiceNotFoundException;
 use Avax\Container\DependencyInjection\Scopes\ScopeInterface;
 use Avax\Container\Observability\RuntimeReport;
 use Avax\Container\Runtime\LazyProxy;
+use Closure;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
@@ -30,6 +31,13 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
      * @throws ServiceNotFoundException
      */
     public function make(string $abstract, array $parameters = []) : object;
+
+    /**
+     * Returns a thin factory closure over one container entry.
+     *
+     * @return Closure(array<string, mixed>=): object
+     */
+    public function factory(string $abstract) : Closure;
 
     /**
      * Executes one callable through the container.
@@ -108,6 +116,16 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
     /**
      * @return array<string, mixed>
      */
+    public function debugGovernance(string $id = '') : array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugArchitecture(string $id = '') : array;
+
+    /**
+     * @return array<string, mixed>
+     */
     public function debugSlice(string $slice = '') : array;
 
     /**
@@ -130,6 +148,16 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
      * @return array<string, mixed>
      */
     public function debugTags(string $tag) : array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugGroup(string $group) : array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function debugSelection(string $id) : array;
 
     /**
      * @return array<string, string>

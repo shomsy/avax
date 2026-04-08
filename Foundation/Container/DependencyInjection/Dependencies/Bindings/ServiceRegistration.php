@@ -234,6 +234,16 @@ final class ServiceRegistration
         return $this;
     }
 
+    public function lockOwnership(string $ownerSlice, string $category) : self
+    {
+        $this->metadata = $this->metadata->lockOwnership(
+            ownerSlice: $ownerSlice,
+            category  : $category
+        );
+
+        return $this;
+    }
+
     public function asFlow(string $ownerSlice) : self
     {
         return $this

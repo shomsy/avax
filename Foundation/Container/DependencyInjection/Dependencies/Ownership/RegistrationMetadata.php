@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Container\DependencyInjection\Dependencies\Ownership;
 
+use LogicException;
+
 /**
  * Canonical authored ownership metadata for one registration.
  */
@@ -49,6 +51,10 @@ final class RegistrationMetadata
 
     public readonly bool $fallback;
 
+    public readonly bool $ownerLocked;
+
+    public readonly bool $categoryLocked;
+
     /**
      * @param list<string> $profiles
      * @param list<string> $flags
@@ -74,7 +80,9 @@ final class RegistrationMetadata
         bool $exported = false,
         array $imports = [],
         string $concept = '',
-        bool $fallback = false
+        bool $fallback = false,
+        bool $ownerLocked = false,
+        bool $categoryLocked = false
     ) {
         $this->unitId = $unitId;
         $this->ownerSlice = self::normalizeSlice(slice: $ownerSlice);
@@ -96,6 +104,8 @@ final class RegistrationMetadata
             fallback: self::derivedConcept(unitId: $unitId)
         );
         $this->fallback = $fallback;
+        $this->ownerLocked = $ownerLocked;
+        $this->categoryLocked = $categoryLocked;
     }
 
     public static function for(string $unitId) : self
@@ -127,7 +137,9 @@ final class RegistrationMetadata
             exported      : (bool) ($state['exported'] ?? false),
             imports       : self::stringList(values: $state['imports'] ?? []),
             concept       : (string) ($state['concept'] ?? ''),
-            fallback      : (bool) ($state['fallback'] ?? false)
+            fallback      : (bool) ($state['fallback'] ?? false),
+            ownerLocked   : (bool) ($state['ownerLocked'] ?? false),
+            categoryLocked: (bool) ($state['categoryLocked'] ?? false)
         );
     }
 
@@ -141,11 +153,25 @@ final class RegistrationMetadata
 
     public function withOwnerSlice(string $ownerSlice) : self
     {
+        $normalized = self::normalizeSlice(slice: $ownerSlice);
+        if ($this->ownerLocked && $normalized !== $this->ownerSlice) {
+            throw new LogicException(
+                message: "Registration ownership is locked to [{$this->ownerSlice}] and cannot move to [{$normalized}]."
+            );
+        }
+
         return $this->copy(overrides: ['ownerSlice' => $ownerSlice]);
     }
 
     public function withCategory(string $category) : self
     {
+        $normalized = RegistrationCategory::normalize(category: $category);
+        if ($this->categoryLocked && $normalized !== $this->category) {
+            throw new LogicException(
+                message: "Registration category is locked to [{$this->category}] and cannot move to [{$normalized}]."
+            );
+        }
+
         return $this->copy(overrides: ['category' => $category]);
     }
 
@@ -237,6 +263,25 @@ final class RegistrationMetadata
         return $this->copy(overrides: ['fallback' => $fallback]);
     }
 
+    public function lockOwnerSlice() : self
+    {
+        return $this->copy(overrides: ['ownerLocked' => true]);
+    }
+
+    public function lockCategory() : self
+    {
+        return $this->copy(overrides: ['categoryLocked' => true]);
+    }
+
+    public function lockOwnership(string $ownerSlice, string $category) : self
+    {
+        return $this
+            ->withOwnerSlice(ownerSlice: $ownerSlice)
+            ->withCategory(category: $category)
+            ->lockOwnerSlice()
+            ->lockCategory();
+    }
+
     public function hasConditions() : bool
     {
         return $this->profiles !== []
@@ -320,6 +365,8 @@ final class RegistrationMetadata
             'imports' => $this->imports,
             'concept' => $this->concept,
             'fallback' => $this->fallback,
+            'ownerLocked' => $this->ownerLocked,
+            'categoryLocked' => $this->categoryLocked,
         ];
     }
 
@@ -408,7 +455,9 @@ final class RegistrationMetadata
             exported      : (bool) ($overrides['exported'] ?? $this->exported),
             imports       : $overrides['imports'] ?? $this->imports,
             concept       : (string) ($overrides['concept'] ?? $this->concept),
-            fallback      : (bool) ($overrides['fallback'] ?? $this->fallback)
+            fallback      : (bool) ($overrides['fallback'] ?? $this->fallback),
+            ownerLocked   : (bool) ($overrides['ownerLocked'] ?? $this->ownerLocked),
+            categoryLocked: (bool) ($overrides['categoryLocked'] ?? $this->categoryLocked)
         );
     }
 }

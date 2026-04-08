@@ -21,6 +21,11 @@ namespace Psr\Container {
 
 namespace {
     $root = dirname(__DIR__);
+    $composerAutoload = dirname(__DIR__, 2) . '/vendor/autoload.php';
+    if (is_file($composerAutoload)) {
+        require_once $composerAutoload;
+    }
+
     spl_autoload_register(
         static function (string $class) use ($root) : void {
             $prefix = 'Avax\\Container\\';

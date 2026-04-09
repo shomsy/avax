@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Avax\Migrations\BaseMigration;
 use Avax\Migrations\Design\BaseMigration;
 use Avax\Migrations\Design\Table\Blueprint;
 

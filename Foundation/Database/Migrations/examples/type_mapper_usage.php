@@ -9,9 +9,8 @@ declare(strict_types=1);
  */
 
 use Avax\Migrations\Design\TypeMapping\SQLToPHPTypeMapper;
-use Avax\Migrations\TypeMapping\SQLToPHPTypeMapper;
 
-require_once __DIR__ . '/../TypeMapping/SQLToPHPTypeMapper.php';
+require_once __DIR__ . '/../Design/TypeMapping/SQLToPHPTypeMapper.php';
 
 $mapper = new SQLToPHPTypeMapper;
 

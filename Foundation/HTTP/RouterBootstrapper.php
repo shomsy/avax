@@ -6,10 +6,9 @@ namespace Avax\HTTP;
 
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Middleware\MiddlewareInterface;
-use Avax\HTTP\Router\RouteCollection;
 use Avax\HTTP\Router\RouterInterface;
-use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteCollection;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use InvalidArgumentException;
 use ReflectionException;

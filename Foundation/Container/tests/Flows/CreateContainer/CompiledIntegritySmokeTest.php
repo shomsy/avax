@@ -50,7 +50,10 @@ $productionReload = makeTestContainer($productionConfig);
 $productionReload->singleton(IntegrityDependency::class, IntegrityDependency::class);
 
 assertThrows(
-    ContainerException::class,
+/**
+ * @throws \Psr\Container\ContainerExceptionInterface
+ * @throws \Psr\Container\NotFoundExceptionInterface
+ */ ContainerException::class,
     static fn() => $productionReload->get(IntegrityTarget::class),
     'Production mode should fail closed when the compiled artifact is corrupted.'
 );

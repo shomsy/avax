@@ -8,7 +8,6 @@ use Avax\HTTP\Router\Cache\RouteCacheLoader;
 use Avax\HTTP\Router\Routing\DomainAwareMatcher;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteMatcher;
-use Avax\HTTP\Router\Routing\RouteCollection;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;

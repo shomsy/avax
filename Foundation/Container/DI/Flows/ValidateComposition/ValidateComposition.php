@@ -20,8 +20,9 @@ final readonly class ValidateComposition
      * @param array<string, mixed> $context
      * @return list<string>
      */
-    public function validate(array $serviceIds = [], array $context = []) : array
+    public function validate(array|null $serviceIds = null, array $context = []) : array
     {
+        $serviceIds ??= [];
         if ($context === []) {
             return $this->resolver->validate(serviceIds: $serviceIds);
         }

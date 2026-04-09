@@ -203,11 +203,12 @@ final readonly class ManageScopes implements ScopeInterface
     }
 
     public function setScoped(
-        string $abstract,
-        mixed $instance,
-        string $kind = ScopeKind::ANY,
-        bool $disposable = false
+        string      $abstract,
+        mixed       $instance,
+        string|null $kind = null,
+        bool        $disposable = false
     ) : void {
+        $kind ??= ScopeKind::ANY;
         $this->store->setFor(
             abstract   : $abstract,
             instance   : $instance,
@@ -225,12 +226,13 @@ final readonly class ManageScopes implements ScopeInterface
      * @return array{hit: bool, instance: mixed}
      */
     public function checkoutPooled(
-        string $abstract,
-        string $kind,
-        int $maxSize,
-        bool $resetBeforeReuse = true,
-        bool $disposable = false
+        string    $abstract,
+        string    $kind,
+        int       $maxSize,
+        bool|null $resetBeforeReuse = null,
+        bool      $disposable = false
     ) : array {
+        $resetBeforeReuse ??= true;
         if ($this->store->hasPooledFor(abstract: $abstract, kind: $kind)) {
             return [
                 'hit' => true,
@@ -266,13 +268,14 @@ final readonly class ManageScopes implements ScopeInterface
     }
 
     public function setPooled(
-        string $abstract,
-        mixed $instance,
-        string $kind,
-        int $maxSize,
-        bool $resetBeforeReuse = true,
-        bool $disposable = false
+        string    $abstract,
+        mixed     $instance,
+        string    $kind,
+        int       $maxSize,
+        bool|null $resetBeforeReuse = null,
+        bool      $disposable = false
     ) : void {
+        $resetBeforeReuse ??= true;
         $this->store->setPooledFor(
             abstract         : $abstract,
             instance         : $instance,

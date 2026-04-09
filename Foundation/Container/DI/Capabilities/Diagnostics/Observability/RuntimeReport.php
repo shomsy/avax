@@ -24,7 +24,11 @@ final readonly class RuntimeReport implements JsonSerializable
      * @param array{
      *     shared: array<string, string>,
      *     scopedDepth: int,
-     *     scoped: array<int, array<string, string>>
+     *     scoped: array<int, array<string, string>>,
+     *     pooled: array<string, string>,
+     *     pooledAvailable: array<string, string>,
+     *     pooledStats: array<string, int>,
+     *     frames: list<string>
      * } $scopes
      */
     public function __construct(

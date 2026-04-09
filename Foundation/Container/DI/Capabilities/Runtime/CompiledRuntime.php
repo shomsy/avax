@@ -10,7 +10,6 @@ use Avax\Container\DI\Capabilities\Composition\Compilation\CompiledContainer;
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
 use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
-use Avax\Container\DI\Capabilities\Runtime\HotPathInliner;
 use Avax\Container\DI\Capabilities\Resolution\ResolveRequest;
 use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
 
@@ -66,8 +65,11 @@ final class CompiledRuntime
         return $this->compiler?->shouldValidateBeforeCompile() ?? false;
     }
 
-    public function compile(array $serviceIds = [], array $validationIssues = [], bool $warmed = false) : CompiledContainer|null
+    public function compile(array|null $serviceIds = null, array|null $validationIssues = null, bool $warmed = false) : CompiledContainer|null
     {
+        $serviceIds       ??= [];
+        $validationIssues ??= [];
+
         return $this->compiler?->compile(
             serviceIds       : $serviceIds,
             validationIssues : $validationIssues,

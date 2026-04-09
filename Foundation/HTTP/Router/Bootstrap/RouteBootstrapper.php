@@ -10,6 +10,7 @@ use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Cache\RouteCacheLoader;
 use Avax\HTTP\Router\Cache\RouteCacheManifest;
 use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteDefinition;
@@ -176,7 +177,10 @@ final readonly class RouteBootstrapper
      * Loads routes from the cache file.
      *
      * @param string $cachePath Path to the route cache file.
+     * @param string $routesPath
      *
+     * @throws DuplicateRouteException
+     * @throws FilesystemException
      * @throws ReservedRouteNameException
      */
     private function loadRoutesFromCache(string $cachePath, string $routesPath) : void
@@ -199,7 +203,9 @@ final readonly class RouteBootstrapper
      * - Registers the fallback route, if it exists.
      *
      * @param string $baseDir Base directory containing route definition files.
+     * @param bool   $closuresOnly
      *
+     * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
     private function loadRoutesFromDisk(string $baseDir, bool $closuresOnly = false) : void
@@ -260,6 +266,7 @@ final readonly class RouteBootstrapper
      * @param bool        $closuresOnly
      *
      * @throws ReservedRouteNameException
+     * @throws DuplicateRouteException
      */
     private function processRouteFile(SplFileInfo $file, bool $closuresOnly = false) : void
     {
@@ -324,6 +331,7 @@ final readonly class RouteBootstrapper
      * @param string $cachePath  Path to where the new cache file should be written.
      *
      * @throws FilesystemException
+     * @throws ReservedRouteNameException
      */
     private function loadRoutesFromDiskAndCache(string $routesPath, string $cachePath) : void
     {

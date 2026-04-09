@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Middleware;
 
-use Avax\HTTP\Request\Request;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;

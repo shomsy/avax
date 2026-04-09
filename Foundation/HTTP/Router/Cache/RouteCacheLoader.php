@@ -7,6 +7,7 @@ namespace Avax\HTTP\Router\Cache;
 use Avax\Contracts\FilesystemException;
 use Avax\Filesystem\Contracts\FilesystemInterface;
 use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Routing\RouterRegistrar;
@@ -34,6 +35,7 @@ final readonly class RouteCacheLoader
      *
      * @throws ReservedRouteNameException
      * @throws \Avax\Contracts\FilesystemException
+     * @throws DuplicateRouteException
      */
     public function load(string $cachePath, string $routesPath) : void
     {

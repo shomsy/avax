@@ -9,51 +9,51 @@ use LogicException;
 /**
  * Canonical authored ownership metadata for one registration.
  */
-final class RegistrationMetadata
+final readonly class RegistrationMetadata
 {
-    public readonly string $unitId;
+    public string $unitId;
 
-    public readonly string $ownerSlice;
+    public string $ownerSlice;
 
-    public readonly string $category;
+    public string $category;
 
-    public readonly string $visibility;
-
-    /** @var list<string> */
-    public readonly array $profiles;
+    public string $visibility;
 
     /** @var list<string> */
-    public readonly array $flags;
+    public array $profiles;
 
     /** @var list<string> */
-    public readonly array $tenants;
+    public array $flags;
 
     /** @var list<string> */
-    public readonly array $regions;
+    public array $tenants;
 
     /** @var list<string> */
-    public readonly array $modes;
-
-    public readonly string|null $overrideSource;
-
-    public readonly string $reason;
-
-    public readonly string $intent;
-
-    public readonly string $provenance;
-
-    public readonly bool $exported;
+    public array $regions;
 
     /** @var list<string> */
-    public readonly array $imports;
+    public array $modes;
 
-    public readonly string $concept;
+    public string|null $overrideSource;
 
-    public readonly bool $fallback;
+    public string $reason;
 
-    public readonly bool $ownerLocked;
+    public string $intent;
 
-    public readonly bool $categoryLocked;
+    public string $provenance;
+
+    public bool $exported;
+
+    /** @var list<string> */
+    public array $imports;
+
+    public string $concept;
+
+    public bool $fallback;
+
+    public bool $ownerLocked;
+
+    public bool $categoryLocked;
 
     /**
      * @param list<string> $profiles
@@ -64,37 +64,53 @@ final class RegistrationMetadata
      * @param list<string> $imports
      */
     public function __construct(
-        string $unitId,
-        string $ownerSlice = 'default',
-        string $category = RegistrationCategory::CONFIGURATION,
-        string $visibility = RegistrationVisibility::PUBLIC,
-        array $profiles = [],
-        array $flags = [],
-        array $tenants = [],
-        array $regions = [],
-        array $modes = [],
+        string      $unitId,
+        string|null $ownerSlice = null,
+        string|null $category = null,
+        string|null $visibility = null,
+        array|null  $profiles = null,
+        array|null  $flags = null,
+        array|null  $tenants = null,
+        array|null  $regions = null,
+        array|null  $modes = null,
         string|null $overrideSource = null,
-        string $reason = 'registered service',
-        string $intent = 'standard',
-        string $provenance = 'manual registration',
-        bool $exported = false,
-        array $imports = [],
-        string $concept = '',
-        bool $fallback = false,
-        bool $ownerLocked = false,
-        bool $categoryLocked = false
+        string|null $reason = null,
+        string|null $intent = null,
+        string|null $provenance = null,
+        bool|null   $exported = null,
+        array|null  $imports = null,
+        string|null $concept = null,
+        bool|null   $fallback = null,
+        bool|null   $ownerLocked = null,
+        bool        $categoryLocked = false
     ) {
-        $this->unitId = $unitId;
-        $this->ownerSlice = self::normalizeSlice(slice: $ownerSlice);
-        $this->category = RegistrationCategory::normalize(category: $category);
-        $this->visibility = RegistrationVisibility::normalize(visibility: $visibility);
-        $this->profiles = self::stringList(values: $profiles);
-        $this->flags = self::stringList(values: $flags);
-        $this->tenants = self::stringList(values: $tenants);
-        $this->regions = self::stringList(values: $regions);
-        $this->modes = self::stringList(values: $modes);
+        $ownerSlice           ??= 'default';
+        $category             ??= RegistrationCategory::CONFIGURATION;
+        $visibility           ??= RegistrationVisibility::PUBLIC;
+        $profiles             ??= [];
+        $flags                ??= [];
+        $tenants              ??= [];
+        $regions              ??= [];
+        $modes                ??= [];
+        $reason               ??= 'registered service';
+        $intent               ??= 'standard';
+        $provenance           ??= 'manual registration';
+        $exported             ??= false;
+        $imports              ??= [];
+        $concept              ??= '';
+        $fallback             ??= false;
+        $ownerLocked          ??= false;
+        $this->unitId         = $unitId;
+        $this->ownerSlice     = self::normalizeSlice(slice: $ownerSlice);
+        $this->category       = RegistrationCategory::normalize(category: $category);
+        $this->visibility     = RegistrationVisibility::normalize(visibility: $visibility);
+        $this->profiles       = self::stringList(values: $profiles);
+        $this->flags          = self::stringList(values: $flags);
+        $this->tenants        = self::stringList(values: $tenants);
+        $this->regions        = self::stringList(values: $regions);
+        $this->modes          = self::stringList(values: $modes);
         $this->overrideSource = self::normalizeNullable(value: $overrideSource);
-        $this->reason = self::normalizeText(value: $reason, fallback: 'registered service');
+        $this->reason         = self::normalizeText(value: $reason, fallback: 'registered service');
         $this->intent = self::normalizeText(value: $intent, fallback: 'standard');
         $this->provenance = self::normalizeText(value: $provenance, fallback: 'manual registration');
         $this->exported = $exported;

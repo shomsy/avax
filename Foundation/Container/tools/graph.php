@@ -31,6 +31,9 @@ if (! $loaded instanceof ContainerInterface) {
 
 $container = $loaded;
 
+/**
+ * @throws JsonException
+ */
 $print = static function (mixed $payload) : void {
     if (is_string($payload)) {
         echo $payload;

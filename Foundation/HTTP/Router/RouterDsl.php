@@ -7,6 +7,8 @@ namespace Avax\HTTP\Router;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Routing\AttributeRouteRegistrar;
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteBuilder;
 use Avax\HTTP\Router\Routing\RouteGroupAttributesConfigurator;
@@ -15,7 +17,6 @@ use Avax\HTTP\Router\Routing\RouteGroupStack;
 use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
 use Avax\HTTP\Router\Routing\RouterRegistrar;
 use Avax\HTTP\Router\Support\FallbackManager;
-use Avax\HTTP\Router\Support\RouteCollector;
 use Avax\HTTP\Router\Support\RouteRegistry;
 use BadMethodCallException;
 use Closure;
@@ -129,7 +130,11 @@ final readonly class RouterDsl implements RouterInterface
     }
 
     /**
+     * @param object|string $controller
+     *
      * @throws ReflectionException
+     * @throws DuplicateRouteException
+     * @throws ReservedRouteNameException
      */
     public function registerAttributes(object|string $controller) : void
     {

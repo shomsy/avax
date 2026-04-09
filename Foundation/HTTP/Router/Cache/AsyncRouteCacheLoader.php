@@ -7,6 +7,7 @@ namespace Avax\HTTP\Router\Cache;
 use Avax\Contracts\FilesystemException;
 use Avax\Filesystem\Contracts\AsyncFilesystemInterface;
 use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Routing\RouterRegistrar;
@@ -46,7 +47,9 @@ final readonly class AsyncRouteCacheLoader
      * @param string $routesPath Path to routes directory for manifest validation
      *
      * @return mixed Promise resolving to void
-     * @throws \Avax\Contracts\FilesystemException
+     * @throws DuplicateRouteException
+     * @throws FilesystemException
+     * @throws ReservedRouteNameException
      */
     public function loadAsync(string $cachePath, string $routesPath) : mixed
     {
@@ -61,8 +64,13 @@ final readonly class AsyncRouteCacheLoader
     /**
      * Internal async load implementation.
      *
-     * @throws \Avax\Contracts\FilesystemException
-     * @throws \Avax\Contracts\FilesystemException
+     * @param string $cachePath
+     * @param string $routesPath
+     *
+     * @return mixed
+     * @throws DuplicateRouteException
+     * @throws FilesystemException
+     * @throws ReservedRouteNameException
      */
     private function loadAsyncInternal(string $cachePath, string $routesPath) : mixed
     {
@@ -138,6 +146,7 @@ final readonly class AsyncRouteCacheLoader
      * Registers routes with the router.
      *
      * @throws ReservedRouteNameException
+     * @throws DuplicateRouteException
      */
     private function registerRoutes(array $routes) : void
     {
@@ -154,6 +163,7 @@ final readonly class AsyncRouteCacheLoader
      * Synchronous fallback for load operation.
      *
      * @throws ReservedRouteNameException
+     * @throws DuplicateRouteException
      */
     private function loadSync(string $cachePath, string $routesPath) : void
     {

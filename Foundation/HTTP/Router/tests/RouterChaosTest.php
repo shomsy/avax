@@ -240,6 +240,7 @@ final class RouterChaosTest extends TestCase
 
     /**
      * @test
+     * @throws Exception
      */
     public function route_loader_failure_fallback(): void
     {

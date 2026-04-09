@@ -146,12 +146,13 @@ final class ServicePool
      * @return array{returned: bool, overflow: bool, unsafe: bool, reason: string}
      */
     public function releasePooled(
-        string $abstract,
-        mixed $instance,
-        int $maxSize,
-        bool $resetBeforeReuse = true,
-        bool $disposable = false
+        string    $abstract,
+        mixed     $instance,
+        int       $maxSize,
+        bool|null $resetBeforeReuse = null,
+        bool      $disposable = false
     ) : array {
+        $resetBeforeReuse               ??= true;
         $this->pooledOptions[$abstract] = [
             'maxSize' => max(1, $maxSize),
             'resetBeforeReuse' => $resetBeforeReuse,

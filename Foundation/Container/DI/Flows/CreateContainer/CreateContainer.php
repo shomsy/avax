@@ -22,12 +22,15 @@ final class CreateContainer
      * @param array<string, mixed> $settings
      */
     public function create(
-        string $cacheDir = '',
-        bool $debug = false,
-        array $settings = [],
+        string|null                $cacheDir = null,
+        bool|null                  $debug = null,
+        array|null                 $settings = null,
         CreateContainerConfig|null $config = null
         ) : Container {
-        $config ??= new CreateContainerConfig(
+        $cacheDir ??= '';
+        $debug    ??= false;
+        $settings ??= [];
+        $config   ??= new CreateContainerConfig(
             cacheDir: $cacheDir,
             debug   : $debug,
             settings: $settings

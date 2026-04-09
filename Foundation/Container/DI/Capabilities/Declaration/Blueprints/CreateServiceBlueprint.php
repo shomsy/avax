@@ -168,6 +168,8 @@ final readonly class CreateServiceBlueprint
 
     /**
      * @return list<string>
+     * @throws ReflectionException
+     * @throws ReflectionException
      */
     private function filesFor(ReflectionClass $reflection) : array
     {

@@ -16,6 +16,11 @@ final readonly class GovernComposition
     /**
      * @param array<string, list<string>> $graph
      * @param array<string, list<string>> $dependents
+     * @param ServiceRegistry             $registrations
+     * @param CreateServiceBlueprint      $blueprints
+     * @param ResolutionPolicy            $policy
+     * @param string                      $environment
+     *
      * @return array{
      *     schemaVersion: int,
      *     stage: string,
@@ -25,6 +30,7 @@ final readonly class GovernComposition
      *     summary: array{error: int, warn: int},
      *     findings: array<string, list<array{code: string, severity: string, category: string, message: string}>>
      * }
+     * @throws \ReflectionException
      */
     public function report(
         array $graph,

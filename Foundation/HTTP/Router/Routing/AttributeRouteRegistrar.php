@@ -6,6 +6,7 @@ namespace Avax\HTTP\Router\Routing;
 
 use Avax\HTTP\Router\HttpMethod;
 use Avax\HTTP\Router\Routing\Attributes\Route as RouteAttribute;
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use ReflectionAttribute;
 use ReflectionClass;
@@ -17,7 +18,11 @@ final readonly class AttributeRouteRegistrar
     public function __construct(private HttpRequestRouter $router) {}
 
     /**
+     * @param object|string $controller
+     *
+     * @throws DuplicateRouteException
      * @throws ReflectionException
+     * @throws ReservedRouteNameException
      */
     public function register(object|string $controller) : void
     {
@@ -61,6 +66,7 @@ final readonly class AttributeRouteRegistrar
 
     /**
      * @throws ReservedRouteNameException
+     * @throws DuplicateRouteException
      */
     private function registerFromAttributes(
         string              $controllerClass,

@@ -15,6 +15,9 @@ use Avax\Auth\System\Foundation\Clock;
  */
 class LoginRateLimitTest extends TestCase
 {
+    /**
+     * @throws RateLimitException
+     */
     public function testLoginRateLimitAllowsRequestsBelowThreshold() : void
     {
         $storage = new InMemoryLoginRateLimitStorage();
@@ -36,6 +39,9 @@ class LoginRateLimitTest extends TestCase
         $rateLimit->check(identifier: 'alice');
     }
 
+    /**
+     * @throws RateLimitException
+     */
     public function testLoginRateLimitResetsAfterDecayWindow() : void
     {
         $storage = new InMemoryLoginRateLimitStorage();

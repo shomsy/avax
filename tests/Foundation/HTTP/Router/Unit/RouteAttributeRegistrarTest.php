@@ -7,6 +7,8 @@ namespace Avax\HTTP\Router\Tests\Unit;
 use Avax\HTTP\Router\HttpMethod;
 use Avax\HTTP\Router\Routing\AttributeRouteRegistrar;
 use Avax\HTTP\Router\Routing\Attributes\Route;
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use PHPUnit\Framework\TestCase;
@@ -23,6 +25,8 @@ final class RouteAttributeRegistrarTest extends TestCase
 {
     /**
      * @throws ReflectionException
+     * @throws DuplicateRouteException
+     * @throws ReservedRouteNameException
      */
     public function test_registers_routes_from_attributes() : void
     {

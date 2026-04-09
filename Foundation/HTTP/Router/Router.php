@@ -19,6 +19,7 @@ namespace Avax\HTTP\Router;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Kernel\RouterKernel;
 use Avax\HTTP\Router\Routing\ErrorResponseFactory;
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\Routing\Exceptions\MethodNotAllowedException;
 use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
@@ -137,6 +138,7 @@ final readonly class Router implements RouterRuntimeInterface
      *
      * @return void
      * @throws \LogicException|ReservedRouteNameException If DSL router or group
+     * @throws DuplicateRouteException
      *                                                                                         stack dependencies are
      *                                                                                         missing
      */

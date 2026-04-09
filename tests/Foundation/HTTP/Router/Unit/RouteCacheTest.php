@@ -9,6 +9,7 @@ use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Cache\RouteCacheLoader;
 use Avax\HTTP\Router\Matching\RouteMatcherRegistry;
 use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteDefinition;
@@ -30,6 +31,7 @@ final class RouteCacheTest extends TestCase
     /**
      * @throws FilesystemException
      * @throws ReservedRouteNameException
+     * @throws DuplicateRouteException
      */
     public function test_cache_write_fails_when_only_closures() : void
     {

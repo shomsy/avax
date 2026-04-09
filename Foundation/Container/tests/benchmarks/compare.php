@@ -6,6 +6,7 @@ require_once dirname(__DIR__) . '/bootstrap.php';
 
 /**
  * @return array{meta: array<string, mixed>, results: array<string, array<string, mixed>>}
+ * @throws JsonException
  */
 function readBenchmarkArtifact(string $path) : array
 {

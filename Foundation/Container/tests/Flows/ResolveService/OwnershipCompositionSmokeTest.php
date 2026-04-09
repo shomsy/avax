@@ -168,7 +168,10 @@ assertSame(
 );
 
 assertThrows(
-    ContainerException::class,
+/**
+ * @throws \Psr\Container\ContainerExceptionInterface
+ * @throws \Psr\Container\NotFoundExceptionInterface
+ */ ContainerException::class,
     static function () use ($container) : void {
         $container->get(InternalAuditTrail::class);
     },
@@ -176,7 +179,10 @@ assertThrows(
 );
 
 assertThrows(
-    ContainerException::class,
+/**
+ * @throws \Psr\Container\ContainerExceptionInterface
+ * @throws \Psr\Container\NotFoundExceptionInterface
+ */ ContainerException::class,
     static function () use ($container) : void {
         $container->get(BillingFlowUsesInternalAudit::class);
     },

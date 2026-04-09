@@ -14,7 +14,10 @@ $container = makeTestContainer();
 $container->scoped(ScopedService::class, ScopedService::class);
 
 assertThrows(
-    ContainerException::class,
+/**
+ * @throws \Psr\Container\ContainerExceptionInterface
+ * @throws \Psr\Container\NotFoundExceptionInterface
+ */ ContainerException::class,
     static fn() => $container->get(ScopedService::class),
     'Scoped services must fail closed without an active scope.'
 );

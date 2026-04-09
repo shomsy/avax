@@ -19,7 +19,6 @@ use Avax\HTTP\Router\Routing\ReflectionCache;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use Avax\HTTP\Router\Matching\RouteMatcherInterface;
-use Avax\HTTP\Request\Request;
 
 /**
  * @BeforeMethods({"setUp"})
@@ -314,6 +313,9 @@ class RouterBenchmark
      * @Revs(1000)
      * @Iterations(5)
      * @OutputTimeUnit("microseconds")
+     * @throws ReflectionException
+     * @throws ReflectionException
+     * @throws ReflectionException
      */
     public function benchReflectionCachePerformance(): void
     {

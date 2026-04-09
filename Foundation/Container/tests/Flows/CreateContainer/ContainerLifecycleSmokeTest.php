@@ -5,7 +5,6 @@ declare(strict_types=1);
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
 
 interface LifecycleContract
 {

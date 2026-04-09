@@ -16,8 +16,11 @@ final readonly class ExplainService
     ) {}
 
     /**
+     * @param string               $id
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
+     * @throws \ReflectionException
      */
     public function describe(string $id, array $context = []) : array
     {
@@ -29,8 +32,11 @@ final readonly class ExplainService
     }
 
     /**
+     * @param string               $id
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
+     * @throws \ReflectionException
      */
     public function debugPlan(string $id, array $context = []) : array
     {
@@ -45,8 +51,9 @@ final readonly class ExplainService
      * @param array<string, mixed> $context
      * @return array<string, mixed>
      */
-    public function debugGovernance(string $id = '', array $context = []) : array
+    public function debugGovernance(string|null $id = null, array $context = []) : array
     {
+        $id ??= '';
         if ($context === []) {
             return $this->resolver->debugGovernance(id: $id);
         }
@@ -58,8 +65,9 @@ final readonly class ExplainService
      * @param array<string, mixed> $context
      * @return array<string, mixed>
      */
-    public function debugArchitecture(string $id = '', array $context = []) : array
+    public function debugArchitecture(string|null $id = null, array $context = []) : array
     {
+        $id ??= '';
         if ($context === []) {
             return $this->resolver->debugArchitecture(id: $id);
         }
@@ -71,8 +79,9 @@ final readonly class ExplainService
      * @param array<string, mixed> $context
      * @return array<string, mixed>
      */
-    public function debugSlice(string $slice = '', array $context = []) : array
+    public function debugSlice(string|null $slice = null, array $context = []) : array
     {
+        $slice ??= '';
         if ($context === []) {
             return $this->resolver->debugSlice(slice: $slice);
         }
@@ -84,8 +93,9 @@ final readonly class ExplainService
      * @param array<string, mixed> $context
      * @return array<string, mixed>
      */
-    public function debugImports(string $slice = '', array $context = []) : array
+    public function debugImports(string|null $slice = null, array $context = []) : array
     {
+        $slice ??= '';
         if ($context === []) {
             return $this->resolver->debugImports(slice: $slice);
         }
@@ -97,8 +107,9 @@ final readonly class ExplainService
      * @param array<string, mixed> $context
      * @return array<string, mixed>
      */
-    public function debugExports(string $slice = '', array $context = []) : array
+    public function debugExports(string|null $slice = null, array $context = []) : array
     {
+        $slice ??= '';
         if ($context === []) {
             return $this->resolver->debugExports(slice: $slice);
         }
@@ -111,8 +122,9 @@ final readonly class ExplainService
      * @param array<string, mixed> $context
      * @return array<string, mixed>
      */
-    public function debugVisibilityViolations(array $serviceIds = [], array $context = []) : array
+    public function debugVisibilityViolations(array|null $serviceIds = null, array $context = []) : array
     {
+        $serviceIds ??= [];
         if ($context === []) {
             return $this->resolver->debugVisibilityViolations(serviceIds: $serviceIds);
         }

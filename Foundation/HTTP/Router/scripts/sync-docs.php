@@ -13,8 +13,6 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Avax\HTTP\Router\Routing\Exceptions\RouterExceptionInterface;
-use ReflectionClass;
-use ReflectionException;
 
 class DocsSync
 {

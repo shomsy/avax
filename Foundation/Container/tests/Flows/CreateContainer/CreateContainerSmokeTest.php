@@ -33,7 +33,10 @@ $resolved = $container->get(NeedsCreateGreeter::class);
 assertInstanceOf(NeedsCreateGreeter::class, $resolved, 'CreateContainer should support autowiring.');
 assertSame('hi', $resolved->greeter->message(), 'Bound dependency should be injected.');
 assertThrows(
-    ServiceNotFoundException::class,
+/**
+ * @throws \Psr\Container\ContainerExceptionInterface
+ * @throws \Psr\Container\NotFoundExceptionInterface
+ */ ServiceNotFoundException::class,
     static fn() => $container->get('Missing\\Service'),
     'Missing services must use the not-found contract.'
 );

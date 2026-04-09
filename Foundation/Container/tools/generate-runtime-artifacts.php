@@ -42,6 +42,9 @@ if (! is_dir($outputDir) && ! mkdir($outputDir, 0777, true) && ! is_dir($outputD
 $container = $loaded;
 $container->warmCompiled();
 
+/**
+ * @throws JsonException
+ */
 $writeJson = static function (string $path, array $payload) : void {
     file_put_contents(
         $path,

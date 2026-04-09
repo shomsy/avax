@@ -178,7 +178,10 @@ assertThrows(
 );
 
 assertThrows(
-    ContainerException::class,
+/**
+ * @throws \Psr\Container\ContainerExceptionInterface
+ * @throws \Psr\Container\NotFoundExceptionInterface
+ */ ContainerException::class,
     static function () use ($billing) : void {
         $billing->get(SliceInternalAudit::class);
     },

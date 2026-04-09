@@ -80,22 +80,36 @@ final readonly class CreateContainerConfig
      * @param array<string, mixed> $settings
      */
     public static function create(
-        string $cacheDir = '',
-        string $cacheVersion = 'container-v1',
-        bool $debug = false,
-        array $settings = [],
-        bool $strict = false,
-        string $compileMode = self::COMPILE_MODE_PRODUCTION,
-        string $diagnosticsMode = self::DIAGNOSTICS_MODE_MINIMAL,
-        string $executionMode = self::EXECUTION_MODE_COMPILED,
-        string $pruneMode = self::PRUNE_MODE_NONE,
-        string $policyProfile = self::POLICY_PROFILE_BALANCED,
-        string $policyFailMode = self::POLICY_FAIL_MODE_CLOSED,
-        array $policyProfiles = [],
-        string $sliceBoundaryMode = self::SLICE_BOUNDARY_MODE_STRICT,
-        string $asyncTarget = self::ASYNC_TARGET_FPM
+        string|null $cacheDir = null,
+        string|null $cacheVersion = null,
+        bool|null   $debug = null,
+        array|null  $settings = null,
+        bool|null   $strict = null,
+        string|null $compileMode = null,
+        string|null $diagnosticsMode = null,
+        string|null $executionMode = null,
+        string|null $pruneMode = null,
+        string|null $policyProfile = null,
+        string|null $policyFailMode = null,
+        array|null  $policyProfiles = null,
+        string|null $sliceBoundaryMode = null,
+        string      $asyncTarget = self::ASYNC_TARGET_FPM
     ) : self
     {
+        $cacheDir          ??= '';
+        $cacheVersion      ??= 'container-v1';
+        $debug             ??= false;
+        $settings          ??= [];
+        $strict            ??= false;
+        $compileMode       ??= self::COMPILE_MODE_PRODUCTION;
+        $diagnosticsMode   ??= self::DIAGNOSTICS_MODE_MINIMAL;
+        $executionMode     ??= self::EXECUTION_MODE_COMPILED;
+        $pruneMode         ??= self::PRUNE_MODE_NONE;
+        $policyProfile     ??= self::POLICY_PROFILE_BALANCED;
+        $policyFailMode    ??= self::POLICY_FAIL_MODE_CLOSED;
+        $policyProfiles    ??= [];
+        $sliceBoundaryMode ??= self::SLICE_BOUNDARY_MODE_STRICT;
+
         return new self(
             cacheDir    : $cacheDir,
             cacheVersion: $cacheVersion,

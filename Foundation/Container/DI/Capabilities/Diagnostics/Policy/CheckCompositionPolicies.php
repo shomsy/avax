@@ -28,7 +28,9 @@ final readonly class CheckCompositionPolicies
     /**
      * @param array<string, list<string>> $graph
      * @param array<string, list<string>> $dependents
+     *
      * @return array<string, list<array{code: string, severity: string, category: string, message: string}>>
+     * @throws \ReflectionException
      */
     public function check(
         array $graph,

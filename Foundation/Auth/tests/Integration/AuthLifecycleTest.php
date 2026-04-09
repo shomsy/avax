@@ -9,7 +9,6 @@ use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
-use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
@@ -44,6 +43,9 @@ class AuthLifecycleTest extends TestCase
         Mockery::close();
     }
 
+    /**
+     * @throws Exception
+     */
     public function testFullUserLifecyclePositive() : void
     {
         // 1. Register
@@ -79,6 +81,9 @@ class AuthLifecycleTest extends TestCase
         $this->assertTrue(condition: true);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testUserLifecycleNegative() : void
     {
         // 1. Register user
@@ -90,6 +95,9 @@ class AuthLifecycleTest extends TestCase
         $this->auth->register(data: new RegistrationData(email: 'fail@test.com', username: 'other', password: 'pass'));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testLoginNegative() : void
     {
         // 1. Register user

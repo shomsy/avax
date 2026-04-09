@@ -36,6 +36,10 @@ final class BaseProvider implements ServiceProviderInterface
         $this->app->instance(ProviderState::class, new ProviderState('base-register'));
     }
 
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function boot() : void
     {
         ProviderState::$events[] = 'base-boot';
@@ -54,6 +58,10 @@ final class DemoProvider implements ServiceProviderInterface
         return [BaseProvider::class];
     }
 
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function register() : void
     {
         ProviderState::$events[] = 'demo-register';
@@ -65,6 +73,10 @@ final class DemoProvider implements ServiceProviderInterface
         $this->app->get(ProviderState::class)->message = 'demo-registered';
     }
 
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function boot() : void
     {
         ProviderState::$events[] = 'demo-boot';

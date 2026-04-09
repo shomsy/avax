@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;
-use Avax\HTTP\Response\Classes\Response;
-use Avax\HTTP\Response\Classes\Stream;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;

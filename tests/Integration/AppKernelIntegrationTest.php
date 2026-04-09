@@ -6,7 +6,6 @@ use Avax\HTTP\AppKernel;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Middleware\CsrfVerificationMiddleware;
 use Avax\HTTP\Response\ResponseFactory;
-use Avax\HTTP\Router\RouteCollection;
 use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\Routing\RouteCollection;
 use Avax\HTTP\RouterBootstrapper;

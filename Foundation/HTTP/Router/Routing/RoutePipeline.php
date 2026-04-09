@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
-use Avax\Auth\Interface\HTTP\Middleware\AuthorizeMiddleware;
-use Avax\Container\Features\Core\Contracts\ContainerInterface;
+use Avax\Container\DI\ContainerInterface;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\Classes\Response;
@@ -140,9 +139,6 @@ final class RoutePipeline
             if ($this->route->authorization !== null) {
                 // Attach the authorization policy as a request attribute.
                 $request = $request->withAttribute(name: 'route:authorization', value: $this->route->authorization);
-
-                // Prepend the authorization middleware to the pipeline.
-                array_unshift($this->middleware, AuthorizeMiddleware::class);
             }
 
             // Unserialize the route action if it's a SerializableClosure

@@ -49,6 +49,7 @@ final readonly class ExplainService
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function debugGovernance(string|null $id = null, array $context = []) : array
@@ -63,6 +64,7 @@ final readonly class ExplainService
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function debugArchitecture(string|null $id = null, array $context = []) : array
@@ -77,6 +79,7 @@ final readonly class ExplainService
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function debugSlice(string|null $slice = null, array $context = []) : array
@@ -91,6 +94,7 @@ final readonly class ExplainService
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function debugImports(string|null $slice = null, array $context = []) : array
@@ -105,6 +109,7 @@ final readonly class ExplainService
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function debugExports(string|null $slice = null, array $context = []) : array
@@ -118,8 +123,9 @@ final readonly class ExplainService
     }
 
     /**
-     * @param list<string> $serviceIds
+     * @param list<string>         $serviceIds
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function debugVisibilityViolations(array|null $serviceIds = null, array $context = []) : array
@@ -137,6 +143,7 @@ final readonly class ExplainService
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function debugTags(string $tag, array $context = []) : array
@@ -150,6 +157,7 @@ final readonly class ExplainService
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function debugGroup(string $group, array $context = []) : array
@@ -163,6 +171,7 @@ final readonly class ExplainService
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function debugSelection(string $id, array $context = []) : array
@@ -176,6 +185,7 @@ final readonly class ExplainService
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, string>
      */
     public function debugAliases(array $context = []) : array
@@ -189,6 +199,7 @@ final readonly class ExplainService
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function debugScope(array $context = []) : array

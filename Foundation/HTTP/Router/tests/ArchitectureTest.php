@@ -8,6 +8,9 @@ use Avax\HTTP\Router\Bootstrap\RouteRegistrar;
 use Avax\HTTP\Router\Cache\RouteCacheLoader;
 use Avax\HTTP\Router\Cache\RouteCacheManifest;
 use Avax\HTTP\Router\Kernel\RouterKernel;
+use Avax\HTTP\Router\Router;
+use Avax\HTTP\Router\RouterDsl;
+use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\Routing\DomainAwareMatcher;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteDefinition;
@@ -16,9 +19,6 @@ use Avax\HTTP\Router\Routing\RouteMatcher;
 use Avax\HTTP\Router\Routing\RoutePipeline;
 use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
 use Avax\HTTP\Router\Routing\StageChain;
-use Avax\HTTP\Router\Router;
-use Avax\HTTP\Router\RouterDsl;
-use Avax\HTTP\Router\RouterInterface;
 use Avax\HTTP\Router\Support\FallbackManager;
 use Avax\HTTP\Router\Support\RouteRegistry;
 use Avax\HTTP\Router\Tracing\RouterTrace;
@@ -36,26 +36,27 @@ final class ArchitectureTest extends TestCase
     /**
      * @var array<class-string> List of all Router component classes to validate
      */
-    private const ROUTER_CLASSES = [
-        Router::class,
-        RouterDsl::class,
-        RouterKernel::class,
-        RouterInterface::class,
-        HttpRequestRouter::class,
-        RouteDefinition::class,
-        RouteMatcher::class,
-        DomainAwareMatcher::class,
-        RouteRegistrarProxy::class,
-        RoutePipeline::class,
-        StageChain::class,
-        RouteRegistry::class,
-        RouteGroupStack::class,
-        FallbackManager::class,
-        RouteCacheLoader::class,
-        RouteCacheManifest::class,
-        RouteRegistrar::class,
-        RouterTrace::class,
-    ];
+    private const array ROUTER_CLASSES
+        = [
+            Router::class,
+            RouterDsl::class,
+            RouterKernel::class,
+            RouterInterface::class,
+            HttpRequestRouter::class,
+            RouteDefinition::class,
+            RouteMatcher::class,
+            DomainAwareMatcher::class,
+            RouteRegistrarProxy::class,
+            RoutePipeline::class,
+            StageChain::class,
+            RouteRegistry::class,
+            RouteGroupStack::class,
+            FallbackManager::class,
+            RouteCacheLoader::class,
+            RouteCacheManifest::class,
+            RouteRegistrar::class,
+            RouterTrace::class,
+        ];
 
     /**
      * Ensures no static mutable properties exist in the Router component.
@@ -70,7 +71,7 @@ final class ArchitectureTest extends TestCase
                 continue; // Skip interfaces or non-existent classes
             }
 
-            $reflection = new ReflectionClass(objectOrClass: $className);
+            $reflection       = new ReflectionClass(objectOrClass: $className);
             $staticProperties = $reflection->getProperties(filter: ReflectionProperty::IS_STATIC);
 
             foreach ($staticProperties as $property) {
@@ -79,10 +80,10 @@ final class ArchitectureTest extends TestCase
                     $this->assertTrue(
                         condition: $property->isReadOnly() || $property->isFinal(),
                         message  : sprintf(
-                            'Static property %s::%s must be readonly or final to prevent mutable global state',
-                            $className,
-                            $property->getName()
-                        )
+                                       'Static property %s::%s must be readonly or final to prevent mutable global state',
+                                       $className,
+                                       $property->getName()
+                                   )
                     );
                 }
             }
@@ -117,10 +118,10 @@ final class ArchitectureTest extends TestCase
                         // Check if parameter type is from Bootstrap namespace
                         if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
                             $this->fail(message: sprintf(
-                                'Router class %s depends on Bootstrap layer (%s) in constructor, violating architectural boundaries',
-                                $className,
-                                $typeName
-                            ));
+                                                     'Router class %s depends on Bootstrap layer (%s) in constructor, violating architectural boundaries',
+                                                     $className,
+                                                     $typeName
+                                                 ));
                         }
                     }
                 }
@@ -134,10 +135,10 @@ final class ArchitectureTest extends TestCase
 
                     if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
                         $this->fail(message: sprintf(
-                            'Router class %s has Bootstrap dependency (%s) as property, violating architectural boundaries',
-                            $className,
-                            $typeName
-                        ));
+                                                 'Router class %s has Bootstrap dependency (%s) as property, violating architectural boundaries',
+                                                 $className,
+                                                 $typeName
+                                             ));
                     }
                 }
             }
@@ -150,11 +151,11 @@ final class ArchitectureTest extends TestCase
 
                     if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
                         $this->fail(message: sprintf(
-                            'Router method %s::%s() returns Bootstrap type (%s), violating architectural boundaries',
-                            $className,
-                            $method->getName(),
-                            $typeName
-                        ));
+                                                 'Router method %s::%s() returns Bootstrap type (%s), violating architectural boundaries',
+                                                 $className,
+                                                 $method->getName(),
+                                                 $typeName
+                                             ));
                     }
                 }
 
@@ -166,11 +167,11 @@ final class ArchitectureTest extends TestCase
 
                         if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
                             $this->fail(message: sprintf(
-                                'Router method %s::%s() accepts Bootstrap type (%s) as parameter, violating architectural boundaries',
-                                $className,
-                                $method->getName(),
-                                $typeName
-                            ));
+                                                     'Router method %s::%s() accepts Bootstrap type (%s) as parameter, violating architectural boundaries',
+                                                     $className,
+                                                     $method->getName(),
+                                                     $typeName
+                                                 ));
                         }
                     }
                 }
@@ -260,11 +261,11 @@ final class ArchitectureTest extends TestCase
                         $this->assertFalse(
                             condition: str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap'),
                             message  : sprintf(
-                                'Interface %s method %s() references Bootstrap class %s, violating interface segregation',
-                                $interfaceName,
-                                $method->getName(),
-                                $typeName
-                            )
+                                           'Interface %s method %s() references Bootstrap class %s, violating interface segregation',
+                                           $interfaceName,
+                                           $method->getName(),
+                                           $typeName
+                                       )
                         );
                     }
                 }

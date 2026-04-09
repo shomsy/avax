@@ -32,13 +32,13 @@ final class CallArgumentTarget
 $container = makeTestContainer();
 $container->bind(CallArgumentGreeterContract::class, CallArgumentGreeter::class);
 
-$resolver = $container->get(ServiceResolver::class);
-$arguments = new ResolveCallArguments(new ResolveDependencies());
+$resolver   = $container->get(ServiceResolver::class);
+$arguments  = new ResolveCallArguments(new ResolveDependencies());
 $reflection = new ReflectionMethod(CallArgumentTarget::class, 'handle');
-$resolved = $arguments->resolve(
+$resolved   = $arguments->resolve(
     parameters: $reflection->getParameters(),
-    overrides: ['name' => 'custom'],
-    resolver: $resolver
+    overrides : ['name' => 'custom'],
+    resolver  : $resolver
 );
 
 assertSame('args', $resolved[0]->message(), 'Call arguments should resolve container-backed dependencies.');

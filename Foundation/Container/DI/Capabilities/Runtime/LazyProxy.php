@@ -16,22 +16,11 @@ final class LazyProxy
     private static WeakMap $instances;
 
     public function __construct(
-        private readonly string $serviceId,
+        private readonly string  $serviceId,
         private readonly Closure $factory
-    ) {
-        self::$instances ??= new WeakMap();
-    }
-
-    /**
-     * Resolves and returns the proxied service instance.
-     */
-    public function resolve() : object
+    )
     {
-        if (! isset(self::$instances[$this])) {
-            self::$instances[$this] = ($this->factory)();
-        }
-
-        return self::$instances[$this];
+        self::$instances ??= new WeakMap();
     }
 
     /**
@@ -48,6 +37,18 @@ final class LazyProxy
     public function __call(string $name, array $arguments) : mixed
     {
         return $this->resolve()->{$name}(...$arguments);
+    }
+
+    /**
+     * Resolves and returns the proxied service instance.
+     */
+    public function resolve() : object
+    {
+        if (! isset(self::$instances[$this])) {
+            self::$instances[$this] = ($this->factory)();
+        }
+
+        return self::$instances[$this];
     }
 
     /**
@@ -89,7 +90,7 @@ final class LazyProxy
     {
         return [
             'serviceId' => $this->serviceId,
-            'resolved' => isset(self::$instances[$this]),
+            'resolved'  => isset(self::$instances[$this]),
         ];
     }
 }

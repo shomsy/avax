@@ -29,21 +29,15 @@ final class SessionIdentity implements SessionIdentityInterface
         $_SESSION[$this->sessionKey] = $userId;
     }
 
-    public function getUserId() : int|null
+    private function ensureSessionAvailable() : void
     {
-        $this->ensureSessionAvailable();
-
-        $storedUserId = $_SESSION[$this->sessionKey] ?? null;
-
-        if (is_int($storedUserId)) {
-            return $storedUserId;
+        if (session_status() === PHP_SESSION_DISABLED) {
+            throw new RuntimeException(message: 'Session support is disabled.');
         }
 
-        if (is_string($storedUserId) && ctype_digit($storedUserId)) {
-            return (int) $storedUserId;
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
-
-        return null;
     }
 
     public function clear() : void
@@ -53,12 +47,12 @@ final class SessionIdentity implements SessionIdentityInterface
         $_SESSION = [];
 
         if (ini_get('session.use_cookies')) {
-            $params = session_get_cookie_params();
+            $params  = session_get_cookie_params();
             $options = [
-                'expires' => time() - 42000,
-                'path' => $params['path'],
-                'domain' => $params['domain'],
-                'secure' => (bool) $params['secure'],
+                'expires'  => time() - 42000,
+                'path'     => $params['path'],
+                'domain'   => $params['domain'],
+                'secure'   => (bool) $params['secure'],
                 'httponly' => (bool) $params['httponly'],
             ];
 
@@ -77,14 +71,20 @@ final class SessionIdentity implements SessionIdentityInterface
         return $this->getUserId() !== null;
     }
 
-    private function ensureSessionAvailable() : void
+    public function getUserId() : int|null
     {
-        if (session_status() === PHP_SESSION_DISABLED) {
-            throw new RuntimeException(message: 'Session support is disabled.');
+        $this->ensureSessionAvailable();
+
+        $storedUserId = $_SESSION[$this->sessionKey] ?? null;
+
+        if (is_int($storedUserId)) {
+            return $storedUserId;
         }
 
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+        if (is_string($storedUserId) && ctype_digit($storedUserId)) {
+            return (int) $storedUserId;
         }
+
+        return null;
     }
 }

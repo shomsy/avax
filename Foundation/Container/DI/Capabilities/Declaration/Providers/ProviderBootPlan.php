@@ -13,7 +13,7 @@ use LogicException;
 final readonly class ProviderBootPlan
 {
     /**
-     * @param list<class-string<ServiceProviderInterface>> $order
+     * @param list<class-string<ServiceProviderInterface>>                                                $order
      * @param array<class-string<ServiceProviderInterface>, list<class-string<ServiceProviderInterface>>> $dependencies
      */
     private function __construct(
@@ -36,7 +36,7 @@ final readonly class ProviderBootPlan
         }
 
         $ordered = [];
-        $state = [];
+        $state   = [];
 
         foreach (array_keys($instances) as $class) {
             self::visit(
@@ -55,7 +55,55 @@ final readonly class ProviderBootPlan
     }
 
     /**
+     * @param array<class-string<ServiceProviderInterface>, list<class-string<ServiceProviderInterface>>> $dependencies
+     * @param list<class-string<ServiceProviderInterface>>                                                $ordered
+     * @param array<class-string<ServiceProviderInterface>, string>                                       $state
+     * @param list<class-string<ServiceProviderInterface>>                                                $stack
+     */
+    private static function visit(
+        string $class,
+        array  $dependencies,
+        array  &$ordered,
+        array  &$state,
+        array  $stack
+    ) : void
+    {
+        $currentState = $state[$class] ?? 'new';
+        if ($currentState === 'done') {
+            return;
+        }
+
+        if ($currentState === 'visiting') {
+            $stack[] = $class;
+            throw new LogicException(
+                message: 'Provider dependency cycle detected: ' . implode(' -> ', $stack)
+            );
+        }
+
+        $state[$class] = 'visiting';
+        $stack[]       = $class;
+
+        foreach ($dependencies[$class] ?? [] as $dependencyClass) {
+            if (! isset($dependencies[$dependencyClass])) {
+                throw new InvalidArgumentException(message: "Provider dependency [{$dependencyClass}] does not exist.");
+            }
+
+            self::visit(
+                class       : $dependencyClass,
+                dependencies: $dependencies,
+                ordered     : $ordered,
+                state       : $state,
+                stack       : $stack
+            );
+        }
+
+        $state[$class] = 'done';
+        $ordered[]     = $class;
+    }
+
+    /**
      * @param array<class-string<ServiceProviderInterface>, ServiceProviderInterface> $instances
+     *
      * @return list<ServiceProviderInterface>
      */
     public function orderedInstances(array $instances) : array
@@ -79,55 +127,9 @@ final readonly class ProviderBootPlan
     public function toArray() : array
     {
         return [
-            'order' => $this->order,
-            'dependencies' => $this->dependencies,
+            'order'         => $this->order,
+            'dependencies'  => $this->dependencies,
             'providerCount' => count($this->order),
         ];
-    }
-
-    /**
-     * @param array<class-string<ServiceProviderInterface>, list<class-string<ServiceProviderInterface>>> $dependencies
-     * @param list<class-string<ServiceProviderInterface>> $ordered
-     * @param array<class-string<ServiceProviderInterface>, string> $state
-     * @param list<class-string<ServiceProviderInterface>> $stack
-     */
-    private static function visit(
-        string $class,
-        array $dependencies,
-        array &$ordered,
-        array &$state,
-        array $stack
-    ) : void {
-        $currentState = $state[$class] ?? 'new';
-        if ($currentState === 'done') {
-            return;
-        }
-
-        if ($currentState === 'visiting') {
-            $stack[] = $class;
-            throw new LogicException(
-                message: 'Provider dependency cycle detected: ' . implode(' -> ', $stack)
-            );
-        }
-
-        $state[$class] = 'visiting';
-        $stack[] = $class;
-
-        foreach ($dependencies[$class] ?? [] as $dependencyClass) {
-            if (! isset($dependencies[$dependencyClass])) {
-                throw new InvalidArgumentException(message: "Provider dependency [{$dependencyClass}] does not exist.");
-            }
-
-            self::visit(
-                class       : $dependencyClass,
-                dependencies: $dependencies,
-                ordered     : $ordered,
-                state       : $state,
-                stack       : $stack
-            );
-        }
-
-        $state[$class] = 'done';
-        $ordered[] = $class;
     }
 }

@@ -8,7 +8,7 @@ use SensitiveParameter;
 
 /**
  * Value object representing user registration data.
- * 
+ *
  * Banal: The data needed to create a new user.
  */
 final readonly class RegistrationData

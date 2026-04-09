@@ -17,40 +17,18 @@ use ReflectionUnionType;
 final class ResolveDependencies
 {
     /**
-     * @param list<ReflectionParameter> $parameters
-     */
-    public function createPlan(array $parameters) : ResolvePlan
-    {
-        $compiled = [];
-
-        foreach ($parameters as $parameter) {
-            $compiled[] = [
-                'name' => $parameter->getName(),
-                'serviceId' => $this->serviceIdFor(parameter: $parameter),
-                'source' => $this->sourceFor(parameter: $parameter),
-                'inputName' => $this->inputNameFor(parameter: $parameter),
-                'hasDefault' => $parameter->isDefaultValueAvailable(),
-                'default' => $parameter->isDefaultValueAvailable()
-                    ? base64_encode(serialize($parameter->getDefaultValue()))
-                    : '',
-                'allowsNull' => $parameter->allowsNull(),
-            ];
-        }
-
-        return new ResolvePlan(parameters: $compiled);
-    }
-
-    /**
      * @param array<string, mixed> $overrides
+     *
      * @return array<int, mixed>
      * @throws ContainerException
      */
     public function resolveParameters(
-        array $parameters,
-        array $overrides,
-        ServiceResolver $resolver,
+        array               $parameters,
+        array               $overrides,
+        ServiceResolver     $resolver,
         ResolveRequest|null $request = null
-    ) : array {
+    ) : array
+    {
         return $this->resolvePlan(
             plan     : $this->createPlan(parameters: $parameters),
             overrides: $overrides,
@@ -61,15 +39,17 @@ final class ResolveDependencies
 
     /**
      * @param array<string, mixed> $overrides
+     *
      * @return array<int, mixed>
      * @throws ContainerException
      */
     public function resolvePlan(
-        ResolvePlan $plan,
-        array $overrides,
-        ServiceResolver $resolver,
+        ResolvePlan         $plan,
+        array               $overrides,
+        ServiceResolver     $resolver,
         ResolveRequest|null $request
-    ) : array {
+    ) : array
+    {
         $resolved = [];
 
         foreach ($plan->parameters as $parameter) {
@@ -85,20 +65,22 @@ final class ResolveDependencies
     }
 
     /**
-     * @param array{name: string, serviceId: string|null, source: string, inputName: string, hasDefault: bool, default: string, allowsNull: bool} $parameter
-     * @param array<string, mixed>                                                                                                                $overrides
-     * @param ServiceResolver                                                                                                                     $resolver
-     * @param ResolveRequest|null                                                                                                                 $request
+     * @param array{name: string, serviceId: string|null, source: string, inputName: string, hasDefault: bool, default:
+     *                            string, allowsNull: bool} $parameter
+     * @param array<string, mixed>                          $overrides
+     * @param ServiceResolver                               $resolver
+     * @param ResolveRequest|null                           $request
      *
      * @return mixed
      * @throws \Throwable
      */
     private function resolveCompiledParameter(
-        array $parameter,
-        array $overrides,
-        ServiceResolver $resolver,
+        array               $parameter,
+        array               $overrides,
+        ServiceResolver     $resolver,
         ResolveRequest|null $request
-    ) : mixed {
+    ) : mixed
+    {
         if (array_key_exists($parameter['name'], $overrides)) {
             return $overrides[$parameter['name']];
         }
@@ -114,7 +96,7 @@ final class ResolveDependencies
         if ($parameter['serviceId'] !== null) {
             return $resolver->resolveRequest(
                 request: $request?->child(serviceId: $parameter['serviceId'])
-                    ?? new ResolveRequest(serviceId: $parameter['serviceId'])
+                             ?? new ResolveRequest(serviceId: $parameter['serviceId'])
             );
         }
 
@@ -128,11 +110,35 @@ final class ResolveDependencies
 
         throw new ContainerException(
             message: $parameter['source'] === 'runtime'
-                ? "Runtime input [\${$parameter['inputName']}] is missing for [{$request?->serviceId}]. "
-                    . "Dependency path [{$request?->getPath()}]. Likely fix: pass an explicit override, use forContext(), or add a default value."
-                : "Cannot resolve parameter [\${$parameter['name']}] for service [{$request?->serviceId}]. "
-                    . "Dependency path [{$request?->getPath()}]. Likely fix: register the dependency, add an Inject attribute, or provide an override."
+                         ? "Runtime input [\${$parameter['inputName']}] is missing for [{$request?->serviceId}]. "
+                       . "Dependency path [{$request?->getPath()}]. Likely fix: pass an explicit override, use forContext(), or add a default value."
+                         : "Cannot resolve parameter [\${$parameter['name']}] for service [{$request?->serviceId}]. "
+                       . "Dependency path [{$request?->getPath()}]. Likely fix: register the dependency, add an Inject attribute, or provide an override."
         );
+    }
+
+    /**
+     * @param list<ReflectionParameter> $parameters
+     */
+    public function createPlan(array $parameters) : ResolvePlan
+    {
+        $compiled = [];
+
+        foreach ($parameters as $parameter) {
+            $compiled[] = [
+                'name'       => $parameter->getName(),
+                'serviceId'  => $this->serviceIdFor(parameter: $parameter),
+                'source'     => $this->sourceFor(parameter: $parameter),
+                'inputName'  => $this->inputNameFor(parameter: $parameter),
+                'hasDefault' => $parameter->isDefaultValueAvailable(),
+                'default'    => $parameter->isDefaultValueAvailable()
+                    ? base64_encode(serialize($parameter->getDefaultValue()))
+                    : '',
+                'allowsNull' => $parameter->allowsNull(),
+            ];
+        }
+
+        return new ResolvePlan(parameters: $compiled);
     }
 
     /**

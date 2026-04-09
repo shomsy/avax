@@ -11,12 +11,11 @@ use Avax\Migrations\Design\Table\Blueprint;
  *
  * Generated with: php migrate make create_products_table --create=products
  */
-return new class extends BaseMigration
-{
+return new class extends BaseMigration {
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up() : void
     {
         $this->create(table: 'products', callback: function (Blueprint $table) {
             // Primary key
@@ -86,7 +85,7 @@ return new class extends BaseMigration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    public function down() : void
     {
         $this->drop(table: 'products');
     }

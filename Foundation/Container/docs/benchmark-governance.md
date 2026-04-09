@@ -47,12 +47,14 @@ The benchmark harness records:
 - relative comparison ratios when two JSON artifacts are compared
 
 The regression guard uses repeated runs and median timing to reduce single-run noise.
-The peer comparison lane also expects guard-mode artifacts so competitor comparisons are not driven by single noisy samples.
+The peer comparison lane also expects guard-mode artifacts so competitor comparisons are not driven by single noisy
+samples.
 
 The external competitor lane is driven through an explicit adapter contract under:
 
 - [`../tests/benchmarks/adapters/BenchmarkPeerAdapter.php`](../tests/benchmarks/adapters/BenchmarkPeerAdapter.php)
-- [`../tests/benchmarks/adapters/ArtifactBenchmarkPeerAdapter.php`](../tests/benchmarks/adapters/ArtifactBenchmarkPeerAdapter.php)
+- [
+  `../tests/benchmarks/adapters/ArtifactBenchmarkPeerAdapter.php`](../tests/benchmarks/adapters/ArtifactBenchmarkPeerAdapter.php)
 
 Benchmark JSON artifacts also carry:
 
@@ -82,7 +84,8 @@ When comparing against a peer container:
 - keep graph shapes and iteration counts identical
 - keep warm/cold/scoped/deferred semantics aligned instead of comparing unrelated behaviors
 - compare JSON benchmark artifacts, not hand-copied numbers
-- reject peer artifacts that do not match `dockerImage`, `php`, `sapi`, `phpSettings`, `suiteVersion`, and the canonical scenario set
+- reject peer artifacts that do not match `dockerImage`, `php`, `sapi`, `phpSettings`, `suiteVersion`, and the canonical
+  scenario set
 - reject peer artifacts that are not produced in the same guard-mode policy
 
 ## Release Policy
@@ -93,12 +96,15 @@ When comparing against a peer container:
 - threshold changes must be intentional and reviewed together with the code change that requires them
 - performance regressions above threshold are blocking unless explicitly accepted as a tradeoff
 - set `BENCHMARK_ARTIFACT_DIR` in CI when benchmark artifacts must be retained after the job finishes
-- peer comparison artifacts support release notes and external claims, but they do not replace the local regression guard
+- peer comparison artifacts support release notes and external claims, but they do not replace the local regression
+  guard
 
 ## Operator Guidance
 
 - use the guard for "did we regress?"
 - use the harness for "what changed?"
 - use the comparison runner for "how does this build compare against another benchmark artifact?"
-- use the peer comparison runner for "how does this build compare against a governed peer baseline under the same artifact contract?"
-- use `compileReport()` and `runtimeReport()` alongside benchmarks when a compiled/runtime mode decision changes the result
+- use the peer comparison runner for "how does this build compare against a governed peer baseline under the same
+  artifact contract?"
+- use `compileReport()` and `runtimeReport()` alongside benchmarks when a compiled/runtime mode decision changes the
+  result

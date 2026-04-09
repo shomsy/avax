@@ -18,13 +18,14 @@ final class InvalidCriteriaException extends DatabaseException
      *
      * -- intent: provide specific feedback on which builder method was misused.
      *
-     * @param  string  $method  Technical name of the builder method
-     * @param  string  $reason  Human-readable explanation of why the input is invalid
+     * @param string $method Technical name of the builder method
+     * @param string $reason Human-readable explanation of why the input is invalid
      */
     public function __construct(
         private readonly string $method,
-        string $reason
-    ) {
+        string                  $reason
+    )
+    {
         parent::__construct(message: "Invalid criteria in [{$method}]: {$reason}");
     }
 
@@ -33,7 +34,7 @@ final class InvalidCriteriaException extends DatabaseException
      *
      * -- intent: pinpoint the logical source of the usage error.
      */
-    public function getMethod(): string
+    public function getMethod() : string
     {
         return $this->method;
     }

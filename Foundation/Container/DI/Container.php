@@ -6,30 +6,30 @@ namespace Avax\Container\DI;
 
 use Avax\Container\DI\Capabilities\Composition\Compilation\CompileReport;
 use Avax\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
+use Avax\Container\DI\Capabilities\Declaration\Bindings\RegisterForTarget;
+use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistration;
+use Avax\Container\DI\Capabilities\Declaration\Ownership\SliceContext;
 use Avax\Container\DI\Capabilities\Declaration\Ownership\Views\CapabilitySliceView;
 use Avax\Container\DI\Capabilities\Declaration\Ownership\Views\ConfigurationSliceView;
 use Avax\Container\DI\Capabilities\Declaration\Ownership\Views\FlowSliceView;
 use Avax\Container\DI\Capabilities\Declaration\Ownership\Views\FoundationSliceView;
 use Avax\Container\DI\Capabilities\Declaration\Ownership\Views\RootCompositionView;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
-use Avax\Container\DI\Flows\CallFunction\CallFunction;
-use Avax\Container\DI\Flows\BootProviders\BootProviders;
-use Avax\Container\DI\Flows\CloseScope\CloseScope;
+use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Container\DI\Capabilities\Diagnostics\Observability\RuntimeReport;
 use Avax\Container\DI\Capabilities\Execution\Injection\Reports\InjectionReport;
+use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Container\DI\Capabilities\Runtime\LazyProxy;
+use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeInterface;
+use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
+use Avax\Container\DI\Flows\BootProviders\BootProviders;
+use Avax\Container\DI\Flows\CallFunction\CallFunction;
+use Avax\Container\DI\Flows\CloseScope\CloseScope;
 use Avax\Container\DI\Flows\ExplainService\ExplainService;
 use Avax\Container\DI\Flows\ExportGraph\ExportGraph;
 use Avax\Container\DI\Flows\OpenScope\OpenScope;
 use Avax\Container\DI\Flows\RegisterServices\RegisterServices;
-use Avax\Container\DI\Capabilities\Declaration\Bindings\RegisterForTarget;
-use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistration;
-use Avax\Container\DI\Capabilities\Declaration\Ownership\SliceContext;
-use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
 use Avax\Container\DI\Flows\ResolveService\ResolveService;
 use Avax\Container\DI\Flows\ValidateComposition\ValidateComposition;
-use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
-use Avax\Container\DI\Capabilities\Diagnostics\Observability\RuntimeReport;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeInterface;
-use Avax\Container\DI\Capabilities\Runtime\LazyProxy;
 use Closure;
 
 /**
@@ -44,9 +44,22 @@ final readonly class Container implements ContainerInterface
         return $this->resolveService()->get(id: $id);
     }
 
+    private function resolveService() : ResolveService
+    {
+        return new ResolveService(resolver: $this->resolver);
+    }
+
     public function has(string $id) : bool
     {
         return $this->resolver->has(id: $id);
+    }
+
+    public function factory(string $abstract) : Closure
+    {
+        return fn (array $parameters = []) : object => $this->make(
+            abstract  : $abstract,
+            parameters: $parameters
+        );
     }
 
     public function make(string $abstract, array $parameters = []) : object
@@ -54,17 +67,14 @@ final readonly class Container implements ContainerInterface
         return $this->resolveService()->make(abstract: $abstract, parameters: $parameters);
     }
 
-    public function factory(string $abstract) : Closure
-    {
-        return fn(array $parameters = []) : object => $this->make(
-            abstract  : $abstract,
-            parameters: $parameters
-        );
-    }
-
     public function call(callable|string $callable, array $parameters = []) : mixed
     {
         return $this->callFunction()->call(target: $callable, parameters: $parameters);
+    }
+
+    private function callFunction() : CallFunction
+    {
+        return new CallFunction(resolver: $this->resolver);
     }
 
     public function injectInto(object $target) : object
@@ -87,6 +97,11 @@ final readonly class Container implements ContainerInterface
         $this->registerServices()->instance(abstract: $abstract, instance: $instance);
     }
 
+    private function registerServices() : RegisterServices
+    {
+        return new RegisterServices(resolver: $this->resolver);
+    }
+
     /**
      * @param array<int, string|ServiceProviderInterface> $providers
      */
@@ -97,11 +112,17 @@ final readonly class Container implements ContainerInterface
 
     /**
      * @param list<string> $serviceIds
+     *
      * @return list<string>
      */
     public function validate(array $serviceIds = []) : array
     {
         return $this->validateComposition()->validate(serviceIds: $serviceIds);
+    }
+
+    private function validateComposition() : ValidateComposition
+    {
+        return new ValidateComposition(resolver: $this->resolver);
     }
 
     /**
@@ -110,6 +131,11 @@ final readonly class Container implements ContainerInterface
     public function describeService(string $id) : array
     {
         return $this->explainService()->describe(id: $id);
+    }
+
+    private function explainService() : ExplainService
+    {
+        return new ExplainService(resolver: $this->resolver);
     }
 
     /**
@@ -134,6 +160,11 @@ final readonly class Container implements ContainerInterface
     public function debugGraph(string $id = '') : array
     {
         return $this->exportGraphFlow()->debugGraph(id: $id);
+    }
+
+    private function exportGraphFlow() : ExportGraph
+    {
+        return new ExportGraph(resolver: $this->resolver);
     }
 
     public function debugGovernance(string $id = '') : array
@@ -210,9 +241,19 @@ final readonly class Container implements ContainerInterface
         $this->openScopeFlow()->open(kind: $kind, scopeId: $scopeId);
     }
 
+    private function openScopeFlow() : OpenScope
+    {
+        return new OpenScope(resolver: $this->resolver);
+    }
+
     public function closeScope(string|null $kind = null) : void
     {
         $this->closeScopeFlow()->close(kind: $kind);
+    }
+
+    private function closeScopeFlow() : CloseScope
+    {
+        return new CloseScope(resolver: $this->resolver);
     }
 
     public function compileContainer(array $serviceIds = []) : void
@@ -410,57 +451,17 @@ final readonly class Container implements ContainerInterface
         return $this->sliceView(context: $context);
     }
 
-    private function registerServices() : RegisterServices
-    {
-        return new RegisterServices(resolver: $this->resolver);
-    }
-
-    private function validateComposition() : ValidateComposition
-    {
-        return new ValidateComposition(resolver: $this->resolver);
-    }
-
-    private function explainService() : ExplainService
-    {
-        return new ExplainService(resolver: $this->resolver);
-    }
-
-    private function exportGraphFlow() : ExportGraph
-    {
-        return new ExportGraph(resolver: $this->resolver);
-    }
-
     /**
      * @param array<string, mixed> $context
      */
     private function sliceView(array $context) : ContainerInterface
     {
         return match (SliceContext::category(slice: SliceContext::from(context: $context))) {
-            'flow' => new FlowSliceView(base: $this, resolver: $this->resolver, context: $context),
-            'capability' => new CapabilitySliceView(base: $this, resolver: $this->resolver, context: $context),
+            'flow'          => new FlowSliceView(base: $this, resolver: $this->resolver, context: $context),
+            'capability'    => new CapabilitySliceView(base: $this, resolver: $this->resolver, context: $context),
             'configuration' => new ConfigurationSliceView(base: $this, resolver: $this->resolver, context: $context),
-            'foundation' => new FoundationSliceView(base: $this, resolver: $this->resolver, context: $context),
-            default => new ContextContainer(base: $this, resolver: $this->resolver, context: $context),
+            'foundation'    => new FoundationSliceView(base: $this, resolver: $this->resolver, context: $context),
+            default         => new ContextContainer(base: $this, resolver: $this->resolver, context: $context),
         };
-    }
-
-    private function resolveService() : ResolveService
-    {
-        return new ResolveService(resolver: $this->resolver);
-    }
-
-    private function callFunction() : CallFunction
-    {
-        return new CallFunction(resolver: $this->resolver);
-    }
-
-    private function openScopeFlow() : OpenScope
-    {
-        return new OpenScope(resolver: $this->resolver);
-    }
-
-    private function closeScopeFlow() : CloseScope
-    {
-        return new CloseScope(resolver: $this->resolver);
     }
 }

@@ -27,12 +27,12 @@ final readonly class ResolveRequest
     public function child(string $serviceId, array $overrides = []) : self
     {
         return new self(
-            serviceId: $serviceId,
-            overrides: $overrides,
-            context  : $this->context,
-            parent   : $this,
+            serviceId      : $serviceId,
+            overrides      : $overrides,
+            context        : $this->context,
+            parent         : $this,
             manualInjection: $this->manualInjection,
-            consumer : $this->serviceId
+            consumer       : $this->serviceId
         );
     }
 
@@ -44,12 +44,12 @@ final readonly class ResolveRequest
     public function withContext(array $context) : self
     {
         return new self(
-            serviceId : $this->serviceId,
-            overrides : $this->overrides,
-            context   : $context,
-            parent    : $this->parent,
+            serviceId      : $this->serviceId,
+            overrides      : $this->overrides,
+            context        : $context,
+            parent         : $this->parent,
             manualInjection: $this->manualInjection,
-            consumer  : $this->consumer
+            consumer       : $this->consumer
         );
     }
 
@@ -59,7 +59,7 @@ final readonly class ResolveRequest
     public function contains(string $serviceId) : bool
     {
         $current = $this->parent;
-        while ($current !== null) {
+        while ( $current !== null ) {
             if ($current->serviceId === $serviceId) {
                 return true;
             }

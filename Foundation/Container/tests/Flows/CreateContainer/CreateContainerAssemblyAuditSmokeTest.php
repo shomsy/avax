@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
-$path = dirname(__DIR__, 3) . '/DI/Flows/CreateContainer/CreateContainer.php';
+$path   = dirname(__DIR__, 3) . '/DI/Flows/CreateContainer/CreateContainer.php';
 $source = (string) file_get_contents($path);
 
 assertTrue(str_contains($source, 'AssembleObservability'), 'CreateContainer should only wire observability through its assembly owner.');

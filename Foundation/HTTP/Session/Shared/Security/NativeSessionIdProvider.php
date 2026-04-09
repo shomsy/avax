@@ -23,7 +23,7 @@ final class NativeSessionIdProvider implements SessionIdProviderInterface
      *
      * @return string The generated session ID.
      */
-    public function generate(): string
+    public function generate() : string
     {
         // Start session if not already started
         if (session_status() === PHP_SESSION_NONE) {
@@ -38,10 +38,11 @@ final class NativeSessionIdProvider implements SessionIdProviderInterface
      *
      * Uses PHP's session_regenerate_id() for secure regeneration.
      *
-     * @param  bool  $deleteOld  Whether to delete the old session data.
+     * @param bool $deleteOld Whether to delete the old session data.
+     *
      * @return string The new session ID.
      */
-    public function regenerate(bool $deleteOld = true): string
+    public function regenerate(bool $deleteOld = true) : string
     {
         // Ensure session is started
         if (session_status() === PHP_SESSION_NONE) {
@@ -59,7 +60,7 @@ final class NativeSessionIdProvider implements SessionIdProviderInterface
      *
      * @return string The current session ID.
      */
-    public function current(): string
+    public function current() : string
     {
         // Start session if needed
         if (session_status() === PHP_SESSION_NONE) {
@@ -72,9 +73,9 @@ final class NativeSessionIdProvider implements SessionIdProviderInterface
     /**
      * Set a custom session ID.
      *
-     * @param  string  $id  The session ID to set.
+     * @param string $id The session ID to set.
      */
-    public function set(string $id): void
+    public function set(string $id) : void
     {
         // Can only set ID before session starts
         if (session_status() === PHP_SESSION_NONE) {
@@ -88,7 +89,7 @@ final class NativeSessionIdProvider implements SessionIdProviderInterface
      *
      * @return bool True if session is active.
      */
-    public function isActive(): bool
+    public function isActive() : bool
     {
         return session_status() === PHP_SESSION_ACTIVE;
     }

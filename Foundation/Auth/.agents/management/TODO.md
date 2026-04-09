@@ -19,7 +19,8 @@ Canonical active implementation queue.
 - `updated_at`: 2026-04-07 01:11 CEST
 - `status`: done
 - `outcome`: Unify authentication identity behind a single façade
-- `acceptance`: AuthBuilder wires flows through `System/Capability/Identity/IdentityInterface` with session and JWT adapters hidden behind `Identity`
+- `acceptance`: AuthBuilder wires flows through `System/Capability/Identity/IdentityInterface` with session and JWT
+  adapters hidden behind `Identity`
 - `links`: System/Capability/Identity/
 
 - `id`: AUTH-010
@@ -27,7 +28,8 @@ Canonical active implementation queue.
 - `updated_at`: 2026-04-06 16:50 CET
 - `status`: todo
 - `outcome`: Refactor repository structure - introduce src/ boundary
-- `acceptance`: src/ contains all source slices (Flow, Capability, Foundation, Configuration), tests/ and docs/ stay at root
+- `acceptance`: src/ contains all source slices (Flow, Capability, Foundation, Configuration), tests/ and docs/ stay at
+  root
 - `links`: src/
 
 - `id`: AUTH-009

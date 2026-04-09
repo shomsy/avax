@@ -28,34 +28,24 @@ final class InternalAuditTrail
     }
 }
 
-final class ScopedOwnershipState
-{
-}
+final class ScopedOwnershipState {}
 
 final class BillingFlowUsesGateway
 {
-    public function __construct(public OwnershipGateway $gateway)
-    {
-    }
+    public function __construct(public OwnershipGateway $gateway) {}
 }
 
 final class BillingFlowUsesInternalAudit
 {
-    public function __construct(public InternalAuditTrail $audit)
-    {
-    }
+    public function __construct(public InternalAuditTrail $audit) {}
 }
 
 final class SharedOwnershipFacade
 {
-    public function __construct(public ScopedOwnershipState $state)
-    {
-    }
+    public function __construct(public ScopedOwnershipState $state) {}
 }
 
-final class DevOnlyOwnershipProbe
-{
-}
+final class DevOnlyOwnershipProbe {}
 
 $container = makeTestContainer(CreateContainerConfig::create(settings: ['app_env' => 'prod']));
 
@@ -110,13 +100,13 @@ $container->bind('flow.login.clock', DateTimeImmutable::class)
     ->asPrivate()
     ->concept('clock');
 
-$description = $container->describeService(OwnershipGateway::class);
-$graph = $container->debugGraph(BillingFlowUsesGateway::class);
-$fullGraph = $container->debugGraph();
+$description        = $container->describeService(OwnershipGateway::class);
+$graph              = $container->debugGraph(BillingFlowUsesGateway::class);
+$fullGraph          = $container->debugGraph();
 $validGatewayIssues = $container->validate([BillingFlowUsesGateway::class]);
 $invalidAuditIssues = $container->validate([BillingFlowUsesInternalAudit::class]);
-$lifetimeIssues = $container->validate([SharedOwnershipFacade::class]);
-$profileIssues = $container->validate([DevOnlyOwnershipProbe::class]);
+$lifetimeIssues     = $container->validate([SharedOwnershipFacade::class]);
+$profileIssues      = $container->validate([DevOnlyOwnershipProbe::class]);
 
 assertSame('capability.payments', $description['ownership']['ownerSlice'] ?? null, 'Service descriptions should expose the owner slice.');
 assertSame('shared', $description['ownership']['visibility'] ?? null, 'Service descriptions should expose visibility.');
@@ -134,9 +124,9 @@ assertTrue(isset($fullGraph['slices']['capability.payments']), 'Full graph repor
 assertTrue(isset($fullGraph['duplicateConcepts'][0]['concept']), 'Full graph reports should include duplicate concept reports.');
 assertTrue(in_array(BillingFlowUsesGateway::class, $fullGraph['deadRegistrations'], true) === false, 'Live flow services should not be reported as dead.');
 assertSame([], array_values(array_filter(
-    $validGatewayIssues,
-    static fn(string $issue) : bool => str_contains($issue, BillingFlowUsesGateway::class)
-)), 'Imported shared capability dependencies should validate cleanly.');
+                                $validGatewayIssues,
+                                static fn (string $issue) : bool => str_contains($issue, BillingFlowUsesGateway::class)
+                            )), 'Imported shared capability dependencies should validate cleanly.');
 
 $invalidAuditText = implode("\n", $invalidAuditIssues);
 assertTrue(

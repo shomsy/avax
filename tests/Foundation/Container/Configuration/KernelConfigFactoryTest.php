@@ -44,6 +44,37 @@ final class KernelConfigFactoryTest extends TestCase
         $this->assertTrue(condition: $config->devMode);
     }
 
+    private function makeFactory() : KernelConfigFactory
+    {
+        return new KernelConfigFactory;
+    }
+
+    private function makeInjector() : InjectDependencies
+    {
+        $resolver = new DependencyResolver;
+
+        return new InjectDependencies(
+            servicePrototypeFactory: $this->makePrototypeFactory(),
+            propertyInjector       : new PropertyInjector(container: null),
+            methodInjector         : new MethodInjector(
+                                         parameterResolver: new ResolveMethodParameters(resolver: $resolver)
+                                     )
+        );
+    }
+
+    private function makePrototypeFactory() : ServicePrototypeFactory
+    {
+        return new ServicePrototypeFactory(
+            cache   : new FilePrototypeCache(directory: sys_get_temp_dir()),
+            analyzer: new PrototypeAnalyzer(typeAnalyzer: new ReflectionTypeAnalyzer)
+        );
+    }
+
+    private function makeInvoker() : InvokeAction
+    {
+        return new InvokeAction(container: null, resolver: new DependencyResolver);
+    }
+
     public function test_debug_false_config() : void
     {
         $config = $this->makeFactory()->create(
@@ -83,36 +114,5 @@ final class KernelConfigFactoryTest extends TestCase
         $this->assertTrue(condition: $config->strictMode);
         $this->assertFalse(condition: $config->autoDefine);
         $this->assertTrue(condition: $config->devMode);
-    }
-
-    private function makeFactory() : KernelConfigFactory
-    {
-        return new KernelConfigFactory;
-    }
-
-    private function makePrototypeFactory() : ServicePrototypeFactory
-    {
-        return new ServicePrototypeFactory(
-            cache   : new FilePrototypeCache(directory: sys_get_temp_dir()),
-            analyzer: new PrototypeAnalyzer(typeAnalyzer: new ReflectionTypeAnalyzer)
-        );
-    }
-
-    private function makeInjector() : InjectDependencies
-    {
-        $resolver = new DependencyResolver;
-
-        return new InjectDependencies(
-            servicePrototypeFactory: $this->makePrototypeFactory(),
-            propertyInjector       : new PropertyInjector(container: null),
-            methodInjector         : new MethodInjector(
-                parameterResolver: new ResolveMethodParameters(resolver: $resolver)
-            )
-        );
-    }
-
-    private function makeInvoker() : InvokeAction
-    {
-        return new InvokeAction(container: null, resolver: new DependencyResolver);
     }
 }

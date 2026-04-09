@@ -11,7 +11,7 @@ if ($argc < 3) {
 
 require_once dirname(__DIR__) . '/tests/bootstrap.php';
 
-$command = (string) ($argv[1] ?? '');
+$command     = (string) ($argv[1] ?? '');
 $fixturePath = (string) ($argv[2] ?? '');
 
 if (! is_file($fixturePath)) {
@@ -47,20 +47,20 @@ $print = static function (mixed $payload) : void {
 switch ($command) {
     case 'graph:export':
         $format = (string) ($argv[3] ?? 'json');
-        $kind = (string) ($argv[4] ?? 'dependency');
-        $id = (string) ($argv[5] ?? '');
+        $kind   = (string) ($argv[4] ?? 'dependency');
+        $id     = (string) ($argv[5] ?? '');
         $print($container->exportGraph(format: $format, kind: $kind, id: $id));
         exit(0);
 
     case 'graph:explore':
         $kind = (string) ($argv[3] ?? 'dependency');
-        $id = (string) ($argv[4] ?? '');
+        $id   = (string) ($argv[4] ?? '');
         $print($container->exportGraph(format: 'html', kind: $kind, id: $id));
         exit(0);
 
     case 'graph:diff':
         $format = (string) ($argv[3] ?? 'json');
-        $id = (string) ($argv[4] ?? '');
+        $id     = (string) ($argv[4] ?? '');
         $print($container->diffGraph(format: $format, id: $id));
         exit(0);
 
@@ -71,13 +71,13 @@ switch ($command) {
 
     case 'graph:policy':
         $format = (string) ($argv[3] ?? 'json');
-        $id = (string) ($argv[4] ?? '');
+        $id     = (string) ($argv[4] ?? '');
         $print($container->exportGraph(format: $format, kind: 'policy', id: $id));
         exit(0);
 
     case 'graph:architecture':
         $format = (string) ($argv[3] ?? 'json');
-        $id = (string) ($argv[4] ?? '');
+        $id     = (string) ($argv[4] ?? '');
         $print($container->exportGraph(format: $format, kind: 'architecture', id: $id));
         exit(0);
 

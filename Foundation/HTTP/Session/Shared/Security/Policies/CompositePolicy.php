@@ -33,11 +33,11 @@ use RuntimeException;
  */
 final class CompositePolicy implements PolicyInterface
 {
-    public const MODE_ALL = 'all';
+    public const string MODE_ALL = 'all';
 
-    public const MODE_ANY = 'any';
+    public const string MODE_ANY = 'any';
 
-    public const MODE_NONE = 'none';
+    public const string MODE_NONE = 'none';
 
     /**
      * @var array<PolicyInterface> Child policies
@@ -160,10 +160,10 @@ final class CompositePolicy implements PolicyInterface
         if (! empty($failures)) {
             throw new RuntimeException(
                 message: sprintf(
-                    'Composite policy "%s" failed (ALL mode): %s',
-                    $this->name,
-                    implode(separator: '; ', array: $failures)
-                )
+                             'Composite policy "%s" failed (ALL mode): %s',
+                             $this->name,
+                             implode(separator: '; ', array: $failures)
+                         )
             );
         }
     }
@@ -204,10 +204,10 @@ final class CompositePolicy implements PolicyInterface
         // All policies failed
         throw new RuntimeException(
             message: sprintf(
-                'Composite policy "%s" failed (ANY mode): All child policies failed: %s',
-                $this->name,
-                implode(separator: '; ', array: $failures)
-            )
+                         'Composite policy "%s" failed (ANY mode): All child policies failed: %s',
+                         $this->name,
+                         implode(separator: '; ', array: $failures)
+                     )
         );
     }
 
@@ -227,10 +227,10 @@ final class CompositePolicy implements PolicyInterface
                 // Policy passed, but we wanted it to fail
                 throw new RuntimeException(
                     message: sprintf(
-                        'Composite policy "%s" failed (NONE mode): Policy "%s" should have failed but passed',
-                        $this->name,
-                        $policy->getName()
-                    )
+                                 'Composite policy "%s" failed (NONE mode): Policy "%s" should have failed but passed',
+                                 $this->name,
+                                 $policy->getName()
+                             )
                 );
             } catch (Exception $e) {
                 // Policy failed, which is what we wanted (continue)

@@ -285,7 +285,7 @@ final readonly class RouteGroupBuilder
         // This results in an array where every route is now a finalized
         // `RouteDefinition` object.
         return array_map(
-            callback: static fn(RouteBuilder $r) => $r->build(), // Transform RouteBuilder into RouteDefinition.
+            callback: static fn (RouteBuilder $r) => $r->build(), // Transform RouteBuilder into RouteDefinition.
             array   : $this->routes                // The array of RouteBuilder instances to process.
         );
     }

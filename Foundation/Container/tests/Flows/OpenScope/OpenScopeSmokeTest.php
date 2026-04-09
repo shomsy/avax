@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
-final class OpenScopedService
-{
-}
+final class OpenScopedService {}
 
 $container = makeTestContainer();
 $container->scoped(OpenScopedService::class, OpenScopedService::class);
 
 $container->openScope();
-$first = $container->get(OpenScopedService::class);
+$first  = $container->get(OpenScopedService::class);
 $second = $container->get(OpenScopedService::class);
 $container->closeScope();
 

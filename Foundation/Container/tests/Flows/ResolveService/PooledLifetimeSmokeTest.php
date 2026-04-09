@@ -10,8 +10,8 @@ use Avax\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
 
 final class PooledLifetimeSequence
 {
-    public static int $created = 0;
-    public static int $reset = 0;
+    public static int $created  = 0;
+    public static int $reset    = 0;
     public static int $disposed = 0;
 }
 
@@ -56,7 +56,7 @@ $container->bind(ReusablePooledService::class, ReusablePooledService::class)
 $container->bind(UnsafePooledService::class, UnsafePooledService::class)
     ->pooled(maxSize: 1);
 
-$issues = $container->validate([ReusablePooledService::class, UnsafePooledService::class]);
+$issues    = $container->validate([ReusablePooledService::class, UnsafePooledService::class]);
 $issueText = implode("\n", $issues);
 
 assertTrue(
@@ -65,7 +65,7 @@ assertTrue(
 );
 
 $container->openScope();
-$first = $container->get(ReusablePooledService::class);
+$first     = $container->get(ReusablePooledService::class);
 $sameScope = $container->get(ReusablePooledService::class);
 assertSame($first, $sameScope, 'Pooled services should reuse the checked-out instance inside one scope.');
 $container->closeScope();

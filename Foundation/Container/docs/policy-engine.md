@@ -31,17 +31,17 @@ Use:
 
 Current severity assignments:
 
-| Code | Severity |
-|---|---|
-| POL-001 | `warn` |
-| POL-002 | `warn` |
-| POL-003 | `warn` |
-| POL-004 | `error` |
-| POL-005 | `warn` |
-| POL-006 | `warn` |
-| POL-007 | `error` |
-| POL-008 | `error` |
-| POL-009 | `warn` |
+| Code    | Severity |
+|---------|----------|
+| POL-001 | `warn`   |
+| POL-002 | `warn`   |
+| POL-003 | `warn`   |
+| POL-004 | `error`  |
+| POL-005 | `warn`   |
+| POL-006 | `warn`   |
+| POL-007 | `error`  |
+| POL-008 | `error`  |
+| POL-009 | `warn`   |
 
 ## Structural Diff
 

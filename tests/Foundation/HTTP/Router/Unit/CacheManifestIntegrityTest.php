@@ -30,6 +30,23 @@ class CacheManifestIntegrityTest extends TestCase
     }
 
     /**
+     * Helper method to create a manifest with checksum.
+     */
+    private function createManifest(array $files, int $generatedAt) : RouteCacheManifest
+    {
+        ksort($files);
+        $hash     = sha1(json_encode($files));
+        $checksum = hash('sha256', $hash . json_encode($files));
+
+        return new RouteCacheManifest(
+            files      : $files,
+            hash       : $hash,
+            generatedAt: $generatedAt,
+            checksum   : $checksum
+        );
+    }
+
+    /**
      * @test
      */
     public function rejects_stale_manifests() : void
@@ -205,22 +222,5 @@ class CacheManifestIntegrityTest extends TestCase
             rmdir($tempDir . '/routes');
             rmdir($tempDir);
         }
-    }
-
-    /**
-     * Helper method to create a manifest with checksum.
-     */
-    private function createManifest(array $files, int $generatedAt) : RouteCacheManifest
-    {
-        ksort($files);
-        $hash     = sha1(json_encode($files));
-        $checksum = hash('sha256', $hash . json_encode($files));
-
-        return new RouteCacheManifest(
-            files      : $files,
-            hash       : $hash,
-            generatedAt: $generatedAt,
-            checksum   : $checksum
-        );
     }
 }

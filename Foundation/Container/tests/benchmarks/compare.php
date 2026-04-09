@@ -35,13 +35,14 @@ function readBenchmarkArtifact(string $path) : array
     }
 
     return [
-        'meta' => $meta,
+        'meta'    => $meta,
         'results' => $results,
     ];
 }
 
 /**
  * @param array<int, string> $arguments
+ *
  * @return array<string, string>
  */
 function benchmarkTargets(array $arguments) : array
@@ -72,12 +73,13 @@ function benchmarkTargets(array $arguments) : array
 
 /**
  * @param array<string, array<string, array<string, mixed>>> $reports
+ *
  * @return list<string>
  */
 function commonScenarios(array $reports) : array
 {
     $scenarioSets = array_map(
-        static fn(array $results) : array => array_keys($results),
+        static fn (array $results) : array => array_keys($results),
         $reports
     );
 
@@ -93,15 +95,16 @@ function commonScenarios(array $reports) : array
 
 /**
  * @param array<string, array{meta: array<string, mixed>, results: array<string, array<string, mixed>>}> $artifacts
+ *
  * @return array<string, mixed>
  */
 function comparisonPayload(array $artifacts, string $baselineName) : array
 {
-    $reports = array_map(
-        static fn(array $artifact) : array => $artifact['results'],
+    $reports  = array_map(
+        static fn (array $artifact) : array => $artifact['results'],
         $artifacts
     );
-    $common = commonScenarios(reports: $reports);
+    $common   = commonScenarios(reports: $reports);
     $baseline = $reports[$baselineName] ?? null;
     if (! is_array($baseline)) {
         throw new RuntimeException("Baseline report [{$baselineName}] is missing.");
@@ -110,29 +113,29 @@ function comparisonPayload(array $artifacts, string $baselineName) : array
     $scenarios = [];
     foreach ($common as $scenario) {
         $baselineTime = (float) ($baseline[$scenario]['time_ms'] ?? 0.0);
-        $baselineOps = (float) ($baseline[$scenario]['ops_per_s'] ?? 0.0);
-        $rows = [];
+        $baselineOps  = (float) ($baseline[$scenario]['ops_per_s'] ?? 0.0);
+        $rows         = [];
 
         foreach ($reports as $name => $results) {
             $time = (float) ($results[$scenario]['time_ms'] ?? 0.0);
-            $ops = (float) ($results[$scenario]['ops_per_s'] ?? 0.0);
+            $ops  = (float) ($results[$scenario]['ops_per_s'] ?? 0.0);
             $peak = (float) ($results[$scenario]['peak_mb'] ?? 0.0);
 
             $rows[$name] = [
-                'time_ms' => $time,
-                'ops_per_s' => $ops,
-                'peak_mb' => $peak,
+                'time_ms'                => $time,
+                'ops_per_s'              => $ops,
+                'peak_mb'                => $peak,
                 'time_ratio_vs_baseline' => $baselineTime > 0 ? $time / $baselineTime : 0.0,
-                'ops_ratio_vs_baseline' => $baselineOps > 0 ? $ops / $baselineOps : 0.0,
+                'ops_ratio_vs_baseline'  => $baselineOps > 0 ? $ops / $baselineOps : 0.0,
             ];
         }
 
         uasort(
             $rows,
-            static fn(array $left, array $right) : int => $left['time_ms'] <=> $right['time_ms']
+            static fn (array $left, array $right) : int => $left['time_ms'] <=> $right['time_ms']
         );
 
-        $fastest = array_key_first($rows);
+        $fastest              = array_key_first($rows);
         $scenarios[$scenario] = [
             'fastest' => $fastest,
             'results' => $rows,
@@ -140,19 +143,19 @@ function comparisonPayload(array $artifacts, string $baselineName) : array
     }
 
     return [
-        'baseline' => $baselineName,
-        'targets' => array_keys($reports),
-        'targetMeta' => array_map(
-            static fn(array $artifact) : array => $artifact['meta'],
+        'baseline'        => $baselineName,
+        'targets'         => array_keys($reports),
+        'targetMeta'      => array_map(
+            static fn (array $artifact) : array => $artifact['meta'],
             $artifacts
         ),
         'commonScenarios' => $common,
-        'scenarioCount' => count($common),
-        'scenarios' => $scenarios,
+        'scenarioCount'   => count($common),
+        'scenarios'       => $scenarios,
     ];
 }
 
-$jsonOutput = in_array('--json', $argv, true);
+$jsonOutput   = in_array('--json', $argv, true);
 $baselineName = 'current';
 
 foreach ($argv as $argument) {
@@ -161,7 +164,7 @@ foreach ($argv as $argument) {
     }
 }
 
-$targets = benchmarkTargets(arguments: array_slice($argv, 1));
+$targets   = benchmarkTargets(arguments: array_slice($argv, 1));
 $artifacts = [];
 
 foreach ($targets as $name => $path) {

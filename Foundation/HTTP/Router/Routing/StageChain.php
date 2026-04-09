@@ -20,7 +20,7 @@ use RuntimeException;
 final class StageChain
 {
     /** Stage ordering contract: stages precede middleware, then dispatch core. */
-    private const ORDER_CONTRACT = ['stages', 'middleware', 'dispatch'];
+    private const array ORDER_CONTRACT = ['stages', 'middleware', 'dispatch'];
 
     public function __construct(
         private readonly ContainerInterface $container,
@@ -49,7 +49,7 @@ final class StageChain
 
         return array_reduce(
             array_reverse($pipeline),
-            fn(Closure $next, string $class) : Closure => fn(Request $request) : ResponseInterface => $this->invoke(class: $class, next: $next, request: $request),
+            fn (Closure $next, string $class) : Closure => fn (Request $request) : ResponseInterface => $this->invoke(class: $class, next: $next, request: $request),
             $core
         );
     }

@@ -61,27 +61,29 @@ Project-specific truth for this repository:
 
 1. **Canonical Validation Entrypoint**: `find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l`
 2. **Canonical Local Development Entrypoint**: `None; this is a library component with no standalone runtime.`
-3. **Canonical Release or Publish Entrypoint**: `None; release and publish are handled at the parent package or release process level.`
-4. **Project-Specific Architecture Boundaries**: `src/Container.php`, `src/ContainerInterface.php`, `src/Flows/`, `src/Capabilities/`, `src/Foundation/`, `docs/`
+3. **Canonical Release or Publish Entrypoint**:
+   `None; release and publish are handled at the parent package or release process level.`
+4. **Project-Specific Architecture Boundaries**: `src/Container.php`, `src/ContainerInterface.php`, `src/Flows/`,
+   `src/Capabilities/`, `src/Foundation/`, `docs/`
 5. **Applied Governance Stack**:
-   - **Delivery Kind**: `library`
-   - **Applied Repository Profiles**: `none`
-   - **Languages**: `php`
-   - **Frameworks Or Runtimes**: `none`
-   - **Applied Coding Profiles**: `.agents/.rules/governance/profiles/languages/php.md`
-   - **Applied Architecture Profiles**: `.agents/.rules/governance/architecture/profiles/languages/php.md`
-   - **Security Lanes Required**: `security/**`
-   - **Operations Lanes Required**: `delivery/operations/**`
+    - **Delivery Kind**: `library`
+    - **Applied Repository Profiles**: `none`
+    - **Languages**: `php`
+    - **Frameworks Or Runtimes**: `none`
+    - **Applied Coding Profiles**: `.agents/.rules/governance/profiles/languages/php.md`
+    - **Applied Architecture Profiles**: `.agents/.rules/governance/architecture/profiles/languages/php.md`
+    - **Security Lanes Required**: `security/**`
+    - **Operations Lanes Required**: `delivery/operations/**`
 6. **Project Workspace**:
-   - `.agents/business-logic/`
-   - `.agents/language-specific/`
-   - `.agents/management/`
-   - `.agents/hooks/`
-   - `.agents/review/`
+    - `.agents/business-logic/`
+    - `.agents/language-specific/`
+    - `.agents/management/`
+    - `.agents/hooks/`
+    - `.agents/review/`
 7. **Project-Specific Exceptions or Forbidden Shortcuts**:
-   - Do not add new documentation at the repository root; use `docs/` for new documentation.
-   - Treat the existing root `how-to-*.md` files as legacy compatibility docs, not as the pattern to extend.
-   - There is no standalone runtime or publish entrypoint from this component root.
+    - Do not add new documentation at the repository root; use `docs/` for new documentation.
+    - Treat the existing root `how-to-*.md` files as legacy compatibility docs, not as the pattern to extend.
+    - There is no standalone runtime or publish entrypoint from this component root.
 
 Keep this file short. Long procedures belong in governance docs, and active
 queues belong in `.agents/management/**`.

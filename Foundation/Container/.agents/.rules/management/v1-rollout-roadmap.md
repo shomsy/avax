@@ -34,12 +34,12 @@ This document defines the 3-week sequence for deploying the **Agent OS v1** spec
 
 ## 🚀 Post-v1: Expansion (Optional)
 
-1.  **Additional Agents**: Security, Performance, Ops.
-2.  **Remote Orchestration**: Parallel execution via Blackbox/Cline pods.
-3.  **Write-capable MCP Servers**: Gradual rollout with multi-layer approval.
+1. **Additional Agents**: Security, Performance, Ops.
+2. **Remote Orchestration**: Parallel execution via Blackbox/Cline pods.
+3. **Write-capable MCP Servers**: Gradual rollout with multi-layer approval.
 
 ## 📈 Success Criteria for v1 Rollout
 
-1.  **Codex Avoidance > 30%** for non-implementation tasks.
-2.  **Context Input Reduction > 80%** for final implementation.
-3.  **Zero Unapproved Write Actions** to external systems.
+1. **Codex Avoidance > 30%** for non-implementation tasks.
+2. **Context Input Reduction > 80%** for final implementation.
+3. **Zero Unapproved Write Actions** to external systems.

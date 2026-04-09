@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Configuration;
 
-use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 /**
@@ -20,11 +20,6 @@ use RuntimeException;
  */
 class AuthBuilderTest extends TestCase
 {
-    protected function tearDown() : void
-    {
-        Mockery::close();
-    }
-
     public function testAuthBuilderThrowsExceptionWithoutUserSource() : void
     {
         $builder = new AuthBuilder();
@@ -36,7 +31,7 @@ class AuthBuilderTest extends TestCase
     public function testAuthBuilderThrowsExceptionWithoutIdentity() : void
     {
         $userSource = Mockery::mock(UserSourceInterface::class);
-        $builder = new AuthBuilder();
+        $builder    = new AuthBuilder();
         $builder->forUser(userSource: $userSource);
 
         $this->expectException(exception: RuntimeException::class);
@@ -47,7 +42,7 @@ class AuthBuilderTest extends TestCase
     public function testAuthBuilderBuildsAuthInstance() : void
     {
         $userSource = Mockery::mock(UserSourceInterface::class);
-        $identity = Mockery::mock(IdentityInterface::class);
+        $identity   = Mockery::mock(IdentityInterface::class);
 
         $builder = new AuthBuilder();
         $builder->forUser(userSource: $userSource)
@@ -64,7 +59,7 @@ class AuthBuilderTest extends TestCase
     public function testAuthBuilderUsesConfiguredIdGenerator() : void
     {
         $data = new RegistrationData(
-            email: 'builder@example.com',
+            email   : 'builder@example.com',
             username: 'builder',
             password: 'password'
         );
@@ -72,7 +67,7 @@ class AuthBuilderTest extends TestCase
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('emailExists')->with($data->email)->andReturn(false);
         $userSource->shouldReceive('usernameExists')->with($data->username)->andReturn(false);
-        $userSource->shouldReceive('create')->once()->andReturnUsing(fn($user) => $user);
+        $userSource->shouldReceive('create')->once()->andReturnUsing(fn ($user) => $user);
 
         $identity = Mockery::mock(IdentityInterface::class);
 
@@ -83,7 +78,7 @@ class AuthBuilderTest extends TestCase
         $passwordHasher->shouldReceive('hash')->with('password')->andReturn('hashed_password');
 
         $builder = new AuthBuilder();
-        $auth = $builder
+        $auth    = $builder
             ->forUser(userSource: $userSource)
             ->withIdentity(identity: $identity)
             ->usingIdGenerator(idGenerator: $idGenerator)
@@ -93,5 +88,10 @@ class AuthBuilderTest extends TestCase
         $user = $auth->register(data: $data);
 
         $this->assertSame(expected: 987654, actual: $user->getId()->value);
+    }
+
+    protected function tearDown() : void
+    {
+        Mockery::close();
     }
 }

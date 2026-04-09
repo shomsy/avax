@@ -5,10 +5,10 @@
 * [x] Open `RoutePipeline.php`
 * [x] Confirm that `dispatch()` **returns `$stack($request)`** (not just calls it)
 * [x] Check that the app now correctly returns responses for:
-  * [x] `/`
-  * [x] `/health`
-  * [x] `/test`
-  * [x] a non-existing route (should show 404)
+    * [x] `/`
+    * [x] `/health`
+    * [x] `/test`
+    * [x] a non-existing route (should show 404)
 
 ## ⚙️ 2. Clean Up the Environment
 
@@ -20,18 +20,18 @@
 ## 🧩 3. Add Basic Integration Tests
 
 * [x] Write tests for each route:
-  * [x] `GET /` → should return status `200`
-  * [x] `GET /health` → should return body `ok`
-  * [x] `GET /test` → should return `"Enterprise Router Active!"`
-  * [x] `GET /missing` → should return status `404`
+    * [x] `GET /` → should return status `200`
+    * [x] `GET /health` → should return body `ok`
+    * [x] `GET /test` → should return `"Enterprise Router Active!"`
+    * [x] `GET /missing` → should return status `404`
 * [x] Assert that each response implements `ResponseInterface`
 * [x] Assert that each response has header `Content-Type: text/plain`
 
 ## 🔍 4. Validate Dispatcher Behavior
 
 * [x] In `ControllerDispatcher`, add temporary `dd()` in:
-  * [x] `dispatch()` → confirm it's reached
-  * [x] `dispatchCallable()` → confirm it returns valid `Response`
+    * [x] `dispatch()` → confirm it's reached
+    * [x] `dispatchCallable()` → confirm it returns valid `Response`
 * [x] Ensure every `dispatch...` method has a **return statement**
 * [x] Remove all `dd()` after confirming success
 
@@ -73,14 +73,14 @@
 ## 📊 Test Coverage Status
 
 - [x] **Integration Tests**: `tests/Integration/RouterIntegrationTest.php`
-  - Tests real HTTP requests through full application stack
-  - Covers all main routes: `/`, `/health`, `/test`, `/missing`
-  - Validates ResponseInterface implementation
-  - Checks Content-Type headers
+    - Tests real HTTP requests through full application stack
+    - Covers all main routes: `/`, `/health`, `/test`, `/missing`
+    - Validates ResponseInterface implementation
+    - Checks Content-Type headers
 
 - [x] **Unit Tests**: `tests/Unit/ControllerDispatcherUnitTest.php`
-  - Tests null handling in ControllerDispatcher
-  - Covers callable, controller method, and invokable controller scenarios
+    - Tests null handling in ControllerDispatcher
+    - Covers callable, controller method, and invokable controller scenarios
 
 ## 🔧 Code Changes Made
 

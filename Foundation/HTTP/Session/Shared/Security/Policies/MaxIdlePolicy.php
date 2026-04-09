@@ -17,7 +17,7 @@ final readonly class MaxIdlePolicy implements PolicyInterface
     /**
      * MaxIdlePolicy Constructor.
      *
-     * @param  int  $maxIdleSeconds  Maximum idle time in seconds (default: 30 minutes).
+     * @param int $maxIdleSeconds Maximum idle time in seconds (default: 30 minutes).
      */
     public function __construct(
         private int $maxIdleSeconds = 1800
@@ -26,11 +26,11 @@ final readonly class MaxIdlePolicy implements PolicyInterface
     /**
      * Enforce max idle policy.
      *
-     * @param  array<string, mixed>  $data  Current session data.
+     * @param array<string, mixed> $data Current session data.
      *
      * @throws \RuntimeException If session is idle too long.
      */
-    public function enforce(array $data): void
+    public function enforce(array $data) : void
     {
         $lastActivity = $data['_last_activity'] ?? null;
 
@@ -43,10 +43,10 @@ final readonly class MaxIdlePolicy implements PolicyInterface
         if ($idleTime > $this->maxIdleSeconds) {
             throw new RuntimeException(
                 message: sprintf(
-                    'Session expired due to inactivity. Idle for %d seconds (max: %d).',
-                    $idleTime,
-                    $this->maxIdleSeconds
-                )
+                             'Session expired due to inactivity. Idle for %d seconds (max: %d).',
+                             $idleTime,
+                             $this->maxIdleSeconds
+                         )
             );
         }
     }
@@ -56,7 +56,7 @@ final readonly class MaxIdlePolicy implements PolicyInterface
      *
      * @return string Policy identifier.
      */
-    public function getName(): string
+    public function getName() : string
     {
         return 'max_idle';
     }

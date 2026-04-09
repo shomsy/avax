@@ -40,8 +40,8 @@ final class InjectDependenciesTest extends TestCase
             servicePrototypeFactory: $factory,
             propertyInjector       : new PropertyInjector(container: $container),
             methodInjector         : new MethodInjector(
-                parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver)
-            ),
+                                         parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver)
+                                     ),
             container              : $container
         );
 
@@ -71,8 +71,8 @@ final class InjectDependenciesTest extends TestCase
             servicePrototypeFactory: $factory,
             propertyInjector       : new PropertyInjector(container: $container),
             methodInjector         : new MethodInjector(
-                parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver)
-            ),
+                                         parameterResolver: new ResolveMethodParameters(resolver: new DependencyResolver)
+                                     ),
             container              : $container
         );
 

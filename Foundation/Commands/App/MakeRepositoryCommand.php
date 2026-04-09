@@ -12,12 +12,12 @@ final readonly class MakeRepositoryCommand
 {
     public function __construct(
         private RepositoryGenerator $repositoryGenerator,
-        private LoggerInterface $logger
+        private LoggerInterface     $logger
     ) {}
 
-    public function execute(array $arguments): void
+    public function execute(array $arguments) : void
     {
-        $name = $arguments['name'] ?? null;
+        $name   = $arguments['name'] ?? null;
         $entity = $arguments['entity'] ?? null;
 
         if (empty($name) || empty($entity)) {
@@ -31,13 +31,13 @@ final readonly class MakeRepositoryCommand
             $this->repositoryGenerator->create(tableName: $name, entity: $entity);
             $this->logger->info(
                 message: sprintf(
-                    "Settings '%s' for entity '%s' created successfully.",
-                    $name,
-                    $entity
-                )
+                             "Settings '%s' for entity '%s' created successfully.",
+                             $name,
+                             $entity
+                         )
             );
         } catch (Throwable $throwable) {
-            $this->logger->error(message: 'Error creating repository: '.$throwable->getMessage());
+            $this->logger->error(message: 'Error creating repository: ' . $throwable->getMessage());
         }
     }
 }

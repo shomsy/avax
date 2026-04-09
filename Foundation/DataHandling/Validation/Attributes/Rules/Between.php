@@ -34,16 +34,16 @@ readonly class Between
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property): void
+    public function validate(mixed $value, string $property) : void
     {
         if ($value < $this->min || $value > $this->max) {
             throw new ValidationException(
                 message: sprintf(
-                    '%s must be between %d and %d.',
-                    $property,
-                    $this->min,
-                    $this->max,
-                ),
+                             '%s must be between %d and %d.',
+                             $property,
+                             $this->min,
+                             $this->max,
+                         ),
             );
         }
     }

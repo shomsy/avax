@@ -11,13 +11,13 @@
 
 ### System Identity
 
-| Property | Value |
-|----------|-------|
-| **System Type** | Authentication/Authorization Framework (Pure PHP 8.3+) |
-| **Primary Consumers** | PHP application developers |
-| **Runtime Context** | HTTP requests, CLI, worker processes |
-| **Lifecycle** | Initial development / Prototype |
-| **Delivery Kind** | Framework (pure PHP library) |
+| Property              | Value                                                  |
+|-----------------------|--------------------------------------------------------|
+| **System Type**       | Authentication/Authorization Framework (Pure PHP 8.3+) |
+| **Primary Consumers** | PHP application developers                             |
+| **Runtime Context**   | HTTP requests, CLI, worker processes                   |
+| **Lifecycle**         | Initial development / Prototype                        |
+| **Delivery Kind**     | Framework (pure PHP library)                           |
 
 ### Intended Use-Cases
 
@@ -73,13 +73,15 @@ flowchart LR
 
 ### 1.2 Primary Axis
 
-> This system is fundamentally organized around **Identity abstraction** (authentication mechanism) that delegates user retrieval to pluggable `UserSourceInterface`.
+> This system is fundamentally organized around **Identity abstraction** (authentication mechanism) that delegates user
+> retrieval to pluggable `UserSourceInterface`.
 
 ### 1.3 Secondary Axis
 
 > Secondary axis: **JWT vs Session** (adds complexity and must be justified)
 
-Two implementations exist: `JwtIdentity` and `SessionIdentity`. This dual-axis requires justification — stateless vs stateful is a fundamental architectural choice.
+Two implementations exist: `JwtIdentity` and `SessionIdentity`. This dual-axis requires justification — stateless vs
+stateful is a fundamental architectural choice.
 
 ---
 
@@ -87,45 +89,45 @@ Two implementations exist: `JwtIdentity` and `SessionIdentity`. This dual-axis r
 
 ### 2.1 Central Abstraction Stress Test
 
-| Question | Answer | Evidence |
-|----------|--------|----------|
-| Does every feature flow through Identity? | Yes | All auth flows use Identity->attempt() |
-| Does it accumulate responsibilities over time? | No | Clear separation: Actions (logic) vs Adapters (implementation) |
-| Is it harder to change than surrounding components? | No | Identity is abstract, implementations are swappable |
+| Question                                            | Answer | Evidence                                                       |
+|-----------------------------------------------------|--------|----------------------------------------------------------------|
+| Does every feature flow through Identity?           | Yes    | All auth flows use Identity->attempt()                         |
+| Does it accumulate responsibilities over time?      | No     | Clear separation: Actions (logic) vs Adapters (implementation) |
+| Is it harder to change than surrounding components? | No     | Identity is abstract, implementations are swappable            |
 
 **Assessment:** ✅ Pass — stable axis
 
 ### 2.2 Responsibility Mapping
 
-| Component | Orchestrates | Executes | Holds State | Notes |
-|-----------|--------------|----------|-------------|-------|
-| Authenticator | Yes | No | No | Facade, delegates to actions |
-| LoginAction | No | Yes | No | Use case, delegates to Identity |
-| Identity | No | Yes | No | Abstract adapter, uses UserDataSource |
-| UserDataSource | No | Yes | No | Interface, implementation-dependent |
-| RateLimiter | No | Yes | Yes | Session-based attempt tracking |
+| Component      | Orchestrates | Executes | Holds State | Notes                                 |
+|----------------|--------------|----------|-------------|---------------------------------------|
+| Authenticator  | Yes          | No       | No          | Facade, delegates to actions          |
+| LoginAction    | No           | Yes      | No          | Use case, delegates to Identity       |
+| Identity       | No           | Yes      | No          | Abstract adapter, uses UserDataSource |
+| UserDataSource | No           | Yes      | No          | Interface, implementation-dependent   |
+| RateLimiter    | No           | Yes      | Yes         | Session-based attempt tracking        |
 
 **Summary:** Responsibilities are **clear**
 
 ### 2.3 Mutability Audit
 
-| Object | Scope | Lifetime | Why Mutable | Classification |
-|--------|-------|----------|--------------|----------------|
-| UserInterface | Application | Request | Roles can change | Necessary |
-| RateLimiter | Request | Session | Tracks attempts | Necessary |
-| Credentials | Request | Request | DTO, input data | Convenience |
+| Object        | Scope       | Lifetime | Why Mutable      | Classification |
+|---------------|-------------|----------|------------------|----------------|
+| UserInterface | Application | Request  | Roles can change | Necessary      |
+| RateLimiter   | Request     | Session  | Tracks attempts  | Necessary      |
+| Credentials   | Request     | Request  | DTO, input data  | Convenience    |
 
 **Summary:** Mutability is **justified**
 
 ### 2.4 System Invariants
 
-| Invariant | Enforced Where | Evidence | Status |
-|-----------|----------------|----------|--------|
-| Passwords hashed | Identity::authenticate | password_verify() | ✅ Enforced |
-| Generic auth errors | LoginAction | AuthFailed message | ✅ Enforced |
-| Sensitive data protected | Credentials, login() | #[SensitiveParameter] | ✅ Enforced |
-| Rate limiting | RateLimiter | Session-based | ✅ Enforced |
-| No user enumeration | LoginController | Generic "Invalid credentials" | ✅ Enforced |
+| Invariant                | Enforced Where         | Evidence                      | Status     |
+|--------------------------|------------------------|-------------------------------|------------|
+| Passwords hashed         | Identity::authenticate | password_verify()             | ✅ Enforced |
+| Generic auth errors      | LoginAction            | AuthFailed message            | ✅ Enforced |
+| Sensitive data protected | Credentials, login()   | #[SensitiveParameter]         | ✅ Enforced |
+| Rate limiting            | RateLimiter            | Session-based                 | ✅ Enforced |
+| No user enumeration      | LoginController        | Generic "Invalid credentials" | ✅ Enforced |
 
 ---
 
@@ -157,7 +159,7 @@ Two implementations exist: `JwtIdentity` and `SessionIdentity`. This dual-axis r
 
 ### Finding: UserInterface Has Mutable Methods
 
-- **Symptom:** UserInterface includes `setPassword()`, `addRole()`, `removeRole()` 
+- **Symptom:** UserInterface includes `setPassword()`, `addRole()`, `removeRole()`
 - **Root Cause:** User entity should be immutable after creation
 - **Impact:** Can lead to role escalation or password changes without proper validation
 - **Evidence:** Contracts/UserInterface.php:49, 83, 92
@@ -189,14 +191,14 @@ Two implementations exist: `JwtIdentity` and `SessionIdentity`. This dual-axis r
 
 ## PHASE 4: Rewrite Heuristics
 
-| Heuristic | Weight | Checked |
-|-----------|--------|---------|
-| Central abstraction is wrong | 2 | ☐ |
-| Pipeline relies on implicit ordering | 2 | ☐ |
-| Configuration complexity mirrors design complexity | 1 | ☐ |
-| Usage requires explanation to avoid misuse | 1 | ☐ |
-| Performance depends on mitigation, not structure | 1 | ☐ |
-| New features require touching multiple core classes | 2 | ☐ |
+| Heuristic                                           | Weight | Checked |
+|-----------------------------------------------------|--------|---------|
+| Central abstraction is wrong                        | 2      | ☐       |
+| Pipeline relies on implicit ordering                | 2      | ☐       |
+| Configuration complexity mirrors design complexity  | 1      | ☐       |
+| Usage requires explanation to avoid misuse          | 1      | ☐       |
+| Performance depends on mitigation, not structure    | 1      | ☐       |
+| New features require touching multiple core classes | 2      | ☐       |
 
 **Rewrite Score:** 0
 
@@ -208,13 +210,16 @@ Two implementations exist: `JwtIdentity` and `SessionIdentity`. This dual-axis r
 
 **Justification:**
 
-The core authentication architecture is sound. The primary axis (Identity abstraction) is stable and well-designed. Security basics are in place:
+The core authentication architecture is sound. The primary axis (Identity abstraction) is stable and well-designed.
+Security basics are in place:
+
 - Password hashing via `password_verify()`
 - `#[SensitiveParameter]` on sensitive data
 - Generic error messages
 - Rate limiting implemented
 
 The findings are fixable without redesign:
+
 - AuthMiddleware is a stub (High) — needs implementation
 - UserInterface mutability (High) — needs design decision
 - RateLimiter placement (Medium) — architectural improvement

@@ -12,10 +12,10 @@ final readonly class MakeServiceCommand
 {
     public function __construct(
         private ServiceGenerator $serviceGenerator,
-        private LoggerInterface $logger
+        private LoggerInterface  $logger
     ) {}
 
-    public function execute(array $arguments): void
+    public function execute(array $arguments) : void
     {
         $name = $arguments['name'] ?? null;
 
@@ -30,7 +30,7 @@ final readonly class MakeServiceCommand
             $this->serviceGenerator->create(name: $name);
             $this->logger->info(message: sprintf("Action '%s' created successfully.", $name));
         } catch (Throwable $throwable) {
-            $this->logger->error(message: 'Error creating service: '.$throwable->getMessage());
+            $this->logger->error(message: 'Error creating service: ' . $throwable->getMessage());
         }
     }
 }

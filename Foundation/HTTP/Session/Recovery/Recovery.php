@@ -113,9 +113,9 @@ final class Recovery
         $this->audit?->record(
             event: 'transaction_committed',
             data : [
-                'backup'    => $backupName,
-                'timestamp' => time(),
-            ]);
+                       'backup'    => $backupName,
+                       'timestamp' => time(),
+                   ]);
     }
 
     // -----------------------------------------------------------------

@@ -32,14 +32,14 @@ final readonly class ErrorHandler
     /**
      * Constructor with property promotion for dependency injection.
      *
-     * @param  LoggerInterface  $logger  Logger for error logging.
+     * @param LoggerInterface $logger Logger for error logging.
      */
     public function __construct(private LoggerInterface $logger) {}
 
     /**
      * Initializes global error handling for application.
      */
-    public function initialize(): void
+    public function initialize() : void
     {
         ob_start();
         set_exception_handler(callback: [$this, 'handle']);
@@ -51,7 +51,7 @@ final readonly class ErrorHandler
     /**
      * Registers CLI signal handlers for graceful shutdown.
      */
-    private function registerCliSignalHandlers(): void
+    private function registerCliSignalHandlers() : void
     {
         if (PHP_SAPI === 'cli' && function_exists(function: 'pcntl_signal')) {
             pcntl_signal(signal: SIGTERM, handler: fn () => $this->exitGracefully(signal: 'SIGTERM'));
@@ -63,7 +63,7 @@ final readonly class ErrorHandler
      * Handles CLI graceful shutdown signals.
      */
     #[NoReturn]
-    private function exitGracefully(string $signal): void
+    private function exitGracefully(string $signal) : void
     {
         $this->logger->warning(
             message: "⚠️ {$signal} received – exiting gracefully.",
@@ -79,11 +79,12 @@ final readonly class ErrorHandler
      * @throws ErrorException
      */
     public function convertErrorToException(
-        int $severity,
+        int    $severity,
         string $message,
         string $file,
-        int $line
-    ): never {
+        int    $line
+    ) : never
+    {
         throw new ErrorException(
             message : $message,
             code    : 0,
@@ -98,7 +99,7 @@ final readonly class ErrorHandler
      *
      * @throws JsonException
      */
-    public function handleShutdown(): void
+    public function handleShutdown() : void
     {
         $error = error_get_last();
 
@@ -110,12 +111,12 @@ final readonly class ErrorHandler
 
             $this->handle(
                 throwable: new ErrorException(
-                    message : $error['message'],
-                    code    : 0,
-                    severity: $error['type'] ?? E_ERROR,
-                    filename: $error['file'],
-                    line    : $error['line']
-                )
+                               message : $error['message'],
+                               code    : 0,
+                               severity: $error['type'] ?? E_ERROR,
+                               filename: $error['file'],
+                               line    : $error['line']
+                           )
             );
         }
     }
@@ -125,14 +126,14 @@ final readonly class ErrorHandler
      *
      * @throws JsonException
      */
-    public function handle(Throwable $throwable): void
+    public function handle(Throwable $throwable) : void
     {
         try {
             $this->report(throwable: $throwable);
 
             match ($this->renderFormat()) {
                 self::RENDER_FORMAT_JSON => $this->renderJson(throwable: $throwable),
-                default => $this->renderIgnition(throwable: $throwable)
+                default                  => $this->renderIgnition(throwable: $throwable)
             };
         } catch (Throwable $e) {
             $this->logger->critical(
@@ -153,7 +154,7 @@ final readonly class ErrorHandler
     /**
      * Reports throwable unless explicitly excluded.
      */
-    private function report(Throwable $throwable): void
+    private function report(Throwable $throwable) : void
     {
         if ($throwable instanceof ValidationException) {
             return;
@@ -171,7 +172,7 @@ final readonly class ErrorHandler
     /**
      * Determines an exception response format based on configuration.
      */
-    private function renderFormat(): string
+    private function renderFormat() : string
     {
         return env(key: 'EXCEPTION_RESPONSE_FORMAT', default: self::RENDER_FORMAT_IGNITION);
     }
@@ -181,7 +182,7 @@ final readonly class ErrorHandler
      *
      * @throws JsonException
      */
-    private function renderJson(Throwable $throwable): void
+    private function renderJson(Throwable $throwable) : void
     {
         $response = $throwable instanceof ValidationException
             ? new JsonResponse(status: 422, message: 'Validation failed', data: $throwable->getErrors())
@@ -198,7 +199,7 @@ final readonly class ErrorHandler
     /**
      * Renders Ignition HTML formatted error response.
      */
-    private function renderIgnition(Throwable $throwable): void
+    private function renderIgnition(Throwable $throwable) : void
     {
         Ignition::make()
             ->shouldDisplayException(shouldDisplayException: true)

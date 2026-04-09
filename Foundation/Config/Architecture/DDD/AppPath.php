@@ -15,7 +15,7 @@ use RuntimeException;
  * dynamic method to resolve these paths based on the root directory of
  * the project, ensuring flexibility and maintainability.
  */
-enum AppPath : string
+enum AppPath: string
 {
     /**
      * The path to the view cache directory where compiled Blade views are stored.
@@ -135,7 +135,7 @@ enum AppPath : string
         $rootDir      = '/'; // should be root of (any) project
 
         // (1) Start from the current directory
-        while (! file_exists(filename: $currentDir . DIRECTORY_SEPARATOR . $composerFile)) { // (2) Check if composer.json exists
+        while ( ! file_exists(filename: $currentDir . DIRECTORY_SEPARATOR . $composerFile) ) { // (2) Check if composer.json exists
             $currentDir = dirname(path: $currentDir); // (3) Move one directory up
 
             if ($currentDir === $rootDir) { // (4) Prevent infinite loop if root is not found

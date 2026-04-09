@@ -7,7 +7,7 @@ namespace {
         /**
          * Store or retrieve the global kernel container instance used by helpers.
          */
-        function appInstance(mixed $instance = null): mixed
+        function appInstance(mixed $instance = null) : mixed
         {
             static $container = null;
 

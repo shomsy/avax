@@ -25,6 +25,11 @@ final readonly class RegisterServices implements ServiceRegistryInterface
         $this->registrations()->alias(alias: $alias, abstract: $abstract);
     }
 
+    private function registrations() : ServiceRegistry
+    {
+        return $this->resolver->registrations();
+    }
+
     public function bind(string $abstract, mixed $concrete = null) : ServiceRegistration
     {
         return $this->registrations()->bind(abstract: $abstract, concrete: $concrete);
@@ -71,10 +76,5 @@ final readonly class RegisterServices implements ServiceRegistryInterface
     public function instance(string $abstract, object $instance) : void
     {
         $this->resolver->instance(abstract: $abstract, instance: $instance);
-    }
-
-    private function registrations() : ServiceRegistry
-    {
-        return $this->resolver->registrations();
     }
 }

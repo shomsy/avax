@@ -11,8 +11,8 @@ readonly class InjectionReport
 {
     public function __construct(
         public object $target,
-        public array $injectedProperties = [],
-        public array $injectedMethods = [],
-        public bool $success = true
+        public array  $injectedProperties = [],
+        public array  $injectedMethods = [],
+        public bool   $success = true
     ) {}
 }

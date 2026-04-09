@@ -59,7 +59,7 @@ final readonly class AttributeRouteRegistrar
     private function instantiateRoutes(array $attributes) : array
     {
         return array_map(
-            callback: static fn(ReflectionAttribute $attribute) => $attribute->newInstance(),
+            callback: static fn (ReflectionAttribute $attribute) => $attribute->newInstance(),
             array   : $attributes
         );
     }
@@ -117,7 +117,7 @@ final readonly class AttributeRouteRegistrar
         $methods = $route->methods !== [] ? $route->methods : ($baseRoute?->methods ?? [HttpMethod::GET->value]);
 
         return array_map(
-            static fn(string $method) => strtoupper(string: $method),
+            static fn (string $method) => strtoupper(string: $method),
             $methods
         );
     }

@@ -26,6 +26,7 @@ Those responsibilities belong under `src/Capabilities/Composition/Assembly/` and
 
 The audit is enforced by:
 
-- [`../tests/Flows/CreateContainer/CreateContainerAssemblyAuditSmokeTest.php`](../tests/Flows/CreateContainer/CreateContainerAssemblyAuditSmokeTest.php)
+- [
+  `../tests/Flows/CreateContainer/CreateContainerAssemblyAuditSmokeTest.php`](../tests/Flows/CreateContainer/CreateContainerAssemblyAuditSmokeTest.php)
 
 That smoke test asserts the file stays thin, assembly-oriented, and free of direct low-level owner wiring.

@@ -10,7 +10,7 @@ use Avax\Tests\TestCase;
 
 class KernelTest extends TestCase
 {
-    public function test_kernel_is_singleton(): void
+    public function test_kernel_is_singleton() : void
     {
         $instance1 = Kernel::getInstance();
         $instance2 = Kernel::getInstance();
@@ -18,7 +18,7 @@ class KernelTest extends TestCase
         $this->assertSame(expected: $instance1, actual: $instance2);
     }
 
-    public function test_kernel_resolves_core_services(): void
+    public function test_kernel_resolves_core_services() : void
     {
         $container = $this->kernel->getContainer();
 
@@ -27,7 +27,7 @@ class KernelTest extends TestCase
         $this->assertInstanceOf(expected: EventBus::class, actual: $container->resolve('events'));
     }
 
-    public function test_kernel_is_bootstrapped(): void
+    public function test_kernel_is_bootstrapped() : void
     {
         $container = $this->kernel->getContainer();
 

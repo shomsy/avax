@@ -19,8 +19,11 @@ final class CallGreeter implements CallGreeterContract
 
 final class CallAction
 {
-    public function __construct(private CallGreeterContract $greeter)
+    public function __construct(private CallGreeterContract $greeter) {}
+
+    public static function staticHello() : string
     {
+        return 'static';
     }
 
     public function __invoke() : string
@@ -31,11 +34,6 @@ final class CallAction
     public function greet(CallGreeterContract $greeter) : string
     {
         return $greeter->message();
-    }
-
-    public static function staticHello() : string
-    {
-        return 'static';
     }
 }
 

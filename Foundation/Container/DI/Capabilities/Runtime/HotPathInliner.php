@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Avax\Container\DI\Capabilities\Runtime;
 
 use Avax\Container\DI\Capabilities\Composition\Compilation\CompiledContainer;
+use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Container\DI\Capabilities\Resolution\ResolveRequest;
 use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Closure;
 
 /**
@@ -30,7 +30,7 @@ final class HotPathInliner
         }
 
         $this->compiled = $compiled;
-        $this->calls = [];
+        $this->calls    = [];
     }
 
     /**
@@ -39,7 +39,7 @@ final class HotPathInliner
     public function detach() : void
     {
         $this->compiled = null;
-        $this->calls = [];
+        $this->calls    = [];
     }
 
     /**
@@ -48,14 +48,6 @@ final class HotPathInliner
     public function isAttached() : bool
     {
         return $this->compiled !== null;
-    }
-
-    /**
-     * Reports whether one compiled entry exists.
-     */
-    public function has(string $serviceId) : bool
-    {
-        return $this->compiled?->has(serviceId: $serviceId) ?? false;
     }
 
     /**
@@ -69,17 +61,25 @@ final class HotPathInliner
             : false;
 
         return [
-            'attached' => $attached,
+            'attached'   => $attached,
             'entryCount' => $this->compiled?->entryCount() ?? 0,
-            'entryIds' => $this->compiled?->entryIds() ?? [],
-            'hasEntry' => $hasEntry,
-            'reason' => match (true) {
-                ! $attached => 'no compiled runtime is attached',
+            'entryIds'   => $this->compiled?->entryIds() ?? [],
+            'hasEntry'   => $hasEntry,
+            'reason'     => match (true) {
+                ! $attached                              => 'no compiled runtime is attached',
                 $serviceId === null || $serviceId === '' => 'compiled runtime is attached',
-                $hasEntry => 'compiled entry is attached',
-                default => 'compiled runtime is attached but the requested entry is missing',
+                $hasEntry                                => 'compiled entry is attached',
+                default                                  => 'compiled runtime is attached but the requested entry is missing',
             },
         ];
+    }
+
+    /**
+     * Reports whether one compiled entry exists.
+     */
+    public function has(string $serviceId) : bool
+    {
+        return $this->compiled?->has(serviceId: $serviceId) ?? false;
     }
 
     /**

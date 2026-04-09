@@ -1,6 +1,7 @@
 # Vanilla Web Components Profile
 
-This profile defines the engineering standard for projects using native Web Components (Vanilla JS) without heavy external frameworks.
+This profile defines the engineering standard for projects using native Web Components (Vanilla JS) without heavy
+external frameworks.
 
 Apply it together with the relevant `languages/javascript.md` or
 `languages/typescript.md` profile and `languages/css.md`.
@@ -10,7 +11,8 @@ matters.
 
 ## 1. Governance & Scope
 
-- **Native First**: No UI libraries (React, Vue, etc.) or CSS frameworks (Tailwind) are permitted unless explicitly approved.
+- **Native First**: No UI libraries (React, Vue, etc.) or CSS frameworks (Tailwind) are permitted unless explicitly
+  approved.
 - **Zero Dependency**: Components should be self-contained and use standard Browser APIs.
 - **ES Modules**: Standard ES modules are the only permissible module system.
 
@@ -38,6 +40,7 @@ Every complex component or feature slice must follow the **State/Render/Actions*
 ## 4. Directory Structure
 
 A standard component slice looks like this:
+
 ```text
 my-component/
   index.js      (Public facade)
@@ -51,7 +54,8 @@ my-component/
 
 ## 5. The Facade Rule
 
-The `index.js` (or a file named after the component) is a small public facade. It should only glue the internal parts together and export the class or initialization function. It must not become a large "command center".
+The `index.js` (or a file named after the component) is a small public facade. It should only glue the internal parts
+together and export the class or initialization function. It must not become a large "command center".
 
 ## 6. DOM, Events, And Contract Rules
 

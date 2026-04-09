@@ -42,9 +42,9 @@ enum DuplicatePolicy
     public function describe() : string
     {
         return match ($this) {
-            self::THROW => 'Throw exception on duplicate routes',
+            self::THROW   => 'Throw exception on duplicate routes',
             self::REPLACE => 'Replace existing route with new one',
-            self::IGNORE => 'Keep first route, ignore duplicates',
+            self::IGNORE  => 'Keep first route, ignore duplicates',
         };
     }
 }

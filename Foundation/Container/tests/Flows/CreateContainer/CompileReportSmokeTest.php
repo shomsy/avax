@@ -6,6 +6,11 @@ require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
+interface CompileReportContract
+{
+    public function dependency() : CompileReportDependency;
+}
+
 final class CompileReportDependency
 {
     public function value() : string
@@ -22,16 +27,9 @@ final class CompileReportDeferredService
     }
 }
 
-interface CompileReportContract
-{
-    public function dependency() : CompileReportDependency;
-}
-
 final class CompileReportService implements CompileReportContract
 {
-    public function __construct(private CompileReportDependency $dependency)
-    {
-    }
+    public function __construct(private CompileReportDependency $dependency) {}
 
     public function dependency() : CompileReportDependency
     {
@@ -40,10 +38,10 @@ final class CompileReportService implements CompileReportContract
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-compile-report-' . uniqid();
-$config = CreateContainerConfig::create(
-    cacheDir: $cacheDir,
+$config   = CreateContainerConfig::create(
+    cacheDir    : $cacheDir,
     cacheVersion: 'compile-report-smoke',
-    compileMode: CreateContainerConfig::COMPILE_MODE_WARMUP
+    compileMode : CreateContainerConfig::COMPILE_MODE_WARMUP
 );
 
 $container = makeTestContainer($config);

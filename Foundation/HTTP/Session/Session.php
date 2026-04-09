@@ -252,7 +252,7 @@ final readonly class Session
     {
         throw new LogicException(
             message: 'Session policies cannot be altered at runtime. ' .
-            'Configure all security policies via DI in SessionSecurityProvider.'
+                     'Configure all security policies via DI in SessionSecurityProvider.'
         );
     }
 

@@ -27,5 +27,5 @@ interface MiddlewareInterface
     /**
      * Process an incoming server request.
      */
-    public function process(RequestInterface $request, RequestHandlerInterface $handler): ResponseInterface;
+    public function process(RequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface;
 }

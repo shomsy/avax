@@ -17,73 +17,20 @@ use ReflectionFunction;
 final readonly class ServiceCompiler
 {
     public function __construct(
-        private ServiceRegistry $registrations,
+        private ServiceRegistry        $registrations,
         private CreateServiceBlueprint $blueprints,
-        private MethodEmitter $emitter = new MethodEmitter
+        private MethodEmitter          $emitter = new MethodEmitter
     ) {}
 
     /**
-     * @return array{
-     *   serviceId: string,
-     *   method: string,
-     *   signature: string,
-     *   direct: bool,
-     *   class: string|null,
-     *   plan: ResolvePlan|null,
-     *   registrationArguments: array<string, mixed>,
-     *   needsFinish: bool
-     * }
+     * @param string $serviceId
+     *
+     * @return array{serviceId: string, method: string, signature: string, source: string}
      * @throws \ReflectionException
      */
-    public function describe(string $serviceId) : array
+    public function compile(string $serviceId) : array
     {
-        $methodName = $this->emitter->methodNameFor(serviceId: $serviceId);
-        $registration = $this->registrations->get(abstract: $serviceId);
-        $candidate = $this->candidateFor(serviceId: $serviceId, registration: $registration);
-        $registrationArguments = $registration?->arguments ?? [];
-
-        if (is_string($candidate) && class_exists($candidate) && $this->supportsCompiledArguments(arguments: $registrationArguments)) {
-            $blueprint = $this->blueprints->createFor(class: $candidate);
-            $needsFinish = $blueprint->injectableProperties !== []
-                || $blueprint->injectableMethods !== []
-                || $this->registrations->hasExtenders(abstract: $serviceId);
-
-            return [
-                'serviceId' => $serviceId,
-                'method' => $methodName,
-                'signature' => sha1(serialize([
-                    'serviceId' => $serviceId,
-                    'candidate' => $candidate,
-                    'lifetime' => $registration?->lifetime,
-                    'deferred' => $registration?->deferred ?? false,
-                    'arguments' => $registrationArguments,
-                    'blueprint' => $blueprint->fingerprint,
-                    'finish' => $needsFinish,
-                ])),
-                'direct' => true,
-                'class' => $candidate,
-                'plan' => $blueprint->constructor,
-                'registrationArguments' => $registrationArguments,
-                'needsFinish' => $needsFinish,
-            ];
-        }
-
-        return [
-            'serviceId' => $serviceId,
-            'method' => $methodName,
-            'signature' => sha1(serialize([
-                'serviceId' => $serviceId,
-                'candidate' => $this->dynamicSignature(candidate: $candidate),
-                'lifetime' => $registration?->lifetime,
-                'deferred' => $registration?->deferred ?? false,
-                'arguments' => $registrationArguments,
-            ])),
-            'direct' => false,
-            'class' => null,
-            'plan' => null,
-            'registrationArguments' => $registrationArguments,
-            'needsFinish' => false,
-        ];
+        return $this->compileFromDescription(description: $this->describe(serviceId: $serviceId));
     }
 
     /**
@@ -97,6 +44,7 @@ final readonly class ServiceCompiler
      *   registrationArguments: array<string, mixed>,
      *   needsFinish: bool
      * } $description
+     *
      * @return array{serviceId: string, method: string, signature: string, source: string}
      */
     public function compileFromDescription(array $description) : array
@@ -114,21 +62,74 @@ final readonly class ServiceCompiler
 
         return [
             'serviceId' => $description['serviceId'],
-            'method' => $description['method'],
+            'method'    => $description['method'],
             'signature' => $description['signature'],
-            'source' => $source,
+            'source'    => $source,
         ];
     }
 
     /**
-     * @param string $serviceId
-     *
-     * @return array{serviceId: string, method: string, signature: string, source: string}
+     * @return array{
+     *   serviceId: string,
+     *   method: string,
+     *   signature: string,
+     *   direct: bool,
+     *   class: string|null,
+     *   plan: ResolvePlan|null,
+     *   registrationArguments: array<string, mixed>,
+     *   needsFinish: bool
+     * }
      * @throws \ReflectionException
      */
-    public function compile(string $serviceId) : array
+    public function describe(string $serviceId) : array
     {
-        return $this->compileFromDescription(description: $this->describe(serviceId: $serviceId));
+        $methodName            = $this->emitter->methodNameFor(serviceId: $serviceId);
+        $registration          = $this->registrations->get(abstract: $serviceId);
+        $candidate             = $this->candidateFor(serviceId: $serviceId, registration: $registration);
+        $registrationArguments = $registration?->arguments ?? [];
+
+        if (is_string($candidate) && class_exists($candidate) && $this->supportsCompiledArguments(arguments: $registrationArguments)) {
+            $blueprint   = $this->blueprints->createFor(class: $candidate);
+            $needsFinish = $blueprint->injectableProperties !== []
+                || $blueprint->injectableMethods !== []
+                || $this->registrations->hasExtenders(abstract: $serviceId);
+
+            return [
+                'serviceId'             => $serviceId,
+                'method'                => $methodName,
+                'signature'             => sha1(serialize([
+                                                              'serviceId' => $serviceId,
+                                                              'candidate' => $candidate,
+                                                              'lifetime'  => $registration?->lifetime,
+                                                              'deferred'  => $registration?->deferred ?? false,
+                                                              'arguments' => $registrationArguments,
+                                                              'blueprint' => $blueprint->fingerprint,
+                                                              'finish'    => $needsFinish,
+                                                          ])),
+                'direct'                => true,
+                'class'                 => $candidate,
+                'plan'                  => $blueprint->constructor,
+                'registrationArguments' => $registrationArguments,
+                'needsFinish'           => $needsFinish,
+            ];
+        }
+
+        return [
+            'serviceId'             => $serviceId,
+            'method'                => $methodName,
+            'signature'             => sha1(serialize([
+                                                          'serviceId' => $serviceId,
+                                                          'candidate' => $this->dynamicSignature(candidate: $candidate),
+                                                          'lifetime'  => $registration?->lifetime,
+                                                          'deferred'  => $registration?->deferred ?? false,
+                                                          'arguments' => $registrationArguments,
+                                                      ])),
+            'direct'                => false,
+            'class'                 => null,
+            'plan'                  => null,
+            'registrationArguments' => $registrationArguments,
+            'needsFinish'           => false,
+        ];
     }
 
     private function candidateFor(string $serviceId, ServiceRegistration|null $registration) : mixed
@@ -138,26 +139,6 @@ final readonly class ServiceCompiler
         }
 
         return class_exists($serviceId) ? $serviceId : null;
-    }
-
-    /**
-     * @throws \ReflectionException
-     */
-    private function dynamicSignature(mixed $candidate) : string
-    {
-        if ($candidate instanceof Closure) {
-            $reflection = new ReflectionFunction($candidate);
-
-            return 'closure:' . ($reflection->getFileName() ?: 'internal')
-                . ':' . $reflection->getStartLine()
-                . ':' . $reflection->getEndLine();
-        }
-
-        if (is_object($candidate)) {
-            return 'object:' . $candidate::class;
-        }
-
-        return get_debug_type($candidate) . ':' . var_export($candidate, true);
     }
 
     /**
@@ -191,5 +172,25 @@ final readonly class ServiceCompiler
         }
 
         return true;
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    private function dynamicSignature(mixed $candidate) : string
+    {
+        if ($candidate instanceof Closure) {
+            $reflection = new ReflectionFunction($candidate);
+
+            return 'closure:' . ($reflection->getFileName() ?: 'internal')
+                . ':' . $reflection->getStartLine()
+                . ':' . $reflection->getEndLine();
+        }
+
+        if (is_object($candidate)) {
+            return 'object:' . $candidate::class;
+        }
+
+        return get_debug_type($candidate) . ':' . var_export($candidate, true);
     }
 }

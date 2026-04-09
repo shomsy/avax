@@ -17,7 +17,7 @@ final class PoolBucketService implements ResettableInterface
     }
 }
 
-$pool = new ServicePool();
+$pool     = new ServicePool();
 $instance = new stdClass();
 
 assertSame(false, $pool->has('shared'), 'Service pool should start empty.');
@@ -36,7 +36,7 @@ $pool->flush();
 assertSame(null, $pool->get('shared'), 'Service pool flush should clear all shared instances.');
 assertSame(0, $pool->count(), 'Service pool flush should reset the shared instance count.');
 
-$pooled = new PoolBucketService();
+$pooled   = new PoolBucketService();
 $released = $pool->releasePooled('pooled', $pooled, maxSize: 2, resetBeforeReuse: true);
 assertSame(true, $released['returned'], 'Pooled services should return to the available bucket when reset succeeds.');
 assertSame(1, $pooled->resets, 'Pooled release should reset the instance before reuse.');

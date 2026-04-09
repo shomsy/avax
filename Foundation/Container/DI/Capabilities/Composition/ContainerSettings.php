@@ -20,26 +20,6 @@ final class ContainerSettings
         $this->items = $items;
     }
 
-    public function get(string $key, mixed $default = null) : mixed
-    {
-        if ($key === '') {
-            return $default;
-        }
-
-        $segments = explode('.', $key);
-        $value = $this->items;
-
-        foreach ($segments as $segment) {
-            if (! is_array($value) || ! array_key_exists($segment, $value)) {
-                return $default;
-            }
-
-            $value = $value[$segment];
-        }
-
-        return $value;
-    }
-
     public function set(string $key, mixed $value) : void
     {
         if ($key === '') {
@@ -47,7 +27,7 @@ final class ContainerSettings
         }
 
         $segments = explode('.', $key);
-        $target = &$this->items;
+        $target   = &$this->items;
 
         foreach ($segments as $segment) {
             if (! isset($target[$segment]) || ! is_array($target[$segment])) {
@@ -58,26 +38,6 @@ final class ContainerSettings
         }
 
         $target = $value;
-    }
-
-    public function has(string $key) : bool
-    {
-        if ($key === '') {
-            return false;
-        }
-
-        $segments = explode('.', $key);
-        $value = $this->items;
-
-        foreach ($segments as $segment) {
-            if (! is_array($value) || ! array_key_exists($segment, $value)) {
-                return false;
-            }
-
-            $value = $value[$segment];
-        }
-
-        return true;
     }
 
     public function env(string $key, mixed $default = null) : mixed
@@ -96,6 +56,46 @@ final class ContainerSettings
         }
 
         return $default;
+    }
+
+    public function has(string $key) : bool
+    {
+        if ($key === '') {
+            return false;
+        }
+
+        $segments = explode('.', $key);
+        $value    = $this->items;
+
+        foreach ($segments as $segment) {
+            if (! is_array($value) || ! array_key_exists($segment, $value)) {
+                return false;
+            }
+
+            $value = $value[$segment];
+        }
+
+        return true;
+    }
+
+    public function get(string $key, mixed $default = null) : mixed
+    {
+        if ($key === '') {
+            return $default;
+        }
+
+        $segments = explode('.', $key);
+        $value    = $this->items;
+
+        foreach ($segments as $segment) {
+            if (! is_array($value) || ! array_key_exists($segment, $value)) {
+                return $default;
+            }
+
+            $value = $value[$segment];
+        }
+
+        return $value;
     }
 
     /**

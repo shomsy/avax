@@ -26,7 +26,7 @@ final readonly class RouteKey
         return new self(
             method: strtoupper($route->method),
             domain: $route->domain ?? '',
-            path: $route->path
+            path  : $route->path
         );
     }
 
@@ -48,8 +48,18 @@ final readonly class RouteKey
     public function conflictsWith(self $other) : bool
     {
         return $this->method === $other->method &&
-               $this->domain === $other->domain &&
-               $this->path === $other->path;
+            $this->domain === $other->domain &&
+            $this->path === $other->path;
+    }
+
+    /**
+     * Check if this key would conflict with an ANY method route for the same path/domain.
+     */
+    public function conflictsWithAnyMethod(self $anyMethodKey) : bool
+    {
+        return $anyMethodKey->isAnyMethod() &&
+            $this->domain === $anyMethodKey->domain &&
+            $this->path === $anyMethodKey->path;
     }
 
     /**
@@ -61,21 +71,12 @@ final readonly class RouteKey
     }
 
     /**
-     * Check if this key would conflict with an ANY method route for the same path/domain.
-     */
-    public function conflictsWithAnyMethod(self $anyMethodKey) : bool
-    {
-        return $anyMethodKey->isAnyMethod() &&
-               $this->domain === $anyMethodKey->domain &&
-               $this->path === $anyMethodKey->path;
-    }
-
-    /**
      * Get a human-readable description of this route key.
      */
     public function describe() : string
     {
         $domain = $this->domain ?: '(no domain)';
+
         return "[{$this->method}] {$this->path} @ {$domain}";
     }
 }

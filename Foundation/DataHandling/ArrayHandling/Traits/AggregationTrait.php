@@ -25,7 +25,8 @@ trait AggregationTrait
      * This method computes the average (arithmetic mean) of all numeric values obtained
      * from the specified key or by applying a callback to each item in the collection.
      *
-     * @param  string|callable  $key  The key to extract values from each item or a callable that returns the value.
+     * @param string|callable $key The key to extract values from each item or a callable that returns the value.
+     *
      * @return float The resulting average or 0.0 if the collection is empty.
      *
      * @throws InvalidArgumentException If non-numeric values are encountered during sum calculation.
@@ -48,7 +49,7 @@ trait AggregationTrait
      * $averageAge = $arrh->average(fn($item) => $item['age']); // Returns 30.0
      * ```
      */
-    public function average(string|callable $key): float
+    public function average(string|callable $key) : float
     {
         $count = count(value: $this->getItems());
 
@@ -61,7 +62,8 @@ trait AggregationTrait
      * This method calculates the total sum of all numeric values obtained from the specified key
      * or by applying a callback to each item in the collection.
      *
-     * @param  string|callable  $key  The key to extract values from each item or a callable that returns the value.
+     * @param string|callable $key The key to extract values from each item or a callable that returns the value.
+     *
      * @return float|int The resulting sum of the values.
      *
      * @throws InvalidArgumentException If non-numeric values are encountered during sum calculation.
@@ -84,13 +86,13 @@ trait AggregationTrait
      * $totalAge = $arrh->sum(fn($item) => $item['age']); // Returns 90
      * ```
      */
-    public function sum(string|callable $key): float|int
+    public function sum(string|callable $key) : float|int
     {
         $this->validateData();
 
         return array_reduce(
             array   : $this->getItems(),
-            callback: static function ($carry, $item) use ($key): int|float {
+            callback: static function ($carry, $item) use ($key) : int|float {
                 $value = is_callable(value: $key) ? $key($item) : ($item[$key] ?? 0);
 
                 if (! is_numeric(value: $value)) {
@@ -111,7 +113,7 @@ trait AggregationTrait
      *
      * @throws LogicException If `getItems` does not return a valid array.
      */
-    private function validateData(): void
+    private function validateData() : void
     {
         $items = $this->getItems();
 
@@ -126,7 +128,8 @@ trait AggregationTrait
      * This method identifies the smallest numeric value obtained from the specified key
      * or by applying a callback to each item in the collection.
      *
-     * @param  string|callable  $key  The key to extract values from each item or a callable that returns the value.
+     * @param string|callable $key The key to extract values from each item or a callable that returns the value.
+     *
      * @return mixed The minimum value.
      *
      * @throws LogicException If the collection is empty or contains non-numeric values.
@@ -148,7 +151,7 @@ trait AggregationTrait
      * $minAge = $arrh->min(fn($item) => $item['age']); // Returns 25
      * ```
      */
-    public function min(string|callable $key): mixed
+    public function min(string|callable $key) : mixed
     {
         $values = $this->mapValues(key: $key);
 
@@ -164,7 +167,8 @@ trait AggregationTrait
      *
      * Extracts values from each item in the collection based on the specified key or by applying a callback.
      *
-     * @param  string|callable  $key  The key to extract values from each item or a callable that returns the value.
+     * @param string|callable $key The key to extract values from each item or a callable that returns the value.
+     *
      * @return array The extracted values.
      *
      * @throws LogicException If the data structure is invalid.
@@ -187,7 +191,7 @@ trait AggregationTrait
      * $names = $arrh->mapValues(fn($item) => $item['name']); // Returns ['Alice', 'Bob', 'Charlie']
      * ```
      */
-    private function mapValues(string|callable $key): array
+    private function mapValues(string|callable $key) : array
     {
         $this->validateData();
 
@@ -203,7 +207,8 @@ trait AggregationTrait
      * This method identifies the largest numeric value obtained from the specified key
      * or by applying a callback to each item in the collection.
      *
-     * @param  string|callable  $key  The key to extract values from each item or a callable that returns the value.
+     * @param string|callable $key The key to extract values from each item or a callable that returns the value.
+     *
      * @return mixed The maximum value.
      *
      * @throws LogicException If the collection is empty or contains non-numeric values.
@@ -225,7 +230,7 @@ trait AggregationTrait
      * $maxAge = $arrh->max(fn($item) => $item['age']); // Returns 35
      * ```
      */
-    public function max(string|callable $key): mixed
+    public function max(string|callable $key) : mixed
     {
         $values = $this->mapValues(key: $key);
 
@@ -242,7 +247,8 @@ trait AggregationTrait
      * This method tallies the number of times each unique value appears in the collection,
      * based on the specified key or by applying a callback to each item.
      *
-     * @param  string|callable  $key  The key to extract values from each item or a callable that returns the value.
+     * @param string|callable $key The key to extract values from each item or a callable that returns the value.
+     *
      * @return array Associative array with counts for each unique value.
      *
      * @throws LogicException If the data structure is invalid.
@@ -269,13 +275,13 @@ trait AggregationTrait
      * // Returns [25 => 1, 30 => 2, 35 => 1]
      * ```
      */
-    public function countBy(string|callable $key): array
+    public function countBy(string|callable $key) : array
     {
         $this->validateData();
 
         $result = [];
         foreach ($this->getItems() as $item) {
-            $value = is_callable(value: $key) ? $key($item) : ($item[$key] ?? null);
+            $value          = is_callable(value: $key) ? $key($item) : ($item[$key] ?? null);
             $result[$value] = ($result[$value] ?? 0) + 1;
         }
 
@@ -288,10 +294,11 @@ trait AggregationTrait
      * This method applies a callback function cumulatively to the items of the collection,
      * from left to right, to reduce the collection to a single value.
      *
-     * @param  callable  $callback  Callback to apply to each item. It should accept two parameters:
-     *                              the carry (accumulator) and the current item.
-     * @param  mixed|null  $initial  Initial value to start the reduction. If not provided, the first item of the
+     * @param callable   $callback   Callback to apply to each item. It should accept two parameters:
+     *                               the carry (accumulator) and the current item.
+     * @param mixed|null $initial    Initial value to start the reduction. If not provided, the first item of the
      *                               collection is used.
+     *
      * @return mixed The reduced value.
      *
      * @throws LogicException If the data structure is invalid.
@@ -310,7 +317,7 @@ trait AggregationTrait
      * // Returns ', Alice, Bob, Charlie'
      * ```
      */
-    public function reduce(callable $callback, mixed $initial = null): mixed
+    public function reduce(callable $callback, mixed $initial = null) : mixed
     {
         $this->validateData();
 
@@ -323,8 +330,9 @@ trait AggregationTrait
      * This method organizes the collection into groups based on the specified key or by applying a callback to each
      * item.
      *
-     * @param  string|callable  $key  The key to extract values from each item or a callable that returns the grouping
+     * @param string|callable $key    The key to extract values from each item or a callable that returns the grouping
      *                                value.
+     *
      * @return array The grouped items.
      *
      * @throws LogicException If the data structure is invalid.
@@ -387,13 +395,13 @@ trait AggregationTrait
      *     ],
      * ]
      */
-    public function aggregateGroupBy(string|callable $key): array
+    public function aggregateGroupBy(string|callable $key) : array
     {
         $this->validateData();
 
         $grouped = [];
         foreach ($this->getItems() as $item) {
-            $groupKey = is_callable(value: $key) ? $key($item) : ($item[$key] ?? null);
+            $groupKey             = is_callable(value: $key) ? $key($item) : ($item[$key] ?? null);
             $grouped[$groupKey][] = $item;
         }
 

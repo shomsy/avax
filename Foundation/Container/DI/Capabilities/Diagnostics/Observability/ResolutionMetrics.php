@@ -20,15 +20,6 @@ final class ResolutionMetrics
         $this->counters[$name] = ($this->counters[$name] ?? 0) + $by;
     }
 
-    /** @return array<string, int> */
-    public function all() : array
-    {
-        $counters = $this->counters;
-        ksort($counters);
-
-        return $counters;
-    }
-
     /**
      * Exports metrics in a text format.
      */
@@ -41,6 +32,15 @@ final class ResolutionMetrics
         }
 
         return implode(PHP_EOL, $lines);
+    }
+
+    /** @return array<string, int> */
+    public function all() : array
+    {
+        $counters = $this->counters;
+        ksort($counters);
+
+        return $counters;
     }
 
     /**

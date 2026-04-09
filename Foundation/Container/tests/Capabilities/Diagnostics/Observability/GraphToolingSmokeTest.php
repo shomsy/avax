@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 3) . '/bootstrap.php';
 
-$tool = dirname(__DIR__, 4) . '/tools/graph.php';
+$tool    = dirname(__DIR__, 4) . '/tools/graph.php';
 $fixture = dirname(__DIR__, 3) . '/fixtures/graph_tool_fixture.php';
 
-$dependencyJson = shell_exec('php ' . escapeshellarg($tool) . ' graph:export ' . escapeshellarg($fixture) . ' json dependency');
-$sliceMermaid = shell_exec('php ' . escapeshellarg($tool) . ' graph:export ' . escapeshellarg($fixture) . ' mermaid slice');
-$policyDot = shell_exec('php ' . escapeshellarg($tool) . ' graph:policy ' . escapeshellarg($fixture) . ' dot');
-$explorerHtml = shell_exec('php ' . escapeshellarg($tool) . ' graph:explore ' . escapeshellarg($fixture) . ' dependency');
-$architectureJson = shell_exec('php ' . escapeshellarg($tool) . ' graph:architecture ' . escapeshellarg($fixture) . ' json');
-$governanceJson = shell_exec('php ' . escapeshellarg($tool) . ' graph:governance ' . escapeshellarg($fixture));
-$diffJson = shell_exec('php ' . escapeshellarg($tool) . ' graph:diff ' . escapeshellarg($fixture) . ' json');
-$sliceJson = shell_exec('php ' . escapeshellarg($tool) . ' graph:slice ' . escapeshellarg($fixture) . ' flow.login');
-$whyJson = shell_exec('php ' . escapeshellarg($tool) . ' why ' . escapeshellarg($fixture) . ' GraphToolLoginEntry');
-$groupJson = shell_exec('php ' . escapeshellarg($tool) . ' group ' . escapeshellarg($fixture) . ' graph.steps');
-$selectionJson = shell_exec('php ' . escapeshellarg($tool) . ' selection ' . escapeshellarg($fixture) . ' GraphToolIdentityService');
+$dependencyJson        = shell_exec('php ' . escapeshellarg($tool) . ' graph:export ' . escapeshellarg($fixture) . ' json dependency');
+$sliceMermaid          = shell_exec('php ' . escapeshellarg($tool) . ' graph:export ' . escapeshellarg($fixture) . ' mermaid slice');
+$policyDot             = shell_exec('php ' . escapeshellarg($tool) . ' graph:policy ' . escapeshellarg($fixture) . ' dot');
+$explorerHtml          = shell_exec('php ' . escapeshellarg($tool) . ' graph:explore ' . escapeshellarg($fixture) . ' dependency');
+$architectureJson      = shell_exec('php ' . escapeshellarg($tool) . ' graph:architecture ' . escapeshellarg($fixture) . ' json');
+$governanceJson        = shell_exec('php ' . escapeshellarg($tool) . ' graph:governance ' . escapeshellarg($fixture));
+$diffJson              = shell_exec('php ' . escapeshellarg($tool) . ' graph:diff ' . escapeshellarg($fixture) . ' json');
+$sliceJson             = shell_exec('php ' . escapeshellarg($tool) . ' graph:slice ' . escapeshellarg($fixture) . ' flow.login');
+$whyJson               = shell_exec('php ' . escapeshellarg($tool) . ' why ' . escapeshellarg($fixture) . ' GraphToolLoginEntry');
+$groupJson             = shell_exec('php ' . escapeshellarg($tool) . ' group ' . escapeshellarg($fixture) . ' graph.steps');
+$selectionJson         = shell_exec('php ' . escapeshellarg($tool) . ' selection ' . escapeshellarg($fixture) . ' GraphToolIdentityService');
 $architectureDebugJson = shell_exec('php ' . escapeshellarg($tool) . ' architecture:debug ' . escapeshellarg($fixture));
 
 assertTrue(is_string($dependencyJson) && str_contains($dependencyJson, '"kind": "dependency"'), 'Graph tool should export machine-readable dependency graphs.');

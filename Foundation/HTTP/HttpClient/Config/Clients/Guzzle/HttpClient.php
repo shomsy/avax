@@ -39,16 +39,16 @@ final readonly class HttpClient implements ClientInterface
         // Initialize Guzzle client with base URI and middleware
         $this->guzzleClient = new Client(
             config: [
-                'base_uri'        => $this->baseUri,
-                'handler'         => $this->getHandlerStack(),
-                'timeout'         => 90,  // Maximum duration of request
-                'connect_timeout' => 10, // Timeout for connection
-                'http_errors'     => false,
-                'headers'         => [
-                    'Accept'       => 'application/json',
-                    'Content-Type' => 'application/json',
-                ],
-            ],
+                        'base_uri'        => $this->baseUri,
+                        'handler'         => $this->getHandlerStack(),
+                        'timeout'         => 90,  // Maximum duration of request
+                        'connect_timeout' => 10, // Timeout for connection
+                        'http_errors'     => false,
+                        'headers'         => [
+                            'Accept'       => 'application/json',
+                            'Content-Type' => 'application/json',
+                        ],
+                    ],
         );
     }
 
@@ -75,9 +75,9 @@ final readonly class HttpClient implements ClientInterface
             $this->logger->error(
                 message: 'Request failed',
                 context: [
-                    'uri'   => (string) $request->getUri(),
-                    'error' => $throwable->getMessage(),
-                ],
+                             'uri'   => (string) $request->getUri(),
+                             'error' => $throwable->getMessage(),
+                         ],
             );
             throw new Exception(message: 'Failed to send request', code: $throwable->getCode(), previous: $throwable);
         }
@@ -113,20 +113,20 @@ final readonly class HttpClient implements ClientInterface
             $this->logger->error(
                 message: '⏳ HTTP error detected!',
                 context: [
-                    'method'    => $method,
-                    'url'       => (string) $uri,
-                    'exception' => $e->getMessage(),
-                ],
+                             'method'    => $method,
+                             'url'       => (string) $uri,
+                             'exception' => $e->getMessage(),
+                         ],
             );
 
             if (str_contains(haystack: $e->getMessage(), needle: 'timed out')) {
                 $this->logger->warning(
                     message: '⏳ HTTP Request stopped because of timeout!',
                     context: [
-                        'method' => $method,
-                        'url'    => (string) $uri,
-                        'error'  => $e->getMessage(),
-                    ],
+                                 'method' => $method,
+                                 'url'    => (string) $uri,
+                                 'error'  => $e->getMessage(),
+                             ],
                 );
                 throw new Exception(
                     message : '⏳ Request timeout (server did not respond in time)',
@@ -182,9 +182,9 @@ final readonly class HttpClient implements ClientInterface
             $this->logger->error(
                 message: 'Asynchronous request failed',
                 context: [
-                    'uri'   => (string) $request->getUri(),
-                    'error' => $throwable->getMessage(),
-                ],
+                             'uri'   => (string) $request->getUri(),
+                             'error' => $throwable->getMessage(),
+                         ],
             );
             throw new Exception(
                 message : 'Failed to send async request',

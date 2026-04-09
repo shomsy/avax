@@ -22,20 +22,21 @@ abstract class RouterException extends RuntimeException implements RouterExcepti
     private array $context;
 
     public function __construct(
-        string $message,
-        int $httpStatusCode,
-        array $context = [],
-        bool $isRetryable = false,
-        int $code = 0,
+        string         $message,
+        int            $httpStatusCode,
+        array          $context = [],
+        bool           $isRetryable = false,
+        int            $code = 0,
         Throwable|null $previous = null
-    ) {
+    )
+    {
         parent::__construct(message: $message, code: $code, previous: $previous);
 
         $this->context = array_merge($context, [
             'http_status_code' => $httpStatusCode,
-            'is_retryable' => $isRetryable,
-            'exception_class' => static::class,
-            'timestamp' => microtime(true),
+            'is_retryable'     => $isRetryable,
+            'exception_class'  => static::class,
+            'timestamp'        => microtime(true),
         ]);
     }
 
@@ -63,17 +64,6 @@ abstract class RouterException extends RuntimeException implements RouterExcepti
     }
 
     /**
-     * Add context information to the exception.
-     *
-     * @param array<string, mixed> $additionalContext
-     */
-    public function withContext(array $additionalContext) : self
-    {
-        $this->context = array_merge($this->context, $additionalContext);
-        return $this;
-    }
-
-    /**
      * Create a new instance with additional context.
      *
      * @param array<string, mixed> $additionalContext
@@ -81,6 +71,19 @@ abstract class RouterException extends RuntimeException implements RouterExcepti
     public function withAdditionalContext(array $additionalContext) : self
     {
         $clone = clone $this;
+
         return $clone->withContext(additionalContext: $additionalContext);
+    }
+
+    /**
+     * Add context information to the exception.
+     *
+     * @param array<string, mixed> $additionalContext
+     */
+    public function withContext(array $additionalContext) : self
+    {
+        $this->context = array_merge($this->context, $additionalContext);
+
+        return $this;
     }
 }

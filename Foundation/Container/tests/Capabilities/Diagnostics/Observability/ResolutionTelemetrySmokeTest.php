@@ -7,9 +7,7 @@ require_once dirname(__DIR__, 3) . '/bootstrap.php';
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTimeline;
 
-final class ObservableService
-{
-}
+final class ObservableService {}
 
 final class ObservableAction
 {
@@ -20,16 +18,15 @@ final class ObservableAction
 }
 
 $container = makeTestContainer(CreateContainerConfig::create(
-    debug: true,
+    debug          : true,
     diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_DETAILED
 ));
 
 $container->get(ObservableService::class);
 $container->call(ObservableAction::class);
-$container->injectInto(new class {
-});
+$container->injectInto(new class {});
 
-$metrics = $container->exportMetrics();
+$metrics  = $container->exportMetrics();
 $timeline = $container->get(ResolutionTimeline::class)->all();
 
 assertTrue(str_contains($metrics, 'container_resolve_total'), 'Resolution metrics must be exported.');

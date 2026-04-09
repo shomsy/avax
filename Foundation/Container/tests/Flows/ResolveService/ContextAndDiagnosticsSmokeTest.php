@@ -22,16 +22,12 @@ final class DiagnosticsService implements DiagnosticsContract
 
 final class ContextualNameConsumer
 {
-    public function __construct(public string $name)
-    {
-    }
+    public function __construct(public string $name) {}
 }
 
 final class DiagnosticsScopedService
 {
-    public function __construct(public string $id = 'scoped')
-    {
-    }
+    public function __construct(public string $id = 'scoped') {}
 }
 
 final class ContextualInjectionTarget
@@ -48,7 +44,7 @@ final class ContextualInjectionTarget
 $envKey = 'AVAX_CONTAINER_ENV_' . uniqid();
 putenv($envKey);
 
-$config = CreateContainerConfig::create(settings: ['env' => [$envKey => 'test']]);
+$config    = CreateContainerConfig::create(settings: ['env' => [$envKey => 'test']]);
 $container = makeTestContainer($config);
 
 $container->singleton(DiagnosticsContract::class, DiagnosticsService::class);
@@ -59,24 +55,24 @@ $container->openScope();
 $container->get(DiagnosticsScopedService::class);
 $container->compileContainer([DiagnosticsContract::class, ContextualNameConsumer::class, DiagnosticsScopedService::class]);
 
-$description = $container->describeService(DiagnosticsContract::class);
+$description      = $container->describeService(DiagnosticsContract::class);
 $aliasDescription = $container->describeService('diagnostics.service');
-$debugService = $container->debugService(DiagnosticsContract::class);
-$plan = $container->debugPlan(DiagnosticsContract::class);
-$tags = $container->debugTags('diagnostics');
-$selection = $container->debugSelection(DiagnosticsContract::class);
-$governance = $container->debugGovernance();
-$architecture = $container->debugArchitecture();
-$aliases = $container->debugAliases();
-$scope = $container->debugScope();
-$compileReport = $container->compileReport([DiagnosticsContract::class]);
-$runtimeReport = $container->runtimeReport();
-$validated = $container->validate([DiagnosticsContract::class, ContextualNameConsumer::class]);
-$contextual = $container->forContext(['name' => 'from-context'])->make(ContextualNameConsumer::class);
-$called = $container->forContext(['name' => 'from-call'])->call(
-    static fn(string $name) : string => $name
+$debugService     = $container->debugService(DiagnosticsContract::class);
+$plan             = $container->debugPlan(DiagnosticsContract::class);
+$tags             = $container->debugTags('diagnostics');
+$selection        = $container->debugSelection(DiagnosticsContract::class);
+$governance       = $container->debugGovernance();
+$architecture     = $container->debugArchitecture();
+$aliases          = $container->debugAliases();
+$scope            = $container->debugScope();
+$compileReport    = $container->compileReport([DiagnosticsContract::class]);
+$runtimeReport    = $container->runtimeReport();
+$validated        = $container->validate([DiagnosticsContract::class, ContextualNameConsumer::class]);
+$contextual       = $container->forContext(['name' => 'from-context'])->make(ContextualNameConsumer::class);
+$called           = $container->forContext(['name' => 'from-call'])->call(
+    static fn (string $name) : string => $name
 );
-$injected = $container->forContext(['name' => 'from-injection'])->injectInto(new ContextualInjectionTarget());
+$injected         = $container->forContext(['name' => 'from-injection'])->injectInto(new ContextualInjectionTarget());
 
 assertSame('test', $container->env($envKey), 'Environment access should prefer configured env values.');
 assertSame([], $validated, 'Validation should pass for explicitly checked services.');
@@ -164,7 +160,7 @@ assertSame('diagnostics', $lazyProxy->label(), 'Lazy proxies should still resolv
 assertTrue($container->isLazy(DiagnosticsContract::class), 'Public lazy status helpers should reflect lazy proxy usage.');
 
 $detailedContainer = makeTestContainer(CreateContainerConfig::create(
-    debug: true,
+    debug          : true,
     diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_DETAILED
 ));
 $detailedContainer->get(DiagnosticsService::class);

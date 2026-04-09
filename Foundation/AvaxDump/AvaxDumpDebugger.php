@@ -13,10 +13,10 @@ class AvaxDumpDebugger
      * Terminates the script and renders an interactive dump.
      */
     #[NoReturn]
-    public static function ddx(mixed ...$args): never
+    public static function ddx(mixed ...$args) : never
     {
         $trace = debug_backtrace(options: DEBUG_BACKTRACE_IGNORE_ARGS, limit: 2)[1] ?? [];
-        $html = self::renderDump(args: $args, file: $trace['file'] ?? 'unknown', line: $trace['line'] ?? 0);
+        $html  = self::renderDump(args: $args, file: $trace['file'] ?? 'unknown', line: $trace['line'] ?? 0);
 
         header(header: 'Content-Type: text/html; charset=utf-8');
         echo $html;
@@ -26,9 +26,9 @@ class AvaxDumpDebugger
     /**
      * Renders the Blade HTML with variables.
      */
-    private static function renderDump(array $args, string $file, int $line): string
+    private static function renderDump(array $args, string $file, int $line) : string
     {
-        $blade = new BladeTemplateEngine(viewsPath: __DIR__.'/views', cachePath: sys_get_temp_dir());
+        $blade = new BladeTemplateEngine(viewsPath: __DIR__ . '/views', cachePath: sys_get_temp_dir());
 
         return $blade->toHtml(view: 'dump', data: [
             'args' => $args,
@@ -40,7 +40,7 @@ class AvaxDumpDebugger
     /**
      * Outputs a styled interactive dump, without terminating.
      */
-    public static function dumpx(mixed ...$args): void
+    public static function dumpx(mixed ...$args) : void
     {
         $trace = debug_backtrace(options: DEBUG_BACKTRACE_IGNORE_ARGS, limit: 2)[1] ?? [];
         echo self::renderDump(args: $args, file: $trace['file'] ?? 'unknown', line: $trace['line'] ?? 0);

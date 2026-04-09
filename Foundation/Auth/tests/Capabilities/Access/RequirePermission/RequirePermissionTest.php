@@ -4,25 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capability\Access\RequirePermission;
 
-use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
-use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserPermission;
+use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for RequirePermission access boundary.
  */
 class RequirePermissionTest extends TestCase
 {
-    protected function tearDown() : void
-    {
-        Mockery::close();
-    }
-
     /**
      * @throws Unauthenticated
      * @throws PermissionDenied
@@ -30,7 +25,7 @@ class RequirePermissionTest extends TestCase
     public function testRequirePermissionSuccess() : void
     {
         $permission = new UserPermission(value: 'delete_user');
-        $user = Mockery::mock(User::class);
+        $user       = Mockery::mock(User::class);
         $user->shouldReceive('hasPermission')
             ->with($permission)
             ->andReturn(true);
@@ -50,7 +45,7 @@ class RequirePermissionTest extends TestCase
     public function testRequirePermissionFailure() : void
     {
         $permission = new UserPermission(value: 'delete_user');
-        $user = Mockery::mock(User::class);
+        $user       = Mockery::mock(User::class);
         $user->shouldReceive('hasPermission')
             ->with($permission)
             ->andReturn(false);
@@ -80,5 +75,10 @@ class RequirePermissionTest extends TestCase
         $this->expectException(exception: Unauthenticated::class);
 
         $requirement->execute(permission: $permission);
+    }
+
+    protected function tearDown() : void
+    {
+        Mockery::close();
     }
 }

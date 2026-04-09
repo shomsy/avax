@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+
 interface SlicePaymentGateway
 {
     public function label() : string;
@@ -18,36 +19,22 @@ final class ExportedSliceGateway implements SlicePaymentGateway
     }
 }
 
-final class SliceInternalAudit
-{
-}
+final class SliceInternalAudit {}
 
 final class SliceBillingEntry
 {
-    public function __construct(public SlicePaymentGateway $gateway)
-    {
-    }
+    public function __construct(public SlicePaymentGateway $gateway) {}
 }
 
-final class SliceBillingHelper
-{
-}
+final class SliceBillingHelper {}
 
-final class SliceLoginSecret
-{
-}
+final class SliceLoginSecret {}
 
-final class SliceConfigProbe
-{
-}
+final class SliceConfigProbe {}
 
-final class SliceClock
-{
-}
+final class SliceClock {}
 
-final class SliceBillingOwnedService
-{
-}
+final class SliceBillingOwnedService {}
 
 $container = makeTestContainer();
 
@@ -82,10 +69,10 @@ $container->bind(SliceClock::class, SliceClock::class)
     ->asFoundation('foundation.time')
     ->asInternal();
 
-$billing = $container->forSlice('flow.billing');
-$payments = $container->forSlice('capability.payments');
+$billing       = $container->forSlice('flow.billing');
+$payments      = $container->forSlice('capability.payments');
 $configuration = $container->forSlice('configuration.runtime');
-$foundation = $container->forSlice('foundation.time');
+$foundation    = $container->forSlice('foundation.time');
 
 assertTrue($billing->has(SliceBillingEntry::class), 'Flow slice views should expose their entry units.');
 assertTrue($billing->has(SliceBillingHelper::class), 'Flow slice views should expose their internal units.');
@@ -103,15 +90,15 @@ assertTrue(! $configuration->has(SliceBillingHelper::class), 'Configuration slic
 assertTrue($foundation->has(SliceClock::class), 'Foundation slice views should expose their own units.');
 assertTrue(! $foundation->has(SliceInternalAudit::class), 'Foundation slice views should not expose capability internals.');
 
-$billingGraph = $billing->debugGraph();
+$billingGraph        = $billing->debugGraph();
 $billingServiceGraph = $billing->debugGraph(SliceInternalAudit::class);
-$billingDescription = $billing->describeService(SliceInternalAudit::class);
-$globalBillingGraph = $container->debugGraph('flow.billing');
-$billingSlice = $billing->debugSlice();
-$billingImports = $billing->debugImports();
-$paymentsExports = $payments->debugExports();
-$violations = $billing->debugVisibilityViolations([SliceInternalAudit::class]);
-$billingGovernance = $billing->debugGovernance();
+$billingDescription  = $billing->describeService(SliceInternalAudit::class);
+$globalBillingGraph  = $container->debugGraph('flow.billing');
+$billingSlice        = $billing->debugSlice();
+$billingImports      = $billing->debugImports();
+$paymentsExports     = $payments->debugExports();
+$violations          = $billing->debugVisibilityViolations([SliceInternalAudit::class]);
+$billingGovernance   = $billing->debugGovernance();
 $billingArchitecture = $billing->debugArchitecture();
 
 assertSame('flow.billing', $billingGraph['sliceView']['slice'] ?? null, 'Slice graph diagnostics should expose the active slice view.');

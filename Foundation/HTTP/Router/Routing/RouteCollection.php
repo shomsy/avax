@@ -50,9 +50,9 @@ final class RouteCollection
         if (isset($this->routeKeys[$key])) {
             throw new DuplicateRouteException(
                 method: $route->method,
-                path: $route->path,
+                path  : $route->path,
                 domain: $route->domain,
-                name: $route->name ?: null
+                name  : $route->name ?: null
             );
         }
 
@@ -67,6 +67,27 @@ final class RouteCollection
             // Exact path match
             $this->exactRoutes[$method][$route->path] = $route;
         }
+    }
+
+    /**
+     * Generate unique key for route deduplication.
+     */
+    private function generateRouteKey(RouteDefinition $route) : string
+    {
+        return sprintf(
+            '%s|%s|%s',
+            strtoupper($route->method),
+            $route->domain ?? '',
+            $route->path
+        );
+    }
+
+    /**
+     * Check if a path contains route parameters (indicating pattern route).
+     */
+    private function isPatternRoute(string $path) : bool
+    {
+        return str_contains($path, '{') && str_contains($path, '}');
     }
 
     /**
@@ -85,6 +106,22 @@ final class RouteCollection
     public function getPatternRoutes(string $method) : array
     {
         return $this->patternRoutes[strtoupper($method)] ?? [];
+    }
+
+    /**
+     * Get all routes grouped by method (legacy format for backward compatibility).
+     *
+     * @return array<string, RouteDefinition[]>
+     */
+    public function getAllRoutes() : array
+    {
+        $allRoutes = [];
+
+        foreach (array_keys($this->exactRoutes + $this->patternRoutes) as $method) {
+            $allRoutes[$method] = $this->getAllRoutesForMethod(method: $method);
+        }
+
+        return $allRoutes;
     }
 
     /**
@@ -111,43 +148,6 @@ final class RouteCollection
     }
 
     /**
-     * Get all routes grouped by method (legacy format for backward compatibility).
-     *
-     * @return array<string, RouteDefinition[]>
-     */
-    public function getAllRoutes() : array
-    {
-        $allRoutes = [];
-
-        foreach (array_keys($this->exactRoutes + $this->patternRoutes) as $method) {
-            $allRoutes[$method] = $this->getAllRoutesForMethod(method: $method);
-        }
-
-        return $allRoutes;
-    }
-
-    /**
-     * Check if a path contains route parameters (indicating pattern route).
-     */
-    private function isPatternRoute(string $path) : bool
-    {
-        return str_contains($path, '{') && str_contains($path, '}');
-    }
-
-    /**
-     * Generate unique key for route deduplication.
-     */
-    private function generateRouteKey(RouteDefinition $route) : string
-    {
-        return sprintf(
-            '%s|%s|%s',
-            strtoupper($route->method),
-            $route->domain ?? '',
-            $route->path
-        );
-    }
-
-    /**
      * Get statistics about the route collection.
      *
      * @return array{exact: int, patterns: int, total: int}
@@ -165,9 +165,9 @@ final class RouteCollection
         }
 
         return [
-            'exact' => $exactCount,
+            'exact'    => $exactCount,
             'patterns' => $patternCount,
-            'total' => $exactCount + $patternCount,
+            'total'    => $exactCount + $patternCount,
         ];
     }
 
@@ -176,8 +176,8 @@ final class RouteCollection
      */
     public function clear() : void
     {
-        $this->exactRoutes = [];
+        $this->exactRoutes   = [];
         $this->patternRoutes = [];
-        $this->routeKeys = [];
+        $this->routeKeys     = [];
     }
 }

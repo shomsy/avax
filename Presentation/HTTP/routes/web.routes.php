@@ -36,6 +36,7 @@ Route::get('/test', static function (Request $request) : ResponseInterface {
 
 Route::get('/favicon.ico', static function (Request $request) : ResponseInterface {
     error_log("Favicon route called");
+
     return new Response(
         stream    : Stream::fromString(content: ''),
         statusCode: 204,
@@ -50,9 +51,10 @@ Route::fallback(static function (Request $request) : ResponseInterface {
         $request->getUri()->getPath()
     );
     error_log("Fallback called, returning message: " . $message);
+
     return new Response(
-        stream: Stream::fromString(content: $message),
+        stream    : Stream::fromString(content: $message),
         statusCode: 404,
-        headers: ['Content-Type' => 'text/plain'],
+        headers   : ['Content-Type' => 'text/plain'],
     );
 });

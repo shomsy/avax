@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capability\User;
 
-use PHPUnit\Framework\TestCase;
+use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserEmail;
 use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Capability\User\UserRole;
 use Avax\Auth\System\Capability\User\UserPermission;
-use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserRole;
 use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for User capability units (Value Objects and User entity).
@@ -52,30 +52,30 @@ class UserTest extends TestCase
     public function testUserCreationAndState() : void
     {
         $user = User::create(
-            id: new UserId(value: 1),
-            email: new UserEmail(value: 'user@test.com'),
-            username: 'tester',
+            id          : new UserId(value: 1),
+            email       : new UserEmail(value: 'user@test.com'),
+            username    : 'tester',
             passwordHash: 'hash',
-            isActive: true
+            isActive    : true
         );
 
         $this->assertTrue(condition: $user->isActive());
-        
+
         $inactiveUser = User::create(
-            id: $user->id,
-            email: $user->email,
-            username: $user->username,
+            id          : $user->id,
+            email       : $user->email,
+            username    : $user->username,
             passwordHash: $user->passwordHash,
-            isActive: false
+            isActive    : false
         );
         $this->assertFalse(condition: $inactiveUser->isActive());
 
         $adminUser = User::create(
-            id: $user->id,
-            email: $user->email,
-            username: $user->username,
+            id          : $user->id,
+            email       : $user->email,
+            username    : $user->username,
             passwordHash: $user->passwordHash,
-            roles: [UserRole::ADMIN]
+            roles       : [UserRole::ADMIN]
         );
         $this->assertTrue(condition: $adminUser->hasRole(role: UserRole::ADMIN));
         $this->assertTrue(condition: $adminUser->canAccessRole(requiredRole: UserRole::USER));
@@ -84,12 +84,12 @@ class UserTest extends TestCase
     public function testUserPermissions() : void
     {
         $permission = new UserPermission(value: 'write');
-        $user = User::create(
-            id: new UserId(value: 1),
-            email: new UserEmail(value: 'user@test.com'),
-            username: 'tester',
+        $user       = User::create(
+            id          : new UserId(value: 1),
+            email       : new UserEmail(value: 'user@test.com'),
+            username    : 'tester',
             passwordHash: 'hash',
-            permissions: [$permission]
+            permissions : [$permission]
         );
 
         $this->assertTrue(condition: $user->hasPermission(permission: $permission));

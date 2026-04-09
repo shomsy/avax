@@ -16,8 +16,9 @@ final readonly class ValidateComposition
     ) {}
 
     /**
-     * @param list<string> $serviceIds
+     * @param list<string>         $serviceIds
      * @param array<string, mixed> $context
+     *
      * @return list<string>
      */
     public function validate(array|null $serviceIds = null, array $context = []) : array

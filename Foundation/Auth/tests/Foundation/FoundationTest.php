@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Foundation;
 
-use DateTimeImmutable;
-use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGenerator;
+use DateTimeImmutable;
+use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 
 /**
@@ -27,7 +27,7 @@ class FoundationTest extends TestCase
     public function testIdGeneratorGeneratesPositiveInt() : void
     {
         $generator = new IdGenerator();
-        $id = $generator->generate();
+        $id        = $generator->generate();
         $this->assertIsInt(actual: $id);
         $this->assertGreaterThan(expected: 0, actual: $id);
     }

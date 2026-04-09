@@ -38,7 +38,7 @@ trait DebugTrait
      * // }
      * ```
      */
-    public function dump(): static
+    public function dump() : static
     {
         $arrayRepresentation = $this->toArray();
 
@@ -58,7 +58,7 @@ trait DebugTrait
      *
      * @return array The array representation of the collection.
      */
-    abstract public function toArray(): array;
+    abstract public function toArray() : array;
 
     /**
      * Dumps the array representation of the class and terminates execution.
@@ -84,7 +84,7 @@ trait DebugTrait
      * // Script execution terminated.
      * ```
      */
-    public function dd(): void
+    public function dd() : void
     {
         $arrayRepresentation = $this->toArray();
 
@@ -104,7 +104,7 @@ trait DebugTrait
      *
      * @return array The debugging information.
      */
-    public function __debugInfo(): array
+    public function __debugInfo() : array
     {
         return $this->debugInfo();
     }
@@ -129,7 +129,7 @@ trait DebugTrait
      * // ]
      * ```
      */
-    public function debugInfo(): array
+    public function debugInfo() : array
     {
         $items = $this->toArray();
 
@@ -150,5 +150,5 @@ trait DebugTrait
      *
      * @return int The number of items in the collection.
      */
-    abstract public function count(): int;
+    abstract public function count() : int;
 }

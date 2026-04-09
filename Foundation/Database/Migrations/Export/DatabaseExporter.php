@@ -59,7 +59,7 @@ final readonly class DatabaseExporter
                 $output .= "-- Data for `{$tableName}`\n";
                 foreach ($rows as $row) {
                     $cols    = implode(separator: '`, `', array: array_keys(array: $row));
-                    $vals    = array_map(callback: static fn($v) => is_null(value: $v) ? 'NULL' : "'" . addslashes(string: (string) $v) . "'", array: array_values(array: $row));
+                    $vals    = array_map(callback: static fn ($v) => is_null(value: $v) ? 'NULL' : "'" . addslashes(string: (string) $v) . "'", array: array_values(array: $row));
                     $valsStr = implode(separator: ', ', array: $vals);
                     $output  .= "INSERT INTO `{$tableName}` (`{$cols}`) VALUES ({$valsStr});\n";
                 }

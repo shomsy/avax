@@ -75,8 +75,8 @@ trait Serialization
         // Normalize and filter object properties depending on the excludeHidden flag.
         return $this->normalizeValue(
             value: $excludeHidden
-                ? $this->filterHiddenFields(properties: get_object_vars(object: $this)) // Filter hidden fields.
-                : get_object_vars(object: $this),
+                       ? $this->filterHiddenFields(properties: get_object_vars(object: $this)) // Filter hidden fields.
+                       : get_object_vars(object: $this),
             depth: $depth
         );
     }
@@ -111,12 +111,12 @@ trait Serialization
             $value instanceof JsonSerializable  => $value->jsonSerialize(), // Serialize JSON-serializable objects.
             $value instanceof Traversable       => array_map(
             // Convert iterable objects to arrays and normalize their items.
-                callback: fn($item) => $this->normalizeValue(value: $item, depth: $depth !== null ? $depth - 1 : null),
+                callback: fn ($item) => $this->normalizeValue(value: $item, depth: $depth !== null ? $depth - 1 : null),
                 array   : iterator_to_array(iterator: $value)
             ),
             is_array(value: $value)             => array_map(
             // Normalize and recurse through array elements.
-                callback: fn($item) => $this->normalizeValue(value: $item, depth: $depth !== null ? $depth - 1 : null),
+                callback: fn ($item) => $this->normalizeValue(value: $item, depth: $depth !== null ? $depth - 1 : null),
                 array   : $value
             ),
             is_object(value: $value) && method_exists(

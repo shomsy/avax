@@ -49,7 +49,7 @@ final class RouteCacheTest extends TestCase
             matcher            : $matcher,
             logger             : new NullLogger
         );
-        $router->registerRoute(method: 'GET', path: '/closure', action: static fn() => 'x');
+        $router->registerRoute(method: 'GET', path: '/closure', action: static fn () => 'x');
 
         $runtime = new class($router) implements RouterRuntimeInterface {
             public function __construct(private HttpRequestRouter $router) {}

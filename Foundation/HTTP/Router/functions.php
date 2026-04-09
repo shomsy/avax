@@ -273,6 +273,7 @@ if (! function_exists('route_path')) {
      * Ensures consistent path format and prevents malformed routes.
      *
      * @param string $path The route path to normalize
+     *
      * @return string The normalized path
      * @throws InvalidArgumentException If path is invalid
      */
@@ -289,6 +290,7 @@ if (! function_exists('route_constraint')) {
      * Ensures regex patterns are syntactically correct and safe.
      *
      * @param string $pattern The regex constraint pattern
+     *
      * @throws InvalidArgumentException If pattern is invalid
      */
     function route_constraint(string $pattern) : void
@@ -305,15 +307,16 @@ if (! function_exists('route_match')) {
      *
      * @param string $pattern The compiled regex pattern
      * @param string $subject The path to match against
+     *
      * @return array<int|string, string>|null Matched parameters or null if no match
      */
     function route_match(string $pattern, string $subject) : array|null
     {
         $matches = [];
-        $result = preg_match($pattern, $subject, $matches);
+        $result  = preg_match($pattern, $subject, $matches);
 
         if ($result === 1) {
-            return array_filter($matches, static fn($key) => !is_int($key), ARRAY_FILTER_USE_KEY);
+            return array_filter($matches, static fn ($key) => ! is_int($key), ARRAY_FILTER_USE_KEY);
         }
 
         return null;
@@ -326,8 +329,9 @@ if (! function_exists('route_compile')) {
      *
      * Centralizes pattern compilation for consistent regex generation.
      *
-     * @param string $template Route path template with {param} placeholders
-     * @param array $constraints Parameter constraints
+     * @param string $template    Route path template with {param} placeholders
+     * @param array  $constraints Parameter constraints
+     *
      * @return string Compiled regex pattern
      */
     function route_compile(string $template, array $constraints = []) : string
@@ -343,8 +347,9 @@ if (! function_exists('get')) {
     /**
      * Register a GET route.
      *
-     * @param string $path Route path template
+     * @param string                $path   Route path template
      * @param callable|array|string $action Route handler
+     *
      * @return RouteRegistrarProxy
      */
     function get(string $path, callable|array|string $action)
@@ -359,8 +364,9 @@ if (! function_exists('post')) {
     /**
      * Register a POST route.
      *
-     * @param string $path Route path template
+     * @param string                $path   Route path template
      * @param callable|array|string $action Route handler
+     *
      * @return RouteRegistrarProxy
      */
     function post(string $path, callable|array|string $action)
@@ -375,8 +381,9 @@ if (! function_exists('put')) {
     /**
      * Register a PUT route.
      *
-     * @param string $path Route path template
+     * @param string                $path   Route path template
      * @param callable|array|string $action Route handler
+     *
      * @return RouteRegistrarProxy
      */
     function put(string $path, callable|array|string $action)
@@ -391,8 +398,9 @@ if (! function_exists('patch')) {
     /**
      * Register a PATCH route.
      *
-     * @param string $path Route path template
+     * @param string                $path   Route path template
      * @param callable|array|string $action Route handler
+     *
      * @return RouteRegistrarProxy
      */
     function patch(string $path, callable|array|string $action)
@@ -407,8 +415,9 @@ if (! function_exists('delete')) {
     /**
      * Register a DELETE route.
      *
-     * @param string $path Route path template
+     * @param string                $path   Route path template
      * @param callable|array|string $action Route handler
+     *
      * @return RouteRegistrarProxy
      */
     function delete(string $path, callable|array|string $action)
@@ -423,8 +432,9 @@ if (! function_exists('options')) {
     /**
      * Register an OPTIONS route.
      *
-     * @param string $path Route path template
+     * @param string                $path   Route path template
      * @param callable|array|string $action Route handler
+     *
      * @return RouteRegistrarProxy
      */
     function options(string $path, callable|array|string $action)
@@ -439,8 +449,9 @@ if (! function_exists('head')) {
     /**
      * Register a HEAD route.
      *
-     * @param string $path Route path template
+     * @param string                $path   Route path template
      * @param callable|array|string $action Route handler
+     *
      * @return RouteRegistrarProxy
      */
     function head(string $path, callable|array|string $action)
@@ -455,8 +466,9 @@ if (! function_exists('any')) {
     /**
      * Register an ANY method route.
      *
-     * @param string $path Route path template
+     * @param string                $path   Route path template
      * @param callable|array|string $action Route handler
+     *
      * @return RouteRegistrarProxy
      */
     function any(string $path, callable|array|string $action)
@@ -489,8 +501,9 @@ if (! function_exists('route_group')) {
      * Reduces boilerplate for API versioning and resource grouping by providing
      * intelligent defaults based on common enterprise patterns.
      *
-     * @param array $config Configuration with keys: prefix?, middleware?, domain?, version?
+     * @param array    $config Configuration with keys: prefix?, middleware?, domain?, version?
      * @param callable $routes Route definition callback
+     *
      * @return void
      */
     function route_group(array $config, callable $routes) : void
@@ -499,7 +512,7 @@ if (! function_exists('route_group')) {
 
         // Auto-detect API group patterns
         if (isset($config['version'])) {
-            $config['prefix'] = ($config['prefix'] ?? '') . '/api/' . $config['version'];
+            $config['prefix']     = ($config['prefix'] ?? '') . '/api/' . $config['version'];
             $config['middleware'] = array_merge($config['middleware'] ?? [], ['api']);
         }
 
@@ -516,9 +529,10 @@ if (! function_exists('route_any')) {
      * Simplifies resource endpoints that support multiple operations
      * while maintaining consistent error handling and middleware application.
      *
-     * @param string $path Route path pattern
+     * @param string                $path    Route path pattern
      * @param callable|array|string $handler Request handler
-     * @param array $methods Specific methods to register (default: common REST methods)
+     * @param array                 $methods Specific methods to register (default: common REST methods)
+     *
      * @return array Registered route proxies
      */
     function route_any(string $path, callable|array|string $handler, array $methods = ['GET', 'POST', 'PUT', 'DELETE']) : array
@@ -526,16 +540,17 @@ if (! function_exists('route_any')) {
         $proxies = [];
         foreach ($methods as $method) {
             $proxies[] = match (strtolower($method)) {
-                'get' => get(path: $path, action: $handler),
-                'post' => post(path: $path, action: $handler),
-                'put' => put(path: $path, action: $handler),
-                'patch' => patch(path: $path, action: $handler),
-                'delete' => delete(path: $path, action: $handler),
+                'get'     => get(path: $path, action: $handler),
+                'post'    => post(path: $path, action: $handler),
+                'put'     => put(path: $path, action: $handler),
+                'patch'   => patch(path: $path, action: $handler),
+                'delete'  => delete(path: $path, action: $handler),
                 'options' => options(path: $path, action: $handler),
-                'head' => head(path: $path, action: $handler),
-                default => throw new \InvalidArgumentException(message: "Unsupported HTTP method: {$method}")
+                'head'    => head(path: $path, action: $handler),
+                default   => throw new \InvalidArgumentException(message: "Unsupported HTTP method: {$method}")
             };
         }
+
         return $proxies;
     }
 }
@@ -548,6 +563,7 @@ if (! function_exists('route_constraint')) {
      * map common patterns (UUID, email, etc.) to secure regex patterns.
      *
      * @param array $constraints Parameter constraints with smart pattern recognition
+     *
      * @return array Processed constraint patterns
      */
     function route_constraint(array $constraints) : array
@@ -556,13 +572,13 @@ if (! function_exists('route_constraint')) {
 
         foreach ($constraints as $param => $pattern) {
             $processed[$param] = match (strtolower($pattern)) {
-                'uuid' => '[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}',
-                'email' => '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
-                'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*',
-                'id' => '[1-9][0-9]*',
-                'alpha' => '[a-zA-Z]+',
+                'uuid'     => '[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}',
+                'email'    => '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
+                'slug'     => '[a-z0-9]+(?:-[a-z0-9]+)*',
+                'id'       => '[1-9][0-9]*',
+                'alpha'    => '[a-zA-Z]+',
                 'alphanum' => '[a-zA-Z0-9]+',
-                default => $pattern // Allow custom regex patterns
+                default    => $pattern // Allow custom regex patterns
             };
         }
 
@@ -577,21 +593,22 @@ if (! function_exists('route_resource')) {
      * Automatically creates CRUD routes following REST conventions
      * while allowing customization of included operations and naming patterns.
      *
-     * @param string $resource Resource name (e.g., 'users', 'posts')
+     * @param string                $resource   Resource name (e.g., 'users', 'posts')
      * @param callable|array|string $controller Controller class or handler
-     * @param array $options Configuration options for included operations
+     * @param array                 $options    Configuration options for included operations
+     *
      * @return array Created route proxies
      */
     function route_resource(string $resource, callable|array|string $controller, array $options = []) : array
     {
-        $only = $options['only'] ?? ['index', 'show', 'store', 'update', 'destroy'];
+        $only   = $options['only'] ?? ['index', 'show', 'store', 'update', 'destroy'];
         $routes = [];
 
         $patterns = [
-            'index' => ['GET', "/{$resource}", 'index'],
-            'show' => ['GET', "/{$resource}/{{$resource}_id}", 'show'],
-            'store' => ['POST', "/{$resource}", 'store'],
-            'update' => ['PUT', "/{$resource}/{{$resource}_id}", 'update'],
+            'index'   => ['GET', "/{$resource}", 'index'],
+            'show'    => ['GET', "/{$resource}/{{$resource}_id}", 'show'],
+            'store'   => ['POST', "/{$resource}", 'store'],
+            'update'  => ['PUT', "/{$resource}/{{$resource}_id}", 'update'],
             'destroy' => ['DELETE', "/{$resource}/{{$resource}_id}", 'destroy'],
         ];
 
@@ -606,9 +623,9 @@ if (! function_exists('route_resource')) {
                 }
 
                 $routes[] = match (strtolower($method)) {
-                    'get' => get(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
-                    'post' => post(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller),
-                    'put' => put(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
+                    'get'    => get(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
+                    'post'   => post(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller),
+                    'put'    => put(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
                     'delete' => delete(path: $path, action: is_string($controller) ? "{$controller}@{$handler}" : $controller)->where(param: $constraints),
                 };
             }

@@ -6,21 +6,17 @@ require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
-final class ExecutionModeDependency
-{
-}
+final class ExecutionModeDependency {}
 
 final class ExecutionModeService
 {
-    public function __construct(public ExecutionModeDependency $dependency)
-    {
-    }
+    public function __construct(public ExecutionModeDependency $dependency) {}
 }
 
 $generatedCacheDir = sys_get_temp_dir() . '/container-generated-mode-' . uniqid('', true);
-$generated = makeTestContainer(CreateContainerConfig::create(
-    cacheDir: $generatedCacheDir,
-    cacheVersion: 'generated-mode-smoke',
+$generated         = makeTestContainer(CreateContainerConfig::create(
+    cacheDir     : $generatedCacheDir,
+    cacheVersion : 'generated-mode-smoke',
     executionMode: CreateContainerConfig::EXECUTION_MODE_GENERATED
 ));
 $generated->compileContainer([ExecutionModeService::class, ExecutionModeDependency::class]);
@@ -28,7 +24,7 @@ $generated->get(ExecutionModeService::class);
 
 $generatedCompileReport = $generated->compileReport([ExecutionModeService::class]);
 $generatedRuntimeReport = $generated->runtimeReport();
-$generatedDescription = $generated->describeService(ExecutionModeService::class);
+$generatedDescription   = $generated->describeService(ExecutionModeService::class);
 
 assertSame(
     CreateContainerConfig::EXECUTION_MODE_GENERATED,
@@ -52,9 +48,9 @@ assertSame(
 );
 
 $dynamicCacheDir = sys_get_temp_dir() . '/container-dynamic-mode-' . uniqid('', true);
-$dynamic = makeTestContainer(CreateContainerConfig::create(
-    cacheDir: $dynamicCacheDir,
-    cacheVersion: 'dynamic-mode-smoke',
+$dynamic         = makeTestContainer(CreateContainerConfig::create(
+    cacheDir     : $dynamicCacheDir,
+    cacheVersion : 'dynamic-mode-smoke',
     executionMode: CreateContainerConfig::EXECUTION_MODE_DYNAMIC
 ));
 $dynamic->compileContainer([ExecutionModeService::class, ExecutionModeDependency::class]);
@@ -62,7 +58,7 @@ $dynamic->get(ExecutionModeService::class);
 
 $dynamicCompileReport = $dynamic->compileReport([ExecutionModeService::class]);
 $dynamicRuntimeReport = $dynamic->runtimeReport();
-$dynamicDescription = $dynamic->describeService(ExecutionModeService::class);
+$dynamicDescription   = $dynamic->describeService(ExecutionModeService::class);
 
 assertSame(
     CreateContainerConfig::EXECUTION_MODE_DYNAMIC,

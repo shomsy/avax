@@ -93,9 +93,9 @@ final readonly class AsyncRouteCacheLoader
 
                 // Load metadata and cache content in parallel
                 return all([
-                    $this->filesystem->getAsync(path: $metadataPath),
-                    $this->filesystem->getAsync(path: $cachePath)
-                ]);
+                               $this->filesystem->getAsync(path: $metadataPath),
+                               $this->filesystem->getAsync(path: $cachePath)
+                           ]);
             }
         )->then(
             function ($results) use ($routesPath, $cachePath) {
@@ -257,9 +257,9 @@ final readonly class AsyncRouteCacheLoader
 
                 // Write cache and metadata in parallel
                 return all([
-                    $this->filesystem->putAsync(path: $cachePath, content: $content),
-                    $this->filesystem->putAsync(path: $metadataPath, content: $manifestContent),
-                ])->then(
+                               $this->filesystem->putAsync(path: $cachePath, content: $content),
+                               $this->filesystem->putAsync(path: $metadataPath, content: $manifestContent),
+                           ])->then(
                     function () use ($manifest, $cachePath) {
                         // Write signature for immutable routing guarantees
                         $manifest->writeSignature(cachePath: $cachePath);

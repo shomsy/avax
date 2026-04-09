@@ -89,6 +89,7 @@ final readonly class Login
 ### Adapters (Implementations)
 
 Pluggable implementations for:
+
 - **Identity** — User retrieval and authentication
 - **Session** — Session storage (JWT, server-side)
 - **AccessControl** — Role/permission checking

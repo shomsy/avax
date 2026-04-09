@@ -171,9 +171,9 @@ final readonly class RecoveryManager
             $this->audit?->record(
                 event: 'recovery.transaction.failed',
                 data : [
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
-                ]);
+                           'error' => $e->getMessage(),
+                           'trace' => $e->getTraceAsString(),
+                       ]);
 
             throw $e;
         }

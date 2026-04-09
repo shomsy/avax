@@ -35,17 +35,21 @@ final class ReflectionCache
     private static array $propertyCache = [];
 
     /**
-     * Get cached ReflectionClass for a class name.
+     * Check if a class has a specific method (cached).
      *
      * @template T of object
-     * @param class-string<T> $className
-     *
-     * @return ReflectionClass<T>
-     * @throws ReflectionException
+     * @param class-string<T>|T $classOrObject
+     * @param string            $methodName
      */
-    public static function getClass(string $className) : ReflectionClass
+    public static function hasMethod($classOrObject, string $methodName) : bool
     {
-        return self::$classCache[$className] ??= new ReflectionClass(objectOrClass: $className);
+        try {
+            self::getMethod(classOrObject: $classOrObject, methodName: $methodName);
+
+            return true;
+        } catch (ReflectionException) {
+            return false;
+        }
     }
 
     /**
@@ -61,9 +65,41 @@ final class ReflectionCache
     public static function getMethod($classOrObject, string $methodName) : ReflectionMethod
     {
         $className = is_string($classOrObject) ? $classOrObject : $classOrObject::class;
-        $key = $className . '::' . $methodName;
+        $key       = $className . '::' . $methodName;
 
         return self::$methodCache[$key] ??= self::getClass(className: $className)->getMethod(name: $methodName);
+    }
+
+    /**
+     * Get cached ReflectionClass for a class name.
+     *
+     * @template T of object
+     * @param class-string<T> $className
+     *
+     * @return ReflectionClass<T>
+     * @throws ReflectionException
+     */
+    public static function getClass(string $className) : ReflectionClass
+    {
+        return self::$classCache[$className] ??= new ReflectionClass(objectOrClass: $className);
+    }
+
+    /**
+     * Check if a class has a specific property (cached).
+     *
+     * @template T of object
+     * @param class-string<T>|T $classOrObject
+     * @param string            $propertyName
+     */
+    public static function hasProperty($classOrObject, string $propertyName) : bool
+    {
+        try {
+            self::getProperty(classOrObject: $classOrObject, propertyName: $propertyName);
+
+            return true;
+        } catch (ReflectionException) {
+            return false;
+        }
     }
 
     /**
@@ -79,43 +115,9 @@ final class ReflectionCache
     public static function getProperty($classOrObject, string $propertyName) : ReflectionProperty
     {
         $className = is_string($classOrObject) ? $classOrObject : $classOrObject::class;
-        $key = $className . '::$' . $propertyName;
+        $key       = $className . '::$' . $propertyName;
 
         return self::$propertyCache[$key] ??= self::getClass(className: $className)->getProperty(name: $propertyName);
-    }
-
-    /**
-     * Check if a class has a specific method (cached).
-     *
-     * @template T of object
-     * @param class-string<T>|T $classOrObject
-     * @param string $methodName
-     */
-    public static function hasMethod($classOrObject, string $methodName) : bool
-    {
-        try {
-            self::getMethod(classOrObject: $classOrObject, methodName: $methodName);
-            return true;
-        } catch (ReflectionException) {
-            return false;
-        }
-    }
-
-    /**
-     * Check if a class has a specific property (cached).
-     *
-     * @template T of object
-     * @param class-string<T>|T $classOrObject
-     * @param string $propertyName
-     */
-    public static function hasProperty($classOrObject, string $propertyName) : bool
-    {
-        try {
-            self::getProperty(classOrObject: $classOrObject, propertyName: $propertyName);
-            return true;
-        } catch (ReflectionException) {
-            return false;
-        }
     }
 
     /**
@@ -123,12 +125,13 @@ final class ReflectionCache
      *
      * @template T of object
      * @param class-string<T>|T $classOrObject
-     * @param string $methodName
+     * @param string            $methodName
      */
     public static function isMethodPublic($classOrObject, string $methodName) : bool
     {
         try {
             $method = self::getMethod(classOrObject: $classOrObject, methodName: $methodName);
+
             return $method->isPublic();
         } catch (ReflectionException) {
             return false;
@@ -140,12 +143,13 @@ final class ReflectionCache
      *
      * @template T of object
      * @param class-string<T>|T $classOrObject
-     * @param string $propertyName
+     * @param string            $propertyName
      */
     public static function isPropertyPublic($classOrObject, string $propertyName) : bool
     {
         try {
             $property = self::getProperty(classOrObject: $classOrObject, propertyName: $propertyName);
+
             return $property->isPublic();
         } catch (ReflectionException) {
             return false;
@@ -159,8 +163,8 @@ final class ReflectionCache
      */
     public static function clear() : void
     {
-        self::$classCache = [];
-        self::$methodCache = [];
+        self::$classCache    = [];
+        self::$methodCache   = [];
         self::$propertyCache = [];
     }
 
@@ -172,8 +176,8 @@ final class ReflectionCache
     public static function getStats() : array
     {
         return [
-            'class_count' => count(self::$classCache),
-            'method_count' => count(self::$methodCache),
+            'class_count'    => count(self::$classCache),
+            'method_count'   => count(self::$methodCache),
             'property_count' => count(self::$propertyCache),
         ];
     }

@@ -61,37 +61,37 @@ Agents MUST follow this order:
 2. **Canonical Local Development Entrypoint**: `composer install` (library - no dev server)
 3. **Canonical Release or Publish Entrypoint**: `composer publish` (composer package)
 4. **Project-Specific Architecture Boundaries**: `Foundation/Auth/` - pure PHP authentication/authorization framework.
-   - **Repository Taxonomy**:
-     - `Auth/System/`: Canonical source root (System Mašinerija).
-     - `Auth/tests/`: Mirror of `System/` for tests.
-     - `Auth/docs/`: Documentation.
-     - `Auth/examples/`: Reference implementations.
-     - `Auth/tooling/`: Local automation, codegen, dev infra.
-   - **Source Root Taxonomy (inside `System/`)**:
-     - **Namespace Parent**: `Avax\Auth\System\`
-     - `Flow/`: High-level business use-cases (Verb-Noun).
-     - `Capability/`: Domain enablers (Access, Identity, User, etc.).
-     - `Foundation/`: Low-level primitives (Clock, ID generation).
-     - `Configuration/`: Setup and wiring logic.
-     - `Auth.php`, `AuthInterface.php`: Root entry points.
+    - **Repository Taxonomy**:
+        - `Auth/System/`: Canonical source root (System Mašinerija).
+        - `Auth/tests/`: Mirror of `System/` for tests.
+        - `Auth/docs/`: Documentation.
+        - `Auth/examples/`: Reference implementations.
+        - `Auth/tooling/`: Local automation, codegen, dev infra.
+    - **Source Root Taxonomy (inside `System/`)**:
+        - **Namespace Parent**: `Avax\Auth\System\`
+        - `Flow/`: High-level business use-cases (Verb-Noun).
+        - `Capability/`: Domain enablers (Access, Identity, User, etc.).
+        - `Foundation/`: Low-level primitives (Clock, ID generation).
+        - `Configuration/`: Setup and wiring logic.
+        - `Auth.php`, `AuthInterface.php`: Root entry points.
 5. **Applied Governance Stack**:
-   - **Delivery Kind**: `framework` (pure PHP 8.3+ authentication/authorization framework)
-   - **Applied Repository Profiles**: `php-framework`
-   - **Languages**: `PHP`
-   - **Frameworks Or Runtimes**: `pure PHP 8.3+` (no framework dependency)
-   - **Applied Coding Profiles**: `php-modern` (PHP 8.3+ idioms)
-   - **Applied Architecture Profiles**: `vertical-slice` (feature-sliced architecture)
-   - **Security Lanes Required**: `governance/security/**`
-   - **Operations Lanes Required**: `delivery/operations/**` (library distribution)
+    - **Delivery Kind**: `framework` (pure PHP 8.3+ authentication/authorization framework)
+    - **Applied Repository Profiles**: `php-framework`
+    - **Languages**: `PHP`
+    - **Frameworks Or Runtimes**: `pure PHP 8.3+` (no framework dependency)
+    - **Applied Coding Profiles**: `php-modern` (PHP 8.3+ idioms)
+    - **Applied Architecture Profiles**: `vertical-slice` (feature-sliced architecture)
+    - **Security Lanes Required**: `governance/security/**`
+    - **Operations Lanes Required**: `delivery/operations/**` (library distribution)
 6. **Project Workspace**:
-   - `.agents/business-logic/` - Auth-specific domain rules
-   - `.agents/language-specific/` - PHP-specific rules
-   - `.agents/management/` - Task tracking
-   - `.agents/hooks/` - Pre-commit hooks
-   - `.agents/review/` - Code review archives
+    - `.agents/business-logic/` - Auth-specific domain rules
+    - `.agents/language-specific/` - PHP-specific rules
+    - `.agents/management/` - Task tracking
+    - `.agents/hooks/` - Pre-commit hooks
+    - `.agents/review/` - Code review archives
 7. **Project-Specific Exceptions or Forbidden Shortcuts**:
-   - No Laravel-specific adapters in core (framework-agnostic)
-   - Must maintain PHP 8.3+ minimum
+    - No Laravel-specific adapters in core (framework-agnostic)
+    - Must maintain PHP 8.3+ minimum
 
 ---
 *No offload recommended for this step.*

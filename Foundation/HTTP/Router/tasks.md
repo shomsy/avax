@@ -1,4 +1,5 @@
-Savršeno. Evo kompletno spreman **Router-Enterprise-Refactor-Plan.md** — sve findings, svi zadaci, svi koraci, svi acceptance kriterijumi, i checkbox za svakog “malog” da označi rešeno ✅
+Savršeno. Evo kompletno spreman **Router-Enterprise-Refactor-Plan.md** — sve findings, svi zadaci, svi koraci, svi
+acceptance kriterijumi, i checkbox za svakog “malog” da označi rešeno ✅
 
 Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo arhitekturna mapa:
 
@@ -23,14 +24,14 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 * 🔧 *Fajlovi:* `RouterDsl.php`, `RouteBootstrapper.php`, `RouteRegistry.php`
 
 * 🧠 *Rešenje:*
-  
-  * Sve DSL operacije (`get/post/any/group`) koriste `$this->registry`.
-  * `RouteCollector` označiti kao `@deprecated`.
+
+    * Sve DSL operacije (`get/post/any/group`) koriste `$this->registry`.
+    * `RouteCollector` označiti kao `@deprecated`.
 
 * ✅ *Acceptance:*
-  
-  * Nijedan `static` property u Routeru.
-  * Test: `RouteIsolationTest` prolazi bez race condition-a.
+
+    * Nijedan `static` property u Routeru.
+    * Test: `RouteIsolationTest` prolazi bez race condition-a.
 
 ---
 
@@ -41,16 +42,16 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 * 🔧 *Fajlovi:* `HttpRequestRouter.php`, `DuplicateRouteException.php`
 
 * 🧠 *Rešenje:*
-  
+
   ```php
   $key = "{$route->method->value}|{$route->domain}|{$route->path}";
   if (isset($this->registry[$key])) throw new DuplicateRouteException(...);
   ```
 
 * ✅ *Acceptance:*
-  
-  * Test: `DuplicateRouteTest` → “Duplicate route detected.”
-  * Routes se ne dupliraju ni u cache-u.
+
+    * Test: `DuplicateRouteTest` → “Duplicate route detected.”
+    * Routes se ne dupliraju ni u cache-u.
 
 ---
 
@@ -61,14 +62,14 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 * 🔧 *Fajlovi:* `RouteCacheLoader.php`, `RouteCacheWriter.php`
 
 * 🧠 *Rešenje:*
-  
-  * Cache format: JSON + SHA256 signature.
-  * Verifikacija pre učitavanja.
+
+    * Cache format: JSON + SHA256 signature.
+    * Verifikacija pre učitavanja.
 
 * ✅ *Acceptance:*
-  
-  * Loader više ne koristi `require` ni `eval`.
-  * Cache signature validacija prolazi.
+
+    * Loader više ne koristi `require` ni `eval`.
+    * Cache signature validacija prolazi.
 
 ---
 
@@ -79,14 +80,14 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 * 🔧 *Fajlovi:* `RouteGroupStack.php`, `RouterDsl.php`
 
 * 🧠 *Rešenje:*
-  
-  * `RouteGroupStack` → instance.
-  * Injektovati u DSL i Registrar.
+
+    * `RouteGroupStack` → instance.
+    * Injektovati u DSL i Registrar.
 
 * ✅ *Acceptance:*
-  
-  * Test: `RouteGroupIsolationTest` prolazi.
-  * Dva routera ne dele group state.
+
+    * Test: `RouteGroupIsolationTest` prolazi.
+    * Dva routera ne dele group state.
 
 ---
 
@@ -97,13 +98,13 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 * 🔧 *Fajlovi:* `HttpRequestRouter.php`, `DomainAwareMatcher.php`
 
 * 🧠 *Rešenje:*
-  
-  * Dodaj `matchesIgnoringMethod()`.
-  * Koristi ga u `resolve()`.
+
+    * Dodaj `matchesIgnoringMethod()`.
+    * Koristi ga u `resolve()`.
 
 * ✅ *Acceptance:*
-  
-  * `/users/{id}` vraća 405 ako POST ne postoji, 404 ako path ne postoji.
+
+    * `/users/{id}` vraća 405 ako POST ne postoji, 404 ako path ne postoji.
 
 ---
 
@@ -114,14 +115,14 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 * 🔧 *Fajlovi:* `RouterKernel.php`, `RouteRequestInjector.php`
 
 * 🧠 *Rešenje:*
-  
+
   ```php
   $request = $request->withAttribute('route.params', $params);
   ```
 
 * ✅ *Acceptance:*
-  
-  * `request->getAttribute('route.params')` postoji i ne preklapa user atribute.
+
+    * `request->getAttribute('route.params')` postoji i ne preklapa user atribute.
 
 ---
 
@@ -134,7 +135,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 * 🔧 *Fajlovi:* `RouteDefinition.php`, `PathNormalizer.php`
 
 * 🧠 *Rešenje:*
-  
+
   ```php
   $path = '/' . trim(preg_replace('#/+#', '/', $path), '/');
   ```
@@ -148,8 +149,8 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 * 🔧 *Fajlovi:* `FallbackManager.php`, `RouterKernel.php`, `RouterDsl.php`
 
 * 🧠 *Rešenje:*
-  
-  * Sve fallback registracije idu kroz `FallbackManager`.
+
+    * Sve fallback registracije idu kroz `FallbackManager`.
 
 * ✅ *Acceptance:* Samo jedan fallback mehanizam, test “fallback routes once” prolazi.
 
@@ -160,8 +161,8 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 * 🔧 *Fajlovi:* `RoutePipeline.php`, `StageChain.php`
 
 * 🧠 *Rešenje:*
-  
-  * Middleware mora implementirati `RouteMiddleware`.
+
+    * Middleware mora implementirati `RouteMiddleware`.
 
 * ✅ *Acceptance:* Ako middleware ne implementira, boot baca exception.
 
@@ -172,9 +173,9 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 * 🔧 *Fajlovi:* `HttpRequestRouter.php`, `DomainAwareMatcher.php`
 
 * 🧠 *Rešenje:*
-  
-  * Svaki path ima listu ruta (`[$method][$path][]`).
-  * Domain se proverava regexom.
+
+    * Svaki path ima listu ruta (`[$method][$path][]`).
+    * Domain se proverava regexom.
 
 * ✅ *Acceptance:* `/login` radi različito na `api.` i `admin.` domenima.
 
@@ -185,7 +186,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 * 🔧 *Fajlovi:* `HttpRequestRouter.php`, `RouteDefinition.php`
 
 * 🧠 *Rešenje:*
-  
+
   ```php
   $route->specificity = substr_count($route->path, '/') - substr_count($route->path, '{');
   usort($routes, fn($a, $b) => $b->specificity <=> $a->specificity);
@@ -260,9 +261,9 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 * 🔧 *Fajlovi:* `tests/ArchitectureTest.php`
 
 * 🧠 *Rešenje:* Reflection proverava da nema:
-  
-  * `static` mutable property
-  * zavisnost Router→Bootstrap
+
+    * `static` mutable property
+    * zavisnost Router→Bootstrap
 
 * ✅ *Acceptance:* Test prolazi 100%.
 
@@ -274,8 +275,8 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * Compare `compiledCache` vs `runtimeRoutes`.
-  * Broj ruta identičan kroz bootstrap faze.
+    * Compare `compiledCache` vs `runtimeRoutes`.
+    * Broj ruta identičan kroz bootstrap faze.
 
 * ✅ *Acceptance:* Deterministični output.
 
@@ -293,10 +294,10 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * `RouteCollection` sa mapom `[$method][$path]` za exact, i listom za patterns.
-  * `RouteSourceLoaderInterface` → `CachedRouteLoader` i `DiskRouteLoader`.
-  * `RouteBootstrapper` jedini orchestration sloj.
-  * Ukloniti "mrtve" fajlove (stari loaderi).
+    * `RouteCollection` sa mapom `[$method][$path]` za exact, i listom za patterns.
+    * `RouteSourceLoaderInterface` → `CachedRouteLoader` i `DiskRouteLoader`.
+    * `RouteBootstrapper` jedini orchestration sloj.
+    * Ukloniti "mrtve" fajlove (stari loaderi).
 
 * ✅ *Acceptance:* Jedna implementacija bez paralelnih varijanti.
 
@@ -310,10 +311,10 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * `RouteKey` value object (`method`, `domain`, `pathTemplate`).
-  * `DuplicateRouteException` u `registerRoute()`.
-  * `RouterConfig->duplicatePolicy = THROW|REPLACE|IGNORE`.
-  * Posebno pravilo za `ANY`: ne može pregaziti specifičan method.
+    * `RouteKey` value object (`method`, `domain`, `pathTemplate`).
+    * `DuplicateRouteException` u `registerRoute()`.
+    * `RouterConfig->duplicatePolicy = THROW|REPLACE|IGNORE`.
+    * Posebno pravilo za `ANY`: ne može pregaziti specifičan method.
 
 * ✅ *Acceptance:* Garantovana jedinstvenost i stabilnost router state-a.
 
@@ -327,9 +328,9 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * `RouteCollector` konstruiše se kao instanca u Router context-u.
-  * Test: registracija u 2 paralelna konteksta (`api` i `web`) mora biti izolovana.
-  * Ukloniti static buffer pristup.
+    * `RouteCollector` konstruiše se kao instanca u Router context-u.
+    * Test: registracija u 2 paralelna konteksta (`api` i `web`) mora biti izolovana.
+    * Ukloniti static buffer pristup.
 
 * ✅ *Acceptance:* Router postaje potpuno thread-safe i izolovan po kontekstu.
 
@@ -343,9 +344,9 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * Uvesti `@phpstan-type RoutesMap` za konzistentnu dokumentaciju.
-  * Uvesti static rule koji proverava konzistentnost docblock tipova.
-  * Korigovati `array<string, RouteDefinition[]>` vs `array<string, array<string, RouteDefinition>>`.
+    * Uvesti `@phpstan-type RoutesMap` za konzistentnu dokumentaciju.
+    * Uvesti static rule koji proverava konzistentnost docblock tipova.
+    * Korigovati `array<string, RouteDefinition[]>` vs `array<string, array<string, RouteDefinition>>`.
 
 * ✅ *Acceptance:* IDE-friendly, 0 type mismatch situacija.
 
@@ -359,9 +360,9 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * Helperi: `route_path()`, `route_constraint()`, `route_match()`, `route_compile()`.
-  * Composer autoload "files" entry.
-  * Sve PCRE greške mapirati u `InvalidConstraintException`.
+    * Helperi: `route_path()`, `route_constraint()`, `route_match()`, `route_compile()`.
+    * Composer autoload "files" entry.
+    * Sve PCRE greške mapirati u `InvalidConstraintException`.
 
 * ✅ *Acceptance:* Regex kapsuliran, manji rizik bugova i brži matching.
 
@@ -375,9 +376,9 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * Hash manifest (`manifest.sha256`) i verifikacija pre učitavanja.
-  * Ako hash ne odgovara, fallback na disk + log upozorenje.
-  * Integrisati u bootstrap proces.
+    * Hash manifest (`manifest.sha256`) i verifikacija pre učitavanja.
+    * Ako hash ne odgovara, fallback na disk + log upozorenje.
+    * Integrisati u bootstrap proces.
 
 * ✅ *Acceptance:* Cache poisoning eliminisan, determinističko ponašanje.
 
@@ -391,9 +392,9 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * Tabela: Finding | File | Line | Evidence | Test | Status
-  * Automatizovati update kroz CI (parse review + run codegrep).
-  * Primer: RouteGroupStack static | Router/GroupStack.php | L22 | DI instance | test_GroupIsolation | ✅ Resolved
+    * Tabela: Finding | File | Line | Evidence | Test | Status
+    * Automatizovati update kroz CI (parse review + run codegrep).
+    * Primer: RouteGroupStack static | Router/GroupStack.php | L22 | DI instance | test_GroupIsolation | ✅ Resolved
 
 * ✅ *Acceptance:* Audit revizije postaje dokaziv i transparentan.
 
@@ -407,9 +408,9 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * Domain-specific helperi: `route_group`, `route_any`, `route_constraint`.
-  * Statički DSL builderi sa kontekst-aware fluent API-jem.
-  * Namespaced funkcije za lakši onboarding.
+    * Domain-specific helperi: `route_group`, `route_any`, `route_constraint`.
+    * Statički DSL builderi sa kontekst-aware fluent API-jem.
+    * Namespaced funkcije za lakši onboarding.
 
 * ✅ *Acceptance:* Veća čitljivost, brži onboarding, manja kognitivna kompleksnost.
 
@@ -417,14 +418,14 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 # ✅ **SUMMARY v2.1 (COMPLETED)**
 
-| Level       | Scope                          | Tasks | Status          |
-| ----------- | ------------------------------ | ----- | --------------- |
-| 🟥 Critical | Architecture                   | 6     | ✅✅✅✅✅✅     |
-| 🟧 High     | Runtime & Behavior             | 5     | ✅✅✅✅✅      |
-| 🟨 Medium   | Performance & DX               | 4     | ✅✅✅✅        |
-| 🟩 Low      | Docs & Standards               | 2     | ✅✅            |
-| ⚙️ Extra    | Tooling                        | 2     | ✅✅            |
-| 🏢 Enterprise| Architecture Consolidation     | 8     | ✅✅✅✅✅✅✅✅   |
+| Level         | Scope                      | Tasks | Status   |
+|---------------|----------------------------|-------|----------|
+| 🟥 Critical   | Architecture               | 6     | ✅✅✅✅✅✅   |
+| 🟧 High       | Runtime & Behavior         | 5     | ✅✅✅✅✅    |
+| 🟨 Medium     | Performance & DX           | 4     | ✅✅✅✅     |
+| 🟩 Low        | Docs & Standards           | 2     | ✅✅       |
+| ⚙️ Extra      | Tooling                    | 2     | ✅✅       |
+| 🏢 Enterprise | Architecture Consolidation | 8     | ✅✅✅✅✅✅✅✅ |
 
 ---
 
@@ -447,16 +448,16 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * Napravi novu klasu `RouteGroupContext` sa metodama `push()`, `pop()`, `current()`.
-  * Ubaci je kao dependency u `RouterDsl` i `RouteRegistrar`.
-  * U `RouteBootstrapper` kreiraj instancu konteksta i prosledi kroz DI.
-  * Dodaj `RouteGroupStackDeprecationTest` da potvrdi da statička upotreba više ne postoji.
+    * Napravi novu klasu `RouteGroupContext` sa metodama `push()`, `pop()`, `current()`.
+    * Ubaci je kao dependency u `RouterDsl` i `RouteRegistrar`.
+    * U `RouteBootstrapper` kreiraj instancu konteksta i prosledi kroz DI.
+    * Dodaj `RouteGroupStackDeprecationTest` da potvrdi da statička upotreba više ne postoji.
 
 * ✅ *Success Criteria:*
 
-  * Nema statičkih svojstava u Router namespace-u
-  * Test izolacija 100% uspešna
-  * Kontekst injektovan iz RouterBootstrapper-a
+    * Nema statičkih svojstava u Router namespace-u
+    * Test izolacija 100% uspešna
+    * Kontekst injektovan iz RouterBootstrapper-a
 
 * 🧱 *Impact:* Thread-safe, test-safe, async-ready design
 * 🟥 *Priority:* Critical
@@ -468,19 +469,20 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 * **Problem:** Mešanje `RuntimeException`, `LogicException`, i domain-specifičnih klasa.
 * **Goal:** Jedinstvena hijerarhija iz korena `RouterExceptionInterface`.
 
-* 🔧 *Fajlovi:* `RouterExceptionInterface.php`, `RouterException.php`, `RouteNotFoundException.php`, `ReservedRouteNameException.php`, `MethodNotAllowedException.php`
+* 🔧 *Fajlovi:* `RouterExceptionInterface.php`, `RouterException.php`, `RouteNotFoundException.php`,
+  `ReservedRouteNameException.php`, `MethodNotAllowedException.php`
 
 * 🧠 *Rešenje:*
 
-  * Napravi `RouterExceptionInterface`.
-  * Napravi apstraktnu `RouterException` klasu koja ga implementira.
-  * Sve izuzetke (`RouteNotFoundException`, `ReservedRouteNameException`, …) refaktoriši da nasledjuju tu bazu.
-  * Dodaj `RouterExceptionConsistencyTest` da verifikuje da svi izuzetci implementiraju interfejs.
+    * Napravi `RouterExceptionInterface`.
+    * Napravi apstraktnu `RouterException` klasu koja ga implementira.
+    * Sve izuzetke (`RouteNotFoundException`, `ReservedRouteNameException`, …) refaktoriši da nasledjuju tu bazu.
+    * Dodaj `RouterExceptionConsistencyTest` da verifikuje da svi izuzetci implementiraju interfejs.
 
 * ✅ *Success Criteria:*
 
-  * 100% izuzetaka pokriveno testom
-  * Jedinstveni namespace i uniformna struktura
+    * 100% izuzetaka pokriveno testom
+    * Jedinstveni namespace i uniformna struktura
 
 * 🛡️ *Impact:* Debugging i tracing konzistentni
 * 🟥 *Priority:* Critical
@@ -498,14 +500,14 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * Uvedi `private static array $reflectionCache` unutar validatora.
-  * Koristi `spl_object_id()` ili `className::methodName` kao ključ.
-  * Cache resetuj na `RouterBootstrapState::reset()`.
+    * Uvedi `private static array $reflectionCache` unutar validatora.
+    * Koristi `spl_object_id()` ili `className::methodName` kao ključ.
+    * Cache resetuj na `RouterBootstrapState::reset()`.
 
 * ✅ *Success Criteria:*
 
-  * <5% CPU overhead u benchmark testovima
-  * Nema funkcionalne promene
+    * <5% CPU overhead u benchmark testovima
+    * Nema funkcionalne promene
 
 * ⚡ *Impact:* 10–15% brže route validacije
 * 🟧 *Priority:* High
@@ -521,13 +523,13 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * U `RouteCacheManifest` dodaj `getHash(RouteDefinition $r): string`.
-  * Ako se hash poklapa sa prethodnim manifestom, preskoči serializaciju.
+    * U `RouteCacheManifest` dodaj `getHash(RouteDefinition $r): string`.
+    * Ako se hash poklapa sa prethodnim manifestom, preskoči serializaciju.
 
 * ✅ *Success Criteria:*
 
-  * Cache generacija vreme smanjeno ≥40%
-  * Funkcionalnost identična
+    * Cache generacija vreme smanjeno ≥40%
+    * Funkcionalnost identična
 
 * ⚡ *Impact:* Brži bootstrap, niže I/O troškove
 * 🟧 *Priority:* High
@@ -545,13 +547,13 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * U `RouterMetricsCollector` dodaj alert pragove (`route_resolution_failures`, `cache_invalidations`).
-  * Dodaj konfigurabilni YAML fajl (`metrics.alerts.yaml`).
+    * U `RouterMetricsCollector` dodaj alert pragove (`route_resolution_failures`, `cache_invalidations`).
+    * Dodaj konfigurabilni YAML fajl (`metrics.alerts.yaml`).
 
 * ✅ *Success Criteria:*
 
-  * Prometheus eksport prikazuje "alert" etikete
-  * Test: simulacija greške → alert aktiviran
+    * Prometheus eksport prikazuje "alert" etikete
+    * Test: simulacija greške → alert aktiviran
 
 * 🧠 *Impact:* Proaktivno praćenje performansi
 * 🟨 *Priority:* Medium
@@ -567,14 +569,14 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * `RouterTrace::record(string $event, array $context = [])`
-  * Automatsko uključivanje metapodataka iz `RouteResolutionContext`.
-  * Uvesti JSON log format kompatibilan sa ELK.
+    * `RouterTrace::record(string $event, array $context = [])`
+    * Automatsko uključivanje metapodataka iz `RouteResolutionContext`.
+    * Uvesti JSON log format kompatibilan sa ELK.
 
 * ✅ *Success Criteria:*
 
-  * Trace log sadrži minimum tri konteksta po događaju
-  * ELK pipeline prepoznaje event strukturu
+    * Trace log sadrži minimum tri konteksta po događaju
+    * ELK pipeline prepoznaje event strukturu
 
 * 🔍 *Impact:* Viša dijagnostička vrednost logova
 * 🟨 *Priority:* Medium
@@ -592,18 +594,18 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * Kreiraj `.github/workflows/quality-check.yml`
-  * Koristi `composer check` skriptu:
+    * Kreiraj `.github/workflows/quality-check.yml`
+    * Koristi `composer check` skriptu:
 
-    ```json
-    "scripts": {
-      "check": "phpstan analyse --level=max && psalm --no-cache"
-    }
-    ```
+      ```json
+      "scripts": {
+        "check": "phpstan analyse --level=max && psalm --no-cache"
+      }
+      ```
 
 * ✅ *Success Criteria:*
 
-  * CI blokira merge ako statička analiza padne
+    * CI blokira merge ako statička analiza padne
 
 * 🧩 *Impact:* Automatski kvalitetni prag
 * 🟩 *Priority:* Low
@@ -619,15 +621,15 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * Napravi `scripts/sync-docs.php`
-  * Parsira PHPDoc anotacije i automatski generiše:
+    * Napravi `scripts/sync-docs.php`
+    * Parsira PHPDoc anotacije i automatski generiše:
 
-    * `docs/Router/Architecture.md` mermaid dijagram
-    * `docs/Router/Failure-Modes.md` listu izuzetaka
+        * `docs/Router/Architecture.md` mermaid dijagram
+        * `docs/Router/Failure-Modes.md` listu izuzetaka
 
 * ✅ *Success Criteria:*
 
-  * Pokretanjem `composer docs:sync` generiše ažurne fajlove
+    * Pokretanjem `composer docs:sync` generiše ažurne fajlove
 
 * 🧾 *Impact:* Uvek aktuelna dokumentacija
 * 🟩 *Priority:* Low
@@ -644,16 +646,16 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * U `tests/RouterChaosTest.php` dodaj simulacije:
+    * U `tests/RouterChaosTest.php` dodaj simulacije:
 
-    * Cache corruption
-    * Concurrent bootstrap
-    * Middleware chain interruption
-  * Uporedi latenciju i logiku fallback-a.
+        * Cache corruption
+        * Concurrent bootstrap
+        * Middleware chain interruption
+    * Uporedi latenciju i logiku fallback-a.
 
 * ✅ *Success Criteria:*
 
-  * 100% predvidivo ponašanje i oporavak
+    * 100% predvidivo ponašanje i oporavak
 
 * 🧪 *Impact:* Validirano fault-tolerance
 * ⚙️ *Priority:* Extra
@@ -668,15 +670,15 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 * 🧠 *Rešenje:*
 
-  * `benchmarks/RouterBenchmark.php` sa:
+    * `benchmarks/RouterBenchmark.php` sa:
 
-    * 10.000 route pattern testova
-    * domain match i fallback testove
-  * Koristi `phpbench` framework.
+        * 10.000 route pattern testova
+        * domain match i fallback testove
+    * Koristi `phpbench` framework.
 
 * ✅ *Success Criteria:*
 
-  * Performanse unutar SLA (<1ms per resolve)
+    * Performanse unutar SLA (<1ms per resolve)
 
 * 📊 *Impact:* Dokumentovana performance karakteristika
 * ⚙️ *Priority:* Extra
@@ -701,7 +703,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 ## ✅ **SUCCESS DEFINITION (v2.2 Milestone)**
 
 | Category            | Target                                     | Metric                |
-| ------------------- | ------------------------------------------ | --------------------- |
+|---------------------|--------------------------------------------|-----------------------|
 | **Architecture**    | 100% isolation, no static globals          | Reflection test suite |
 | **Performance**     | +15% faster bootstrap, -40% cache gen time | PhpBench metrics      |
 | **Security**        | Unified exception taxonomy                 | OWASP compliance      |
@@ -713,13 +715,13 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 
 # 📊 **v2.2 PROGRESS SUMMARY**
 
-| Phase       | Scope                          | Tasks | Status |
-| ----------- | ------------------------------ | ----- | ------ |
-| 🟥 Critical | Core Architecture              | 2     | ✅✅    |
-| 🟧 High     | Performance & Validation       | 2     | ✅✅    |
-| 🟨 Medium   | Observability & Reliability    | 2     | ✅✅    |
-| 🟩 Low      | Tooling & Automation           | 2     | ✅✅    |
-| ⚙️ Extra    | Quality & Stress Testing       | 2     | ✅✅    |
+| Phase       | Scope                       | Tasks | Status |
+|-------------|-----------------------------|-------|--------|
+| 🟥 Critical | Core Architecture           | 2     | ✅✅     |
+| 🟧 High     | Performance & Validation    | 2     | ✅✅     |
+| 🟨 Medium   | Observability & Reliability | 2     | ✅✅     |
+| 🟩 Low      | Tooling & Automation        | 2     | ✅✅     |
+| ⚙️ Extra    | Quality & Stress Testing    | 2     | ✅✅     |
 
 ---
 
@@ -732,7 +734,7 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 > * Odradi po prioritetu (🟥 → ⚙️).
 > * Za svaku stavku popuni checkbox ✅ nakon merge-a u main branch.
 > * Po završetku svakog "Phase-a", izvrši `vendor/bin/phpunit --testsuite=router`
->   i zabeleži `Execution Summary` u `review.md`.
+    > i zabeleži `Execution Summary` u `review.md`.
 
 ---
 
@@ -741,6 +743,6 @@ Ovaj fajl možeš mu direktno dati za egzekuciju — čista, produkcijska ToDo a
 > * Odradi po prioritetu (🟥 → ⚙️ → 🏢).
 > * Za svaku stavku popuni checkbox ✅ nakon merge-a u main branch.
 > * Po završetku svakog "Level-a", izvrši `vendor/bin/phpunit --testsuite=router`
->   i zabeleži `Execution Summary` u `review.md`.
+    > i zabeleži `Execution Summary` u `review.md`.
 
 ---

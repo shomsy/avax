@@ -14,7 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 class ControllerDispatcherUnitTest extends TestCase
 {
     private ControllerDispatcher $dispatcher;
-    private ContainerInterface $container;
+    private ContainerInterface   $container;
 
     /**
      * @test
@@ -22,7 +22,7 @@ class ControllerDispatcherUnitTest extends TestCase
     public function dispatch_callable_returns_response_when_callable_returns_null() : void
     {
         // Given: A callable that returns null
-        $callable = fn(Request $request) => null;
+        $callable = fn (Request $request) => null;
 
         // Mock request
         $request = $this->createMock(Request::class);
@@ -42,7 +42,7 @@ class ControllerDispatcherUnitTest extends TestCase
     {
         // Given: A controller with a method that returns null
         $controller = new class {
-            public function testMethod(Request $request): ResponseInterface|null
+            public function testMethod(Request $request) : ResponseInterface|null
             {
                 return null;
             }
@@ -70,7 +70,7 @@ class ControllerDispatcherUnitTest extends TestCase
     {
         // Given: An invokable controller that returns null
         $controller = new class {
-            public function __invoke(Request $request): ResponseInterface|null
+            public function __invoke(Request $request) : ResponseInterface|null
             {
                 return null;
             }
@@ -89,7 +89,7 @@ class ControllerDispatcherUnitTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->container = $this->createMock(ContainerInterface::class);
+        $this->container  = $this->createMock(ContainerInterface::class);
         $this->dispatcher = new ControllerDispatcher(container: $this->container);
     }
 }

@@ -110,13 +110,13 @@ trait CastsTypes
             // Extract only named types excluding null/mixed/etc.
             $types = array_filter(
                 array   : $type->getTypes(),
-                callback: fn($t) => $t instanceof ReflectionNamedType && $t->getName() !== 'null'
+                callback: fn ($t) => $t instanceof ReflectionNamedType && $t->getName() !== 'null'
             );
 
             // Prioritize classes (DTO/Enum) over scalar primitives
             usort(
                 array   : $types,
-                callback: fn(ReflectionNamedType $a, ReflectionNamedType $b) : int => class_exists(
+                callback: fn (ReflectionNamedType $a, ReflectionNamedType $b) : int => class_exists(
                         class: $b->getName()
                     ) <=> class_exists(class: $a->getName())
             );
@@ -170,10 +170,10 @@ trait CastsTypes
         if ($class === null || ! class_exists(class: $class) || ! is_subclass_of(object_or_class: $class, class: AbstractDTO::class)) {
             throw new InvalidArgumentException(
                 message: sprintf(
-                    "Invalid DTO class '%s' for property '%s'.",
-                    $class ?? 'null',
-                    $property->getName()
-                )
+                             "Invalid DTO class '%s' for property '%s'.",
+                             $class ?? 'null',
+                             $property->getName()
+                         )
             );
         }
     }
@@ -253,7 +253,7 @@ trait CastsTypes
 
         // Map each array element to a new DTO instance.
         return array_map(
-            callback: fn($item) => new $class($this->normalizeToArray(value: $item)),
+            callback: fn ($item) => new $class($this->normalizeToArray(value: $item)),
             array   : is_array(value: $value) ? $value : []
         );
     }
@@ -301,12 +301,12 @@ trait CastsTypes
         if (! $enum) {
             throw new InvalidArgumentException(
                 message: sprintf(
-                    "Invalid enum value '%s' for '%s' on property '%s'. Valid: [%s]",
-                    is_scalar(value: $value) ? $value : gettype(value: $value),
-                    $type,
-                    $property->getName(),
-                    implode(separator: ', ', array: array_map(callback: static fn($case) => $case->value, array: $type::cases()))
-                )
+                             "Invalid enum value '%s' for '%s' on property '%s'. Valid: [%s]",
+                             is_scalar(value: $value) ? $value : gettype(value: $value),
+                             $type,
+                             $property->getName(),
+                             implode(separator: ', ', array: array_map(callback: static fn ($case) => $case->value, array: $type::cases()))
+                         )
             );
         }
 
@@ -326,10 +326,10 @@ trait CastsTypes
         if ($class === null || ! enum_exists(enum: $class) || ! is_subclass_of(object_or_class: $class, class: BackedEnum::class)) {
             throw new InvalidArgumentException(
                 message: sprintf(
-                    "Invalid enum type '%s' for property '%s'. Must be a backed enum.",
-                    $class ?? 'null',
-                    $property->getName()
-                )
+                             "Invalid enum type '%s' for property '%s'. Must be a backed enum.",
+                             $class ?? 'null',
+                             $property->getName()
+                         )
             );
         }
     }

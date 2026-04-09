@@ -22,40 +22,6 @@ final class DeferredProviderRegistry
     /** @var array<class-string<ServiceProviderInterface>, true> */
     private array $bootedProviders = [];
 
-    public function register(ServiceProviderInterface $provider, array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics|null $metrics = null) : void
-    {
-        $providerClass = $provider::class;
-        $ids = array_values(array_unique(array_filter(
-            array_map(
-                fn(string $serviceId) : string => $registrations->resolveAlias(abstract: $serviceId),
-                $serviceIds
-            ),
-            static fn(string $serviceId) : bool => $serviceId !== ''
-        )));
-
-        sort($ids);
-
-        if ($ids === []) {
-            throw new ContainerException(message: "Deferred provider [{$providerClass}] must declare at least one provided service.");
-        }
-
-        $this->providers[$providerClass] = $provider;
-
-        foreach ($ids as $serviceId) {
-            $existing = $this->serviceOwners[$serviceId] ?? null;
-            if ($existing !== null && $existing !== $providerClass) {
-                throw new ContainerException(
-                    message: "Deferred provider conflict for service [{$serviceId}] between [{$existing}] and [{$providerClass}]."
-                );
-            }
-
-            $this->serviceOwners[$serviceId] = $providerClass;
-        }
-
-        $metrics?->increment(name: 'container_provider_deferred_total');
-        $metrics?->increment(name: 'container_provider_deferred_services_total', by: count($ids));
-    }
-
     public function isDeferred(string $serviceId) : bool
     {
         return isset($this->serviceOwners[$serviceId]);
@@ -84,8 +50,8 @@ final class DeferredProviderRegistry
     {
         foreach (array_values(array_unique($serviceIds)) as $serviceId) {
             $this->bootIfNeeded(
-                serviceId     : $registrations->resolveAlias(abstract: $serviceId),
-                metrics       : $metrics
+                serviceId: $registrations->resolveAlias(abstract: $serviceId),
+                metrics  : $metrics
             );
         }
     }
@@ -122,5 +88,39 @@ final class DeferredProviderRegistry
         $metrics?->increment(name: 'container_provider_boot_total');
         $metrics?->increment(name: 'container_provider_deferred_boot_total');
         $this->bootedProviders[$providerClass] = true;
+    }
+
+    public function register(ServiceProviderInterface $provider, array $serviceIds, ServiceRegistry $registrations, ResolutionMetrics|null $metrics = null) : void
+    {
+        $providerClass = $provider::class;
+        $ids           = array_values(array_unique(array_filter(
+                                                       array_map(
+                                                           fn (string $serviceId) : string => $registrations->resolveAlias(abstract: $serviceId),
+                                                           $serviceIds
+                                                       ),
+                                                       static fn (string $serviceId) : bool => $serviceId !== ''
+                                                   )));
+
+        sort($ids);
+
+        if ($ids === []) {
+            throw new ContainerException(message: "Deferred provider [{$providerClass}] must declare at least one provided service.");
+        }
+
+        $this->providers[$providerClass] = $provider;
+
+        foreach ($ids as $serviceId) {
+            $existing = $this->serviceOwners[$serviceId] ?? null;
+            if ($existing !== null && $existing !== $providerClass) {
+                throw new ContainerException(
+                    message: "Deferred provider conflict for service [{$serviceId}] between [{$existing}] and [{$providerClass}]."
+                );
+            }
+
+            $this->serviceOwners[$serviceId] = $providerClass;
+        }
+
+        $metrics?->increment(name: 'container_provider_deferred_total');
+        $metrics?->increment(name: 'container_provider_deferred_services_total', by: count($ids));
     }
 }

@@ -129,7 +129,7 @@ final class AsyncEventDispatcher
 
         $this->listeners[$event] = array_filter(
             array   : $this->listeners[$event],
-            callback: static fn($listener) => $listener !== $callback
+            callback: static fn ($listener) => $listener !== $callback
         );
 
         return $this;
@@ -303,7 +303,7 @@ final class AsyncEventDispatcher
         $processed = 0;
         $remaining = [];
 
-        while (($line = fgets(stream: $handle)) !== false) {
+        while ( ($line = fgets(stream: $handle)) !== false ) {
             if ($limit > 0 && $processed >= $limit) {
                 $remaining[] = $line;
 
@@ -341,7 +341,7 @@ final class AsyncEventDispatcher
     {
         $processed = 0;
 
-        while ($limit === 0 || $processed < $limit) {
+        while ( $limit === 0 || $processed < $limit ) {
             $payload = $this->redis->lPop('session:events');
             if (! $payload) {
                 break;

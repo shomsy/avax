@@ -99,13 +99,13 @@ class VerifyCsrfToken
 
         $response->getBody()->write(
             string: json_encode(
-                value: [
-                    'error' => [
-                        'code'    => 'CSRF_TOKEN_MISMATCH',
-                        'message' => 'The CSRF token is invalid, missing, or expired.',
-                    ],
-                ]
-            )
+                        value: [
+                                   'error' => [
+                                       'code'    => 'CSRF_TOKEN_MISMATCH',
+                                       'message' => 'The CSRF token is invalid, missing, or expired.',
+                                   ],
+                               ]
+                    )
         );
 
         return $response->withHeader(name: 'Content-Type', value: 'application/json');

@@ -29,14 +29,14 @@ final class OverrideConditionalGateway implements ConditionalGateway
 }
 
 $activeConfig = CreateContainerConfig::create(settings: [
-    'app_env' => 'prod',
-    'composition' => [
-        'flags' => ['beta'],
-        'tenant' => 'tenant-a',
-        'region' => 'eu',
-        'mode' => 'online',
-    ],
-]);
+                                                            'app_env'     => 'prod',
+                                                            'composition' => [
+                                                                'flags'  => ['beta'],
+                                                                'tenant' => 'tenant-a',
+                                                                'region' => 'eu',
+                                                                'mode'   => 'online',
+                                                            ],
+                                                        ]);
 
 $active = makeTestContainer($activeConfig);
 $active->singleton(ConditionalGateway::class, ActiveConditionalGateway::class)
@@ -51,7 +51,7 @@ $active->singleton(ConditionalGateway::class, ActiveConditionalGateway::class)
     ->because('regional payments gateway');
 
 $activeDescription = $active->describeService(ConditionalGateway::class);
-$activeGraph = $active->debugGraph();
+$activeGraph       = $active->debugGraph();
 
 assertTrue($active->has(ConditionalGateway::class), 'Active conditional registrations should remain resolvable.');
 assertSame('active', $active->get(ConditionalGateway::class)->name(), 'Active conditional registrations should resolve normally.');
@@ -62,14 +62,14 @@ assertTrue(
 );
 
 $inactiveConfig = CreateContainerConfig::create(settings: [
-    'app_env' => 'prod',
-    'composition' => [
-        'flags' => ['beta'],
-        'tenant' => 'tenant-a',
-        'region' => 'us',
-        'mode' => 'online',
-    ],
-]);
+                                                              'app_env'     => 'prod',
+                                                              'composition' => [
+                                                                  'flags'  => ['beta'],
+                                                                  'tenant' => 'tenant-a',
+                                                                  'region' => 'us',
+                                                                  'mode'   => 'online',
+                                                              ],
+                                                          ]);
 
 $inactive = makeTestContainer($inactiveConfig);
 $inactive->singleton(ConditionalGateway::class, ActiveConditionalGateway::class)
@@ -128,7 +128,7 @@ $override->singleton(ConditionalGateway::class, OverrideConditionalGateway::clas
     ->because('test override')
     ->concept('payments.gateway');
 
-$overrideDebug = $override->debugGraph(ConditionalGateway::class);
+$overrideDebug  = $override->debugGraph(ConditionalGateway::class);
 $overrideIssues = implode("\n", $override->validate([ConditionalGateway::class]));
 
 assertTrue($overrideDebug['overrides'] !== [], 'Graph diagnostics should expose override history for rebound abstracts.');

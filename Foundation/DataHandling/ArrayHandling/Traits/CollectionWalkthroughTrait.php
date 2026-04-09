@@ -269,7 +269,7 @@ trait CollectionWalkthroughTrait
     {
         $filtered = array_filter(
             array   : $this->getItems(),
-            callback: static fn($item) : bool => ($item[$key] ?? null) === $value
+            callback: static fn ($item) : bool => ($item[$key] ?? null) === $value
         );
 
         return new static(items: $filtered);
@@ -311,7 +311,7 @@ trait CollectionWalkthroughTrait
 
         $filtered = array_filter(
             array   : $this->getItems(),
-            callback: static fn($item) : bool => ($item[$key] ?? null) >= $min &&
+            callback: static fn ($item) : bool => ($item[$key] ?? null) >= $min &&
                 ($item[$key] ?? null) <= $max
         );
 
@@ -352,7 +352,7 @@ trait CollectionWalkthroughTrait
 
         $filtered = array_filter(
             array   : $this->getItems(),
-            callback: static fn($item) : bool => in_array(needle: $item[$key] ?? null, haystack: $values, strict: true)
+            callback: static fn ($item) : bool => in_array(needle: $item[$key] ?? null, haystack: $values, strict: true)
         );
 
         return new static(items: $filtered);
@@ -393,7 +393,7 @@ trait CollectionWalkthroughTrait
 
         $filtered = array_filter(
             array   : $this->getItems(),
-            callback: static fn($item) : bool => ($item[$key] ?? null) < $min ||
+            callback: static fn ($item) : bool => ($item[$key] ?? null) < $min ||
                 ($item[$key] ?? null) > $max
         );
 
@@ -429,7 +429,7 @@ trait CollectionWalkthroughTrait
     {
         $filtered = array_filter(
             array   : $this->getItems(),
-            callback: static fn($item) : bool => ($item[$key] ?? null) === null
+            callback: static fn ($item) : bool => ($item[$key] ?? null) === null
         );
 
         return new static(items: $filtered);
@@ -463,7 +463,7 @@ trait CollectionWalkthroughTrait
     {
         $filtered = array_filter(
             array   : $this->getItems(),
-            callback: static fn($item) : bool => ($item[$key] ?? null) !== null
+            callback: static fn ($item) : bool => ($item[$key] ?? null) !== null
         );
 
         return new static(items: $filtered);
@@ -500,7 +500,7 @@ trait CollectionWalkthroughTrait
      */
     public function whereInGroup(string $key, array $groups) : static
     {
-        return $this->filter(callback: static fn($item) : bool => in_array(needle: $item[$key] ?? null, haystack: $groups, strict: true));
+        return $this->filter(callback: static fn ($item) : bool => in_array(needle: $item[$key] ?? null, haystack: $groups, strict: true));
     }
 
     /**
@@ -568,7 +568,7 @@ trait CollectionWalkthroughTrait
     public function updateWhere(Closure $condition, Closure $updater) : static
     {
         $updated = array_map(
-            callback: static fn($item) => $condition($item) ? $updater($item) : $item,
+            callback: static fn ($item) => $condition($item) ? $updater($item) : $item,
             array   : $this->getItems()
         );
 

@@ -27,14 +27,15 @@ The compiled path is rejected when these no longer match:
 
 ## Runtime Behavior Matrix
 
-| Condition | Dev | CI | Warmup | Production |
-|:--|:--|:--|:--|:--|
-| missing artifact | dynamic fallback | dynamic fallback with CI diagnostics | dynamic fallback before warm compile | dynamic fallback |
-| incompatible artifact | dynamic fallback | dynamic fallback with CI diagnostics | dynamic fallback before rebuild | dynamic fallback |
-| stale artifact | dynamic fallback | dynamic fallback with CI diagnostics | dynamic fallback before rebuild | dynamic fallback |
-| corrupt artifact | quarantine + dynamic fallback | quarantine + fail closed | quarantine + fail closed | quarantine + fail closed |
+| Condition             | Dev                           | CI                                   | Warmup                               | Production               |
+|:----------------------|:------------------------------|:-------------------------------------|:-------------------------------------|:-------------------------|
+| missing artifact      | dynamic fallback              | dynamic fallback with CI diagnostics | dynamic fallback before warm compile | dynamic fallback         |
+| incompatible artifact | dynamic fallback              | dynamic fallback with CI diagnostics | dynamic fallback before rebuild      | dynamic fallback         |
+| stale artifact        | dynamic fallback              | dynamic fallback with CI diagnostics | dynamic fallback before rebuild      | dynamic fallback         |
+| corrupt artifact      | quarantine + dynamic fallback | quarantine + fail closed             | quarantine + fail closed             | quarantine + fail closed |
 
-Corruption is fail-closed in production-style modes. Compatibility and freshness drift reject the compiled path deterministically and leave the runtime on the dynamic path until the artifact is rebuilt.
+Corruption is fail-closed in production-style modes. Compatibility and freshness drift reject the compiled path
+deterministically and leave the runtime on the dynamic path until the artifact is rebuilt.
 
 ## Canonical Commands
 
@@ -48,7 +49,11 @@ Corruption is fail-closed in production-style modes. Compatibility and freshness
 
 Compatibility and freshness proofs live in:
 
-- [`../tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php`](../tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php)
-- [`../tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php`](../tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php)
-- [`../tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php`](../tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php)
-- [`../tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php`](../tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php)
+- [
+  `../tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php`](../tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php)
+- [
+  `../tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php`](../tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php)
+- [
+  `../tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php`](../tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php)
+- [
+  `../tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php`](../tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php)

@@ -18,14 +18,12 @@ final class DiagnosticsSchemaDependency
 
 final class DiagnosticsSchemaConsumer
 {
-    public function __construct(public DiagnosticsSchemaDependency $dependency)
-    {
-    }
+    public function __construct(public DiagnosticsSchemaDependency $dependency) {}
 }
 
 /**
  * @param array<string, mixed> $payload
- * @param list<string> $requiredKeys
+ * @param list<string>         $requiredKeys
  */
 function assertSchemaKeys(array $payload, array $requiredKeys, string $label) : void
 {
@@ -34,12 +32,12 @@ function assertSchemaKeys(array $payload, array $requiredKeys, string $label) : 
     }
 }
 
-$cacheDir = sys_get_temp_dir() . '/container-diagnostics-schema-' . uniqid();
+$cacheDir  = sys_get_temp_dir() . '/container-diagnostics-schema-' . uniqid();
 $container = makeTestContainer(CreateContainerConfig::create(
-    cacheDir        : $cacheDir,
-    cacheVersion    : 'diagnostics-schema',
-    compileMode     : CreateContainerConfig::COMPILE_MODE_CI,
-    diagnosticsMode : CreateContainerConfig::DIAGNOSTICS_MODE_CI
+    cacheDir       : $cacheDir,
+    cacheVersion   : 'diagnostics-schema',
+    compileMode    : CreateContainerConfig::COMPILE_MODE_CI,
+    diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_CI
 ));
 
 $container->singleton(DiagnosticsSchemaDependency::class, DiagnosticsSchemaDependency::class);
@@ -59,48 +57,48 @@ assertSame(CompileReport::SCHEMA_VERSION, $compilePayload['schemaVersion'], 'Com
 assertSame(RuntimeReport::SCHEMA_VERSION, $runtimePayload['schemaVersion'], 'Runtime report schema version should stay explicit.');
 
 assertSchemaKeys(
-    payload      : $compilePayload,
-    requiredKeys : [
-        'schemaVersion',
-        'available',
-        'compatible',
-        'freshnessState',
-        'warnings',
-        'compileMode',
-        'executionMode',
-        'pruneMode',
-        'environment',
-        'fingerprint',
-        'entries',
-        'pruning',
-        'compatibilityIssues',
-        'statistics',
-        'metadata',
-    ],
-    label        : 'Compile report'
+    payload     : $compilePayload,
+    requiredKeys: [
+                      'schemaVersion',
+                      'available',
+                      'compatible',
+                      'freshnessState',
+                      'warnings',
+                      'compileMode',
+                      'executionMode',
+                      'pruneMode',
+                      'environment',
+                      'fingerprint',
+                      'entries',
+                      'pruning',
+                      'compatibilityIssues',
+                      'statistics',
+                      'metadata',
+                  ],
+    label       : 'Compile report'
 );
 assertSchemaKeys(
-    payload      : $runtimePayload,
-    requiredKeys : [
-        'schemaVersion',
-        'registrationRevision',
-        'compiledRevision',
-        'compiledAttached',
-        'warmedUp',
-        'diagnosticsMode',
-        'executionMode',
-        'asyncTarget',
-        'sliceBoundaryMode',
-        'timelineEnabled',
-        'sharedServiceCount',
-        'scopedServiceCount',
-        'metrics',
-        'timeline',
-        'scopes',
-        'hotPath',
-        'compiled',
-    ],
-    label        : 'Runtime report'
+    payload     : $runtimePayload,
+    requiredKeys: [
+                      'schemaVersion',
+                      'registrationRevision',
+                      'compiledRevision',
+                      'compiledAttached',
+                      'warmedUp',
+                      'diagnosticsMode',
+                      'executionMode',
+                      'asyncTarget',
+                      'sliceBoundaryMode',
+                      'timelineEnabled',
+                      'sharedServiceCount',
+                      'scopedServiceCount',
+                      'metrics',
+                      'timeline',
+                      'scopes',
+                      'hotPath',
+                      'compiled',
+                  ],
+    label       : 'Runtime report'
 );
 
 $compileJson = json_decode($compileReport->toJson(), true, 512, JSON_THROW_ON_ERROR);

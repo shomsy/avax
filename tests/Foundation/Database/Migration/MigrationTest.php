@@ -10,7 +10,7 @@ use Avax\Tests\TestCase;
 
 class MigrationTest extends TestCase
 {
-    public function test_blueprint_generates_columns(): void
+    public function test_blueprint_generates_columns() : void
     {
         $blueprint = new Blueprint('users');
         $blueprint->id();
@@ -20,7 +20,7 @@ class MigrationTest extends TestCase
         $this->assertCount(expectedCount: 4, haystack: $blueprint->getColumns());
     }
 
-    public function test_table_renderer_generates_sql(): void
+    public function test_table_renderer_generates_sql() : void
     {
         $blueprint = new Blueprint('users');
         $blueprint->id();

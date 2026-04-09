@@ -17,16 +17,16 @@ interface PolicyInterface
     /**
      * Enforce the policy rules.
      *
-     * @param  array<string, mixed>  $data  Current session data.
+     * @param array<string, mixed> $data Current session data.
      *
      * @throws RuntimeException If policy is violated.
      */
-    public function enforce(array $data): void;
+    public function enforce(array $data) : void;
 
     /**
      * Get the policy name.
      *
      * @return string The policy identifier.
      */
-    public function getName(): string;
+    public function getName() : string;
 }

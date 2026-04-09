@@ -137,9 +137,9 @@ class Collection extends BaseCollection implements CollectionInterface
     {
         return max(
             value: array_map(
-                callback: static fn($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
-                array   : $this->getItems(),
-            ),
+                       callback: static fn ($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
+                       array   : $this->getItems(),
+                   ),
         );
     }
 
@@ -154,9 +154,9 @@ class Collection extends BaseCollection implements CollectionInterface
     {
         return min(
             value: array_map(
-                callback: static fn($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
-                array   : $this->getItems(),
-            ),
+                       callback: static fn ($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
+                       array   : $this->getItems(),
+                   ),
         );
     }
 
@@ -171,9 +171,9 @@ class Collection extends BaseCollection implements CollectionInterface
     {
         $counts = array_count_values(
             array: array_map(
-                callback: static fn($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
-                array   : $this->getItems(),
-            ),
+                       callback: static fn ($item) => $key !== null && $key !== '' && $key !== '0' ? ($item[$key] ?? null) : $item,
+                       array   : $this->getItems(),
+                   ),
         );
         arsort(array: $counts);
 

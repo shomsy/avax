@@ -6,7 +6,7 @@ require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Resolution\ResolutionPolicy;
 
-$strict = new ResolutionPolicy(strict: true, debug: false);
+$strict  = new ResolutionPolicy(strict: true, debug: false);
 $relaxed = new ResolutionPolicy(strict: false, debug: false);
 
 assertTrue($strict->isAllowed(DateTimeImmutable::class), 'Strict policy should allow instantiable classes.');

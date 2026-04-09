@@ -13,9 +13,10 @@ final class InlineSmokeCompiled extends CompiledContainer
 {
     protected string $fingerprint = 'hot-path-smoke';
 
-    protected array $entries = [
-        'inline.service' => 'resolveInlineService',
-    ];
+    protected array $entries
+        = [
+            'inline.service' => 'resolveInlineService',
+        ];
 
     public function resolveInlineService(mixed $resolver, ResolveRequest $request, array $overrides) : string
     {
@@ -23,7 +24,7 @@ final class InlineSmokeCompiled extends CompiledContainer
     }
 }
 
-$inliner = new HotPathInliner();
+$inliner  = new HotPathInliner();
 $compiled = new InlineSmokeCompiled();
 $resolver = makeTestContainer()->get(ServiceResolver::class);
 

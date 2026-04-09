@@ -24,16 +24,17 @@ readonly class DirectoryInitializer
      * Automatically initializes the directory by creating it if it doesn't exist,
      * setting permissions, and ensuring it is writable.
      *
-     * @param  string  $directoryPath  The path to the directory to be initialized.
-     * @param  FileServiceInterface  $fileService  The file service to handle directory operations.
+     * @param string               $directoryPath The path to the directory to be initialized.
+     * @param FileServiceInterface $fileService   The file service to handle directory operations.
      *
      * @throws \Exception
      * @throws \Exception
      */
     public function __construct(
-        private string $directoryPath,
+        private string               $directoryPath,
         private FileServiceInterface $fileService
-    ) {
+    )
+    {
         $this->initializeDirectory();
     }
 
@@ -43,12 +44,12 @@ readonly class DirectoryInitializer
      *
      * @throws Exception if the directory can't be created or made writable.
      */
-    private function initializeDirectory(): void
+    private function initializeDirectory() : void
     {
         // Only create the directory if it does not exist to avoid unnecessary operations
         if (! $this->fileService->isDirectory(path: $this->directoryPath) &&
             ! $this->fileService->createDirectory(path: $this->directoryPath, permissions: 0755)) {
-            throw new Exception(message: 'Failed to create directory at '.$this->directoryPath);
+            throw new Exception(message: 'Failed to create directory at ' . $this->directoryPath);
         }
 
         // Set permissions to 0755 and ensure the directory is writable
@@ -62,7 +63,7 @@ readonly class DirectoryInitializer
      *
      * @throws Exception if the directory cannot be made writable after the given attempts.
      */
-    private function ensureWritable(): void
+    private function ensureWritable() : void
     {
         for ($attempt = 1; $attempt <= self::RETRY_ATTEMPTS; $attempt++) {
             // Attempt to write to the directory or retry after a delay
@@ -75,9 +76,9 @@ readonly class DirectoryInitializer
 
         throw new Exception(
             message: sprintf(
-                'Unable to make the directory writable at %s. Check file system permissions.',
-                $this->directoryPath
-            )
+                         'Unable to make the directory writable at %s. Check file system permissions.',
+                         $this->directoryPath
+                     )
         );
     }
 
@@ -87,9 +88,9 @@ readonly class DirectoryInitializer
      *
      * @return bool True if the directory is writable, false otherwise.
      */
-    private function attemptFileCreation(): bool
+    private function attemptFileCreation() : bool
     {
-        $testFilePath = $this->directoryPath.'/.write_test';
+        $testFilePath = $this->directoryPath . '/.write_test';
 
         // Create the test file if it doesn't exist
         if (! $this->fileService->fileExists(path: $testFilePath)) {

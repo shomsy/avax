@@ -26,7 +26,8 @@ Proven:
 - versioned `CompileReport` and `RuntimeReport`
 - compile artifact compatibility checks
 - hot-path state and fallback reasons
-- explainability for alias, decoration, cache, compiled decisions, dependency chain, failure chain, slice ownership, and impact
+- explainability for alias, decoration, cache, compiled decisions, dependency chain, failure chain, slice ownership, and
+  impact
 - explainability for conditions, override history, grouped bindings, structure diff, and policy findings
 - worker/request lifecycle reset semantics
 
@@ -59,7 +60,8 @@ Proof:
 - operator-grade docs for compile artifact model, runtime state, troubleshooting, and benchmark governance
 - operator-grade docs for lifetime/scope, conditional composition, policy engine, and error posture
 - CI-readable diagnostics contracts
-- ownership-aware validation for slice access, imports/exports, duplicate concepts, lifetime capture, conditional composition, override collisions, disposal semantics, and grouped/decorator conflicts
+- ownership-aware validation for slice access, imports/exports, duplicate concepts, lifetime capture, conditional
+  composition, override collisions, disposal semantics, and grouped/decorator conflicts
 
 ## What Is Not Claimed Automatically
 

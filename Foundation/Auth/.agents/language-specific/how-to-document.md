@@ -32,15 +32,21 @@
  *     password: 'secret'
  * ));
  * ```
- *
- * ## Dependencies
- *
- * - Login action
- * - Logout action
- * - GetUser action
- * - Check action
- */
-final readonly class Authenticator implements AuthInterface
+
+*
+* ## Dependencies
+*
+*
+    - Login action
+*
+    - Logout action
+*
+    - GetUser action
+*
+    - Check action
+      */
+      final readonly class Authenticator implements AuthInterface
+
 ```
 
 ---
@@ -115,6 +121,7 @@ Auth/
 ```
 
 For each folder, document:
+
 - What business capability it provides
 - What files are inside
 - How it connects to other features
@@ -149,13 +156,13 @@ if ($access->can(action: 'edit', resource: $post)) {
 
 Always document security-relevant behavior:
 
-| Topic | What to Document |
-|-------|------------------|
+| Topic             | What to Document            |
+|-------------------|-----------------------------|
 | Password handling | Hash algorithm, cost factor |
-| Session security | Cookie settings, expiry |
-| Rate limiting | Limits, lockout duration |
-| Error messages | Why they are generic |
-| Logging | What is NOT logged |
+| Session security  | Cookie settings, expiry     |
+| Rate limiting     | Limits, lockout duration    |
+| Error messages    | Why they are generic        |
+| Logging           | What is NOT logged          |
 
 ---
 
@@ -177,10 +184,13 @@ If breaking changes occur, document:
  * ```php
  * $auth->authenticate($credentials);
  * ```
- *
- * After:
- * ```php
- * $auth->login(credentials: $credentials);
- * ```
- */
+
+*
+* After:
+* ```php
+* $auth->login(credentials: $credentials);
+* ```
+
+*/
+
 ```

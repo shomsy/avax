@@ -21,14 +21,12 @@ final class LifecycleService implements LifecycleContract
 
 final class LifecycleScopedService
 {
-    public function __construct(public string $name = 'scoped')
-    {
-    }
+    public function __construct(public string $name = 'scoped') {}
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-lifecycle-' . uniqid();
-$version = 'lifecycle-smoke';
-$config = CreateContainerConfig::create(cacheDir: $cacheDir, cacheVersion: $version);
+$version  = 'lifecycle-smoke';
+$config   = CreateContainerConfig::create(cacheDir: $cacheDir, cacheVersion: $version);
 $artifact = $cacheDir . '/container/' . rawurlencode($version) . '/compiled/container.php';
 
 $container = makeTestContainer($config);

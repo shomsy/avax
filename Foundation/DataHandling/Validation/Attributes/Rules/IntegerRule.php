@@ -34,10 +34,10 @@ final readonly class IntegerRule
             throw new ValidationException(
                 message : $this->message ?? "The {$property} field must be an integer.",
                 metadata: [
-                    'property' => $property,
-                    'value'    => $value,
-                    'expected' => 'integer',
-                ]
+                              'property' => $property,
+                              'value'    => $value,
+                              'expected' => 'integer',
+                          ]
             );
         }
     }

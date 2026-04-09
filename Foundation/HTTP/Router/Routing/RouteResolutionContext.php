@@ -62,14 +62,14 @@ final readonly class RouteResolutionContext
             route         : new RouteDefinition(
                                 method    : 'GET',
                                 path      : '/__resolution_failed__',
-                                action    : static fn() => new Response(
-                    stream: Stream::fromString(content: 'Route resolution failed'),
-                    statusCode: 500,
-                    headers: ['Content-Type' => 'text/plain']
-                ),
+                                action    : static fn () => new Response(
+                                    stream    : Stream::fromString(content: 'Route resolution failed'),
+                                    statusCode: 500,
+                                    headers   : ['Content-Type' => 'text/plain']
+                                ),
                                 middleware: [],
                                 name      : '__failed_route__'
-            ),
+                            ),
             parameters    : [],
             matchedDomain : null,
             matchTimeMs   : $matchTimeMs,
@@ -154,7 +154,7 @@ final readonly class RouteResolutionContext
     public function getResolutionSteps() : array
     {
         return array_map(
-            static fn(array $step) : string => sprintf(
+            static fn (array $step) : string => sprintf(
                 '[%s] %s',
                 $step['timestamp'] ?? 'unknown',
                 $step['description'] ?? 'unknown step'

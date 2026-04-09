@@ -30,7 +30,7 @@ final class RouteAttributeRegistrarTest extends TestCase
      */
     public function test_registers_routes_from_attributes() : void
     {
-        $router     = new HttpRequestRouter(constraintValidator: new RouteConstraintValidator);
+        $router     = new HttpRequestRouter(constraintValidator: new RouteConstraintValidator, matcher: new \Avax\HTTP\Router\Routing\RouteMatcher(new \Psr\Log\NullLogger));
         $registrar  = new AttributeRouteRegistrar(router: $router);
         $controller = SampleAttributeController::class;
 

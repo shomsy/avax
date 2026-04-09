@@ -35,9 +35,9 @@ final class InvalidRouteException extends InvalidArgumentException
     {
         return new self(
             message: sprintf(
-                'Invalid route path provided: "%s". Path must begin with "/" and contain valid segments.',
-                $path
-            )
+                         'Invalid route path provided: "%s". Path must begin with "/" and contain valid segments.',
+                         $path
+                     )
         );
     }
 
@@ -63,9 +63,9 @@ final class InvalidRouteException extends InvalidArgumentException
     {
         return new self(
             message: sprintf(
-                'Invalid wildcard usage: wildcards must appear only once and at the end. Path: "%s"',
-                $path
-            )
+                         'Invalid wildcard usage: wildcards must appear only once and at the end. Path: "%s"',
+                         $path
+                     )
         );
     }
 }

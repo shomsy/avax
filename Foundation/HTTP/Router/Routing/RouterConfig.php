@@ -14,9 +14,9 @@ final readonly class RouterConfig
 {
     public function __construct(
         public DuplicatePolicy $duplicatePolicy = DuplicatePolicy::THROW,
-        public bool $enableTracing = false,
-        public bool $strictMode = true,
-        public int $maxRoutes = 10000
+        public bool            $enableTracing = false,
+        public bool            $strictMode = true,
+        public int             $maxRoutes = 10000
     ) {}
 
     /**
@@ -28,9 +28,9 @@ final readonly class RouterConfig
     {
         return new self(
             duplicatePolicy: DuplicatePolicy::THROW,
-            enableTracing: true,
-            strictMode: false,
-            maxRoutes: 50000
+            enableTracing  : true,
+            strictMode     : false,
+            maxRoutes      : 50000
         );
     }
 
@@ -43,9 +43,9 @@ final readonly class RouterConfig
     {
         return new self(
             duplicatePolicy: DuplicatePolicy::THROW,
-            enableTracing: false,
-            strictMode: true,
-            maxRoutes: 10000
+            enableTracing  : false,
+            strictMode     : true,
+            maxRoutes      : 10000
         );
     }
 
@@ -58,9 +58,9 @@ final readonly class RouterConfig
     {
         return new self(
             duplicatePolicy: DuplicatePolicy::REPLACE,
-            enableTracing: true,
-            strictMode: false,
-            maxRoutes: 1000
+            enableTracing  : true,
+            strictMode     : false,
+            maxRoutes      : 1000
         );
     }
 }

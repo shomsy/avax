@@ -4,32 +4,20 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
-use Avax\Container\DI\ContainerInterface;
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Container\DI\ContainerInterface;
 
-final class PolicyDependencyA
-{
-}
+final class PolicyDependencyA {}
 
-final class PolicyDependencyB
-{
-}
+final class PolicyDependencyB {}
 
-final class PolicyDependencyC
-{
-}
+final class PolicyDependencyC {}
 
-final class PolicyDependencyD
-{
-}
+final class PolicyDependencyD {}
 
-final class PolicyDependencyE
-{
-}
+final class PolicyDependencyE {}
 
-final class PolicyDependencyF
-{
-}
+final class PolicyDependencyF {}
 
 final class OverInjectedPolicyService
 {
@@ -40,38 +28,27 @@ final class OverInjectedPolicyService
         PolicyDependencyD $d,
         PolicyDependencyE $e,
         PolicyDependencyF $f
-    ) {
-    }
+    ) {}
 }
 
-final class OtherFlowLocal
-{
-}
+final class OtherFlowLocal {}
 
 final class FlowToFlowEntry
 {
-    public function __construct(public OtherFlowLocal $local)
-    {
-    }
+    public function __construct(public OtherFlowLocal $local) {}
 }
 
-final class GenericHelperService
-{
-}
+final class GenericHelperService {}
 
-final class StructureDiffService
-{
-}
+final class StructureDiffService {}
 
 final class LocatorDriftService
 {
-    public function __construct(public ContainerInterface $container)
-    {
-    }
+    public function __construct(public ContainerInterface $container) {}
 }
 
-$cacheDir = sys_get_temp_dir() . '/container-policy-diff-' . uniqid('', true);
-$config = CreateContainerConfig::create(cacheDir: $cacheDir);
+$cacheDir  = sys_get_temp_dir() . '/container-policy-diff-' . uniqid('', true);
+$config    = CreateContainerConfig::create(cacheDir: $cacheDir);
 $container = makeTestContainer($config);
 
 $container->bind(PolicyDependencyA::class, PolicyDependencyA::class);
@@ -111,20 +88,20 @@ $container->singleton(StructureDiffService::class, StructureDiffService::class)
     ->asPublic()
     ->concept('structure.diff');
 
-$graph = $container->debugGraph();
+$graph        = $container->debugGraph();
 $serviceGraph = $container->debugGraph(StructureDiffService::class);
-$issues = implode("\n", $container->validate([
-    OverInjectedPolicyService::class,
-    FlowToFlowEntry::class,
-    GenericHelperService::class,
-    StructureDiffService::class,
-    LocatorDriftService::class,
-]));
+$issues       = implode("\n", $container->validate([
+                                                       OverInjectedPolicyService::class,
+                                                       FlowToFlowEntry::class,
+                                                       GenericHelperService::class,
+                                                       StructureDiffService::class,
+                                                       LocatorDriftService::class,
+                                                   ]));
 
 $overInjectedCodes = array_column($graph['policyFindings'][OverInjectedPolicyService::class] ?? [], 'code');
-$flowCodes = array_column($graph['policyFindings'][FlowToFlowEntry::class] ?? [], 'code');
-$genericCodes = array_column($graph['policyFindings'][GenericHelperService::class] ?? [], 'code');
-$locatorCodes = array_column($graph['policyFindings'][LocatorDriftService::class] ?? [], 'code');
+$flowCodes         = array_column($graph['policyFindings'][FlowToFlowEntry::class] ?? [], 'code');
+$genericCodes      = array_column($graph['policyFindings'][GenericHelperService::class] ?? [], 'code');
+$locatorCodes      = array_column($graph['policyFindings'][LocatorDriftService::class] ?? [], 'code');
 
 assertTrue(in_array('POL-001', $overInjectedCodes, true), 'Policy diagnostics should flag over-injected constructors.');
 assertTrue(in_array('POL-004', $flowCodes, true), 'Policy diagnostics should flag direct flow-to-flow dependencies.');

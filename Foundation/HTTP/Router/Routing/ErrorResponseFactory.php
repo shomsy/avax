@@ -34,9 +34,9 @@ final readonly class ErrorResponseFactory
             stream    : Stream::fromString(content: $body),
             statusCode: 405,
             headers   : [
-                'Content-Type' => 'text/plain',
-                'Allow'        => implode(', ', $allowedMethods),
-            ],
+                            'Content-Type' => 'text/plain',
+                            'Allow'        => implode(', ', $allowedMethods),
+                        ],
         );
     }
 }

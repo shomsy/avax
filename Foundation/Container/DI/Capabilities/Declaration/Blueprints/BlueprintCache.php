@@ -16,9 +16,9 @@ final class BlueprintCache
     private array $items = [];
 
     public function __construct(
-        private readonly string $cacheDir = '',
-        private readonly string $cacheVersion = 'container-v1',
-        private readonly bool $debug = false,
+        private readonly string                 $cacheDir = '',
+        private readonly string                 $cacheVersion = 'container-v1',
+        private readonly bool                   $debug = false,
         private readonly ResolutionMetrics|null $metrics = null
     ) {}
 
@@ -79,6 +79,34 @@ final class BlueprintCache
         return $loaded;
     }
 
+    private function isEnabled() : bool
+    {
+        return $this->cacheDir !== '';
+    }
+
+    private function pathFor(string $class) : string
+    {
+        return $this->directory() . '/' . sha1($class) . '.php';
+    }
+
+    private function directory() : string
+    {
+        return rtrim($this->cacheDir, '/\\') . '/container/' . rawurlencode($this->cacheVersion) . '/blueprints';
+    }
+
+    /**
+     * Removes one blueprint from memory and disk cache.
+     */
+    public function forget(string $class) : void
+    {
+        unset($this->items[$class]);
+
+        $path = $this->pathFor(class: $class);
+        if (is_file($path)) {
+            unlink($path);
+        }
+    }
+
     /**
      * Stores one blueprint in memory and optional disk cache.
      *
@@ -115,19 +143,6 @@ final class BlueprintCache
     }
 
     /**
-     * Removes one blueprint from memory and disk cache.
-     */
-    public function forget(string $class) : void
-    {
-        unset($this->items[$class]);
-
-        $path = $this->pathFor(class: $class);
-        if (is_file($path)) {
-            unlink($path);
-        }
-    }
-
-    /**
      * Clears the full blueprint cache.
      */
     public function flush() : void
@@ -157,21 +172,6 @@ final class BlueprintCache
 
             unlink($path);
         }
-    }
-
-    private function isEnabled() : bool
-    {
-        return $this->cacheDir !== '';
-    }
-
-    private function directory() : string
-    {
-        return rtrim($this->cacheDir, '/\\') . '/container/' . rawurlencode($this->cacheVersion) . '/blueprints';
-    }
-
-    private function pathFor(string $class) : string
-    {
-        return $this->directory() . '/' . sha1($class) . '.php';
     }
 
     private function deleteDirectory(string $directory) : void

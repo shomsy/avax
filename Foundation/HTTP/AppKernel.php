@@ -162,38 +162,38 @@ final readonly class AppKernel implements Kernel
         // For now, create with mock/null dependencies
         return new SessionLifecycleMiddleware(
             session: new class implements SessionInterface {
-                public function start() : void {}
+                       public function start() : void {}
 
-                public function getId() : string
-                {
-                    return 'mock';
-                }
+                       public function getId() : string
+                       {
+                           return 'mock';
+                       }
 
-                public function has(string $key) : bool
-                {
-                    return false;
-                }
+                       public function has(string $key) : bool
+                       {
+                           return false;
+                       }
 
-                public function get(string $key, mixed $default = null) : mixed
-                {
-                    return $default;
-                }
+                       public function get(string $key, mixed $default = null) : mixed
+                       {
+                           return $default;
+                       }
 
-                public function set(string $key, mixed $value) : void {}
+                       public function set(string $key, mixed $value) : void {}
 
-                public function remove(string $key) : void {}
+                       public function remove(string $key) : void {}
 
-                public function clear() : void {}
+                       public function clear() : void {}
 
-                public function destroy() : void {}
+                       public function destroy() : void {}
 
-                public function regenerateId() : void {}
+                       public function regenerateId() : void {}
 
-                public function isStarted() : bool
-                {
-                    return true;
-                }
-            }
+                       public function isStarted() : bool
+                       {
+                           return true;
+                       }
+                   }
         );
     }
 
@@ -205,51 +205,51 @@ final readonly class AppKernel implements Kernel
         // In real implementation, this would inject PSR-3 LoggerInterface
         return new RequestLoggerMiddleware(
             logger: new class implements LoggerInterface {
-                public function emergency(Stringable|string $message, array $context = []) : void
-                {
-                    error_log($message);
-                }
+                      public function emergency(Stringable|string $message, array $context = []) : void
+                      {
+                          error_log($message);
+                      }
 
-                public function alert(Stringable|string $message, array $context = []) : void
-                {
-                    error_log($message);
-                }
+                      public function alert(Stringable|string $message, array $context = []) : void
+                      {
+                          error_log($message);
+                      }
 
-                public function critical(Stringable|string $message, array $context = []) : void
-                {
-                    error_log($message);
-                }
+                      public function critical(Stringable|string $message, array $context = []) : void
+                      {
+                          error_log($message);
+                      }
 
-                public function error(Stringable|string $message, array $context = []) : void
-                {
-                    error_log($message);
-                }
+                      public function error(Stringable|string $message, array $context = []) : void
+                      {
+                          error_log($message);
+                      }
 
-                public function warning(Stringable|string $message, array $context = []) : void
-                {
-                    error_log($message);
-                }
+                      public function warning(Stringable|string $message, array $context = []) : void
+                      {
+                          error_log($message);
+                      }
 
-                public function notice(Stringable|string $message, array $context = []) : void
-                {
-                    error_log($message);
-                }
+                      public function notice(Stringable|string $message, array $context = []) : void
+                      {
+                          error_log($message);
+                      }
 
-                public function info(Stringable|string $message, array $context = []) : void
-                {
-                    error_log($message);
-                }
+                      public function info(Stringable|string $message, array $context = []) : void
+                      {
+                          error_log($message);
+                      }
 
-                public function debug(Stringable|string $message, array $context = []) : void
-                {
-                    error_log($message);
-                }
+                      public function debug(Stringable|string $message, array $context = []) : void
+                      {
+                          error_log($message);
+                      }
 
-                public function log($level, Stringable|string $message, array $context = []) : void
-                {
-                    error_log($message);
-                }
-            }
+                      public function log($level, Stringable|string $message, array $context = []) : void
+                      {
+                          error_log($message);
+                      }
+                  }
         );
     }
 
@@ -261,25 +261,25 @@ final readonly class AppKernel implements Kernel
         // In real implementation, this would inject RateLimiterService
         return new RateLimiterMiddleware(
             rateLimiterService: new class implements RateLimiterService {
-                public function canAttempt(string $key, int $maxAttempts, int $decaySeconds) : bool
-                {
-                    return true;
-                }
+                                  public function canAttempt(string $key, int $maxAttempts, int $decaySeconds) : bool
+                                  {
+                                      return true;
+                                  }
 
-                public function recordFailedAttempt(string $key, int $maxAttempts, int $decaySeconds) : void {}
+                                  public function recordFailedAttempt(string $key, int $maxAttempts, int $decaySeconds) : void {}
 
-                public function remainingAttempts(string $key, int $maxAttempts, int $decaySeconds) : int
-                {
-                    return 60;
-                }
+                                  public function remainingAttempts(string $key, int $maxAttempts, int $decaySeconds) : int
+                                  {
+                                      return 60;
+                                  }
 
-                public function availableIn(string $key, int $maxAttempts, int $decaySeconds) : int
-                {
-                    return 0;
-                }
+                                  public function availableIn(string $key, int $maxAttempts, int $decaySeconds) : int
+                                  {
+                                      return 0;
+                                  }
 
-                public function clear(string $key) : void {}
-            },
+                                  public function clear(string $key) : void {}
+                              },
             responseFactory   : $responseFactory,
             identifierType    : 'ip',
             maxRequests       : 100, // max requests

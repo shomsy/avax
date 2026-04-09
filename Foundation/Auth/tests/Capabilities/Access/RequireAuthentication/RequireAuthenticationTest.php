@@ -4,22 +4,17 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capability\Access\RequireAuthentication;
 
-use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for RequireAuthentication access boundary.
  */
 class RequireAuthenticationTest extends TestCase
 {
-    protected function tearDown() : void
-    {
-        Mockery::close();
-    }
-
     /**
      * @throws Unauthenticated
      */
@@ -44,5 +39,10 @@ class RequireAuthenticationTest extends TestCase
         $this->expectException(exception: Unauthenticated::class);
 
         $requirement->execute();
+    }
+
+    protected function tearDown() : void
+    {
+        Mockery::close();
     }
 }

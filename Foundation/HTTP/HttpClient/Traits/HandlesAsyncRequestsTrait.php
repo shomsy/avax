@@ -14,14 +14,15 @@ trait HandlesAsyncRequestsTrait
     /**
      * Generates asynchronous requests for multiple endpoints.
      *
-     * @param  array  $urls  The list of URLs to fetch data from.
+     * @param array $urls The list of URLs to fetch data from.
+     *
      * @return array An array of promises for the asynchronous requests.
      *
      * @throws Exception
      * @throws Exception
      * @throws GuzzleException
      */
-    public function createAsyncRequests(array $urls): array
+    public function createAsyncRequests(array $urls) : array
     {
         $promises = [];
         foreach ($urls as $endpoint => $url) {
@@ -34,10 +35,11 @@ trait HandlesAsyncRequestsTrait
     /**
      * Settles the promises for multiple requests and processes their results.
      *
-     * @param  array  $promises  The list of promises to settle.
+     * @param array $promises The list of promises to settle.
+     *
      * @return PromiseInterface A promise that resolves with processed results.
      */
-    public function settlePromises(array $promises): PromiseInterface
+    public function settlePromises(array $promises) : PromiseInterface
     {
         return Utils::settle(promises: $promises)->then(
             onFulfilled: fn (array $results) => $this->processPromisesResults(results: $results),
@@ -47,10 +49,11 @@ trait HandlesAsyncRequestsTrait
     /**
      * Processes the results of each settled promise.
      *
-     * @param  array  $results  The array of results from settled promises.
+     * @param array $results The array of results from settled promises.
+     *
      * @return array The array of processed responses.
      */
-    private function processPromisesResults(array $results): array
+    private function processPromisesResults(array $results) : array
     {
         $aggregatedResponses = [];
         foreach ($results as $endpoint => $result) {

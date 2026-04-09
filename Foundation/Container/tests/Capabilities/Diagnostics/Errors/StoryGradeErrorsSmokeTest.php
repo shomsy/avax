@@ -4,45 +4,31 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 3) . '/bootstrap.php';
 
-use Avax\Container\DI\ContainerInterface;
-use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\RuntimeInput;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\RuntimeInput;
+use Avax\Container\DI\ContainerInterface;
 
-interface StoryInternalContract
-{
-}
+interface StoryInternalContract {}
 
-final class StoryInternalService implements StoryInternalContract
-{
-}
+final class StoryInternalService implements StoryInternalContract {}
 
 final class StoryFlowEntry
 {
-    public function __construct(public StoryInternalContract $dependency)
-    {
-    }
+    public function __construct(public StoryInternalContract $dependency) {}
 }
 
-final class StoryFlowLocalService
-{
-}
+final class StoryFlowLocalService {}
 
-final class RequestOnlyStoryService
-{
-}
+final class RequestOnlyStoryService {}
 
 final class StoryRuntimeInputConsumer
 {
-    public function __construct(#[RuntimeInput('token')] public string $token)
-    {
-    }
+    public function __construct(#[RuntimeInput('token')] public string $token) {}
 }
 
 final class StoryLocatorDrift
 {
-    public function __construct(public ContainerInterface $container)
-    {
-    }
+    public function __construct(public ContainerInterface $container) {}
 }
 
 $topLevelContainer = makeTestContainer();

@@ -5,7 +5,8 @@
 
 ## Context
 
-The container already ships a real compile/runtime path, deferred providers, typed reports, and generated artifacts. The remaining risk is not feature breadth. The risk is ownership drift:
+The container already ships a real compile/runtime path, deferred providers, typed reports, and generated artifacts. The
+remaining risk is not feature breadth. The risk is ownership drift:
 
 - authored definitions, compile metadata, and runtime caches can be treated as one mutable blob
 - `CreateContainer` can become the next assembler god-object
@@ -27,9 +28,12 @@ Ownership is split like this:
 - derived registration caches also live in `ServiceRegistry`, but only behind `resetDerivedState()`
 - compiled artifact lifecycle lives in `src/Capabilities/Composition/Compilation/CompileContainer.php`
 - compiled runtime attachment and hot-path reuse live in `src/Capabilities/Runtime/CompiledRuntime.php`
-- deferred provider ownership and lazy boot live in `src/Capabilities/Declaration/Providers/DeferredProviderRegistry.php`
-- scope-local and shared runtime instances live in `src/Capabilities/Runtime/Scopes/` plus `src/Capabilities/Runtime/ServicePool.php`
-- assembly stays under `src/Flows/CreateContainer/CreateContainer.php`, with internal collaborator wiring split under `src/Capabilities/Composition/Assembly/`
+- deferred provider ownership and lazy boot live in
+  `src/Capabilities/Declaration/Providers/DeferredProviderRegistry.php`
+- scope-local and shared runtime instances live in `src/Capabilities/Runtime/Scopes/` plus
+  `src/Capabilities/Runtime/ServicePool.php`
+- assembly stays under `src/Flows/CreateContainer/CreateContainer.php`, with internal collaborator wiring split under
+  `src/Capabilities/Composition/Assembly/`
 
 Lifecycle rules are explicit:
 

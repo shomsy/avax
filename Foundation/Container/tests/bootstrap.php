@@ -8,18 +8,14 @@ namespace Psr\Container {
 
     interface ContainerInterface
     {
-        public function get(string $id): mixed;
+        public function get(string $id) : mixed;
 
-        public function has(string $id): bool;
+        public function has(string $id) : bool;
     }
 
-    interface ContainerExceptionInterface extends Throwable
-    {
-    }
+    interface ContainerExceptionInterface extends Throwable {}
 
-    interface NotFoundExceptionInterface extends ContainerExceptionInterface
-    {
-    }
+    interface NotFoundExceptionInterface extends ContainerExceptionInterface {}
 }
 
 namespace {
@@ -42,7 +38,7 @@ namespace {
             }
 
             $relative = substr($class, strlen($prefix));
-            $path = $root . '/' . str_replace('\\', '/', $relative) . '.php';
+            $path     = $root . '/' . str_replace('\\', '/', $relative) . '.php';
 
             if (is_file($path)) {
                 require_once $path;
@@ -101,7 +97,8 @@ namespace {
 
     function makeTestContainer(
         CreateContainerConfig|null $config = null
-    ) : Container {
+    ) : Container
+    {
         return (new CreateContainer())->create(config: $config);
     }
 }

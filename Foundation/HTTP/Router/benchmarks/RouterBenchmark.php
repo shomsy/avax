@@ -12,31 +12,31 @@ declare(strict_types=1);
  * Uses PhpBench framework for accurate micro-benchmarking.
  */
 
+use Avax\HTTP\Router\Matching\RouteMatcherInterface;
 use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\ReflectionCache;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
-use Avax\HTTP\Router\Matching\RouteMatcherInterface;
 
 /**
  * @BeforeMethods({"setUp"})
  */
 class RouterBenchmark
 {
-    private HttpRequestRouter $router;
-    private RouteMatcherInterface $matcher;
+    private HttpRequestRouter        $router;
+    private RouteMatcherInterface    $matcher;
     private RouteConstraintValidator $validator;
 
-    public function setUp(): void
+    public function setUp() : void
     {
-        $this->matcher = $this->createMock(RouteMatcherInterface::class);
+        $this->matcher   = $this->createMock(RouteMatcherInterface::class);
         $this->validator = $this->createMock(RouteConstraintValidator::class);
 
         $this->router = new HttpRequestRouter(
             constraintValidator: $this->validator,
-            matcher: $this->matcher
+            matcher            : $this->matcher
         );
     }
 
@@ -47,13 +47,13 @@ class RouterBenchmark
      * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
-    public function benchSimpleRouteRegistration(): void
+    public function benchSimpleRouteRegistration() : void
     {
         $route = new RouteDefinition(
-            method: 'GET',
-            path: '/users/{id}',
-            action: 'UserController@show',
-            middleware: ['auth'],
+            method     : 'GET',
+            path       : '/users/{id}',
+            action     : 'UserController@show',
+            middleware : ['auth'],
             constraints: ['id' => '[0-9]+']
         );
 
@@ -67,19 +67,19 @@ class RouterBenchmark
      * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
-    public function benchComplexRouteRegistration(): void
+    public function benchComplexRouteRegistration() : void
     {
         for ($i = 0; $i < 100; $i++) {
             $route = new RouteDefinition(
-                method: 'POST',
-                path: "/api/v1/resources/{$i}/subresources/{subId}/actions/{action}",
-                action: "ResourceController@handle",
-                middleware: ['api', 'auth', 'rate_limit', 'cache'],
+                method     : 'POST',
+                path       : "/api/v1/resources/{$i}/subresources/{subId}/actions/{action}",
+                action     : "ResourceController@handle",
+                middleware : ['api', 'auth', 'rate_limit', 'cache'],
                 constraints: [
-                    'subId' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
-                    'action' => 'create|update|delete'
-                ],
-                name: "api.resource.{$i}.action"
+                                 'subId'  => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+                                 'action' => 'create|update|delete'
+                             ],
+                name       : "api.resource.{$i}.action"
             );
 
             $this->router->add(route: $route);
@@ -92,15 +92,15 @@ class RouterBenchmark
      * @OutputTimeUnit("microseconds")
      * @throws DuplicateRouteException
      */
-    public function benchRouteLookupByName(): void
+    public function benchRouteLookupByName() : void
     {
         // Pre-populate with routes
         for ($i = 0; $i < 1000; $i++) {
             $route = new RouteDefinition(
                 method: 'GET',
-                path: "/benchmark/route/{$i}",
+                path  : "/benchmark/route/{$i}",
                 action: "BenchmarkController{$i}@action",
-                name: "benchmark.route.{$i}"
+                name  : "benchmark.route.{$i}"
             );
             $this->router->add(route: $route);
         }
@@ -116,10 +116,10 @@ class RouterBenchmark
      * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
-    public function benchRouteCollectionStatistics(): void
+    public function benchRouteCollectionStatistics() : void
     {
         // Pre-populate with diverse routes
-        $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+        $methods  = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
         $patterns = [
             '/simple/path',
             '/users/{id}',
@@ -129,11 +129,11 @@ class RouterBenchmark
 
         for ($i = 0; $i < 1000; $i++) {
             $route = new RouteDefinition(
-                method: $methods[$i % count($methods)],
-                path: $patterns[$i % count($patterns)],
-                action: "Controller{$i}@action",
+                method    : $methods[$i % count($methods)],
+                path      : $patterns[$i % count($patterns)],
+                action    : "Controller{$i}@action",
                 middleware: ['middleware' . ($i % 5)],
-                name: "route.{$i}"
+                name      : "route.{$i}"
             );
             $this->router->add(route: $route);
         }
@@ -149,16 +149,16 @@ class RouterBenchmark
      * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
-    public function benchLargeScaleRouteRegistration(): void
+    public function benchLargeScaleRouteRegistration() : void
     {
         // Register 10,000 routes (enterprise-scale)
         for ($i = 0; $i < 10000; $i++) {
             $route = new RouteDefinition(
-                method: 'GET',
-                path: "/enterprise/resource/{$i}/endpoint",
-                action: "EnterpriseController@handle",
+                method    : 'GET',
+                path      : "/enterprise/resource/{$i}/endpoint",
+                action    : "EnterpriseController@handle",
                 middleware: ['auth', 'log', 'metrics'],
-                name: "enterprise.resource.{$i}"
+                name      : "enterprise.resource.{$i}"
             );
             $this->router->add(route: $route);
         }
@@ -170,7 +170,7 @@ class RouterBenchmark
      * @OutputTimeUnit("microseconds")
      * @ParamProviders({"provideRoutePatterns"})
      */
-    public function benchRoutePatternMatching($params): void
+    public function benchRoutePatternMatching($params) : void
     {
         $pattern = $params['pattern'];
 
@@ -178,7 +178,7 @@ class RouterBenchmark
         preg_match($pattern, '/users/123/posts/456/comments/789');
     }
 
-    public function provideRoutePatterns(): array
+    public function provideRoutePatterns() : array
     {
         return [
             ['pattern' => '#^/users/([^/]+)/posts/([^/]+)/comments/([^/]+)$#'],
@@ -194,7 +194,7 @@ class RouterBenchmark
      * @OutputTimeUnit("milliseconds")
      * @ParamProviders({"provideMiddlewareStacks"})
      */
-    public function benchMiddlewareStackProcessing($params): void
+    public function benchMiddlewareStackProcessing($params) : void
     {
         $middleware = $params['middleware'];
 
@@ -205,19 +205,19 @@ class RouterBenchmark
         }
     }
 
-    public function provideMiddlewareStacks(): array
+    private function simulateMiddleware(string $input, string $middleware) : string
+    {
+        // Simulate middleware processing overhead
+        return hash('sha256', $input . $middleware);
+    }
+
+    public function provideMiddlewareStacks() : array
     {
         return [
             ['middleware' => ['auth', 'session', 'csrf']],
             ['middleware' => ['auth', 'rate_limit', 'cache', 'log', 'metrics']],
             ['middleware' => ['auth', 'session', 'csrf', 'rate_limit', 'cache', 'log', 'metrics', 'cors']],
         ];
-    }
-
-    private function simulateMiddleware(string $input, string $middleware): string
-    {
-        // Simulate middleware processing overhead
-        return hash('sha256', $input . $middleware);
     }
 
     /**
@@ -227,20 +227,20 @@ class RouterBenchmark
      * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
-    public function benchDomainAwareRouting(): void
+    public function benchDomainAwareRouting() : void
     {
         // Pre-populate with domain-specific routes
         $domains = ['api.example.com', 'admin.example.com', 'www.example.com'];
-        $paths = ['/users', '/posts', '/comments', '/dashboard', '/reports'];
+        $paths   = ['/users', '/posts', '/comments', '/dashboard', '/reports'];
 
         foreach ($domains as $domain) {
             foreach ($paths as $path) {
                 $route = new RouteDefinition(
                     method: 'GET',
-                    path: $path,
+                    path  : $path,
                     action: 'DomainController@handle',
                     domain: $domain,
-                    name: "{$domain}.{$path}"
+                    name  : "{$domain}.{$path}"
                 );
                 $this->router->add(route: $route);
             }
@@ -256,23 +256,23 @@ class RouterBenchmark
      * @Iterations(5)
      * @OutputTimeUnit("milliseconds")
      */
-    public function benchRouteConstraintValidation(): void
+    public function benchRouteConstraintValidation() : void
     {
         // Test various constraint patterns
         $constraints = [
-            'id' => '[0-9]+',
-            'uuid' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
-            'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*',
+            'id'    => '[0-9]+',
+            'uuid'  => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+            'slug'  => '[a-z0-9]+(?:-[a-z0-9]+)*',
             'email' => '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
-            'ipv4' => '(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)',
+            'ipv4'  => '(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)',
         ];
 
         $testValues = [
-            'id' => '12345',
-            'uuid' => '550e8400-e29b-41d4-a716-446655440000',
-            'slug' => 'my-article-title',
+            'id'    => '12345',
+            'uuid'  => '550e8400-e29b-41d4-a716-446655440000',
+            'slug'  => 'my-article-title',
             'email' => 'user@example.com',
-            'ipv4' => '192.168.1.1',
+            'ipv4'  => '192.168.1.1',
         ];
 
         foreach ($constraints as $type => $pattern) {
@@ -287,18 +287,18 @@ class RouterBenchmark
      * @OutputTimeUnit("milliseconds")
      * @throws ReservedRouteNameException
      */
-    public function benchCacheSerialization(): void
+    public function benchCacheSerialization() : void
     {
         // Create complex route collection for serialization testing
         $routes = [];
         for ($i = 0; $i < 1000; $i++) {
             $routes[] = new RouteDefinition(
-                method: 'GET',
-                path: "/cache/test/{$i}",
-                action: ['CacheController', 'handle'],
-                middleware: ['auth', 'cache'],
+                method     : 'GET',
+                path       : "/cache/test/{$i}",
+                action     : ['CacheController', 'handle'],
+                middleware : ['auth', 'cache'],
                 constraints: ['id' => '[0-9]+'],
-                name: "cache.test.{$i}"
+                name       : "cache.test.{$i}"
             );
         }
 
@@ -317,11 +317,12 @@ class RouterBenchmark
      * @throws ReflectionException
      * @throws ReflectionException
      */
-    public function benchReflectionCachePerformance(): void
+    public function benchReflectionCachePerformance() : void
     {
         // Test ReflectionCache performance
         $testClass = new class {
-            public function testMethod(string $param): string {
+            public function testMethod(string $param) : string
+            {
                 return $param;
             }
 
@@ -343,7 +344,7 @@ class RouterBenchmark
      * @Iterations(1)
      * @OutputTimeUnit("milliseconds")
      */
-    public function benchMemoryUsageScaling(): void
+    public function benchMemoryUsageScaling() : void
     {
         $initialMemory = memory_get_usage(true);
 
@@ -353,13 +354,13 @@ class RouterBenchmark
             for ($i = 0; $i < $count; $i++) {
                 $routes[] = new RouteDefinition(
                     method: 'GET',
-                    path: "/scale/test/{$i}",
+                    path  : "/scale/test/{$i}",
                     action: "ScaleController@handle",
-                    name: "scale.{$i}"
+                    name  : "scale.{$i}"
                 );
             }
 
-            $memoryAfter = memory_get_usage(true);
+            $memoryAfter    = memory_get_usage(true);
             $memoryPerRoute = ($memoryAfter - $initialMemory) / $count;
 
             // Log memory scaling characteristics

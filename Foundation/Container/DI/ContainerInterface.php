@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Avax\Container\DI;
 
 use Avax\Container\DI\Capabilities\Composition\Compilation\CompileReport;
-use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
-use Avax\Container\DI\Capabilities\Execution\Injection\Reports\InjectionReport;
 use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistryInterface;
+use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeInterface;
 use Avax\Container\DI\Capabilities\Diagnostics\Observability\RuntimeReport;
+use Avax\Container\DI\Capabilities\Execution\Injection\Reports\InjectionReport;
 use Avax\Container\DI\Capabilities\Runtime\LazyProxy;
+use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeInterface;
 use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
 use Closure;
 use InvalidArgumentException;
@@ -27,6 +27,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
      * Builds one object with optional constructor overrides.
      *
      * @param array<string, mixed> $parameters
+     *
      * @throws ContainerException
      * @throws ServiceNotFoundException
      */
@@ -43,6 +44,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
      * Executes one callable through the container.
      *
      * @param array<string, mixed> $parameters
+     *
      * @throws ContainerException
      * @throws ServiceNotFoundException
      */
@@ -82,6 +84,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
 
     /**
      * @param array<int, string|ServiceProviderInterface> $providers
+     *
      * @throws InvalidArgumentException
      * @throws ContainerException
      */
@@ -89,6 +92,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
 
     /**
      * @param list<string> $serviceIds
+     *
      * @return list<string>
      */
     public function validate(array $serviceIds = []) : array;
@@ -140,6 +144,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
 
     /**
      * @param list<string> $serviceIds
+     *
      * @return array<string, mixed>
      */
     public function debugVisibilityViolations(array $serviceIds = []) : array;
@@ -190,12 +195,14 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
 
     /**
      * @param list<string> $serviceIds
+     *
      * @throws ContainerException
      */
     public function compileContainer(array $serviceIds = []) : void;
 
     /**
      * @param list<string> $serviceIds
+     *
      * @throws ContainerException
      */
     public function warmCompiled(array $serviceIds = []) : void;
@@ -207,6 +214,7 @@ interface ContainerInterface extends PsrContainerInterface, ServiceRegistryInter
 
     /**
      * @param list<string> $serviceIds
+     *
      * @throws ContainerException
      */
     public function rebuildCompiled(array $serviceIds = []) : void;

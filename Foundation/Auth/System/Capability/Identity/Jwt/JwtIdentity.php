@@ -18,7 +18,7 @@ use SensitiveParameter;
  */
 final class JwtIdentity implements JwtIdentityInterface
 {
-    private User|null $currentUser = null;
+    private User|null   $currentUser  = null;
     private string|null $currentToken = null;
 
     public function __construct(
@@ -38,65 +38,23 @@ final class JwtIdentity implements JwtIdentityInterface
         }
 
         $payload = [
-            'iss' => 'avax-auth-system',
-            'sub' => $user->getId()->value,
+            'iss'   => 'avax-auth-system',
+            'sub'   => $user->getId()->value,
             'email' => $user->getEmail()->value,
-            'iat' => time(),
-            'exp' => time() + $this->tokenExpiry,
+            'iat'   => time(),
+            'exp'   => time() + $this->tokenExpiry,
         ];
 
-        $token = JWT::encode(payload: $payload, key: $this->secret, alg: $this->algorithm);
+        $token              = JWT::encode(payload: $payload, key: $this->secret, alg: $this->algorithm);
         $this->currentToken = $token;
-        $this->currentUser = $user;
+        $this->currentUser  = $user;
 
         return $token;
-    }
-
-    public function validate(#[SensitiveParameter] string $token) : User|null
-    {
-        try {
-            $decoded = JWT::decode(jwt: $token, keyOrKeyArray: new Key(keyMaterial: $this->secret, algorithm: $this->algorithm));
-            $user = $this->userSource->findById(id: new UserId(value: (int) $decoded->sub));
-
-            if ($user !== null && $user->isActive()) {
-                return $user;
-            }
-
-            return null;
-        } catch (Exception) {
-            return null;
-        }
     }
 
     public function token() : string|null
     {
         return $this->refreshCurrentUser() !== null ? $this->currentToken : null;
-    }
-
-    public function getCurrentUser() : User|null
-    {
-        return $this->refreshCurrentUser();
-    }
-
-    public function clear() : void
-    {
-        $this->currentToken = null;
-        $this->currentUser = null;
-    }
-
-    public function check() : bool
-    {
-        return $this->refreshCurrentUser() !== null;
-    }
-
-    public function authenticate(#[SensitiveParameter] string $token) : void
-    {
-        $this->currentToken = $token;
-        $this->currentUser = $this->validate(token: $token);
-
-        if ($this->currentUser === null) {
-            $this->currentToken = null;
-        }
     }
 
     private function refreshCurrentUser() : User|null
@@ -114,5 +72,47 @@ final class JwtIdentity implements JwtIdentityInterface
         }
 
         return $this->currentUser;
+    }
+
+    public function validate(#[SensitiveParameter] string $token) : User|null
+    {
+        try {
+            $decoded = JWT::decode(jwt: $token, keyOrKeyArray: new Key(keyMaterial: $this->secret, algorithm: $this->algorithm));
+            $user    = $this->userSource->findById(id: new UserId(value: (int) $decoded->sub));
+
+            if ($user !== null && $user->isActive()) {
+                return $user;
+            }
+
+            return null;
+        } catch (Exception) {
+            return null;
+        }
+    }
+
+    public function getCurrentUser() : User|null
+    {
+        return $this->refreshCurrentUser();
+    }
+
+    public function clear() : void
+    {
+        $this->currentToken = null;
+        $this->currentUser  = null;
+    }
+
+    public function check() : bool
+    {
+        return $this->refreshCurrentUser() !== null;
+    }
+
+    public function authenticate(#[SensitiveParameter] string $token) : void
+    {
+        $this->currentToken = $token;
+        $this->currentUser  = $this->validate(token: $token);
+
+        if ($this->currentUser === null) {
+            $this->currentToken = null;
+        }
     }
 }

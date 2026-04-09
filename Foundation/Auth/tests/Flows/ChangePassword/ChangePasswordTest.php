@@ -4,26 +4,21 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flow\ChangePassword;
 
-use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
-use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
-use Mockery;
+use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
+use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
 use Exception;
+use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for ChangePassword flow.
  */
 class ChangePasswordTest extends TestCase
 {
-    protected function tearDown() : void
-    {
-        Mockery::close();
-    }
-
     /**
      * @throws \Exception
      */
@@ -35,7 +30,7 @@ class ChangePasswordTest extends TestCase
 
         $data = new ChangePasswordData(
             currentPassword: 'old_password',
-            newPassword: 'new_password'
+            newPassword    : 'new_password'
         );
 
         $passwordHasher = Mockery::mock(PasswordHasher::class);
@@ -46,7 +41,7 @@ class ChangePasswordTest extends TestCase
         $userSource->shouldReceive('updatePassword')->once();
 
         $changePassword = new ChangePassword(
-            userSource: $userSource,
+            userSource    : $userSource,
             passwordHasher: $passwordHasher
         );
 
@@ -62,7 +57,7 @@ class ChangePasswordTest extends TestCase
 
         $data = new ChangePasswordData(
             currentPassword: 'wrong_password',
-            newPassword: 'new_password'
+            newPassword    : 'new_password'
         );
 
         $passwordHasher = Mockery::mock(PasswordHasher::class);
@@ -71,7 +66,7 @@ class ChangePasswordTest extends TestCase
         $userSource = Mockery::mock(UserSourceInterface::class);
 
         $changePassword = new ChangePassword(
-            userSource: $userSource,
+            userSource    : $userSource,
             passwordHasher: $passwordHasher
         );
 
@@ -80,5 +75,10 @@ class ChangePasswordTest extends TestCase
         $this->expectExceptionCode(code: 403);
 
         $changePassword->execute(user: $user, data: $data);
+    }
+
+    protected function tearDown() : void
+    {
+        Mockery::close();
     }
 }

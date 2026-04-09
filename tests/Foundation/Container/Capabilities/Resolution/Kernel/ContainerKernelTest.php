@@ -80,8 +80,8 @@ final class ContainerKernelTest extends TestCase
             servicePrototypeFactory: $factory,
             propertyInjector       : $propertyInjector,
             methodInjector         : new MethodInjector(
-                parameterResolver: new ResolveMethodParameters(resolver: $resolver)
-            )
+                                         parameterResolver: new ResolveMethodParameters(resolver: $resolver)
+                                     )
         );
         $invoker          = new InvokeAction(container: null, resolver: $resolver);
 
@@ -95,9 +95,9 @@ final class ContainerKernelTest extends TestCase
             autoDefine      : true
         );
 
-        $this->kernel       = new ContainerKernel(definitions: $this->definitions, config: $this->config);
-        $container          = new Container(kernel: $this->kernel);
-        $runtimeContainer   = new RuntimeContainer(container: $container, kernel: $this->kernel);
+        $this->kernel     = new ContainerKernel(definitions: $this->definitions, config: $this->config);
+        $container        = new Container(kernel: $this->kernel);
+        $runtimeContainer = new RuntimeContainer(container: $container, kernel: $this->kernel);
 
         $engine->setContainer(container: $runtimeContainer);
         $injector->setContainer(container: $runtimeContainer);

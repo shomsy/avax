@@ -29,7 +29,8 @@ trait ArrayConversionTrait
      * This method serializes the collection into a JSON-formatted string. It accepts optional
      * JSON encoding options to customize the output.
      *
-     * @param  int  $options  Optional JSON encoding options. Default is 0.
+     * @param int $options Optional JSON encoding options. Default is 0.
+     *
      * @return string JSON-encoded string representation of the collection.
      *
      * @throws InvalidArgumentException If the collection contains data that cannot be encoded to JSON.
@@ -48,12 +49,12 @@ trait ArrayConversionTrait
      *     "cherry"
      * ]
      */
-    public function toJson(int $options = 0): string
+    public function toJson(int $options = 0) : string
     {
         $json = json_encode(value: $this->toArray(), flags: $options);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new InvalidArgumentException(
-                message: 'Failed to encode collection to JSON: '.json_last_error_msg()
+                message: 'Failed to encode collection to JSON: ' . json_last_error_msg()
             );
         }
 
@@ -84,7 +85,7 @@ trait ArrayConversionTrait
      * // ]
      * ```
      */
-    public function toArray(): array
+    public function toArray() : array
     {
         return array_map(callback: static function ($item) {
             if (is_object(value: $item) && method_exists(object_or_class: $item, method: 'toArray')) {
@@ -92,7 +93,7 @@ trait ArrayConversionTrait
             }
 
             return $item;
-        }, array   : $this->getItems());
+        },               array   : $this->getItems());
     }
 
     /**
@@ -101,7 +102,8 @@ trait ArrayConversionTrait
      * This method serializes the collection into an XML-formatted string. It allows specifying
      * a custom root element name. All values are escaped to ensure valid XML.
      *
-     * @param  string  $rootElement  The root element name for the XML. Default is 'root'.
+     * @param string $rootElement The root element name for the XML. Default is 'root'.
+     *
      * @return string XML representation of the collection.
      *
      * @throws Exception If the XML conversion fails.
@@ -118,7 +120,7 @@ trait ArrayConversionTrait
      *     <item>cherry</item>
      * </fruits>
      */
-    public function toXml(string $rootElement = 'root'): string
+    public function toXml(string $rootElement = 'root') : string
     {
         try {
             $xml = new SimpleXMLElement(data: sprintf('<%s/>', $rootElement));
@@ -127,7 +129,7 @@ trait ArrayConversionTrait
             return $xml->asXML();
         } catch (Exception $exception) {
             throw new Exception(
-                message : 'Failed to convert collection to XML: '.$exception->getMessage(),
+                message : 'Failed to convert collection to XML: ' . $exception->getMessage(),
                 code    : $exception->getCode(),
                 previous: $exception
             );
@@ -137,10 +139,10 @@ trait ArrayConversionTrait
     /**
      * Helper method to recursively convert an array to XML.
      *
-     * @param  array  $data  The data to convert.
-     * @param  SimpleXMLElement  $xml  The XML element to append data to.
+     * @param array            $data The data to convert.
+     * @param SimpleXMLElement $xml  The XML element to append data to.
      */
-    private function arrayToXml(array $data, SimpleXMLElement &$xml): void
+    private function arrayToXml(array $data, SimpleXMLElement &$xml) : void
     {
         foreach ($data as $key => $value) {
             // Handle numeric keys by using 'item' as the tag name
@@ -163,7 +165,8 @@ trait ArrayConversionTrait
      * This method filters the collection to retain only the specified keys. It returns a new
      * instance of the collection with the filtered items.
      *
-     * @param  array  $keys  Keys to retain in the collection.
+     * @param array $keys Keys to retain in the collection.
+     *
      * @return static Collection instance with specified keys.
      *
      * @throws InvalidArgumentException If the keys array is empty.
@@ -174,7 +177,7 @@ trait ArrayConversionTrait
      * // Returns ['name' => 'Alice', 'city' => 'Wonderland']
      * ```
      */
-    public function only(array $keys): static
+    public function only(array $keys) : static
     {
         if ($keys === []) {
             throw new InvalidArgumentException(message: 'Keys array cannot be empty.');
@@ -182,7 +185,7 @@ trait ArrayConversionTrait
 
         $filteredItems = array_filter(
             array   : $this->getItems(),
-            callback: static fn ($item, $key): bool => in_array(needle: $key, haystack: $keys, strict: true),
+            callback: static fn ($item, $key) : bool => in_array(needle: $key, haystack: $keys, strict: true),
             mode    : ARRAY_FILTER_USE_BOTH
         );
 
@@ -195,7 +198,8 @@ trait ArrayConversionTrait
      * This method filters the collection to remove the specified keys. It returns a new
      * instance of the collection without the excluded items.
      *
-     * @param  array  $keys  Keys to exclude from the collection.
+     * @param array $keys Keys to exclude from the collection.
+     *
      * @return static Collection instance without specified keys.
      *
      * @throws InvalidArgumentException If the keys array is empty.
@@ -206,7 +210,7 @@ trait ArrayConversionTrait
      * // Returns ['name' => 'Alice', 'city' => 'Wonderland']
      * ```
      */
-    public function except(array $keys): static
+    public function except(array $keys) : static
     {
         if ($keys === []) {
             throw new InvalidArgumentException(message: 'Keys array cannot be empty.');
@@ -214,7 +218,7 @@ trait ArrayConversionTrait
 
         $filteredItems = array_filter(
             array   : $this->getItems(),
-            callback: static fn ($item, $key): bool => ! in_array(needle: $key, haystack: $keys, strict: true),
+            callback: static fn ($item, $key) : bool => ! in_array(needle: $key, haystack: $keys, strict: true),
             mode    : ARRAY_FILTER_USE_BOTH
         );
 

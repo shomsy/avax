@@ -11,15 +11,15 @@ final class DisposeInstances
 {
     /**
      * @param array<string, mixed> $instances
-     * @param array<string, bool> $disposable
+     * @param array<string, bool>  $disposable
      */
     public function disposeMany(array $instances, array $disposable = []) : void
     {
         foreach ($instances as $serviceId => $instance) {
             $this->dispose(
-                instance   : $instance,
-                disposable : ($disposable[$serviceId] ?? false)
-                    || $instance instanceof DisposableInterface
+                instance  : $instance,
+                disposable: ($disposable[$serviceId] ?? false)
+                            || $instance instanceof DisposableInterface
             );
         }
     }
@@ -36,6 +36,7 @@ final class DisposeInstances
 
         if ($instance instanceof DisposableInterface) {
             $instance->dispose();
+
             return;
         }
 

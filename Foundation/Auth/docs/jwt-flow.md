@@ -4,7 +4,8 @@ This document describes the stateless JWT-based authentication flow in the Avax 
 
 ## Overview
 
-Unlike session-based auth, JWT authentication is stateless. The client passes a token in the `Authorization: Bearer <token>` header with every request.
+Unlike session-based auth, JWT authentication is stateless. The client passes a token in the
+`Authorization: Bearer <token>` header with every request.
 
 ```mermaid
 sequenceDiagram
@@ -64,6 +65,7 @@ The resulting token is available through the same `Identity` instance via `token
 ## Validating Tokens
 
 The `JwtIdentity` adapter is responsible for:
+
 1. Receiving a bearer token from the application boundary.
 2. Validating the signature.
 3. Checking for expiration.

@@ -17,6 +17,15 @@ final class RegistrationCategory
 
     public const string FOUNDATION = 'foundation';
 
+    public static function normalize(string $category) : string
+    {
+        $normalized = strtolower(trim($category));
+
+        return in_array($normalized, self::all(), true)
+            ? $normalized
+            : self::CONFIGURATION;
+    }
+
     /**
      * @return list<string>
      */
@@ -28,14 +37,5 @@ final class RegistrationCategory
             self::CONFIGURATION,
             self::FOUNDATION,
         ];
-    }
-
-    public static function normalize(string $category) : string
-    {
-        $normalized = strtolower(trim($category));
-
-        return in_array($normalized, self::all(), true)
-            ? $normalized
-            : self::CONFIGURATION;
     }
 }

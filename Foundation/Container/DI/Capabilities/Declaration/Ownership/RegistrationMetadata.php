@@ -83,7 +83,8 @@ final readonly class RegistrationMetadata
         bool|null   $fallback = null,
         bool|null   $ownerLocked = null,
         bool        $categoryLocked = false
-    ) {
+    )
+    {
         $ownerSlice           ??= 'default';
         $category             ??= RegistrationCategory::CONFIGURATION;
         $visibility           ??= RegistrationVisibility::PUBLIC;
@@ -111,22 +112,94 @@ final readonly class RegistrationMetadata
         $this->modes          = self::stringList(values: $modes);
         $this->overrideSource = self::normalizeNullable(value: $overrideSource);
         $this->reason         = self::normalizeText(value: $reason, fallback: 'registered service');
-        $this->intent = self::normalizeText(value: $intent, fallback: 'standard');
-        $this->provenance = self::normalizeText(value: $provenance, fallback: 'manual registration');
-        $this->exported = $exported;
-        $this->imports = self::stringList(values: $imports);
-        $this->concept = self::normalizeText(
+        $this->intent         = self::normalizeText(value: $intent, fallback: 'standard');
+        $this->provenance     = self::normalizeText(value: $provenance, fallback: 'manual registration');
+        $this->exported       = $exported;
+        $this->imports        = self::stringList(values: $imports);
+        $this->concept        = self::normalizeText(
             value   : $concept,
             fallback: self::derivedConcept(unitId: $unitId)
         );
-        $this->fallback = $fallback;
-        $this->ownerLocked = $ownerLocked;
+        $this->fallback       = $fallback;
+        $this->ownerLocked    = $ownerLocked;
         $this->categoryLocked = $categoryLocked;
+    }
+
+    private static function normalizeSlice(string $slice) : string
+    {
+        return self::normalizeText(value: $slice, fallback: 'default');
+    }
+
+    private static function normalizeText(string $value, string $fallback) : string
+    {
+        $normalized = trim($value);
+
+        return $normalized !== '' ? $normalized : $fallback;
+    }
+
+    /**
+     * @param mixed $values
+     *
+     * @return list<string>
+     */
+    private static function stringList(mixed $values) : array
+    {
+        if (! is_array($values)) {
+            return [];
+        }
+
+        $items = [];
+
+        foreach ($values as $value) {
+            if (! is_string($value)) {
+                continue;
+            }
+
+            $normalized = trim($value);
+            if ($normalized === '') {
+                continue;
+            }
+
+            $items[] = $normalized;
+        }
+
+        $items = array_values(array_unique($items));
+        sort($items);
+
+        return $items;
+    }
+
+    private static function normalizeNullable(string|null $value) : string|null
+    {
+        if (! is_string($value)) {
+            return null;
+        }
+
+        $normalized = trim($value);
+
+        return $normalized !== '' ? $normalized : null;
+    }
+
+    private static function derivedConcept(string $unitId) : string
+    {
+        $normalized = str_replace(['\\', '/', '@', ':'], '.', $unitId);
+        $segments   = array_values(array_filter(explode('.', $normalized), static fn (string $segment) : bool => $segment !== ''));
+        $last       = $segments !== [] ? $segments[array_key_last($segments)] : $unitId;
+
+        return strtolower(trim($last)) ?: strtolower($unitId);
     }
 
     public static function for(string $unitId) : self
     {
         return new self(unitId: $unitId);
+    }
+
+    /**
+     * @param array<string, mixed> $state
+     */
+    public static function __set_state(array $state) : self
+    {
+        return self::fromArray(state: $state);
     }
 
     /**
@@ -145,8 +218,8 @@ final readonly class RegistrationMetadata
             regions       : self::stringList(values: $state['regions'] ?? []),
             modes         : self::stringList(values: $state['modes'] ?? []),
             overrideSource: is_string($state['overrideSource'] ?? null)
-                ? $state['overrideSource']
-                : null,
+                                ? $state['overrideSource']
+                                : null,
             reason        : (string) ($state['reason'] ?? 'registered service'),
             intent        : (string) ($state['intent'] ?? 'standard'),
             provenance    : (string) ($state['provenance'] ?? 'manual registration'),
@@ -159,41 +232,37 @@ final readonly class RegistrationMetadata
         );
     }
 
-    /**
-     * @param array<string, mixed> $state
-     */
-    public static function __set_state(array $state) : self
-    {
-        return self::fromArray(state: $state);
-    }
-
-    public function withOwnerSlice(string $ownerSlice) : self
-    {
-        $normalized = self::normalizeSlice(slice: $ownerSlice);
-        if ($this->ownerLocked && $normalized !== $this->ownerSlice) {
-            throw new LogicException(
-                message: "Registration ownership is locked to [{$this->ownerSlice}] and cannot move to [{$normalized}]."
-            );
-        }
-
-        return $this->copy(overrides: ['ownerSlice' => $ownerSlice]);
-    }
-
-    public function withCategory(string $category) : self
-    {
-        $normalized = RegistrationCategory::normalize(category: $category);
-        if ($this->categoryLocked && $normalized !== $this->category) {
-            throw new LogicException(
-                message: "Registration category is locked to [{$this->category}] and cannot move to [{$normalized}]."
-            );
-        }
-
-        return $this->copy(overrides: ['category' => $category]);
-    }
-
     public function withVisibility(string $visibility) : self
     {
         return $this->copy(overrides: ['visibility' => $visibility]);
+    }
+
+    /**
+     * @param array<string, mixed> $overrides
+     */
+    private function copy(array $overrides = []) : self
+    {
+        return new self(
+            unitId        : $this->unitId,
+            ownerSlice    : (string) ($overrides['ownerSlice'] ?? $this->ownerSlice),
+            category      : (string) ($overrides['category'] ?? $this->category),
+            visibility    : (string) ($overrides['visibility'] ?? $this->visibility),
+            profiles      : $overrides['profiles'] ?? $this->profiles,
+            flags         : $overrides['flags'] ?? $this->flags,
+            tenants       : $overrides['tenants'] ?? $this->tenants,
+            regions       : $overrides['regions'] ?? $this->regions,
+            modes         : $overrides['modes'] ?? $this->modes,
+            overrideSource: $overrides['overrideSource'] ?? $this->overrideSource,
+            reason        : (string) ($overrides['reason'] ?? $this->reason),
+            intent        : (string) ($overrides['intent'] ?? $this->intent),
+            provenance    : (string) ($overrides['provenance'] ?? $this->provenance),
+            exported      : (bool) ($overrides['exported'] ?? $this->exported),
+            imports       : $overrides['imports'] ?? $this->imports,
+            concept       : (string) ($overrides['concept'] ?? $this->concept),
+            fallback      : (bool) ($overrides['fallback'] ?? $this->fallback),
+            ownerLocked   : (bool) ($overrides['ownerLocked'] ?? $this->ownerLocked),
+            categoryLocked: (bool) ($overrides['categoryLocked'] ?? $this->categoryLocked)
+        );
     }
 
     /**
@@ -279,16 +348,6 @@ final readonly class RegistrationMetadata
         return $this->copy(overrides: ['fallback' => $fallback]);
     }
 
-    public function lockOwnerSlice() : self
-    {
-        return $this->copy(overrides: ['ownerLocked' => true]);
-    }
-
-    public function lockCategory() : self
-    {
-        return $this->copy(overrides: ['categoryLocked' => true]);
-    }
-
     public function lockOwnership(string $ownerSlice, string $category) : self
     {
         return $this
@@ -296,6 +355,40 @@ final readonly class RegistrationMetadata
             ->withCategory(category: $category)
             ->lockOwnerSlice()
             ->lockCategory();
+    }
+
+    public function lockCategory() : self
+    {
+        return $this->copy(overrides: ['categoryLocked' => true]);
+    }
+
+    public function lockOwnerSlice() : self
+    {
+        return $this->copy(overrides: ['ownerLocked' => true]);
+    }
+
+    public function withCategory(string $category) : self
+    {
+        $normalized = RegistrationCategory::normalize(category: $category);
+        if ($this->categoryLocked && $normalized !== $this->category) {
+            throw new LogicException(
+                message: "Registration category is locked to [{$this->category}] and cannot move to [{$normalized}]."
+            );
+        }
+
+        return $this->copy(overrides: ['category' => $category]);
+    }
+
+    public function withOwnerSlice(string $ownerSlice) : self
+    {
+        $normalized = self::normalizeSlice(slice: $ownerSlice);
+        if ($this->ownerLocked && $normalized !== $this->ownerSlice) {
+            throw new LogicException(
+                message: "Registration ownership is locked to [{$this->ownerSlice}] and cannot move to [{$normalized}]."
+            );
+        }
+
+        return $this->copy(overrides: ['ownerSlice' => $ownerSlice]);
     }
 
     public function hasConditions() : bool
@@ -352,10 +445,10 @@ final readonly class RegistrationMetadata
     public function exportsSurface() : bool
     {
         return $this->exported || in_array(
-            $this->visibility,
-            [RegistrationVisibility::PUBLIC, RegistrationVisibility::SHARED],
-            true
-        );
+                $this->visibility,
+                [RegistrationVisibility::PUBLIC, RegistrationVisibility::SHARED],
+                true
+            );
     }
 
     /**
@@ -364,116 +457,25 @@ final readonly class RegistrationMetadata
     public function toArray() : array
     {
         return [
-            'unitId' => $this->unitId,
-            'ownerSlice' => $this->ownerSlice,
-            'category' => $this->category,
-            'visibility' => $this->visibility,
-            'profiles' => $this->profiles,
-            'flags' => $this->flags,
-            'tenants' => $this->tenants,
-            'regions' => $this->regions,
-            'modes' => $this->modes,
+            'unitId'         => $this->unitId,
+            'ownerSlice'     => $this->ownerSlice,
+            'category'       => $this->category,
+            'visibility'     => $this->visibility,
+            'profiles'       => $this->profiles,
+            'flags'          => $this->flags,
+            'tenants'        => $this->tenants,
+            'regions'        => $this->regions,
+            'modes'          => $this->modes,
             'overrideSource' => $this->overrideSource,
-            'reason' => $this->reason,
-            'intent' => $this->intent,
-            'provenance' => $this->provenance,
-            'exported' => $this->exported,
-            'imports' => $this->imports,
-            'concept' => $this->concept,
-            'fallback' => $this->fallback,
-            'ownerLocked' => $this->ownerLocked,
+            'reason'         => $this->reason,
+            'intent'         => $this->intent,
+            'provenance'     => $this->provenance,
+            'exported'       => $this->exported,
+            'imports'        => $this->imports,
+            'concept'        => $this->concept,
+            'fallback'       => $this->fallback,
+            'ownerLocked'    => $this->ownerLocked,
             'categoryLocked' => $this->categoryLocked,
         ];
-    }
-
-    /**
-     * @param mixed $values
-     * @return list<string>
-     */
-    private static function stringList(mixed $values) : array
-    {
-        if (! is_array($values)) {
-            return [];
-        }
-
-        $items = [];
-
-        foreach ($values as $value) {
-            if (! is_string($value)) {
-                continue;
-            }
-
-            $normalized = trim($value);
-            if ($normalized === '') {
-                continue;
-            }
-
-            $items[] = $normalized;
-        }
-
-        $items = array_values(array_unique($items));
-        sort($items);
-
-        return $items;
-    }
-
-    private static function normalizeSlice(string $slice) : string
-    {
-        return self::normalizeText(value: $slice, fallback: 'default');
-    }
-
-    private static function normalizeText(string $value, string $fallback) : string
-    {
-        $normalized = trim($value);
-
-        return $normalized !== '' ? $normalized : $fallback;
-    }
-
-    private static function normalizeNullable(string|null $value) : string|null
-    {
-        if (! is_string($value)) {
-            return null;
-        }
-
-        $normalized = trim($value);
-
-        return $normalized !== '' ? $normalized : null;
-    }
-
-    private static function derivedConcept(string $unitId) : string
-    {
-        $normalized = str_replace(['\\', '/', '@', ':'], '.', $unitId);
-        $segments = array_values(array_filter(explode('.', $normalized), static fn(string $segment) : bool => $segment !== ''));
-        $last = $segments !== [] ? $segments[array_key_last($segments)] : $unitId;
-
-        return strtolower(trim($last)) ?: strtolower($unitId);
-    }
-
-    /**
-     * @param array<string, mixed> $overrides
-     */
-    private function copy(array $overrides = []) : self
-    {
-        return new self(
-            unitId        : $this->unitId,
-            ownerSlice    : (string) ($overrides['ownerSlice'] ?? $this->ownerSlice),
-            category      : (string) ($overrides['category'] ?? $this->category),
-            visibility    : (string) ($overrides['visibility'] ?? $this->visibility),
-            profiles      : $overrides['profiles'] ?? $this->profiles,
-            flags         : $overrides['flags'] ?? $this->flags,
-            tenants       : $overrides['tenants'] ?? $this->tenants,
-            regions       : $overrides['regions'] ?? $this->regions,
-            modes         : $overrides['modes'] ?? $this->modes,
-            overrideSource: $overrides['overrideSource'] ?? $this->overrideSource,
-            reason        : (string) ($overrides['reason'] ?? $this->reason),
-            intent        : (string) ($overrides['intent'] ?? $this->intent),
-            provenance    : (string) ($overrides['provenance'] ?? $this->provenance),
-            exported      : (bool) ($overrides['exported'] ?? $this->exported),
-            imports       : $overrides['imports'] ?? $this->imports,
-            concept       : (string) ($overrides['concept'] ?? $this->concept),
-            fallback      : (bool) ($overrides['fallback'] ?? $this->fallback),
-            ownerLocked   : (bool) ($overrides['ownerLocked'] ?? $this->ownerLocked),
-            categoryLocked: (bool) ($overrides['categoryLocked'] ?? $this->categoryLocked)
-        );
     }
 }

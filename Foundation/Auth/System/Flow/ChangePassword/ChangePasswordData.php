@@ -8,7 +8,7 @@ use SensitiveParameter;
 
 /**
  * Value object representing password change data.
- * 
+ *
  * Banal: The data needed to change a password.
  */
 final readonly class ChangePasswordData

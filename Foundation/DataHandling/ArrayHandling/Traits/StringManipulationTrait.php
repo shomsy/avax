@@ -60,7 +60,7 @@ trait StringManipulationTrait
      */
     public function uppercase(string|null $key = null) : static
     {
-        return $this->processItems(callback: static fn(string $value) : string => strtoupper(string: $value), key: $key);
+        return $this->processItems(callback: static fn (string $value) : string => strtoupper(string: $value), key: $key);
     }
 
     /**
@@ -102,7 +102,7 @@ trait StringManipulationTrait
      */
     public function lowercase(string|null $key = null) : static
     {
-        return $this->processItems(callback: static fn(string $value) : string => strtolower(string: $value), key: $key);
+        return $this->processItems(callback: static fn (string $value) : string => strtolower(string: $value), key: $key);
     }
 
     /**
@@ -119,7 +119,7 @@ trait StringManipulationTrait
      */
     public function title(string|null $key = null) : static
     {
-        return $this->processItems(callback: static fn(string $value) : string => ucwords(string: strtolower(string: $value)), key: $key);
+        return $this->processItems(callback: static fn (string $value) : string => ucwords(string: strtolower(string: $value)), key: $key);
     }
 
     /**
@@ -139,7 +139,7 @@ trait StringManipulationTrait
     {
         $characters ??= self::DEFAULT_TRIM_CHARACTERS;
 
-        return $this->processItems(callback: static fn(string $value) : string => trim(string: $value, characters: $characters), key: $key);
+        return $this->processItems(callback: static fn (string $value) : string => trim(string: $value, characters: $characters), key: $key);
     }
 
     /**
@@ -157,7 +157,7 @@ trait StringManipulationTrait
     public function camelCase(string|null $key = null) : static
     {
         return $this->processItems(
-            callback: static fn(string $value) : string => lcfirst(
+            callback: static fn (string $value) : string => lcfirst(
                 string: str_replace(search: ' ', replace: '', subject: ucwords(string: str_replace(search: ['-', '_'], replace: ' ', subject: $value)))
             ),
             key     : $key

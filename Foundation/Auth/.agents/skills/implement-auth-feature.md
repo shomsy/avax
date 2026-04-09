@@ -15,6 +15,7 @@ in the Avax Auth framework.
 ### 1. Analyze the Feature
 
 Before coding, answer:
+
 - What user goal does this feature serve?
 - What is the input? (DTO, credentials, request)
 - What is the output? (User, bool, response)
@@ -24,14 +25,14 @@ Before coding, answer:
 
 Choose the appropriate feature slice:
 
-| Feature | Slice Location |
-|---------|----------------|
-| Login flow | `Login/` |
-| Registration | `Register/` |
-| Session management | `Session/` |
-| Role management | `Roles/` |
-| Permission checks | `Access/` |
-| Password management | `Password/` |
+| Feature             | Slice Location |
+|---------------------|----------------|
+| Login flow          | `Login/`       |
+| Registration        | `Register/`    |
+| Session management  | `Session/`     |
+| Role management     | `Roles/`       |
+| Permission checks   | `Access/`      |
+| Password management | `Password/`    |
 
 ### 3. Create the Structure
 
@@ -79,6 +80,7 @@ final class LoginController
 ### 6. Document
 
 Add docblock with:
+
 - What the class/method does
 - `@throws` tags
 - Input/output types
@@ -86,6 +88,7 @@ Add docblock with:
 ## Quality Gates
 
 Before marking complete:
+
 - [ ] Static analysis passes (`composer analyse`)
 - [ ] Tests pass (`composer test`)
 - [ ] Code follows DSL naming

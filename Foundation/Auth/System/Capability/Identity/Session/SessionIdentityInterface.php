@@ -10,7 +10,10 @@ namespace Avax\Auth\System\Capability\Identity\Session;
 interface SessionIdentityInterface
 {
     public function issue(int $userId) : void;
+
     public function getUserId() : int|null;
+
     public function clear() : void;
+
     public function check() : bool;
 }

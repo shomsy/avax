@@ -2,7 +2,8 @@
 
 > Pure PHP 8.3+ authentication and authorization framework.
 
-A **feature-sliced**, **security-first**, **DSL-driven** authentication framework for PHP applications. Prolifically designed for **absurd simplicity on the surface** and **enterprise-grade integrity underneath**.
+A **feature-sliced**, **security-first**, **DSL-driven** authentication framework for PHP applications. Prolifically
+designed for **absurd simplicity on the surface** and **enterprise-grade integrity underneath**.
 
 ## Features
 
@@ -37,7 +38,9 @@ $auth = Auth::configuration()
     ->ready();
 ```
 
-If you bootstrap through the container, register `System/Configuration/AuthServiceProvider.php` and bind a `UserSourceInterface` plus the identity backend you want to expose. Rate limiting stays opt-in until you provide a `LoginRateLimitStorageInterface`.
+If you bootstrap through the container, register `System/Configuration/AuthServiceProvider.php` and bind a
+`UserSourceInterface` plus the identity backend you want to expose. Rate limiting stays opt-in until you provide a
+`LoginRateLimitStorageInterface`.
 
 ### Authentication Flow (Flow)
 

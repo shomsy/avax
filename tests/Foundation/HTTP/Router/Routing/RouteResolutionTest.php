@@ -29,7 +29,7 @@ final class RouteResolutionTest extends TestCase
         $routes = ['GET' => ['/users/{id?}' => new RouteDefinition(
             method       : 'GET',
             path         : '/users/{id?}',
-            action       : static fn() => new Response(stream: Stream::fromString(content: ''), protocolVersion: 200),
+            action       : static fn () => new Response(stream: Stream::fromString(content: ''), protocolVersion: 200),
             middleware   : [],
             name         : 'test',
             constraints  : [],
@@ -58,7 +58,7 @@ final class RouteResolutionTest extends TestCase
         $routes = ['GET' => ['/files/{path*}' => new RouteDefinition(
             method       : 'GET',
             path         : '/files/{path*}',
-            action       : static fn() => new Response(stream: Stream::fromString(content: ''), protocolVersion: 200),
+            action       : static fn () => new Response(stream: Stream::fromString(content: ''), protocolVersion: 200),
             middleware   : [],
             name         : 'test',
             constraints  : [],

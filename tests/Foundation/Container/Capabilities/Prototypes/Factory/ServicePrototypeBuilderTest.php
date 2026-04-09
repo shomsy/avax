@@ -25,9 +25,9 @@ final class ServicePrototypeBuilderTest extends TestCase
         $prototype = (new ServicePrototypeBuilder)
             ->for(class: BuilderFixture::class)
             ->withConstructor(prototype: new MethodPrototype(
-                name      : '__construct',
-                parameters: [new ParameterPrototype(name: 'logger', type: 'Psr\\Log\\LoggerInterface')]
-            ))
+                                             name      : '__construct',
+                                             parameters: [new ParameterPrototype(name: 'logger', type: 'Psr\\Log\\LoggerInterface')]
+                                         ))
             ->addProperty(new PropertyPrototype(name: 'cache', type: 'Psr\\SimpleCache\\CacheInterface'))
             ->addMethod(new MethodPrototype(name: 'boot'))
             ->build();

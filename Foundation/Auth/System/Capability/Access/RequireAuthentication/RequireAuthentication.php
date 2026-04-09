@@ -9,7 +9,7 @@ use SensitiveParameter;
 
 /**
  * Requirement for authentication presence.
- * 
+ *
  * Banal: Stops anyone not logged in.
  */
 final readonly class RequireAuthentication

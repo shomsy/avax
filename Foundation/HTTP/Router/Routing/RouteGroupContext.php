@@ -12,9 +12,9 @@ namespace Avax\HTTP\Router\Routing;
  */
 final class RouteGroupContext
 {
-    private string $prefix = '';
-    private string $namePrefix = '';
-    private string|null $domain = null;
+    private string      $prefix        = '';
+    private string      $namePrefix    = '';
+    private string|null $domain        = null;
     private string|null $authorization = null;
 
     /**
@@ -136,14 +136,14 @@ final class RouteGroupContext
     {
         $merged = new self();
 
-        $merged->prefix = $this->prefix . $other->prefix;
-        $merged->namePrefix = $this->namePrefix . $other->namePrefix;
-        $merged->domain = $other->domain ?? $this->domain;
+        $merged->prefix        = $this->prefix . $other->prefix;
+        $merged->namePrefix    = $this->namePrefix . $other->namePrefix;
+        $merged->domain        = $other->domain ?? $this->domain;
         $merged->authorization = $other->authorization ?? $this->authorization;
-        $merged->middleware = array_merge($this->middleware, $other->middleware);
-        $merged->constraints = array_merge($this->constraints, $other->constraints);
-        $merged->defaults = array_merge($this->defaults, $other->defaults);
-        $merged->attributes = array_merge($this->attributes, $other->attributes);
+        $merged->middleware    = array_merge($this->middleware, $other->middleware);
+        $merged->constraints   = array_merge($this->constraints, $other->constraints);
+        $merged->defaults      = array_merge($this->defaults, $other->defaults);
+        $merged->attributes    = array_merge($this->attributes, $other->attributes);
 
         return $merged;
     }
@@ -154,12 +154,12 @@ final class RouteGroupContext
     public function isEmpty() : bool
     {
         return empty($this->prefix) &&
-               empty($this->namePrefix) &&
-               $this->domain === null &&
-               $this->authorization === null &&
-               empty($this->middleware) &&
-               empty($this->constraints) &&
-               empty($this->defaults) &&
-               empty($this->attributes);
+            empty($this->namePrefix) &&
+            $this->domain === null &&
+            $this->authorization === null &&
+            empty($this->middleware) &&
+            empty($this->constraints) &&
+            empty($this->defaults) &&
+            empty($this->attributes);
     }
 }

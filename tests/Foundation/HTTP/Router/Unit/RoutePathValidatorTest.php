@@ -10,6 +10,32 @@ use PHPUnit\Framework\TestCase;
  */
 class RoutePathValidatorTest extends TestCase
 {
+    public static function validPathsProvider() : array
+    {
+        return [
+            ['/'],
+            ['/users'],
+            ['/users/{id}'],
+            ['/users/{id}/posts'],
+            ['/blog/{slug?}'],
+            ['/blog/{year}/{month?}'],
+            ['/files/{path*}'],
+            ['/api/v1/users/{id}/posts/{slug}'],
+        ];
+    }
+
+    public static function invalidPathsProvider() : array
+    {
+        return [
+            ['/blog/{slug*}/comments', 'must be at the end of the path'],
+            ['/blog/{slug*}/{id*}', 'Multiple wildcard parameters found'],
+            ['/blog/{slug*}/{page?}', 'cannot appear after wildcard'],
+            ['/users/{123invalid}', 'Invalid parameter name'],
+            ['/blog/{slug??}', 'cannot have multiple ?'],
+            ['/blog/{slug?*}', 'cannot combine ? and * modifiers'],
+        ];
+    }
+
     /**
      * @test
      *
@@ -157,31 +183,5 @@ class RoutePathValidatorTest extends TestCase
     {
         $this->assertTrue(condition: RoutePathValidator::hasOptional(path: '/blog/{slug?}'));
         $this->assertFalse(condition: RoutePathValidator::hasOptional(path: '/blog/{slug}'));
-    }
-
-    public static function validPathsProvider() : array
-    {
-        return [
-            ['/'],
-            ['/users'],
-            ['/users/{id}'],
-            ['/users/{id}/posts'],
-            ['/blog/{slug?}'],
-            ['/blog/{year}/{month?}'],
-            ['/files/{path*}'],
-            ['/api/v1/users/{id}/posts/{slug}'],
-        ];
-    }
-
-    public static function invalidPathsProvider() : array
-    {
-        return [
-            ['/blog/{slug*}/comments', 'must be at the end of the path'],
-            ['/blog/{slug*}/{id*}', 'Multiple wildcard parameters found'],
-            ['/blog/{slug*}/{page?}', 'cannot appear after wildcard'],
-            ['/users/{123invalid}', 'Invalid parameter name'],
-            ['/blog/{slug??}', 'cannot have multiple ?'],
-            ['/blog/{slug?*}', 'cannot combine ? and * modifiers'],
-        ];
     }
 }

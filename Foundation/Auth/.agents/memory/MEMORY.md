@@ -4,13 +4,13 @@ This file contains long-term memory and key facts about the Auth framework proje
 
 ## Core Facts
 
-| Fact | Value |
-|------|-------|
-| Project Name | Avax Auth |
-| Type | Pure PHP 8.3+ authentication/authorization framework |
-| Architecture | Feature-sliced (vertical-slice) |
-| Namespace | `Avax\Auth` |
-| Min PHP | 8.3 |
+| Fact         | Value                                                |
+|--------------|------------------------------------------------------|
+| Project Name | Avax Auth                                            |
+| Type         | Pure PHP 8.3+ authentication/authorization framework |
+| Architecture | Feature-sliced (vertical-slice)                      |
+| Namespace    | `Avax\Auth`                                          |
+| Min PHP      | 8.3                                                  |
 
 ## Design Decisions
 
@@ -35,12 +35,12 @@ This file contains long-term memory and key facts about the Auth framework proje
 
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| `Authenticator.php` | Main entry point |
-| `Actions/Login.php` | Login use case |
-| `Adapters/Identity.php` | User authentication |
-| `Contracts/AuthInterface.php` | Auth contract |
+| File                          | Purpose             |
+|-------------------------------|---------------------|
+| `Authenticator.php`           | Main entry point    |
+| `Actions/Login.php`           | Login use case      |
+| `Adapters/Identity.php`       | User authentication |
+| `Contracts/AuthInterface.php` | Auth contract       |
 
 ## Current Status
 

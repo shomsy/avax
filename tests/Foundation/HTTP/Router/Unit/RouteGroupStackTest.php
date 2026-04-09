@@ -15,11 +15,6 @@ class RouteGroupStackTest extends TestCase
 {
     private RouteGroupStack $stack;
 
-    protected function setUp() : void
-    {
-        $this->stack = new RouteGroupStack;
-    }
-
     /**
      * @test
      */
@@ -147,5 +142,10 @@ class RouteGroupStackTest extends TestCase
         $stack2->push(group: $context);
         $this->assertEquals(expected: 1, actual: $stack1->depth());
         $this->assertEquals(expected: 1, actual: $stack2->depth());
+    }
+
+    protected function setUp() : void
+    {
+        $this->stack = new RouteGroupStack;
     }
 }

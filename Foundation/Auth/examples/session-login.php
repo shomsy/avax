@@ -5,8 +5,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Avax\Auth\Auth;
-use Avax\Auth\Login\Credentials;
 use Avax\Auth\Login\AuthFailed;
+use Avax\Auth\Login\Credentials;
 
 // 1. Setup your data source (e.g., Eloquent, Doctrine, or custom)
 // $userSource = new MyUserSource();

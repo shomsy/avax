@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Container\DI\Capabilities\Declaration\Blueprints;
 
-use Avax\Container\DI\Capabilities\Resolution\ResolveDependencies;
 use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
+use Avax\Container\DI\Capabilities\Resolution\ResolveDependencies;
 use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\Attributes\Singleton;
 use ReflectionClass;
 use ReflectionException;
@@ -22,67 +22,17 @@ final readonly class CreateServiceBlueprint
     private BlueprintCache $cache;
 
     public function __construct(
-        BlueprintCache|null $cache = null,
+        BlueprintCache|null              $cache = null,
         private ResolveDependencies|null $dependencies = null
     )
     {
-        $this->cache = $cache ?? new BlueprintCache;
+        $this->cache        = $cache ?? new BlueprintCache;
         $this->dependencies ??= new ResolveDependencies;
     }
 
     /**
-     * @throws ReflectionException
-     */
-    public function createFor(string $class) : ServiceBlueprint
-    {
-        $fingerprint = $this->cache->shouldValidateSource()
-            ? $this->cacheFingerprintFor(class: $class)
-            : '';
-        $cached = $this->cache->get(class: $class, fingerprint: $fingerprint);
-        if ($cached !== null) {
-            return $cached;
-        }
-
-        $reflection = new ReflectionClass($class);
-        $fingerprint = $fingerprint !== '' ? $fingerprint : $this->cacheFingerprintForReflection(reflection: $reflection);
-
-        $properties = array_values(array_filter(
-            $reflection->getProperties(),
-            static fn($property) => $property->getAttributes(Inject::class) !== [] && ! $property->isStatic()
-        ));
-        $methods = array_values(array_filter(
-            $reflection->getMethods(),
-            static fn($method) => $method->getAttributes(Inject::class) !== [] && ! $method->isStatic()
-        ));
-
-        return $this->cache->put(new ServiceBlueprint(
-            class               : $class,
-            instantiable        : $reflection->isInstantiable(),
-            constructor         : $reflection->getConstructor() !== null
-                ? $this->dependencies->createPlan(parameters: $reflection->getConstructor()->getParameters())
-                : null,
-            injectableProperties: array_map(
-                fn(ReflectionProperty $property) => [
-                    'name' => $property->getName(),
-                    'serviceId' => $this->serviceIdFor(property: $property),
-                    'readonly' => $property->isReadOnly(),
-                ],
-                $properties
-            ),
-            injectableMethods   : array_map(
-                fn(ReflectionMethod $method) => [
-                    'name' => $method->getName(),
-                    'plan' => $this->dependencies->createPlan(parameters: $method->getParameters()),
-                ],
-                $methods
-            ),
-            shared              : $reflection->getAttributes(Singleton::class) !== [],
-            fingerprint         : $fingerprint
-        ));
-    }
-
-    /**
      * @param list<string> $classes
+     *
      * @throws ReflectionException
      */
     public function warm(array $classes) : void
@@ -97,19 +47,135 @@ final readonly class CreateServiceBlueprint
     }
 
     /**
-     * Removes one cached blueprint.
+     * @throws ReflectionException
      */
-    public function forget(string $class) : void
+    public function createFor(string $class) : ServiceBlueprint
     {
-        $this->cache->forget(class: $class);
+        $fingerprint = $this->cache->shouldValidateSource()
+            ? $this->cacheFingerprintFor(class: $class)
+            : '';
+        $cached      = $this->cache->get(class: $class, fingerprint: $fingerprint);
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        $reflection  = new ReflectionClass($class);
+        $fingerprint = $fingerprint !== '' ? $fingerprint : $this->cacheFingerprintForReflection(reflection: $reflection);
+
+        $properties = array_values(array_filter(
+                                       $reflection->getProperties(),
+                                       static fn ($property) => $property->getAttributes(Inject::class) !== [] && ! $property->isStatic()
+                                   ));
+        $methods    = array_values(array_filter(
+                                       $reflection->getMethods(),
+                                       static fn ($method) => $method->getAttributes(Inject::class) !== [] && ! $method->isStatic()
+                                   ));
+
+        return $this->cache->put(new ServiceBlueprint(
+                                     class               : $class,
+                                     instantiable        : $reflection->isInstantiable(),
+                                     constructor         : $reflection->getConstructor() !== null
+                                                               ? $this->dependencies->createPlan(parameters: $reflection->getConstructor()->getParameters())
+                                                               : null,
+                                     injectableProperties: array_map(
+                                                               fn (ReflectionProperty $property) => [
+                                                                   'name'      => $property->getName(),
+                                                                   'serviceId' => $this->serviceIdFor(property: $property),
+                                                                   'readonly'  => $property->isReadOnly(),
+                                                               ],
+                                                               $properties
+                                                           ),
+                                     injectableMethods   : array_map(
+                                                               fn (ReflectionMethod $method) => [
+                                                                   'name' => $method->getName(),
+                                                                   'plan' => $this->dependencies->createPlan(parameters: $method->getParameters()),
+                                                               ],
+                                                               $methods
+                                                           ),
+                                     shared              : $reflection->getAttributes(Singleton::class) !== [],
+                                     fingerprint         : $fingerprint
+                                 ));
     }
 
     /**
-     * Clears all cached blueprints.
+     * @throws ReflectionException
      */
-    public function flush() : void
+    private function cacheFingerprintFor(string $class) : string
     {
-        $this->cache->flush();
+        return $this->cacheFingerprintForReflection(reflection: new ReflectionClass($class));
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function cacheFingerprintForReflection(ReflectionClass $reflection) : string
+    {
+        $files = $this->filesFor(reflection: $reflection);
+        $parts = [];
+
+        foreach ($files as $file) {
+            $timestamp = is_file($file) ? (string) filemtime($file) : 'missing';
+            $parts[]   = $file . ':' . $timestamp;
+        }
+
+        sort($parts);
+
+        return sha1($reflection->getName() . '|' . implode('|', $parts));
+    }
+
+    /**
+     * @return list<string>
+     * @throws ReflectionException
+     * @throws ReflectionException
+     */
+    private function filesFor(ReflectionClass $reflection) : array
+    {
+        $files = [];
+
+        $classFile = $reflection->getFileName();
+        if (is_string($classFile) && $classFile !== '') {
+            $files[] = $classFile;
+        }
+
+        foreach (class_parents($reflection->getName()) ?: [] as $parent) {
+            $parentReflection = new ReflectionClass($parent);
+            $parentFile       = $parentReflection->getFileName();
+            if (is_string($parentFile) && $parentFile !== '') {
+                $files[] = $parentFile;
+            }
+            $files = array_merge($files, $this->traitFilesFor(reflection: $parentReflection));
+        }
+
+        foreach (class_implements($reflection->getName()) ?: [] as $interface) {
+            $interfaceReflection = new ReflectionClass($interface);
+            $interfaceFile       = $interfaceReflection->getFileName();
+            if (is_string($interfaceFile) && $interfaceFile !== '') {
+                $files[] = $interfaceFile;
+            }
+        }
+
+        $files = array_merge($files, $this->traitFilesFor(reflection: $reflection));
+
+        return array_values(array_unique($files));
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function traitFilesFor(ReflectionClass $reflection) : array
+    {
+        $files = [];
+
+        foreach ($reflection->getTraits() as $trait) {
+            $traitFile = $trait->getFileName();
+            if (is_string($traitFile) && $traitFile !== '') {
+                $files[] = $traitFile;
+            }
+
+            $files = array_merge($files, $this->traitFilesFor(reflection: $trait));
+        }
+
+        return array_values(array_unique($files));
     }
 
     /**
@@ -141,83 +207,18 @@ final readonly class CreateServiceBlueprint
     }
 
     /**
-     * @throws ReflectionException
+     * Removes one cached blueprint.
      */
-    private function cacheFingerprintFor(string $class) : string
+    public function forget(string $class) : void
     {
-        return $this->cacheFingerprintForReflection(reflection: new ReflectionClass($class));
+        $this->cache->forget(class: $class);
     }
 
     /**
-     * @throws ReflectionException
+     * Clears all cached blueprints.
      */
-    private function cacheFingerprintForReflection(ReflectionClass $reflection) : string
+    public function flush() : void
     {
-        $files = $this->filesFor(reflection: $reflection);
-        $parts = [];
-
-        foreach ($files as $file) {
-            $timestamp = is_file($file) ? (string) filemtime($file) : 'missing';
-            $parts[] = $file . ':' . $timestamp;
-        }
-
-        sort($parts);
-
-        return sha1($reflection->getName() . '|' . implode('|', $parts));
-    }
-
-    /**
-     * @return list<string>
-     * @throws ReflectionException
-     * @throws ReflectionException
-     */
-    private function filesFor(ReflectionClass $reflection) : array
-    {
-        $files = [];
-
-        $classFile = $reflection->getFileName();
-        if (is_string($classFile) && $classFile !== '') {
-            $files[] = $classFile;
-        }
-
-        foreach (class_parents($reflection->getName()) ?: [] as $parent) {
-            $parentReflection = new ReflectionClass($parent);
-            $parentFile = $parentReflection->getFileName();
-            if (is_string($parentFile) && $parentFile !== '') {
-                $files[] = $parentFile;
-            }
-            $files = array_merge($files, $this->traitFilesFor(reflection: $parentReflection));
-        }
-
-        foreach (class_implements($reflection->getName()) ?: [] as $interface) {
-            $interfaceReflection = new ReflectionClass($interface);
-            $interfaceFile = $interfaceReflection->getFileName();
-            if (is_string($interfaceFile) && $interfaceFile !== '') {
-                $files[] = $interfaceFile;
-            }
-        }
-
-        $files = array_merge($files, $this->traitFilesFor(reflection: $reflection));
-
-        return array_values(array_unique($files));
-    }
-
-    /**
-     * @return list<string>
-     */
-    private function traitFilesFor(ReflectionClass $reflection) : array
-    {
-        $files = [];
-
-        foreach ($reflection->getTraits() as $trait) {
-            $traitFile = $trait->getFileName();
-            if (is_string($traitFile) && $traitFile !== '') {
-                $files[] = $traitFile;
-            }
-
-            $files = array_merge($files, $this->traitFilesFor(reflection: $trait));
-        }
-
-        return array_values(array_unique($files));
+        $this->cache->flush();
     }
 }

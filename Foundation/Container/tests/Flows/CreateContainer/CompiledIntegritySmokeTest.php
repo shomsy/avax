@@ -17,21 +17,19 @@ final class IntegrityDependency
 
 final class IntegrityTarget
 {
-    public function __construct(public IntegrityDependency $dependency)
-    {
-    }
+    public function __construct(public IntegrityDependency $dependency) {}
 }
 
-$productionCache = sys_get_temp_dir() . '/container-integrity-prod-' . uniqid();
-$productionVersion = 'compiled-integrity-production';
-$productionConfig = CreateContainerConfig::create(
-    cacheDir: $productionCache,
+$productionCache       = sys_get_temp_dir() . '/container-integrity-prod-' . uniqid();
+$productionVersion     = 'compiled-integrity-production';
+$productionConfig      = CreateContainerConfig::create(
+    cacheDir    : $productionCache,
     cacheVersion: $productionVersion,
-    compileMode: CreateContainerConfig::COMPILE_MODE_PRODUCTION
+    compileMode : CreateContainerConfig::COMPILE_MODE_PRODUCTION
 );
 $productionArtifactDir = $productionCache . '/container/' . rawurlencode($productionVersion) . '/compiled';
-$productionArtifact = $productionArtifactDir . '/container.php';
-$productionMetadata = $productionArtifactDir . '/container.json';
+$productionArtifact    = $productionArtifactDir . '/container.php';
+$productionMetadata    = $productionArtifactDir . '/container.json';
 
 $production = makeTestContainer($productionConfig);
 $production->singleton(IntegrityDependency::class, IntegrityDependency::class);
@@ -54,7 +52,7 @@ assertThrows(
  * @throws \Psr\Container\ContainerExceptionInterface
  * @throws \Psr\Container\NotFoundExceptionInterface
  */ ContainerException::class,
-    static fn() => $productionReload->get(IntegrityTarget::class),
+    static fn () => $productionReload->get(IntegrityTarget::class),
     'Production mode should fail closed when the compiled artifact is corrupted.'
 );
 assertTrue(
@@ -66,12 +64,12 @@ assertTrue(
     'Corrupted production metadata should also be quarantined.'
 );
 
-$developmentCache = sys_get_temp_dir() . '/container-integrity-dev-' . uniqid();
-$developmentVersion = 'compiled-integrity-development';
-$developmentConfig = CreateContainerConfig::create(
-    cacheDir: $developmentCache,
+$developmentCache    = sys_get_temp_dir() . '/container-integrity-dev-' . uniqid();
+$developmentVersion  = 'compiled-integrity-development';
+$developmentConfig   = CreateContainerConfig::create(
+    cacheDir    : $developmentCache,
     cacheVersion: $developmentVersion,
-    compileMode: CreateContainerConfig::COMPILE_MODE_DEV
+    compileMode : CreateContainerConfig::COMPILE_MODE_DEV
 );
 $developmentArtifact = $developmentCache
     . '/container/' . rawurlencode($developmentVersion) . '/compiled/container.php';

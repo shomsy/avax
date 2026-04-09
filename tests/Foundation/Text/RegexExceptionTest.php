@@ -22,7 +22,7 @@ final class RegexExceptionTest extends TestCase
     {
         $this->expectException(exception: RegexException::class);
 
-        Pattern::of(raw: '(\w+)')->replaceCallback(subject: 'hello world', fn: fn($matches) => null);
+        Pattern::of(raw: '(\w+)')->replaceCallback(subject: 'hello world', fn: fn ($matches) => null);
     }
 
     public function test_preg_last_error_mapping() : void

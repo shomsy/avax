@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Database\Avax\Connection\Pool;
 
-use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Avax\Connection\Pool\Contracts\ConnectionPoolInterface;
+use Avax\Database\Connection\Contracts\DatabaseConnection;
 use PDO;
 
 /**

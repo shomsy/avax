@@ -4,21 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flow\Logout;
 
-use PHPUnit\Framework\TestCase;
-use Avax\Auth\System\Flow\Logout\Logout;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Flow\Logout\Logout;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for Logout flow.
  */
 class LogoutTest extends TestCase
 {
-    protected function tearDown() : void
-    {
-        Mockery::close();
-    }
-
     public function testLogoutClearsIdentity() : void
     {
         $identity = Mockery::mock(IdentityInterface::class);
@@ -28,5 +23,10 @@ class LogoutTest extends TestCase
         $logout->execute();
 
         $this->assertTrue(condition: true);
+    }
+
+    protected function tearDown() : void
+    {
+        Mockery::close();
     }
 }

@@ -17,6 +17,15 @@ final class RegistrationVisibility
 
     public const string INTERNAL = 'internal';
 
+    public static function normalize(string $visibility) : string
+    {
+        $normalized = strtolower(trim($visibility));
+
+        return in_array($normalized, self::all(), true)
+            ? $normalized
+            : self::PUBLIC;
+    }
+
     /**
      * @return list<string>
      */
@@ -28,14 +37,5 @@ final class RegistrationVisibility
             self::PUBLIC,
             self::INTERNAL,
         ];
-    }
-
-    public static function normalize(string $visibility) : string
-    {
-        $normalized = strtolower(trim($visibility));
-
-        return in_array($normalized, self::all(), true)
-            ? $normalized
-            : self::PUBLIC;
     }
 }

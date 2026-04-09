@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Database\Connection;
 
+use Avax\Database\Avax\Connection\Pool\ConnectionPool;
+use Avax\Database\Avax\Connection\Pool\PooledConnectionAuthority;
 use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Connection\Exceptions\ConnectionException;
 use Avax\Database\Events\EventBus;
-use Avax\Database\Avax\Connection\Pool\ConnectionPool;
-use Avax\Database\Avax\Connection\Pool\PooledConnectionAuthority;
 use Avax\Database\Support\ExecutionScope;
 use PDO;
 use Random\RandomException;

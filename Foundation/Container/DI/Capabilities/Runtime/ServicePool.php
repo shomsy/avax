@@ -25,13 +25,14 @@ final class ServicePool
     private array $pooledOptions = [];
 
     /** @var array{hits: int, misses: int, releases: int, overflows: int, unsafe: int} */
-    private array $pooledStats = [
-        'hits' => 0,
-        'misses' => 0,
-        'releases' => 0,
-        'overflows' => 0,
-        'unsafe' => 0,
-    ];
+    private array $pooledStats
+        = [
+            'hits'      => 0,
+            'misses'    => 0,
+            'releases'  => 0,
+            'overflows' => 0,
+            'unsafe'    => 0,
+        ];
 
     /**
      * Reports whether one shared instance exists.
@@ -54,7 +55,7 @@ final class ServicePool
      */
     public function set(string $abstract, mixed $instance, bool $disposable = false) : void
     {
-        $this->items[$abstract] = $instance;
+        $this->items[$abstract]      = $instance;
         $this->disposable[$abstract] = $disposable;
     }
 
@@ -68,36 +69,36 @@ final class ServicePool
     }
 
     /**
-     * Clears all shared instances.
-     */
-    public function flush() : void
-    {
-        $this->items = [];
-        $this->disposable = [];
-        $this->pooled = [];
-        $this->pooledOptions = [];
-        $this->pooledStats = [
-            'hits' => 0,
-            'misses' => 0,
-            'releases' => 0,
-            'overflows' => 0,
-            'unsafe' => 0,
-        ];
-    }
-
-    /**
      * @return array{items: array<string, mixed>, disposable: array<string, bool>}
      */
     public function drain() : array
     {
         $drained = [
-            'items' => $this->items,
+            'items'      => $this->items,
             'disposable' => $this->disposable,
         ];
 
         $this->flush();
 
         return $drained;
+    }
+
+    /**
+     * Clears all shared instances.
+     */
+    public function flush() : void
+    {
+        $this->items         = [];
+        $this->disposable    = [];
+        $this->pooled        = [];
+        $this->pooledOptions = [];
+        $this->pooledStats   = [
+            'hits'      => 0,
+            'misses'    => 0,
+            'releases'  => 0,
+            'overflows' => 0,
+            'unsafe'    => 0,
+        ];
     }
 
     /**
@@ -123,12 +124,12 @@ final class ServicePool
             $this->pooledStats['misses']++;
 
             return [
-                'hit' => false,
+                'hit'      => false,
                 'instance' => null,
             ];
         }
 
-        $instance = array_pop($bucket);
+        $instance                = array_pop($bucket);
         $this->pooled[$abstract] = $bucket;
         if ($bucket === []) {
             unset($this->pooled[$abstract]);
@@ -137,7 +138,7 @@ final class ServicePool
         $this->pooledStats['hits']++;
 
         return [
-            'hit' => true,
+            'hit'      => true,
             'instance' => $instance,
         ];
     }
@@ -151,12 +152,13 @@ final class ServicePool
         int       $maxSize,
         bool|null $resetBeforeReuse = null,
         bool      $disposable = false
-    ) : array {
+    ) : array
+    {
         $resetBeforeReuse               ??= true;
         $this->pooledOptions[$abstract] = [
-            'maxSize' => max(1, $maxSize),
+            'maxSize'          => max(1, $maxSize),
             'resetBeforeReuse' => $resetBeforeReuse,
-            'disposable' => $disposable,
+            'disposable'       => $disposable,
         ];
 
         if (! is_object($instance)) {
@@ -165,8 +167,8 @@ final class ServicePool
             return [
                 'returned' => false,
                 'overflow' => false,
-                'unsafe' => true,
-                'reason' => 'only objects can participate in pooled lifetime reuse',
+                'unsafe'   => true,
+                'reason'   => 'only objects can participate in pooled lifetime reuse',
             ];
         }
 
@@ -177,8 +179,8 @@ final class ServicePool
                 return [
                     'returned' => false,
                     'overflow' => false,
-                    'unsafe' => true,
-                    'reason' => 'pooled service does not implement ResettableInterface',
+                    'unsafe'   => true,
+                    'reason'   => 'pooled service does not implement ResettableInterface',
                 ];
             }
 
@@ -190,8 +192,8 @@ final class ServicePool
                 return [
                     'returned' => false,
                     'overflow' => false,
-                    'unsafe' => true,
-                    'reason' => 'pooled service failed during reset()',
+                    'unsafe'   => true,
+                    'reason'   => 'pooled service failed during reset()',
                 ];
             }
         }
@@ -203,20 +205,20 @@ final class ServicePool
             return [
                 'returned' => false,
                 'overflow' => true,
-                'unsafe' => false,
-                'reason' => 'pooled bucket is already at max size',
+                'unsafe'   => false,
+                'reason'   => 'pooled bucket is already at max size',
             ];
         }
 
-        $bucket[] = $instance;
+        $bucket[]                = $instance;
         $this->pooled[$abstract] = $bucket;
         $this->pooledStats['releases']++;
 
         return [
             'returned' => true,
             'overflow' => false,
-            'unsafe' => false,
-            'reason' => 'pooled service returned to the available bucket',
+            'unsafe'   => false,
+            'reason'   => 'pooled service returned to the available bucket',
         ];
     }
 
@@ -227,9 +229,9 @@ final class ServicePool
         }
 
         return array_sum(array_map(
-            static fn(array $bucket) : int => count($bucket),
-            $this->pooled
-        ));
+                             static fn (array $bucket) : int => count($bucket),
+                             $this->pooled
+                         ));
     }
 
     /**
@@ -268,7 +270,7 @@ final class ServicePool
 
         foreach ($this->pooled as $serviceId => $bucket) {
             $snapshot[$serviceId] = array_map(
-                static fn(mixed $instance) : string => is_object($instance) ? $instance::class : get_debug_type($instance),
+                static fn (mixed $instance) : string => is_object($instance) ? $instance::class : get_debug_type($instance),
                 $bucket
             );
         }
@@ -306,11 +308,11 @@ final class ServicePool
     public function drainPooled() : array
     {
         $drained = [
-            'items' => $this->pooled,
+            'items'   => $this->pooled,
             'options' => $this->pooledOptions,
         ];
 
-        $this->pooled = [];
+        $this->pooled        = [];
         $this->pooledOptions = [];
 
         return $drained;

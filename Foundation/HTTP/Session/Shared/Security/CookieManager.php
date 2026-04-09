@@ -210,13 +210,13 @@ final readonly class CookieManager
     public function configureSessionCookie() : void
     {
         session_set_cookie_params(lifetime_or_options: [
-            'lifetime' => $this->lifetime,
-            'path'     => $this->path,
-            'domain'   => $this->domain,
-            'secure'   => $this->secure,
-            'httponly' => $this->httpOnly,
-            'samesite' => $this->sameSite,
-        ]);
+                                                           'lifetime' => $this->lifetime,
+                                                           'path'     => $this->path,
+                                                           'domain'   => $this->domain,
+                                                           'secure'   => $this->secure,
+                                                           'httponly' => $this->httpOnly,
+                                                           'samesite' => $this->sameSite,
+                                                       ]);
     }
 
     /**

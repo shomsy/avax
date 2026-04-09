@@ -13,12 +13,14 @@ scope drift, and undocumented deviations.
 The Agent OS operates in two distinct modes to optimize for both discovery and implementation:
 
 ### 1.1 Explore Mode (Read-Only)
+
 - **Goal**: Discovery, mapping, research, documentation analysis.
 - **Constraints**: **NO CODE CHANGES ALLOWED**.
 - **Agent Choice**: Use "cheap" or "mini" models (Mapper, Docs Researcher).
 - **Output**: Mandatory artifact summarizing findings (Brief/Research).
 
 ### 1.2 Execute Mode (Implementation)
+
 - **Goal**: Code writing, refactoring, bug fixes, integration.
 - **Constraints**: Restricted to the **approved scope** and file list from Explore Mode.
 - **Agent Choice**: Use primary/powerful models (Codex Executor).
@@ -51,8 +53,10 @@ At minimum, closure must:
 2. record how it was validated
 3. update the active queue or bug record with timestamps
 4. perform any local release, sync, or archival step required by the repo
-5. **Phase 5 & 8: Memory Extraction** - Extract learnings and update the `.agents/memory/` memory or session logs as per the **Universal Memory Standard**.
-6. **ProdOps: Meeting Snapshot to Action** - If the iteration involves a meeting cleanup, extract triggers, decisions, and actions into `.agents/management/TODO.md` and `.agents/context/`.
+5. **Phase 5 & 8: Memory Extraction** - Extract learnings and update the `.agents/memory/` memory or session logs as per
+   the **Universal Memory Standard**.
+6. **ProdOps: Meeting Snapshot to Action** - If the iteration involves a meeting cleanup, extract triggers, decisions,
+   and actions into `.agents/management/TODO.md` and `.agents/context/`.
 
 ## 4. Evidence Requirements
 

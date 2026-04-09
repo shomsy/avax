@@ -14,10 +14,16 @@ use Avax\Auth\System\Flow\Login\Credentials;
 interface UserSourceInterface
 {
     public function findByCredentials(Credentials $credentials) : User|null;
+
     public function findById(UserId $id) : User|null;
+
     public function findByEmail(string $email) : User|null;
+
     public function create(User $user) : User;
+
     public function updatePassword(UserId $id, string $passwordHash) : void;
+
     public function emailExists(string $email) : bool;
+
     public function usernameExists(string $username) : bool;
 }

@@ -21,7 +21,9 @@ Tracks active and accepted risks.
   `updated_at`: `2026-04-08 18:16 CEST`
   `severity`: `medium`
   `likelihood`: `medium`
-  `impact`: `The previous hold-level risk was that advanced lifetimes, conditional composition, and deeper anti-pattern resistance were only partially implemented.`
-  `mitigation`: `Closed by finishing TODO-016 with runtime, validation, docs, and smoke evidence for advanced lifetimes, conditionals, policy findings, test composition helpers, and story-grade errors.`
+  `impact`:
+  `The previous hold-level risk was that advanced lifetimes, conditional composition, and deeper anti-pattern resistance were only partially implemented.`
+  `mitigation`:
+  `Closed by finishing TODO-016 with runtime, validation, docs, and smoke evidence for advanced lifetimes, conditionals, policy findings, test composition helpers, and story-grade errors.`
   `owner`: `container component`
   `status`: `closed`

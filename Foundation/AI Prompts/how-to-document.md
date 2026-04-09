@@ -1,10 +1,9 @@
-
-
 # AGENT INSTRUCTIONS (GLOBAL, NON-NEGOTIABLE)
 
 These instructions are **GLOBAL** and apply to **ALL future documentation and PHPDoc work** in this repository.
 
-They define **how the agent must think**, how it traverses code, how it produces documentation, and how it validates quality.
+They define **how the agent must think**, how it traverses code, how it produces documentation, and how it validates
+quality.
 
 Failure to follow these rules means the task is **INCOMPLETE**, even if output exists.
 
@@ -156,7 +155,8 @@ This is not optional. Every folder that contains code must explain itself.
 
 ### Why This Exists
 
-A system is only as understandable as its documentation. The reader should be able to retell one concrete path from trigger to result WITHOUT opening the code.
+A system is only as understandable as its documentation. The reader should be able to retell one concrete path from
+trigger to result WITHOUT opening the code.
 
 The test is simple: Can a new reader answer these without guessing?
 
@@ -188,16 +188,20 @@ classification: internal
 ### Folder Shape Options
 
 #### Command-Facing Folders
+
 Use when a real typed command reaches the folder.
 
 Required headings:
+
 - `## Real commands that reach this folder`
 - `## Exact CLI front doors`
 
 #### Internal-Only Folders
+
 Use when the folder wakes up only after another code path hands work to it.
 
 Required headings:
+
 - `## Real commands or triggers that reach this folder`
 - `## Exact upstream handoffs`
 
@@ -246,11 +250,10 @@ sequenceDiagram
     participant File as <Main file or function in this folder>
     participant Next as <Next handoff>
     participant Result as <Visible result or artifact>
-
-    Entry->>File: Step 1: <real call with real behavior>
-    File->>File: Step 2: <main decision, transform, read, or write>
-    File->>Next: Step 3: <hand the result forward>
-    Next-->>Result: Step 4: <visible result, artifact, or next state>
+    Entry ->> File: Step 1: <real call with real behavior>
+    File ->> File: Step 2: <main decision, transform, read, or write>
+    File ->> Next: Step 3: <hand the result forward>
+    Next -->> Result: Step 4: <visible result, artifact, or next state>
 ```
 
 - **Step 1:** <what catches the command>
@@ -265,18 +268,22 @@ sequenceDiagram
 This is the file where <one plain sentence about the file's purpose>.
 
 When the story opens this file:
+
 - <command or trigger> -> <caller> -> <this file>
 
 What arrives here:
+
 - <input 1>
 - <input 2>
 
 What leaves this file:
+
 - <returned value>
 - <written artifact>
 - <visible output if true>
 
 Why you open it first:
+
 - <debug symptom 1>
 - <debug symptom 2>
 
@@ -287,6 +294,7 @@ Why you open it first:
 Open `<child>/how-this-works.md`.
 
 Use it when:
+
 - <command or trigger>
 - <command or trigger>
 
@@ -304,7 +312,9 @@ Use it when:
 ## Dictionary
 
 <a id="dictionary-term"></a>
+
 - `term`: <simple and honest definition>
+
 ```
 
 ### Quality Rules

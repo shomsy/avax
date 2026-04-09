@@ -6,13 +6,9 @@ require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
-final class StrictSharedFlowService
-{
-}
+final class StrictSharedFlowService {}
 
-final class ConditionalInternalService
-{
-}
+final class ConditionalInternalService {}
 
 $relaxed = makeTestContainer(CreateContainerConfig::create(
     policyProfile: CreateContainerConfig::POLICY_PROFILE_RELAXED
@@ -26,8 +22,8 @@ $relaxed->bind(ConditionalInternalService::class, ConditionalInternalService::cl
     ->profiles('prod');
 
 $strict = makeTestContainer(CreateContainerConfig::create(
-    settings: ['app_env' => 'prod'],
-    policyProfile: CreateContainerConfig::POLICY_PROFILE_RELAXED,
+    settings      : ['app_env' => 'prod'],
+    policyProfile : CreateContainerConfig::POLICY_PROFILE_RELAXED,
     policyProfiles: ['prod' => CreateContainerConfig::POLICY_PROFILE_STRICT],
     policyFailMode: CreateContainerConfig::POLICY_FAIL_MODE_CLOSED
 ));
@@ -39,14 +35,14 @@ $strict->bind(ConditionalInternalService::class, ConditionalInternalService::cla
     ->asInternal()
     ->profiles('prod');
 
-$relaxedFindings = $relaxed->debugGraph()['policyFindings'];
-$strictFindings = $strict->debugGraph()['policyFindings'];
+$relaxedFindings  = $relaxed->debugGraph()['policyFindings'];
+$strictFindings   = $strict->debugGraph()['policyFindings'];
 $strictGovernance = $strict->debugGovernance();
 
-$relaxedFlowSeverities = array_column($relaxedFindings[StrictSharedFlowService::class] ?? [], 'severity', 'code');
-$strictFlowSeverities = array_column($strictFindings[StrictSharedFlowService::class] ?? [], 'severity', 'code');
+$relaxedFlowSeverities        = array_column($relaxedFindings[StrictSharedFlowService::class] ?? [], 'severity', 'code');
+$strictFlowSeverities         = array_column($strictFindings[StrictSharedFlowService::class] ?? [], 'severity', 'code');
 $relaxedConditionalSeverities = array_column($relaxedFindings[ConditionalInternalService::class] ?? [], 'severity', 'code');
-$strictConditionalSeverities = array_column($strictFindings[ConditionalInternalService::class] ?? [], 'severity', 'code');
+$strictConditionalSeverities  = array_column($strictFindings[ConditionalInternalService::class] ?? [], 'severity', 'code');
 
 assertSame('warn', $relaxedFlowSeverities['POL-006'] ?? null, 'Relaxed policy profile should keep POL-006 as a warning.');
 assertSame('error', $strictFlowSeverities['POL-006'] ?? null, 'Strict policy profile should escalate POL-006 to an error.');

@@ -40,13 +40,13 @@ final class RouteGroupAttributesConfigurator
              * Strategy for handling 'prefix' - converts the value to a string
              * and applies it as a prefix to the route group context.
              */
-            'prefix'     => fn(RouteGroupContext $context, mixed $value) => $context->setPrefix(prefix: (string) $value),
+            'prefix'     => fn (RouteGroupContext $context, mixed $value) => $context->setPrefix(prefix: (string) $value),
 
             /**
              * Strategy for handling 'middleware' - converts the value to an array
              * and appends the middleware to the route group context.
              */
-            'middleware' => fn(RouteGroupContext $context, mixed $value) => $context->addMiddleware(
+            'middleware' => fn (RouteGroupContext $context, mixed $value) => $context->addMiddleware(
                 middleware: (array) $value
             ),
 
@@ -54,14 +54,14 @@ final class RouteGroupAttributesConfigurator
              * Strategy for handling 'domain' - converts the value to a string
              * and sets it as the domain for the route group context.
              */
-            'domain'     => fn(RouteGroupContext $context, mixed $value) => $context->setDomain(domain: (string) $value),
+            'domain'     => fn (RouteGroupContext $context, mixed $value) => $context->setDomain(domain: (string) $value),
 
             /**
              * Strategy for handling 'name' - converts the value to a string
              * and applies it as a prefix to the names of route group context
              * names.
              */
-            'name'       => fn(RouteGroupContext $context, mixed $value) => $context->setNamePrefix(
+            'name'       => fn (RouteGroupContext $context, mixed $value) => $context->setNamePrefix(
                 prefix: (string) $value
             ),
 
@@ -69,7 +69,7 @@ final class RouteGroupAttributesConfigurator
              * Strategy for handling 'authorize' - converts the value to a string
              * and sets it as authorization for the route group context.
              */
-            'authorize'  => fn(RouteGroupContext $context, mixed $value) => $context->setAuthorization(
+            'authorize'  => fn (RouteGroupContext $context, mixed $value) => $context->setAuthorization(
                 authorization: (string) $value
             ),
 

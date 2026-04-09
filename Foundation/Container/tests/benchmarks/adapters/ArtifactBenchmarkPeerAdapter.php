@@ -47,7 +47,7 @@ final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapte
         $results = $decoded['results'];
 
         return [
-            'meta' => $meta,
+            'meta'    => $meta,
             'results' => $results,
         ];
     }

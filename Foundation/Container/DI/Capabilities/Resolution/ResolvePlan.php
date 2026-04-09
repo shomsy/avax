@@ -24,13 +24,13 @@ final readonly class ResolvePlan
         public array $parameters = []
     ) {}
 
-    public function isEmpty() : bool
-    {
-        return $this->parameters === [];
-    }
-
     public static function __set_state(array $state) : self
     {
         return new self(parameters: $state['parameters'] ?? []);
+    }
+
+    public function isEmpty() : bool
+    {
+        return $this->parameters === [];
     }
 }

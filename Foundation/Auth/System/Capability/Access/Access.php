@@ -21,7 +21,7 @@ final readonly class Access implements AccessInterface
     public function __construct(
         private RequireAuthenticationBoundary $requireAuthentication,
         private RequireRoleBoundary           $requireRole,
-        private RequirePermissionBoundary      $requirePermission
+        private RequirePermissionBoundary     $requirePermission
     ) {}
 
     /**

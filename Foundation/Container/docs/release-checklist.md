@@ -8,13 +8,15 @@ This checklist is the canonical release proof ledger for the component root.
 - smoke suite: [`../tests/run-smoke-tests.sh`](../tests/run-smoke-tests.sh)
 - diagnostics contracts: [`../tests/check-diagnostics-contracts.sh`](../tests/check-diagnostics-contracts.sh)
 - benchmark guard: [`../tests/check-benchmarks.sh`](../tests/check-benchmarks.sh)
-- peer benchmark gate when peer artifacts are available: [`../tests/check-peer-benchmarks.sh`](../tests/check-peer-benchmarks.sh)
+- peer benchmark gate when peer artifacts are available: [
+  `../tests/check-peer-benchmarks.sh`](../tests/check-peer-benchmarks.sh)
 
 ## Deterministic Ordering Proof
 
 The release proof for deterministic ordering is green only when these pass:
 
-- [`../tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php`](../tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php)
+- [
+  `../tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php`](../tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php)
 - [`../tests/Flows/BootProviders/BootProvidersSmokeTest.php`](../tests/Flows/BootProviders/BootProvidersSmokeTest.php)
 
 They cover:
@@ -28,10 +30,14 @@ They cover:
 
 The release proof for artifact compatibility is green only when these pass:
 
-- [`../tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php`](../tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php)
-- [`../tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php`](../tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php)
-- [`../tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php`](../tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php)
-- [`../tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php`](../tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php)
+- [
+  `../tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php`](../tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php)
+- [
+  `../tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php`](../tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php)
+- [
+  `../tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php`](../tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php)
+- [
+  `../tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php`](../tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php)
 
 ## Final Claim Gate
 

@@ -89,9 +89,9 @@ abstract class Repository
         if (! method_exists(object_or_class: $entityClass, method: 'getTableName')) {
             throw new RuntimeException(
                 message: sprintf(
-                    'Entity class %s must implement a getTableName() method.',
-                    $entityClass
-                )
+                             'Entity class %s must implement a getTableName() method.',
+                             $entityClass
+                         )
             );
         }
 

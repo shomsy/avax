@@ -141,7 +141,7 @@ trait MetaInfoTrait
      */
     public function version(int $version = 1) : static
     {
-        return $this->map(callback: static fn($item) : array => [
+        return $this->map(callback: static fn ($item) : array => [
             'version' => $version,
             'data'    => $item,
         ]);

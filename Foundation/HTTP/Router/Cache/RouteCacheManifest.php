@@ -72,6 +72,25 @@ final readonly class RouteCacheManifest
         return $manifest;
     }
 
+    /**
+     * Generate SHA256 hash of the manifest data for integrity verification.
+     */
+    private function generateManifestHash() : string
+    {
+        $data = [
+            'files'        => $this->files,
+            'hash'         => $this->hash,
+            'generated_at' => $this->generatedAt,
+            'checksum'     => $this->checksum,
+        ];
+
+        try {
+            return hash('sha256', json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+        } catch (JsonException $exception) {
+            throw new RuntimeException(message: 'Unable to generate manifest hash.', previous: $exception);
+        }
+    }
+
     public static function metadataPath(string $cachePath) : string
     {
         return "{$cachePath}.meta";
@@ -117,25 +136,6 @@ final readonly class RouteCacheManifest
             );
         } catch (JsonException $exception) {
             throw new RuntimeException(message: 'Unable to write route cache metadata.', previous: $exception);
-        }
-    }
-
-    /**
-     * Generate SHA256 hash of the manifest data for integrity verification.
-     */
-    private function generateManifestHash() : string
-    {
-        $data = [
-            'files'        => $this->files,
-            'hash'         => $this->hash,
-            'generated_at' => $this->generatedAt,
-            'checksum'     => $this->checksum,
-        ];
-
-        try {
-            return hash('sha256', json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
-        } catch (JsonException $exception) {
-            throw new RuntimeException(message: 'Unable to generate manifest hash.', previous: $exception);
         }
     }
 

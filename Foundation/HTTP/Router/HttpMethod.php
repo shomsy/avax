@@ -10,7 +10,7 @@ namespace Avax\HTTP\Router;
  * This provides a type-safe representation of allowed HTTP methods
  * for routing and validation purposes.
  */
-enum HttpMethod : string
+enum HttpMethod: string
 {
     case GET = 'GET';
 
@@ -46,6 +46,6 @@ enum HttpMethod : string
      */
     public static function list() : array
     {
-        return array_map(callback: static fn(self $method) => $method->value, array: self::cases());
+        return array_map(callback: static fn (self $method) => $method->value, array: self::cases());
     }
 }

@@ -8,7 +8,7 @@ namespace Avax\HTTP\URI;
  * Enum Protocol
  * Defines supported protocols for URIs and provides methods for conversion and validation.
  */
-enum Protocol : string
+enum Protocol: string
 {
     case HTTP = 'http';
 

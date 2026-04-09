@@ -7,17 +7,19 @@ Avax Container is a semantic DI engine with a fluent, minimal API and strategy-d
 The container follows a **Kernel + Pipeline + Steps** architecture for enterprise-grade dependency injection:
 
 ### Kernel Architecture
+
 ```
 Container (PSR-11 Facade)
-    “ delegates to
+    ï¿½ delegates to
 ContainerKernel (Orchestrator)
-    “ runs
+    ï¿½ runs
 ResolutionPipeline (Ordered Steps)
-    “ executes
-Steps: Analyze ’ Guard ’ Resolve ’ Inject ’ Invoke ’ Store ’ Collect
+    ï¿½ executes
+Steps: Analyze ï¿½ Guard ï¿½ Resolve ï¿½ Inject ï¿½ Invoke ï¿½ Store ï¿½ Collect
 ```
 
 ### Pipeline Steps
+
 1. **AnalyzePrototypeStep** - Dependency analysis and prototype preparation
 2. **GuardPolicyStep** - Security and policy enforcement
 3. **ResolveInstanceStep** - Core service instantiation via ResolutionEngine

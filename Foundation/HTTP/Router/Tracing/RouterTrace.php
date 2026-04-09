@@ -29,26 +29,9 @@ final class RouterTrace
 
     public function __construct()
     {
-        $this->events = [];
-        $this->startTime = microtime(true);
+        $this->events     = [];
+        $this->startTime  = microtime(true);
         $this->eventCount = 0;
-    }
-
-    /**
-     * Log a trace event with timing and context.
-     *
-     * @param string $event   Event identifier (e.g., 'resolve.start', 'matcher.domain_match')
-     * @param array  $context Additional context data for debugging
-     */
-    public function log(string $event, array $context = []) : void
-    {
-        $this->events[] = [
-            'time'    => round((microtime(true) - $this->startTime) * 1000, 3), // milliseconds
-            'event'   => $event,
-            'context' => $context,
-        ];
-
-        $this->eventCount++;
     }
 
     /**
@@ -57,15 +40,16 @@ final class RouterTrace
      * Automatically adds request_id, route metadata, and system context
      * to provide richer debugging information for enterprise observability.
      *
-     * @param string $event   Event identifier
-     * @param array  $context Base context data
+     * @param string $event      Event identifier
+     * @param array  $context    Base context data
      * @param array  $autoEnrich Automatic enrichment flags
      */
     public function record(
         string     $event,
         array|null $context = null,
         array      $autoEnrich = ['request_id', 'memory', 'route']
-    ): void {
+    ) : void
+    {
         $context         ??= [];
         $enrichedContext = $context;
 
@@ -77,7 +61,7 @@ final class RouterTrace
         // Auto-enrich with memory usage
         if (in_array('memory', $autoEnrich, true)) {
             $enrichedContext['memory_usage'] = memory_get_usage(true);
-            $enrichedContext['memory_peak'] = memory_get_peak_usage(true);
+            $enrichedContext['memory_peak']  = memory_get_peak_usage(true);
         }
 
         // Auto-enrich with route information if available in context
@@ -87,8 +71,8 @@ final class RouterTrace
 
         // Auto-enrich with system context
         $enrichedContext['php_version'] = PHP_VERSION;
-        $enrichedContext['timestamp'] = microtime(true);
-        $enrichedContext['process_id'] = getmypid();
+        $enrichedContext['timestamp']   = microtime(true);
+        $enrichedContext['process_id']  = getmypid();
 
         $this->log(event: $event, context: $enrichedContext);
     }
@@ -96,7 +80,8 @@ final class RouterTrace
     /**
      * Get current request ID from various sources.
      */
-    private function getCurrentRequestId(): string {
+    private function getCurrentRequestId() : string
+    {
         // Try common request ID headers/sources
         $sources = [
             $_SERVER['HTTP_X_REQUEST_ID'] ?? null,
@@ -118,16 +103,17 @@ final class RouterTrace
     /**
      * Enrich context with route-specific information.
      */
-    private function enrichWithRouteContext(string $event, array $context): array {
+    private function enrichWithRouteContext(string $event, array $context) : array
+    {
         // Extract route information from recent events
         $routeInfo = $this->findRecentRouteInfo();
 
         if ($routeInfo) {
-            $context['route_name'] = $routeInfo['name'] ?? null;
-            $context['route_method'] = $routeInfo['method'] ?? null;
-            $context['route_path'] = $routeInfo['path'] ?? null;
+            $context['route_name']       = $routeInfo['name'] ?? null;
+            $context['route_method']     = $routeInfo['method'] ?? null;
+            $context['route_path']       = $routeInfo['path'] ?? null;
             $context['middleware_count'] = $routeInfo['middleware_count'] ?? 0;
-            $context['domain'] = $routeInfo['domain'] ?? null;
+            $context['domain']           = $routeInfo['domain'] ?? null;
         }
 
         // Add timing information for route resolution events
@@ -141,19 +127,21 @@ final class RouterTrace
     /**
      * Find recent route information from trace events.
      */
-    private function findRecentRouteInfo(): array|null {
+    private function findRecentRouteInfo() : array|null
+    {
         // Look for the most recent route matching event
         for ($i = count($this->events) - 1; $i >= 0; $i--) {
             $event = $this->events[$i];
 
             if (isset($event['context']['route'])) {
                 $route = $event['context']['route'];
+
                 return [
-                    'name' => $route->name ?? null,
-                    'method' => $route->method ?? null,
-                    'path' => $route->path ?? null,
+                    'name'             => $route->name ?? null,
+                    'method'           => $route->method ?? null,
+                    'path'             => $route->path ?? null,
                     'middleware_count' => count($route->middleware ?? []),
-                    'domain' => $route->domain ?? null,
+                    'domain'           => $route->domain ?? null,
                 ];
             }
         }
@@ -164,9 +152,10 @@ final class RouterTrace
     /**
      * Calculate route resolution time from trace events.
      */
-    private function calculateResolutionTime(): float {
+    private function calculateResolutionTime() : float
+    {
         $startTime = null;
-        $endTime = null;
+        $endTime   = null;
 
         foreach ($this->events as $event) {
             if ($event['event'] === 'resolve.start') {
@@ -186,21 +175,39 @@ final class RouterTrace
     }
 
     /**
+     * Log a trace event with timing and context.
+     *
+     * @param string $event   Event identifier (e.g., 'resolve.start', 'matcher.domain_match')
+     * @param array  $context Additional context data for debugging
+     */
+    public function log(string $event, array $context = []) : void
+    {
+        $this->events[] = [
+            'time'    => round((microtime(true) - $this->startTime) * 1000, 3), // milliseconds
+            'event'   => $event,
+            'context' => $context,
+        ];
+
+        $this->eventCount++;
+    }
+
+    /**
      * Export enriched trace data in JSON format for ELK stack.
      *
      * @throws JsonException
      */
-    public function exportJson(): string {
+    public function exportJson() : string
+    {
         $traceData = [
-            'trace_id' => $this->getCurrentRequestId(),
-            'start_time' => $this->startTime,
+            'trace_id'      => $this->getCurrentRequestId(),
+            'start_time'    => $this->startTime,
             'total_time_ms' => $this->getTotalTime(),
-            'event_count' => $this->eventCount,
-            'events' => $this->events,
-            'system_info' => [
+            'event_count'   => $this->eventCount,
+            'events'        => $this->events,
+            'system_info'   => [
                 'php_version' => PHP_VERSION,
                 'memory_peak' => memory_get_peak_usage(true),
-                'process_id' => getmypid(),
+                'process_id'  => getmypid(),
             ],
         ];
 
@@ -208,11 +215,19 @@ final class RouterTrace
             return json_encode($traceData, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
         } catch (JsonException $exception) {
             return json_encode([
-                'error' => 'Failed to export trace data',
-                'message' => $exception->getMessage(),
-            ], JSON_THROW_ON_ERROR);
+                                   'error' => 'Failed to export trace data',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       'message' => $exception->getMessage(),
+                               ], JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
         }
+    }
+
+    /**
+     * Get the total execution time from trace start.
+     */
+    public function getTotalTime() : float
+    {
+        return round((microtime(true) - $this->startTime) * 1000, 3);
     }
 
     /**
@@ -264,7 +279,7 @@ final class RouterTrace
     {
         return array_filter(
             $this->events,
-            static fn(array $event) => $event['event'] === $eventType
+            static fn (array $event) => $event['event'] === $eventType
         );
     }
 
@@ -304,14 +319,6 @@ final class RouterTrace
         }
 
         return $output;
-    }
-
-    /**
-     * Get the total execution time from trace start.
-     */
-    public function getTotalTime() : float
-    {
-        return round((microtime(true) - $this->startTime) * 1000, 3);
     }
 
     /**

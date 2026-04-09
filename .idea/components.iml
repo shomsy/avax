@@ -9,11 +9,20 @@
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="Avax\\Tests\\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/System" isTestSource="false" packagePrefix="Avax\Auth\System\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests" isTestSource="true" packagePrefix="Avax\Auth\Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/avax-container" isTestSource="false" packagePrefix="Avax\Auth\Integrations\AvaxContainer\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/cookies" isTestSource="false" packagePrefix="Avax\Auth\Integrations\Cookies\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/headers" isTestSource="false" packagePrefix="Avax\Auth\Integrations\Headers\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/http" isTestSource="false" packagePrefix="Avax\Auth\Integrations\Http\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Capabilities" isTestSource="true" packagePrefix="Avax\Auth\Tests\Capability\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Configuration" isTestSource="true" packagePrefix="Avax\Auth\Tests\Configuration\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Flows" isTestSource="true" packagePrefix="Avax\Auth\Tests\Flow\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Foundation" isTestSource="true" packagePrefix="Avax\Auth\Tests\Foundation\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Integration" isTestSource="true" packagePrefix="Avax\Auth\Tests\Integration\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Integrations" isTestSource="true" packagePrefix="Avax\Auth\Tests\Integrations\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Support" isTestSource="true" packagePrefix="Avax\Auth\Tests\Support\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Support/AvaxContainer/Core" isTestSource="true" packagePrefix="Avax\Container\Core\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Support/AvaxContainer/Providers" isTestSource="true" packagePrefix="Avax\Container\Providers\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/System" isTestSource="true" packagePrefix="Avax\Auth\Tests\System\" />
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/amphp/amp" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/amphp/byte-stream" />
@@ -183,6 +192,64 @@
       <excludeFolder url="file://$MODULE_DIR$/storage/cache" />
       <excludeFolder url="file://$MODULE_DIR$/var/cache" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/_laravel_idea" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/colinodell/json5" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/fidry/cpu-core-counter" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/hamcrest/hamcrest-php" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/infection/abstract-testframework-adapter" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/infection/extension-installer" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/infection/include-interceptor" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/infection/infection" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/justinrainbow/json-schema" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/mockery/mockery" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/myclabs/deep-copy" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/nikic/php-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/ondram/ci-detector" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/phar-io/manifest" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/phar-io/version" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/phpstan/phpstan" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/phpstan/phpstan-strict-rules" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/phpunit/php-code-coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/phpunit/php-file-iterator" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/phpunit/php-invoker" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/phpunit/php-text-template" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/phpunit/php-timer" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/phpunit/phpunit" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/psr/container" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/psr/log" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/rector/rector" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sanmai/later" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sanmai/pipeline" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/cli-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/code-unit" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/code-unit-reverse-lookup" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/comparator" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/complexity" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/diff" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/environment" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/exporter" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/global-state" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/lines-of-code" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/object-enumerator" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/object-reflector" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/recursion-context" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/type" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/sebastian/version" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/staabm/side-effects-detector" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/symfony/console" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/symfony/deprecation-contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/symfony/filesystem" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/symfony/finder" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/symfony/polyfill-ctype" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/symfony/polyfill-intl-grapheme" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/symfony/polyfill-intl-normalizer" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/symfony/polyfill-mbstring" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/symfony/process" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/symfony/service-contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/symfony/string" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/thecodingmachine/safe" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/theseer/tokenizer" />
+      <excludeFolder url="file://$MODULE_DIR$/Foundation/Auth/vendor/webmozart/assert" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

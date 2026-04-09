@@ -13,6 +13,9 @@ use DateTimeImmutable;
  */
 final readonly class BackupCodeSet
 {
+    /**
+     * @param list<BackupCode> $codes
+     */
     public function __construct(
         public array             $codes,
         public DateTimeImmutable $generatedAt

@@ -26,6 +26,10 @@ final readonly class User implements UserInterface, Stringable
         public bool                            $isActive = true
     ) {}
 
+    /**
+     * @param list<UserRole>|null $roles
+     * @param list<UserPermission>|null $permissions
+     */
     public static function create(
         UserId                          $id,
         #[SensitiveParameter] UserEmail $email,
@@ -100,11 +104,17 @@ final readonly class User implements UserInterface, Stringable
         return $this->passwordHash;
     }
 
+    /**
+     * @return list<UserRole>
+     */
     public function getRoles() : array
     {
         return $this->roles;
     }
 
+    /**
+     * @return list<UserPermission>
+     */
     public function getPermissions() : array
     {
         return $this->permissions;

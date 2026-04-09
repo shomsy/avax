@@ -8,6 +8,7 @@ use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\Identity\IssuedAuthentication;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserEmail;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
@@ -17,16 +18,22 @@ use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\Login\AuthenticationFailed;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\Login\Login;
+use Avax\Auth\System\Flow\Login\RateLimit\InMemoryLoginRateLimitStorage;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
+use Avax\Auth\System\Flow\Mfa\Challenge\InMemoryMfaChallengeStore;
 use Avax\Auth\System\Flow\Mfa\Challenge\StartMfaChallenge;
 use Avax\Auth\System\Flow\Mfa\InMemoryMfaStore;
 use Avax\Auth\System\Flow\Mfa\MfaChallenge;
 use Avax\Auth\System\Flow\Mfa\MfaChallengePurpose;
+use Avax\Auth\System\Flow\Mfa\MfaMethod;
+use Avax\Auth\System\Flow\Mfa\MfaMethodRecord;
 use Avax\Auth\System\Flow\Token\IssuedRefreshToken;
 use Avax\Auth\System\Flow\Token\IssuedToken;
 use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
+use Avax\Auth\Tests\Support\FrozenClock;
+use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
-use Exception;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -44,22 +51,18 @@ class LoginTest extends TestCase
     {
         $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
         $userId      = new UserId(value: 1);
-        $user        = Mockery::mock(User::class);
-        $user->shouldReceive('isActive')->andReturn(true);
-        $user->shouldReceive('getPasswordHash')->andReturn('hashed_password');
-        $user->shouldReceive('getId')->andReturn($userId);
+        $passwordHasher = $this->passwordHasher();
+        $user           = $this->userWithPassword(
+            passwordHasher: $passwordHasher,
+            userId        : $userId,
+            password      : 'password'
+        );
 
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('findByCredentials')
             ->once()
             ->with($credentials)
             ->andReturn($user);
-
-        $passwordHasher = Mockery::mock(PasswordHasher::class);
-        $passwordHasher->shouldReceive('verify')
-            ->once()
-            ->with('password', 'hashed_password')
-            ->andReturn(true);
 
         $identity = Mockery::mock(IdentityInterface::class);
         $identity->shouldReceive('issue')->once()->with($user)->andReturn(new IssuedAuthentication(
@@ -78,12 +81,6 @@ class LoginTest extends TestCase
                                                                                             )
                                                                           ));
 
-        $rateLimit = Mockery::mock(LoginRateLimit::class);
-        $rateLimit->shouldReceive('check')->once();
-        $rateLimit->shouldReceive('reset')->once();
-        $startMfaChallenge = Mockery::mock(StartMfaChallenge::class);
-        $startMfaChallenge->shouldNotReceive('issueForLogin');
-
         $login  = new Login(
             userSource              : $userSource,
             passwordHasher          : $passwordHasher,
@@ -95,8 +92,7 @@ class LoginTest extends TestCase
             currentAuthentication   : new CurrentAuthentication(),
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
-            startMfaChallenge       : $startMfaChallenge,
-            rateLimit               : $rateLimit
+            startMfaChallenge       : $this->startMfaChallenge(new InMemoryMfaStore())
         );
         $result = $login->execute(credentials: $credentials);
 
@@ -115,17 +111,18 @@ class LoginTest extends TestCase
             ->once()
             ->andReturn(null);
 
-        $passwordHasher = Mockery::mock(PasswordHasher::class);
         $identity       = Mockery::mock(IdentityInterface::class);
         $identity->shouldNotReceive('issue');
 
-        $rateLimit = Mockery::mock(LoginRateLimit::class);
-        $rateLimit->shouldReceive('check')->once();
-        $rateLimit->shouldReceive('recordFailed')->once();
+        $rateLimitStorage = new InMemoryLoginRateLimitStorage();
+        $rateLimit        = new LoginRateLimit(
+            storage: $rateLimitStorage,
+            clock  : new Clock()
+        );
 
         $login = new Login(
             userSource              : $userSource,
-            passwordHasher          : $passwordHasher,
+            passwordHasher          : $this->passwordHasher(),
             identity                : $identity,
             projectAuthenticatedUser: new ProjectAuthenticatedUser(
                                           emailVerificationState: new InMemoryEmailVerificationStateStore(),
@@ -134,39 +131,43 @@ class LoginTest extends TestCase
             currentAuthentication   : new CurrentAuthentication(),
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
-            startMfaChallenge       : Mockery::mock(StartMfaChallenge::class),
+            startMfaChallenge       : $this->startMfaChallenge(new InMemoryMfaStore()),
             rateLimit               : $rateLimit
         );
 
-        $this->expectException(exception: AuthenticationFailed::class);
-        $this->expectExceptionMessage(message: 'Invalid credentials.');
-
-        $login->execute(credentials: $credentials);
+        try {
+            $login->execute(credentials: $credentials);
+            self::fail('AuthenticationFailed was not raised.');
+        } catch (AuthenticationFailed $exception) {
+            $this->assertSame('Invalid credentials.', $exception->getMessage());
+            $this->assertSame(1, $rateLimitStorage->get('user@example.com'));
+        }
     }
 
     public function testLoginFailedWithInactiveUser() : void
     {
         $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
-        $user        = Mockery::mock(User::class);
-        $user->shouldReceive('isActive')->andReturn(false);
-        $user->shouldReceive('getPasswordHash')->andReturn('hashed_password');
+        $passwordHasher = $this->passwordHasher();
+        $user           = $this->userWithPassword(
+            passwordHasher: $passwordHasher,
+            userId        : new UserId(1),
+            password      : 'password',
+            isActive      : false
+        );
 
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('findByCredentials')
             ->once()
             ->andReturn($user);
 
-        $passwordHasher = Mockery::mock(PasswordHasher::class);
-        $passwordHasher->shouldReceive('verify')
-            ->once()
-            ->andReturn(true);
-
         $identity = Mockery::mock(IdentityInterface::class);
         $identity->shouldNotReceive('issue');
 
-        $rateLimit = Mockery::mock(LoginRateLimit::class);
-        $rateLimit->shouldReceive('check')->once();
-        $rateLimit->shouldReceive('recordFailed')->once();
+        $rateLimitStorage = new InMemoryLoginRateLimitStorage();
+        $rateLimit        = new LoginRateLimit(
+            storage: $rateLimitStorage,
+            clock  : new Clock()
+        );
 
         $login = new Login(
             userSource              : $userSource,
@@ -179,14 +180,17 @@ class LoginTest extends TestCase
             currentAuthentication   : new CurrentAuthentication(),
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
-            startMfaChallenge       : Mockery::mock(StartMfaChallenge::class),
+            startMfaChallenge       : $this->startMfaChallenge(new InMemoryMfaStore()),
             rateLimit               : $rateLimit
         );
 
-        $this->expectException(exception: AuthenticationFailed::class);
-        $this->expectExceptionMessage(message: 'Invalid credentials.');
-
-        $login->execute(credentials: $credentials);
+        try {
+            $login->execute(credentials: $credentials);
+            self::fail('AuthenticationFailed was not raised.');
+        } catch (AuthenticationFailed $exception) {
+            $this->assertSame('Invalid credentials.', $exception->getMessage());
+            $this->assertSame(1, $rateLimitStorage->get('user@example.com'));
+        }
     }
 
     public function testLoginFailedDueToRateLimiting() : void
@@ -194,18 +198,21 @@ class LoginTest extends TestCase
         $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
 
         $userSource     = Mockery::mock(UserSourceInterface::class);
-        $passwordHasher = Mockery::mock(PasswordHasher::class);
         $identity       = Mockery::mock(IdentityInterface::class);
         $identity->shouldNotReceive('issue');
 
-        $rateLimit = Mockery::mock(LoginRateLimit::class);
-        $rateLimit->shouldReceive('check')
-            ->once()
-            ->andThrow(new Exception(message: 'Too many login attempts.'));
+        $rateLimitStorage = new InMemoryLoginRateLimitStorage();
+        $rateLimitStorage->increment('user@example.com');
+        $rateLimit = new LoginRateLimit(
+            storage     : $rateLimitStorage,
+            clock       : new FrozenClock(new DateTimeImmutable()),
+            maxAttempts : 1,
+            decaySeconds: 60
+        );
 
         $login = new Login(
             userSource              : $userSource,
-            passwordHasher          : $passwordHasher,
+            passwordHasher          : $this->passwordHasher(),
             identity                : $identity,
             projectAuthenticatedUser: new ProjectAuthenticatedUser(
                                           emailVerificationState: new InMemoryEmailVerificationStateStore(),
@@ -214,11 +221,11 @@ class LoginTest extends TestCase
             currentAuthentication   : new CurrentAuthentication(),
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
-            startMfaChallenge       : Mockery::mock(StartMfaChallenge::class),
+            startMfaChallenge       : $this->startMfaChallenge(new InMemoryMfaStore()),
             rateLimit               : $rateLimit
         );
 
-        $this->expectException(exception: Exception::class);
+        $this->expectException(exception: RateLimitException::class);
         $this->expectExceptionMessage(message: 'Too many login attempts.');
 
         $login->execute(credentials: $credentials);
@@ -228,39 +235,27 @@ class LoginTest extends TestCase
     {
         $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
         $userId      = new UserId(1);
-        $user        = Mockery::mock(User::class);
-        $user->shouldReceive('isActive')->andReturn(true);
-        $user->shouldReceive('getPasswordHash')->andReturn('hashed_password');
-        $user->shouldReceive('getId')->andReturn($userId);
-        $user->shouldReceive('getEmail')->andReturn(new \Avax\Auth\System\Capability\User\UserEmail('user@example.com'));
-        $user->shouldReceive('getUsername')->andReturn('user');
-        $user->shouldReceive('getRoles')->andReturn([]);
-        $user->shouldReceive('getPermissions')->andReturn([]);
+        $passwordHasher = $this->passwordHasher();
+        $user           = $this->userWithPassword(
+            passwordHasher: $passwordHasher,
+            userId        : $userId,
+            password      : 'password'
+        );
 
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('findByCredentials')->andReturn($user);
-
-        $passwordHasher = Mockery::mock(PasswordHasher::class);
-        $passwordHasher->shouldReceive('verify')->andReturn(true);
 
         $identity = Mockery::mock(IdentityInterface::class);
         $identity->shouldNotReceive('issue');
 
         $mfaStore = new InMemoryMfaStore();
-        $mfaStore->saveMethod(new \Avax\Auth\System\Flow\Mfa\MfaMethodRecord(
-                                  userId   : $userId,
-                                  method   : \Avax\Auth\System\Flow\Mfa\MfaMethod::TOTP,
-                                  secret   : 'SECRET',
-                                  enabledAt: new DateTimeImmutable('-1 minute')
-                              ));
-        $challenge         = new MfaChallenge(
-            challengeId      : 'challenge-1',
-            purpose          : MfaChallengePurpose::LOGIN,
-            expiresAt        : new DateTimeImmutable('+5 minutes'),
-            remainingAttempts: 5
-        );
-        $startMfaChallenge = Mockery::mock(StartMfaChallenge::class);
-        $startMfaChallenge->shouldReceive('issueForLogin')->once()->andReturn($challenge);
+        $mfaStore->saveMethod(new MfaMethodRecord(
+            userId   : $userId,
+            method   : MfaMethod::TOTP,
+            secret   : 'SECRET',
+            enabledAt: new DateTimeImmutable('-1 minute')
+        ));
+        $startMfaChallenge = $this->startMfaChallenge($mfaStore);
 
         $login = new Login(
             userSource              : $userSource,
@@ -279,11 +274,45 @@ class LoginTest extends TestCase
         $result = $login->execute($credentials);
 
         $this->assertTrue($result->requiresMfa());
-        $this->assertSame('challenge-1', $result->mfaChallengeId());
+        $this->assertNotNull($result->mfaChallengeId());
+        $this->assertSame(MfaChallengePurpose::LOGIN, $result->mfaChallenge()?->purpose);
     }
 
     protected function tearDown() : void
     {
         Mockery::close();
+    }
+
+    private function passwordHasher() : PasswordHasher
+    {
+        return new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
+    }
+
+    private function userWithPassword(
+        PasswordHasher $passwordHasher,
+        UserId $userId,
+        string $password,
+        bool $isActive = true
+    ) : User {
+        return User::create(
+            id          : $userId,
+            email       : new UserEmail('user@example.com'),
+            username    : 'user',
+            passwordHash: $passwordHasher->hash($password),
+            roles       : [],
+            permissions : [],
+            isActive    : $isActive
+        );
+    }
+
+    private function startMfaChallenge(InMemoryMfaStore $mfaStore) : StartMfaChallenge
+    {
+        return new StartMfaChallenge(
+            currentAuthentication: new CurrentAuthentication(),
+            mfaStore             : $mfaStore,
+            challengeStore       : new InMemoryMfaChallengeStore(),
+            auditLog             : new InMemoryAuditLog(),
+            clock                : new Clock()
+        );
     }
 }

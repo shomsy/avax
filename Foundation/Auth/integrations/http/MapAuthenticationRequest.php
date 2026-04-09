@@ -49,7 +49,7 @@ final readonly class MapAuthenticationRequest
     private function readHeaderValue(array $headers, string $name) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
-            if (! is_string($candidateKey) || strcasecmp($candidateKey, $name) !== 0) {
+            if (strcasecmp($candidateKey, $name) !== 0) {
                 continue;
             }
 

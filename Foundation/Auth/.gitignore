@@ -1,0 +1,7 @@
+/.phpunit.cache/
+/build/
+/coverage/
+/vendor/
+/composer.phar
+/tooling/local-phpdbg/
+/tooling/local-php-ext/

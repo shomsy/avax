@@ -13,6 +13,68 @@ Concrete records of executed verification.
 
 ## Reports
 
+- `executed_at`: 2026-04-09 21:44 CEST
+- `scope`: mutation execution after installing a repo-local coverage-driver fallback
+- `environment`: local CLI PHP 8.4.11 with repo-local `pcov` loaded via `tooling/run-with-coverage-driver`
+- `checks`: `php composer.phar mutation`
+- `result`: fail
+- `notes`: tooling succeeds and Infection completes; result is a real quality failure, not an environment failure:
+  `312 mutations`, `MSI 30%`, `Mutation Code Coverage 50%`, `Covered Code MSI 59%`, `64 escaped`, `153 uncovered`,
+  `1 error`, `1 timeout`
+
+- `executed_at`: 2026-04-09 21:44 CEST
+- `scope`: covered-only mutation diagnostic pass for critical auth slices
+- `environment`: local CLI PHP 8.4.11 with repo-local `pcov` loaded via `tooling/run-with-coverage-driver`
+- `checks`: `tooling/run-with-coverage-driver vendor/bin/infection --configuration=infection.json.dist --only-covered --show-mutations --threads=16`
+- `result`: fail
+- `notes`: coverage lane is clean and actionable; `613 mutations`, `Mutation Code Coverage 100%`, `MSI 61%`,
+  `Covered Code MSI 61%`, `236 escaped`, `70 timeouts`; strongest surviving signals cluster in `Identity`,
+  `JwtIdentity`, `ChangePassword`, `RefreshAuthentication`, `HmacTokenCodec`, and in-memory token stores
+
+- `executed_at`: 2026-04-09 21:12 CEST
+- `scope`: full PHPUnit suite after restoring the Composer toolchain and strict-review fixes
+- `environment`: local CLI PHP 8.4.11 with local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: PHPUnit now runs end to end; result `OK (89 tests, 200 assertions)`
+
+- `executed_at`: 2026-04-09 21:12 CEST
+- `scope`: baseline static analysis after kernel, adapter, and test hardening
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes on the package with restored autoload and optional adapter seams
+
+- `executed_at`: 2026-04-09 21:12 CEST
+- `scope`: strict static analysis after strict-review fixes
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after tightening header parsing, session cookie normalization, TOTP internals, and
+  iterable type declarations
+
+- `executed_at`: 2026-04-09 21:12 CEST
+- `scope`: PHPUnit hygiene check for deprecations
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `vendor/bin/phpunit --display-phpunit-deprecations --display-deprecations`
+- `result`: pass
+- `notes`: no PHPUnit runtime or configuration deprecations were emitted after migrating `phpunit.xml.dist`
+
+- `executed_at`: 2026-04-09 21:12 CEST
+- `scope`: PHPUnit hygiene check for skipped tests and hidden errors
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `vendor/bin/phpunit --display-skipped --display-errors`
+- `result`: pass
+- `notes`: no tests were skipped; the optional Avax container adapter now executes through a test seam instead of
+  being silently omitted
+
+- `executed_at`: 2026-04-09 21:12 CEST
+- `scope`: mutation verification for security-sensitive auth paths
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `php composer.phar mutation`
+- `result`: partial
+- `notes`: superseded by the 2026-04-09 21:44 CEST mutation runs after the repo-local `pcov` fallback was installed
+
 - `executed_at`: 2026-04-09 19:21 CEST
 - `scope`: syntax validation after kernel and integration boundary extraction
 - `environment`: local CLI PHP 8.4.11 without Composer installed

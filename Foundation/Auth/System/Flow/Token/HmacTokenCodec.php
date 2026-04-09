@@ -39,6 +39,9 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
         ];
     }
 
+    /**
+     * @param array<string, mixed> $claims
+     */
     public function encode(array $claims) : string
     {
         $header = [
@@ -63,6 +66,9 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
         return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     private function encodeJson(array $payload) : string
     {
         try {

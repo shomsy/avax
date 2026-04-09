@@ -11,6 +11,9 @@ use SensitiveParameter;
  */
 final readonly class PasswordHasher
 {
+    /**
+     * @param array<string, int|string|bool> $options
+     */
     public function __construct(
         private string $algo = PASSWORD_DEFAULT,
         private array  $options = ['cost' => 12]

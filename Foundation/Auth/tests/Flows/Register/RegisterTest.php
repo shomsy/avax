@@ -38,17 +38,14 @@ class RegisterTest extends TestCase
         $userSource->shouldReceive('usernameExists')->with($data->username)->andReturn(false);
         $userSource->shouldReceive('create')->once()->andReturnUsing(fn ($user) => $user);
 
-        $passwordHasher = Mockery::mock(PasswordHasher::class);
-        $passwordHasher->shouldReceive('hash')->with('password')->andReturn('hashed_password');
+        $passwordHasher = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
 
-        $idGenerator = Mockery::mock(IdGeneratorInterface::class);
-        $idGenerator->shouldReceive('generate')->andReturn(123456);
-
-        $register = new Register(
-            userSource    : $userSource,
-            passwordHasher: $passwordHasher,
-            idGenerator   : $idGenerator
-        );
+        $idGenerator = new class implements IdGeneratorInterface {
+            public function generate() : int
+            {
+                return 123456;
+            }
+        };
 
         $register = new Register(
             userSource              : $userSource,
@@ -79,8 +76,13 @@ class RegisterTest extends TestCase
         $userSource->shouldReceive('emailExists')->with($data->email)->andReturn(true);
         $userSource->shouldNotReceive('usernameExists');
 
-        $passwordHasher = Mockery::mock(PasswordHasher::class);
-        $idGenerator    = Mockery::mock(IdGeneratorInterface::class);
+        $passwordHasher = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
+        $idGenerator    = new class implements IdGeneratorInterface {
+            public function generate() : int
+            {
+                return 123456;
+            }
+        };
 
         $register = new Register(
             userSource              : $userSource,
@@ -112,8 +114,13 @@ class RegisterTest extends TestCase
         $userSource->shouldReceive('emailExists')->with($data->email)->andReturn(false);
         $userSource->shouldReceive('usernameExists')->with($data->username)->andReturn(true);
 
-        $passwordHasher = Mockery::mock(PasswordHasher::class);
-        $idGenerator    = Mockery::mock(IdGeneratorInterface::class);
+        $passwordHasher = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
+        $idGenerator    = new class implements IdGeneratorInterface {
+            public function generate() : int
+            {
+                return 123456;
+            }
+        };
 
         $register = new Register(
             userSource              : $userSource,

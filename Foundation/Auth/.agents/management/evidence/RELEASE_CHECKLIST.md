@@ -62,3 +62,26 @@ Use snapshots in this shape:
 - `notes`: Syntax and executable smoke paths passed without Composer. Hold remains because PHPUnit, PHPStan on the new
   adapter lane, and end-to-end Avax container verification could not run in this environment after the Composer
   toolchain was removed.
+
+- `snapshot_at`: 2026-04-09 21:12 CEST
+- `release_scope`: AUTH-015 verification recovery and strict hardening across Composer toolchain restore, real test
+  execution, adapter seam coverage, and production-readiness review
+- `decision`: hold
+- `rollback_path`: revert AUTH-015 changeset and restore the prior composer/tooling/test files plus the pre-hardening
+  runtime fixes
+- `smoke_reference`: `.agents/management/evidence/TEST_REPORTS.md`
+- `risk_reference`: `.agents/management/evidence/RISK_REGISTER.md`
+- `notes`: PHPUnit, baseline PHPStan, strict PHPStan, no-skip PHPUnit, and no-deprecation PHPUnit all pass locally.
+  Hold remains only because mutation testing cannot execute in this environment without a PHP coverage driver
+  (`xdebug`, `pcov`, or `phpdbg`).
+
+- `snapshot_at`: 2026-04-09 21:44 CEST
+- `release_scope`: AUTH-016 local coverage-driver installation and mutation-lane repair across repo-local `pcov`,
+  Composer timeout removal, and mutation diagnostics
+- `decision`: hold
+- `rollback_path`: revert AUTH-016 changeset and remove the repo-local coverage tooling plus composer-script changes
+- `smoke_reference`: `.agents/management/evidence/TEST_REPORTS.md`
+- `risk_reference`: `.agents/management/evidence/RISK_REGISTER.md`
+- `notes`: Mutation tooling now runs locally and no longer fails for missing drivers. Hold remains because the actual
+  mutation signal is not production-ready yet: critical slices currently show low MSI, many escaped mutants, and
+  timeout instability under high parallelism.

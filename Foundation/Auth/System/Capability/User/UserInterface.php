@@ -17,8 +17,14 @@ interface UserInterface
 
     public function getPasswordHash() : string;
 
+    /**
+     * @return list<UserRole>
+     */
     public function getRoles() : array;
 
+    /**
+     * @return list<UserPermission>
+     */
     public function getPermissions() : array;
 
     public function hasRole(UserRole $role) : bool;

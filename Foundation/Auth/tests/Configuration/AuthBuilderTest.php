@@ -75,11 +75,14 @@ class AuthBuilderTest extends TestCase
         $identity->shouldReceive('sessionIdentity')->andReturn(null);
         $identity->shouldReceive('jwtIdentity')->andReturn(null);
 
-        $idGenerator = Mockery::mock(IdGeneratorInterface::class);
-        $idGenerator->shouldReceive('generate')->once()->andReturn(987654);
+        $idGenerator = new class implements IdGeneratorInterface {
+            public function generate() : int
+            {
+                return 987654;
+            }
+        };
 
-        $passwordHasher = Mockery::mock(PasswordHasher::class);
-        $passwordHasher->shouldReceive('hash')->with('password')->andReturn('hashed_password');
+        $passwordHasher = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
 
         $builder = new AuthBuilder();
         $auth    = $builder

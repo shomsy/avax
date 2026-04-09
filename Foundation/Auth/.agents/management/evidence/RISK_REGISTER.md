@@ -55,24 +55,26 @@ Tracks active and accepted risks.
 
 - `id`: AUTH-RISK-001
 - `identified_at`: 2026-04-09 15:31 CEST
-- `updated_at`: 2026-04-09 15:31 CEST
-- `severity`: medium
-- `likelihood`: medium
-- `impact`: Full PHPUnit suite and mutation testing cannot be executed in the current CLI environment because required
-  PHP extensions are missing.
-- `mitigation`: Kernel was verified with full syntax pass, PHPStan, and executable smoke scripts; release snapshot
-  remains `hold` until CI or a full local PHP runtime executes PHPUnit and mutation checks.
+- `updated_at`: 2026-04-09 21:44 CEST
+- `severity`: high
+- `likelihood`: high
+- `impact`: Mutation tooling now executes, but the current critical auth slices are not yet mutation-hard enough for a
+  production-ready claim; covered-only diagnostics report `MSI 61%`, `236` escaped mutants, and `70` timeouts.
+- `mitigation`: Add targeted tests for `Identity`, `JwtIdentity`, `ChangePassword`, `RefreshAuthentication`,
+  `HmacTokenCodec`, and token-store invariants; stabilize mutation parallelism and eliminate timeout-prone cases before
+  release.
 - `owner`: local environment
 - `status`: open
 
 - `id`: AUTH-RISK-002
 - `identified_at`: 2026-04-09 15:31 CEST
-- `updated_at`: 2026-04-09 19:21 CEST
+- `updated_at`: 2026-04-09 21:12 CEST
 - `severity`: low
 - `likelihood`: medium
 - `impact`: `Integrations/AvaxContainer/AuthServiceProvider` is an optional adapter and was not exercised end-to-end
   because the real Avax container package is not installed locally.
-- `mitigation`: The adapter is now physically extracted from the kernel, syntax-checked, and covered by a
-  skipped-when-missing test; full runtime verification still requires the external package.
+- `mitigation`: The adapter is now physically extracted from the kernel and executed in PHPUnit through a test seam
+  that mirrors the minimal container contract. Full runtime verification against the external package is still desirable
+  before publish, but kernel correctness no longer depends on that package being present.
 - `owner`: optional adapter
-- `status`: open
+- `status`: accepted

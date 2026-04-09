@@ -18,9 +18,17 @@ final class NativeSessionStore implements SessionStoreInterface
     public function regenerate() : string
     {
         $this->start();
-        session_regenerate_id(delete_old_session: true);
+        if (! session_regenerate_id(delete_old_session: true)) {
+            throw new RuntimeException('Session ID regeneration failed.');
+        }
 
-        return session_id();
+        $sessionId = session_id();
+
+        if ($sessionId === false || $sessionId === '') {
+            throw new RuntimeException('Session ID is unavailable after regeneration.');
+        }
+
+        return $sessionId;
     }
 
     public function start() : void
@@ -34,12 +42,12 @@ final class NativeSessionStore implements SessionStoreInterface
         }
 
         session_set_cookie_params([
-                                      'secure'   => $this->cookieSettings->secure,
-                                      'httponly' => $this->cookieSettings->httpOnly,
-                                      'samesite' => $this->cookieSettings->sameSite,
-                                      'path'     => $this->cookieSettings->path,
-                                      'domain'   => $this->cookieSettings->domain,
-                                  ]);
+            'secure'   => $this->cookieSettings->secure,
+            'httponly' => $this->cookieSettings->httpOnly,
+            'samesite' => $this->cookieSettings->sameSite,
+            'path'     => $this->cookieSettings->path,
+            'domain'   => $this->cookieSettings->domain,
+        ]);
 
         session_start();
     }
@@ -48,7 +56,9 @@ final class NativeSessionStore implements SessionStoreInterface
     {
         $this->start();
 
-        return session_id() !== '' ? session_id() : null;
+        $sessionId = session_id();
+
+        return $sessionId === false || $sessionId === '' ? null : $sessionId;
     }
 
     public function get(string $key) : mixed
@@ -76,19 +86,38 @@ final class NativeSessionStore implements SessionStoreInterface
 
         $_SESSION = [];
 
-        if (ini_get('session.use_cookies')) {
-            $params = session_get_cookie_params();
+        $useCookies = filter_var(ini_get('session.use_cookies'), FILTER_VALIDATE_BOOL);
 
-            setcookie(session_name(), '', [
+        if ($useCookies) {
+            $params = session_get_cookie_params();
+            $sessionName = session_name();
+
+            if ($sessionName === false) {
+                throw new RuntimeException('Session name is unavailable.');
+            }
+
+            setcookie($sessionName, '', [
                 'expires'  => time() - 42000,
                 'path'     => $params['path'],
                 'domain'   => $params['domain'],
-                'secure'   => (bool) $params['secure'],
-                'httponly' => (bool) $params['httponly'],
-                'samesite' => $params['samesite'],
+                'secure'   => $params['secure'],
+                'httponly' => $params['httponly'],
+                'samesite' => $this->normalizeSameSite($params['samesite']),
             ]);
         }
 
         session_destroy();
+    }
+
+    /**
+     * @return 'Lax'|'Strict'|'None'
+     */
+    private function normalizeSameSite(string $sameSite) : string
+    {
+        return match (strtolower($sameSite)) {
+            'strict' => 'Strict',
+            'none' => 'None',
+            default => 'Lax',
+        };
     }
 }

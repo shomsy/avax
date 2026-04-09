@@ -16,7 +16,7 @@ final readonly class UserEmail implements Stringable
         public string $value
     )
     {
-        if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
+        if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
             throw new InvalidArgumentException(message: "Invalid email format: {$value}");
         }
     }

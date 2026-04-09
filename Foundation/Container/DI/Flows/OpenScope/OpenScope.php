@@ -19,8 +19,9 @@ final readonly class OpenScope
     /**
      * Opens one new scope frame.
      */
-    public function open(string $kind = ScopeKind::OPERATION, string $scopeId = '') : void
+    public function open(string|null $kind = null, string $scopeId = '') : void
     {
+        $kind ??= ScopeKind::OPERATION;
         $this->resolver->openScope(kind: $kind, scopeId: $scopeId);
     }
 }

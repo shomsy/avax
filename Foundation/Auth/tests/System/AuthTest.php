@@ -29,6 +29,9 @@ class AuthTest extends TestCase
         Mockery::close();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testAuthFacadeDelegatesToFlows() : void
     {
         $loginFlow = Mockery::mock(Login::class);

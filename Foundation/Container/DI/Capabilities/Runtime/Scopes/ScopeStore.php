@@ -51,8 +51,9 @@ final class ScopeStore
     /**
      * Opens one new nested scope.
      */
-    public function open(string $kind = ScopeKind::OPERATION, string $scopeId = '') : void
+    public function open(string|null $kind = null, string $scopeId = '') : void
     {
+        $kind           ??= ScopeKind::OPERATION;
         $this->scopes[] = [
             'kind' => ScopeKind::normalize(kind: $kind),
             'id' => trim($scopeId),
@@ -132,11 +133,12 @@ final class ScopeStore
      * @throws ContainerException
      */
     public function setFor(
-        string $abstract,
-        mixed $instance,
-        string $kind = ScopeKind::ANY,
-        bool $disposable = false
+        string      $abstract,
+        mixed       $instance,
+        string|null $kind = null,
+        bool        $disposable = false
     ) : void {
+        $kind  ??= ScopeKind::ANY;
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
             $required = ScopeKind::normalize(kind: $kind);
@@ -158,14 +160,15 @@ final class ScopeStore
      * @throws ContainerException
      */
     public function setPooledFor(
-        string $abstract,
-        mixed $instance,
-        string $kind,
-        int $maxSize,
-        bool $resetBeforeReuse = true,
-        bool $disposable = false
+        string    $abstract,
+        mixed     $instance,
+        string    $kind,
+        int       $maxSize,
+        bool|null $resetBeforeReuse = null,
+        bool      $disposable = false
     ) : void {
-        $index = $this->frameIndex(kind: $kind);
+        $resetBeforeReuse ??= true;
+        $index            = $this->frameIndex(kind: $kind);
         if ($index === null) {
             $required = ScopeKind::normalize(kind: $kind);
 

@@ -35,6 +35,9 @@ class AppKernelIntegrationTest extends TestCase
 
     /**
      * @test
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function router_bootstrapper_registers_routes() : void
     {
@@ -53,6 +56,8 @@ class AppKernelIntegrationTest extends TestCase
 
     /**
      * @test
+     * @throws ReflectionException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function app_kernel_handles_complete_request_flow() : void
     {
@@ -85,6 +90,7 @@ class AppKernelIntegrationTest extends TestCase
 
     /**
      * @test
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function middleware_groups_work_in_bootstrapper() : void
     {
@@ -107,6 +113,7 @@ class AppKernelIntegrationTest extends TestCase
 
     /**
      * @test
+     * @throws ReflectionException
      */
     public function route_grouping_preserves_middleware_stack() : void
     {

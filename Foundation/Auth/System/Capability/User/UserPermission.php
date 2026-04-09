@@ -7,10 +7,10 @@ namespace Avax\Auth\System\Capability\User;
 /**
  * Value object representing a permission within the Auth System.
  */
-final class UserPermission
+final readonly class UserPermission
 {
     public function __construct(
-        public readonly string $value
+        public string $value
     ) {}
 
     public function equals(UserPermission $other) : bool

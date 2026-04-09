@@ -80,20 +80,26 @@ final readonly class RouteDefinition
      * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function __construct(
-        string             $method,
-        string             $path,
-        mixed              $action,
-        array              $middleware = [],
-        string             $name = '',
-        array              $constraints = [],
-        array              $defaults = [],
-        string|null        $domain = null,
-        array              $attributes = [],
-        string|null        $authorization = null,
-        array              $parameters = [],
-        array              $metadata = []
+        string      $method,
+        string      $path,
+        mixed       $action,
+        array|null  $middleware = null,
+        string|null $name = null,
+        array|null  $constraints = null,
+        array|null  $defaults = null,
+        string|null $domain = null,
+        array|null  $attributes = null,
+        string|null $authorization = null,
+        array|null  $parameters = null,
+        array       $metadata = []
     )
     {
+        $middleware  ??= [];
+        $name        ??= '';
+        $constraints ??= [];
+        $defaults    ??= [];
+        $attributes  ??= [];
+        $parameters  ??= [];
         $this->validateMethod(method: $method);
         $this->validatePath(path: $path);
         $this->validateAction(action: $action);

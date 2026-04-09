@@ -26,13 +26,14 @@ final readonly class BuildService
      * @throws ContainerException
      */
     public function build(
-        string $class,
-        ServiceResolver $resolver,
-        array $overrides = [],
+        string              $class,
+        ServiceResolver     $resolver,
+        array|null          $overrides = null,
         ResolveRequest|null $request = null
     ) : object {
+        $overrides ??= [];
         $serviceId = $request?->serviceId ?? $class;
-        $path = $request?->getPath() ?? $serviceId;
+        $path      = $request?->getPath() ?? $serviceId;
 
         try {
             $blueprint = $this->blueprints->createFor(class: $class);

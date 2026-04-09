@@ -10,10 +10,10 @@ use Stringable;
 /**
  * Value object representing a user's email within the Auth System.
  */
-final class UserEmail implements Stringable
+final readonly class UserEmail implements Stringable
 {
     public function __construct(
-        public readonly string $value
+        public string $value
     ) {
         if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException(message: "Invalid email format: {$value}");

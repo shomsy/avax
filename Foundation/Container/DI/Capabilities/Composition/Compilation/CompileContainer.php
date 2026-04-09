@@ -68,12 +68,18 @@ final class CompileContainer
      *
      * @param list<string> $serviceIds
      * @param list<string> $validationIssues
-     * @throws ContainerException
+     * @param bool         $warmed
+     *
+     * @return CompiledContainer
+     * @throws JsonException
+     * @throws \ReflectionException
      */
-    public function compile(array $serviceIds = [], array $validationIssues = [], bool $warmed = false) : CompiledContainer
+    public function compile(array|null $serviceIds = null, array|null $validationIssues = null, bool $warmed = false) : CompiledContainer
     {
-        $snapshot = $this->snapshot(serviceIds: $serviceIds);
-        $metadata = $this->metadataFor(
+        $serviceIds       ??= [];
+        $validationIssues ??= [];
+        $snapshot         = $this->snapshot(serviceIds: $serviceIds);
+        $metadata         = $this->metadataFor(
             snapshot        : $snapshot,
             validationIssues: $validationIssues,
             previous        : $this->loadMetadata(quarantineOnFailure: false),
@@ -270,6 +276,7 @@ final class CompileContainer
 
     /**
      * @param list<string> $serviceIds
+     *
      * @return array{
      *     fingerprint: string,
      *     entries: array<string, string>,
@@ -283,6 +290,7 @@ final class CompileContainer
      *     deferred: array<string, bool>,
      *     decorations: array<string, int>
      * }
+     * @throws \ReflectionException
      */
     private function snapshot(array $serviceIds) : array
     {
@@ -418,7 +426,9 @@ final class CompileContainer
 
     /**
      * @param list<string> $serviceIds
+     *
      * @return list<string>
+     * @throws \ReflectionException
      */
     private function collectServiceIds(array $serviceIds) : array
     {
@@ -585,6 +595,7 @@ final class CompileContainer
 
     /**
      * @return list<string>
+     * @throws \ReflectionException
      */
     private function dependenciesForService(string $serviceId) : array
     {
@@ -658,6 +669,7 @@ PHP;
     }
 
     /**
+     * @throws JsonException
      */
     private function write(string $source, ArtifactMetadata $metadata) : void
     {

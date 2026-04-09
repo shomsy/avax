@@ -51,6 +51,7 @@ class AccessBoundaryTest extends TestCase
 
     /**
      * @throws \Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied
+     * @throws Unauthenticated
      */
     public function testRequirePermissionSuccess() : void
     {
@@ -80,6 +81,9 @@ class AccessBoundaryTest extends TestCase
         $boundary->execute(permission: new UserPermission(value: 'any'));
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function testRequirePermissionFailurePermissionMissing() : void
     {
         $permission = new UserPermission(value: 'write');

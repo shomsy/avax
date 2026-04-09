@@ -19,8 +19,13 @@ final class InjectProperties
     private array $writers = [];
 
     /**
+     * @param object               $target
+     * @param ServiceBlueprint     $blueprint
      * @param array<string, mixed> $overrides
-     * @throws ContainerException
+     * @param ServiceResolver      $resolver
+     * @param ResolveRequest       $request
+     *
+     * @throws \Throwable
      */
     public function inject(
         object $target,

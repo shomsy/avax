@@ -6,6 +6,7 @@ namespace Avax\HTTP\Router\Kernel;
 
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Routing\Exceptions\MethodNotAllowedException;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteExecutor;
@@ -58,10 +59,12 @@ final readonly class RouterKernel
      *
      * @return ResponseInterface The HTTP response produced after processing.
      *
-     * @throws ReflectionException Signals issues with runtime reflection in the pipeline processing.
      * @throws ContainerExceptionInterface Indicates a container-related error occurred.
-     * @throws NotFoundExceptionInterface Indicates a requested service was not found.
      * @throws InvalidConstraintException
+     * @throws NotFoundExceptionInterface Indicates a requested service was not found.
+     * @throws ReflectionException Signals issues with runtime reflection in the pipeline processing.
+     * @throws Throwable
+     * @throws ReservedRouteNameException
      */
     public function handle(Request $request) : ResponseInterface
     {

@@ -33,6 +33,7 @@ final readonly class ServiceCompiler
      *   registrationArguments: array<string, mixed>,
      *   needsFinish: bool
      * }
+     * @throws \ReflectionException
      */
     public function describe(string $serviceId) : array
     {
@@ -120,7 +121,10 @@ final readonly class ServiceCompiler
     }
 
     /**
+     * @param string $serviceId
+     *
      * @return array{serviceId: string, method: string, signature: string, source: string}
+     * @throws \ReflectionException
      */
     public function compile(string $serviceId) : array
     {
@@ -136,6 +140,9 @@ final readonly class ServiceCompiler
         return class_exists($serviceId) ? $serviceId : null;
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function dynamicSignature(mixed $candidate) : string
     {
         if ($candidate instanceof Closure) {

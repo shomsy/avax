@@ -18,8 +18,9 @@ final readonly class ExportGraph
     /**
      * @param array<string, mixed> $context
      */
-    public function debugGraph(string $id = '', array $context = []) : array
+    public function debugGraph(string|null $id = null, array $context = []) : array
     {
+        $id ??= '';
         if ($context === []) {
             return $this->resolver->debugGraph(id: $id);
         }
@@ -30,8 +31,11 @@ final readonly class ExportGraph
     /**
      * @param array<string, mixed> $context
      */
-    public function export(string $format = 'json', string $kind = 'dependency', string $id = '', array $context = []) : string
+    public function export(string|null $format = null, string|null $kind = null, string|null $id = null, array $context = []) : string
     {
+        $format ??= 'json';
+        $kind   ??= 'dependency';
+        $id     ??= '';
         if ($context === []) {
             return $this->resolver->exportGraph(format: $format, kind: $kind, id: $id);
         }
@@ -47,8 +51,10 @@ final readonly class ExportGraph
     /**
      * @param array<string, mixed> $context
      */
-    public function diff(string $format = 'json', string $id = '', array $context = []) : string
+    public function diff(string|null $format = null, string|null $id = null, array $context = []) : string
     {
+        $format ??= 'json';
+        $id     ??= '';
         if ($context === []) {
             return $this->resolver->diffGraph(format: $format, id: $id);
         }
@@ -112,8 +118,9 @@ final readonly class ExportGraph
      * @param array<string, mixed> $context
      * @return array<string, mixed>
      */
-    public function showSlice(string $slice = '', array $context = []) : array
+    public function showSlice(string|null $slice = null, array $context = []) : array
     {
+        $slice ??= '';
         if ($context === []) {
             return $this->resolver->debugSlice(slice: $slice);
         }

@@ -62,10 +62,11 @@ final class RouterTrace
      * @param array  $autoEnrich Automatic enrichment flags
      */
     public function record(
-        string $event,
-        array $context = [],
-        array $autoEnrich = ['request_id', 'memory', 'route']
+        string     $event,
+        array|null $context = null,
+        array      $autoEnrich = ['request_id', 'memory', 'route']
     ): void {
+        $context         ??= [];
         $enrichedContext = $context;
 
         // Auto-enrich with request ID if available
@@ -186,6 +187,8 @@ final class RouterTrace
 
     /**
      * Export enriched trace data in JSON format for ELK stack.
+     *
+     * @throws JsonException
      */
     public function exportJson(): string {
         $traceData = [

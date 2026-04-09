@@ -12,7 +12,6 @@ use Avax\Container\DI\Capabilities\Declaration\Ownership\Views\FlowSliceView;
 use Avax\Container\DI\Capabilities\Declaration\Ownership\Views\FoundationSliceView;
 use Avax\Container\DI\Capabilities\Declaration\Ownership\Views\RootCompositionView;
 use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
-use Avax\Container\DI\ContainerInterface;
 use Avax\Container\DI\Flows\CallFunction\CallFunction;
 use Avax\Container\DI\Flows\BootProviders\BootProviders;
 use Avax\Container\DI\Flows\CloseScope\CloseScope;

@@ -19,6 +19,9 @@ final readonly class ArtifactBenchmarkPeerAdapter implements BenchmarkPeerAdapte
         return $this->peerName;
     }
 
+    /**
+     * @throws JsonException
+     */
     public function load() : array
     {
         if (! is_file($this->path)) {

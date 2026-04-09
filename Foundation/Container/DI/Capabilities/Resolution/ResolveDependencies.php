@@ -86,8 +86,12 @@ final class ResolveDependencies
 
     /**
      * @param array{name: string, serviceId: string|null, source: string, inputName: string, hasDefault: bool, default: string, allowsNull: bool} $parameter
-     * @param array<string, mixed> $overrides
-     * @throws ContainerException
+     * @param array<string, mixed>                                                                                                                $overrides
+     * @param ServiceResolver                                                                                                                     $resolver
+     * @param ResolveRequest|null                                                                                                                 $request
+     *
+     * @return mixed
+     * @throws \Throwable
      */
     private function resolveCompiledParameter(
         array $parameter,

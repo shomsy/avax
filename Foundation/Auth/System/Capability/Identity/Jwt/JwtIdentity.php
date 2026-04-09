@@ -24,9 +24,12 @@ final class JwtIdentity implements JwtIdentityInterface
     public function __construct(
         private UserSourceInterface          $userSource,
         #[SensitiveParameter] private string $secret,
-        private string                       $algorithm = 'HS256',
+        private string|null                  $algorithm = null,
         private int                          $tokenExpiry = 3600
-    ) {}
+    )
+    {
+        $this->algorithm ??= 'HS256';
+    }
 
     public function issue(User $user) : string
     {

@@ -12,10 +12,10 @@ use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistration;
 /**
  * Composes isolated test containers with ownership-aware defaults.
  */
-final class TestComposition
+final readonly class TestComposition
 {
     private function __construct(
-        private readonly Container $container
+        private Container $container
     ) {}
 
     public static function create(CreateContainerConfig|null $config = null) : self
@@ -31,12 +31,13 @@ final class TestComposition
     }
 
     public function bindFlow(
-        string $slice,
-        string $abstract,
-        mixed $concrete = null,
-        bool $entry = false,
-        array $imports = []
+        string    $slice,
+        string    $abstract,
+        mixed     $concrete = null,
+        bool|null $entry = null,
+        array     $imports = []
     ) : ServiceRegistration {
+        $entry        ??= false;
         $registration = $this->container->bind(abstract: $abstract, concrete: $concrete)
             ->asFlow(ownerSlice: $slice)
             ->asPrivate();

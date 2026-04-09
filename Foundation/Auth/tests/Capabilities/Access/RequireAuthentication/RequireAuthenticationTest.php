@@ -20,6 +20,9 @@ class RequireAuthenticationTest extends TestCase
         Mockery::close();
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function testRequireAuthenticationSuccess() : void
     {
         $checkAuthentication = Mockery::mock(CheckAuthentication::class);

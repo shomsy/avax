@@ -132,7 +132,10 @@ $container->get(LazySingletonService::class);
 assertSame(1, AdvancedLifetimeSequence::$lazySingletons, 'Lazy shared services should build on first resolve.');
 
 assertThrows(
-    ContainerException::class,
+/**
+ * @throws \Psr\Container\ContainerExceptionInterface
+ * @throws \Psr\Container\NotFoundExceptionInterface
+ */ ContainerException::class,
     static fn() => $container->get(RequestScopedDisposableService::class),
     'Request-scoped services should require an active request scope.'
 );
@@ -146,7 +149,10 @@ $container->closeScope(ScopeKind::REQUEST);
 assertSame(1, AdvancedLifetimeSequence::$requestDisposals, 'Closing a request scope should dispose request-owned disposable services.');
 
 assertThrows(
-    ContainerException::class,
+/**
+ * @throws \Psr\Container\ContainerExceptionInterface
+ * @throws \Psr\Container\NotFoundExceptionInterface
+ */ ContainerException::class,
     static fn() => $container->get(JobScopedService::class),
     'Job-scoped services should require an active job scope.'
 );

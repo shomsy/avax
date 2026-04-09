@@ -9,7 +9,6 @@ use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteGroupStack;
-use Avax\HTTP\Router\Support\RouteCollector;
 use Avax\HTTP\Router\Support\RouteRegistry;
 
 /**

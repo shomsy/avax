@@ -340,15 +340,17 @@ final class ServiceRegistration
     }
 
     public function pooled(
-        int $maxSize = 8,
-        string $scopeKind = ScopeKind::OPERATION,
-        bool $resetBeforeReuse = true
+        int|null    $maxSize = null,
+        string|null $scopeKind = null,
+        bool        $resetBeforeReuse = true
     ) : self {
-        $this->lifetime = PooledLifetime::NAME;
-        $this->poolSize = max(1, $maxSize);
-        $this->poolScopeKind = ScopeKind::normalize(kind: $scopeKind);
+        $maxSize                    ??= 8;
+        $scopeKind                  ??= ScopeKind::OPERATION;
+        $this->lifetime             = PooledLifetime::NAME;
+        $this->poolSize             = max(1, $maxSize);
+        $this->poolScopeKind        = ScopeKind::normalize(kind: $scopeKind);
         $this->poolResetBeforeReuse = $resetBeforeReuse;
-        $this->warm = false;
+        $this->warm                 = false;
 
         return $this;
     }

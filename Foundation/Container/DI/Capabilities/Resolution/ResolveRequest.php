@@ -7,18 +7,18 @@ namespace Avax\Container\DI\Capabilities\Resolution;
 /**
  * Carries one service resolution request and its local context.
  */
-final class ResolveRequest
+final readonly class ResolveRequest
 {
     /**
      * @param array<string, mixed> $overrides
      */
     public function __construct(
-        public readonly string $serviceId,
-        public readonly array $overrides = [],
-        public readonly array $context = [],
-        public readonly ResolveRequest|null $parent = null,
-        public readonly bool $manualInjection = false,
-        public readonly string|null $consumer = null
+        public string      $serviceId,
+        public array       $overrides = [],
+        public array       $context = [],
+        public self|null   $parent = null,
+        public bool        $manualInjection = false,
+        public string|null $consumer = null
     ) {}
 
     /**

@@ -23,6 +23,10 @@ class RequirePermissionTest extends TestCase
         Mockery::close();
     }
 
+    /**
+     * @throws Unauthenticated
+     * @throws PermissionDenied
+     */
     public function testRequirePermissionSuccess() : void
     {
         $permission = new UserPermission(value: 'delete_user');
@@ -40,6 +44,9 @@ class RequirePermissionTest extends TestCase
         $this->assertTrue(condition: true); // No exception thrown
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function testRequirePermissionFailure() : void
     {
         $permission = new UserPermission(value: 'delete_user');
@@ -58,6 +65,9 @@ class RequirePermissionTest extends TestCase
         $requirement->execute(permission: $permission);
     }
 
+    /**
+     * @throws PermissionDenied
+     */
     public function testRequirePermissionFailureUserNotLoggedIn() : void
     {
         $permission = new UserPermission(value: 'delete_user');

@@ -8,7 +8,6 @@ use Avax\Container\DI\Container;
 use Avax\Container\DI\ContainerInterface;
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
-use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
 use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
 use Avax\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
 use Avax\Container\DI\Capabilities\Runtime\LazyProxy;
@@ -205,13 +204,18 @@ function benchmark(callable $callback, int $iterations = 1) : array
  * @param array<string, mixed> $settings
  */
 function benchContainer(
-    array $settings = [],
-    string $compileMode = CreateContainerConfig::COMPILE_MODE_PRODUCTION,
-    bool $debug = false,
-    string $diagnosticsMode = CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL,
-    string $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED
+    array|null  $settings = null,
+    string|null $compileMode = null,
+    bool|null   $debug = null,
+    string|null $diagnosticsMode = null,
+    string      $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED
 ) : Container
 {
+    $settings        ??= [];
+    $compileMode     ??= CreateContainerConfig::COMPILE_MODE_PRODUCTION;
+    $debug           ??= false;
+    $diagnosticsMode ??= CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL;
+
     return makeTestContainer(CreateContainerConfig::create(
         cacheDir: sys_get_temp_dir() . '/container-bench-' . uniqid(),
         cacheVersion: 'bench-' . uniqid(),

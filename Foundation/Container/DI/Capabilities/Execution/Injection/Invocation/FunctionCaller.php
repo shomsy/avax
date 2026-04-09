@@ -38,14 +38,19 @@ final class FunctionCaller
     /**
      * Calls one target with container-resolved arguments.
      *
+     * @param callable|string      $target
      * @param array<string, mixed> $parameters
-     * @throws ContainerException
+     * @param ResolveRequest|null  $request
+     *
+     * @return mixed
+     * @throws \ReflectionException
      */
     public function call(
-        callable|string $target,
-        array $parameters = [],
+        callable|string     $target,
+        array|null          $parameters = null,
         ResolveRequest|null $request = null
     ) : mixed {
+        $parameters ??= [];
         if ($this->resolver === null) {
             throw new ContainerException(message: 'FunctionCaller is not attached to a resolver.');
         }
@@ -71,6 +76,9 @@ final class FunctionCaller
         return $reflection->invokeArgs($arguments);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function normalizeTarget(callable|string $target, ResolveRequest|null $request = null) : callable|string|array
     {
         $context = $request?->context ?? [];
@@ -121,6 +129,9 @@ final class FunctionCaller
         return $target;
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function reflect(callable|string|array $target) : ReflectionFunctionAbstract
     {
         if (is_array($target)) {

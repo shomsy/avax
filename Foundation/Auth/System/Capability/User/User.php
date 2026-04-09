@@ -10,20 +10,20 @@ use Stringable;
 /**
  * User entity within the Avax Auth System.
  */
-final class User implements UserInterface, Stringable
+final readonly class User implements UserInterface, Stringable
 {
     /**
      * @param array<UserRole> $roles
      * @param array<UserPermission> $permissions
      */
     public function __construct(
-        public readonly UserId                          $id,
-        #[SensitiveParameter] public readonly UserEmail $email,
-        public readonly string                          $username,
-        #[SensitiveParameter] public readonly string    $passwordHash,
-        public readonly array                           $roles = [],
-        public readonly array                           $permissions = [],
-        public readonly bool                            $isActive = true
+        public UserId                          $id,
+        #[SensitiveParameter] public UserEmail $email,
+        public string                          $username,
+        #[SensitiveParameter] public string    $passwordHash,
+        public array                           $roles = [],
+        public array                           $permissions = [],
+        public bool                            $isActive = true
     ) {}
 
     public static function create(
@@ -31,10 +31,13 @@ final class User implements UserInterface, Stringable
         #[SensitiveParameter] UserEmail $email,
         string                          $username,
         #[SensitiveParameter] string    $passwordHash,
-        array                           $roles = [],
-        array                           $permissions = [],
+        array|null                      $roles = null,
+        array|null                      $permissions = null,
         bool                            $isActive = true
     ) : self {
+        $roles       ??= [];
+        $permissions ??= [];
+
         return new self(id: $id, email: $email, username: $username, passwordHash: $passwordHash, roles: $roles, permissions: $permissions, isActive: $isActive);
     }
 

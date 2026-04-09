@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Container\DI;
 
 use Avax\Container\DI\Capabilities\Composition\Compilation\CompileReport;
-use Avax\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
 use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
 use Avax\Container\DI\Capabilities\Execution\Injection\Reports\InjectionReport;
 use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistryInterface;

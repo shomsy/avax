@@ -25,6 +25,7 @@ class RequireRoleTest extends TestCase
 
     /**
      * @throws \Avax\Auth\System\Capability\Access\RequireRole\RoleDenied
+     * @throws Unauthenticated
      */
     public function testRequireRoleSuccess() : void
     {
@@ -43,6 +44,9 @@ class RequireRoleTest extends TestCase
         $this->assertTrue(condition: true); // No exception thrown
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function testRequireRoleFailure() : void
     {
         $role = UserRole::ADMIN;
@@ -61,6 +65,9 @@ class RequireRoleTest extends TestCase
         $requirement->execute(requiredRole: $role);
     }
 
+    /**
+     * @throws RoleDenied
+     */
     public function testRequireRoleFailureUserNotLoggedIn() : void
     {
         $role = UserRole::ADMIN;

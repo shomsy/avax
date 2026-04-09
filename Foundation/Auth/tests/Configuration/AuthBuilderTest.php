@@ -58,6 +58,9 @@ class AuthBuilderTest extends TestCase
         $this->assertInstanceOf(expected: Auth::class, actual: $auth);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testAuthBuilderUsesConfiguredIdGenerator() : void
     {
         $data = new RegistrationData(

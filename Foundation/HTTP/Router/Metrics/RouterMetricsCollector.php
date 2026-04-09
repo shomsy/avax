@@ -73,10 +73,11 @@ final class RouterMetricsCollector
      * Record cache operation metrics.
      */
     public function recordCacheOperation(
-        string $operation, // 'hit', 'miss', 'write', 'invalidate'
-        string $cacheType = 'routes',
-        float $durationMs = 0.0
+        string      $operation, // 'hit', 'miss', 'write', 'invalidate'
+        string|null $cacheType = null,
+        float       $durationMs = 0.0
     ): void {
+        $cacheType ??= 'routes';
         $this->increment(name: 'cache_operations_total', labels: [
             'operation' => $operation,
             'type' => $cacheType

@@ -7,8 +7,10 @@ namespace Avax\Auth\System\Capability\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capability\Identity\Session\SessionIdentityInterface;
 use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
+use DateTimeImmutable;
 use InvalidArgumentException;
-use SensitiveParameter;
 
 /**
  * Unified identity façade that coordinates session and JWT authentication state.
@@ -16,8 +18,8 @@ use SensitiveParameter;
 final readonly class Identity implements IdentityInterface
 {
     public function __construct(
-        #[SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
-        #[SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
+        private SessionIdentityInterface|null $sessionIdentity = null,
+        private JwtIdentityInterface|null     $jwtIdentity = null
     )
     {
         if ($this->sessionIdentity === null && $this->jwtIdentity === null) {
@@ -25,59 +27,65 @@ final readonly class Identity implements IdentityInterface
         }
     }
 
-    public function issue(User $user) : string|null
+    public function issue(User $user, DateTimeImmutable|null $mfaVerifiedAt = null) : IssuedAuthentication
     {
         if (! $user->isActive()) {
             throw new InvalidArgumentException(message: 'Inactive users cannot be authenticated.');
         }
 
-        $this->sessionIdentity?->issue(userId: $user->getId()->value);
+        $sessionId    = $this->sessionIdentity?->issue(
+            userId       : $user->getId()->value,
+            mfaVerifiedAt: $mfaVerifiedAt
+        );
+        $accessToken  = $this->jwtIdentity?->issue(user: $user, mfaVerifiedAt: $mfaVerifiedAt);
+        $refreshToken = $this->jwtIdentity?->issueRefreshToken(user: $user, mfaVerifiedAt: $mfaVerifiedAt);
 
-        return $this->jwtIdentity?->issue(user: $user);
-
+        return new IssuedAuthentication(
+            mode         : $this->resolveMode(),
+            sessionId    : $sessionId,
+            accessToken  : $accessToken,
+            refreshToken : $refreshToken,
+            mfaVerifiedAt: $mfaVerifiedAt
+        );
     }
 
-    public function authenticate(#[SensitiveParameter] string $token) : void
+    private function resolveMode() : AuthenticationMode
     {
-        $this->jwtIdentity?->authenticate(token: $token);
+        if ($this->sessionIdentity !== null && $this->jwtIdentity !== null) {
+            return AuthenticationMode::HYBRID;
+        }
+
+        if ($this->sessionIdentity !== null) {
+            return AuthenticationMode::SESSION;
+        }
+
+        return AuthenticationMode::TOKEN;
     }
 
-    public function clear() : void
+    public function clear(AuthenticationContext|null $context = null) : void
     {
         $this->sessionIdentity?->clear();
 
-        $this->jwtIdentity?->clear();
-    }
-
-    public function check() : bool
-    {
-        if ($this->sessionIdentity?->check() === true) {
-            return true;
+        if (
+            $context !== null
+            && $this->jwtIdentity !== null
+            && $context->accessTokenId() !== null
+            && $context->accessTokenExpiresAt() !== null
+        ) {
+            $this->jwtIdentity->revoke(
+                tokenId  : $context->accessTokenId(),
+                expiresAt: $context->accessTokenExpiresAt()
+            );
         }
-
-        return $this->jwtIdentity?->check() ?? false;
     }
 
-    public function token() : string|null
+    public function sessionIdentity() : SessionIdentityInterface|null
     {
-        return $this->jwtIdentity?->token();
+        return $this->sessionIdentity;
     }
 
-    public function getUserId() : int|null
+    public function jwtIdentity() : JwtIdentityInterface|null
     {
-        if ($this->sessionIdentity !== null) {
-            $sessionUserId = $this->sessionIdentity->getUserId();
-
-            if ($sessionUserId !== null) {
-                return $sessionUserId;
-            }
-        }
-
-        return $this->jwtIdentity?->getCurrentUser()?->getId()->value;
-    }
-
-    public function getCurrentUser() : User|null
-    {
-        return $this->jwtIdentity?->getCurrentUser();
+        return $this->jwtIdentity;
     }
 }

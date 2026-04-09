@@ -6,7 +6,7 @@ namespace Avax\Auth\System\Capability\Access\RequireRole;
 
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\User\UserRole;
-use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 
 /**
  * Requirement for specific roles within the Auth System.
@@ -16,7 +16,7 @@ use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 final readonly class RequireRole
 {
     public function __construct(
-        private ReadCurrentUser $readCurrentUser
+        private CurrentAuthentication $currentAuthentication
     ) {}
 
     /**
@@ -25,7 +25,7 @@ final readonly class RequireRole
      */
     public function execute(UserRole $requiredRole) : void
     {
-        $user = $this->readCurrentUser->execute();
+        $user = $this->currentAuthentication->read()->user();
 
         if ($user === null) {
             throw new Unauthenticated();

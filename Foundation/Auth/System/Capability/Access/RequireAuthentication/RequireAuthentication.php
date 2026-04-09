@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Access\RequireAuthentication;
 
-use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
-use SensitiveParameter;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 
 /**
  * Requirement for authentication presence.
@@ -15,7 +14,7 @@ use SensitiveParameter;
 final readonly class RequireAuthentication
 {
     public function __construct(
-        #[SensitiveParameter] private CheckAuthentication $checkAuthentication
+        private CurrentAuthentication $currentAuthentication
     ) {}
 
     /**
@@ -23,7 +22,7 @@ final readonly class RequireAuthentication
      */
     public function execute() : void
     {
-        if (! $this->checkAuthentication->execute()) {
+        if (! $this->currentAuthentication->read()->isAuthenticated()) {
             throw new Unauthenticated();
         }
     }

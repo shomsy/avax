@@ -6,10 +6,15 @@ namespace Avax\Auth\System\Flow\Login;
 
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
-use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
-use Exception;
+use Avax\Auth\System\Flow\Mfa\Challenge\StartMfaChallenge;
+use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use SensitiveParameter;
 
 /**
@@ -23,15 +28,18 @@ final readonly class Login
         private UserSourceInterface                     $userSource,
         #[SensitiveParameter] private PasswordHasher    $passwordHasher,
         #[SensitiveParameter] private IdentityInterface $identity,
+        private ProjectAuthenticatedUser                $projectAuthenticatedUser,
+        private CurrentAuthentication                   $currentAuthentication,
+        private AuditLogInterface                       $auditLog,
+        private MfaStoreInterface                       $mfaStore,
+        private StartMfaChallenge                       $startMfaChallenge,
         private LoginRateLimit|null                     $rateLimit = null
     ) {}
 
     /**
-     * Execute the login flow.
-     *
-     * @throws Exception
+     * @throws AuthenticationFailed
      */
-    public function execute(#[SensitiveParameter] Credentials $credentials) : User
+    public function execute(#[SensitiveParameter] Credentials $credentials) : AuthenticationResult
     {
         $this->rateLimit?->check(identifier: $credentials->identifier);
 
@@ -43,14 +51,61 @@ final readonly class Login
             || ! $user->isActive()
         ) {
             $this->rateLimit?->recordFailed(identifier: $credentials->identifier);
+            $this->auditLog->record(new AuditEvent(
+                                        name      : 'auth.login.failed',
+                                        occurredAt: new \DateTimeImmutable(),
+                                        context   : [
+                                                        'identifier' => strtolower($credentials->identifier),
+                                                        'ip_address' => $credentials->ipAddress,
+                                                        'user_agent' => $credentials->userAgent,
+                                                    ]
+                                    ));
 
-            throw new Exception(message: 'Invalid credentials.', code: 401);
+            throw AuthenticationFailed::invalidCredentials();
         }
 
-        $this->identity->issue(user: $user);
+        if ($this->mfaStore->isEnabled($user->getId())) {
+            $challenge = $this->startMfaChallenge->issueForLogin(
+                user     : $user,
+                ipAddress: $credentials->ipAddress,
+                userAgent: $credentials->userAgent
+            );
+
+            return AuthenticationResult::mfaRequired(
+                user     : $this->projectAuthenticatedUser->fromUser($user),
+                challenge: $challenge
+            );
+        }
+
+        $issued  = $this->identity->issue(user: $user);
+        $context = AuthenticationContext::authenticated(
+            user                : $this->projectAuthenticatedUser->fromUser($user),
+            mode                : $issued->mode,
+            sessionId           : $issued->sessionId,
+            accessTokenId       : $issued->accessToken?->tokenId,
+            accessTokenExpiresAt: $issued->accessToken?->expiresAt,
+            refreshTokenId      : $issued->refreshToken?->tokenId,
+            mfaVerifiedAt       : $issued->mfaVerifiedAt
+        );
+
+        $this->currentAuthentication->store($context);
 
         $this->rateLimit?->reset(identifier: $credentials->identifier);
+        $this->auditLog->record(new AuditEvent(
+                                    name      : 'auth.login.succeeded',
+                                    occurredAt: new \DateTimeImmutable(),
+                                    context   : [
+                                                    'user_id'    => $user->getId()->value,
+                                                    'mode'       => $issued->mode->value,
+                                                    'ip_address' => $credentials->ipAddress,
+                                                    'user_agent' => $credentials->userAgent,
+                                                ]
+                                ));
 
-        return $user;
+        return AuthenticationResult::success(
+            context     : $context,
+            accessToken : $issued->accessToken?->token,
+            refreshToken: $issued->refreshToken?->token
+        );
     }
 }

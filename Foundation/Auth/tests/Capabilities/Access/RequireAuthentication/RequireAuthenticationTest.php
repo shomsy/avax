@@ -6,8 +6,10 @@ namespace Avax\Auth\Tests\Capability\Access\RequireAuthentication;
 
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
-use Mockery;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -20,10 +22,13 @@ class RequireAuthenticationTest extends TestCase
      */
     public function testRequireAuthenticationSuccess() : void
     {
-        $checkAuthentication = Mockery::mock(CheckAuthentication::class);
-        $checkAuthentication->shouldReceive('execute')->andReturn(true);
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(AuthenticationContext::authenticated(
+            user: new AuthenticatedUser(id: 1, email: 'user@example.com', username: 'user'),
+            mode: AuthenticationMode::SESSION
+        ));
 
-        $requirement = new RequireAuthentication(checkAuthentication: $checkAuthentication);
+        $requirement = new RequireAuthentication(currentAuthentication: $currentAuthentication);
         $requirement->execute();
 
         $this->assertTrue(condition: true); // No exception thrown
@@ -31,18 +36,10 @@ class RequireAuthenticationTest extends TestCase
 
     public function testRequireAuthenticationFailure() : void
     {
-        $checkAuthentication = Mockery::mock(CheckAuthentication::class);
-        $checkAuthentication->shouldReceive('execute')->andReturn(false);
-
-        $requirement = new RequireAuthentication(checkAuthentication: $checkAuthentication);
+        $requirement = new RequireAuthentication(currentAuthentication: new CurrentAuthentication());
 
         $this->expectException(exception: Unauthenticated::class);
 
         $requirement->execute();
-    }
-
-    protected function tearDown() : void
-    {
-        Mockery::close();
     }
 }

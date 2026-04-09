@@ -7,10 +7,11 @@ namespace Avax\Auth\Tests\Capability\Access\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
-use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserPermission;
-use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
-use Mockery;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -24,16 +25,19 @@ class RequirePermissionTest extends TestCase
      */
     public function testRequirePermissionSuccess() : void
     {
-        $permission = new UserPermission(value: 'delete_user');
-        $user       = Mockery::mock(User::class);
-        $user->shouldReceive('hasPermission')
-            ->with($permission)
-            ->andReturn(true);
+        $permission            = new UserPermission(value: 'delete_user');
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(AuthenticationContext::authenticated(
+            user: new AuthenticatedUser(
+                      id         : 1,
+                      email      : 'delete@example.com',
+                      username   : 'deleter',
+                      permissions: ['delete_user']
+                  ),
+            mode: AuthenticationMode::SESSION
+        ));
 
-        $readCurrentUser = Mockery::mock(ReadCurrentUser::class);
-        $readCurrentUser->shouldReceive('execute')->andReturn($user);
-
-        $requirement = new RequirePermission(readCurrentUser: $readCurrentUser);
+        $requirement = new RequirePermission(currentAuthentication: $currentAuthentication);
         $requirement->execute(permission: $permission);
 
         $this->assertTrue(condition: true); // No exception thrown
@@ -44,20 +48,21 @@ class RequirePermissionTest extends TestCase
      */
     public function testRequirePermissionFailure() : void
     {
-        $permission = new UserPermission(value: 'delete_user');
-        $user       = Mockery::mock(User::class);
-        $user->shouldReceive('hasPermission')
-            ->with($permission)
-            ->andReturn(false);
+        $permission            = new UserPermission(value: 'delete_user');
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(AuthenticationContext::authenticated(
+            user: new AuthenticatedUser(id: 1, email: 'user@example.com', username: 'user'),
+            mode: AuthenticationMode::SESSION
+        ));
 
-        $readCurrentUser = Mockery::mock(ReadCurrentUser::class);
-        $readCurrentUser->shouldReceive('execute')->andReturn($user);
-
-        $requirement = new RequirePermission(readCurrentUser: $readCurrentUser);
-
-        $this->expectException(exception: PermissionDenied::class);
-
-        $requirement->execute(permission: $permission);
+        $requirement = new RequirePermission(currentAuthentication: $currentAuthentication);
+        try {
+            $requirement->execute(permission: $permission);
+            self::fail('PermissionDenied was not raised.');
+        } catch (PermissionDenied $exception) {
+            $this->assertSame('Access denied.', $exception->getMessage());
+            $this->assertSame('delete_user', $exception->requirement()->value);
+        }
     }
 
     /**
@@ -65,20 +70,11 @@ class RequirePermissionTest extends TestCase
      */
     public function testRequirePermissionFailureUserNotLoggedIn() : void
     {
-        $permission = new UserPermission(value: 'delete_user');
-
-        $readCurrentUser = Mockery::mock(ReadCurrentUser::class);
-        $readCurrentUser->shouldReceive('execute')->andReturn(null);
-
-        $requirement = new RequirePermission(readCurrentUser: $readCurrentUser);
+        $permission  = new UserPermission(value: 'delete_user');
+        $requirement = new RequirePermission(currentAuthentication: new CurrentAuthentication());
 
         $this->expectException(exception: Unauthenticated::class);
 
         $requirement->execute(permission: $permission);
-    }
-
-    protected function tearDown() : void
-    {
-        Mockery::close();
     }
 }

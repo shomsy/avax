@@ -1,0 +1,20 @@
+{
+  "$schema": "https://infection.github.io/schema.json",
+  "source": {
+    "directories": [
+      "System/Flow/Mfa",
+      "System/Flow/ChangePassword",
+      "System/Capability/Identity",
+      "System/Flow/Token"
+    ]
+  },
+  "logs": {
+    "summary": "build/infection-summary.log"
+  },
+  "phpUnit": {
+    "configDir": "."
+  },
+  "mutators": {
+    "@default": true
+  }
+}

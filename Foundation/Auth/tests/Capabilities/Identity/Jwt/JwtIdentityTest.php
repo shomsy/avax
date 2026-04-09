@@ -8,7 +8,12 @@ use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserEmail;
 use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\Token\HmacTokenCodec;
+use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Foundation\Clock;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -18,7 +23,7 @@ use PHPUnit\Framework\TestCase;
  */
 class JwtIdentityTest extends TestCase
 {
-    public function testJwtIdentityIssueAuthenticateAndClearCycle() : void
+    public function testJwtIdentityIssueResolveAndRevokeCycle() : void
     {
         $user = new User(
             id          : new UserId(value: 7),
@@ -27,34 +32,27 @@ class JwtIdentityTest extends TestCase
             passwordHash: 'hash'
         );
 
-        $userSource = Mockery::mock(UserSourceInterface::class);
-        $userSource->shouldReceive('findById')
-            ->with(Mockery::on(fn ($id) => $id instanceof UserId && $id->value === 7))
-            ->andReturn($user);
+        $userSource = new InMemoryUserSource();
+        $userSource->create($user);
+        $revocationStore = new InMemoryTokenRevocationStore();
 
         $jwt = new JwtIdentity(
-            userSource: $userSource,
-            secret    : 'super-secret-key'
+            userSource       : $userSource,
+            codec            : new HmacTokenCodec(secret: 'super-secret-key'),
+            clock            : new Clock(),
+            revocationStore  : $revocationStore,
+            refreshTokenStore: new InMemoryRefreshTokenStore()
         );
 
-        $token = $jwt->issue(user: $user);
+        $issued   = $jwt->issue(user: $user);
+        $resolved = $jwt->resolve($issued->token);
 
-        $this->assertIsString(actual: $token);
-        $this->assertSame(expected: $token, actual: $jwt->token());
-        $this->assertTrue(condition: $jwt->check());
-        $this->assertSame(expected: $user, actual: $jwt->getCurrentUser());
+        $this->assertNotNull($resolved);
+        $this->assertSame($user->getId()->value, $resolved?->user->getId()->value);
 
-        $jwt->clear();
+        $jwt->revoke($issued->tokenId, $issued->expiresAt);
 
-        $this->assertFalse(condition: $jwt->check());
-        $this->assertNull(actual: $jwt->getCurrentUser());
-        $this->assertNull(actual: $jwt->token());
-
-        $jwt->authenticate(token: $token);
-
-        $this->assertTrue(condition: $jwt->check());
-        $this->assertSame(expected: $user, actual: $jwt->getCurrentUser());
-        $this->assertSame(expected: $token, actual: $jwt->token());
+        $this->assertNull($jwt->resolve($issued->token));
     }
 
     public function testJwtIdentityRejectsInactiveUsersWhenIssuing() : void
@@ -69,7 +67,8 @@ class JwtIdentityTest extends TestCase
 
         $jwt = new JwtIdentity(
             userSource: Mockery::mock(UserSourceInterface::class),
-            secret    : 'super-secret-key'
+            codec     : new HmacTokenCodec(secret: 'super-secret-key'),
+            clock     : new Clock()
         );
 
         $this->expectException(exception: InvalidArgumentException::class);
@@ -102,16 +101,36 @@ class JwtIdentityTest extends TestCase
 
         $jwt = new JwtIdentity(
             userSource: $userSource,
-            secret    : 'super-secret-key'
+            codec     : new HmacTokenCodec(secret: 'super-secret-key'),
+            clock     : new Clock()
         );
 
         $token = $jwt->issue(user: $activeUser);
 
-        $jwt->authenticate(token: $token);
+        $this->assertNull($jwt->resolve($token->token));
+    }
 
-        $this->assertFalse(condition: $jwt->check());
-        $this->assertNull(actual: $jwt->getCurrentUser());
-        $this->assertNull(actual: $jwt->token());
+    public function testJwtIdentityIssuesRefreshTokenWhenStoreConfigured() : void
+    {
+        $user = new User(
+            id          : new UserId(11),
+            email       : new UserEmail('refresh@example.com'),
+            username    : 'refresh',
+            passwordHash: 'hash'
+        );
+
+        $store = new InMemoryRefreshTokenStore();
+        $jwt   = new JwtIdentity(
+            userSource       : new InMemoryUserSource(),
+            codec            : new HmacTokenCodec(secret: 'super-secret-key'),
+            clock            : new Clock(),
+            refreshTokenStore: $store
+        );
+
+        $refresh = $jwt->issueRefreshToken($user);
+
+        $this->assertNotNull($refresh);
+        $this->assertSame($user->getId()->value, $refresh?->userId->value);
     }
 
     protected function tearDown() : void

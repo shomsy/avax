@@ -1,62 +1,91 @@
 # Architecture Overview
 
-This framework is built on **vertical-slice, feature-first** architectural laws. Every directory represents a business
-capability or flow, and every file represents a single responsibility.
+The package now reads in two lanes:
 
-## Repository Structure
+- `System/` is the auth kernel.
+- `integrations/` is the optional integration surface.
 
-The project repository is structured with a clean boundary between the core logic and operational assets:
+## Canonical Public Surface
 
-1. **`System/`**: The canonical source root (System Mašinerija) under the `Avax\Auth\System` namespace.
-2. **`tests/`**: Mirror of `System/` for unit and integration testing.
-3. **`docs/`**: Technical and architectural documentation.
-4. **`examples/`**: Reference implementations and user guides.
-5. **`tooling/`**: Local automation and developer infrastructure.
+- `Auth` is the single package entrypoint.
+- `AuthenticationRequest` is the single request ingress input.
+- `AuthenticationContext` is the single runtime auth state model.
+- `AuthenticationResult` is the single successful auth output model.
+- `AuthenticatedUser` is the public auth user snapshot.
 
-## System Anatomy (inside `System/`)
+## Runtime Ownership
 
-The core logic is divided into four primary lanes:
-
-1. **`Flow/`**: High-level business use-cases following the **Verb-Noun** naming pattern (e.g., `Login`, `Register`,
-   `ChangePassword`). These are the primary entry points.
-2. **`Capability/`**: Domain enablers and internal subsystems that the flows orchestrate.
-    - `Access`: Root access façade plus specialized authorization boundaries.
-    - `Identity`: Unified authentication façade plus protocol-specific adapters (Session, JWT).
-    - `User`: The core User entity and its specific Value Objects (Email, Id, etc.).
-    - `UserSource`: The persistence bridge/gateway.
-    - `PasswordHashing`: Security primitives for credential management.
-3. **`Configuration/`**: The composition root and setup logic (e.g., `AuthBuilder`) for wiring the component.
-4. **`Foundation/`**: Low-level, domain-agnostic primitives (e.g., `Clock`, `IdGenerator`).
-
-## Core Directory Roles
-
-| Folder                                                                 | Category     | Role                                                               |
-|:-----------------------------------------------------------------------|:-------------|:-------------------------------------------------------------------|
-| **[`System/Flow/`](./System/Flow/)**                                   | **Features** | Core business processes and API entry points.                      |
-| **[`System/Capability/Access/`](./System/Capability/Access/)**         | Facade       | Root authorization boundary plus specialized requirement units.    |
-| **[`System/Capability/Identity/`](./System/Capability/Identity/)**     | Facade       | Unified identity façade with JWT and Session persistence adapters. |
-| **[`System/Capability/User/`](./System/Capability/User/)**             | Domain       | Immutability-first User entity and its Value Objects.              |
-| **[`System/Capability/UserSource/`](./System/Capability/UserSource/)** | Port         | Interface for accessing the external data store.                   |
-| **[`System/Configuration/`](./System/Configuration/)**                 | Infra        | Fluent DSL Builder for setting up Auth system instances.           |
-| **[`System/Foundation/`](./System/Foundation/)**                       | Primitives   | Shared low-level primitives (Clock, IdGen).                        |
-
-## Dependency Graph
-
-```mermaid
-graph TD
-    Facade[Auth Facade] --> Builder[AuthBuilder]
-    Facade --> Flow[Business Flow]
-    Facade --> Access[Access Facade]
-    Flow --> Capability[Capability]
-    Access --> Capability
-    Capability --> Foundation[Foundation Primitives]
+```text
+Auth
+├── login()
+├── authenticateRequest()
+├── current()
+├── logout()
+├── access()
+├── changePassword()
+├── register()
+├── refresh()
+├── beginPasswordReset() / resetPassword()
+├── beginEmailVerification() / verifyEmail()
+└── startMfaEnrollment() / confirmMfaEnrollment() / beginMfaChallenge() / verifyMfaChallenge() / regenerateBackupCodes() / disableMfa() / beginMfaRecovery() / confirmMfaRecovery()
 ```
 
-## Evolution Log
+## Flow Slices
 
-### v5.0 (The System Era)
+```text
+System/
+├── Auth.php
+├── AuthInterface.php
+├── Configuration/
+│   └── AuthBuilder.php
+├── Capability/
+│   ├── Access/          # authorization boundary
+│   ├── Identity/        # session/JWT strategy coordination
+│   ├── PasswordHashing/
+│   ├── User/            # internal domain entity + value objects
+│   └── UserSource/      # persistence port
+├── Flow/
+│   ├── AuthenticateRequest/
+│   ├── ChangePassword/
+│   ├── CheckAuthentication/
+│   ├── Diagnostics/
+│   ├── Login/
+│   ├── Logout/
+│   ├── Mfa/
+│   │   ├── Backup/
+│   │   ├── Challenge/
+│   │   ├── Disable/
+│   │   ├── Enroll/
+│   │   ├── Recover/
+│   │   └── StepUp/
+│   ├── ReadCurrentUser/
+│   ├── Recover/
+│   ├── Register/
+│   ├── Session/
+│   ├── Token/
+│   └── Verify/
+└── Foundation/
 
-- Renamed `src/` to **`System/`** to better reflect the architectural purpose of the source root.
-- Updated root namespace to **`Avax\Auth\System`**.
-- Enforced strict repository discipline with a clear boundary between System logic and operational artifacts.
-- Maintained the **vertical-slice, feature-first** architecture within the system lane.
+integrations/
+├── avax-container/
+├── cookies/
+├── headers/
+└── http/
+```
+
+## Boundary Rules
+
+- kernel code never imports the `Integrations` namespace
+- optional adapters depend on kernel contracts only
+- Session and JWT are strategies behind the same `Identity` coordination contract.
+- Request authentication happens only in `Flow/AuthenticateRequest/AuthenticateRequest.php`.
+- Authorization reads `CurrentAuthentication`; it no longer reaches into session/JWT adapters directly.
+- MFA freshness now survives ingress boundaries through package-owned session/JWT claims (`mfaVerifiedAt`).
+- Exception mapping stays at public or ingress boundaries; deep flow code returns domain-safe failures.
+
+## Compatibility Notes
+
+- The old `User` entity is no longer the public auth output.
+- `System/Configuration/AuthServiceProvider` moved to `Integrations/AvaxContainer/AuthServiceProvider`.
+- Session/JWT adapters stay reusable, but public consumers should code to `Auth`, `AuthenticationContext`, and
+  `AuthenticationResult`.

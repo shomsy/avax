@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flow\ReadCurrentUser;
 
-use Avax\Auth\System\Capability\Identity\IdentityInterface;
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
-use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -18,100 +16,28 @@ use PHPUnit\Framework\TestCase;
  */
 class ReadCurrentUserTest extends TestCase
 {
-    public function testReadCurrentUserFromSessionSuccess() : void
+    public function testReadCurrentUserReturnsStoredUser() : void
     {
-        $userId = 123;
-        $user   = Mockery::mock(User::class);
+        $currentAuthentication = new CurrentAuthentication();
+        $user                  = new AuthenticatedUser(id: 123, email: 'user@example.com', username: 'user');
+        $currentAuthentication->store(AuthenticationContext::authenticated(
+            user: $user,
+            mode: AuthenticationMode::SESSION
+        ));
 
-        $identity = Mockery::mock(IdentityInterface::class);
-        $identity->shouldReceive('getCurrentUser')->andReturn(null);
-        $identity->shouldReceive('getUserId')->andReturn($userId);
-
-        $userSource = Mockery::mock(UserSourceInterface::class);
-        $userSource->shouldReceive('findById')
-            ->once()
-            ->with(Mockery::on(fn ($id) => $id instanceof UserId && $id->value === $userId))
-            ->andReturn($user);
-
-        $readCurrentUser = new ReadCurrentUser(
-            identity  : $identity,
-            userSource: $userSource
-        );
+        $readCurrentUser = new ReadCurrentUser(currentAuthentication: $currentAuthentication);
 
         $result = $readCurrentUser->execute();
 
         $this->assertSame(expected: $user, actual: $result);
     }
 
-    public function testReadCurrentUserFromJwtSuccess() : void
+    public function testReadCurrentUserReturnsNullForGuestContext() : void
     {
-        $user = Mockery::mock(User::class);
-
-        $identity = Mockery::mock(IdentityInterface::class);
-        $identity->shouldReceive('getCurrentUser')->andReturn($user);
-
-        $userSource = Mockery::mock(UserSourceInterface::class);
-
-        $readCurrentUser = new ReadCurrentUser(
-            identity  : $identity,
-            userSource: $userSource
-        );
-
-        $result = $readCurrentUser->execute();
-
-        $this->assertSame(expected: $user, actual: $result);
-    }
-
-    public function testReadCurrentUserReturnsNullWhenNoSessionFound() : void
-    {
-        $identity = Mockery::mock(IdentityInterface::class);
-        $identity->shouldReceive('getCurrentUser')->andReturn(null);
-        $identity->shouldReceive('getUserId')->andReturn(null);
-
-        $userSource = Mockery::mock(UserSourceInterface::class);
-
-        $readCurrentUser = new ReadCurrentUser(
-            identity  : $identity,
-            userSource: $userSource
-        );
+        $readCurrentUser = new ReadCurrentUser(currentAuthentication: new CurrentAuthentication());
 
         $result = $readCurrentUser->execute();
 
         $this->assertNull(actual: $result);
-    }
-
-    public function testReadCurrentUserReturnsNullForInactiveUser() : void
-    {
-        $identity = Mockery::mock(IdentityInterface::class);
-        $identity->shouldReceive('getCurrentUser')->andReturn(null);
-        $identity->shouldReceive('getUserId')->andReturn(555);
-
-        $inactiveUser = new User(
-            id          : new UserId(value: 555),
-            email       : new UserEmail(value: 'inactive@example.com'),
-            username    : 'inactive',
-            passwordHash: 'hash',
-            isActive    : false
-        );
-
-        $userSource = Mockery::mock(UserSourceInterface::class);
-        $userSource->shouldReceive('findById')
-            ->once()
-            ->with(Mockery::on(fn ($id) => $id instanceof UserId && $id->value === 555))
-            ->andReturn($inactiveUser);
-
-        $readCurrentUser = new ReadCurrentUser(
-            identity  : $identity,
-            userSource: $userSource
-        );
-
-        $result = $readCurrentUser->execute();
-
-        $this->assertNull(actual: $result);
-    }
-
-    protected function tearDown() : void
-    {
-        Mockery::close();
     }
 }

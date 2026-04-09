@@ -18,7 +18,8 @@ final readonly class Identity implements IdentityInterface
     public function __construct(
         #[SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
         #[SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
-    ) {
+    )
+    {
         if ($this->sessionIdentity === null && $this->jwtIdentity === null) {
             throw new InvalidArgumentException(message: 'Identity requires at least one backend.');
         }
@@ -62,11 +63,6 @@ final readonly class Identity implements IdentityInterface
         return $this->jwtIdentity?->token();
     }
 
-    public function getCurrentUser() : User|null
-    {
-        return $this->jwtIdentity?->getCurrentUser();
-    }
-
     public function getUserId() : int|null
     {
         if ($this->sessionIdentity !== null) {
@@ -78,5 +74,10 @@ final readonly class Identity implements IdentityInterface
         }
 
         return $this->jwtIdentity?->getCurrentUser()?->getId()->value;
+    }
+
+    public function getCurrentUser() : User|null
+    {
+        return $this->jwtIdentity?->getCurrentUser();
     }
 }

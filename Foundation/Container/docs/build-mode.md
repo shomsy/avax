@@ -77,4 +77,5 @@ Rebuild or invalidate when any of these change:
 - `rebuildCompiled()`
 - `compileReport()`
 
-Use `compileReport()` as the operator-facing explanation surface for artifact availability, compatibility, freshness, invalidation, and reuse.
+Use `compileReport()` as the operator-facing explanation surface for artifact availability, compatibility, freshness,
+invalidation, and reuse.

@@ -6,8 +6,10 @@ This folder is the execution memory layer.
 
 - Agent Harness installed into `Foundation/Container`
 - PHP language profile selected
-- architecture convergence completed into the `src/` system root with explicit `Flows/`, `Capabilities/`, and `Foundation/` lanes
-- shared engine ownership now reads through `Declaration`, `Composition`, `Resolution`, `Execution`, `Runtime`, and `Diagnostics` inside `src/Capabilities/`
+- architecture convergence completed into the `src/` system root with explicit `Flows/`, `Capabilities/`, and
+  `Foundation/` lanes
+- shared engine ownership now reads through `Declaration`, `Composition`, `Resolution`, `Execution`, `Runtime`, and
+  `Diagnostics` inside `src/Capabilities/`
 - one TODO item tracks migration of legacy root `how-to-*.md` docs
 - legacy generated docs and legacy test buckets removed in favor of a smaller canonical docs set and mirrored test lanes
 - no active bug items yet

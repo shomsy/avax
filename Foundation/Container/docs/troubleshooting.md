@@ -62,7 +62,8 @@ If a provider should boot lazily instead of during `bootProviders()`:
 If deferred or lazy behavior looks inconsistent:
 
 1. check `debugService()` for `deferred`, `lazy`, `cacheState`, and `compiledState`
-2. inspect `debugService()['explain']['fallback']` to see why the compiled path was skipped or why dynamic fallback is active
+2. inspect `debugService()['explain']['fallback']` to see why the compiled path was skipped or why dynamic fallback is
+   active
 3. inspect `debugService()['explain']['dependencyChain']` when a deferred provider owns a transitive dependency
 4. rebuild compiled artifacts if the deferred graph changed after warmup
 
@@ -88,7 +89,8 @@ If the compiled artifact is incompatible with the current runtime:
 1. inspect `compileReport()->compatible`
 2. inspect `compileReport()->compatibilityIssues`
 3. inspect `compileReport()->freshnessState`
-4. confirm whether `configHash`, `environment`, `compileMode`, `diagnosticsMode`, or `strict` changed between compile and load
+4. confirm whether `configHash`, `environment`, `compileMode`, `diagnosticsMode`, or `strict` changed between compile
+   and load
 4. rebuild the artifact instead of assuming the hot path is still valid
 
 If the compiled artifact is corrupt:
@@ -96,9 +98,11 @@ If the compiled artifact is corrupt:
 1. production-style compile modes fail closed and quarantine the artifact
 2. development mode quarantines the artifact and falls back to dynamic resolution
 3. quarantined artifacts move under the compiled artifact `quarantine/` directory instead of being silently overwritten
-4. inspect `describeService()` or `debugService()` to confirm whether the service is still compiled or running dynamically
+4. inspect `describeService()` or `debugService()` to confirm whether the service is still compiled or running
+   dynamically
 
-If a compiled service is still resolving dynamically, it may be outside the compiled hot path on purpose. Check `describeService()` and `debugPlan()` before assuming a cache miss.
+If a compiled service is still resolving dynamically, it may be outside the compiled hot path on purpose. Check
+`describeService()` and `debugPlan()` before assuming a cache miss.
 
 If `debugService()` shows `decision=dynamic`, inspect:
 
@@ -111,7 +115,8 @@ If a compile report shows invalidated services:
 
 1. inspect `compileReport()->invalidatedServices`
 2. inspect `compileReport()->invalidationReasons`
-3. confirm whether the change was a service signature change, dependency graph change, or missing previous compiled source
+3. confirm whether the change was a service signature change, dependency graph change, or missing previous compiled
+   source
 
 ## Context Views
 
@@ -134,7 +139,8 @@ If a runtime input is missing:
 
 If tests or long-running workers need a clean slate:
 
-1. call `reset()` to clear pools, scopes, lazy markers, telemetry state, and other disposable runtime caches while keeping registrations and compiled artifacts
+1. call `reset()` to clear pools, scopes, lazy markers, telemetry state, and other disposable runtime caches while
+   keeping registrations and compiled artifacts
 2. call `flush()` when you also want compiled artifacts and derived caches cleared
 3. authored registrations stay intact across both operations
 
@@ -188,7 +194,8 @@ If you need to know what the container thinks right now:
 4. `isCompiled()` reports whether one service id is present in the compiled artifact
 5. `isWarmedUp()` reports whether a compiled artifact is available for this runtime
 6. `runtimeReport()` exposes whether diagnostics mode is `minimal`, `detailed`, or `ci`
-7. `runtimeReport()` also exposes whether the timeline is enabled plus shared/scoped counts and the current hot-path summary
+7. `runtimeReport()` also exposes whether the timeline is enabled plus shared/scoped counts and the current hot-path
+   summary
 
 ## Policy And Structure Diff
 
@@ -200,7 +207,8 @@ If the graph looks wrong even though resolution still works:
 
 ## Validation Commands
 
-- lint: `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`
+- lint:
+  `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`
 - smoke suite: `./tests/run-smoke-tests.sh`
 - benchmarks: `./tests/run-benchmarks.sh`
 - benchmark guard: `./tests/check-benchmarks.sh`

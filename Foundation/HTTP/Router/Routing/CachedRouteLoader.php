@@ -19,9 +19,9 @@ use Throwable;
 final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
 {
     public function __construct(
-        private string $cachePath,
+        private string              $cachePath,
         private FilesystemInterface $filesystem,
-        private RouteCacheManifest $manifest
+        private RouteCacheManifest  $manifest
     ) {}
 
     /**
@@ -90,6 +90,7 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
         if (! $this->manifest->validateSignatureFile($cachePath: $this->cachePath)) {
             // Log cache corruption but don't throw - allow fallback to disk loading
             error_log("Route cache signature validation failed for {$this->cachePath} - cache may be corrupted");
+
             return false;
         }
 

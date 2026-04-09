@@ -8,9 +8,9 @@ use Avax\Container\BindingBuilderInterface;
 use Avax\Container\Container;
 use Avax\Container\ContainerInterface;
 use Avax\Container\ContextBuilderInterface;
+use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
 use Avax\Container\InjectionReport;
 use Avax\Container\ScopeManagerInterface;
-use Avax\Container\DependencyInjection\Capability\Resolution\Contracts\ContainerRuntimeInterface;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
@@ -36,6 +36,11 @@ final class ContainerPublicSurfaceTest extends TestCase
         );
     }
 
+    private function returnType(ReflectionMethod $method) : string
+    {
+        return $method->getReturnType()?->getName() ?? '';
+    }
+
     public function test_container_does_not_implement_runtime_interface() : void
     {
         $this->assertFalse(condition: is_a(Container::class, ContainerRuntimeInterface::class, true));
@@ -45,10 +50,5 @@ final class ContainerPublicSurfaceTest extends TestCase
     {
         $this->assertFalse(condition: method_exists(Container::class, 'resolveContext'));
         $this->assertFalse(condition: method_exists(Container::class, 'resolve'));
-    }
-
-    private function returnType(ReflectionMethod $method) : string
-    {
-        return $method->getReturnType()?->getName() ?? '';
     }
 }

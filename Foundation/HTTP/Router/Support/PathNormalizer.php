@@ -15,6 +15,19 @@ use InvalidArgumentException;
 final class PathNormalizer
 {
     /**
+     * Checks if two paths are equivalent after normalization.
+     *
+     * @param string $path1 First path to compare
+     * @param string $path2 Second path to compare
+     *
+     * @return bool True if paths are equivalent
+     */
+    public static function areEquivalent(string $path1, string $path2) : bool
+    {
+        return self::normalize(path: $path1) === self::normalize(path: $path2);
+    }
+
+    /**
      * Normalizes a URL path by:
      * - Ensuring leading slash
      * - Removing trailing slashes (except for root path)
@@ -50,18 +63,5 @@ final class PathNormalizer
         }
 
         return $path;
-    }
-
-    /**
-     * Checks if two paths are equivalent after normalization.
-     *
-     * @param string $path1 First path to compare
-     * @param string $path2 Second path to compare
-     *
-     * @return bool True if paths are equivalent
-     */
-    public static function areEquivalent(string $path1, string $path2) : bool
-    {
-        return self::normalize(path: $path1) === self::normalize(path: $path2);
     }
 }

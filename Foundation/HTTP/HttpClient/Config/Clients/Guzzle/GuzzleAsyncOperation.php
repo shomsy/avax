@@ -19,7 +19,7 @@ readonly class GuzzleAsyncOperation implements AsyncOperationInterface
 {
     public function __construct(
         private PromiseInterface $promise,
-        private LoggerInterface $logger,
+        private LoggerInterface  $logger,
     ) {}
 
     /**
@@ -30,7 +30,7 @@ readonly class GuzzleAsyncOperation implements AsyncOperationInterface
      * @throws \Throwable
      * @throws \Throwable
      */
-    public function resolve(): mixed
+    public function resolve() : mixed
     {
         try {
             return $this->promise->wait();
@@ -50,7 +50,7 @@ readonly class GuzzleAsyncOperation implements AsyncOperationInterface
      *
      * @throws \Exception
      */
-    public function reject(): mixed
+    public function reject() : mixed
     {
         try {
             return $this->promise->wait(unwrap: false);
@@ -66,10 +66,11 @@ readonly class GuzzleAsyncOperation implements AsyncOperationInterface
     /**
      * Attaches a success callback to the promise.
      *
-     * @param  callable  $onFulfilled  The callback for a successful response.
+     * @param callable $onFulfilled The callback for a successful response.
+     *
      * @return self The current instance for chaining.
      */
-    public function then(callable $onFulfilled): self
+    public function then(callable $onFulfilled) : self
     {
         $this->promise->then(onFulfilled: $onFulfilled);
 
@@ -79,10 +80,11 @@ readonly class GuzzleAsyncOperation implements AsyncOperationInterface
     /**
      * Attaches a failure callback to the promise.
      *
-     * @param  callable  $onRejected  The callback for a failed response.
+     * @param callable $onRejected The callback for a failed response.
+     *
      * @return self The current instance for chaining.
      */
-    public function catch(callable $onRejected): self
+    public function catch(callable $onRejected) : self
     {
         $this->promise->otherwise(onRejected: $onRejected);
 

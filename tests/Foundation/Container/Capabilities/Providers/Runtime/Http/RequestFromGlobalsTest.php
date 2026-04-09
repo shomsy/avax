@@ -49,7 +49,7 @@ namespace Avax\Container\Tests\Capability\Providers\Runtime\Http {
     final readonly class FakeContainer
     {
         public function __construct(
-            private bool $hasSession,
+            private bool                        $hasSession,
             #[SensitiveParameter] private mixed $session
         ) {}
 
@@ -88,6 +88,14 @@ namespace Avax\Container\Tests\Capability\Providers\Runtime\Http {
 
             $this->assertInstanceOf(expected: Request::class, actual: $request);
             $this->assertInstanceOf(expected: NullSession::class, actual: $this->extractSession(request: $request));
+        }
+
+        private function extractSession(Request $request) : SessionInterface
+        {
+            $property = new ReflectionProperty(class: Request::class, property: 'session');
+            $property->setAccessible(accessible: true);
+
+            return $property->getValue(object: $request);
         }
 
         public function test_create_from_globals_uses_session_interface() : void
@@ -133,14 +141,6 @@ namespace Avax\Container\Tests\Capability\Providers\Runtime\Http {
             $_FILES  = $this->filesBackup;
 
             parent::tearDown();
-        }
-
-        private function extractSession(Request $request) : SessionInterface
-        {
-            $property = new ReflectionProperty(class: Request::class, property: 'session');
-            $property->setAccessible(accessible: true);
-
-            return $property->getValue(object: $request);
         }
     }
 }

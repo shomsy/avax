@@ -4,26 +4,27 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
-use Avax\Container\DI\ContainerInterface;
 use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
-use Avax\Container\DI\Flows\BootProviders\BootProviders;
 use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Container\DI\ContainerInterface;
+use Avax\Container\DI\Flows\BootProviders\BootProviders;
+
+interface DeferredProvidedContract
+{
+    public function id() : string;
+}
 
 final class ProviderState
 {
     /** @var list<string> */
     public static array $events = [];
 
-    public function __construct(public string $message = 'registered')
-    {
-    }
+    public function __construct(public string $message = 'registered') {}
 }
 
 final class BaseProvider implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app)
-    {
-    }
+    public function __construct(private ContainerInterface $app) {}
 
     public function dependsOn() : array
     {
@@ -42,16 +43,14 @@ final class BaseProvider implements ServiceProviderInterface
      */
     public function boot() : void
     {
-        ProviderState::$events[] = 'base-boot';
+        ProviderState::$events[]                       = 'base-boot';
         $this->app->get(ProviderState::class)->message = 'base-booted';
     }
 }
 
 final class DemoProvider implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app)
-    {
-    }
+    public function __construct(private ContainerInterface $app) {}
 
     public function dependsOn() : array
     {
@@ -89,11 +88,6 @@ final class DemoProvider implements ServiceProviderInterface
     }
 }
 
-interface DeferredProvidedContract
-{
-    public function id() : string;
-}
-
 final class DeferredProvidedService implements DeferredProvidedContract
 {
     public function id() : string
@@ -104,16 +98,12 @@ final class DeferredProvidedService implements DeferredProvidedContract
 
 final class DeferredProviderConsumer
 {
-    public function __construct(public DeferredProvidedContract $dependency)
-    {
-    }
+    public function __construct(public DeferredProvidedContract $dependency) {}
 }
 
 final class DeferredDemoProvider implements DeferredProviderInterface
 {
-    public function __construct(private ContainerInterface $app)
-    {
-    }
+    public function __construct(private ContainerInterface $app) {}
 
     public function dependsOn() : array
     {
@@ -144,9 +134,7 @@ final class DeferredDemoProvider implements DeferredProviderInterface
 
 final class CycleProviderA implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app)
-    {
-    }
+    public function __construct(private ContainerInterface $app) {}
 
     public function dependsOn() : array
     {
@@ -158,16 +146,12 @@ final class CycleProviderA implements ServiceProviderInterface
         $this->app->instance('cycle-a', new stdClass());
     }
 
-    public function boot() : void
-    {
-    }
+    public function boot() : void {}
 }
 
 final class CycleProviderB implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app)
-    {
-    }
+    public function __construct(private ContainerInterface $app) {}
 
     public function dependsOn() : array
     {
@@ -179,13 +163,11 @@ final class CycleProviderB implements ServiceProviderInterface
         $this->app->instance('cycle-b', new stdClass());
     }
 
-    public function boot() : void
-    {
-    }
+    public function boot() : void {}
 }
 
 ProviderState::$events = [];
-$container = makeTestContainer();
+$container             = makeTestContainer();
 
 (new BootProviders($container))->boot([DemoProvider::class]);
 
@@ -206,7 +188,7 @@ assertTrue(
 );
 
 ProviderState::$events = [];
-$deferredContainer = makeTestContainer();
+$deferredContainer     = makeTestContainer();
 
 (new BootProviders($deferredContainer))->boot([DeferredDemoProvider::class]);
 
@@ -232,7 +214,7 @@ assertTrue(
     'Deferred provider metrics should record lazy provider boots.'
 );
 
-ProviderState::$events = [];
+ProviderState::$events     = [];
 $compiledDeferredContainer = makeTestContainer();
 $compiledDeferredContainer->singleton(DeferredProviderConsumer::class, DeferredProviderConsumer::class);
 
@@ -240,9 +222,9 @@ $compiledDeferredContainer->singleton(DeferredProviderConsumer::class, DeferredP
 $compiledDeferredContainer->compileContainer([DeferredProviderConsumer::class]);
 
 $compiledDeferredReport = $compiledDeferredContainer->compileReport([
-    DeferredProviderConsumer::class,
-    DeferredProvidedContract::class,
-]);
+                                                                        DeferredProviderConsumer::class,
+                                                                        DeferredProvidedContract::class,
+                                                                    ]);
 
 assertSame(
     ['deferred-register', 'deferred-boot'],

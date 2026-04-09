@@ -15,9 +15,9 @@ final class ResolutionStageHandlersTest extends TestCase
     public function test_ordered_states_and_handlers() : void
     {
         $handlers = new ResolutionStageHandlers(handlers: [
-            ResolutionState::ContextualLookup->value => static fn(KernelContext $context) : string => 'contextual:' . $context->serviceId,
-            ResolutionState::DefinitionLookup->value => static fn(KernelContext $context) : string => 'definition:' . $context->serviceId,
-        ]);
+                                                              ResolutionState::ContextualLookup->value => static fn (KernelContext $context) : string => 'contextual:' . $context->serviceId,
+                                                              ResolutionState::DefinitionLookup->value => static fn (KernelContext $context) : string => 'definition:' . $context->serviceId,
+                                                          ]);
 
         $this->assertSame(
             expected: [ResolutionState::ContextualLookup, ResolutionState::DefinitionLookup],
@@ -32,9 +32,9 @@ final class ResolutionStageHandlersTest extends TestCase
     public function test_next_state_after() : void
     {
         $handlers = new ResolutionStageHandlers(handlers: [
-            ResolutionState::ContextualLookup->value => static fn(KernelContext $context) : string => 'contextual',
-            ResolutionState::DefinitionLookup->value => static fn(KernelContext $context) : string => 'definition',
-        ]);
+                                                              ResolutionState::ContextualLookup->value => static fn (KernelContext $context) : string => 'contextual',
+                                                              ResolutionState::DefinitionLookup->value => static fn (KernelContext $context) : string => 'definition',
+                                                          ]);
 
         $this->assertSame(
             expected: ResolutionState::DefinitionLookup,
@@ -46,8 +46,8 @@ final class ResolutionStageHandlersTest extends TestCase
     public function test_throws_on_missing_handler() : void
     {
         $handlers = new ResolutionStageHandlers(handlers: [
-            ResolutionState::ContextualLookup->value => static fn(KernelContext $context) : string => 'contextual',
-        ]);
+                                                              ResolutionState::ContextualLookup->value => static fn (KernelContext $context) : string => 'contextual',
+                                                          ]);
 
         $this->expectException(exception: ContainerException::class);
         $handlers->get(state: ResolutionState::Autowire);

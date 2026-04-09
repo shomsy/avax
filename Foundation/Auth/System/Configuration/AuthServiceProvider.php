@@ -74,7 +74,7 @@ final class AuthServiceProvider extends ServiceProvider
 
                 return new Identity(
                     sessionIdentity: $sessionIdentity,
-                    jwtIdentity: $jwtIdentity
+                    jwtIdentity    : $jwtIdentity
                 );
             });
         }
@@ -119,7 +119,7 @@ final class AuthServiceProvider extends ServiceProvider
 
         return new LoginRateLimit(
             storage: $this->app->get(LoginRateLimitStorageInterface::class),
-            clock: $this->app->get(Clock::class)
+            clock  : $this->app->get(Clock::class)
         );
     }
 }

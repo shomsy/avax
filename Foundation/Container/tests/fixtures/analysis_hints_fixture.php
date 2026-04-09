@@ -6,30 +6,21 @@ require_once dirname(__DIR__) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\RuntimeInput;
 
-final class HintIdentityService
-{
-}
+final class HintIdentityService {}
 
-final class HintPipelineStepA
-{
-}
+final class HintPipelineStepA {}
 
-final class HintPipelineStepB
-{
-}
+final class HintPipelineStepB {}
 
 final class HintRuntimeInputConsumer
 {
     public function __construct(
-        public HintIdentityService $identity,
+        public HintIdentityService             $identity,
         #[RuntimeInput('token')] public string $token
-    ) {
-    }
+    ) {}
 }
 
-final class HintConditionalService
-{
-}
+final class HintConditionalService {}
 
 $container = makeTestContainer();
 

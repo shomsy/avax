@@ -64,6 +64,7 @@ final readonly class ExportGraph
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function why(string $id, array $context = []) : array
@@ -77,6 +78,7 @@ final readonly class ExportGraph
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function whoUses(string $id, array $context = []) : array
@@ -90,6 +92,7 @@ final readonly class ExportGraph
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function whatBreaksIf(string $id, array $context = []) : array
@@ -103,6 +106,7 @@ final readonly class ExportGraph
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function showOwner(string $id, array $context = []) : array
@@ -116,6 +120,7 @@ final readonly class ExportGraph
 
     /**
      * @param array<string, mixed> $context
+     *
      * @return array<string, mixed>
      */
     public function showSlice(string|null $slice = null, array $context = []) : array

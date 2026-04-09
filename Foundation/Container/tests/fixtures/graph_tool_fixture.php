@@ -6,34 +6,22 @@ use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
 require_once dirname(__DIR__) . '/bootstrap.php';
 
-final class GraphToolIdentityService
-{
-}
+final class GraphToolIdentityService {}
 
-final class GraphToolIdentitySecret
-{
-}
+final class GraphToolIdentitySecret {}
 
 final class GraphToolLoginEntry
 {
-    public function __construct(public GraphToolIdentityService $identity)
-    {
-    }
+    public function __construct(public GraphToolIdentityService $identity) {}
 }
 
-final class GraphToolStructureTarget
-{
-}
+final class GraphToolStructureTarget {}
 
-final class GraphToolStepOne
-{
-}
+final class GraphToolStepOne {}
 
-final class GraphToolStepTwo
-{
-}
+final class GraphToolStepTwo {}
 
-$cacheDir = sys_get_temp_dir() . '/container-graph-tool-' . uniqid('', true);
+$cacheDir  = sys_get_temp_dir() . '/container-graph-tool-' . uniqid('', true);
 $container = makeTestContainer(CreateContainerConfig::create(cacheDir: $cacheDir));
 
 $container->singleton(GraphToolIdentityService::class, GraphToolIdentityService::class)
@@ -64,12 +52,12 @@ $container->singleton(GraphToolStepTwo::class, GraphToolStepTwo::class)
     ->group('graph.steps', 10);
 
 $container->compileContainer([
-    GraphToolStructureTarget::class,
-    GraphToolLoginEntry::class,
-    GraphToolIdentityService::class,
-    GraphToolStepOne::class,
-    GraphToolStepTwo::class,
-]);
+                                 GraphToolStructureTarget::class,
+                                 GraphToolLoginEntry::class,
+                                 GraphToolIdentityService::class,
+                                 GraphToolStepOne::class,
+                                 GraphToolStepTwo::class,
+                             ]);
 $container->singleton(GraphToolStructureTarget::class, GraphToolStructureTarget::class)
     ->asFoundation('foundation.graph')
     ->asPublic();

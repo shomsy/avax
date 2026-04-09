@@ -64,8 +64,8 @@ class AppKernelIntegrationTest extends TestCase
         // Given: Complete application with routes and middleware
         $app = $this->bootstrapper
             ->globalMiddleware(middleware: [
-                new CsrfVerificationMiddleware(responseFactory: $this->responseFactory),
-            ])
+                                               new CsrfVerificationMiddleware(responseFactory: $this->responseFactory),
+                                           ])
             ->get(path: '/api/test', handler: static function () {
                 return ['message' => 'API response'];
             })

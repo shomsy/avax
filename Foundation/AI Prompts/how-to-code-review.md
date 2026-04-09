@@ -243,7 +243,7 @@ For the primary axis, answer Yes / No:
 Map responsibilities explicitly:
 
 | Component | Orchestrates | Executes | Holds State | Notes |
-| --------- | ------------ | -------- | ----------- | ----- |
+|-----------|--------------|----------|-------------|-------|
 |           |              |          |             |       |
 
 **Red Flags:**
@@ -272,7 +272,7 @@ Map responsibilities explicitly:
 List steps in actual execution order:
 
 | Step | Mandatory | Conditional | Mutates State | Terminal |
-| ---- | --------- | ----------- | ------------- | -------- |
+|------|-----------|-------------|---------------|----------|
 |      |           |             |               |          |
 
 ### 5.2 Determinism Check
@@ -302,7 +302,7 @@ Is this pipeline a formal state machine?
 List all mutable objects:
 
 | Object | Scope | Lifetime | Why Mutable? | Classification                         |
-| ------ | ----- | -------- | ------------ | -------------------------------------- |
+|--------|-------|----------|--------------|----------------------------------------|
 |        |       |          |              | Necessary / Convenience / Design Smell |
 
 **Deliverable:**
@@ -339,7 +339,7 @@ Define invariants the system must preserve. Examples:
 Template:
 
 | Invariant | Enforced Where | Evidence | Status                              |
-| --------- | -------------- | -------- | ----------------------------------- |
+|-----------|----------------|----------|-------------------------------------|
 |           |                |          | Enforced / Partially / Not enforced |
 
 ---
@@ -484,7 +484,7 @@ Answer Yes / No:
 Check items and sum weights.
 
 | Heuristic                                           | Weight | Checked |
-| --------------------------------------------------- | ------ | ------- |
+|-----------------------------------------------------|--------|---------|
 | Central abstraction is wrong                        | 2      | ☐       |
 | Pipeline relies on implicit ordering                | 2      | ☐       |
 | Configuration complexity mirrors design complexity  | 1      | ☐       |
@@ -563,60 +563,60 @@ Define signals that the decision is failing:
 ## If Keep and Improve
 
 - What must not change:
-  
-  - …
+
+    - …
 
 - What can be incrementally evolved:
-  
-  - …
+
+    - …
 
 - First 3 concrete actions:
-  
-  1. …
-  
-  2. …
-  
-  3. …
+
+    1. …
+
+    2. …
+
+    3. …
 
 ## If Redesign
 
 - Which abstraction is being redesigned:
-  
-  - …
+
+    - …
 
 - What remains intact:
-  
-  - …
+
+    - …
 
 - First 3 concrete actions:
-  
-  1. …
-  
-  2. …
-  
-  3. …
+
+    1. …
+
+    2. …
+
+    3. …
 
 ## If Rewrite Candidate
 
 - What core idea failed:
-  
-  - …
+
+    - …
 
 - What the new primary axis should be:
-  
-  - …
+
+    - …
 
 - Migration strategy (minimum viable):
-  
-  - parallel run / adapter layer / incremental replacement
+
+    - parallel run / adapter layer / incremental replacement
 
 - First 3 concrete actions:
-  
-  1. …
-  
-  2. …
-  
-  3. …
+
+    1. …
+
+    2. …
+
+    3. …
 
 ---
 
@@ -641,6 +641,6 @@ Use one entry per significant decision.
 ---
 
 > **Final Rule**
-> 
+>
 > A review that does not clearly determine what to do next and why  
 > is not an enterprise-grade review.

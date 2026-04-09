@@ -6,20 +6,20 @@ namespace Avax\Container\DI\Capabilities\Composition\Assembly;
 
 use Avax\Container\DI\Capabilities\Composition\ContainerSettings;
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
-use Avax\Container\DI\Container;
-use Avax\Container\DI\ContainerInterface;
 use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
 use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistryInterface;
-use Avax\Container\DI\Capabilities\Resolution\ResolutionPolicy;
-use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
-use Avax\Container\DI\Capabilities\Execution\Injection\Invocation\FunctionCaller;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ManageScopes;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeInterface;
-use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeStore;
 use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
 use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTelemetry;
 use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionTimeline;
+use Avax\Container\DI\Capabilities\Execution\Injection\Invocation\FunctionCaller;
+use Avax\Container\DI\Capabilities\Resolution\ResolutionPolicy;
+use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Container\DI\Capabilities\Runtime\Scopes\ManageScopes;
+use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeInterface;
+use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeStore;
 use Avax\Container\DI\Capabilities\Runtime\ServicePool;
+use Avax\Container\DI\Container;
+use Avax\Container\DI\ContainerInterface;
 use Avax\Container\DI\Foundation\Time\Clock;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
@@ -29,13 +29,14 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 final class SeedSystemServices
 {
     public function seed(
-        RuntimeAssembly $runtime,
+        RuntimeAssembly       $runtime,
         ObservabilityAssembly $observability,
-        Container $container,
+        Container             $container,
         CreateContainerConfig $config,
-        ResolutionTelemetry $telemetry
-    ) : void {
-        $settings = new ContainerSettings(items: $config->settings);
+        ResolutionTelemetry   $telemetry
+    ) : void
+    {
+        $settings      = new ContainerSettings(items: $config->settings);
         $registrations = $runtime->registrations;
 
         $registrations->bootstrapInstance(abstract: PsrContainerInterface::class, instance: $container);

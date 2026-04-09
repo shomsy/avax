@@ -7,19 +7,19 @@ require_once dirname(__DIR__, 2) . '/bootstrap.php';
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
 $config = CreateContainerConfig::create(
-    cacheDir: '/tmp/container-cache',
-    debug: true,
-    settings: ['app' => ['name' => 'Container'], 'app_env' => 'prod', 'benchmark' => ['build_marker' => 'ci-smoke']],
-    strict: true,
-    compileMode: CreateContainerConfig::COMPILE_MODE_CI,
-    diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_CI,
-    executionMode: CreateContainerConfig::EXECUTION_MODE_GENERATED,
-    pruneMode: CreateContainerConfig::PRUNE_MODE_STRICT,
-    policyProfile: CreateContainerConfig::POLICY_PROFILE_RELAXED,
-    policyFailMode: CreateContainerConfig::POLICY_FAIL_MODE_OPEN,
-    policyProfiles: ['prod' => CreateContainerConfig::POLICY_PROFILE_STRICT],
+    cacheDir         : '/tmp/container-cache',
+    debug            : true,
+    settings         : ['app' => ['name' => 'Container'], 'app_env' => 'prod', 'benchmark' => ['build_marker' => 'ci-smoke']],
+    strict           : true,
+    compileMode      : CreateContainerConfig::COMPILE_MODE_CI,
+    diagnosticsMode  : CreateContainerConfig::DIAGNOSTICS_MODE_CI,
+    executionMode    : CreateContainerConfig::EXECUTION_MODE_GENERATED,
+    pruneMode        : CreateContainerConfig::PRUNE_MODE_STRICT,
+    policyProfile    : CreateContainerConfig::POLICY_PROFILE_RELAXED,
+    policyFailMode   : CreateContainerConfig::POLICY_FAIL_MODE_OPEN,
+    policyProfiles   : ['prod' => CreateContainerConfig::POLICY_PROFILE_STRICT],
     sliceBoundaryMode: CreateContainerConfig::SLICE_BOUNDARY_MODE_PROJECTED,
-    asyncTarget: CreateContainerConfig::ASYNC_TARGET_WORKER
+    asyncTarget      : CreateContainerConfig::ASYNC_TARGET_WORKER
 );
 
 $changed = $config

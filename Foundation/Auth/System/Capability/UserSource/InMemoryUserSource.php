@@ -11,7 +11,7 @@ use SensitiveParameter;
 
 /**
  * In-memory implementation of UserSource.
- * 
+ *
  * Capability: Useful for testing and prototyping.
  */
 class InMemoryUserSource implements UserSourceInterface
@@ -36,6 +36,7 @@ class InMemoryUserSource implements UserSourceInterface
                 return $user;
             }
         }
+
         return null;
     }
 
@@ -46,6 +47,7 @@ class InMemoryUserSource implements UserSourceInterface
                 return true;
             }
         }
+
         return false;
     }
 
@@ -56,6 +58,7 @@ class InMemoryUserSource implements UserSourceInterface
                 return $user;
             }
         }
+
         return null;
     }
 
@@ -66,30 +69,32 @@ class InMemoryUserSource implements UserSourceInterface
                 return true;
             }
         }
-        return false;
-    }
 
-    public function create(User $user) : User
-    {
-        $this->users[$user->getId()->value] = $user;
-        return $user;
+        return false;
     }
 
     public function updatePassword(UserId $id, #[SensitiveParameter] string $passwordHash) : void
     {
         if (isset($this->users[$id->value])) {
             $user = $this->users[$id->value];
-            
+
             // User is immutable, so we replace it with a new instance
             $this->users[$id->value] = User::create(
-                id: $user->id,
-                email: $user->email,
-                username: $user->username,
+                id          : $user->id,
+                email       : $user->email,
+                username    : $user->username,
                 passwordHash: $passwordHash,
-                roles: $user->roles,
-                permissions: $user->permissions,
-                isActive: $user->isActive
+                roles       : $user->roles,
+                permissions : $user->permissions,
+                isActive    : $user->isActive
             );
         }
+    }
+
+    public function create(User $user) : User
+    {
+        $this->users[$user->getId()->value] = $user;
+
+        return $user;
     }
 }

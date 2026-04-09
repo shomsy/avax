@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\Access\RequirePermission;
 
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Capability\User\UserPermission;
+use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 
 /**
  * Requirement for specific permissions within the Auth System.
- * 
+ *
  * Banal: Stops anyone without the exact permission.
  */
 final readonly class RequirePermission

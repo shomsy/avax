@@ -121,13 +121,13 @@ final readonly class PDOExecutor implements ExecutorInterface
         $correlationId = $scope?->correlationId ?? ('ctx_' . bin2hex(string: random_bytes(length: 4)));
 
         $this->eventBus->dispatch(event: new QueryExecuted(
-            sql           : $sql,
-            bindings      : $bindings,
-            timeMs        : (microtime(as_float: true) - $start) * 1000,
-            connectionName: $this->connectionName,
-            correlationId : $correlationId,
-            redactBindings: $redactBindings
-        ));
+                                             sql           : $sql,
+                                             bindings      : $bindings,
+                                             timeMs        : (microtime(as_float: true) - $start) * 1000,
+                                             connectionName: $this->connectionName,
+                                             correlationId : $correlationId,
+                                             redactBindings: $redactBindings
+                                         ));
     }
 
     private function shouldRedactBindings() : bool

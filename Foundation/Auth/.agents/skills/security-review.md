@@ -57,13 +57,13 @@ This skill defines how to perform security-focused code review for the Auth fram
 
 ## Severity Levels
 
-| Level | Description |
-|-------|-------------|
-| **Critical** | Immediate security risk |
-| **High** | Significant vulnerability |
-| **Medium** | Moderate risk |
-| **Low** | Minor issue or improvement |
-| **Info** | Observation |
+| Level        | Description                |
+|--------------|----------------------------|
+| **Critical** | Immediate security risk    |
+| **High**     | Significant vulnerability  |
+| **Medium**   | Moderate risk              |
+| **Low**      | Minor issue or improvement |
+| **Info**     | Observation                |
 
 ## Output Format
 

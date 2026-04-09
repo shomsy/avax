@@ -2,7 +2,8 @@
 
 > **Purpose**
 >
-> This document defines coding standards specifically for the **Avax Auth** framework — a pure PHP 8.3+ authentication/authorization system.
+> This document defines coding standards specifically for the **Avax Auth** framework — a pure PHP 8.3+
+> authentication/authorization system.
 
 ---
 
@@ -124,14 +125,14 @@ $auth->terminateCurrentSession();
 
 ### File and Class Names
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Action | Verb + Action | `LoginAction.php` |
-| Adapter | Noun | `Identity.php` |
-| Controller | Noun + Controller | `LoginController.php` |
-| DTO | Noun + Request/Response | `LoginRequest.php` |
-| Contract | Noun + Interface | `IdentityInterface.php` |
-| Exception | Noun + Exception | `AuthFailed.php` |
+| Type       | Convention              | Example                 |
+|------------|-------------------------|-------------------------|
+| Action     | Verb + Action           | `LoginAction.php`       |
+| Adapter    | Noun                    | `Identity.php`          |
+| Controller | Noun + Controller       | `LoginController.php`   |
+| DTO        | Noun + Request/Response | `LoginRequest.php`      |
+| Contract   | Noun + Interface        | `IdentityInterface.php` |
+| Exception  | Noun + Exception        | `AuthFailed.php`        |
 
 ---
 
@@ -264,14 +265,14 @@ public function execute(Credentials $credentials) : UserInterface
 
 ## 9. Security Invariants
 
-| Invariant | Enforcement |
-|-----------|--------------|
-| Passwords never logged | `#[SensitiveParameter]` |
-| Passwords hashed | `password_hash()` only |
-| No user enumeration | Generic errors |
-| Secure sessions | HttpOnly, Secure, SameSite |
-| Rate limited | Per-attempt tracking |
-| Auth failures logged safely | No credentials in logs |
+| Invariant                   | Enforcement                |
+|-----------------------------|----------------------------|
+| Passwords never logged      | `#[SensitiveParameter]`    |
+| Passwords hashed            | `password_hash()` only     |
+| No user enumeration         | Generic errors             |
+| Secure sessions             | HttpOnly, Secure, SameSite |
+| Rate limited                | Per-attempt tracking       |
+| Auth failures logged safely | No credentials in logs     |
 
 ---
 

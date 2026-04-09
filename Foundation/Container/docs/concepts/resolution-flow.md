@@ -67,8 +67,10 @@ Compiled artifact handling is mode-aware:
 - development mode can fall back to dynamic resolution
 - production-style modes fail closed on corrupt compiled artifacts
 - artifact freshness can be revalidated against per-service signatures before the hot path is reused
-- `compileReport()` exposes the current artifact fingerprint, changed service ids, invalidated service ids, invalidation reasons, validation issues, and typed lifetime plans
-- `runtimeReport()` exposes the current runtime revisions, diagnostics mode, deferred provider ownership, scope snapshot, lazy service set, metrics, and timeline
+- `compileReport()` exposes the current artifact fingerprint, changed service ids, invalidated service ids, invalidation
+  reasons, validation issues, and typed lifetime plans
+- `runtimeReport()` exposes the current runtime revisions, diagnostics mode, deferred provider ownership, scope
+  snapshot, lazy service set, metrics, and timeline
 
 ## Missing Service Behavior
 
@@ -102,14 +104,18 @@ The resolver exports:
 
 ## Deferred Services
 
-`defer()` keeps a registration out of the default compile warmup unless it is explicitly requested or pulled in by a compiled dependency.
+`defer()` keeps a registration out of the default compile warmup unless it is explicitly requested or pulled in by a
+compiled dependency.
 
-Deferred services still resolve on demand. They just do not get promoted into the hot path unless the runtime actually needs them.
+Deferred services still resolve on demand. They just do not get promoted into the hot path unless the runtime actually
+needs them.
 
-Providers can also be deferred. When a provider implements `DeferredProviderInterface`, it stays out of eager boot and registers or boots only when one of its declared service ids is resolved for the first time.
+Providers can also be deferred. When a provider implements `DeferredProviderInterface`, it stays out of eager boot and
+registers or boots only when one of its declared service ids is resolved for the first time.
 
 ## Context Views
 
-`forContext()` returns a view over the same container that can feed scalar constructor, callable, and injection arguments by name.
+`forContext()` returns a view over the same container that can feed scalar constructor, callable, and injection
+arguments by name.
 
 The same context values work in both the dynamic resolver and the compiled runtime path.

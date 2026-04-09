@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\ChangePassword;
 
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
 use Exception;
 use SensitiveParameter;
 
 /**
  * High-level orchestrator for the password change process.
- * 
+ *
  * Banal: The file that changes passwords.
  */
 final readonly class ChangePassword
@@ -38,7 +38,7 @@ final readonly class ChangePassword
         }
 
         $newHash = $this->passwordHasher->hash(password: $data->newPassword);
-        
+
         $this->userSource->updatePassword(id: $user->getId(), passwordHash: $newHash);
 
         $this->rateLimit?->reset(identifier: (string) $user->getId());

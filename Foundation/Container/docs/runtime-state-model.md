@@ -28,7 +28,8 @@ None of this is authored truth.
 - job start: open a `job` scope when worker/job-bound services exist
 - tenant start: open a `tenant` scope when tenant-bound services exist
 - request end: close the scope so scoped instances are dropped
-- worker boundary: call `reset()` to clear shared instances, scoped frames, lazy markers, telemetry state, and callable caches
+- worker boundary: call `reset()` to clear shared instances, scoped frames, lazy markers, telemetry state, and callable
+  caches
 - full runtime clear: call `flush()` when you also want compiled artifacts and derived caches gone
 
 Shared services can now carry explicit lifecycle modifiers:

@@ -6,19 +6,15 @@ require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
-final class SchemaCompatibilityDependency
-{
-}
+final class SchemaCompatibilityDependency {}
 
 final class SchemaCompatibilityService
 {
-    public function __construct(public SchemaCompatibilityDependency $dependency)
-    {
-    }
+    public function __construct(public SchemaCompatibilityDependency $dependency) {}
 }
 
-$cacheDir = sys_get_temp_dir() . '/container-schema-compatibility-' . uniqid();
-$version = 'compiled-schema-compatibility';
+$cacheDir     = sys_get_temp_dir() . '/container-schema-compatibility-' . uniqid();
+$version      = 'compiled-schema-compatibility';
 $metadataPath = $cacheDir . '/container/' . rawurlencode($version) . '/compiled/container.json';
 
 $compiled = makeTestContainer(CreateContainerConfig::create(
@@ -29,7 +25,7 @@ $compiled = makeTestContainer(CreateContainerConfig::create(
 $compiled->singleton(SchemaCompatibilityDependency::class, SchemaCompatibilityDependency::class);
 $compiled->compileContainer([SchemaCompatibilityService::class, SchemaCompatibilityDependency::class]);
 
-$metadata = json_decode((string) file_get_contents($metadataPath), true, 512, JSON_THROW_ON_ERROR);
+$metadata                  = json_decode((string) file_get_contents($metadataPath), true, 512, JSON_THROW_ON_ERROR);
 $metadata['schemaVersion'] = 999;
 file_put_contents($metadataPath, json_encode($metadata, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
 
@@ -40,7 +36,7 @@ $reloaded = makeTestContainer(CreateContainerConfig::create(
 ));
 $reloaded->singleton(SchemaCompatibilityDependency::class, SchemaCompatibilityDependency::class);
 
-$report = $reloaded->compileReport([SchemaCompatibilityService::class]);
+$report   = $reloaded->compileReport([SchemaCompatibilityService::class]);
 $resolved = $reloaded->get(SchemaCompatibilityService::class);
 
 assertTrue($report !== null, 'Schema compatibility checks should still expose compile reports.');

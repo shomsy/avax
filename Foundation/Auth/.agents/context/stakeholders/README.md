@@ -3,16 +3,19 @@
 ## Primary Stakeholders
 
 ### 1. Framework Developers
+
 - **Role**: Build and maintain Avax Auth
 - **Needs**: Clear architecture, good DX, testable code
 - **Influence**: Architecture decisions, API design
 
 ### 2. Application Developers (Users)
+
 - **Role**: Use Avax Auth in their projects
 - **Needs**: Easy integration, clear docs, flexibility
 - **Influence**: Feature requests, API feedback
 
 ### 3. End Users
+
 - **Role**: Use applications built with Avax Auth
 - **Needs**: Secure login, privacy, account safety
 - **Influence**: Security requirements
@@ -31,11 +34,11 @@ Application Developers
 
 ## Communication
 
-| Stakeholder | Channel | Frequency |
-|-------------|---------|-----------|
-| Framework Developers | GitHub issues, PRs | Daily |
-| Application Developers | GitHub, docs | As needed |
-| End Users | (Via app developers) | N/A |
+| Stakeholder            | Channel              | Frequency |
+|------------------------|----------------------|-----------|
+| Framework Developers   | GitHub issues, PRs   | Daily     |
+| Application Developers | GitHub, docs         | As needed |
+| End Users              | (Via app developers) | N/A       |
 
 ## Interests to Balance
 

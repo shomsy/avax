@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
-use Avax\Container\DI\ContainerInterface;
 use Avax\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
+use Avax\Container\DI\ContainerInterface;
 
 interface RegisterLoggerContract
 {
@@ -30,25 +30,19 @@ final class SpecialRegisterLogger implements RegisterLoggerContract
 
 final class NeedsDefaultLogger
 {
-    public function __construct(public RegisterLoggerContract $logger)
-    {
-    }
+    public function __construct(public RegisterLoggerContract $logger) {}
 }
 
 final class NeedsSpecialLogger
 {
-    public function __construct(public RegisterLoggerContract $logger)
-    {
-    }
+    public function __construct(public RegisterLoggerContract $logger) {}
 }
 
 final class ExtensibleMessage
 {
     public string $value = 'base';
 
-    public function __construct(public string $name = 'unset')
-    {
-    }
+    public function __construct(public string $name = 'unset') {}
 }
 
 final class MessageDecorator implements DecoratorInterface
@@ -56,7 +50,7 @@ final class MessageDecorator implements DecoratorInterface
     public function decorate(mixed $instance, ContainerInterface|null $container = null) : mixed
     {
         assertInstanceOf(ExtensibleMessage::class, $instance, 'Decorator contract should receive the resolved service instance.');
-        $message = $instance;
+        $message        = $instance;
         $message->value = 'decorated:' . $message->value;
 
         return $message;
@@ -74,7 +68,7 @@ $container->tag([DefaultRegisterLogger::class, SpecialRegisterLogger::class], 'l
 $container
     ->singleton(
         ExtensibleMessage::class,
-        static fn($app, array $arguments = []) => new ExtensibleMessage($arguments['name'] ?? 'missing')
+        static fn ($app, array $arguments = []) => new ExtensibleMessage($arguments['name'] ?? 'missing')
     )
     ->withArgument('name', 'configured');
 
@@ -96,11 +90,11 @@ $container->extend(
 );
 $container->decorate(ExtensibleMessage::class, new MessageDecorator());
 
-$default = $container->get(NeedsDefaultLogger::class);
-$special = $container->get(NeedsSpecialLogger::class);
-$aliased = $container->get('register.logger');
-$message = $container->get(ExtensibleMessage::class);
-$tagged = $container->tagged('logger');
+$default            = $container->get(NeedsDefaultLogger::class);
+$special            = $container->get(NeedsSpecialLogger::class);
+$aliased            = $container->get('register.logger');
+$message            = $container->get(ExtensibleMessage::class);
+$tagged             = $container->tagged('logger');
 $messageDescription = $container->describeService(ExtensibleMessage::class);
 
 assertSame('default', $default->logger->channel(), 'Default registration should remain default.');

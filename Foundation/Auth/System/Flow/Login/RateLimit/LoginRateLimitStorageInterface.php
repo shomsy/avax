@@ -6,13 +6,16 @@ namespace Avax\Auth\System\Flow\Login\RateLimit;
 
 /**
  * Interface for rate limit storage within the Auth System.
- * 
+ *
  * Capability: Pluggable storage for brute force protection.
  */
 interface LoginRateLimitStorageInterface
 {
     public function get(string $identifier) : int;
+
     public function increment(string $identifier) : void;
+
     public function reset(string $identifier) : void;
+
     public function getLastAttemptTime(string $identifier) : int;
 }

@@ -25,16 +25,16 @@ trait HandlesHydration
      * The method processes each public field of the DTO using reflection, applying
      * type validation, attribute-based transformations, and error handling for invalid data.
      *
-     * @param  array<string, mixed>  $data  An associative array of input data for hydration,
+     * @param array<string, mixed> $data    An associative array of input data for hydration,
      *                                      where keys correspond to public property names
      *                                      and values represent their respective input values.
      *
      * @throws DTOValidationException Thrown if one or more fields fail validation during hydration.
      * @throws ReflectionException Raised when an error occurs in accessing reflective metadata for the class.
      */
-    public function hydrateFrom(array $data): void
+    public function hydrateFrom(array $data) : void
     {
-        $errors = [];
+        $errors        = [];
         $simpleMessage = null;
 
         foreach ($this->reflectPublicFields() as $meta) {
@@ -57,12 +57,12 @@ trait HandlesHydration
 
         if (! empty($errors)) {
             logger()->warning(
-                message: 'DTO hydration failed - '.$simpleMessage,
+                message: 'DTO hydration failed - ' . $simpleMessage,
                 context: ['errors' => $errors]
             );
 
             throw new DTOValidationException(
-                message: 'DTO hydration failed - '.$simpleMessage,
+                message: 'DTO hydration failed - ' . $simpleMessage,
                 errors : $errors
             );
         }
@@ -72,11 +72,12 @@ trait HandlesHydration
      * Hydrates a single field of the DTO by casting, validating, and assigning the value.
      */
     protected function hydrateField(
-        string $name,
+        string             $name,
         ReflectionProperty $property,
-        array $attributes,
-        array $data
-    ): void {
+        array              $attributes,
+        array              $data
+    ) : void
+    {
         if (! array_key_exists(key: $name, array: $data)) {
             $this->handleMissingField(name: $name, property: $property);
 
@@ -107,13 +108,13 @@ trait HandlesHydration
      * either assigning a default value, setting it to `null` if nullable,
      * or throwing an exception for required fields.
      *
-     * @param  string  $name  The name of the missing property in the DTO.
-     * @param  ReflectionProperty  $property  Reflective metadata for the missing property,
+     * @param string             $name        The name of the missing property in the DTO.
+     * @param ReflectionProperty $property    Reflective metadata for the missing property,
      *                                        used to inspect its type and default value.
      *
      * @throws InvalidArgumentException If the field is required but no value or default is provided.
      */
-    protected function handleMissingField(string $name, ReflectionProperty $property): void
+    protected function handleMissingField(string $name, ReflectionProperty $property) : void
     {
         // Check if the property explicitly allows null values using type reflection.
         if ($this->isPropertyNullable(property: $property)) {
@@ -133,7 +134,7 @@ trait HandlesHydration
 
         // Log a warning indicating that a required field is missing during hydration.
         logger()->warning(
-            message: 'Missing required field: '.$name, // Descriptive message for the log entry.
+            message: 'Missing required field: ' . $name, // Descriptive message for the log entry.
             context: ['class' => static::class] // Include the class name for debugging context.
         );
 
@@ -146,7 +147,7 @@ trait HandlesHydration
     /**
      * Validates the resolved value with all assigned attributes.
      */
-    private function validateField(string $fieldName, mixed $value, array $attributes): void
+    private function validateField(string $fieldName, mixed $value, array $attributes) : void
     {
         foreach ($attributes as $attribute) {
             if (method_exists(object_or_class: $attribute, method: 'validate')) {
@@ -161,7 +162,7 @@ trait HandlesHydration
     /**
      * Formats a hydration error for detailed exception reporting.
      */
-    private function formatHydrationError(string $fieldName, Throwable $e): string
+    private function formatHydrationError(string $fieldName, Throwable $e) : string
     {
         return sprintf(
             '%s → Field "%s": %s',

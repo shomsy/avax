@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
-use Avax\Container\DI\ContainerInterface;
 use Avax\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
-use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\RuntimeInput;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\RuntimeInput;
+use Avax\Container\DI\ContainerInterface;
 
 interface DecoratedContract
 {
@@ -46,10 +46,9 @@ final class InvisibleDecorator implements DecoratorInterface
 final class RuntimeInputConsumer
 {
     public function __construct(
-        public DecoratedContract $service,
+        public DecoratedContract              $service,
         #[RuntimeInput('name')] public string $name
-    ) {
-    }
+    ) {}
 }
 
 final class FirstGroupedStep
@@ -102,13 +101,13 @@ $container->singleton(SecondGroupedStep::class, SecondGroupedStep::class)
     ->export()
     ->group('checkout.steps', 10);
 
-$runtimeFactory = $container->factory(RuntimeInputConsumer::class);
-$consumer = $container->make(RuntimeInputConsumer::class, ['name' => 'Ada']);
+$runtimeFactory  = $container->factory(RuntimeInputConsumer::class);
+$consumer        = $container->make(RuntimeInputConsumer::class, ['name' => 'Ada']);
 $factoryConsumer = $runtimeFactory(['name' => 'Grace']);
-$description = $container->describeService(DecoratedContract::class);
-$grouped = $container->grouped('checkout.steps');
-$graph = $container->debugGraph();
-$groupReport = $container->debugGroup('checkout.steps');
+$description     = $container->describeService(DecoratedContract::class);
+$grouped         = $container->grouped('checkout.steps');
+$graph           = $container->debugGraph();
+$groupReport     = $container->debugGroup('checkout.steps');
 $selectionReport = $container->debugSelection(DecoratedContract::class);
 
 assertSame('Ada', $consumer->name, 'Runtime input should come from explicit caller overrides.');
@@ -116,7 +115,7 @@ assertSame('Grace', $factoryConsumer->name, 'Factory closures should resolve the
 assertTrue($consumer->service instanceof DecoratedService && $consumer->service->decorated, 'Decorators should still run before runtime-input consumers receive the service.');
 assertSame(
     [SecondGroupedStep::class, FirstGroupedStep::class],
-    array_map(static fn(object $service) : string => $service::class, $grouped),
+    array_map(static fn (object $service) : string => $service::class, $grouped),
     'Grouped multi-bindings should resolve in deterministic order.'
 );
 assertSame(
@@ -159,10 +158,10 @@ $container->singleton(ConflictingGroupedStep::class, ConflictingGroupedStep::cla
     ->group('checkout.steps', 10);
 
 $groupIssues = implode("\n", $container->validate([
-    FirstGroupedStep::class,
-    SecondGroupedStep::class,
-    ConflictingGroupedStep::class,
-]));
+                                                      FirstGroupedStep::class,
+                                                      SecondGroupedStep::class,
+                                                      ConflictingGroupedStep::class,
+                                                  ]));
 
 assertTrue(
     str_contains($groupIssues, 'Group [checkout.steps] uses duplicate order [10]'),

@@ -11,22 +11,26 @@ Provide a pure PHP auth solution that works anywhere, with clear APIs and enterp
 ## Strategic Goals
 
 ### 1. Developer Experience First
+
 - Simple, intuitive DSL naming
 - Clear documentation
 - Predictable behavior
 
 ### 2. Security by Default
+
 - OWASP compliance
 - Rate limiting
 - Secure sessions
 - No sensitive data leaks
 
 ### 3. Framework Agnostic
+
 - Pure PHP, no dependencies
 - Works with Laravel, Symfony, plain PHP
 - Easy adapter system
 
 ### 4. Quality Excellence
+
 - 100% test coverage goal
 - Static analysis (PHPStan)
 - Mutation testing
@@ -34,11 +38,11 @@ Provide a pure PHP auth solution that works anywhere, with clear APIs and enterp
 
 ## Competitors
 
-| Competitor | Weakness | Our Advantage |
-|------------|----------|---------------|
-| Laravel Auth | Laravel-only | Framework-agnostic |
-| Symfony Security | Complex | Simpler, DSL-driven |
-| Custom solutions | Reinvented wheel | Pre-built, tested |
+| Competitor       | Weakness         | Our Advantage       |
+|------------------|------------------|---------------------|
+| Laravel Auth     | Laravel-only     | Framework-agnostic  |
+| Symfony Security | Complex          | Simpler, DSL-driven |
+| Custom solutions | Reinvented wheel | Pre-built, tested   |
 
 ## Success Metrics
 

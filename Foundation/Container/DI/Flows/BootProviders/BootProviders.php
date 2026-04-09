@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Container\DI\Flows\BootProviders;
 
-use Avax\Container\DI\ContainerInterface;
 use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
 use Avax\Container\DI\Capabilities\Declaration\Providers\ProviderBootPlan;
 use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
-use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
+use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
+use Avax\Container\DI\ContainerInterface;
 use InvalidArgumentException;
 use Throwable;
 
@@ -25,17 +25,18 @@ final readonly class BootProviders
 
     /**
      * @param array<int, string|ServiceProviderInterface> $providers
+     *
      * @throws InvalidArgumentException
      * @throws ContainerException
      */
     public function boot(array $providers) : void
     {
-        $instances = $this->resolveProviders(providers: $providers);
-        $plan = ProviderBootPlan::build(instances: $instances);
-        $ordered = $plan->orderedInstances(instances: $instances);
+        $instances      = $this->resolveProviders(providers: $providers);
+        $plan           = ProviderBootPlan::build(instances: $instances);
+        $ordered        = $plan->orderedInstances(instances: $instances);
         $eagerProviders = $this->eagerProviderClasses(plan: $plan, instances: $instances);
-        $metrics = $this->metrics();
-        $resolver = $this->resolver();
+        $metrics        = $this->metrics();
+        $resolver       = $this->resolver();
 
         $metrics?->increment(name: 'container_provider_plan_total');
         $metrics?->increment(name: 'container_provider_plan_entries_total', by: count($plan->order));
@@ -69,6 +70,7 @@ final readonly class BootProviders
 
     /**
      * @param array<int, string|ServiceProviderInterface> $providers
+     *
      * @return array<class-string<ServiceProviderInterface>, ServiceProviderInterface>
      * @throws InvalidArgumentException
      * @throws ContainerException
@@ -78,21 +80,21 @@ final readonly class BootProviders
         $instances = [];
 
         foreach ($providers as $provider) {
-            $instance = $this->instanceFor(provider: $provider);
+            $instance                    = $this->instanceFor(provider: $provider);
             $instances[$instance::class] = $instance;
         }
 
         $queue = array_values($instances);
-        while ($queue !== []) {
+        while ( $queue !== [] ) {
             $provider = array_shift($queue);
             foreach ($provider->dependsOn() as $dependencyClass) {
                 if (isset($instances[$dependencyClass])) {
                     continue;
                 }
 
-                $dependency = $this->instanceFor(provider: $dependencyClass);
+                $dependency                    = $this->instanceFor(provider: $dependencyClass);
                 $instances[$dependency::class] = $dependency;
-                $queue[] = $dependency;
+                $queue[]                       = $dependency;
             }
         }
 
@@ -101,6 +103,7 @@ final readonly class BootProviders
 
     /**
      * @param array<int, string|ServiceProviderInterface> $providers
+     *
      * @return ServiceProviderInterface
      * @throws InvalidArgumentException
      * @throws ContainerException
@@ -126,6 +129,7 @@ final readonly class BootProviders
 
     /**
      * @param array<class-string<ServiceProviderInterface>, ServiceProviderInterface> $instances
+     *
      * @return list<class-string<ServiceProviderInterface>>
      */
     private function eagerProviderClasses(ProviderBootPlan $plan, array $instances) : array
@@ -151,9 +155,15 @@ final readonly class BootProviders
         return $classes;
     }
 
+    private function isDeferredProvider(ServiceProviderInterface $provider) : bool
+    {
+        return $provider instanceof DeferredProviderInterface
+            && $provider->deferred();
+    }
+
     /**
      * @param array<class-string<ServiceProviderInterface>, list<class-string<ServiceProviderInterface>>> $dependencies
-     * @param array<class-string<ServiceProviderInterface>, true> $eager
+     * @param array<class-string<ServiceProviderInterface>, true>                                         $eager
      */
     private function markDependenciesAsEager(string $class, array $dependencies, array &$eager) : void
     {
@@ -171,27 +181,18 @@ final readonly class BootProviders
         }
     }
 
-    private function isDeferredProvider(ServiceProviderInterface $provider) : bool
-    {
-        return $provider instanceof DeferredProviderInterface
-            && $provider->deferred();
-    }
-
     /**
-     * Returns the service ids owned by one deferred provider.
-     *
-     * @return list<string>
+     * Returns the metrics system service when available.
      */
-    private function providedServices(ServiceProviderInterface $provider) : array
+    private function metrics() : ResolutionMetrics|null
     {
-        if (! $provider instanceof DeferredProviderInterface) {
-            return [];
+        try {
+            $metrics = $this->container->get(ResolutionMetrics::class);
+        } catch (Throwable) {
+            return null;
         }
 
-        $services = $provider->provides();
-        sort($services);
-
-        return array_values(array_unique($services));
+        return $metrics instanceof ResolutionMetrics ? $metrics : null;
     }
 
     /**
@@ -209,16 +210,19 @@ final readonly class BootProviders
     }
 
     /**
-     * Returns the metrics system service when available.
+     * Returns the service ids owned by one deferred provider.
+     *
+     * @return list<string>
      */
-    private function metrics() : ResolutionMetrics|null
+    private function providedServices(ServiceProviderInterface $provider) : array
     {
-        try {
-            $metrics = $this->container->get(ResolutionMetrics::class);
-        } catch (Throwable) {
-            return null;
+        if (! $provider instanceof DeferredProviderInterface) {
+            return [];
         }
 
-        return $metrics instanceof ResolutionMetrics ? $metrics : null;
+        $services = $provider->provides();
+        sort($services);
+
+        return array_values(array_unique($services));
     }
 }

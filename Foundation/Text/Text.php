@@ -307,7 +307,7 @@ final readonly class Text
 
         $parts = explode(' ', $s);
         $parts = array_map(
-            static fn(string $p) : string => $p === '' ? '' : ucfirst(strtolower($p)),
+            static fn (string $p) : string => $p === '' ? '' : ucfirst(strtolower($p)),
             $parts
         );
 

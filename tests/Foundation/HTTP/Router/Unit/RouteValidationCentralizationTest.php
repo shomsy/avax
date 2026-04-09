@@ -115,15 +115,15 @@ class RouteValidationCentralizationTest extends TestCase
         $builder = RouteBuilder::make(method: 'GET', path: '/users/{id}/posts/{slug}')
             ->action(action: 'Controller@show')
             ->whereIn(constraints: [
-                'id'   => '\d+',
-                'slug' => '[a-z0-9-]+',
-            ]);
+                                       'id'   => '\d+',
+                                       'slug' => '[a-z0-9-]+',
+                                   ]);
 
         $route = $builder->build();
         $this->assertEquals(expected: [
-            'id'   => '\d+',
-            'slug' => '[a-z0-9-]+',
-        ],                  actual  : $route->constraints);
+                                          'id' => '\d+',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  'slug' => '[a-z0-9-]+',
+                                      ], actual: $route->constraints);
     }
 
     /**
@@ -137,9 +137,9 @@ class RouteValidationCentralizationTest extends TestCase
         RouteBuilder::make(method: 'GET', path: '/users/{id}/posts/{slug}')
             ->action(action: 'Controller@show')
             ->whereIn(constraints: [
-                'id'   => '[invalid', // Invalid first
-                'slug' => '[a-z0-9-]+', // Valid second
-            ]);
+                                       'id'   => '[invalid', // Invalid first
+                                       'slug' => '[a-z0-9-]+', // Valid second
+                                   ]);
     }
 
     /**

@@ -4,7 +4,8 @@ This document describes the access control system in Avax Auth (v2.0+).
 
 ## Overview
 
-Unlike older frameworks, authorization in Avax Auth is handled through the **`Access/`** layer, which provides a root façade plus specialized **require** actions.
+Unlike older frameworks, authorization in Avax Auth is handled through the **`Access/`** layer, which provides a root
+façade plus specialized **require** actions.
 
 ## 1. Authentication vs Authorization
 
@@ -64,7 +65,8 @@ $auth->access()->requirePermission(new UserPermission('delete_user'));
 
 ## 5. Metadata Resolution
 
-Authorization requirements can be discovered via PSR-7 request attributes, PHP 8 Attributes, or manual injection into the **`Access`** façade.
+Authorization requirements can be discovered via PSR-7 request attributes, PHP 8 Attributes, or manual injection into
+the **`Access`** façade.
 
 ---
 *Least privilege by design.*

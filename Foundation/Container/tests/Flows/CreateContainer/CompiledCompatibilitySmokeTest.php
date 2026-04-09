@@ -16,13 +16,11 @@ final class CompatibilityDependency
 
 final class CompatibilityTarget
 {
-    public function __construct(public CompatibilityDependency $dependency)
-    {
-    }
+    public function __construct(public CompatibilityDependency $dependency) {}
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-compatibility-' . uniqid();
-$version = 'compiled-compatibility-smoke';
+$version  = 'compiled-compatibility-smoke';
 
 $compiled = makeTestContainer(CreateContainerConfig::create(
     cacheDir    : $cacheDir,
@@ -34,16 +32,16 @@ $compiled->singleton(CompatibilityDependency::class, CompatibilityDependency::cl
 $compiled->compileContainer([CompatibilityTarget::class, CompatibilityDependency::class]);
 
 $reloaded = makeTestContainer(CreateContainerConfig::create(
-    cacheDir    : $cacheDir,
-    cacheVersion: $version,
-    compileMode : CreateContainerConfig::COMPILE_MODE_DEV,
-    settings    : ['app_env' => 'dev'],
-    debug       : true,
+    cacheDir       : $cacheDir,
+    cacheVersion   : $version,
+    compileMode    : CreateContainerConfig::COMPILE_MODE_DEV,
+    settings       : ['app_env' => 'dev'],
+    debug          : true,
     diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_DETAILED,
 ));
 $reloaded->singleton(CompatibilityDependency::class, CompatibilityDependency::class);
 
-$report = $reloaded->compileReport([CompatibilityTarget::class]);
+$report   = $reloaded->compileReport([CompatibilityTarget::class]);
 $resolved = $reloaded->get(CompatibilityTarget::class);
 
 assertTrue($report !== null, 'Compile reports should still exist for incompatible artifacts.');

@@ -21,28 +21,22 @@ final class CompiledGreeter implements CompiledGreeterContract
 
 final class CompiledNeedsGreeter
 {
-    public function __construct(public CompiledGreeterContract $greeter)
-    {
-    }
+    public function __construct(public CompiledGreeterContract $greeter) {}
 }
 
 final class CompiledConfiguredMessage
 {
-    public function __construct(public string $name)
-    {
-    }
+    public function __construct(public string $name) {}
 }
 
 final class CompiledNeedsObjectArgument
 {
-    public function __construct(public stdClass $payload)
-    {
-    }
+    public function __construct(public stdClass $payload) {}
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-runtime-' . uniqid();
-$version = 'compiled-container-smoke';
-$config = CreateContainerConfig::create(cacheDir: $cacheDir, cacheVersion: $version);
+$version  = 'compiled-container-smoke';
+$config   = CreateContainerConfig::create(cacheDir: $cacheDir, cacheVersion: $version);
 $artifact = $cacheDir . '/container/' . rawurlencode($version) . '/compiled/container.php';
 
 $first = makeTestContainer($config);
@@ -54,8 +48,8 @@ $first->compileContainer([CompiledNeedsGreeter::class, CompiledConfiguredMessage
 
 assertTrue(is_file($artifact), 'CompileContainer should write a generated compiled runtime artifact.');
 
-$resolvedFromCompiled = $first->get(CompiledNeedsGreeter::class);
-$configuredFromCompiled = $first->get(CompiledConfiguredMessage::class);
+$resolvedFromCompiled       = $first->get(CompiledNeedsGreeter::class);
+$configuredFromCompiled     = $first->get(CompiledConfiguredMessage::class);
 $objectArgumentFromCompiled = $first->get(CompiledNeedsObjectArgument::class);
 assertSame('compiled-runtime', $resolvedFromCompiled->greeter->message(), 'Compiled runtime should resolve bound dependencies.');
 assertSame('from-compiled', $configuredFromCompiled->name, 'Compiled runtime should preserve registration constructor arguments.');
@@ -70,10 +64,10 @@ $second->bind(CompiledGreeterContract::class, CompiledGreeter::class);
 $second->singleton(CompiledConfiguredMessage::class, CompiledConfiguredMessage::class)->withArgument('name', 'from-compiled');
 $second->singleton(CompiledNeedsObjectArgument::class, CompiledNeedsObjectArgument::class)
     ->withArgument('payload', (object) ['kind' => 'dynamic-fallback']);
-$resolvedFromDisk = $second->get(CompiledNeedsGreeter::class);
-$configuredFromDisk = $second->get(CompiledConfiguredMessage::class);
+$resolvedFromDisk       = $second->get(CompiledNeedsGreeter::class);
+$configuredFromDisk     = $second->get(CompiledConfiguredMessage::class);
 $objectArgumentFromDisk = $second->get(CompiledNeedsObjectArgument::class);
-$metrics = $second->exportMetrics();
+$metrics                = $second->exportMetrics();
 
 assertSame('compiled-runtime', $resolvedFromDisk->greeter->message(), 'A second container should load the compiled runtime from disk.');
 assertSame('from-compiled', $configuredFromDisk->name, 'Disk-loaded compiled runtime should preserve registration constructor arguments.');

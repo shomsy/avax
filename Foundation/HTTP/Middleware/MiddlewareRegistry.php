@@ -154,7 +154,7 @@ final class MiddlewareRegistry
         if (! isset(self::MIDDLEWARE_MAP[$identifier])) {
             throw new InvalidArgumentException(
                 message: "Middleware '{$identifier}' is not registered. Available: " .
-                implode(', ', array_keys(self::MIDDLEWARE_MAP))
+                         implode(', ', array_keys(self::MIDDLEWARE_MAP))
             );
         }
 

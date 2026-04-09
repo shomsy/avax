@@ -16,7 +16,8 @@ Relevant runtime and validation failures now aim to include:
 
 ## Examples Of Story-Grade Failures
 
-- top-level access to a flow-local service explains that the service is not part of the top-level surface and suggests `entry()` or an exported capability
+- top-level access to a flow-local service explains that the service is not part of the top-level surface and suggests
+  `entry()` or an exported capability
 - cross-slice access errors explain both the consumer slice and dependency slice
 - scope failures explain which scope kind is required and suggest the exact `openScope()` call
 - missing runtime input errors explain which input is missing and suggest overrides, `forContext()`, or a default value

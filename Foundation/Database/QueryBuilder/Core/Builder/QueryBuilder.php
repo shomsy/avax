@@ -558,6 +558,6 @@ class QueryBuilder
      */
     public function transaction(callable $callback) : mixed
     {
-        return $this->orchestrator->transaction(callback: fn() => $callback($this));
+        return $this->orchestrator->transaction(callback: fn () => $callback($this));
     }
 }

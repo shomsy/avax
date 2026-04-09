@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Avax\Container\DI\Capabilities\Composition\Testing;
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistration;
 use Avax\Container\DI\Container;
 use Avax\Container\DI\Flows\CreateContainer\CreateContainer;
-use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistration;
 
 /**
  * Composes isolated test containers with ownership-aware defaults.
@@ -36,7 +36,8 @@ final readonly class TestComposition
         mixed     $concrete = null,
         bool|null $entry = null,
         array     $imports = []
-    ) : ServiceRegistration {
+    ) : ServiceRegistration
+    {
         $entry        ??= false;
         $registration = $this->container->bind(abstract: $abstract, concrete: $concrete)
             ->asFlow(ownerSlice: $slice)
@@ -56,9 +57,10 @@ final readonly class TestComposition
     public function singletonCapability(
         string $slice,
         string $abstract,
-        mixed $concrete = null,
-        bool $exported = true
-    ) : ServiceRegistration {
+        mixed  $concrete = null,
+        bool   $exported = true
+    ) : ServiceRegistration
+    {
         $registration = $this->container->singleton(abstract: $abstract, concrete: $concrete)
             ->asCapability(ownerSlice: $slice)
             ->asShared()
@@ -74,9 +76,10 @@ final readonly class TestComposition
     public function bindCapability(
         string $slice,
         string $abstract,
-        mixed $concrete = null,
-        bool $exported = false
-    ) : ServiceRegistration {
+        mixed  $concrete = null,
+        bool   $exported = false
+    ) : ServiceRegistration
+    {
         $registration = $this->container->bind(abstract: $abstract, concrete: $concrete)
             ->asCapability(ownerSlice: $slice)
             ->asShared()

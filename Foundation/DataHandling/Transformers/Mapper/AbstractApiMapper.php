@@ -46,7 +46,8 @@ abstract class AbstractApiMapper implements MapperInterface
      * This method decides whether to map to a single DTO or a collection of DTOs
      * based on the size of the response.
      *
-     * @param  array  $data  The array of data sets to be mapped to DTOs.
+     * @param array $data The array of data sets to be mapped to DTOs.
+     *
      * @return DTOInterface|DTOCollection Either a single DTO object or a DTOCollection.
      *
      * @throws ReflectionException If an error occurs during reflection.
@@ -56,7 +57,7 @@ abstract class AbstractApiMapper implements MapperInterface
      * $dtoOrCollection = $this->map(data: $apiResponse);
      * ```
      */
-    public function map(array $data): DTOInterface|DTOCollection
+    public function map(array $data) : DTOInterface|DTOCollection
     {
         return count(value: $data) === 1
             ? $this->mapSingleDTO(data: $data[0])
@@ -67,7 +68,8 @@ abstract class AbstractApiMapper implements MapperInterface
      * Maps a single data array to a DTO object.
      * Internal helper method used by map().
      *
-     * @param  array  $data  The data set to be mapped.
+     * @param array $data The data set to be mapped.
+     *
      * @return DTOInterface The DTO object created from the provided data.
      *
      * @throws ReflectionException If an error occurs during reflection.
@@ -77,7 +79,7 @@ abstract class AbstractApiMapper implements MapperInterface
      * $singleDto = $this->mapSingleDTO(data: $dataArray);
      * ```
      */
-    private function mapSingleDTO(array $data): DTOInterface
+    private function mapSingleDTO(array $data) : DTOInterface
     {
         $dtoClass = $this->getDtoClassName();
         DTOValidator::validateClassExistence(dtoClass: $dtoClass);
@@ -90,7 +92,7 @@ abstract class AbstractApiMapper implements MapperInterface
      *
      * @return string The fully qualified class name of the DTO.
      */
-    protected function getDtoClassName(): string
+    protected function getDtoClassName() : string
     {
         return $this->defineDtoClass();
     }
@@ -102,13 +104,14 @@ abstract class AbstractApiMapper implements MapperInterface
      *
      * @return string The fully qualified class name of the DTO.
      */
-    abstract protected function defineDtoClass(): string;
+    abstract protected function defineDtoClass() : string;
 
     /**
      * Transforms an array of data into a DTO object.
      *
-     * @param  array  $data  The data set to be transformed.
-     * @param  string  $dtoClass  The fully qualified class name of the DTO.
+     * @param array  $data     The data set to be transformed.
+     * @param string $dtoClass The fully qualified class name of the DTO.
+     *
      * @return DTOInterface The DTO object created from the provided data.
      *
      * @throws ReflectionException If an error occurs during reflection.
@@ -118,7 +121,7 @@ abstract class AbstractApiMapper implements MapperInterface
      * $dtoObject = $this->transformToDTO(data: $data, dtoClass: UserDTO::class);
      * ```
      */
-    protected function transformToDTO(array $data, string $dtoClass): DTOInterface
+    protected function transformToDTO(array $data, string $dtoClass) : DTOInterface
     {
         $castedData = $this->castData(data: $data, dtoClass: $dtoClass);
 
@@ -131,8 +134,9 @@ abstract class AbstractApiMapper implements MapperInterface
      * This method uses reflection to find the type of each property in the DTO class,
      * and then casts the data accordingly using the `ValueCaster` class.
      *
-     * @param  array  $data  The data to be cast.
-     * @param  string  $dtoClass  The fully qualified class name of the DTO which contains type definitions.
+     * @param array  $data     The data to be cast.
+     * @param string $dtoClass The fully qualified class name of the DTO which contains type definitions.
+     *
      * @return array An array of casted data that can be used to instantiate the DTO object.
      *
      * @throws ReflectionException If an error occurs during reflection.
@@ -142,14 +146,14 @@ abstract class AbstractApiMapper implements MapperInterface
      * $castedData = $this->castData(data: $dataArray, dtoClass: UserDTO::class);
      * ```
      */
-    protected function castData(array $data, string $dtoClass): array
+    protected function castData(array $data, string $dtoClass) : array
     {
         $reflectionClass = ReflectionCache::getReflectionClass(dtoClass: $dtoClass);
-        $castedData = [];
+        $castedData      = [];
 
         foreach ($reflectionClass->getProperties(filter: ReflectionProperty::IS_PUBLIC) as $reflectionProperty) {
             $propertyName = $reflectionProperty->getName();
-            $type = $reflectionProperty->getType();
+            $type         = $reflectionProperty->getType();
 
             if ($type instanceof ReflectionNamedType && array_key_exists(key: $propertyName, array: $data)) {
                 $castedData[$propertyName] = ValueCaster::castValue(
@@ -167,7 +171,8 @@ abstract class AbstractApiMapper implements MapperInterface
      * Maps an array of data sets into an array or collection of DTO objects.
      * Internal helper method used by map().
      *
-     * @param  array  $data  The array of data sets to be mapped to DTOs.
+     * @param array $data The array of data sets to be mapped to DTOs.
+     *
      * @return DTOCollection A collection of mapped DTO objects.
      *
      * @throws ReflectionException If an error occurs during reflection.
@@ -177,7 +182,7 @@ abstract class AbstractApiMapper implements MapperInterface
      * $dtoCollection = $this->mapToDTOCollection(data: $dataArray);
      * ```
      */
-    private function mapToDTOCollection(array $data): DTOCollection
+    private function mapToDTOCollection(array $data) : DTOCollection
     {
         $dtoCollection = new DTOCollection;
 
@@ -195,7 +200,7 @@ abstract class AbstractApiMapper implements MapperInterface
      *
      * @return string The fully qualified class name of the DTO collection.
      */
-    protected function getDtoCollectionClassName(): string
+    protected function getDtoCollectionClassName() : string
     {
         return $this->defineDtoCollectionClass();
     }
@@ -207,5 +212,5 @@ abstract class AbstractApiMapper implements MapperInterface
      *
      * @return string The fully qualified class name of the DTO collection.
      */
-    abstract protected function defineDtoCollectionClass(): string;
+    abstract protected function defineDtoCollectionClass() : string;
 }

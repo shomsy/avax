@@ -70,7 +70,8 @@ Cross-slice access is explicit:
 - consumer slice declares `import('capability.payments')`
 - validation and runtime diagnostics explain why access is allowed or blocked
 
-If a shared unit is not exported, or a consumer slice does not import the provider slice, cross-slice access is rejected by validation and can fail fast at runtime.
+If a shared unit is not exported, or a consumer slice does not import the provider slice, cross-slice access is rejected
+by validation and can fail fast at runtime.
 
 ## Explainability Surface
 

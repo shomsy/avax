@@ -24,13 +24,13 @@ final class DomainAwareMatcher implements RouteMatcherInterface
      * Now supports multiple routes per method+path for true domain-aware routing.
      *
      * @param array<string, array<string, RouteDefinition[]>> $routes  Routes grouped by method and path
-     * @param Request                                          $request The incoming request
+     * @param Request                                         $request The incoming request
      *
      * @return array{0: RouteDefinition, 1: array}|null Returns [route, matches] or null if no match
      */
     public function match(array $routes, Request $request) : array|null
     {
-        $method = strtoupper($request->getMethod());
+        $method  = strtoupper($request->getMethod());
         $uriPath = $request->getUri()->getPath();
 
         // Sort routes by specificity (most specific first) for proper precedence
@@ -63,6 +63,30 @@ final class DomainAwareMatcher implements RouteMatcherInterface
 
         // Domain doesn't match, try to find another route that does match domain
         return $this->findDomainMatchingRoute(routes: $sortedRoutes, request: $request, method: $method, uriPath: $uriPath);
+    }
+
+    /**
+     * Sorts routes by specificity in descending order (most specific first).
+     * Ensures more specific routes (like /users/me) are matched before generic ones (like /users/{id}).
+     *
+     * @param array<string, array<string, RouteDefinition[]>> $routes
+     *
+     * @return array<string, array<string, RouteDefinition[]>>
+     */
+    private function sortRoutesBySpecificity(array $routes) : array
+    {
+        $sorted = [];
+
+        foreach ($routes as $method => $pathsForMethod) {
+            $sorted[$method] = [];
+            foreach ($pathsForMethod as $path => $routesForPath) {
+                // Sort routes by specificity (descending: higher specificity first)
+                usort($routesForPath, static fn (RouteDefinition $a, RouteDefinition $b) => $b->specificity <=> $a->specificity);
+                $sorted[$method][$path] = $routesForPath;
+            }
+        }
+
+        return $sorted;
     }
 
     /**
@@ -139,30 +163,6 @@ final class DomainAwareMatcher implements RouteMatcherInterface
         }
 
         return null;
-    }
-
-    /**
-     * Sorts routes by specificity in descending order (most specific first).
-     * Ensures more specific routes (like /users/me) are matched before generic ones (like /users/{id}).
-     *
-     * @param array<string, array<string, RouteDefinition[]>> $routes
-     *
-     * @return array<string, array<string, RouteDefinition[]>>
-     */
-    private function sortRoutesBySpecificity(array $routes) : array
-    {
-        $sorted = [];
-
-        foreach ($routes as $method => $pathsForMethod) {
-            $sorted[$method] = [];
-            foreach ($pathsForMethod as $path => $routesForPath) {
-                // Sort routes by specificity (descending: higher specificity first)
-                usort($routesForPath, static fn(RouteDefinition $a, RouteDefinition $b) => $b->specificity <=> $a->specificity);
-                $sorted[$method][$path] = $routesForPath;
-            }
-        }
-
-        return $sorted;
     }
 
     /**

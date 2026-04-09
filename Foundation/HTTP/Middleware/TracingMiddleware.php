@@ -13,18 +13,20 @@ use Throwable;
 
 class TracingMiddleware implements MiddlewareInterface
 {
-    private array $metrics = [
-        'total_requests' => 0,
-        'total_latency_ms' => 0,
-        'uptime_seconds' => 0,
-    ];
+    private array $metrics
+        = [
+            'total_requests'   => 0,
+            'total_latency_ms' => 0,
+            'uptime_seconds'   => 0,
+        ];
 
     private float $startTime;
 
     public function __construct(
-        private LoggerInterface $logger,
+        private LoggerInterface              $logger,
         #[SensitiveParameter] private string $requestIdHeader = 'X-Request-ID'
-    ) {
+    )
+    {
         $this->startTime = microtime(true);
     }
 
@@ -32,7 +34,7 @@ class TracingMiddleware implements MiddlewareInterface
      * @throws Throwable
      * @throws RandomException
      */
-    public function process(ServerRequestInterface $request, callable $next): ResponseInterface
+    public function process(ServerRequestInterface $request, callable $next) : ResponseInterface
     {
         $requestId = $this->generateRequestId();
         $startTime = microtime(true);
@@ -42,10 +44,10 @@ class TracingMiddleware implements MiddlewareInterface
 
         $this->logger->info(message: 'Request started', context: [
             'request_id' => $requestId,
-            'method' => $request->getMethod(),
-            'path' => $request->getUri()->getPath(),
-            'query' => $request->getUri()->getQuery(),
-            'headers' => $this->getSafeHeaders(request: $request),
+            'method'     => $request->getMethod(),
+            'path'       => $request->getUri()->getPath(),
+            'query'      => $request->getUri()->getQuery(),
+            'headers'    => $this->getSafeHeaders(request: $request),
         ]);
 
         try {
@@ -56,14 +58,14 @@ class TracingMiddleware implements MiddlewareInterface
             // Update metrics
             $this->metrics['total_requests']++;
             $this->metrics['total_latency_ms'] += $latency;
-            $this->metrics['uptime_seconds'] = microtime(true) - $this->startTime;
+            $this->metrics['uptime_seconds']   = microtime(true) - $this->startTime;
 
             $this->logger->info(message: 'Request completed', context: [
-                'request_id' => $requestId,
-                'method' => $request->getMethod(),
-                'path' => $request->getUri()->getPath(),
-                'status' => $response->getStatusCode(),
-                'latency_ms' => round($latency, 2),
+                'request_id'          => $requestId,
+                'method'              => $request->getMethod(),
+                'path'                => $request->getUri()->getPath(),
+                'status'              => $response->getStatusCode(),
+                'latency_ms'          => round($latency, 2),
                 'response_size_bytes' => strlen((string) $response->getBody()),
             ]);
 
@@ -75,35 +77,21 @@ class TracingMiddleware implements MiddlewareInterface
 
             $this->logger->error(message: 'Request failed', context: [
                 'request_id' => $requestId,
-                'method' => $request->getMethod(),
-                'path' => $request->getUri()->getPath(),
+                'method'     => $request->getMethod(),
+                'path'       => $request->getUri()->getPath(),
                 'latency_ms' => round($latency, 2),
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'error'      => $e->getMessage(),
+                'trace'      => $e->getTraceAsString(),
             ]);
 
             throw $e;
         }
     }
 
-    public function getMetrics(): array
-    {
-        $avgLatency = $this->metrics['total_requests'] > 0
-            ? $this->metrics['total_latency_ms'] / $this->metrics['total_requests']
-            : 0;
-
-        return [
-            'uptime_seconds' => round($this->metrics['uptime_seconds'], 2),
-            'total_requests' => $this->metrics['total_requests'],
-            'average_latency_ms' => round($avgLatency, 2),
-            'total_latency_ms' => round($this->metrics['total_latency_ms'], 2),
-        ];
-    }
-
     /**
      * @throws RandomException
      */
-    private function generateRequestId(): string
+    private function generateRequestId() : string
     {
         return sprintf(
             '%s-%s-%s',
@@ -113,7 +101,7 @@ class TracingMiddleware implements MiddlewareInterface
         );
     }
 
-    private function getSafeHeaders(ServerRequestInterface $request): array
+    private function getSafeHeaders(ServerRequestInterface $request) : array
     {
         $headers = $request->getHeaders();
 
@@ -135,5 +123,19 @@ class TracingMiddleware implements MiddlewareInterface
         }
 
         return $headers;
+    }
+
+    public function getMetrics() : array
+    {
+        $avgLatency = $this->metrics['total_requests'] > 0
+            ? $this->metrics['total_latency_ms'] / $this->metrics['total_requests']
+            : 0;
+
+        return [
+            'uptime_seconds'     => round($this->metrics['uptime_seconds'], 2),
+            'total_requests'     => $this->metrics['total_requests'],
+            'average_latency_ms' => round($avgLatency, 2),
+            'total_latency_ms'   => round($this->metrics['total_latency_ms'], 2),
+        ];
     }
 }

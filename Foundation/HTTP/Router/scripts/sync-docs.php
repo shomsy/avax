@@ -21,11 +21,11 @@ class DocsSync
 
     public function __construct()
     {
-        $this->docsDir = __DIR__ . '/../docs/Router';
+        $this->docsDir   = __DIR__ . '/../docs/Router';
         $this->routerDir = __DIR__ . '/../';
     }
 
-    public function sync(): void
+    public function sync() : void
     {
         echo "🔄 Starting documentation sync...\n";
 
@@ -37,17 +37,17 @@ class DocsSync
         echo "✅ Documentation sync completed!\n";
     }
 
-    private function ensureDocsDir(): void
+    private function ensureDocsDir() : void
     {
-        if (!is_dir($this->docsDir)) {
+        if (! is_dir($this->docsDir)) {
             mkdir($this->docsDir, 0755, true);
         }
     }
 
-    private function generateArchitectureDiagram(): void
+    private function generateArchitectureDiagram() : void
     {
         $diagram = $this->buildMermaidDiagram();
-        $file = $this->docsDir . '/Architecture.md';
+        $file    = $this->docsDir . '/Architecture.md';
 
         $content = "# HTTP Router Architecture\n\n";
         $content .= "## System Overview\n\n";
@@ -65,7 +65,7 @@ class DocsSync
         echo "📊 Generated architecture diagram\n";
     }
 
-    private function buildMermaidDiagram(): string
+    private function buildMermaidDiagram() : string
     {
         $diagram = "graph TB\n";
         $diagram .= "    A[HTTP Request] --> B{Router.resolve}\n";
@@ -96,10 +96,10 @@ class DocsSync
         return $diagram;
     }
 
-    private function generateExceptionList(): void
+    private function generateExceptionList() : void
     {
         $exceptions = $this->scanExceptions();
-        $file = $this->docsDir . '/Failure-Modes.md';
+        $file       = $this->docsDir . '/Failure-Modes.md';
 
         $content = "# Router Failure Modes & Exceptions\n\n";
         $content .= "## Exception Hierarchy\n\n";
@@ -127,9 +127,9 @@ class DocsSync
         echo "📋 Generated exception reference\n";
     }
 
-    private function scanExceptions(): array
+    private function scanExceptions() : array
     {
-        $exceptions = [];
+        $exceptions     = [];
         $exceptionFiles = glob($this->routerDir . '/Routing/Exceptions/*.php');
 
         foreach ($exceptionFiles as $file) {
@@ -144,11 +144,11 @@ class DocsSync
                         $instance = $reflection->newInstanceWithoutConstructor();
 
                         $exceptions[] = [
-                            'class' => $className,
+                            'class'       => $className,
                             'http_status' => method_exists($instance, 'getHttpStatusCode')
                                 ? $instance->getHttpStatusCode()
                                 : 'Unknown',
-                            'retryable' => method_exists($instance, 'isRetryable')
+                            'retryable'   => method_exists($instance, 'isRetryable')
                                 ? ($instance->isRetryable() ? 'Yes' : 'No')
                                 : 'Unknown',
                             'description' => $this->extractClassDescription(reflection: $reflection),
@@ -163,7 +163,7 @@ class DocsSync
         return $exceptions;
     }
 
-    private function extractClassDescription(ReflectionClass $reflection): string
+    private function extractClassDescription(ReflectionClass $reflection) : string
     {
         $docComment = $reflection->getDocComment();
         if ($docComment) {
@@ -171,7 +171,7 @@ class DocsSync
             $lines = explode("\n", $docComment);
             foreach ($lines as $line) {
                 $line = trim($line, " \t/*");
-                if (!empty($line)) {
+                if (! empty($line)) {
                     return $line;
                 }
             }
@@ -180,10 +180,10 @@ class DocsSync
         return "Exception for routing operations";
     }
 
-    private function generateApiReference(): void
+    private function generateApiReference() : void
     {
         $interfaces = $this->scanInterfaces();
-        $file = $this->docsDir . '/Api-Reference.md';
+        $file       = $this->docsDir . '/Api-Reference.md';
 
         $content = "# Router API Reference\n\n";
         $content .= "## Core Interfaces\n\n";
@@ -192,15 +192,15 @@ class DocsSync
             $content .= "### {$interface['name']}\n\n";
             $content .= "**Namespace:** `{$interface['namespace']}`\n\n";
 
-            if (!empty($interface['description'])) {
+            if (! empty($interface['description'])) {
                 $content .= "**Description:** {$interface['description']}\n\n";
             }
 
-            if (!empty($interface['methods'])) {
+            if (! empty($interface['methods'])) {
                 $content .= "**Methods:**\n\n";
                 foreach ($interface['methods'] as $method) {
                     $content .= "- `{$method['signature']}`\n";
-                    if (!empty($method['description'])) {
+                    if (! empty($method['description'])) {
                         $content .= "  - {$method['description']}\n";
                     }
                 }
@@ -214,9 +214,9 @@ class DocsSync
         echo "📖 Generated API reference\n";
     }
 
-    private function scanInterfaces(): array
+    private function scanInterfaces() : array
     {
-        $interfaces = [];
+        $interfaces     = [];
         $interfaceFiles = [
             $this->routerDir . '/RouterInterface.php',
             $this->routerDir . '/RouterRuntimeInterface.php',
@@ -226,7 +226,7 @@ class DocsSync
 
         foreach ($interfaceFiles as $file) {
             if (file_exists($file)) {
-                $content = file_get_contents($file);
+                $content      = file_get_contents($file);
                 $interfaces[] = $this->parseInterface(content: $content, file: $file);
             }
         }
@@ -234,13 +234,13 @@ class DocsSync
         return array_filter($interfaces);
     }
 
-    private function parseInterface(string $content, string $file): array
+    private function parseInterface(string $content, string $file) : array
     {
         $interface = [
-            'name' => basename($file, '.php'),
-            'namespace' => 'Avax\\HTTP\\Router',
+            'name'        => basename($file, '.php'),
+            'namespace'   => 'Avax\\HTTP\\Router',
             'description' => '',
-            'methods' => [],
+            'methods'     => [],
         ];
 
         // Extract namespace
@@ -257,7 +257,7 @@ class DocsSync
         preg_match_all('/public\s+function\s+([^\(]+)\([^)]*\)/', $content, $methodMatches);
         foreach ($methodMatches[0] as $methodSignature) {
             $interface['methods'][] = [
-                'signature' => $methodSignature,
+                'signature'   => $methodSignature,
                 'description' => '',
             ];
         }

@@ -42,13 +42,55 @@ class RouterHardeningTest extends TestCase
         $this->app = $this->createAppWithRoutes(routesFile: $routes);
 
         // When: Requesting the null-returning route
-        $request = $this->createRequest(method: 'GET', path: '/null-test');
+        $request  = $this->createRequest(method: 'GET', path: '/null-test');
         $response = $this->getRouter()->resolve($request);
 
         // Then: Should return fallback response
         $this->assertEquals(expected: 200, actual: $response->getStatusCode());
         $this->assertStringContainsString(needle: 'Callable returned null', haystack: (string) $response->getBody());
         $this->assertInstanceOf(expected: ResponseInterface::class, actual: $response);
+    }
+
+    private function createAppWithRoutes(string $routesFile) : mixed
+    {
+        $providers = [
+            ConfigurationServiceProvider::class,
+            FilesystemServiceProvider::class,
+            LoggingServiceProvider::class,
+            AuthenticationServiceProvider::class,
+            SecurityServiceProvider::class,
+            DatabaseServiceProvider::class,
+            HTTPServiceProvider::class,
+            MiddlewareServiceProvider::class,
+            RouterServiceProvider::class,
+            SessionServiceProvider::class,
+            ViewServiceProvider::class,
+            HttpClientServiceProvider::class,
+        ];
+
+        $cacheDir = dirname(__DIR__, 2) . '/storage/cache';
+
+        return AppFactory::http(
+            providers: $providers,
+            routes   : $routesFile,
+            cacheDir : $cacheDir,
+            debug    : true
+        );
+    }
+
+    private function createRequest(string $method, string $path) : Request
+    {
+        $uri = UriBuilder::createFromString(uri: "http://localhost{$path}");
+
+        return new Request(
+            serverParams: ['REQUEST_METHOD' => $method],
+            uri         : $uri
+        );
+    }
+
+    private function getRouter()
+    {
+        return $this->app->getContainer()->get(RouterRuntimeInterface::class);
     }
 
     /**
@@ -94,13 +136,13 @@ class RouterHardeningTest extends TestCase
      */
     public function stress_test_sequential_route_calls_no_leaks() : void
     {
-        $routes = ['/', '/health', '/test', '/favicon.ico'];
+        $routes     = ['/', '/health', '/test', '/favicon.ico'];
         $iterations = 100;
 
         // Run stress test
         for ($i = 0; $i < $iterations; $i++) {
             foreach ($routes as $route) {
-                $request = $this->createRequest(method: 'GET', path: $route);
+                $request  = $this->createRequest(method: 'GET', path: $route);
                 $response = $this->getRouter()->resolve($request);
 
                 // Basic validation that response is valid
@@ -122,7 +164,7 @@ class RouterHardeningTest extends TestCase
         $routes = ['/', '/health', '/test', '/favicon.ico'];
 
         foreach ($routes as $route) {
-            $request = $this->createRequest(method: 'GET', path: $route);
+            $request  = $this->createRequest(method: 'GET', path: $route);
             $response = $this->getRouter()->resolve($request);
 
             // Validate PSR-7 compliance
@@ -142,7 +184,7 @@ class RouterHardeningTest extends TestCase
     public function route_pipeline_dispatch_returns_valid_response() : void
     {
         // This test validates that RoutePipeline dispatch method works correctly
-        $request = $this->createRequest(method: 'GET', path: '/health');
+        $request  = $this->createRequest(method: 'GET', path: '/health');
         $response = $this->getRouter()->resolve($request);
 
         // Validate the response is properly formed
@@ -157,7 +199,7 @@ class RouterHardeningTest extends TestCase
     public function router_kernel_returns_final_response() : void
     {
         // Test that the full routing pipeline returns a final response
-        $request = $this->createRequest(method: 'GET', path: '/');
+        $request  = $this->createRequest(method: 'GET', path: '/');
         $response = $this->getRouter()->resolve($request);
 
         // Validate final response
@@ -189,7 +231,7 @@ class RouterHardeningTest extends TestCase
     public function middleware_stagechain_reactivation_works() : void
     {
         // Test middleware pipeline reactivation
-        $request = $this->createRequest(method: 'GET', path: '/health');
+        $request  = $this->createRequest(method: 'GET', path: '/health');
         $response = $this->getRouter()->resolve($request);
 
         // If middleware is working, we should get a valid response
@@ -214,55 +256,14 @@ class RouterHardeningTest extends TestCase
             HttpClientServiceProvider::class,
         ];
 
-        $routes = dirname(__DIR__, 2) . '/Presentation/HTTP/routes/web.routes.php';
+        $routes   = dirname(__DIR__, 2) . '/Presentation/HTTP/routes/web.routes.php';
         $cacheDir = dirname(__DIR__, 2) . '/storage/cache';
 
         $this->app = AppFactory::http(
             providers: $providers,
-            routes: $routes,
-            cacheDir: $cacheDir,
-            debug: true
-        );
-    }
-
-    private function createAppWithRoutes(string $routesFile): mixed
-    {
-        $providers = [
-            ConfigurationServiceProvider::class,
-            FilesystemServiceProvider::class,
-            LoggingServiceProvider::class,
-            AuthenticationServiceProvider::class,
-            SecurityServiceProvider::class,
-            DatabaseServiceProvider::class,
-            HTTPServiceProvider::class,
-            MiddlewareServiceProvider::class,
-            RouterServiceProvider::class,
-            SessionServiceProvider::class,
-            ViewServiceProvider::class,
-            HttpClientServiceProvider::class,
-        ];
-
-        $cacheDir = dirname(__DIR__, 2) . '/storage/cache';
-
-        return AppFactory::http(
-            providers: $providers,
-            routes: $routesFile,
-            cacheDir: $cacheDir,
-            debug: true
-        );
-    }
-
-    private function getRouter()
-    {
-        return $this->app->getContainer()->get(RouterRuntimeInterface::class);
-    }
-
-    private function createRequest(string $method, string $path): Request
-    {
-        $uri = UriBuilder::createFromString(uri: "http://localhost{$path}");
-        return new Request(
-            serverParams: ['REQUEST_METHOD' => $method],
-            uri: $uri
+            routes   : $routes,
+            cacheDir : $cacheDir,
+            debug    : true
         );
     }
 }

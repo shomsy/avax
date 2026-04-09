@@ -16,7 +16,7 @@ final class SQLToPHPTypeMapper
      *
      * @var array<string, string>
      */
-    private const TYPE_MAP
+    private const array TYPE_MAP
         = [
             // NUMERIC TYPES
             'TINYINT'          => 'int',

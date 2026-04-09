@@ -22,7 +22,7 @@ use SensitiveParameter;
 readonly class CsrfVerificationMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private ResponseFactory $responseFactory,
+        private ResponseFactory              $responseFactory,
         #[SensitiveParameter] private string $tokenAttribute = '_csrf_token'
     ) {}
 

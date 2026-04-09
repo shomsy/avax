@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 3) . '/bootstrap.php';
 
-$tool = dirname(__DIR__, 4) . '/tools/generate-analysis-hints.php';
-$fixture = dirname(__DIR__, 3) . '/fixtures/analysis_hints_fixture.php';
+$tool      = dirname(__DIR__, 4) . '/tools/generate-analysis-hints.php';
+$fixture   = dirname(__DIR__, 3) . '/fixtures/analysis_hints_fixture.php';
 $outputDir = sys_get_temp_dir() . '/container-analysis-hints-' . uniqid('', true);
 
 $result = shell_exec(
@@ -22,7 +22,7 @@ assertTrue(is_file($jsonPath), 'Hint generator should emit a JSON artifact.');
 assertTrue(is_file($stubPath), 'Hint generator should emit a PHP stub artifact.');
 
 $payload = json_decode((string) file_get_contents($jsonPath), true, 512, JSON_THROW_ON_ERROR);
-$stub = (string) file_get_contents($stubPath);
+$stub    = (string) file_get_contents($stubPath);
 
 assertSame(1, $payload['schemaVersion'] ?? null, 'Hint payloads should expose a stable schema version.');
 assertTrue(in_array('HintIdentityService', $payload['serviceIds'] ?? [], true), 'Hint payloads should include service ids.');

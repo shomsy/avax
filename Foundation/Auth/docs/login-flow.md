@@ -25,22 +25,27 @@ Return User
 ## Components
 
 ### Login.php (Main Action)
+
 Orchestrates the entire login flow:
+
 1. Check rate limit
 2. Attempt authentication
 3. Record failed attempt if needed
 4. Reset rate limit on success
 
 ### Credentials (Value Object)
+
 - `identifier` - Email or username
 - `password` - Protected with `#[SensitiveParameter]`
 
 ### Identity Action
+
 - Reads user by credentials
 - Verifies password hash
 - Updates the unified identity state
 
 ### Rate Limiting
+
 - Prevents brute-force attacks
 - Configurable max attempts
 - Lockout duration

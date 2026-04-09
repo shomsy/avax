@@ -49,7 +49,8 @@ final class FunctionCaller
         callable|string     $target,
         array|null          $parameters = null,
         ResolveRequest|null $request = null
-    ) : mixed {
+    ) : mixed
+    {
         $parameters ??= [];
         if ($this->resolver === null) {
             throw new ContainerException(message: 'FunctionCaller is not attached to a resolver.');
@@ -59,9 +60,9 @@ final class FunctionCaller
         $reflection = $this->reflect(target: $normalized);
         $arguments  = $this->arguments->resolvePlan(
             plan     : $this->planFor(reflection: $reflection),
-            overrides : $parameters,
-            resolver  : $this->resolver,
-            request   : $request ?? new ResolveRequest(serviceId: $this->nameOf(reflection: $reflection))
+            overrides: $parameters,
+            resolver : $this->resolver,
+            request  : $request ?? new ResolveRequest(serviceId: $this->nameOf(reflection: $reflection))
         );
 
         if ($reflection instanceof ReflectionMethod) {
@@ -149,15 +150,6 @@ final class FunctionCaller
         throw new ContainerException(message: 'Unsupported callable target.');
     }
 
-    private function nameOf(ReflectionFunctionAbstract $reflection) : string
-    {
-        if ($reflection instanceof ReflectionMethod) {
-            return 'call:' . $reflection->class . '::' . $reflection->getName();
-        }
-
-        return 'call:' . $reflection->getName();
-    }
-
     private function planFor(ReflectionFunctionAbstract $reflection) : ResolvePlan
     {
         $key = $this->planKeyOf(reflection: $reflection);
@@ -180,6 +172,15 @@ final class FunctionCaller
         }
 
         return 'function:' . $reflection->getName();
+    }
+
+    private function nameOf(ReflectionFunctionAbstract $reflection) : string
+    {
+        if ($reflection instanceof ReflectionMethod) {
+            return 'call:' . $reflection->class . '::' . $reflection->getName();
+        }
+
+        return 'call:' . $reflection->getName();
     }
 
     /**

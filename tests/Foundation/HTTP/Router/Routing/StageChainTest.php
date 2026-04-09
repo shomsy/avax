@@ -25,7 +25,7 @@ final class StageChainTest extends TestCase
         $chain     = new StageChain(container: $container, logger: $logger);
 
         $response = $this->createMock(ResponseInterface::class);
-        $core     = static fn(Request $request) : ResponseInterface => $response;
+        $core     = static fn (Request $request) : ResponseInterface => $response;
 
         $pipeline = $chain->create(
             stages    : [SampleStage::class],
@@ -49,7 +49,7 @@ final class StageChainTest extends TestCase
         $chain->create(
             stages    : [SampleStage::class, SampleStage::class],
             middleware: [SampleMiddleware::class],
-            core      : fn(Request $request) : ResponseInterface => $this->createMock(ResponseInterface::class)
+            core      : fn (Request $request) : ResponseInterface => $this->createMock(ResponseInterface::class)
         );
     }
 
@@ -64,7 +64,7 @@ final class StageChainTest extends TestCase
         $chain->create(
             stages    : [],
             middleware: [SampleStage::class],
-            core      : fn(Request $request) : ResponseInterface => $this->createMock(ResponseInterface::class)
+            core      : fn (Request $request) : ResponseInterface => $this->createMock(ResponseInterface::class)
         );
     }
 }

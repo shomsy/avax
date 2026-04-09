@@ -72,13 +72,15 @@ final class RoutePipeline
     public static function for(
         RouteDefinition      $route,
         ControllerDispatcher $dispatcher,
-        ContainerInterface   $container
+        ContainerInterface   $container,
+        StageChain           $stageChain
     ) : self
     {
         return new self(
             route     : $route,
             dispatcher: $dispatcher,
-            container : $container
+            container : $container,
+            stageChain: $stageChain
         );
     }
 
@@ -150,7 +152,7 @@ final class RoutePipeline
             }
 
             // Define the core execution logic for the pipeline - dispatching the route's action.
-            $core = fn(Request $request) : ResponseInterface => $this->dispatcher->dispatch(
+            $core = fn (Request $request) : ResponseInterface => $this->dispatcher->dispatch(
                 action : $route->action,
                 request: $request
             );
@@ -166,7 +168,7 @@ final class RoutePipeline
         } catch (Throwable $e) {
             // Return 500 Response on exceptions
             return new Response(
-                stream: Stream::fromString(content: 'Internal Server Error'),
+                stream    : Stream::fromString(content: 'Internal Server Error'),
                 statusCode: 500
             );
         }

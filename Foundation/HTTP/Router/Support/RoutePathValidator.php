@@ -59,7 +59,7 @@ final class RoutePathValidator
             if (! preg_match(self::VALID_PARAM_PATTERN, $cleanParam)) {
                 throw new InvalidArgumentException(
                     message: "Invalid parameter name '{$cleanParam}' in path '{$path}'. " .
-                    'Parameter names must match: ' . self::VALID_PARAM_PATTERN
+                             'Parameter names must match: ' . self::VALID_PARAM_PATTERN
                 );
             }
 

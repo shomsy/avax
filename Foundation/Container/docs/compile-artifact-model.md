@@ -57,7 +57,8 @@ The compiler keeps stable ordering for:
 - ownership maps
 - slice manifests
 
-`compiledAt` and artifact paths are intentionally environment-specific. They are not part of the semantic ordering proof.
+`compiledAt` and artifact paths are intentionally environment-specific. They are not part of the semantic ordering
+proof.
 
 ## Compatibility Rules
 

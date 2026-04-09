@@ -10,7 +10,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 $containerException = new ContainerException('boom');
-$notFoundException = new ServiceNotFoundException('missing');
+$notFoundException  = new ServiceNotFoundException('missing');
 
 assertInstanceOf(ContainerExceptionInterface::class, $containerException, 'ContainerException should satisfy PSR.');
 assertInstanceOf(NotFoundExceptionInterface::class, $notFoundException, 'ServiceNotFoundException should satisfy PSR.');

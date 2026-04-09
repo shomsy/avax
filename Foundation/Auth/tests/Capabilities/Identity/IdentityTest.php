@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capability\Identity;
 
-use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capability\Identity\Session\SessionIdentityInterface;
@@ -13,17 +12,13 @@ use Avax\Auth\System\Capability\User\UserEmail;
 use Avax\Auth\System\Capability\User\UserId;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for the unified Identity façade.
  */
 class IdentityTest extends TestCase
 {
-    protected function tearDown() : void
-    {
-        Mockery::close();
-    }
-
     public function testIdentityRequiresAtLeastOneBackend() : void
     {
         $this->expectException(exception: InvalidArgumentException::class);
@@ -35,11 +30,11 @@ class IdentityTest extends TestCase
     public function testIdentityRejectsInactiveUsersWhenIssuing() : void
     {
         $user = new User(
-            id: new UserId(value: 10),
-            email: new UserEmail(value: 'inactive@example.com'),
-            username: 'inactive',
+            id          : new UserId(value: 10),
+            email       : new UserEmail(value: 'inactive@example.com'),
+            username    : 'inactive',
             passwordHash: 'hash',
-            isActive: false
+            isActive    : false
         );
 
         $jwt = Mockery::mock(JwtIdentityInterface::class);
@@ -56,9 +51,9 @@ class IdentityTest extends TestCase
     public function testIdentityIssuesAllConfiguredBackends() : void
     {
         $user = new User(
-            id: new UserId(value: 10),
-            email: new UserEmail(value: 'identity@example.com'),
-            username: 'identity',
+            id          : new UserId(value: 10),
+            email       : new UserEmail(value: 'identity@example.com'),
+            username    : 'identity',
             passwordHash: 'hash'
         );
 
@@ -70,7 +65,7 @@ class IdentityTest extends TestCase
 
         $identity = new Identity(
             sessionIdentity: $session,
-            jwtIdentity: $jwt
+            jwtIdentity    : $jwt
         );
 
         $this->assertSame(expected: 'token-10', actual: $identity->issue(user: $user));
@@ -86,7 +81,7 @@ class IdentityTest extends TestCase
 
         $identity = new Identity(
             sessionIdentity: $session,
-            jwtIdentity: $jwt
+            jwtIdentity    : $jwt
         );
 
         $this->assertTrue(condition: $identity->check());
@@ -95,9 +90,9 @@ class IdentityTest extends TestCase
     public function testIdentityResolvesCurrentUserAndUserId() : void
     {
         $user = new User(
-            id: new UserId(value: 25),
-            email: new UserEmail(value: 'current@example.com'),
-            username: 'current',
+            id          : new UserId(value: 25),
+            email       : new UserEmail(value: 'current@example.com'),
+            username    : 'current',
             passwordHash: 'hash'
         );
 
@@ -109,7 +104,7 @@ class IdentityTest extends TestCase
 
         $identity = new Identity(
             sessionIdentity: $session,
-            jwtIdentity: $jwt
+            jwtIdentity    : $jwt
         );
 
         $this->assertSame(expected: $user, actual: $identity->getCurrentUser());
@@ -126,7 +121,7 @@ class IdentityTest extends TestCase
 
         $identity = new Identity(
             sessionIdentity: $session,
-            jwtIdentity: $jwt
+            jwtIdentity    : $jwt
         );
 
         $identity->clear();
@@ -145,5 +140,10 @@ class IdentityTest extends TestCase
         $identity->authenticate(token: 'token-42');
 
         $this->assertSame(expected: 'token-42', actual: $identity->token());
+    }
+
+    protected function tearDown() : void
+    {
+        Mockery::close();
     }
 }

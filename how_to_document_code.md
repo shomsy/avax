@@ -5,21 +5,23 @@ Each module section lists classes folder-by-folder, file-by-file.
 ## Per-Class Page Template
 
 Each class page should contain:
+
 1) Hero section: name, purpose, source path.
 2) Class Overview card with a short summary.
 3) `<details class="more">` with long-form explanation:
-   - Why the class exists
-   - How it fits in the container lifecycle
-   - Terminology definitions
+    - Why the class exists
+    - How it fits in the container lifecycle
+    - Terminology definitions
 4) Story Example section (where relevant)
 5) Methods section with per-method cards:
-   - Short summary on top
-   - `<details class="more">` with the long explanation
+    - Short summary on top
+    - `<details class="more">` with the long explanation
 
 ## What "More" Should Include
 
 For every class and public method, the "More" section should be an essay-level,
 human-readable explanation:
+
 - Explain what happens internally, step-by-step.
 - Include "why" it exists, not just "what" it does.
 - Define technical terms in plain language.
@@ -55,6 +57,7 @@ $service = $container->get(UserService::class);
 ```
 
 Explain the internal flow:
+
 1) The binding is stored in the DefinitionStore.
 2) ResolutionEngine inspects constructor parameters.
 3) It finds the binding for the interface.
@@ -64,6 +67,7 @@ Explain the internal flow:
 ## Docblock Rules (PSR Style)
 
 Keep docblocks short and factual:
+
 - Purpose in 1-2 sentences.
 - Params/returns with types.
 - Exceptions thrown.
@@ -92,6 +96,7 @@ Use `@see` to link to the HTML docs:
 ## Order of Documentation
 
 Document modules in this order:
+
 1) Core (Facade, Engine, Builder, Config, Contracts, Exceptions, Value objects)
 2) Resolve (Engine, Context, Pipeline, Pipes)
 3) Think (Prototypes, Cache, Analyze)

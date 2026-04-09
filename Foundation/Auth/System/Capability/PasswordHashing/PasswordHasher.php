@@ -13,7 +13,7 @@ final readonly class PasswordHasher
 {
     public function __construct(
         private string $algo = PASSWORD_DEFAULT,
-        private array $options = ['cost' => 12]
+        private array  $options = ['cost' => 12]
     ) {}
 
     public function hash(#[SensitiveParameter] string $password) : string

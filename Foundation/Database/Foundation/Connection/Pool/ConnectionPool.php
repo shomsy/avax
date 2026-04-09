@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Database\Avax\Connection\Pool;
 
+use Avax\Database\Avax\Connection\Pool\Contracts\ConnectionPoolInterface;
+use Avax\Database\Avax\Connection\Pool\DTO\ConnectionPoolMetrics;
 use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Connection\DirectConnectionFlow;
 use Avax\Database\Connection\Exceptions\PoolLimitReachedException;
 use Avax\Database\Events\ConnectionAcquired;
 use Avax\Database\Events\EventBus;
-use Avax\Database\Avax\Connection\Pool\Contracts\ConnectionPoolInterface;
-use Avax\Database\Avax\Connection\Pool\DTO\ConnectionPoolMetrics;
 use Avax\Database\Support\ExecutionScope;
 use ReflectionException;
 use SplQueue;
@@ -66,10 +66,10 @@ final class ConnectionPool implements ConnectionPoolInterface
                 $this->state->recordRecycledAcquisition();
 
                 $this->eventBus?->dispatch(event: new ConnectionAcquired(
-                    connectionName: $this->getName(),
-                    isRecycled    : true,
-                    correlationId : $this->scope?->correlationId ?? 'ctx_unknown'
-                ));
+                                                      connectionName: $this->getName(),
+                                                      isRecycled    : true,
+                                                      correlationId : $this->scope?->correlationId ?? 'ctx_unknown'
+                                                  ));
 
                 return new BorrowedConnection(connection: $connection, pool: $this);
             }
@@ -100,10 +100,10 @@ final class ConnectionPool implements ConnectionPoolInterface
         $connection = $flow->connect();
 
         $this->eventBus?->dispatch(event: new ConnectionAcquired(
-            connectionName: $this->getName(),
-            isRecycled    : false,
-            correlationId : $this->scope?->correlationId ?? 'ctx_unknown'
-        ));
+                                              connectionName: $this->getName(),
+                                              isRecycled    : false,
+                                              correlationId : $this->scope?->correlationId ?? 'ctx_unknown'
+                                          ));
 
         return new BorrowedConnection(connection: $connection, pool: $this);
     }
@@ -121,7 +121,7 @@ final class ConnectionPool implements ConnectionPoolInterface
 
         $validConnections = new SplQueue;
 
-        while (! $this->pool->isEmpty()) {
+        while ( ! $this->pool->isEmpty() ) {
             $item     = $this->pool->dequeue();
             $idleTime = $currentTime - $item['released_at'];
 
@@ -137,7 +137,7 @@ final class ConnectionPool implements ConnectionPoolInterface
         }
 
         // Put the survivors back in the garage.
-        while (! $validConnections->isEmpty()) {
+        while ( ! $validConnections->isEmpty() ) {
             $this->pool->enqueue(value: $validConnections->dequeue());
         }
 
@@ -206,9 +206,9 @@ final class ConnectionPool implements ConnectionPoolInterface
 
         $this->pool->enqueue(
             value: [
-                'connection'  => $connection,
-                'released_at' => microtime(as_float: true),
-            ]
+                       'connection'  => $connection,
+                       'released_at' => microtime(as_float: true),
+                   ]
         );
     }
 
@@ -247,13 +247,13 @@ final class ConnectionPool implements ConnectionPoolInterface
 
         return new ConnectionPoolMetrics(
             data: [
-                'spawnedConnections' => $this->state->getSpawnedCount(),
-                'idleConnections'    => $this->pool->count(),
-                'activeConnections'  => $this->state->getSpawnedCount() - $this->pool->count(),
-                'maxConnections'     => (int) ($this->config['pool']['max_connections'] ?? 10),
-                'totalAcquisitions'  => $this->state->getTotalAcquisitions(),
-                'maxIdleTime'        => $maxIdleTime,
-            ]
+                      'spawnedConnections' => $this->state->getSpawnedCount(),
+                      'idleConnections'    => $this->pool->count(),
+                      'activeConnections'  => $this->state->getSpawnedCount() - $this->pool->count(),
+                      'maxConnections'     => (int) ($this->config['pool']['max_connections'] ?? 10),
+                      'totalAcquisitions'  => $this->state->getTotalAcquisitions(),
+                      'maxIdleTime'        => $maxIdleTime,
+                  ]
         );
     }
 }

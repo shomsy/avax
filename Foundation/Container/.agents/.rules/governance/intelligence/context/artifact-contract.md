@@ -13,12 +13,14 @@ or trust sub-agent outputs.
 ## 1) Why Artifact Contract?
 
 Without a standardized artifact:
+
 - Supervisor consumes raw chat logs (wastes tokens)
 - Context bloat accumulates across the session
 - No way to validate if the sub-agent actually succeeded
 - Manual parsing required — error-prone
 
 With artifact contract:
+
 - Supervisor receives structured, validated data
 - Token budget stays predictable
 - Clear acceptance criteria per task
@@ -103,17 +105,17 @@ Every sub-agent MUST return a JSON artifact conforming to this schema:
 
 ## 3) Required Fields
 
-| Field | Type | Required | Description |
-|:------|:-----|:---------|:------------|
-| `artifact_version` | string | YES | Version of this contract (1.0.0) |
-| `agent_role` | enum | YES | Role that generated this artifact |
-| `task_id` | string | YES | Unique task identifier |
-| `session_id` | string | YES | Session identifier |
-| `timestamp` | ISO8601 | YES | When artifact was generated |
-| `goal` | string | YES | Specific goal of this task |
-| `task_type` | enum | YES | Type of task performed |
-| `status` | enum | YES | success\|failed\|partial\|escalated |
-| `recommended_next_agent` | enum | YES | What should run next |
+| Field                    | Type    | Required | Description                         |
+|:-------------------------|:--------|:---------|:------------------------------------|
+| `artifact_version`       | string  | YES      | Version of this contract (1.0.0)    |
+| `agent_role`             | enum    | YES      | Role that generated this artifact   |
+| `task_id`                | string  | YES      | Unique task identifier              |
+| `session_id`             | string  | YES      | Session identifier                  |
+| `timestamp`              | ISO8601 | YES      | When artifact was generated         |
+| `goal`                   | string  | YES      | Specific goal of this task          |
+| `task_type`              | enum    | YES      | Type of task performed              |
+| `status`                 | enum    | YES      | success\|failed\|partial\|escalated |
+| `recommended_next_agent` | enum    | YES      | What should run next                |
 
 ---
 
@@ -138,6 +140,7 @@ Every sub-agent MUST return a JSON artifact conforming to this schema:
 ```
 
 **Mapper MUST return:**
+
 - Maximum 5-10 relevant files
 - Clear mapping of code paths
 - Entry points identified
@@ -160,6 +163,7 @@ Every sub-agent MUST return a JSON artifact conforming to this schema:
 ```
 
 **Researcher MUST return:**
+
 - At least one doc finding with source URL
 - API/version references
 - Code examples if applicable
@@ -182,6 +186,7 @@ Every sub-agent MUST return a JSON artifact conforming to this schema:
 ```
 
 **Executor MUST return:**
+
 - Explicit list of files modified
 - Diff summary
 - Verification steps taken
@@ -203,6 +208,7 @@ Every sub-agent MUST return a JSON artifact conforming to this schema:
 ```
 
 **Reviewer MUST return:**
+
 - At least one risk identified (or explicit "no risks found")
 - Clear allow/block recommendation
 
@@ -219,13 +225,13 @@ The supervisor validates artifacts BEFORE passing to the next agent:
 
 ### 5.1 Validation Failure Handling
 
-| Validation | Action |
-|:------------|:-------|
-| Missing required field | **REJECT** — retry with same goal |
-| Type mismatch | **REJECT** — retry with corrected schema |
-| Status = "failed" | **ESCALATE** — supervisor decides next step |
-| Status = "partial" | **RETRY** — max 2 times, then escalate |
-| No risks in review | **WARN** — reviewer may have missed something |
+| Validation             | Action                                        |
+|:-----------------------|:----------------------------------------------|
+| Missing required field | **REJECT** — retry with same goal             |
+| Type mismatch          | **REJECT** — retry with corrected schema      |
+| Status = "failed"      | **ESCALATE** — supervisor decides next step   |
+| Status = "partial"     | **RETRY** — max 2 times, then escalate        |
+| No risks in review     | **WARN** — reviewer may have missed something |
 
 ---
 
@@ -233,14 +239,15 @@ The supervisor validates artifacts BEFORE passing to the next agent:
 
 Each role has a maximum token budget:
 
-| Role | Max Tokens | Max Files |
-|:-----|:-----------|:----------|
-| **Mapper** | 2,000 | 10 |
-| **Researcher** | 3,000 | 5 |
-| **Executor** | 15,000 | 20 |
-| **Reviewer** | 5,000 | 15 |
+| Role           | Max Tokens | Max Files |
+|:---------------|:-----------|:----------|
+| **Mapper**     | 2,000      | 10        |
+| **Researcher** | 3,000      | 5         |
+| **Executor**   | 15,000     | 20        |
+| **Reviewer**   | 5,000      | 15        |
 
 If a sub-agent exceeds budget, it MUST:
+
 1. Stop processing
 2. Return partial artifact with `status: "partial"`
 3. Include `remaining_work` description in `status_reason`
@@ -249,11 +256,11 @@ If a sub-agent exceeds budget, it MUST:
 
 ## 7) Trust Tier Mapping
 
-| Tier | Role | MCP Access | Write Access |
-|:-----|:-----|:------------|:--------------|
-| **T0** | Mapper, Researcher | Read-only local | None |
-| **T1** | Executor | Read + limited write | Workspace only |
-| **T2** | (Future) External write | Requires approval |
+| Tier   | Role                    | MCP Access           | Write Access   |
+|:-------|:------------------------|:---------------------|:---------------|
+| **T0** | Mapper, Researcher      | Read-only local      | None           |
+| **T1** | Executor                | Read + limited write | Workspace only |
+| **T2** | (Future) External write | Requires approval    |
 
 ---
 
@@ -503,6 +510,7 @@ echo "$ARTIFACT" | jq '.metadata + {task_type, status}'
 ## 10) Anti-Patterns
 
 **DO NOT:**
+
 - Return raw chat logs as artifacts
 - Skip required fields "for simplicity"
 - Use `recommended_next_agent: "none"` when work remains
@@ -510,6 +518,7 @@ echo "$ARTIFACT" | jq '.metadata + {task_type, status}'
 - Exceed token budget without returning `partial`
 
 **DO:**
+
 - Always include `task_id` and `session_id`
 - Return specific file paths, not directories
 - Use exact enum values

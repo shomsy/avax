@@ -4,18 +4,23 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
-use Avax\Container\DI\ContainerInterface;
 use Avax\Container\DI\Capabilities\Declaration\Bindings\DecoratorInterface;
 use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
-
-final class PoolingSequence
-{
-    public static int $ids = 0;
-}
+use Avax\Container\DI\ContainerInterface;
 
 interface PoolingContract
 {
     public function id() : int;
+}
+
+interface DeferredPoolingContract
+{
+    public function id() : int;
+}
+
+final class PoolingSequence
+{
+    public static int $ids = 0;
 }
 
 final class PoolingService implements PoolingContract
@@ -44,11 +49,6 @@ final class PoolingDecorator implements DecoratorInterface
     }
 }
 
-interface DeferredPoolingContract
-{
-    public function id() : int;
-}
-
 final class DeferredPoolingService implements DeferredPoolingContract
 {
     private int $id;
@@ -66,9 +66,7 @@ final class DeferredPoolingService implements DeferredPoolingContract
 
 final class DeferredPoolingProvider implements DeferredProviderInterface
 {
-    public function __construct(private ContainerInterface $app)
-    {
-    }
+    public function __construct(private ContainerInterface $app) {}
 
     public function dependsOn() : array
     {
@@ -90,9 +88,7 @@ final class DeferredPoolingProvider implements DeferredProviderInterface
         $this->app->singleton(DeferredPoolingContract::class, DeferredPoolingService::class);
     }
 
-    public function boot() : void
-    {
-    }
+    public function boot() : void {}
 }
 
 $container = makeTestContainer();
@@ -101,9 +97,9 @@ $container->alias('pooling.alias', PoolingContract::class);
 $container->decorate(PoolingContract::class, new PoolingDecorator());
 $container->bootProviders([DeferredPoolingProvider::class]);
 
-$first = $container->get(PoolingContract::class);
-$aliased = $container->get('pooling.alias');
-$deferredFirst = $container->get(DeferredPoolingContract::class);
+$first          = $container->get(PoolingContract::class);
+$aliased        = $container->get('pooling.alias');
+$deferredFirst  = $container->get(DeferredPoolingContract::class);
 $deferredSecond = $container->get(DeferredPoolingContract::class);
 
 assertSame($first, $aliased, 'Aliased singleton resolution should reuse the same pooled instance.');
@@ -112,8 +108,8 @@ assertSame($deferredFirst, $deferredSecond, 'Deferred provider singletons should
 
 $container->reset();
 
-$afterReset = $container->get(PoolingContract::class);
-$afterResetAlias = $container->get('pooling.alias');
+$afterReset         = $container->get(PoolingContract::class);
+$afterResetAlias    = $container->get('pooling.alias');
 $afterResetDeferred = $container->get(DeferredPoolingContract::class);
 
 assertNotSame($first, $afterReset, 'Reset should clear shared pooled instances so singletons rebuild cleanly.');

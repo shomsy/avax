@@ -4,25 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capability\Access\RequireRole;
 
-use PHPUnit\Framework\TestCase;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
 use Avax\Auth\System\Capability\Access\RequireRole\RoleDenied;
-use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserRole;
+use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for RequireRole access boundary.
  */
 class RequireRoleTest extends TestCase
 {
-    protected function tearDown() : void
-    {
-        Mockery::close();
-    }
-
     /**
      * @throws \Avax\Auth\System\Capability\Access\RequireRole\RoleDenied
      * @throws Unauthenticated
@@ -80,5 +75,10 @@ class RequireRoleTest extends TestCase
         $this->expectException(exception: Unauthenticated::class);
 
         $requirement->execute(requiredRole: $role);
+    }
+
+    protected function tearDown() : void
+    {
+        Mockery::close();
     }
 }

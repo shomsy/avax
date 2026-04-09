@@ -36,18 +36,18 @@ final class LoggerFactory
      *
      * @return ErrorLogger The error logger instance, pre-configured with a rotating writer.
      */
-    public function create(): ErrorLogger
+    public function create() : ErrorLogger
     {
         // Get the environment from env()
         $env = env(key: 'APP_ENV');
 
         // Determine base name based on environment
         $baseName = match ($env) {
-            'production' => 'production-errors',
-            'stage' => 'stage-errors',
-            'staging' => 'staging-errors',
+            'production'  => 'production-errors',
+            'stage'       => 'stage-errors',
+            'staging'     => 'staging-errors',
             'development' => 'dev-errors',
-            default => 'errors',
+            default       => 'errors',
         };
 
         // Delegate to the specific channel-based logger builder
@@ -62,13 +62,14 @@ final class LoggerFactory
      * - Uses a rotating file log writer (1 file per day).
      * - Sets timezone for all entries based on `APP_TZ` env or system fallback.
      *
-     * @param  string  $channel  Name of the channel (used as log file base name).
+     * @param string $channel Name of the channel (used as log file base name).
+     *
      * @return ErrorLogger A PSR-3-compatible logger instance.
      */
-    public function createLoggerFor(string $channel): ErrorLogger
+    public function createLoggerFor(string $channel) : ErrorLogger
     {
         // Resolve a full path based on configured log directory + channel name
-        $path = rtrim(string: AppPath::LOGS_PATH->get(), characters: '/').'/'.trim(string: $channel, characters: '/');
+        $path = rtrim(string: AppPath::LOGS_PATH->get(), characters: '/') . '/' . trim(string: $channel, characters: '/');
 
         // Ensure the directory is safe to use
         $this->ensureLogDirectoryIsWritable(logPath: $path);
@@ -76,12 +77,12 @@ final class LoggerFactory
         // Return the logger instance with a rotating file writer
         return new ErrorLogger(
             logWriter: new RotatingFileLogWriter(
-                baseLogPath: $path,
-                timezone   : env(
-                    key    : 'APP_TZ',
-                    default: date_default_timezone_get()
-                )
-            )
+                           baseLogPath: $path,
+                           timezone   : env(
+                                            key    : 'APP_TZ',
+                                            default: date_default_timezone_get()
+                                        )
+                       )
         );
     }
 
@@ -92,11 +93,11 @@ final class LoggerFactory
      * - If the directory exists but is not writable, a RuntimeException is thrown.
      * - This ensures the system does not silently fail when logging.
      *
-     * @param  string  $logPath  Full path to the intended log file.
+     * @param string $logPath Full path to the intended log file.
      *
      * @throws RuntimeException If a directory is not writable or cannot be created.
      */
-    private function ensureLogDirectoryIsWritable(string $logPath): void
+    private function ensureLogDirectoryIsWritable(string $logPath) : void
     {
         // Extract the parent directory from the log file path
         $dir = dirname(path: $logPath);

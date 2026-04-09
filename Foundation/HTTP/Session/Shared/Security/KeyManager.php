@@ -18,9 +18,9 @@ final class KeyManager
      *
      * @return array<string> List of keys.
      */
-    public function getAllKeys(): array
+    public function getAllKeys() : array
     {
-        $keys = [];
+        $keys   = [];
         $active = $this->getActiveKey();
         $keys[] = $active;
 
@@ -37,7 +37,7 @@ final class KeyManager
      *
      * @throws RuntimeException If no valid key is found.
      */
-    public function getActiveKey(): string
+    public function getActiveKey() : string
     {
         // Try specific session key first
         $key = $_ENV['SESSION_ENCRYPTION_KEY'] ?? $_ENV['APP_KEY'] ?? null;

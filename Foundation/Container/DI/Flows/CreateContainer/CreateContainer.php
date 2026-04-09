@@ -7,8 +7,8 @@ namespace Avax\Container\DI\Flows\CreateContainer;
 use Avax\Container\DI\Capabilities\Composition\Assembly\AssembleObservability;
 use Avax\Container\DI\Capabilities\Composition\Assembly\AssembleRuntime;
 use Avax\Container\DI\Capabilities\Composition\Assembly\SeedSystemServices;
-use Avax\Container\DI\Container;
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Container\DI\Container;
 use InvalidArgumentException;
 
 /**
@@ -26,7 +26,8 @@ final class CreateContainer
         bool|null                  $debug = null,
         array|null                 $settings = null,
         CreateContainerConfig|null $config = null
-        ) : Container {
+    ) : Container
+    {
         $cacheDir ??= '';
         $debug    ??= false;
         $settings ??= [];
@@ -39,26 +40,26 @@ final class CreateContainer
         if (! $config->supportsAsyncTarget()) {
             throw new InvalidArgumentException(
                 message: "Async target [{$config->asyncTarget}] is not supported by this container runtime. "
-                    . 'Supported targets are [fpm, worker].'
+                         . 'Supported targets are [fpm, worker].'
             );
         }
 
         $observability = (new AssembleObservability)->assemble(config: $config);
-        $runtime = (new AssembleRuntime)->assemble(
+        $runtime       = (new AssembleRuntime)->assemble(
             config       : $config,
             observability: $observability
         );
-        $telemetry = $runtime->resolver->telemetry();
+        $telemetry     = $runtime->resolver->telemetry();
 
         $container = new Container(resolver: $runtime->resolver);
         $runtime->resolver->setContainer(container: $container);
 
         (new SeedSystemServices)->seed(
-            runtime       : $runtime,
-            observability : $observability,
-            container     : $container,
-            config        : $config,
-            telemetry     : $telemetry
+            runtime      : $runtime,
+            observability: $observability,
+            container    : $container,
+            config       : $config,
+            telemetry    : $telemetry
         );
 
         return $container;

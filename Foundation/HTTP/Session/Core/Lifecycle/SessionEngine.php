@@ -275,20 +275,20 @@ final readonly class SessionEngine
             userId   : $userId,
             sessionId: session_id(),
             metadata : [
-                'ip'         => $clientIp,
-                'user_agent' => $userAgent,
-                'login_time' => time(),
-            ]
+                           'ip'         => $clientIp,
+                           'user_agent' => $userAgent,
+                           'login_time' => time(),
+                       ]
         );
 
         // Step 5: Audit logging
         $this->audit()?->record(
             event: 'user_login',
             data : [
-                'user_id'   => $userId,
-                'timestamp' => time(),
-                'ip'        => $clientIp,
-            ]
+                       'user_id'   => $userId,
+                       'timestamp' => time(),
+                       'ip'        => $clientIp,
+                   ]
         );
 
         // Step 6: Dispatch login event
@@ -521,11 +521,11 @@ final readonly class SessionEngine
         $this->audit()?->record(
             event: 'session_terminated',
             data : [
-                'user_id'          => $userId,
-                'reason'           => $reason,
-                'timestamp'        => time(),
-                'session_duration' => time() - ($this->get(key: 'logged_in_at') ?? time()),
-            ]
+                       'user_id'          => $userId,
+                       'reason'           => $reason,
+                       'timestamp'        => time(),
+                       'session_duration' => time() - ($this->get(key: 'logged_in_at') ?? time()),
+                   ]
         );
 
         // Step 4: Dispatch termination event

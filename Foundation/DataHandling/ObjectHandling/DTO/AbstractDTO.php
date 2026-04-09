@@ -72,7 +72,7 @@ abstract class AbstractDTO
      * This constructor leverages the `HandlesHydration` trait to populate DTO properties
      * with data provided in the array.
      *
-     * @param  array  $data  The associative array containing the initial properties of the DTO.
+     * @param array $data The associative array containing the initial properties of the DTO.
      *
      * @throws ReflectionException If reflection fails to evaluate class or property metadata during hydration.
      */

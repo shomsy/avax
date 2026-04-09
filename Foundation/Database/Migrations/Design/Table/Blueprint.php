@@ -601,7 +601,7 @@ final class Blueprint
      */
     public function enum(string $name, array $values) : ColumnDefinition
     {
-        $quoted = array_map(callback: static fn($v) => "'{$v}'", array: $values);
+        $quoted = array_map(callback: static fn ($v) => "'{$v}'", array: $values);
 
         return $this->addColumn(type: 'ENUM(' . implode(separator: ',', array: $quoted) . ')', name: $name);
     }
@@ -616,7 +616,7 @@ final class Blueprint
      */
     public function set(string $name, array $values) : ColumnDefinition
     {
-        $quoted = array_map(callback: static fn($v) => "'{$v}'", array: $values);
+        $quoted = array_map(callback: static fn ($v) => "'{$v}'", array: $values);
 
         return $this->addColumn(type: 'SET(' . implode(separator: ',', array: $quoted) . ')', name: $name);
     }
@@ -852,7 +852,7 @@ final class Blueprint
     {
         $renderer = new ColumnSQLRenderer;
         $columns  = array_map(
-            callback: fn(ColumnDefinition $col) => $renderer->render(column: $col, grammar: $grammar),
+            callback: fn (ColumnDefinition $col) => $renderer->render(column: $col, grammar: $grammar),
             array   : $this->columns
         );
 

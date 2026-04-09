@@ -92,12 +92,12 @@ External (DB, Session, etc.)
 
 ## Naming Conventions
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Actions | Verb + Action | `LoginAction.php` |
-| Adapters | Noun | `Identity.php` |
-| Controllers | Noun + Controller | `LoginController.php` |
-| DTOs | Noun + Request/Response/DTO | `Credentials.php` |
+| Type        | Convention                  | Example               |
+|-------------|-----------------------------|-----------------------|
+| Actions     | Verb + Action               | `LoginAction.php`     |
+| Adapters    | Noun                        | `Identity.php`        |
+| Controllers | Noun + Controller           | `LoginController.php` |
+| DTOs        | Noun + Request/Response/DTO | `Credentials.php`     |
 
 ## API Design (DSL Style)
 
@@ -127,8 +127,8 @@ $access->hasRole('admin');
 
 ## Decision Log
 
-| Date | Decision | Rationale |
-|------|----------|-----------|
+| Date       | Decision           | Rationale                           |
+|------------|--------------------|-------------------------------------|
 | 2026-04-06 | Use feature-sliced | Follows coding standards preference |
-| 2026-04-06 | Pure PHP | No framework lock-in |
-| 2026-04-06 | DSL naming | Readable, predictable APIs |
+| 2026-04-06 | Pure PHP           | No framework lock-in                |
+| 2026-04-06 | DSL naming         | Readable, predictable APIs          |

@@ -4,55 +4,50 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\System;
 
-use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Flow\Login\Login;
-use Avax\Auth\System\Flow\Login\Credentials;
-use Avax\Auth\System\Flow\Logout\Logout;
 use Avax\Auth\System\Capability\Access\AccessInterface;
-use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
-use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
+use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Flow\Login\Login;
+use Avax\Auth\System\Flow\Logout\Logout;
+use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Flow\Register\Register;
 use Avax\Auth\System\Flow\Register\RegistrationData;
-use Avax\Auth\System\Capability\User\User;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for Auth Facade.
  */
 class AuthTest extends TestCase
 {
-    protected function tearDown() : void
-    {
-        Mockery::close();
-    }
-
     /**
      * @throws \Exception
      */
     public function testAuthFacadeDelegatesToFlows() : void
     {
-        $loginFlow = Mockery::mock(Login::class);
-        $logoutFlow = Mockery::mock(Logout::class);
-        $checkFlow = Mockery::mock(CheckAuthentication::class);
-        $readUserFlow = Mockery::mock(ReadCurrentUser::class);
-        $access = Mockery::mock(AccessInterface::class);
+        $loginFlow          = Mockery::mock(Login::class);
+        $logoutFlow         = Mockery::mock(Logout::class);
+        $checkFlow          = Mockery::mock(CheckAuthentication::class);
+        $readUserFlow       = Mockery::mock(ReadCurrentUser::class);
+        $access             = Mockery::mock(AccessInterface::class);
         $changePasswordFlow = Mockery::mock(ChangePassword::class);
-        $registerFlow = Mockery::mock(Register::class);
+        $registerFlow       = Mockery::mock(Register::class);
 
         $auth = new Auth(
-            login: $loginFlow,
-            logout: $logoutFlow,
+            login              : $loginFlow,
+            logout             : $logoutFlow,
             checkAuthentication: $checkFlow,
-            readCurrentUser: $readUserFlow,
-            access: $access,
-            changePassword: $changePasswordFlow,
-            register: $registerFlow
+            readCurrentUser    : $readUserFlow,
+            access             : $access,
+            changePassword     : $changePasswordFlow,
+            register           : $registerFlow
         );
 
-        $user = Mockery::mock(User::class);
+        $user        = Mockery::mock(User::class);
         $credentials = new Credentials(identifier: 'user', password: 'pass');
         $loginFlow->shouldReceive('execute')->with($credentials)->andReturn($user);
         $this->assertSame(expected: $user, actual: $auth->login(credentials: $credentials));
@@ -75,5 +70,10 @@ class AuthTest extends TestCase
         $regData = new RegistrationData(email: 'email', username: 'nick', password: 'pass');
         $registerFlow->shouldReceive('execute')->with($regData)->andReturn($user);
         $this->assertSame(expected: $user, actual: $auth->register(data: $regData));
+    }
+
+    protected function tearDown() : void
+    {
+        Mockery::close();
     }
 }

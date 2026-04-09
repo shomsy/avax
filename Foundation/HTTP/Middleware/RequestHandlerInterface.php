@@ -20,5 +20,5 @@ interface RequestHandlerInterface
     /**
      * Handle the request and return a response.
      */
-    public function handle(RequestInterface $request): ResponseInterface;
+    public function handle(RequestInterface $request) : ResponseInterface;
 }

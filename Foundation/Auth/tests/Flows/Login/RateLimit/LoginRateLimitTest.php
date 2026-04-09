@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flow\Login\RateLimit;
 
-use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Flow\Login\RateLimit\InMemoryLoginRateLimitStorage;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Foundation\Clock;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for login rate limiting.
@@ -20,7 +20,7 @@ class LoginRateLimitTest extends TestCase
      */
     public function testLoginRateLimitAllowsRequestsBelowThreshold() : void
     {
-        $storage = new InMemoryLoginRateLimitStorage();
+        $storage   = new InMemoryLoginRateLimitStorage();
         $rateLimit = new LoginRateLimit(storage: $storage, clock: new Clock(), maxAttempts: 2, decaySeconds: 60);
 
         $rateLimit->check(identifier: 'alice');
@@ -30,7 +30,7 @@ class LoginRateLimitTest extends TestCase
 
     public function testLoginRateLimitBlocksWithinDecayWindow() : void
     {
-        $storage = new InMemoryLoginRateLimitStorage();
+        $storage   = new InMemoryLoginRateLimitStorage();
         $rateLimit = new LoginRateLimit(storage: $storage, clock: new Clock(), maxAttempts: 1, decaySeconds: 60);
 
         $rateLimit->recordFailed(identifier: 'alice');
@@ -44,7 +44,7 @@ class LoginRateLimitTest extends TestCase
      */
     public function testLoginRateLimitResetsAfterDecayWindow() : void
     {
-        $storage = new InMemoryLoginRateLimitStorage();
+        $storage   = new InMemoryLoginRateLimitStorage();
         $rateLimit = new LoginRateLimit(storage: $storage, clock: new Clock(), maxAttempts: 1, decaySeconds: 0);
 
         $rateLimit->recordFailed(identifier: 'alice');
@@ -56,7 +56,7 @@ class LoginRateLimitTest extends TestCase
 
     public function testLoginRateLimitNormalizesIdentifiers() : void
     {
-        $storage = new InMemoryLoginRateLimitStorage();
+        $storage   = new InMemoryLoginRateLimitStorage();
         $rateLimit = new LoginRateLimit(storage: $storage, clock: new Clock(), maxAttempts: 1, decaySeconds: 60);
 
         $rateLimit->recordFailed(identifier: 'Alice@Example.com');

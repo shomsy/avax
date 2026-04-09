@@ -9,6 +9,4 @@ use Avax\Container\DI\ContextContainer;
 /**
  * Logical capability-scoped view over the assembled container.
  */
-final readonly class CapabilitySliceView extends ContextContainer
-{
-}
+final readonly class CapabilitySliceView extends ContextContainer {}

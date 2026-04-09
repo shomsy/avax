@@ -63,10 +63,10 @@ readonly class RegexException
             throw new ValidationException(
                 message : $this->message ?? sprintf(self::DEFAULT_ERROR_MESSAGE, $property),
                 metadata: [
-                    'property' => $property,
-                    'value'    => $value,
-                    'pattern'  => $this->pattern,
-                ]
+                              'property' => $property,
+                              'value'    => $value,
+                              'pattern'  => $this->pattern,
+                          ]
             );
         }
     }

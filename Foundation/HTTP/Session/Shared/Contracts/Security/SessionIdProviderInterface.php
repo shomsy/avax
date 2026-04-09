@@ -20,7 +20,7 @@ interface SessionIdProviderInterface
      *
      * @return string The generated session ID.
      */
-    public function generate(): string;
+    public function generate() : string;
 
     /**
      * Regenerate the current session ID.
@@ -28,29 +28,30 @@ interface SessionIdProviderInterface
      * This is critical for preventing session fixation attacks.
      * Should be called on login, privilege elevation, etc.
      *
-     * @param  bool  $deleteOld  Whether to delete the old session data.
+     * @param bool $deleteOld Whether to delete the old session data.
+     *
      * @return string The new session ID.
      */
-    public function regenerate(bool $deleteOld = true): string;
+    public function regenerate(bool $deleteOld = true) : string;
 
     /**
      * Get the current session ID.
      *
      * @return string The current session ID.
      */
-    public function current(): string;
+    public function current() : string;
 
     /**
      * Set a custom session ID.
      *
-     * @param  string  $id  The session ID to set.
+     * @param string $id The session ID to set.
      */
-    public function set(string $id): void;
+    public function set(string $id) : void;
 
     /**
      * Check if a session is active.
      *
      * @return bool True if session is active.
      */
-    public function isActive(): bool;
+    public function isActive() : bool;
 }

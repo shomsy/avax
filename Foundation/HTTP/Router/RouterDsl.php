@@ -45,6 +45,7 @@ final readonly class RouterDsl implements RouterInterface
         if (empty($path)) {
             throw new InvalidArgumentException(message: 'Route path cannot be empty in get() method');
         }
+
         return $this->register(method: HttpMethod::GET->value, path: $path, action: $action);
     }
 
@@ -120,7 +121,7 @@ final readonly class RouterDsl implements RouterInterface
     {
         $callable = is_callable(value: $handler)
             ? $handler
-            : fn(Request $request) => $this->controllerDispatcher->dispatch(action: $handler, request: $request);
+            : fn (Request $request) => $this->controllerDispatcher->dispatch(action: $handler, request: $request);
 
         // Unified fallback handling through FallbackManager only
         $this->fallbackManager->set(handler: $callable);
@@ -225,12 +226,12 @@ final readonly class RouterDsl implements RouterInterface
      * Handle dynamic method calls for HTTP methods not explicitly defined.
      * This prevents creation of routes with empty paths when invalid methods are called.
      *
-     * @param string $method The method name being called
-     * @param array $arguments The arguments passed to the method
+     * @param string $method    The method name being called
+     * @param array  $arguments The arguments passed to the method
      *
      * @throws BadMethodCallException When an invalid HTTP method is called
      */
-    public function __call(string $method, array $arguments): mixed
+    public function __call(string $method, array $arguments) : mixed
     {
         // Check if this might be an HTTP method (all uppercase)
         if (strtoupper($method) === $method && strlen($method) > 0) {

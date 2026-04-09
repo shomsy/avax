@@ -26,7 +26,7 @@ readonly class MigrationStringRule
      *
      * @throws ValidationException
      */
-    public function validate(mixed $value, string $property): void
+    public function validate(mixed $value, string $property) : void
     {
         if ($value === null) {
             return;
@@ -38,12 +38,12 @@ readonly class MigrationStringRule
 
         if (! is_scalar(value: $value) && ! (is_object(value: $value) && method_exists(object_or_class: $value, method: '__toString'))) {
             throw new ValidationException(
-                message: "{$property} must be a string or string-castable object. Got: ".get_debug_type(value: $value)
+                message: "{$property} must be a string or string-castable object. Got: " . get_debug_type(value: $value)
             );
         }
     }
 
-    public function apply(mixed $value): mixed
+    public function apply(mixed $value) : mixed
     {
         return $value;
     }

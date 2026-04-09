@@ -10,7 +10,8 @@ This component has one canonical story:
 - runtime state model: [`runtime-state-model.md`](./runtime-state-model.md)
 - lifetimes and scopes: [`lifetimes-and-scopes.md`](./lifetimes-and-scopes.md)
 - conditional composition: [`conditional-composition.md`](./conditional-composition.md)
-- ownership-aware composition program: [`ownership-aware-composition-program.md`](./ownership-aware-composition-program.md)
+- ownership-aware composition program: [
+  `ownership-aware-composition-program.md`](./ownership-aware-composition-program.md)
 - ownership model: [`ownership-model.md`](./ownership-model.md)
 - testing composition: [`testing-composition.md`](./testing-composition.md)
 - policy engine: [`policy-engine.md`](./policy-engine.md)
@@ -46,7 +47,8 @@ Canonical source tree:
 
 Local validation:
 
-- lint: `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`
+- lint:
+  `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`
 - smoke suite: [`tests/run-smoke-tests.sh`](../tests/run-smoke-tests.sh)
 - benchmarks: [`tests/run-benchmarks.sh`](../tests/run-benchmarks.sh)
 - benchmark guard: [`tests/check-benchmarks.sh`](../tests/check-benchmarks.sh)

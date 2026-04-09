@@ -69,4 +69,5 @@ The supported model is:
 - explicit composition conditions on that binding
 - explicit override history and collision diagnostics when the binding is replaced
 
-If a product needs multi-candidate selection under one abstract, that decision should live in authored composition, not hidden runtime magic.
+If a product needs multi-candidate selection under one abstract, that decision should live in authored composition, not
+hidden runtime magic.

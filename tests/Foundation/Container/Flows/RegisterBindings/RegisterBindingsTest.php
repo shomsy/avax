@@ -26,7 +26,7 @@ final class RegisterBindingsTest extends TestCase
     {
         $this->app->getContainer()->singleton(
             abstract: 'shared_service',
-            concrete: static fn(...$arguments) : stdClass => new stdClass
+            concrete: static fn (...$arguments) : stdClass => new stdClass
         );
 
         $instance1 = $this->app->getContainer()->make(abstract: 'shared_service');
@@ -40,7 +40,7 @@ final class RegisterBindingsTest extends TestCase
     {
         $this->app->getContainer()->bind(
             abstract: 'transient_service',
-            concrete: static fn(...$arguments) : stdClass => new stdClass
+            concrete: static fn (...$arguments) : stdClass => new stdClass
         );
 
         $instance1 = $this->app->getContainer()->make(abstract: 'transient_service');
@@ -53,7 +53,7 @@ final class RegisterBindingsTest extends TestCase
     {
         $this->app->getContainer()->scoped(
             abstract: 'scoped_service',
-            concrete: static fn(...$arguments) : stdClass => new stdClass
+            concrete: static fn (...$arguments) : stdClass => new stdClass
         );
 
         $this->app->getContainer()->beginScope();

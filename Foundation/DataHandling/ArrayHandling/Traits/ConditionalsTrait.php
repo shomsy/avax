@@ -29,9 +29,10 @@ trait ConditionalsTrait
      * to the collection based on a boolean condition. If the condition is true,
      * the callback is executed with the current instance as its parameter.
      *
-     * @param  bool  $condition  The condition to evaluate.
-     * @param  Closure  $callback  The callback to execute if the condition is true. It should accept the instance and
+     * @param bool    $condition   The condition to evaluate.
+     * @param Closure $callback    The callback to execute if the condition is true. It should accept the instance and
      *                             return the modified instance.
+     *
      * @return static The current instance for method chaining.
      *
      * @throws InvalidArgumentException If the callback does not return the instance.
@@ -42,7 +43,7 @@ trait ConditionalsTrait
      * // $result contains [3, 4]
      * ```
      */
-    public function when(bool $condition, Closure $callback): static
+    public function when(bool $condition, Closure $callback) : static
     {
         if ($condition) {
             $result = $callback($this);
@@ -63,9 +64,10 @@ trait ConditionalsTrait
      * to the collection based on the inverse of a boolean condition. If the condition is false,
      * the callback is executed with the current instance as its parameter.
      *
-     * @param  bool  $condition  The condition to evaluate.
-     * @param  Closure  $callback  The callback to execute if the condition is false. It should accept the instance and
+     * @param bool    $condition   The condition to evaluate.
+     * @param Closure $callback    The callback to execute if the condition is false. It should accept the instance and
      *                             return the modified instance.
+     *
      * @return static The current instance for method chaining.
      *
      * @throws InvalidArgumentException If the callback does not return the instance.
@@ -76,7 +78,7 @@ trait ConditionalsTrait
      * // $result contains [2, 4, 6, 8]
      * ```
      */
-    public function unless(bool $condition, Closure $callback): static
+    public function unless(bool $condition, Closure $callback) : static
     {
         if (! $condition) {
             $result = $callback($this);
@@ -96,8 +98,9 @@ trait ConditionalsTrait
      * This method provides an inverse conditional application. It checks if the collection
      * is not empty, and if so, executes the provided callback with the current instance as its parameter.
      *
-     * @param  Closure  $callback  The callback to execute if the collection is not empty. It should accept the instance
+     * @param Closure $callback    The callback to execute if the collection is not empty. It should accept the instance
      *                             and return the modified instance.
+     *
      * @return static The current instance for method chaining.
      *
      * @throws InvalidArgumentException If the callback does not return the instance.
@@ -108,7 +111,7 @@ trait ConditionalsTrait
      * // $result contains [1, 3]
      * ```
      */
-    public function unlessEmpty(Closure $callback): static
+    public function unlessEmpty(Closure $callback) : static
     {
         return $this->whenNotEmpty(callback: $callback);
     }
@@ -119,8 +122,9 @@ trait ConditionalsTrait
      * This method checks if the collection has items. If it is not empty,
      * the provided callback is executed with the current instance as its parameter.
      *
-     * @param  Closure  $callback  The callback to execute if the collection is not empty. It should accept the instance
+     * @param Closure $callback    The callback to execute if the collection is not empty. It should accept the instance
      *                             and return the modified instance.
+     *
      * @return static The current instance for method chaining.
      *
      * @throws InvalidArgumentException If the callback does not return the instance.
@@ -131,7 +135,7 @@ trait ConditionalsTrait
      * // $result contains [2, 3, 4]
      * ```
      */
-    public function whenNotEmpty(Closure $callback): static
+    public function whenNotEmpty(Closure $callback) : static
     {
         if (! $this->isEmpty()) {
             $result = $callback($this);
@@ -160,7 +164,7 @@ trait ConditionalsTrait
      * $isEmpty = $arrh->isEmpty(); // Returns false
      * ```
      */
-    public function isEmpty(): bool
+    public function isEmpty() : bool
     {
         return empty($this->getItems());
     }
@@ -171,8 +175,9 @@ trait ConditionalsTrait
      * This method checks if the collection is empty, and if so, executes the provided callback
      * with the current instance as its parameter. It serves as a semantic alternative to `whenEmpty`.
      *
-     * @param  Closure  $callback  The callback to execute if the collection is empty. It should accept the instance and
+     * @param Closure $callback    The callback to execute if the collection is empty. It should accept the instance and
      *                             return the modified instance.
+     *
      * @return static The current instance for method chaining.
      *
      * @throws InvalidArgumentException If the callback does not return the instance.
@@ -183,7 +188,7 @@ trait ConditionalsTrait
      * // $result contains ['default']
      * ```
      */
-    public function unlessNotEmpty(Closure $callback): static
+    public function unlessNotEmpty(Closure $callback) : static
     {
         return $this->whenEmpty(callback: $callback);
     }
@@ -194,8 +199,9 @@ trait ConditionalsTrait
      * This method checks if the collection has no items. If it is empty,
      * the provided callback is executed with the current instance as its parameter.
      *
-     * @param  Closure  $callback  The callback to execute if the collection is empty. It should accept the instance and
+     * @param Closure $callback    The callback to execute if the collection is empty. It should accept the instance and
      *                             return the modified instance.
+     *
      * @return static The current instance for method chaining.
      *
      * @throws InvalidArgumentException If the callback does not return the instance.
@@ -206,7 +212,7 @@ trait ConditionalsTrait
      * // $result contains ['default']
      * ```
      */
-    public function whenEmpty(Closure $callback): static
+    public function whenEmpty(Closure $callback) : static
     {
         if ($this->isEmpty()) {
             $result = $callback($this);

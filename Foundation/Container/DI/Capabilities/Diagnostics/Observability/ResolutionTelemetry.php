@@ -14,10 +14,11 @@ final readonly class ResolutionTelemetry
     private ResolutionTimeline $timeline;
 
     public function __construct(
-        ResolutionMetrics|null $metrics = null,
+        ResolutionMetrics|null  $metrics = null,
         ResolutionTimeline|null $timeline = null
-    ) {
-        $this->metrics = $metrics ?? new ResolutionMetrics;
+    )
+    {
+        $this->metrics  = $metrics ?? new ResolutionMetrics;
         $this->timeline = $timeline ?? new ResolutionTimeline;
     }
 

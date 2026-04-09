@@ -70,7 +70,7 @@ final class HttpRequestRouter
      *
      * @var array<string, RouteDefinition>
      */
-    private array                $namedRoutes   = [];
+    private array $namedRoutes = [];
     /**
      * Route keys for deduplication.
      *
@@ -127,77 +127,6 @@ final class HttpRequestRouter
     }
 
     /**
-     * @throws ReservedRouteNameException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
-     */
-    private function registerRoute(string $method, string $path, callable|array|string $action, string|null $name = null) : void
-    {
-        $route = new RouteDefinition(
-            method       : $method,
-            path         : $path,
-            action       : $action,
-            middleware   : [],
-            name         : $name,
-            constraints  : [],
-            defaults     : [],
-            domain       : null,
-            attributes   : [],
-            authorization: null
-        );
-
-        $this->add(route: $route);
-    }
-
-    /**
-     * Registers a route from cache (bypasses validation).
-     *
-     * @param RouteDefinition $route The precompiled route to register.
-     *
-     * @internal This method is for internal cache loading only.
-     *
-     * @throws DuplicateRouteException
-     */
-    public function add(RouteDefinition $route) : void
-    {
-        $routeKey = RouteKey::fromRoute(route: $route);
-        $keyString = $routeKey->toString();
-
-        // Check for duplicates based on configured policy
-        if (isset($this->routeKeys[$keyString])) {
-            $this->handleDuplicateRoute(existingKey: $routeKey, newRoute: $route);
-            return; // If policy allows continuation
-        }
-
-        $this->routeKeys[$keyString] = true;
-
-        $method = strtoupper(string: $route->method);
-
-        // Support multiple routes per method+path for domain-aware routing
-        if (!isset($this->routes[$method][$route->path])) {
-            $this->routes[$method][$route->path] = [];
-        }
-        $this->routes[$method][$route->path][] = $route;
-
-        // Register named routes for quick lookup
-        if (! empty($route->name)) {
-            $this->namedRoutes[$route->name] = $route;
-        }
-    }
-
-    /**
-     * Builds a unique key for route deduplication.
-     */
-    private function buildRouteKey(RouteDefinition $route) : string
-    {
-        return sprintf(
-            '%s|%s|%s',
-            strtoupper($route->method),
-            $route->domain ?? '',
-            $route->path
-        );
-    }
-
-    /**
      * Resolves the given HTTP request and returns structured resolution context.
      *
      * Provides comprehensive debugging information about how and why a route was selected,
@@ -245,7 +174,7 @@ final class HttpRequestRouter
                     $this->trace?->log(event: 'resolve.method_not_allowed');
                     throw new MethodNotAllowedException(
                         $failureReason,
-                        405,
+                        (string) 405,
                         ['allowed_methods' => $allowedMethods],
                         false
                     );
@@ -348,7 +277,7 @@ final class HttpRequestRouter
      * Uses precompiled regex pattern for performance.
      *
      * @param RouteDefinition $route The route to check
-     * @param string         $path  The request path
+     * @param string          $path  The request path
      *
      * @return bool True if the route pattern matches the path
      */
@@ -356,6 +285,166 @@ final class HttpRequestRouter
     {
         // Use precompiled regex pattern for performance
         return preg_match($route->compiledPathRegex, $path) === 1;
+    }
+
+    private function extractParameters(array $matches) : array
+    {
+        return array_filter($matches, static fn ($key) => ! is_int($key), ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
+     * Returns all registered routes grouped by HTTP method.
+     * Flattens the internal structure for backward compatibility.
+     *
+     * @return array<string, RouteDefinition[]>
+     */
+    public function allRoutes() : array
+    {
+        $flattened = [];
+        foreach ($this->routes as $method => $pathsForMethod) {
+            $flattened[$method] = [];
+            foreach ($pathsForMethod as $routesForPath) {
+                foreach ($routesForPath as $route) {
+                    $flattened[$method][] = $route;
+                }
+            }
+        }
+
+        return $flattened;
+    }
+
+    /**
+     * Gets the current trace instance for debugging and profiling.
+     */
+    public function getTrace() : RouterTrace|null
+    {
+        return $this->trace;
+    }
+
+    /**
+     * @throws ReservedRouteNameException
+     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
+     */
+    private function registerRoute(string $method, string $path, callable|array|string $action, string|null $name = null) : void
+    {
+        $route = new RouteDefinition(
+            method       : $method,
+            path         : $path,
+            action       : $action,
+            middleware   : [],
+            name         : $name,
+            constraints  : [],
+            defaults     : [],
+            domain       : null,
+            attributes   : [],
+            authorization: null
+        );
+
+        $this->add(route: $route);
+    }
+
+    /**
+     * Registers a route from cache (bypasses validation).
+     *
+     * @param RouteDefinition $route The precompiled route to register.
+     *
+     * @throws DuplicateRouteException
+     * @internal This method is for internal cache loading only.
+     *
+     */
+    public function add(RouteDefinition $route) : void
+    {
+        $routeKey  = RouteKey::fromRoute(route: $route);
+        $keyString = $routeKey->toString();
+
+        // Check for duplicates based on configured policy
+        if (isset($this->routeKeys[$keyString])) {
+            $this->handleDuplicateRoute(existingKey: $routeKey, newRoute: $route);
+
+            return; // If policy allows continuation
+        }
+
+        $this->routeKeys[$keyString] = true;
+
+        $method = strtoupper(string: $route->method);
+
+        // Support multiple routes per method+path for domain-aware routing
+        if (! isset($this->routes[$method][$route->path])) {
+            $this->routes[$method][$route->path] = [];
+        }
+        $this->routes[$method][$route->path][] = $route;
+
+        // Register named routes for quick lookup
+        if (! empty($route->name)) {
+            $this->namedRoutes[$route->name] = $route;
+        }
+    }
+
+    /**
+     * Handle duplicate route registration based on configured policy.
+     *
+     * @throws DuplicateRouteException
+     */
+    private function handleDuplicateRoute(RouteKey $existingKey, RouteDefinition $newRoute) : void
+    {
+        // Default policy - can be made configurable in future versions
+        $policy = DuplicatePolicy::THROW;
+
+        match ($policy) {
+            DuplicatePolicy::THROW   => throw new DuplicateRouteException(
+                method: "Duplicate route: {$newRoute->method} {$newRoute->path}",
+                path  : (string) 409,
+                domain: [
+                            'method' => $newRoute->method,
+                            'path'   => $newRoute->path,
+                            'domain' => $newRoute->domain,
+                            'name'   => $newRoute->name
+                        ],
+                name  : false
+            ),
+            DuplicatePolicy::REPLACE => $this->replaceRoute(key: $existingKey, newRoute: $newRoute),
+            DuplicatePolicy::IGNORE  => null, // Do nothing, keep existing route
+        };
+    }
+
+    /**
+     * Replace an existing route with a new one.
+     */
+    private function replaceRoute(RouteKey $key, RouteDefinition $newRoute) : void
+    {
+        $method = strtoupper($key->method);
+
+        // Remove existing route
+        if (isset($this->routes[$method][$key->path])) {
+            $this->routes[$method][$key->path] = array_filter(
+                $this->routes[$method][$key->path],
+                static fn (RouteDefinition $route) => $route->domain !== $key->domain
+            );
+        }
+
+        // Add new route
+        if (! isset($this->routes[$method][$key->path])) {
+            $this->routes[$method][$key->path] = [];
+        }
+        $this->routes[$method][$key->path][] = $newRoute;
+
+        // Update named routes if applicable
+        if (! empty($newRoute->name)) {
+            $this->namedRoutes[$newRoute->name] = $newRoute;
+        }
+    }
+
+    /**
+     * Builds a unique key for route deduplication.
+     */
+    private function buildRouteKey(RouteDefinition $route) : string
+    {
+        return sprintf(
+            '%s|%s|%s',
+            strtoupper($route->method),
+            $route->domain ?? '',
+            $route->path
+        );
     }
 
     /**
@@ -396,92 +485,5 @@ final class HttpRequestRouter
         );
 
         return "#^{$pattern}$#";
-    }
-
-    private function extractParameters(array $matches) : array
-    {
-        return array_filter($matches, static fn($key) => ! is_int($key), ARRAY_FILTER_USE_KEY);
-    }
-
-    /**
-     * Returns all registered routes grouped by HTTP method.
-     * Flattens the internal structure for backward compatibility.
-     *
-     * @return array<string, RouteDefinition[]>
-     */
-    public function allRoutes() : array
-    {
-        $flattened = [];
-        foreach ($this->routes as $method => $pathsForMethod) {
-            $flattened[$method] = [];
-            foreach ($pathsForMethod as $routesForPath) {
-                foreach ($routesForPath as $route) {
-                    $flattened[$method][] = $route;
-                }
-            }
-        }
-        return $flattened;
-    }
-
-    /**
-     * Handle duplicate route registration based on configured policy.
-     *
-     * @throws DuplicateRouteException
-     */
-    private function handleDuplicateRoute(RouteKey $existingKey, RouteDefinition $newRoute) : void
-    {
-        // Default policy - can be made configurable in future versions
-        $policy = DuplicatePolicy::THROW;
-
-        match ($policy) {
-            DuplicatePolicy::THROW => throw new DuplicateRouteException(
-                method: "Duplicate route: {$newRoute->method} {$newRoute->path}",
-                path  : 409,
-                domain: [
-                    'method' => $newRoute->method,
-                    'path' => $newRoute->path,
-                    'domain' => $newRoute->domain,
-                    'name' => $newRoute->name
-                ],
-                name  : false
-            ),
-            DuplicatePolicy::REPLACE => $this->replaceRoute(key: $existingKey, newRoute: $newRoute),
-            DuplicatePolicy::IGNORE => null, // Do nothing, keep existing route
-        };
-    }
-
-    /**
-     * Replace an existing route with a new one.
-     */
-    private function replaceRoute(RouteKey $key, RouteDefinition $newRoute) : void
-    {
-        $method = strtoupper($key->method);
-
-        // Remove existing route
-        if (isset($this->routes[$method][$key->path])) {
-            $this->routes[$method][$key->path] = array_filter(
-                $this->routes[$method][$key->path],
-                static fn(RouteDefinition $route) => $route->domain !== $key->domain
-            );
-        }
-
-        // Add new route
-        if (!isset($this->routes[$method][$key->path])) {
-            $this->routes[$method][$key->path] = [];
-        }
-        $this->routes[$method][$key->path][] = $newRoute;
-
-        // Update named routes if applicable
-        if (! empty($newRoute->name)) {
-            $this->namedRoutes[$newRoute->name] = $newRoute;
-        }
-    }
-
-    /**
-     * Gets the current trace instance for debugging and profiling.
-     */
-    public function getTrace() : RouterTrace|null
-    {
-        return $this->trace;
     }
 }

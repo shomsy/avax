@@ -21,9 +21,7 @@ final class CreateGreeter implements CreateGreeterContract
 
 final class NeedsCreateGreeter
 {
-    public function __construct(public CreateGreeterContract $greeter)
-    {
-    }
+    public function __construct(public CreateGreeterContract $greeter) {}
 }
 
 $container = makeTestContainer();
@@ -37,7 +35,7 @@ assertThrows(
  * @throws \Psr\Container\ContainerExceptionInterface
  * @throws \Psr\Container\NotFoundExceptionInterface
  */ ServiceNotFoundException::class,
-    static fn() => $container->get('Missing\\Service'),
+    static fn () => $container->get('Missing\\Service'),
     'Missing services must use the not-found contract.'
 );
 

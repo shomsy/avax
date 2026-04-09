@@ -12,14 +12,15 @@ namespace Avax\Database\Events;
 final readonly class ConnectionOpened extends Event
 {
     /**
-     * @param  string  $connectionName  The technical identifier assigned to the established database channel.
-     * @param  string  $correlationId  The technical trace identifier used for correlating this event with a specific
+     * @param string $connectionName   The technical identifier assigned to the established database channel.
+     * @param string $correlationId    The technical trace identifier used for correlating this event with a specific
      *                                 execution scope.
      */
     public function __construct(
         public string $connectionName,
-        string $correlationId
-    ) {
+        string        $correlationId
+    )
+    {
         parent::__construct(correlationId: $correlationId);
     }
 }

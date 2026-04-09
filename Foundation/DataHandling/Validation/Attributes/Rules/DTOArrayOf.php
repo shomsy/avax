@@ -29,7 +29,7 @@ readonly class DTOArrayOf
     public function apply(array|null $value) : array
     {
         return array_map(
-            callback: fn(array $item) => new ($this->class)($item),
+            callback: fn (array $item) => new ($this->class)($item),
             array   : $value ?? []
         );
     }

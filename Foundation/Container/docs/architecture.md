@@ -6,7 +6,9 @@ Read the component in this order:
 
 1. [`src/Container.php`](../DI/Container.php)
 2. flow entries under `src/Flows/`
-3. shared engine lanes under `src/Capabilities/Declaration/`, `src/Capabilities/Composition/`, `src/Capabilities/Resolution/`, `src/Capabilities/Execution/`, `src/Capabilities/Runtime/`, and `src/Capabilities/Diagnostics/`
+3. shared engine lanes under `src/Capabilities/Declaration/`, `src/Capabilities/Composition/`,
+   `src/Capabilities/Resolution/`, `src/Capabilities/Execution/`, `src/Capabilities/Runtime/`, and
+   `src/Capabilities/Diagnostics/`
 4. tiny primitives under `src/Foundation/`
 8. tests under `tests/`
 9. benchmark harnesses under `tests/benchmarks/`
@@ -47,7 +49,8 @@ The facade also exposes lifecycle, context, and diagnostics helpers:
 - `hasAlias()` / `isDeferred()` / `isLazy()` / `isCompiled()` / `isWarmedUp()`
 - `env()`
 
-`CreateContainer` stays the only public assembly flow, while internal collaborator wiring is split under `src/Capabilities/Composition/Assembly/`.
+`CreateContainer` stays the only public assembly flow, while internal collaborator wiring is split under
+`src/Capabilities/Composition/Assembly/`.
 
 ## Flow Entries
 
@@ -91,7 +94,8 @@ Each flow entry owns one obvious user action:
 
 - writes and reads the generated compiled runtime artifact
 - writes sidecar metadata with checksum, config hash, environment, lifetime plans, and per-service signatures
-- records schema version, settings fingerprint, diagnostics mode, warmed state, artifact paths, and dependency-graph revision
+- records schema version, settings fingerprint, diagnostics mode, warmed state, artifact paths, and dependency-graph
+  revision
 - enforces artifact compatibility across cache version, config hash, environment, compile mode, and strictness
 - records reused and invalidated services plus invalidation reasons for incremental recompilation
 - quarantines corrupt artifacts before they can silently drift into the hot path
@@ -202,7 +206,8 @@ The runtime is designed around one rule:
 - compile once
 - run many times from memory or versioned disk artifacts
 
-Deferred services stay out of the default compile warmup unless they are explicitly requested or needed by a compiled dependency.
+Deferred services stay out of the default compile warmup unless they are explicitly requested or needed by a compiled
+dependency.
 
 Compile-time discipline is mode-aware:
 

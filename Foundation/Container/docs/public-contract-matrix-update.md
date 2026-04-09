@@ -6,42 +6,42 @@ This document updates the public contract matrix to reflect slice views, pooled 
 
 ### Slice View APIs
 
-| Surface | Owner | Effect | Compile/Runtime | Throws | Evidence |
-|:--------|:------|:-------|:----------------|:-------|:---------|
-| `debugGraph('flow.login')` | `ServiceResolver` | Return filtered graph for specific slice | Runtime | none | `SliceVisibilitySmokeTest.php` |
-| `validate(['flow.login'])` | `ServiceResolver` | Validate specific slice | Runtime | none | `SliceValidationSmokeTest.php` |
-| `describeService()['slice']` | `ServiceResolver` | Return slice metadata | Runtime | none | `SliceDiagnosticsSmokeTest.php` |
-| `debugGraph()['slices']` | `ServiceResolver` | Return all slice manifests | Runtime | none | `SliceDiagnosticsSmokeTest.php` |
+| Surface                      | Owner             | Effect                                   | Compile/Runtime | Throws | Evidence                        |
+|:-----------------------------|:------------------|:-----------------------------------------|:----------------|:-------|:--------------------------------|
+| `debugGraph('flow.login')`   | `ServiceResolver` | Return filtered graph for specific slice | Runtime         | none   | `SliceVisibilitySmokeTest.php`  |
+| `validate(['flow.login'])`   | `ServiceResolver` | Validate specific slice                  | Runtime         | none   | `SliceValidationSmokeTest.php`  |
+| `describeService()['slice']` | `ServiceResolver` | Return slice metadata                    | Runtime         | none   | `SliceDiagnosticsSmokeTest.php` |
+| `debugGraph()['slices']`     | `ServiceResolver` | Return all slice manifests               | Runtime         | none   | `SliceDiagnosticsSmokeTest.php` |
 
 ### Pooled Lifetime APIs
 
-| Surface | Owner | Effect | Compile/Runtime | Throws | Evidence |
-|:--------|:------|:-------|:----------------|:-------|:---------|
-| `pooled()` | `RegisterServices` | Register with pooled lifetime | Authored only | none | `PooledLifetimeSmokeTest.php` |
-| `maxPoolSize(int)` | `RegisterServices` | Configure pool size | Authored only | none | `PooledLifetimeSmokeTest.php` |
-| `onOverflow(strategy)` | `RegisterServices` | Configure overflow behavior | Authored only | none | `PooledLifetimeSmokeTest.php` |
-| `resetWith(callable)` | `RegisterServices` | Declare reset behavior | Authored only | none | `PooledLifetimeSmokeTest.php` |
-| `resettable()` | `RegisterServices` | Use class reset() method | Authored only | none | `PooledLifetimeSmokeTest.php` |
-| `debugScope()['pooled']` | `ServiceResolver` | Return pooled service state | Runtime | none | `PooledDiagnosticsSmokeTest.php` |
-| `runtimeReport()['poolStats']` | `ResolutionMetrics` | Return pool metrics | Runtime | none | `PooledDiagnosticsSmokeTest.php` |
+| Surface                        | Owner               | Effect                        | Compile/Runtime | Throws | Evidence                         |
+|:-------------------------------|:--------------------|:------------------------------|:----------------|:-------|:---------------------------------|
+| `pooled()`                     | `RegisterServices`  | Register with pooled lifetime | Authored only   | none   | `PooledLifetimeSmokeTest.php`    |
+| `maxPoolSize(int)`             | `RegisterServices`  | Configure pool size           | Authored only   | none   | `PooledLifetimeSmokeTest.php`    |
+| `onOverflow(strategy)`         | `RegisterServices`  | Configure overflow behavior   | Authored only   | none   | `PooledLifetimeSmokeTest.php`    |
+| `resetWith(callable)`          | `RegisterServices`  | Declare reset behavior        | Authored only   | none   | `PooledLifetimeSmokeTest.php`    |
+| `resettable()`                 | `RegisterServices`  | Use class reset() method      | Authored only   | none   | `PooledLifetimeSmokeTest.php`    |
+| `debugScope()['pooled']`       | `ServiceResolver`   | Return pooled service state   | Runtime         | none   | `PooledDiagnosticsSmokeTest.php` |
+| `runtimeReport()['poolStats']` | `ResolutionMetrics` | Return pool metrics           | Runtime         | none   | `PooledDiagnosticsSmokeTest.php` |
 
 ### New Diagnostics Outputs
 
-| Output | Content | Format |
-|:-------|:--------|:-------|
-| `debugGraph()['slices']` | All slice manifests | JSON array |
-| `debugGraph()['sliceManifest']['flow.login']` | Services in flow.login | JSON object |
-| `debugGraph()['impact']` | Impact analysis per service | JSON object |
-| `debugGraph()['deadRegistrations']` | Unreachable services | JSON array |
-| `debugGraph()['duplicateConcepts']` | Conflicting concepts | JSON array |
-| `validate()['ownership']` | Cross-slice access issues | JSON array |
-| `validate()['lifetime']` | Lifetime misuse issues | JSON array |
-| `validate()['policy']` | Policy violations | JSON array |
-| `runtimeReport()['poolStats']` | Pool utilization | JSON object |
-| `describeService()['poolConfig']` | Pool configuration | JSON object |
-| `describeService()['imports']` | Declared imports | JSON array |
-| `describeService()['exports']` | Declared exports | JSON array |
-| `compileReport()['derivedSlices']` | Derived slice metadata | JSON object |
+| Output                                        | Content                     | Format      |
+|:----------------------------------------------|:----------------------------|:------------|
+| `debugGraph()['slices']`                      | All slice manifests         | JSON array  |
+| `debugGraph()['sliceManifest']['flow.login']` | Services in flow.login      | JSON object |
+| `debugGraph()['impact']`                      | Impact analysis per service | JSON object |
+| `debugGraph()['deadRegistrations']`           | Unreachable services        | JSON array  |
+| `debugGraph()['duplicateConcepts']`           | Conflicting concepts        | JSON array  |
+| `validate()['ownership']`                     | Cross-slice access issues   | JSON array  |
+| `validate()['lifetime']`                      | Lifetime misuse issues      | JSON array  |
+| `validate()['policy']`                        | Policy violations           | JSON array  |
+| `runtimeReport()['poolStats']`                | Pool utilization            | JSON object |
+| `describeService()['poolConfig']`             | Pool configuration          | JSON object |
+| `describeService()['imports']`                | Declared imports            | JSON array  |
+| `describeService()['exports']`                | Declared exports            | JSON array  |
+| `compileReport()['derivedSlices']`            | Derived slice metadata      | JSON object |
 
 ## Slice-View Diagnostics
 
@@ -127,16 +127,16 @@ This document updates the public contract matrix to reflect slice views, pooled 
 
 ### Anti-Pattern Detection
 
-| Pattern | Severity | Message |
-|:--------|:---------|:--------|
-| `shared_captures_scoped` | ERROR | Shared service captures scoped dependency |
-| `wider_scope_captures_narrower` | ERROR | Service in wider scope captures narrower scope |
-| `disposable_transient` | ERROR | Transient service is marked disposable |
-| `unexported_cross_slice` | WARNING | Cross-slice access without export |
-| `missing_import` | WARNING | Slice accesses capability without import |
-| `private_leak` | ERROR | Private service accessed from outside owning slice |
-| `cyclic_dependency` | ERROR | Circular dependency detected |
-| `duplicate_concept` | WARNING | Multiple services claim same concept name |
+| Pattern                         | Severity | Message                                            |
+|:--------------------------------|:---------|:---------------------------------------------------|
+| `shared_captures_scoped`        | ERROR    | Shared service captures scoped dependency          |
+| `wider_scope_captures_narrower` | ERROR    | Service in wider scope captures narrower scope     |
+| `disposable_transient`          | ERROR    | Transient service is marked disposable             |
+| `unexported_cross_slice`        | WARNING  | Cross-slice access without export                  |
+| `missing_import`                | WARNING  | Slice accesses capability without import           |
+| `private_leak`                  | ERROR    | Private service accessed from outside owning slice |
+| `cyclic_dependency`             | ERROR    | Circular dependency detected                       |
+| `duplicate_concept`             | WARNING  | Multiple services claim same concept name          |
 
 ## Explainability Outputs
 
@@ -228,14 +228,14 @@ $container->exportGraph('graph.png'); // PNG via graphviz
 
 ## Acceptance Criteria Coverage
 
-| Criterion | API Coverage |
-|:----------|:-------------|
-| AC-101 Slice-local visibility | `debugGraph(slice)`, `validate([slice])` |
+| Criterion                         | API Coverage                                               |
+|:----------------------------------|:-----------------------------------------------------------|
+| AC-101 Slice-local visibility     | `debugGraph(slice)`, `validate([slice])`                   |
 | AC-102 Capability exports/imports | `describeService()['imports/exports']`, validate ownership |
-| AC-103 Pooled lifetime | `pooled()`, `maxPoolSize()`, `resetWith()`, diagnostics |
-| AC-105 Graph artifacts | `debugGraph()`, `compileReport()`, `runtimeReport()` |
-| AC-106 Structural diff | `debugGraph()['slices']`, compile report metadata |
-| AC-110 Policy engine | `validate()['policy']`, anti-pattern detection |
+| AC-103 Pooled lifetime            | `pooled()`, `maxPoolSize()`, `resetWith()`, diagnostics    |
+| AC-105 Graph artifacts            | `debugGraph()`, `compileReport()`, `runtimeReport()`       |
+| AC-106 Structural diff            | `debugGraph()['slices']`, compile report metadata          |
+| AC-110 Policy engine              | `validate()['policy']`, anti-pattern detection             |
 
 ---
 

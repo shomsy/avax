@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Login;
 
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
-use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
 use Exception;
 use SensitiveParameter;

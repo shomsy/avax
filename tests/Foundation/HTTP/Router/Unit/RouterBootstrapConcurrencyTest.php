@@ -14,11 +14,6 @@ class RouterBootstrapConcurrencyTest extends TestCase
 {
     private RouterBootstrapState $bootstrapState;
 
-    protected function setUp() : void
-    {
-        $this->bootstrapState = new RouterBootstrapState;
-    }
-
     /**
      * @test
      */
@@ -106,5 +101,10 @@ class RouterBootstrapConcurrencyTest extends TestCase
         $state1->reset();
         $this->assertFalse(condition: $state1->isBooted());
         $this->assertTrue(condition: $state2->isBooted());
+    }
+
+    protected function setUp() : void
+    {
+        $this->bootstrapState = new RouterBootstrapState;
     }
 }

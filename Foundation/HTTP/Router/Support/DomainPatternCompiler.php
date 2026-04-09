@@ -40,7 +40,7 @@ final class DomainPatternCompiler
         $regex = preg_replace_callback(
             pattern : '/\\{(\w+)}/',
             // Matches `{placeholder_name}` where placeholders are word characters.
-            callback: static fn(array $match) : string => '(?P<' . $match[1] . '>[\w\-\.]+)',
+            callback: static fn (array $match) : string => '(?P<' . $match[1] . '>[\w\-\.]+)',
             // Replace it with a named group.
             subject : $escaped // Apply on the escaped string.
         );

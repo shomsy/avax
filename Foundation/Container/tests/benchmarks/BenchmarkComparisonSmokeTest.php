@@ -9,7 +9,7 @@ if (! mkdir($artifactDir, 0775, true) && ! is_dir($artifactDir)) {
     throw new RuntimeException("Cannot create benchmark comparison artifact directory [{$artifactDir}].");
 }
 
-$left = $artifactDir . '/left.json';
+$left  = $artifactDir . '/left.json';
 $right = $artifactDir . '/right.json';
 
 $command = 'php tests/benchmarks/run.php --json --output=' . escapeshellarg($left) . ' >/dev/null';

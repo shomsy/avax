@@ -15,7 +15,7 @@ final class RegisterForTarget
 
     public function __construct(
         private readonly ServiceRegistry $registry,
-        private readonly string $consumer
+        private readonly string          $consumer
     ) {}
 
     public function needs(string $abstract) : self

@@ -11,7 +11,8 @@ Each JSON payload emits `schemaVersion` at the top level.
 
 ## Stability Guarantee
 
-Minor internal implementation changes may add fields, but existing documented fields are treated as stable within the same schema version.
+Minor internal implementation changes may add fields, but existing documented fields are treated as stable within the
+same schema version.
 
 Changing semantics or removing documented fields requires:
 

@@ -22,12 +22,6 @@ class RouterContractTest extends TestCase
 {
     private RouterInterface $router;
 
-    protected function setUp() : void
-    {
-        // These will be mocked/injected by the container in real usage
-        $this->router = $this->createMock(RouterInterface::class);
-    }
-
     /**
      * @test
      * @throws ReservedRouteNameException
@@ -166,5 +160,11 @@ class RouterContractTest extends TestCase
         // When: Router handles unmatched request
         // Then: Should return 404 (handled by Router::resolve catch block)
         $this->assertTrue(condition: true); // Contract test - 404 behavior guaranteed
+    }
+
+    protected function setUp() : void
+    {
+        // These will be mocked/injected by the container in real usage
+        $this->router = $this->createMock(RouterInterface::class);
     }
 }

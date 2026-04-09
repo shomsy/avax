@@ -29,17 +29,15 @@ final class FakeTestingClock implements TestingClockContract
 
 final class LoginFlowEntry
 {
-    public function __construct(public TestingClockContract $clock)
-    {
-    }
+    public function __construct(public TestingClockContract $clock) {}
 }
 
 $composition = TestComposition::create();
 $composition->singletonCapability('time', TestingClockContract::class, RealTestingClock::class, exported: true);
 $composition->bindFlow('login', LoginFlowEntry::class, LoginFlowEntry::class, entry: true, imports: ['time']);
 
-$container = $composition->container();
-$entry = $container->make(LoginFlowEntry::class);
+$container     = $composition->container();
+$entry         = $container->make(LoginFlowEntry::class);
 $entrySnapshot = $composition->snapshot(LoginFlowEntry::class);
 
 assertInstanceOf(RealTestingClock::class, $entry->clock, 'Flow-only test composition should resolve required imported capabilities.');
@@ -48,7 +46,7 @@ assertSame(['time'], $entrySnapshot['owner']['imports'] ?? [], 'Snapshot diagnos
 
 $composition->override(TestingClockContract::class, FakeTestingClock::class, 'test-double');
 
-$overridden = $container->make(LoginFlowEntry::class);
+$overridden       = $container->make(LoginFlowEntry::class);
 $overrideSnapshot = $composition->snapshot(TestingClockContract::class);
 
 assertInstanceOf(FakeTestingClock::class, $overridden->clock, 'Test overrides should replace dependencies cleanly inside the isolated composition.');

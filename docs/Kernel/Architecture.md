@@ -2,7 +2,8 @@
 
 ## Overview
 
-The HTTP Kernel is the central orchestrator for HTTP request processing in the Avax framework. It coordinates the flow from PSR-7 ServerRequestInterface to PSR-7 ResponseInterface through Router resolution and middleware pipelines.
+The HTTP Kernel is the central orchestrator for HTTP request processing in the Avax framework. It coordinates the flow
+from PSR-7 ServerRequestInterface to PSR-7 ResponseInterface through Router resolution and middleware pipelines.
 
 ## Core Principles
 
@@ -19,6 +20,7 @@ The HTTP Kernel is the central orchestrator for HTTP request processing in the A
 **Purpose**: Single, stable entry point for HTTP request processing.
 
 **Interface Contract**:
+
 ```php
 interface Kernel {
     public function handle(ServerRequestInterface $request): ResponseInterface;
@@ -26,6 +28,7 @@ interface Kernel {
 ```
 
 **Guarantees**:
+
 - PSR-7 compliant input/output
 - Exception safety (never throws)
 - Deterministic request lifecycle
@@ -36,12 +39,14 @@ interface Kernel {
 **Purpose**: Coordinates the complete request processing pipeline.
 
 **Responsibilities**:
+
 - Global middleware pipeline setup
 - Router integration and error handling
 - Response generation and formatting
 - Exception boundary management
 
 **Key Components**:
+
 - `HttpKernel`: Main implementation
 - `ControllerRequestHandler`: Final pipeline handler
 - `RouteMiddlewareHandler`: Route-aware middleware bridge
@@ -51,12 +56,14 @@ interface Kernel {
 **Purpose**: Immutable, PSR-15 compatible middleware execution.
 
 **Features**:
+
 - Immutable pipeline construction
 - PSR-15 `MiddlewareInterface` support
 - RequestHandlerInterface chaining
 - Short-circuit capability
 
 **Design Decisions**:
+
 - Immutable: `withMiddleware()` returns new instances
 - PSR-15: Industry standard for PHP middleware
 - Handler chain: Efficient execution without recursion limits
@@ -94,11 +101,13 @@ interface Kernel {
 ## Middleware Architecture
 
 ### Global Middleware
+
 - Applied to ALL requests
 - Examples: CORS, security headers, logging, rate limiting
 - Configured at Kernel instantiation
 
 ### Route-Specific Middleware
+
 - Applied based on matched route
 - Defined in route configuration
 - Examples: authentication, authorization, input validation
@@ -106,12 +115,14 @@ interface Kernel {
 ### Middleware Contract
 
 **What Middleware CAN Do**:
+
 - Return `ResponseInterface` (short-circuit pipeline)
 - Call `$handler->handle()` (continue pipeline)
 - Access and modify request attributes
 - Throw exceptions (caught by Kernel)
 
 **What Middleware CANNOT Do**:
+
 - Know about routing details
 - Directly access controllers
 - Modify request URI/path (affects routing)
@@ -129,16 +140,17 @@ Request → Global Middleware 1 → Global Middleware 2 → ... → Global Middl
 
 ### Exception Mapping
 
-| Exception Type | HTTP Status | When Thrown |
-|----------------|-------------|-------------|
-| `RouteNotFoundException` | 404 | Router cannot match request |
-| `MethodNotAllowedException` | 405 | Route exists but wrong method |
-| `ConstraintValidationException` | 400 | Route parameters invalid |
-| `Throwable` (unexpected) | 500 | Any other exception |
+| Exception Type                  | HTTP Status | When Thrown                   |
+|---------------------------------|-------------|-------------------------------|
+| `RouteNotFoundException`        | 404         | Router cannot match request   |
+| `MethodNotAllowedException`     | 405         | Route exists but wrong method |
+| `ConstraintValidationException` | 400         | Route parameters invalid      |
+| `Throwable` (unexpected)        | 500         | Any other exception           |
 
 ### Error Response Format
 
 All errors return JSON responses:
+
 ```json
 {
   "error": "Human-readable error message"
@@ -162,16 +174,19 @@ try {
 ## Integration Points
 
 ### Router Integration
+
 - Kernel receives `RouterInterface` dependency
 - Router exceptions are caught and converted to responses
 - Route parameters become request attributes
 
 ### Controller Integration
+
 - Controllers receive PSR-7 request with resolved parameters
 - Controllers return PSR-7 responses
 - Controller exceptions bubble up to Kernel boundary
 
 ### Middleware Integration
+
 - PSR-15 standard interface
 - Framework-agnostic middleware components
 - Composable pipeline construction
@@ -186,6 +201,7 @@ try {
 ## Anti-Patterns
 
 ### ❌ Framework Coupling
+
 ```php
 // WRONG - Kernel knows about framework details
 class HttpKernel {
@@ -197,6 +213,7 @@ class HttpKernel {
 ```
 
 ### ❌ Business Logic in Kernel
+
 ```php
 // WRONG - Kernel does business logic
 class HttpKernel {
@@ -208,6 +225,7 @@ class HttpKernel {
 ```
 
 ### ❌ Multiple Entry Points
+
 ```php
 // WRONG - Multiple ways to process requests
 class HttpKernel {
@@ -220,32 +238,39 @@ class HttpKernel {
 ## Extension Points
 
 ### Custom Middleware
+
 Implement `MiddlewareInterface` for cross-cutting concerns.
 
 ### Custom Exception Handling
+
 Extend Kernel to customize exception → response mapping.
 
 ### Custom Controllers
+
 Any callable that accepts PSR-7 Request and returns PSR-7 Response.
 
 ## Migration Guide
 
 ### From Laravel Kernel
+
 - Replace `Kernel::handle()` calls with dependency injection
 - PSR-15 middleware replaces Laravel middleware
 - Global middleware configured in Kernel constructor
 - Route middleware defined in route configuration
 
 ### From Symfony HttpKernel
+
 - PSR-15 replaces Symfony event system
 - Single `handle()` method instead of multiple event listeners
 - Exception handling centralized instead of event-based
 
 ### From Custom Frameworks
+
 - Implement `Kernel` interface
 - Use PSR-15 middleware for existing logic
 - Route resolution becomes middleware responsibility
 
 ---
 
-*The HTTP Kernel provides the stable foundation for request processing. Everything above the Kernel is application-specific; everything below is infrastructure.*
+*The HTTP Kernel provides the stable foundation for request processing. Everything above the Kernel is
+application-specific; everything below is infrastructure.*

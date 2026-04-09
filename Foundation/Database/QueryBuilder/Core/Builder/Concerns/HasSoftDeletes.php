@@ -203,11 +203,11 @@ trait HasSoftDeletes
 
         $clone        = clone $this;
         $clone->state = $clone->state->addWhere(where: new WhereNode(
-            column  : $column,
-            operator: $operator,
-            type    : 'Null',
-            boolean : $boolean
-        ));
+                                                           column  : $column,
+                                                           operator: $operator,
+                                                           type    : 'Null',
+                                                           boolean : $boolean
+                                                       ));
 
         return $clone;
     }

@@ -32,13 +32,28 @@ final class CriticalPathTest extends TestCase
      * @throws ReflectionException
      * @throws \Throwable
      */
-    public function test_transaction_rollback_on_failure(): void
+    public function test_transaction_rollback_on_failure() : void
     {
-        $grammar = new MySQLGrammar;
-        $executor = new PDOExecutor(pdo: $this->pdo, connectionName: 'test');
-        $transactionMgr = new TransactionManager(pdo: $this->pdo);
-        $orchestrator = new QueryOrchestrator(executor: $executor, transactionManager: $transactionMgr);
-        $builder = new QueryBuilder(grammar: $grammar, orchestrator: $orchestrator);
+        $grammar        = new MySQLGrammar;
+        $connection     = new class($this->pdo) implements \Avax\Database\Connection\Contracts\DatabaseConnection {
+            public function __construct(private PDO $pdo) {}
+
+            public function getConnection() : PDO { return $this->pdo; }
+
+            public function getName() : string { return 'test'; }
+
+            public function config(string $key = null, mixed $default = null) : mixed { return null; }
+
+            public function ping() : bool { return true; }
+
+            public function reconnect() : void {}
+
+            public function disconnect() : void {}
+        };
+        $executor       = new PDOExecutor(connection: $connection, connectionName: 'test');
+        $transactionMgr = \Avax\Database\Transaction\Transaction::on($connection);
+        $orchestrator   = new QueryOrchestrator(executor: $executor, transactionManager: $transactionMgr);
+        $builder        = new QueryBuilder(grammar: $grammar, orchestrator: $orchestrator);
 
         try {
             $builder->transaction(callback: function (QueryBuilder $query) {
@@ -61,13 +76,29 @@ final class CriticalPathTest extends TestCase
      *
      * @throws Throwable
      */
-    public function test_identity_map_defers_execution(): void
+    public function test_identity_map_defers_execution() : void
     {
-        $grammar = new MySQLGrammar;
-        $executor = new PDOExecutor(pdo: $this->pdo, connectionName: 'test');
-        $orchestrator = new QueryOrchestrator(executor: $executor);
-        $identityMap = new IdentityMap(orchestrator: $orchestrator);
-        $builder = new QueryBuilder(grammar: $grammar, orchestrator: $orchestrator->withIdentityMap(map: $identityMap));
+        $grammar        = new MySQLGrammar;
+        $connection     = new class($this->pdo) implements \Avax\Database\Connection\Contracts\DatabaseConnection {
+            public function __construct(private PDO $pdo) {}
+
+            public function getConnection() : PDO { return $this->pdo; }
+
+            public function getName() : string { return 'test'; }
+
+            public function config(string $key = null, mixed $default = null) : mixed { return null; }
+
+            public function ping() : bool { return true; }
+
+            public function reconnect() : void {}
+
+            public function disconnect() : void {}
+        };
+        $executor       = new PDOExecutor(connection: $connection, connectionName: 'test');
+        $transactionMgr = \Avax\Database\Transaction\Transaction::on($connection);
+        $orchestrator   = new QueryOrchestrator(executor: $executor, transactionManager: $transactionMgr);
+        $identityMap    = new IdentityMap(transactionManager: $transactionMgr, connection: $connection);
+        $builder        = new QueryBuilder(grammar: $grammar, orchestrator: $orchestrator->withIdentityMap(map: $identityMap));
 
         $deferred = $builder->deferred(identityMap: $identityMap);
         $deferred->from(table: 'users')->insert(values: ['name' => 'Bob', 'email' => 'bob@test.com']);
@@ -89,12 +120,27 @@ final class CriticalPathTest extends TestCase
      * @throws ReflectionException
      * @throws \Throwable
      */
-    public function test_query_exception_redacts_bindings_by_default(): void
+    public function test_query_exception_redacts_bindings_by_default() : void
     {
-        $grammar = new MySQLGrammar;
-        $executor = new PDOExecutor(pdo: $this->pdo, connectionName: 'test');
+        $grammar      = new MySQLGrammar;
+        $connection   = new class($this->pdo) implements \Avax\Database\Connection\Contracts\DatabaseConnection {
+            public function __construct(private PDO $pdo) {}
+
+            public function getConnection() : PDO { return $this->pdo; }
+
+            public function getName() : string { return 'test'; }
+
+            public function config(string $key = null, mixed $default = null) : mixed { return null; }
+
+            public function ping() : bool { return true; }
+
+            public function reconnect() : void {}
+
+            public function disconnect() : void {}
+        };
+        $executor     = new PDOExecutor(connection: $connection, connectionName: 'test');
         $orchestrator = new QueryOrchestrator(executor: $executor);
-        $builder = new QueryBuilder(grammar: $grammar, orchestrator: $orchestrator);
+        $builder      = new QueryBuilder(grammar: $grammar, orchestrator: $orchestrator);
 
         try {
             // Invalid SQL to trigger exception
@@ -108,7 +154,7 @@ final class CriticalPathTest extends TestCase
         }
     }
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $this->pdo = new PDO(dsn: 'sqlite::memory:');
         $this->pdo->setAttribute(attribute: PDO::ATTR_ERRMODE, value: PDO::ERRMODE_EXCEPTION);

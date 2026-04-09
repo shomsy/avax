@@ -64,11 +64,11 @@ trait HasConditions
 
         $clone        = clone $this;
         $clone->state = $clone->state->addWhere(where: new WhereNode(
-            column  : $column,
-            operator: (string) $operator,
-            value   : $value,
-            boolean : $boolean
-        ));
+                                                           column  : $column,
+                                                           operator: (string) $operator,
+                                                           value   : $value,
+                                                           boolean : $boolean
+                                                       ));
 
         if (! in_array(needle: $operator, haystack: ['IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN'])) {
             $clone->state = $clone->state->addBinding(value: $value);
@@ -108,9 +108,9 @@ trait HasConditions
 
         $clone        = clone $this;
         $clone->state = $clone->state->addWhere(where: new NestedWhereNode(
-            query  : $query,
-            boolean: $boolean
-        ));
+                                                           query  : $query,
+                                                           boolean: $boolean
+                                                       ));
 
         $clone->state = $clone->state->mergeBindings(values: $query->state->getBindings());
 
@@ -172,11 +172,11 @@ trait HasConditions
 
         $clone        = clone $this;
         $clone->state = $clone->state->addWhere(where: new WhereNode(
-            column  : $column,
-            operator: $operator,
-            value   : $values,
-            boolean : $boolean
-        ));
+                                                           column  : $column,
+                                                           operator: $operator,
+                                                           value   : $values,
+                                                           boolean : $boolean
+                                                       ));
 
         $clone->state = $clone->state->mergeBindings(values: $values);
 
@@ -216,11 +216,11 @@ trait HasConditions
 
         $clone        = clone $this;
         $clone->state = $clone->state->addWhere(where: new WhereNode(
-            column  : $column,
-            operator: $operator,
-            value   : $values,
-            boolean : $boolean
-        ));
+                                                           column  : $column,
+                                                           operator: $operator,
+                                                           value   : $values,
+                                                           boolean : $boolean
+                                                       ));
 
         $clone->state = $clone->state->mergeBindings(values: $values);
 

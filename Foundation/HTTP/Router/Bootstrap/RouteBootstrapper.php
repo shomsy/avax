@@ -15,8 +15,8 @@ use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Snapshots\RouterSnapshot;
-use Avax\HTTP\Router\Support\RouteRegistry;
 use Avax\HTTP\Router\Support\RouterBootstrapState;
+use Avax\HTTP\Router\Support\RouteRegistry;
 use Closure;
 use FilesystemIterator;
 use Psr\Http\Message\ResponseInterface;
@@ -158,9 +158,9 @@ final readonly class RouteBootstrapper
 
         $iterator = new RecursiveIteratorIterator(
             iterator: new RecursiveDirectoryIterator(
-                directory: $baseDir,
-                flags    : FilesystemIterator::SKIP_DOTS
-            )
+                          directory: $baseDir,
+                          flags    : FilesystemIterator::SKIP_DOTS
+                      )
         );
 
         $latest = 0;
@@ -238,15 +238,15 @@ final readonly class RouteBootstrapper
         // Create a recursive iterator to find all files within the route directory.
         $iterator = new RecursiveIteratorIterator(
             iterator: new RecursiveDirectoryIterator(
-                directory: $baseDir,
-                flags    : FilesystemIterator::SKIP_DOTS
-            )
+                          directory: $baseDir,
+                          flags    : FilesystemIterator::SKIP_DOTS
+                      )
         );
 
         // Filter and return files that end with `.routes.php`, or just 'routes.php'
         $routeFiles = array_filter(
             array   : iterator_to_array(iterator: $iterator),
-            callback: static fn(SplFileInfo $file) : bool => $file->isFile()
+            callback: static fn (SplFileInfo $file) : bool => $file->isFile()
                 && $file->isReadable()
                 && preg_match(
                     pattern: '/\.routes\.php$|^routes\.php$/',

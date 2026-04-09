@@ -15,24 +15,24 @@ layered override model.
 
 ## 1) Flag Catalog
 
-| Flag | Default | Scope | Description |
-|:---|:---:|:---|:---|
-| `strict_review` | ON | project | Enforce multi-pass review from `how-to-strict-review.md` |
-| `memory_extraction` | ON | global | Auto-extract memories after tasks (Phase 1) |
-| `memory_consolidation` | OFF | global | Auto-consolidate memory summaries (Phase 2) |
-| `memory_injection` | ON | global | Inject `memory_summary.md` at session start (Phase 3) |
-| `continuous_learning` | ON | project | Capture observations and allow the learning pipeline to run |
-| `instincts_enabled` | ON | project | Allow instinct generation and application from learned patterns |
-| `approval_required` | ON | project | Require human approval for T2+ operations |
-| `auto_approval_rules` | ON | project | Use `approved-commands.rules` for prefix matching |
-| `dangerous_op_detection` | ON | global | Always detect dangerous operations (§2 of approval-policy) |
-| `auto_backlog_update` | ON | project | Auto-update TODO.md on task completion |
-| `hooks_enabled` | ON | project | Enable lifecycle hooks from `hooks-policy.md` |
-| `offload_notes` | ON | global | Include offload notes in final responses |
-| `evidence_required` | ON | project | Require timestamped evidence for DoD |
-| `naming_standard` | ON | project | Enforce naming rules from `naming-standard.md` |
-| `profile_resolution` | ON | global | Use `profile-resolution-algorithm.md` for stack resolution |
-| `security_gates` | ON | global | Enforce security gates from `security/**` |
+| Flag                     | Default | Scope   | Description                                                     |
+|:-------------------------|:-------:|:--------|:----------------------------------------------------------------|
+| `strict_review`          |   ON    | project | Enforce multi-pass review from `how-to-strict-review.md`        |
+| `memory_extraction`      |   ON    | global  | Auto-extract memories after tasks (Phase 1)                     |
+| `memory_consolidation`   |   OFF   | global  | Auto-consolidate memory summaries (Phase 2)                     |
+| `memory_injection`       |   ON    | global  | Inject `memory_summary.md` at session start (Phase 3)           |
+| `continuous_learning`    |   ON    | project | Capture observations and allow the learning pipeline to run     |
+| `instincts_enabled`      |   ON    | project | Allow instinct generation and application from learned patterns |
+| `approval_required`      |   ON    | project | Require human approval for T2+ operations                       |
+| `auto_approval_rules`    |   ON    | project | Use `approved-commands.rules` for prefix matching               |
+| `dangerous_op_detection` |   ON    | global  | Always detect dangerous operations (§2 of approval-policy)      |
+| `auto_backlog_update`    |   ON    | project | Auto-update TODO.md on task completion                          |
+| `hooks_enabled`          |   ON    | project | Enable lifecycle hooks from `hooks-policy.md`                   |
+| `offload_notes`          |   ON    | global  | Include offload notes in final responses                        |
+| `evidence_required`      |   ON    | project | Require timestamped evidence for DoD                            |
+| `naming_standard`        |   ON    | project | Enforce naming rules from `naming-standard.md`                  |
+| `profile_resolution`     |   ON    | global  | Use `profile-resolution-algorithm.md` for stack resolution      |
+| `security_gates`         |   ON    | global  | Enforce security gates from `security/**`                       |
 
 ---
 
@@ -48,6 +48,7 @@ Flags are resolved in the following priority order (highest wins):
 4. **Default** — The value in the table above.
 
 ### Override Syntax
+
 In root `AGENTS.md`, flags are overridden under the project definitions:
 
 ```markdown
@@ -64,10 +65,12 @@ In root `AGENTS.md`, flags are overridden under the project definitions:
 ## 3) Flag Semantics
 
 ### ON
+
 The governance subsystem is active. All rules from the referenced document
 are enforced.
 
 ### OFF
+
 The governance subsystem is inactive. Its rules are still documented but
 not enforced. The agent MAY note when it would have triggered a disabled
 gate:
@@ -86,13 +89,13 @@ lifecycle instead of permanent ad hoc toggles.
 
 Use these maturity stages:
 
-| Stage | Intended Use | Default Posture | Compatibility Promise |
-|:---|:---|:---|:---|
-| `Alpha` | internal proving and narrow pilots | OFF | no compatibility guarantee |
-| `Beta` | broader validation in real repos | explicit opt-in or carefully chosen default | config shape should stabilize |
-| `GA` | standard reusable capability | ON or policy-driven | safe to depend on operationally |
-| `Deprecated` | scheduled removal | keep current behavior but warn | replacement and sunset date required |
-| `Removed` | no longer available | OFF and ignored | references must be cleaned up |
+| Stage        | Intended Use                       | Default Posture                             | Compatibility Promise                |
+|:-------------|:-----------------------------------|:--------------------------------------------|:-------------------------------------|
+| `Alpha`      | internal proving and narrow pilots | OFF                                         | no compatibility guarantee           |
+| `Beta`       | broader validation in real repos   | explicit opt-in or carefully chosen default | config shape should stabilize        |
+| `GA`         | standard reusable capability       | ON or policy-driven                         | safe to depend on operationally      |
+| `Deprecated` | scheduled removal                  | keep current behavior but warn              | replacement and sunset date required |
+| `Removed`    | no longer available                | OFF and ignored                             | references must be cleaned up        |
 
 Shared baseline flags in this file should be treated as `GA` unless explicitly
 marked otherwise by a future update.
@@ -134,11 +137,11 @@ be explicit both when enabled and when disabled.
 Some flags cannot be set to OFF by project-level overrides. They can only
 be disabled at session-level by explicit human instruction:
 
-| Flag | Reason |
-|:---|:---|
+| Flag                     | Reason                                 |
+|:-------------------------|:---------------------------------------|
 | `dangerous_op_detection` | Core safety — never disable by default |
-| `security_gates` | Core safety — never disable by default |
-| `evidence_required` | Audit trail integrity |
+| `security_gates`         | Core safety — never disable by default |
+| `evidence_required`      | Audit trail integrity                  |
 
 ---
 
@@ -178,14 +181,14 @@ Dead flags should be removed, not left as ceremonial switches.
 
 ## 9) Relationship to Other Standards
 
-| Standard | Controlled By Flag |
-|:---|:---|
-| `hooks-policy.md` | `hooks_enabled` |
-| `memory-lifecycle.md` | `memory_extraction`, `memory_consolidation`, `memory_injection` |
-| `continuous-learning.md` | `continuous_learning`, `instincts_enabled` |
-| `approval-policy.md` | `approval_required`, `auto_approval_rules`, `dangerous_op_detection` |
-| `how-to-strict-review.md` | `strict_review` |
-| `naming-standard.md` | `naming_standard` |
-| `quality-gates.md` | `evidence_required` |
-| `security/**` | `security_gates` |
-| `profile-resolution-algorithm.md` | `profile_resolution` |
+| Standard                          | Controlled By Flag                                                   |
+|:----------------------------------|:---------------------------------------------------------------------|
+| `hooks-policy.md`                 | `hooks_enabled`                                                      |
+| `memory-lifecycle.md`             | `memory_extraction`, `memory_consolidation`, `memory_injection`      |
+| `continuous-learning.md`          | `continuous_learning`, `instincts_enabled`                           |
+| `approval-policy.md`              | `approval_required`, `auto_approval_rules`, `dangerous_op_detection` |
+| `how-to-strict-review.md`         | `strict_review`                                                      |
+| `naming-standard.md`              | `naming_standard`                                                    |
+| `quality-gates.md`                | `evidence_required`                                                  |
+| `security/**`                     | `security_gates`                                                     |
+| `profile-resolution-algorithm.md` | `profile_resolution`                                                 |

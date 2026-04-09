@@ -2,7 +2,8 @@
 
 ## Vision
 
-A pure PHP 8.3+ authentication and authorization framework that provides secure, flexible, and framework-agnostic identity management for any PHP application.
+A pure PHP 8.3+ authentication and authorization framework that provides secure, flexible, and framework-agnostic
+identity management for any PHP application.
 
 ## Core Value Proposition
 
@@ -52,14 +53,14 @@ A pure PHP 8.3+ authentication and authorization framework that provides secure,
 
 ## Key Domain Concepts
 
-| Concept | Definition |
-|---------|------------|
-| **Identity** | User entity from the data source (database, LDAP, etc.) |
-| **Credentials** | Email/password, API key, or other auth factors |
-| **Session** | Authenticated state, may be JWT or server-side |
-| **Role** | Named group of permissions (admin, user, moderator) |
-| **Permission** | Single action or resource access right |
-| **Access Policy** | Custom rule that determines if access is granted |
+| Concept           | Definition                                              |
+|-------------------|---------------------------------------------------------|
+| **Identity**      | User entity from the data source (database, LDAP, etc.) |
+| **Credentials**   | Email/password, API key, or other auth factors          |
+| **Session**       | Authenticated state, may be JWT or server-side          |
+| **Role**          | Named group of permissions (admin, user, moderator)     |
+| **Permission**    | Single action or resource access right                  |
+| **Access Policy** | Custom rule that determines if access is granted        |
 
 ## Security Invariants
 
@@ -72,13 +73,13 @@ A pure PHP 8.3+ authentication and authorization framework that provides secure,
 
 ## User-Facing Behaviors
 
-| Behavior | Expected Outcome |
-|----------|------------------|
-| Successful login | User authenticated, session created, redirect to protected area |
-| Failed login | Error message, rate limit check, no user existence leak |
-| Logout | Session destroyed, redirect to public area |
-| Access protected resource | Success if authorized, 403 if not, 401 if not authenticated |
-| Password reset | Email with reset token, secure flow |
+| Behavior                  | Expected Outcome                                                |
+|---------------------------|-----------------------------------------------------------------|
+| Successful login          | User authenticated, session created, redirect to protected area |
+| Failed login              | Error message, rate limit check, no user existence leak         |
+| Logout                    | Session destroyed, redirect to public area                      |
+| Access protected resource | Success if authorized, 403 if not, 401 if not authenticated     |
+| Password reset            | Email with reset token, secure flow                             |
 
 ## Questions Each Feature Must Answer
 

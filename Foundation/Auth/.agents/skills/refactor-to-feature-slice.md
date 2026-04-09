@@ -56,11 +56,11 @@ Foundation/Auth/
 
 Map current files to features:
 
-| Current | Feature Slice |
-|---------|---------------|
-| `Login.php` action | `Login/LoginAction.php` |
+| Current                | Feature Slice                  |
+|------------------------|--------------------------------|
+| `Login.php` action     | `Login/LoginAction.php`        |
 | `Identity.php` adapter | `Shared/Adapters/Identity.php` |
-| `Credentials.php` DTO | `Shared/Data/Credentials.php` |
+| `Credentials.php` DTO  | `Shared/Data/Credentials.php`  |
 
 ### 2. Create Feature Folders
 
@@ -97,12 +97,12 @@ Update imports in files that reference moved classes.
 
 Features may have shared code:
 
-| Folder | Contents |
-|--------|----------|
-| `Shared/Contracts/` | All interfaces |
-| `Shared/Adapters/` | Reusable implementations |
-| `Shared/Exceptions/` | Custom exceptions |
-| `Shared/Data/` | Cross-feature DTOs |
+| Folder               | Contents                 |
+|----------------------|--------------------------|
+| `Shared/Contracts/`  | All interfaces           |
+| `Shared/Adapters/`   | Reusable implementations |
+| `Shared/Exceptions/` | Custom exceptions        |
+| `Shared/Data/`       | Cross-feature DTOs       |
 
 ## Verification
 

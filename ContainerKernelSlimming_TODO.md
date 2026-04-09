@@ -1,6 +1,7 @@
 # ⚙️ **CONTAINER KERNEL SLIMMING & RESPONSIBILITY SPLIT**
 
-> *Cilj: Pretvoriti postojeći ContainerKernel u tanak, čitljiv orchestration sloj (~200 linija), a sve pomoćne logike prebaciti u zasebne kernel servise.*
+> *Cilj: Pretvoriti postojeći ContainerKernel u tanak, čitljiv orchestration sloj (~200 linija), a sve pomoćne logike
+prebaciti u zasebne kernel servise.*
 
 ---
 
@@ -28,11 +29,11 @@ Container/Core/Kernel/
 
 - [ ] Otvori `ContainerKernel.php`
 - [ ] Obeleži sledeće metode komentarima:
-  - [ ] `// STATE` – sve gde se koriste `$designFlow`, `$policyFlow`, `$diagnosticsFlow`, `$compilationStats`
-  - [ ] `// COMPILE` – `compile()`, `validate()`, `clearCache()`, `getCompilationStats()`
-  - [ ] `// API` – `bind()`, `singleton()`, `scoped()`, `extend()`, `resolving()`, `when()`, `instance()`
+    - [ ] `// STATE` – sve gde se koriste `$designFlow`, `$policyFlow`, `$diagnosticsFlow`, `$compilationStats`
+    - [ ] `// COMPILE` – `compile()`, `validate()`, `clearCache()`, `getCompilationStats()`
+    - [ ] `// API` – `bind()`, `singleton()`, `scoped()`, `extend()`, `resolving()`, `when()`, `instance()`
 - [ ] Ostavi orchestration metode netaknute:
-  - [ ] `get()`, `resolve()`, `call()`, `injectInto()`, `beginScope()`, `endScope()`
+    - [ ] `get()`, `resolve()`, `call()`, `injectInto()`, `beginScope()`, `endScope()`
 
 ✅ **Rezultat:** 3 zone označene u postojećem kodu.
 
@@ -136,10 +137,10 @@ final class KernelCompiler
 
 - [ ] Kreiraj `KernelCompiler.php` sa strukturom iznad
 - [ ] Iseci sledeće metode iz `ContainerKernel`:
-  - [ ] `compile()`
-  - [ ] `validate()`
-  - [ ] `clearCache()`
-  - [ ] `getCompilationStats()`
+    - [ ] `compile()`
+    - [ ] `validate()`
+    - [ ] `clearCache()`
+    - [ ] `getCompilationStats()`
 - [ ] Prebaci njihov kod unutar `KernelCompiler` odgovarajućih metoda
 - [ ] U `ContainerKernel` dodaj:
   ```php
@@ -212,7 +213,7 @@ final class KernelFacade
 
 - [ ] Kreiraj `KernelFacade.php` sa strukturom iznad
 - [ ] Iseci sledeće metode iz `ContainerKernel`:
-  - [ ] `bind()`, `singleton()`, `scoped()`, `extend()`, `resolving()`, `instance()`, `when()`
+    - [ ] `bind()`, `singleton()`, `scoped()`, `extend()`, `resolving()`, `instance()`, `when()`
 - [ ] Prebaci njihov kod unutar `KernelFacade` odgovarajućih metoda
 - [ ] U `ContainerKernel` dodaj:
   ```php
@@ -251,7 +252,8 @@ final class KernelFacade
   public function beginScope(): void
   public function endScope(): void
   ```
-- [ ] Sve ostalo (compile, bind, validate, design, lifecycle, policy, diagnostics, etc.) – sada delegeriše ili KernelState, Compiler ili Facade.
+- [ ] Sve ostalo (compile, bind, validate, design, lifecycle, policy, diagnostics, etc.) – sada delegeriše ili
+  KernelState, Compiler ili Facade.
 
 ✅ **Rezultat:** `ContainerKernel` postaje tanak orchestration sloj (200–250 linija), čitljiv i održiv.
 
@@ -266,9 +268,9 @@ final class KernelFacade
 - [ ] Pokreni sve postojeće testove (`ContainerKernelTest`, `ResolutionPipelineTest`)
 - [ ] Uveri se da sve public metode i dalje rade kroz delegaciju
 - [ ] Obriši nepotrebne `use` direktive:
-  - [ ] `BindingBuilder`, `ContextBuilder`, `InvalidArgumentException`, itd.
+    - [ ] `BindingBuilder`, `ContextBuilder`, `InvalidArgumentException`, itd.
 - [ ] Obriši privatne helper-e ako više nisu potrebni:
-  - [ ] `bindAs()`, `resolveDefinitionClass()`
+    - [ ] `bindAs()`, `resolveDefinitionClass()`
 - [ ] Commituj refaktor u posebnu granu:
   ```
   git checkout -b feature/kernel-split
@@ -350,7 +352,7 @@ final class KernelFacade
 ## ✅ Očekivani rezultat
 
 | Komponenta        | Broj linija pre | Broj linija posle | Svrha                        |
-| ----------------- | --------------- | ----------------- | ---------------------------- |
+|-------------------|-----------------|-------------------|------------------------------|
 | `ContainerKernel` | ~850            | ~220              | orchestration                |
 | `KernelState`     | –               | ~50               | držanje flow-a               |
 | `KernelCompiler`  | –               | ~150              | build-time logic             |
@@ -371,4 +373,5 @@ final class KernelFacade
 
 ---
 
-*Ovaj TODO plan vodi kroz surgical refactor ContainerKernel-a u 4 specijalizovana servisa, održavajući potpunu funkcionalnost i backward compatibility.*
+*Ovaj TODO plan vodi kroz surgical refactor ContainerKernel-a u 4 specijalizovana servisa, održavajući potpunu
+funkcionalnost i backward compatibility.*

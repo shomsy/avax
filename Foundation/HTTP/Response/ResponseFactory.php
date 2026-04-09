@@ -65,7 +65,7 @@ readonly class ResponseFactory implements ResponseFactoryInterface
         try {
             $json = json_encode(value: $data, flags: JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
         } catch (JsonException $jsonException) {
-            return $this->createErrorResponse(message: 'JSON encoding failed: ' . $jsonException->getMessage());
+            return $this->createErrorResponse(statusCode: 500, message: 'JSON encoding failed: ' . $jsonException->getMessage());
         }
 
         $stream = $this->streamFactory->createStream(content: $json);
@@ -77,13 +77,6 @@ readonly class ResponseFactory implements ResponseFactoryInterface
             ->withHeader(name: 'Content-Type', value: 'application/json');
     }
 
-    /**
-     * Creates an error response.
-     */
-    private function createErrorResponse(string $message) : ResponseInterface
-    {
-        return $this->createJsonResponse(data: ['error' => $message], status: 500);
-    }
 
     /**
      * Creates an error response with custom status code.

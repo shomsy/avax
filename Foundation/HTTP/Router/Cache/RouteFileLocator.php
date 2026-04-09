@@ -21,14 +21,14 @@ final class RouteFileLocator
 
         $iterator = new RecursiveIteratorIterator(
             iterator: new RecursiveDirectoryIterator(
-                directory: $baseDir,
-                flags    : FilesystemIterator::SKIP_DOTS
-            )
+                          directory: $baseDir,
+                          flags    : FilesystemIterator::SKIP_DOTS
+                      )
         );
 
         $files = array_filter(
             array   : iterator_to_array(iterator: $iterator),
-            callback: static fn(SplFileInfo $file) : bool => $file->isFile()
+            callback: static fn (SplFileInfo $file) : bool => $file->isFile()
                 && $file->isReadable()
                 && preg_match(
                     pattern: '/\.routes\.php$|^routes\.php$/',

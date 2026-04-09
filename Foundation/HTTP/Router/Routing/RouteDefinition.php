@@ -29,18 +29,18 @@ use RuntimeException;
  */
 final readonly class RouteDefinition
 {
-    public readonly string $method;
-    public readonly string $path;
-    public readonly mixed $action;
-    public readonly array $middleware;
-    public readonly string $name;
-    public readonly array $constraints;
-    public readonly array $defaults;
+    public readonly string      $method;
+    public readonly string      $path;
+    public readonly mixed       $action;
+    public readonly array       $middleware;
+    public readonly string      $name;
+    public readonly array       $constraints;
+    public readonly array       $defaults;
     public readonly string|null $domain;
-    public readonly array $attributes;
+    public readonly array       $attributes;
     public readonly string|null $authorization;
-    public readonly array $parameters;
-    public readonly array $metadata;
+    public readonly array       $parameters;
+    public readonly array       $metadata;
 
     /**
      * Route specificity score for matching precedence.
@@ -111,26 +111,26 @@ final readonly class RouteDefinition
 
         // Calculate route specificity: (segment count) - (parameter count)
         // Higher specificity = more specific routes matched first
-        $segmentCount = substr_count($path, '/') - ($path === '/' ? 0 : 1); // Don't count leading slash
+        $segmentCount   = substr_count($path, '/') - ($path === '/' ? 0 : 1); // Don't count leading slash
         $parameterCount = preg_match_all('/\{[^}]+\}/', $path);
-        $specificity = $segmentCount - $parameterCount;
+        $specificity    = $segmentCount - $parameterCount;
 
         // Precompile regex pattern for performance
         $compiledPathRegex = $this->compileRoutePattern(template: $path, constraints: $constraints);
 
-        $this->method = $method;
-        $this->path = $path;
-        $this->action = $action;
-        $this->middleware = $middleware;
-        $this->name = $name;
-        $this->constraints = $constraints;
-        $this->defaults = $defaults;
-        $this->domain = $domain;
-        $this->attributes = $attributes;
-        $this->authorization = $authorization;
-        $this->parameters = $parameters;
-        $this->metadata = $metadata;
-        $this->specificity = $specificity;
+        $this->method            = $method;
+        $this->path              = $path;
+        $this->action            = $action;
+        $this->middleware        = $middleware;
+        $this->name              = $name;
+        $this->constraints       = $constraints;
+        $this->defaults          = $defaults;
+        $this->domain            = $domain;
+        $this->attributes        = $attributes;
+        $this->authorization     = $authorization;
+        $this->parameters        = $parameters;
+        $this->metadata          = $metadata;
+        $this->specificity       = $specificity;
         $this->compiledPathRegex = $compiledPathRegex;
     }
 
@@ -220,7 +220,7 @@ final readonly class RouteDefinition
     {
         // Basic validation - check if pattern compiles
         $testPattern = "/{$pattern}/";
-        $error = null;
+        $error       = null;
 
         set_error_handler(static function ($errno, $errstr) use (&$error) {
             $error = $errstr;

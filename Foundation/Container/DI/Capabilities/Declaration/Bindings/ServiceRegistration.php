@@ -70,8 +70,40 @@ final class ServiceRegistration
 
     public function __construct(
         public readonly string $abstract
-    ) {
+    )
+    {
         $this->metadata = RegistrationMetadata::for(unitId: $abstract);
+    }
+
+    /**
+     * Restores the registration from generated PHP state.
+     */
+    public static function __set_state(array $array) : self
+    {
+        $registration                       = new self(abstract: $array['abstract']);
+        $registration->concrete             = $array['concrete'] ?? null;
+        $registration->lifetime             = $array['lifetime'] ?? TransientLifetime::NAME;
+        $registration->deferred             = $array['deferred'] ?? false;
+        $registration->warm                 = $array['warm'] ?? false;
+        $registration->lazy                 = $array['lazy'] ?? false;
+        $registration->disposable           = $array['disposable'] ?? false;
+        $registration->poolSize             = max(1, (int) ($array['poolSize'] ?? 8));
+        $registration->poolResetBeforeReuse = (bool) ($array['poolResetBeforeReuse'] ?? true);
+        $registration->poolScopeKind        = ScopeKind::normalize(
+            kind: (string) ($array['poolScopeKind'] ?? ScopeKind::OPERATION)
+        );
+        $registration->group                = is_string($array['group'] ?? null) ? $array['group'] : null;
+        $registration->groupOrder           = (int) ($array['groupOrder'] ?? 0);
+        $registration->tags                 = $array['tags'] ?? [];
+        $registration->arguments            = $array['arguments'] ?? [];
+        $metadata                           = $array['metadata'] ?? null;
+        if ($metadata instanceof RegistrationMetadata) {
+            $registration->metadata = $metadata;
+        } elseif (is_array($metadata)) {
+            $registration->metadata = RegistrationMetadata::fromArray(state: $metadata);
+        }
+
+        return $registration;
     }
 
     /**
@@ -95,6 +127,14 @@ final class ServiceRegistration
     }
 
     /**
+     * Adds one named argument override.
+     */
+    public function withArgument(string $name, mixed $value) : self
+    {
+        return $this->withArguments(arguments: [$name => $value]);
+    }
+
+    /**
      * @param array<string, mixed> $arguments
      */
     public function withArguments(array $arguments) : self
@@ -102,14 +142,6 @@ final class ServiceRegistration
         $this->arguments = array_merge($this->arguments, $arguments);
 
         return $this;
-    }
-
-    /**
-     * Adds one named argument override.
-     */
-    public function withArgument(string $name, mixed $value) : self
-    {
-        return $this->withArguments(arguments: [$name => $value]);
     }
 
     /**
@@ -122,32 +154,32 @@ final class ServiceRegistration
         return $this;
     }
 
-    public function ownedBy(string $ownerSlice) : self
-    {
-        $this->metadata = $this->metadata->withOwnerSlice(ownerSlice: $ownerSlice);
-
-        return $this;
-    }
-
-    public function category(string $category) : self
-    {
-        $this->metadata = $this->metadata->withCategory(category: $category);
-
-        return $this;
-    }
-
-    public function visibility(string $visibility) : self
-    {
-        $this->metadata = $this->metadata->withVisibility(visibility: $visibility);
-
-        return $this;
-    }
-
     public function profiles(string|array $profiles) : self
     {
         $this->metadata = $this->metadata->withProfiles(profiles: $this->stringList(values: $profiles));
 
         return $this;
+    }
+
+    /**
+     * @param mixed $values
+     *
+     * @return list<string>
+     */
+    private function stringList(mixed $values) : array
+    {
+        $items = array_values(array_filter(
+                                  array_map(
+                                      static fn (mixed $value) : string => is_string($value) ? trim($value) : '',
+                                      (array) $values
+                                  ),
+                                  static fn (string $value) : bool => $value !== ''
+                              ));
+
+        $items = array_values(array_unique($items));
+        sort($items);
+
+        return $items;
     }
 
     public function flags(string|array $flags) : self
@@ -188,13 +220,6 @@ final class ServiceRegistration
     public function because(string $reason) : self
     {
         $this->metadata = $this->metadata->withReason(reason: $reason);
-
-        return $this;
-    }
-
-    public function intent(string $intent) : self
-    {
-        $this->metadata = $this->metadata->withIntent(intent: $intent);
 
         return $this;
     }
@@ -251,6 +276,20 @@ final class ServiceRegistration
             ->category(RegistrationCategory::FLOW);
     }
 
+    public function category(string $category) : self
+    {
+        $this->metadata = $this->metadata->withCategory(category: $category);
+
+        return $this;
+    }
+
+    public function ownedBy(string $ownerSlice) : self
+    {
+        $this->metadata = $this->metadata->withOwnerSlice(ownerSlice: $ownerSlice);
+
+        return $this;
+    }
+
     public function asCapability(string $ownerSlice) : self
     {
         return $this
@@ -277,6 +316,13 @@ final class ServiceRegistration
         return $this->visibility(RegistrationVisibility::PRIVATE);
     }
 
+    public function visibility(string $visibility) : self
+    {
+        $this->metadata = $this->metadata->withVisibility(visibility: $visibility);
+
+        return $this;
+    }
+
     public function asShared() : self
     {
         return $this->visibility(RegistrationVisibility::SHARED);
@@ -295,6 +341,13 @@ final class ServiceRegistration
     public function entry(bool $entry = true) : self
     {
         return $this->intent(intent: $entry ? 'entry' : 'standard');
+    }
+
+    public function intent(string $intent) : self
+    {
+        $this->metadata = $this->metadata->withIntent(intent: $intent);
+
+        return $this;
     }
 
     public function operation() : self
@@ -343,7 +396,8 @@ final class ServiceRegistration
         int|null    $maxSize = null,
         string|null $scopeKind = null,
         bool        $resetBeforeReuse = true
-    ) : self {
+    ) : self
+    {
         $maxSize                    ??= 8;
         $scopeKind                  ??= ScopeKind::OPERATION;
         $this->lifetime             = PooledLifetime::NAME;
@@ -364,61 +418,10 @@ final class ServiceRegistration
 
     public function group(string $group, int $order = 0) : self
     {
-        $normalized = trim($group);
-        $this->group = $normalized !== '' ? $normalized : null;
+        $normalized       = trim($group);
+        $this->group      = $normalized !== '' ? $normalized : null;
         $this->groupOrder = $order;
 
         return $this;
-    }
-
-    /**
-     * Restores the registration from generated PHP state.
-     */
-    public static function __set_state(array $array) : self
-    {
-        $registration = new self(abstract: $array['abstract']);
-        $registration->concrete = $array['concrete'] ?? null;
-        $registration->lifetime = $array['lifetime'] ?? TransientLifetime::NAME;
-        $registration->deferred = $array['deferred'] ?? false;
-        $registration->warm = $array['warm'] ?? false;
-        $registration->lazy = $array['lazy'] ?? false;
-        $registration->disposable = $array['disposable'] ?? false;
-        $registration->poolSize = max(1, (int) ($array['poolSize'] ?? 8));
-        $registration->poolResetBeforeReuse = (bool) ($array['poolResetBeforeReuse'] ?? true);
-        $registration->poolScopeKind = ScopeKind::normalize(
-            kind: (string) ($array['poolScopeKind'] ?? ScopeKind::OPERATION)
-        );
-        $registration->group = is_string($array['group'] ?? null) ? $array['group'] : null;
-        $registration->groupOrder = (int) ($array['groupOrder'] ?? 0);
-        $registration->tags = $array['tags'] ?? [];
-        $registration->arguments = $array['arguments'] ?? [];
-        $metadata = $array['metadata'] ?? null;
-        if ($metadata instanceof RegistrationMetadata) {
-            $registration->metadata = $metadata;
-        } elseif (is_array($metadata)) {
-            $registration->metadata = RegistrationMetadata::fromArray(state: $metadata);
-        }
-
-        return $registration;
-    }
-
-    /**
-     * @param mixed $values
-     * @return list<string>
-     */
-    private function stringList(mixed $values) : array
-    {
-        $items = array_values(array_filter(
-            array_map(
-                static fn(mixed $value) : string => is_string($value) ? trim($value) : '',
-                (array) $values
-            ),
-            static fn(string $value) : bool => $value !== ''
-        ));
-
-        $items = array_values(array_unique($items));
-        sort($items);
-
-        return $items;
     }
 }

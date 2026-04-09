@@ -44,7 +44,7 @@ trait UriValidationTrait
     public function validatePath(string $path) : string
     {
         $segments = array_map(
-            callback: static fn(string $segment) : string => rawurlencode(string: $segment),
+            callback: static fn (string $segment) : string => rawurlencode(string: $segment),
             array   : explode(separator: '/', string: $path)
         );
 

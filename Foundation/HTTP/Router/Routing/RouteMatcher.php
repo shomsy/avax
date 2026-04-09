@@ -162,7 +162,7 @@ final readonly class RouteMatcher implements RouteMatcherInterface
 
     private function extractParameters(array $matches) : array
     {
-        $params = array_filter($matches, static fn($key) => ! is_int($key), ARRAY_FILTER_USE_KEY);
+        $params = array_filter($matches, static fn ($key) => ! is_int($key), ARRAY_FILTER_USE_KEY);
 
         // Sanitize parameter values
         foreach ($params as $key => $value) {

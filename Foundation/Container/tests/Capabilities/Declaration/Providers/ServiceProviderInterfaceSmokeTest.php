@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 3) . '/bootstrap.php';
 
-use Avax\Container\DI\ContainerInterface;
 use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
 use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Container\DI\ContainerInterface;
 
-$reflection = new ReflectionClass(ServiceProviderInterface::class);
+$reflection  = new ReflectionClass(ServiceProviderInterface::class);
 $constructor = $reflection->getMethod('__construct');
-$dependsOn = $reflection->getMethod('dependsOn');
-$register = $reflection->getMethod('register');
-$boot = $reflection->getMethod('boot');
+$dependsOn   = $reflection->getMethod('dependsOn');
+$register    = $reflection->getMethod('register');
+$boot        = $reflection->getMethod('boot');
 
 assertSame(1, $constructor->getNumberOfParameters(), 'Provider contract should require the container boundary.');
 assertSame(ContainerInterface::class, $constructor->getParameters()[0]->getType()?->getName(), 'Provider contract should depend on ContainerInterface.');

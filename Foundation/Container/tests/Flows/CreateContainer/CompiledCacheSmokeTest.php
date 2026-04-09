@@ -16,14 +16,12 @@ final class CompiledCacheDependency
 
 final class CompiledCacheTarget
 {
-    public function __construct(public CompiledCacheDependency $dependency)
-    {
-    }
+    public function __construct(public CompiledCacheDependency $dependency) {}
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-compiled-' . uniqid();
-$version = 'compiled-smoke';
-$config = CreateContainerConfig::create(cacheDir: $cacheDir, cacheVersion: $version);
+$version  = 'compiled-smoke';
+$config   = CreateContainerConfig::create(cacheDir: $cacheDir, cacheVersion: $version);
 $artifact = $cacheDir . '/container/' . rawurlencode($version) . '/blueprints/' . sha1(CompiledCacheTarget::class) . '.php';
 
 $container = makeTestContainer($config);
@@ -39,9 +37,9 @@ $container->rebuildCompiled([CompiledCacheTarget::class, CompiledCacheDependency
 assertTrue(is_file($artifact), 'Rebuild should repopulate compiled blueprints.');
 assertTrue(str_contains($container->exportMetrics(), 'container_compiled_rebuilds_total'), 'Rebuild should be reported in metrics.');
 
-$second = makeTestContainer($config);
+$second   = makeTestContainer($config);
 $resolved = $second->get(CompiledCacheTarget::class);
-$metrics = $second->exportMetrics();
+$metrics  = $second->exportMetrics();
 
 assertInstanceOf(CompiledCacheTarget::class, $resolved, 'Compiled cache should still resolve services correctly.');
 assertSame('compiled', $resolved->dependency->id(), 'Compiled cache should preserve dependency resolution behavior.');

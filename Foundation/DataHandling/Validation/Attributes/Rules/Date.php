@@ -29,13 +29,13 @@ class Date
     /**
      * @throws \Avax\Exceptions\ValidationException
      */
-    public function validate(mixed $value, string $property): void
+    public function validate(mixed $value, string $property) : void
     {
         if (! DateTime::createFromFormat(format: 'Y-m-d', datetime: $value) && ! DateTime::createFromFormat(
-            format  : 'Y-m-d H:i:s',
-            datetime: $value,
-        )) {
-            throw new ValidationException(message: $property.' is not a valid date.');
+                format  : 'Y-m-d H:i:s',
+                datetime: $value,
+            )) {
+            throw new ValidationException(message: $property . ' is not a valid date.');
         }
     }
 }

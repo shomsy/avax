@@ -45,7 +45,7 @@ class QueryException extends DatabaseException
      */
     private function redactBindings(array $bindings) : array
     {
-        return array_map(callback: static fn($value) => '[REDACTED]', array: $bindings);
+        return array_map(callback: static fn ($value) => '[REDACTED]', array: $bindings);
     }
 
     /**

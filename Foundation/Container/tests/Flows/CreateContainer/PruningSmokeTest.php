@@ -6,26 +6,20 @@ require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
-final class PrunedDependency
-{
-}
+final class PrunedDependency {}
 
 final class PrunedFlowEntry
 {
-    public function __construct(public PrunedDependency $dependency)
-    {
-    }
+    public function __construct(public PrunedDependency $dependency) {}
 }
 
-final class DeadPrunableService
-{
-}
+final class DeadPrunableService {}
 
-$cacheDir = sys_get_temp_dir() . '/container-pruning-smoke-' . uniqid('', true);
+$cacheDir  = sys_get_temp_dir() . '/container-pruning-smoke-' . uniqid('', true);
 $container = makeTestContainer(CreateContainerConfig::create(
-    cacheDir: $cacheDir,
+    cacheDir    : $cacheDir,
     cacheVersion: 'pruning-smoke',
-    pruneMode: CreateContainerConfig::PRUNE_MODE_STRICT
+    pruneMode   : CreateContainerConfig::PRUNE_MODE_STRICT
 ));
 
 $container->bind(DeadPrunableService::class, DeadPrunableService::class)
@@ -38,8 +32,8 @@ $container->bind(PrunedFlowEntry::class, PrunedFlowEntry::class)
 
 $container->compileContainer([PrunedFlowEntry::class, PrunedDependency::class]);
 
-$report = $container->compileReport([PrunedFlowEntry::class]);
-$deadSlice = $container->forSlice('flow.dead');
+$report        = $container->compileReport([PrunedFlowEntry::class]);
+$deadSlice     = $container->forSlice('flow.dead');
 $deadSliceView = $deadSlice->debugSlice();
 
 assertTrue($report !== null, 'Strict pruning should still produce a compile report.');

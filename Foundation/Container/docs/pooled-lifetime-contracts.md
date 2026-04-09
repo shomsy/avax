@@ -4,9 +4,12 @@ This document defines canonical contracts for pooled lifetime semantics in the D
 
 ## What Is Pooled Lifetime?
 
-**Pooled lifetime** is a service lifetime model where the container maintains a reusable pool of service instances that are reset and recycled between uses rather than being disposed after each use. It is distinct from both `shared` (one instance forever) and `transient` (new instance every time).
+**Pooled lifetime** is a service lifetime model where the container maintains a reusable pool of service instances that
+are reset and recycled between uses rather than being disposed after each use. It is distinct from both `shared` (one
+instance forever) and `transient` (new instance every time).
 
 Pooled lifetime is designed for:
+
 - **High-frequency short-lived workers**: HTTP handlers, queue jobs, CLI commands
 - **Connection pooling**: Database connections, HTTP clients, gRPC channels
 - **Resource efficiency**: Reusing expensive-to-create objects without holding them permanently
@@ -15,7 +18,8 @@ Pooled lifetime is designed for:
 
 Pooled lifetime is valid when:
 
-1. **Instance state is stateless or resettable**: The service can be safely reused after `reset()` clears its internal state
+1. **Instance state is stateless or resettable**: The service can be safely reused after `reset()` clears its internal
+   state
 2. **No cross-request contamination**: No user data, tenant context, or request-scoped data leaks between uses
 3. **Resource efficiency matters**: Creating a new instance is expensive (connections, parsers, validators)
 4. **Deterministic lifecycle**: The service has clear `reset-before-reuse` semantics
@@ -136,12 +140,12 @@ $container->pooled(HttpClient::class)
 
 ### Overflow Strategies
 
-| Strategy | Behavior |
-|:---------|:---------|
-| `FAIL` | Throw `ContainerException` when pool is full |
-| `EVICT` | Evict oldest instance to make room |
-| `CREATE_NEW` | Allow unbounded growth (not recommended) |
-| `BLOCK` | Block until a slot is available (careful with deadlocks) |
+| Strategy     | Behavior                                                 |
+|:-------------|:---------------------------------------------------------|
+| `FAIL`       | Throw `ContainerException` when pool is full             |
+| `EVICT`      | Evict oldest instance to make room                       |
+| `CREATE_NEW` | Allow unbounded growth (not recommended)                 |
+| `BLOCK`      | Block until a slot is available (careful with deadlocks) |
 
 ### Default Behavior
 
@@ -166,14 +170,14 @@ $container->debugService(Parser::class)['resetCount'];
 
 ### Metrics
 
-| Metric | Description |
-|:-------|:------------|
-| `pool_hits` | Reuses from pool |
-| `pool_misses` | Created new (pool empty) |
-| `pool_resets` | Reset-before-reuse calls |
-| `pool_disposals` | Dispose on drain/reset |
-| `pool_evictions` | Evicted due to overflow |
-| `pool_size` | Current pool size |
+| Metric           | Description              |
+|:-----------------|:-------------------------|
+| `pool_hits`      | Reuses from pool         |
+| `pool_misses`    | Created new (pool empty) |
+| `pool_resets`    | Reset-before-reuse calls |
+| `pool_disposals` | Dispose on drain/reset   |
+| `pool_evictions` | Evicted due to overflow  |
+| `pool_size`      | Current pool size        |
 
 ## Benchmark Expectations
 
@@ -225,19 +229,19 @@ $container->runtimeReport()['poolStats'];
 
 - **Criterion**: Pooled lifetime is a documented, validated, benchmarked lifetime with clear safety rules
 - **Evidence**:
-  - `pooled()` registration works with config
-  - `resetWith()` or `ResettableInterface` required
-  - Unsafe usage produces validation warnings
-  - Benchmarks show reuse efficiency
+    - `pooled()` registration works with config
+    - `resetWith()` or `ResettableInterface` required
+    - Unsafe usage produces validation warnings
+    - Benchmarks show reuse efficiency
 - **Tests**: `PooledLifetimeSmokeTest.php` (to be created)
 
 ### AC-106: Structural Diff Explains Ownership and Dependency Changes
 
 - **Criterion**: Pooled services are included in structural diff output
 - **Evidence**:
-  - `debugGraph()` includes pool configuration
-  - Compile report shows pooled metadata
-  - Structural diff includes pool size changes
+    - `debugGraph()` includes pool configuration
+    - Compile report shows pooled metadata
+    - Structural diff includes pool size changes
 - **Tests**: `PooledDiagnosticsSmokeTest.php` (to be created)
 
 ---

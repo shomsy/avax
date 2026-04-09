@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 // Determine the root directory
 $rootDir = __DIR__;
-while (! file_exists($rootDir . '/bootstrap.php') && $rootDir !== dirname($rootDir)) {
+while ( ! file_exists($rootDir . '/bootstrap.php') && $rootDir !== dirname($rootDir) ) {
     $rootDir = dirname($rootDir);
 }
 

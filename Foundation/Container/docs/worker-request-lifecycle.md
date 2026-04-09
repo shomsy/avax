@@ -37,11 +37,14 @@ The canonical lifecycle benchmarks are:
 - `worker_cached_get`
 - `request_lifecycle`
 
-They prove both the steady-state worker loop and the explicit request scope boundary under the same Docker image and PHP settings.
+They prove both the steady-state worker loop and the explicit request scope boundary under the same Docker image and PHP
+settings.
 
 ## Regression Proof
 
 Lifecycle correctness is defended by:
 
-- [`../tests/Flows/CreateContainer/ContainerLifecycleSmokeTest.php`](../tests/Flows/CreateContainer/ContainerLifecycleSmokeTest.php)
-- [`../tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php`](../tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php)
+- [
+  `../tests/Flows/CreateContainer/ContainerLifecycleSmokeTest.php`](../tests/Flows/CreateContainer/ContainerLifecycleSmokeTest.php)
+- [
+  `../tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php`](../tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php)

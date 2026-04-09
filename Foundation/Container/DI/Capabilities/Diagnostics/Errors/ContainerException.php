@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Base explicit failure boundary for container operations.
  */
-class ContainerException extends RuntimeException implements ContainerExceptionInterface
-{
-}
+class ContainerException extends RuntimeException implements ContainerExceptionInterface {}

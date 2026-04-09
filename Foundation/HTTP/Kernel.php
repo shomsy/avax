@@ -29,8 +29,9 @@ interface Kernel
      *
      * This is the single entry point for HTTP request processing.
      *
-     * @param  ServerRequestInterface  $request  The HTTP request to process
+     * @param ServerRequestInterface $request The HTTP request to process
+     *
      * @return ResponseInterface The HTTP response
      */
-    public function handle(ServerRequestInterface $request): ResponseInterface;
+    public function handle(ServerRequestInterface $request) : ResponseInterface;
 }

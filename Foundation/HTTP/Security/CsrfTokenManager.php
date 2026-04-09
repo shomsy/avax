@@ -101,7 +101,7 @@ final readonly class CsrfTokenManager
 
         return array_filter(
             $tokens,
-            static fn($timestamp) => $currentTime - $timestamp <= self::TOKEN_EXPIRATION_MINUTES * 60
+            static fn ($timestamp) => $currentTime - $timestamp <= self::TOKEN_EXPIRATION_MINUTES * 60
         );
     }
 

@@ -13,9 +13,11 @@ Main files:
 - `src/Capabilities/Resolution/ResolveDependencies.php`
 - `src/Capabilities/Declaration/Blueprints/ServiceBlueprint.php`
 
-Constructor arguments are resolved first. If the object cannot be created, the resolver fails before any late wiring starts.
+Constructor arguments are resolved first. If the object cannot be created, the resolver fails before any late wiring
+starts.
 
-Scalar arguments can also come from a `forContext()` view. The same context fallback works in both the dynamic resolver and the compiled runtime path.
+Scalar arguments can also come from a `forContext()` view. The same context fallback works in both the dynamic resolver
+and the compiled runtime path.
 
 ## Injection
 

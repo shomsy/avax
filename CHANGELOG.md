@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+
 - Enterprise-grade Router with clean architecture
 - RouteMatcher for separated matching logic
 - ErrorResponseFactory for centralized error handling
@@ -11,20 +12,24 @@
 - API stabilization with @internal markers
 
 ### Changed
+
 - Router::resolve now uses RouteMatcher
 - Route registration unified with RouteCollector
 - Fallback handling centralized in ErrorResponseFactory
 
 ### Fixed
+
 - Duplicate route registration for closures
 - Route path compilation for optional and wildcard parameters
 - Cache toolchain with unified RouteCollector
 
 ### Performance
+
 - Reduced allocations with immutable RouteDefinitions
 - Cached route patterns (planned)
 
 ### Documentation
+
 - Added CODE-REVIEW.md with architecture decisions
 - Added DECISIONS-LOG.md for future changes
 

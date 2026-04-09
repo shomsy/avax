@@ -97,9 +97,9 @@ readonly class RateLimiterMiddleware implements MiddlewareInterface
     private function isRateLimitExceeded(string $identifier) : bool
     {
         return ! $this->rateLimiterService->canAttempt(
-            identifier : $identifier,
-            maxAttempts: $this->maxRequests,
-            timeWindow : $this->timeWindow
+            key         : $identifier,
+            maxAttempts : $this->maxRequests,
+            decaySeconds: $this->timeWindow
         );
     }
 

@@ -13,7 +13,7 @@ use Stringable;
 final readonly class User implements UserInterface, Stringable
 {
     /**
-     * @param array<UserRole> $roles
+     * @param array<UserRole>       $roles
      * @param array<UserPermission> $permissions
      */
     public function __construct(
@@ -34,7 +34,8 @@ final readonly class User implements UserInterface, Stringable
         array|null                      $roles = null,
         array|null                      $permissions = null,
         bool                            $isActive = true
-    ) : self {
+    ) : self
+    {
         $roles       ??= [];
         $permissions ??= [];
 
@@ -48,6 +49,7 @@ final readonly class User implements UserInterface, Stringable
                 return true;
             }
         }
+
         return false;
     }
 
@@ -58,6 +60,7 @@ final readonly class User implements UserInterface, Stringable
                 return true;
             }
         }
+
         return false;
     }
 
@@ -68,6 +71,7 @@ final readonly class User implements UserInterface, Stringable
                 return true;
             }
         }
+
         return false;
     }
 

@@ -34,7 +34,7 @@ final class InvocationExecutorTest extends TestCase
         );
 
         $result = $executor->execute(
-            context      : new InvocationContext(originalTarget: static fn(stdClass $service) : string => 'ok'),
+            context      : new InvocationContext(originalTarget: static fn (stdClass $service) : string => 'ok'),
             parameters   : [],
             parentContext: $parentContext
         );

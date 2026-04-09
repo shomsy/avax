@@ -90,7 +90,7 @@ readonly class EnumAreValuesAllowed
         // Resolve each array element to its respective Enum instance, or return null if not an array
         return is_array(value: $value)
             ? array_map(
-                callback: fn($v) => is_object(value: $v) ? $v : ($this->enumClass)::tryFrom($v),
+                callback: fn ($v) => is_object(value: $v) ? $v : ($this->enumClass)::tryFrom($v),
                 array   : $value
             )
             : null;

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Register;
 
-use Avax\Auth\System\Capability\User\User;
-use Avax\Auth\System\Capability\User\UserId;
-use Avax\Auth\System\Capability\User\UserEmail;
-use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserEmail;
+use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Exception;
@@ -16,7 +16,7 @@ use SensitiveParameter;
 
 /**
  * High-level orchestrator for user registration.
- * 
+ *
  * Banal: The main Register file.
  */
 final readonly class Register
@@ -48,11 +48,11 @@ final readonly class Register
         }
 
         $passwordHash = $this->passwordHasher->hash(password: $data->password);
-        
+
         $user = User::create(
-            id: new UserId(value: $this->idGenerator->generate()),
-            email: new UserEmail(value: $data->email),
-            username: $data->username,
+            id          : new UserId(value: $this->idGenerator->generate()),
+            email       : new UserEmail(value: $data->email),
+            username    : $data->username,
             passwordHash: $passwordHash
         );
 

@@ -30,12 +30,53 @@ final class ScopeStore
         return $this->hasFor(abstract: $abstract);
     }
 
+    public function hasFor(string $abstract, string $kind = ScopeKind::ANY) : bool
+    {
+        $index = $this->frameIndex(kind: $kind);
+        if ($index === null) {
+            return false;
+        }
+
+        return array_key_exists($abstract, $this->scopes[$index]['items']);
+    }
+
+    private function frameIndex(string $kind) : int|null
+    {
+        if ($this->scopes === []) {
+            return null;
+        }
+
+        $normalized = ScopeKind::normalize(kind: $kind);
+
+        if ($normalized === ScopeKind::ANY) {
+            return array_key_last($this->scopes);
+        }
+
+        for ($index = array_key_last($this->scopes); $index >= 0; $index--) {
+            if (($this->scopes[$index]['kind'] ?? '') === $normalized) {
+                return $index;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Reads one scoped instance from the active scope.
      */
     public function get(string $abstract) : mixed
     {
         return $this->getFor(abstract: $abstract);
+    }
+
+    public function getFor(string $abstract, string $kind = ScopeKind::ANY) : mixed
+    {
+        $index = $this->frameIndex(kind: $kind);
+        if ($index === null) {
+            return null;
+        }
+
+        return $this->scopes[$index]['items'][$abstract] ?? null;
     }
 
     /**
@@ -49,24 +90,51 @@ final class ScopeStore
     }
 
     /**
+     * @throws ContainerException
+     */
+    public function setFor(
+        string      $abstract,
+        mixed       $instance,
+        string|null $kind = null,
+        bool        $disposable = false
+    ) : void
+    {
+        $kind  ??= ScopeKind::ANY;
+        $index = $this->frameIndex(kind: $kind);
+        if ($index === null) {
+            $required = ScopeKind::normalize(kind: $kind);
+            $hint     = $required === ScopeKind::ANY
+                ? 'open a scope before resolving this service'
+                : "open a [{$required}] scope before resolving this service";
+
+            throw new ContainerException(
+                message: "Cannot store scoped instance [{$abstract}] without an active matching scope; {$hint}."
+            );
+        }
+
+        $this->scopes[$index]['items'][$abstract]      = $instance;
+        $this->scopes[$index]['disposable'][$abstract] = $disposable;
+        unset($this->scopes[$index]['pooled'][$abstract]);
+    }
+
+    /**
      * Opens one new nested scope.
      */
     public function open(string|null $kind = null, string $scopeId = '') : void
     {
         $kind           ??= ScopeKind::OPERATION;
         $this->scopes[] = [
-            'kind' => ScopeKind::normalize(kind: $kind),
-            'id' => trim($scopeId),
-            'items' => [],
+            'kind'       => ScopeKind::normalize(kind: $kind),
+            'id'         => trim($scopeId),
+            'items'      => [],
             'disposable' => [],
-            'pooled' => [],
+            'pooled'     => [],
         ];
     }
 
     /**
      * Closes the current nested scope.
      *
-     * @throws ContainerException
      * @return array{
      *     kind: string,
      *     id: string,
@@ -74,6 +142,7 @@ final class ScopeStore
      *     disposable: array<string, bool>,
      *     pooled: array<string, array{maxSize: int, resetBeforeReuse: bool, disposable: bool}>
      * }
+     * @throws ContainerException
      */
     public function close(string|null $kind = null) : array
     {
@@ -98,7 +167,7 @@ final class ScopeStore
      */
     public function terminate() : array
     {
-        $frames = $this->scopes;
+        $frames       = $this->scopes;
         $this->scopes = [];
 
         return $frames;
@@ -107,53 +176,6 @@ final class ScopeStore
     public function hasActive(string $kind = ScopeKind::ANY) : bool
     {
         return $this->frameIndex(kind: $kind) !== null;
-    }
-
-    public function hasFor(string $abstract, string $kind = ScopeKind::ANY) : bool
-    {
-        $index = $this->frameIndex(kind: $kind);
-        if ($index === null) {
-            return false;
-        }
-
-        return array_key_exists($abstract, $this->scopes[$index]['items']);
-    }
-
-    public function getFor(string $abstract, string $kind = ScopeKind::ANY) : mixed
-    {
-        $index = $this->frameIndex(kind: $kind);
-        if ($index === null) {
-            return null;
-        }
-
-        return $this->scopes[$index]['items'][$abstract] ?? null;
-    }
-
-    /**
-     * @throws ContainerException
-     */
-    public function setFor(
-        string      $abstract,
-        mixed       $instance,
-        string|null $kind = null,
-        bool        $disposable = false
-    ) : void {
-        $kind  ??= ScopeKind::ANY;
-        $index = $this->frameIndex(kind: $kind);
-        if ($index === null) {
-            $required = ScopeKind::normalize(kind: $kind);
-            $hint = $required === ScopeKind::ANY
-                ? 'open a scope before resolving this service'
-                : "open a [{$required}] scope before resolving this service";
-
-            throw new ContainerException(
-                message: "Cannot store scoped instance [{$abstract}] without an active matching scope; {$hint}."
-            );
-        }
-
-        $this->scopes[$index]['items'][$abstract] = $instance;
-        $this->scopes[$index]['disposable'][$abstract] = $disposable;
-        unset($this->scopes[$index]['pooled'][$abstract]);
     }
 
     /**
@@ -166,7 +188,8 @@ final class ScopeStore
         int       $maxSize,
         bool|null $resetBeforeReuse = null,
         bool      $disposable = false
-    ) : void {
+    ) : void
+    {
         $resetBeforeReuse ??= true;
         $index            = $this->frameIndex(kind: $kind);
         if ($index === null) {
@@ -177,12 +200,12 @@ final class ScopeStore
             );
         }
 
-        $this->scopes[$index]['items'][$abstract] = $instance;
+        $this->scopes[$index]['items'][$abstract]      = $instance;
         $this->scopes[$index]['disposable'][$abstract] = $disposable;
-        $this->scopes[$index]['pooled'][$abstract] = [
-            'maxSize' => max(1, $maxSize),
+        $this->scopes[$index]['pooled'][$abstract]     = [
+            'maxSize'          => max(1, $maxSize),
             'resetBeforeReuse' => $resetBeforeReuse,
-            'disposable' => $disposable,
+            'disposable'       => $disposable,
         ];
     }
 
@@ -214,9 +237,9 @@ final class ScopeStore
                 sort($pooledServices);
 
                 return [
-                    'kind' => $frame['kind'],
-                    'id' => $frame['id'],
-                    'services' => $services,
+                    'kind'           => $frame['kind'],
+                    'id'             => $frame['id'],
+                    'services'       => $services,
                     'pooledServices' => $pooledServices,
                 ];
             },
@@ -224,11 +247,11 @@ final class ScopeStore
         );
 
         return [
-            'scoped' => array_map(
-                static fn(array $frame) : array => $frame['items'],
+            'scoped'      => array_map(
+                static fn (array $frame) : array => $frame['items'],
                 $this->scopes
             ),
-            'pooled' => array_reduce(
+            'pooled'      => array_reduce(
                 $this->scopes,
                 static function (array $carry, array $frame) : array {
                     foreach ($frame['pooled'] as $serviceId => $options) {
@@ -240,28 +263,7 @@ final class ScopeStore
                 []
             ),
             'pooledStats' => [],
-            'frames' => $frames,
+            'frames'      => $frames,
         ];
-    }
-
-    private function frameIndex(string $kind) : int|null
-    {
-        if ($this->scopes === []) {
-            return null;
-        }
-
-        $normalized = ScopeKind::normalize(kind: $kind);
-
-        if ($normalized === ScopeKind::ANY) {
-            return array_key_last($this->scopes);
-        }
-
-        for ($index = array_key_last($this->scopes); $index >= 0; $index--) {
-            if (($this->scopes[$index]['kind'] ?? '') === $normalized) {
-                return $index;
-            }
-        }
-
-        return null;
     }
 }

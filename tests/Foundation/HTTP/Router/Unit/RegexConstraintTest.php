@@ -163,9 +163,9 @@ class RegexConstraintTest extends TestCase
             path       : '/users/{id}/posts/{slug}',
             action     : 'PostController@show',
             constraints: [
-                'id'   => '\d+',
-                'slug' => '[a-z0-9-]+',
-            ]
+                             'id'   => '\d+',
+                             'slug' => '[a-z0-9-]+',
+                         ]
         );
 
         $request = $this->createMock(Request::class);
@@ -194,9 +194,9 @@ class RegexConstraintTest extends TestCase
             path       : '/users/{id}/posts/{slug}',
             action     : 'PostController@show',
             constraints: [
-                'id'   => '[invalid', // Invalid pattern
-                'slug' => '[a-z0-9-]+',
-            ]
+                             'id'   => '[invalid', // Invalid pattern
+                             'slug' => '[a-z0-9-]+',
+                         ]
         );
 
         $request = $this->createMock(Request::class);

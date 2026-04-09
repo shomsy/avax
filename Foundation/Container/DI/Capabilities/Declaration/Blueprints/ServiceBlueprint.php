@@ -10,16 +10,16 @@ final readonly class ServiceBlueprint
 {
     /**
      * @param list<array{name: string, serviceId: string|null, readonly: bool}> $injectableProperties
-     * @param list<array{name: string, plan: ResolvePlan}> $injectableMethods
+     * @param list<array{name: string, plan: ResolvePlan}>                      $injectableMethods
      */
     public function __construct(
-        public string $class,
-        public bool $instantiable = false,
+        public string           $class,
+        public bool             $instantiable = false,
         public ResolvePlan|null $constructor = null,
-        public array $injectableProperties = [],
-        public array $injectableMethods = [],
-        public bool $shared = false,
-        public string $fingerprint = ''
+        public array            $injectableProperties = [],
+        public array            $injectableMethods = [],
+        public bool             $shared = false,
+        public string           $fingerprint = ''
     ) {}
 
     public static function __set_state(array $state) : self

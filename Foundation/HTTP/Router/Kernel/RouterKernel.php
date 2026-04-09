@@ -91,11 +91,11 @@ final readonly class RouterKernel
 
             // Trace: Route matched successfully
             $this->trace?->log(event: 'kernel.route.matched', context: [
-                'route'     => $route->name ?? $route->path,
-                'method'    => $route->method,
-                'path'      => $route->path,
-                'domain'    => $route->domain,
-                'duration'  => round((microtime(true) - $startTime) * 1000, 2) . 'ms',
+                'route'    => $route->name ?? $route->path,
+                'method'   => $route->method,
+                'path'     => $route->path,
+                'domain'   => $route->domain,
+                'duration' => round((microtime(true) - $startTime) * 1000, 2) . 'ms',
             ]);
 
             // Inject route parameters from resolution context into the request as attributes.
@@ -135,8 +135,8 @@ final readonly class RouterKernel
                 $exception instanceof MethodNotAllowedException) {
 
                 $this->trace?->log(event: 'kernel.fallback.triggered', context: [
-                    'reason'   => get_class($exception),
-                    'message'  => $exception->getMessage(),
+                    'reason'  => get_class($exception),
+                    'message' => $exception->getMessage(),
                 ]);
 
                 // Re-throw to let Router handle fallback

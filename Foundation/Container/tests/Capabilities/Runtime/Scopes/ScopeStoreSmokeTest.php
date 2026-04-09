@@ -7,12 +7,12 @@ require_once dirname(__DIR__, 3) . '/bootstrap.php';
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeStore;
 
-$store = new ScopeStore();
+$store  = new ScopeStore();
 $scoped = new ArrayObject();
 
 assertThrows(
     ContainerException::class,
-    static fn() => $store->set('scoped', $scoped),
+    static fn () => $store->set('scoped', $scoped),
     'Scope store should fail closed when storing scoped values without an active scope.'
 );
 

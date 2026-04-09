@@ -22,10 +22,11 @@ trait StructureConversionTrait
      *
      * Classes using this trait must implement this method.
      *
-     * @param  array  $items  The new collection of items.
+     * @param array $items The new collection of items.
+     *
      * @return static A new instance with the updated collection.
      */
-    abstract public function setItems(array $items): static;
+    abstract public function setItems(array $items) : static;
 
     /**
      * Flatten a multidimensional collection into a dot-notated array.
@@ -58,18 +59,18 @@ trait StructureConversionTrait
      * // ]
      * ```
      */
-    public function dot(): static
+    public function dot() : static
     {
         $results = [];
-        $flatten = static function (array $items, string $prefix = '') use (&$flatten, &$results): void {
+        $flatten = static function (array $items, string $prefix = '') use (&$flatten, &$results) : void {
             foreach ($items as $key => $value) {
                 if (! is_scalar(value: $key) && ! is_null(value: $key)) {
                     throw new InvalidArgumentException(message: 'Keys must be scalar or null.');
                 }
 
-                $dotKey = $prefix.$key;
+                $dotKey = $prefix . $key;
                 if (is_array(value: $value)) {
-                    $flatten($value, $dotKey.'.');
+                    $flatten($value, $dotKey . '.');
                 } else {
                     $results[$dotKey] = $value;
                 }
@@ -97,7 +98,7 @@ trait StructureConversionTrait
      *
      * @return array The current collection of items.
      */
-    abstract public function getItems(): array;
+    abstract public function getItems() : array;
 
     /**
      * Converts the collection to a list (indexed array).
@@ -113,7 +114,7 @@ trait StructureConversionTrait
      * // $list contains ['apple', 'banana', 'cherry']
      * ```
      */
-    public function toList(): static
+    public function toList() : static
     {
         $list = array_values(array: $this->getItems());
 
@@ -148,7 +149,7 @@ trait StructureConversionTrait
      * // ]
      * ```
      */
-    public function unDot(): static
+    public function unDot() : static
     {
         $results = [];
         foreach ($this->getItems() as $dotKey => $item) {

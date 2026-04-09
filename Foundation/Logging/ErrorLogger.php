@@ -29,7 +29,7 @@ final readonly class ErrorLogger implements LoggerInterface
     /**
      * 🚀 Initializes the logger with a LogWriterInterface instance.
      *
-     * @param  LogWriterInterface  $logWriter  The log writer responsible for persisting log messages.
+     * @param LogWriterInterface $logWriter The log writer responsible for persisting log messages.
      */
     public function __construct(private LogWriterInterface $logWriter) {}
 
@@ -49,10 +49,10 @@ final readonly class ErrorLogger implements LoggerInterface
      * - **Triggers immediate alerts** (e.g., SMS, email, monitoring tools).
      * - **Used sparingly**—this is the **highest severity level**.
      *
-     * @param  Stringable|string  $message  The emergency message.
-     * @param  array<string, mixed>  $context  Additional context for debugging.
+     * @param Stringable|string    $message The emergency message.
+     * @param array<string, mixed> $context Additional context for debugging.
      */
-    public function emergency(Stringable|string $message, array $context = []): void
+    public function emergency(Stringable|string $message, array $context = []) : void
     {
         $this->callLogMethod(level: LogLevel::EMERGENCY, message: $message, context: $context);
     }
@@ -61,11 +61,11 @@ final readonly class ErrorLogger implements LoggerInterface
      * 🛠 Central method for logging messages at different levels.
      * ✅ Reduces code duplication by handling all log levels in a single function.
      *
-     * @param  string  $level  The PSR-3 log level.
-     * @param  Stringable|string  $message  The log message.
-     * @param  array<string, mixed>  $context  Additional log context.
+     * @param string               $level   The PSR-3 log level.
+     * @param Stringable|string    $message The log message.
+     * @param array<string, mixed> $context Additional log context.
      */
-    private function callLogMethod(string $level, Stringable|string $message, array $context = []): void
+    private function callLogMethod(string $level, Stringable|string $message, array $context = []) : void
     {
         $this->log(level: $level, message: $message, context: $context);
     }
@@ -77,13 +77,13 @@ final readonly class ErrorLogger implements LoggerInterface
      * - Converts exceptions to structured JSON
      * - Writes the log entry using LogWriterInterface
      *
-     * @param  mixed  $level  The severity level (e.g., LogLevel::ERROR).
-     * @param  Stringable|string  $message  The log message.
-     * @param  array<string, mixed>  $context  Additional context for debugging.
+     * @param mixed                $level   The severity level (e.g., LogLevel::ERROR).
+     * @param Stringable|string    $message The log message.
+     * @param array<string, mixed> $context Additional context for debugging.
      *
      * @throws InvalidArgumentException If the log level is invalid.
      */
-    public function log(mixed $level, Stringable|string $message, array $context = []): void
+    public function log(mixed $level, Stringable|string $message, array $context = []) : void
     {
         // 🔍 Validate log level before proceeding
         if (! $this->isValidLogLevel(level: $level)) {
@@ -106,21 +106,21 @@ final readonly class ErrorLogger implements LoggerInterface
     /**
      * 🔍 Validates if the provided log level is a valid PSR-3 level.
      */
-    private function isValidLogLevel(mixed $level): bool
+    private function isValidLogLevel(mixed $level) : bool
     {
         return is_string(value: $level)
             && in_array(
                 needle  : $level,
                 haystack: [
-                    LogLevel::EMERGENCY,
-                    LogLevel::ALERT,
-                    LogLevel::CRITICAL,
-                    LogLevel::ERROR,
-                    LogLevel::WARNING,
-                    LogLevel::NOTICE,
-                    LogLevel::INFO,
-                    LogLevel::DEBUG,
-                ],
+                              LogLevel::EMERGENCY,
+                              LogLevel::ALERT,
+                              LogLevel::CRITICAL,
+                              LogLevel::ERROR,
+                              LogLevel::WARNING,
+                              LogLevel::NOTICE,
+                              LogLevel::INFO,
+                              LogLevel::DEBUG,
+                          ],
                 strict  : true
             );
     }
@@ -129,18 +129,18 @@ final readonly class ErrorLogger implements LoggerInterface
      * 🔥 Provides an emoji-based prefix for log levels.
      * ✅ Improves readability in logs.
      */
-    private function getLogPrefix(string $level): string
+    private function getLogPrefix(string $level) : string
     {
         return match ($level) {
             LogLevel::EMERGENCY => '🚨 [EMERGENCY]',
-            LogLevel::ALERT => '🚨 [ALERT]',
-            LogLevel::CRITICAL => '🔥 [CRITICAL]',
-            LogLevel::ERROR => '❌ [ERROR]',
-            LogLevel::WARNING => '⚠️ [WARNING]',
-            LogLevel::NOTICE => 'ℹ️ [NOTICE]',
-            LogLevel::INFO => '✅ [INFO]',
-            LogLevel::DEBUG => '🐞 [DEBUG]',
-            default => '[LOG]',
+            LogLevel::ALERT     => '🚨 [ALERT]',
+            LogLevel::CRITICAL  => '🔥 [CRITICAL]',
+            LogLevel::ERROR     => '❌ [ERROR]',
+            LogLevel::WARNING   => '⚠️ [WARNING]',
+            LogLevel::NOTICE    => 'ℹ️ [NOTICE]',
+            LogLevel::INFO      => '✅ [INFO]',
+            LogLevel::DEBUG     => '🐞 [DEBUG]',
+            default             => '[LOG]',
         };
     }
 
@@ -149,25 +149,26 @@ final readonly class ErrorLogger implements LoggerInterface
      * - Handles exceptions and extracts full details.
      * - Uses `JSON_PRETTY_PRINT` for improved log readability.
      *
-     * @param  array<string, mixed>  $context
+     * @param array<string, mixed> $context
+     *
      * @return string JSON encoded context string or fallback JSON on failure.
      */
-    private function formatContext(array $context): string
+    private function formatContext(array $context) : string
     {
         // ✅ Extract full exception details if present
         if (isset($context['exception']) && $context['exception'] instanceof Throwable) {
             $exception = $context['exception'];
 
             $context['exception'] = [
-                'message' => $exception->getMessage(),
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'trace' => explode(separator: "\n", string: $exception->getTraceAsString()), // Stack trace formatted as an array
-                'code' => $exception->getPrevious() ? $exception->getPrevious()->getCode() : $exception->getCode(),
+                'message'  => $exception->getMessage(),
+                'file'     => $exception->getFile(),
+                'line'     => $exception->getLine(),
+                'trace'    => explode(separator: "\n", string: $exception->getTraceAsString()), // Stack trace formatted as an array
+                'code'     => $exception->getPrevious() ? $exception->getPrevious()->getCode() : $exception->getCode(),
                 'previous' => $exception->getPrevious() ? [
                     'message' => $exception->getPrevious()->getMessage(),
-                    'file' => $exception->getPrevious()->getFile(),
-                    'line' => $exception->getPrevious()->getLine(),
+                    'file'    => $exception->getPrevious()->getFile(),
+                    'line'    => $exception->getPrevious()->getLine(),
                 ] : null,
             ];
         }
@@ -185,10 +186,10 @@ final readonly class ErrorLogger implements LoggerInterface
      *
      * Example: Database connection failures, critical security breaches.
      *
-     * @param  Stringable|string  $message  The alert message.
-     * @param  array<string, mixed>  $context  Additional context for debugging.
+     * @param Stringable|string    $message The alert message.
+     * @param array<string, mixed> $context Additional context for debugging.
      */
-    public function alert(Stringable|string $message, array $context = []): void
+    public function alert(Stringable|string $message, array $context = []) : void
     {
         $this->callLogMethod(level: LogLevel::ALERT, message: $message, context: $context);
     }
@@ -199,10 +200,10 @@ final readonly class ErrorLogger implements LoggerInterface
      *
      * Example: Application component failure, major errors preventing execution.
      *
-     * @param  Stringable|string  $message  The critical message.
-     * @param  array<string, mixed>  $context  Additional context for debugging.
+     * @param Stringable|string    $message The critical message.
+     * @param array<string, mixed> $context Additional context for debugging.
      */
-    public function critical(Stringable|string $message, array $context = []): void
+    public function critical(Stringable|string $message, array $context = []) : void
     {
         $this->callLogMethod(level: LogLevel::CRITICAL, message: $message, context: $context);
     }
@@ -213,10 +214,10 @@ final readonly class ErrorLogger implements LoggerInterface
      *
      * Example: Exception thrown in production, failed API requests.
      *
-     * @param  Stringable|string  $message  The error message.
-     * @param  array<string, mixed>  $context  Additional context for debugging.
+     * @param Stringable|string    $message The error message.
+     * @param array<string, mixed> $context Additional context for debugging.
      */
-    public function error(Stringable|string $message, array $context = []): void
+    public function error(Stringable|string $message, array $context = []) : void
     {
         $this->callLogMethod(level: LogLevel::ERROR, message: $message, context: $context);
     }
@@ -227,10 +228,10 @@ final readonly class ErrorLogger implements LoggerInterface
      *
      * Example: Deprecation warnings, retries on failed operations.
      *
-     * @param  Stringable|string  $message  The warning message.
-     * @param  array<string, mixed>  $context  Additional context for debugging.
+     * @param Stringable|string    $message The warning message.
+     * @param array<string, mixed> $context Additional context for debugging.
      */
-    public function warning(Stringable|string $message, array $context = []): void
+    public function warning(Stringable|string $message, array $context = []) : void
     {
         $this->callLogMethod(level: LogLevel::WARNING, message: $message, context: $context);
     }
@@ -241,10 +242,10 @@ final readonly class ErrorLogger implements LoggerInterface
      *
      * Example: User authentication success, feature usage tracking.
      *
-     * @param  Stringable|string  $message  The notice message.
-     * @param  array<string, mixed>  $context  Additional context for debugging.
+     * @param Stringable|string    $message The notice message.
+     * @param array<string, mixed> $context Additional context for debugging.
      */
-    public function notice(Stringable|string $message, array $context = []): void
+    public function notice(Stringable|string $message, array $context = []) : void
     {
         $this->callLogMethod(level: LogLevel::NOTICE, message: $message, context: $context);
     }
@@ -255,10 +256,10 @@ final readonly class ErrorLogger implements LoggerInterface
      *
      * Example: System startup, cron job execution, API call success.
      *
-     * @param  Stringable|string  $message  The info message.
-     * @param  array<string, mixed>  $context  Additional context for debugging.
+     * @param Stringable|string    $message The info message.
+     * @param array<string, mixed> $context Additional context for debugging.
      */
-    public function info(Stringable|string $message, array $context = []): void
+    public function info(Stringable|string $message, array $context = []) : void
     {
         $this->callLogMethod(level: LogLevel::INFO, message: $message, context: $context);
     }
@@ -269,10 +270,10 @@ final readonly class ErrorLogger implements LoggerInterface
      *
      * Example: Variable dumps, performance metrics, internal function calls.
      *
-     * @param  Stringable|string  $message  The debug message.
-     * @param  array<string, mixed>  $context  Additional context for debugging.
+     * @param Stringable|string    $message The debug message.
+     * @param array<string, mixed> $context Additional context for debugging.
      */
-    public function debug(Stringable|string $message, array $context = []): void
+    public function debug(Stringable|string $message, array $context = []) : void
     {
         $this->callLogMethod(level: LogLevel::DEBUG, message: $message, context: $context);
     }

@@ -47,7 +47,7 @@ use ReflectionException;
 final readonly class Module implements LifecycleInterface
 {
     /**
-     * @param  Container  $container  The "Toolbox" where the feature will store its recipes.
+     * @param Container $container The "Toolbox" where the feature will store its recipes.
      */
     public function __construct(
         private Container $container
@@ -59,10 +59,10 @@ final readonly class Module implements LifecycleInterface
      * -- intent:
      * This is how the system recognizes this class as a valid Feature Module.
      */
-    public static function declare(): array
+    public static function declare() : array
     {
         return [
-            'name' => 'queryBuilder',
+            'name'  => 'queryBuilder',
             'class' => self::class,
         ];
     }
@@ -77,14 +77,18 @@ final readonly class Module implements LifecycleInterface
      *
      * @throws ReflectionException
      */
-    public function register(): void
+    public function register() : void
     {
         $this->container->singleton(abstract: QueryBuilder::class, concrete: static function ($c) {
-            return new QueryBuilder(
-                grammar           : new MySQLGrammar,
+            $orchestrator = new QueryOrchestrator(
                 executor          : new PDOExecutor(connection: $c->get(id: DatabaseConnection::class)),
                 transactionManager: $c->get(id: TransactionManagerInterface::class),
                 identityMap       : $c->get(id: IdentityMap::class)
+            );
+
+            return new QueryBuilder(
+                grammar     : new MySQLGrammar,
+                orchestrator: $orchestrator
             );
         });
     }
@@ -92,7 +96,7 @@ final readonly class Module implements LifecycleInterface
     /**
      * Optional "Wake up" logic.
      */
-    public function boot(): void
+    public function boot() : void
     {
         // No additional boot logic required for query builder.
     }
@@ -100,7 +104,7 @@ final readonly class Module implements LifecycleInterface
     /**
      * Optional "Cleanup" logic.
      */
-    public function shutdown(): void
+    public function shutdown() : void
     {
         // Shutdown logic if required.
     }

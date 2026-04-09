@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Tests;
 
+use Avax\HTTP\Router\Matching\RouteMatcherInterface;
 use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
-use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Routing\RouteCollection;
+use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Routing\RouteSourceLoaderInterface;
-use Avax\HTTP\Router\Matching\RouteMatcherInterface;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use Exception;
 use PHPUnit\Framework\TestCase;
@@ -30,24 +30,13 @@ use Throwable;
 final class RouterChaosTest extends TestCase
 {
     private HttpRequestRouter $router;
-    private RouteCollection $collection;
-
-    protected function setUp(): void
-    {
-        $this->router = new HttpRequestRouter(
-            constraintValidator: new RouteConstraintValidator(),
-            matcher: $this->createMock(RouteMatcherInterface::class),
-            trace: null
-        );
-
-        $this->collection = new RouteCollection();
-    }
+    private RouteCollection   $collection;
 
     /**
      * @test
      * @throws Exception
      */
-    public function cache_corruption_does_not_crash_router(): void
+    public function cache_corruption_does_not_crash_router() : void
     {
         // Simulate cache file with corrupted JSON
         $corruptedData = '{"invalid": json, "missing": brackets';
@@ -72,7 +61,7 @@ final class RouterChaosTest extends TestCase
      * @throws ReservedRouteNameException
      * @throws ReservedRouteNameException
      */
-    public function concurrent_route_registration_isolation(): void
+    public function concurrent_route_registration_isolation() : void
     {
         // Simulate concurrent route registration from multiple threads/loaders
         $routes1 = [];
@@ -81,7 +70,7 @@ final class RouterChaosTest extends TestCase
         // Thread 1: Register API routes
         $thread1 = function () use (&$routes1) {
             for ($i = 1; $i <= 100; $i++) {
-                $route = new RouteDefinition(
+                $route     = new RouteDefinition(
                     method    : 'GET',
                     path      : "/api/v1/resource{$i}",
                     action    : "Controller{$i}@action",
@@ -95,7 +84,7 @@ final class RouterChaosTest extends TestCase
         // Thread 2: Register web routes
         $thread2 = function () use (&$routes2) {
             for ($i = 1; $i <= 100; $i++) {
-                $route = new RouteDefinition(
+                $route     = new RouteDefinition(
                     method    : 'GET',
                     path      : "/web/resource{$i}",
                     action    : "WebController{$i}@action",
@@ -125,7 +114,7 @@ final class RouterChaosTest extends TestCase
      * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
-    public function middleware_chain_interruption_recovery(): void
+    public function middleware_chain_interruption_recovery() : void
     {
         // Test middleware that throws exceptions mid-chain
         $failingMiddleware = function ($request, $next) {
@@ -159,7 +148,7 @@ final class RouterChaosTest extends TestCase
      * @throws DuplicateRouteException
      * @throws ReservedRouteNameException
      */
-    public function memory_pressure_route_collection(): void
+    public function memory_pressure_route_collection() : void
     {
         // Simulate high memory pressure with large route collection
         $largeRoutes = [];
@@ -187,7 +176,7 @@ final class RouterChaosTest extends TestCase
 
         // Measure memory after
         $memoryAfter = memory_get_usage(true);
-        $memoryUsed = $memoryAfter - $memoryBefore;
+        $memoryUsed  = $memoryAfter - $memoryBefore;
 
         // Memory usage should be reasonable (< 50MB for 10k routes)
         $this->assertLessThan(expected: 50 * 1024 * 1024, actual: $memoryUsed,
@@ -201,7 +190,7 @@ final class RouterChaosTest extends TestCase
     /**
      * @test
      */
-    public function invalid_route_configuration_recovery(): void
+    public function invalid_route_configuration_recovery() : void
     {
         // Test various invalid route configurations
         $invalidRoutes = [
@@ -242,7 +231,7 @@ final class RouterChaosTest extends TestCase
      * @test
      * @throws Exception
      */
-    public function route_loader_failure_fallback(): void
+    public function route_loader_failure_fallback() : void
     {
         // Simulate primary loader failure
         $primaryLoader = $this->createMock(RouteSourceLoaderInterface::class);
@@ -275,11 +264,11 @@ final class RouterChaosTest extends TestCase
     /**
      * @test
      */
-    public function extreme_concurrency_simulation(): void
+    public function extreme_concurrency_simulation() : void
     {
         // Simulate extreme concurrency with rapid route modifications
         $concurrentOperations = 50;
-        $routesPerOperation = 20;
+        $routesPerOperation   = 20;
 
         $operations = [];
 
@@ -288,7 +277,7 @@ final class RouterChaosTest extends TestCase
             $operations[] = function () use ($op, $routesPerOperation) {
                 for ($i = 0; $i < $routesPerOperation; $i++) {
                     $routeId = ($op * $routesPerOperation) + $i;
-                    $route = new RouteDefinition(
+                    $route   = new RouteDefinition(
                         method    : 'GET',
                         path      : "/concurrent/{$routeId}",
                         action    : "ConcurrentController{$routeId}@action",
@@ -325,7 +314,7 @@ final class RouterChaosTest extends TestCase
      * @test
      * @throws Exception
      */
-    public function network_partition_simulation(): void
+    public function network_partition_simulation() : void
     {
         // Simulate network partition affecting external dependencies
         $networkDependentLoader = $this->createMock(RouteSourceLoaderInterface::class);
@@ -345,11 +334,11 @@ final class RouterChaosTest extends TestCase
      * @test
      * @throws DuplicateRouteException
      */
-    public function gradual_memory_leak_detection(): void
+    public function gradual_memory_leak_detection() : void
     {
         // Test for memory leaks during extended operation
         $initialMemory = memory_get_usage(true);
-        $iterations = 1000;
+        $iterations    = 1000;
 
         for ($i = 0; $i < $iterations; $i++) {
             // Create and register route
@@ -366,7 +355,7 @@ final class RouterChaosTest extends TestCase
                 // Force garbage collection in test environment
                 gc_collect_cycles();
 
-                $currentMemory = memory_get_usage(true);
+                $currentMemory  = memory_get_usage(true);
                 $memoryIncrease = $currentMemory - $initialMemory;
 
                 // Memory increase should be bounded (allow some growth for route storage)
@@ -379,7 +368,7 @@ final class RouterChaosTest extends TestCase
         }
 
         // Final memory check
-        $finalMemory = memory_get_usage(true);
+        $finalMemory   = memory_get_usage(true);
         $totalIncrease = $finalMemory - $initialMemory;
 
         // Total memory increase should be reasonable for 1000 routes
@@ -388,5 +377,16 @@ final class RouterChaosTest extends TestCase
             actual  : $totalIncrease,
             message : 'Excessive memory usage indicates potential leak'
         );
+    }
+
+    protected function setUp() : void
+    {
+        $this->router = new HttpRequestRouter(
+            constraintValidator: new RouteConstraintValidator(),
+            matcher            : $this->createMock(RouteMatcherInterface::class),
+            trace              : null
+        );
+
+        $this->collection = new RouteCollection();
     }
 }

@@ -13,28 +13,31 @@ failure definitions, 1% skill invocation rule, and verification-before-
 completion philosophy.
 
 ---
- 
- ## 1) Minimal Supervisor Flow (v1 Default)
- 
- This is the canonical pipeline for Token-Aware Orchestration. It minimizes Codex usage by pre-filtering context through specialized sub-agents.
- 
+
+## 1) Minimal Supervisor Flow (v1 Default)
+
+This is the canonical pipeline for Token-Aware Orchestration. It minimizes Codex usage by pre-filtering context through
+specialized sub-agents.
+
  ```
   📥 Task Input ──► 🧩 Classify ──► 🔍 Explore ──► 📝 Artifact ──► 🛠 Execute ──► ✅ Review ──► 🚀 Done
      (Supervisor)    (Supervisor)    (Mapper)       (Mapper)      (Codex)        (Reviewer)
  ```
- 
- ### Stage Details:
- 1. **Classify**: Supervisor decides if it's an Explore or Execute task.
- 2. **Explore**: Mapper/Docs Researcher explores the repo (Read-only, cheap model).
- 3. **Artifact**: Sub-agent returns the Mandatory 9-field Artifact.
- 4. **Decision**: Supervisor decides if the task is complete (stop) or requires Execute Mode (next).
- 5. **Execute**: Codex Executor performs the change based ON the artifact (High-reasoning).
- 6. **Review**: Final Reviewer checks the diff before completion.
- 
- ## 2) The 1% Rule
+
+### Stage Details:
+
+1. **Classify**: Supervisor decides if it's an Explore or Execute task.
+2. **Explore**: Mapper/Docs Researcher explores the repo (Read-only, cheap model).
+3. **Artifact**: Sub-agent returns the Mandatory 9-field Artifact.
+4. **Decision**: Supervisor decides if the task is complete (stop) or requires Execute Mode (next).
+5. **Execute**: Codex Executor performs the change based ON the artifact (High-reasoning).
+6. **Review**: Final Reviewer checks the diff before completion.
+
+## 2) The 1% Rule
 
 If there is even a **1% chance** that a governance rule, skill, or standard
 applies to the current task, the agent MUST invoke it. This ensures:
+
 - No governance bypass due to agent judgment errors
 - Comprehensive quality coverage
 - Consistent adherence to standards
@@ -71,41 +74,49 @@ The canonical pipeline for implementing a new feature:
 ### Stage Details
 
 #### 1. Brainstorm (planner)
+
 - **Input**: User requirement or feature request
 - **Output**: Clear requirements, user stories, acceptance criteria
 - **Gate**: Requirements must be unambiguous and testable
 
 #### 2. Plan (architect)
+
 - **Input**: Requirements from brainstorm
 - **Output**: Implementation plan with file-level detail
 - **Gate**: Plan must pass Plan Failure Check (§3)
 
 #### 3. Test First (tester)
+
 - **Input**: Implementation plan
 - **Output**: Failing test suite covering acceptance criteria
 - **Gate**: Tests must compile/parse but fail (TDD red phase)
 
 #### 4. Implement (implementer)
+
 - **Input**: Failing tests + implementation plan
 - **Output**: Source code that passes all tests
 - **Gate**: All tests pass (TDD green phase)
 
 #### 5. Verify (implementer)
+
 - **Input**: Completed implementation
 - **Output**: Full validation results (tests + lint + type-check)
 - **Gate**: Zero failures in test, lint, and type-check
 
 #### 6. Review (reviewer)
+
 - **Input**: Source code + test results
 - **Output**: Review findings, approval/rejection
 - **Gate**: All review checks pass per `how-to-code-review.md`
 
 #### 7. Document (documenter)
+
 - **Input**: Approved implementation
 - **Output**: Updated docs, changelog, backlog
 - **Gate**: Documentation is complete and accurate
 
 #### 8. Complete (releaser)
+
 - **Input**: All previous artifacts
 - **Output**: Merged code, updated version, release notes
 - **Gate**: All quality gates pass per `quality-gates.md`
@@ -119,19 +130,20 @@ rejected**. The agent MUST revise the plan before proceeding:
 
 ### Prohibited in Plans
 
-| Violation | Example | Why It Fails |
-|:---|:---|:---|
-| **TBD markers** | "Authentication: TBD" | Undefined scope |
-| **Vague descriptions** | "Handle errors appropriately" | No actionable detail |
-| **Undefined references** | "Similar to Task 3" | Ambiguous dependency |
-| **Placeholder code** | `// TODO: implement later` | Incomplete specification |
-| **Missing file paths** | "Update the config file" | Which file? |
-| **Scope gaps** | No test plan mentioned | Missing pipeline stage |
-| **Circular references** | "See the plan for details" | Self-referential |
+| Violation                | Example                       | Why It Fails             |
+|:-------------------------|:------------------------------|:-------------------------|
+| **TBD markers**          | "Authentication: TBD"         | Undefined scope          |
+| **Vague descriptions**   | "Handle errors appropriately" | No actionable detail     |
+| **Undefined references** | "Similar to Task 3"           | Ambiguous dependency     |
+| **Placeholder code**     | `// TODO: implement later`    | Incomplete specification |
+| **Missing file paths**   | "Update the config file"      | Which file?              |
+| **Scope gaps**           | No test plan mentioned        | Missing pipeline stage   |
+| **Circular references**  | "See the plan for details"    | Self-referential         |
 
 ### Required in Plans
 
 Every valid plan MUST include:
+
 1. **Exact file paths** for every file to be created or modified
 2. **Specific changes** described at the function/method level
 3. **Test strategy** with concrete test cases
@@ -327,31 +339,31 @@ verification steps have passed. This is a **non-negotiable** rule.
 The agent selects the appropriate pipeline based on task classification
 from `execution-policy.md`:
 
-| Task Lane | Pipeline | Minimum Stages |
-|:---|:---|:---|
-| Brainstorm | Brainstorm Flow | 3 stages |
-| Planning | Planning Pipeline | 4 stages |
-| Feature | Standard Feature Pipeline | All 8 stages |
-| Bugfix | Bugfix Pipeline | 5 stages |
-| Governance | Governance Pipeline | 6 stages |
-| Review | Review Pipeline | 4 stages |
-| Documentation | Documentation Pipeline | 4 stages |
-| Operations | Operations Pipeline | 5 stages |
-| Security | Security Review Flow or Bugfix Pipeline | scoped subset |
-| Refactoring | Refactoring Pipeline | 5 stages |
-| Investigation | Investigation Flow | 4 stages |
-| Release | Release Pipeline | 4 stages |
+| Task Lane     | Pipeline                                | Minimum Stages |
+|:--------------|:----------------------------------------|:---------------|
+| Brainstorm    | Brainstorm Flow                         | 3 stages       |
+| Planning      | Planning Pipeline                       | 4 stages       |
+| Feature       | Standard Feature Pipeline               | All 8 stages   |
+| Bugfix        | Bugfix Pipeline                         | 5 stages       |
+| Governance    | Governance Pipeline                     | 6 stages       |
+| Review        | Review Pipeline                         | 4 stages       |
+| Documentation | Documentation Pipeline                  | 4 stages       |
+| Operations    | Operations Pipeline                     | 5 stages       |
+| Security      | Security Review Flow or Bugfix Pipeline | scoped subset  |
+| Refactoring   | Refactoring Pipeline                    | 5 stages       |
+| Investigation | Investigation Flow                      | 4 stages       |
+| Release       | Release Pipeline                        | 4 stages       |
 
 ---
 
 ## 17) Relationship to Other Standards
 
-| Standard | Relationship |
-|:---|:---|
-| `agent-roles.md` | Roles execute pipeline stages |
-| `hooks-policy.md` | `PreTask` selects pipeline; `PostTask` verifies completion |
-| `quality-gates.md` | Gates enforce per-stage verification |
-| `execution-policy.md` | Task lane determines which pipeline |
-| `how-to-code-review.md` | Review stage follows these standards |
-| `approval-policy.md` | Approval required at specific gates |
-| `memory-lifecycle.md` | PostTask extracts memories after completion |
+| Standard                | Relationship                                               |
+|:------------------------|:-----------------------------------------------------------|
+| `agent-roles.md`        | Roles execute pipeline stages                              |
+| `hooks-policy.md`       | `PreTask` selects pipeline; `PostTask` verifies completion |
+| `quality-gates.md`      | Gates enforce per-stage verification                       |
+| `execution-policy.md`   | Task lane determines which pipeline                        |
+| `how-to-code-review.md` | Review stage follows these standards                       |
+| `approval-policy.md`    | Approval required at specific gates                        |
+| `memory-lifecycle.md`   | PostTask extracts memories after completion                |

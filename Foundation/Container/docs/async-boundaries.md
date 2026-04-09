@@ -4,7 +4,8 @@ This document covers async boundary behavior when/if supported.
 
 ## Current State
 
-The container is currently **synchronous-only**. Async support is **not implemented** and is marked for future consideration.
+The container is currently **synchronous-only**. Async support is **not implemented** and is marked for future
+consideration.
 
 ## Future Async Support (If/When Implemented)
 
@@ -23,7 +24,8 @@ $container->singleton(HttpClient::class)
 
 #### Async Boundary Rules
 
-1. **No shared state crossing async boundaries**: Shared services with mutable state cannot be used across async boundaries without explicit context isolation
+1. **No shared state crossing async boundaries**: Shared services with mutable state cannot be used across async
+   boundaries without explicit context isolation
 2. **Scope isolation**: Each async task gets its own scope frame
 3. **Pool isolation**: Pooled services used in async contexts must be isolated per-task
 
@@ -36,6 +38,7 @@ $container->singleton(HttpClient::class)
 #### Documentation Requirements
 
 When async is implemented, docs must include:
+
 - Migration guide from sync to async services
 - Debugging async resolution issues
 - Performance implications of async boundaries

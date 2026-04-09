@@ -85,11 +85,11 @@ class Min
         throw new ValidationException(
             message : $this->message ?? sprintf('%s must be at least %d.', ucfirst(string: $property), $this->min),
             metadata: [
-                'property' => $property,
-                'value'    => $value,
-                'min'      => $this->min,
-                'errorKey' => $errorKey,
-            ]
+                          'property' => $property,
+                          'value'    => $value,
+                          'min'      => $this->min,
+                          'errorKey' => $errorKey,
+                      ]
         );
     }
 

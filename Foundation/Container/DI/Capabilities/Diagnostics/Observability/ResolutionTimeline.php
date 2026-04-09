@@ -16,7 +16,7 @@ final class ResolutionTimeline
 
     public function __construct(
         private readonly Clock $clock = new Clock,
-        private readonly bool $enabled = true
+        private readonly bool  $enabled = true
     ) {}
 
     /**
@@ -29,10 +29,10 @@ final class ResolutionTimeline
         }
 
         $this->entries[] = [
-            'time'     => $this->clock->now(),
-            'action'   => $action,
-            'serviceId'=> $serviceId,
-            'outcome'  => $outcome,
+            'time'      => $this->clock->now(),
+            'action'    => $action,
+            'serviceId' => $serviceId,
+            'outcome'   => $outcome,
         ];
     }
 

@@ -22,16 +22,16 @@ final readonly class Module implements LifecycleInterface
      *
      * -- intent: link the module to the central dependency injection system.
      *
-     * @param  Container  $container  The active DI vessel
+     * @param Container $container The active DI vessel
      */
     public function __construct(
         private Container $container
     ) {}
 
-    public static function declare(): array
+    public static function declare() : array
     {
         return [
-            'name' => 'migrations',
+            'name'  => 'migrations',
             'class' => self::class,
         ];
     }
@@ -41,7 +41,7 @@ final readonly class Module implements LifecycleInterface
      *
      * -- intent: define the resolution recipes for migration persistence and execution technicians.
      */
-    public function register(): void
+    public function register() : void
     {
         $this->container->singleton(abstract: MigrationRepository::class, concrete: static function ($c) {
             return new MigrationRepository(builder: $c->get(id: QueryBuilder::class));
@@ -60,7 +60,7 @@ final readonly class Module implements LifecycleInterface
      *
      * -- intent: ensure the feature is ready for use after registration.
      */
-    public function boot(): void
+    public function boot() : void
     {
         // No additional boot logic required for migrations
     }
@@ -70,7 +70,7 @@ final readonly class Module implements LifecycleInterface
      *
      * -- intent: signal the end of the migration feature availability.
      */
-    public function shutdown(): void
+    public function shutdown() : void
     {
         // Shutdown logic if required
     }

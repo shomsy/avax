@@ -81,6 +81,7 @@ final class RouteCollector
         // This eliminates global state completely
         try {
             $closure($collector);
+
             return $collector;
         } catch (Throwable $exception) {
             // Ensure clean state even on exception
@@ -90,11 +91,21 @@ final class RouteCollector
     }
 
     /**
+     * Clear all routes (for testing/cleanup).
+     */
+    public function clear() : void
+    {
+        $this->routes   = [];
+        $this->fallback = null;
+    }
+
+    /**
      * Execute DSL functions with this collector instance.
      *
      * Provides a clean API for route file execution without global state.
      *
      * @param string $code The PHP code containing DSL function calls
+     *
      * @return void
      */
     public function executeDsl(#[SensitiveParameter] string $code) : void
@@ -107,31 +118,31 @@ final class RouteCollector
             // Make collector available to global DSL functions via closure binding
             // This replaces the global state approach
             $dslFunctions = [
-                'get' => fn($path, $action) => $collector->addRouteBuilder(
+                'get'      => fn ($path, $action) => $collector->addRouteBuilder(
                     routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'GET', path: $path)->action(action: $action)
                 ),
-                'post' => fn($path, $action) => $collector->addRouteBuilder(
+                'post'     => fn ($path, $action) => $collector->addRouteBuilder(
                     routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'POST', path: $path)->action(action: $action)
                 ),
-                'put' => fn($path, $action) => $collector->addRouteBuilder(
+                'put'      => fn ($path, $action) => $collector->addRouteBuilder(
                     routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'PUT', path: $path)->action(action: $action)
                 ),
-                'patch' => fn($path, $action) => $collector->addRouteBuilder(
+                'patch'    => fn ($path, $action) => $collector->addRouteBuilder(
                     routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'PATCH', path: $path)->action(action: $action)
                 ),
-                'delete' => fn($path, $action) => $collector->addRouteBuilder(
+                'delete'   => fn ($path, $action) => $collector->addRouteBuilder(
                     routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'DELETE', path: $path)->action(action: $action)
                 ),
-                'options' => fn($path, $action) => $collector->addRouteBuilder(
+                'options'  => fn ($path, $action) => $collector->addRouteBuilder(
                     routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'OPTIONS', path: $path)->action(action: $action)
                 ),
-                'head' => fn($path, $action) => $collector->addRouteBuilder(
+                'head'     => fn ($path, $action) => $collector->addRouteBuilder(
                     routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'HEAD', path: $path)->action(action: $action)
                 ),
-                'any' => fn($path, $action) => $collector->addRouteBuilder(
+                'any'      => fn ($path, $action) => $collector->addRouteBuilder(
                     routeBuilder: \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'ANY', path: $path)->action(action: $action)
                 ),
-                'fallback' => fn($handler) => $collector->setFallback(fallback: $handler),
+                'fallback' => fn ($handler) => $collector->setFallback(fallback: $handler),
             ];
 
             // Extract variables for the DSL execution
@@ -145,21 +156,12 @@ final class RouteCollector
     }
 
     /**
-     * Add a route builder to the collection.
-     *
-     * @param RouteBuilder $routeBuilder The route builder to add
-     */
-    public function add(RouteBuilder $routeBuilder) : void
-    {
-        $this->routes[] = $routeBuilder;
-    }
-
-    /**
      * Add a route builder and return a registrar proxy for chaining.
      *
      * This method provides the fluent API for DSL functions.
      *
      * @param RouteBuilder $routeBuilder The route builder to add
+     *
      * @return RouteRegistrarProxy The proxy for chaining
      */
     public function addRouteBuilder(RouteBuilder $routeBuilder) : RouteRegistrarProxy
@@ -167,10 +169,20 @@ final class RouteCollector
         $this->add(routeBuilder: $routeBuilder);
 
         return new RouteRegistrarProxy(
-            router: null, // Will be set by RouterDsl
-            builder: $routeBuilder,
+            router  : null, // Will be set by RouterDsl
+            builder : $routeBuilder,
             registry: null // Will be set by RouterDsl
         );
+    }
+
+    /**
+     * Add a route builder to the collection.
+     *
+     * @param RouteBuilder $routeBuilder The route builder to add
+     */
+    public function add(RouteBuilder $routeBuilder) : void
+    {
+        $this->routes[] = $routeBuilder;
     }
 
     /**
@@ -226,14 +238,5 @@ final class RouteCollector
     public function count() : int
     {
         return count($this->routes);
-    }
-
-    /**
-     * Clear all routes (for testing/cleanup).
-     */
-    public function clear() : void
-    {
-        $this->routes = [];
-        $this->fallback = null;
     }
 }

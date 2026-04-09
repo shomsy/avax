@@ -23,14 +23,14 @@ final class RouteNotFoundException extends RouterException
     public static function for(string $method, string $path) : self
     {
         return new self(
-            message: sprintf('No route found for [%s] %s', strtoupper($method), $path),
+            message       : sprintf('No route found for [%s] %s', strtoupper($method), $path),
             httpStatusCode: 404,
-            context: [
-                'method' => $method,
-                'path' => $path,
-                'available_methods' => [], // Can be populated by caller
-            ],
-            isRetryable: false
+            context       : [
+                                'method'            => $method,
+                                'path'              => $path,
+                                'available_methods' => [], // Can be populated by caller
+                            ],
+            isRetryable   : false
         );
     }
 

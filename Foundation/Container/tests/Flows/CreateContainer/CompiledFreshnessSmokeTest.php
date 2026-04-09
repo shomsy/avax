@@ -29,14 +29,12 @@ final class FreshnessDependencyV2 implements FreshnessDependencyContract
 
 final class FreshnessConsumer
 {
-    public function __construct(public FreshnessDependencyContract $dependency)
-    {
-    }
+    public function __construct(public FreshnessDependencyContract $dependency) {}
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-freshness-' . uniqid();
-$version = 'compiled-freshness-smoke';
-$config = CreateContainerConfig::create(
+$version  = 'compiled-freshness-smoke';
+$config   = CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: $version,
     compileMode : CreateContainerConfig::COMPILE_MODE_PRODUCTION
@@ -49,8 +47,8 @@ $compiled->compileContainer([FreshnessConsumer::class, FreshnessDependencyContra
 $reloaded = makeTestContainer($config);
 $reloaded->singleton(FreshnessDependencyContract::class, FreshnessDependencyV2::class);
 
-$report = $reloaded->compileReport([FreshnessConsumer::class, FreshnessDependencyContract::class]);
-$debug = $reloaded->debugService(FreshnessDependencyContract::class);
+$report   = $reloaded->compileReport([FreshnessConsumer::class, FreshnessDependencyContract::class]);
+$debug    = $reloaded->debugService(FreshnessDependencyContract::class);
 $resolved = $reloaded->get(FreshnessConsumer::class);
 
 assertTrue($report !== null, 'Freshness checks should still expose compile reports.');

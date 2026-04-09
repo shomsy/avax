@@ -110,11 +110,11 @@ class Max
         throw new ValidationException(
             message : $this->message ?? sprintf('%s must be at most %d.', ucfirst(string: $property), $this->max),
             metadata: [
-                'property' => $property,
-                'value'    => $value,
-                'max'      => $this->max,
-                'errorKey' => $errorKey,
-            ]
+                          'property' => $property,
+                          'value'    => $value,
+                          'max'      => $this->max,
+                          'errorKey' => $errorKey,
+                      ]
         );
     }
 

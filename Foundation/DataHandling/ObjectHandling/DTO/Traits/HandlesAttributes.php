@@ -32,12 +32,12 @@ trait HandlesAttributes
      * **Usage in DDD**: Enables well-encapsulated validation and behavior adjustments
      * directly linked to the domain model's field attributes.
      *
-     * @param  string  $fieldName  The name of the field currently being processed.
-     * @param  mixed  $value  The current value of the field, passed by reference for in-place
-     *                        updates.
-     * @param  ReflectionAttribute[]  $attributes  A collection of `ReflectionAttribute` instances to apply.
+     * @param string                $fieldName  The name of the field currently being processed.
+     * @param mixed                 $value      The current value of the field, passed by reference for in-place
+     *                                          updates.
+     * @param ReflectionAttribute[] $attributes A collection of `ReflectionAttribute` instances to apply.
      */
-    protected function applyFieldAttributes(string $fieldName, mixed &$value, array $attributes): mixed
+    protected function applyFieldAttributes(string $fieldName, mixed &$value, array $attributes) : mixed
     {
         // Iterate over all attributes associated with the field.
         foreach ($attributes as $attribute) {
@@ -64,13 +64,14 @@ trait HandlesAttributes
      * **Delegated Responsibility**: Verifies the integrity of an attribute's instantiation,
      * ensuring downstream logic (like `apply` or `validate`) receives a valid object.
      *
-     * @param  ReflectionAttribute  $attribute  The `ReflectionAttribute` instance to instantiate.
+     * @param ReflectionAttribute $attribute The `ReflectionAttribute` instance to instantiate.
+     *
      * @return object The instantiated attribute object, ready for application.
      *
      * @throws InvalidArgumentException If attribute instantiation fails due to invalid parameters
      *                                  or a runtime exception.
      */
-    private function instantiateAttribute(ReflectionAttribute $attribute): object
+    private function instantiateAttribute(ReflectionAttribute $attribute) : object
     {
         try {
             // Create an instance of the attribute dynamically.
@@ -79,10 +80,10 @@ trait HandlesAttributes
             // Throw a developer-friendly error with contextual information.
             throw new InvalidArgumentException(
                 message : sprintf(
-                    'Failed to instantiate attribute of type "%s": %s',
-                    $attribute->getName(),
-                    $e->getMessage()
-                ),
+                              'Failed to instantiate attribute of type "%s": %s',
+                              $attribute->getName(),
+                              $e->getMessage()
+                          ),
                 code    : 422, // Exception code (standardized as 0 for consistent exception chaining).
                 previous: $e // Preserve the original exception for backtrace details.
             );
@@ -95,14 +96,15 @@ trait HandlesAttributes
      * **Domain Use Case**: Alters the field value as determined by attribute-specific
      * transformation rules, enriching the domain model with declarative behavior logic.
      *
-     * @param  object  $instance  The instantiated attribute object with the `apply` method.
-     * @param  mixed  $value  The current field value to be transformed.
-     * @param  string  $fieldName  The name of the field to provide context in case of errors.
+     * @param object $instance  The instantiated attribute object with the `apply` method.
+     * @param mixed  $value     The current field value to be transformed.
+     * @param string $fieldName The name of the field to provide context in case of errors.
+     *
      * @return mixed The transformed value after applying the attribute's logic.
      *
      * @throws InvalidArgumentException If the `apply` method fails or is improperly implemented.
      */
-    private function applyAttribute(object $instance, mixed $value, string $fieldName): mixed
+    private function applyAttribute(object $instance, mixed $value, string $fieldName) : mixed
     {
         try {
             // Invoke the attribute's `apply` method and return the modified value.
@@ -111,11 +113,11 @@ trait HandlesAttributes
             // Throw an exception with clear diagnostic information.
             throw new InvalidArgumentException(
                 message : sprintf(
-                    'The "apply" method of attribute "%s" failed for field "%s": %s',
-                    $instance::class,
-                    $fieldName,
-                    $e->getMessage()
-                ),
+                              'The "apply" method of attribute "%s" failed for field "%s": %s',
+                              $instance::class,
+                              $fieldName,
+                              $e->getMessage()
+                          ),
                 code    : 422, // Exception code to maintain consistent exception hierarchy.
                 previous: $e // Preserve chained exception details for diagnosis.
             );
@@ -128,13 +130,13 @@ trait HandlesAttributes
      * **Domain Implication**: Ensures that field values adhere to domain-driven constraints encapsulated
      * by attributes, supporting robust domain model invariants.
      *
-     * @param  object  $instance  The instantiated attribute object with validation capability.
-     * @param  mixed  $value  The current field value to be validated.
-     * @param  string  $fieldName  The name of the field being validated for error reporting.
+     * @param object $instance  The instantiated attribute object with validation capability.
+     * @param mixed  $value     The current field value to be validated.
+     * @param string $fieldName The name of the field being validated for error reporting.
      *
      * @throws InvalidArgumentException If validation rules are violated or improperly implemented.
      */
-    private function validateAttribute(object $instance, mixed $value, string $fieldName): void
+    private function validateAttribute(object $instance, mixed $value, string $fieldName) : void
     {
         try {
             // Invoke the attribute's `validate` method to perform validation checks.
@@ -143,11 +145,11 @@ trait HandlesAttributes
             // Throw informative validation exceptions to aid debugging.
             throw new InvalidArgumentException(
                 message : sprintf(
-                    'Validation failed for field "%s" with attribute "%s": %s',
-                    $fieldName,
-                    $instance::class,
-                    $e->getMessage()
-                ),
+                              'Validation failed for field "%s" with attribute "%s": %s',
+                              $fieldName,
+                              $instance::class,
+                              $e->getMessage()
+                          ),
                 code    : 422, // Maintain consistent exception codes.
                 previous: $e // Include original exception for additional debug trace.
             );

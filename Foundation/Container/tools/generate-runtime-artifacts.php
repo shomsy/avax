@@ -12,7 +12,7 @@ if ($argc < 3) {
 require_once dirname(__DIR__) . '/tests/bootstrap.php';
 
 $fixturePath = (string) ($argv[1] ?? '');
-$outputDir = (string) ($argv[2] ?? '');
+$outputDir   = (string) ($argv[2] ?? '');
 
 if (! is_file($fixturePath)) {
     fwrite(STDERR, "Fixture [{$fixturePath}] was not found.\n");
@@ -62,15 +62,15 @@ $writeJson($outputDir . '/architecture.json', $container->debugArchitecture());
 file_put_contents($outputDir . '/dependency-graph.html', $container->exportGraph(format: 'html', kind: 'dependency'));
 
 echo json_encode(
-    [
-        'outputDir' => $outputDir,
-        'files' => [
-            'compile-report.json',
-            'runtime-report.json',
-            'governance.json',
-            'architecture.json',
-            'dependency-graph.html',
+        [
+            'outputDir' => $outputDir,
+            'files'     => [
+                'compile-report.json',
+                'runtime-report.json',
+                'governance.json',
+                'architecture.json',
+                'dependency-graph.html',
+            ],
         ],
-    ],
-    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR
-) . PHP_EOL;
+        JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR
+    ) . PHP_EOL;

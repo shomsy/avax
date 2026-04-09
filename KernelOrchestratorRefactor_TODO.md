@@ -12,11 +12,11 @@
 
 - [ ] Otvori `ContainerKernel.php`
 - [ ] Obeleži sve sledeće:
-  - [ ] `if` i `switch` blokove
-  - [ ] `try/catch` blokove
-  - [ ] direktne reference na servise (`ResolutionEngine`, `ScopeManager`, `PolicyFlow`, `Metrics`)
-  - [ ] metode koje imaju `boot`, `terminate`, `inject`, `store`, `invoke`
-  - [ ] svaku promenljivu `$this->map`, `$this->cache`, `$this->instances`
+    - [ ] `if` i `switch` blokove
+    - [ ] `try/catch` blokove
+    - [ ] direktne reference na servise (`ResolutionEngine`, `ScopeManager`, `PolicyFlow`, `Metrics`)
+    - [ ] metode koje imaju `boot`, `terminate`, `inject`, `store`, `invoke`
+    - [ ] svaku promenljivu `$this->map`, `$this->cache`, `$this->instances`
 - [ ] U komentar iznad svakog napiši:
   ```php
   // TODO move to step: <ime>
@@ -38,7 +38,7 @@
 - [ ] Za svaku oznaku iz prethodne faze napravi novi `Step`:
 
   | Nova klasa                   | Poreklo logike                       |
-  | ---------------------------- | ------------------------------------ |
+      | ---------------------------- | ------------------------------------ |
   | `EnsureDefinitionExistsStep` | `if (!$this->definitions->has($id))` |
   | `ResolveInstanceStep`        | `ResolutionEngine->resolve()`        |
   | `InjectDependenciesStep`     | `injector->inject()`                 |
@@ -127,8 +127,8 @@
 📋 **Taskovi:**
 
 - [ ] Napravi `ResolutionPipelineBuilder::default()` koji:
-  - [ ] sklapa sve step-ove u pravilnom redosledu
-  - [ ] injektuje zavisnosti (`engine`, `injector`, `policy`, `scopeManager`, `metrics`)
+    - [ ] sklapa sve step-ove u pravilnom redosledu
+    - [ ] injektuje zavisnosti (`engine`, `injector`, `policy`, `scopeManager`, `metrics`)
 
 - [ ] Kernel više ne zna kako se pipeline pravi — samo ga prima u konstruktoru.
 
@@ -176,10 +176,10 @@
   ```
 
 - [ ] Testiraj:
-  - [ ] `resolve($id)` vraća očekivanu instancu
-  - [ ] svi step-ovi menjaju `KernelContext` ispravno
-  - [ ] `ErrorHandlingStep` ne ruši tok
-  - [ ] `CollectDiagnosticsStep` beleži pipeline vreme
+    - [ ] `resolve($id)` vraća očekivanu instancu
+    - [ ] svi step-ovi menjaju `KernelContext` ispravno
+    - [ ] `ErrorHandlingStep` ne ruši tok
+    - [ ] `CollectDiagnosticsStep` beleži pipeline vreme
 
 ✅ **Rezultat:** full coverage orchestration layer-a.
 
@@ -196,8 +196,8 @@
 - [ ] Obriši `Traits/` folder
 
 - [ ] U `Features/`:
-  - [ ] izbaci logiku iz `LifecycleFlow` i `DiagnosticsFlow`
-  - [ ] ostavi samo DSL API (`policy()->strict()`, `design()->use()`, itd.)
+    - [ ] izbaci logiku iz `LifecycleFlow` i `DiagnosticsFlow`
+    - [ ] ostavi samo DSL API (`policy()->strict()`, `design()->use()`, itd.)
 
 - [ ] Refaktori Engine da više ne zna za Kernel (`setContainer()` → obrisati).
 
@@ -281,4 +281,5 @@ Container/
 
 ---
 
-*Ovaj TODO plan vodi developera kroz kompletnu transformaciju ContainerKernel-a iz "debela" u "čist" orchestrator. Svaka faza ima jasne taskove i rezultate.*
+*Ovaj TODO plan vodi developera kroz kompletnu transformaciju ContainerKernel-a iz "debela" u "čist" orchestrator. Svaka
+faza ima jasne taskove i rezultate.*

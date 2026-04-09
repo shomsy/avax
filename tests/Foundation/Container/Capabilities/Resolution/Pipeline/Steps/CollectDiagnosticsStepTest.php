@@ -26,20 +26,20 @@ final class CollectDiagnosticsStepTest extends TestCase
         );
 
         $telemetry->onStepStarted(event: new StepStarted(
-            stepClass: 'SomeStep',
-            timestamp: 1000.0,
-            serviceId: $serviceId,
-            traceId  : $traceId
-        ));
+                                             stepClass: 'SomeStep',
+                                             timestamp: 1000.0,
+                                             serviceId: $serviceId,
+                                             traceId  : $traceId
+                                         ));
 
         $telemetry->onStepSucceeded(event: new StepSucceeded(
-            stepClass: 'SomeStep',
-            startedAt: 1000.0,
-            endedAt  : 1000.05,
-            duration : 0.05,
-            serviceId: $serviceId,
-            traceId  : $traceId
-        ));
+                                               stepClass: 'SomeStep',
+                                               startedAt: 1000.0,
+                                               endedAt  : 1000.05,
+                                               duration : 0.05,
+                                               serviceId: $serviceId,
+                                               traceId  : $traceId
+                                           ));
 
         $step(context: $context);
 

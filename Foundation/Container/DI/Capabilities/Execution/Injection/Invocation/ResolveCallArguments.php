@@ -17,23 +17,17 @@ final readonly class ResolveCallArguments
     ) {}
 
     /**
-     * @param list<ReflectionParameter> $parameters
-     */
-    public function createPlan(array $parameters) : ResolvePlan
-    {
-        return $this->dependencies->createPlan(parameters: $parameters);
-    }
-
-    /**
      * @param array<string, mixed> $overrides
+     *
      * @return array<int, mixed>
      */
     public function resolve(
-        array $parameters,
-        array $overrides,
-        ServiceResolver $resolver,
+        array               $parameters,
+        array               $overrides,
+        ServiceResolver     $resolver,
         ResolveRequest|null $request = null
-    ) : array {
+    ) : array
+    {
         return $this->resolvePlan(
             plan     : $this->createPlan(parameters: $parameters),
             overrides: $overrides,
@@ -44,19 +38,29 @@ final readonly class ResolveCallArguments
 
     /**
      * @param array<string, mixed> $overrides
+     *
      * @return array<int, mixed>
      */
     public function resolvePlan(
-        ResolvePlan $plan,
-        array $overrides,
-        ServiceResolver $resolver,
+        ResolvePlan         $plan,
+        array               $overrides,
+        ServiceResolver     $resolver,
         ResolveRequest|null $request = null
-    ) : array {
+    ) : array
+    {
         return $this->dependencies->resolvePlan(
             plan     : $plan,
-            overrides : $overrides,
-            resolver  : $resolver,
-            request   : $request
+            overrides: $overrides,
+            resolver : $resolver,
+            request  : $request
         );
+    }
+
+    /**
+     * @param list<ReflectionParameter> $parameters
+     */
+    public function createPlan(array $parameters) : ResolvePlan
+    {
+        return $this->dependencies->createPlan(parameters: $parameters);
     }
 }

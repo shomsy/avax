@@ -9,23 +9,23 @@ namespace Avax\Container\DI\Capabilities\Resolution;
  */
 final readonly class ResolutionPolicy
 {
-    public const PROFILE_RELAXED = 'relaxed';
+    public const string PROFILE_RELAXED = 'relaxed';
 
-    public const PROFILE_BALANCED = 'balanced';
+    public const string PROFILE_BALANCED = 'balanced';
 
-    public const PROFILE_STRICT = 'strict';
+    public const string PROFILE_STRICT = 'strict';
 
-    public const FAIL_MODE_OPEN = 'open';
+    public const string FAIL_MODE_OPEN = 'open';
 
-    public const FAIL_MODE_CLOSED = 'closed';
+    public const string FAIL_MODE_CLOSED = 'closed';
 
     public function __construct(
-        public bool $strict = false,
-        public bool $debug = false,
+        public bool   $strict = false,
+        public bool   $debug = false,
         public string $profile = self::PROFILE_BALANCED,
         public string $failMode = self::FAIL_MODE_CLOSED,
         /** @var array<string, string> */
-        public array $profiles = []
+        public array  $profiles = []
     ) {}
 
     public function isAllowed(string $abstract) : bool
@@ -42,13 +42,13 @@ final readonly class ResolutionPolicy
         return match ($this->profile) {
             self::PROFILE_RELAXED => match ($code) {
                 'POL-001', 'POL-002', 'POL-003', 'POL-005', 'POL-006', 'POL-009', 'POL-010', 'POL-011', 'POL-012', 'POL-013' => 'warn',
-                default => $defaultSeverity,
+                default                                                                                                      => $defaultSeverity,
             },
-            self::PROFILE_STRICT => match ($code) {
+            self::PROFILE_STRICT  => match ($code) {
                 'POL-006', 'POL-009', 'POL-010', 'POL-011', 'POL-012', 'POL-013' => 'error',
-                default => $defaultSeverity,
+                default                                                          => $defaultSeverity,
             },
-            default => $defaultSeverity,
+            default               => $defaultSeverity,
         };
     }
 

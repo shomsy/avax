@@ -4,115 +4,81 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
-use Avax\Container\DI\Container;
-use Avax\Container\DI\ContainerInterface;
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
 use Avax\Container\DI\Capabilities\Declaration\Providers\ProviderBootPlan;
 use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Container\DI\Container;
+use Avax\Container\DI\ContainerInterface;
 
 final class OrderingProviderAlpha implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app)
-    {
-    }
+    public function __construct(private ContainerInterface $app) {}
 
     public function dependsOn() : array
     {
         return [];
     }
 
-    public function register() : void
-    {
-    }
+    public function register() : void {}
 
-    public function boot() : void
-    {
-    }
+    public function boot() : void {}
 }
 
 final class OrderingProviderBeta implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app)
-    {
-    }
+    public function __construct(private ContainerInterface $app) {}
 
     public function dependsOn() : array
     {
         return [OrderingProviderAlpha::class];
     }
 
-    public function register() : void
-    {
-    }
+    public function register() : void {}
 
-    public function boot() : void
-    {
-    }
+    public function boot() : void {}
 }
 
 final class OrderingProviderGamma implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app)
-    {
-    }
+    public function __construct(private ContainerInterface $app) {}
 
     public function dependsOn() : array
     {
         return [OrderingProviderAlpha::class];
     }
 
-    public function register() : void
-    {
-    }
+    public function register() : void {}
 
-    public function boot() : void
-    {
-    }
+    public function boot() : void {}
 }
 
-final class OrderingTaggedA
-{
-}
+final class OrderingTaggedA {}
 
-final class OrderingTaggedB
-{
-}
+final class OrderingTaggedB {}
 
-final class OrderingTaggedC
-{
-}
+final class OrderingTaggedC {}
 
 final class OrderingDecoratedService
 {
-    public function __construct(public string $value = 'base')
-    {
-    }
+    public function __construct(public string $value = 'base') {}
 }
 
 final class OrderingFirstDecorator
 {
-    public function __construct(public OrderingDecoratedService $inner)
-    {
-    }
+    public function __construct(public OrderingDecoratedService $inner) {}
 }
 
 final class OrderingSecondDecorator
 {
-    public function __construct(public OrderingFirstDecorator $inner)
-    {
-    }
+    public function __construct(public OrderingFirstDecorator $inner) {}
 }
 
-final class OrderingArtifactDependency
-{
-}
+final class OrderingArtifactDependency {}
 
 final class OrderingArtifactService
 {
-    public function __construct(public OrderingArtifactDependency $dependency)
-    {
-    }
+    public function __construct(public OrderingArtifactDependency $dependency) {}
 }
 
 /**
@@ -130,10 +96,10 @@ function normalizedArtifactMetadata(Container $container) : array
 }
 
 $providerPlan = ProviderBootPlan::build([
-    OrderingProviderGamma::class => new OrderingProviderGamma(makeTestContainer()),
-    OrderingProviderAlpha::class => new OrderingProviderAlpha(makeTestContainer()),
-    OrderingProviderBeta::class => new OrderingProviderBeta(makeTestContainer()),
-]);
+                                            OrderingProviderGamma::class => new OrderingProviderGamma(makeTestContainer()),
+                                            OrderingProviderAlpha::class => new OrderingProviderAlpha(makeTestContainer()),
+                                            OrderingProviderBeta::class  => new OrderingProviderBeta(makeTestContainer()),
+                                        ]);
 
 assertSame(
     [OrderingProviderAlpha::class, OrderingProviderBeta::class, OrderingProviderGamma::class],
@@ -160,7 +126,7 @@ assertSame(
     'Decoration ordering must stay deterministic and preserve explicit registration order.'
 );
 
-$leftCache = sys_get_temp_dir() . '/container-ordering-left-' . uniqid();
+$leftCache  = sys_get_temp_dir() . '/container-ordering-left-' . uniqid();
 $rightCache = sys_get_temp_dir() . '/container-ordering-right-' . uniqid();
 
 $left = makeTestContainer(CreateContainerConfig::create(cacheDir: $leftCache, cacheVersion: 'ordering-proof'));

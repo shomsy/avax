@@ -28,6 +28,7 @@ final readonly class ResolveService
 
     /**
      * @param array<string, mixed> $parameters
+     *
      * @throws ContainerException
      * @throws ServiceNotFoundException
      */

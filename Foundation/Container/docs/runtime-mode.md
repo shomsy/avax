@@ -1,6 +1,7 @@
 # Runtime Mode
 
-Runtime mode is the phase where the container resolves services from authored registrations and, when available, from the compiled hot path.
+Runtime mode is the phase where the container resolves services from authored registrations and, when available, from
+the compiled hot path.
 
 ## Runtime State
 
@@ -65,4 +66,5 @@ Use these APIs when the runtime needs to explain itself:
 - hot-path attachment and freshness
 - metrics and timeline data
 
-`describeService()` exposes the per-service compiled decision, cache state, alias chain, decoration chain, and artifact status.
+`describeService()` exposes the per-service compiled decision, cache state, alias chain, decoration chain, and artifact
+status.

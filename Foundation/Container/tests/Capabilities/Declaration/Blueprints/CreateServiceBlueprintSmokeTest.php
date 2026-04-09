@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 3) . '/bootstrap.php';
 
-use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
 use Avax\Container\DI\Capabilities\Declaration\Blueprints\BlueprintCache;
 use Avax\Container\DI\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
+use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
 use Avax\Container\DI\Capabilities\Resolution\ResolveDependencies;
 use Avax\Container\DI\Capabilities\Resolution\ResolvePlan;
 use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\Attributes\Singleton;
@@ -14,27 +14,23 @@ use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\Attributes\Singleton
 #[Singleton]
 final class BlueprintTarget
 {
-    public function __construct(public DateTimeImmutable $createdAt)
-    {
-    }
-
     #[Inject]
     public stdClass $property;
 
+    public function __construct(public DateTimeImmutable $createdAt) {}
+
     #[Inject]
-    protected function wire(DateTimeImmutable $clock) : void
-    {
-    }
+    protected function wire(DateTimeImmutable $clock) : void {}
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-blueprint-' . uniqid();
-$version = 'blueprint-smoke';
-$factory = new CreateServiceBlueprint(
+$version  = 'blueprint-smoke';
+$factory  = new CreateServiceBlueprint(
     new BlueprintCache(cacheDir: $cacheDir, cacheVersion: $version),
     new ResolveDependencies()
 );
-$first = $factory->createFor(BlueprintTarget::class);
-$second = $factory->createFor(BlueprintTarget::class);
+$first    = $factory->createFor(BlueprintTarget::class);
+$second   = $factory->createFor(BlueprintTarget::class);
 $reloaded = (new CreateServiceBlueprint(
     new BlueprintCache(cacheDir: $cacheDir, cacheVersion: $version),
     new ResolveDependencies()

@@ -6,16 +6,12 @@ require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 
-final class WorkerSharedService
-{
-}
+final class WorkerSharedService {}
 
-final class WorkerScopedService
-{
-}
+final class WorkerScopedService {}
 
-$cacheDir = sys_get_temp_dir() . '/container-worker-lifecycle-' . uniqid();
-$version = 'worker-lifecycle';
+$cacheDir  = sys_get_temp_dir() . '/container-worker-lifecycle-' . uniqid();
+$version   = 'worker-lifecycle';
 $container = makeTestContainer(CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: $version,

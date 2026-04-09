@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 // Load composer autoloader FIRST
-require_once dirname(__DIR__).'/vendor/autoload.php';
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 use Avax\Container\Core\AppFactory;
 use Avax\Container\Providers\Auth\AuthenticationServiceProvider;
@@ -34,8 +34,8 @@ $providers = [
     HttpClientServiceProvider::class,
 ];
 
-$routes = dirname(__DIR__).'/Presentation/HTTP/routes/web.routes.php';
-$cacheDir = dirname(__DIR__).'/storage/cache';
+$routes   = dirname(__DIR__) . '/Presentation/HTTP/routes/web.routes.php';
+$cacheDir = dirname(__DIR__) . '/storage/cache';
 
 return AppFactory::http(
     providers: $providers,

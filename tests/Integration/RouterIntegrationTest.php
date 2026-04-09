@@ -58,6 +58,21 @@ class RouterIntegrationTest extends TestCase
         $this->assertStringContainsString(needle: 'text/plain', haystack: $response->getHeaderLine(name: 'Content-Type'));
     }
 
+    private function createRequest(string $method, string $path) : Request
+    {
+        $uri = UriBuilder::createFromString(uri: "http://localhost{$path}");
+
+        return new Request(
+            serverParams: ['REQUEST_METHOD' => $method],
+            uri         : $uri
+        );
+    }
+
+    private function getRouter()
+    {
+        return $this->app->getContainer()->get(RouterRuntimeInterface::class);
+    }
+
     /**
      * @test
      */
@@ -209,28 +224,14 @@ class RouterIntegrationTest extends TestCase
             HttpClientServiceProvider::class,
         ];
 
-        $routes = dirname(__DIR__, 2) . '/Presentation/HTTP/routes/web.routes.php';
+        $routes   = dirname(__DIR__, 2) . '/Presentation/HTTP/routes/web.routes.php';
         $cacheDir = dirname(__DIR__, 2) . '/storage/cache';
 
         $this->app = AppFactory::http(
             providers: $providers,
-            routes: $routes,
-            cacheDir: $cacheDir,
-            debug: true
-        );
-    }
-
-    private function getRouter()
-    {
-        return $this->app->getContainer()->get(RouterRuntimeInterface::class);
-    }
-
-    private function createRequest(string $method, string $path): Request
-    {
-        $uri = UriBuilder::createFromString(uri: "http://localhost{$path}");
-        return new Request(
-            serverParams: ['REQUEST_METHOD' => $method],
-            uri: $uri
+            routes   : $routes,
+            cacheDir : $cacheDir,
+            debug    : true
         );
     }
 }

@@ -35,8 +35,10 @@ The target container reads flow-first:
 
 - authored registration truth: `src/Capabilities/Declaration/Bindings/ServiceRegistry.php`
 - authored ownership truth: `src/Capabilities/Declaration/Ownership/RegistrationMetadata.php`
-- generated compile truth: `src/Capabilities/Composition/Compilation/CompileContainer.php` plus `src/Capabilities/Composition/Compilation/ArtifactMetadata.php`
-- disposable runtime truth: `src/Capabilities/Resolution/ServiceResolver.php`, `src/Capabilities/Runtime/ServicePool.php`, `src/Capabilities/Runtime/Scopes/ScopeStore.php`
+- generated compile truth: `src/Capabilities/Composition/Compilation/CompileContainer.php` plus
+  `src/Capabilities/Composition/Compilation/ArtifactMetadata.php`
+- disposable runtime truth: `src/Capabilities/Resolution/ServiceResolver.php`,
+  `src/Capabilities/Runtime/ServicePool.php`, `src/Capabilities/Runtime/Scopes/ScopeStore.php`
 
 Compiled artifacts remain derived outputs only.
 
@@ -53,7 +55,8 @@ Compiled artifacts remain derived outputs only.
 
 Canonical local checks for this wave:
 
-- lint: `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`
+- lint:
+  `docker run --rm -v "$PWD:/app" -w /app php:8.3-cli sh -lc "find . -name '*.php' -not -path './.agents/*' -print0 | xargs -0 -n1 php -l"`
 - smoke suite: `./tests/run-smoke-tests.sh`
 - diagnostics contracts: `./tests/check-diagnostics-contracts.sh`
 - benchmark guard: `./tests/check-benchmarks.sh`

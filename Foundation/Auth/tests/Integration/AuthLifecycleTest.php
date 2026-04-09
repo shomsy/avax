@@ -4,44 +4,27 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Integration;
 
-use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Auth;
-use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\Register\RegistrationData;
-use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
-use Mockery;
 use Exception;
+use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Integration test covering the full user lifecycle.
- * 
+ *
  * Banal: Testing the whole system together.
  */
 class AuthLifecycleTest extends TestCase
 {
-    private Auth $auth;
-    private InMemoryUserSource $userSource;
+    private Auth                 $auth;
+    private InMemoryUserSource   $userSource;
     private JwtIdentityInterface $jwtIdentity;
-
-    protected function setUp() : void
-    {
-        $this->userSource = new InMemoryUserSource();
-        $this->jwtIdentity = Mockery::mock(JwtIdentityInterface::class);
-        $identity = new Identity(jwtIdentity: $this->jwtIdentity);
-
-        $this->auth = Auth::configuration()
-            ->forUser(userSource: $this->userSource)
-            ->withIdentity(identity: $identity)
-            ->ready();
-    }
-
-    protected function tearDown() : void
-    {
-        Mockery::close();
-    }
 
     /**
      * @throws Exception
@@ -50,11 +33,11 @@ class AuthLifecycleTest extends TestCase
     {
         // 1. Register
         $regData = new RegistrationData(
-            email: 'integration@test.com',
+            email   : 'integration@test.com',
             username: 'itest',
             password: 'initial-password'
         );
-        $user = $this->auth->register(data: $regData);
+        $user    = $this->auth->register(data: $regData);
         $this->assertEquals(expected: 'integration@test.com', actual: $user->getEmail()->value);
 
         // 2. Login
@@ -66,7 +49,7 @@ class AuthLifecycleTest extends TestCase
         // 3. Change Password
         $cpData = new ChangePasswordData(
             currentPassword: 'initial-password',
-            newPassword: 'new-secure-password'
+            newPassword    : 'new-secure-password'
         );
         $this->auth->changePassword(user: $loggedInUser, data: $cpData);
 
@@ -107,5 +90,22 @@ class AuthLifecycleTest extends TestCase
         $this->expectException(exception: Exception::class);
         $this->expectExceptionMessage(message: 'Invalid credentials.');
         $this->auth->login(credentials: new Credentials(identifier: 'login@fail.com', password: 'WRONG'));
+    }
+
+    protected function setUp() : void
+    {
+        $this->userSource  = new InMemoryUserSource();
+        $this->jwtIdentity = Mockery::mock(JwtIdentityInterface::class);
+        $identity          = new Identity(jwtIdentity: $this->jwtIdentity);
+
+        $this->auth = Auth::configuration()
+            ->forUser(userSource: $this->userSource)
+            ->withIdentity(identity: $identity)
+            ->ready();
+    }
+
+    protected function tearDown() : void
+    {
+        Mockery::close();
     }
 }

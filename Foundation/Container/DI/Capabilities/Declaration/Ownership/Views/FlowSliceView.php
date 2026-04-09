@@ -9,6 +9,4 @@ use Avax\Container\DI\ContextContainer;
 /**
  * Logical flow-scoped view over the assembled container.
  */
-final readonly class FlowSliceView extends ContextContainer
-{
-}
+final readonly class FlowSliceView extends ContextContainer {}

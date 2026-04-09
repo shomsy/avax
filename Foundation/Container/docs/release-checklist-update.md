@@ -7,51 +7,51 @@ This document provides artifacts for final closure after Codex implementation of
 ### Slice View Features
 
 - [ ] AC-101: Slice-local visibility enforced through real slice views
-  - [ ] `debugGraph(sliceId)` filters to specific slice
-  - [ ] `validate([sliceIds])` validates only specified slices
-  - [ ] Cross-slice access violations detected and reported
-  - [ ] Slice manifest available in diagnostics output
+    - [ ] `debugGraph(sliceId)` filters to specific slice
+    - [ ] `validate([sliceIds])` validates only specified slices
+    - [ ] Cross-slice access violations detected and reported
+    - [ ] Slice manifest available in diagnostics output
 
 - [ ] AC-102: Capability exports/imports explicit and diagnosable
-  - [ ] `export()` marks service as available to importers
-  - [ ] `import(capabilityId)` declares slice dependency
-  - [ ] `describeService()` shows imports/exports arrays
-  - [ ] Cross-slice violations include consumer AND provider in message
+    - [ ] `export()` marks service as available to importers
+    - [ ] `import(capabilityId)` declares slice dependency
+    - [ ] `describeService()` shows imports/exports arrays
+    - [ ] Cross-slice violations include consumer AND provider in message
 
 - [ ] AC-105: Graph artifacts exportable
-  - [ ] `debugGraph()` returns JSON-serializable structure
-  - [ ] `compileReport()` includes graph snapshot
-  - [ ] `runtimeReport()` includes live graph state
+    - [ ] `debugGraph()` returns JSON-serializable structure
+    - [ ] `compileReport()` includes graph snapshot
+    - [ ] `runtimeReport()` includes live graph state
 
 ### Pooled Lifetime Features
 
 - [ ] AC-103: Pooled lifetime first-class, safe, benchmarked, explainable
-  - [ ] `pooled()` registration works
-  - [ ] `maxPoolSize()` configures pool limit
-  - [ ] `onOverflow()` configures overflow behavior
-  - [ ] `resetWith()` declares reset behavior
-  - [ ] `resettable()` uses class reset() method
-  - [ ] Unsafe usage produces validation warnings
-  - [ ] Benchmarks show reuse efficiency
+    - [ ] `pooled()` registration works
+    - [ ] `maxPoolSize()` configures pool limit
+    - [ ] `onOverflow()` configures overflow behavior
+    - [ ] `resetWith()` declares reset behavior
+    - [ ] `resettable()` uses class reset() method
+    - [ ] Unsafe usage produces validation warnings
+    - [ ] Benchmarks show reuse efficiency
 
 ### Supporting Features
 
 - [ ] AC-106: Structural diff explains ownership and dependency changes
-  - [ ] Slice manifests in debug output
-  - [ ] Ownership metadata in compile artifacts
+    - [ ] Slice manifests in debug output
+    - [ ] Ownership metadata in compile artifacts
 
 - [ ] AC-110: Policy engine can warn/fail on architectural anti-patterns
-  - [ ] Shared captures scoped detection
-  - [ ] Disposable transient detection
-  - [ ] Duplicate concept detection
-  - [ ] Cyclic dependency detection
-  - [ ] Unexported cross-slice access detection
+    - [ ] Shared captures scoped detection
+    - [ ] Disposable transient detection
+    - [ ] Duplicate concept detection
+    - [ ] Cyclic dependency detection
+    - [ ] Unexported cross-slice access detection
 
 - [ ] AC-111: Docs and diagnostics cover every new capability
-  - [ ] Slice view contracts documented
-  - [ ] Pooled lifetime contracts documented
-  - [ ] Diagnostics outputs documented
-  - [ ] Policy rules documented
+    - [ ] Slice view contracts documented
+    - [ ] Pooled lifetime contracts documented
+    - [ ] Diagnostics outputs documented
+    - [ ] Policy rules documented
 
 ## Evidence Checklist
 
@@ -121,7 +121,8 @@ This document provides artifacts for final closure after Codex implementation of
 
 ### New Features
 
-- **Slice Views**: Logical projections of container service graph filtered by slice (flow, capability, configuration, foundation)
+- **Slice Views**: Logical projections of container service graph filtered by slice (flow, capability, configuration,
+  foundation)
 - **Cross-Slice Access Control**: Explicit export/import contracts enforced at runtime and validation time
 - **Pooled Lifetime**: Reusable pool of service instances with reset-before-reuse semantics
 - **Enhanced Diagnostics**: Slice manifests, ownership reports, pool statistics, policy violations

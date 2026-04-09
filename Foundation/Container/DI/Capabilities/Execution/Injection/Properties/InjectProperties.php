@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Container\DI\Capabilities\Execution\Injection\Properties;
 
+use Avax\Container\DI\Capabilities\Declaration\Blueprints\ServiceBlueprint;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Container\DI\Capabilities\Resolution\ResolveRequest;
-use Avax\Container\DI\Capabilities\Declaration\Blueprints\ServiceBlueprint;
 use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
 use Closure;
 
@@ -28,12 +28,13 @@ final class InjectProperties
      * @throws \Throwable
      */
     public function inject(
-        object $target,
+        object           $target,
         ServiceBlueprint $blueprint,
-        array $overrides,
-        ServiceResolver $resolver,
-        ResolveRequest $request
-    ) : void {
+        array            $overrides,
+        ServiceResolver  $resolver,
+        ResolveRequest   $request
+    ) : void
+    {
         foreach ($blueprint->injectableProperties as $property) {
             $name = $property['name'];
 

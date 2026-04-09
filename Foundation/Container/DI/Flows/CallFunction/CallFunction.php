@@ -19,6 +19,7 @@ final readonly class CallFunction
 
     /**
      * @param array<string, mixed> $parameters
+     *
      * @throws ContainerException
      * @throws ServiceNotFoundException
      */

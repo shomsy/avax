@@ -86,18 +86,18 @@ trait HasJoins
             $first($joinClause);
 
             $clone->state = $clone->state->addJoin(join: new JoinNode(
-                table : $table,
-                type  : $type,
-                clause: $joinClause
-            ));
+                                                             table : $table,
+                                                             type  : $type,
+                                                             clause: $joinClause
+                                                         ));
         } else {
             $clone->state = $clone->state->addJoin(join: new JoinNode(
-                table   : $table,
-                type    : $type,
-                first   : $first,
-                operator: $operator,
-                second  : $second
-            ));
+                                                             table   : $table,
+                                                             type    : $type,
+                                                             first   : $first,
+                                                             operator: $operator,
+                                                             second  : $second
+                                                         ));
         }
 
         return $clone;

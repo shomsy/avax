@@ -7,16 +7,19 @@ This document maps every acceptance criterion to evidence, tests, and validation
 **Criterion**: Slice views filter services based on ownership metadata and import/export declarations
 
 **Evidence**:
+
 - `debugGraph('flow.login')` returns only flow.login's services + imported capabilities
 - `validate(['flow.login'])` reports cross-slice access violations
 - `describeService()['slice']` returns slice metadata
 
 **Tests**:
+
 - `SliceVisibilitySmokeTest.php` - tests slice filtering
 - `ExportImportDiagnosticsSmokeTest.php` - tests import/export
 - `SliceValidationSmokeTest.php` - tests slice validation
 
 **Validation**:
+
 - PHP lint passes
 - Smoke tests pass
 - Diagnostics contract validation passes
@@ -28,15 +31,18 @@ This document maps every acceptance criterion to evidence, tests, and validation
 **Criterion**: Every cross-slice access is traceable to explicit export/import declarations
 
 **Evidence**:
+
 - `describeService()['imports']` array shows declared imports
 - `describeService()['exports']` array shows declared exports
 - Cross-slice violations include both consumer and provider in error message
 
 **Tests**:
+
 - `ExportImportDiagnosticsSmokeTest.php` - tests explicit export/import
 - `OwnershipCompositionSmokeTest.php` - tests ownership metadata
 
 **Validation**:
+
 - PHP lint passes
 - Smoke tests pass
 - Cross-slice errors are actionable
@@ -48,21 +54,25 @@ This document maps every acceptance criterion to evidence, tests, and validation
 **Criterion**: Pooled lifetime is a documented, validated, benchmarked lifetime with clear safety rules
 
 **Evidence**:
+
 - `pooled()` registration works with config
 - `resetWith()` or `ResettableInterface` required
 - Unsafe usage produces validation warnings
 - Benchmarks show reuse efficiency
 
 **Tests**:
+
 - `PooledLifetimeSmokeTest.php` - tests pool registration and reset
 - `PooledDiagnosticsSmokeTest.php` - tests pool diagnostics
 
 **Benchmarks**:
+
 - `bench_pooled_reuse` - reuse pooled instance
 - `bench_pooled_reset` - reset and reuse
 - Expected: pooled_reuse/transient_create < 0.3
 
 **Validation**:
+
 - PHP lint passes
 - Smoke tests pass
 - Benchmarks pass with expected ratios
@@ -74,6 +84,7 @@ This document maps every acceptance criterion to evidence, tests, and validation
 **Criterion**: Async boundaries have explicit contracts if/when implemented
 
 **Evidence**:
+
 - Document in `async-boundaries.md`
 - Marked as future work
 - Current state: synchronous-only
@@ -89,14 +100,17 @@ This document maps every acceptance criterion to evidence, tests, and validation
 **Criterion**: Graph can be exported in JSON and text formats
 
 **Evidence**:
+
 - `debugGraph()` returns JSON-serializable structure
 - `compileReport()` includes graph snapshot
 - `runtimeReport()` includes live graph state
 
 **Tests**:
+
 - `GraphExportSmokeTest.php` - tests export formats
 
 **Validation**:
+
 - JSON output is valid
 - Text output is readable
 - Machine-readable exports parse correctly
@@ -108,14 +122,17 @@ This document maps every acceptance criterion to evidence, tests, and validation
 **Criterion**: Structural diff includes ownership and dependency changes
 
 **Evidence**:
+
 - `debugGraph()['slices']` shows slice manifests
 - Compile report includes derived ownership maps
 - Structural diff includes slice changes
 
 **Tests**:
+
 - `PolicyAndStructureDiffSmokeTest.php` - tests structure diff
 
 **Validation**:
+
 - Slice manifests present in output
 - Ownership metadata preserved in compile
 
@@ -126,6 +143,7 @@ This document maps every acceptance criterion to evidence, tests, and validation
 **Criterion**: AOT mode is supported and benchmarked if implemented
 
 **Evidence**:
+
 - Compile mode docs exist in `build-mode.md`, `compile-artifact-model.md`
 - Current: compiled container is implemented
 
@@ -140,6 +158,7 @@ This document maps every acceptance criterion to evidence, tests, and validation
 **Criterion**: Static analysis hints are available if implemented
 
 **Evidence**:
+
 - Policy engine docs exist in `policy-engine.md`
 - Current: validation catches anti-patterns
 
@@ -152,6 +171,7 @@ This document maps every acceptance criterion to evidence, tests, and validation
 **Criterion**: Graph pruning follows safety rules if implemented
 
 **Evidence**:
+
 - Dead registration detection exists
 - Validation reports unreachable services
 - Current: dead registrations are diagnostic only
@@ -165,13 +185,16 @@ This document maps every acceptance criterion to evidence, tests, and validation
 **Criterion**: Policy engine detects and reports anti-patterns
 
 **Evidence**:
+
 - `validate()['policy']` returns policy violations
 - Detection for: shared_captures_scoped, disposable_transient, duplicate_concept, cyclic_dependency
 
 **Tests**:
+
 - `PolicyEnforcementSmokeTest.php` - tests anti-pattern detection
 
 **Validation**:
+
 - All documented patterns detected
 - Error messages are actionable
 
@@ -182,6 +205,7 @@ This document maps every acceptance criterion to evidence, tests, and validation
 **Criterion**: Every new capability is documented
 
 **Evidence**:
+
 - `slice-view-contracts.md` - slice views
 - `pooled-lifetime-contracts.md` - pooled lifetime
 - `public-contract-matrix-update.md` - API surface
@@ -190,6 +214,7 @@ This document maps every acceptance criterion to evidence, tests, and validation
 **Tests**: N/A (documentation)
 
 **Validation**:
+
 - All new surfaces documented
 - All diagnostics outputs documented
 
@@ -207,18 +232,18 @@ This document maps every acceptance criterion to evidence, tests, and validation
 
 ## Test Location Reference
 
-| Criterion | Test File | Location |
-|:----------|:----------|:---------|
-| AC-101 | SliceVisibilitySmokeTest.php | `tests/Flows/SliceView/` |
-| AC-101 | ExportImportDiagnosticsSmokeTest.php | `tests/Flows/SliceView/` |
-| AC-101 | SliceValidationSmokeTest.php | `tests/Flows/SliceView/` |
-| AC-102 | ExportImportDiagnosticsSmokeTest.php | `tests/Flows/SliceView/` |
-| AC-102 | OwnershipCompositionSmokeTest.php | `tests/Flows/ResolveService/` |
-| AC-103 | PooledLifetimeSmokeTest.php | `tests/Flows/RegisterServices/` |
-| AC-103 | PooledLifetimeSmokeTest.php | `tests/Flows/ResolveService/` |
-| AC-105 | GraphToolingSmokeTest.php | `tests/Capabilities/Diagnostics/Observability/` |
-| AC-106 | PolicyAndStructureDiffSmokeTest.php | `tests/Flows/ResolveService/` |
-| AC-110 | PolicyAndStructureDiffSmokeTest.php | `tests/Flows/ResolveService/` |
+| Criterion | Test File                            | Location                                        |
+|:----------|:-------------------------------------|:------------------------------------------------|
+| AC-101    | SliceVisibilitySmokeTest.php         | `tests/Flows/SliceView/`                        |
+| AC-101    | ExportImportDiagnosticsSmokeTest.php | `tests/Flows/SliceView/`                        |
+| AC-101    | SliceValidationSmokeTest.php         | `tests/Flows/SliceView/`                        |
+| AC-102    | ExportImportDiagnosticsSmokeTest.php | `tests/Flows/SliceView/`                        |
+| AC-102    | OwnershipCompositionSmokeTest.php    | `tests/Flows/ResolveService/`                   |
+| AC-103    | PooledLifetimeSmokeTest.php          | `tests/Flows/RegisterServices/`                 |
+| AC-103    | PooledLifetimeSmokeTest.php          | `tests/Flows/ResolveService/`                   |
+| AC-105    | GraphToolingSmokeTest.php            | `tests/Capabilities/Diagnostics/Observability/` |
+| AC-106    | PolicyAndStructureDiffSmokeTest.php  | `tests/Flows/ResolveService/`                   |
+| AC-110    | PolicyAndStructureDiffSmokeTest.php  | `tests/Flows/ResolveService/`                   |
 
 ---
 

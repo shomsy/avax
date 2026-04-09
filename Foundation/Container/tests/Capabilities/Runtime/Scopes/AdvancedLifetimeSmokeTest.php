@@ -5,9 +5,9 @@ declare(strict_types=1);
 require_once dirname(__DIR__, 3) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Container\DI\Capabilities\Runtime\Scopes\DisposableInterface;
 use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
-use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 
 final class AdvancedLifetimeSequence
 {
@@ -52,41 +52,29 @@ final class SharedDisposableService implements DisposableInterface
     }
 }
 
-final class PlainTransientDependency
-{
-}
+final class PlainTransientDependency {}
 
 final class SharedCapturesTransientService
 {
-    public function __construct(public PlainTransientDependency $dependency)
-    {
-    }
+    public function __construct(public PlainTransientDependency $dependency) {}
 }
 
 final class SharedCapturesRequestScopedService
 {
-    public function __construct(public RequestScopedDisposableService $dependency)
-    {
-    }
+    public function __construct(public RequestScopedDisposableService $dependency) {}
 }
 
-final class InvalidDisposableService
-{
-}
+final class InvalidDisposableService {}
 
 final class InvalidTransientDisposableService implements DisposableInterface
 {
-    public function dispose() : void
-    {
-    }
+    public function dispose() : void {}
 }
 
-final class JobScopedService
-{
-}
+final class JobScopedService {}
 
-$cacheDir = sys_get_temp_dir() . '/container-advanced-lifetimes-' . uniqid('', true);
-$config = CreateContainerConfig::create(cacheDir: $cacheDir);
+$cacheDir  = sys_get_temp_dir() . '/container-advanced-lifetimes-' . uniqid('', true);
+$config    = CreateContainerConfig::create(cacheDir: $cacheDir);
 $container = makeTestContainer($config);
 
 $container->singleton(WarmSingletonService::class, WarmSingletonService::class)->warm();
@@ -101,10 +89,10 @@ $container->bind(InvalidTransientDisposableService::class, InvalidTransientDispo
 $container->scoped(JobScopedService::class, JobScopedService::class)->job();
 
 $issues = implode("\n", $container->validate([
-    SharedCapturesTransientService::class,
-    SharedCapturesRequestScopedService::class,
-    InvalidDisposableService::class,
-]));
+                                                 SharedCapturesTransientService::class,
+                                                 SharedCapturesRequestScopedService::class,
+                                                 InvalidDisposableService::class,
+                                             ]));
 
 assertTrue(
     str_contains($issues, 'captures transient dependency [' . PlainTransientDependency::class . ']'),
@@ -136,12 +124,12 @@ assertThrows(
  * @throws \Psr\Container\ContainerExceptionInterface
  * @throws \Psr\Container\NotFoundExceptionInterface
  */ ContainerException::class,
-    static fn() => $container->get(RequestScopedDisposableService::class),
+    static fn () => $container->get(RequestScopedDisposableService::class),
     'Request-scoped services should require an active request scope.'
 );
 
 $container->openScope(ScopeKind::REQUEST, 'request-1');
-$requestFirst = $container->get(RequestScopedDisposableService::class);
+$requestFirst  = $container->get(RequestScopedDisposableService::class);
 $requestSecond = $container->get(RequestScopedDisposableService::class);
 assertSame($requestFirst, $requestSecond, 'Request-scoped services should reuse the same instance inside one request scope.');
 $container->closeScope(ScopeKind::REQUEST);
@@ -153,12 +141,12 @@ assertThrows(
  * @throws \Psr\Container\ContainerExceptionInterface
  * @throws \Psr\Container\NotFoundExceptionInterface
  */ ContainerException::class,
-    static fn() => $container->get(JobScopedService::class),
+    static fn () => $container->get(JobScopedService::class),
     'Job-scoped services should require an active job scope.'
 );
 
 $container->openScope(ScopeKind::JOB, 'job-1');
-$jobFirst = $container->get(JobScopedService::class);
+$jobFirst  = $container->get(JobScopedService::class);
 $jobSecond = $container->get(JobScopedService::class);
 assertSame($jobFirst, $jobSecond, 'Job-scoped services should reuse the same instance inside one job scope.');
 $container->closeScope(ScopeKind::JOB);

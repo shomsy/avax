@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax;
 
+use InvalidArgumentException;
 use JetBrains\PhpStorm\NoReturn;
 use RuntimeException;
 
@@ -77,7 +78,7 @@ final class DumpDebugger
      *
      * @return string Complete HTML header markup with embedded styles and JavaScript
      *
-     * @throws \InvalidArgumentException When a file path is empty or the line number is negative
+     * @throws InvalidArgumentException When a file path is empty or the line number is negative
      *
      * @since 1.0.0
      */

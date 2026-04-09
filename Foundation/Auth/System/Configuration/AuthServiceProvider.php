@@ -18,6 +18,7 @@ use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGenerator;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Avax\Container\Providers\ServiceProvider;
+use RuntimeException;
 
 /**
  * Root service provider for the Auth component.
@@ -66,7 +67,7 @@ final class AuthServiceProvider extends ServiceProvider
                     : null;
 
                 if ($sessionIdentity === null && $jwtIdentity === null) {
-                    throw new \RuntimeException(
+                    throw new RuntimeException(
                         message: 'AuthServiceProvider requires a SessionIdentityInterface or JwtIdentityInterface binding.'
                     );
                 }

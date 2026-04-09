@@ -12,7 +12,10 @@ declare(strict_types=1);
  * Uses PhpBench framework for accurate micro-benchmarking.
  */
 
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
+use Avax\HTTP\Router\Routing\ReflectionCache;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use Avax\HTTP\Router\Matching\RouteMatcherInterface;
@@ -42,8 +45,8 @@ class RouterBenchmark
      * @Revs(1000)
      * @Iterations(10)
      * @OutputTimeUnit("milliseconds")
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws DuplicateRouteException
+     * @throws ReservedRouteNameException
      */
     public function benchSimpleRouteRegistration(): void
     {
@@ -62,8 +65,8 @@ class RouterBenchmark
      * @Revs(100)
      * @Iterations(5)
      * @OutputTimeUnit("milliseconds")
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws DuplicateRouteException
+     * @throws ReservedRouteNameException
      */
     public function benchComplexRouteRegistration(): void
     {
@@ -88,7 +91,7 @@ class RouterBenchmark
      * @Revs(10000)
      * @Iterations(10)
      * @OutputTimeUnit("microseconds")
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
+     * @throws DuplicateRouteException
      */
     public function benchRouteLookupByName(): void
     {
@@ -111,8 +114,8 @@ class RouterBenchmark
      * @Revs(1000)
      * @Iterations(5)
      * @OutputTimeUnit("milliseconds")
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws DuplicateRouteException
+     * @throws ReservedRouteNameException
      */
     public function benchRouteCollectionStatistics(): void
     {
@@ -144,8 +147,8 @@ class RouterBenchmark
      * @Revs(100)
      * @Iterations(3)
      * @OutputTimeUnit("milliseconds")
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws DuplicateRouteException
+     * @throws ReservedRouteNameException
      */
     public function benchLargeScaleRouteRegistration(): void
     {
@@ -222,8 +225,8 @@ class RouterBenchmark
      * @Revs(100)
      * @Iterations(3)
      * @OutputTimeUnit("milliseconds")
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws DuplicateRouteException
+     * @throws ReservedRouteNameException
      */
     public function benchDomainAwareRouting(): void
     {
@@ -283,7 +286,7 @@ class RouterBenchmark
      * @Revs(100)
      * @Iterations(3)
      * @OutputTimeUnit("milliseconds")
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function benchCacheSerialization(): void
     {
@@ -324,11 +327,11 @@ class RouterBenchmark
         };
 
         // Benchmark cached reflection operations
-        \Avax\HTTP\Router\Routing\ReflectionCache::getClass(className: $testClass::class);
-        \Avax\HTTP\Router\Routing\ReflectionCache::getMethod(classOrObject: $testClass, methodName: 'testMethod');
-        \Avax\HTTP\Router\Routing\ReflectionCache::getProperty(classOrObject: $testClass, propertyName: 'testProperty');
-        \Avax\HTTP\Router\Routing\ReflectionCache::hasMethod(classOrObject: $testClass, methodName: 'testMethod');
-        \Avax\HTTP\Router\Routing\ReflectionCache::isMethodPublic(classOrObject: $testClass, methodName: 'testMethod');
+        ReflectionCache::getClass(className: $testClass::class);
+        ReflectionCache::getMethod(classOrObject: $testClass, methodName: 'testMethod');
+        ReflectionCache::getProperty(classOrObject: $testClass, propertyName: 'testProperty');
+        ReflectionCache::hasMethod(classOrObject: $testClass, methodName: 'testMethod');
+        ReflectionCache::isMethodPublic(classOrObject: $testClass, methodName: 'testMethod');
     }
 
     /**

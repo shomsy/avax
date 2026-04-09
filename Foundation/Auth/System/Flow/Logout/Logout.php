@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Logout;
 
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use SensitiveParameter;
 
 /**
  * High-level orchestrator for the logout process.
@@ -14,7 +15,7 @@ use Avax\Auth\System\Capability\Identity\IdentityInterface;
 final readonly class Logout
 {
     public function __construct(
-        #[\SensitiveParameter] private IdentityInterface $identity
+        #[SensitiveParameter] private IdentityInterface $identity
     ) {}
 
     public function execute() : void

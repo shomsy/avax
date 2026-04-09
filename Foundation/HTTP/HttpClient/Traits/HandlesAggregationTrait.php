@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\HttpClient\Traits;
 
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Promise\PromiseInterface;
 
 trait HandlesAggregationTrait
@@ -14,8 +16,8 @@ trait HandlesAggregationTrait
      * @param  array  $urls  The list of URLs to request data from.
      * @return PromiseInterface A promise that resolves with the aggregated results.
      *
-     * @throws \Exception
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws Exception
+     * @throws GuzzleException
      */
     public function aggregateDataAsynchronously(array $urls): PromiseInterface
     {

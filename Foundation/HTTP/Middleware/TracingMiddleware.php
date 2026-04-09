@@ -8,6 +8,9 @@ use Avax\HTTP\Request\Request;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
+use Random\RandomException;
+use SensitiveParameter;
+use Throwable;
 
 class TracingMiddleware implements MiddlewareInterface
 {
@@ -21,14 +24,14 @@ class TracingMiddleware implements MiddlewareInterface
 
     public function __construct(
         private LoggerInterface $logger,
-        #[\SensitiveParameter] private string $requestIdHeader = 'X-Request-ID'
+        #[SensitiveParameter] private string $requestIdHeader = 'X-Request-ID'
     ) {
         $this->startTime = microtime(true);
     }
 
     /**
-     * @throws \Throwable
-     * @throws \Random\RandomException
+     * @throws Throwable
+     * @throws RandomException
      */
     public function process(ServerRequestInterface $request, callable $next): ResponseInterface
     {
@@ -68,7 +71,7 @@ class TracingMiddleware implements MiddlewareInterface
             // Add request ID to response
             return $response->withHeader($this->requestIdHeader, $requestId);
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $latency = (microtime(true) - $startTime) * 1000;
 
             $this->logger->error(message: 'Request failed', context: [
@@ -99,7 +102,7 @@ class TracingMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     private function generateRequestId(): string
     {

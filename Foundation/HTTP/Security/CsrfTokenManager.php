@@ -7,6 +7,8 @@ namespace Avax\HTTP\Security;
 use Avax\HTTP\Session\Session;
 use Exception;
 use Psr\Log\LoggerInterface;
+use Random\RandomException;
+use SensitiveParameter;
 
 /**
  * The `CsrfTokenManager` is a high-level component that manages CSRF tokens
@@ -34,8 +36,8 @@ final readonly class CsrfTokenManager
      * @param LoggerInterface $logger  Responsible for logging important events.
      */
     public function __construct(
-        #[\SensitiveParameter] private Session $session,
-        private LoggerInterface                $logger
+        #[SensitiveParameter] private Session $session,
+        private LoggerInterface               $logger
     ) {}
 
     /**
@@ -88,12 +90,12 @@ final readonly class CsrfTokenManager
         return $tokens;
     }
 
-    private function storeTokens(#[\SensitiveParameter] array $tokens) : void
+    private function storeTokens(#[SensitiveParameter] array $tokens) : void
     {
         $this->session->put(key: self::SESSION_KEY, value: $tokens);
     }
 
-    private function pruneExpiredTokens(#[\SensitiveParameter] array $tokens) : array
+    private function pruneExpiredTokens(#[SensitiveParameter] array $tokens) : array
     {
         $currentTime = time();
 
@@ -104,7 +106,7 @@ final readonly class CsrfTokenManager
     }
 
     /**
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     private function generateToken() : string
     {
@@ -112,9 +114,9 @@ final readonly class CsrfTokenManager
     }
 
     /**
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
-    public function validateToken(#[\SensitiveParameter] string|null $token) : bool
+    public function validateToken(#[SensitiveParameter] string|null $token) : bool
     {
         $tokens = $this->getTokens();
 

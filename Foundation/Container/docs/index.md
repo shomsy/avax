@@ -32,19 +32,16 @@ This component has one canonical story:
 - benchmark comparison: [`../tests/run-benchmark-comparison.sh`](../tests/run-benchmark-comparison.sh)
 - peer benchmark matrix: [`../tests/run-peer-benchmark-matrix.sh`](../tests/run-peer-benchmark-matrix.sh)
 - peer benchmark gate: [`../tests/check-peer-benchmarks.sh`](../tests/check-peer-benchmarks.sh)
+- convergence map: [`architecture-convergence.md`](./architecture-convergence.md)
 
 Canonical source tree:
 
-- `Container.php`
-- `ContainerInterface.php`
-- `DependencyInjection/Flows/`
-- `DependencyInjection/Dependencies/`
-- `DependencyInjection/Injection/`
-- `DependencyInjection/Scopes/`
-- `Configuration/`
-- `Observability/`
-- `Errors/`
-- `Foundation/`
+- `src/Container.php`
+- `src/ContainerInterface.php`
+- `src/ContextContainer.php`
+- `src/Flows/`
+- `src/Capabilities/`
+- `src/Foundation/`
 - `docs/`
 
 Local validation:

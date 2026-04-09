@@ -9,6 +9,7 @@ use Avax\Database\QueryBuilder\Core\Grammar\GrammarInterface;
 use Avax\Migrations\Design\Table\Blueprint;
 use Closure;
 use RuntimeException;
+use Throwable;
 
 /**
  * Base migration class providing fluent schema building methods (DSL).
@@ -47,7 +48,7 @@ abstract class BaseMigration
     /**
      * Create a new table in the database.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function create(string $table, Closure $callback) : void
     {
@@ -94,7 +95,7 @@ abstract class BaseMigration
     /**
      * Modify an existing table.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function table(string $table, Closure $callback) : void
     {
@@ -112,7 +113,7 @@ abstract class BaseMigration
     /**
      * Drop a table if it exists.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function dropIfExists(string $table) : void
     {
@@ -122,7 +123,7 @@ abstract class BaseMigration
     /**
      * Drop a table.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function drop(string $table) : void
     {

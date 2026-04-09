@@ -11,7 +11,10 @@ declare(strict_types=1);
 
 namespace Avax\View;
 
+use Avax\Container\Core\Exceptions\FoundationContainerException;
 use eftec\bladeone\BladeOne;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class TemplateEngine extends BladeOne
 {
@@ -27,9 +30,9 @@ class TemplateEngine extends BladeOne
      * @param  string  $compiledPath  The path where compiled templates are stored.
      * @param  int  $mode  BladeOne mode (e.g., MODE_AUTO).
      *
-     * @throws \Avax\Container\Core\Exceptions\FoundationContainerException
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws FoundationContainerException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __construct(
         string $templatePath,
@@ -59,9 +62,9 @@ class TemplateEngine extends BladeOne
     }
 
     /**
-     * @throws \Avax\Container\Core\Exceptions\FoundationContainerException
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws FoundationContainerException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     private function initializeBaseAssetPath(): void
     {

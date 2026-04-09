@@ -14,8 +14,8 @@ This checklist is the canonical release proof ledger for the component root.
 
 The release proof for deterministic ordering is green only when these pass:
 
-- [`../tests/DependencyInjection/Flows/CreateContainer/DeterministicOrderingSmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/DeterministicOrderingSmokeTest.php)
-- [`../tests/DependencyInjection/Flows/BootProviders/BootProvidersSmokeTest.php`](../tests/DependencyInjection/Flows/BootProviders/BootProvidersSmokeTest.php)
+- [`../tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php`](../tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php)
+- [`../tests/Flows/BootProviders/BootProvidersSmokeTest.php`](../tests/Flows/BootProviders/BootProvidersSmokeTest.php)
 
 They cover:
 
@@ -28,10 +28,10 @@ They cover:
 
 The release proof for artifact compatibility is green only when these pass:
 
-- [`../tests/DependencyInjection/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php)
-- [`../tests/DependencyInjection/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php)
-- [`../tests/DependencyInjection/Flows/CreateContainer/CompiledFreshnessSmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/CompiledFreshnessSmokeTest.php)
-- [`../tests/DependencyInjection/Flows/CreateContainer/CompiledIntegritySmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/CompiledIntegritySmokeTest.php)
+- [`../tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php`](../tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php)
+- [`../tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php`](../tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php)
+- [`../tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php`](../tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php)
+- [`../tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php`](../tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php)
 
 ## Final Claim Gate
 

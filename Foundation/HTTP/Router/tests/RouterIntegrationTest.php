@@ -11,6 +11,7 @@ use Avax\HTTP\Router\Routing\RouteMatcher;
 use Avax\HTTP\Router\Routing\RouteCollection;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Integration stability tests to ensure Router component maintains
@@ -182,7 +183,7 @@ final class RouterIntegrationTest extends TestCase
     private function initializeRouterComponents() : void
     {
         // Create simple router instance for testing
-        $matcher = new DomainAwareMatcher(baseMatcher: new RouteMatcher(logger: $this->createMock(\Psr\Log\LoggerInterface::class)));
+        $matcher = new DomainAwareMatcher(baseMatcher: new RouteMatcher(logger: $this->createMock(LoggerInterface::class)));
         $constraintValidator = new RouteConstraintValidator;
         $this->router = new HttpRequestRouter(constraintValidator: $constraintValidator, matcher: $matcher);
 

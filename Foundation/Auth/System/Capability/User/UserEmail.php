@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\User;
 
+use InvalidArgumentException;
 use Stringable;
 
 /**
@@ -15,7 +16,7 @@ final class UserEmail implements Stringable
         public readonly string $value
     ) {
         if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException(message: "Invalid email format: {$value}");
+            throw new InvalidArgumentException(message: "Invalid email format: {$value}");
         }
     }
 

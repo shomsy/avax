@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Database\QueryBuilder\Core\Builder\Concerns;
 
+use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 use Closure;
 
 /**
@@ -39,7 +40,7 @@ trait HasControlStructures
      * @param callable      $callback The logic to execute if the condition evaluates to false.
      * @param callable|null $default  Optional alternative logic to execute if the condition is true.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasControlStructures The
+     * @return QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasControlStructures The
      *                                                                                                                                      resulting
      *                                                                                                                                      builder
      *                                                                                                                                      instance
@@ -70,7 +71,7 @@ trait HasControlStructures
      * @param callable      $callback  The logic to execute if the condition evaluates to true.
      * @param callable|null $default   Optional alternative logic to execute if the condition is false.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasControlStructures The
+     * @return QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasControlStructures The
      *                                                                                                                                      resulting
      *                                                                                                                                      builder
      *                                                                                                                                      instance
@@ -102,7 +103,7 @@ trait HasControlStructures
      *
      * @param Closure $callback A logic hook receiving the current builder instance.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasControlStructures The
+     * @return QueryBuilder|\Avax\Database\QueryBuilder\Core\Builder\Concerns\HasControlStructures The
      *                                                                                                                                      current
      *                                                                                                                                      builder
      *                                                                                                                                      instance.

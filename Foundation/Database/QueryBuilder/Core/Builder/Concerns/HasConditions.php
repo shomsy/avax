@@ -6,8 +6,10 @@ namespace Avax\Database\QueryBuilder\Core\Builder\Concerns;
 
 use Avax\Database\Query\AST\NestedWhereNode;
 use Avax\Database\Query\AST\WhereNode;
+use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 use Closure;
 use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Trait providing high-level logical filtering (WHERE) capabilities for the QueryBuilder.
@@ -23,9 +25,9 @@ trait HasConditions
      * @param mixed          $operator Comparison operator.
      * @param mixed          $value    Comparison value.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|QueryBuilder
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function orWhere(string|Closure $column, mixed $operator = null, mixed $value = null) : self
     {
@@ -40,9 +42,9 @@ trait HasConditions
      * @param mixed          $value    Comparison value.
      * @param string         $boolean  Logical joiner ('AND' or 'OR').
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|QueryBuilder
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function where(
         string|Closure $column,
@@ -85,7 +87,7 @@ trait HasConditions
      * @param Closure $callback A configuration closure receiving a fresh builder instance.
      * @param string  $boolean  The logical joiner for the entire nested group.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|QueryBuilder A
      *                                                                                                                               fresh,
      *                                                                                                                               cloned
      *                                                                                                                               builder
@@ -96,7 +98,7 @@ trait HasConditions
      *                                                                                                                               logical
      *                                                                                                                               node.
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function whereNested(Closure $callback, string $boolean = 'AND') : self
     {
@@ -125,7 +127,7 @@ trait HasConditions
      * @param string $column The technical field name to check.
      * @param array  $values The collection of allowed data tokens.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|QueryBuilder A
      *                                                                                                                               fresh,
      *                                                                                                                               cloned
      *                                                                                                                               builder
@@ -153,7 +155,7 @@ trait HasConditions
      * @param string|null $boolean The logical joiner ('AND' or 'OR').
      * @param bool        $not     Flag indicating whether to use negative (NOT IN) logic.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|QueryBuilder A
      *                                                                                                                               fresh,
      *                                                                                                                               cloned
      *                                                                                                                               builder
@@ -193,7 +195,7 @@ trait HasConditions
      * @param string|null $boolean The logical joiner ('AND' or 'OR').
      * @param bool        $not     Flag indicating whether to use negative (NOT BETWEEN) logic.
      *
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasConditions|QueryBuilder A
      *                                                                                                                               fresh,
      *                                                                                                                               cloned
      *                                                                                                                               builder

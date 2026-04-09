@@ -8,8 +8,14 @@ use Avax\Auth\Interface\HTTP\Middleware\AuthorizeMiddleware;
 use Avax\Container\Features\Core\Contracts\ContainerInterface;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;
+use Avax\HTTP\Response\Classes\Response;
+use Avax\HTTP\Response\Classes\Stream;
 use Laravel\SerializableClosure\SerializableClosure;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use ReflectionException;
+use Throwable;
 
 /**
  * Class RoutePipeline
@@ -121,9 +127,9 @@ final class RoutePipeline
      *
      * @return ResponseInterface The final HTTP response from the dispatched route.
      *
-     * @throws \ReflectionException If reflection fails during middleware creation.
-     * @throws \Psr\Container\ContainerExceptionInterface If the DI container encounters an issue.
-     * @throws \Psr\Container\NotFoundExceptionInterface If a middleware class cannot be resolved.
+     * @throws ReflectionException If reflection fails during middleware creation.
+     * @throws ContainerExceptionInterface If the DI container encounters an issue.
+     * @throws NotFoundExceptionInterface If a middleware class cannot be resolved.
      */
     public function dispatch(Request $request) : ResponseInterface
     {
@@ -157,10 +163,10 @@ final class RoutePipeline
             );
 
             return $stack($request);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             // Return 500 Response on exceptions
-            return new \Avax\HTTP\Response\Classes\Response(
-                stream: \Avax\HTTP\Response\Classes\Stream::fromString(content: 'Internal Server Error'),
+            return new Response(
+                stream: Stream::fromString(content: 'Internal Server Error'),
                 statusCode: 500
             );
         }

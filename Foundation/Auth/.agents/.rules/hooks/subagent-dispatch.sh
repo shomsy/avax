@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Sub-Agent Dispatcher - Context-Pruned Launcher
-# Usage: ./subagent-dispatch.sh --task "Fix bug" --files "src/app.ts,docs/api.md" --budget "10k"
+# Usage: ./subagent-dispatch.sh --task "Fix bug" --files "DI/app.ts,docs/api.md" --budget "10k"
 
 set -euo pipefail
 

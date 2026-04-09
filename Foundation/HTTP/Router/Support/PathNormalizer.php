@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Support;
 
+use InvalidArgumentException;
+
 /**
  * Normalizes URL paths for consistent route matching.
  *
@@ -34,7 +36,7 @@ final class PathNormalizer
         $path = preg_replace('#/+#', '/', $path);
 
         if ($path === null) {
-            throw new \InvalidArgumentException(message: 'Invalid path format for normalization');
+            throw new InvalidArgumentException(message: 'Invalid path format for normalization');
         }
 
         // Ensure leading slash

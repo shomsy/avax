@@ -1,7 +1,7 @@
 # Glossary
 
-- `Flow Entry`: a root file under `DependencyInjection/Flows/` that owns one public action
-- `Dependency Area`: a noun-based subfolder under `DependencyInjection/Dependencies/` that owns one internal slice of runtime behavior
+- `Flow Entry`: a root file under `src/Flows/<FlowName>/` that owns one public action
+- `Capability Lane`: a noun-based subfolder under `src/Capabilities/` that owns one shared internal work area
 - `Service Registration`: one stored rule that says what an abstract resolves to and how long it lives
 - `Register For Target`: one target-specific override rule for a consumer/need pair
 - `Resolve Request`: one in-flight request for a service id plus overrides and parent chain
@@ -31,7 +31,7 @@
 - `Telemetry`: runtime counters and timeline events emitted by the resolver
 - `Clock`: the neutral time source used by observability
 - `Environment Hook`: a container-owned env lookup such as `Container::env()`
-- `Slice View`: a read-only projection of the container's service graph filtered by a specific slice (flow, capability, configuration, or foundation)
+- `Slice View`: a logical container view over the same runtime filtered by a specific slice (flow, capability, configuration, or foundation)
 - `Root Composition View`: the full container view without filtering; exposes all services
 - `Flow Slice`: a slice category for end-to-end system behavior (e.g., 'flow.login')
 - `Capability Slice`: a slice category for shared abilities that support multiple flows (e.g., 'capability.payments')

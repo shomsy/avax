@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Routing;
 
 use Avax\HTTP\Router\HttpMethod;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use InvalidArgumentException;
 
 /**
@@ -370,7 +371,7 @@ final class RouteBuilder
     /**
      * Finalizes and compiles the route definition.
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function build() : RouteDefinition
     {

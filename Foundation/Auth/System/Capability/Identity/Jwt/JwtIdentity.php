@@ -7,8 +7,11 @@ namespace Avax\Auth\System\Capability\Identity\Jwt;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use InvalidArgumentException;
+use SensitiveParameter;
 
 /**
  * JWT identity implementation within the Auth System.
@@ -19,16 +22,16 @@ final class JwtIdentity implements JwtIdentityInterface
     private string|null $currentToken = null;
 
     public function __construct(
-        private UserSourceInterface           $userSource,
-        #[\SensitiveParameter] private string $secret,
-        private string                        $algorithm = 'HS256',
-        private int                           $tokenExpiry = 3600
+        private UserSourceInterface          $userSource,
+        #[SensitiveParameter] private string $secret,
+        private string                       $algorithm = 'HS256',
+        private int                          $tokenExpiry = 3600
     ) {}
 
     public function issue(User $user) : string
     {
         if (! $user->isActive()) {
-            throw new \InvalidArgumentException(message: 'Inactive users cannot be authenticated.');
+            throw new InvalidArgumentException(message: 'Inactive users cannot be authenticated.');
         }
 
         $payload = [
@@ -46,7 +49,7 @@ final class JwtIdentity implements JwtIdentityInterface
         return $token;
     }
 
-    public function validate(#[\SensitiveParameter] string $token) : User|null
+    public function validate(#[SensitiveParameter] string $token) : User|null
     {
         try {
             $decoded = JWT::decode(jwt: $token, keyOrKeyArray: new Key(keyMaterial: $this->secret, algorithm: $this->algorithm));
@@ -57,7 +60,7 @@ final class JwtIdentity implements JwtIdentityInterface
             }
 
             return null;
-        } catch (\Exception) {
+        } catch (Exception) {
             return null;
         }
     }
@@ -83,7 +86,7 @@ final class JwtIdentity implements JwtIdentityInterface
         return $this->refreshCurrentUser() !== null;
     }
 
-    public function authenticate(#[\SensitiveParameter] string $token) : void
+    public function authenticate(#[SensitiveParameter] string $token) : void
     {
         $this->currentToken = $token;
         $this->currentUser = $this->validate(token: $token);

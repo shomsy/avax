@@ -53,3 +53,11 @@ Use snapshots in this shape:
   `smoke_reference`: `.agents/management/evidence/TEST_REPORTS.md`
   `risk_reference`: `.agents/management/evidence/RISK_REGISTER.md`
   `notes`: `The new wave keeps the compiled hot path green while making governance explicit, slice mutation stricter, graph tooling human-readable, and generated artifact tooling auditable. The async target posture remains explicit: fpm and worker are supported, coroutine and fiber stay fail-fast.`
+
+- `snapshot_at`: `2026-04-09 01:28 CEST`
+  `release_scope`: `src system-root convergence refactor`
+  `decision`: `go`
+  `rollback_path`: `revert the src-convergence refactor commit set and restore the previous production tree before rebuilding compiled artifacts`
+  `smoke_reference`: `.agents/management/evidence/TEST_REPORTS.md`
+  `risk_reference`: `.agents/management/evidence/RISK_REGISTER.md`
+  `notes`: `The package now exposes the intended flow-first reading model directly from `src/`, with one honest lane for declaration, composition, resolution, execution, runtime, diagnostics, and foundation. Canonical lint, smoke, diagnostics-contract, benchmark, and diff-integrity gates are green on the converged tree.`

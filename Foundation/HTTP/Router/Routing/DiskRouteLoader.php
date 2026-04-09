@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
+use RuntimeException;
+use Throwable;
+
 /**
  * Route loader that loads routes from PHP files on disk.
  *
@@ -22,12 +25,12 @@ final readonly class DiskRouteLoader implements RouteSourceLoaderInterface
      * Creates a scoped collector context to prevent global state pollution
      * and executes route definition files safely with instance-based isolation.
      *
-     * @throws \RuntimeException If route file execution fails
+     * @throws RuntimeException If route file execution fails
      */
     public function loadInto(RouteCollection $collection) : void
     {
         if (! $this->isAvailable()) {
-            throw new \RuntimeException(message: "Routes file not found: {$this->routesPath}");
+            throw new RuntimeException(message: "Routes file not found: {$this->routesPath}");
         }
 
         // Execute routes in scoped collector context to prevent global pollution
@@ -36,12 +39,12 @@ final readonly class DiskRouteLoader implements RouteSourceLoaderInterface
                 // Read file content and execute DSL
                 $code = file_get_contents($this->routesPath);
                 if ($code === false) {
-                    throw new \RuntimeException(message: "Cannot read routes file: {$this->routesPath}");
+                    throw new RuntimeException(message: "Cannot read routes file: {$this->routesPath}");
                 }
 
                 $collector->executeDsl($code);
-            } catch (\Throwable $exception) {
-                throw new \RuntimeException(
+            } catch (Throwable $exception) {
+                throw new RuntimeException(
                     message : "Failed to load routes from {$this->routesPath}: " . $exception->getMessage(),
                     code    : 0,
                     previous: $exception
@@ -54,8 +57,8 @@ final readonly class DiskRouteLoader implements RouteSourceLoaderInterface
             try {
                 $route = $routeBuilder->build();
                 $collection->addRoute(route: $route);
-            } catch (\Throwable $exception) {
-                throw new \RuntimeException(
+            } catch (Throwable $exception) {
+                throw new RuntimeException(
                     message : 'Failed to build route from file: ' . $exception->getMessage(),
                     code    : 0,
                     previous: $exception

@@ -10,6 +10,7 @@ use Avax\HTTP\Router\Routing\Attributes\Route;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 #[Route(path: '/api', name: 'api', middleware: ['api'], defaults: ['locale' => 'en'], constraints: ['locale' => '[a-z]+'])]
 final class SampleAttributeController
@@ -21,7 +22,7 @@ final class SampleAttributeController
 final class RouteAttributeRegistrarTest extends TestCase
 {
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function test_registers_routes_from_attributes() : void
     {

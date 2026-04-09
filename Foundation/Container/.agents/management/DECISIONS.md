@@ -16,6 +16,34 @@ ADR-lite decision log for non-trivial choices.
 
 ## Decisions
 
+- `id`: DEC-008
+  `recorded_at`: 2026-04-09 01:28 CEST
+  `decision_at`: 2026-04-09 01:28 CEST
+  `updated_at`: 2026-04-09 01:28 CEST
+  `status`: accepted
+  `context`: The package had accumulated a multi-root implementation tree where
+    `DependencyInjection/`, `Configuration/`, `Compilation/`, `Runtime/`,
+    `Observability/`, and `Errors/` split the engine by technical hallway
+    rather than by the intended reading model. The target architecture for this
+    component is a `src/` system root that reads public surface first, then
+    flows, then shared capability lanes, with `Foundation/` kept tiny and
+    honest.
+  `decision`: Move the implementation into `src/` with `Container.php`,
+    `ContainerInterface.php`, and `ContextContainer.php` at the root public
+    surface; make `src/Flows/` the first narrative layer; keep shared engine
+    work in `src/Capabilities/Declaration`, `Composition`, `Resolution`,
+    `Execution`, `Runtime`, and `Diagnostics`; keep only tiny neutral
+    primitives in `src/Foundation/`; and remove the legacy production hallways
+    instead of leaving compatibility copies alive.
+  `consequences`: The package now reads flow-first at a glance, tests and docs
+    must reference `src/` and the new lanes, and future work should extend the
+    existing capability lanes instead of reintroducing generic root buckets.
+    `CreateContainer`, `ValidateComposition`, `ExplainService`, and
+    `ExportGraph` become explicit flow owners, while `ServiceResolver` remains
+    a reduced but still important gravity well to keep slimming inside the
+    `Resolution` lane rather than by inventing cross-cutting buckets.
+  `links`: `AGENTS.md`, `docs/architecture-convergence.md`, `src/Container.php`, `src/ContainerInterface.php`, `src/ContextContainer.php`, `src/Flows/`, `src/Capabilities/`, `src/Foundation/`, `tests/Flows/`, `tests/Capabilities/`
+
 - `id`: DEC-007
   `recorded_at`: 2026-04-08 20:39 CEST
   `decision_at`: 2026-04-08 20:39 CEST
@@ -38,22 +66,24 @@ ADR-lite decision log for non-trivial choices.
 - `id`: DEC-006
   `recorded_at`: 2026-04-08 20:39 CEST
   `decision_at`: 2026-04-08 20:39 CEST
-  `updated_at`: 2026-04-08 20:45 CEST
-  `status`: accepted
+  `updated_at`: 2026-04-09 01:28 CEST
+  `status`: superseded
   `context`: The container needed a reusable instance lifetime that is neither
     singleton (one instance forever) nor transient (fresh every time). Workers,
     HTTP pools, and connection adapters need bounded reuse with explicit reset.
   `decision`: Implement pooled lifetime as a bounded bucket inside `ServicePool`
     with checkout/release semantics, scope-anchored usage, and a mandatory
-    `PooledServiceInterface::resetForReuse()` contract when reset-before-reuse is
+    `ResettableInterface::reset()` contract when reset-before-reuse is
     enabled. Pooled services are built on first resolve, stored in the active
     scope, returned to the idle bucket on scope close, and disposed on overflow
     or unsafe return.
-  `consequences`: New `PooledLifetime`, `PooledServiceInterface`, and pool
-    methods on `ServicePool` and `ManageScopes`. Validation covers pooled
-    contract violations (POL-007), lifetime capture rules, warm/lazy conflicts,
-    and prebuilt instance rejection. Benchmarks include pooled scenarios.
-  `links`: `DependencyInjection/Scopes/Lifetimes/PooledLifetime.php`, `Runtime/PooledServiceInterface.php`, `Runtime/ServicePool.php`, `DependencyInjection/Scopes/ManageScopes.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `docs/pooled-lifetime-contracts.md`, `docs/lifetimes-and-scopes.md`
+  `consequences`: New `PooledLifetime`, `ResettableInterface`, and pool methods
+    on `ServicePool` and `ManageScopes`. Validation covers pooled contract
+    violations (POL-007), lifetime capture rules, warm/lazy conflicts, and
+    prebuilt instance rejection. Benchmarks include pooled scenarios. Superseded
+    by `DEC-008` only for system-root placement; the pooled-lifetime decision
+    itself remains active.
+  `links`: `src/Capabilities/Runtime/Scopes/Lifetimes/PooledLifetime.php`, `src/Capabilities/Runtime/Scopes/ResettableInterface.php`, `src/Capabilities/Runtime/ServicePool.php`, `src/Capabilities/Runtime/Scopes/ManageScopes.php`, `src/Capabilities/Resolution/ServiceResolver.php`, `docs/pooled-lifetime-contracts.md`, `docs/lifetimes-and-scopes.md`
 
 - `id`: DEC-005
   `recorded_at`: 2026-04-07 04:40 CEST

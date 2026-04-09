@@ -2,7 +2,7 @@
 
 The container has one policy file:
 
-- `DependencyInjection/Dependencies/Resolution/ResolutionPolicy.php`
+- `src/Capabilities/Resolution/ResolutionPolicy.php`
 
 ## What It Owns
 
@@ -17,6 +17,6 @@ Today the main switch is `strict`:
 
 Policy is enforced in:
 
-- `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`
+- `src/Capabilities/Resolution/ServiceResolver.php`
 
 There is no separate policy pipeline, guard folder, or kernel stage map in the shipped architecture.

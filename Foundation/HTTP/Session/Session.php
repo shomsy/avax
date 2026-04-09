@@ -13,6 +13,7 @@ use Avax\HTTP\Session\Shared\Security\Policies\PolicyInterface;
 use Avax\HTTP\Session\Shared\Security\SessionNonce;
 use Avax\HTTP\Session\Shared\Security\SessionRegistry;
 use LogicException;
+use Random\RandomException;
 use Throwable;
 
 /**
@@ -306,7 +307,7 @@ final readonly class Session
      * Critical security operation to prevent session fixation attacks.
      * Should be called on login, privilege elevation, etc.
      *
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     public function regenerate() : void
     {

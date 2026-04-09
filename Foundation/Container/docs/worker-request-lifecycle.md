@@ -43,5 +43,5 @@ They prove both the steady-state worker loop and the explicit request scope boun
 
 Lifecycle correctness is defended by:
 
-- [`../tests/DependencyInjection/Flows/CreateContainer/ContainerLifecycleSmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/ContainerLifecycleSmokeTest.php)
-- [`../tests/DependencyInjection/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php)
+- [`../tests/Flows/CreateContainer/ContainerLifecycleSmokeTest.php`](../tests/Flows/CreateContainer/ContainerLifecycleSmokeTest.php)
+- [`../tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php`](../tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php)

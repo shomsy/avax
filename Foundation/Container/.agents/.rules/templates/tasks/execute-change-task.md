@@ -147,8 +147,8 @@ acceptance_criteria:
   "goal": "Fix login timeout bug",
   "task_type": "execute",
   "relevant_files": [
-    "src/auth/login.ts",
-    "src/config/index.ts"
+    "DI/auth/login.ts",
+    "DI/config/index.ts"
   ],
   "files_discovered": [],
   "excluded_files": [],
@@ -166,11 +166,11 @@ acceptance_criteria:
       "category": "regression",
       "description": "Changing session timeout could affect remember-me",
       "mitigation": "Test both scenarios",
-      "affected_files": ["src/auth/login.ts"]
+      "affected_files": ["DI/auth/login.ts"]
     }
   ],
   "code_changes": {
-    "files_modified": ["src/auth/login.ts"],
+    "files_modified": ["DI/auth/login.ts"],
     "files_created": [],
     "files_deleted": [],
     "diff_summary": "Changed session timeout from hardcoded 30min to config.get('SESSION_TIMEOUT')"
@@ -202,7 +202,7 @@ BEFORE returning success, you MUST run:
 1. **Syntax validation** (if applicable):
    ```bash
    # Python
-   python3 -m py_compile src/file.py
+   python3 -m py_compile DI/file.py
    
    # JavaScript/TypeScript
    npx tsc --noEmit
@@ -219,7 +219,7 @@ BEFORE returning success, you MUST run:
    ```bash
    npm run lint
    # or
-   ruff check src/
+   ruff check DI/
    ```
 
 Include validation results in `metadata.validation_run` and `metadata.tests_passed`.

@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Support;
 
 use Avax\HTTP\Router\Routing\RouteBuilder;
+use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
 use Closure;
+use SensitiveParameter;
+use Throwable;
 
 /**
  * ROUTE LIFECYCLE: DSL → Collection → Registration
@@ -68,7 +71,7 @@ final class RouteCollector
      * @param Closure $closure The closure to execute with scoped collection
      *
      * @return RouteCollector The collector instance used for the scope
-     * @throws \Throwable
+     * @throws Throwable
      */
     public static function scoped(Closure $closure) : self
     {
@@ -79,7 +82,7 @@ final class RouteCollector
         try {
             $closure($collector);
             return $collector;
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             // Ensure clean state even on exception
             $collector->clear();
             throw $exception;
@@ -94,7 +97,7 @@ final class RouteCollector
      * @param string $code The PHP code containing DSL function calls
      * @return void
      */
-    public function executeDsl(#[\SensitiveParameter] string $code) : void
+    public function executeDsl(#[SensitiveParameter] string $code) : void
     {
         // Bind this collector instance to the execution context
         $collector = $this;
@@ -157,13 +160,13 @@ final class RouteCollector
      * This method provides the fluent API for DSL functions.
      *
      * @param RouteBuilder $routeBuilder The route builder to add
-     * @return \Avax\HTTP\Router\Routing\RouteRegistrarProxy The proxy for chaining
+     * @return RouteRegistrarProxy The proxy for chaining
      */
-    public function addRouteBuilder(RouteBuilder $routeBuilder) : \Avax\HTTP\Router\Routing\RouteRegistrarProxy
+    public function addRouteBuilder(RouteBuilder $routeBuilder) : RouteRegistrarProxy
     {
         $this->add(routeBuilder: $routeBuilder);
 
-        return new \Avax\HTTP\Router\Routing\RouteRegistrarProxy(
+        return new RouteRegistrarProxy(
             router: null, // Will be set by RouterDsl
             builder: $routeBuilder,
             registry: null // Will be set by RouterDsl

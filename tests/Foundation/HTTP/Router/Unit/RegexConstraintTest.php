@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Avax\HTTP\Request\Request;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
@@ -20,7 +21,7 @@ class RegexConstraintTest extends TestCase
     /**
      * @test
      * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function validates_correct_constraints() : void
     {
@@ -42,7 +43,7 @@ class RegexConstraintTest extends TestCase
     /**
      * @test
      * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function rejects_constraint_validation_failure() : void
     {
@@ -64,7 +65,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function rejects_invalid_regex_patterns() : void
     {
@@ -85,7 +86,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function handles_regex_compilation_errors() : void
     {
@@ -108,7 +109,7 @@ class RegexConstraintTest extends TestCase
     /**
      * @test
      * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function escapes_special_regex_characters() : void
     {
@@ -131,7 +132,7 @@ class RegexConstraintTest extends TestCase
     /**
      * @test
      * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function skips_non_string_non_numeric_attributes() : void
     {
@@ -153,7 +154,7 @@ class RegexConstraintTest extends TestCase
     /**
      * @test
      * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function validates_multiple_constraints() : void
     {
@@ -184,7 +185,7 @@ class RegexConstraintTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function fails_on_first_invalid_constraint() : void
     {

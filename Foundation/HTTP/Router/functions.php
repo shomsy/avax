@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use Avax\HTTP\Router\Routing\RouteBuilder;
+use Avax\HTTP\Router\Routing\RouteRegistrarProxy;
+use Avax\HTTP\Router\Support\RouteCollector;
 use Avax\Text\Pattern;
 use Avax\Text\RegexException;
 
@@ -342,12 +345,12 @@ if (! function_exists('get')) {
      *
      * @param string $path Route path template
      * @param callable|array|string $action Route handler
-     * @return \Avax\HTTP\Router\Routing\RouteRegistrarProxy
+     * @return RouteRegistrarProxy
      */
     function get(string $path, callable|array|string $action)
     {
-        return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'GET', path: $path)->action(action: $action)
+        return RouteCollector::current()->addRouteBuilder(
+            RouteBuilder::make(method: 'GET', path: $path)->action(action: $action)
         );
     }
 }
@@ -358,12 +361,12 @@ if (! function_exists('post')) {
      *
      * @param string $path Route path template
      * @param callable|array|string $action Route handler
-     * @return \Avax\HTTP\Router\Routing\RouteRegistrarProxy
+     * @return RouteRegistrarProxy
      */
     function post(string $path, callable|array|string $action)
     {
-        return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'POST', path: $path)->action(action: $action)
+        return RouteCollector::current()->addRouteBuilder(
+            RouteBuilder::make(method: 'POST', path: $path)->action(action: $action)
         );
     }
 }
@@ -374,12 +377,12 @@ if (! function_exists('put')) {
      *
      * @param string $path Route path template
      * @param callable|array|string $action Route handler
-     * @return \Avax\HTTP\Router\Routing\RouteRegistrarProxy
+     * @return RouteRegistrarProxy
      */
     function put(string $path, callable|array|string $action)
     {
-        return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'PUT', path: $path)->action(action: $action)
+        return RouteCollector::current()->addRouteBuilder(
+            RouteBuilder::make(method: 'PUT', path: $path)->action(action: $action)
         );
     }
 }
@@ -390,12 +393,12 @@ if (! function_exists('patch')) {
      *
      * @param string $path Route path template
      * @param callable|array|string $action Route handler
-     * @return \Avax\HTTP\Router\Routing\RouteRegistrarProxy
+     * @return RouteRegistrarProxy
      */
     function patch(string $path, callable|array|string $action)
     {
-        return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'PATCH', path: $path)->action(action: $action)
+        return RouteCollector::current()->addRouteBuilder(
+            RouteBuilder::make(method: 'PATCH', path: $path)->action(action: $action)
         );
     }
 }
@@ -406,12 +409,12 @@ if (! function_exists('delete')) {
      *
      * @param string $path Route path template
      * @param callable|array|string $action Route handler
-     * @return \Avax\HTTP\Router\Routing\RouteRegistrarProxy
+     * @return RouteRegistrarProxy
      */
     function delete(string $path, callable|array|string $action)
     {
-        return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'DELETE', path: $path)->action(action: $action)
+        return RouteCollector::current()->addRouteBuilder(
+            RouteBuilder::make(method: 'DELETE', path: $path)->action(action: $action)
         );
     }
 }
@@ -422,12 +425,12 @@ if (! function_exists('options')) {
      *
      * @param string $path Route path template
      * @param callable|array|string $action Route handler
-     * @return \Avax\HTTP\Router\Routing\RouteRegistrarProxy
+     * @return RouteRegistrarProxy
      */
     function options(string $path, callable|array|string $action)
     {
-        return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'OPTIONS', path: $path)->action(action: $action)
+        return RouteCollector::current()->addRouteBuilder(
+            RouteBuilder::make(method: 'OPTIONS', path: $path)->action(action: $action)
         );
     }
 }
@@ -438,12 +441,12 @@ if (! function_exists('head')) {
      *
      * @param string $path Route path template
      * @param callable|array|string $action Route handler
-     * @return \Avax\HTTP\Router\Routing\RouteRegistrarProxy
+     * @return RouteRegistrarProxy
      */
     function head(string $path, callable|array|string $action)
     {
-        return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'HEAD', path: $path)->action(action: $action)
+        return RouteCollector::current()->addRouteBuilder(
+            RouteBuilder::make(method: 'HEAD', path: $path)->action(action: $action)
         );
     }
 }
@@ -454,12 +457,12 @@ if (! function_exists('any')) {
      *
      * @param string $path Route path template
      * @param callable|array|string $action Route handler
-     * @return \Avax\HTTP\Router\Routing\RouteRegistrarProxy
+     * @return RouteRegistrarProxy
      */
     function any(string $path, callable|array|string $action)
     {
-        return \Avax\HTTP\Router\Support\RouteCollector::current()->addRouteBuilder(
-            \Avax\HTTP\Router\Routing\RouteBuilder::make(method: 'ANY', path: $path)->action(action: $action)
+        return RouteCollector::current()->addRouteBuilder(
+            RouteBuilder::make(method: 'ANY', path: $path)->action(action: $action)
         );
     }
 }
@@ -472,7 +475,7 @@ if (! function_exists('fallback')) {
      */
     function fallback(callable|array|string $handler) : void
     {
-        \Avax\HTTP\Router\Support\RouteCollector::current()->setFallback($handler);
+        RouteCollector::current()->setFallback($handler);
     }
 }
 
@@ -492,7 +495,7 @@ if (! function_exists('route_group')) {
      */
     function route_group(array $config, callable $routes) : void
     {
-        $router = \Avax\HTTP\Router\Support\RouteCollector::current();
+        $router = RouteCollector::current();
 
         // Auto-detect API group patterns
         if (isset($config['version'])) {

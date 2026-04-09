@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\Identity;
 
 use Avax\Auth\System\Capability\User\User;
+use SensitiveParameter;
 
 /**
  * Unified authentication identity contract for the Auth System.
@@ -13,7 +14,7 @@ interface IdentityInterface
 {
     public function issue(User $user) : string|null;
 
-    public function authenticate(#[\SensitiveParameter] string $token) : void;
+    public function authenticate(#[SensitiveParameter] string $token) : void;
 
     public function clear() : void;
 

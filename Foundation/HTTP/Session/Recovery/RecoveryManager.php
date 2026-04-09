@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session\Recovery;
 
 use Avax\HTTP\Session\Audit\Audit;
+use Avax\HTTP\Session\Exceptions\RecoveryException;
 use Throwable;
 
 /**
@@ -67,7 +68,7 @@ final readonly class RecoveryManager
      *
      * @param string $name Snapshot identifier (default: 'default').
      *
-     * @throws \Avax\HTTP\Session\Exceptions\RecoveryException If snapshot doesn't exist or is corrupted.
+     * @throws RecoveryException If snapshot doesn't exist or is corrupted.
      */
     public function restore(string $name = 'default') : void
     {
@@ -196,7 +197,7 @@ final readonly class RecoveryManager
      * Finalizes the transaction and removes the automatic snapshot.
      *
      *
-     * @throws \Avax\HTTP\Session\Exceptions\RecoveryException If no transaction is active.
+     * @throws RecoveryException If no transaction is active.
      */
     public function commit() : void
     {
@@ -210,7 +211,7 @@ final readonly class RecoveryManager
      * Restores session state to the snapshot taken at transaction start.
      *
      *
-     * @throws \Avax\HTTP\Session\Exceptions\RecoveryException If no transaction is active.
+     * @throws RecoveryException If no transaction is active.
      */
     public function rollback() : void
     {

@@ -13,6 +13,13 @@ Concrete records of executed verification.
 
 ## Reports
 
+- `executed_at`: `2026-04-09 01:28 CEST`
+  `scope`: `src system-root convergence refactor`
+  `environment`: `docker php:8.3-cli`
+  `checks`: `canonical php lint`, `tests/run-smoke-tests.sh`, `tests/check-diagnostics-contracts.sh`, `tests/check-benchmarks.sh`, `git diff --check`
+  `result`: `pass`
+  `notes`: `The package now reads from the `src/` system root with public surface plus `Flows/*` first, shared engine lanes under `Capabilities/*`, and a tiny `Foundation/*`. Legacy production hallways were removed, test paths were migrated to `tests/Flows` and `tests/Capabilities`, and the canonical verification gates stayed green on the converged tree.`
+
 - `executed_at`: `2026-04-08 22:15 CEST`
   `scope`: `governance-separated slice-boundary and explorer wave`
   `environment`: `docker php:8.3-cli`

@@ -24,6 +24,7 @@ use Avax\HTTP\Router\Support\RouteRegistry;
 use Avax\HTTP\Router\Tracing\RouterTrace;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionNamedType;
 use ReflectionProperty;
 
 /**
@@ -110,7 +111,7 @@ final class ArchitectureTest extends TestCase
             if ($constructor !== null) {
                 foreach ($constructor->getParameters() as $parameter) {
                     $type = $parameter->getType();
-                    if ($type instanceof \ReflectionNamedType) {
+                    if ($type instanceof ReflectionNamedType) {
                         $typeName = $type->getName();
 
                         // Check if parameter type is from Bootstrap namespace
@@ -128,7 +129,7 @@ final class ArchitectureTest extends TestCase
             // Check property types for bootstrap dependencies
             foreach ($reflection->getProperties() as $property) {
                 $type = $property->getType();
-                if ($type instanceof \ReflectionNamedType) {
+                if ($type instanceof ReflectionNamedType) {
                     $typeName = $type->getName();
 
                     if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
@@ -144,7 +145,7 @@ final class ArchitectureTest extends TestCase
             // Check method return types for bootstrap dependencies
             foreach ($reflection->getMethods() as $method) {
                 $returnType = $method->getReturnType();
-                if ($returnType instanceof \ReflectionNamedType) {
+                if ($returnType instanceof ReflectionNamedType) {
                     $typeName = $returnType->getName();
 
                     if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
@@ -160,7 +161,7 @@ final class ArchitectureTest extends TestCase
                 // Check method parameters for bootstrap dependencies
                 foreach ($method->getParameters() as $parameter) {
                     $type = $parameter->getType();
-                    if ($type instanceof \ReflectionNamedType) {
+                    if ($type instanceof ReflectionNamedType) {
                         $typeName = $type->getName();
 
                         if (str_contains($typeName, 'Avax\\HTTP\\Router\\Bootstrap')) {
@@ -252,7 +253,7 @@ final class ArchitectureTest extends TestCase
             foreach ($reflection->getMethods() as $method) {
                 foreach ($method->getParameters() as $parameter) {
                     $type = $parameter->getType();
-                    if ($type instanceof \ReflectionNamedType) {
+                    if ($type instanceof ReflectionNamedType) {
                         $typeName = $type->getName();
 
                         // Interfaces should not reference concrete Bootstrap classes

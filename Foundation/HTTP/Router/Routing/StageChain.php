@@ -8,6 +8,8 @@ use Avax\Container\Features\Core\Contracts\ContainerInterface;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Routing\Exceptions\StageOrderException;
 use Closure;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -108,8 +110,8 @@ final class StageChain
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     private function invoke(string $class, Closure $next, Request $request) : ResponseInterface
     {

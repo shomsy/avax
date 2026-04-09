@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
+use Exception;
+
 /**
  * Interface for route loading strategies.
  *
@@ -20,7 +22,7 @@ interface RouteSourceLoaderInterface
      *
      * @param RouteCollection $collection The collection to populate with routes
      *
-     * @throws \Exception If loading fails for any reason
+     * @throws Exception If loading fails for any reason
      */
     public function loadInto(RouteCollection $collection) : void;
 

@@ -16,6 +16,7 @@ use Avax\Container\Providers\HTTP\RouterServiceProvider;
 use Avax\Container\Providers\HTTP\SessionServiceProvider;
 use Avax\Container\Providers\HTTP\ViewServiceProvider;
 use Avax\HTTP\Request\Request;
+use Avax\HTTP\Router\RouterRuntimeInterface;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -253,7 +254,7 @@ class RouterHardeningTest extends TestCase
 
     private function getRouter()
     {
-        return $this->app->getContainer()->get(\Avax\HTTP\Router\RouterRuntimeInterface::class);
+        return $this->app->getContainer()->get(RouterRuntimeInterface::class);
     }
 
     private function createRequest(string $method, string $path): Request

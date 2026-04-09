@@ -4,13 +4,10 @@
 
 Read the component in this order:
 
-1. [`Container.php`](../Container.php)
-2. flow entries under `DependencyInjection/Flows/`
-3. dependency owners under `DependencyInjection/Dependencies/`
-4. injection owners under `DependencyInjection/Injection/`
-5. scope owners under `DependencyInjection/Scopes/`
-6. compiled runtime owners under `Compilation/` and `Runtime/`
-7. root support areas: `Configuration/`, `Observability/`, `Errors/`, `Foundation/`
+1. [`src/Container.php`](../DI/Container.php)
+2. flow entries under `src/Flows/`
+3. shared engine lanes under `src/Capabilities/Declaration/`, `src/Capabilities/Composition/`, `src/Capabilities/Resolution/`, `src/Capabilities/Execution/`, `src/Capabilities/Runtime/`, and `src/Capabilities/Diagnostics/`
+4. tiny primitives under `src/Foundation/`
 8. tests under `tests/`
 9. benchmark harnesses under `tests/benchmarks/`
 
@@ -22,8 +19,8 @@ That order matches the intended mental model:
 
 ## Public Surface
 
-- `Container.php`: stable facade
-- `ContainerInterface.php`: public contract
+- `src/Container.php`: stable facade
+- `src/ContainerInterface.php`: public contract
 
 The facade delegates to the explicit flow owners:
 
@@ -34,6 +31,9 @@ The facade delegates to the explicit flow owners:
 - `OpenScope`
 - `CloseScope`
 - `BootProviders`
+- `ValidateComposition`
+- `ExplainService`
+- `ExportGraph`
 
 The facade also exposes lifecycle, context, and diagnostics helpers:
 
@@ -47,7 +47,7 @@ The facade also exposes lifecycle, context, and diagnostics helpers:
 - `hasAlias()` / `isDeferred()` / `isLazy()` / `isCompiled()` / `isWarmedUp()`
 - `env()`
 
-`CreateContainer` stays the only public assembly flow, while internal collaborator wiring is split under `Configuration/Assembly/`.
+`CreateContainer` stays the only public assembly flow, while internal collaborator wiring is split under `src/Capabilities/Composition/Assembly/`.
 
 ## Flow Entries
 
@@ -64,30 +64,30 @@ Each flow entry owns one obvious user action:
 
 ## Dependency Areas
 
-`DependencyInjection/Dependencies/Bindings/`
+`src/Capabilities/Declaration/Bindings/`
 
 - stores service registrations
 - stores target-specific overrides
 - stores tags and extenders
 
-`DependencyInjection/Dependencies/Resolution/`
+`src/Capabilities/Resolution/`
 
 - owns the runtime resolver
 - resolves constructor arguments
 - decides whether a request is allowed
-- delegates compiled hot-path attachment to `CompiledRuntime`
+- delegates compiled hot-path attachment to `src/Capabilities/Runtime/CompiledRuntime.php`
 - delegates deferred provider ownership and lazy boot to `DeferredProviderRegistry`
 - coordinates runtime storage and build path
 - keeps the compiled runtime attached when it is still valid for the current revision
 - falls back to dynamic resolution for services that stay outside the compiled hot path
 
-`DependencyInjection/Dependencies/Blueprints/`
+`src/Capabilities/Declaration/Blueprints/`
 
 - reflects classes once, then writes compiled blueprints to disk
 - stores constructor and injection metadata plus compiled resolve plans
 - serves memory hits first, then versioned disk artifacts
 
-`Compilation/`
+`src/Capabilities/Composition/Compilation/`
 
 - writes and reads the generated compiled runtime artifact
 - writes sidecar metadata with checksum, config hash, environment, lifetime plans, and per-service signatures
@@ -99,7 +99,7 @@ Each flow entry owns one obvious user action:
 - owns compile-time fingerprinting for the hot path
 - exposes typed artifact metadata and compile reports instead of implicit array schemas
 
-`Runtime/`
+`src/Capabilities/Runtime/`
 
 - owns shared singleton storage
 - owns pooled service storage with bounded buckets, checkout/release, and reset-before-reuse semantics
@@ -108,12 +108,12 @@ Each flow entry owns one obvious user action:
 - owns compiled method call caching
 - exposes hot-path attachment state and entry presence without pushing reflection back into the resolve path
 
-`Configuration/Assembly/`
+`src/Capabilities/Composition/Assembly/`
 
 - keeps assembly internals out of `CreateContainer`
 - wires observability, runtime, and seeded system services into one container instance
 
-`DependencyInjection/Dependencies/Providers/`
+`src/Capabilities/Declaration/Providers/`
 
 - keeps the provider contract boundary
 - owns the deterministic provider boot plan
@@ -121,31 +121,31 @@ Each flow entry owns one obvious user action:
 
 ## Injection Area
 
-`DependencyInjection/Injection/Properties/`
+`src/Capabilities/Execution/Injection/Properties/`
 
 - injects public and non-public properties
 
-`DependencyInjection/Injection/Methods/`
+`src/Capabilities/Execution/Injection/Methods/`
 
 - injects marked methods after construction
 
-`DependencyInjection/Injection/Reports/`
+`src/Capabilities/Execution/Injection/Reports/`
 
 - describes what can be injected
 
-`DependencyInjection/Injection/Invocation/`
+`src/Capabilities/Execution/Injection/Invocation/`
 
 - resolves callable arguments
 - normalizes call targets
 - invokes callables through the container
 
-`DependencyInjection/Injection/Attributes/`
+`src/Capabilities/Execution/Injection/Attributes/`
 
 - keeps opt-in injection markers
 
 ## Scopes
 
-`DependencyInjection/Scopes/`
+`src/Capabilities/Runtime/Scopes/`
 
 - owns scoped storage and scope lifecycle
 - exposes scope lifecycle control
@@ -154,24 +154,20 @@ Each flow entry owns one obvious user action:
 
 ## Root Support Areas
 
-`Configuration/`
+`src/Capabilities/Composition/`
 
 - owns assembly options, cache versioning, and runtime settings
 - includes env-backed lookups for container-owned configuration hooks
 
-`Observability/`
+`src/Capabilities/Diagnostics/`
 
 - records metrics
 - records timeline events
 - exports telemetry
-- exposes a machine-readable runtime report
-- supports `minimal` and `detailed` diagnostics modes so production can stay low-overhead while CI/debug runs keep richer traces
+- exposes machine-readable runtime and governance reports
+- owns graph export, policy evaluation, and container-facing exception boundaries
 
-`Errors/`
-
-- owns container-facing exception boundaries
-
-`Foundation/`
+`src/Foundation/`
 
 - keeps tiny neutral primitives only
 

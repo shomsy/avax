@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteBuilder;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Routing\RouteGroupContext;
@@ -70,7 +71,7 @@ class RouterCoreFunctionalityTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function route_builder_fluent_api_works() : void
     {

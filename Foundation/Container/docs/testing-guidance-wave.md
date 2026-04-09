@@ -271,17 +271,18 @@ assert($describe['provenance'] === 'TestProvider');
 
 ```
 tests/
-├── DependencyInjection/
-│   ├── Flows/
-│   │   ├── SliceView/
-│   │   │   ├── SliceVisibilitySmokeTest.php
-│   │   │   ├── ExportImportDiagnosticsSmokeTest.php
-│   │   │   └── SliceValidationSmokeTest.php
-│   │   └── RegisterServices/
-│   │       └── PooledLifetimeSmokeTest.php
+├── Flows/
+│   ├── ResolveService/
+│   │   ├── SliceViewSmokeTest.php
+│   │   ├── OwnershipCompositionSmokeTest.php
+│   │   └── PooledLifetimeSmokeTest.php
+│   └── RegisterServices/
+│       └── RegisterServicesSmokeTest.php
+├── Capabilities/
+│   ├── Declaration/
+│   ├── Execution/
+│   ├── Runtime/
 │   └── Diagnostics/
-│       ├── PooledDiagnosticsSmokeTest.php
-│       └── PolicyEnforcementSmokeTest.php
 ```
 
 ### Integration Tests

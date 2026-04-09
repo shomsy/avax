@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Filesystem\Storage;
 
+use Avax\Container\Core\Exceptions\FoundationContainerException;
 use Exception;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Class Filesystem
@@ -33,9 +36,9 @@ readonly class Filesystem
      *
      * @return FileStorageInterface The instance of the file storage based on the disk configuration.
      *
-     * @throws \Avax\Container\Core\Exceptions\FoundationContainerException
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws FoundationContainerException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @throws \Exception
      */
     public function disk(string|null $name = null) : FileStorageInterface

@@ -12,6 +12,7 @@ use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 use Avax\Database\QueryBuilder\Core\Executor\PDOExecutor;
 use Avax\Database\QueryBuilder\Core\Grammar\MySQLGrammar;
 use Avax\Database\Transaction\Contracts\TransactionManagerInterface;
+use ReflectionException;
 
 /**
  * The "Sentence Builder" Feature (QueryBuilder Module).
@@ -74,7 +75,7 @@ final readonly class Module implements LifecycleInterface
      * is how you build one: connect the MySQL language (Grammar), the
      * PDO engine (Executor), and the Identity Map together."
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function register(): void
     {

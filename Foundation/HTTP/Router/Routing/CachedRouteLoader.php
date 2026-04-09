@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
+use Avax\Contracts\FilesystemException;
 use Avax\Filesystem\Contracts\FilesystemInterface;
+use JsonException;
+use RuntimeException;
+use Throwable;
 
 /**
  * Route loader that loads routes from compiled cache files.
@@ -25,18 +29,18 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
      *
      * Performs integrity validation before loading to prevent cache poisoning.
      *
-     * @throws \RuntimeException If cache is invalid or corrupted
-     * @throws \Avax\Contracts\FilesystemException
+     * @throws RuntimeException If cache is invalid or corrupted
+     * @throws FilesystemException
      */
     public function loadInto(RouteCollection $collection) : void
     {
         if (! $this->isAvailable()) {
-            throw new \RuntimeException(message: 'Cache file not available or invalid');
+            throw new RuntimeException(message: 'Cache file not available or invalid');
         }
 
         // Validate cache integrity before loading
         if (! $this->manifest->validateSignatureFile($this->cachePath)) {
-            throw new \RuntimeException(message: 'Cache signature validation failed - possible tampering detected');
+            throw new RuntimeException(message: 'Cache signature validation failed - possible tampering detected');
         }
 
         // Load and validate JSON content
@@ -45,25 +49,25 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
         try {
             /** @var array<array<string, mixed>> $routesData */
             $routesData = json_decode($cacheContent, true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $exception) {
-            throw new \RuntimeException(message: 'Invalid cache JSON format', code: 0, previous: $exception);
+        } catch (JsonException $exception) {
+            throw new RuntimeException(message: 'Invalid cache JSON format', code: 0, previous: $exception);
         }
 
         if (! is_array($routesData)) {
-            throw new \RuntimeException(message: 'Cache file does not contain valid route array');
+            throw new RuntimeException(message: 'Cache file does not contain valid route array');
         }
 
         // Populate collection with cached routes
         foreach ($routesData as $routeData) {
             if (! is_array($routeData)) {
-                throw new \RuntimeException(message: 'Invalid route data in cache');
+                throw new RuntimeException(message: 'Invalid route data in cache');
             }
 
             try {
                 $route = RouteDefinition::fromArray(payload: $routeData);
                 $collection->addRoute(route: $route);
-            } catch (\Throwable $exception) {
-                throw new \RuntimeException(
+            } catch (Throwable $exception) {
+                throw new RuntimeException(
                     message : 'Failed to load route from cache: ' . $exception->getMessage(),
                     code    : 0,
                     previous: $exception

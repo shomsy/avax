@@ -30,6 +30,7 @@ use Closure;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
+use RuntimeException;
 use Traversable;
 
 /**
@@ -141,7 +142,7 @@ class Arrhae implements ArrayAccess, Countable, IteratorAggregate
      * @param  iterable<TKey, TValue>  $items  The source items to populate the collection
      * @return static<TKey, TValue> A new locked collection instance
      *
-     * @throws \RuntimeException If the collection cannot be locked
+     * @throws RuntimeException If the collection cannot be locked
      *
      * @immutable
      */
@@ -188,7 +189,7 @@ class Arrhae implements ArrayAccess, Countable, IteratorAggregate
      *
      * @return self Returns a new locked instance
      *
-     * @throws \RuntimeException If the locking mechanism fails
+     * @throws RuntimeException If the locking mechanism fails
      *
      * @since 8.3.0
      *

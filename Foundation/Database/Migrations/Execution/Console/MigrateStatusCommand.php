@@ -6,6 +6,7 @@ namespace Avax\Migrations\Execution\Console;
 
 use Avax\Migrations\Execution\Repository\MigrationRepository;
 use Avax\Migrations\Generate\MigrationLoader;
+use Throwable;
 
 /**
  * Console command to show migration status.
@@ -18,7 +19,7 @@ final readonly class MigrateStatusCommand
     ) {}
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(string $path): int
     {

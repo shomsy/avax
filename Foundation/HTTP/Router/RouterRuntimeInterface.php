@@ -6,7 +6,10 @@ namespace Avax\HTTP\Router;
 
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Routing\RouteDefinition;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use ReflectionException;
 
 /**
  * Represents the runtime responsibilities of the router: resolving requests
@@ -17,9 +20,9 @@ interface RouterRuntimeInterface
     /**
      * Resolves the request and returns a PSR-7 response.
      *
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \ReflectionException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
      */
     public function resolve(Request $request) : ResponseInterface;
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Database\QueryBuilder\Core\Builder\Concerns;
 
+use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
+
 /**
  * Trait providing aggregation grouping (GROUP BY) and aggregate filtering (HAVING) capabilities.
  *
@@ -21,7 +23,8 @@ trait HasGroups
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Grouping.md#groupby
      *
      * @param  string|array  ...$columns  A variable list of field names or arrays of names to group by.
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasGroups|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     *
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasGroups|QueryBuilder A
      *                                                                                                                           fresh,
      *                                                                                                                           cloned
      *                                                                                                                           builder
@@ -55,7 +58,8 @@ trait HasGroups
      * @param  string  $operator  The SQL comparison operator (e.g., '=', '>', '<').
      * @param  mixed  $value  The comparison target value, which will be safely parameterized.
      * @param  string  $boolean  The logical joiner used to attach this condition ('AND' or 'OR').
-     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasGroups|\Avax\Database\QueryBuilder\Core\Builder\QueryBuilder A
+     *
+     * @return \Avax\Database\QueryBuilder\Core\Builder\Concerns\HasGroups|QueryBuilder A
      *                                                                                                                           fresh,
      *                                                                                                                           cloned
      *                                                                                                                           builder

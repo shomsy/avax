@@ -11,6 +11,7 @@ use Avax\Database\QueryBuilder\Core\Grammar\GrammarInterface;
 use Avax\Database\QueryBuilder\Exceptions\InvalidCriteriaException;
 use Avax\Database\QueryBuilder\ValueObjects\Expression;
 use ReflectionClass;
+use ReflectionException;
 use Throwable;
 
 /**
@@ -47,7 +48,7 @@ class QueryBuilder
      * @param QueryOrchestrator $orchestrator    The "Conductor". It doesn't write SQL, but it knows how to send the
      *                                           final SQL to the database and get results back.
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function __construct(
         protected readonly GrammarInterface $grammar,
@@ -84,7 +85,7 @@ class QueryBuilder
      *
      * @return static A fresh builder instance with no filters or tables set.
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function newQuery() : static
     {

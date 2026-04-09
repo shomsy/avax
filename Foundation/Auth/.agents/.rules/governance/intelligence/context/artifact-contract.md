@@ -271,13 +271,13 @@ If a sub-agent exceeds budget, it MUST:
   "goal": "Find authentication flow implementation",
   "task_type": "map",
   "relevant_files": [
-    "src/auth/login.ts",
-    "src/auth/middleware.ts",
-    "src/services/session.ts"
+    "DI/auth/login.ts",
+    "DI/auth/middleware.ts",
+    "DI/services/session.ts"
   ],
   "files_discovered": [
-    "src/auth/providers/oauth.ts",
-    "src/auth/validators.ts"
+    "DI/auth/providers/oauth.ts",
+    "DI/auth/validators.ts"
   ],
   "excluded_files": [],
   "constraints": {
@@ -363,8 +363,8 @@ If a sub-agent exceeds budget, it MUST:
   "goal": "Fix login timeout bug",
   "task_type": "execute",
   "relevant_files": [
-    "src/auth/login.ts",
-    "src/services/session.ts"
+    "DI/auth/login.ts",
+    "DI/services/session.ts"
   ],
   "files_discovered": [],
   "excluded_files": [],
@@ -381,11 +381,11 @@ If a sub-agent exceeds budget, it MUST:
       "category": "regression",
       "description": "Changing session timeout could affect remember-me functionality",
       "mitigation": "Test both scenarios",
-      "affected_files": ["src/auth/login.ts"]
+      "affected_files": ["DI/auth/login.ts"]
     }
   ],
   "code_changes": {
-    "files_modified": ["src/auth/login.ts"],
+    "files_modified": ["DI/auth/login.ts"],
     "files_created": [],
     "files_deleted": [],
     "diff_summary": "Changed session timeout from 30min to 24h"
@@ -418,7 +418,7 @@ If a sub-agent exceeds budget, it MUST:
   "goal": "Review login timeout fix",
   "task_type": "review",
   "relevant_files": [
-    "src/auth/login.ts"
+    "DI/auth/login.ts"
   ],
   "files_discovered": [],
   "excluded_files": [],
@@ -439,7 +439,7 @@ If a sub-agent exceeds budget, it MUST:
     }
   ],
   "code_changes": {
-    "files_modified": ["src/auth/login.ts"],
+    "files_modified": ["DI/auth/login.ts"],
     "files_created": [],
     "files_deleted": [],
     "diff_summary": "Changed session timeout from 30min to 24h"

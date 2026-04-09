@@ -48,7 +48,7 @@ Corruption is fail-closed in production-style modes. Compatibility and freshness
 
 Compatibility and freshness proofs live in:
 
-- [`../tests/DependencyInjection/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php)
-- [`../tests/DependencyInjection/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php)
-- [`../tests/DependencyInjection/Flows/CreateContainer/CompiledFreshnessSmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/CompiledFreshnessSmokeTest.php)
-- [`../tests/DependencyInjection/Flows/CreateContainer/CompiledIntegritySmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/CompiledIntegritySmokeTest.php)
+- [`../tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php`](../tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php)
+- [`../tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php`](../tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php)
+- [`../tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php`](../tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php)
+- [`../tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php`](../tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php)

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Logging;
 
+use Exception;
 use Throwable;
 
 /**
@@ -16,7 +17,7 @@ interface GlobalErrorHandlerInterface
     /**
      * Initializes error handling configuration.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function initialize(): void;
 
@@ -25,7 +26,7 @@ interface GlobalErrorHandlerInterface
      *
      * @param  Throwable  $throwable  - The exception to handle.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function handle(Throwable $throwable): void;
 

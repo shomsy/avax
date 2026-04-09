@@ -6,6 +6,8 @@ namespace Avax\HTTP\Middleware;
 
 use Avax\Auth\Application\Service\RateLimiterService;
 use Avax\HTTP\Response\ResponseFactory;
+use DateMalformedStringException;
+use Psr\Cache\InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -38,7 +40,7 @@ readonly class RateLimiterMiddleware implements MiddlewareInterface
      *
      * @return ResponseInterface The processed response or a rate-limit-exceeded response.
      *
-     * @throws \Psr\Cache\InvalidArgumentException|\DateMalformedStringException If the cache is unavailable or invalid.
+     * @throws InvalidArgumentException|DateMalformedStringException If the cache is unavailable or invalid.
      */
     public function process(RequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
@@ -90,7 +92,7 @@ readonly class RateLimiterMiddleware implements MiddlewareInterface
      *
      * @return bool True if rate limit is exceeded, false otherwise.
      *
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function isRateLimitExceeded(string $identifier) : bool
     {

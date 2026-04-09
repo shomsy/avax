@@ -6,6 +6,7 @@ namespace Avax\DataHandling\DataTransformers\Mapper;
 
 use Avax\DataHandling\DTO\DTOCollection;
 use Avax\DataHandling\DTO\DTOInterface;
+use ReflectionException;
 
 /**
  * MapperInterface
@@ -36,7 +37,7 @@ interface MapperInterface
      * @param  array  $data  The array of data sets to be mapped to DTOs.
      * @return DTOInterface|DTOCollection Either a single DTO object or a DTOCollection.
      *
-     * @throws \ReflectionException If an error occurs during reflection.
+     * @throws ReflectionException If an error occurs during reflection.
      *
      * ### Example implementation:
      * ```

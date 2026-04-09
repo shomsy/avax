@@ -6,6 +6,7 @@ namespace Avax\Database\Connection;
 
 use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Avax\Connection\Pool\Contracts\ConnectionPoolInterface;
+use Throwable;
 
 /**
  * Fluent builder for coordinating one-off database operations with resource safety.
@@ -50,7 +51,7 @@ final class DatabaseFlow
      *
      * @param callable(DatabaseConnection): mixed $callback
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function run(callable $callback) : mixed
     {

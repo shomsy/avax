@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Container\ContainerInterface;
+use Avax\Container\DI\ContainerInterface;
 
 if ($argc < 3) {
     fwrite(STDERR, "Usage: php tools/generate-analysis-hints.php <fixture> <output-dir>\n");

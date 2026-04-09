@@ -10,10 +10,10 @@ Lifetime decides whether a resolved object is reused.
 
 ## Main Files
 
-- `DependencyInjection/Scopes/Lifetimes/SharedLifetime.php`
-- `DependencyInjection/Scopes/Lifetimes/ScopedLifetime.php`
-- `DependencyInjection/Scopes/Lifetimes/TransientLifetime.php`
-- `DependencyInjection/Scopes/Lifetimes/Attributes/Singleton.php`
+- `src/Capabilities/Runtime/Scopes/Lifetimes/SharedLifetime.php`
+- `src/Capabilities/Runtime/Scopes/Lifetimes/ScopedLifetime.php`
+- `src/Capabilities/Runtime/Scopes/Lifetimes/TransientLifetime.php`
+- `src/Capabilities/Runtime/Scopes/Lifetimes/Attributes/Singleton.php`
 
 ## Practical Meaning
 

@@ -23,13 +23,13 @@ The container uses this model:
 
 Ownership is split like this:
 
-- authored definitions live in `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`
+- authored definitions live in `src/Capabilities/Declaration/Bindings/ServiceRegistry.php`
 - derived registration caches also live in `ServiceRegistry`, but only behind `resetDerivedState()`
-- compiled artifact lifecycle lives in `Compilation/CompileContainer.php`
-- compiled runtime attachment and hot-path reuse live in `DependencyInjection/Dependencies/Resolution/CompiledRuntime.php`
-- deferred provider ownership and lazy boot live in `DependencyInjection/Dependencies/Providers/DeferredProviderRegistry.php`
-- scope-local and shared runtime instances live in `DependencyInjection/Scopes/` plus `Runtime/ServicePool.php`
-- assembly stays under `DependencyInjection/Flows/CreateContainer.php`, with internal collaborator wiring split under `Configuration/Assembly/`
+- compiled artifact lifecycle lives in `src/Capabilities/Composition/Compilation/CompileContainer.php`
+- compiled runtime attachment and hot-path reuse live in `src/Capabilities/Runtime/CompiledRuntime.php`
+- deferred provider ownership and lazy boot live in `src/Capabilities/Declaration/Providers/DeferredProviderRegistry.php`
+- scope-local and shared runtime instances live in `src/Capabilities/Runtime/Scopes/` plus `src/Capabilities/Runtime/ServicePool.php`
+- assembly stays under `src/Flows/CreateContainer/CreateContainer.php`, with internal collaborator wiring split under `src/Capabilities/Composition/Assembly/`
 
 Lifecycle rules are explicit:
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Shared\Security\Policies;
 
+use RuntimeException;
+
 /**
  * PolicyInterface - Session Security Policy Contract
  *
@@ -17,7 +19,7 @@ interface PolicyInterface
      *
      * @param  array<string, mixed>  $data  Current session data.
      *
-     * @throws \RuntimeException If policy is violated.
+     * @throws RuntimeException If policy is violated.
      */
     public function enforce(array $data): void;
 

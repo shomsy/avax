@@ -8,6 +8,7 @@ use Avax\HTTP\Response\ResponseFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SensitiveParameter;
 
 /**
  * PSR-15 Middleware for CSRF token verification.
@@ -22,7 +23,7 @@ readonly class CsrfVerificationMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private ResponseFactory $responseFactory,
-        #[\SensitiveParameter] private string $tokenAttribute = '_csrf_token'
+        #[SensitiveParameter] private string $tokenAttribute = '_csrf_token'
     ) {}
 
     /**
@@ -94,7 +95,7 @@ readonly class CsrfVerificationMiddleware implements MiddlewareInterface
      * - Check token expiration
      * - Use cryptographically secure comparison
      */
-    private function isValidToken(#[\SensitiveParameter] string|null $token) : bool
+    private function isValidToken(#[SensitiveParameter] string|null $token) : bool
     {
         if ($token === null || strlen($token) < 32) {
             return false;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Identity\Session;
 
+use RuntimeException;
 use SensitiveParameter;
 
 /**
@@ -79,7 +80,7 @@ final class SessionIdentity implements SessionIdentityInterface
     private function ensureSessionAvailable() : void
     {
         if (session_status() === PHP_SESSION_DISABLED) {
-            throw new \RuntimeException(message: 'Session support is disabled.');
+            throw new RuntimeException(message: 'Session support is disabled.');
         }
 
         if (session_status() === PHP_SESSION_NONE) {

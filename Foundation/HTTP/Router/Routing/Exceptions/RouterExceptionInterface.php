@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing\Exceptions;
 
+use Throwable;
+
 /**
  * Base interface for all router-related exceptions.
  *
@@ -11,7 +13,7 @@ namespace Avax\HTTP\Router\Routing\Exceptions;
  * All router exceptions must implement this interface for proper error handling
  * and debugging consistency.
  */
-interface RouterExceptionInterface extends \Throwable
+interface RouterExceptionInterface extends Throwable
 {
     /**
      * Get the HTTP status code associated with this exception.

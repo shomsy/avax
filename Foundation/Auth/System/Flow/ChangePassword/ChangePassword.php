@@ -8,6 +8,8 @@ use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
+use Exception;
+use SensitiveParameter;
 
 /**
  * High-level orchestrator for the password change process.
@@ -17,13 +19,13 @@ use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
 final readonly class ChangePassword
 {
     public function __construct(
-        private UserSourceInterface $userSource,
-        #[\SensitiveParameter] private PasswordHasher $passwordHasher,
-        private LoginRateLimit|null $rateLimit = null
+        private UserSourceInterface                  $userSource,
+        #[SensitiveParameter] private PasswordHasher $passwordHasher,
+        private LoginRateLimit|null                  $rateLimit = null
     ) {}
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function execute(User $user, ChangePasswordData $data) : void
     {
@@ -32,7 +34,7 @@ final readonly class ChangePassword
         if (! $this->passwordHasher->verify(password: $data->currentPassword, hash: $user->getPasswordHash())) {
             $this->rateLimit?->recordFailed(identifier: (string) $user->getId());
 
-            throw new \Exception(message: 'Current password is incorrect.', code: 403);
+            throw new Exception(message: 'Current password is incorrect.', code: 403);
         }
 
         $newHash = $this->passwordHasher->hash(password: $data->newPassword);

@@ -7,6 +7,7 @@ namespace Avax\HTTP\Router\Tests\Unit;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\Classes\Response;
 use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Routing\RouteMatcher;
 use Avax\HTTP\URI\UriBuilder;
@@ -21,7 +22,7 @@ final class RouteResolutionTest extends TestCase
     private RouteMatcher $matcher;
 
     /**
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function test_compile_optional_parameter() : void
     {
@@ -50,7 +51,7 @@ final class RouteResolutionTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function test_compile_wildcard_parameter() : void
     {

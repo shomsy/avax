@@ -7,6 +7,7 @@ namespace Avax\HTTP\Security;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\ResponseFactory;
 use Closure;
+use Exception;
 use Psr\Http\Message\ResponseInterface;
 use SensitiveParameter;
 
@@ -33,8 +34,8 @@ class VerifyCsrfToken
      * @param Request $request The incoming request.
      * @param Closure $next    The next middleware in the pipeline.
      *
-     * @throws \Exception
-     * @throws \Exception
+     * @throws Exception
+     * @throws Exception
      */
     public function handle(Request $request, Closure $next) : ResponseInterface
     {

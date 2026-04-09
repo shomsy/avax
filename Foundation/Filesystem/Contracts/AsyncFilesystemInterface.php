@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Filesystem\Contracts;
 
+use Avax\Contracts\FilesystemException;
+
 /**
  * Asynchronous filesystem interface for modern PHP runtimes.
  *
@@ -31,7 +33,7 @@ interface AsyncFilesystemInterface
      * @param string $path File path to read
      *
      * @return mixed Promise resolving to string
-     * @throws \Avax\Contracts\FilesystemException
+     * @throws FilesystemException
      */
     public function getAsync(string $path) : mixed;
 
@@ -42,7 +44,7 @@ interface AsyncFilesystemInterface
      * @param string $content Content to write
      *
      * @return mixed Promise resolving to bool
-     * @throws \Avax\Contracts\FilesystemException
+     * @throws FilesystemException
      */
     public function putAsync(string $path, string $content) : mixed;
 
@@ -52,7 +54,7 @@ interface AsyncFilesystemInterface
      * @param string $path File path to delete
      *
      * @return mixed Promise resolving to bool
-     * @throws \Avax\Contracts\FilesystemException
+     * @throws FilesystemException
      */
     public function deleteAsync(string $path) : mixed;
 
@@ -62,7 +64,7 @@ interface AsyncFilesystemInterface
      * @param string $path Directory path to create
      *
      * @return mixed Promise resolving to bool
-     * @throws \Avax\Contracts\FilesystemException
+     * @throws FilesystemException
      */
     public function ensureDirectoryAsync(string $path) : mixed;
 

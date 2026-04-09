@@ -20,12 +20,12 @@
 - `HotPathInliner`
 - `BlueprintCache`
 
-Those responsibilities belong under `Configuration/Assembly/` and the runtime/compiler owners they wire.
+Those responsibilities belong under `src/Capabilities/Composition/Assembly/` and the runtime/compiler owners they wire.
 
 ## Proof
 
 The audit is enforced by:
 
-- [`../tests/DependencyInjection/Flows/CreateContainer/CreateContainerAssemblyAuditSmokeTest.php`](../tests/DependencyInjection/Flows/CreateContainer/CreateContainerAssemblyAuditSmokeTest.php)
+- [`../tests/Flows/CreateContainer/CreateContainerAssemblyAuditSmokeTest.php`](../tests/Flows/CreateContainer/CreateContainerAssemblyAuditSmokeTest.php)
 
 That smoke test asserts the file stays thin, assembly-oriented, and free of direct low-level owner wiring.

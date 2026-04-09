@@ -6,7 +6,10 @@ namespace Avax\HTTP\Router\Routing;
 
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use ReflectionException;
 
 /**
  * Executes a matched route by invoking the controller and returning the response.
@@ -26,9 +29,9 @@ final readonly class RouteExecutor
      * @param Request         $request The HTTP request with injected parameters.
      *
      * @return ResponseInterface The response from the controller.
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \ReflectionException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
      */
     public function execute(RouteDefinition $route, Request $request) : ResponseInterface
     {

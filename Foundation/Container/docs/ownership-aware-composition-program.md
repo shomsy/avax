@@ -8,40 +8,35 @@ The current system root is this component root.
 
 Canonical production structure:
 
-- `Container.php`
-- `ContainerInterface.php`
-- `DependencyInjection/Flows/`
-- `DependencyInjection/Dependencies/`
-- `DependencyInjection/Injection/`
-- `DependencyInjection/Scopes/`
-- `Configuration/`
-- `Compilation/`
-- `Runtime/`
-- `Observability/`
-- `Errors/`
-- `Foundation/`
+- `src/Container.php`
+- `src/ContainerInterface.php`
+- `src/ContextContainer.php`
+- `src/Flows/`
+- `src/Capabilities/`
+- `src/Foundation/`
 
 ## Target Shape
 
-The target container keeps the same canonical tree, but adds one narrow authored ownership lane:
+The target container reads flow-first:
 
-- `DependencyInjection/Dependencies/Ownership/`
-
-That lane owns:
-
-- registration ownership metadata
-- category and visibility vocabularies
-- import/export posture
-- slice manifests for diagnostics
-
-It does not own runtime resolution, scope storage, or artifact lifecycle.
+- `src/Container.php`
+- `src/ContainerInterface.php`
+- `src/ContextContainer.php`
+- `src/Flows/`
+- `src/Capabilities/Declaration/`
+- `src/Capabilities/Composition/`
+- `src/Capabilities/Resolution/`
+- `src/Capabilities/Execution/`
+- `src/Capabilities/Runtime/`
+- `src/Capabilities/Diagnostics/`
+- `src/Foundation/`
 
 ## Source Of Truth
 
-- authored registration truth: `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`
-- authored ownership truth: `DependencyInjection/Dependencies/Ownership/RegistrationMetadata.php`
-- generated compile truth: `Compilation/CompileContainer.php` plus `Compilation/ArtifactMetadata.php`
-- disposable runtime truth: `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `Runtime/ServicePool.php`, `DependencyInjection/Scopes/ScopeStore.php`
+- authored registration truth: `src/Capabilities/Declaration/Bindings/ServiceRegistry.php`
+- authored ownership truth: `src/Capabilities/Declaration/Ownership/RegistrationMetadata.php`
+- generated compile truth: `src/Capabilities/Composition/Compilation/CompileContainer.php` plus `src/Capabilities/Composition/Compilation/ArtifactMetadata.php`
+- disposable runtime truth: `src/Capabilities/Resolution/ServiceResolver.php`, `src/Capabilities/Runtime/ServicePool.php`, `src/Capabilities/Runtime/Scopes/ScopeStore.php`
 
 Compiled artifacts remain derived outputs only.
 

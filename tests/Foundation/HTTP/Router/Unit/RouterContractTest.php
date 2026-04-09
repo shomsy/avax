@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Router;
 use Avax\HTTP\Router\RouterInterface;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
@@ -29,7 +30,7 @@ class RouterContractTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function named_route_resolution_works() : void
     {
@@ -63,7 +64,7 @@ class RouterContractTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function parameter_and_default_merge_works() : void
     {
@@ -95,7 +96,7 @@ class RouterContractTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function constraint_failure_throws_expected_exception() : void
     {
@@ -123,7 +124,7 @@ class RouterContractTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function http_method_mismatch_behavior() : void
     {

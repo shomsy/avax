@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Response\Helper;
 
+use Exception;
 use SimpleXMLElement;
 
 /**
@@ -21,7 +22,7 @@ class XmlFormatter
      * @param  string  $rootNode  Root node for the XML (default is 'response').
      * @return string XML string representation of the array.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function format(array $data, string $rootNode = 'response'): string
     {

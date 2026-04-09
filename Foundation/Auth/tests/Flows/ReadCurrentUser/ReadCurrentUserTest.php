@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flow\ReadCurrentUser;
 
+use Avax\Auth\System\Capability\User\UserEmail;
 use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
@@ -92,7 +93,7 @@ class ReadCurrentUserTest extends TestCase
 
         $inactiveUser = new User(
             id: new UserId(value: 555),
-            email: new \Avax\Auth\System\Capability\User\UserEmail(value: 'inactive@example.com'),
+            email: new UserEmail(value: 'inactive@example.com'),
             username: 'inactive',
             passwordHash: 'hash',
             isActive: false

@@ -20,6 +20,7 @@ use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Kernel\RouterKernel;
 use Avax\HTTP\Router\Routing\ErrorResponseFactory;
 use Avax\HTTP\Router\Routing\Exceptions\MethodNotAllowedException;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteDefinition;
@@ -27,8 +28,12 @@ use Avax\HTTP\Router\Routing\RouteGroupStack;
 use Avax\HTTP\Router\Support\FallbackManager;
 use Avax\HTTP\Router\Support\RouteRegistry;
 use Avax\HTTP\Router\Tracing\RouterTrace;
+use Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException;
 use LogicException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use ReflectionException;
 
 /**
  * Public API Contract: Runtime Router
@@ -53,10 +58,10 @@ final readonly class Router implements RouterRuntimeInterface
     ) {}
 
     /**
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \ReflectionException
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
+     * @throws ContainerExceptionInterface
+     * @throws InvalidConstraintException
      */
     public function resolve(Request $request) : ResponseInterface
     {
@@ -131,7 +136,7 @@ final readonly class Router implements RouterRuntimeInterface
      * @param string $cacheDir   Cache directory for compiled routes (optional)
      *
      * @return void
-     * @throws \LogicException|\Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException If DSL router or group
+     * @throws \LogicException|ReservedRouteNameException If DSL router or group
      *                                                                                         stack dependencies are
      *                                                                                         missing
      */

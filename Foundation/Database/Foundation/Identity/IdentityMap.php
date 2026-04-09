@@ -7,6 +7,7 @@ namespace Avax\Database\Identity;
 use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Transaction\Contracts\TransactionManagerInterface;
 use Avax\Database\Transaction\Exceptions\TransactionException;
+use Throwable;
 
 /**
  * Unit-of-Work IdentityMap that buffers mutations and tracks loaded records.
@@ -37,7 +38,7 @@ final class IdentityMap
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/IdentityMap.md#unit-of-work-pattern
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function execute(): void
     {

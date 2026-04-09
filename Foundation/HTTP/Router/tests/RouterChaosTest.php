@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Tests;
 
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Routing\RouteCollection;
 use Avax\HTTP\Router\Routing\RouteSourceLoaderInterface;
 use Avax\HTTP\Router\Matching\RouteMatcherInterface;
+use Avax\HTTP\Router\Validation\RouteConstraintValidator;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use Throwable;
 
 /**
  * Chaos and stress testing for router fault tolerance.
@@ -30,7 +35,7 @@ final class RouterChaosTest extends TestCase
     protected function setUp(): void
     {
         $this->router = new HttpRequestRouter(
-            constraintValidator: new \Avax\HTTP\Router\Validation\RouteConstraintValidator(),
+            constraintValidator: new RouteConstraintValidator(),
             matcher: $this->createMock(RouteMatcherInterface::class),
             trace: null
         );
@@ -40,7 +45,7 @@ final class RouterChaosTest extends TestCase
 
     /**
      * @test
-     * @throws \Exception
+     * @throws Exception
      */
     public function cache_corruption_does_not_crash_router(): void
     {
@@ -63,9 +68,9 @@ final class RouterChaosTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws DuplicateRouteException
+     * @throws ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function concurrent_route_registration_isolation(): void
     {
@@ -117,8 +122,8 @@ final class RouterChaosTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws DuplicateRouteException
+     * @throws ReservedRouteNameException
      */
     public function middleware_chain_interruption_recovery(): void
     {
@@ -151,8 +156,8 @@ final class RouterChaosTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws DuplicateRouteException
+     * @throws ReservedRouteNameException
      */
     public function memory_pressure_route_collection(): void
     {
@@ -220,9 +225,9 @@ final class RouterChaosTest extends TestCase
 
                 $this->router->add(route: $route);
                 $validRoutesAdded++;
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 // Expected - invalid routes should throw exceptions
-                $this->assertInstanceOf(expected: \Throwable::class, actual: $exception);
+                $this->assertInstanceOf(expected: Throwable::class, actual: $exception);
             }
         }
 
@@ -257,7 +262,7 @@ final class RouterChaosTest extends TestCase
         } catch (RuntimeException) {
             // Primary failed, try fallback
             $fallbackLoader->loadInto(collection: $this->collection);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         // Fallback route should be available
@@ -292,7 +297,7 @@ final class RouterChaosTest extends TestCase
 
                     try {
                         $this->router->add(route: $route);
-                    } catch (\Throwable $exception) {
+                    } catch (Throwable $exception) {
                         // In real concurrency, some operations might fail due to race conditions
                         // This is expected behavior we're testing for
                     }
@@ -317,7 +322,7 @@ final class RouterChaosTest extends TestCase
 
     /**
      * @test
-     * @throws \Exception
+     * @throws Exception
      */
     public function network_partition_simulation(): void
     {
@@ -337,7 +342,7 @@ final class RouterChaosTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
+     * @throws DuplicateRouteException
      */
     public function gradual_memory_leak_detection(): void
     {

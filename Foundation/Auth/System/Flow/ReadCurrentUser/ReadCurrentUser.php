@@ -8,6 +8,7 @@ use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use SensitiveParameter;
 
 /**
  * Retrieve the currently authenticated user entity.
@@ -17,8 +18,8 @@ use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 final readonly class ReadCurrentUser
 {
     public function __construct(
-        #[\SensitiveParameter] private IdentityInterface $identity,
-        private UserSourceInterface                       $userSource
+        #[SensitiveParameter] private IdentityInterface $identity,
+        private UserSourceInterface                     $userSource
     ) {}
 
     public function execute() : User|null

@@ -11,7 +11,7 @@ Proven:
 - compile/runtime separation with authored state, generated artifacts, and disposable runtime state
 - first-class ownership metadata with slice categories, visibility, imports, and exports
 - first-class lifetime, scope, disposal, and conditional-composition rules
-- canonical tree under `DependencyInjection/`, `Compilation/`, `Runtime/`, `Configuration/`, `Observability/`, `Errors/`, and `Foundation/`
+- canonical tree under `src/Flows/`, `src/Capabilities/`, and `src/Foundation/`
 
 Proof:
 

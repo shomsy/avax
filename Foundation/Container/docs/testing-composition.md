@@ -4,7 +4,7 @@ Tests should compose only the slices they actually need.
 
 ## Preferred Pattern
 
-Use [`Configuration/Testing/TestComposition.php`](../Configuration/Testing/TestComposition.php) when the test wants an ownership-aware helper instead of writing the full setup inline.
+Use [`src/Capabilities/Composition/Testing/TestComposition.php`](../DI/Capabilities/Composition/Testing/TestComposition.php) when the test wants an ownership-aware helper instead of writing the full setup inline.
 
 Example:
 

@@ -6,7 +6,9 @@ namespace Avax\Repository;
 
 use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 use Exception;
+use ReflectionException;
 use RuntimeException;
+use Throwable;
 
 /**
  * Base Settings
@@ -28,8 +30,8 @@ abstract class Repository
      * @param int $id
      *
      * @return object|null
-     * @throws \ReflectionException
-     * @throws \Throwable
+     * @throws ReflectionException
+     * @throws Throwable
      */
     public function findById(int $id) : object|null
     {
@@ -43,8 +45,8 @@ abstract class Repository
      *
      * @return object|null The found entity or null.
      *
-     * @throws \ReflectionException
-     * @throws \Throwable
+     * @throws ReflectionException
+     * @throws Throwable
      */
     public function findOneBy(array $conditions) : object|null
     {
@@ -68,7 +70,7 @@ abstract class Repository
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function query() : QueryBuilder
     {
@@ -124,8 +126,8 @@ abstract class Repository
      * @param int      $offset
      *
      * @return array
-     * @throws \ReflectionException
-     * @throws \Throwable
+     * @throws ReflectionException
+     * @throws Throwable
      */
     public function findAll(int|null $limit = null, int $offset = 0) : array
     {
@@ -145,8 +147,8 @@ abstract class Repository
      *
      * @return array<object> The found entities.
      *
-     * @throws \ReflectionException
-     * @throws \Throwable
+     * @throws ReflectionException
+     * @throws Throwable
      */
     public function findBy(
         array       $conditions,
@@ -196,8 +198,8 @@ abstract class Repository
     /**
      * @param object $entity
      *
-     * @throws \ReflectionException
-     * @throws \Throwable
+     * @throws ReflectionException
+     * @throws Throwable
      */
     public function save(object $entity) : void
     {
@@ -244,8 +246,8 @@ abstract class Repository
     /**
      * @param object $entity
      *
-     * @throws \ReflectionException
-     * @throws \Throwable
+     * @throws ReflectionException
+     * @throws Throwable
      */
     public function delete(object $entity) : void
     {
@@ -265,8 +267,8 @@ abstract class Repository
      *
      * @return bool True if the entity exists, false otherwise.
      *
-     * @throws \ReflectionException
-     * @throws \Throwable
+     * @throws ReflectionException
+     * @throws Throwable
      */
     public function exists(array $conditions) : bool
     {
@@ -296,8 +298,8 @@ abstract class Repository
      *
      * @return int The number of matching entities.
      *
-     * @throws \ReflectionException
-     * @throws \Throwable
+     * @throws ReflectionException
+     * @throws Throwable
      */
     public function count(array $conditions) : int
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\Support\RouteRegistry;
 
 /**
@@ -33,7 +34,7 @@ final readonly class RouterRegistrar
     // Fallback method removed - fallbacks are handled exclusively through FallbackManager
 
     /**
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
+     * @throws DuplicateRouteException
      * @internal For cache loader use only.
      */
     public function registerRouteFromCache(RouteDefinition $definition) : void

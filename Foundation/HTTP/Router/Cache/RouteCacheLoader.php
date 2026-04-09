@@ -7,8 +7,10 @@ namespace Avax\HTTP\Router\Cache;
 use Avax\Contracts\FilesystemException;
 use Avax\Filesystem\Contracts\FilesystemInterface;
 use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Routing\RouterRegistrar;
+use JsonException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
@@ -30,7 +32,7 @@ final readonly class RouteCacheLoader
      * @param string $cachePath
      * @param string $routesPath
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      * @throws \Avax\Contracts\FilesystemException
      */
     public function load(string $cachePath, string $routesPath) : void
@@ -62,7 +64,7 @@ final readonly class RouteCacheLoader
         try {
             /** @var array<array<string, mixed>> $routes */
             $routes = json_decode($cacheContent, true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $exception) {
+        } catch (JsonException $exception) {
             throw new RuntimeException(message: 'Invalid route cache JSON format.', previous: $exception);
         }
 
@@ -121,7 +123,7 @@ final readonly class RouteCacheLoader
         // Write secure JSON format instead of PHP code
         try {
             $content = json_encode($exportable, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-        } catch (\JsonException $exception) {
+        } catch (JsonException $exception) {
             throw new RuntimeException(message: 'Failed to encode route cache as JSON.', previous: $exception);
         }
 

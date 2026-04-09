@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/bootstrap.php';
 
-use Avax\Container\ContainerInterface;
-use Avax\Container\Configuration\CreateContainerConfig;
-use Avax\Container\DependencyInjection\Dependencies\Providers\DeferredProviderInterface;
-use Avax\Container\DependencyInjection\Dependencies\Providers\ServiceProviderInterface;
-use Avax\Container\DependencyInjection\Injection\Attributes\Inject;
-use Avax\Container\DependencyInjection\Scopes\ResettableInterface;
-use Avax\Container\Runtime\LazyProxy;
+use Avax\Container\DI\Container;
+use Avax\Container\DI\ContainerInterface;
+use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterface;
+use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
+use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\Inject;
+use Avax\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
+use Avax\Container\DI\Capabilities\Runtime\LazyProxy;
 
 const BENCHMARK_DOCKER_IMAGE = 'php:8.3-cli';
 const BENCHMARK_SUITE_VERSION = '2026-04-08';
@@ -209,7 +210,7 @@ function benchContainer(
     bool $debug = false,
     string $diagnosticsMode = CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL,
     string $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED
-) : \Avax\Container\Container
+) : Container
 {
     return makeTestContainer(CreateContainerConfig::create(
         cacheDir: sys_get_temp_dir() . '/container-bench-' . uniqid(),

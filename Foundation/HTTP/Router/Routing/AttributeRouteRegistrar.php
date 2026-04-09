@@ -6,8 +6,10 @@ namespace Avax\HTTP\Router\Routing;
 
 use Avax\HTTP\Router\HttpMethod;
 use Avax\HTTP\Router\Routing\Attributes\Route as RouteAttribute;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use ReflectionAttribute;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionMethod;
 
 final readonly class AttributeRouteRegistrar
@@ -15,7 +17,7 @@ final readonly class AttributeRouteRegistrar
     public function __construct(private HttpRequestRouter $router) {}
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function register(object|string $controller) : void
     {
@@ -58,7 +60,7 @@ final readonly class AttributeRouteRegistrar
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     private function registerFromAttributes(
         string              $controllerClass,

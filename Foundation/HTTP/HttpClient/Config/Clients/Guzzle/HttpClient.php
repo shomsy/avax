@@ -9,6 +9,7 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Promise\PromiseInterface;
@@ -83,7 +84,7 @@ final readonly class HttpClient implements ClientInterface
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      * @throws \Exception
      */
     private function performRequest(
@@ -138,7 +139,7 @@ final readonly class HttpClient implements ClientInterface
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function requestAsync(string $method, $uri, array $options = []) : PromiseInterface
     {
@@ -157,7 +158,7 @@ final readonly class HttpClient implements ClientInterface
      * @param string|UriInterface $uri     Request URI.
      * @param array               $options Additional request options.
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function request(string $method, $uri, array $options = []) : ResponseInterface
     {

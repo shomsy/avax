@@ -83,7 +83,7 @@ final readonly class Totp implements TotpInterface
         int|null          $lastAcceptedTimeStep = null
     ) : TotpVerification
     {
-        if (! preg_match('/^\d{6,8}$/', $code)) {
+        if (preg_match('/^\d{6,8}$/', $code) !== 1) {
             return TotpVerification::invalid('format_invalid');
         }
 
@@ -153,7 +153,7 @@ final readonly class Totp implements TotpInterface
                 continue;
             }
 
-            $bytes .= chr(bindec($chunk));
+            $bytes .= chr((int) bindec($chunk));
         }
 
         return $bytes;
@@ -165,7 +165,13 @@ final readonly class Totp implements TotpInterface
         $hash          = hash_hmac('sha1', $binaryCounter, $secret, true);
         $offset        = ord($hash[19]) & 0x0F;
         $chunk         = substr($hash, $offset, 4);
-        $value         = unpack('N', $chunk)[1] & 0x7FFFFFFF;
+        $unpacked      = unpack('N', $chunk);
+
+        if ($unpacked === false || ! isset($unpacked[1])) {
+            throw new InvalidArgumentException('TOTP hash unpack failed.');
+        }
+
+        $value         = $unpacked[1] & 0x7FFFFFFF;
         $modulo        = 10 ** $this->digits;
 
         return str_pad((string) ($value % $modulo), $this->digits, '0', STR_PAD_LEFT);

@@ -14,6 +14,9 @@ use Avax\Auth\System\Flow\Mfa\BackupCodeSet;
  */
 final readonly class GeneratedBackupCodes
 {
+    /**
+     * @param list<BackupCodeRecord> $records
+     */
     public function __construct(
         public BackupCodeSet $backupCodeSet,
         public array         $records

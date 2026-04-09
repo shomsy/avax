@@ -3,5 +3,5 @@ parameters:
   paths:
     - System
     - integrations
-  stubFiles:
+  scanFiles:
     - phpstan.stubs/avax-container.stub.php

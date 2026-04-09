@@ -49,7 +49,16 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Avax\\Auth\\Tests\\": "tests/"
+      "Avax\\Auth\\Tests\\Capability\\": "tests/Capabilities/",
+      "Avax\\Auth\\Tests\\Configuration\\": "tests/Configuration/",
+      "Avax\\Auth\\Tests\\Flow\\": "tests/Flows/",
+      "Avax\\Auth\\Tests\\Foundation\\": "tests/Foundation/",
+      "Avax\\Auth\\Tests\\Integration\\": "tests/Integration/",
+      "Avax\\Auth\\Tests\\Integrations\\": "tests/Integrations/",
+      "Avax\\Auth\\Tests\\Support\\": "tests/Support/",
+      "Avax\\Auth\\Tests\\System\\": "tests/System/",
+      "Avax\\Container\\Core\\": "tests/Support/AvaxContainer/Core/",
+      "Avax\\Container\\Providers\\": "tests/Support/AvaxContainer/Providers/"
     }
   },
   "config": {
@@ -62,12 +71,15 @@
   },
   "scripts": {
     "test": "phpunit",
-    "test:coverage": "phpunit --coverage-html coverage",
+    "test:coverage": "tooling/run-with-coverage-driver vendor/bin/phpunit --coverage-html coverage",
     "analyse": "phpstan analyse --memory-limit=1G",
     "analyse:strict": "phpstan analyse --memory-limit=1G -c phpstan.strict.neon",
     "rector": "rector process --dry-run",
     "rector:apply": "rector process",
-    "mutation": "infection --coverage=phpunit.xml",
+    "mutation": [
+      "Composer\\Config::disableProcessTimeout",
+      "tooling/run-with-coverage-driver vendor/bin/infection --configuration=infection.json.dist"
+    ],
     "all": [
       "@analyse",
       "@test",

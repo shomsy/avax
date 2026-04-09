@@ -7,17 +7,6 @@ namespace Avax\Auth\System\Foundation;
 use Random\RandomException;
 
 /**
- * Interface for ID generation.
- */
-interface IdGeneratorInterface
-{
-    /**
-     * Generate a new unique ID.
-     */
-    public function generate() : int;
-}
-
-/**
  * Default ID generator using random integers.
  */
 final class IdGenerator implements IdGeneratorInterface

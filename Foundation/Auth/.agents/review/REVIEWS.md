@@ -1,5 +1,90 @@
 # Code Review: Avax Auth Framework
 
+**Captured:** 2026-04-09 21:44 CEST
+**Reviewer:** Agent
+**Scope:** Foundation/Auth/**
+**Mode:** Strict review follow-up after mutation-lane repair
+**Score:** 8.1/10
+**Decision:** Keep and Improve
+**Release Posture:** Hold
+
+## Findings
+
+### High
+
+- Mutation tooling is no longer blocked, and that exposed a real release blocker: the critical auth slices are not yet
+  mutation-hard enough. Covered-only diagnostics report `MSI 61%` with `236` escaped mutants and `70` timeouts.
+  The strongest surviving clusters are in `Identity`, `JwtIdentity`, `ChangePassword`, `RefreshAuthentication`,
+  `HmacTokenCodec`, and token-store invariants.
+
+### Medium
+
+- High parallel mutation runs are unstable for this suite and produce timeout-heavy noise. The mutation lane should stay
+  conservative by default until timeout-prone test paths are hardened.
+
+- The optional Avax container adapter is still validated through a local seam rather than the real external package in
+  this environment. That remains acceptable for kernel isolation, but not as the sole publish-time confidence check.
+
+- Global revocation of arbitrary stateful session backends is still application-owned. The kernel clears the current
+  session and revokes refresh tokens, but package-level multi-session revocation still needs an application store or
+  registry.
+
+### Resolved In This Pass
+
+- Installed a repo-local coverage-driver fallback via `pcov` without requiring root access
+- Repaired the mutation lane so `composer mutation` executes real mutation analysis locally
+- Removed Composer process-timeout as an artificial mutation blocker
+- Added local artifact ignores so verification tooling does not pollute repo status
+
+## Verdict
+
+The package is past environment excuses: the remaining release blocker is now a real mutation-quality gap in critical
+auth behavior. That is a healthier place to be, but it is still a blocker.
+
+---
+
+**Captured:** 2026-04-09 21:12 CEST
+**Reviewer:** Agent
+**Scope:** Foundation/Auth/**
+**Mode:** Strict review follow-up after real test execution
+**Score:** 8.8/10
+**Decision:** Keep and Improve
+**Release Posture:** Hold
+
+## Findings
+
+### High
+
+- Mutation proof is still missing locally because Infection has no available coverage driver in this environment. The
+  code is in better shape than the tooling proof. Keep release posture at `hold` until CI or a fuller PHP runtime runs
+  mutation checks against the security-sensitive paths.
+
+### Medium
+
+- The optional Avax container adapter is now exercised through a local seam, but not yet against the real external
+  container package in this environment. This is acceptable for kernel isolation, but it remains a publish-time
+  integration confidence gap.
+
+- Global revocation of arbitrary stateful session backends is still application-owned. The kernel clears the current
+  session and revokes refresh tokens, but package-level multi-session revocation still needs an application store or
+  registry.
+
+### Resolved In This Pass
+
+- Restored Composer verification and executed the real PHPUnit suite: `89 tests, 200 assertions`
+- Removed Composer PSR-4 noise and fixed the autoload split for `IdGeneratorInterface`
+- Migrated deprecated PHPUnit XML configuration and verified no deprecations/skips remain
+- Replaced brittle mocks of final classes in tests with real package seams and low-cost implementations
+- Hardened header parsing fallthrough, session regeneration/cookie normalization, TOTP internals, and iterable typing
+- Executed strict PHPStan successfully on the hardened package
+
+## Verdict
+
+The package now reads like a small auth kernel with thin adapters, and the concrete verification story is materially
+stronger than before this pass. The remaining blocker is tooling proof depth, not an unresolved kernel defect.
+
+---
+
 **Captured:** 2026-04-06 14:00 CET
 **Reviewer:** Agent
 **Scope:** Foundation/Auth/**

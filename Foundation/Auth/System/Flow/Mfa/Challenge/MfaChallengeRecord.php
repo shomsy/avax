@@ -17,6 +17,9 @@ use DateTimeImmutable;
  */
 final readonly class MfaChallengeRecord
 {
+    /**
+     * @param list<MfaVerificationAttempt> $attempts
+     */
     public function __construct(
         public string              $challengeId,
         public UserId              $userId,

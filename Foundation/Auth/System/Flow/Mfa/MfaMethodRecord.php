@@ -14,6 +14,9 @@ use DateTimeImmutable;
  */
 final readonly class MfaMethodRecord
 {
+    /**
+     * @param list<BackupCodeRecord> $backupCodes
+     */
     public function __construct(
         public UserId            $userId,
         public MfaMethod         $method,

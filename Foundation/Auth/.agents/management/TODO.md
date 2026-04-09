@@ -14,6 +14,28 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-016
+- `created_at`: 2026-04-09 21:44 CEST
+- `updated_at`: 2026-04-09 21:44 CEST
+- `status`: done
+- `outcome`: Install a repo-local PHP coverage driver path and repair the mutation execution lane so coverage and
+  Infection run without global root access
+- `acceptance`: local `pcov` fallback is available through `tooling/run-with-coverage-driver`; `composer mutation`
+  starts and completes real mutation analysis; Composer timeout no longer kills the run; release evidence distinguishes
+  tooling unblock from actual mutation-quality gaps
+- `links`: tooling/run-with-coverage-driver, composer.json, .gitignore, .agents/management/evidence/
+
+- `id`: AUTH-015
+- `created_at`: 2026-04-09 21:12 CEST
+- `updated_at`: 2026-04-09 21:12 CEST
+- `status`: done
+- `outcome`: Restore the local Composer toolchain, execute the real verification suite, and harden kernel, adapter, and
+  tooling edges found by strict review
+- `acceptance`: `composer test`, `composer analyse`, and `composer analyse:strict` pass; optional adapter seams execute
+  in tests; strict-review findings on autoloading, PHPUnit config, header parsing, session handling, and final-class
+  test doubles are resolved; release evidence reflects the actual blocker state
+- `links`: composer.json, phpunit.xml.dist, phpstan.strict.neon, tests/Integrations/, .agents/management/evidence/
+
 - `id`: AUTH-014
 - `created_at`: 2026-04-09 19:21 CEST
 - `updated_at`: 2026-04-09 19:21 CEST

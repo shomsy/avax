@@ -17,6 +17,12 @@ Update rules:
 
 ## Current Ledger
 
+- `2026-04-09 21:44 CEST` | `AUTH-016` | installed repo-local `pcov` fallback, added coverage-driver wrapper,
+  removed Composer mutation timeout, added local artifact ignores, and converted the mutation blocker from environment
+  failure into real mutation-quality signal
+- `2026-04-09 21:12 CEST` | `AUTH-015` | restored local Composer verification, fixed autoload and PHPUnit config
+  issues, replaced fragile final-class mocks with real seams, hardened header/TOTP/session edges, and executed strict
+  review with updated release evidence
 - `2026-04-09 19:21 CEST` | `AUTH-014` | separated `System/` auth kernel from `integrations/` adapters, moved Avax
   container wiring out of the kernel, added HTTP ingress/failure mappers, hardened access-denial messages, and
   documented the frozen boundary

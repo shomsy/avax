@@ -7,6 +7,8 @@ namespace Avax\Auth\System\Capability\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capability\Identity\Session\SessionIdentityInterface;
 use Avax\Auth\System\Capability\User\User;
+use InvalidArgumentException;
+use SensitiveParameter;
 
 /**
  * Unified identity façade that coordinates session and JWT authentication state.
@@ -14,18 +16,18 @@ use Avax\Auth\System\Capability\User\User;
 final readonly class Identity implements IdentityInterface
 {
     public function __construct(
-        #[\SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
-        #[\SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
+        #[SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
+        #[SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
     ) {
         if ($this->sessionIdentity === null && $this->jwtIdentity === null) {
-            throw new \InvalidArgumentException(message: 'Identity requires at least one backend.');
+            throw new InvalidArgumentException(message: 'Identity requires at least one backend.');
         }
     }
 
     public function issue(User $user) : string|null
     {
         if (! $user->isActive()) {
-            throw new \InvalidArgumentException(message: 'Inactive users cannot be authenticated.');
+            throw new InvalidArgumentException(message: 'Inactive users cannot be authenticated.');
         }
 
         $this->sessionIdentity?->issue(userId: $user->getId()->value);
@@ -34,7 +36,7 @@ final readonly class Identity implements IdentityInterface
 
     }
 
-    public function authenticate(#[\SensitiveParameter] string $token) : void
+    public function authenticate(#[SensitiveParameter] string $token) : void
     {
         $this->jwtIdentity?->authenticate(token: $token);
     }

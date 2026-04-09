@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\HttpClient\Traits;
 
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Promise\Utils;
 
@@ -15,9 +17,9 @@ trait HandlesAsyncRequestsTrait
      * @param  array  $urls  The list of URLs to fetch data from.
      * @return array An array of promises for the asynchronous requests.
      *
-     * @throws \Exception
-     * @throws \Exception
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws Exception
+     * @throws Exception
+     * @throws GuzzleException
      */
     public function createAsyncRequests(array $urls): array
     {

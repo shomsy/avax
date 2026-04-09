@@ -8,10 +8,10 @@ Instantiation creates the object itself.
 
 Main files:
 
-- `DependencyInjection/Dependencies/Resolution/BuildService.php`
-- `DependencyInjection/Dependencies/Blueprints/CreateServiceBlueprint.php`
-- `DependencyInjection/Dependencies/Resolution/ResolveDependencies.php`
-- `DependencyInjection/Dependencies/Blueprints/ServiceBlueprint.php`
+- `src/Capabilities/Execution/BuildService.php`
+- `src/Capabilities/Declaration/Blueprints/CreateServiceBlueprint.php`
+- `src/Capabilities/Resolution/ResolveDependencies.php`
+- `src/Capabilities/Declaration/Blueprints/ServiceBlueprint.php`
 
 Constructor arguments are resolved first. If the object cannot be created, the resolver fails before any late wiring starts.
 
@@ -23,11 +23,11 @@ Injection happens after the object exists.
 
 Main files:
 
-- `DependencyInjection/Injection/Properties/InjectProperties.php`
-- `DependencyInjection/Injection/Methods/InjectMethods.php`
-- `DependencyInjection/Injection/Reports/InjectionReport.php`
-- `DependencyInjection/Injection/Invocation/ResolveCallArguments.php`
-- `DependencyInjection/Injection/Invocation/FunctionCaller.php`
+- `src/Capabilities/Execution/Injection/Properties/InjectProperties.php`
+- `src/Capabilities/Execution/Injection/Methods/InjectMethods.php`
+- `src/Capabilities/Execution/Injection/Reports/InjectionReport.php`
+- `src/Capabilities/Execution/Injection/Invocation/ResolveCallArguments.php`
+- `src/Capabilities/Execution/Injection/Invocation/FunctionCaller.php`
 
 Current rules:
 

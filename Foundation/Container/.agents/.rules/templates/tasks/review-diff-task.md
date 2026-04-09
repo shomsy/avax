@@ -157,8 +157,8 @@ acceptance_criteria:
   "goal": "Review login timeout fix",
   "task_type": "review",
   "relevant_files": [
-    "src/auth/login.ts",
-    "src/config/index.ts"
+    "DI/auth/login.ts",
+    "DI/config/index.ts"
   ],
   "files_discovered": [],
   "excluded_files": [],
@@ -180,7 +180,7 @@ acceptance_criteria:
     }
   ],
   "code_changes": {
-    "files_modified": ["src/auth/login.ts"],
+    "files_modified": ["DI/auth/login.ts"],
     "files_created": [],
     "files_deleted": [],
     "diff_summary": "Changed session timeout from 30min to config value"

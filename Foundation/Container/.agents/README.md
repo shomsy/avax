@@ -8,12 +8,11 @@ folder is project-specific state, guidance, or runtime memory.
 
 ## This Repository
 
-- `Container.php` is the public facade.
-- `DependencyInjection/` is the system root.
-- `DependencyInjection/Flow/` holds public system flows.
-- `DependencyInjection/Capability/` holds shared runtime capabilities.
-- `DependencyInjection/Configuration/` holds assembly and wiring.
-- `DependencyInjection/Foundation/` is reserved for tiny neutral primitives.
+- `src/Container.php` is the public facade.
+- `src/` is the system root.
+- `src/Flows/` holds public system flows.
+- `src/Capabilities/` holds shared engine lanes.
+- `src/Foundation/` is reserved for tiny neutral primitives.
 - `docs/` is the canonical documentation tree for this component.
 
 ## Use This Folder For

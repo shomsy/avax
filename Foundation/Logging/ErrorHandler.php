@@ -9,6 +9,7 @@ use Avax\HTTP\Response\JsonResponse;
 use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
 use ErrorException;
 use JetBrains\PhpStorm\NoReturn;
+use JsonException;
 use Psr\Log\LoggerInterface;
 use Spatie\Ignition\Ignition;
 use Throwable;
@@ -95,7 +96,7 @@ final readonly class ErrorHandler
     /**
      * Handles fatal shutdown errors.
      *
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function handleShutdown(): void
     {
@@ -122,7 +123,7 @@ final readonly class ErrorHandler
     /**
      * Handles uncaught exceptions globally.
      *
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function handle(Throwable $throwable): void
     {
@@ -178,7 +179,7 @@ final readonly class ErrorHandler
     /**
      * Renders JSON formatted error response.
      *
-     * @throws \JsonException
+     * @throws JsonException
      */
     private function renderJson(Throwable $throwable): void
     {

@@ -7,8 +7,10 @@ namespace Avax\HTTP\Router\Cache;
 use Avax\Contracts\FilesystemException;
 use Avax\Filesystem\Contracts\AsyncFilesystemInterface;
 use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Routing\RouterRegistrar;
+use JsonException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
@@ -135,7 +137,7 @@ final readonly class AsyncRouteCacheLoader
     /**
      * Registers routes with the router.
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     private function registerRoutes(array $routes) : void
     {
@@ -151,7 +153,7 @@ final readonly class AsyncRouteCacheLoader
     /**
      * Synchronous fallback for load operation.
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     private function loadSync(string $cachePath, string $routesPath) : void
     {
@@ -200,7 +202,7 @@ final readonly class AsyncRouteCacheLoader
      *
      * @return mixed Promise resolving to void
      * @throws \Avax\Contracts\FilesystemException
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function writeAsync(string $cachePath, string $routesPath) : mixed
     {
@@ -217,7 +219,7 @@ final readonly class AsyncRouteCacheLoader
      *
      * @throws \Avax\Contracts\FilesystemException
      * @throws \Avax\Contracts\FilesystemException
-     * @throws \JsonException
+     * @throws JsonException
      * @throws \Avax\Contracts\FilesystemException
      */
     private function writeAsyncInternal(string $cachePath, string $routesPath) : mixed

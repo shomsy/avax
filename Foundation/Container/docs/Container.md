@@ -66,12 +66,12 @@ Lifecycle, scopes, and diagnostics:
 
 ## What It Delegates To
 
-- `DependencyInjection/Flows/RegisterServices.php`
-- `DependencyInjection/Flows/ResolveService.php`
-- `DependencyInjection/Flows/CallFunction.php`
-- `DependencyInjection/Flows/OpenScope.php`
-- `DependencyInjection/Flows/CloseScope.php`
-- `DependencyInjection/Flows/BootProviders.php`
+- `src/Flows/RegisterServices/RegisterServices.php`
+- `src/Flows/ResolveService/ResolveService.php`
+- `src/Flows/CallFunction/CallFunction.php`
+- `src/Flows/OpenScope/OpenScope.php`
+- `src/Flows/CloseScope/CloseScope.php`
+- `src/Flows/BootProviders/BootProviders.php`
 
 The facade does not own resolution internals, storage, blueprint creation, or telemetry wiring.
 
@@ -119,9 +119,9 @@ The facade does not own resolution internals, storage, blueprint creation, or te
 
 The facade uses a small set of explicit companion types:
 
-- `DependencyInjection/Dependencies/Bindings/ServiceRegistration.php`
-- `DependencyInjection/Dependencies/Bindings/RegisterForTarget.php`
-- `DependencyInjection/Injection/Reports/InjectionReport.php`
-- `DependencyInjection/Scopes/ScopeInterface.php`
-- `Compilation/CompileReport.php`
-- `Observability/RuntimeReport.php`
+- `src/Capabilities/Declaration/Bindings/ServiceRegistration.php`
+- `src/Capabilities/Declaration/Bindings/RegisterForTarget.php`
+- `src/Capabilities/Execution/Injection/Reports/InjectionReport.php`
+- `src/Capabilities/Runtime/Scopes/ScopeInterface.php`
+- `src/Capabilities/Composition/Compilation/CompileReport.php`
+- `src/Capabilities/Diagnostics/Observability/RuntimeReport.php`

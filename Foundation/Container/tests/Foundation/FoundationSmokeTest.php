@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/bootstrap.php';
 
-use Avax\Container\Foundation\Ids\IdGenerator;
-use Avax\Container\Foundation\Time\Clock;
+use Avax\Container\DI\Foundation\Ids\IdGenerator;
+use Avax\Container\DI\Foundation\Time\Clock;
 
 $clock = new Clock();
 $generator = new IdGenerator();

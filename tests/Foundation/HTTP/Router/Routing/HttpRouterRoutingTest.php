@@ -7,8 +7,10 @@ namespace Avax\HTTP\Router\Tests\Unit;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Matching\RouteMatcherRegistry;
 use Avax\HTTP\Router\Routing\Exceptions\InvalidRouteException;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
+use Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use Avax\HTTP\URI\UriBuilder;
 use PHPUnit\Framework\TestCase;
@@ -20,8 +22,8 @@ final class HttpRouterRoutingTest extends TestCase
     private HttpRequestRouter $router;
 
     /**
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws InvalidConstraintException
+     * @throws ReservedRouteNameException
      */
     public function test_optional_segment_with_value_is_captured() : void
     {
@@ -42,8 +44,8 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws InvalidConstraintException
+     * @throws ReservedRouteNameException
      */
     public function test_optional_segment_is_accepted() : void
     {
@@ -68,8 +70,8 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws InvalidConstraintException
+     * @throws ReservedRouteNameException
      */
     public function test_optional_segment_without_value_falls_back_to_defaults() : void
     {
@@ -92,8 +94,8 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws InvalidConstraintException
+     * @throws ReservedRouteNameException
      */
     public function test_wildcard_segment_captures_remainder() : void
     {
@@ -114,8 +116,8 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws InvalidConstraintException
+     * @throws ReservedRouteNameException
      */
     public function test_wildcard_segment_captures_single_segment_too() : void
     {
@@ -136,8 +138,8 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws InvalidConstraintException
+     * @throws ReservedRouteNameException
      */
     public function test_fallback_route_is_returned_when_no_match() : void
     {
@@ -155,8 +157,8 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws InvalidConstraintException
+     * @throws ReservedRouteNameException
      */
     public function test_fallback_handles_different_http_method() : void
     {
@@ -174,8 +176,8 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws InvalidConstraintException
+     * @throws ReservedRouteNameException
      */
     public function test_domain_route_matches_only_when_host_matches() : void
     {
@@ -204,7 +206,7 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function test_wildcard_must_be_final_segment() : void
     {
@@ -218,7 +220,7 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function test_only_one_wildcard_allowed() : void
     {
@@ -232,7 +234,7 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function test_wildcard_must_be_named() : void
     {
@@ -246,8 +248,8 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws InvalidConstraintException
+     * @throws ReservedRouteNameException
      */
     public function test_constraint_failure_throws() : void
     {
@@ -268,7 +270,7 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function test_named_route_lookup() : void
     {
@@ -286,7 +288,7 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function test_prefix_is_applied_and_cleared() : void
     {
@@ -312,7 +314,7 @@ final class HttpRouterRoutingTest extends TestCase
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function test_invalid_path_throws_exception() : void
     {

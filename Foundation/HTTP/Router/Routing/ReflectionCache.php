@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
+use ReflectionProperty;
+
 /**
  * Cache for reflection metadata to optimize repeated reflection operations.
  *
@@ -15,17 +20,17 @@ namespace Avax\HTTP\Router\Routing;
 final class ReflectionCache
 {
     /**
-     * @var array<string, \ReflectionClass<object>>
+     * @var array<string, ReflectionClass<object>>
      */
     private static array $classCache = [];
 
     /**
-     * @var array<string, \ReflectionMethod>
+     * @var array<string, ReflectionMethod>
      */
     private static array $methodCache = [];
 
     /**
-     * @var array<string, \ReflectionProperty>
+     * @var array<string, ReflectionProperty>
      */
     private static array $propertyCache = [];
 
@@ -35,12 +40,12 @@ final class ReflectionCache
      * @template T of object
      * @param class-string<T> $className
      *
-     * @return \ReflectionClass<T>
-     * @throws \ReflectionException
+     * @return ReflectionClass<T>
+     * @throws ReflectionException
      */
-    public static function getClass(string $className) : \ReflectionClass
+    public static function getClass(string $className) : ReflectionClass
     {
-        return self::$classCache[$className] ??= new \ReflectionClass(objectOrClass: $className);
+        return self::$classCache[$className] ??= new ReflectionClass(objectOrClass: $className);
     }
 
     /**
@@ -50,10 +55,10 @@ final class ReflectionCache
      * @param class-string<T>|T $classOrObject
      * @param string            $methodName
      *
-     * @return \ReflectionMethod
-     * @throws \ReflectionException
+     * @return ReflectionMethod
+     * @throws ReflectionException
      */
-    public static function getMethod($classOrObject, string $methodName) : \ReflectionMethod
+    public static function getMethod($classOrObject, string $methodName) : ReflectionMethod
     {
         $className = is_string($classOrObject) ? $classOrObject : $classOrObject::class;
         $key = $className . '::' . $methodName;
@@ -68,10 +73,10 @@ final class ReflectionCache
      * @param class-string<T>|T $classOrObject
      * @param string            $propertyName
      *
-     * @return \ReflectionProperty
-     * @throws \ReflectionException
+     * @return ReflectionProperty
+     * @throws ReflectionException
      */
-    public static function getProperty($classOrObject, string $propertyName) : \ReflectionProperty
+    public static function getProperty($classOrObject, string $propertyName) : ReflectionProperty
     {
         $className = is_string($classOrObject) ? $classOrObject : $classOrObject::class;
         $key = $className . '::$' . $propertyName;
@@ -91,7 +96,7 @@ final class ReflectionCache
         try {
             self::getMethod(classOrObject: $classOrObject, methodName: $methodName);
             return true;
-        } catch (\ReflectionException) {
+        } catch (ReflectionException) {
             return false;
         }
     }
@@ -108,7 +113,7 @@ final class ReflectionCache
         try {
             self::getProperty(classOrObject: $classOrObject, propertyName: $propertyName);
             return true;
-        } catch (\ReflectionException) {
+        } catch (ReflectionException) {
             return false;
         }
     }
@@ -125,7 +130,7 @@ final class ReflectionCache
         try {
             $method = self::getMethod(classOrObject: $classOrObject, methodName: $methodName);
             return $method->isPublic();
-        } catch (\ReflectionException) {
+        } catch (ReflectionException) {
             return false;
         }
     }
@@ -142,7 +147,7 @@ final class ReflectionCache
         try {
             $property = self::getProperty(classOrObject: $classOrObject, propertyName: $propertyName);
             return $property->isPublic();
-        } catch (\ReflectionException) {
+        } catch (ReflectionException) {
             return false;
         }
     }

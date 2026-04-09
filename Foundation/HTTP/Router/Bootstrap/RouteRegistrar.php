@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Bootstrap;
 
 use Avax\HTTP\Router\RouterInterface;
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteGroupStack;
 use Avax\HTTP\Router\Support\RouteCollector;
@@ -28,8 +30,8 @@ final readonly class RouteRegistrar
      * Load routes from file with registry integration.
      *
      * @see docs/Http/RouteRegistrar.md#method-load
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
+     * @throws ReservedRouteNameException
+     * @throws DuplicateRouteException
      */
     public function load(string $path, string $cacheDir) : void
     {

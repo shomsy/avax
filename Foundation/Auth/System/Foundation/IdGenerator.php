@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Foundation;
 
+use Random\RandomException;
+
 /**
  * Interface for ID generation.
  */
@@ -21,7 +23,7 @@ interface IdGeneratorInterface
 final class IdGenerator implements IdGeneratorInterface
 {
     /**
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     public function generate() : int
     {

@@ -8,8 +8,11 @@ use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\Classes\Response;
 use Avax\HTTP\Response\Classes\Stream;
 use InvalidArgumentException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use ReflectionException;
 use ReflectionMethod;
 use ReflectionNamedType;
 use RuntimeException;
@@ -37,9 +40,9 @@ final readonly class ControllerDispatcher
      * @param  callable|array|string  $action  The route's target action (controller, method, or callable).
      * @param  Request  $request  The PSR-7 compatible HTTP request instance.
      *
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \ReflectionException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
      */
     /**
      * Dispatches a controller action or callable based on the route action definition.
@@ -47,9 +50,9 @@ final readonly class ControllerDispatcher
      * @param  callable|array|string  $action  The route's target action (controller, method, or callable).
      * @param  Request  $request  The PSR-7 compatible HTTP request instance.
      *
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \ReflectionException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
      */
     public function dispatch(callable|array|string $action, Request $request): ResponseInterface
     {
@@ -107,9 +110,9 @@ final readonly class ControllerDispatcher
      * @param  array  $action  [ControllerClass::class, 'method'].
      * @param  Request  $request  The PSR-7 compatible HTTP request instance.
      *
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \ReflectionException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
      */
     private function dispatchControllerAndMethod(array $action, Request $request): ResponseInterface
     {
@@ -219,8 +222,8 @@ final readonly class ControllerDispatcher
      *
      * @param  string  $className  The fully qualified name of the controller class.
      *
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     private function resolveController(string $className): object
     {
@@ -241,8 +244,8 @@ final readonly class ControllerDispatcher
      * @param  string  $controller  The fully qualified name of the invokable controller class.
      * @param  Request  $request  The PSR-7 compatible HTTP request instance.
      *
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     private function dispatchInvokableController(string $controller, Request $request): ResponseInterface
     {

@@ -17,8 +17,11 @@ use Avax\HTTP\Router\Routing\RouterRegistrar;
 use Avax\HTTP\Router\Support\FallbackManager;
 use Avax\HTTP\Router\Support\RouteCollector;
 use Avax\HTTP\Router\Support\RouteRegistry;
+use BadMethodCallException;
 use Closure;
+use InvalidArgumentException;
 use LogicException;
+use ReflectionException;
 
 /**
  * Router DSL surface responsible for defining routes and fallbacks.
@@ -39,7 +42,7 @@ final readonly class RouterDsl implements RouterInterface
     public function get(string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         if (empty($path)) {
-            throw new \InvalidArgumentException(message: 'Route path cannot be empty in get() method');
+            throw new InvalidArgumentException(message: 'Route path cannot be empty in get() method');
         }
         return $this->register(method: HttpMethod::GET->value, path: $path, action: $action);
     }
@@ -47,7 +50,7 @@ final readonly class RouterDsl implements RouterInterface
     private function register(string $method, string $path, callable|array|string $action) : RouteRegistrarProxy
     {
         if (empty($path)) {
-            throw new \InvalidArgumentException(message: "Route path cannot be empty for method {$method}");
+            throw new InvalidArgumentException(message: "Route path cannot be empty for method {$method}");
         }
 
         $builder = RouteBuilder::make(method: $method, path: $path);
@@ -126,7 +129,7 @@ final readonly class RouterDsl implements RouterInterface
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function registerAttributes(object|string $controller) : void
     {
@@ -220,15 +223,15 @@ final readonly class RouterDsl implements RouterInterface
      * @param string $method The method name being called
      * @param array $arguments The arguments passed to the method
      *
-     * @throws \BadMethodCallException When an invalid HTTP method is called
+     * @throws BadMethodCallException When an invalid HTTP method is called
      */
     public function __call(string $method, array $arguments): mixed
     {
         // Check if this might be an HTTP method (all uppercase)
         if (strtoupper($method) === $method && strlen($method) > 0) {
-            throw new \BadMethodCallException(message: "HTTP method '{$method}' is not supported or route path is empty");
+            throw new BadMethodCallException(message: "HTTP method '{$method}' is not supported or route path is empty");
         }
 
-        throw new \BadMethodCallException(message: "Method '{$method}' does not exist on RouterDsl");
+        throw new BadMethodCallException(message: "Method '{$method}' does not exist on RouterDsl");
     }
 }

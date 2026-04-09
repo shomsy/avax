@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 namespace Psr\Container {
+
+    use Throwable;
+
     interface ContainerInterface
     {
         public function get(string $id): mixed;
@@ -10,7 +13,7 @@ namespace Psr\Container {
         public function has(string $id): bool;
     }
 
-    interface ContainerExceptionInterface extends \Throwable
+    interface ContainerExceptionInterface extends Throwable
     {
     }
 
@@ -20,7 +23,12 @@ namespace Psr\Container {
 }
 
 namespace {
-    $root = dirname(__DIR__);
+
+    use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
+    use Avax\Container\DI\Container;
+    use Avax\Container\DI\Flows\CreateContainer\CreateContainer;
+
+    $root             = dirname(__DIR__) . '/DI';
     $composerAutoload = dirname(__DIR__, 2) . '/vendor/autoload.php';
     if (is_file($composerAutoload)) {
         require_once $composerAutoload;
@@ -28,7 +36,7 @@ namespace {
 
     spl_autoload_register(
         static function (string $class) use ($root) : void {
-            $prefix = 'Avax\\Container\\';
+            $prefix = 'Avax\\Container\\DI\\';
             if (! str_starts_with($class, $prefix)) {
                 return;
             }
@@ -92,8 +100,8 @@ namespace {
     }
 
     function makeTestContainer(
-        \Avax\Container\Configuration\CreateContainerConfig|null $config = null
-    ) : \Avax\Container\Container {
-        return (new \Avax\Container\DependencyInjection\Flows\CreateContainer())->create(config: $config);
+        CreateContainerConfig|null $config = null
+    ) : Container {
+        return (new CreateContainer())->create(config: $config);
     }
 }

@@ -14,6 +14,8 @@ use Avax\Database\Transaction\TransactionManager;
 use Exception;
 use PDO;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
+use ReflectionException;
 use Throwable;
 
 /**
@@ -26,8 +28,8 @@ final class CriticalPathTest extends TestCase
     /**
      * Test: Transaction rollback on inner failure.
      *
-     * @throws \Random\RandomException
-     * @throws \ReflectionException
+     * @throws RandomException
+     * @throws ReflectionException
      * @throws \Throwable
      */
     public function test_transaction_rollback_on_failure(): void
@@ -83,8 +85,8 @@ final class CriticalPathTest extends TestCase
     /**
      * Test: QueryException never exposes raw bindings by default.
      *
-     * @throws \Random\RandomException
-     * @throws \ReflectionException
+     * @throws RandomException
+     * @throws ReflectionException
      * @throws \Throwable
      */
     public function test_query_exception_redacts_bindings_by_default(): void

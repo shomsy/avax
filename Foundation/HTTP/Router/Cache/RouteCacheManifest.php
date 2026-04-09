@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Cache;
 
+use Avax\HTTP\Router\Routing\RouteDefinition;
 use JsonException;
 use RuntimeException;
+use SensitiveParameter;
 
 final readonly class RouteCacheManifest
 {
     /** @param array<string, int> $files */
     private function __construct(
-        private array                         $files,
-        #[\SensitiveParameter] private string $hash,
-        private int                           $generatedAt,
-        private string                        $checksum
+        private array                        $files,
+        #[SensitiveParameter] private string $hash,
+        private int                          $generatedAt,
+        private string                       $checksum
     ) {}
 
     public static function buildFromDirectory(string $baseDir) : self
@@ -235,7 +237,7 @@ final readonly class RouteCacheManifest
      * Used to determine if route serialization can be skipped when
      * the route hasn't changed since last cache generation.
      */
-    public function getRouteHash(\Avax\HTTP\Router\Routing\RouteDefinition $route) : string
+    public function getRouteHash(RouteDefinition $route) : string
     {
         $routeData = $route->toArray();
 

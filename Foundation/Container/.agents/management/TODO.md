@@ -25,6 +25,16 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: TODO-019
+  `created_at`: 2026-04-09 00:35 CEST
+  `updated_at`: 2026-04-09 01:28 CEST
+  `status`: done
+  `estimate`: xlarge
+  `actual`: xlarge
+  `outcome`: Converge the package from the legacy multi-root tree into a `src/` system root that reads flow-first, with shared engine lanes under `Capabilities/`, tiny `Foundation/`, reduced gravity wells, and synced tests/docs/tools/governance.
+  `acceptance`: `src/` becomes the system root; public surface plus `Flows/*` are the first readable package story; authored declaration, composition, resolution, execution, runtime, and diagnostics have one honest lane each; legacy `DependencyInjection/`, `Compilation/`, `Configuration/`, `Observability/`, `Runtime/`, and `Errors/` implementation paths are removed from the production tree; docs/tests/tools reference the new shape; canonical lint, smoke suite, diagnostics contracts, benchmark guard, and `git diff --check` are green.
+  `links`: `docs/architecture-convergence.md`, `src/Container.php`, `src/ContainerInterface.php`, `src/ContextContainer.php`, `src/Flows/`, `src/Capabilities/`, `src/Foundation/`, `tests/Flows/`, `tests/Capabilities/`
+
 - `id`: TODO-018
   `created_at`: 2026-04-08 22:15 CEST
   `updated_at`: 2026-04-08 22:15 CEST
@@ -33,7 +43,7 @@ Canonical active implementation queue.
   `actual`: large
   `outcome`: Harden the ownership-aware runtime into a stricter architecture governor by separating policy execution into a dedicated governance stage, enforcing strict slice-boundary mutation rules, exposing richer architecture and selection diagnostics, shipping an HTML graph explorer plus architecture/governance tool commands, and adding a generated-artifact tool lane with smoke and CI-style checks.
   `acceptance`: `CreateContainerConfig` exposes policy fail mode, environment-specific policy profiles, and slice boundary mode; strict slice views block global mutation and cross-slice mutation while still compiling visible services; `debugGovernance()`, `debugArchitecture()`, `debugGroup()`, `debugSelection()`, and `factory()` exist on the public surface; graph tooling exports HTML explorer and architecture/governance outputs; generated artifact tool and `tests/check-generated-artifacts.sh` are green; canonical PHP lint, smoke tests, diagnostics contracts, analysis hints, benchmark guard, and `git diff --check` are green.
-  `links`: `Configuration/CreateContainerConfig.php`, `DependencyInjection/Dependencies/Ownership/GovernComposition.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `ContextContainer.php`, `Observability/GraphExporter.php`, `tools/graph.php`, `tools/generate-runtime-artifacts.php`, `tests/Observability/GraphToolingSmokeTest.php`, `tests/Observability/GeneratedArtifactsSmokeTest.php`
+  `links`: `Configuration/CreateContainerConfig.php`, `DependencyInjection/Dependencies/Ownership/GovernComposition.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `ContextContainer.php`, `Observability/GraphExporter.php`, `tools/graph.php`, `tools/generate-runtime-artifacts.php`, `tests/Capabilities/Diagnostics/Observability/GraphToolingSmokeTest.php`, `tests/Capabilities/Diagnostics/Observability/GeneratedArtifactsSmokeTest.php`
 
 - `id`: TODO-017
   `created_at`: 2026-04-08 20:39 CEST
@@ -85,7 +95,7 @@ Canonical active implementation queue.
     PHP lint is green; `tests/run-smoke-tests.sh` is green;
     `tests/check-benchmarks.sh` is green; `tests/run-benchmarks.sh` is green;
     `git diff --check` is clean.
-  `links`: `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `tests/DependencyInjection/Flows/BootProviders/BootProvidersSmokeTest.php`, `tests/run-benchmark-comparison.sh`, `tests/benchmarks/run.php`, `docs/Container.md`, `docs/architecture.md`, `docs/troubleshooting.md`
+  `links`: `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `tests/Flows/BootProviders/BootProvidersSmokeTest.php`, `tests/run-benchmark-comparison.sh`, `tests/benchmarks/run.php`, `docs/Container.md`, `docs/architecture.md`, `docs/troubleshooting.md`
 
 - `id`: TODO-013
   `created_at`: 2026-04-08 02:45 CEST
@@ -123,7 +133,7 @@ Canonical active implementation queue.
     deferred provider, and dev/prod compiled paths; Docker PHP lint is green;
     `tests/run-smoke-tests.sh` is green; `tests/check-benchmarks.sh` is green;
     `tests/run-benchmarks.sh` is green.
-  `links`: `Configuration/CreateContainerConfig.php`, `DependencyInjection/Flows/CreateContainer.php`, `DependencyInjection/Flows/BootProviders.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`, `Observability/ResolutionTimeline.php`, `Observability/RuntimeReport.php`, `tests/DependencyInjection/Flows/BootProviders/BootProvidersSmokeTest.php`, `tests/DependencyInjection/Flows/ResolveService/ContextAndDiagnosticsSmokeTest.php`, `tests/benchmarks/run.php`
+  `links`: `Configuration/CreateContainerConfig.php`, `DependencyInjection/Flows/CreateContainer.php`, `DependencyInjection/Flows/BootProviders.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`, `Observability/ResolutionTimeline.php`, `Observability/RuntimeReport.php`, `tests/Flows/BootProviders/BootProvidersSmokeTest.php`, `tests/Flows/ResolveService/ContextAndDiagnosticsSmokeTest.php`, `tests/benchmarks/run.php`
 
 - `id`: TODO-011
   `created_at`: 2026-04-08 01:50 CEST
@@ -228,7 +238,7 @@ Canonical active implementation queue.
     decoration, lazy proxies, and explicit compile commands are exposed on the
     public facade; Docker PHP lint is green; `tests/run-smoke-tests.sh` is
     green; no open strict-review findings remain in scope.
-  `links`: `Compilation/CompileContainer.php`, `Compilation/MethodEmitter.php`, `Compilation/ServiceCompiler.php`, `Runtime/HotPathInliner.php`, `Runtime/LazyProxy.php`, `Runtime/ServicePool.php`, `Container.php`, `ContainerInterface.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `tests/DependencyInjection/Flows/CreateContainer/CompiledContainerSmokeTest.php`, `tests/DependencyInjection/Flows/RegisterServices/RegisterServicesSmokeTest.php`, `tests/Runtime/ServicePoolSmokeTest.php`
+  `links`: `Compilation/CompileContainer.php`, `Compilation/MethodEmitter.php`, `Compilation/ServiceCompiler.php`, `Runtime/HotPathInliner.php`, `Runtime/LazyProxy.php`, `Runtime/ServicePool.php`, `Container.php`, `ContainerInterface.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `tests/Flows/CreateContainer/CompiledContainerSmokeTest.php`, `tests/Flows/RegisterServices/RegisterServicesSmokeTest.php`, `tests/Capabilities/Runtime/ServicePoolSmokeTest.php`
 
 - `id`: TODO-005
   `created_at`: 2026-04-07 23:50 CEST
@@ -247,7 +257,7 @@ Canonical active implementation queue.
     `warmCompiled()`, `flushCompiled()`, and `rebuildCompiled()`; Docker PHP
     lint is green; `tests/run-smoke-tests.sh` is green; no open strict-review
     findings remain in scope.
-  `links`: `Configuration/CreateContainerConfig.php`, `Container.php`, `ContainerInterface.php`, `DependencyInjection/Dependencies/Blueprints/BlueprintCache.php`, `DependencyInjection/Dependencies/Blueprints/CreateServiceBlueprint.php`, `DependencyInjection/Dependencies/Resolution/ResolvePlan.php`, `DependencyInjection/Dependencies/Resolution/BuildService.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `tests/DependencyInjection/Flows/CreateContainer/CompiledCacheSmokeTest.php`
+  `links`: `Configuration/CreateContainerConfig.php`, `Container.php`, `ContainerInterface.php`, `DependencyInjection/Dependencies/Blueprints/BlueprintCache.php`, `DependencyInjection/Dependencies/Blueprints/CreateServiceBlueprint.php`, `DependencyInjection/Dependencies/Resolution/ResolvePlan.php`, `DependencyInjection/Dependencies/Resolution/BuildService.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `tests/Flows/CreateContainer/CompiledCacheSmokeTest.php`
 
 - `id`: TODO-004
   `created_at`: 2026-04-07 15:20 CEST
@@ -269,7 +279,7 @@ Canonical active implementation queue.
     contract, and error boundaries; Docker PHP lint stays green;
     `tests/run-smoke-tests.sh` stays green; no open strict-review findings
     remain in scope.
-  `links`: `DependencyInjection/Flows/CreateContainer.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `DependencyInjection/Observability/ResolutionTimeline.php`, `tests/DependencyInjection/Flows/CreateContainer/CreateContainerSmokeTest.php`, `tests/DependencyInjection/Dependencies/Bindings/ServiceRegistrySmokeTest.php`, `tests/DependencyInjection/Dependencies/Blueprints/CreateServiceBlueprintSmokeTest.php`, `tests/DependencyInjection/Injection/Invocation/ResolveCallArgumentsSmokeTest.php`, `tests/DependencyInjection/Scopes/ScopeStoreSmokeTest.php`
+  `links`: `DependencyInjection/Flows/CreateContainer.php`, `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`, `DependencyInjection/Observability/ResolutionTimeline.php`, `tests/Flows/CreateContainer/CreateContainerSmokeTest.php`, `tests/Capabilities/Declaration/Bindings/ServiceRegistrySmokeTest.php`, `tests/Capabilities/Declaration/Blueprints/CreateServiceBlueprintSmokeTest.php`, `tests/Capabilities/Execution/Injection/Invocation/ResolveCallArgumentsSmokeTest.php`, `tests/Capabilities/Runtime/Scopes/ScopeStoreSmokeTest.php`
 
 - `id`: TODO-003
   `created_at`: 2026-04-07 13:30 CEST

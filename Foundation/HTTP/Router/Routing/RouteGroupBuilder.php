@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Routing;
 
 use Avax\HTTP\Router\HttpMethod;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Closure;
 use InvalidArgumentException;
 use RuntimeException;
@@ -275,7 +276,7 @@ final readonly class RouteGroupBuilder
      * @return RouteDefinition[] An array of `RouteDefinition` instances,
      *                           representing the fully finalized routes
      *                           within this route group.
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function build() : array
     {

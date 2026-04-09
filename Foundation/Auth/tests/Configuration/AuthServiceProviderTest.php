@@ -15,6 +15,7 @@ use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use Avax\Container\Core\AppFactory;
 use Avax\Container\Providers\ServiceProvider;
+use RuntimeException;
 
 /**
  * Integration test for the Auth component service provider.
@@ -81,7 +82,7 @@ class AuthServiceProviderTest extends TestCase
             cacheDir: sys_get_temp_dir()
         );
 
-        $this->expectException(exception: \RuntimeException::class);
+        $this->expectException(exception: RuntimeException::class);
         $this->expectExceptionMessage(
             message: 'AuthServiceProvider requires a SessionIdentityInterface or JwtIdentityInterface binding.'
         );

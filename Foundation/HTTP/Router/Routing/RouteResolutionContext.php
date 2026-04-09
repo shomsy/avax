@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
+use Avax\HTTP\Response\Classes\Response;
+use Avax\HTTP\Response\Classes\Stream;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
+
 /**
  * Structured context object for route resolution debugging and analysis.
  *
@@ -46,7 +50,7 @@ final readonly class RouteResolutionContext
     /**
      * Creates a failed resolution context.
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public static function failure(
         string $failureReason,
@@ -58,8 +62,8 @@ final readonly class RouteResolutionContext
             route         : new RouteDefinition(
                                 method    : 'GET',
                                 path      : '/__resolution_failed__',
-                                action    : static fn() => new \Avax\HTTP\Response\Classes\Response(
-                    stream: \Avax\HTTP\Response\Classes\Stream::fromString(content: 'Route resolution failed'),
+                                action    : static fn() => new Response(
+                    stream: Stream::fromString(content: 'Route resolution failed'),
                     statusCode: 500,
                     headers: ['Content-Type' => 'text/plain']
                 ),

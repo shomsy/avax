@@ -6,6 +6,7 @@ namespace Avax\HTTP\Middleware;
 
 use InvalidArgumentException;
 use ReflectionClass;
+use ReflectionException;
 
 /**
  * PSR-15 Middleware Registry
@@ -126,7 +127,7 @@ final class MiddlewareRegistry
      * @param array  $args       Constructor arguments
      *
      * @return MiddlewareInterface The middleware instance
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function create(string $identifier, array $args = []) : MiddlewareInterface
     {

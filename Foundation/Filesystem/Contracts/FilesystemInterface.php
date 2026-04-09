@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Filesystem\Contracts;
 
+use Avax\Contracts\FilesystemException;
+
 /**
  * Filesystem abstraction for clean architecture.
  *
@@ -19,7 +21,7 @@ interface FilesystemInterface
      *
      * @return string The file contents
      *
-     * @throws \Avax\Contracts\FilesystemException If file cannot be read
+     * @throws FilesystemException If file cannot be read
      */
     public function get(string $path) : string;
 
@@ -29,7 +31,7 @@ interface FilesystemInterface
      * @param string $path    The file path
      * @param string $content The content to write
      *
-     * @throws \Avax\Contracts\FilesystemException If file cannot be written
+     * @throws FilesystemException If file cannot be written
      */
     public function put(string $path, string $content) : void;
 
@@ -47,7 +49,7 @@ interface FilesystemInterface
      *
      * @param string $path The file path
      *
-     * @throws \Avax\Contracts\FilesystemException If file cannot be deleted
+     * @throws FilesystemException If file cannot be deleted
      */
     public function delete(string $path) : void;
 
@@ -65,7 +67,7 @@ interface FilesystemInterface
      *
      * @param string $path Directory path
      *
-     * @throws \Avax\Contracts\FilesystemException If directory cannot be created
+     * @throws FilesystemException If directory cannot be created
      */
     public function ensureDirectory(string $path) : void;
 }

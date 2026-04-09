@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing\Exceptions;
 
+use RuntimeException;
+use Throwable;
+
 /**
  * Base exception class for all router-related exceptions.
  *
@@ -11,7 +14,7 @@ namespace Avax\HTTP\Router\Routing\Exceptions;
  * all router exceptions. Implements RouterExceptionInterface for
  * standardized error handling.
  */
-abstract class RouterException extends \RuntimeException implements RouterExceptionInterface
+abstract class RouterException extends RuntimeException implements RouterExceptionInterface
 {
     /**
      * @var array<string, mixed>
@@ -24,7 +27,7 @@ abstract class RouterException extends \RuntimeException implements RouterExcept
         array $context = [],
         bool $isRetryable = false,
         int $code = 0,
-        \Throwable|null $previous = null
+        Throwable|null $previous = null
     ) {
         parent::__construct(message: $message, code: $code, previous: $previous);
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\HTTP\Session\Shared\Security;
 
 use Avax\HTTP\Session\Shared\Contracts\Storage\StoreInterface;
+use Random\RandomException;
 use RuntimeException;
 
 /**
@@ -39,7 +40,7 @@ final class SessionNonce
      *
      * @return string Hex-encoded nonce.
      *
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     public function generate(): string
     {
@@ -111,7 +112,7 @@ final class SessionNonce
      * @param  string  $action  Action identifier (e.g., 'delete_account', 'transfer_funds').
      * @return string Hex-encoded nonce.
      *
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     public function generateForRequest(string $action): string
     {

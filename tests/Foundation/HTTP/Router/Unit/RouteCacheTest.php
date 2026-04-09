@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Tests\Unit;
 
+use Avax\Contracts\FilesystemException;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Cache\RouteCacheLoader;
 use Avax\HTTP\Router\Matching\RouteMatcherRegistry;
 use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Routing\RouterRegistrar;
@@ -26,8 +28,8 @@ final class RouteCacheTest extends TestCase
     }
 
     /**
-     * @throws \Avax\Contracts\FilesystemException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws FilesystemException
+     * @throws ReservedRouteNameException
      */
     public function test_cache_write_fails_when_only_closures() : void
     {

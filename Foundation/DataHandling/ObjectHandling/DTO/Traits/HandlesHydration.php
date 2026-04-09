@@ -6,6 +6,7 @@ namespace Avax\DataHandling\ObjectHandling\DTO\Traits;
 
 use Avax\DataHandling\ObjectHandling\DTO\DTOValidationException;
 use InvalidArgumentException;
+use ReflectionException;
 use ReflectionProperty;
 use Throwable;
 
@@ -29,7 +30,7 @@ trait HandlesHydration
      *                                      and values represent their respective input values.
      *
      * @throws DTOValidationException Thrown if one or more fields fail validation during hydration.
-     * @throws \ReflectionException Raised when an error occurs in accessing reflective metadata for the class.
+     * @throws ReflectionException Raised when an error occurs in accessing reflective metadata for the class.
      */
     public function hydrateFrom(array $data): void
     {

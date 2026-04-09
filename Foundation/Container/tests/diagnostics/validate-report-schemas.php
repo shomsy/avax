@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/bootstrap.php';
 
-use Avax\Container\Compilation\CompileReport;
-use Avax\Container\Configuration\CreateContainerConfig;
-use Avax\Container\Observability\RuntimeReport;
+use Avax\Container\DI\Capabilities\Composition\Compilation\CompileReport;
+use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
+use Avax\Container\DI\Capabilities\Diagnostics\Observability\RuntimeReport;
 
 final class DiagnosticsSchemaDependency
 {

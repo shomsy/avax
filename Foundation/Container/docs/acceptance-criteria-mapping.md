@@ -209,16 +209,16 @@ This document maps every acceptance criterion to evidence, tests, and validation
 
 | Criterion | Test File | Location |
 |:----------|:----------|:---------|
-| AC-101 | SliceVisibilitySmokeTest.php | `tests/DependencyInjection/Flows/SliceView/` |
-| AC-101 | ExportImportDiagnosticsSmokeTest.php | `tests/DependencyInjection/Flows/SliceView/` |
-| AC-101 | SliceValidationSmokeTest.php | `tests/DependencyInjection/Flows/SliceView/` |
-| AC-102 | ExportImportDiagnosticsSmokeTest.php | `tests/DependencyInjection/Flows/SliceView/` |
-| AC-102 | OwnershipCompositionSmokeTest.php | `tests/DependencyInjection/Flows/ResolveService/` |
-| AC-103 | PooledLifetimeSmokeTest.php | `tests/DependencyInjection/Flows/RegisterServices/` |
-| AC-103 | PooledDiagnosticsSmokeTest.php | `tests/DependencyInjection/Diagnostics/` |
-| AC-105 | GraphExportSmokeTest.php | `tests/DependencyInjection/Diagnostics/` |
-| AC-106 | PolicyAndStructureDiffSmokeTest.php | `tests/DependencyInjection/Flows/ResolveService/` |
-| AC-110 | PolicyEnforcementSmokeTest.php | `tests/DependencyInjection/Diagnostics/` |
+| AC-101 | SliceVisibilitySmokeTest.php | `tests/Flows/SliceView/` |
+| AC-101 | ExportImportDiagnosticsSmokeTest.php | `tests/Flows/SliceView/` |
+| AC-101 | SliceValidationSmokeTest.php | `tests/Flows/SliceView/` |
+| AC-102 | ExportImportDiagnosticsSmokeTest.php | `tests/Flows/SliceView/` |
+| AC-102 | OwnershipCompositionSmokeTest.php | `tests/Flows/ResolveService/` |
+| AC-103 | PooledLifetimeSmokeTest.php | `tests/Flows/RegisterServices/` |
+| AC-103 | PooledLifetimeSmokeTest.php | `tests/Flows/ResolveService/` |
+| AC-105 | GraphToolingSmokeTest.php | `tests/Capabilities/Diagnostics/Observability/` |
+| AC-106 | PolicyAndStructureDiffSmokeTest.php | `tests/Flows/ResolveService/` |
+| AC-110 | PolicyAndStructureDiffSmokeTest.php | `tests/Flows/ResolveService/` |
 
 ---
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Database\Tests\Stress;
 
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 /**
  * Stress test: Verify pool correctly handles rapid acquire/release cycles.
@@ -14,7 +15,7 @@ final class PoolStressTest extends TestCase
     /**
      * Test: 100 rapid acquire/release cycles without slot leakage.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function test_pool_handles_rapid_acquire_release() : void
     {
@@ -24,8 +25,8 @@ final class PoolStressTest extends TestCase
     /**
      * Test: Concurrent slot usage respects max pool size.
      *
-     * @throws \Throwable
-     * @throws \Throwable
+     * @throws Throwable
+     * @throws Throwable
      */
     public function test_pool_respects_max_size() : void
     {

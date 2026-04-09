@@ -20,9 +20,11 @@ use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Matching\RouteMatcherInterface;
 use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\Routing\Exceptions\MethodNotAllowedException;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
 use Avax\HTTP\Router\Support\RouteRequestInjector;
 use Avax\HTTP\Router\Tracing\RouterTrace;
+use Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -125,7 +127,7 @@ final class HttpRequestRouter
     }
 
     /**
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      * @throws \Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException
      */
     private function registerRoute(string $method, string $path, callable|array|string $action, string|null $name = null) : void
@@ -205,8 +207,8 @@ final class HttpRequestRouter
      *
      * @return RouteResolutionContext Structured context with route, parameters, timing, and debug info
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
+     * @throws ReservedRouteNameException
+     * @throws InvalidConstraintException
      */
     public function resolve(Request $request) : RouteResolutionContext
     {

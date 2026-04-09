@@ -7,6 +7,7 @@ namespace Avax\HTTP\Middleware\CSRF;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Response\ResponseFactory;
 use Avax\HTTP\Security\CsrfTokenManager;
+use Exception;
 use SensitiveParameter;
 
 /**
@@ -34,7 +35,7 @@ readonly class CsrfMiddleware
      * @param  callable  $next  The next middleware to be called.
      * @return mixed Returns the next middleware response or a 403 response if CSRF validation fails.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function handle(Request $request, callable $next): mixed
     {

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Bootstrap;
 
 use Avax\Config\Architecture\DDD\AppPath;
+use Avax\Contracts\FilesystemException;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\Cache\RouteCacheLoader;
 use Avax\HTTP\Router\Cache\RouteCacheManifest;
 use Avax\HTTP\Router\RouterRuntimeInterface;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Snapshots\RouterSnapshot;
@@ -175,7 +177,7 @@ final readonly class RouteBootstrapper
      *
      * @param string $cachePath Path to the route cache file.
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     private function loadRoutesFromCache(string $cachePath, string $routesPath) : void
     {
@@ -198,7 +200,7 @@ final readonly class RouteBootstrapper
      *
      * @param string $baseDir Base directory containing route definition files.
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     private function loadRoutesFromDisk(string $baseDir, bool $closuresOnly = false) : void
     {
@@ -257,7 +259,7 @@ final readonly class RouteBootstrapper
      * @param SplFileInfo $file Route file to process.
      * @param bool        $closuresOnly
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     private function processRouteFile(SplFileInfo $file, bool $closuresOnly = false) : void
     {
@@ -321,7 +323,7 @@ final readonly class RouteBootstrapper
      * @param string $routesPath Path to the directory containing route definition files.
      * @param string $cachePath  Path to where the new cache file should be written.
      *
-     * @throws \Avax\Contracts\FilesystemException
+     * @throws FilesystemException
      */
     private function loadRoutesFromDiskAndCache(string $routesPath, string $cachePath) : void
     {

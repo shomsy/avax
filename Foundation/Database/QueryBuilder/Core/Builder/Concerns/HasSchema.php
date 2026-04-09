@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Database\QueryBuilder\Core\Builder\Concerns;
 
 use Avax\Migrations\Design\Table\Blueprint;
+use Throwable;
 
 /**
  * Trait bridging the QueryBuilder with the Migration system for integrated schema management.
@@ -16,7 +17,7 @@ trait HasSchema
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Schema.md#create
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function create(string $table, callable $callback) : void
     {
@@ -33,7 +34,7 @@ trait HasSchema
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Schema.md#dropifexists
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function dropIfExists(string $table) : void
     {
@@ -44,7 +45,7 @@ trait HasSchema
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Schema.md#truncate
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function truncate(string|null $table = null) : void
     {
@@ -56,7 +57,7 @@ trait HasSchema
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Schema.md#createdatabase
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function createDatabase(string $name) : void
     {
@@ -67,7 +68,7 @@ trait HasSchema
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/DSL/Schema.md#dropdatabase
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function dropDatabase(string $name) : void
     {

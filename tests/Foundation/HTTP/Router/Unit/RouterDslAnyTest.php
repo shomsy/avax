@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;
 use Avax\HTTP\Router\RouterDsl;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteCollection;
 use Avax\HTTP\Router\Routing\RouteDefinition;
@@ -75,8 +76,8 @@ class RouterDslAnyTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function method_specific_routes_take_precedence_over_any() : void
     {

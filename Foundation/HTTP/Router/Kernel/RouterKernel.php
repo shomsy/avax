@@ -5,13 +5,20 @@ declare(strict_types=1);
 namespace Avax\HTTP\Router\Kernel;
 
 use Avax\HTTP\Request\Request;
+use Avax\HTTP\Router\Routing\Exceptions\MethodNotAllowedException;
+use Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Routing\RouteExecutor;
 use Avax\HTTP\Router\Routing\RoutePipelineFactory;
 use Avax\HTTP\Router\Support\HeadRequestFallback;
 use Avax\HTTP\Router\Support\RouteRequestInjector;
 use Avax\HTTP\Router\Tracing\RouterTrace;
+use Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use ReflectionException;
+use Throwable;
 
 /**
  * Class RouterKernel
@@ -51,10 +58,10 @@ final readonly class RouterKernel
      *
      * @return ResponseInterface The HTTP response produced after processing.
      *
-     * @throws \ReflectionException Signals issues with runtime reflection in the pipeline processing.
-     * @throws \Psr\Container\ContainerExceptionInterface Indicates a container-related error occurred.
-     * @throws \Psr\Container\NotFoundExceptionInterface Indicates a requested service was not found.
-     * @throws \Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException
+     * @throws ReflectionException Signals issues with runtime reflection in the pipeline processing.
+     * @throws ContainerExceptionInterface Indicates a container-related error occurred.
+     * @throws NotFoundExceptionInterface Indicates a requested service was not found.
+     * @throws InvalidConstraintException
      */
     public function handle(Request $request) : ResponseInterface
     {
@@ -110,7 +117,7 @@ final readonly class RouterKernel
 
             return $response;
 
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             // Trace: Request failed with fallback or error
             $this->trace?->log(event: 'kernel.request.failed', context: [
                 'method'    => $method,
@@ -121,8 +128,8 @@ final readonly class RouterKernel
             ]);
 
             // Check if this is a routing exception that should trigger fallback
-            if ($exception instanceof \Avax\HTTP\Router\Routing\Exceptions\RouteNotFoundException ||
-                $exception instanceof \Avax\HTTP\Router\Routing\Exceptions\MethodNotAllowedException) {
+            if ($exception instanceof RouteNotFoundException ||
+                $exception instanceof MethodNotAllowedException) {
 
                 $this->trace?->log(event: 'kernel.fallback.triggered', context: [
                     'reason'   => get_class($exception),

@@ -4,11 +4,11 @@ Scopes are the isolation boundary for scoped services.
 
 ## Main Files
 
-- `DependencyInjection/Flows/OpenScope.php`
-- `DependencyInjection/Flows/CloseScope.php`
-- `DependencyInjection/Scopes/ScopeInterface.php`
-- `DependencyInjection/Scopes/ManageScopes.php`
-- `DependencyInjection/Scopes/ScopeStore.php`
+- `src/Flows/OpenScope/OpenScope.php`
+- `src/Flows/CloseScope/CloseScope.php`
+- `src/Capabilities/Runtime/Scopes/ScopeInterface.php`
+- `src/Capabilities/Runtime/Scopes/ManageScopes.php`
+- `src/Capabilities/Runtime/Scopes/ScopeStore.php`
 
 ## Behavior
 

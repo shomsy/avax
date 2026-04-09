@@ -20,7 +20,7 @@ Recommended card format:
 ```mermaid
 flowchart LR
     subgraph Ready["Ready"]
-        R1["No active cards"]
+        R0["No active cards"]
     end
 
     subgraph InProgress["In Progress"]

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Session\Shared\Contracts\Security;
 
+use RuntimeException;
+
 /**
  * Encrypter - Encryption Contract
  *
@@ -30,7 +32,7 @@ interface Encrypter
      * @param  string  $encrypted  The encrypted value.
      * @return mixed The decrypted value.
      *
-     * @throws \RuntimeException If decryption fails.
+     * @throws RuntimeException If decryption fails.
      */
     public function decrypt(string $encrypted): mixed;
 }

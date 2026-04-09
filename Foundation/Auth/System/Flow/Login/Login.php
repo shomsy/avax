@@ -10,6 +10,7 @@ use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
 use Exception;
+use SensitiveParameter;
 
 /**
  * High-level orchestrator for the login process.
@@ -19,10 +20,10 @@ use Exception;
 final readonly class Login
 {
     public function __construct(
-        private UserSourceInterface                   $userSource,
-        #[\SensitiveParameter] private PasswordHasher $passwordHasher,
-        #[\SensitiveParameter] private IdentityInterface $identity,
-        private LoginRateLimit|null                   $rateLimit = null
+        private UserSourceInterface                     $userSource,
+        #[SensitiveParameter] private PasswordHasher    $passwordHasher,
+        #[SensitiveParameter] private IdentityInterface $identity,
+        private LoginRateLimit|null                     $rateLimit = null
     ) {}
 
     /**
@@ -30,7 +31,7 @@ final readonly class Login
      *
      * @throws Exception
      */
-    public function execute(#[\SensitiveParameter] Credentials $credentials) : User
+    public function execute(#[SensitiveParameter] Credentials $credentials) : User
     {
         $this->rateLimit?->check(identifier: $credentials->identifier);
 

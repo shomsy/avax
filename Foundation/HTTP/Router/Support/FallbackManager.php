@@ -7,7 +7,10 @@ namespace Avax\HTTP\Router\Support;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Request\Request;
 use Closure;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use ReflectionException;
 use RuntimeException;
 
 /**
@@ -32,9 +35,9 @@ final class FallbackManager
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \ReflectionException
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws ReflectionException
+     * @throws NotFoundExceptionInterface
      */
     public function invoke(Request $request) : ResponseInterface
     {

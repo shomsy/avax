@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Foundation;
 
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGenerator;
@@ -16,7 +17,7 @@ class FoundationTest extends TestCase
     public function testClockReturnsDateTime() : void
     {
         $clock = new Clock();
-        $this->assertInstanceOf(expected: \DateTimeImmutable::class, actual: $clock->now());
+        $this->assertInstanceOf(expected: DateTimeImmutable::class, actual: $clock->now());
     }
 
     public function testIdGeneratorGeneratesPositiveInt() : void

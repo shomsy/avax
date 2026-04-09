@@ -18,6 +18,8 @@ use Avax\HTTP\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
+use ReflectionException;
+use SensitiveParameter;
 use Stringable;
 
 /**
@@ -53,7 +55,7 @@ final readonly class AppKernel implements Kernel
      * @param ResponseFactory       $responseFactory  For creating responses
      * @param MiddlewareInterface[] $globalMiddleware Always-executed middleware
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function __construct(
         RouterInterface      $router,
@@ -85,8 +87,8 @@ final readonly class AppKernel implements Kernel
      * This provides sensible defaults that can be customized or replaced.
      * Order matters for security and functionality.
      *
-     * @throws \ReflectionException
-     * @throws \ReflectionException
+     * @throws ReflectionException
+     * @throws ReflectionException
      */
     private function createDefaultMiddlewareStack(ResponseFactory $responseFactory) : array
     {
@@ -131,7 +133,7 @@ final readonly class AppKernel implements Kernel
     private function createOfficeIpRestriction(ResponseFactory $responseFactory) : MiddlewareInterface
     {
         return new class($responseFactory) extends IpRestrictionMiddleware {
-            protected function isAllowedIp(#[\SensitiveParameter] string $ipAddress) : bool
+            protected function isAllowedIp(#[SensitiveParameter] string $ipAddress) : bool
             {
                 // Example: Allow local development and office IPs
                 $allowed = ['127.0.0.1', '::1', '192.168.1.0/24'];
@@ -323,7 +325,7 @@ final readonly class AppKernel implements Kernel
     /**
      * Add middleware to the global pipeline.
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function withMiddleware(MiddlewareInterface $middleware) : self
     {

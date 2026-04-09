@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\User;
 
+use SensitiveParameter;
 use Stringable;
 
 /**
@@ -16,23 +17,23 @@ final class User implements UserInterface, Stringable
      * @param array<UserPermission> $permissions
      */
     public function __construct(
-        public readonly UserId                           $id,
-        #[\SensitiveParameter] public readonly UserEmail $email,
-        public readonly string                           $username,
-        #[\SensitiveParameter] public readonly string    $passwordHash,
-        public readonly array                            $roles = [],
-        public readonly array                            $permissions = [],
-        public readonly bool                             $isActive = true
+        public readonly UserId                          $id,
+        #[SensitiveParameter] public readonly UserEmail $email,
+        public readonly string                          $username,
+        #[SensitiveParameter] public readonly string    $passwordHash,
+        public readonly array                           $roles = [],
+        public readonly array                           $permissions = [],
+        public readonly bool                            $isActive = true
     ) {}
 
     public static function create(
-        UserId                           $id,
-        #[\SensitiveParameter] UserEmail $email,
-        string                           $username,
-        #[\SensitiveParameter] string    $passwordHash,
-        array                            $roles = [],
-        array                            $permissions = [],
-        bool                             $isActive = true
+        UserId                          $id,
+        #[SensitiveParameter] UserEmail $email,
+        string                          $username,
+        #[SensitiveParameter] string    $passwordHash,
+        array                           $roles = [],
+        array                           $permissions = [],
+        bool                            $isActive = true
     ) : self {
         return new self(id: $id, email: $email, username: $username, passwordHash: $passwordHash, roles: $roles, permissions: $permissions, isActive: $isActive);
     }

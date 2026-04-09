@@ -82,7 +82,7 @@ $container->pooled(Parser::class)
 ### Via ResettableInterface
 
 ```php
-class ResettableParser implements \Avax\Container\DependencyInjection\Scopes\ResettableInterface
+class ResettableParser implements \Avax\Container\Capabilities\Runtime\Scopes\ResettableInterface
 {
     public function reset(): void
     {

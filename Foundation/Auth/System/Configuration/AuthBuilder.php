@@ -21,6 +21,8 @@ use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Foundation\IdGenerator;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
+use RuntimeException;
+use SensitiveParameter;
 
 /**
  * Fluent builder for creating Auth system instances.
@@ -47,7 +49,7 @@ final class AuthBuilder
     /**
      * Define the composed identity façade for authentication state.
      */
-    public function withIdentity(#[\SensitiveParameter] IdentityInterface $identity) : self
+    public function withIdentity(#[SensitiveParameter] IdentityInterface $identity) : self
     {
         $this->identity = $identity;
         return $this;
@@ -65,7 +67,7 @@ final class AuthBuilder
     /**
      * Configure a custom password hasher.
      */
-    public function usingHasher(#[\SensitiveParameter] PasswordHasher $passwordHasher) : self
+    public function usingHasher(#[SensitiveParameter] PasswordHasher $passwordHasher) : self
     {
         $this->passwordHasher = $passwordHasher;
         return $this;
@@ -86,11 +88,11 @@ final class AuthBuilder
     public function ready() : Auth
     {
         if ($this->userSource === null) {
-            throw new \RuntimeException(message: 'Data source is required (forUser).');
+            throw new RuntimeException(message: 'Data source is required (forUser).');
         }
 
         if ($this->identity === null) {
-            throw new \RuntimeException(message: 'Identity is required (withIdentity).');
+            throw new RuntimeException(message: 'Identity is required (withIdentity).');
         }
 
         $identity = $this->identity;

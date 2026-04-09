@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteDefinition;
 use Avax\HTTP\Router\Support\RouteExportValidator;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +33,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function validates_exportable_array_action_routes() : void
     {
@@ -47,7 +48,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function validates_routes_with_all_exportable_fields() : void
     {
@@ -69,7 +70,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function rejects_closure_action_routes() : void
     {
@@ -93,7 +94,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function rejects_invalid_array_action_routes() : void
     {
@@ -115,7 +116,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function rejects_non_string_middleware() : void
     {
@@ -138,7 +139,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function rejects_non_scalar_defaults() : void
     {
@@ -161,7 +162,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function rejects_non_scalar_attributes() : void
     {
@@ -184,7 +185,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function rejects_non_string_domain() : void
     {
@@ -207,7 +208,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function filters_exportable_routes() : void
     {
@@ -243,7 +244,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function allows_null_values_in_exportable_fields() : void
     {
@@ -260,7 +261,7 @@ class RouteExportValidatorTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function allows_nested_scalar_arrays() : void
     {

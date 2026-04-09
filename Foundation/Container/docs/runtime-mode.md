@@ -7,8 +7,8 @@ Runtime mode is the phase where the container resolves services from authored re
 Disposable runtime state lives in:
 
 - attached compiled runtime
-- `Runtime/ServicePool.php`
-- `DependencyInjection/Scopes/ScopeStore.php`
+- `src/Capabilities/Runtime/ServicePool.php`
+- `src/Capabilities/Runtime/Scopes/ScopeStore.php`
 - lazy-service ledger
 - callable cache
 - metrics and optional timeline state

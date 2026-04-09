@@ -6,7 +6,7 @@ Build mode is the phase where the container turns authored definitions into gene
 
 Canonical authored truth lives in:
 
-- `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`
+- `src/Capabilities/Declaration/Bindings/ServiceRegistry.php`
 - explicit registrations
 - aliases
 - tags

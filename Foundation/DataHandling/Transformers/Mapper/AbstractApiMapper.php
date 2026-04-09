@@ -9,6 +9,7 @@ use Avax\DataHandling\DTO\DTOCollection;
 use Avax\DataHandling\DTO\DTOInterface;
 use Avax\DataHandling\DTO\Validation\Casting\ValueCaster;
 use Avax\DataHandling\DTO\Validation\DTOValidator;
+use ReflectionException;
 use ReflectionNamedType;
 use ReflectionProperty;
 
@@ -48,7 +49,7 @@ abstract class AbstractApiMapper implements MapperInterface
      * @param  array  $data  The array of data sets to be mapped to DTOs.
      * @return DTOInterface|DTOCollection Either a single DTO object or a DTOCollection.
      *
-     * @throws \ReflectionException If an error occurs during reflection.
+     * @throws ReflectionException If an error occurs during reflection.
      *
      * ### Example usage:
      * ```
@@ -69,7 +70,7 @@ abstract class AbstractApiMapper implements MapperInterface
      * @param  array  $data  The data set to be mapped.
      * @return DTOInterface The DTO object created from the provided data.
      *
-     * @throws \ReflectionException If an error occurs during reflection.
+     * @throws ReflectionException If an error occurs during reflection.
      *
      * ### Example usage:
      * ```
@@ -110,7 +111,7 @@ abstract class AbstractApiMapper implements MapperInterface
      * @param  string  $dtoClass  The fully qualified class name of the DTO.
      * @return DTOInterface The DTO object created from the provided data.
      *
-     * @throws \ReflectionException If an error occurs during reflection.
+     * @throws ReflectionException If an error occurs during reflection.
      *
      * ### Example usage:
      * ```
@@ -134,7 +135,7 @@ abstract class AbstractApiMapper implements MapperInterface
      * @param  string  $dtoClass  The fully qualified class name of the DTO which contains type definitions.
      * @return array An array of casted data that can be used to instantiate the DTO object.
      *
-     * @throws \ReflectionException If an error occurs during reflection.
+     * @throws ReflectionException If an error occurs during reflection.
      *
      * ### Example usage:
      * ```
@@ -169,7 +170,7 @@ abstract class AbstractApiMapper implements MapperInterface
      * @param  array  $data  The array of data sets to be mapped to DTOs.
      * @return DTOCollection A collection of mapped DTO objects.
      *
-     * @throws \ReflectionException If an error occurs during reflection.
+     * @throws ReflectionException If an error occurs during reflection.
      *
      * ### Example usage:
      * ```

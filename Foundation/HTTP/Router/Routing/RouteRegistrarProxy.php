@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Routing;
 
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Support\RouteRegistry;
 
 /**
@@ -62,7 +63,7 @@ final class RouteRegistrarProxy
     /**
      * Finalizes and returns the RouteDefinition (registers first).
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      * @internal Use fluent methods instead.
      */
     public function build() : RouteDefinition

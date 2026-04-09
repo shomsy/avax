@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Tracing;
 
+use JsonException;
+
 /**
  * Performance traceability layer for HTTP router operations.
  *
@@ -201,12 +203,12 @@ final class RouterTrace
 
         try {
             return json_encode($traceData, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-        } catch (\JsonException $exception) {
+        } catch (JsonException $exception) {
             return json_encode([
                 'error' => 'Failed to export trace data',
                 'message' => $exception->getMessage(),
             ], JSON_THROW_ON_ERROR);
-        } catch (\JsonException $e) {
+        } catch (JsonException $e) {
         }
     }
 

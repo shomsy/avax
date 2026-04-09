@@ -12,33 +12,33 @@ Public entry:
 
 Flow entry:
 
-- `DependencyInjection/Flows/ResolveService.php`
+- `src/Flows/ResolveService/ResolveService.php`
 
 Runtime owner:
 
-- `DependencyInjection/Dependencies/Resolution/ServiceResolver.php`
+- `src/Capabilities/Resolution/ServiceResolver.php`
 
 Main collaborators:
 
-- `DependencyInjection/Dependencies/Resolution/ResolveRequest.php`
-- `DependencyInjection/Dependencies/Resolution/ResolvePlan.php`
-- `DependencyInjection/Dependencies/Resolution/ResolveDependencies.php`
-- `DependencyInjection/Dependencies/Resolution/BuildService.php`
-- `DependencyInjection/Dependencies/Blueprints/CreateServiceBlueprint.php`
-- `DependencyInjection/Dependencies/Blueprints/BlueprintCache.php`
-- `DependencyInjection/Dependencies/Bindings/ServiceRegistry.php`
-- `DependencyInjection/Scopes/ManageScopes.php`
-- `Compilation/CompileContainer.php`
-- `Compilation/ArtifactMetadata.php`
-- `Compilation/CompileReport.php`
-- `DependencyInjection/Dependencies/Resolution/CompiledRuntime.php`
-- `DependencyInjection/Dependencies/Providers/DeferredProviderRegistry.php`
-- `Runtime/HotPathInliner.php`
-- `Runtime/ServicePool.php`
-- `DependencyInjection/Injection/Properties/InjectProperties.php`
-- `DependencyInjection/Injection/Methods/InjectMethods.php`
-- `DependencyInjection/Dependencies/Resolution/ResolutionPolicy.php`
-- `Observability/ResolutionTelemetry.php`
+- `src/Capabilities/Resolution/ResolveRequest.php`
+- `src/Capabilities/Resolution/ResolvePlan.php`
+- `src/Capabilities/Resolution/ResolveDependencies.php`
+- `src/Capabilities/Execution/BuildService.php`
+- `src/Capabilities/Declaration/Blueprints/CreateServiceBlueprint.php`
+- `src/Capabilities/Declaration/Blueprints/BlueprintCache.php`
+- `src/Capabilities/Declaration/Bindings/ServiceRegistry.php`
+- `src/Capabilities/Runtime/Scopes/ManageScopes.php`
+- `src/Capabilities/Composition/Compilation/CompileContainer.php`
+- `src/Capabilities/Composition/Compilation/ArtifactMetadata.php`
+- `src/Capabilities/Composition/Compilation/CompileReport.php`
+- `src/Capabilities/Runtime/CompiledRuntime.php`
+- `src/Capabilities/Declaration/Providers/DeferredProviderRegistry.php`
+- `src/Capabilities/Runtime/HotPathInliner.php`
+- `src/Capabilities/Runtime/ServicePool.php`
+- `src/Capabilities/Execution/Injection/Properties/InjectProperties.php`
+- `src/Capabilities/Execution/Injection/Methods/InjectMethods.php`
+- `src/Capabilities/Resolution/ResolutionPolicy.php`
+- `src/Capabilities/Diagnostics/Observability/ResolutionTelemetry.php`
 
 ## What Happens
 

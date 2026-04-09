@@ -16,6 +16,8 @@ use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
 use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Capability\User\User;
+use Exception;
+use SensitiveParameter;
 
 /**
  * Main entry point for Avax Auth System.
@@ -25,13 +27,13 @@ use Avax\Auth\System\Capability\User\User;
 final readonly class Auth implements AuthInterface
 {
     public function __construct(
-        private Login                                      $login,
-        private Logout                                     $logout,
-        #[\SensitiveParameter] private CheckAuthentication $checkAuthentication,
-        private ReadCurrentUser                            $readCurrentUser,
-        private AccessInterface                            $access,
-        #[\SensitiveParameter] private ChangePassword      $changePassword,
-        private Register                                   $register
+        private Login                                     $login,
+        private Logout                                    $logout,
+        #[SensitiveParameter] private CheckAuthentication $checkAuthentication,
+        private ReadCurrentUser                           $readCurrentUser,
+        private AccessInterface                           $access,
+        #[SensitiveParameter] private ChangePassword      $changePassword,
+        private Register                                  $register
     ) {}
 
     /**
@@ -43,9 +45,9 @@ final readonly class Auth implements AuthInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function login(#[\SensitiveParameter] Credentials $credentials) : User
+    public function login(#[SensitiveParameter] Credentials $credentials) : User
     {
         return $this->login->execute(credentials: $credentials);
     }
@@ -71,7 +73,7 @@ final readonly class Auth implements AuthInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function changePassword(User $user, ChangePasswordData $data) : void
     {
@@ -79,7 +81,7 @@ final readonly class Auth implements AuthInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function register(RegistrationData $data) : User
     {

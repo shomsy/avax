@@ -192,7 +192,7 @@ AuthException (base)
     },
     "autoload": {
         "psr-4": {
-            "Avax\\Auth\\": "src/"
+            "Avax\\Auth\\": "DI/"
         }
     }
 }

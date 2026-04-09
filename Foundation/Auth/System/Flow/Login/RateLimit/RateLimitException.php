@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Login\RateLimit;
 
+use Exception;
+
 /**
  * Exception thrown when login rate limit is exceeded.
  */
-class RateLimitException extends \Exception
+class RateLimitException extends Exception
 {
     public function __construct(
         string $message,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Cache;
 
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Support\RouteRegistry;
 use JsonException;
 use RuntimeException;
@@ -27,7 +28,7 @@ final readonly class RouteCacheCompiler
      * @param string $directory  The absolute path to the directory containing `*.routes.php` files.
      * @param string $outputFile The absolute file path where the compiled routes cache will be stored.
      *
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function compile(string $directory, string $outputFile) : void
     {

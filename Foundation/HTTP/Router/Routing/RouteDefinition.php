@@ -18,6 +18,7 @@ use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Support\PathNormalizer;
 use Closure;
 use InvalidArgumentException;
+use Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException;
 use Laravel\SerializableClosure\SerializableClosure;
 use RuntimeException;
 
@@ -331,8 +332,8 @@ final readonly class RouteDefinition
     /**
      * Returns a copy of the route with the action wrapped in a SerializableClosure (if needed).
      *
-     * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
-     * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException|\Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws PhpVersionNotSupportedException
+     * @throws PhpVersionNotSupportedException|\Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function withSerializedAction() : self
     {
@@ -357,8 +358,8 @@ final readonly class RouteDefinition
     /**
      * Returns a copy of the route with the action unwrapped (if it's a SerializableClosure).
      *
-     * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException
-     * @throws \Laravel\SerializableClosure\Exceptions\PhpVersionNotSupportedException|\Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws PhpVersionNotSupportedException
+     * @throws PhpVersionNotSupportedException|\Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
      */
     public function withUnserializedAction() : self
     {

@@ -123,13 +123,13 @@ focus_area: "auth"
   "goal": "Map authentication flow implementation",
   "task_type": "map",
   "relevant_files": [
-    "src/auth/login.ts",
-    "src/auth/middleware.ts",
-    "src/services/session.ts"
+    "DI/auth/login.ts",
+    "DI/auth/middleware.ts",
+    "DI/services/session.ts"
   ],
   "files_discovered": [
-    "src/auth/providers/oauth.ts",
-    "src/auth/validators.ts"
+    "DI/auth/providers/oauth.ts",
+    "DI/auth/validators.ts"
   ],
   "excluded_files": [],
   "constraints": {

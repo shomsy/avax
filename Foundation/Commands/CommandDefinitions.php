@@ -8,10 +8,9 @@ use Avax\Commands\App\MakeControllerCommand;
 use Avax\Commands\App\MakeRepositoryCommand;
 use Avax\Migrations\Execution\Console\MigrateCommand;
 use Avax\Migrations\Execution\Console\MigrateRollbackCommand;
-use Avax\Migrations\Execution\Console\MigrateMakeCommand;
 use Illuminate\Database\Console\Migrations\InstallCommand;
-use Illuminate\Database\Console\Migrations\MigrateRefreshCommand;
 use Illuminate\Database\Console\Migrations\MigrateFreshCommand;
+use Illuminate\Database\Console\Migrations\MigrateRefreshCommand;
 
 class CommandDefinitions
 {

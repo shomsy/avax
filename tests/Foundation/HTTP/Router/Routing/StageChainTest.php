@@ -4,14 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Router\Tests\Unit;
 
-use Avax\Container\DI\ContainerInterface;
 use Avax\HTTP\Request\Request;
-use Avax\HTTP\Router\Routing\Exceptions\StageOrderException;
 use Avax\HTTP\Router\Routing\RouteStage;
-use Avax\HTTP\Router\Routing\StageChain;
-use Avax\HTTP\URI\UriBuilder;
 use Closure;
-use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;

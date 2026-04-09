@@ -13,14 +13,16 @@ use Exception;
 class RoleDenied extends Exception
 {
     public function __construct(
-        UserRole $requirement,
-        string   $message = 'Access denied.',
-        int      $code = 403
+        private readonly UserRole $requirement,
+        string                    $message = 'Access denied.',
+        int                       $code = 403
     )
     {
-        parent::__construct(
-            message: $message . " (Missing role: $requirement->value)",
-            code   : $code
-        );
+        parent::__construct(message: $message, code: $code);
+    }
+
+    public function requirement() : UserRole
+    {
+        return $this->requirement;
     }
 }

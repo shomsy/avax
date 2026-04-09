@@ -15,6 +15,8 @@ final readonly class Credentials
 {
     public function __construct(
         public string                       $identifier, // email or username
-        #[SensitiveParameter] public string $password
+        #[SensitiveParameter] public string $password,
+        public string|null                  $ipAddress = null,
+        public string|null                  $userAgent = null
     ) {}
 }

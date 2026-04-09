@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Identity\Session;
 
+use DateTimeImmutable;
+
 /**
  * Interface SessionIdentityInterface within the Auth System.
  */
 interface SessionIdentityInterface
 {
-    public function issue(int $userId) : void;
+    public function issue(int $userId, DateTimeImmutable|null $mfaVerifiedAt = null) : string|null;
 
-    public function getUserId() : int|null;
+    public function resolveUserId() : int|null;
+
+    public function resolveMfaVerifiedAt() : DateTimeImmutable|null;
+
+    public function currentSessionId() : string|null;
 
     public function clear() : void;
-
-    public function check() : bool;
 }

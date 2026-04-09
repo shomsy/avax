@@ -1,117 +1,131 @@
 # Avax Auth
 
-> Pure PHP 8.3+ authentication and authorization framework.
+Pure PHP 8.3+ auth kernel with one obvious ingress, immutable auth context, interchangeable session/JWT runtime
+strategies, first-class MFA, and a thin optional integration surface.
 
-A **feature-sliced**, **security-first**, **DSL-driven** authentication framework for PHP applications. Prolifically
-designed for **absurd simplicity on the surface** and **enterprise-grade integrity underneath**.
+## What Changed
 
-## Features
-
-- **Fluent Configuration DSL** - Natural, predictable setup.
-- **Unified Identity Management** - Session and JWT support in one place.
-- **Granular Access Control** - Enforceable RBAC (Roles and Permissions).
-- **Brute Force Protection** - Integrated protection flow.
-- **Secure Password Hashing** - Bcrypt (cost 12+) by default.
-- **Strictly Typed** - Built with PHP 8.3+ and Value Objects.
-
-## Installation
-
-```bash
-composer require avax/auth
-```
+- `Auth::login()` now returns `AuthenticationResult`, not an internal `User` entity.
+- `Auth::authenticateRequest()` is the canonical request ingress for bearer token/session resolution.
+- `Auth::current()`, `Auth::check()`, and `Auth::user()` now read one immutable `AuthenticationContext`.
+- Session and JWT now share the same public result model, logout path, and refresh/revocation lifecycle.
+- Password reset, email verification, MFA enrollment/challenge/recovery, refresh rotation, audit events, and
+  anti-enumeration flows are package-owned.
 
 ## Quick Start
-
-### Configuration
 
 ```php
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capability\Identity\Identity;
+use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
 use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
+use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Flow\Mfa\Enroll\ConfirmMfaEnrollmentData;
+use Avax\Auth\System\Flow\Mfa\Totp;
+use Avax\Auth\System\Flow\Token\HmacTokenCodec;
+use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Foundation\Clock;
+use DateTimeImmutable;
+
+$refreshTokens = new InMemoryRefreshTokenStore();
+$totp = new Totp();
 
 $auth = Auth::configuration()
     ->forUser($userSource)
-    ->withIdentity(new Identity(sessionIdentity: new SessionIdentity(
-        sessionKey: 'user_id'
-    )))
-    ->protectFromBruteForce($protection)
+    ->withIdentity(new Identity(
+        sessionIdentity: new SessionIdentity(),
+        jwtIdentity: new JwtIdentity(
+            userSource: $userSource,
+            codec: new HmacTokenCodec(secret: 'change-me'),
+            clock: new Clock(),
+            revocationStore: new InMemoryTokenRevocationStore(),
+            refreshTokenStore: $refreshTokens,
+        ),
+    ))
+    ->withRefreshTokenStore($refreshTokens)
+    ->usingTotp($totp)
     ->ready();
-```
 
-If you bootstrap through the container, register `System/Configuration/AuthServiceProvider.php` and bind a
-`UserSourceInterface` plus the identity backend you want to expose. Rate limiting stays opt-in until you provide a
-`LoginRateLimitStorageInterface`.
-
-### Authentication Flow (Flow)
-
-```php
-use Avax\Auth\System\Flow\Login\Credentials;
-use Avax\Auth\System\Flow\Register\RegistrationData;
-
-// Login
-$user = $auth->login(new Credentials(
+$login = $auth->login(new Credentials(
     identifier: 'user@example.com',
-    password: 'secret_password_123'
+    password: 'secret',
 ));
 
-// Registration
-$auth->register(new RegistrationData(
-    email: 'new@example.com',
-    username: 'new_user',
-    password: 'secure_password'
-));
-
-// Status & Logout
-if ($auth->check()) {
-    $currentUser = $auth->user();
+if ($login->requiresMfa()) {
+    $login = $auth->verifyMfaChallenge(
+        new \Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData(
+            challengeId: $login->mfaChallengeId() ?? '',
+            code: $backupCodeOrTotp
+        )
+    );
 }
 
-$auth->logout();
+$enrollment = $auth->startMfaEnrollment();
+$backupCodes = $auth->confirmMfaEnrollment(
+    new ConfirmMfaEnrollmentData(
+        code: $totp->codeAt($enrollment->secret(), new DateTimeImmutable())
+    )
+);
 ```
 
-### Authorization (Access)
+## Public API
 
-```php
-use Avax\Auth\System\Capability\User\UserPermission;
-use Avax\Auth\System\Capability\User\UserRole;
-
-$auth->access()->requireRole(UserRole::ADMIN);
-$auth->access()->requirePermission(new UserPermission('delete_user'));
-```
+- `login(Credentials): AuthenticationResult`
+- `authenticateRequest(AuthenticationRequest): AuthenticationContext`
+- `current(): AuthenticationContext`
+- `check(): bool`
+- `user(): ?AuthenticatedUser`
+- `logout(): void`
+- `access(): AccessInterface`
+- `changePassword(ChangePasswordData): void`
+- `register(RegistrationData): RegistrationResult`
+- `refresh(RefreshAuthenticationRequest): AuthenticationResult`
+- `beginPasswordReset(BeginPasswordResetData): PasswordResetChallenge`
+- `resetPassword(ResetPasswordData): bool`
+- `beginEmailVerification(BeginEmailVerificationData): EmailVerificationChallenge`
+- `verifyEmail(VerifyEmailData): bool`
+- `startMfaEnrollment(): MfaEnrollment`
+- `confirmMfaEnrollment(ConfirmMfaEnrollmentData): BackupCodeSet`
+- `cancelMfaEnrollment(): void`
+- `beginMfaChallenge(): MfaChallenge`
+- `verifyMfaChallenge(VerifyMfaChallengeData): AuthenticationResult`
+- `regenerateBackupCodes(): BackupCodeSet`
+- `disableMfa(): void`
+- `beginMfaRecovery(BeginMfaRecoveryData): MfaRecoveryChallenge`
+- `confirmMfaRecovery(ConfirmMfaRecoveryData): void`
 
 ## Architecture
 
-This framework uses a **feature-first** architecture where each business flow lives in its own owner-centric folder:
+The package now has two explicit lanes:
 
-```
-System/
-├── Auth.php
-├── AuthInterface.php
-├── Configuration/     # Composition Root & Fluent Builder
-├── Flow/             # Verb-Noun Business Actions (Login, Register, etc.)
-├── Capability/
-│   ├── Access/        # Root authorization façade plus specialized checks
-│   ├── Identity/      # Unified authentication façade plus adapters
-│   ├── PasswordHashing/
-│   ├── User/          # Core Domain Data & Value Objects
-│   └── UserSource/    # User Data Storage Port
-└── Foundation/        # Core Primitives
-```
+- `System/` is the auth kernel.
+- `integrations/` contains optional adapters.
 
-## Documentation
+Runtime ownership lives in auth-flow slices:
 
-- [Architecture Overview](./docs/architecture.md)
-- [Security Rules & Best Practices](./docs/security-rules.md)
-- [Authorization Flow](./docs/authorization-flow.md)
-- [JWT Identity Guide](./docs/jwt-flow.md)
-- [Session Identity Guide](./docs/session-flow.md)
+- `System/Flow/AuthenticateRequest/` owns ingress resolution and current auth context.
+- `System/Flow/Login/`, `Register/`, `Logout/`, `Recover/`, `Verify/`, `Mfa/`, and `Token/` own package behavior.
+- `System/Capability/Identity/` now only coordinates strategy issuance/clear semantics.
+- `System/Capability/User/` stays internal domain state; public auth output is `AuthenticatedUser`.
+- `System/Flow/Diagnostics/` owns audit events without becoming a second source of truth.
+- `integrations/http/` maps transport input and safe failures without leaking HTTP concerns into the kernel.
+- `integrations/avax-container/` is the optional container adapter.
 
-## Requirements
+See [docs/boundary.md](docs/boundary.md) for the final kernel vs integration boundary, API freeze, target tree, and
+non-goals.
 
-- PHP 8.3 or higher
-- `ext-pdo` (for database sources)
-- `firebase/php-jwt` (for JWT flows)
+## Security Notes
 
-## License
+- Session fixation protection via session ID regeneration on login.
+- Token revocation and refresh rotation through package-owned stores.
+- Password reset and login failures keep safe public messages.
+- Password reset begin flow is anti-enumeration by default.
+- MFA uses TOTP with replay protection, backup codes, recovery tokens, step-up freshness checks, and per-user challenge
+  throttling.
+- Auth context is immutable and password hashes never leave the internal `User` entity.
 
-MIT
+## Optional Adapter
+
+`integrations/avax-container/AuthServiceProvider.php` is an optional Avax Container adapter. Core runtime does not
+require that package.

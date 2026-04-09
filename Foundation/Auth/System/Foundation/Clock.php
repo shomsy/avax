@@ -9,7 +9,7 @@ use DateTimeImmutable;
 /**
  * Clock service for time-related operations.
  */
-final class Clock
+class Clock
 {
     /**
      * Get the current time.

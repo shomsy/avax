@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Auth\System\Configuration;
+namespace Avax\Auth\Integrations\AvaxContainer;
 
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\AuthInterface;
@@ -21,10 +21,7 @@ use Avax\Container\Providers\ServiceProvider;
 use RuntimeException;
 
 /**
- * Root service provider for the Auth component.
- *
- * The provider keeps component wiring inside the component boundary while the
- * container only sees one entry point.
+ * Optional Avax Container adapter for assembling the auth kernel.
  */
 final class AuthServiceProvider extends ServiceProvider
 {

@@ -17,4 +17,11 @@ Update rules:
 
 ## Current Ledger
 
-No completed evidence recorded yet.
+- `2026-04-09 19:21 CEST` | `AUTH-014` | separated `System/` auth kernel from `integrations/` adapters, moved Avax
+  container wiring out of the kernel, added HTTP ingress/failure mappers, hardened access-denial messages, and
+  documented the frozen boundary
+- `2026-04-09 18:10 CEST` | `AUTH-013` | delivered first-class MFA slice with TOTP enrollment, replay-safe challenge
+  verification, backup codes, recovery, fresh-MFA guards, new tests, phpunit source fix, and mutation config
+- `2026-04-09 15:31 CEST` | `AUTH-012` | delivered auth-kernel refactor with immutable auth context, unified login
+  result, request ingress, refresh rotation, password reset, email verification, MFA, audit log, and updated
+  docs/evidence

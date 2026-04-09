@@ -14,6 +14,36 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-014
+- `created_at`: 2026-04-09 19:21 CEST
+- `updated_at`: 2026-04-09 19:21 CEST
+- `status`: done
+- `outcome`: Separate the package into an explicit auth kernel and optional integration surface, extract container glue,
+  add HTTP transport adapters, and freeze the public boundary
+- `acceptance`: `System/` stays kernel-only, `integrations/` owns adapters, `AuthServiceProvider` is extracted, HTTP
+  request/failure mapping is optional, docs/evidence record the new boundary and compatibility risks
+- `links`: docs/boundary.md, integrations/, tests/Integrations/
+
+- `id`: AUTH-013
+- `created_at`: 2026-04-09 18:10 CEST
+- `updated_at`: 2026-04-09 18:10 CEST
+- `status`: done
+- `outcome`: Implement production-grade MFA with TOTP enrollment, challenge lifecycle, backup codes, recovery, fresh-MFA
+  guards, docs, and verification evidence
+- `acceptance`: MFA enrollment requires first proof; login stops at `mfa_required`; backup codes are hashed and
+  one-time; recovery resets MFA safely; challenge lockout and fresh-MFA protections exist; docs/evidence updated
+- `links`: System/Flow/Mfa/, tests/Flows/Mfa/, docs/mfa-flow.md
+
+- `id`: AUTH-012
+- `created_at`: 2026-04-09 15:31 CEST
+- `updated_at`: 2026-04-09 15:31 CEST
+- `status`: done
+- `outcome`: Evolve Auth into a public auth kernel with immutable context, ingress ownership, token/session strategy
+  parity, and secondary security flows
+- `acceptance`: `Auth` exposes stable request/result/context contracts; request auth is centralized;
+  refresh/reset/verify/MFA flows exist; diagnostics and release evidence updated
+- `links`: README.md, System/Auth.php, System/Flow/AuthenticateRequest/
+
 - `id`: AUTH-011
 - `created_at`: 2026-04-07 01:11 CEST
 - `updated_at`: 2026-04-07 01:11 CEST

@@ -1,5 +1,6 @@
 ```markdown
 # Enterprise-Grade System Code Review
+
 ## Architecture, Design, and Foundational Assessment
 
 > **Purpose**
@@ -15,6 +16,7 @@
 ## Review Contract
 
 ### What This Review IS
+
 - System-level analysis
 - Architecture and design validation
 - Foundational assumption challenge
@@ -22,6 +24,7 @@
 - Failure-mode and diagnostic surface sanity check (minimal, not a tooling deep dive)
 
 ### What This Review IS NOT
+
 - Style or formatting review
 - Line-by-line refactor suggestions
 - Feature-level feedback
@@ -64,11 +67,11 @@ Stop the review immediately if any of the following cannot be produced:
 2. Do **not** start from individual files.
 3. Do **not** optimize before reconstructing the architecture.
 4. Every finding must include:
-   - **Symptom**: what is observed
-   - **Root Cause**: why it exists
-   - **Impact**: why it matters
-   - **Evidence**: concrete pointers (files, classes, call paths, scenarios)
-   - **Risk Level**: Low / Medium / High / Rewrite Risk
+    - **Symptom**: what is observed
+    - **Root Cause**: why it exists
+    - **Impact**: why it matters
+    - **Evidence**: concrete pointers (files, classes, call paths, scenarios)
+    - **Risk Level**: Low / Medium / High / Rewrite Risk
 
 ---
 
@@ -86,6 +89,7 @@ Stop the review immediately if any of the following cannot be produced:
 ## Standard Finding Template (Use This Format)
 
 ### Finding: <short title>
+
 - **Symptom:** …
 - **Root Cause:** …
 - **Impact:** …
@@ -97,7 +101,7 @@ Stop the review immediately if any of the following cannot be produced:
 
 ## Required Artifacts (Deliverables)
 
-The review must produce these file review.md as output 
+The review must produce these file review.md as output
 in the folder Code-Review-And-ToDo with sections:
 
 - `ARCHITECTURE NOTES` (or this doc filled in)
@@ -114,23 +118,28 @@ NOTE: overwrite existing reviews
 **Goal:** Prevent wrong assumptions and opinion-based review.
 
 ### 0.1 System Identity
+
 Fill in:
+
 - **System Type:** library / framework / platform / infra component / SDK / shared module
 - **Primary Consumers:** internal teams / public users / app layer / infra layer
 - **Runtime Context:** HTTP request / CLI / worker / long-running process / mixed
 - **Lifecycle:** prototype / stable core / legacy / replacement-in-progress
 
 ### 0.2 Intended Use-Cases and Anti-Use-Cases
+
 - **Intended Use-Cases :**
-  - …
+    - …
 - **Anti-Use-Cases (things the system explicitly should NOT do):**
-  - …
+    - …
 
 ### 0.3 Non-Goals
+
 - List explicit non-goals, to prevent scope creep in review:
-  - …
+    - …
 
 ### 0.4 Compatibility Contract
+
 - **Public API Stability Requirement:** strict / moderate / none
 - **Backwards Compatibility:** required / optional / not required
 - **Performance Budget:** expected scale and constraints (rough numbers are fine)
@@ -140,6 +149,7 @@ Fill in:
 ---
 
 # PHASE 1: System and Architecture Review
+
 **Goal:** Build a correct mental model of the system as it exists today.
 
 ---
@@ -147,22 +157,26 @@ Fill in:
 ## 1. System Model Reconstruction (Mandatory)
 
 ### 1.1 Actual Execution Flow (As-Built)
+
 Reconstruct the real execution flow, ignoring documentation and intentions:
 
 `Public API -> ? -> ? -> ? -> Final Effect`
 
 Identify explicitly:
+
 - Where state is **created**
 - Where state is **mutated**
 - Where decisions are **made**
 - Where execution is **pure / mechanical**
 
 **Deliverable:**
+
 - One diagram (ASCII / Mermaid / external)
 - A 5 to 10 line explanation titled:
   **"This is how the system actually works."**
 
 Example Mermaid skeleton (optional):
+
 ```mermaid
 flowchart LR
   API[Public API] --> A[Step A]

@@ -7,10 +7,11 @@ namespace Avax\Auth\Tests\Capability\Access\RequireRole;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
 use Avax\Auth\System\Capability\Access\RequireRole\RoleDenied;
-use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserRole;
-use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
-use Mockery;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -24,16 +25,19 @@ class RequireRoleTest extends TestCase
      */
     public function testRequireRoleSuccess() : void
     {
-        $role = UserRole::ADMIN;
-        $user = Mockery::mock(User::class);
-        $user->shouldReceive('canAccessRole')
-            ->with($role)
-            ->andReturn(true);
+        $role                  = UserRole::ADMIN;
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(AuthenticationContext::authenticated(
+            user: new AuthenticatedUser(
+                      id      : 1,
+                      email   : 'admin@example.com',
+                      username: 'admin',
+                      roles   : [UserRole::ADMIN->value]
+                  ),
+            mode: AuthenticationMode::SESSION
+        ));
 
-        $readCurrentUser = Mockery::mock(ReadCurrentUser::class);
-        $readCurrentUser->shouldReceive('execute')->andReturn($user);
-
-        $requirement = new RequireRole(readCurrentUser: $readCurrentUser);
+        $requirement = new RequireRole(currentAuthentication: $currentAuthentication);
         $requirement->execute(requiredRole: $role);
 
         $this->assertTrue(condition: true); // No exception thrown
@@ -44,20 +48,26 @@ class RequireRoleTest extends TestCase
      */
     public function testRequireRoleFailure() : void
     {
-        $role = UserRole::ADMIN;
-        $user = Mockery::mock(User::class);
-        $user->shouldReceive('canAccessRole')
-            ->with($role)
-            ->andReturn(false);
+        $role                  = UserRole::ADMIN;
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(AuthenticationContext::authenticated(
+            user: new AuthenticatedUser(
+                      id      : 1,
+                      email   : 'user@example.com',
+                      username: 'user',
+                      roles   : [UserRole::USER->value]
+                  ),
+            mode: AuthenticationMode::SESSION
+        ));
 
-        $readCurrentUser = Mockery::mock(ReadCurrentUser::class);
-        $readCurrentUser->shouldReceive('execute')->andReturn($user);
-
-        $requirement = new RequireRole(readCurrentUser: $readCurrentUser);
-
-        $this->expectException(exception: RoleDenied::class);
-
-        $requirement->execute(requiredRole: $role);
+        $requirement = new RequireRole(currentAuthentication: $currentAuthentication);
+        try {
+            $requirement->execute(requiredRole: $role);
+            self::fail('RoleDenied was not raised.');
+        } catch (RoleDenied $exception) {
+            $this->assertSame('Access denied.', $exception->getMessage());
+            $this->assertSame(UserRole::ADMIN, $exception->requirement());
+        }
     }
 
     /**
@@ -65,20 +75,11 @@ class RequireRoleTest extends TestCase
      */
     public function testRequireRoleFailureUserNotLoggedIn() : void
     {
-        $role = UserRole::ADMIN;
-
-        $readCurrentUser = Mockery::mock(ReadCurrentUser::class);
-        $readCurrentUser->shouldReceive('execute')->andReturn(null);
-
-        $requirement = new RequireRole(readCurrentUser: $readCurrentUser);
+        $role        = UserRole::ADMIN;
+        $requirement = new RequireRole(currentAuthentication: new CurrentAuthentication());
 
         $this->expectException(exception: Unauthenticated::class);
 
         $requirement->execute(requiredRole: $role);
-    }
-
-    protected function tearDown() : void
-    {
-        Mockery::close();
     }
 }

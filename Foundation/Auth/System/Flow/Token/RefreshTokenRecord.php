@@ -1,0 +1,34 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\Token;
+
+use Avax\Auth\System\Capability\User\UserId;
+use DateTimeImmutable;
+
+/**
+ * Stored refresh token state used for rotation and revocation checks.
+ */
+final readonly class RefreshTokenRecord
+{
+    public function __construct(
+        public string                 $tokenId,
+        public string                 $familyId,
+        public UserId                 $userId,
+        public DateTimeImmutable      $expiresAt,
+        public string|null            $replacementTokenId = null,
+        public bool                   $revoked = false,
+        public DateTimeImmutable|null $mfaVerifiedAt = null
+    ) {}
+
+    public function isExpiredAt(DateTimeImmutable $moment) : bool
+    {
+        return $this->expiresAt <= $moment;
+    }
+
+    public function wasRotated() : bool
+    {
+        return $this->replacementTokenId !== null;
+    }
+}

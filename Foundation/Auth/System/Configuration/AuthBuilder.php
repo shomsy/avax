@@ -12,17 +12,53 @@ use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticateRequest;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
 use Avax\Auth\System\Flow\Login\Login;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Flow\Logout\Logout;
+use Avax\Auth\System\Flow\Mfa\Backup\GenerateBackupCodes;
+use Avax\Auth\System\Flow\Mfa\Backup\RegenerateBackupCodes;
+use Avax\Auth\System\Flow\Mfa\Backup\VerifyBackupCode;
+use Avax\Auth\System\Flow\Mfa\Challenge\InMemoryAttemptLimitStorage;
+use Avax\Auth\System\Flow\Mfa\Challenge\InMemoryMfaChallengeStore;
+use Avax\Auth\System\Flow\Mfa\Challenge\LimitMfaAttempts;
+use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeStoreInterface;
+use Avax\Auth\System\Flow\Mfa\Challenge\StartMfaChallenge;
+use Avax\Auth\System\Flow\Mfa\Challenge\VerifyMfaChallenge;
+use Avax\Auth\System\Flow\Mfa\Disable\DisableMfa;
+use Avax\Auth\System\Flow\Mfa\Enroll\CancelMfaEnrollment;
+use Avax\Auth\System\Flow\Mfa\Enroll\ConfirmMfaEnrollment;
+use Avax\Auth\System\Flow\Mfa\Enroll\StartMfaEnrollment;
+use Avax\Auth\System\Flow\Mfa\InMemoryMfaStore;
+use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
+use Avax\Auth\System\Flow\Mfa\Recover\ConfirmMfaRecovery;
+use Avax\Auth\System\Flow\Mfa\Recover\StartMfaRecovery;
+use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
+use Avax\Auth\System\Flow\Mfa\Totp;
+use Avax\Auth\System\Flow\Mfa\TotpInterface;
 use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
+use Avax\Auth\System\Flow\Recover\BeginPasswordReset;
+use Avax\Auth\System\Flow\Recover\InMemoryPasswordResetStore;
+use Avax\Auth\System\Flow\Recover\PasswordResetStoreInterface;
+use Avax\Auth\System\Flow\Recover\ResetPassword;
 use Avax\Auth\System\Flow\Register\Register;
+use Avax\Auth\System\Flow\Token\RefreshAuthentication;
+use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
+use Avax\Auth\System\Flow\Verify\BeginEmailVerification;
+use Avax\Auth\System\Flow\Verify\EmailVerificationStateStoreInterface;
+use Avax\Auth\System\Flow\Verify\EmailVerificationStoreInterface;
+use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
+use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStore;
+use Avax\Auth\System\Flow\Verify\VerifyEmail;
 use Avax\Auth\System\Foundation\IdGenerator;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use RuntimeException;
-use SensitiveParameter;
 
 /**
  * Fluent builder for creating Auth system instances.
@@ -31,11 +67,21 @@ use SensitiveParameter;
  */
 final class AuthBuilder
 {
-    private UserSourceInterface|null  $userSource     = null;
-    private IdentityInterface|null    $identity       = null;
-    private LoginRateLimit|null       $rateLimit      = null;
-    private PasswordHasher|null       $passwordHasher = null;
-    private IdGeneratorInterface|null $idGenerator    = null;
+    private UserSourceInterface|null                  $userSource             = null;
+    private IdentityInterface|null                    $identity               = null;
+    private LoginRateLimit|null                       $rateLimit              = null;
+    private PasswordHasher|null                       $passwordHasher         = null;
+    private IdGeneratorInterface|null                 $idGenerator            = null;
+    private AuditLogInterface|null                    $auditLog               = null;
+    private EmailVerificationStateStoreInterface|null $emailVerificationState = null;
+    private MfaStoreInterface|null                    $mfaStore               = null;
+    private RefreshTokenStoreInterface|null           $refreshTokenStore      = null;
+    private PasswordResetStoreInterface|null          $passwordResetStore     = null;
+    private EmailVerificationStoreInterface|null      $emailVerificationStore = null;
+    private MfaChallengeStoreInterface|null           $mfaChallengeStore      = null;
+    private TotpInterface|null                        $totp                   = null;
+    private LimitMfaAttempts|null                     $mfaAttemptLimit        = null;
+    private string                                    $mfaIssuer              = 'Avax Auth';
 
     /**
      * Define the data source for users.
@@ -50,7 +96,7 @@ final class AuthBuilder
     /**
      * Define the composed identity façade for authentication state.
      */
-    public function withIdentity(#[SensitiveParameter] IdentityInterface $identity) : self
+    public function withIdentity(IdentityInterface $identity) : self
     {
         $this->identity = $identity;
 
@@ -70,7 +116,7 @@ final class AuthBuilder
     /**
      * Configure a custom password hasher.
      */
-    public function usingHasher(#[SensitiveParameter] PasswordHasher $passwordHasher) : self
+    public function usingHasher(PasswordHasher $passwordHasher) : self
     {
         $this->passwordHasher = $passwordHasher;
 
@@ -83,6 +129,76 @@ final class AuthBuilder
     public function usingIdGenerator(IdGeneratorInterface $idGenerator) : self
     {
         $this->idGenerator = $idGenerator;
+
+        return $this;
+    }
+
+    public function withAuditLog(AuditLogInterface $auditLog) : self
+    {
+        $this->auditLog = $auditLog;
+
+        return $this;
+    }
+
+    public function withEmailVerificationState(EmailVerificationStateStoreInterface $emailVerificationState) : self
+    {
+        $this->emailVerificationState = $emailVerificationState;
+
+        return $this;
+    }
+
+    public function withMfaStore(MfaStoreInterface $mfaStore) : self
+    {
+        $this->mfaStore = $mfaStore;
+
+        return $this;
+    }
+
+    public function withRefreshTokenStore(RefreshTokenStoreInterface $refreshTokenStore) : self
+    {
+        $this->refreshTokenStore = $refreshTokenStore;
+
+        return $this;
+    }
+
+    public function withPasswordResetStore(PasswordResetStoreInterface $passwordResetStore) : self
+    {
+        $this->passwordResetStore = $passwordResetStore;
+
+        return $this;
+    }
+
+    public function withEmailVerificationStore(EmailVerificationStoreInterface $emailVerificationStore) : self
+    {
+        $this->emailVerificationStore = $emailVerificationStore;
+
+        return $this;
+    }
+
+    public function withMfaChallengeStore(MfaChallengeStoreInterface $mfaChallengeStore) : self
+    {
+        $this->mfaChallengeStore = $mfaChallengeStore;
+
+        return $this;
+    }
+
+    public function usingTotp(TotpInterface $totp) : self
+    {
+        $this->totp = $totp;
+
+        return $this;
+    }
+
+    public function withMfaAttemptLimit(LimitMfaAttempts $mfaAttemptLimit) : self
+    {
+        $this->mfaAttemptLimit = $mfaAttemptLimit;
+
+        return $this;
+    }
+
+    public function withMfaIssuer(string $mfaIssuer) : self
+    {
+        $this->mfaIssuer = $mfaIssuer;
 
         return $this;
     }
@@ -100,47 +216,215 @@ final class AuthBuilder
             throw new RuntimeException(message: 'Identity is required (withIdentity).');
         }
 
-        $identity            = $this->identity;
-        $passwordHasher      = $this->passwordHasher ?? new PasswordHasher();
-        $readCurrentUser     = new ReadCurrentUser(
-            identity  : $identity,
-            userSource: $this->userSource
+        $identity                 = $this->identity;
+        $passwordHasher           = $this->passwordHasher ?? new PasswordHasher();
+        $auditLog                 = $this->auditLog ?? new NullAuditLog();
+        $clock                    = new \Avax\Auth\System\Foundation\Clock();
+        $passwordResetStore       = $this->passwordResetStore ?? new InMemoryPasswordResetStore();
+        $emailVerificationStore   = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore();
+        $emailVerificationState   = $this->emailVerificationState ?? new InMemoryEmailVerificationStateStore();
+        $mfaStore                 = $this->mfaStore ?? new InMemoryMfaStore();
+        $mfaChallengeStore        = $this->mfaChallengeStore ?? new InMemoryMfaChallengeStore();
+        $totp                     = $this->totp ?? new Totp();
+        $mfaAttemptLimit          = $this->mfaAttemptLimit ?? new LimitMfaAttempts(
+            storage: new InMemoryAttemptLimitStorage(),
+            clock  : $clock
         );
-        $checkAuthentication = new CheckAuthentication(
-            readCurrentUser: $readCurrentUser
+        $projectAuthenticatedUser = new ProjectAuthenticatedUser(
+            emailVerificationState: $emailVerificationState,
+            mfaStore              : $mfaStore
         );
-        $access              = new Access(
+        $currentAuthentication    = new CurrentAuthentication();
+        $requireFreshMfa          = new RequireFreshMfa(
+            currentAuthentication: $currentAuthentication,
+            clock                : $clock
+        );
+        $generateBackupCodes      = new GenerateBackupCodes(
+            passwordHasher: $passwordHasher,
+            clock         : $clock
+        );
+        $verifyBackupCode         = new VerifyBackupCode(
+            mfaStore      : $mfaStore,
+            passwordHasher: $passwordHasher,
+            auditLog      : $auditLog,
+            clock         : $clock
+        );
+        $startMfaChallenge        = new StartMfaChallenge(
+            currentAuthentication: $currentAuthentication,
+            mfaStore             : $mfaStore,
+            challengeStore       : $mfaChallengeStore,
+            auditLog             : $auditLog,
+            clock                : $clock
+        );
+        $authenticateRequest      = new AuthenticateRequest(
+            currentAuthentication   : $currentAuthentication,
+            projectAuthenticatedUser: $projectAuthenticatedUser,
+            userSource              : $this->userSource,
+            auditLog                : $auditLog,
+            sessionIdentity         : $identity->sessionIdentity(),
+            jwtIdentity             : $identity->jwtIdentity()
+        );
+        $readCurrentUser          = new ReadCurrentUser(
+            currentAuthentication: $currentAuthentication
+        );
+        $checkAuthentication      = new CheckAuthentication(
+            currentAuthentication: $currentAuthentication
+        );
+        $access                   = new Access(
             requireAuthentication: new RequireAuthentication(
-                                       checkAuthentication: $checkAuthentication
+                                       currentAuthentication: $currentAuthentication
                                    ),
-            requireRole          : new RequireRole(readCurrentUser: $readCurrentUser),
+            requireRole          : new RequireRole(currentAuthentication: $currentAuthentication),
             requirePermission    : new RequirePermission(
-                                       readCurrentUser: $readCurrentUser
+                                       currentAuthentication: $currentAuthentication
                                    )
         );
 
         return new Auth(
-            login              : new Login(
-                                     userSource    : $this->userSource,
-                                     passwordHasher: $passwordHasher,
-                                     identity      : $identity,
-                                     rateLimit     : $this->rateLimit
-                                 ),
-            logout             : new Logout(identity: $identity),
-            checkAuthentication: $checkAuthentication,
-            readCurrentUser    : $readCurrentUser,
-            access             : $access,
-            changePassword     : new ChangePassword(
-                                     userSource    : $this->userSource,
-                                     passwordHasher: $passwordHasher,
-                                     rateLimit     : $this->rateLimit
-                                 ),
-            register           : new Register(
-                                     userSource    : $this->userSource,
-                                     passwordHasher: $passwordHasher,
-                                     idGenerator   : $this->idGenerator ?? new IdGenerator(),
-                                     rateLimit     : $this->rateLimit
-                                 )
+            login                 : new Login(
+                                        userSource              : $this->userSource,
+                                        passwordHasher          : $passwordHasher,
+                                        identity                : $identity,
+                                        projectAuthenticatedUser: $projectAuthenticatedUser,
+                                        currentAuthentication   : $currentAuthentication,
+                                        auditLog                : $auditLog,
+                                        mfaStore                : $mfaStore,
+                                        startMfaChallenge       : $startMfaChallenge,
+                                        rateLimit               : $this->rateLimit
+                                    ),
+            authenticateRequest   : $authenticateRequest,
+            logout                : new Logout(
+                                        identity             : $identity,
+                                        currentAuthentication: $currentAuthentication,
+                                        auditLog             : $auditLog,
+                                        refreshTokenStore    : $this->refreshTokenStore
+                                    ),
+            checkAuthentication   : $checkAuthentication,
+            readCurrentUser       : $readCurrentUser,
+            currentAuthentication : $currentAuthentication,
+            access                : $access,
+            changePassword        : new ChangePassword(
+                                        userSource           : $this->userSource,
+                                        passwordHasher       : $passwordHasher,
+                                        identity             : $identity,
+                                        currentAuthentication: $currentAuthentication,
+                                        auditLog             : $auditLog,
+                                        refreshTokenStore    : $this->refreshTokenStore,
+                                        rateLimit            : $this->rateLimit,
+                                        requireFreshMfa      : $requireFreshMfa
+                                    ),
+            register              : new Register(
+                                        userSource               : $this->userSource,
+                                        passwordHasher           : $passwordHasher,
+                                        idGenerator              : $this->idGenerator ?? new IdGenerator(),
+                                        projectAuthenticatedUser : $projectAuthenticatedUser,
+                                        auditLog                 : $auditLog,
+                                        emailVerificationRequired: $this->emailVerificationState !== null || $this->emailVerificationStore !== null,
+                                        rateLimit                : $this->rateLimit
+                                    ),
+            refreshAuthentication : new RefreshAuthentication(
+                                        userSource              : $this->userSource,
+                                        projectAuthenticatedUser: $projectAuthenticatedUser,
+                                        currentAuthentication   : $currentAuthentication,
+                                        auditLog                : $auditLog,
+                                        clock                   : $clock,
+                                        refreshTokenStore       : $this->refreshTokenStore,
+                                        jwtIdentity             : $identity->jwtIdentity()
+                                    ),
+            beginPasswordReset    : new BeginPasswordReset(
+                                        userSource        : $this->userSource,
+                                        passwordResetStore: $passwordResetStore,
+                                        auditLog          : $auditLog,
+                                        clock             : $clock
+                                    ),
+            resetPassword         : new ResetPassword(
+                                        userSource        : $this->userSource,
+                                        passwordHasher    : $passwordHasher,
+                                        passwordResetStore: $passwordResetStore,
+                                        auditLog          : $auditLog,
+                                        clock             : $clock,
+                                        refreshTokenStore : $this->refreshTokenStore
+                                    ),
+            beginEmailVerification: new BeginEmailVerification(
+                                        userSource            : $this->userSource,
+                                        emailVerificationStore: $emailVerificationStore,
+                                        auditLog              : $auditLog,
+                                        clock                 : $clock
+                                    ),
+            verifyEmail           : new VerifyEmail(
+                                        emailVerificationStore: $emailVerificationStore,
+                                        emailVerificationState: $emailVerificationState,
+                                        auditLog              : $auditLog,
+                                        clock                 : $clock
+                                    ),
+            startMfaEnrollment    : new StartMfaEnrollment(
+                                        currentAuthentication: $currentAuthentication,
+                                        mfaStore             : $mfaStore,
+                                        totp                 : $totp,
+                                        auditLog             : $auditLog,
+                                        clock                : $clock,
+                                        issuer               : $this->mfaIssuer
+                                    ),
+            confirmMfaEnrollment  : new ConfirmMfaEnrollment(
+                                        currentAuthentication: $currentAuthentication,
+                                        mfaStore             : $mfaStore,
+                                        totp                 : $totp,
+                                        generateBackupCodes  : $generateBackupCodes,
+                                        auditLog             : $auditLog,
+                                        clock                : $clock
+                                    ),
+            cancelMfaEnrollment   : new CancelMfaEnrollment(
+                                        currentAuthentication: $currentAuthentication,
+                                        mfaStore             : $mfaStore,
+                                        auditLog             : $auditLog,
+                                        clock                : $clock
+                                    ),
+            startMfaChallenge     : $startMfaChallenge,
+            verifyMfaChallenge    : new VerifyMfaChallenge(
+                                        challengeStore          : $mfaChallengeStore,
+                                        mfaStore                : $mfaStore,
+                                        totp                    : $totp,
+                                        verifyBackupCode        : $verifyBackupCode,
+                                        userSource              : $this->userSource,
+                                        identity                : $identity,
+                                        projectAuthenticatedUser: $projectAuthenticatedUser,
+                                        currentAuthentication   : $currentAuthentication,
+                                        auditLog                : $auditLog,
+                                        clock                   : $clock,
+                                        attemptLimit            : $mfaAttemptLimit
+                                    ),
+            regenerateBackupCodes : new RegenerateBackupCodes(
+                                        currentAuthentication: $currentAuthentication,
+                                        requireFreshMfa      : $requireFreshMfa,
+                                        mfaStore             : $mfaStore,
+                                        generateBackupCodes  : $generateBackupCodes,
+                                        auditLog             : $auditLog,
+                                        clock                : $clock
+                                    ),
+            disableMfa            : new DisableMfa(
+                                        currentAuthentication: $currentAuthentication,
+                                        requireFreshMfa      : $requireFreshMfa,
+                                        mfaStore             : $mfaStore,
+                                        mfaChallengeStore    : $mfaChallengeStore,
+                                        auditLog             : $auditLog,
+                                        clock                : $clock,
+                                        refreshTokenStore    : $this->refreshTokenStore
+                                    ),
+            startMfaRecovery      : new StartMfaRecovery(
+                                        userSource: $this->userSource,
+                                        mfaStore  : $mfaStore,
+                                        auditLog  : $auditLog,
+                                        clock     : $clock
+                                    ),
+            confirmMfaRecovery    : new ConfirmMfaRecovery(
+                                        mfaStore             : $mfaStore,
+                                        mfaChallengeStore    : $mfaChallengeStore,
+                                        auditLog             : $auditLog,
+                                        clock                : $clock,
+                                        refreshTokenStore    : $this->refreshTokenStore,
+                                        currentAuthentication: $currentAuthentication,
+                                        identity             : $identity
+                                    )
         );
     }
 }

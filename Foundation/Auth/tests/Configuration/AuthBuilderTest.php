@@ -43,6 +43,8 @@ class AuthBuilderTest extends TestCase
     {
         $userSource = Mockery::mock(UserSourceInterface::class);
         $identity   = Mockery::mock(IdentityInterface::class);
+        $identity->shouldReceive('sessionIdentity')->andReturn(null);
+        $identity->shouldReceive('jwtIdentity')->andReturn(null);
 
         $builder = new AuthBuilder();
         $builder->forUser(userSource: $userSource)
@@ -70,6 +72,8 @@ class AuthBuilderTest extends TestCase
         $userSource->shouldReceive('create')->once()->andReturnUsing(fn ($user) => $user);
 
         $identity = Mockery::mock(IdentityInterface::class);
+        $identity->shouldReceive('sessionIdentity')->andReturn(null);
+        $identity->shouldReceive('jwtIdentity')->andReturn(null);
 
         $idGenerator = Mockery::mock(IdGeneratorInterface::class);
         $idGenerator->shouldReceive('generate')->once()->andReturn(987654);
@@ -87,7 +91,7 @@ class AuthBuilderTest extends TestCase
 
         $user = $auth->register(data: $data);
 
-        $this->assertSame(expected: 987654, actual: $user->getId()->value);
+        $this->assertSame(expected: 987654, actual: $user->user()->id);
     }
 
     protected function tearDown() : void

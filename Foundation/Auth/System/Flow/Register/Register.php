@@ -9,9 +9,11 @@ use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserEmail;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
-use Exception;
 use SensitiveParameter;
 
 /**
@@ -25,26 +27,29 @@ final readonly class Register
         private UserSourceInterface                  $userSource,
         #[SensitiveParameter] private PasswordHasher $passwordHasher,
         private IdGeneratorInterface                 $idGenerator,
+        private ProjectAuthenticatedUser             $projectAuthenticatedUser,
+        private AuditLogInterface                    $auditLog,
+        private bool                                 $emailVerificationRequired = false,
         private LoginRateLimit|null                  $rateLimit = null
     ) {}
 
     /**
-     * @throws Exception
+     * @throws RegistrationFailed
      */
-    public function execute(RegistrationData $data) : User
+    public function execute(RegistrationData $data) : RegistrationResult
     {
         $this->rateLimit?->check(identifier: $data->email);
 
         if ($this->userSource->emailExists(email: $data->email)) {
             $this->rateLimit?->recordFailed(identifier: $data->email);
 
-            throw new Exception(message: 'Email is already taken.', code: 409);
+            throw RegistrationFailed::emailTaken();
         }
 
         if ($this->userSource->usernameExists(username: $data->username)) {
             $this->rateLimit?->recordFailed(identifier: $data->email);
 
-            throw new Exception(message: 'Username is already taken.', code: 409);
+            throw RegistrationFailed::usernameTaken();
         }
 
         $passwordHash = $this->passwordHasher->hash(password: $data->password);
@@ -59,7 +64,20 @@ final readonly class Register
         $createdUser = $this->userSource->create(user: $user);
 
         $this->rateLimit?->reset(identifier: $data->email);
+        $this->auditLog->record(new AuditEvent(
+                                    name      : 'auth.register.succeeded',
+                                    occurredAt: new \DateTimeImmutable(),
+                                    context   : [
+                                                    'user_id'    => $createdUser->getId()->value,
+                                                    'email'      => strtolower($createdUser->getEmail()->value),
+                                                    'ip_address' => $data->ipAddress,
+                                                    'user_agent' => $data->userAgent,
+                                                ]
+                                ));
 
-        return $createdUser;
+        return new RegistrationResult(
+            user                     : $this->projectAuthenticatedUser->fromUser($createdUser),
+            emailVerificationRequired: $this->emailVerificationRequired
+        );
     }
 }

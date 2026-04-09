@@ -38,7 +38,7 @@
 - [ ] Za svaku oznaku iz prethodne faze napravi novi `Step`:
 
   | Nova klasa                   | Poreklo logike                       |
-      | ---------------------------- | ------------------------------------ |
+        | ---------------------------- | ------------------------------------ |
   | `EnsureDefinitionExistsStep` | `if (!$this->definitions->has($id))` |
   | `ResolveInstanceStep`        | `ResolutionEngine->resolve()`        |
   | `InjectDependenciesStep`     | `injector->inject()`                 |

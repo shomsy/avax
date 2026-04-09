@@ -6,6 +6,7 @@ namespace Avax\HTTP\Router\Routing;
 
 use Avax\Contracts\FilesystemException;
 use Avax\Filesystem\Contracts\FilesystemInterface;
+use Avax\HTTP\Router\Cache\RouteCacheManifest;
 use JsonException;
 use RuntimeException;
 use Throwable;
@@ -87,7 +88,7 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
         }
 
         // Verify cache integrity before considering it available
-        if (! $this->manifest->validateSignatureFile($cachePath: $this->cachePath)) {
+        if (! $this->manifest->validateSignatureFile(cachePath: $this->cachePath)) {
             // Log cache corruption but don't throw - allow fallback to disk loading
             error_log("Route cache signature validation failed for {$this->cachePath} - cache may be corrupted");
 
@@ -98,7 +99,7 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
     }
 
     /**
-     * Get loader priority (cache has highest priority for performance).
+     * Get loader priority (cache has the highest priority for performance).
      */
     public function getPriority() : int
     {

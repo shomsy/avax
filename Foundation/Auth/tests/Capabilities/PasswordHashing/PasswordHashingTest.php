@@ -12,6 +12,21 @@ use PHPUnit\Framework\TestCase;
  */
 class PasswordHashingTest extends TestCase
 {
+    public function testDefaultHasherPrefersArgon2idWhenAvailable() : void
+    {
+        $hasher = new PasswordHasher();
+        $hash   = $hasher->hash(password: 'secret');
+        $info   = password_get_info($hash);
+
+        if (defined('PASSWORD_ARGON2ID')) {
+            $this->assertSame('argon2id', $info['algoName']);
+
+            return;
+        }
+
+        $this->assertNotSame('unknown', $info['algoName']);
+    }
+
     public function testHashAndVerify() : void
     {
         $hasher   = new PasswordHasher();

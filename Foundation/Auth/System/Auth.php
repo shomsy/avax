@@ -44,6 +44,10 @@ use Avax\Auth\System\Flow\Recover\ResetPasswordData;
 use Avax\Auth\System\Flow\Register\Register;
 use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Flow\Register\RegistrationResult;
+use Avax\Auth\System\Flow\Session\ActiveSession;
+use Avax\Auth\System\Flow\Session\LogoutAllSessions\LogoutAllSessions;
+use Avax\Auth\System\Flow\Session\ReadActiveSessions\ReadActiveSessions;
+use Avax\Auth\System\Flow\Session\RevokeSession\RevokeSession;
 use Avax\Auth\System\Flow\Token\RefreshAuthentication;
 use Avax\Auth\System\Flow\Token\RefreshAuthenticationRequest;
 use Avax\Auth\System\Flow\Verify\BeginEmailVerification;
@@ -63,8 +67,11 @@ final readonly class Auth implements AuthInterface
         private Login                  $login,
         private AuthenticateRequest    $authenticateRequest,
         private Logout                 $logout,
+        private LogoutAllSessions      $logoutAllSessions,
         private CheckAuthentication    $checkAuthentication,
         private ReadCurrentUser        $readCurrentUser,
+        private ReadActiveSessions     $readActiveSessions,
+        private RevokeSession          $revokeSession,
         private CurrentAuthentication  $currentAuthentication,
         private AccessInterface        $access,
         private ChangePassword         $changePassword,
@@ -111,6 +118,21 @@ final readonly class Auth implements AuthInterface
     public function logout() : void
     {
         $this->logout->execute();
+    }
+
+    public function logoutAllSessions() : void
+    {
+        $this->logoutAllSessions->execute();
+    }
+
+    public function readActiveSessions() : array
+    {
+        return $this->readActiveSessions->execute();
+    }
+
+    public function revokeSession(string $sessionId) : void
+    {
+        $this->revokeSession->execute($sessionId);
     }
 
     public function check() : bool

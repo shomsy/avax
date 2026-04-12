@@ -17,6 +17,12 @@ Update rules:
 
 ## Current Ledger
 
+- `2026-04-12 15:04 CEST` | `AUTH-018` | converted `REFAKTOR.md` into a repo-owned ADR, threat model, and
+  implementation roadmap; added `Capability/Session` with tracked session registry contracts; shipped active-session
+  listing, targeted revoke, logout-all, and reset-driven session/challenge revocation across the auth kernel
+- `2026-04-12 14:25 CEST` | `AUTH-017` | hardened the auth kernel with Argon2id-first hashing, login-time password
+  rehash, shared recovery throttling, session idle/absolute expiry enforcement, stricter session cookie policy, and
+  new regression tests for session and recovery security edges
 - `2026-04-09 21:44 CEST` | `AUTH-016` | installed repo-local `pcov` fallback, added coverage-driver wrapper,
   removed Composer mutation timeout, added local artifact ignores, and converted the mutation blocker from environment
   failure into real mutation-quality signal

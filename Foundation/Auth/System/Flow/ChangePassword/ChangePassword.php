@@ -7,15 +7,18 @@ namespace Avax\Auth\System\Flow\ChangePassword;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeStoreInterface;
 use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
+use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
 
 /**
@@ -31,6 +34,9 @@ final readonly class ChangePassword
         #[SensitiveParameter] private IdentityInterface $identity,
         private CurrentAuthentication                   $currentAuthentication,
         private AuditLogInterface                       $auditLog,
+        private Clock                                   $clock,
+        private SessionRegistryInterface|null           $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null         $mfaChallengeStore = null,
         private RefreshTokenStoreInterface|null         $refreshTokenStore = null,
         private LoginRateLimit|null                     $rateLimit = null,
         private RequireFreshMfa|null                    $requireFreshMfa = null
@@ -74,6 +80,8 @@ final readonly class ChangePassword
         $newHash = $this->passwordHasher->hash(password: $data->newPassword);
 
         $this->userSource->updatePassword(id: $user->getId(), passwordHash: $newHash);
+        $this->sessionRegistry?->revokeForUser($user->getId(), $this->clock->now(), 'password_changed');
+        $this->mfaChallengeStore?->forgetForUser($user->getId());
         $this->refreshTokenStore?->revokeUser($user->getId());
         $this->identity->clear($context);
         $this->currentAuthentication->clear();
@@ -81,7 +89,7 @@ final readonly class ChangePassword
         $this->rateLimit?->reset(identifier: (string) $user->getId());
         $this->auditLog->record(new AuditEvent(
                                     name      : 'auth.password.changed',
-                                    occurredAt: new \DateTimeImmutable(),
+                                    occurredAt: $this->clock->now(),
                                     context   : [
                                                     'user_id' => $user->getId()->value,
                                                 ]

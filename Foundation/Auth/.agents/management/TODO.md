@@ -14,6 +14,30 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-018
+- `created_at`: 2026-04-12 15:04 CEST
+- `updated_at`: 2026-04-12 15:04 CEST
+- `status`: done
+- `outcome`: Turn `REFAKTOR.md` into repo-owned scope artifacts and ship session subsystem v1 with tracked session
+  listing, targeted revoke, logout-all, and reset-driven session/challenge revocation
+- `acceptance`: ADR and threat model exist; `System/` remains the canonical system root; session registry capability and
+  session flows exist; password reset and password change revoke tracked sessions and active MFA challenges; PHPUnit and
+  PHPStan lanes pass
+- `links`: REFAKTOR.md, docs/adr/001-auth-scope-and-trust-boundaries.md, docs/threat-model.md,
+  docs/implementation-roadmap.md, System/Capability/Session/, System/Flow/Session/
+
+- `id`: AUTH-017
+- `created_at`: 2026-04-12 14:25 CEST
+- `updated_at`: 2026-04-12 14:25 CEST
+- `status`: done
+- `outcome`: Harden the auth kernel with Argon2id-first password policy, recovery throttling, session lifetime
+  enforcement, and regression coverage for the new security edges
+- `acceptance`: password hashing defaults to Argon2id when available and rehashes stale hashes on login; password reset
+  and MFA recovery starts throttle repeated requests without enumeration leaks; session identity expires idle and
+  absolute lifetimes with audit evidence; PHPUnit and PHPStan lanes pass
+- `links`: System/Capability/PasswordHashing/, System/Capability/Identity/Session/, System/Capability/Throttle/,
+  System/Flow/Recover/, System/Flow/Mfa/Recover/, tests/
+
 - `id`: AUTH-016
 - `created_at`: 2026-04-09 21:44 CEST
 - `updated_at`: 2026-04-09 21:44 CEST
@@ -77,12 +101,14 @@ Canonical active implementation queue.
 
 - `id`: AUTH-010
 - `created_at`: 2026-04-06 16:50 CET
-- `updated_at`: 2026-04-06 16:50 CET
-- `status`: todo
+- `updated_at`: 2026-04-12 15:04 CEST
+- `status`: cancelled
 - `outcome`: Refactor repository structure - introduce src/ boundary
 - `acceptance`: src/ contains all source slices (Flow, Capability, Foundation, Configuration), tests/ and docs/ stay at
   root
-- `links`: src/
+- `links`: System/, AGENTS.md
+- `reason`: Superseded by the local repository contract: `System/` is the canonical system root and a `src/` hallway
+  would reduce clarity instead of improving it.
 
 - `id`: AUTH-009
 - `created_at`: 2026-04-06 16:30 CET

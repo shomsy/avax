@@ -64,6 +64,13 @@ final readonly class Login
             throw AuthenticationFailed::invalidCredentials();
         }
 
+        if ($this->passwordHasher->needsRehash($user->getPasswordHash())) {
+            $this->userSource->updatePassword(
+                id          : $user->getId(),
+                passwordHash: $this->passwordHasher->hash($credentials->password)
+            );
+        }
+
         if ($this->mfaStore->isEnabled($user->getId())) {
             $challenge = $this->startMfaChallenge->issueForLogin(
                 user     : $user,
@@ -78,6 +85,10 @@ final readonly class Login
         }
 
         $issued  = $this->identity->issue(user: $user);
+        $this->identity->sessionIdentity()?->captureCurrentSession(
+            ipAddress: $credentials->ipAddress,
+            userAgent: $credentials->userAgent
+        );
         $context = AuthenticationContext::authenticated(
             user                : $this->projectAuthenticatedUser->fromUser($user),
             mode                : $issued->mode,

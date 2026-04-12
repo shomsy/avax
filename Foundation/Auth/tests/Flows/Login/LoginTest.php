@@ -80,6 +80,7 @@ class LoginTest extends TestCase
                                                                                                 expiresAt: new DateTimeImmutable('+30 days')
                                                                                             )
                                                                           ));
+        $identity->shouldReceive('sessionIdentity')->andReturn(null);
 
         $login  = new Login(
             userSource              : $userSource,
@@ -113,6 +114,7 @@ class LoginTest extends TestCase
 
         $identity       = Mockery::mock(IdentityInterface::class);
         $identity->shouldNotReceive('issue');
+        $identity->shouldReceive('sessionIdentity')->andReturn(null);
 
         $rateLimitStorage = new InMemoryLoginRateLimitStorage();
         $rateLimit        = new LoginRateLimit(
@@ -162,6 +164,7 @@ class LoginTest extends TestCase
 
         $identity = Mockery::mock(IdentityInterface::class);
         $identity->shouldNotReceive('issue');
+        $identity->shouldReceive('sessionIdentity')->andReturn(null);
 
         $rateLimitStorage = new InMemoryLoginRateLimitStorage();
         $rateLimit        = new LoginRateLimit(
@@ -200,6 +203,7 @@ class LoginTest extends TestCase
         $userSource     = Mockery::mock(UserSourceInterface::class);
         $identity       = Mockery::mock(IdentityInterface::class);
         $identity->shouldNotReceive('issue');
+        $identity->shouldReceive('sessionIdentity')->andReturn(null);
 
         $rateLimitStorage = new InMemoryLoginRateLimitStorage();
         $rateLimitStorage->increment('user@example.com');
@@ -247,6 +251,7 @@ class LoginTest extends TestCase
 
         $identity = Mockery::mock(IdentityInterface::class);
         $identity->shouldNotReceive('issue');
+        $identity->shouldReceive('sessionIdentity')->andReturn(null);
 
         $mfaStore = new InMemoryMfaStore();
         $mfaStore->saveMethod(new MfaMethodRecord(
@@ -276,6 +281,55 @@ class LoginTest extends TestCase
         $this->assertTrue($result->requiresMfa());
         $this->assertNotNull($result->mfaChallengeId());
         $this->assertSame(MfaChallengePurpose::LOGIN, $result->mfaChallenge()?->purpose);
+    }
+
+    public function testLoginRehashesStoredPasswordWhenHasherPolicyChanged() : void
+    {
+        $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
+        $userId      = new UserId(1);
+        $legacyHasher = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
+        $user         = $this->userWithPassword(
+            passwordHasher: $legacyHasher,
+            userId        : $userId,
+            password      : 'password'
+        );
+        $currentHasher = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 12]);
+
+        $userSource = Mockery::mock(UserSourceInterface::class);
+        $userSource->shouldReceive('findByCredentials')->once()->with($credentials)->andReturn($user);
+        $userSource->shouldReceive('updatePassword')->once()->with(
+            $userId,
+            Mockery::on(static fn (string $hash) : bool => password_verify('password', $hash))
+        );
+
+        $identity = Mockery::mock(IdentityInterface::class);
+        $identity->shouldReceive('issue')->once()->with($user)->andReturn(new IssuedAuthentication(
+            mode: AuthenticationMode::TOKEN,
+            accessToken: new IssuedToken(
+                token    : 'token-123',
+                tokenId  : 'access-123',
+                expiresAt: new DateTimeImmutable('+1 hour')
+            )
+        ));
+        $identity->shouldReceive('sessionIdentity')->andReturn(null);
+
+        $login = new Login(
+            userSource              : $userSource,
+            passwordHasher          : $currentHasher,
+            identity                : $identity,
+            projectAuthenticatedUser: new ProjectAuthenticatedUser(
+                emailVerificationState: new InMemoryEmailVerificationStateStore(),
+                mfaStore              : new InMemoryMfaStore()
+            ),
+            currentAuthentication   : new CurrentAuthentication(),
+            auditLog                : new InMemoryAuditLog(),
+            mfaStore                : new InMemoryMfaStore(),
+            startMfaChallenge       : $this->startMfaChallenge(new InMemoryMfaStore())
+        );
+
+        $result = $login->execute($credentials);
+
+        $this->assertTrue($result->isAuthenticated());
     }
 
     protected function tearDown() : void

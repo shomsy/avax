@@ -159,6 +159,10 @@ final readonly class VerifyMfaChallenge
         $this->challengeStore->forget($record->challengeId);
         $this->attemptLimit?->reset($attemptLimitKey);
         $issued  = $this->identity->issue($user, $now);
+        $this->identity->sessionIdentity()?->captureCurrentSession(
+            ipAddress: $data->ipAddress,
+            userAgent: $data->userAgent
+        );
         $context = AuthenticationContext::authenticated(
             user                : $this->projectAuthenticatedUser->fromUser($user),
             mode                : $issued->mode,

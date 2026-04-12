@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Recover;
 
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeStoreInterface;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
 
@@ -22,6 +24,8 @@ final readonly class ResetPassword
         private PasswordResetStoreInterface     $passwordResetStore,
         private AuditLogInterface               $auditLog,
         private Clock                           $clock,
+        private SessionRegistryInterface|null   $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null $mfaChallengeStore = null,
         private RefreshTokenStoreInterface|null $refreshTokenStore = null
     ) {}
 
@@ -47,6 +51,8 @@ final readonly class ResetPassword
             id          : $userId,
             passwordHash: $this->passwordHasher->hash($data->newPassword)
         );
+        $this->sessionRegistry?->revokeForUser($userId, $this->clock->now(), 'password_reset');
+        $this->mfaChallengeStore?->forgetForUser($userId);
         $this->refreshTokenStore?->revokeUser($userId);
 
         $this->auditLog->record(new AuditEvent(

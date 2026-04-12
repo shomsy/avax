@@ -22162,7 +22162,7 @@ flowchart LR
     end
 
     subgraph Verify["Verify / Review"]
-        V1["AUTH-018 | REFAKTOR scope + session subsystem v1 | updated 2026-04-12 15:04 CEST"]
+        V1["AUTH-019 | OAuth/API auth subsystem v1 | updated 2026-04-12 15:36 CEST"]
     end
 
     Ready --> InProgress
@@ -22391,6 +22391,17 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-019
+- `created_at`: 2026-04-12 15:36 CEST
+- `updated_at`: 2026-04-12 15:36 CEST
+- `status`: done
+- `outcome`: Deliver package-owned OAuth/API auth subsystem v1 with client registry, authorization-code + PKCE,
+  refresh exchange, revoke, introspection, and public facade wiring
+- `acceptance`: `Capability/OAuth/` and `Flow/OAuth/` exist; public clients require `S256` PKCE; authorization codes are
+  single use; OAuth refresh reuse revokes the token family; README/docs/evidence reflect the new subsystem; PHPUnit and
+  PHPStan lanes pass
+- `links`: System/Capability/OAuth/, System/Flow/OAuth/, README.md, docs/
+
 - `id`: AUTH-018
 - `created_at`: 2026-04-12 15:04 CEST
 - `updated_at`: 2026-04-12 15:04 CEST
@@ -22575,6 +22586,9 @@ Update rules:
 
 ## Current Ledger
 
+- `2026-04-12 15:36 CEST` | `AUTH-019` | shipped package-owned OAuth/API auth subsystem v1 with `Capability/OAuth`
+  contracts, client registration, authorization-code + PKCE flow, OAuth refresh exchange, introspection, revoke, JWT
+  client/scope claims, new regression tests, and boundary/doc updates
 - `2026-04-12 15:04 CEST` | `AUTH-018` | converted `REFAKTOR.md` into a repo-owned ADR, threat model, and
   implementation roadmap; added `Capability/Session` with tracked session registry contracts; shipped active-session
   listing, targeted revoke, logout-all, and reset-driven session/challenge revocation across the auth kernel
@@ -22704,6 +22718,18 @@ Tracks active and accepted risks.
 
 ## Active Risks
 
+- `id`: AUTH-RISK-006
+- `identified_at`: 2026-04-12 15:36 CEST
+- `updated_at`: 2026-04-12 15:36 CEST
+- `severity`: medium
+- `likelihood`: medium
+- `impact`: The package now owns OAuth authorization-code and refresh flows for user-bound API access, but it still does
+  not ship OIDC, client-credentials, federation, or SCIM; teams could mistake OAuth v1 for a full identity platform.
+- `mitigation`: Boundary docs, ADR-001, and the roadmap now state the exact delivered OAuth scope and keep OIDC,
+  federation, provisioning, and risk/admin realms as separate future tracks.
+- `owner`: OAuth slice
+- `status`: accepted
+
 - `id`: AUTH-RISK-005
 - `identified_at`: 2026-04-09 19:21 CEST
 - `updated_at`: 2026-04-09 19:21 CEST
@@ -22783,6 +22809,36 @@ Concrete records of executed verification.
 - `notes`:
 
 ## Reports
+
+- `executed_at`: 2026-04-12 15:36 CEST
+- `scope`: full PHPUnit suite after OAuth/API auth subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: PHPUnit passes after adding `Capability/OAuth`, `Flow/OAuth`, client-bound JWT claims, and new OAuth facade
+  methods; result `OK (107 tests, 260 assertions)`
+
+- `executed_at`: 2026-04-12 15:36 CEST
+- `scope`: baseline static analysis after OAuth/API auth subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes across the new OAuth capability and flow slices
+
+- `executed_at`: 2026-04-12 15:36 CEST
+- `scope`: strict static analysis after OAuth/API auth subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after tightening iterable contracts for client/scope-aware token issuance
+
+- `executed_at`: 2026-04-12 15:36 CEST
+- `scope`: targeted OAuth regression suite and JWT claim coverage
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `vendor/bin/phpunit tests/Capabilities/OAuth/InMemoryOAuthClientRegistryTest.php tests/Capabilities/Identity/Jwt/JwtIdentityTest.php tests/Flows/OAuth/OAuthFlowTest.php tests/System/AuthTest.php`
+- `result`: pass
+- `notes`: targeted OAuth regression suite passes for PKCE enforcement, authorization-code exchange, refresh reuse
+  detection, introspection, revoke, and client-claim preservation; result `OK (12 tests, 47 assertions)`
 
 - `executed_at`: 2026-04-12 15:04 CEST
 - `scope`: full PHPUnit suite after `REFAKTOR.md` scope artifacts and session subsystem v1 implementation
@@ -24416,7 +24472,7 @@ Read and follow all rules in `.agents/AGENTS.md`.
 # Avax Auth
 
 Pure PHP 8.3+ auth kernel with one obvious ingress, immutable auth context, interchangeable session/JWT runtime
-strategies, first-class MFA, and a thin optional integration surface.
+strategies, first-class MFA, package-owned OAuth client/token flows, and a thin optional integration surface.
 
 ## What Changed
 
@@ -24424,6 +24480,8 @@ strategies, first-class MFA, and a thin optional integration surface.
 - `Auth::authenticateRequest()` is the canonical request ingress for bearer token/session resolution.
 - `Auth::current()`, `Auth::check()`, and `Auth::user()` now read one immutable `AuthenticationContext`.
 - Session and JWT now share the same public result model, logout path, and refresh/revocation lifecycle.
+- OAuth v1 now owns client registration, authorization-code issuance, PKCE verification, refresh exchange,
+  introspection, and token revocation.
 - Password reset, email verification, MFA enrollment/challenge/recovery, refresh rotation, audit events, and
   anti-enumeration flows are package-owned.
 
@@ -24496,6 +24554,13 @@ $backupCodes = $auth->confirmMfaEnrollment(
 - `changePassword(ChangePasswordData): void`
 - `register(RegistrationData): RegistrationResult`
 - `refresh(RefreshAuthenticationRequest): AuthenticationResult`
+- `registerOAuthClient(RegisterClientData): RegisteredOAuthClient`
+- `readOAuthClients(): list<OAuthClient>`
+- `authorizeOAuthCode(AuthorizeCodeData): IssuedAuthorizationCode`
+- `exchangeOAuthCode(ExchangeAuthorizationCodeData): OAuthTokenGrant`
+- `exchangeOAuthRefreshToken(ExchangeRefreshTokenData): OAuthTokenGrant`
+- `revokeOAuthToken(RevokeTokenData): void`
+- `introspectOAuthToken(IntrospectTokenData): TokenIntrospection`
 - `beginPasswordReset(BeginPasswordResetData): PasswordResetChallenge`
 - `resetPassword(ResetPasswordData): bool`
 - `beginEmailVerification(BeginEmailVerificationData): EmailVerificationChallenge`
@@ -24521,6 +24586,8 @@ Runtime ownership lives in auth-flow slices:
 
 - `System/Flow/AuthenticateRequest/` owns ingress resolution and current auth context.
 - `System/Flow/Login/`, `Register/`, `Logout/`, `Recover/`, `Verify/`, `Mfa/`, and `Token/` own package behavior.
+- `System/Capability/OAuth/` owns client registry and authorization-code persistence contracts.
+- `System/Flow/OAuth/` owns client registration, authorization-code issuance, token exchange, revoke, and introspection.
 - `System/Capability/Session/` owns durable tracked-session state and revocation contracts.
 - `System/Capability/Identity/` now only coordinates strategy issuance/clear semantics.
 - `System/Capability/User/` stays internal domain state; public auth output is `AuthenticatedUser`.
@@ -24537,6 +24604,7 @@ non-goals.
 - Idle and absolute session lifetime enforcement with tracked-session revocation hooks.
 - Active session listing, targeted session revoke, and logout-all flow support.
 - Token revocation and refresh rotation through package-owned stores.
+- OAuth public clients require PKCE and OAuth refresh reuse revokes the full token family.
 - Password reset and login failures keep safe public messages.
 - Password reset begin flow is anti-enumeration by default.
 - MFA uses TOTP with replay protection, backup codes, recovery tokens, step-up freshness checks, and per-user challenge
@@ -26224,6 +26292,9 @@ declare(strict_types=1);
 namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
+use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
+use Avax\Auth\System\Capability\OAuth\OAuthClient;
+use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
 use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticateRequest;
@@ -26254,6 +26325,21 @@ use Avax\Auth\System\Flow\Mfa\Recover\ConfirmMfaRecovery;
 use Avax\Auth\System\Flow\Mfa\Recover\ConfirmMfaRecoveryData;
 use Avax\Auth\System\Flow\Mfa\Recover\StartMfaRecovery;
 use Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData;
+use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCode;
+use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
+use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCode;
+use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
+use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshToken;
+use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshTokenData;
+use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectToken;
+use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectTokenData;
+use Avax\Auth\System\Flow\OAuth\IntrospectToken\TokenIntrospection;
+use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
+use Avax\Auth\System\Flow\OAuth\ReadClients\ReadClients;
+use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClient;
+use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeToken;
+use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
 use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Flow\Recover\BeginPasswordReset;
 use Avax\Auth\System\Flow\Recover\BeginPasswordResetData;
@@ -26274,6 +26360,7 @@ use Avax\Auth\System\Flow\Verify\BeginEmailVerificationData;
 use Avax\Auth\System\Flow\Verify\EmailVerificationChallenge;
 use Avax\Auth\System\Flow\Verify\VerifyEmail;
 use Avax\Auth\System\Flow\Verify\VerifyEmailData;
+use RuntimeException;
 
 /**
  * Main entry point for Avax Auth System.
@@ -26296,6 +26383,13 @@ final readonly class Auth implements AuthInterface
         private ChangePassword         $changePassword,
         private Register               $register,
         private RefreshAuthentication  $refreshAuthentication,
+        private RegisterClient|null    $registerOAuthClient,
+        private ReadClients|null       $readOAuthClients,
+        private AuthorizeCode|null     $authorizeOAuthCode,
+        private ExchangeAuthorizationCode|null $exchangeOAuthCode,
+        private ExchangeRefreshToken|null $exchangeOAuthRefreshToken,
+        private RevokeToken|null       $revokeOAuthToken,
+        private IntrospectToken|null   $introspectOAuthToken,
         private BeginPasswordReset     $beginPasswordReset,
         private ResetPassword          $resetPassword,
         private BeginEmailVerification $beginEmailVerification,
@@ -26384,6 +26478,41 @@ final readonly class Auth implements AuthInterface
         return $this->refreshAuthentication->execute($request);
     }
 
+    public function registerOAuthClient(RegisterClientData $data) : RegisteredOAuthClient
+    {
+        return $this->registerOAuthClientOrFail()->execute($data);
+    }
+
+    public function readOAuthClients() : array
+    {
+        return $this->readOAuthClientsOrFail()->execute();
+    }
+
+    public function authorizeOAuthCode(AuthorizeCodeData $data) : IssuedAuthorizationCode
+    {
+        return $this->authorizeOAuthCodeOrFail()->execute($data);
+    }
+
+    public function exchangeOAuthCode(ExchangeAuthorizationCodeData $data) : OAuthTokenGrant
+    {
+        return $this->exchangeOAuthCodeOrFail()->execute($data);
+    }
+
+    public function exchangeOAuthRefreshToken(ExchangeRefreshTokenData $data) : OAuthTokenGrant
+    {
+        return $this->exchangeOAuthRefreshTokenOrFail()->execute($data);
+    }
+
+    public function revokeOAuthToken(RevokeTokenData $data) : void
+    {
+        $this->revokeOAuthTokenOrFail()->execute($data);
+    }
+
+    public function introspectOAuthToken(IntrospectTokenData $data) : TokenIntrospection
+    {
+        return $this->introspectOAuthTokenOrFail()->execute($data);
+    }
+
     public function beginPasswordReset(BeginPasswordResetData $data) : PasswordResetChallenge
     {
         return $this->beginPasswordReset->execute($data);
@@ -26448,6 +26577,41 @@ final readonly class Auth implements AuthInterface
     {
         $this->confirmMfaRecovery->execute($data);
     }
+
+    private function registerOAuthClientOrFail() : RegisterClient
+    {
+        return $this->registerOAuthClient ?? throw new RuntimeException('OAuth client registry is not configured.');
+    }
+
+    private function readOAuthClientsOrFail() : ReadClients
+    {
+        return $this->readOAuthClients ?? throw new RuntimeException('OAuth client registry is not configured.');
+    }
+
+    private function authorizeOAuthCodeOrFail() : AuthorizeCode
+    {
+        return $this->authorizeOAuthCode ?? throw new RuntimeException('OAuth authorization code flow is not configured.');
+    }
+
+    private function exchangeOAuthCodeOrFail() : ExchangeAuthorizationCode
+    {
+        return $this->exchangeOAuthCode ?? throw new RuntimeException('OAuth token exchange is not configured.');
+    }
+
+    private function exchangeOAuthRefreshTokenOrFail() : ExchangeRefreshToken
+    {
+        return $this->exchangeOAuthRefreshToken ?? throw new RuntimeException('OAuth refresh flow is not configured.');
+    }
+
+    private function revokeOAuthTokenOrFail() : RevokeToken
+    {
+        return $this->revokeOAuthToken ?? throw new RuntimeException('OAuth revoke flow is not configured.');
+    }
+
+    private function introspectOAuthTokenOrFail() : IntrospectToken
+    {
+        return $this->introspectOAuthToken ?? throw new RuntimeException('OAuth introspection is not configured.');
+    }
 }
 
 === System/AuthInterface.php ===
@@ -26458,6 +26622,9 @@ declare(strict_types=1);
 namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
+use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
+use Avax\Auth\System\Capability\OAuth\OAuthClient;
+use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
@@ -26472,6 +26639,14 @@ use Avax\Auth\System\Flow\Mfa\MfaRecoveryChallenge;
 use Avax\Auth\System\Flow\Mfa\Recover\BeginMfaRecoveryData;
 use Avax\Auth\System\Flow\Mfa\Recover\ConfirmMfaRecoveryData;
 use Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData;
+use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
+use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
+use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshTokenData;
+use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectTokenData;
+use Avax\Auth\System\Flow\OAuth\IntrospectToken\TokenIntrospection;
+use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
+use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
 use Avax\Auth\System\Flow\Recover\BeginPasswordResetData;
 use Avax\Auth\System\Flow\Recover\PasswordResetChallenge;
 use Avax\Auth\System\Flow\Recover\ResetPasswordData;
@@ -26518,6 +26693,23 @@ interface AuthInterface
     public function register(RegistrationData $data) : RegistrationResult;
 
     public function refresh(RefreshAuthenticationRequest $request) : AuthenticationResult;
+
+    public function registerOAuthClient(RegisterClientData $data) : RegisteredOAuthClient;
+
+    /**
+     * @return list<OAuthClient>
+     */
+    public function readOAuthClients() : array;
+
+    public function authorizeOAuthCode(AuthorizeCodeData $data) : IssuedAuthorizationCode;
+
+    public function exchangeOAuthCode(ExchangeAuthorizationCodeData $data) : OAuthTokenGrant;
+
+    public function exchangeOAuthRefreshToken(ExchangeRefreshTokenData $data) : OAuthTokenGrant;
+
+    public function revokeOAuthToken(RevokeTokenData $data) : void;
+
+    public function introspectOAuthToken(IntrospectTokenData $data) : TokenIntrospection;
 
     public function beginPasswordReset(BeginPasswordResetData $data) : PasswordResetChallenge;
 
@@ -27035,9 +27227,20 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
             $mfaVerifiedAt = null;
             $mfaTimestamp  = $claims['mfa_at'] ?? null;
+            $clientId      = $claims['client_id'] ?? null;
+            $scopeClaim    = $claims['scope'] ?? null;
+            $scopes        = [];
 
             if (is_int($mfaTimestamp)) {
                 $mfaVerifiedAt = new DateTimeImmutable("@{$mfaTimestamp}");
+            }
+
+            if (! is_string($clientId) && $clientId !== null) {
+                return null;
+            }
+
+            if (is_string($scopeClaim) && $scopeClaim !== '') {
+                $scopes = array_values(array_filter(explode(' ', $scopeClaim), static fn (string $scope) : bool => $scope !== ''));
             }
 
             $user = $this->userSource->findById(new UserId($subject));
@@ -27050,14 +27253,24 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 user         : $user,
                 tokenId      : $tokenId,
                 expiresAt    : $expiryMoment,
-                mfaVerifiedAt: $mfaVerifiedAt
+                mfaVerifiedAt: $mfaVerifiedAt,
+                clientId     : $clientId,
+                scopes       : $scopes
             );
         } catch (Throwable) {
             return null;
         }
     }
 
-    public function issueRefreshToken(User $user, DateTimeImmutable|null $mfaVerifiedAt = null) : IssuedRefreshToken|null
+    /**
+     * @param list<string> $scopes
+     */
+    public function issueRefreshToken(
+        User $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null $clientId = null,
+        array $scopes = []
+    ) : IssuedRefreshToken|null
     {
         if ($this->refreshTokenStore === null) {
             return null;
@@ -27066,11 +27279,21 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         return $this->refreshTokenStore->issue(
             userId       : $user->getId(),
             expiresAt    : $this->clock->now()->modify("+{$this->refreshTokenExpiry} seconds"),
-            mfaVerifiedAt: $mfaVerifiedAt
+            mfaVerifiedAt: $mfaVerifiedAt,
+            clientId     : $clientId,
+            scopes       : $scopes
         );
     }
 
-    public function issue(User $user, DateTimeImmutable|null $mfaVerifiedAt = null) : IssuedToken
+    /**
+     * @param list<string> $scopes
+     */
+    public function issue(
+        User $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null $clientId = null,
+        array $scopes = []
+    ) : IssuedToken
     {
         if (! $user->isActive()) {
             throw new InvalidArgumentException(message: 'Inactive users cannot be authenticated.');
@@ -27090,6 +27313,14 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
         if ($mfaVerifiedAt !== null) {
             $payload['mfa_at'] = $mfaVerifiedAt->getTimestamp();
+        }
+
+        if ($clientId !== null) {
+            $payload['client_id'] = $clientId;
+        }
+
+        if ($scopes !== []) {
+            $payload['scope'] = implode(' ', array_values($scopes));
         }
 
         return new IssuedToken(
@@ -27125,11 +27356,27 @@ use DateTimeImmutable;
  */
 interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterface
 {
-    public function issue(User $user, DateTimeImmutable|null $mfaVerifiedAt = null) : IssuedToken;
+    /**
+     * @param list<string> $scopes
+     */
+    public function issue(
+        User $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null $clientId = null,
+        array $scopes = []
+    ) : IssuedToken;
 
     public function resolve(string $token) : ResolvedToken|null;
 
-    public function issueRefreshToken(User $user, DateTimeImmutable|null $mfaVerifiedAt = null) : IssuedRefreshToken|null;
+    /**
+     * @param list<string> $scopes
+     */
+    public function issueRefreshToken(
+        User $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null $clientId = null,
+        array $scopes = []
+    ) : IssuedRefreshToken|null;
 
     public function revoke(string $tokenId, DateTimeImmutable $expiresAt) : void;
 }
@@ -27453,6 +27700,477 @@ final readonly class SessionLifetime
             throw new InvalidArgumentException('Absolute timeout must be greater than or equal to idle timeout.');
         }
     }
+}
+
+=== System/Capability/OAuth/AuthorizationCodeRecord.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth;
+
+use Avax\Auth\System\Capability\User\UserId;
+use DateTimeImmutable;
+
+/**
+ * Stored OAuth authorization code state.
+ */
+final readonly class AuthorizationCodeRecord
+{
+    /**
+     * @param list<string> $scopes
+     */
+    public function __construct(
+        public string                 $codeId,
+        public string                 $clientId,
+        public UserId                 $userId,
+        public string                 $redirectUri,
+        public array                  $scopes,
+        public DateTimeImmutable      $expiresAt,
+        public string|null            $codeChallenge = null,
+        public PkceMethod|null        $codeChallengeMethod = null,
+        public DateTimeImmutable|null $usedAt = null,
+        public DateTimeImmutable|null $mfaVerifiedAt = null
+    ) {}
+
+    public function isExpiredAt(DateTimeImmutable $moment) : bool
+    {
+        return $this->expiresAt <= $moment;
+    }
+
+    public function wasUsed() : bool
+    {
+        return $this->usedAt !== null;
+    }
+}
+
+=== System/Capability/OAuth/AuthorizationCodeStoreInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth;
+
+use Avax\Auth\System\Capability\User\UserId;
+use DateTimeImmutable;
+
+/**
+ * Shared authorization code persistence for OAuth flows.
+ */
+interface AuthorizationCodeStoreInterface
+{
+    /**
+     * @param list<string> $scopes
+     */
+    public function issue(
+        UserId $userId,
+        string $clientId,
+        string $redirectUri,
+        array $scopes,
+        DateTimeImmutable $expiresAt,
+        string|null $state = null,
+        string|null $codeChallenge = null,
+        PkceMethod|null $codeChallengeMethod = null,
+        DateTimeImmutable|null $mfaVerifiedAt = null
+    ) : IssuedAuthorizationCode;
+
+    public function find(string $plainCode) : AuthorizationCodeRecord|null;
+
+    public function markUsed(string $codeId, DateTimeImmutable $usedAt) : void;
+}
+
+=== System/Capability/OAuth/InMemoryAuthorizationCodeStore.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth;
+
+use Avax\Auth\System\Capability\User\UserId;
+use DateTimeImmutable;
+
+/**
+ * In-memory authorization code storage.
+ */
+final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInterface
+{
+    /** @var array<string, string> */
+    private array $hashToCodeId = [];
+
+    /** @var array<string, AuthorizationCodeRecord> */
+    private array $records = [];
+
+    public function issue(
+        UserId $userId,
+        string $clientId,
+        string $redirectUri,
+        array $scopes,
+        DateTimeImmutable $expiresAt,
+        string|null $state = null,
+        string|null $codeChallenge = null,
+        PkceMethod|null $codeChallengeMethod = null,
+        DateTimeImmutable|null $mfaVerifiedAt = null
+    ) : IssuedAuthorizationCode
+    {
+        $plainCode = bin2hex(random_bytes(32));
+        $codeId    = 'code_' . bin2hex(random_bytes(12));
+
+        $this->records[$codeId] = new AuthorizationCodeRecord(
+            codeId             : $codeId,
+            clientId           : $clientId,
+            userId             : $userId,
+            redirectUri        : $redirectUri,
+            scopes             : array_values($scopes),
+            expiresAt          : $expiresAt,
+            codeChallenge      : $codeChallenge,
+            codeChallengeMethod: $codeChallengeMethod,
+            mfaVerifiedAt      : $mfaVerifiedAt
+        );
+        $this->hashToCodeId[$this->hash($plainCode)] = $codeId;
+
+        return new IssuedAuthorizationCode(
+            code     : $plainCode,
+            codeId   : $codeId,
+            expiresAt: $expiresAt,
+            state    : $state
+        );
+    }
+
+    public function find(string $plainCode) : AuthorizationCodeRecord|null
+    {
+        $codeId = $this->hashToCodeId[$this->hash($plainCode)] ?? null;
+
+        if ($codeId === null) {
+            return null;
+        }
+
+        return $this->records[$codeId] ?? null;
+    }
+
+    public function markUsed(string $codeId, DateTimeImmutable $usedAt) : void
+    {
+        $record = $this->records[$codeId] ?? null;
+
+        if ($record === null) {
+            return;
+        }
+
+        $this->records[$codeId] = new AuthorizationCodeRecord(
+            codeId             : $record->codeId,
+            clientId           : $record->clientId,
+            userId             : $record->userId,
+            redirectUri        : $record->redirectUri,
+            scopes             : $record->scopes,
+            expiresAt          : $record->expiresAt,
+            codeChallenge      : $record->codeChallenge,
+            codeChallengeMethod: $record->codeChallengeMethod,
+            usedAt             : $usedAt,
+            mfaVerifiedAt      : $record->mfaVerifiedAt
+        );
+    }
+
+    private function hash(string $plainCode) : string
+    {
+        return hash('sha256', $plainCode);
+    }
+}
+
+=== System/Capability/OAuth/InMemoryOAuthClientRegistry.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth;
+
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use InvalidArgumentException;
+use SensitiveParameter;
+
+/**
+ * In-memory OAuth client registry for tests and demos.
+ */
+final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
+{
+    /** @var array<string, OAuthClient> */
+    private array $clients = [];
+
+    public function __construct(
+        #[SensitiveParameter] private readonly PasswordHasher $passwordHasher
+    ) {}
+
+    public function register(
+        string $name,
+        OAuthClientType $type,
+        array $redirectUris,
+        array $allowedScopes = []
+    ) : RegisteredOAuthClient
+    {
+        $normalizedRedirectUris = $this->normalizeRedirectUris($redirectUris);
+        $normalizedScopes       = $this->normalizeScopes($allowedScopes);
+
+        if ($normalizedRedirectUris === []) {
+            throw new InvalidArgumentException('OAuth clients require at least one redirect URI.');
+        }
+
+        $clientId   = 'oauth_' . bin2hex(random_bytes(12));
+        $plainSecret = null;
+        $secretHash = null;
+
+        if ($type === OAuthClientType::CONFIDENTIAL) {
+            $plainSecret = bin2hex(random_bytes(24));
+            $secretHash  = $this->passwordHasher->hash($plainSecret);
+        }
+
+        $client = new OAuthClient(
+            clientId     : $clientId,
+            name         : trim($name),
+            type         : $type,
+            redirectUris : $normalizedRedirectUris,
+            allowedScopes: $normalizedScopes,
+            secretHash   : $secretHash
+        );
+
+        $this->clients[$clientId] = $client;
+
+        return new RegisteredOAuthClient(
+            client         : $client,
+            plainTextSecret: $plainSecret
+        );
+    }
+
+    public function find(string $clientId) : OAuthClient|null
+    {
+        return $this->clients[$clientId] ?? null;
+    }
+
+    public function all() : array
+    {
+        return array_values($this->clients);
+    }
+
+    public function verifySecret(
+        string $clientId,
+        #[SensitiveParameter] string|null $plainTextSecret
+    ) : bool
+    {
+        $client = $this->find($clientId);
+
+        if ($client === null) {
+            return false;
+        }
+
+        if ($client->isPublic()) {
+            return $plainTextSecret === null || $plainTextSecret === '';
+        }
+
+        if ($plainTextSecret === null || $plainTextSecret === '' || $client->secretHash === null) {
+            return false;
+        }
+
+        return $this->passwordHasher->verify($plainTextSecret, $client->secretHash);
+    }
+
+    /**
+     * @param list<string> $redirectUris
+     * @return list<string>
+     */
+    private function normalizeRedirectUris(array $redirectUris) : array
+    {
+        $normalized = [];
+
+        foreach ($redirectUris as $redirectUri) {
+            $value = trim($redirectUri);
+
+            if ($value === '' || in_array($value, $normalized, true)) {
+                continue;
+            }
+
+            $normalized[] = $value;
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * @param list<string> $allowedScopes
+     * @return list<string>
+     */
+    private function normalizeScopes(array $allowedScopes) : array
+    {
+        $normalized = [];
+
+        foreach ($allowedScopes as $scope) {
+            $value = trim($scope);
+
+            if ($value === '' || in_array($value, $normalized, true)) {
+                continue;
+            }
+
+            $normalized[] = $value;
+        }
+
+        sort($normalized);
+
+        return $normalized;
+    }
+}
+
+=== System/Capability/OAuth/IssuedAuthorizationCode.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth;
+
+use DateTimeImmutable;
+
+/**
+ * One-time authorization code returned to the client redirect layer.
+ */
+final readonly class IssuedAuthorizationCode
+{
+    public function __construct(
+        public string            $code,
+        public string            $codeId,
+        public DateTimeImmutable $expiresAt,
+        public string|null       $state = null
+    ) {}
+}
+
+=== System/Capability/OAuth/OAuthClient.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth;
+
+/**
+ * Registered OAuth client contract.
+ */
+final readonly class OAuthClient
+{
+    /**
+     * @param list<string> $redirectUris
+     * @param list<string> $allowedScopes
+     */
+    public function __construct(
+        public string          $clientId,
+        public string          $name,
+        public OAuthClientType $type,
+        public array           $redirectUris,
+        public array           $allowedScopes,
+        public string|null     $secretHash = null
+    ) {}
+
+    public function isPublic() : bool
+    {
+        return $this->type === OAuthClientType::PUBLIC;
+    }
+
+    public function isConfidential() : bool
+    {
+        return $this->type === OAuthClientType::CONFIDENTIAL;
+    }
+
+    public function allowsRedirectUri(string $redirectUri) : bool
+    {
+        return in_array($redirectUri, $this->redirectUris, true);
+    }
+
+    /**
+     * @param list<string> $scopes
+     */
+    public function allowsScopes(array $scopes) : bool
+    {
+        foreach ($scopes as $scope) {
+            if (! in_array($scope, $this->allowedScopes, true)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+=== System/Capability/OAuth/OAuthClientRegistryInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth;
+
+use SensitiveParameter;
+
+/**
+ * Shared client registry for OAuth flows.
+ */
+interface OAuthClientRegistryInterface
+{
+    /**
+     * @param list<string> $redirectUris
+     * @param list<string> $allowedScopes
+     */
+    public function register(
+        string $name,
+        OAuthClientType $type,
+        array $redirectUris,
+        array $allowedScopes = []
+    ) : RegisteredOAuthClient;
+
+    public function find(string $clientId) : OAuthClient|null;
+
+    /**
+     * @return list<OAuthClient>
+     */
+    public function all() : array;
+
+    public function verifySecret(
+        string $clientId,
+        #[SensitiveParameter] string|null $plainTextSecret
+    ) : bool;
+}
+
+=== System/Capability/OAuth/OAuthClientType.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth;
+
+enum OAuthClientType : string
+{
+    case PUBLIC = 'public';
+    case CONFIDENTIAL = 'confidential';
+}
+
+=== System/Capability/OAuth/PkceMethod.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth;
+
+enum PkceMethod : string
+{
+    case S256 = 'S256';
+}
+
+=== System/Capability/OAuth/RegisteredOAuthClient.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth;
+
+/**
+ * One-time client registration result.
+ */
+final readonly class RegisteredOAuthClient
+{
+    public function __construct(
+        public OAuthClient  $client,
+        public string|null  $plainTextSecret = null
+    ) {}
 }
 
 === System/Capability/PasswordHashing/PasswordHasher.php ===
@@ -28352,6 +29070,10 @@ use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthenticati
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
+use Avax\Auth\System\Capability\OAuth\InMemoryAuthorizationCodeStore;
+use Avax\Auth\System\Capability\OAuth\InMemoryOAuthClientRegistry;
+use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
 use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
 use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
 use Avax\Auth\System\Capability\Throttle\InMemoryAttemptThrottleStore;
@@ -28387,6 +29109,13 @@ use Avax\Auth\System\Flow\Mfa\Recover\StartMfaRecovery;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Flow\Mfa\Totp;
 use Avax\Auth\System\Flow\Mfa\TotpInterface;
+use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCode;
+use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCode;
+use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshToken;
+use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectToken;
+use Avax\Auth\System\Flow\OAuth\ReadClients\ReadClients;
+use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClient;
+use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeToken;
 use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Flow\Recover\BeginPasswordReset;
 use Avax\Auth\System\Flow\Recover\InMemoryPasswordResetStore;
@@ -28434,6 +29163,8 @@ final class AuthBuilder
     private AttemptThrottle|null                      $mfaRecoveryThrottle    = null;
     private Clock|null                                $clock                  = null;
     private SessionRegistryInterface|null             $sessionRegistry        = null;
+    private OAuthClientRegistryInterface|null         $oauthClientRegistry    = null;
+    private AuthorizationCodeStoreInterface|null      $authorizationCodeStore = null;
     private string                                    $mfaIssuer              = 'Avax Auth';
 
     /**
@@ -28570,6 +29301,20 @@ final class AuthBuilder
         return $this;
     }
 
+    public function withOAuthClientRegistry(OAuthClientRegistryInterface $oauthClientRegistry) : self
+    {
+        $this->oauthClientRegistry = $oauthClientRegistry;
+
+        return $this;
+    }
+
+    public function withAuthorizationCodeStore(AuthorizationCodeStoreInterface $authorizationCodeStore) : self
+    {
+        $this->authorizationCodeStore = $authorizationCodeStore;
+
+        return $this;
+    }
+
     public function withMfaAttemptLimit(LimitMfaAttempts $mfaAttemptLimit) : self
     {
         $this->mfaAttemptLimit = $mfaAttemptLimit;
@@ -28601,6 +29346,8 @@ final class AuthBuilder
         $passwordHasher           = $this->passwordHasher ?? new PasswordHasher();
         $auditLog                 = $this->auditLog ?? new NullAuditLog();
         $clock                    = $this->clock ?? new Clock();
+        $oauthClientRegistry      = $this->oauthClientRegistry ?? new InMemoryOAuthClientRegistry($passwordHasher);
+        $authorizationCodeStore   = $this->authorizationCodeStore ?? new InMemoryAuthorizationCodeStore();
         $passwordResetStore       = $this->passwordResetStore ?? new InMemoryPasswordResetStore();
         $emailVerificationStore   = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore();
         $emailVerificationState   = $this->emailVerificationState ?? new InMemoryEmailVerificationStateStore();
@@ -28672,6 +29419,23 @@ final class AuthBuilder
                                        currentAuthentication: $currentAuthentication
                                    )
         );
+        $registerOAuthClient      = new RegisterClient(
+            clientRegistry: $oauthClientRegistry,
+            auditLog      : $auditLog,
+            clock         : $clock
+        );
+        $readOAuthClients         = new ReadClients(
+            clientRegistry: $oauthClientRegistry
+        );
+        $authorizeOAuthCode       = new AuthorizeCode(
+            currentAuthentication: $currentAuthentication,
+            userSource           : $this->userSource,
+            clientRegistry       : $oauthClientRegistry,
+            codeStore            : $authorizationCodeStore,
+            auditLog             : $auditLog,
+            clock                : $clock
+        );
+        $oauthReady               = $identity->jwtIdentity() !== null && $this->refreshTokenStore !== null;
 
         return new Auth(
             login                 : new Login(
@@ -28749,6 +29513,47 @@ final class AuthBuilder
                                         refreshTokenStore       : $this->refreshTokenStore,
                                         jwtIdentity             : $identity->jwtIdentity()
                                     ),
+            registerOAuthClient   : $oauthReady ? $registerOAuthClient : null,
+            readOAuthClients      : $oauthReady ? $readOAuthClients : null,
+            authorizeOAuthCode    : $oauthReady ? $authorizeOAuthCode : null,
+            exchangeOAuthCode     : $oauthReady
+                ? new ExchangeAuthorizationCode(
+                    clientRegistry   : $oauthClientRegistry,
+                    codeStore        : $authorizationCodeStore,
+                    userSource       : $this->userSource,
+                    jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
+                    refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException('Refresh token store is required.'),
+                    auditLog         : $auditLog,
+                    clock            : $clock
+                )
+                : null,
+            exchangeOAuthRefreshToken: $oauthReady
+                ? new ExchangeRefreshToken(
+                    clientRegistry   : $oauthClientRegistry,
+                    refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException('Refresh token store is required.'),
+                    userSource       : $this->userSource,
+                    jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
+                    auditLog         : $auditLog,
+                    clock            : $clock
+                )
+                : null,
+            revokeOAuthToken      : $oauthReady
+                ? new RevokeToken(
+                    clientRegistry   : $oauthClientRegistry,
+                    refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException('Refresh token store is required.'),
+                    jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
+                    auditLog         : $auditLog,
+                    clock            : $clock
+                )
+                : null,
+            introspectOAuthToken  : $oauthReady
+                ? new IntrospectToken(
+                    clientRegistry: $oauthClientRegistry,
+                    jwtIdentity   : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
+                    auditLog      : $auditLog,
+                    clock         : $clock
+                )
+                : null,
             beginPasswordReset    : new BeginPasswordReset(
                                         userSource        : $this->userSource,
                                         passwordResetStore: $passwordResetStore,
@@ -32642,6 +33447,901 @@ final readonly class VerifyMfaChallengeData
     ) {}
 }
 
+=== System/Flow/OAuth/AuthorizeCode/AuthorizeCode.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\AuthorizeCode;
+
+use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
+use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
+use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capability\OAuth\PkceMethod;
+use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
+use Avax\Auth\System\Foundation\Clock;
+
+final readonly class AuthorizeCode
+{
+    public function __construct(
+        private CurrentAuthentication        $currentAuthentication,
+        private UserSourceInterface          $userSource,
+        private OAuthClientRegistryInterface $clientRegistry,
+        private AuthorizationCodeStoreInterface $codeStore,
+        private AuditLogInterface            $auditLog,
+        private Clock                        $clock
+    ) {}
+
+    /**
+     * @throws OAuthAuthorizationFailed
+     */
+    public function execute(AuthorizeCodeData $data) : IssuedAuthorizationCode
+    {
+        $context = $this->currentAuthentication->read();
+        $actor   = $context->user();
+        $now     = $this->clock->now();
+
+        if ($actor === null) {
+            $this->recordFailure($data, 'unauthenticated');
+            throw OAuthAuthorizationFailed::unauthenticated();
+        }
+
+        $user = $this->userSource->findById(new UserId($actor->id));
+
+        if ($user === null || ! $user->isActive()) {
+            $this->recordFailure($data, 'user_not_active');
+            throw OAuthAuthorizationFailed::unauthenticated();
+        }
+
+        $client = $this->clientRegistry->find($data->clientId);
+
+        if ($client === null) {
+            $this->recordFailure($data, 'client_not_found');
+            throw OAuthAuthorizationFailed::invalidClient();
+        }
+
+        if (! $client->allowsRedirectUri($data->redirectUri)) {
+            $this->recordFailure($data, 'redirect_uri_mismatch');
+            throw OAuthAuthorizationFailed::invalidRedirectUri();
+        }
+
+        $scopes = $this->normalizeScopes($data->scopes);
+
+        if (! $client->allowsScopes($scopes)) {
+            $this->recordFailure($data, 'scope_mismatch');
+            throw OAuthAuthorizationFailed::invalidScopes();
+        }
+
+        if ($client->isPublic()) {
+            if ($data->codeChallenge === null || $data->codeChallengeMethod !== PkceMethod::S256) {
+                $this->recordFailure($data, 'pkce_required');
+                throw OAuthAuthorizationFailed::invalidPkce();
+            }
+        }
+
+        $issued = $this->codeStore->issue(
+            userId             : $user->getId(),
+            clientId           : $client->clientId,
+            redirectUri        : $data->redirectUri,
+            scopes             : $scopes,
+            expiresAt          : $now->modify('+5 minutes'),
+            state              : $data->state,
+            codeChallenge      : $data->codeChallenge,
+            codeChallengeMethod: $data->codeChallengeMethod,
+            mfaVerifiedAt      : $context->mfaVerifiedAt()
+        );
+
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.oauth.authorization_code.issued',
+            occurredAt: $now,
+            context   : [
+                'client_id' => $client->clientId,
+                'user_id' => $user->getId()->value,
+                'code_id' => $issued->codeId,
+                'scope' => implode(' ', $scopes),
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ]
+        ));
+
+        return $issued;
+    }
+
+    /**
+     * @param list<string> $scopes
+     * @return list<string>
+     */
+    private function normalizeScopes(array $scopes) : array
+    {
+        $normalized = [];
+
+        foreach ($scopes as $scope) {
+            $value = trim($scope);
+
+            if ($value === '' || in_array($value, $normalized, true)) {
+                continue;
+            }
+
+            $normalized[] = $value;
+        }
+
+        sort($normalized);
+
+        return $normalized;
+    }
+
+    private function recordFailure(AuthorizeCodeData $data, string $reason) : void
+    {
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.oauth.authorization_code.failed',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'client_id' => $data->clientId,
+                'redirect_uri' => $data->redirectUri,
+                'reason' => $reason,
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ]
+        ));
+    }
+}
+
+=== System/Flow/OAuth/AuthorizeCode/AuthorizeCodeData.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\AuthorizeCode;
+
+use Avax\Auth\System\Capability\OAuth\PkceMethod;
+
+final readonly class AuthorizeCodeData
+{
+    /**
+     * @param list<string> $scopes
+     */
+    public function __construct(
+        public string           $clientId,
+        public string           $redirectUri,
+        public array            $scopes = [],
+        public string|null      $state = null,
+        public string|null      $codeChallenge = null,
+        public PkceMethod|null  $codeChallengeMethod = null,
+        public string|null      $ipAddress = null,
+        public string|null      $userAgent = null
+    ) {}
+}
+
+=== System/Flow/OAuth/ExchangeAuthorizationCode/ExchangeAuthorizationCode.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode;
+
+use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
+use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capability\OAuth\PkceMethod;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\OAuth\OAuthTokenExchangeFailed;
+use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
+use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
+use Avax\Auth\System\Foundation\Clock;
+
+final readonly class ExchangeAuthorizationCode
+{
+    public function __construct(
+        private OAuthClientRegistryInterface    $clientRegistry,
+        private AuthorizationCodeStoreInterface $codeStore,
+        private UserSourceInterface             $userSource,
+        private JwtIdentityInterface            $jwtIdentity,
+        private RefreshTokenStoreInterface      $refreshTokenStore,
+        private AuditLogInterface               $auditLog,
+        private Clock                           $clock
+    ) {}
+
+    /**
+     * @throws OAuthTokenExchangeFailed
+     */
+    public function execute(ExchangeAuthorizationCodeData $data) : OAuthTokenGrant
+    {
+        $now    = $this->clock->now();
+        $client = $this->clientRegistry->find($data->clientId);
+
+        if ($client === null || ! $this->clientRegistry->verifySecret($data->clientId, $data->clientSecret)) {
+            $this->recordFailure($data, 'client_authentication_failed');
+            throw OAuthTokenExchangeFailed::invalidClient();
+        }
+
+        $record = $this->codeStore->find($data->code);
+
+        if ($record === null) {
+            $this->recordFailure($data, 'grant_not_found');
+            throw OAuthTokenExchangeFailed::invalidGrant();
+        }
+
+        if ($record->wasUsed()) {
+            $this->recordFailure($data, 'grant_reused', suspicious: true);
+            throw OAuthTokenExchangeFailed::invalidGrant();
+        }
+
+        if ($record->isExpiredAt($now) || $record->clientId !== $data->clientId) {
+            $this->recordFailure($data, 'grant_expired_or_mismatch');
+            throw OAuthTokenExchangeFailed::invalidGrant();
+        }
+
+        if ($record->redirectUri !== $data->redirectUri) {
+            $this->recordFailure($data, 'redirect_uri_mismatch');
+            throw OAuthTokenExchangeFailed::invalidRedirectUri();
+        }
+
+        if ($record->codeChallenge !== null) {
+            if ($record->codeChallengeMethod !== PkceMethod::S256 || $data->codeVerifier === null) {
+                $this->recordFailure($data, 'pkce_verifier_missing');
+                throw OAuthTokenExchangeFailed::invalidVerifier();
+            }
+
+            $expectedChallenge = rtrim(strtr(base64_encode(hash('sha256', $data->codeVerifier, true)), '+/', '-_'), '=');
+
+            if (! hash_equals($record->codeChallenge, $expectedChallenge)) {
+                $this->recordFailure($data, 'pkce_verifier_mismatch');
+                throw OAuthTokenExchangeFailed::invalidVerifier();
+            }
+        }
+
+        $user = $this->userSource->findById($record->userId);
+
+        if ($user === null || ! $user->isActive()) {
+            $this->recordFailure($data, 'user_not_active');
+            throw OAuthTokenExchangeFailed::invalidGrant();
+        }
+
+        $this->codeStore->markUsed($record->codeId, $now);
+
+        $accessToken = $this->jwtIdentity->issue(
+            user         : $user,
+            mfaVerifiedAt: $record->mfaVerifiedAt,
+            clientId     : $client->clientId,
+            scopes       : $record->scopes
+        );
+        $refreshToken = $this->refreshTokenStore->issue(
+            userId       : $user->getId(),
+            expiresAt    : $now->modify('+30 days'),
+            mfaVerifiedAt: $record->mfaVerifiedAt,
+            clientId     : $client->clientId,
+            scopes       : $record->scopes
+        );
+
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.oauth.authorization_code.exchanged',
+            occurredAt: $now,
+            context   : [
+                'client_id' => $client->clientId,
+                'user_id' => $user->getId()->value,
+                'code_id' => $record->codeId,
+                'scope' => implode(' ', $record->scopes),
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ]
+        ));
+
+        return new OAuthTokenGrant(
+            accessToken          : $accessToken->token,
+            accessTokenExpiresAt : $accessToken->expiresAt,
+            refreshToken         : $refreshToken->token,
+            clientId             : $client->clientId,
+            userId               : $user->getId()->value,
+            scopes               : $record->scopes
+        );
+    }
+
+    private function recordFailure(
+        ExchangeAuthorizationCodeData $data,
+        string $reason,
+        bool $suspicious = false
+    ) : void
+    {
+        $name = $suspicious
+            ? 'auth.oauth.authorization_code.reuse_detected'
+            : 'auth.oauth.authorization_code.exchange.failed';
+
+        $this->auditLog->record(new AuditEvent(
+            name      : $name,
+            occurredAt: $this->clock->now(),
+            context   : [
+                'client_id' => $data->clientId,
+                'redirect_uri' => $data->redirectUri,
+                'reason' => $reason,
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ]
+        ));
+    }
+}
+
+=== System/Flow/OAuth/ExchangeAuthorizationCode/ExchangeAuthorizationCodeData.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode;
+
+use SensitiveParameter;
+
+final readonly class ExchangeAuthorizationCodeData
+{
+    public function __construct(
+        public string $clientId,
+        #[SensitiveParameter] public string $code,
+        public string $redirectUri,
+        #[SensitiveParameter] public string|null $clientSecret = null,
+        #[SensitiveParameter] public string|null $codeVerifier = null,
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null
+    ) {}
+}
+
+=== System/Flow/OAuth/ExchangeRefreshToken/ExchangeRefreshToken.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken;
+
+use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\OAuth\OAuthTokenExchangeFailed;
+use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
+use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
+use Avax\Auth\System\Foundation\Clock;
+
+final readonly class ExchangeRefreshToken
+{
+    public function __construct(
+        private OAuthClientRegistryInterface $clientRegistry,
+        private RefreshTokenStoreInterface   $refreshTokenStore,
+        private UserSourceInterface          $userSource,
+        private JwtIdentityInterface         $jwtIdentity,
+        private AuditLogInterface            $auditLog,
+        private Clock                        $clock
+    ) {}
+
+    /**
+     * @throws OAuthTokenExchangeFailed
+     */
+    public function execute(ExchangeRefreshTokenData $data) : OAuthTokenGrant
+    {
+        $now    = $this->clock->now();
+        $client = $this->clientRegistry->find($data->clientId);
+
+        if ($client === null || ! $this->clientRegistry->verifySecret($data->clientId, $data->clientSecret)) {
+            $this->recordFailure($data, 'client_authentication_failed');
+            throw OAuthTokenExchangeFailed::invalidClient();
+        }
+
+        $record = $this->refreshTokenStore->find($data->refreshToken);
+
+        if (
+            $record === null
+            || $record->clientId !== $data->clientId
+            || $record->revoked
+            || $record->isExpiredAt($now)
+        ) {
+            $this->recordFailure($data, 'grant_not_found_or_expired');
+            throw OAuthTokenExchangeFailed::invalidGrant();
+        }
+
+        if ($record->wasRotated()) {
+            $this->refreshTokenStore->revokeFamily($record->familyId);
+            $this->recordFailure($data, 'reuse_detected', suspicious: true);
+            throw OAuthTokenExchangeFailed::invalidGrant();
+        }
+
+        $user = $this->userSource->findById($record->userId);
+
+        if ($user === null || ! $user->isActive()) {
+            $this->refreshTokenStore->revokeFamily($record->familyId);
+            $this->recordFailure($data, 'user_not_active');
+            throw OAuthTokenExchangeFailed::invalidGrant();
+        }
+
+        $accessToken = $this->jwtIdentity->issue(
+            user         : $user,
+            mfaVerifiedAt: $record->mfaVerifiedAt,
+            clientId     : $client->clientId,
+            scopes       : $record->scopes
+        );
+        $refreshToken = $this->refreshTokenStore->issue(
+            userId       : $record->userId,
+            expiresAt    : $now->modify('+30 days'),
+            familyId     : $record->familyId,
+            mfaVerifiedAt: $record->mfaVerifiedAt,
+            clientId     : $client->clientId,
+            scopes       : $record->scopes
+        );
+
+        $this->refreshTokenStore->markRotated($record->tokenId, $refreshToken->tokenId);
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.oauth.refresh.exchanged',
+            occurredAt: $now,
+            context   : [
+                'client_id' => $client->clientId,
+                'user_id' => $user->getId()->value,
+                'family_id' => $refreshToken->familyId,
+                'scope' => implode(' ', $record->scopes),
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ]
+        ));
+
+        return new OAuthTokenGrant(
+            accessToken          : $accessToken->token,
+            accessTokenExpiresAt : $accessToken->expiresAt,
+            refreshToken         : $refreshToken->token,
+            clientId             : $client->clientId,
+            userId               : $user->getId()->value,
+            scopes               : $record->scopes
+        );
+    }
+
+    private function recordFailure(
+        ExchangeRefreshTokenData $data,
+        string $reason,
+        bool $suspicious = false
+    ) : void
+    {
+        $name = $suspicious
+            ? 'auth.oauth.refresh.reuse_detected'
+            : 'auth.oauth.refresh.failed';
+
+        $this->auditLog->record(new AuditEvent(
+            name      : $name,
+            occurredAt: $this->clock->now(),
+            context   : [
+                'client_id' => $data->clientId,
+                'reason' => $reason,
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ]
+        ));
+    }
+}
+
+=== System/Flow/OAuth/ExchangeRefreshToken/ExchangeRefreshTokenData.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken;
+
+use SensitiveParameter;
+
+final readonly class ExchangeRefreshTokenData
+{
+    public function __construct(
+        public string $clientId,
+        #[SensitiveParameter] public string $refreshToken,
+        #[SensitiveParameter] public string|null $clientSecret = null,
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null
+    ) {}
+}
+
+=== System/Flow/OAuth/IntrospectToken/IntrospectToken.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\IntrospectToken;
+
+use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\OAuth\OAuthTokenExchangeFailed;
+use Avax\Auth\System\Foundation\Clock;
+
+final readonly class IntrospectToken
+{
+    public function __construct(
+        private OAuthClientRegistryInterface $clientRegistry,
+        private JwtIdentityInterface $jwtIdentity,
+        private AuditLogInterface $auditLog,
+        private Clock $clock
+    ) {}
+
+    /**
+     * @throws OAuthTokenExchangeFailed
+     */
+    public function execute(IntrospectTokenData $data) : TokenIntrospection
+    {
+        $client = $this->clientRegistry->find($data->clientId);
+
+        if ($client === null || ! $this->clientRegistry->verifySecret($data->clientId, $data->clientSecret)) {
+            throw OAuthTokenExchangeFailed::invalidClient();
+        }
+
+        $resolved = $this->jwtIdentity->resolve($data->token);
+
+        if ($resolved === null || $resolved->clientId !== $data->clientId) {
+            $result = TokenIntrospection::inactive();
+        } else {
+            $result = new TokenIntrospection(
+                active       : true,
+                clientId     : $resolved->clientId,
+                userId       : $resolved->user->getId()->value,
+                scopes       : $resolved->scopes,
+                expiresAt    : $resolved->expiresAt,
+                mfaVerifiedAt: $resolved->mfaVerifiedAt
+            );
+        }
+
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.oauth.token.introspected',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'client_id' => $data->clientId,
+                'active' => $result->active ? 1 : 0,
+            ]
+        ));
+
+        return $result;
+    }
+}
+
+=== System/Flow/OAuth/IntrospectToken/IntrospectTokenData.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\IntrospectToken;
+
+use SensitiveParameter;
+
+final readonly class IntrospectTokenData
+{
+    public function __construct(
+        public string $clientId,
+        #[SensitiveParameter] public string $token,
+        #[SensitiveParameter] public string|null $clientSecret = null
+    ) {}
+}
+
+=== System/Flow/OAuth/IntrospectToken/TokenIntrospection.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\IntrospectToken;
+
+use DateTimeImmutable;
+
+final readonly class TokenIntrospection
+{
+    /**
+     * @param list<string> $scopes
+     */
+    public function __construct(
+        public bool                   $active,
+        public string|null            $clientId = null,
+        public int|null               $userId = null,
+        public array                  $scopes = [],
+        public DateTimeImmutable|null $expiresAt = null,
+        public DateTimeImmutable|null $mfaVerifiedAt = null
+    ) {}
+
+    public static function inactive() : self
+    {
+        return new self(active: false);
+    }
+
+    public function scopeString() : string
+    {
+        return implode(' ', $this->scopes);
+    }
+}
+
+=== System/Flow/OAuth/OAuthAuthorizationFailed.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth;
+
+use RuntimeException;
+
+final class OAuthAuthorizationFailed extends RuntimeException
+{
+    public static function unauthenticated() : self
+    {
+        return new self('An authenticated user is required.');
+    }
+
+    public static function invalidClient() : self
+    {
+        return new self('Invalid OAuth client.');
+    }
+
+    public static function invalidRedirectUri() : self
+    {
+        return new self('Invalid redirect URI.');
+    }
+
+    public static function invalidScopes() : self
+    {
+        return new self('Invalid scopes.');
+    }
+
+    public static function invalidPkce() : self
+    {
+        return new self('PKCE is required for this client.');
+    }
+}
+
+=== System/Flow/OAuth/OAuthTokenExchangeFailed.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth;
+
+use RuntimeException;
+
+final class OAuthTokenExchangeFailed extends RuntimeException
+{
+    public static function invalidClient() : self
+    {
+        return new self('Invalid OAuth client credentials.');
+    }
+
+    public static function invalidGrant() : self
+    {
+        return new self('Invalid OAuth grant.');
+    }
+
+    public static function invalidRedirectUri() : self
+    {
+        return new self('Invalid redirect URI.');
+    }
+
+    public static function invalidVerifier() : self
+    {
+        return new self('Invalid PKCE verifier.');
+    }
+}
+
+=== System/Flow/OAuth/OAuthTokenGrant.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth;
+
+use DateTimeImmutable;
+
+/**
+ * OAuth token endpoint result.
+ */
+final readonly class OAuthTokenGrant
+{
+    /**
+     * @param list<string> $scopes
+     */
+    public function __construct(
+        public string            $accessToken,
+        public DateTimeImmutable $accessTokenExpiresAt,
+        public string|null       $refreshToken,
+        public string            $clientId,
+        public int               $userId,
+        public array             $scopes = [],
+        public string            $tokenType = 'Bearer'
+    ) {}
+
+    public function expiresIn(DateTimeImmutable $moment) : int
+    {
+        return max(0, $this->accessTokenExpiresAt->getTimestamp() - $moment->getTimestamp());
+    }
+
+    public function scopeString() : string
+    {
+        return implode(' ', $this->scopes);
+    }
+}
+
+=== System/Flow/OAuth/ReadClients/ReadClients.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\ReadClients;
+
+use Avax\Auth\System\Capability\OAuth\OAuthClient;
+use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+
+final readonly class ReadClients
+{
+    public function __construct(
+        private OAuthClientRegistryInterface $clientRegistry
+    ) {}
+
+    /**
+     * @return list<OAuthClient>
+     */
+    public function execute() : array
+    {
+        return $this->clientRegistry->all();
+    }
+}
+
+=== System/Flow/OAuth/RegisterClient/RegisterClient.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\RegisterClient;
+
+use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Foundation\Clock;
+
+final readonly class RegisterClient
+{
+    public function __construct(
+        private OAuthClientRegistryInterface $clientRegistry,
+        private AuditLogInterface            $auditLog,
+        private Clock                        $clock
+    ) {}
+
+    public function execute(RegisterClientData $data) : RegisteredOAuthClient
+    {
+        $registered = $this->clientRegistry->register(
+            name         : $data->name,
+            type         : $data->type,
+            redirectUris : $data->redirectUris,
+            allowedScopes: $data->allowedScopes
+        );
+
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.oauth.client.registered',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'client_id' => $registered->client->clientId,
+                'name' => $registered->client->name,
+                'type' => $registered->client->type->value,
+            ]
+        ));
+
+        return $registered;
+    }
+}
+
+=== System/Flow/OAuth/RegisterClient/RegisterClientData.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\RegisterClient;
+
+use Avax\Auth\System\Capability\OAuth\OAuthClientType;
+
+final readonly class RegisterClientData
+{
+    /**
+     * @param list<string> $redirectUris
+     * @param list<string> $allowedScopes
+     */
+    public function __construct(
+        public string          $name,
+        public OAuthClientType $type,
+        public array           $redirectUris,
+        public array           $allowedScopes = []
+    ) {}
+}
+
+=== System/Flow/OAuth/RevokeToken/RevokeToken.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\RevokeToken;
+
+use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\OAuth\OAuthTokenExchangeFailed;
+use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
+use Avax\Auth\System\Foundation\Clock;
+
+final readonly class RevokeToken
+{
+    public function __construct(
+        private OAuthClientRegistryInterface $clientRegistry,
+        private RefreshTokenStoreInterface $refreshTokenStore,
+        private JwtIdentityInterface $jwtIdentity,
+        private AuditLogInterface $auditLog,
+        private Clock $clock
+    ) {}
+
+    /**
+     * @throws OAuthTokenExchangeFailed
+     */
+    public function execute(RevokeTokenData $data) : void
+    {
+        $client = $this->clientRegistry->find($data->clientId);
+
+        if ($client === null || ! $this->clientRegistry->verifySecret($data->clientId, $data->clientSecret)) {
+            throw OAuthTokenExchangeFailed::invalidClient();
+        }
+
+        $revoked = false;
+
+        if ($data->tokenTypeHint !== 'access_token') {
+            $refreshRecord = $this->refreshTokenStore->find($data->token);
+
+            if ($refreshRecord !== null && $refreshRecord->clientId === $data->clientId) {
+                $this->refreshTokenStore->revokeFamily($refreshRecord->familyId);
+                $revoked = true;
+            }
+        }
+
+        if ($data->tokenTypeHint !== 'refresh_token') {
+            $access = $this->jwtIdentity->resolve($data->token);
+
+            if ($access !== null && $access->clientId === $data->clientId) {
+                $this->jwtIdentity->revoke($access->tokenId, $access->expiresAt);
+                $revoked = true;
+            }
+        }
+
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.oauth.token.revoked',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'client_id' => $data->clientId,
+                'token_type_hint' => $data->tokenTypeHint,
+                'revoked' => $revoked ? 1 : 0,
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ]
+        ));
+    }
+}
+
+=== System/Flow/OAuth/RevokeToken/RevokeTokenData.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\RevokeToken;
+
+use SensitiveParameter;
+
+final readonly class RevokeTokenData
+{
+    public function __construct(
+        public string $clientId,
+        #[SensitiveParameter] public string $token,
+        #[SensitiveParameter] public string|null $clientSecret = null,
+        public string|null $tokenTypeHint = null,
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null
+    ) {}
+}
+
 === System/Flow/ReadCurrentUser/ReadCurrentUser.php ===
 <?php
 
@@ -33728,11 +35428,16 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
     /** @var array<string, RefreshTokenRecord> */
     private array $records = [];
 
+    /**
+     * @param list<string> $scopes
+     */
     public function issue(
         UserId                 $userId,
         DateTimeImmutable      $expiresAt,
         string|null            $familyId = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null            $clientId = null,
+        array                  $scopes = []
     ) : IssuedRefreshToken
     {
         $plainToken = bin2hex(random_bytes(32));
@@ -33744,7 +35449,9 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             familyId     : $familyId,
             userId       : $userId,
             expiresAt    : $expiresAt,
-            mfaVerifiedAt: $mfaVerifiedAt
+            mfaVerifiedAt: $mfaVerifiedAt,
+            clientId     : $clientId,
+            scopes       : array_values($scopes)
         );
 
         $this->records[$tokenId]                       = $record;
@@ -33756,7 +35463,9 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             familyId     : $familyId,
             userId       : $userId,
             expiresAt    : $expiresAt,
-            mfaVerifiedAt: $mfaVerifiedAt
+            mfaVerifiedAt: $mfaVerifiedAt,
+            clientId     : $clientId,
+            scopes       : array_values($scopes)
         );
     }
 
@@ -33791,7 +35500,9 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             expiresAt         : $record->expiresAt,
             replacementTokenId: $replacementTokenId,
             revoked           : $record->revoked,
-            mfaVerifiedAt     : $record->mfaVerifiedAt
+            mfaVerifiedAt     : $record->mfaVerifiedAt,
+            clientId          : $record->clientId,
+            scopes            : $record->scopes
         );
     }
 
@@ -33809,7 +35520,9 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
                 expiresAt         : $record->expiresAt,
                 replacementTokenId: $record->replacementTokenId,
                 revoked           : true,
-                mfaVerifiedAt     : $record->mfaVerifiedAt
+                mfaVerifiedAt     : $record->mfaVerifiedAt,
+                clientId          : $record->clientId,
+                scopes            : $record->scopes
             );
         }
     }
@@ -33825,7 +35538,9 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
                     expiresAt         : $record->expiresAt,
                     replacementTokenId: $record->replacementTokenId,
                     revoked           : true,
-                    mfaVerifiedAt     : $record->mfaVerifiedAt
+                    mfaVerifiedAt     : $record->mfaVerifiedAt,
+                    clientId          : $record->clientId,
+                    scopes            : $record->scopes
                 );
             }
         }
@@ -33877,13 +35592,18 @@ use DateTimeImmutable;
  */
 final readonly class IssuedRefreshToken
 {
+    /**
+     * @param list<string> $scopes
+     */
     public function __construct(
         public string                 $token,
         public string                 $tokenId,
         public string                 $familyId,
         public UserId                 $userId,
         public DateTimeImmutable      $expiresAt,
-        public DateTimeImmutable|null $mfaVerifiedAt = null
+        public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public string|null            $clientId = null,
+        public array                  $scopes = []
     ) {}
 }
 
@@ -33966,6 +35686,20 @@ final readonly class RefreshAuthentication
             throw RefreshAuthenticationFailed::invalidToken();
         }
 
+        if ($record->clientId !== null) {
+            $this->auditLog->record(new AuditEvent(
+                                        name      : 'auth.refresh.failed',
+                                        occurredAt: $now,
+                                        context   : [
+                                                        'reason'     => 'oauth_bound_token',
+                                                        'ip_address' => $request->ipAddress,
+                                                        'user_agent' => $request->userAgent,
+                                                    ]
+                                    ));
+
+            throw RefreshAuthenticationFailed::invalidToken();
+        }
+
         if ($record->wasRotated()) {
             $this->refreshTokenStore->revokeFamily($record->familyId);
             $this->auditLog->record(new AuditEvent(
@@ -33989,12 +35723,19 @@ final readonly class RefreshAuthentication
             throw RefreshAuthenticationFailed::invalidToken();
         }
 
-        $accessToken  = $this->jwtIdentity->issue($user, $record->mfaVerifiedAt);
+        $accessToken  = $this->jwtIdentity->issue(
+            user         : $user,
+            mfaVerifiedAt: $record->mfaVerifiedAt,
+            clientId     : $record->clientId,
+            scopes       : $record->scopes
+        );
         $refreshToken = $this->refreshTokenStore->issue(
             userId       : $record->userId,
             expiresAt    : $now->modify('+30 days'),
             familyId     : $record->familyId,
-            mfaVerifiedAt: $record->mfaVerifiedAt
+            mfaVerifiedAt: $record->mfaVerifiedAt,
+            clientId     : $record->clientId,
+            scopes       : $record->scopes
         );
         $this->refreshTokenStore->markRotated($record->tokenId, $refreshToken->tokenId);
 
@@ -34083,6 +35824,9 @@ use DateTimeImmutable;
  */
 final readonly class RefreshTokenRecord
 {
+    /**
+     * @param list<string> $scopes
+     */
     public function __construct(
         public string                 $tokenId,
         public string                 $familyId,
@@ -34090,7 +35834,9 @@ final readonly class RefreshTokenRecord
         public DateTimeImmutable      $expiresAt,
         public string|null            $replacementTokenId = null,
         public bool                   $revoked = false,
-        public DateTimeImmutable|null $mfaVerifiedAt = null
+        public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public string|null            $clientId = null,
+        public array                  $scopes = []
     ) {}
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool
@@ -34119,11 +35865,16 @@ use DateTimeImmutable;
  */
 interface RefreshTokenStoreInterface
 {
+    /**
+     * @param list<string> $scopes
+     */
     public function issue(
         UserId                 $userId,
         DateTimeImmutable      $expiresAt,
         string|null            $familyId = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null            $clientId = null,
+        array                  $scopes = []
     ) : IssuedRefreshToken;
 
     public function find(string $plainToken) : RefreshTokenRecord|null;
@@ -34150,11 +35901,16 @@ use DateTimeImmutable;
  */
 final readonly class ResolvedToken
 {
+    /**
+     * @param list<string> $scopes
+     */
     public function __construct(
         public User                   $user,
         public string                 $tokenId,
         public DateTimeImmutable      $expiresAt,
-        public DateTimeImmutable|null $mfaVerifiedAt = null
+        public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public string|null            $clientId = null,
+        public array                  $scopes = []
     ) {}
 }
 
@@ -34195,7 +35951,15 @@ use Avax\Auth\System\Capability\User\User;
  */
 interface TokenIssuerInterface
 {
-    public function issue(User $user) : IssuedToken;
+    /**
+     * @param list<string> $scopes
+     */
+    public function issue(
+        User $user,
+        \DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null $clientId = null,
+        array $scopes = []
+    ) : IssuedToken;
 }
 
 === System/Flow/Token/TokenRevocationStoreInterface.php ===
@@ -38921,12 +40685,12 @@ The package already owns:
 - password authentication
 - server-side session identity
 - token issuance and refresh rotation
+- OAuth client registration, authorization-code issuance, PKCE verification, token revocation, and introspection
 - MFA enrollment, challenge, recovery, and fresh-MFA checks
 - audit events and auth ingress ownership
 
 The package does not yet own:
 
-- OAuth authorization-server interoperability through a standards library
 - WebAuthn / passkeys
 - enterprise federation
 - SCIM provisioning
@@ -38948,6 +40712,7 @@ The package owns and ships:
 - MFA with TOTP and backup codes
 - password reset and MFA recovery
 - refresh rotation and reuse detection
+- OAuth authorization-code and refresh grants for package-owned clients
 - audit events
 - active session management
 
@@ -38956,7 +40721,7 @@ The package owns and ships:
 The package may add:
 
 - passkeys / WebAuthn
-- OAuth authorization-server contracts
+- optional OAuth interoperability adapters
 - tenant-aware federation
 - provisioning contracts
 - deterministic risk rules
@@ -39052,6 +40817,7 @@ System/
 ├── Capability/
 │   ├── Access/          # authorization boundary
 │   ├── Identity/        # session/JWT strategy coordination
+│   ├── OAuth/           # client registry and auth-code contracts
 │   ├── PasswordHashing/
 │   ├── Session/         # tracked session ownership and revocation
 │   ├── Throttle/        # auth-sensitive throttling contracts
@@ -39071,6 +40837,7 @@ System/
 │   │   ├── Enroll/
 │   │   ├── Recover/
 │   │   └── StepUp/
+│   ├── OAuth/
 │   ├── ReadCurrentUser/
 │   ├── Recover/
 │   ├── Register/
@@ -39091,6 +40858,7 @@ integrations/
 - kernel code never imports the `Integrations` namespace
 - optional adapters depend on kernel contracts only
 - Session and JWT are strategies behind the same `Identity` coordination contract.
+- OAuth owns a separate machine/API lane and does not reuse browser session flows as its token model.
 - `Capability/Session/` is the durable truth for tracked web sessions when the application provides a registry.
 - Request authentication happens only in `Flow/AuthenticateRequest/AuthenticateRequest.php`.
 - Authorization reads `CurrentAuthentication`; it no longer reaches into session/JWT adapters directly.
@@ -39150,9 +40918,9 @@ Current delivery posture is documented in
   `AccessInterface`, `AuthenticationRequest`, `AuthenticationContext`,
   `AuthenticationResult`, `AuthenticatedUser`
 - core flows: `AuthenticateRequest`, `Login`, `Register`, `Logout`, `Refresh`,
-  `Recover`, `Verify`, `Mfa`, `ChangePassword`, `ReadCurrentUser`
+  `Recover`, `Verify`, `Mfa`, `ChangePassword`, `ReadCurrentUser`, `OAuth`
 - shared auth capabilities: `Access`, `Identity`, `PasswordHashing`,
-  `Session`, `Throttle`, `UserSource`
+  `OAuth`, `Session`, `Throttle`, `UserSource`
 - package-owned contracts: session store, token issuer/verifier, refresh store,
   audit log, clock, MFA store, user source
 - package-owned runtime strategies for session and token auth
@@ -39186,7 +40954,7 @@ Integration rule:
 This package does not own today:
 
 - central IdP behavior
-- package-owned OAuth or OIDC authorization-server features
+- OIDC provider behavior
 - SAML federation brokering
 - SCIM provisioning
 - workforce lifecycle management
@@ -39204,6 +40972,7 @@ System/
   Capability/
     Access/
     Identity/
+    OAuth/
     PasswordHashing/
     Session/
     Throttle/
@@ -39217,6 +40986,7 @@ System/
     Login/
     Logout/
     Mfa/
+    OAuth/
     ReadCurrentUser/
     Recover/
     Register/
@@ -39261,6 +41031,15 @@ Stable application API to keep public:
 - `RegistrationResult`
 - `ChangePasswordData`
 - `RefreshAuthenticationRequest`
+- `RegisterClientData`
+- `AuthorizeCodeData`
+- `ExchangeAuthorizationCodeData`
+- `ExchangeRefreshTokenData`
+- `RevokeTokenData`
+- `IntrospectTokenData`
+- `OAuthTokenGrant`
+- `IssuedAuthorizationCode`
+- `TokenIntrospection`
 - `PasswordResetChallenge`
 - `EmailVerificationChallenge`
 - `MfaEnrollment`
@@ -39284,6 +41063,8 @@ Stable extension contracts to keep public:
 - `TokenVerifierInterface`
 - `TokenCodecInterface`
 - `HmacTokenCodec`
+- `OAuthClientRegistryInterface`
+- `AuthorizationCodeStoreInterface`
 - `JwtIdentityInterface`
 - `JwtIdentity`
 - `RefreshTokenStoreInterface`
@@ -39350,6 +41131,7 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 - MFA enrollment, challenge, backup codes, and fresh-MFA checks
 - tracked web sessions with idle and absolute expiry
 - active session listing, single-session revoke, and logout-all
+- OAuth client registry, authorization-code issuance, PKCE enforcement, refresh exchange, revoke, and introspection
 - audit events across security-sensitive flows
 
 ## Next Delivery Order
@@ -39362,7 +41144,7 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 
 ### Sprint 2
 
-- extend token subsystem with explicit client registry contracts
+- complete OAuth-backed adapter examples and persistence contracts
 - add reset-confirm throttling and narrower refresh revocation controls
 
 ### Sprint 3
@@ -39372,7 +41154,7 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 
 ### Sprint 4
 
-- introduce optional OAuth contracts over `league/oauth2-server`
+- evaluate optional `league/oauth2-server` interop adapter without breaking package-owned OAuth kernel contracts
 
 ### Sprint 5
 
@@ -39606,6 +41388,7 @@ This document captures the current auth-kernel threat model and the controls own
 | credential stuffing | login rate limiting, safe failures, audit events | implemented |
 | brute force | login rate limiting, MFA attempt throttling | implemented |
 | session hijack | secure cookies, session ID regeneration, idle timeout, absolute timeout, tracked session revocation | implemented |
+| stolen authorization code | short TTL, single use, redirect URI match, PKCE verification for public clients | implemented |
 | stolen refresh token | rotation, reuse detection, family revocation | implemented |
 | MFA bypass | challenge lifecycle, replay protection, backup code one-time use, fresh-MFA checks | implemented |
 | recovery takeover | anti-enumeration start, recovery throttling, reset-driven revocation, MFA recovery auditing | implemented |
@@ -39620,6 +41403,7 @@ This document captures the current auth-kernel threat model and the controls own
 - `auth_incident`: login, logout, MFA, or auth-ingress compromise indicators
 - `credential_incident`: password reset, password change, or hash-policy compromise indicators
 - `session_incident`: session theft, stale session use, or mass revocation scenarios
+- `oauth_incident`: authorization-code abuse, refresh reuse, or client secret compromise
 - `admin_incident`: privileged access misuse or break-glass usage
 
 ## Failure And Recovery Notes
@@ -39643,6 +41427,13 @@ This document captures the current auth-kernel threat model and the controls own
 - recovery start is throttled and anti-enumeration
 - successful recovery disables MFA and revokes tracked sessions and refresh tokens
 - recovery emits auditable security events
+
+### OAuth Grant Compromise
+
+- authorization codes are single use and short lived
+- public clients require `S256` PKCE before token exchange
+- refresh reuse revokes the entire token family
+- revoke and introspection flows exist for downstream incident handling
 
 ## Severity Matrix
 
@@ -41133,6 +42924,36 @@ class JwtIdentityTest extends TestCase
         $this->assertSame($user->getId()->value, $refresh?->userId->value);
     }
 
+    public function testJwtIdentityPreservesOAuthClientClaims() : void
+    {
+        $user = new User(
+            id          : new UserId(12),
+            email       : new UserEmail('oauth-claims@example.com'),
+            username    : 'oauth-claims',
+            passwordHash: 'hash'
+        );
+
+        $userSource = new InMemoryUserSource();
+        $userSource->create($user);
+
+        $jwt = new JwtIdentity(
+            userSource: $userSource,
+            codec     : new HmacTokenCodec(secret: 'super-secret-key'),
+            clock     : new Clock()
+        );
+
+        $issued   = $jwt->issue(
+            user     : $user,
+            clientId : 'oauth_client',
+            scopes   : ['email', 'profile']
+        );
+        $resolved = $jwt->resolve($issued->token);
+
+        $this->assertNotNull($resolved);
+        $this->assertSame('oauth_client', $resolved?->clientId);
+        $this->assertSame(['email', 'profile'], $resolved?->scopes);
+    }
+
     protected function tearDown() : void
     {
         Mockery::close();
@@ -41212,6 +43033,53 @@ final class SessionIdentityTest extends TestCase
 
         $this->assertNull($identity->resolveUserId());
         $this->assertSame('absolute_timeout', $auditLog->events()[0]->context['reason']);
+    }
+}
+
+=== tests/Capabilities/OAuth/InMemoryOAuthClientRegistryTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Tests\Capability\OAuth;
+
+use Avax\Auth\System\Capability\OAuth\InMemoryOAuthClientRegistry;
+use Avax\Auth\System\Capability\OAuth\OAuthClientType;
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use PHPUnit\Framework\TestCase;
+
+final class InMemoryOAuthClientRegistryTest extends TestCase
+{
+    public function testConfidentialClientRegistrationReturnsOneTimeSecret() : void
+    {
+        $registry = new InMemoryOAuthClientRegistry(new PasswordHasher());
+
+        $registered = $registry->register(
+            name         : 'Backoffice',
+            type         : OAuthClientType::CONFIDENTIAL,
+            redirectUris : ['https://app.example.test/callback'],
+            allowedScopes: ['profile', 'email']
+        );
+
+        $this->assertSame(OAuthClientType::CONFIDENTIAL, $registered->client->type);
+        $this->assertNotNull($registered->plainTextSecret);
+        $this->assertTrue($registry->verifySecret($registered->client->clientId, $registered->plainTextSecret));
+    }
+
+    public function testPublicClientDoesNotRequireSecret() : void
+    {
+        $registry = new InMemoryOAuthClientRegistry(new PasswordHasher());
+
+        $registered = $registry->register(
+            name         : 'SPA',
+            type         : OAuthClientType::PUBLIC,
+            redirectUris : ['https://spa.example.test/callback'],
+            allowedScopes: ['profile']
+        );
+
+        $this->assertSame(OAuthClientType::PUBLIC, $registered->client->type);
+        $this->assertNull($registered->plainTextSecret);
+        $this->assertTrue($registry->verifySecret($registered->client->clientId, null));
     }
 }
 
@@ -42966,6 +44834,179 @@ final class RequireFreshMfaTest extends TestCase
 
         $guard->execute();
         $this->assertTrue(true);
+    }
+}
+
+=== tests/Flows/OAuth/OAuthFlowTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Tests\Flow\OAuth;
+
+use Avax\Auth\System\Auth;
+use Avax\Auth\System\Capability\Identity\Identity;
+use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capability\OAuth\PkceMethod;
+use Avax\Auth\System\Capability\OAuth\OAuthClientType;
+use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
+use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
+use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshTokenData;
+use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectTokenData;
+use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
+use Avax\Auth\System\Flow\OAuth\OAuthTokenExchangeFailed;
+use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
+use Avax\Auth\System\Flow\Register\RegistrationData;
+use Avax\Auth\System\Flow\Token\HmacTokenCodec;
+use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
+use Avax\Auth\System\Foundation\Clock;
+use PHPUnit\Framework\TestCase;
+
+final class OAuthFlowTest extends TestCase
+{
+    public function testPublicClientRequiresPkceDuringAuthorization() : void
+    {
+        $auth = $this->buildAuth();
+
+        $auth->register(new RegistrationData(
+            email   : 'oauth-public@example.com',
+            username: 'oauth-public',
+            password: 'secret'
+        ));
+        $auth->login(new Credentials(
+            identifier: 'oauth-public@example.com',
+            password  : 'secret'
+        ));
+
+        $client = $auth->registerOAuthClient(new RegisterClientData(
+            name         : 'Public SPA',
+            type         : OAuthClientType::PUBLIC,
+            redirectUris : ['https://spa.example.test/callback'],
+            allowedScopes: ['profile']
+        ));
+
+        $this->expectException(OAuthAuthorizationFailed::class);
+        $this->expectExceptionMessage('PKCE is required for this client.');
+
+        $auth->authorizeOAuthCode(new AuthorizeCodeData(
+            clientId   : $client->client->clientId,
+            redirectUri: 'https://spa.example.test/callback',
+            scopes     : ['profile']
+        ));
+    }
+
+    public function testOAuthAuthorizationCodeRefreshIntrospectionAndRevokeCycle() : void
+    {
+        $auditLog = new InMemoryAuditLog();
+        $auth     = $this->buildAuth($auditLog);
+
+        $auth->register(new RegistrationData(
+            email   : 'oauth@example.com',
+            username: 'oauth-user',
+            password: 'secret'
+        ));
+        $auth->login(new Credentials(
+            identifier: 'oauth@example.com',
+            password  : 'secret'
+        ));
+
+        $client = $auth->registerOAuthClient(new RegisterClientData(
+            name         : 'Backoffice',
+            type         : OAuthClientType::CONFIDENTIAL,
+            redirectUris : ['https://app.example.test/callback'],
+            allowedScopes: ['email', 'profile']
+        ));
+
+        $code = $auth->authorizeOAuthCode(new AuthorizeCodeData(
+            clientId   : $client->client->clientId,
+            redirectUri: 'https://app.example.test/callback',
+            scopes     : ['profile', 'email']
+        ));
+
+        $grant = $auth->exchangeOAuthCode(new ExchangeAuthorizationCodeData(
+            clientId    : $client->client->clientId,
+            clientSecret: $client->plainTextSecret,
+            code        : $code->code,
+            redirectUri : 'https://app.example.test/callback'
+        ));
+
+        $this->assertSame($client->client->clientId, $grant->clientId);
+        $this->assertSame(['email', 'profile'], $grant->scopes);
+        $this->assertNotNull($grant->refreshToken);
+
+        $introspection = $auth->introspectOAuthToken(new IntrospectTokenData(
+            clientId    : $client->client->clientId,
+            clientSecret: $client->plainTextSecret,
+            token       : $grant->accessToken
+        ));
+
+        $this->assertTrue($introspection->active);
+        $this->assertSame($client->client->clientId, $introspection->clientId);
+        $this->assertSame(['email', 'profile'], $introspection->scopes);
+
+        $refreshed = $auth->exchangeOAuthRefreshToken(new ExchangeRefreshTokenData(
+            clientId    : $client->client->clientId,
+            clientSecret: $client->plainTextSecret,
+            refreshToken: $grant->refreshToken ?? ''
+        ));
+
+        $this->assertNotSame($grant->refreshToken, $refreshed->refreshToken);
+
+        try {
+            $auth->exchangeOAuthRefreshToken(new ExchangeRefreshTokenData(
+                clientId    : $client->client->clientId,
+                clientSecret: $client->plainTextSecret,
+                refreshToken: $grant->refreshToken ?? ''
+            ));
+            $this->fail('Expected refresh token reuse to fail.');
+        } catch (OAuthTokenExchangeFailed $exception) {
+            $this->assertSame('Invalid OAuth grant.', $exception->getMessage());
+        }
+
+        $this->assertContains(
+            'auth.oauth.refresh.reuse_detected',
+            array_map(static fn ($event) => $event->name, $auditLog->events())
+        );
+
+        $auth->revokeOAuthToken(new RevokeTokenData(
+            clientId    : $client->client->clientId,
+            clientSecret: $client->plainTextSecret,
+            token       : $refreshed->accessToken,
+            tokenTypeHint: 'access_token'
+        ));
+
+        $inactive = $auth->introspectOAuthToken(new IntrospectTokenData(
+            clientId    : $client->client->clientId,
+            clientSecret: $client->plainTextSecret,
+            token       : $refreshed->accessToken
+        ));
+
+        $this->assertFalse($inactive->active);
+    }
+
+    private function buildAuth(InMemoryAuditLog|null $auditLog = null) : Auth
+    {
+        $userSource    = new InMemoryUserSource();
+        $refreshTokens = new InMemoryRefreshTokenStore();
+        $jwtIdentity   = new JwtIdentity(
+            userSource       : $userSource,
+            codec            : new HmacTokenCodec('oauth-flow-secret'),
+            clock            : new Clock(),
+            revocationStore  : new InMemoryTokenRevocationStore(),
+            refreshTokenStore: $refreshTokens
+        );
+
+        return Auth::configuration()
+            ->forUser($userSource)
+            ->withIdentity(new Identity(jwtIdentity: $jwtIdentity))
+            ->withRefreshTokenStore($refreshTokens)
+            ->withAuditLog($auditLog ?? new InMemoryAuditLog())
+            ->ready();
     }
 }
 

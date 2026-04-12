@@ -16,16 +16,32 @@ Tracks active and accepted risks.
 
 ## Active Risks
 
-- `id`: AUTH-RISK-006
-- `identified_at`: 2026-04-12 15:36 CEST
-- `updated_at`: 2026-04-12 15:36 CEST
+- `id`: AUTH-RISK-007
+- `identified_at`: 2026-04-12 21:32 CEST
+- `updated_at`: 2026-04-12 21:32 CEST
 - `severity`: medium
 - `likelihood`: medium
-- `impact`: The package now owns OAuth authorization-code and refresh flows for user-bound API access, but it still does
-  not ship OIDC, client-credentials, federation, or SCIM; teams could mistake OAuth v1 for a full identity platform.
-- `mitigation`: Boundary docs, ADR-001, and the roadmap now state the exact delivered OAuth scope and keep OIDC,
-  federation, provisioning, and risk/admin realms as separate future tracks.
-- `owner`: OAuth slice
+- `impact`: The package now owns passkey and admin-realm slices, but passkey assurance is not yet propagated through the
+  general auth context as a first-class policy claim; an application that wants "admin must currently be passkey-authenticated"
+  still needs an explicit step-up design over the passkey runtime seam.
+- `mitigation`: The kernel already owns passkey registration/authentication and admin elevation. Next iteration should
+  add a package-owned phishing-resistant assurance claim or passkey step-up flow before enforcing passkey-required admin
+  policy globally.
+- `owner`: passkey + admin realm slices
+- `status`: open
+
+- `id`: AUTH-RISK-006
+- `identified_at`: 2026-04-12 15:36 CEST
+- `updated_at`: 2026-04-12 21:32 CEST
+- `severity`: medium
+- `likelihood`: medium
+- `impact`: The package now owns OAuth, passkey, federation, provisioning, risk, and admin-realm kernel slices, but it
+  still does not ship OIDC provider behavior, client-credentials, SCIM runtime, or a full tenant/control-plane model;
+  teams could mistake the kernel for a full identity platform.
+- `mitigation`: Boundary docs, ADR-001, threat model, and the roadmap now state the exact delivered kernel scope and
+  keep OIDC provider, SCIM runtime, deeper tenant ownership, and control-plane workflows as explicit non-goals or next
+  tracks.
+- `owner`: boundary docs
 - `status`: accepted
 
 - `id`: AUTH-RISK-005

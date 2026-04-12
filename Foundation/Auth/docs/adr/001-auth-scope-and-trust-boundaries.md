@@ -21,15 +21,19 @@ The package already owns:
 - token issuance and refresh rotation
 - OAuth client registration, authorization-code issuance, PKCE verification, token revocation, and introspection
 - MFA enrollment, challenge, recovery, and fresh-MFA checks
+- adapter-first passkey registration and authentication
+- tenant-aware federation connection and login orchestration
+- deterministic risk rules and refresh-reuse review signals
+- admin elevation and user lifecycle provisioning
 - audit events and auth ingress ownership
 
 The package does not yet own:
 
-- WebAuthn / passkeys
-- enterprise federation
-- SCIM provisioning
-- adaptive risk
-- admin realm policy separation
+- OIDC provider behavior
+- SCIM runtime integration
+- full tenant membership control plane
+- KMS/HSM, mail, SIEM, and queue infrastructure
+- approval-driven privileged workflows
 
 ## Decision
 
@@ -49,17 +53,19 @@ The package owns and ships:
 - OAuth authorization-code and refresh grants for package-owned clients
 - audit events
 - active session management
+- admin elevation and lifecycle provisioning
+- adapter-first passkeys and tenant-aware federation flows
+- deterministic risk decisions and maintenance cleanup/export flows
 
 ### V2 Planned Scope
 
 The package may add:
 
-- passkeys / WebAuthn
 - optional OAuth interoperability adapters
-- tenant-aware federation
-- provisioning contracts
-- deterministic risk rules
-- stronger admin realm policy
+- stronger passkey assurance propagation
+- domain verification and federation metadata sync
+- external SCIM and SIEM adapters
+- deeper tenant membership ownership
 
 ### Future Dependency Strategy
 

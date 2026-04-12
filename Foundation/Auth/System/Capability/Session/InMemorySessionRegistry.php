@@ -10,7 +10,7 @@ use DateTimeImmutable;
 /**
  * In-memory session registry for tests and lightweight deployments.
  */
-final class InMemorySessionRegistry implements SessionRegistryInterface
+final class InMemorySessionRegistry implements SessionRegistryInterface, PruneExpiredSessionsInterface
 {
     /** @var array<string, SessionRecord> */
     private array $records = [];
@@ -68,5 +68,19 @@ final class InMemorySessionRegistry implements SessionRegistryInterface
 
             $this->records[$sessionId] = $record->withRevocation($revokedAt, $reason);
         }
+    }
+
+    public function pruneExpired(DateTimeImmutable $now) : int
+    {
+        $removed = 0;
+
+        foreach ($this->records as $sessionId => $record) {
+            if ($record->isRevoked() || $record->isExpiredAt($now)) {
+                unset($this->records[$sessionId]);
+                $removed++;
+            }
+        }
+
+        return $removed;
     }
 }

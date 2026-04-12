@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\Federation\DiscoverConnection;
+
+use Avax\Auth\System\Capability\Federation\FederationConnection;
+use Avax\Auth\System\Capability\Federation\FederationConnectionStoreInterface;
+
+final readonly class DiscoverFederationConnection
+{
+    public function __construct(
+        private FederationConnectionStoreInterface $connectionStore
+    ) {}
+
+    public function execute(string $email) : FederationConnection|null
+    {
+        $separator = strrchr($email, '@');
+        $domain    = strtolower(trim(substr($separator !== false ? $separator : '', 1)));
+
+        if ($domain === '') {
+            return null;
+        }
+
+        return $this->connectionStore->findByDomain($domain);
+    }
+}

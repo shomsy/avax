@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\Login;
 
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\Risk\DeterministicRiskEngine;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
@@ -33,7 +34,8 @@ final readonly class Login
         private AuditLogInterface                       $auditLog,
         private MfaStoreInterface                       $mfaStore,
         private StartMfaChallenge                       $startMfaChallenge,
-        private LoginRateLimit|null                     $rateLimit = null
+        private LoginRateLimit|null                     $rateLimit = null,
+        private DeterministicRiskEngine|null            $riskEngine = null
     ) {}
 
     /**
@@ -100,6 +102,11 @@ final readonly class Login
         );
 
         $this->currentAuthentication->store($context);
+        $riskDecision = $this->riskEngine?->assessSuccessfulAuthentication(
+            user      : $user,
+            ipAddress : $credentials->ipAddress,
+            userAgent : $credentials->userAgent
+        );
 
         $this->rateLimit?->reset(identifier: $credentials->identifier);
         $this->auditLog->record(new AuditEvent(
@@ -108,6 +115,7 @@ final readonly class Login
                                     context   : [
                                                     'user_id'    => $user->getId()->value,
                                                     'mode'       => $issued->mode->value,
+                                                    'risk_action'=> $riskDecision?->action->value,
                                                     'ip_address' => $credentials->ipAddress,
                                                     'user_agent' => $credentials->userAgent,
                                                 ]

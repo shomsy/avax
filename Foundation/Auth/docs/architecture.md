@@ -21,10 +21,20 @@ Auth
 ├── authenticateRequest()
 ├── current()
 ├── logout()
+├── logoutAllSessions()
+├── readActiveSessions()
+├── revokeSession()
 ├── access()
+├── beginAdminElevation() / endAdminElevation() / requireAdminElevation()
 ├── changePassword()
 ├── register()
 ├── refresh()
+├── suspendUser() / reactivateUser() / deprovisionUser()
+├── beginPasskeyRegistration() / completePasskeyRegistration()
+├── beginPasskeyAuthentication() / completePasskeyAuthentication() / readPasskeys() / renamePasskey() / revokePasskey()
+├── registerFederationConnection() / readFederationConnections() / discoverFederationConnection()
+├── startFederatedLogin() / completeFederatedLogin()
+├── assessCurrentRisk() / readRiskSignals()
 ├── beginPasswordReset() / resetPassword()
 ├── beginEmailVerification() / verifyEmail()
 └── startMfaEnrollment() / confirmMfaEnrollment() / beginMfaChallenge() / verifyMfaChallenge() / regenerateBackupCodes() / disableMfa() / beginMfaRecovery() / confirmMfaRecovery()
@@ -39,19 +49,25 @@ System/
 ├── Configuration/
 │   └── AuthBuilder.php
 ├── Capability/
-│   ├── Access/          # authorization boundary
+│   ├── Access/          # authorization boundary + composed access policy
+│   ├── AdminRealm/      # privileged elevation state
+│   ├── Federation/      # tenant-aware SSO contracts and identity links
 │   ├── Identity/        # session/JWT strategy coordination
 │   ├── OAuth/           # client registry and auth-code contracts
+│   ├── Passkey/         # passkey credentials, challenges, runtime seam
 │   ├── PasswordHashing/
+│   ├── Risk/            # deterministic risk signals and decisions
 │   ├── Session/         # tracked session ownership and revocation
 │   ├── Throttle/        # auth-sensitive throttling contracts
 │   ├── User/            # internal domain entity + value objects
 │   └── UserSource/      # persistence port
 ├── Flow/
+│   ├── AdminRealm/
 │   ├── AuthenticateRequest/
 │   ├── ChangePassword/
 │   ├── CheckAuthentication/
 │   ├── Diagnostics/
+│   ├── Federation/
 │   ├── Login/
 │   ├── Logout/
 │   ├── Mfa/
@@ -62,9 +78,12 @@ System/
 │   │   ├── Recover/
 │   │   └── StepUp/
 │   ├── OAuth/
+│   ├── Passkey/
+│   ├── Provisioning/
 │   ├── ReadCurrentUser/
 │   ├── Recover/
 │   ├── Register/
+│   ├── Risk/
 │   ├── Session/
 │   ├── Token/
 │   └── Verify/
@@ -86,6 +105,11 @@ integrations/
 - `Capability/Session/` is the durable truth for tracked web sessions when the application provides a registry.
 - Request authentication happens only in `Flow/AuthenticateRequest/AuthenticateRequest.php`.
 - Authorization reads `CurrentAuthentication`; it no longer reaches into session/JWT adapters directly.
+- `Capability/Access/Policy/AccessPolicy` is the package-owned way to combine role, permission, resource-owner,
+  fresh-MFA, and admin-elevation requirements.
+- Passkeys and federation stay adapter-first: the kernel owns orchestration and storage contracts, while standards-heavy
+  protocol work stays behind runtime interfaces.
+- Maintenance work stays local to the owning slice through `CleanupExpired*` flows and `Flow/Diagnostics/ExportAuditEvents/`.
 - MFA freshness now survives ingress boundaries through package-owned session/JWT claims (`mfaVerifiedAt`).
 - Exception mapping stays at public or ingress boundaries; deep flow code returns domain-safe failures.
 

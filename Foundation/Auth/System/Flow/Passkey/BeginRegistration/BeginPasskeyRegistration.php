@@ -1,0 +1,80 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\Passkey\BeginRegistration;
+
+use Avax\Auth\System\Capability\Passkey\PasskeyChallengePurpose;
+use Avax\Auth\System\Capability\Passkey\PasskeyChallengeRecord;
+use Avax\Auth\System\Capability\Passkey\PasskeyChallengeStoreInterface;
+use Avax\Auth\System\Capability\Passkey\PasskeyCredentialStoreInterface;
+use Avax\Auth\System\Capability\Passkey\PasskeyRuntimeInterface;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
+use Avax\Auth\System\Flow\Passkey\PasskeyOperationFailed;
+use Avax\Auth\System\Flow\Passkey\PasskeyRegistration;
+use Avax\Auth\System\Foundation\Clock;
+
+final readonly class BeginPasskeyRegistration
+{
+    public function __construct(
+        private CurrentAuthentication $currentAuthentication,
+        private RequireFreshMfa $requireFreshMfa,
+        private PasskeyRuntimeInterface $runtime,
+        private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyChallengeStoreInterface $challengeStore,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
+        private string $rpId,
+        private string $rpName
+    ) {}
+
+    /**
+     * @throws PasskeyOperationFailed
+     */
+    public function execute() : PasskeyRegistration
+    {
+        $user = $this->currentAuthentication->read()->user();
+
+        if ($user === null) {
+            throw PasskeyOperationFailed::unauthenticated();
+        }
+
+        $this->requireFreshMfa->execute();
+
+        $challengeId = 'pkreg_' . bin2hex(random_bytes(12));
+        $challenge   = bin2hex(random_bytes(32));
+        $excludeIds  = array_map(
+            static fn ($credential) => $credential->credentialId,
+            $this->credentialStore->forUser($user->id)
+        );
+
+        $this->challengeStore->issue(new PasskeyChallengeRecord(
+            challengeId: $challengeId,
+            challenge  : $challenge,
+            purpose    : PasskeyChallengePurpose::REGISTRATION,
+            expiresAt  : $this->clock->now()->modify('+5 minutes'),
+            userId     : $user->id
+        ));
+
+        $options = $this->runtime->beginRegistration(
+            rpId               : $this->rpId,
+            rpName             : $this->rpName,
+            userId             : $user->id,
+            userName           : $user->username,
+            displayName        : $user->email,
+            challenge          : $challenge,
+            excludeCredentialIds: $excludeIds
+        );
+
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.passkey.registration.started',
+            occurredAt: $this->clock->now(),
+            context   : ['user_id' => $user->id, 'challenge_id' => $challengeId]
+        ));
+
+        return new PasskeyRegistration($challengeId, $options);
+    }
+}

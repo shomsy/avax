@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
+use Avax\Auth\System\Capability\Federation\FederationConnection;
+use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
 use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
 use Avax\Auth\System\Capability\OAuth\OAuthClient;
+use Avax\Auth\System\Capability\Passkey\PasskeyCredential;
+use Avax\Auth\System\Capability\Risk\RiskDecision;
+use Avax\Auth\System\Capability\Risk\RiskSignal;
 use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
@@ -14,6 +19,10 @@ use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
 use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
 use Avax\Auth\System\Flow\Login\AuthenticationResult;
 use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Flow\AdminRealm\AdminElevation;
+use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLoginData;
+use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
+use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLoginData;
 use Avax\Auth\System\Flow\Mfa\BackupCodeSet;
 use Avax\Auth\System\Flow\Mfa\Enroll\ConfirmMfaEnrollmentData;
 use Avax\Auth\System\Flow\Mfa\MfaChallenge;
@@ -30,6 +39,12 @@ use Avax\Auth\System\Flow\OAuth\IntrospectToken\TokenIntrospection;
 use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
+use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthenticationData;
+use Avax\Auth\System\Flow\Passkey\CompleteAuthentication\CompletePasskeyAuthenticationData;
+use Avax\Auth\System\Flow\Passkey\CompleteRegistration\CompletePasskeyRegistrationData;
+use Avax\Auth\System\Flow\Passkey\PasskeyAuthenticationChallenge;
+use Avax\Auth\System\Flow\Passkey\PasskeyRegistration;
+use Avax\Auth\System\Flow\Passkey\RenamePasskey\RenamePasskeyData;
 use Avax\Auth\System\Flow\Recover\BeginPasswordResetData;
 use Avax\Auth\System\Flow\Recover\PasswordResetChallenge;
 use Avax\Auth\System\Flow\Recover\ResetPasswordData;
@@ -93,6 +108,55 @@ interface AuthInterface
     public function revokeOAuthToken(RevokeTokenData $data) : void;
 
     public function introspectOAuthToken(IntrospectTokenData $data) : TokenIntrospection;
+
+    public function beginAdminElevation() : AdminElevation;
+
+    public function endAdminElevation() : void;
+
+    public function requireAdminElevation() : void;
+
+    public function suspendUser(int $userId) : void;
+
+    public function reactivateUser(int $userId) : void;
+
+    public function deprovisionUser(int $userId) : void;
+
+    public function beginPasskeyRegistration() : PasskeyRegistration;
+
+    public function completePasskeyRegistration(CompletePasskeyRegistrationData $data) : PasskeyCredential;
+
+    public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $data) : PasskeyAuthenticationChallenge;
+
+    public function completePasskeyAuthentication(CompletePasskeyAuthenticationData $data) : AuthenticationResult;
+
+    /**
+     * @return list<PasskeyCredential>
+     */
+    public function readPasskeys() : array;
+
+    public function renamePasskey(RenamePasskeyData $data) : PasskeyCredential;
+
+    public function revokePasskey(string $credentialId) : void;
+
+    public function registerFederationConnection(RegisterFederationConnectionData $data) : FederationConnection;
+
+    /**
+     * @return list<FederationConnection>
+     */
+    public function readFederationConnections() : array;
+
+    public function discoverFederationConnection(string $email) : FederationConnection|null;
+
+    public function startFederatedLogin(StartFederatedLoginData $data) : StartedFederatedLogin;
+
+    public function completeFederatedLogin(CompleteFederatedLoginData $data) : AuthenticationResult;
+
+    public function assessCurrentRisk(string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null;
+
+    /**
+     * @return list<RiskSignal>
+     */
+    public function readRiskSignals(int|null $userId = null) : array;
 
     public function beginPasswordReset(BeginPasswordResetData $data) : PasswordResetChallenge;
 

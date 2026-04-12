@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Access\RequireResourceOwner;
+
+use RuntimeException;
+
+final class ResourceOwnerDenied extends RuntimeException
+{
+    public function __construct(
+        private readonly int $ownerUserId,
+        string $message = 'Current user does not own this resource.'
+    )
+    {
+        parent::__construct($message, 403);
+    }
+
+    public function ownerUserId() : int
+    {
+        return $this->ownerUserId;
+    }
+}

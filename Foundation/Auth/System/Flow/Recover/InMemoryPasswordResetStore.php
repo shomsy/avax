@@ -10,7 +10,7 @@ use DateTimeImmutable;
 /**
  * In-memory password reset storage for tests and demos.
  */
-final class InMemoryPasswordResetStore implements PasswordResetStoreInterface
+final class InMemoryPasswordResetStore implements PasswordResetStoreInterface, PruneExpiredPasswordResetsInterface
 {
     /** @var array<string, array{user_id: int, expires_at: int}> */
     private array $records = [];
@@ -41,5 +41,21 @@ final class InMemoryPasswordResetStore implements PasswordResetStoreInterface
         }
 
         return new UserId($record['user_id']);
+    }
+
+    public function pruneExpired(DateTimeImmutable $now) : int
+    {
+        $removed = 0;
+
+        foreach ($this->records as $key => $record) {
+            if ($record['expires_at'] > $now->getTimestamp()) {
+                continue;
+            }
+
+            unset($this->records[$key]);
+            $removed++;
+        }
+
+        return $removed;
     }
 }

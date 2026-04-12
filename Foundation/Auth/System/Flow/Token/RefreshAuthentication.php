@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Token;
 
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capability\Risk\DeterministicRiskEngine;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
@@ -26,7 +27,8 @@ final readonly class RefreshAuthentication
         private AuditLogInterface               $auditLog,
         private Clock                           $clock,
         private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        private JwtIdentityInterface|null       $jwtIdentity = null
+        private JwtIdentityInterface|null       $jwtIdentity = null,
+        private DeterministicRiskEngine|null    $riskEngine = null
     ) {}
 
     /**
@@ -71,12 +73,14 @@ final readonly class RefreshAuthentication
 
         if ($record->wasRotated()) {
             $this->refreshTokenStore->revokeFamily($record->familyId);
+            $riskDecision = $this->riskEngine?->recordRefreshReuse($record->userId->value, $record->clientId);
             $this->auditLog->record(new AuditEvent(
                                         name      : 'auth.refresh.reuse_detected',
                                         occurredAt: $now,
                                         context   : [
                                                         'user_id'    => $record->userId->value,
                                                         'family_id'  => $record->familyId,
+                                                        'risk_action'=> $riskDecision?->action->value,
                                                         'ip_address' => $request->ipAddress,
                                                         'user_agent' => $request->userAgent,
                                                     ]

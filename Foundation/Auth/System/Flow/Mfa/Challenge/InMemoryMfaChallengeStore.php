@@ -9,7 +9,7 @@ use Avax\Auth\System\Capability\User\UserId;
 /**
  * In-memory MFA challenge store for tests and demos.
  */
-final class InMemoryMfaChallengeStore implements MfaChallengeStoreInterface
+final class InMemoryMfaChallengeStore implements MfaChallengeStoreInterface, PruneExpiredMfaChallengesInterface
 {
     /** @var array<string, MfaChallengeRecord> */
     private array $records = [];
@@ -41,5 +41,21 @@ final class InMemoryMfaChallengeStore implements MfaChallengeStoreInterface
                 unset($this->records[$challengeId]);
             }
         }
+    }
+
+    public function pruneExpired(\DateTimeImmutable $now) : int
+    {
+        $removed = 0;
+
+        foreach ($this->records as $challengeId => $record) {
+            if (! $record->isExpiredAt($now)) {
+                continue;
+            }
+
+            unset($this->records[$challengeId]);
+            $removed++;
+        }
+
+        return $removed;
     }
 }

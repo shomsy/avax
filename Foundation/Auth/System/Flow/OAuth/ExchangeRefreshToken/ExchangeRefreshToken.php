@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken;
 
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capability\Risk\DeterministicRiskEngine;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
@@ -22,7 +23,8 @@ final readonly class ExchangeRefreshToken
         private UserSourceInterface          $userSource,
         private JwtIdentityInterface         $jwtIdentity,
         private AuditLogInterface            $auditLog,
-        private Clock                        $clock
+        private Clock                        $clock,
+        private DeterministicRiskEngine|null $riskEngine = null
     ) {}
 
     /**
@@ -52,6 +54,16 @@ final readonly class ExchangeRefreshToken
 
         if ($record->wasRotated()) {
             $this->refreshTokenStore->revokeFamily($record->familyId);
+            $riskDecision = $this->riskEngine?->recordRefreshReuse($record->userId->value, $record->clientId);
+            $this->auditLog->record(new AuditEvent(
+                name      : 'auth.oauth.refresh.review.opened',
+                occurredAt: $now,
+                context   : [
+                    'user_id' => $record->userId->value,
+                    'client_id' => $record->clientId,
+                    'risk_action' => $riskDecision?->action->value,
+                ]
+            ));
             $this->recordFailure($data, 'reuse_detected', suspicious: true);
             throw OAuthTokenExchangeFailed::invalidGrant();
         }

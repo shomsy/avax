@@ -19,13 +19,17 @@ Current delivery posture is documented in
   `AccessInterface`, `AuthenticationRequest`, `AuthenticationContext`,
   `AuthenticationResult`, `AuthenticatedUser`
 - core flows: `AuthenticateRequest`, `Login`, `Register`, `Logout`, `Refresh`,
-  `Recover`, `Verify`, `Mfa`, `ChangePassword`, `ReadCurrentUser`, `OAuth`
-- shared auth capabilities: `Access`, `Identity`, `PasswordHashing`,
-  `OAuth`, `Session`, `Throttle`, `UserSource`
+  `Recover`, `Verify`, `Mfa`, `ChangePassword`, `ReadCurrentUser`, `Session`,
+  `OAuth`, `AdminRealm`, `Passkey`, `Federation`, `Provisioning`, `Risk`
+- shared auth capabilities: `Access`, `AdminRealm`, `Federation`, `Identity`,
+  `OAuth`, `Passkey`, `PasswordHashing`, `Risk`, `Session`, `Throttle`,
+  `UserSource`
 - package-owned contracts: session store, token issuer/verifier, refresh store,
-  audit log, clock, MFA store, user source
+  audit log/export, clock, MFA store, user source
 - package-owned runtime strategies for session and token auth
 - auth diagnostics contracts and audit events
+- package-owned maintenance flows for cleanup and audit export when stores/logs
+  expose the relevant seams
 
 Kernel rule:
 
@@ -56,11 +60,11 @@ This package does not own today:
 
 - central IdP behavior
 - OIDC provider behavior
-- SAML federation brokering
-- SCIM provisioning
-- workforce lifecycle management
-- adaptive risk as a standalone platform
-- enterprise IAM control-plane workflows
+- SAML federation brokering runtime
+- SCIM provisioning runtime
+- full tenant membership control plane
+- KMS/HSM, mail, SIEM, and queue infrastructure
+- enterprise IAM approval workflows
 
 ## Final Target Tree
 
@@ -72,25 +76,34 @@ System/
     AuthBuilder.php
   Capability/
     Access/
+    AdminRealm/
+    Federation/
     Identity/
     OAuth/
+    Passkey/
     PasswordHashing/
+    Risk/
     Session/
     Throttle/
     User/
     UserSource/
   Flow/
+    AdminRealm/
     AuthenticateRequest/
     ChangePassword/
     CheckAuthentication/
     Diagnostics/
+    Federation/
     Login/
     Logout/
     Mfa/
     OAuth/
+    Passkey/
+    Provisioning/
     ReadCurrentUser/
     Recover/
     Register/
+    Risk/
     Session/
     Token/
     Verify/
@@ -141,6 +154,14 @@ Stable application API to keep public:
 - `OAuthTokenGrant`
 - `IssuedAuthorizationCode`
 - `TokenIntrospection`
+- `AdminElevation`
+- `FederationConnection`
+- `StartedFederatedLogin`
+- `PasskeyCredential`
+- `PasskeyRegistration`
+- `PasskeyAuthenticationChallenge`
+- `RiskDecision`
+- `RiskSignal`
 - `PasswordResetChallenge`
 - `EmailVerificationChallenge`
 - `MfaEnrollment`
@@ -166,8 +187,14 @@ Stable extension contracts to keep public:
 - `HmacTokenCodec`
 - `OAuthClientRegistryInterface`
 - `AuthorizationCodeStoreInterface`
+- `FederationRuntimeInterface`
+- `FederationConnectionStoreInterface`
+- `FederatedIdentityLinkStoreInterface`
 - `JwtIdentityInterface`
 - `JwtIdentity`
+- `PasskeyRuntimeInterface`
+- `PasskeyCredentialStoreInterface`
+- `PasskeyChallengeStoreInterface`
 - `RefreshTokenStoreInterface`
 - `TokenRevocationStoreInterface`
 - `PasswordResetStoreInterface`

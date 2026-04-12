@@ -13,6 +13,29 @@ Concrete records of executed verification.
 
 ## Reports
 
+- `executed_at`: 2026-04-12 22:39 CEST
+- `scope`: targeted regression suite for phishing-resistant access naming, admin elevation policy, and ChangeEmail flow
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test` (suite covered `tests/Capabilities/Access/RequirePhishingResistantAuthentication/RequirePhishingResistantAuthenticationTest.php`, `tests/Flows/ChangeEmail/ChangeEmailTest.php`, `tests/Flows/AdminRealm/AdminElevationTest.php`, `tests/Capabilities/Access/AccessPolicyTest.php`, `tests/Capabilities/Access/AccessTest.php`, `tests/Capabilities/Identity/IdentityTest.php`)
+- `result`: pass
+- `notes`: targeted regression coverage passes for the new phishing-resistant capability guard, admin elevation policy,
+  and email-change begin/confirm lifecycle; result `OK (129 tests, 327 assertions)`
+
+- `executed_at`: 2026-04-12 22:39 CEST
+- `scope`: baseline static analysis after phishing-resistant naming and ChangeEmail refactor
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes after the `RequirePhishingResistantAuthentication` namespace move and email-change
+  builder wiring
+
+- `executed_at`: 2026-04-12 22:39 CEST
+- `scope`: strict static analysis after phishing-resistant naming and ChangeEmail refactor
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after the new `ChangeEmail` flow and admin policy naming cleanup
+
 - `executed_at`: 2026-04-12 21:32 CEST
 - `scope`: targeted authorization-policy, passkey rename, maintenance cleanup, and audit export regression suite
 - `environment`: local CLI PHP 8.4.11 with vendor dependencies installed

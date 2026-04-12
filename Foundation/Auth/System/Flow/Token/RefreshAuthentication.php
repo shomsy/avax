@@ -99,6 +99,7 @@ final readonly class RefreshAuthentication
         $accessToken  = $this->jwtIdentity->issue(
             user         : $user,
             mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
             clientId     : $record->clientId,
             scopes       : $record->scopes
         );
@@ -107,6 +108,7 @@ final readonly class RefreshAuthentication
             expiresAt    : $now->modify('+30 days'),
             familyId     : $record->familyId,
             mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
             clientId     : $record->clientId,
             scopes       : $record->scopes
         );
@@ -118,7 +120,8 @@ final readonly class RefreshAuthentication
             accessTokenId       : $accessToken->tokenId,
             accessTokenExpiresAt: $accessToken->expiresAt,
             refreshTokenId      : $refreshToken->tokenId,
-            mfaVerifiedAt       : $record->mfaVerifiedAt
+            mfaVerifiedAt       : $record->mfaVerifiedAt,
+            phishingResistant   : $record->phishingResistant
         );
 
         $this->currentAuthentication->store($context);

@@ -35,7 +35,8 @@ final class AdminElevationTest extends TestCase
             ),
             mode         : AuthenticationMode::SESSION,
             sessionId    : 'session-1',
-            mfaVerifiedAt: $clock->now()
+            mfaVerifiedAt: $clock->now(),
+            phishingResistant: true
         ));
 
         $store = new InMemoryAdminElevationStore();
@@ -44,7 +45,8 @@ final class AdminElevationTest extends TestCase
             requireFreshMfa      : new RequireFreshMfa($current, $clock),
             elevationStore       : $store,
             auditLog             : new InMemoryAuditLog(),
-            clock                : $clock
+            clock                : $clock,
+            requirePhishingResistant: true
         );
         $guard = new RequireAdminElevation($current, $store, $clock);
         $end   = new EndAdminElevation($current, $store, new InMemoryAuditLog(), $clock);
@@ -57,5 +59,37 @@ final class AdminElevationTest extends TestCase
 
         $this->expectException(AdminElevationFailed::class);
         $guard->execute();
+    }
+
+    public function testAdminElevationRequiresPhishingResistantAuthenticationWhenConfigured() : void
+    {
+        $clock = new Clock();
+        $current = new CurrentAuthentication();
+        $current->store(AuthenticationContext::authenticated(
+            user         : new AuthenticatedUser(
+                id        : 1,
+                email     : 'admin@example.com',
+                username  : 'admin',
+                roles     : [UserRole::ADMIN->value],
+                mfaEnabled: true
+            ),
+            mode         : AuthenticationMode::SESSION,
+            sessionId    : 'session-2',
+            mfaVerifiedAt: $clock->now()
+        ));
+
+        $begin = new BeginAdminElevation(
+            currentAuthentication: $current,
+            requireFreshMfa      : new RequireFreshMfa($current, $clock),
+            elevationStore       : new InMemoryAdminElevationStore(),
+            auditLog             : new InMemoryAuditLog(),
+            clock                : $clock,
+            requirePhishingResistant: true
+        );
+
+        $this->expectException(AdminElevationFailed::class);
+        $this->expectExceptionMessage('Admin elevation requires phishing-resistant authentication.');
+
+        $begin->execute();
     }
 }

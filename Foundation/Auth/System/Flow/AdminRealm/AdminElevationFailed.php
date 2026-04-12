@@ -27,4 +27,9 @@ final class AdminElevationFailed extends RuntimeException
     {
         return new self('Current authentication cannot be elevated.');
     }
+
+    public static function phishingResistantRequired() : self
+    {
+        return new self('Admin elevation requires phishing-resistant authentication.');
+    }
 }

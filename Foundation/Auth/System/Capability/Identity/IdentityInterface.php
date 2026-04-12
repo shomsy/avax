@@ -15,7 +15,11 @@ use DateTimeImmutable;
  */
 interface IdentityInterface
 {
-    public function issue(User $user, DateTimeImmutable|null $mfaVerifiedAt = null) : IssuedAuthentication;
+    public function issue(
+        User $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false
+    ) : IssuedAuthentication;
 
     public function clear(AuthenticationContext|null $context = null) : void;
 

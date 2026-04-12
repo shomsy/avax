@@ -28,17 +28,23 @@ final class SessionIdentity implements SessionIdentityInterface
         private SessionRegistryInterface|null $sessionRegistry = null,
         private string                        $sessionKey = 'auth_user_id',
         private string                        $mfaVerifiedAtKey = 'auth_mfa_verified_at',
+        private string                        $phishingResistantKey = 'auth_phishing_resistant',
         private string                        $issuedAtKey = 'auth_session_issued_at',
         private string                        $lastSeenAtKey = 'auth_session_last_seen_at'
     ) {}
 
-    public function issue(int $userId, DateTimeImmutable|null $mfaVerifiedAt = null) : string|null
+    public function issue(
+        int $userId,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false
+    ) : string|null
     {
         $sessionId = $this->store->regenerate();
         $now       = $this->clock->now();
 
         $this->store->put($this->sessionKey, $userId);
         $this->store->put($this->mfaVerifiedAtKey, $mfaVerifiedAt?->format(DATE_ATOM));
+        $this->store->put($this->phishingResistantKey, $phishingResistant ? '1' : '0');
         $this->store->put($this->issuedAtKey, $now->format(DATE_ATOM));
         $this->store->put($this->lastSeenAtKey, $now->format(DATE_ATOM));
 
@@ -143,6 +149,15 @@ final class SessionIdentity implements SessionIdentityInterface
         } catch (\Exception) {
             return null;
         }
+    }
+
+    public function resolvePhishingResistant() : bool
+    {
+        if (! $this->isSessionActive()) {
+            return false;
+        }
+
+        return $this->store->get($this->phishingResistantKey) === '1';
     }
 
     private function isSessionActive() : bool

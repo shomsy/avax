@@ -79,6 +79,7 @@ final readonly class ExchangeRefreshToken
         $accessToken = $this->jwtIdentity->issue(
             user         : $user,
             mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
             scopes       : $record->scopes
         );
@@ -87,6 +88,7 @@ final readonly class ExchangeRefreshToken
             expiresAt    : $now->modify('+30 days'),
             familyId     : $record->familyId,
             mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
             scopes       : $record->scopes
         );

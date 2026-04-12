@@ -23,6 +23,7 @@ final readonly class RefreshTokenRecord
         public string|null            $replacementTokenId = null,
         public bool                   $revoked = false,
         public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public bool                   $phishingResistant = false,
         public string|null            $clientId = null,
         public array                  $scopes = []
     ) {}

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\Access\RequireAccessPolicy;
 
 use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\PhishingResistantAuthenticationRequired;
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
@@ -28,6 +30,7 @@ final readonly class RequireAccessPolicy
         private RequireRole $requireRole,
         private RequirePermission $requirePermission,
         private RequireResourceOwner $requireResourceOwner,
+        private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
         private RequireFreshMfa $requireFreshMfa,
         private RequireAdminElevation $requireAdminElevation
     ) {}
@@ -36,6 +39,7 @@ final readonly class RequireAccessPolicy
      * @throws AdminElevationFailed
      * @throws FreshMfaRequired
      * @throws PermissionDenied
+     * @throws PhishingResistantAuthenticationRequired
      * @throws ResourceOwnerDenied
      * @throws RoleDenied
      * @throws Unauthenticated
@@ -54,6 +58,10 @@ final readonly class RequireAccessPolicy
 
         if ($policy->resourceOwnerUserId !== null) {
             $this->requireResourceOwner->execute($policy->resourceOwnerUserId);
+        }
+
+        if ($policy->phishingResistant) {
+            $this->requirePhishingResistantAuthentication->execute();
         }
 
         if ($policy->freshMfa) {

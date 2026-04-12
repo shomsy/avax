@@ -21,7 +21,8 @@ final readonly class AuthenticationContext
         private string|null            $accessTokenId = null,
         private DateTimeImmutable|null $accessTokenExpiresAt = null,
         private string|null            $refreshTokenId = null,
-        private DateTimeImmutable|null $mfaVerifiedAt = null
+        private DateTimeImmutable|null $mfaVerifiedAt = null,
+        private bool                   $phishingResistant = false
     )
     {
         if ($this->authenticated && $this->user === null) {
@@ -49,7 +50,8 @@ final readonly class AuthenticationContext
         string|null            $accessTokenId = null,
         DateTimeImmutable|null $accessTokenExpiresAt = null,
         string|null            $refreshTokenId = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool                   $phishingResistant = false
     ) : self
     {
         return new self(
@@ -60,7 +62,8 @@ final readonly class AuthenticationContext
             accessTokenId       : $accessTokenId,
             accessTokenExpiresAt: $accessTokenExpiresAt,
             refreshTokenId      : $refreshTokenId,
-            mfaVerifiedAt       : $mfaVerifiedAt
+            mfaVerifiedAt       : $mfaVerifiedAt,
+            phishingResistant   : $phishingResistant
         );
     }
 
@@ -107,5 +110,10 @@ final readonly class AuthenticationContext
     public function mfaVerifiedAt() : DateTimeImmutable|null
     {
         return $this->mfaVerifiedAt;
+    }
+
+    public function isPhishingResistant() : bool
+    {
+        return $this->phishingResistant;
     }
 }

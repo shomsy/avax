@@ -91,6 +91,8 @@ $backupCodes = $auth->confirmMfaEnrollment(
 - `revokeSession(string): void`
 - `access(): AccessInterface`
 - `changePassword(ChangePasswordData): void`
+- `beginEmailChange(BeginEmailChangeData): EmailChangeChallenge`
+- `confirmEmailChange(ConfirmEmailChangeData): bool`
 - `register(RegistrationData): RegistrationResult`
 - `refresh(RefreshAuthenticationRequest): AuthenticationResult`
 - `registerOAuthClient(RegisterClientData): RegisteredOAuthClient`
@@ -144,8 +146,8 @@ The package now has two explicit lanes:
 Runtime ownership lives in auth-flow slices:
 
 - `System/Flow/AuthenticateRequest/` owns ingress resolution and current auth context.
-- `System/Flow/Login/`, `Register/`, `Logout/`, `Recover/`, `Verify/`, `Mfa/`, `Token/`, `Session/`, `AdminRealm/`,
-  `Passkey/`, `Federation/`, `Provisioning/`, and `Risk/` own package behavior.
+- `System/Flow/Login/`, `Register/`, `Logout/`, `Recover/`, `ChangeEmail/`, `Verify/`, `Mfa/`, `Token/`, `Session/`,
+  `AdminRealm/`, `Passkey/`, `Federation/`, `Provisioning/`, and `Risk/` own package behavior.
 - `System/Capability/Access/` owns authorization boundaries and composed access-policy evaluation.
 - `System/Capability/OAuth/` owns client registry and authorization-code persistence contracts.
 - `System/Flow/OAuth/` owns client registration, authorization-code issuance, token exchange, revoke, and introspection.
@@ -174,6 +176,7 @@ non-goals.
 - OAuth public clients require PKCE and OAuth refresh reuse revokes the full token family.
 - Password reset and login failures keep safe public messages.
 - Password reset begin flow is anti-enumeration by default.
+- Email change requires the current password, fresh MFA, and revokes the current auth/session family on confirmation.
 - MFA uses TOTP with replay protection, backup codes, recovery tokens, step-up freshness checks, and per-user challenge
   throttling.
 - Passkeys support multiple credentials per account, user-owned rename/revoke, and strict challenge replay prevention.

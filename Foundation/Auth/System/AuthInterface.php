@@ -16,6 +16,9 @@ use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
+use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChangeData;
+use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChangeData;
+use Avax\Auth\System\Flow\ChangeEmail\EmailChangeChallenge;
 use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
 use Avax\Auth\System\Flow\Login\AuthenticationResult;
 use Avax\Auth\System\Flow\Login\Credentials;
@@ -87,6 +90,10 @@ interface AuthInterface
     public function access() : AccessInterface;
 
     public function changePassword(ChangePasswordData $data) : void;
+
+    public function beginEmailChange(BeginEmailChangeData $data) : EmailChangeChallenge;
+
+    public function confirmEmailChange(ConfirmEmailChangeData $data) : bool;
 
     public function register(RegistrationData $data) : RegistrationResult;
 

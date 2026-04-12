@@ -10,7 +10,7 @@ use DateTimeImmutable;
 /**
  * In-memory authorization code storage.
  */
-final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInterface
+final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInterface, PruneExpiredAuthorizationCodesInterface
 {
     /** @var array<string, string> */
     private array $hashToCodeId = [];
@@ -85,6 +85,31 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
             usedAt             : $usedAt,
             mfaVerifiedAt      : $record->mfaVerifiedAt
         );
+    }
+
+    public function pruneExpired(DateTimeImmutable $now) : int
+    {
+        $removed = 0;
+
+        foreach ($this->records as $codeId => $record) {
+            if (! $record->wasUsed() && ! $record->isExpiredAt($now)) {
+                continue;
+            }
+
+            unset($this->records[$codeId]);
+            $removed++;
+        }
+
+        if ($removed === 0) {
+            return 0;
+        }
+
+        $this->hashToCodeId = array_filter(
+            $this->hashToCodeId,
+            fn (string $codeId) : bool => isset($this->records[$codeId])
+        );
+
+        return $removed;
     }
 
     private function hash(string $plainCode) : string

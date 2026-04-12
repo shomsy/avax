@@ -6,19 +6,40 @@ namespace Avax\Auth\System\Configuration;
 
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capability\Access\Access;
+use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
+use Avax\Auth\System\Capability\Access\RequireResourceOwner\RequireResourceOwner;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
+use Avax\Auth\System\Capability\AdminRealm\AdminElevationStoreInterface;
+use Avax\Auth\System\Capability\AdminRealm\InMemoryAdminElevationStore;
+use Avax\Auth\System\Capability\Federation\FederatedIdentityLinkStoreInterface;
+use Avax\Auth\System\Capability\Federation\FederationConnectionStoreInterface;
+use Avax\Auth\System\Capability\Federation\FederationRuntimeInterface;
+use Avax\Auth\System\Capability\Federation\InMemoryFederatedIdentityLinkStore;
+use Avax\Auth\System\Capability\Federation\InMemoryFederationConnectionStore;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
 use Avax\Auth\System\Capability\OAuth\InMemoryAuthorizationCodeStore;
 use Avax\Auth\System\Capability\OAuth\InMemoryOAuthClientRegistry;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capability\Passkey\InMemoryPasskeyChallengeStore;
+use Avax\Auth\System\Capability\Passkey\InMemoryPasskeyCredentialStore;
+use Avax\Auth\System\Capability\Passkey\PasskeyChallengeStoreInterface;
+use Avax\Auth\System\Capability\Passkey\PasskeyCredentialStoreInterface;
+use Avax\Auth\System\Capability\Passkey\PasskeyRuntimeInterface;
+use Avax\Auth\System\Capability\Risk\DeterministicRiskEngine;
+use Avax\Auth\System\Capability\Risk\InMemoryKnownAuthenticationEnvironmentStore;
+use Avax\Auth\System\Capability\Risk\InMemoryRiskSignalStore;
 use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
 use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
 use Avax\Auth\System\Capability\Throttle\InMemoryAttemptThrottleStore;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\UserSource\ProvisionableUserSourceInterface;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\AdminRealm\BeginAdminElevation\BeginAdminElevation;
+use Avax\Auth\System\Flow\AdminRealm\EndAdminElevation\EndAdminElevation;
+use Avax\Auth\System\Flow\AdminRealm\RequireAdminElevation\RequireAdminElevation;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticateRequest;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
@@ -26,6 +47,11 @@ use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
+use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLogin;
+use Avax\Auth\System\Flow\Federation\DiscoverConnection\DiscoverFederationConnection;
+use Avax\Auth\System\Flow\Federation\ReadConnections\ReadFederationConnections;
+use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnection;
+use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLogin;
 use Avax\Auth\System\Flow\Login\Login;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Flow\Logout\Logout;
@@ -56,12 +82,24 @@ use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectToken;
 use Avax\Auth\System\Flow\OAuth\ReadClients\ReadClients;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClient;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeToken;
+use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthentication;
+use Avax\Auth\System\Flow\Passkey\BeginRegistration\BeginPasskeyRegistration;
+use Avax\Auth\System\Flow\Passkey\CompleteAuthentication\CompletePasskeyAuthentication;
+use Avax\Auth\System\Flow\Passkey\CompleteRegistration\CompletePasskeyRegistration;
+use Avax\Auth\System\Flow\Passkey\ListPasskeys\ListPasskeys;
+use Avax\Auth\System\Flow\Passkey\RenamePasskey\RenamePasskey;
+use Avax\Auth\System\Flow\Passkey\RevokePasskey\RevokePasskey;
+use Avax\Auth\System\Flow\Provisioning\DeprovisionUser\DeprovisionUser;
+use Avax\Auth\System\Flow\Provisioning\ReactivateUser\ReactivateUser;
+use Avax\Auth\System\Flow\Provisioning\SuspendUser\SuspendUser;
 use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Flow\Recover\BeginPasswordReset;
 use Avax\Auth\System\Flow\Recover\InMemoryPasswordResetStore;
 use Avax\Auth\System\Flow\Recover\PasswordResetStoreInterface;
 use Avax\Auth\System\Flow\Recover\ResetPassword;
 use Avax\Auth\System\Flow\Register\Register;
+use Avax\Auth\System\Flow\Risk\AssessCurrentRisk\AssessCurrentRisk;
+use Avax\Auth\System\Flow\Risk\ReadRiskSignals\ReadRiskSignals;
 use Avax\Auth\System\Flow\Session\LogoutAllSessions\LogoutAllSessions;
 use Avax\Auth\System\Flow\Session\ReadActiveSessions\ReadActiveSessions;
 use Avax\Auth\System\Flow\Session\RevokeSession\RevokeSession;
@@ -105,7 +143,17 @@ final class AuthBuilder
     private SessionRegistryInterface|null             $sessionRegistry        = null;
     private OAuthClientRegistryInterface|null         $oauthClientRegistry    = null;
     private AuthorizationCodeStoreInterface|null      $authorizationCodeStore = null;
+    private AdminElevationStoreInterface|null         $adminElevationStore    = null;
+    private DeterministicRiskEngine|null              $riskEngine             = null;
+    private PasskeyRuntimeInterface|null              $passkeyRuntime         = null;
+    private PasskeyCredentialStoreInterface|null      $passkeyCredentialStore = null;
+    private PasskeyChallengeStoreInterface|null       $passkeyChallengeStore  = null;
+    private FederationRuntimeInterface|null           $federationRuntime      = null;
+    private FederationConnectionStoreInterface|null   $federationConnectionStore = null;
+    private FederatedIdentityLinkStoreInterface|null  $federatedIdentityLinkStore = null;
     private string                                    $mfaIssuer              = 'Avax Auth';
+    private string                                    $passkeyRpId            = 'localhost';
+    private string                                    $passkeyRpName          = 'Avax Auth';
 
     /**
      * Define the data source for users.
@@ -255,6 +303,70 @@ final class AuthBuilder
         return $this;
     }
 
+    public function withAdminElevationStore(AdminElevationStoreInterface $adminElevationStore) : self
+    {
+        $this->adminElevationStore = $adminElevationStore;
+
+        return $this;
+    }
+
+    public function withRiskEngine(DeterministicRiskEngine $riskEngine) : self
+    {
+        $this->riskEngine = $riskEngine;
+
+        return $this;
+    }
+
+    public function withPasskeyRuntime(PasskeyRuntimeInterface $passkeyRuntime) : self
+    {
+        $this->passkeyRuntime = $passkeyRuntime;
+
+        return $this;
+    }
+
+    public function withPasskeyCredentialStore(PasskeyCredentialStoreInterface $passkeyCredentialStore) : self
+    {
+        $this->passkeyCredentialStore = $passkeyCredentialStore;
+
+        return $this;
+    }
+
+    public function withPasskeyChallengeStore(PasskeyChallengeStoreInterface $passkeyChallengeStore) : self
+    {
+        $this->passkeyChallengeStore = $passkeyChallengeStore;
+
+        return $this;
+    }
+
+    public function withPasskeyRelyingParty(string $rpId, string $rpName) : self
+    {
+        $this->passkeyRpId = $rpId;
+        $this->passkeyRpName = $rpName;
+
+        return $this;
+    }
+
+    public function withFederationRuntime(FederationRuntimeInterface $federationRuntime) : self
+    {
+        $this->federationRuntime = $federationRuntime;
+
+        return $this;
+    }
+
+    public function withFederationConnectionStore(FederationConnectionStoreInterface $federationConnectionStore) : self
+    {
+        $this->federationConnectionStore = $federationConnectionStore;
+
+        return $this;
+    }
+
+    public function withFederatedIdentityLinkStore(FederatedIdentityLinkStoreInterface $federatedIdentityLinkStore) : self
+    {
+        $this->federatedIdentityLinkStore = $federatedIdentityLinkStore;
+
+        return $this;
+    }
+
     public function withMfaAttemptLimit(LimitMfaAttempts $mfaAttemptLimit) : self
     {
         $this->mfaAttemptLimit = $mfaAttemptLimit;
@@ -288,6 +400,16 @@ final class AuthBuilder
         $clock                    = $this->clock ?? new Clock();
         $oauthClientRegistry      = $this->oauthClientRegistry ?? new InMemoryOAuthClientRegistry($passwordHasher);
         $authorizationCodeStore   = $this->authorizationCodeStore ?? new InMemoryAuthorizationCodeStore();
+        $adminElevationStore      = $this->adminElevationStore ?? new InMemoryAdminElevationStore();
+        $riskEngine               = $this->riskEngine ?? new DeterministicRiskEngine(
+            knownEnvironments: new InMemoryKnownAuthenticationEnvironmentStore(),
+            signals          : new InMemoryRiskSignalStore(),
+            clock            : $clock
+        );
+        $passkeyCredentialStore   = $this->passkeyCredentialStore ?? new InMemoryPasskeyCredentialStore();
+        $passkeyChallengeStore    = $this->passkeyChallengeStore ?? new InMemoryPasskeyChallengeStore();
+        $federationConnectionStore = $this->federationConnectionStore ?? new InMemoryFederationConnectionStore();
+        $federatedIdentityLinkStore = $this->federatedIdentityLinkStore ?? new InMemoryFederatedIdentityLinkStore();
         $passwordResetStore       = $this->passwordResetStore ?? new InMemoryPasswordResetStore();
         $emailVerificationStore   = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore();
         $emailVerificationState   = $this->emailVerificationState ?? new InMemoryEmailVerificationStateStore();
@@ -350,15 +472,6 @@ final class AuthBuilder
         $checkAuthentication      = new CheckAuthentication(
             currentAuthentication: $currentAuthentication
         );
-        $access                   = new Access(
-            requireAuthentication: new RequireAuthentication(
-                                       currentAuthentication: $currentAuthentication
-                                   ),
-            requireRole          : new RequireRole(currentAuthentication: $currentAuthentication),
-            requirePermission    : new RequirePermission(
-                                       currentAuthentication: $currentAuthentication
-                                   )
-        );
         $registerOAuthClient      = new RegisterClient(
             clientRegistry: $oauthClientRegistry,
             auditLog      : $auditLog,
@@ -376,6 +489,41 @@ final class AuthBuilder
             clock                : $clock
         );
         $oauthReady               = $identity->jwtIdentity() !== null && $this->refreshTokenStore !== null;
+        $requireAdminElevation    = new RequireAdminElevation(
+            currentAuthentication: $currentAuthentication,
+            elevationStore       : $adminElevationStore,
+            clock                : $clock
+        );
+        $requireAuthentication    = new RequireAuthentication(
+            currentAuthentication: $currentAuthentication
+        );
+        $requireRole             = new RequireRole(
+            currentAuthentication: $currentAuthentication
+        );
+        $requirePermission       = new RequirePermission(
+            currentAuthentication: $currentAuthentication
+        );
+        $requireResourceOwner    = new RequireResourceOwner(
+            currentAuthentication: $currentAuthentication
+        );
+        $access                  = new Access(
+            requireAuthentication: $requireAuthentication,
+            requireRole          : $requireRole,
+            requirePermission    : $requirePermission,
+            requireAccessPolicy  : new RequireAccessPolicy(
+                requireAuthentication: $requireAuthentication,
+                requireRole          : $requireRole,
+                requirePermission    : $requirePermission,
+                requireResourceOwner : $requireResourceOwner,
+                requireFreshMfa      : $requireFreshMfa,
+                requireAdminElevation: $requireAdminElevation
+            )
+        );
+        $provisionableUserSource  = $this->userSource instanceof ProvisionableUserSourceInterface
+            ? $this->userSource
+            : null;
+        $passkeyReady             = $this->passkeyRuntime !== null;
+        $federationReady          = $this->federationRuntime !== null;
 
         return new Auth(
             login                 : new Login(
@@ -387,7 +535,8 @@ final class AuthBuilder
                                         auditLog                : $auditLog,
                                         mfaStore                : $mfaStore,
                                         startMfaChallenge       : $startMfaChallenge,
-                                        rateLimit               : $this->rateLimit
+                                        rateLimit               : $this->rateLimit,
+                                        riskEngine              : $riskEngine
                                     ),
             authenticateRequest   : $authenticateRequest,
             logout                : new Logout(
@@ -451,7 +600,8 @@ final class AuthBuilder
                                         auditLog                : $auditLog,
                                         clock                   : $clock,
                                         refreshTokenStore       : $this->refreshTokenStore,
-                                        jwtIdentity             : $identity->jwtIdentity()
+                                        jwtIdentity             : $identity->jwtIdentity(),
+                                        riskEngine              : $riskEngine
                                     ),
             registerOAuthClient   : $oauthReady ? $registerOAuthClient : null,
             readOAuthClients      : $oauthReady ? $readOAuthClients : null,
@@ -474,7 +624,8 @@ final class AuthBuilder
                     userSource       : $this->userSource,
                     jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
                     auditLog         : $auditLog,
-                    clock            : $clock
+                    clock            : $clock,
+                    riskEngine       : $riskEngine
                 )
                 : null,
             revokeOAuthToken      : $oauthReady
@@ -494,6 +645,170 @@ final class AuthBuilder
                     clock         : $clock
                 )
                 : null,
+            beginAdminElevation   : new BeginAdminElevation(
+                                        currentAuthentication: $currentAuthentication,
+                                        requireFreshMfa      : $requireFreshMfa,
+                                        elevationStore       : $adminElevationStore,
+                                        auditLog             : $auditLog,
+                                        clock                : $clock
+                                    ),
+            endAdminElevation     : new EndAdminElevation(
+                                        currentAuthentication: $currentAuthentication,
+                                        elevationStore       : $adminElevationStore,
+                                        auditLog             : $auditLog,
+                                        clock                : $clock
+                                    ),
+            requireAdminElevation : $requireAdminElevation,
+            suspendUser           : $provisionableUserSource !== null
+                ? new SuspendUser(
+                    userSource         : $provisionableUserSource,
+                    requireAdminElevation: $requireAdminElevation,
+                    auditLog           : $auditLog,
+                    clock              : $clock,
+                    sessionRegistry    : $this->sessionRegistry,
+                    refreshTokenStore  : $this->refreshTokenStore,
+                    adminElevationStore: $adminElevationStore
+                )
+                : null,
+            reactivateUser        : $provisionableUserSource !== null
+                ? new ReactivateUser(
+                    userSource         : $provisionableUserSource,
+                    requireAdminElevation: $requireAdminElevation,
+                    auditLog           : $auditLog,
+                    clock              : $clock
+                )
+                : null,
+            deprovisionUser       : $provisionableUserSource !== null
+                ? new DeprovisionUser(
+                    userSource         : $provisionableUserSource,
+                    requireAdminElevation: $requireAdminElevation,
+                    auditLog           : $auditLog,
+                    clock              : $clock,
+                    sessionRegistry    : $this->sessionRegistry,
+                    refreshTokenStore  : $this->refreshTokenStore,
+                    adminElevationStore: $adminElevationStore
+                )
+                : null,
+            beginPasskeyRegistration: $passkeyReady
+                ? new BeginPasskeyRegistration(
+                    currentAuthentication: $currentAuthentication,
+                    requireFreshMfa      : $requireFreshMfa,
+                    runtime              : $this->passkeyRuntime ?? throw new RuntimeException('Passkey runtime is required.'),
+                    credentialStore      : $passkeyCredentialStore,
+                    challengeStore       : $passkeyChallengeStore,
+                    auditLog             : $auditLog,
+                    clock                : $clock,
+                    rpId                 : $this->passkeyRpId,
+                    rpName               : $this->passkeyRpName
+                )
+                : null,
+            completePasskeyRegistration: $passkeyReady
+                ? new CompletePasskeyRegistration(
+                    currentAuthentication: $currentAuthentication,
+                    runtime              : $this->passkeyRuntime ?? throw new RuntimeException('Passkey runtime is required.'),
+                    credentialStore      : $passkeyCredentialStore,
+                    challengeStore       : $passkeyChallengeStore,
+                    auditLog             : $auditLog,
+                    clock                : $clock,
+                    rpId                 : $this->passkeyRpId
+                )
+                : null,
+            beginPasskeyAuthentication: $passkeyReady
+                ? new BeginPasskeyAuthentication(
+                    userSource      : $this->userSource,
+                    runtime         : $this->passkeyRuntime ?? throw new RuntimeException('Passkey runtime is required.'),
+                    credentialStore : $passkeyCredentialStore,
+                    challengeStore  : $passkeyChallengeStore,
+                    auditLog        : $auditLog,
+                    clock           : $clock,
+                    rpId            : $this->passkeyRpId
+                )
+                : null,
+            completePasskeyAuthentication: $passkeyReady
+                ? new CompletePasskeyAuthentication(
+                    runtime              : $this->passkeyRuntime ?? throw new RuntimeException('Passkey runtime is required.'),
+                    challengeStore       : $passkeyChallengeStore,
+                    credentialStore      : $passkeyCredentialStore,
+                    userSource           : $this->userSource,
+                    identity             : $identity,
+                    projectAuthenticatedUser: $projectAuthenticatedUser,
+                    currentAuthentication: $currentAuthentication,
+                    auditLog             : $auditLog,
+                    clock                : $clock,
+                    rpId                 : $this->passkeyRpId
+                )
+                : null,
+            readPasskeys          : $passkeyReady
+                ? new ListPasskeys(
+                    currentAuthentication: $currentAuthentication,
+                    credentialStore      : $passkeyCredentialStore
+                )
+                : null,
+            renamePasskey         : $passkeyReady
+                ? new RenamePasskey(
+                    currentAuthentication: $currentAuthentication,
+                    credentialStore      : $passkeyCredentialStore
+                )
+                : null,
+            revokePasskey         : $passkeyReady
+                ? new RevokePasskey(
+                    currentAuthentication: $currentAuthentication,
+                    requireFreshMfa      : $requireFreshMfa,
+                    credentialStore      : $passkeyCredentialStore,
+                    auditLog             : $auditLog,
+                    clock                : $clock
+                )
+                : null,
+            registerFederationConnection: $federationReady
+                ? new RegisterFederationConnection(
+                    connectionStore: $federationConnectionStore,
+                    auditLog      : $auditLog,
+                    clock         : $clock
+                )
+                : null,
+            readFederationConnections: $federationReady
+                ? new ReadFederationConnections(
+                    connectionStore: $federationConnectionStore
+                )
+                : null,
+            discoverFederationConnection: $federationReady
+                ? new DiscoverFederationConnection(
+                    connectionStore: $federationConnectionStore
+                )
+                : null,
+            startFederatedLogin   : $federationReady
+                ? new StartFederatedLogin(
+                    connectionStore: $federationConnectionStore,
+                    runtime        : $this->federationRuntime ?? throw new RuntimeException('Federation runtime is required.'),
+                    auditLog       : $auditLog,
+                    clock          : $clock
+                )
+                : null,
+            completeFederatedLogin: $federationReady
+                ? new CompleteFederatedLogin(
+                    connectionStore       : $federationConnectionStore,
+                    runtime               : $this->federationRuntime ?? throw new RuntimeException('Federation runtime is required.'),
+                    linkStore             : $federatedIdentityLinkStore,
+                    userSource            : $this->userSource,
+                    identity              : $identity,
+                    projectAuthenticatedUser: $projectAuthenticatedUser,
+                    currentAuthentication : $currentAuthentication,
+                    passwordHasher        : $passwordHasher,
+                    idGenerator           : $this->idGenerator ?? new IdGenerator(),
+                    auditLog              : $auditLog,
+                    clock                 : $clock,
+                    riskEngine            : $riskEngine
+                )
+                : null,
+            assessCurrentRisk     : new AssessCurrentRisk(
+                                        currentAuthentication: $currentAuthentication,
+                                        userSource           : $this->userSource,
+                                        riskEngine           : $riskEngine
+                                    ),
+            readRiskSignals       : new ReadRiskSignals(
+                                        currentAuthentication: $currentAuthentication,
+                                        riskEngine           : $riskEngine
+                                    ),
             beginPasswordReset    : new BeginPasswordReset(
                                         userSource        : $this->userSource,
                                         passwordResetStore: $passwordResetStore,
@@ -557,7 +872,8 @@ final class AuthBuilder
                                         currentAuthentication   : $currentAuthentication,
                                         auditLog                : $auditLog,
                                         clock                   : $clock,
-                                        attemptLimit            : $mfaAttemptLimit
+                                        attemptLimit            : $mfaAttemptLimit,
+                                        riskEngine              : $riskEngine
                                     ),
             regenerateBackupCodes : new RegenerateBackupCodes(
                                         currentAuthentication: $currentAuthentication,

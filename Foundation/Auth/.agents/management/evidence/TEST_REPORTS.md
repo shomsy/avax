@@ -13,6 +13,38 @@ Concrete records of executed verification.
 
 ## Reports
 
+- `executed_at`: 2026-04-12 21:32 CEST
+- `scope`: targeted authorization-policy, passkey rename, maintenance cleanup, and audit export regression suite
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `vendor/bin/phpunit tests/Capabilities/Access/AccessTest.php tests/Capabilities/Access/AccessPolicyTest.php tests/Flows/Passkey/PasskeyFlowTest.php tests/Flows/Session/CleanupExpiredSessionsTest.php tests/Flows/Recover/CleanupExpiredPasswordResetsTest.php tests/Flows/Mfa/CleanupExpiredMfaChallengesTest.php tests/Flows/Passkey/CleanupExpiredPasskeyChallengesTest.php tests/Flows/OAuth/CleanupExpiredAuthorizationCodesTest.php tests/Flows/Diagnostics/ExportAuditEventsTest.php`
+- `result`: pass
+- `notes`: targeted regression suite passes for composed access-policy enforcement, passkey rename ownership, cleanup
+  jobs, and audit export drain behavior; result `OK (10 tests, 27 assertions)`
+
+- `executed_at`: 2026-04-12 21:32 CEST
+- `scope`: full PHPUnit suite after authorization-policy, maintenance, and passkey rename expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: full PHPUnit suite passes after access-policy wiring, maintenance cleanup/export flows, passkey rename, and
+  docs alignment; result `OK (121 tests, 302 assertions)`
+
+- `executed_at`: 2026-04-12 21:32 CEST
+- `scope`: baseline static analysis after authorization-policy, maintenance, and passkey rename expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes across the new `Capability/Access/Policy`, maintenance flows, and passkey rename
+  surface
+
+- `executed_at`: 2026-04-12 21:32 CEST
+- `scope`: strict static analysis after authorization-policy, maintenance, and passkey rename expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after the new maintenance contracts, access-policy composition, and passkey label
+  validation flow
+
 - `executed_at`: 2026-04-12 15:36 CEST
 - `scope`: full PHPUnit suite after OAuth/API auth subsystem v1 implementation
 - `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Mfa\Challenge;
 
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\Risk\DeterministicRiskEngine;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
@@ -37,7 +38,8 @@ final readonly class VerifyMfaChallenge
         private CurrentAuthentication      $currentAuthentication,
         private AuditLogInterface          $auditLog,
         private Clock                      $clock,
-        private LimitMfaAttempts|null      $attemptLimit = null
+        private LimitMfaAttempts|null      $attemptLimit = null,
+        private DeterministicRiskEngine|null $riskEngine = null
     ) {}
 
     /**
@@ -174,6 +176,11 @@ final readonly class VerifyMfaChallenge
         );
 
         $this->currentAuthentication->store($context);
+        $riskDecision = $this->riskEngine?->assessSuccessfulAuthentication(
+            user      : $user,
+            ipAddress : $data->ipAddress,
+            userAgent : $data->userAgent
+        );
         $this->auditLog->record(new AuditEvent(
                                     name      : 'auth.mfa.challenge.passed',
                                     occurredAt: $now,
@@ -182,6 +189,7 @@ final readonly class VerifyMfaChallenge
                                                     'challenge_id' => $record->challengeId,
                                                     'purpose'      => $record->purpose->value,
                                                     'method'       => $acceptedMethod->value,
+                                                    'risk_action'  => $riskDecision?->action->value,
                                                     'ip_address'   => $data->ipAddress,
                                                     'user_agent'   => $data->userAgent,
                                                 ]

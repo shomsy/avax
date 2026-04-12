@@ -17,6 +17,9 @@ Update rules:
 
 ## Current Ledger
 
+- `2026-04-12 21:32 CEST` | `AUTH-020` | shipped package-owned authorization-policy boundaries, passkey rename,
+  slice-local maintenance jobs for session/reset/MFA/passkey/OAuth cleanup, audit export seams, and repo-wide docs for
+  the expanded admin realm, federation, provisioning, passkey, and risk scope
 - `2026-04-12 15:36 CEST` | `AUTH-019` | shipped package-owned OAuth/API auth subsystem v1 with `Capability/OAuth`
   contracts, client registration, authorization-code + PKCE flow, OAuth refresh exchange, introspection, revoke, JWT
   client/scope claims, new regression tests, and boundary/doc updates

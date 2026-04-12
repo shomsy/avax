@@ -14,6 +14,22 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-020
+- `created_at`: 2026-04-12 18:35 CEST
+- `updated_at`: 2026-04-12 21:32 CEST
+- `completed_at`: 2026-04-12 21:32 CEST
+- `status`: done
+- `estimate`: 3h
+- `actual`: 2h 57m
+- `outcome`: Deliver authorization-policy, passkey-lifecycle, maintenance-job, and audit-export seams that complete the
+  remaining practical kernel scope from `REFAKTOR.md`
+- `acceptance`: `Capability/Access/Policy/` exists; passkeys support rename in the public facade; cleanup/export flows
+  exist inside their owning slices; README/docs/evidence reflect admin realm, federation, passkey, risk, provisioning,
+  and maintenance ownership; PHPUnit and PHPStan lanes pass
+- `links`: System/Capability/Access/, System/Flow/Passkey/, System/Flow/Session/CleanupExpiredSessions/,
+  System/Flow/Recover/CleanupExpiredPasswordResets/, System/Flow/Mfa/Challenge/CleanupExpiredMfaChallenges/,
+  System/Flow/OAuth/CleanupExpiredAuthorizationCodes/, System/Flow/Diagnostics/ExportAuditEvents/, README.md, docs/
+
 - `id`: AUTH-019
 - `created_at`: 2026-04-12 15:36 CEST
 - `updated_at`: 2026-04-12 15:36 CEST

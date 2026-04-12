@@ -7,7 +7,7 @@ namespace Avax\Auth\System\Flow\Diagnostics;
 /**
  * In-memory audit sink for tests.
  */
-final class InMemoryAuditLog implements AuditLogInterface
+final class InMemoryAuditLog implements DrainAuditLogInterface
 {
     /** @var list<AuditEvent> */
     private array $events = [];
@@ -23,5 +23,13 @@ final class InMemoryAuditLog implements AuditLogInterface
     public function events() : array
     {
         return $this->events;
+    }
+
+    public function drain() : array
+    {
+        $events = $this->events;
+        $this->events = [];
+
+        return $events;
     }
 }

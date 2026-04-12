@@ -13,13 +13,14 @@ This document captures the current auth-kernel threat model and the controls own
 | session hijack | secure cookies, session ID regeneration, idle timeout, absolute timeout, tracked session revocation | implemented |
 | stolen authorization code | short TTL, single use, redirect URI match, PKCE verification for public clients | implemented |
 | stolen refresh token | rotation, reuse detection, family revocation | implemented |
+| passkey replay | single-use passkey challenge lifecycle and revoked-credential checks | implemented |
 | MFA bypass | challenge lifecycle, replay protection, backup code one-time use, fresh-MFA checks | implemented |
 | recovery takeover | anti-enumeration start, recovery throttling, reset-driven revocation, MFA recovery auditing | implemented |
-| admin account takeover | stronger realm not yet package-owned | planned |
+| admin account takeover | admin elevation, fresh-MFA step-up, audit trail, provisioning revocation | partial |
 | email change takeover | dedicated email-change flow not yet package-owned | planned |
-| refresh token reuse | family revocation and audit | implemented |
-| insider misuse | audit trail exists; approval workflows are application-owned | partial |
-| tenant isolation bug | tenant model not yet package-owned | planned |
+| refresh token reuse | family revocation, risk review signal, and audit | implemented |
+| insider misuse | audit trail and admin-elevation state exist; approval workflows are application-owned | partial |
+| tenant isolation bug | tenant-aware federation connection boundary exists, but full tenant membership model is not package-owned | partial |
 
 ## Incident Classes
 
@@ -28,6 +29,8 @@ This document captures the current auth-kernel threat model and the controls own
 - `session_incident`: session theft, stale session use, or mass revocation scenarios
 - `oauth_incident`: authorization-code abuse, refresh reuse, or client secret compromise
 - `admin_incident`: privileged access misuse or break-glass usage
+- `federation_incident`: tenant SSO configuration or federated-login compromise indicators
+- `risk_incident`: deterministic risk rule activation that requires review
 
 ## Failure And Recovery Notes
 
@@ -57,6 +60,18 @@ This document captures the current auth-kernel threat model and the controls own
 - public clients require `S256` PKCE before token exchange
 - refresh reuse revokes the entire token family
 - revoke and introspection flows exist for downstream incident handling
+
+### Passkey Compromise
+
+- registration and authentication use separate one-time challenges
+- revoked credentials can no longer authenticate
+- users can rename or revoke individual passkeys without affecting password or TOTP ownership
+
+### Federation Misrouting
+
+- login discovery resolves by normalized domain into one tenant-owned connection
+- completed federated login leaves an audit trail with tenant context
+- group mapping only maps into known package roles and ignores unknown values
 
 ## Severity Matrix
 

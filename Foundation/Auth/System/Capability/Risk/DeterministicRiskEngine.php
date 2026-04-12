@@ -1,0 +1,73 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Risk;
+
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserRole;
+use Avax\Auth\System\Foundation\Clock;
+
+/**
+ * Small deterministic risk engine for environment changes and token abuse.
+ */
+final readonly class DeterministicRiskEngine
+{
+    public function __construct(
+        private KnownAuthenticationEnvironmentStoreInterface $knownEnvironments,
+        private RiskSignalStoreInterface $signals,
+        private Clock $clock
+    ) {}
+
+    public function assessSuccessfulAuthentication(
+        User $user,
+        string|null $ipAddress,
+        string|null $userAgent
+    ) : RiskDecision
+    {
+        $userId = $user->getId()->value;
+
+        if (! $this->knownEnvironments->hasSeen($userId, $ipAddress, $userAgent)) {
+            $this->signals->record(new RiskSignal(
+                userId     : $userId,
+                name       : 'new_environment',
+                occurredAt : $this->clock->now(),
+                context    : [
+                    'ip_address' => $ipAddress,
+                    'user_agent' => $userAgent,
+                ]
+            ));
+            $this->knownEnvironments->remember($userId, $ipAddress, $userAgent);
+
+            if ($user->hasRole(UserRole::ADMIN)) {
+                return new RiskDecision(RiskAction::OPEN_REVIEW, ['admin_new_environment']);
+            }
+
+            return new RiskDecision(RiskAction::ALLOW, ['new_environment']);
+        }
+
+        return RiskDecision::allow('known_environment');
+    }
+
+    public function recordRefreshReuse(int $userId, string|null $clientId) : RiskDecision
+    {
+        $this->signals->record(new RiskSignal(
+            userId     : $userId,
+            name       : 'refresh_reuse_detected',
+            occurredAt : $this->clock->now(),
+            context    : [
+                'client_id' => $clientId,
+            ]
+        ));
+
+        return new RiskDecision(RiskAction::REVOKE_SESSIONS, ['refresh_reuse_detected']);
+    }
+
+    /**
+     * @return list<RiskSignal>
+     */
+    public function readSignalsForUser(int $userId) : array
+    {
+        return $this->signals->forUser($userId);
+    }
+}

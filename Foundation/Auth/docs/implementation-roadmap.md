@@ -13,6 +13,13 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 - tracked web sessions with idle and absolute expiry
 - active session listing, single-session revoke, and logout-all
 - OAuth client registry, authorization-code issuance, PKCE enforcement, refresh exchange, revoke, and introspection
+- admin elevation and privileged-user lifecycle flows
+- passkey registration, authentication, rename, and revoke behind a runtime seam
+- tenant-aware federation connections, login discovery, start/complete login, and JIT linking
+- deterministic risk signals and refresh-reuse review hooks
+- composed access-policy enforcement for role, permission, resource-owner, fresh-MFA, and admin-elevation checks
+- cleanup/export maintenance flows for sessions, reset tokens, MFA/passkey challenges, authorization codes, and audit
+  events
 - audit events across security-sensitive flows
 
 ## Next Delivery Order
@@ -26,28 +33,31 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 ### Sprint 2
 
 - complete OAuth-backed adapter examples and persistence contracts
-- add reset-confirm throttling and narrower refresh revocation controls
+- add richer audit exporters and security-notification adapter examples
 
 ### Sprint 3
 
-- package-owned RBAC base and policy conditions
-- admin realm policy split
+- package-owned passkey assurance propagation for admin passkey-required policy
+- add explicit email-change flow with fresh-auth ownership
 
 ### Sprint 4
 
 - evaluate optional `league/oauth2-server` interop adapter without breaking package-owned OAuth kernel contracts
+- evaluate optional WebAuthn interop adapter packaging over the runtime seam
 
 ### Sprint 5
 
-- introduce passkey contracts over a WebAuthn library
+- domain verification, federation metadata sync, and stronger tenant connection policy
 
 ### Sprint 6
 
-- federation, provisioning, and deterministic risk contracts
+- SCIM/runtime adapters, deeper tenant membership model, and external control-plane integration
 
 ## Non-Goals For This Package Today
 
 - custom SAML implementation from scratch
+- OIDC provider surface
+- full SCIM runtime
 - full identity control plane
 - package-owned database migrations
 - framework-specific session UIs

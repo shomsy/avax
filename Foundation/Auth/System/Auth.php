@@ -5,18 +5,35 @@ declare(strict_types=1);
 namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
+use Avax\Auth\System\Capability\Federation\FederationConnection;
+use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
 use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
 use Avax\Auth\System\Capability\OAuth\OAuthClient;
 use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
+use Avax\Auth\System\Capability\Passkey\PasskeyCredential;
+use Avax\Auth\System\Capability\Risk\RiskDecision;
+use Avax\Auth\System\Capability\Risk\RiskSignal;
 use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticateRequest;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flow\AdminRealm\AdminElevation;
+use Avax\Auth\System\Flow\AdminRealm\BeginAdminElevation\BeginAdminElevation;
+use Avax\Auth\System\Flow\AdminRealm\EndAdminElevation\EndAdminElevation;
+use Avax\Auth\System\Flow\AdminRealm\RequireAdminElevation\RequireAdminElevation;
 use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
+use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLogin;
+use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLoginData;
+use Avax\Auth\System\Flow\Federation\DiscoverConnection\DiscoverFederationConnection;
+use Avax\Auth\System\Flow\Federation\ReadConnections\ReadFederationConnections;
+use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnection;
+use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
+use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLogin;
+use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLoginData;
 use Avax\Auth\System\Flow\Login\AuthenticationResult;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\Login\Login;
@@ -53,6 +70,22 @@ use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClient;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeToken;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
+use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthentication;
+use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthenticationData;
+use Avax\Auth\System\Flow\Passkey\BeginRegistration\BeginPasskeyRegistration;
+use Avax\Auth\System\Flow\Passkey\CompleteAuthentication\CompletePasskeyAuthentication;
+use Avax\Auth\System\Flow\Passkey\CompleteAuthentication\CompletePasskeyAuthenticationData;
+use Avax\Auth\System\Flow\Passkey\CompleteRegistration\CompletePasskeyRegistration;
+use Avax\Auth\System\Flow\Passkey\CompleteRegistration\CompletePasskeyRegistrationData;
+use Avax\Auth\System\Flow\Passkey\ListPasskeys\ListPasskeys;
+use Avax\Auth\System\Flow\Passkey\PasskeyAuthenticationChallenge;
+use Avax\Auth\System\Flow\Passkey\PasskeyRegistration;
+use Avax\Auth\System\Flow\Passkey\RenamePasskey\RenamePasskey;
+use Avax\Auth\System\Flow\Passkey\RenamePasskey\RenamePasskeyData;
+use Avax\Auth\System\Flow\Passkey\RevokePasskey\RevokePasskey as RevokePasskeyFlow;
+use Avax\Auth\System\Flow\Provisioning\DeprovisionUser\DeprovisionUser;
+use Avax\Auth\System\Flow\Provisioning\ReactivateUser\ReactivateUser;
+use Avax\Auth\System\Flow\Provisioning\SuspendUser\SuspendUser;
 use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Flow\Recover\BeginPasswordReset;
 use Avax\Auth\System\Flow\Recover\BeginPasswordResetData;
@@ -62,6 +95,8 @@ use Avax\Auth\System\Flow\Recover\ResetPasswordData;
 use Avax\Auth\System\Flow\Register\Register;
 use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Flow\Register\RegistrationResult;
+use Avax\Auth\System\Flow\Risk\AssessCurrentRisk\AssessCurrentRisk;
+use Avax\Auth\System\Flow\Risk\ReadRiskSignals\ReadRiskSignals;
 use Avax\Auth\System\Flow\Session\ActiveSession;
 use Avax\Auth\System\Flow\Session\LogoutAllSessions\LogoutAllSessions;
 use Avax\Auth\System\Flow\Session\ReadActiveSessions\ReadActiveSessions;
@@ -103,6 +138,26 @@ final readonly class Auth implements AuthInterface
         private ExchangeRefreshToken|null $exchangeOAuthRefreshToken,
         private RevokeToken|null       $revokeOAuthToken,
         private IntrospectToken|null   $introspectOAuthToken,
+        private BeginAdminElevation    $beginAdminElevation,
+        private EndAdminElevation      $endAdminElevation,
+        private RequireAdminElevation  $requireAdminElevation,
+        private SuspendUser|null       $suspendUser,
+        private ReactivateUser|null    $reactivateUser,
+        private DeprovisionUser|null   $deprovisionUser,
+        private BeginPasskeyRegistration|null $beginPasskeyRegistration,
+        private CompletePasskeyRegistration|null $completePasskeyRegistration,
+        private BeginPasskeyAuthentication|null $beginPasskeyAuthentication,
+        private CompletePasskeyAuthentication|null $completePasskeyAuthentication,
+        private ListPasskeys|null      $readPasskeys,
+        private RenamePasskey|null     $renamePasskey,
+        private RevokePasskeyFlow|null $revokePasskey,
+        private RegisterFederationConnection|null $registerFederationConnection,
+        private ReadFederationConnections|null $readFederationConnections,
+        private DiscoverFederationConnection|null $discoverFederationConnection,
+        private StartFederatedLogin|null $startFederatedLogin,
+        private CompleteFederatedLogin|null $completeFederatedLogin,
+        private AssessCurrentRisk      $assessCurrentRisk,
+        private ReadRiskSignals        $readRiskSignals,
         private BeginPasswordReset     $beginPasswordReset,
         private ResetPassword          $resetPassword,
         private BeginEmailVerification $beginEmailVerification,
@@ -226,6 +281,106 @@ final readonly class Auth implements AuthInterface
         return $this->introspectOAuthTokenOrFail()->execute($data);
     }
 
+    public function beginAdminElevation() : AdminElevation
+    {
+        return $this->beginAdminElevation->execute();
+    }
+
+    public function endAdminElevation() : void
+    {
+        $this->endAdminElevation->execute();
+    }
+
+    public function requireAdminElevation() : void
+    {
+        $this->requireAdminElevation->execute();
+    }
+
+    public function suspendUser(int $userId) : void
+    {
+        $this->suspendUserOrFail()->execute($userId);
+    }
+
+    public function reactivateUser(int $userId) : void
+    {
+        $this->reactivateUserOrFail()->execute($userId);
+    }
+
+    public function deprovisionUser(int $userId) : void
+    {
+        $this->deprovisionUserOrFail()->execute($userId);
+    }
+
+    public function beginPasskeyRegistration() : PasskeyRegistration
+    {
+        return $this->beginPasskeyRegistrationOrFail()->execute();
+    }
+
+    public function completePasskeyRegistration(CompletePasskeyRegistrationData $data) : PasskeyCredential
+    {
+        return $this->completePasskeyRegistrationOrFail()->execute($data);
+    }
+
+    public function beginPasskeyAuthentication(BeginPasskeyAuthenticationData $data) : PasskeyAuthenticationChallenge
+    {
+        return $this->beginPasskeyAuthenticationOrFail()->execute($data);
+    }
+
+    public function completePasskeyAuthentication(CompletePasskeyAuthenticationData $data) : AuthenticationResult
+    {
+        return $this->completePasskeyAuthenticationOrFail()->execute($data);
+    }
+
+    public function readPasskeys() : array
+    {
+        return $this->readPasskeysOrFail()->execute();
+    }
+
+    public function renamePasskey(RenamePasskeyData $data) : PasskeyCredential
+    {
+        return $this->renamePasskeyOrFail()->execute($data);
+    }
+
+    public function revokePasskey(string $credentialId) : void
+    {
+        $this->revokePasskeyOrFail()->execute($credentialId);
+    }
+
+    public function registerFederationConnection(RegisterFederationConnectionData $data) : FederationConnection
+    {
+        return $this->registerFederationConnectionOrFail()->execute($data);
+    }
+
+    public function readFederationConnections() : array
+    {
+        return $this->readFederationConnectionsOrFail()->execute();
+    }
+
+    public function discoverFederationConnection(string $email) : FederationConnection|null
+    {
+        return $this->discoverFederationConnectionOrFail()->execute($email);
+    }
+
+    public function startFederatedLogin(StartFederatedLoginData $data) : StartedFederatedLogin
+    {
+        return $this->startFederatedLoginOrFail()->execute($data);
+    }
+
+    public function completeFederatedLogin(CompleteFederatedLoginData $data) : AuthenticationResult
+    {
+        return $this->completeFederatedLoginOrFail()->execute($data);
+    }
+
+    public function assessCurrentRisk(string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
+    {
+        return $this->assessCurrentRisk->execute($ipAddress, $userAgent);
+    }
+
+    public function readRiskSignals(int|null $userId = null) : array
+    {
+        return $this->readRiskSignals->execute($userId);
+    }
+
     public function beginPasswordReset(BeginPasswordResetData $data) : PasswordResetChallenge
     {
         return $this->beginPasswordReset->execute($data);
@@ -324,5 +479,80 @@ final readonly class Auth implements AuthInterface
     private function introspectOAuthTokenOrFail() : IntrospectToken
     {
         return $this->introspectOAuthToken ?? throw new RuntimeException('OAuth introspection is not configured.');
+    }
+
+    private function suspendUserOrFail() : SuspendUser
+    {
+        return $this->suspendUser ?? throw new RuntimeException('Provisioning lifecycle is not configured.');
+    }
+
+    private function reactivateUserOrFail() : ReactivateUser
+    {
+        return $this->reactivateUser ?? throw new RuntimeException('Provisioning lifecycle is not configured.');
+    }
+
+    private function deprovisionUserOrFail() : DeprovisionUser
+    {
+        return $this->deprovisionUser ?? throw new RuntimeException('Provisioning lifecycle is not configured.');
+    }
+
+    private function beginPasskeyRegistrationOrFail() : BeginPasskeyRegistration
+    {
+        return $this->beginPasskeyRegistration ?? throw new RuntimeException('Passkey runtime is not configured.');
+    }
+
+    private function completePasskeyRegistrationOrFail() : CompletePasskeyRegistration
+    {
+        return $this->completePasskeyRegistration ?? throw new RuntimeException('Passkey runtime is not configured.');
+    }
+
+    private function beginPasskeyAuthenticationOrFail() : BeginPasskeyAuthentication
+    {
+        return $this->beginPasskeyAuthentication ?? throw new RuntimeException('Passkey runtime is not configured.');
+    }
+
+    private function completePasskeyAuthenticationOrFail() : CompletePasskeyAuthentication
+    {
+        return $this->completePasskeyAuthentication ?? throw new RuntimeException('Passkey runtime is not configured.');
+    }
+
+    private function readPasskeysOrFail() : ListPasskeys
+    {
+        return $this->readPasskeys ?? throw new RuntimeException('Passkey runtime is not configured.');
+    }
+
+    private function renamePasskeyOrFail() : RenamePasskey
+    {
+        return $this->renamePasskey ?? throw new RuntimeException('Passkey runtime is not configured.');
+    }
+
+    private function revokePasskeyOrFail() : RevokePasskeyFlow
+    {
+        return $this->revokePasskey ?? throw new RuntimeException('Passkey runtime is not configured.');
+    }
+
+    private function registerFederationConnectionOrFail() : RegisterFederationConnection
+    {
+        return $this->registerFederationConnection ?? throw new RuntimeException('Federation runtime is not configured.');
+    }
+
+    private function readFederationConnectionsOrFail() : ReadFederationConnections
+    {
+        return $this->readFederationConnections ?? throw new RuntimeException('Federation runtime is not configured.');
+    }
+
+    private function discoverFederationConnectionOrFail() : DiscoverFederationConnection
+    {
+        return $this->discoverFederationConnection ?? throw new RuntimeException('Federation runtime is not configured.');
+    }
+
+    private function startFederatedLoginOrFail() : StartFederatedLogin
+    {
+        return $this->startFederatedLogin ?? throw new RuntimeException('Federation runtime is not configured.');
+    }
+
+    private function completeFederatedLoginOrFail() : CompleteFederatedLogin
+    {
+        return $this->completeFederatedLogin ?? throw new RuntimeException('Federation runtime is not configured.');
     }
 }

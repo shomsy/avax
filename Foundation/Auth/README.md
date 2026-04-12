@@ -1,7 +1,8 @@
 # Avax Auth
 
-Pure PHP 8.3+ auth kernel with one obvious ingress, immutable auth context, interchangeable session/JWT runtime
-strategies, first-class MFA, package-owned OAuth client/token flows, and a thin optional integration surface.
+Pure PHP 8.3+ auth kernel with one obvious ingress, immutable auth context, separate web-session and API-token lanes,
+first-class MFA, package-owned OAuth client/token flows, adapter-first passkeys and federation, deterministic risk,
+admin elevation, and a thin optional integration surface.
 
 ## What Changed
 
@@ -11,6 +12,12 @@ strategies, first-class MFA, package-owned OAuth client/token flows, and a thin 
 - Session and JWT now share the same public result model, logout path, and refresh/revocation lifecycle.
 - OAuth v1 now owns client registration, authorization-code issuance, PKCE verification, refresh exchange,
   introspection, and token revocation.
+- `Access` now supports composed access policies with role, permission, resource-owner, fresh-MFA, and admin-elevation
+  conditions.
+- Passkeys now own registration/authentication plus listing, rename, and revoke flows behind a runtime contract.
+- Federation now owns tenant-aware connection registration, discovery, start/complete login, JIT linking, and
+  group-to-role mapping.
+- Admin realm, provisioning, deterministic risk, and cleanup/export maintenance flows are package-owned slices.
 - Password reset, email verification, MFA enrollment/challenge/recovery, refresh rotation, audit events, and
   anti-enumeration flows are package-owned.
 
@@ -79,6 +86,9 @@ $backupCodes = $auth->confirmMfaEnrollment(
 - `check(): bool`
 - `user(): ?AuthenticatedUser`
 - `logout(): void`
+- `logoutAllSessions(): void`
+- `readActiveSessions(): list<ActiveSession>`
+- `revokeSession(string): void`
 - `access(): AccessInterface`
 - `changePassword(ChangePasswordData): void`
 - `register(RegistrationData): RegistrationResult`
@@ -90,6 +100,26 @@ $backupCodes = $auth->confirmMfaEnrollment(
 - `exchangeOAuthRefreshToken(ExchangeRefreshTokenData): OAuthTokenGrant`
 - `revokeOAuthToken(RevokeTokenData): void`
 - `introspectOAuthToken(IntrospectTokenData): TokenIntrospection`
+- `beginAdminElevation(): AdminElevation`
+- `endAdminElevation(): void`
+- `requireAdminElevation(): void`
+- `suspendUser(int): void`
+- `reactivateUser(int): void`
+- `deprovisionUser(int): void`
+- `beginPasskeyRegistration(): PasskeyRegistration`
+- `completePasskeyRegistration(CompletePasskeyRegistrationData): PasskeyCredential`
+- `beginPasskeyAuthentication(BeginPasskeyAuthenticationData): PasskeyAuthenticationChallenge`
+- `completePasskeyAuthentication(CompletePasskeyAuthenticationData): AuthenticationResult`
+- `readPasskeys(): list<PasskeyCredential>`
+- `renamePasskey(RenamePasskeyData): PasskeyCredential`
+- `revokePasskey(string): void`
+- `registerFederationConnection(RegisterFederationConnectionData): FederationConnection`
+- `readFederationConnections(): list<FederationConnection>`
+- `discoverFederationConnection(string): ?FederationConnection`
+- `startFederatedLogin(StartFederatedLoginData): StartedFederatedLogin`
+- `completeFederatedLogin(CompleteFederatedLoginData): AuthenticationResult`
+- `assessCurrentRisk(?string, ?string): ?RiskDecision`
+- `readRiskSignals(?int): list<RiskSignal>`
 - `beginPasswordReset(BeginPasswordResetData): PasswordResetChallenge`
 - `resetPassword(ResetPasswordData): bool`
 - `beginEmailVerification(BeginEmailVerificationData): EmailVerificationChallenge`
@@ -114,10 +144,18 @@ The package now has two explicit lanes:
 Runtime ownership lives in auth-flow slices:
 
 - `System/Flow/AuthenticateRequest/` owns ingress resolution and current auth context.
-- `System/Flow/Login/`, `Register/`, `Logout/`, `Recover/`, `Verify/`, `Mfa/`, and `Token/` own package behavior.
+- `System/Flow/Login/`, `Register/`, `Logout/`, `Recover/`, `Verify/`, `Mfa/`, `Token/`, `Session/`, `AdminRealm/`,
+  `Passkey/`, `Federation/`, `Provisioning/`, and `Risk/` own package behavior.
+- `System/Capability/Access/` owns authorization boundaries and composed access-policy evaluation.
 - `System/Capability/OAuth/` owns client registry and authorization-code persistence contracts.
 - `System/Flow/OAuth/` owns client registration, authorization-code issuance, token exchange, revoke, and introspection.
 - `System/Capability/Session/` owns durable tracked-session state and revocation contracts.
+- `System/Capability/Passkey/` owns credential and challenge contracts; runtime verification stays behind
+  `PasskeyRuntimeInterface`.
+- `System/Capability/Federation/` owns tenant-aware connection and identity-link contracts; protocol execution stays
+  behind `FederationRuntimeInterface`.
+- `System/Flow/*/CleanupExpired*/` and `Flow/Diagnostics/ExportAuditEvents/` own package-local maintenance jobs without
+  creating a global operations bucket.
 - `System/Capability/Identity/` now only coordinates strategy issuance/clear semantics.
 - `System/Capability/User/` stays internal domain state; public auth output is `AuthenticatedUser`.
 - `System/Flow/Diagnostics/` owns audit events without becoming a second source of truth.
@@ -138,6 +176,10 @@ non-goals.
 - Password reset begin flow is anti-enumeration by default.
 - MFA uses TOTP with replay protection, backup codes, recovery tokens, step-up freshness checks, and per-user challenge
   throttling.
+- Passkeys support multiple credentials per account, user-owned rename/revoke, and strict challenge replay prevention.
+- Admin-sensitive actions can be expressed through `AccessPolicy` and enforced with fresh MFA plus admin elevation.
+- Federation login is tenant-aware at the connection boundary, leaves an audit trail, and can JIT link or create users.
+- Deterministic risk rules flag new environments and refresh-token reuse for review-oriented follow-up.
 - Auth context is immutable and password hashes never leave the internal `User` entity.
 
 ## Delivery Docs

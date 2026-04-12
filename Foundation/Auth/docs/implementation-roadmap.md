@@ -12,6 +12,7 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 - MFA enrollment, challenge, backup codes, and fresh-MFA checks
 - tracked web sessions with idle and absolute expiry
 - active session listing, single-session revoke, and logout-all
+- OAuth client registry, authorization-code issuance, PKCE enforcement, refresh exchange, revoke, and introspection
 - audit events across security-sensitive flows
 
 ## Next Delivery Order
@@ -24,7 +25,7 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 
 ### Sprint 2
 
-- extend token subsystem with explicit client registry contracts
+- complete OAuth-backed adapter examples and persistence contracts
 - add reset-confirm throttling and narrower refresh revocation controls
 
 ### Sprint 3
@@ -34,7 +35,7 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 
 ### Sprint 4
 
-- introduce optional OAuth contracts over `league/oauth2-server`
+- evaluate optional `league/oauth2-server` interop adapter without breaking package-owned OAuth kernel contracts
 
 ### Sprint 5
 

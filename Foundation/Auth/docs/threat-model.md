@@ -11,6 +11,7 @@ This document captures the current auth-kernel threat model and the controls own
 | credential stuffing | login rate limiting, safe failures, audit events | implemented |
 | brute force | login rate limiting, MFA attempt throttling | implemented |
 | session hijack | secure cookies, session ID regeneration, idle timeout, absolute timeout, tracked session revocation | implemented |
+| stolen authorization code | short TTL, single use, redirect URI match, PKCE verification for public clients | implemented |
 | stolen refresh token | rotation, reuse detection, family revocation | implemented |
 | MFA bypass | challenge lifecycle, replay protection, backup code one-time use, fresh-MFA checks | implemented |
 | recovery takeover | anti-enumeration start, recovery throttling, reset-driven revocation, MFA recovery auditing | implemented |
@@ -25,6 +26,7 @@ This document captures the current auth-kernel threat model and the controls own
 - `auth_incident`: login, logout, MFA, or auth-ingress compromise indicators
 - `credential_incident`: password reset, password change, or hash-policy compromise indicators
 - `session_incident`: session theft, stale session use, or mass revocation scenarios
+- `oauth_incident`: authorization-code abuse, refresh reuse, or client secret compromise
 - `admin_incident`: privileged access misuse or break-glass usage
 
 ## Failure And Recovery Notes
@@ -48,6 +50,13 @@ This document captures the current auth-kernel threat model and the controls own
 - recovery start is throttled and anti-enumeration
 - successful recovery disables MFA and revokes tracked sessions and refresh tokens
 - recovery emits auditable security events
+
+### OAuth Grant Compromise
+
+- authorization codes are single use and short lived
+- public clients require `S256` PKCE before token exchange
+- refresh reuse revokes the entire token family
+- revoke and introspection flows exist for downstream incident handling
 
 ## Severity Matrix
 

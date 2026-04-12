@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
+use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
+use Avax\Auth\System\Capability\OAuth\OAuthClient;
+use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
 use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticateRequest;
@@ -35,6 +38,21 @@ use Avax\Auth\System\Flow\Mfa\Recover\ConfirmMfaRecovery;
 use Avax\Auth\System\Flow\Mfa\Recover\ConfirmMfaRecoveryData;
 use Avax\Auth\System\Flow\Mfa\Recover\StartMfaRecovery;
 use Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData;
+use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCode;
+use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
+use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCode;
+use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
+use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshToken;
+use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshTokenData;
+use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectToken;
+use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectTokenData;
+use Avax\Auth\System\Flow\OAuth\IntrospectToken\TokenIntrospection;
+use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
+use Avax\Auth\System\Flow\OAuth\ReadClients\ReadClients;
+use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClient;
+use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeToken;
+use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
 use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Flow\Recover\BeginPasswordReset;
 use Avax\Auth\System\Flow\Recover\BeginPasswordResetData;
@@ -55,6 +73,7 @@ use Avax\Auth\System\Flow\Verify\BeginEmailVerificationData;
 use Avax\Auth\System\Flow\Verify\EmailVerificationChallenge;
 use Avax\Auth\System\Flow\Verify\VerifyEmail;
 use Avax\Auth\System\Flow\Verify\VerifyEmailData;
+use RuntimeException;
 
 /**
  * Main entry point for Avax Auth System.
@@ -77,6 +96,13 @@ final readonly class Auth implements AuthInterface
         private ChangePassword         $changePassword,
         private Register               $register,
         private RefreshAuthentication  $refreshAuthentication,
+        private RegisterClient|null    $registerOAuthClient,
+        private ReadClients|null       $readOAuthClients,
+        private AuthorizeCode|null     $authorizeOAuthCode,
+        private ExchangeAuthorizationCode|null $exchangeOAuthCode,
+        private ExchangeRefreshToken|null $exchangeOAuthRefreshToken,
+        private RevokeToken|null       $revokeOAuthToken,
+        private IntrospectToken|null   $introspectOAuthToken,
         private BeginPasswordReset     $beginPasswordReset,
         private ResetPassword          $resetPassword,
         private BeginEmailVerification $beginEmailVerification,
@@ -165,6 +191,41 @@ final readonly class Auth implements AuthInterface
         return $this->refreshAuthentication->execute($request);
     }
 
+    public function registerOAuthClient(RegisterClientData $data) : RegisteredOAuthClient
+    {
+        return $this->registerOAuthClientOrFail()->execute($data);
+    }
+
+    public function readOAuthClients() : array
+    {
+        return $this->readOAuthClientsOrFail()->execute();
+    }
+
+    public function authorizeOAuthCode(AuthorizeCodeData $data) : IssuedAuthorizationCode
+    {
+        return $this->authorizeOAuthCodeOrFail()->execute($data);
+    }
+
+    public function exchangeOAuthCode(ExchangeAuthorizationCodeData $data) : OAuthTokenGrant
+    {
+        return $this->exchangeOAuthCodeOrFail()->execute($data);
+    }
+
+    public function exchangeOAuthRefreshToken(ExchangeRefreshTokenData $data) : OAuthTokenGrant
+    {
+        return $this->exchangeOAuthRefreshTokenOrFail()->execute($data);
+    }
+
+    public function revokeOAuthToken(RevokeTokenData $data) : void
+    {
+        $this->revokeOAuthTokenOrFail()->execute($data);
+    }
+
+    public function introspectOAuthToken(IntrospectTokenData $data) : TokenIntrospection
+    {
+        return $this->introspectOAuthTokenOrFail()->execute($data);
+    }
+
     public function beginPasswordReset(BeginPasswordResetData $data) : PasswordResetChallenge
     {
         return $this->beginPasswordReset->execute($data);
@@ -228,5 +289,40 @@ final readonly class Auth implements AuthInterface
     public function confirmMfaRecovery(ConfirmMfaRecoveryData $data) : void
     {
         $this->confirmMfaRecovery->execute($data);
+    }
+
+    private function registerOAuthClientOrFail() : RegisterClient
+    {
+        return $this->registerOAuthClient ?? throw new RuntimeException('OAuth client registry is not configured.');
+    }
+
+    private function readOAuthClientsOrFail() : ReadClients
+    {
+        return $this->readOAuthClients ?? throw new RuntimeException('OAuth client registry is not configured.');
+    }
+
+    private function authorizeOAuthCodeOrFail() : AuthorizeCode
+    {
+        return $this->authorizeOAuthCode ?? throw new RuntimeException('OAuth authorization code flow is not configured.');
+    }
+
+    private function exchangeOAuthCodeOrFail() : ExchangeAuthorizationCode
+    {
+        return $this->exchangeOAuthCode ?? throw new RuntimeException('OAuth token exchange is not configured.');
+    }
+
+    private function exchangeOAuthRefreshTokenOrFail() : ExchangeRefreshToken
+    {
+        return $this->exchangeOAuthRefreshToken ?? throw new RuntimeException('OAuth refresh flow is not configured.');
+    }
+
+    private function revokeOAuthTokenOrFail() : RevokeToken
+    {
+        return $this->revokeOAuthToken ?? throw new RuntimeException('OAuth revoke flow is not configured.');
+    }
+
+    private function introspectOAuthTokenOrFail() : IntrospectToken
+    {
+        return $this->introspectOAuthToken ?? throw new RuntimeException('OAuth introspection is not configured.');
     }
 }

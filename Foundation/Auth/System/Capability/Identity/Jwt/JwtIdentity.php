@@ -73,9 +73,20 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
             $mfaVerifiedAt = null;
             $mfaTimestamp  = $claims['mfa_at'] ?? null;
+            $clientId      = $claims['client_id'] ?? null;
+            $scopeClaim    = $claims['scope'] ?? null;
+            $scopes        = [];
 
             if (is_int($mfaTimestamp)) {
                 $mfaVerifiedAt = new DateTimeImmutable("@{$mfaTimestamp}");
+            }
+
+            if (! is_string($clientId) && $clientId !== null) {
+                return null;
+            }
+
+            if (is_string($scopeClaim) && $scopeClaim !== '') {
+                $scopes = array_values(array_filter(explode(' ', $scopeClaim), static fn (string $scope) : bool => $scope !== ''));
             }
 
             $user = $this->userSource->findById(new UserId($subject));
@@ -88,14 +99,24 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 user         : $user,
                 tokenId      : $tokenId,
                 expiresAt    : $expiryMoment,
-                mfaVerifiedAt: $mfaVerifiedAt
+                mfaVerifiedAt: $mfaVerifiedAt,
+                clientId     : $clientId,
+                scopes       : $scopes
             );
         } catch (Throwable) {
             return null;
         }
     }
 
-    public function issueRefreshToken(User $user, DateTimeImmutable|null $mfaVerifiedAt = null) : IssuedRefreshToken|null
+    /**
+     * @param list<string> $scopes
+     */
+    public function issueRefreshToken(
+        User $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null $clientId = null,
+        array $scopes = []
+    ) : IssuedRefreshToken|null
     {
         if ($this->refreshTokenStore === null) {
             return null;
@@ -104,11 +125,21 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         return $this->refreshTokenStore->issue(
             userId       : $user->getId(),
             expiresAt    : $this->clock->now()->modify("+{$this->refreshTokenExpiry} seconds"),
-            mfaVerifiedAt: $mfaVerifiedAt
+            mfaVerifiedAt: $mfaVerifiedAt,
+            clientId     : $clientId,
+            scopes       : $scopes
         );
     }
 
-    public function issue(User $user, DateTimeImmutable|null $mfaVerifiedAt = null) : IssuedToken
+    /**
+     * @param list<string> $scopes
+     */
+    public function issue(
+        User $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null $clientId = null,
+        array $scopes = []
+    ) : IssuedToken
     {
         if (! $user->isActive()) {
             throw new InvalidArgumentException(message: 'Inactive users cannot be authenticated.');
@@ -128,6 +159,14 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
         if ($mfaVerifiedAt !== null) {
             $payload['mfa_at'] = $mfaVerifiedAt->getTimestamp();
+        }
+
+        if ($clientId !== null) {
+            $payload['client_id'] = $clientId;
+        }
+
+        if ($scopes !== []) {
+            $payload['scope'] = implode(' ', array_values($scopes));
         }
 
         return new IssuedToken(

@@ -14,6 +14,17 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-019
+- `created_at`: 2026-04-12 15:36 CEST
+- `updated_at`: 2026-04-12 15:36 CEST
+- `status`: done
+- `outcome`: Deliver package-owned OAuth/API auth subsystem v1 with client registry, authorization-code + PKCE,
+  refresh exchange, revoke, introspection, and public facade wiring
+- `acceptance`: `Capability/OAuth/` and `Flow/OAuth/` exist; public clients require `S256` PKCE; authorization codes are
+  single use; OAuth refresh reuse revokes the token family; README/docs/evidence reflect the new subsystem; PHPUnit and
+  PHPStan lanes pass
+- `links`: System/Capability/OAuth/, System/Flow/OAuth/, README.md, docs/
+
 - `id`: AUTH-018
 - `created_at`: 2026-04-12 15:04 CEST
 - `updated_at`: 2026-04-12 15:04 CEST

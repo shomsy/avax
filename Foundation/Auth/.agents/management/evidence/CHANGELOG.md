@@ -17,6 +17,9 @@ Update rules:
 
 ## Current Ledger
 
+- `2026-04-12 15:36 CEST` | `AUTH-019` | shipped package-owned OAuth/API auth subsystem v1 with `Capability/OAuth`
+  contracts, client registration, authorization-code + PKCE flow, OAuth refresh exchange, introspection, revoke, JWT
+  client/scope claims, new regression tests, and boundary/doc updates
 - `2026-04-12 15:04 CEST` | `AUTH-018` | converted `REFAKTOR.md` into a repo-owned ADR, threat model, and
   implementation roadmap; added `Capability/Session` with tracked session registry contracts; shipped active-session
   listing, targeted revoke, logout-all, and reset-driven session/challenge revocation across the auth kernel

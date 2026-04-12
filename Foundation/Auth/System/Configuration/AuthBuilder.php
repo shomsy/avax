@@ -10,6 +10,10 @@ use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthenticati
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
+use Avax\Auth\System\Capability\OAuth\InMemoryAuthorizationCodeStore;
+use Avax\Auth\System\Capability\OAuth\InMemoryOAuthClientRegistry;
+use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
 use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
 use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
 use Avax\Auth\System\Capability\Throttle\InMemoryAttemptThrottleStore;
@@ -45,6 +49,13 @@ use Avax\Auth\System\Flow\Mfa\Recover\StartMfaRecovery;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Flow\Mfa\Totp;
 use Avax\Auth\System\Flow\Mfa\TotpInterface;
+use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCode;
+use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCode;
+use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshToken;
+use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectToken;
+use Avax\Auth\System\Flow\OAuth\ReadClients\ReadClients;
+use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClient;
+use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeToken;
 use Avax\Auth\System\Flow\ReadCurrentUser\ReadCurrentUser;
 use Avax\Auth\System\Flow\Recover\BeginPasswordReset;
 use Avax\Auth\System\Flow\Recover\InMemoryPasswordResetStore;
@@ -92,6 +103,8 @@ final class AuthBuilder
     private AttemptThrottle|null                      $mfaRecoveryThrottle    = null;
     private Clock|null                                $clock                  = null;
     private SessionRegistryInterface|null             $sessionRegistry        = null;
+    private OAuthClientRegistryInterface|null         $oauthClientRegistry    = null;
+    private AuthorizationCodeStoreInterface|null      $authorizationCodeStore = null;
     private string                                    $mfaIssuer              = 'Avax Auth';
 
     /**
@@ -228,6 +241,20 @@ final class AuthBuilder
         return $this;
     }
 
+    public function withOAuthClientRegistry(OAuthClientRegistryInterface $oauthClientRegistry) : self
+    {
+        $this->oauthClientRegistry = $oauthClientRegistry;
+
+        return $this;
+    }
+
+    public function withAuthorizationCodeStore(AuthorizationCodeStoreInterface $authorizationCodeStore) : self
+    {
+        $this->authorizationCodeStore = $authorizationCodeStore;
+
+        return $this;
+    }
+
     public function withMfaAttemptLimit(LimitMfaAttempts $mfaAttemptLimit) : self
     {
         $this->mfaAttemptLimit = $mfaAttemptLimit;
@@ -259,6 +286,8 @@ final class AuthBuilder
         $passwordHasher           = $this->passwordHasher ?? new PasswordHasher();
         $auditLog                 = $this->auditLog ?? new NullAuditLog();
         $clock                    = $this->clock ?? new Clock();
+        $oauthClientRegistry      = $this->oauthClientRegistry ?? new InMemoryOAuthClientRegistry($passwordHasher);
+        $authorizationCodeStore   = $this->authorizationCodeStore ?? new InMemoryAuthorizationCodeStore();
         $passwordResetStore       = $this->passwordResetStore ?? new InMemoryPasswordResetStore();
         $emailVerificationStore   = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore();
         $emailVerificationState   = $this->emailVerificationState ?? new InMemoryEmailVerificationStateStore();
@@ -330,6 +359,23 @@ final class AuthBuilder
                                        currentAuthentication: $currentAuthentication
                                    )
         );
+        $registerOAuthClient      = new RegisterClient(
+            clientRegistry: $oauthClientRegistry,
+            auditLog      : $auditLog,
+            clock         : $clock
+        );
+        $readOAuthClients         = new ReadClients(
+            clientRegistry: $oauthClientRegistry
+        );
+        $authorizeOAuthCode       = new AuthorizeCode(
+            currentAuthentication: $currentAuthentication,
+            userSource           : $this->userSource,
+            clientRegistry       : $oauthClientRegistry,
+            codeStore            : $authorizationCodeStore,
+            auditLog             : $auditLog,
+            clock                : $clock
+        );
+        $oauthReady               = $identity->jwtIdentity() !== null && $this->refreshTokenStore !== null;
 
         return new Auth(
             login                 : new Login(
@@ -407,6 +453,47 @@ final class AuthBuilder
                                         refreshTokenStore       : $this->refreshTokenStore,
                                         jwtIdentity             : $identity->jwtIdentity()
                                     ),
+            registerOAuthClient   : $oauthReady ? $registerOAuthClient : null,
+            readOAuthClients      : $oauthReady ? $readOAuthClients : null,
+            authorizeOAuthCode    : $oauthReady ? $authorizeOAuthCode : null,
+            exchangeOAuthCode     : $oauthReady
+                ? new ExchangeAuthorizationCode(
+                    clientRegistry   : $oauthClientRegistry,
+                    codeStore        : $authorizationCodeStore,
+                    userSource       : $this->userSource,
+                    jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
+                    refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException('Refresh token store is required.'),
+                    auditLog         : $auditLog,
+                    clock            : $clock
+                )
+                : null,
+            exchangeOAuthRefreshToken: $oauthReady
+                ? new ExchangeRefreshToken(
+                    clientRegistry   : $oauthClientRegistry,
+                    refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException('Refresh token store is required.'),
+                    userSource       : $this->userSource,
+                    jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
+                    auditLog         : $auditLog,
+                    clock            : $clock
+                )
+                : null,
+            revokeOAuthToken      : $oauthReady
+                ? new RevokeToken(
+                    clientRegistry   : $oauthClientRegistry,
+                    refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException('Refresh token store is required.'),
+                    jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
+                    auditLog         : $auditLog,
+                    clock            : $clock
+                )
+                : null,
+            introspectOAuthToken  : $oauthReady
+                ? new IntrospectToken(
+                    clientRegistry: $oauthClientRegistry,
+                    jwtIdentity   : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
+                    auditLog      : $auditLog,
+                    clock         : $clock
+                )
+                : null,
             beginPasswordReset    : new BeginPasswordReset(
                                         userSource        : $this->userSource,
                                         passwordResetStore: $passwordResetStore,

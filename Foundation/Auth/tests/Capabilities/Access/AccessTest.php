@@ -8,6 +8,7 @@ use Avax\Auth\System\Capability\Access\Access;
 use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequireResourceOwner\RequireResourceOwner;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
@@ -55,6 +56,7 @@ class AccessTest extends TestCase
         $requireAuthentication = new RequireAuthentication(currentAuthentication: $currentAuthentication);
         $requireRole = new RequireRole(currentAuthentication: $currentAuthentication);
         $requirePermission = new RequirePermission(currentAuthentication: $currentAuthentication);
+        $requirePhishingResistantAuthentication = new RequirePhishingResistantAuthentication($currentAuthentication);
 
         $access = new Access(
             requireAuthentication: $requireAuthentication,
@@ -65,6 +67,7 @@ class AccessTest extends TestCase
                 requireRole          : $requireRole,
                 requirePermission    : $requirePermission,
                 requireResourceOwner : new RequireResourceOwner($currentAuthentication),
+                requirePhishingResistantAuthentication: $requirePhishingResistantAuthentication,
                 requireFreshMfa      : new RequireFreshMfa($currentAuthentication, $clock),
                 requireAdminElevation: new RequireAdminElevation($currentAuthentication, $adminElevationStore, $clock)
             )

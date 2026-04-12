@@ -14,6 +14,17 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-021
+- `created_at`: 2026-04-12 22:39 CEST
+- `updated_at`: 2026-04-12 22:39 CEST
+- `completed_at`: 2026-04-12 22:39 CEST
+- `status`: done
+- `estimate`: 2h
+- `actual`: 2h 03m
+- `outcome`: Normalize phishing-resistant naming, unblock `ChangeEmail` as a first-class flow, and close the new regression gaps around admin elevation and email change
+- `acceptance`: `Capability/Access/RequirePhishingResistantAuthentication/` exists with clean naming; `BeginEmailChange` resolves accounts by `UserId`; admin elevation uses phishing-resistant terminology; new `ChangeEmail` and guard tests exist; PHPUnit and PHPStan lanes pass
+- `links`: System/Capability/Access/RequirePhishingResistantAuthentication/, System/Flow/ChangeEmail/, System/Flow/AdminRealm/, tests/Flows/ChangeEmail/, tests/Capabilities/Access/RequirePhishingResistantAuthentication/
+
 - `id`: AUTH-020
 - `created_at`: 2026-04-12 18:35 CEST
 - `updated_at`: 2026-04-12 21:32 CEST

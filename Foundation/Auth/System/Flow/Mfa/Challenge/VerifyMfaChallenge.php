@@ -172,7 +172,8 @@ final readonly class VerifyMfaChallenge
             accessTokenId       : $issued->accessToken?->tokenId,
             accessTokenExpiresAt: $issued->accessToken?->expiresAt,
             refreshTokenId      : $issued->refreshToken?->tokenId,
-            mfaVerifiedAt       : $now
+            mfaVerifiedAt       : $now,
+            phishingResistant   : $issued->phishingResistant
         );
 
         $this->currentAuthentication->store($context);

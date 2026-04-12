@@ -24,7 +24,8 @@ interface AuthorizationCodeStoreInterface
         string|null $state = null,
         string|null $codeChallenge = null,
         PkceMethod|null $codeChallengeMethod = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false
     ) : IssuedAuthorizationCode;
 
     public function find(string $plainCode) : AuthorizationCodeRecord|null;

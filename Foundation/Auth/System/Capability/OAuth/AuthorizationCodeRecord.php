@@ -25,7 +25,8 @@ final readonly class AuthorizationCodeRecord
         public string|null            $codeChallenge = null,
         public PkceMethod|null        $codeChallengeMethod = null,
         public DateTimeImmutable|null $usedAt = null,
-        public DateTimeImmutable|null $mfaVerifiedAt = null
+        public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public bool                   $phishingResistant = false
     ) {}
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool

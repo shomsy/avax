@@ -23,6 +23,11 @@ use Avax\Auth\System\Flow\AdminRealm\AdminElevation;
 use Avax\Auth\System\Flow\AdminRealm\BeginAdminElevation\BeginAdminElevation;
 use Avax\Auth\System\Flow\AdminRealm\EndAdminElevation\EndAdminElevation;
 use Avax\Auth\System\Flow\AdminRealm\RequireAdminElevation\RequireAdminElevation;
+use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChange;
+use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChangeData;
+use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChange;
+use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChangeData;
+use Avax\Auth\System\Flow\ChangeEmail\EmailChangeChallenge;
 use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
@@ -129,6 +134,8 @@ final readonly class Auth implements AuthInterface
         private CurrentAuthentication  $currentAuthentication,
         private AccessInterface        $access,
         private ChangePassword         $changePassword,
+        private BeginEmailChange|null  $beginEmailChange,
+        private ConfirmEmailChange|null $confirmEmailChange,
         private Register               $register,
         private RefreshAuthentication  $refreshAuthentication,
         private RegisterClient|null    $registerOAuthClient,
@@ -234,6 +241,16 @@ final readonly class Auth implements AuthInterface
     public function changePassword(ChangePasswordData $data) : void
     {
         $this->changePassword->execute(data: $data);
+    }
+
+    public function beginEmailChange(BeginEmailChangeData $data) : EmailChangeChallenge
+    {
+        return $this->beginEmailChangeOrFail()->execute($data);
+    }
+
+    public function confirmEmailChange(ConfirmEmailChangeData $data) : bool
+    {
+        return $this->confirmEmailChangeOrFail()->execute($data);
     }
 
     public function register(RegistrationData $data) : RegistrationResult
@@ -484,6 +501,16 @@ final readonly class Auth implements AuthInterface
     private function suspendUserOrFail() : SuspendUser
     {
         return $this->suspendUser ?? throw new RuntimeException('Provisioning lifecycle is not configured.');
+    }
+
+    private function beginEmailChangeOrFail() : BeginEmailChange
+    {
+        return $this->beginEmailChange ?? throw new RuntimeException('Email change flow is not configured.');
+    }
+
+    private function confirmEmailChangeOrFail() : ConfirmEmailChange
+    {
+        return $this->confirmEmailChange ?? throw new RuntimeException('Email change flow is not configured.');
     }
 
     private function reactivateUserOrFail() : ReactivateUser

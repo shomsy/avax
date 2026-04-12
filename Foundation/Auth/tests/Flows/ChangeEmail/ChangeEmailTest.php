@@ -1,0 +1,286 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Tests\Flow\ChangeEmail;
+
+use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
+use Avax\Auth\System\Capability\Session\SessionRecord;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserEmail;
+use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChange;
+use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChangeData;
+use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChange;
+use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChangeData;
+use Avax\Auth\System\Flow\ChangeEmail\EmailChangeFailed;
+use Avax\Auth\System\Flow\ChangeEmail\InMemoryEmailChangeStore;
+use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flow\Mfa\Challenge\InMemoryMfaChallengeStore;
+use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeRecord;
+use Avax\Auth\System\Flow\Mfa\MfaChallengePurpose;
+use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
+use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
+use Avax\Auth\Tests\Support\FrozenClock;
+use DateInterval;
+use DateTimeImmutable;
+use Mockery;
+use PHPUnit\Framework\TestCase;
+
+final class ChangeEmailTest extends TestCase
+{
+    public function testBeginEmailChangeSuccess() : void
+    {
+        $clock = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $passwordHasher = $this->passwordHasher();
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(AuthenticationContext::authenticated(
+            user             : new AuthenticatedUser(
+                id            : 1,
+                email         : 'stale@example.com',
+                username      : 'user',
+                mfaEnabled    : true
+            ),
+            mode             : AuthenticationMode::SESSION,
+            sessionId        : 'session-1',
+            mfaVerifiedAt    : $clock->now()->sub(new DateInterval('PT2M'))
+        ));
+
+        $userSource = new InMemoryUserSource();
+        $userSource->create($this->userWithPassword($passwordHasher, 1, 'old-password', 'user@example.com'));
+
+        $auditLog = new InMemoryAuditLog();
+        $flow = new BeginEmailChange(
+            currentAuthentication: $currentAuthentication,
+            userSource           : $userSource,
+            passwordHasher       : $passwordHasher,
+            emailChangeStore     : new InMemoryEmailChangeStore(),
+            requireFreshMfa      : new RequireFreshMfa($currentAuthentication, $clock),
+            auditLog             : $auditLog,
+            clock                : $clock
+        );
+
+        $challenge = $flow->execute(new BeginEmailChangeData(
+            newEmail        : 'new@example.com',
+            currentPassword : 'old-password'
+        ));
+
+        $this->assertTrue($challenge->dispatched);
+        $this->assertNotNull($challenge->token);
+        $this->assertSame('auth.email_change.requested', $auditLog->events()[0]->name);
+    }
+
+    public function testBeginEmailChangeFailureInvalidPasswordTakesPrecedenceOverTakenEmail() : void
+    {
+        $clock = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $passwordHasher = $this->passwordHasher();
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(AuthenticationContext::authenticated(
+            user             : new AuthenticatedUser(
+                id            : 1,
+                email         : 'stale@example.com',
+                username      : 'user',
+                mfaEnabled    : true
+            ),
+            mode             : AuthenticationMode::SESSION,
+            sessionId        : 'session-1',
+            mfaVerifiedAt    : $clock->now()->sub(new DateInterval('PT2M'))
+        ));
+
+        $userSource = new InMemoryUserSource();
+        $userSource->create($this->userWithPassword($passwordHasher, 1, 'old-password', 'user@example.com'));
+        $userSource->create($this->userWithPassword($passwordHasher, 2, 'someone-password', 'taken@example.com'));
+
+        $auditLog = new InMemoryAuditLog();
+        $flow = new BeginEmailChange(
+            currentAuthentication: $currentAuthentication,
+            userSource           : $userSource,
+            passwordHasher       : $passwordHasher,
+            emailChangeStore     : new InMemoryEmailChangeStore(),
+            requireFreshMfa      : new RequireFreshMfa($currentAuthentication, $clock),
+            auditLog             : $auditLog,
+            clock                : $clock
+        );
+
+        $this->expectException(EmailChangeFailed::class);
+        $this->expectExceptionMessage('Current password is invalid.');
+        $this->expectExceptionCode(403);
+
+        $flow->execute(new BeginEmailChangeData(
+            newEmail        : 'taken@example.com',
+            currentPassword : 'wrong-password'
+        ));
+    }
+
+    public function testBeginEmailChangeFailureEmailTaken() : void
+    {
+        $clock = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $passwordHasher = $this->passwordHasher();
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(AuthenticationContext::authenticated(
+            user             : new AuthenticatedUser(
+                id            : 1,
+                email         : 'stale@example.com',
+                username      : 'user',
+                mfaEnabled    : true
+            ),
+            mode             : AuthenticationMode::SESSION,
+            sessionId        : 'session-1',
+            mfaVerifiedAt    : $clock->now()->sub(new DateInterval('PT2M'))
+        ));
+
+        $userSource = new InMemoryUserSource();
+        $userSource->create($this->userWithPassword($passwordHasher, 1, 'old-password', 'user@example.com'));
+        $userSource->create($this->userWithPassword($passwordHasher, 2, 'someone-password', 'taken@example.com'));
+
+        $auditLog = new InMemoryAuditLog();
+        $flow = new BeginEmailChange(
+            currentAuthentication: $currentAuthentication,
+            userSource           : $userSource,
+            passwordHasher       : $passwordHasher,
+            emailChangeStore     : new InMemoryEmailChangeStore(),
+            requireFreshMfa      : new RequireFreshMfa($currentAuthentication, $clock),
+            auditLog             : $auditLog,
+            clock                : $clock
+        );
+
+        $this->expectException(EmailChangeFailed::class);
+        $this->expectExceptionMessage('Email address is already in use.');
+        $this->expectExceptionCode(409);
+
+        $flow->execute(new BeginEmailChangeData(
+            newEmail        : 'taken@example.com',
+            currentPassword : 'old-password'
+        ));
+    }
+
+    public function testConfirmEmailChangeSuccess() : void
+    {
+        $clock = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $passwordHasher = $this->passwordHasher();
+        $currentAuthentication = new CurrentAuthentication();
+        $context = AuthenticationContext::authenticated(
+            user          : new AuthenticatedUser(
+                id            : 1,
+                email         : 'user@example.com',
+                username      : 'user',
+                mfaEnabled    : true
+            ),
+            mode          : AuthenticationMode::SESSION,
+            sessionId     : 'session-1',
+            mfaVerifiedAt  : $clock->now()->sub(new DateInterval('PT2M'))
+        );
+        $currentAuthentication->store($context);
+
+        $userSource = new InMemoryUserSource();
+        $userSource->create($this->userWithPassword($passwordHasher, 1, 'old-password', 'user@example.com'));
+
+        $emailChangeStore = new InMemoryEmailChangeStore();
+        $challenge = $emailChangeStore->issue(
+            userId    : new UserId(1),
+            newEmail  : 'new@example.com',
+            expiresAt : $clock->now()->add(new DateInterval('PT30M'))
+        );
+
+        $sessionRegistry = new InMemorySessionRegistry();
+        $sessionRegistry->track(new SessionRecord(
+            sessionId        : 'session-1',
+            userId           : new UserId(1),
+            createdAt        : $clock->now()->sub(new DateInterval('PT5M')),
+            lastSeenAt       : $clock->now(),
+            idleExpiresAt    : $clock->now()->add(new DateInterval('PT10M')),
+            absoluteExpiresAt: $clock->now()->add(new DateInterval('PT1H'))
+        ));
+
+        $challengeStore = new InMemoryMfaChallengeStore();
+        $challengeStore->issue(new MfaChallengeRecord(
+            challengeId: 'challenge-1',
+            userId     : new UserId(1),
+            purpose    : MfaChallengePurpose::LOGIN,
+            createdAt  : $clock->now(),
+            expiresAt  : $clock->now()->add(new DateInterval('PT5M'))
+        ));
+
+        $refreshTokenStore = new InMemoryRefreshTokenStore();
+        $refreshToken = $refreshTokenStore->issue(
+            userId    : new UserId(1),
+            expiresAt : $clock->now()->add(new DateInterval('PT1H'))
+        );
+
+        $emailVerificationState = new InMemoryEmailVerificationStateStore();
+        $auditLog = new InMemoryAuditLog();
+        $identity = Mockery::mock(IdentityInterface::class);
+        $identity->shouldReceive('clear')->once()->with($context);
+
+        $flow = new ConfirmEmailChange(
+            userSource            : $userSource,
+            emailChangeStore      : $emailChangeStore,
+            emailVerificationState: $emailVerificationState,
+            auditLog              : $auditLog,
+            clock                 : $clock,
+            currentAuthentication : $currentAuthentication,
+            identity              : $identity,
+            sessionRegistry       : $sessionRegistry,
+            mfaChallengeStore     : $challengeStore,
+            refreshTokenStore     : $refreshTokenStore
+        );
+
+        $this->assertTrue($flow->execute(new ConfirmEmailChangeData(token: $challenge->token ?? '')));
+        $this->assertSame('new@example.com', $userSource->findById(new UserId(1))?->getEmail()->value);
+        $this->assertTrue($emailVerificationState->isVerified(new UserId(1)));
+        $this->assertTrue($sessionRegistry->find('session-1')?->isRevoked() ?? false);
+        $this->assertSame('email_change', $sessionRegistry->find('session-1')?->revokeReason);
+        $this->assertNull($challengeStore->find('challenge-1'));
+        $this->assertTrue($refreshTokenStore->find($refreshToken->token)?->revoked ?? false);
+        $this->assertNull($currentAuthentication->read()->user());
+        $this->assertSame('auth.email_change.completed', $auditLog->events()[0]->name);
+    }
+
+    public function testConfirmEmailChangeFailureInvalidToken() : void
+    {
+        $clock = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $flow = new ConfirmEmailChange(
+            userSource            : new InMemoryUserSource(),
+            emailChangeStore      : new InMemoryEmailChangeStore(),
+            emailVerificationState: new InMemoryEmailVerificationStateStore(),
+            auditLog              : new InMemoryAuditLog(),
+            clock                 : $clock,
+            currentAuthentication : new CurrentAuthentication(),
+            identity              : Mockery::mock(IdentityInterface::class)
+        );
+
+        $this->expectException(EmailChangeFailed::class);
+        $this->expectExceptionMessage('Email change token is invalid.');
+        $this->expectExceptionCode(410);
+
+        $flow->execute(new ConfirmEmailChangeData(token: 'invalid-token'));
+    }
+
+    protected function tearDown() : void
+    {
+        Mockery::close();
+    }
+
+    private function passwordHasher() : PasswordHasher
+    {
+        return new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
+    }
+
+    private function userWithPassword(PasswordHasher $passwordHasher, int $userId, string $password, string $email) : User
+    {
+        return User::create(
+            id          : new UserId($userId),
+            email       : new UserEmail($email),
+            username    : 'user' . $userId,
+            passwordHash: $passwordHasher->hash($password)
+        );
+    }
+}

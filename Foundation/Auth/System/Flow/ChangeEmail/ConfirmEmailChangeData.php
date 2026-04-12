@@ -1,0 +1,16 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\ChangeEmail;
+
+use SensitiveParameter;
+
+final readonly class ConfirmEmailChangeData
+{
+    public function __construct(
+        #[SensitiveParameter] public string $token,
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null
+    ) {}
+}

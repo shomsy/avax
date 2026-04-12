@@ -48,7 +48,8 @@ class AuthBuilderTest extends TestCase
 
         $builder = new AuthBuilder();
         $builder->forUser(userSource: $userSource)
-            ->withIdentity(identity: $identity);
+            ->withIdentity(identity: $identity)
+            ->requirePhishingResistantAdminElevation();
 
         $auth = $builder->ready();
 

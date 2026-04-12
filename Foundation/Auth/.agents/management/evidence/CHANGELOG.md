@@ -17,6 +17,9 @@ Update rules:
 
 ## Current Ledger
 
+- `2026-04-12 22:39 CEST` | `AUTH-021` | normalized the phishing-resistant access naming, moved the guard into an explicit capability namespace, made
+  `ChangeEmail` a first-class flow keyed by `UserId`, and added regression tests for email-change and admin-elevation
+  policy paths
 - `2026-04-12 21:32 CEST` | `AUTH-020` | shipped package-owned authorization-policy boundaries, passkey rename,
   slice-local maintenance jobs for session/reset/MFA/passkey/OAuth cleanup, audit export seams, and repo-wide docs for
   the expanded admin realm, federation, provisioning, passkey, and risk scope

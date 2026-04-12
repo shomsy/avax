@@ -22391,6 +22391,17 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-021
+- `created_at`: 2026-04-12 22:39 CEST
+- `updated_at`: 2026-04-12 22:39 CEST
+- `completed_at`: 2026-04-12 22:39 CEST
+- `status`: done
+- `estimate`: 2h
+- `actual`: 2h 03m
+- `outcome`: Normalize phishing-resistant naming, unblock `ChangeEmail` as a first-class flow, and close the new regression gaps around admin elevation and email change
+- `acceptance`: `Capability/Access/RequirePhishingResistantAuthentication/` exists with clean naming; `BeginEmailChange` resolves accounts by `UserId`; admin elevation uses phishing-resistant terminology; new `ChangeEmail` and guard tests exist; PHPUnit and PHPStan lanes pass
+- `links`: System/Capability/Access/RequirePhishingResistantAuthentication/, System/Flow/ChangeEmail/, System/Flow/AdminRealm/, tests/Flows/ChangeEmail/, tests/Capabilities/Access/RequirePhishingResistantAuthentication/
+
 - `id`: AUTH-020
 - `created_at`: 2026-04-12 18:35 CEST
 - `updated_at`: 2026-04-12 21:32 CEST
@@ -22602,6 +22613,9 @@ Update rules:
 
 ## Current Ledger
 
+- `2026-04-12 22:39 CEST` | `AUTH-021` | normalized the phishing-resistant access naming, moved the guard into an explicit capability namespace, made
+  `ChangeEmail` a first-class flow keyed by `UserId`, and added regression tests for email-change and admin-elevation
+  policy paths
 - `2026-04-12 21:32 CEST` | `AUTH-020` | shipped package-owned authorization-policy boundaries, passkey rename,
   slice-local maintenance jobs for session/reset/MFA/passkey/OAuth cleanup, audit export seams, and repo-wide docs for
   the expanded admin realm, federation, provisioning, passkey, and risk scope
@@ -22844,6 +22858,29 @@ Concrete records of executed verification.
 - `notes`:
 
 ## Reports
+
+- `executed_at`: 2026-04-12 22:39 CEST
+- `scope`: targeted regression suite for phishing-resistant access naming, admin elevation policy, and ChangeEmail flow
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test` (suite covered `tests/Capabilities/Access/RequirePhishingResistantAuthentication/RequirePhishingResistantAuthenticationTest.php`, `tests/Flows/ChangeEmail/ChangeEmailTest.php`, `tests/Flows/AdminRealm/AdminElevationTest.php`, `tests/Capabilities/Access/AccessPolicyTest.php`, `tests/Capabilities/Access/AccessTest.php`, `tests/Capabilities/Identity/IdentityTest.php`)
+- `result`: pass
+- `notes`: targeted regression coverage passes for the new phishing-resistant capability guard, admin elevation policy,
+  and email-change begin/confirm lifecycle; result `OK (129 tests, 327 assertions)`
+
+- `executed_at`: 2026-04-12 22:39 CEST
+- `scope`: baseline static analysis after phishing-resistant naming and ChangeEmail refactor
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes after the `RequirePhishingResistantAuthentication` namespace move and email-change
+  builder wiring
+
+- `executed_at`: 2026-04-12 22:39 CEST
+- `scope`: strict static analysis after phishing-resistant naming and ChangeEmail refactor
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after the new `ChangeEmail` flow and admin policy naming cleanup
 
 - `executed_at`: 2026-04-12 21:32 CEST
 - `scope`: targeted authorization-policy, passkey rename, maintenance cleanup, and audit export regression suite
@@ -24629,6 +24666,8 @@ $backupCodes = $auth->confirmMfaEnrollment(
 - `revokeSession(string): void`
 - `access(): AccessInterface`
 - `changePassword(ChangePasswordData): void`
+- `beginEmailChange(BeginEmailChangeData): EmailChangeChallenge`
+- `confirmEmailChange(ConfirmEmailChangeData): bool`
 - `register(RegistrationData): RegistrationResult`
 - `refresh(RefreshAuthenticationRequest): AuthenticationResult`
 - `registerOAuthClient(RegisterClientData): RegisteredOAuthClient`
@@ -24682,8 +24721,8 @@ The package now has two explicit lanes:
 Runtime ownership lives in auth-flow slices:
 
 - `System/Flow/AuthenticateRequest/` owns ingress resolution and current auth context.
-- `System/Flow/Login/`, `Register/`, `Logout/`, `Recover/`, `Verify/`, `Mfa/`, `Token/`, `Session/`, `AdminRealm/`,
-  `Passkey/`, `Federation/`, `Provisioning/`, and `Risk/` own package behavior.
+- `System/Flow/Login/`, `Register/`, `Logout/`, `Recover/`, `ChangeEmail/`, `Verify/`, `Mfa/`, `Token/`, `Session/`,
+  `AdminRealm/`, `Passkey/`, `Federation/`, `Provisioning/`, and `Risk/` own package behavior.
 - `System/Capability/Access/` owns authorization boundaries and composed access-policy evaluation.
 - `System/Capability/OAuth/` owns client registry and authorization-code persistence contracts.
 - `System/Flow/OAuth/` owns client registration, authorization-code issuance, token exchange, revoke, and introspection.
@@ -24712,6 +24751,7 @@ non-goals.
 - OAuth public clients require PKCE and OAuth refresh reuse revokes the full token family.
 - Password reset and login failures keep safe public messages.
 - Password reset begin flow is anti-enumeration by default.
+- Email change requires the current password, fresh MFA, and revokes the current auth/session family on confirmation.
 - MFA uses TOTP with replay protection, backup codes, recovery tokens, step-up freshness checks, and per-user challenge
   throttling.
 - Passkeys support multiple credentials per account, user-owned rename/revoke, and strict challenge replay prevention.
@@ -26419,6 +26459,11 @@ use Avax\Auth\System\Flow\AdminRealm\AdminElevation;
 use Avax\Auth\System\Flow\AdminRealm\BeginAdminElevation\BeginAdminElevation;
 use Avax\Auth\System\Flow\AdminRealm\EndAdminElevation\EndAdminElevation;
 use Avax\Auth\System\Flow\AdminRealm\RequireAdminElevation\RequireAdminElevation;
+use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChange;
+use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChangeData;
+use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChange;
+use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChangeData;
+use Avax\Auth\System\Flow\ChangeEmail\EmailChangeChallenge;
 use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
@@ -26525,6 +26570,8 @@ final readonly class Auth implements AuthInterface
         private CurrentAuthentication  $currentAuthentication,
         private AccessInterface        $access,
         private ChangePassword         $changePassword,
+        private BeginEmailChange|null  $beginEmailChange,
+        private ConfirmEmailChange|null $confirmEmailChange,
         private Register               $register,
         private RefreshAuthentication  $refreshAuthentication,
         private RegisterClient|null    $registerOAuthClient,
@@ -26630,6 +26677,16 @@ final readonly class Auth implements AuthInterface
     public function changePassword(ChangePasswordData $data) : void
     {
         $this->changePassword->execute(data: $data);
+    }
+
+    public function beginEmailChange(BeginEmailChangeData $data) : EmailChangeChallenge
+    {
+        return $this->beginEmailChangeOrFail()->execute($data);
+    }
+
+    public function confirmEmailChange(ConfirmEmailChangeData $data) : bool
+    {
+        return $this->confirmEmailChangeOrFail()->execute($data);
     }
 
     public function register(RegistrationData $data) : RegistrationResult
@@ -26882,6 +26939,16 @@ final readonly class Auth implements AuthInterface
         return $this->suspendUser ?? throw new RuntimeException('Provisioning lifecycle is not configured.');
     }
 
+    private function beginEmailChangeOrFail() : BeginEmailChange
+    {
+        return $this->beginEmailChange ?? throw new RuntimeException('Email change flow is not configured.');
+    }
+
+    private function confirmEmailChangeOrFail() : ConfirmEmailChange
+    {
+        return $this->confirmEmailChange ?? throw new RuntimeException('Email change flow is not configured.');
+    }
+
     private function reactivateUserOrFail() : ReactivateUser
     {
         return $this->reactivateUser ?? throw new RuntimeException('Provisioning lifecycle is not configured.');
@@ -26972,6 +27039,9 @@ use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
+use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChangeData;
+use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChangeData;
+use Avax\Auth\System\Flow\ChangeEmail\EmailChangeChallenge;
 use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
 use Avax\Auth\System\Flow\Login\AuthenticationResult;
 use Avax\Auth\System\Flow\Login\Credentials;
@@ -27043,6 +27113,10 @@ interface AuthInterface
     public function access() : AccessInterface;
 
     public function changePassword(ChangePasswordData $data) : void;
+
+    public function beginEmailChange(BeginEmailChangeData $data) : EmailChangeChallenge;
+
+    public function confirmEmailChange(ConfirmEmailChangeData $data) : bool;
 
     public function register(RegistrationData $data) : RegistrationResult;
 
@@ -27257,7 +27331,8 @@ final readonly class AccessPolicy
         public UserPermission|null $requiredPermission = null,
         public int|null $resourceOwnerUserId = null,
         public bool $freshMfa = false,
-        public bool $adminElevation = false
+        public bool $adminElevation = false,
+        public bool $phishingResistant = false
     ) {}
 }
 
@@ -27269,6 +27344,8 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\Access\RequireAccessPolicy;
 
 use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\PhishingResistantAuthenticationRequired;
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
@@ -27292,6 +27369,7 @@ final readonly class RequireAccessPolicy
         private RequireRole $requireRole,
         private RequirePermission $requirePermission,
         private RequireResourceOwner $requireResourceOwner,
+        private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
         private RequireFreshMfa $requireFreshMfa,
         private RequireAdminElevation $requireAdminElevation
     ) {}
@@ -27300,6 +27378,7 @@ final readonly class RequireAccessPolicy
      * @throws AdminElevationFailed
      * @throws FreshMfaRequired
      * @throws PermissionDenied
+     * @throws PhishingResistantAuthenticationRequired
      * @throws ResourceOwnerDenied
      * @throws RoleDenied
      * @throws Unauthenticated
@@ -27318,6 +27397,10 @@ final readonly class RequireAccessPolicy
 
         if ($policy->resourceOwnerUserId !== null) {
             $this->requireResourceOwner->execute($policy->resourceOwnerUserId);
+        }
+
+        if ($policy->phishingResistant) {
+            $this->requirePhishingResistantAuthentication->execute();
         }
 
         if ($policy->freshMfa) {
@@ -27447,6 +27530,59 @@ final readonly class RequirePermission
 
         if (! $user->hasPermission(permission: $permission)) {
             throw new PermissionDenied(requirement: $permission);
+        }
+    }
+}
+
+=== System/Capability/Access/RequirePhishingResistantAuthentication/PhishingResistantAuthenticationRequired.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication;
+
+use RuntimeException;
+
+final class PhishingResistantAuthenticationRequired extends RuntimeException
+{
+    public function __construct(
+        string $message = 'Phishing-resistant authentication is required.'
+    )
+    {
+        parent::__construct($message, 403);
+    }
+}
+
+=== System/Capability/Access/RequirePhishingResistantAuthentication/RequirePhishingResistantAuthentication.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication;
+
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+
+final readonly class RequirePhishingResistantAuthentication
+{
+    public function __construct(
+        private CurrentAuthentication $currentAuthentication
+    ) {}
+
+    /**
+     * @throws PhishingResistantAuthenticationRequired
+     * @throws Unauthenticated
+     */
+    public function execute() : void
+    {
+        $context = $this->currentAuthentication->read();
+
+        if ($context->user() === null) {
+            throw new Unauthenticated();
+        }
+
+        if (! $context->isPhishingResistant()) {
+            throw new PhishingResistantAuthenticationRequired();
         }
     }
 }
@@ -27909,7 +28045,11 @@ final readonly class Identity implements IdentityInterface
         }
     }
 
-    public function issue(User $user, DateTimeImmutable|null $mfaVerifiedAt = null) : IssuedAuthentication
+    public function issue(
+        User $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false
+    ) : IssuedAuthentication
     {
         if (! $user->isActive()) {
             throw new InvalidArgumentException(message: 'Inactive users cannot be authenticated.');
@@ -27917,17 +28057,27 @@ final readonly class Identity implements IdentityInterface
 
         $sessionId    = $this->sessionIdentity?->issue(
             userId       : $user->getId()->value,
-            mfaVerifiedAt: $mfaVerifiedAt
+            mfaVerifiedAt: $mfaVerifiedAt,
+            phishingResistant: $phishingResistant
         );
-        $accessToken  = $this->jwtIdentity?->issue(user: $user, mfaVerifiedAt: $mfaVerifiedAt);
-        $refreshToken = $this->jwtIdentity?->issueRefreshToken(user: $user, mfaVerifiedAt: $mfaVerifiedAt);
+        $accessToken  = $this->jwtIdentity?->issue(
+            user               : $user,
+            mfaVerifiedAt      : $mfaVerifiedAt,
+            phishingResistant  : $phishingResistant
+        );
+        $refreshToken = $this->jwtIdentity?->issueRefreshToken(
+            user               : $user,
+            mfaVerifiedAt      : $mfaVerifiedAt,
+            phishingResistant  : $phishingResistant
+        );
 
         return new IssuedAuthentication(
             mode         : $this->resolveMode(),
             sessionId    : $sessionId,
             accessToken  : $accessToken,
             refreshToken : $refreshToken,
-            mfaVerifiedAt: $mfaVerifiedAt
+            mfaVerifiedAt: $mfaVerifiedAt,
+            phishingResistant: $phishingResistant
         );
     }
 
@@ -27990,7 +28140,11 @@ use DateTimeImmutable;
  */
 interface IdentityInterface
 {
-    public function issue(User $user, DateTimeImmutable|null $mfaVerifiedAt = null) : IssuedAuthentication;
+    public function issue(
+        User $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false
+    ) : IssuedAuthentication;
 
     public function clear(AuthenticationContext|null $context = null) : void;
 
@@ -28021,7 +28175,8 @@ final readonly class IssuedAuthentication
         public string|null             $sessionId = null,
         public IssuedToken|null        $accessToken = null,
         public IssuedRefreshToken|null $refreshToken = null,
-        public DateTimeImmutable|null  $mfaVerifiedAt = null
+        public DateTimeImmutable|null  $mfaVerifiedAt = null,
+        public bool                    $phishingResistant = false
     ) {}
 }
 
@@ -28101,6 +28256,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
             $mfaVerifiedAt = null;
             $mfaTimestamp  = $claims['mfa_at'] ?? null;
+            $phishingResistant = ($claims['phr'] ?? 0) === 1;
             $clientId      = $claims['client_id'] ?? null;
             $scopeClaim    = $claims['scope'] ?? null;
             $scopes        = [];
@@ -28128,6 +28284,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 tokenId      : $tokenId,
                 expiresAt    : $expiryMoment,
                 mfaVerifiedAt: $mfaVerifiedAt,
+                phishingResistant: $phishingResistant,
                 clientId     : $clientId,
                 scopes       : $scopes
             );
@@ -28142,6 +28299,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
     public function issueRefreshToken(
         User $user,
         DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = []
     ) : IssuedRefreshToken|null
@@ -28154,6 +28312,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             userId       : $user->getId(),
             expiresAt    : $this->clock->now()->modify("+{$this->refreshTokenExpiry} seconds"),
             mfaVerifiedAt: $mfaVerifiedAt,
+            phishingResistant: $phishingResistant,
             clientId     : $clientId,
             scopes       : $scopes
         );
@@ -28165,6 +28324,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
     public function issue(
         User $user,
         DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = []
     ) : IssuedToken
@@ -28187,6 +28347,10 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
         if ($mfaVerifiedAt !== null) {
             $payload['mfa_at'] = $mfaVerifiedAt->getTimestamp();
+        }
+
+        if ($phishingResistant) {
+            $payload['phr'] = 1;
         }
 
         if ($clientId !== null) {
@@ -28236,6 +28400,7 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
     public function issue(
         User $user,
         DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = []
     ) : IssuedToken;
@@ -28248,6 +28413,7 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
     public function issueRefreshToken(
         User $user,
         DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = []
     ) : IssuedRefreshToken|null;
@@ -28286,17 +28452,23 @@ final class SessionIdentity implements SessionIdentityInterface
         private SessionRegistryInterface|null $sessionRegistry = null,
         private string                        $sessionKey = 'auth_user_id',
         private string                        $mfaVerifiedAtKey = 'auth_mfa_verified_at',
+        private string                        $phishingResistantKey = 'auth_phishing_resistant',
         private string                        $issuedAtKey = 'auth_session_issued_at',
         private string                        $lastSeenAtKey = 'auth_session_last_seen_at'
     ) {}
 
-    public function issue(int $userId, DateTimeImmutable|null $mfaVerifiedAt = null) : string|null
+    public function issue(
+        int $userId,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false
+    ) : string|null
     {
         $sessionId = $this->store->regenerate();
         $now       = $this->clock->now();
 
         $this->store->put($this->sessionKey, $userId);
         $this->store->put($this->mfaVerifiedAtKey, $mfaVerifiedAt?->format(DATE_ATOM));
+        $this->store->put($this->phishingResistantKey, $phishingResistant ? '1' : '0');
         $this->store->put($this->issuedAtKey, $now->format(DATE_ATOM));
         $this->store->put($this->lastSeenAtKey, $now->format(DATE_ATOM));
 
@@ -28401,6 +28573,15 @@ final class SessionIdentity implements SessionIdentityInterface
         } catch (\Exception) {
             return null;
         }
+    }
+
+    public function resolvePhishingResistant() : bool
+    {
+        if (! $this->isSessionActive()) {
+            return false;
+        }
+
+        return $this->store->get($this->phishingResistantKey) === '1';
     }
 
     private function isSessionActive() : bool
@@ -28530,13 +28711,19 @@ use DateTimeImmutable;
  */
 interface SessionIdentityInterface
 {
-    public function issue(int $userId, DateTimeImmutable|null $mfaVerifiedAt = null) : string|null;
+    public function issue(
+        int $userId,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false
+    ) : string|null;
 
     public function captureCurrentSession(string|null $ipAddress = null, string|null $userAgent = null) : void;
 
     public function resolveUserId() : int|null;
 
     public function resolveMfaVerifiedAt() : DateTimeImmutable|null;
+
+    public function resolvePhishingResistant() : bool;
 
     public function currentSessionId() : string|null;
 
@@ -28604,7 +28791,8 @@ final readonly class AuthorizationCodeRecord
         public string|null            $codeChallenge = null,
         public PkceMethod|null        $codeChallengeMethod = null,
         public DateTimeImmutable|null $usedAt = null,
-        public DateTimeImmutable|null $mfaVerifiedAt = null
+        public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public bool                   $phishingResistant = false
     ) {}
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool
@@ -28645,7 +28833,8 @@ interface AuthorizationCodeStoreInterface
         string|null $state = null,
         string|null $codeChallenge = null,
         PkceMethod|null $codeChallengeMethod = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false
     ) : IssuedAuthorizationCode;
 
     public function find(string $plainCode) : AuthorizationCodeRecord|null;
@@ -28683,7 +28872,8 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         string|null $state = null,
         string|null $codeChallenge = null,
         PkceMethod|null $codeChallengeMethod = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false
     ) : IssuedAuthorizationCode
     {
         $plainCode = bin2hex(random_bytes(32));
@@ -28698,7 +28888,8 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
             expiresAt          : $expiresAt,
             codeChallenge      : $codeChallenge,
             codeChallengeMethod: $codeChallengeMethod,
-            mfaVerifiedAt      : $mfaVerifiedAt
+            mfaVerifiedAt      : $mfaVerifiedAt,
+            phishingResistant  : $phishingResistant
         );
         $this->hashToCodeId[$this->hash($plainCode)] = $codeId;
 
@@ -28739,7 +28930,8 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
             codeChallenge      : $record->codeChallenge,
             codeChallengeMethod: $record->codeChallengeMethod,
             usedAt             : $usedAt,
-            mfaVerifiedAt      : $record->mfaVerifiedAt
+            mfaVerifiedAt      : $record->mfaVerifiedAt,
+            phishingResistant  : $record->phishingResistant
         );
     }
 
@@ -30738,6 +30930,7 @@ use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capability\Access\Access;
 use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequireResourceOwner\RequireResourceOwner;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
@@ -30773,6 +30966,10 @@ use Avax\Auth\System\Flow\AdminRealm\RequireAdminElevation\RequireAdminElevation
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticateRequest;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
+use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChange;
+use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChange;
+use Avax\Auth\System\Flow\ChangeEmail\EmailChangeStoreInterface;
+use Avax\Auth\System\Flow\ChangeEmail\InMemoryEmailChangeStore;
 use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
@@ -30864,6 +31061,7 @@ final class AuthBuilder
     private RefreshTokenStoreInterface|null           $refreshTokenStore      = null;
     private PasswordResetStoreInterface|null          $passwordResetStore     = null;
     private EmailVerificationStoreInterface|null      $emailVerificationStore = null;
+    private EmailChangeStoreInterface|null            $emailChangeStore       = null;
     private MfaChallengeStoreInterface|null           $mfaChallengeStore      = null;
     private TotpInterface|null                        $totp                   = null;
     private LimitMfaAttempts|null                     $mfaAttemptLimit        = null;
@@ -30884,6 +31082,7 @@ final class AuthBuilder
     private string                                    $mfaIssuer              = 'Avax Auth';
     private string                                    $passkeyRpId            = 'localhost';
     private string                                    $passkeyRpName          = 'Avax Auth';
+    private bool                                      $adminPhishingResistantRequired = false;
 
     /**
      * Define the data source for users.
@@ -30973,6 +31172,13 @@ final class AuthBuilder
     public function withEmailVerificationStore(EmailVerificationStoreInterface $emailVerificationStore) : self
     {
         $this->emailVerificationStore = $emailVerificationStore;
+
+        return $this;
+    }
+
+    public function withEmailChangeStore(EmailChangeStoreInterface $emailChangeStore) : self
+    {
+        $this->emailChangeStore = $emailChangeStore;
 
         return $this;
     }
@@ -31076,6 +31282,13 @@ final class AuthBuilder
         return $this;
     }
 
+    public function requirePhishingResistantAdminElevation(bool $required = true) : self
+    {
+        $this->adminPhishingResistantRequired = $required;
+
+        return $this;
+    }
+
     public function withFederationRuntime(FederationRuntimeInterface $federationRuntime) : self
     {
         $this->federationRuntime = $federationRuntime;
@@ -31142,6 +31355,7 @@ final class AuthBuilder
         $federatedIdentityLinkStore = $this->federatedIdentityLinkStore ?? new InMemoryFederatedIdentityLinkStore();
         $passwordResetStore       = $this->passwordResetStore ?? new InMemoryPasswordResetStore();
         $emailVerificationStore   = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore();
+        $emailChangeStore         = $this->emailChangeStore ?? new InMemoryEmailChangeStore();
         $emailVerificationState   = $this->emailVerificationState ?? new InMemoryEmailVerificationStateStore();
         $mfaStore                 = $this->mfaStore ?? new InMemoryMfaStore();
         $mfaChallengeStore        = $this->mfaChallengeStore ?? new InMemoryMfaChallengeStore();
@@ -31236,6 +31450,9 @@ final class AuthBuilder
         $requireResourceOwner    = new RequireResourceOwner(
             currentAuthentication: $currentAuthentication
         );
+        $requirePhishingResistantAuthentication = new RequirePhishingResistantAuthentication(
+            currentAuthentication: $currentAuthentication
+        );
         $access                  = new Access(
             requireAuthentication: $requireAuthentication,
             requireRole          : $requireRole,
@@ -31245,6 +31462,7 @@ final class AuthBuilder
                 requireRole          : $requireRole,
                 requirePermission    : $requirePermission,
                 requireResourceOwner : $requireResourceOwner,
+                requirePhishingResistantAuthentication: $requirePhishingResistantAuthentication,
                 requireFreshMfa      : $requireFreshMfa,
                 requireAdminElevation: $requireAdminElevation
             )
@@ -31314,6 +31532,29 @@ final class AuthBuilder
                                         rateLimit            : $this->rateLimit,
                                         requireFreshMfa      : $requireFreshMfa
                                     ),
+            beginEmailChange      : new BeginEmailChange(
+                currentAuthentication: $currentAuthentication,
+                userSource           : $this->userSource,
+                passwordHasher       : $passwordHasher,
+                emailChangeStore     : $emailChangeStore,
+                requireFreshMfa      : $requireFreshMfa,
+                auditLog             : $auditLog,
+                clock                : $clock
+            ),
+            confirmEmailChange    : $provisionableUserSource !== null
+                ? new ConfirmEmailChange(
+                    userSource           : $provisionableUserSource,
+                    emailChangeStore     : $emailChangeStore,
+                    emailVerificationState: $emailVerificationState,
+                    auditLog             : $auditLog,
+                    clock                : $clock,
+                    currentAuthentication: $currentAuthentication,
+                    identity             : $identity,
+                    sessionRegistry      : $this->sessionRegistry,
+                    mfaChallengeStore    : $mfaChallengeStore,
+                    refreshTokenStore    : $this->refreshTokenStore
+                )
+                : null,
             register              : new Register(
                                         userSource               : $this->userSource,
                                         passwordHasher           : $passwordHasher,
@@ -31380,7 +31621,8 @@ final class AuthBuilder
                                         requireFreshMfa      : $requireFreshMfa,
                                         elevationStore       : $adminElevationStore,
                                         auditLog             : $auditLog,
-                                        clock                : $clock
+                                        clock                : $clock,
+                                        requirePhishingResistant: $this->adminPhishingResistantRequired
                                     ),
             endAdminElevation     : new EndAdminElevation(
                                         currentAuthentication: $currentAuthentication,
@@ -31690,6 +31932,11 @@ final class AdminElevationFailed extends RuntimeException
     {
         return new self('Current authentication cannot be elevated.');
     }
+
+    public static function phishingResistantRequired() : self
+    {
+        return new self('Admin elevation requires phishing-resistant authentication.');
+    }
 }
 
 === System/Flow/AdminRealm/BeginAdminElevation/BeginAdminElevation.php ===
@@ -31718,7 +31965,8 @@ final readonly class BeginAdminElevation
         private RequireFreshMfa $requireFreshMfa,
         private AdminElevationStoreInterface $elevationStore,
         private AuditLogInterface $auditLog,
-        private Clock $clock
+        private Clock $clock,
+        private bool $requirePhishingResistant = false
     ) {}
 
     /**
@@ -31735,6 +31983,10 @@ final readonly class BeginAdminElevation
 
         if (! $user->hasRole(UserRole::ADMIN)) {
             throw AdminElevationFailed::forbidden();
+        }
+
+        if ($this->requirePhishingResistant && ! $context->isPhishingResistant()) {
+            throw AdminElevationFailed::phishingResistantRequired();
         }
 
         $this->requireFreshMfa->execute();
@@ -31921,7 +32173,7 @@ final readonly class AuthenticateRequest
 
     public function execute(AuthenticationRequest $request) : AuthenticationContext
     {
-        [$sessionUser, $sessionId, $sessionMfaVerifiedAt] = $this->resolveSessionUser($request);
+        [$sessionUser, $sessionId, $sessionMfaVerifiedAt, $sessionPhishingResistant] = $this->resolveSessionUser($request);
         $resolvedToken = $request->bearerToken !== null
             ? $this->jwtIdentity?->resolve($request->bearerToken)
             : null;
@@ -31954,7 +32206,8 @@ final readonly class AuthenticateRequest
                 sessionId           : $sessionId,
                 accessTokenId       : $resolvedToken->tokenId,
                 accessTokenExpiresAt: $resolvedToken->expiresAt,
-                mfaVerifiedAt       : $this->latestMfaMoment($sessionMfaVerifiedAt, $resolvedToken->mfaVerifiedAt)
+                mfaVerifiedAt       : $this->latestMfaMoment($sessionMfaVerifiedAt, $resolvedToken->mfaVerifiedAt),
+                phishingResistant   : $sessionPhishingResistant || $resolvedToken->phishingResistant
             );
 
             $this->currentAuthentication->store($context);
@@ -31967,7 +32220,8 @@ final readonly class AuthenticateRequest
                 user         : $this->projectAuthenticatedUser->fromUser($sessionUser),
                 mode         : AuthenticationMode::SESSION,
                 sessionId    : $sessionId,
-                mfaVerifiedAt: $sessionMfaVerifiedAt
+                mfaVerifiedAt: $sessionMfaVerifiedAt,
+                phishingResistant: $sessionPhishingResistant
             );
 
             $this->currentAuthentication->store($context);
@@ -31981,7 +32235,8 @@ final readonly class AuthenticateRequest
                 mode                : AuthenticationMode::TOKEN,
                 accessTokenId       : $resolvedToken->tokenId,
                 accessTokenExpiresAt: $resolvedToken->expiresAt,
-                mfaVerifiedAt       : $resolvedToken->mfaVerifiedAt
+                mfaVerifiedAt       : $resolvedToken->mfaVerifiedAt,
+                phishingResistant   : $resolvedToken->phishingResistant
             );
 
             $this->currentAuthentication->store($context);
@@ -31996,30 +32251,31 @@ final readonly class AuthenticateRequest
     }
 
     /**
-     * @return array{0: User|null, 1: string|null, 2: \DateTimeImmutable|null}
+     * @return array{0: User|null, 1: string|null, 2: \DateTimeImmutable|null, 3: bool}
      */
     private function resolveSessionUser(AuthenticationRequest $request) : array
     {
         if (! $request->allowSession || $this->sessionIdentity === null) {
-            return [null, null, null];
+            return [null, null, null, false];
         }
 
         $userId = $this->sessionIdentity->resolveUserId();
 
         if ($userId === null) {
-            return [null, null, null];
+            return [null, null, null, false];
         }
 
         $user = $this->userSource->findById(new UserId($userId));
 
         if ($user === null || ! $user->isActive()) {
-            return [null, null, null];
+            return [null, null, null, false];
         }
 
         return [
             $user,
             $this->sessionIdentity->currentSessionId(),
             $this->sessionIdentity->resolveMfaVerifiedAt(),
+            $this->sessionIdentity->resolvePhishingResistant(),
         ];
     }
 
@@ -32143,7 +32399,8 @@ final readonly class AuthenticationContext
         private string|null            $accessTokenId = null,
         private DateTimeImmutable|null $accessTokenExpiresAt = null,
         private string|null            $refreshTokenId = null,
-        private DateTimeImmutable|null $mfaVerifiedAt = null
+        private DateTimeImmutable|null $mfaVerifiedAt = null,
+        private bool                   $phishingResistant = false
     )
     {
         if ($this->authenticated && $this->user === null) {
@@ -32171,7 +32428,8 @@ final readonly class AuthenticationContext
         string|null            $accessTokenId = null,
         DateTimeImmutable|null $accessTokenExpiresAt = null,
         string|null            $refreshTokenId = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool                   $phishingResistant = false
     ) : self
     {
         return new self(
@@ -32182,7 +32440,8 @@ final readonly class AuthenticationContext
             accessTokenId       : $accessTokenId,
             accessTokenExpiresAt: $accessTokenExpiresAt,
             refreshTokenId      : $refreshTokenId,
-            mfaVerifiedAt       : $mfaVerifiedAt
+            mfaVerifiedAt       : $mfaVerifiedAt,
+            phishingResistant   : $phishingResistant
         );
     }
 
@@ -32229,6 +32488,11 @@ final readonly class AuthenticationContext
     public function mfaVerifiedAt() : DateTimeImmutable|null
     {
         return $this->mfaVerifiedAt;
+    }
+
+    public function isPhishingResistant() : bool
+    {
+        return $this->phishingResistant;
     }
 }
 
@@ -32347,6 +32611,366 @@ final readonly class ProjectAuthenticatedUser
             user         : $user,
             emailVerified: $this->emailVerificationState->isVerified($user->getId()),
             mfaEnabled   : $this->mfaStore->isEnabled($user->getId())
+        );
+    }
+}
+
+=== System/Flow/ChangeEmail/BeginEmailChange.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\ChangeEmail;
+
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
+use Avax\Auth\System\Foundation\Clock;
+
+final readonly class BeginEmailChange
+{
+    public function __construct(
+        private CurrentAuthentication $currentAuthentication,
+        private UserSourceInterface $userSource,
+        private PasswordHasher $passwordHasher,
+        private EmailChangeStoreInterface $emailChangeStore,
+        private RequireFreshMfa $requireFreshMfa,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
+        private int $expiresAfterSeconds = 1800
+    ) {}
+
+    /**
+     * @throws EmailChangeFailed
+     */
+    public function execute(BeginEmailChangeData $data) : EmailChangeChallenge
+    {
+        $context = $this->currentAuthentication->read();
+        $actor   = $context->user();
+
+        if ($actor === null) {
+            throw EmailChangeFailed::unauthenticated();
+        }
+
+        $user = $this->userSource->findById(new UserId($actor->id));
+
+        if ($user === null || ! $user->isActive()) {
+            throw EmailChangeFailed::unauthenticated();
+        }
+
+        $newEmail = strtolower(trim($data->newEmail));
+
+        if ($newEmail === '' || $newEmail === strtolower($user->getEmail()->value)) {
+            throw EmailChangeFailed::invalidEmail();
+        }
+
+        if (! $this->passwordHasher->verify($data->currentPassword, $user->getPasswordHash())) {
+            $this->auditLog->record(new AuditEvent(
+                name      : 'auth.email_change.failed',
+                occurredAt: $this->clock->now(),
+                context   : [
+                    'user_id'    => $user->getId()->value,
+                    'reason'     => 'invalid_password',
+                    'ip_address' => $data->ipAddress,
+                    'user_agent' => $data->userAgent,
+                ]
+            ));
+
+            throw EmailChangeFailed::invalidPassword();
+        }
+
+        if ($this->userSource->emailExists($newEmail)) {
+            throw EmailChangeFailed::emailInUse();
+        }
+
+        $this->requireFreshMfa->execute();
+        $challenge = $this->emailChangeStore->issue(
+            userId    : $user->getId(),
+            newEmail  : $newEmail,
+            expiresAt : $this->clock->now()->modify("+{$this->expiresAfterSeconds} seconds")
+        );
+
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.email_change.requested',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'user_id'    => $user->getId()->value,
+                'new_email'  => $newEmail,
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ]
+        ));
+
+        return $challenge;
+    }
+}
+
+=== System/Flow/ChangeEmail/BeginEmailChangeData.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\ChangeEmail;
+
+use SensitiveParameter;
+
+final readonly class BeginEmailChangeData
+{
+    public function __construct(
+        #[SensitiveParameter] public string $newEmail,
+        #[SensitiveParameter] public string $currentPassword,
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null
+    ) {}
+}
+
+=== System/Flow/ChangeEmail/ConfirmEmailChange.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\ChangeEmail;
+
+use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\UserSource\ProvisionableUserSourceInterface;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeStoreInterface;
+use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
+use Avax\Auth\System\Flow\Verify\EmailVerificationStateStoreInterface;
+use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
+use Avax\Auth\System\Foundation\Clock;
+
+final readonly class ConfirmEmailChange
+{
+    public function __construct(
+        private ProvisionableUserSourceInterface $userSource,
+        private EmailChangeStoreInterface $emailChangeStore,
+        private EmailVerificationStateStoreInterface $emailVerificationState,
+        private AuditLogInterface $auditLog,
+        private Clock $clock,
+        private CurrentAuthentication $currentAuthentication,
+        private IdentityInterface $identity,
+        private SessionRegistryInterface|null $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null $mfaChallengeStore = null,
+        private RefreshTokenStoreInterface|null $refreshTokenStore = null
+    ) {}
+
+    /**
+     * @throws EmailChangeFailed
+     */
+    public function execute(ConfirmEmailChangeData $data) : bool
+    {
+        $context = $this->currentAuthentication->read();
+        $record = $this->emailChangeStore->consume($data->token, $this->clock->now());
+
+        if ($record === null) {
+            $this->auditLog->record(new AuditEvent(
+                name      : 'auth.email_change.failed',
+                occurredAt: $this->clock->now(),
+                context   : [
+                    'reason'     => 'invalid_token',
+                    'ip_address' => $data->ipAddress,
+                    'user_agent' => $data->userAgent,
+                ]
+            ));
+
+            throw EmailChangeFailed::invalidToken();
+        }
+
+        $existingUser = $this->userSource->findByEmail($record->newEmail);
+
+        if ($existingUser !== null && ! $existingUser->getId()->equals($record->userId)) {
+            throw EmailChangeFailed::emailInUse();
+        }
+
+        $this->userSource->updateEmail($record->userId, $record->newEmail);
+        $this->emailVerificationState->markVerified($record->userId);
+        $this->sessionRegistry?->revokeForUser($record->userId, $this->clock->now(), 'email_change');
+        $this->mfaChallengeStore?->forgetForUser($record->userId);
+        $this->refreshTokenStore?->revokeUser($record->userId);
+
+        $currentUser = $context->user();
+
+        if ($currentUser !== null && $currentUser->id === $record->userId->value) {
+            $this->identity->clear($context);
+            $this->currentAuthentication->clear();
+        }
+
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.email_change.completed',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'user_id'    => $record->userId->value,
+                'new_email'  => $record->newEmail,
+                'ip_address' => $data->ipAddress,
+                'user_agent' => $data->userAgent,
+            ]
+        ));
+
+        return true;
+    }
+}
+
+=== System/Flow/ChangeEmail/ConfirmEmailChangeData.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\ChangeEmail;
+
+use SensitiveParameter;
+
+final readonly class ConfirmEmailChangeData
+{
+    public function __construct(
+        #[SensitiveParameter] public string $token,
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null
+    ) {}
+}
+
+=== System/Flow/ChangeEmail/EmailChangeChallenge.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\ChangeEmail;
+
+use DateTimeImmutable;
+
+final readonly class EmailChangeChallenge
+{
+    public function __construct(
+        public bool $dispatched,
+        public string|null $token = null,
+        public DateTimeImmutable|null $expiresAt = null
+    ) {}
+}
+
+=== System/Flow/ChangeEmail/EmailChangeFailed.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\ChangeEmail;
+
+use RuntimeException;
+
+final class EmailChangeFailed extends RuntimeException
+{
+    public static function unauthenticated() : self
+    {
+        return new self('Authentication is required.', 401);
+    }
+
+    public static function invalidEmail() : self
+    {
+        return new self('Email change request is invalid.', 422);
+    }
+
+    public static function emailInUse() : self
+    {
+        return new self('Email address is already in use.', 409);
+    }
+
+    public static function invalidPassword() : self
+    {
+        return new self('Current password is invalid.', 403);
+    }
+
+    public static function invalidToken() : self
+    {
+        return new self('Email change token is invalid.', 410);
+    }
+}
+
+=== System/Flow/ChangeEmail/EmailChangeRecord.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\ChangeEmail;
+
+use Avax\Auth\System\Capability\User\UserId;
+use DateTimeImmutable;
+
+final readonly class EmailChangeRecord
+{
+    public function __construct(
+        public UserId $userId,
+        public string $newEmail,
+        public DateTimeImmutable $expiresAt
+    ) {}
+}
+
+=== System/Flow/ChangeEmail/EmailChangeStoreInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\ChangeEmail;
+
+use Avax\Auth\System\Capability\User\UserId;
+use DateTimeImmutable;
+
+interface EmailChangeStoreInterface
+{
+    public function issue(UserId $userId, string $newEmail, DateTimeImmutable $expiresAt) : EmailChangeChallenge;
+
+    public function consume(string $token, DateTimeImmutable $now) : EmailChangeRecord|null;
+}
+
+=== System/Flow/ChangeEmail/InMemoryEmailChangeStore.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\ChangeEmail;
+
+use Avax\Auth\System\Capability\User\UserId;
+use DateTimeImmutable;
+
+final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
+{
+    /** @var array<string, array{user_id: int, new_email: string, expires_at: int}> */
+    private array $records = [];
+
+    public function issue(UserId $userId, string $newEmail, DateTimeImmutable $expiresAt) : EmailChangeChallenge
+    {
+        $token = bin2hex(random_bytes(32));
+        $this->records[hash('sha256', $token)] = [
+            'user_id'    => $userId->value,
+            'new_email'  => $newEmail,
+            'expires_at' => $expiresAt->getTimestamp(),
+        ];
+
+        return new EmailChangeChallenge(
+            dispatched: true,
+            token     : $token,
+            expiresAt : $expiresAt
+        );
+    }
+
+    public function consume(string $token, DateTimeImmutable $now) : EmailChangeRecord|null
+    {
+        $key    = hash('sha256', $token);
+        $record = $this->records[$key] ?? null;
+        unset($this->records[$key]);
+
+        if ($record === null || $record['expires_at'] <= $now->getTimestamp()) {
+            return null;
+        }
+
+        return new EmailChangeRecord(
+            userId   : new UserId($record['user_id']),
+            newEmail : $record['new_email'],
+            expiresAt: new DateTimeImmutable('@' . $record['expires_at'])
         );
     }
 }
@@ -33353,7 +33977,8 @@ final readonly class Login
             accessTokenId       : $issued->accessToken?->tokenId,
             accessTokenExpiresAt: $issued->accessToken?->expiresAt,
             refreshTokenId      : $issued->refreshToken?->tokenId,
-            mfaVerifiedAt       : $issued->mfaVerifiedAt
+            mfaVerifiedAt       : $issued->mfaVerifiedAt,
+            phishingResistant   : $issued->phishingResistant
         );
 
         $this->currentAuthentication->store($context);
@@ -34591,7 +35216,8 @@ final readonly class VerifyMfaChallenge
             accessTokenId       : $issued->accessToken?->tokenId,
             accessTokenExpiresAt: $issued->accessToken?->expiresAt,
             refreshTokenId      : $issued->refreshToken?->tokenId,
-            mfaVerifiedAt       : $now
+            mfaVerifiedAt       : $now,
+            phishingResistant   : $issued->phishingResistant
         );
 
         $this->currentAuthentication->store($context);
@@ -36330,7 +36956,8 @@ final readonly class AuthorizeCode
             state              : $data->state,
             codeChallenge      : $data->codeChallenge,
             codeChallengeMethod: $data->codeChallengeMethod,
-            mfaVerifiedAt      : $context->mfaVerifiedAt()
+            mfaVerifiedAt      : $context->mfaVerifiedAt(),
+            phishingResistant  : $context->isPhishingResistant()
         );
 
         $this->auditLog->record(new AuditEvent(
@@ -36533,6 +37160,7 @@ final readonly class ExchangeAuthorizationCode
         $accessToken = $this->jwtIdentity->issue(
             user         : $user,
             mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
             scopes       : $record->scopes
         );
@@ -36540,6 +37168,7 @@ final readonly class ExchangeAuthorizationCode
             userId       : $user->getId(),
             expiresAt    : $now->modify('+30 days'),
             mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
             scopes       : $record->scopes
         );
@@ -36695,6 +37324,7 @@ final readonly class ExchangeRefreshToken
         $accessToken = $this->jwtIdentity->issue(
             user         : $user,
             mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
             scopes       : $record->scopes
         );
@@ -36703,6 +37333,7 @@ final readonly class ExchangeRefreshToken
             expiresAt    : $now->modify('+30 days'),
             familyId     : $record->familyId,
             mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
             scopes       : $record->scopes
         );
@@ -36819,7 +37450,8 @@ final readonly class IntrospectToken
                 userId       : $resolved->user->getId()->value,
                 scopes       : $resolved->scopes,
                 expiresAt    : $resolved->expiresAt,
-                mfaVerifiedAt: $resolved->mfaVerifiedAt
+                mfaVerifiedAt: $resolved->mfaVerifiedAt,
+                phishingResistant: $resolved->phishingResistant
             );
         }
 
@@ -36874,7 +37506,8 @@ final readonly class TokenIntrospection
         public int|null               $userId = null,
         public array                  $scopes = [],
         public DateTimeImmutable|null $expiresAt = null,
-        public DateTimeImmutable|null $mfaVerifiedAt = null
+        public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public bool                   $phishingResistant = false
     ) {}
 
     public static function inactive() : self
@@ -37454,7 +38087,11 @@ final readonly class CompletePasskeyAuthentication
             throw PasskeyOperationFailed::notFound();
         }
 
-        $issued  = $this->identity->issue($user, $this->clock->now());
+        $issued  = $this->identity->issue(
+            $user,
+            $this->clock->now(),
+            true
+        );
         $context = AuthenticationContext::authenticated(
             user                : $this->projectAuthenticatedUser->fromUser($user),
             mode                : $issued->mode === AuthenticationMode::SESSION ? AuthenticationMode::SESSION : $issued->mode,
@@ -37462,7 +38099,8 @@ final readonly class CompletePasskeyAuthentication
             accessTokenId       : $issued->accessToken?->tokenId,
             accessTokenExpiresAt: $issued->accessToken?->expiresAt,
             refreshTokenId      : $issued->refreshToken?->tokenId,
-            mfaVerifiedAt       : $this->clock->now()
+            mfaVerifiedAt       : $this->clock->now(),
+            phishingResistant   : true
         );
 
         $this->currentAuthentication->store($context);
@@ -39238,6 +39876,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
         DateTimeImmutable      $expiresAt,
         string|null            $familyId = null,
         DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool                   $phishingResistant = false,
         string|null            $clientId = null,
         array                  $scopes = []
     ) : IssuedRefreshToken
@@ -39252,6 +39891,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             userId       : $userId,
             expiresAt    : $expiresAt,
             mfaVerifiedAt: $mfaVerifiedAt,
+            phishingResistant: $phishingResistant,
             clientId     : $clientId,
             scopes       : array_values($scopes)
         );
@@ -39266,6 +39906,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             userId       : $userId,
             expiresAt    : $expiresAt,
             mfaVerifiedAt: $mfaVerifiedAt,
+            phishingResistant: $phishingResistant,
             clientId     : $clientId,
             scopes       : array_values($scopes)
         );
@@ -39303,6 +39944,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             replacementTokenId: $replacementTokenId,
             revoked           : $record->revoked,
             mfaVerifiedAt     : $record->mfaVerifiedAt,
+            phishingResistant : $record->phishingResistant,
             clientId          : $record->clientId,
             scopes            : $record->scopes
         );
@@ -39323,6 +39965,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
                 replacementTokenId: $record->replacementTokenId,
                 revoked           : true,
                 mfaVerifiedAt     : $record->mfaVerifiedAt,
+                phishingResistant : $record->phishingResistant,
                 clientId          : $record->clientId,
                 scopes            : $record->scopes
             );
@@ -39341,6 +39984,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
                     replacementTokenId: $record->replacementTokenId,
                     revoked           : true,
                     mfaVerifiedAt     : $record->mfaVerifiedAt,
+                    phishingResistant : $record->phishingResistant,
                     clientId          : $record->clientId,
                     scopes            : $record->scopes
                 );
@@ -39404,6 +40048,7 @@ final readonly class IssuedRefreshToken
         public UserId                 $userId,
         public DateTimeImmutable      $expiresAt,
         public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public bool                   $phishingResistant = false,
         public string|null            $clientId = null,
         public array                  $scopes = []
     ) {}
@@ -39532,6 +40177,7 @@ final readonly class RefreshAuthentication
         $accessToken  = $this->jwtIdentity->issue(
             user         : $user,
             mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
             clientId     : $record->clientId,
             scopes       : $record->scopes
         );
@@ -39540,6 +40186,7 @@ final readonly class RefreshAuthentication
             expiresAt    : $now->modify('+30 days'),
             familyId     : $record->familyId,
             mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
             clientId     : $record->clientId,
             scopes       : $record->scopes
         );
@@ -39551,7 +40198,8 @@ final readonly class RefreshAuthentication
             accessTokenId       : $accessToken->tokenId,
             accessTokenExpiresAt: $accessToken->expiresAt,
             refreshTokenId      : $refreshToken->tokenId,
-            mfaVerifiedAt       : $record->mfaVerifiedAt
+            mfaVerifiedAt       : $record->mfaVerifiedAt,
+            phishingResistant   : $record->phishingResistant
         );
 
         $this->currentAuthentication->store($context);
@@ -39641,6 +40289,7 @@ final readonly class RefreshTokenRecord
         public string|null            $replacementTokenId = null,
         public bool                   $revoked = false,
         public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public bool                   $phishingResistant = false,
         public string|null            $clientId = null,
         public array                  $scopes = []
     ) {}
@@ -39679,6 +40328,7 @@ interface RefreshTokenStoreInterface
         DateTimeImmutable      $expiresAt,
         string|null            $familyId = null,
         DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool                   $phishingResistant = false,
         string|null            $clientId = null,
         array                  $scopes = []
     ) : IssuedRefreshToken;
@@ -39715,6 +40365,7 @@ final readonly class ResolvedToken
         public string                 $tokenId,
         public DateTimeImmutable      $expiresAt,
         public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public bool                   $phishingResistant = false,
         public string|null            $clientId = null,
         public array                  $scopes = []
     ) {}
@@ -39763,6 +40414,7 @@ interface TokenIssuerInterface
     public function issue(
         User $user,
         \DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = []
     ) : IssuedToken;
@@ -46292,6 +46944,7 @@ namespace Avax\Auth\Tests\Capability\Access;
 use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequireResourceOwner\RequireResourceOwner;
 use Avax\Auth\System\Capability\Access\RequireResourceOwner\ResourceOwnerDenied;
@@ -46328,6 +46981,7 @@ final class AccessPolicyTest extends TestCase
             requireRole          : new RequireRole($current),
             requirePermission    : new RequirePermission($current),
             requireResourceOwner : new RequireResourceOwner($current),
+            requirePhishingResistantAuthentication: new RequirePhishingResistantAuthentication($current),
             requireFreshMfa      : new RequireFreshMfa($current, new Clock()),
             requireAdminElevation: new RequireAdminElevation($current, new InMemoryAdminElevationStore(), new Clock())
         );
@@ -46349,7 +47003,8 @@ final class AccessPolicyTest extends TestCase
             ),
             mode         : AuthenticationMode::SESSION,
             sessionId    : 'session-admin',
-            mfaVerifiedAt: new \DateTimeImmutable()
+            mfaVerifiedAt: new \DateTimeImmutable(),
+            phishingResistant: true
         ));
         $store = new InMemoryAdminElevationStore();
         $store->start(new AdminElevationRecord(
@@ -46363,12 +47018,14 @@ final class AccessPolicyTest extends TestCase
             requireRole          : new RequireRole($current),
             requirePermission    : new RequirePermission($current),
             requireResourceOwner : new RequireResourceOwner($current),
+            requirePhishingResistantAuthentication: new RequirePhishingResistantAuthentication($current),
             requireFreshMfa      : new RequireFreshMfa($current, new Clock()),
             requireAdminElevation: new RequireAdminElevation($current, $store, new Clock())
         );
 
         $policy->execute(new AccessPolicy(
             requiredRole   : UserRole::ADMIN,
+            phishingResistant: true,
             freshMfa       : true,
             adminElevation : true
         ));
@@ -46388,6 +47045,7 @@ use Avax\Auth\System\Capability\Access\Access;
 use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequireResourceOwner\RequireResourceOwner;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
@@ -46435,6 +47093,7 @@ class AccessTest extends TestCase
         $requireAuthentication = new RequireAuthentication(currentAuthentication: $currentAuthentication);
         $requireRole = new RequireRole(currentAuthentication: $currentAuthentication);
         $requirePermission = new RequirePermission(currentAuthentication: $currentAuthentication);
+        $requirePhishingResistantAuthentication = new RequirePhishingResistantAuthentication($currentAuthentication);
 
         $access = new Access(
             requireAuthentication: $requireAuthentication,
@@ -46445,6 +47104,7 @@ class AccessTest extends TestCase
                 requireRole          : $requireRole,
                 requirePermission    : $requirePermission,
                 requireResourceOwner : new RequireResourceOwner($currentAuthentication),
+                requirePhishingResistantAuthentication: $requirePhishingResistantAuthentication,
                 requireFreshMfa      : new RequireFreshMfa($currentAuthentication, $clock),
                 requireAdminElevation: new RequireAdminElevation($currentAuthentication, $adminElevationStore, $clock)
             )
@@ -46591,6 +47251,61 @@ class RequirePermissionTest extends TestCase
         $this->expectException(exception: Unauthenticated::class);
 
         $requirement->execute(permission: $permission);
+    }
+}
+
+=== tests/Capabilities/Access/RequirePhishingResistantAuthentication/RequirePhishingResistantAuthenticationTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Tests\Capability\Access\RequirePhishingResistantAuthentication;
+
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\PhishingResistantAuthenticationRequired;
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use PHPUnit\Framework\TestCase;
+
+final class RequirePhishingResistantAuthenticationTest extends TestCase
+{
+    public function testRequirePhishingResistantAuthenticationSuccess() : void
+    {
+        $current = new CurrentAuthentication();
+        $current->store(AuthenticationContext::authenticated(
+            user               : new AuthenticatedUser(
+                id       : 1,
+                email    : 'user@example.com',
+                username : 'user'
+            ),
+            mode               : AuthenticationMode::SESSION,
+            phishingResistant  : true
+        ));
+
+        $requirement = new RequirePhishingResistantAuthentication($current);
+        $requirement->execute();
+
+        $this->assertTrue(true);
+    }
+
+    public function testRequirePhishingResistantAuthenticationFailure() : void
+    {
+        $current = new CurrentAuthentication();
+        $current->store(AuthenticationContext::authenticated(
+            user  : new AuthenticatedUser(
+                id       : 1,
+                email    : 'user@example.com',
+                username : 'user'
+            ),
+            mode  : AuthenticationMode::SESSION
+        ));
+
+        $requirement = new RequirePhishingResistantAuthentication($current);
+
+        $this->expectException(PhishingResistantAuthenticationRequired::class);
+        $requirement->execute();
     }
 }
 
@@ -46745,15 +47460,15 @@ class IdentityTest extends TestCase
         );
 
         $session = Mockery::mock(SessionIdentityInterface::class);
-        $session->shouldReceive('issue')->once()->with(10, null)->andReturn('session-10');
+        $session->shouldReceive('issue')->once()->with(10, null, false)->andReturn('session-10');
 
         $jwt = Mockery::mock(JwtIdentityInterface::class);
-        $jwt->shouldReceive('issue')->once()->with($user, null)->andReturn(new IssuedToken(
+        $jwt->shouldReceive('issue')->once()->with($user, null, false)->andReturn(new IssuedToken(
                                                                                token    : 'token-10',
                                                                                tokenId  : 'token-id',
                                                                                expiresAt: new \DateTimeImmutable('+1 hour')
                                                                            ));
-        $jwt->shouldReceive('issueRefreshToken')->once()->with($user, null)->andReturn(null);
+        $jwt->shouldReceive('issueRefreshToken')->once()->with($user, null, false)->andReturn(null);
 
         $identity = new Identity(
             sessionIdentity: $session,
@@ -47402,7 +48117,8 @@ class AuthBuilderTest extends TestCase
 
         $builder = new AuthBuilder();
         $builder->forUser(userSource: $userSource)
-            ->withIdentity(identity: $identity);
+            ->withIdentity(identity: $identity)
+            ->requirePhishingResistantAdminElevation();
 
         $auth = $builder->ready();
 
@@ -47495,7 +48211,8 @@ final class AdminElevationTest extends TestCase
             ),
             mode         : AuthenticationMode::SESSION,
             sessionId    : 'session-1',
-            mfaVerifiedAt: $clock->now()
+            mfaVerifiedAt: $clock->now(),
+            phishingResistant: true
         ));
 
         $store = new InMemoryAdminElevationStore();
@@ -47504,7 +48221,8 @@ final class AdminElevationTest extends TestCase
             requireFreshMfa      : new RequireFreshMfa($current, $clock),
             elevationStore       : $store,
             auditLog             : new InMemoryAuditLog(),
-            clock                : $clock
+            clock                : $clock,
+            requirePhishingResistant: true
         );
         $guard = new RequireAdminElevation($current, $store, $clock);
         $end   = new EndAdminElevation($current, $store, new InMemoryAuditLog(), $clock);
@@ -47517,6 +48235,326 @@ final class AdminElevationTest extends TestCase
 
         $this->expectException(AdminElevationFailed::class);
         $guard->execute();
+    }
+
+    public function testAdminElevationRequiresPhishingResistantAuthenticationWhenConfigured() : void
+    {
+        $clock = new Clock();
+        $current = new CurrentAuthentication();
+        $current->store(AuthenticationContext::authenticated(
+            user         : new AuthenticatedUser(
+                id        : 1,
+                email     : 'admin@example.com',
+                username  : 'admin',
+                roles     : [UserRole::ADMIN->value],
+                mfaEnabled: true
+            ),
+            mode         : AuthenticationMode::SESSION,
+            sessionId    : 'session-2',
+            mfaVerifiedAt: $clock->now()
+        ));
+
+        $begin = new BeginAdminElevation(
+            currentAuthentication: $current,
+            requireFreshMfa      : new RequireFreshMfa($current, $clock),
+            elevationStore       : new InMemoryAdminElevationStore(),
+            auditLog             : new InMemoryAuditLog(),
+            clock                : $clock,
+            requirePhishingResistant: true
+        );
+
+        $this->expectException(AdminElevationFailed::class);
+        $this->expectExceptionMessage('Admin elevation requires phishing-resistant authentication.');
+
+        $begin->execute();
+    }
+}
+
+=== tests/Flows/ChangeEmail/ChangeEmailTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Tests\Flow\ChangeEmail;
+
+use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
+use Avax\Auth\System\Capability\Session\SessionRecord;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserEmail;
+use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChange;
+use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChangeData;
+use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChange;
+use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChangeData;
+use Avax\Auth\System\Flow\ChangeEmail\EmailChangeFailed;
+use Avax\Auth\System\Flow\ChangeEmail\InMemoryEmailChangeStore;
+use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flow\Mfa\Challenge\InMemoryMfaChallengeStore;
+use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeRecord;
+use Avax\Auth\System\Flow\Mfa\MfaChallengePurpose;
+use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
+use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
+use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
+use Avax\Auth\Tests\Support\FrozenClock;
+use DateInterval;
+use DateTimeImmutable;
+use Mockery;
+use PHPUnit\Framework\TestCase;
+
+final class ChangeEmailTest extends TestCase
+{
+    public function testBeginEmailChangeSuccess() : void
+    {
+        $clock = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $passwordHasher = $this->passwordHasher();
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(AuthenticationContext::authenticated(
+            user             : new AuthenticatedUser(
+                id            : 1,
+                email         : 'stale@example.com',
+                username      : 'user',
+                mfaEnabled    : true
+            ),
+            mode             : AuthenticationMode::SESSION,
+            sessionId        : 'session-1',
+            mfaVerifiedAt    : $clock->now()->sub(new DateInterval('PT2M'))
+        ));
+
+        $userSource = new InMemoryUserSource();
+        $userSource->create($this->userWithPassword($passwordHasher, 1, 'old-password', 'user@example.com'));
+
+        $auditLog = new InMemoryAuditLog();
+        $flow = new BeginEmailChange(
+            currentAuthentication: $currentAuthentication,
+            userSource           : $userSource,
+            passwordHasher       : $passwordHasher,
+            emailChangeStore     : new InMemoryEmailChangeStore(),
+            requireFreshMfa      : new RequireFreshMfa($currentAuthentication, $clock),
+            auditLog             : $auditLog,
+            clock                : $clock
+        );
+
+        $challenge = $flow->execute(new BeginEmailChangeData(
+            newEmail        : 'new@example.com',
+            currentPassword : 'old-password'
+        ));
+
+        $this->assertTrue($challenge->dispatched);
+        $this->assertNotNull($challenge->token);
+        $this->assertSame('auth.email_change.requested', $auditLog->events()[0]->name);
+    }
+
+    public function testBeginEmailChangeFailureInvalidPasswordTakesPrecedenceOverTakenEmail() : void
+    {
+        $clock = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $passwordHasher = $this->passwordHasher();
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(AuthenticationContext::authenticated(
+            user             : new AuthenticatedUser(
+                id            : 1,
+                email         : 'stale@example.com',
+                username      : 'user',
+                mfaEnabled    : true
+            ),
+            mode             : AuthenticationMode::SESSION,
+            sessionId        : 'session-1',
+            mfaVerifiedAt    : $clock->now()->sub(new DateInterval('PT2M'))
+        ));
+
+        $userSource = new InMemoryUserSource();
+        $userSource->create($this->userWithPassword($passwordHasher, 1, 'old-password', 'user@example.com'));
+        $userSource->create($this->userWithPassword($passwordHasher, 2, 'someone-password', 'taken@example.com'));
+
+        $auditLog = new InMemoryAuditLog();
+        $flow = new BeginEmailChange(
+            currentAuthentication: $currentAuthentication,
+            userSource           : $userSource,
+            passwordHasher       : $passwordHasher,
+            emailChangeStore     : new InMemoryEmailChangeStore(),
+            requireFreshMfa      : new RequireFreshMfa($currentAuthentication, $clock),
+            auditLog             : $auditLog,
+            clock                : $clock
+        );
+
+        $this->expectException(EmailChangeFailed::class);
+        $this->expectExceptionMessage('Current password is invalid.');
+        $this->expectExceptionCode(403);
+
+        $flow->execute(new BeginEmailChangeData(
+            newEmail        : 'taken@example.com',
+            currentPassword : 'wrong-password'
+        ));
+    }
+
+    public function testBeginEmailChangeFailureEmailTaken() : void
+    {
+        $clock = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $passwordHasher = $this->passwordHasher();
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(AuthenticationContext::authenticated(
+            user             : new AuthenticatedUser(
+                id            : 1,
+                email         : 'stale@example.com',
+                username      : 'user',
+                mfaEnabled    : true
+            ),
+            mode             : AuthenticationMode::SESSION,
+            sessionId        : 'session-1',
+            mfaVerifiedAt    : $clock->now()->sub(new DateInterval('PT2M'))
+        ));
+
+        $userSource = new InMemoryUserSource();
+        $userSource->create($this->userWithPassword($passwordHasher, 1, 'old-password', 'user@example.com'));
+        $userSource->create($this->userWithPassword($passwordHasher, 2, 'someone-password', 'taken@example.com'));
+
+        $auditLog = new InMemoryAuditLog();
+        $flow = new BeginEmailChange(
+            currentAuthentication: $currentAuthentication,
+            userSource           : $userSource,
+            passwordHasher       : $passwordHasher,
+            emailChangeStore     : new InMemoryEmailChangeStore(),
+            requireFreshMfa      : new RequireFreshMfa($currentAuthentication, $clock),
+            auditLog             : $auditLog,
+            clock                : $clock
+        );
+
+        $this->expectException(EmailChangeFailed::class);
+        $this->expectExceptionMessage('Email address is already in use.');
+        $this->expectExceptionCode(409);
+
+        $flow->execute(new BeginEmailChangeData(
+            newEmail        : 'taken@example.com',
+            currentPassword : 'old-password'
+        ));
+    }
+
+    public function testConfirmEmailChangeSuccess() : void
+    {
+        $clock = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $passwordHasher = $this->passwordHasher();
+        $currentAuthentication = new CurrentAuthentication();
+        $context = AuthenticationContext::authenticated(
+            user          : new AuthenticatedUser(
+                id            : 1,
+                email         : 'user@example.com',
+                username      : 'user',
+                mfaEnabled    : true
+            ),
+            mode          : AuthenticationMode::SESSION,
+            sessionId     : 'session-1',
+            mfaVerifiedAt  : $clock->now()->sub(new DateInterval('PT2M'))
+        );
+        $currentAuthentication->store($context);
+
+        $userSource = new InMemoryUserSource();
+        $userSource->create($this->userWithPassword($passwordHasher, 1, 'old-password', 'user@example.com'));
+
+        $emailChangeStore = new InMemoryEmailChangeStore();
+        $challenge = $emailChangeStore->issue(
+            userId    : new UserId(1),
+            newEmail  : 'new@example.com',
+            expiresAt : $clock->now()->add(new DateInterval('PT30M'))
+        );
+
+        $sessionRegistry = new InMemorySessionRegistry();
+        $sessionRegistry->track(new SessionRecord(
+            sessionId        : 'session-1',
+            userId           : new UserId(1),
+            createdAt        : $clock->now()->sub(new DateInterval('PT5M')),
+            lastSeenAt       : $clock->now(),
+            idleExpiresAt    : $clock->now()->add(new DateInterval('PT10M')),
+            absoluteExpiresAt: $clock->now()->add(new DateInterval('PT1H'))
+        ));
+
+        $challengeStore = new InMemoryMfaChallengeStore();
+        $challengeStore->issue(new MfaChallengeRecord(
+            challengeId: 'challenge-1',
+            userId     : new UserId(1),
+            purpose    : MfaChallengePurpose::LOGIN,
+            createdAt  : $clock->now(),
+            expiresAt  : $clock->now()->add(new DateInterval('PT5M'))
+        ));
+
+        $refreshTokenStore = new InMemoryRefreshTokenStore();
+        $refreshToken = $refreshTokenStore->issue(
+            userId    : new UserId(1),
+            expiresAt : $clock->now()->add(new DateInterval('PT1H'))
+        );
+
+        $emailVerificationState = new InMemoryEmailVerificationStateStore();
+        $auditLog = new InMemoryAuditLog();
+        $identity = Mockery::mock(IdentityInterface::class);
+        $identity->shouldReceive('clear')->once()->with($context);
+
+        $flow = new ConfirmEmailChange(
+            userSource            : $userSource,
+            emailChangeStore      : $emailChangeStore,
+            emailVerificationState: $emailVerificationState,
+            auditLog              : $auditLog,
+            clock                 : $clock,
+            currentAuthentication : $currentAuthentication,
+            identity              : $identity,
+            sessionRegistry       : $sessionRegistry,
+            mfaChallengeStore     : $challengeStore,
+            refreshTokenStore     : $refreshTokenStore
+        );
+
+        $this->assertTrue($flow->execute(new ConfirmEmailChangeData(token: $challenge->token ?? '')));
+        $this->assertSame('new@example.com', $userSource->findById(new UserId(1))?->getEmail()->value);
+        $this->assertTrue($emailVerificationState->isVerified(new UserId(1)));
+        $this->assertTrue($sessionRegistry->find('session-1')?->isRevoked() ?? false);
+        $this->assertSame('email_change', $sessionRegistry->find('session-1')?->revokeReason);
+        $this->assertNull($challengeStore->find('challenge-1'));
+        $this->assertTrue($refreshTokenStore->find($refreshToken->token)?->revoked ?? false);
+        $this->assertNull($currentAuthentication->read()->user());
+        $this->assertSame('auth.email_change.completed', $auditLog->events()[0]->name);
+    }
+
+    public function testConfirmEmailChangeFailureInvalidToken() : void
+    {
+        $clock = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $flow = new ConfirmEmailChange(
+            userSource            : new InMemoryUserSource(),
+            emailChangeStore      : new InMemoryEmailChangeStore(),
+            emailVerificationState: new InMemoryEmailVerificationStateStore(),
+            auditLog              : new InMemoryAuditLog(),
+            clock                 : $clock,
+            currentAuthentication : new CurrentAuthentication(),
+            identity              : Mockery::mock(IdentityInterface::class)
+        );
+
+        $this->expectException(EmailChangeFailed::class);
+        $this->expectExceptionMessage('Email change token is invalid.');
+        $this->expectExceptionCode(410);
+
+        $flow->execute(new ConfirmEmailChangeData(token: 'invalid-token'));
+    }
+
+    protected function tearDown() : void
+    {
+        Mockery::close();
+    }
+
+    private function passwordHasher() : PasswordHasher
+    {
+        return new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
+    }
+
+    private function userWithPassword(PasswordHasher $passwordHasher, int $userId, string $password, string $email) : User
+    {
+        return User::create(
+            id          : new UserId($userId),
+            email       : new UserEmail($email),
+            username    : 'user' . $userId,
+            passwordHash: $passwordHasher->hash($password)
+        );
     }
 }
 

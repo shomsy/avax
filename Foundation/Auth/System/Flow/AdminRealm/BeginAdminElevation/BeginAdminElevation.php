@@ -23,7 +23,8 @@ final readonly class BeginAdminElevation
         private RequireFreshMfa $requireFreshMfa,
         private AdminElevationStoreInterface $elevationStore,
         private AuditLogInterface $auditLog,
-        private Clock $clock
+        private Clock $clock,
+        private bool $requirePhishingResistant = false
     ) {}
 
     /**
@@ -40,6 +41,10 @@ final readonly class BeginAdminElevation
 
         if (! $user->hasRole(UserRole::ADMIN)) {
             throw AdminElevationFailed::forbidden();
+        }
+
+        if ($this->requirePhishingResistant && ! $context->isPhishingResistant()) {
+            throw AdminElevationFailed::phishingResistantRequired();
         }
 
         $this->requireFreshMfa->execute();

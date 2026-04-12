@@ -20,6 +20,7 @@ final readonly class ResolvedToken
         public string                 $tokenId,
         public DateTimeImmutable      $expiresAt,
         public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public bool                   $phishingResistant = false,
         public string|null            $clientId = null,
         public array                  $scopes = []
     ) {}

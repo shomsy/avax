@@ -17,6 +17,7 @@ final readonly class AccessPolicy
         public UserPermission|null $requiredPermission = null,
         public int|null $resourceOwnerUserId = null,
         public bool $freshMfa = false,
-        public bool $adminElevation = false
+        public bool $adminElevation = false,
+        public bool $phishingResistant = false
     ) {}
 }

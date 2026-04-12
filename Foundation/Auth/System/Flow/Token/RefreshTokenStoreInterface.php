@@ -20,6 +20,7 @@ interface RefreshTokenStoreInterface
         DateTimeImmutable      $expiresAt,
         string|null            $familyId = null,
         DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool                   $phishingResistant = false,
         string|null            $clientId = null,
         array                  $scopes = []
     ) : IssuedRefreshToken;

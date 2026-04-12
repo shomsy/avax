@@ -23,6 +23,7 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
     public function issue(
         User $user,
         DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = []
     ) : IssuedToken;
@@ -35,6 +36,7 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
     public function issueRefreshToken(
         User $user,
         DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = []
     ) : IssuedRefreshToken|null;

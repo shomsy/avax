@@ -22,6 +22,7 @@ final readonly class IssuedRefreshToken
         public UserId                 $userId,
         public DateTimeImmutable      $expiresAt,
         public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public bool                   $phishingResistant = false,
         public string|null            $clientId = null,
         public array                  $scopes = []
     ) {}

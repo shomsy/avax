@@ -73,6 +73,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
             $mfaVerifiedAt = null;
             $mfaTimestamp  = $claims['mfa_at'] ?? null;
+            $phishingResistant = ($claims['phr'] ?? 0) === 1;
             $clientId      = $claims['client_id'] ?? null;
             $scopeClaim    = $claims['scope'] ?? null;
             $scopes        = [];
@@ -100,6 +101,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 tokenId      : $tokenId,
                 expiresAt    : $expiryMoment,
                 mfaVerifiedAt: $mfaVerifiedAt,
+                phishingResistant: $phishingResistant,
                 clientId     : $clientId,
                 scopes       : $scopes
             );
@@ -114,6 +116,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
     public function issueRefreshToken(
         User $user,
         DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = []
     ) : IssuedRefreshToken|null
@@ -126,6 +129,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             userId       : $user->getId(),
             expiresAt    : $this->clock->now()->modify("+{$this->refreshTokenExpiry} seconds"),
             mfaVerifiedAt: $mfaVerifiedAt,
+            phishingResistant: $phishingResistant,
             clientId     : $clientId,
             scopes       : $scopes
         );
@@ -137,6 +141,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
     public function issue(
         User $user,
         DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = []
     ) : IssuedToken
@@ -159,6 +164,10 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
         if ($mfaVerifiedAt !== null) {
             $payload['mfa_at'] = $mfaVerifiedAt->getTimestamp();
+        }
+
+        if ($phishingResistant) {
+            $payload['phr'] = 1;
         }
 
         if ($clientId !== null) {

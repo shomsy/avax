@@ -61,15 +61,15 @@ class IdentityTest extends TestCase
         );
 
         $session = Mockery::mock(SessionIdentityInterface::class);
-        $session->shouldReceive('issue')->once()->with(10, null)->andReturn('session-10');
+        $session->shouldReceive('issue')->once()->with(10, null, false)->andReturn('session-10');
 
         $jwt = Mockery::mock(JwtIdentityInterface::class);
-        $jwt->shouldReceive('issue')->once()->with($user, null)->andReturn(new IssuedToken(
+        $jwt->shouldReceive('issue')->once()->with($user, null, false)->andReturn(new IssuedToken(
                                                                                token    : 'token-10',
                                                                                tokenId  : 'token-id',
                                                                                expiresAt: new \DateTimeImmutable('+1 hour')
                                                                            ));
-        $jwt->shouldReceive('issueRefreshToken')->once()->with($user, null)->andReturn(null);
+        $jwt->shouldReceive('issueRefreshToken')->once()->with($user, null, false)->andReturn(null);
 
         $identity = new Identity(
             sessionIdentity: $session,

@@ -89,6 +89,7 @@ final readonly class ExchangeAuthorizationCode
         $accessToken = $this->jwtIdentity->issue(
             user         : $user,
             mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
             scopes       : $record->scopes
         );
@@ -96,6 +97,7 @@ final readonly class ExchangeAuthorizationCode
             userId       : $user->getId(),
             expiresAt    : $now->modify('+30 days'),
             mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
             scopes       : $record->scopes
         );

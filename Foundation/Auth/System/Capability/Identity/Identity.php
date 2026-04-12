@@ -27,7 +27,11 @@ final readonly class Identity implements IdentityInterface
         }
     }
 
-    public function issue(User $user, DateTimeImmutable|null $mfaVerifiedAt = null) : IssuedAuthentication
+    public function issue(
+        User $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false
+    ) : IssuedAuthentication
     {
         if (! $user->isActive()) {
             throw new InvalidArgumentException(message: 'Inactive users cannot be authenticated.');
@@ -35,17 +39,27 @@ final readonly class Identity implements IdentityInterface
 
         $sessionId    = $this->sessionIdentity?->issue(
             userId       : $user->getId()->value,
-            mfaVerifiedAt: $mfaVerifiedAt
+            mfaVerifiedAt: $mfaVerifiedAt,
+            phishingResistant: $phishingResistant
         );
-        $accessToken  = $this->jwtIdentity?->issue(user: $user, mfaVerifiedAt: $mfaVerifiedAt);
-        $refreshToken = $this->jwtIdentity?->issueRefreshToken(user: $user, mfaVerifiedAt: $mfaVerifiedAt);
+        $accessToken  = $this->jwtIdentity?->issue(
+            user               : $user,
+            mfaVerifiedAt      : $mfaVerifiedAt,
+            phishingResistant  : $phishingResistant
+        );
+        $refreshToken = $this->jwtIdentity?->issueRefreshToken(
+            user               : $user,
+            mfaVerifiedAt      : $mfaVerifiedAt,
+            phishingResistant  : $phishingResistant
+        );
 
         return new IssuedAuthentication(
             mode         : $this->resolveMode(),
             sessionId    : $sessionId,
             accessToken  : $accessToken,
             refreshToken : $refreshToken,
-            mfaVerifiedAt: $mfaVerifiedAt
+            mfaVerifiedAt: $mfaVerifiedAt,
+            phishingResistant: $phishingResistant
         );
     }
 

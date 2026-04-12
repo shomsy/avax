@@ -76,7 +76,11 @@ final readonly class CompletePasskeyAuthentication
             throw PasskeyOperationFailed::notFound();
         }
 
-        $issued  = $this->identity->issue($user, $this->clock->now());
+        $issued  = $this->identity->issue(
+            $user,
+            $this->clock->now(),
+            true
+        );
         $context = AuthenticationContext::authenticated(
             user                : $this->projectAuthenticatedUser->fromUser($user),
             mode                : $issued->mode === AuthenticationMode::SESSION ? AuthenticationMode::SESSION : $issued->mode,
@@ -84,7 +88,8 @@ final readonly class CompletePasskeyAuthentication
             accessTokenId       : $issued->accessToken?->tokenId,
             accessTokenExpiresAt: $issued->accessToken?->expiresAt,
             refreshTokenId      : $issued->refreshToken?->tokenId,
-            mfaVerifiedAt       : $this->clock->now()
+            mfaVerifiedAt       : $this->clock->now(),
+            phishingResistant   : true
         );
 
         $this->currentAuthentication->store($context);

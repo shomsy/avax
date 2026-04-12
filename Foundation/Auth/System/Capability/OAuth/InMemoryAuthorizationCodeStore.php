@@ -27,7 +27,8 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         string|null $state = null,
         string|null $codeChallenge = null,
         PkceMethod|null $codeChallengeMethod = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false
     ) : IssuedAuthorizationCode
     {
         $plainCode = bin2hex(random_bytes(32));
@@ -42,7 +43,8 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
             expiresAt          : $expiresAt,
             codeChallenge      : $codeChallenge,
             codeChallengeMethod: $codeChallengeMethod,
-            mfaVerifiedAt      : $mfaVerifiedAt
+            mfaVerifiedAt      : $mfaVerifiedAt,
+            phishingResistant  : $phishingResistant
         );
         $this->hashToCodeId[$this->hash($plainCode)] = $codeId;
 
@@ -83,7 +85,8 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
             codeChallenge      : $record->codeChallenge,
             codeChallengeMethod: $record->codeChallengeMethod,
             usedAt             : $usedAt,
-            mfaVerifiedAt      : $record->mfaVerifiedAt
+            mfaVerifiedAt      : $record->mfaVerifiedAt,
+            phishingResistant  : $record->phishingResistant
         );
     }
 

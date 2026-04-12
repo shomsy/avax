@@ -98,7 +98,8 @@ final readonly class Login
             accessTokenId       : $issued->accessToken?->tokenId,
             accessTokenExpiresAt: $issued->accessToken?->expiresAt,
             refreshTokenId      : $issued->refreshToken?->tokenId,
-            mfaVerifiedAt       : $issued->mfaVerifiedAt
+            mfaVerifiedAt       : $issued->mfaVerifiedAt,
+            phishingResistant   : $issued->phishingResistant
         );
 
         $this->currentAuthentication->store($context);

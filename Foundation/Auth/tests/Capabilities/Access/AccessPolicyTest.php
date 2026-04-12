@@ -7,6 +7,7 @@ namespace Avax\Auth\Tests\Capability\Access;
 use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequireResourceOwner\RequireResourceOwner;
 use Avax\Auth\System\Capability\Access\RequireResourceOwner\ResourceOwnerDenied;
@@ -43,6 +44,7 @@ final class AccessPolicyTest extends TestCase
             requireRole          : new RequireRole($current),
             requirePermission    : new RequirePermission($current),
             requireResourceOwner : new RequireResourceOwner($current),
+            requirePhishingResistantAuthentication: new RequirePhishingResistantAuthentication($current),
             requireFreshMfa      : new RequireFreshMfa($current, new Clock()),
             requireAdminElevation: new RequireAdminElevation($current, new InMemoryAdminElevationStore(), new Clock())
         );
@@ -64,7 +66,8 @@ final class AccessPolicyTest extends TestCase
             ),
             mode         : AuthenticationMode::SESSION,
             sessionId    : 'session-admin',
-            mfaVerifiedAt: new \DateTimeImmutable()
+            mfaVerifiedAt: new \DateTimeImmutable(),
+            phishingResistant: true
         ));
         $store = new InMemoryAdminElevationStore();
         $store->start(new AdminElevationRecord(
@@ -78,12 +81,14 @@ final class AccessPolicyTest extends TestCase
             requireRole          : new RequireRole($current),
             requirePermission    : new RequirePermission($current),
             requireResourceOwner : new RequireResourceOwner($current),
+            requirePhishingResistantAuthentication: new RequirePhishingResistantAuthentication($current),
             requireFreshMfa      : new RequireFreshMfa($current, new Clock()),
             requireAdminElevation: new RequireAdminElevation($current, $store, new Clock())
         );
 
         $policy->execute(new AccessPolicy(
             requiredRole   : UserRole::ADMIN,
+            phishingResistant: true,
             freshMfa       : true,
             adminElevation : true
         ));

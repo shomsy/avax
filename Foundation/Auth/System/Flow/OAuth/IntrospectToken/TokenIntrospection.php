@@ -17,7 +17,8 @@ final readonly class TokenIntrospection
         public int|null               $userId = null,
         public array                  $scopes = [],
         public DateTimeImmutable|null $expiresAt = null,
-        public DateTimeImmutable|null $mfaVerifiedAt = null
+        public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public bool                   $phishingResistant = false
     ) {}
 
     public static function inactive() : self

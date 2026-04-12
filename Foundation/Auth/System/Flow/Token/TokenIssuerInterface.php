@@ -17,6 +17,7 @@ interface TokenIssuerInterface
     public function issue(
         User $user,
         \DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = []
     ) : IssuedToken;

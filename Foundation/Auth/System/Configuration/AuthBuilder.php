@@ -8,6 +8,7 @@ use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capability\Access\Access;
 use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequireResourceOwner\RequireResourceOwner;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
@@ -43,6 +44,10 @@ use Avax\Auth\System\Flow\AdminRealm\RequireAdminElevation\RequireAdminElevation
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticateRequest;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
+use Avax\Auth\System\Flow\ChangeEmail\BeginEmailChange;
+use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChange;
+use Avax\Auth\System\Flow\ChangeEmail\EmailChangeStoreInterface;
+use Avax\Auth\System\Flow\ChangeEmail\InMemoryEmailChangeStore;
 use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
@@ -134,6 +139,7 @@ final class AuthBuilder
     private RefreshTokenStoreInterface|null           $refreshTokenStore      = null;
     private PasswordResetStoreInterface|null          $passwordResetStore     = null;
     private EmailVerificationStoreInterface|null      $emailVerificationStore = null;
+    private EmailChangeStoreInterface|null            $emailChangeStore       = null;
     private MfaChallengeStoreInterface|null           $mfaChallengeStore      = null;
     private TotpInterface|null                        $totp                   = null;
     private LimitMfaAttempts|null                     $mfaAttemptLimit        = null;
@@ -154,6 +160,7 @@ final class AuthBuilder
     private string                                    $mfaIssuer              = 'Avax Auth';
     private string                                    $passkeyRpId            = 'localhost';
     private string                                    $passkeyRpName          = 'Avax Auth';
+    private bool                                      $adminPhishingResistantRequired = false;
 
     /**
      * Define the data source for users.
@@ -243,6 +250,13 @@ final class AuthBuilder
     public function withEmailVerificationStore(EmailVerificationStoreInterface $emailVerificationStore) : self
     {
         $this->emailVerificationStore = $emailVerificationStore;
+
+        return $this;
+    }
+
+    public function withEmailChangeStore(EmailChangeStoreInterface $emailChangeStore) : self
+    {
+        $this->emailChangeStore = $emailChangeStore;
 
         return $this;
     }
@@ -346,6 +360,13 @@ final class AuthBuilder
         return $this;
     }
 
+    public function requirePhishingResistantAdminElevation(bool $required = true) : self
+    {
+        $this->adminPhishingResistantRequired = $required;
+
+        return $this;
+    }
+
     public function withFederationRuntime(FederationRuntimeInterface $federationRuntime) : self
     {
         $this->federationRuntime = $federationRuntime;
@@ -412,6 +433,7 @@ final class AuthBuilder
         $federatedIdentityLinkStore = $this->federatedIdentityLinkStore ?? new InMemoryFederatedIdentityLinkStore();
         $passwordResetStore       = $this->passwordResetStore ?? new InMemoryPasswordResetStore();
         $emailVerificationStore   = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore();
+        $emailChangeStore         = $this->emailChangeStore ?? new InMemoryEmailChangeStore();
         $emailVerificationState   = $this->emailVerificationState ?? new InMemoryEmailVerificationStateStore();
         $mfaStore                 = $this->mfaStore ?? new InMemoryMfaStore();
         $mfaChallengeStore        = $this->mfaChallengeStore ?? new InMemoryMfaChallengeStore();
@@ -506,6 +528,9 @@ final class AuthBuilder
         $requireResourceOwner    = new RequireResourceOwner(
             currentAuthentication: $currentAuthentication
         );
+        $requirePhishingResistantAuthentication = new RequirePhishingResistantAuthentication(
+            currentAuthentication: $currentAuthentication
+        );
         $access                  = new Access(
             requireAuthentication: $requireAuthentication,
             requireRole          : $requireRole,
@@ -515,6 +540,7 @@ final class AuthBuilder
                 requireRole          : $requireRole,
                 requirePermission    : $requirePermission,
                 requireResourceOwner : $requireResourceOwner,
+                requirePhishingResistantAuthentication: $requirePhishingResistantAuthentication,
                 requireFreshMfa      : $requireFreshMfa,
                 requireAdminElevation: $requireAdminElevation
             )
@@ -584,6 +610,29 @@ final class AuthBuilder
                                         rateLimit            : $this->rateLimit,
                                         requireFreshMfa      : $requireFreshMfa
                                     ),
+            beginEmailChange      : new BeginEmailChange(
+                currentAuthentication: $currentAuthentication,
+                userSource           : $this->userSource,
+                passwordHasher       : $passwordHasher,
+                emailChangeStore     : $emailChangeStore,
+                requireFreshMfa      : $requireFreshMfa,
+                auditLog             : $auditLog,
+                clock                : $clock
+            ),
+            confirmEmailChange    : $provisionableUserSource !== null
+                ? new ConfirmEmailChange(
+                    userSource           : $provisionableUserSource,
+                    emailChangeStore     : $emailChangeStore,
+                    emailVerificationState: $emailVerificationState,
+                    auditLog             : $auditLog,
+                    clock                : $clock,
+                    currentAuthentication: $currentAuthentication,
+                    identity             : $identity,
+                    sessionRegistry      : $this->sessionRegistry,
+                    mfaChallengeStore    : $mfaChallengeStore,
+                    refreshTokenStore    : $this->refreshTokenStore
+                )
+                : null,
             register              : new Register(
                                         userSource               : $this->userSource,
                                         passwordHasher           : $passwordHasher,
@@ -650,7 +699,8 @@ final class AuthBuilder
                                         requireFreshMfa      : $requireFreshMfa,
                                         elevationStore       : $adminElevationStore,
                                         auditLog             : $auditLog,
-                                        clock                : $clock
+                                        clock                : $clock,
+                                        requirePhishingResistant: $this->adminPhishingResistantRequired
                                     ),
             endAdminElevation     : new EndAdminElevation(
                                         currentAuthentication: $currentAuthentication,

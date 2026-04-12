@@ -83,7 +83,8 @@ final readonly class AuthorizeCode
             state              : $data->state,
             codeChallenge      : $data->codeChallenge,
             codeChallengeMethod: $data->codeChallengeMethod,
-            mfaVerifiedAt      : $context->mfaVerifiedAt()
+            mfaVerifiedAt      : $context->mfaVerifiedAt(),
+            phishingResistant  : $context->isPhishingResistant()
         );
 
         $this->auditLog->record(new AuditEvent(

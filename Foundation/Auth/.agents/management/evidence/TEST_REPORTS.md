@@ -13,6 +13,31 @@ Concrete records of executed verification.
 
 ## Reports
 
+- `executed_at`: 2026-04-12 23:10 CEST
+- `scope`: full PHPUnit suite after assurance policy tiers, sender-constrained OAuth posture, and key-versioned JWT
+  artifacts
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: PHPUnit passes after adding `IdentityPolicyCatalog`, OAuth sender-constraint enforcement, phishing-resistant
+  OAuth client policy, JWT `kid` handling, and new regression coverage; result `OK (138 tests, 355 assertions)`
+
+- `executed_at`: 2026-04-12 23:10 CEST
+- `scope`: baseline static analysis after enterprise-to-ideal auth policy expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes across the new `Capability/Access/Policy` types, OAuth sender-constraint contracts,
+  and JWT token-version support
+
+- `executed_at`: 2026-04-12 23:10 CEST
+- `scope`: strict static analysis after enterprise-to-ideal auth policy expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after tightening grant-type normalization, sender-constraint iterable contracts, and
+  explicit assurance-policy seams
+
 - `executed_at`: 2026-04-12 22:39 CEST
 - `scope`: targeted regression suite for phishing-resistant access naming, admin elevation policy, and ChangeEmail flow
 - `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed

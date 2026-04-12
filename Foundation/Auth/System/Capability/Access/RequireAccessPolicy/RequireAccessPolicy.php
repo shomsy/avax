@@ -47,6 +47,7 @@ final readonly class RequireAccessPolicy
     public function execute(AccessPolicy $policy) : void
     {
         $this->requireAuthentication->execute();
+        $identityPolicy = $policy->identityPolicy;
 
         if ($policy->requiredRole !== null) {
             $this->requireRole->execute($policy->requiredRole);
@@ -60,15 +61,18 @@ final readonly class RequireAccessPolicy
             $this->requireResourceOwner->execute($policy->resourceOwnerUserId);
         }
 
-        if ($policy->phishingResistant) {
+        if ($policy->phishingResistantRequired || $identityPolicy?->phishingResistantRequired === true) {
             $this->requirePhishingResistantAuthentication->execute();
         }
 
-        if ($policy->freshMfa) {
-            $this->requireFreshMfa->execute();
+        $freshMfaMaxAgeSeconds = $policy->freshMfaMaxAgeSeconds
+            ?? $identityPolicy?->freshMfaMaxAgeSeconds;
+
+        if ($policy->freshMfa || $freshMfaMaxAgeSeconds !== null) {
+            $this->requireFreshMfa->execute($freshMfaMaxAgeSeconds);
         }
 
-        if ($policy->adminElevation) {
+        if ($policy->adminElevation || $identityPolicy?->adminElevationRequired === true) {
             $this->requireAdminElevation->execute();
         }
     }

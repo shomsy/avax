@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\OAuth\IntrospectToken;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use DateTimeImmutable;
 
 final readonly class TokenIntrospection
@@ -18,7 +19,8 @@ final readonly class TokenIntrospection
         public array                  $scopes = [],
         public DateTimeImmutable|null $expiresAt = null,
         public DateTimeImmutable|null $mfaVerifiedAt = null,
-        public bool                   $phishingResistant = false
+        public bool                   $phishingResistant = false,
+        public OAuthSenderConstraint|null $senderConstraint = null
     ) {}
 
     public static function inactive() : self

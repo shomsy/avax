@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Capability\Identity\Jwt;
 
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserEmail;
 use Avax\Auth\System\Capability\User\UserId;
@@ -161,6 +163,41 @@ class JwtIdentityTest extends TestCase
         $this->assertNotNull($resolved);
         $this->assertSame('oauth_client', $resolved?->clientId);
         $this->assertSame(['email', 'profile'], $resolved?->scopes);
+    }
+
+    public function testJwtIdentityPreservesSenderConstraintClaims() : void
+    {
+        $user = new User(
+            id          : new UserId(13),
+            email       : new UserEmail('oauth-binding@example.com'),
+            username    : 'oauth-binding',
+            passwordHash: 'hash'
+        );
+
+        $userSource = new InMemoryUserSource();
+        $userSource->create($user);
+
+        $jwt = new JwtIdentity(
+            userSource: $userSource,
+            codec     : new HmacTokenCodec(secret: 'super-secret-key'),
+            clock     : new Clock()
+        );
+
+        $issued = $jwt->issue(
+            user            : $user,
+            clientId        : 'oauth_client',
+            scopes          : ['profile'],
+            senderConstraint: new OAuthSenderConstraint(
+                type      : OAuthSenderConstraintType::DPOP,
+                thumbprint: 'thumb-123'
+            )
+        );
+        $resolved = $jwt->resolve($issued->token);
+
+        $this->assertNotNull($resolved);
+        $this->assertNotNull($resolved?->senderConstraint);
+        $this->assertSame(OAuthSenderConstraintType::DPOP, $resolved?->senderConstraint?->type);
+        $this->assertSame('thumb-123', $resolved?->senderConstraint?->thumbprint);
     }
 
     protected function tearDown() : void

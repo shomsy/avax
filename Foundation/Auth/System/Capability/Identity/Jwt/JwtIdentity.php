@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Identity\Jwt;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
@@ -76,7 +78,10 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             $phishingResistant = ($claims['phr'] ?? 0) === 1;
             $clientId      = $claims['client_id'] ?? null;
             $scopeClaim    = $claims['scope'] ?? null;
+            $senderConstraintType = $claims['cnf_typ'] ?? null;
+            $senderConstraintThumbprint = $claims['cnf_thumbprint'] ?? null;
             $scopes        = [];
+            $senderConstraint = null;
 
             if (is_int($mfaTimestamp)) {
                 $mfaVerifiedAt = new DateTimeImmutable("@{$mfaTimestamp}");
@@ -88,6 +93,17 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
             if (is_string($scopeClaim) && $scopeClaim !== '') {
                 $scopes = array_values(array_filter(explode(' ', $scopeClaim), static fn (string $scope) : bool => $scope !== ''));
+            }
+
+            if ($senderConstraintType !== null || $senderConstraintThumbprint !== null) {
+                if (! is_string($senderConstraintType) || ! is_string($senderConstraintThumbprint)) {
+                    return null;
+                }
+
+                $senderConstraint = new OAuthSenderConstraint(
+                    type      : OAuthSenderConstraintType::from($senderConstraintType),
+                    thumbprint: $senderConstraintThumbprint
+                );
             }
 
             $user = $this->userSource->findById(new UserId($subject));
@@ -103,7 +119,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 mfaVerifiedAt: $mfaVerifiedAt,
                 phishingResistant: $phishingResistant,
                 clientId     : $clientId,
-                scopes       : $scopes
+                scopes       : $scopes,
+                senderConstraint: $senderConstraint
             );
         } catch (Throwable) {
             return null;
@@ -118,7 +135,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         DateTimeImmutable|null $mfaVerifiedAt = null,
         bool $phishingResistant = false,
         string|null $clientId = null,
-        array $scopes = []
+        array $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedRefreshToken|null
     {
         if ($this->refreshTokenStore === null) {
@@ -131,7 +149,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             mfaVerifiedAt: $mfaVerifiedAt,
             phishingResistant: $phishingResistant,
             clientId     : $clientId,
-            scopes       : $scopes
+            scopes       : $scopes,
+            senderConstraint: $senderConstraint
         );
     }
 
@@ -143,7 +162,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         DateTimeImmutable|null $mfaVerifiedAt = null,
         bool $phishingResistant = false,
         string|null $clientId = null,
-        array $scopes = []
+        array $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedToken
     {
         if (! $user->isActive()) {
@@ -176,6 +196,11 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
         if ($scopes !== []) {
             $payload['scope'] = implode(' ', array_values($scopes));
+        }
+
+        if ($senderConstraint !== null) {
+            $payload['cnf_typ'] = $senderConstraint->type->value;
+            $payload['cnf_thumbprint'] = $senderConstraint->thumbprint;
         }
 
         return new IssuedToken(

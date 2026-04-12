@@ -14,6 +14,23 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-022
+- `created_at`: 2026-04-12 22:39 CEST
+- `updated_at`: 2026-04-12 23:10 CEST
+- `completed_at`: 2026-04-12 23:10 CEST
+- `status`: done
+- `estimate`: 3h
+- `actual`: 31m
+- `outcome`: Add explicit assurance policy tiers, sender-constrained OAuth posture, key-versioned token artifacts, and
+  first-class privacy, authorization, and crypto governance docs for the enterprise-to-ideal auth pass
+- `acceptance`: `Capability/Access/Policy/IdentityPolicyCatalog` exists; `AccessPolicy` can express actor-tier
+  assurance; OAuth clients can require phishing-resistant auth and sender-constrained tokens; HMAC JWTs support `kid`;
+  README/docs/evidence reflect assurance, retention, authz, crypto, and SCIM conditional posture; PHPUnit and PHPStan
+  lanes pass
+- `links`: System/Capability/Access/Policy/, System/Capability/OAuth/, System/Flow/OAuth/, System/Flow/Token/,
+  docs/assurance-policy.md, docs/privacy-retention-policy.md, docs/authorization-hardening.md,
+  docs/crypto-key-lifecycle.md
+
 - `id`: AUTH-021
 - `created_at`: 2026-04-12 22:39 CEST
 - `updated_at`: 2026-04-12 22:39 CEST

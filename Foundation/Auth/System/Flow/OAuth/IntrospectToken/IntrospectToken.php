@@ -43,7 +43,8 @@ final readonly class IntrospectToken
                 scopes       : $resolved->scopes,
                 expiresAt    : $resolved->expiresAt,
                 mfaVerifiedAt: $resolved->mfaVerifiedAt,
-                phishingResistant: $resolved->phishingResistant
+                phishingResistant: $resolved->phishingResistant,
+                senderConstraint: $resolved->senderConstraint
             );
         }
 

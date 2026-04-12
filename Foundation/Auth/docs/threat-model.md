@@ -12,14 +12,15 @@ This document captures the current auth-kernel threat model and the controls own
 | brute force | login rate limiting, MFA attempt throttling | implemented |
 | session hijack | secure cookies, session ID regeneration, idle timeout, absolute timeout, tracked session revocation | implemented |
 | stolen authorization code | short TTL, single use, redirect URI match, PKCE verification for public clients | implemented |
-| stolen refresh token | rotation, reuse detection, family revocation | implemented |
+| stolen refresh token | rotation, reuse detection, family revocation, optional sender-constrained binding checks | implemented |
+| bearer token replay | DPoP or mTLS binding metadata for clients that require sender-constrained tokens | implemented |
 | passkey replay | single-use passkey challenge lifecycle and revoked-credential checks | implemented |
 | MFA bypass | challenge lifecycle, replay protection, backup code one-time use, fresh-MFA checks | implemented |
 | recovery takeover | anti-enumeration start, recovery throttling, reset-driven revocation, MFA recovery auditing | implemented |
-| admin account takeover | admin elevation, fresh-MFA step-up, audit trail, provisioning revocation | partial |
-| email change takeover | dedicated email-change flow not yet package-owned | planned |
+| admin account takeover | explicit phishing-resistant admin policy, admin elevation, fresh-MFA step-up, passkey support, audit trail | implemented |
+| email change takeover | dedicated email-change flow, current-password proof, fresh MFA, one-time confirmation, audit | implemented |
 | refresh token reuse | family revocation, risk review signal, and audit | implemented |
-| insider misuse | audit trail and admin-elevation state exist; approval workflows are application-owned | partial |
+| insider misuse | audit trail, admin-elevation state, and authorization hardening checklist exist; approval workflows remain application-owned | partial |
 | tenant isolation bug | tenant-aware federation connection boundary exists, but full tenant membership model is not package-owned | partial |
 
 ## Incident Classes
@@ -58,6 +59,10 @@ This document captures the current auth-kernel threat model and the controls own
 
 - authorization codes are single use and short lived
 - public clients require `S256` PKCE before token exchange
+- high-assurance clients can require phishing-resistant user auth before code
+  issuance
+- sender-constrained clients must present the same DPoP or mTLS binding on
+  refresh exchange
 - refresh reuse revokes the entire token family
 - revoke and introspection flows exist for downstream incident handling
 

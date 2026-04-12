@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Capability\Access;
 
 use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
+use Avax\Auth\System\Capability\Access\Policy\IdentityPolicyCatalog;
 use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
 use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
@@ -20,6 +21,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
@@ -88,11 +90,49 @@ final class AccessPolicyTest extends TestCase
 
         $policy->execute(new AccessPolicy(
             requiredRole   : UserRole::ADMIN,
-            phishingResistant: true,
+            phishingResistantRequired: true,
             freshMfa       : true,
             adminElevation : true
         ));
 
         $this->assertTrue(true);
+    }
+
+    public function testAdminIdentityPolicyUsesItsOwnFreshMfaWindow() : void
+    {
+        $clock = new Clock();
+        $current = new CurrentAuthentication();
+        $current->store(AuthenticationContext::authenticated(
+            user         : new AuthenticatedUser(
+                id         : 1,
+                email      : 'admin@example.com',
+                username   : 'admin',
+                roles      : [UserRole::ADMIN->value],
+                mfaEnabled : true
+            ),
+            mode         : AuthenticationMode::SESSION,
+            sessionId    : 'session-admin',
+            mfaVerifiedAt: $clock->now()->modify('-4 minutes'),
+            phishingResistant: true
+        ));
+        $store = new InMemoryAdminElevationStore();
+        $store->start(new AdminElevationRecord(
+            userId    : 1,
+            bindingId : 'session-admin',
+            expiresAt : new \DateTimeImmutable('+5 minutes')
+        ));
+
+        $policy = new RequireAccessPolicy(
+            requireAuthentication: new RequireAuthentication($current),
+            requireRole          : new RequireRole($current),
+            requirePermission    : new RequirePermission($current),
+            requireResourceOwner : new RequireResourceOwner($current),
+            requirePhishingResistantAuthentication: new RequirePhishingResistantAuthentication($current),
+            requireFreshMfa      : new RequireFreshMfa($current, $clock),
+            requireAdminElevation: new RequireAdminElevation($current, $store, $clock)
+        );
+
+        $this->expectException(FreshMfaRequired::class);
+        $policy->execute(AccessPolicy::forIdentityPolicy(IdentityPolicyCatalog::admin()));
     }
 }

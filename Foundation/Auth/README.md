@@ -11,15 +11,17 @@ admin elevation, and a thin optional integration surface.
 - `Auth::current()`, `Auth::check()`, and `Auth::user()` now read one immutable `AuthenticationContext`.
 - Session and JWT now share the same public result model, logout path, and refresh/revocation lifecycle.
 - OAuth v1 now owns client registration, authorization-code issuance, PKCE verification, refresh exchange,
-  introspection, and token revocation.
-- `Access` now supports composed access policies with role, permission, resource-owner, fresh-MFA, and admin-elevation
-  conditions.
+  introspection, token revocation, sender-constrained token binding metadata, and explicit client policy posture.
+- `Access` now supports composed access policies with role, permission, resource-owner, fresh-MFA, admin-elevation,
+  and actor-tier assurance policies.
 - Passkeys now own registration/authentication plus listing, rename, and revoke flows behind a runtime contract.
 - Federation now owns tenant-aware connection registration, discovery, start/complete login, JIT linking, and
   group-to-role mapping.
 - Admin realm, provisioning, deterministic risk, and cleanup/export maintenance flows are package-owned slices.
 - Password reset, email verification, MFA enrollment/challenge/recovery, refresh rotation, audit events, and
   anti-enumeration flows are package-owned.
+- Assurance, privacy retention, authorization hardening, and crypto lifecycle now have first-class repo docs instead of
+  being implied follow-up work.
 
 ## Quick Start
 
@@ -174,20 +176,28 @@ non-goals.
 - Active session listing, targeted session revoke, and logout-all flow support.
 - Token revocation and refresh rotation through package-owned stores.
 - OAuth public clients require PKCE and OAuth refresh reuse revokes the full token family.
+- High-assurance OAuth clients can require phishing-resistant auth before authorization-code issuance.
+- OAuth clients can require sender-constrained access and refresh tokens with DPoP or mTLS binding metadata.
 - Password reset and login failures keep safe public messages.
 - Password reset begin flow is anti-enumeration by default.
 - Email change requires the current password, fresh MFA, and revokes the current auth/session family on confirmation.
 - MFA uses TOTP with replay protection, backup codes, recovery tokens, step-up freshness checks, and per-user challenge
   throttling.
 - Passkeys support multiple credentials per account, user-owned rename/revoke, and strict challenge replay prevention.
-- Admin-sensitive actions can be expressed through `AccessPolicy` and enforced with fresh MFA plus admin elevation.
+- Admin-sensitive actions can be expressed through `AccessPolicy` and enforced with explicit phishing-resistant,
+  fresh-MFA, and admin-elevation policy.
 - Federation login is tenant-aware at the connection boundary, leaves an audit trail, and can JIT link or create users.
 - Deterministic risk rules flag new environments and refresh-token reuse for review-oriented follow-up.
 - Auth context is immutable and password hashes never leave the internal `User` entity.
+- HMAC JWTs can carry an explicit `kid` key version for rollover-aware deployments.
 
 ## Delivery Docs
 
 - [docs/adr/001-auth-scope-and-trust-boundaries.md](docs/adr/001-auth-scope-and-trust-boundaries.md)
+- [docs/assurance-policy.md](docs/assurance-policy.md)
+- [docs/authorization-hardening.md](docs/authorization-hardening.md)
+- [docs/privacy-retention-policy.md](docs/privacy-retention-policy.md)
+- [docs/crypto-key-lifecycle.md](docs/crypto-key-lifecycle.md)
 - [docs/threat-model.md](docs/threat-model.md)
 - [docs/implementation-roadmap.md](docs/implementation-roadmap.md)
 

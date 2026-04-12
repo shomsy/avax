@@ -700,7 +700,7 @@ final class AuthBuilder
                                         elevationStore       : $adminElevationStore,
                                         auditLog             : $auditLog,
                                         clock                : $clock,
-                                        requirePhishingResistant: $this->adminPhishingResistantRequired
+                                        phishingResistantRequired: $this->adminPhishingResistantRequired
                                     ),
             endAdminElevation     : new EndAdminElevation(
                                         currentAuthentication: $currentAuthentication,

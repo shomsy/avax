@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\OAuth;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use DateTimeImmutable;
 
 /**
@@ -19,9 +20,10 @@ final readonly class OAuthTokenGrant
         public DateTimeImmutable $accessTokenExpiresAt,
         public string|null       $refreshToken,
         public string            $clientId,
-        public int               $userId,
+        public int|null          $userId,
         public array             $scopes = [],
-        public string            $tokenType = 'Bearer'
+        public string            $tokenType = 'Bearer',
+        public OAuthSenderConstraint|null $senderConstraint = null
     ) {}
 
     public function expiresIn(DateTimeImmutable $moment) : int

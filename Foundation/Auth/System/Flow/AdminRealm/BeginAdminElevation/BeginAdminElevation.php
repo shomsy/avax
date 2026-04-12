@@ -24,7 +24,7 @@ final readonly class BeginAdminElevation
         private AdminElevationStoreInterface $elevationStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        private bool $requirePhishingResistant = false
+        private bool $phishingResistantRequired = false
     ) {}
 
     /**
@@ -43,7 +43,7 @@ final readonly class BeginAdminElevation
             throw AdminElevationFailed::forbidden();
         }
 
-        if ($this->requirePhishingResistant && ! $context->isPhishingResistant()) {
+        if ($this->phishingResistantRequired && ! $context->isPhishingResistant()) {
             throw AdminElevationFailed::phishingResistantRequired();
         }
 

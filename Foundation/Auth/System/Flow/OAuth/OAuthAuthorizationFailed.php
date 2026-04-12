@@ -32,4 +32,9 @@ final class OAuthAuthorizationFailed extends RuntimeException
     {
         return new self('PKCE is required for this client.');
     }
+
+    public static function phishingResistantRequired() : self
+    {
+        return new self('Phishing-resistant authentication is required for this client.');
+    }
 }

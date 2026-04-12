@@ -16,19 +16,32 @@ Tracks active and accepted risks.
 
 ## Active Risks
 
-- `id`: AUTH-RISK-007
-- `identified_at`: 2026-04-12 21:32 CEST
-- `updated_at`: 2026-04-12 21:32 CEST
+- `id`: AUTH-RISK-008
+- `identified_at`: 2026-04-12 23:10 CEST
+- `updated_at`: 2026-04-12 23:10 CEST
 - `severity`: medium
 - `likelihood`: medium
-- `impact`: The package now owns passkey and admin-realm slices, but passkey assurance is not yet propagated through the
-  general auth context as a first-class policy claim; an application that wants "admin must currently be passkey-authenticated"
-  still needs an explicit step-up design over the passkey runtime seam.
-- `mitigation`: The kernel already owns passkey registration/authentication and admin elevation. Next iteration should
-  add a package-owned phishing-resistant assurance claim or passkey step-up flow before enforcing passkey-required admin
-  policy globally.
+- `impact`: The kernel now owns sender-constrained token binding metadata and refresh enforcement, but actual HTTP DPoP
+  proof verification and mTLS certificate validation remain integration-owned; a deployment could still pass untrusted
+  thumbprints into the kernel if its transport layer is weak.
+- `mitigation`: Keep sender-constraint verification at the transport or adapter boundary, document that trust boundary
+  in `docs/assurance-policy.md` and `docs/boundary.md`, and add concrete HTTP or mTLS adapters before claiming
+  full replay-resistant enforcement in a specific deployment.
+- `owner`: OAuth integrations
+- `status`: accepted
+
+- `id`: AUTH-RISK-007
+- `identified_at`: 2026-04-12 21:32 CEST
+- `updated_at`: 2026-04-12 23:10 CEST
+- `severity`: medium
+- `likelihood`: medium
+- `impact`: The package previously lacked an explicit package-owned assurance policy for phishing-resistant privileged
+  posture.
+- `mitigation`: `Capability/Access/Policy/IdentityPolicyCatalog`, `AccessPolicy::forIdentityPolicy()`, the renamed
+  phishing-resistant policy requirement, and OAuth client high-assurance posture now provide first-class package-owned
+  enforcement seams.
 - `owner`: passkey + admin realm slices
-- `status`: open
+- `status`: mitigated
 
 - `id`: AUTH-RISK-006
 - `identified_at`: 2026-04-12 15:36 CEST

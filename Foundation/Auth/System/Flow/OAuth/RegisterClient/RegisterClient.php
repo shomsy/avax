@@ -21,10 +21,14 @@ final readonly class RegisterClient
     public function execute(RegisterClientData $data) : RegisteredOAuthClient
     {
         $registered = $this->clientRegistry->register(
-            name         : $data->name,
-            type         : $data->type,
-            redirectUris : $data->redirectUris,
-            allowedScopes: $data->allowedScopes
+            name                      : $data->name,
+            type                      : $data->type,
+            redirectUris              : $data->redirectUris,
+            allowedScopes             : $data->allowedScopes,
+            allowedGrantTypes         : $data->allowedGrantTypes,
+            requiredSenderConstraint  : $data->requiredSenderConstraint,
+            workloadIdentity          : $data->workloadIdentity,
+            phishingResistantRequired : $data->phishingResistantRequired
         );
 
         $this->auditLog->record(new AuditEvent(
@@ -34,6 +38,8 @@ final readonly class RegisterClient
                 'client_id' => $registered->client->clientId,
                 'name' => $registered->client->name,
                 'type' => $registered->client->type->value,
+                'workload_identity' => $registered->client->workloadIdentity ? 1 : 0,
+                'sender_constraint' => $registered->client->requiredSenderConstraint?->value,
             ]
         ));
 

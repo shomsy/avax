@@ -106,9 +106,12 @@ integrations/
 - Request authentication happens only in `Flow/AuthenticateRequest/AuthenticateRequest.php`.
 - Authorization reads `CurrentAuthentication`; it no longer reaches into session/JWT adapters directly.
 - `Capability/Access/Policy/AccessPolicy` is the package-owned way to combine role, permission, resource-owner,
-  fresh-MFA, and admin-elevation requirements.
+  fresh-MFA, admin-elevation, and explicit actor-tier assurance requirements.
+- `Capability/Access/Policy/IdentityPolicyCatalog` owns the package default assurance matrix for user, privileged user,
+  admin, support, tenant admin, machine identity, and break-glass posture.
 - Passkeys and federation stay adapter-first: the kernel owns orchestration and storage contracts, while standards-heavy
   protocol work stays behind runtime interfaces.
+- `Capability/OAuth/SenderConstraint/` owns DPoP and mTLS binding metadata for sender-constrained token posture.
 - Maintenance work stays local to the owning slice through `CleanupExpired*` flows and `Flow/Diagnostics/ExportAuditEvents/`.
 - MFA freshness now survives ingress boundaries through package-owned session/JWT claims (`mfaVerifiedAt`).
 - Exception mapping stays at public or ingress boundaries; deep flow code returns domain-safe failures.

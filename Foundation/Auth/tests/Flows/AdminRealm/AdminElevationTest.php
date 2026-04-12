@@ -46,7 +46,7 @@ final class AdminElevationTest extends TestCase
             elevationStore       : $store,
             auditLog             : new InMemoryAuditLog(),
             clock                : $clock,
-            requirePhishingResistant: true
+            phishingResistantRequired: true
         );
         $guard = new RequireAdminElevation($current, $store, $clock);
         $end   = new EndAdminElevation($current, $store, new InMemoryAuditLog(), $clock);
@@ -84,7 +84,7 @@ final class AdminElevationTest extends TestCase
             elevationStore       : new InMemoryAdminElevationStore(),
             auditLog             : new InMemoryAuditLog(),
             clock                : $clock,
-            requirePhishingResistant: true
+            phishingResistantRequired: true
         );
 
         $this->expectException(AdminElevationFailed::class);

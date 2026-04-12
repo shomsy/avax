@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flow\Mfa\Recover;
 
+use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
+use Avax\Auth\System\Capability\Throttle\InMemoryAttemptThrottleStore;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserEmail;
@@ -122,6 +124,53 @@ final class MfaRecoveryTest extends TestCase
         $this->expectException(MfaRecoveryFailed::class);
         $this->expectExceptionMessage('MFA recovery token is invalid.');
         $confirm->execute(new ConfirmMfaRecoveryData('missing-token'));
+    }
+
+    public function testRecoveryStartIsThrottledAfterConfiguredLimit() : void
+    {
+        $clock      = new FrozenClock(new DateTimeImmutable('2026-04-09T12:00:00+00:00'));
+        $userSource = new InMemoryUserSource();
+        $userSource->create(User::create(
+            id          : new UserId(1),
+            email       : new UserEmail('user@example.com'),
+            username    : 'user',
+            passwordHash: 'hash'
+        ));
+        $mfaStore = new InMemoryMfaStore();
+        $mfaStore->saveMethod(new MfaMethodRecord(
+            userId   : new UserId(1),
+            method   : MfaMethod::TOTP,
+            secret   : 'SECRETSECRETSECRETSECRETSECRETSE',
+            enabledAt: $clock->now()
+        ));
+        $auditLog = new InMemoryAuditLog();
+        $start    = new StartMfaRecovery(
+            userSource     : $userSource,
+            mfaStore       : $mfaStore,
+            auditLog       : $auditLog,
+            clock          : $clock,
+            attemptThrottle: new AttemptThrottle(
+                store       : new InMemoryAttemptThrottleStore(),
+                clock       : $clock,
+                maxAttempts : 1,
+                decaySeconds: 900
+            )
+        );
+
+        $first = $start->execute(new BeginMfaRecoveryData(
+            email    : 'user@example.com',
+            ipAddress: '127.0.0.1',
+            userAgent: 'PHPUnit'
+        ));
+        $second = $start->execute(new BeginMfaRecoveryData(
+            email    : 'user@example.com',
+            ipAddress: '127.0.0.1',
+            userAgent: 'PHPUnit'
+        ));
+
+        $this->assertNotNull($first->token);
+        $this->assertNull($second->token);
+        $this->assertSame('auth.mfa.recovery.throttled', $auditLog->events()[1]->name);
     }
 
     protected function tearDown() : void

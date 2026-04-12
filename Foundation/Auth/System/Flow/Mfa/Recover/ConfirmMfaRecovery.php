@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Mfa\Recover;
 
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
@@ -25,6 +26,7 @@ final readonly class ConfirmMfaRecovery
         private MfaChallengeStoreInterface      $mfaChallengeStore,
         private AuditLogInterface               $auditLog,
         private Clock                           $clock,
+        private SessionRegistryInterface|null   $sessionRegistry = null,
         private RefreshTokenStoreInterface|null $refreshTokenStore = null,
         private CurrentAuthentication|null      $currentAuthentication = null,
         private IdentityInterface|null          $identity = null
@@ -52,6 +54,7 @@ final readonly class ConfirmMfaRecovery
         $this->mfaStore->disable($record->userId);
         $this->mfaStore->forgetRecovery($tokenHash);
         $this->mfaChallengeStore->forgetForUser($record->userId);
+        $this->sessionRegistry?->revokeForUser($record->userId, $now, 'mfa_recovery');
         $this->refreshTokenStore?->revokeUser($record->userId);
 
         $context = $this->currentAuthentication?->read();

@@ -12,6 +12,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\Logout\Logout;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
+use Avax\Auth\System\Foundation\Clock;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -36,6 +37,7 @@ class LogoutTest extends TestCase
             identity             : $identity,
             currentAuthentication: $currentAuthentication,
             auditLog             : new InMemoryAuditLog(),
+            clock                : new Clock(),
             refreshTokenStore    : $refreshTokenStore
         );
         $logout->execute();

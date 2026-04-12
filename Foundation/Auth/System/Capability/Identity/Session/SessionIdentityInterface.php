@@ -13,6 +13,8 @@ interface SessionIdentityInterface
 {
     public function issue(int $userId, DateTimeImmutable|null $mfaVerifiedAt = null) : string|null;
 
+    public function captureCurrentSession(string|null $ipAddress = null, string|null $userAgent = null) : void;
+
     public function resolveUserId() : int|null;
 
     public function resolveMfaVerifiedAt() : DateTimeImmutable|null;

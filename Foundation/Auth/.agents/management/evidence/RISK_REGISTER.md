@@ -43,13 +43,14 @@ Tracks active and accepted risks.
 
 - `id`: AUTH-RISK-004
 - `identified_at`: 2026-04-09 18:10 CEST
-- `updated_at`: 2026-04-09 18:10 CEST
+- `updated_at`: 2026-04-12 15:04 CEST
 - `severity`: medium
 - `likelihood`: low
 - `impact`: Global session revocation for all PHP session backends is still limited because the package only owns the
   current session store, not a session registry.
-- `mitigation`: MFA recovery and disablement revoke refresh tokens and clear the current session; documentation now
-  calls out that multi-session revocation for stateful session backends requires an application-owned store/registry.
+- `mitigation`: The kernel now ships `Capability/Session/SessionRegistryInterface`, active-session flows, and
+  revocation-aware `SessionIdentity`. Full multi-session revocation is covered when applications provide a durable
+  registry implementation; deployments without that registry still only control the current session store.
 - `owner`: session strategy
 - `status`: open
 

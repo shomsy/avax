@@ -106,6 +106,7 @@ Runtime ownership lives in auth-flow slices:
 
 - `System/Flow/AuthenticateRequest/` owns ingress resolution and current auth context.
 - `System/Flow/Login/`, `Register/`, `Logout/`, `Recover/`, `Verify/`, `Mfa/`, and `Token/` own package behavior.
+- `System/Capability/Session/` owns durable tracked-session state and revocation contracts.
 - `System/Capability/Identity/` now only coordinates strategy issuance/clear semantics.
 - `System/Capability/User/` stays internal domain state; public auth output is `AuthenticatedUser`.
 - `System/Flow/Diagnostics/` owns audit events without becoming a second source of truth.
@@ -118,12 +119,20 @@ non-goals.
 ## Security Notes
 
 - Session fixation protection via session ID regeneration on login.
+- Idle and absolute session lifetime enforcement with tracked-session revocation hooks.
+- Active session listing, targeted session revoke, and logout-all flow support.
 - Token revocation and refresh rotation through package-owned stores.
 - Password reset and login failures keep safe public messages.
 - Password reset begin flow is anti-enumeration by default.
 - MFA uses TOTP with replay protection, backup codes, recovery tokens, step-up freshness checks, and per-user challenge
   throttling.
 - Auth context is immutable and password hashes never leave the internal `User` entity.
+
+## Delivery Docs
+
+- [docs/adr/001-auth-scope-and-trust-boundaries.md](docs/adr/001-auth-scope-and-trust-boundaries.md)
+- [docs/threat-model.md](docs/threat-model.md)
+- [docs/implementation-roadmap.md](docs/implementation-roadmap.md)
 
 ## Optional Adapter
 

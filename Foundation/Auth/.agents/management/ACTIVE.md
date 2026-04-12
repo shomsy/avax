@@ -13,7 +13,7 @@ flowchart LR
     end
 
     subgraph InProgress["In Progress"]
-        P1["AUTH-010 | Refactor to src/ boundary | updated 2026-04-06 16:50 CET"]
+        P0["No active items"]
     end
 
     subgraph Blocked["Blocked"]
@@ -21,7 +21,7 @@ flowchart LR
     end
 
     subgraph Verify["Verify / Review"]
-        V0["No items in review"]
+        V1["AUTH-018 | REFAKTOR scope + session subsystem v1 | updated 2026-04-12 15:04 CEST"]
     end
 
     Ready --> InProgress

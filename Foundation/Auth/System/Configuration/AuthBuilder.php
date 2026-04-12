@@ -10,6 +10,9 @@ use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthenticati
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
+use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
+use Avax\Auth\System\Capability\Throttle\InMemoryAttemptThrottleStore;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticateRequest;
@@ -48,6 +51,9 @@ use Avax\Auth\System\Flow\Recover\InMemoryPasswordResetStore;
 use Avax\Auth\System\Flow\Recover\PasswordResetStoreInterface;
 use Avax\Auth\System\Flow\Recover\ResetPassword;
 use Avax\Auth\System\Flow\Register\Register;
+use Avax\Auth\System\Flow\Session\LogoutAllSessions\LogoutAllSessions;
+use Avax\Auth\System\Flow\Session\ReadActiveSessions\ReadActiveSessions;
+use Avax\Auth\System\Flow\Session\RevokeSession\RevokeSession;
 use Avax\Auth\System\Flow\Token\RefreshAuthentication;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Flow\Verify\BeginEmailVerification;
@@ -56,6 +62,7 @@ use Avax\Auth\System\Flow\Verify\EmailVerificationStoreInterface;
 use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
 use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStore;
 use Avax\Auth\System\Flow\Verify\VerifyEmail;
+use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGenerator;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use RuntimeException;
@@ -81,6 +88,10 @@ final class AuthBuilder
     private MfaChallengeStoreInterface|null           $mfaChallengeStore      = null;
     private TotpInterface|null                        $totp                   = null;
     private LimitMfaAttempts|null                     $mfaAttemptLimit        = null;
+    private AttemptThrottle|null                      $passwordResetThrottle  = null;
+    private AttemptThrottle|null                      $mfaRecoveryThrottle    = null;
+    private Clock|null                                $clock                  = null;
+    private SessionRegistryInterface|null             $sessionRegistry        = null;
     private string                                    $mfaIssuer              = 'Avax Auth';
 
     /**
@@ -189,6 +200,34 @@ final class AuthBuilder
         return $this;
     }
 
+    public function withPasswordResetThrottle(AttemptThrottle $passwordResetThrottle) : self
+    {
+        $this->passwordResetThrottle = $passwordResetThrottle;
+
+        return $this;
+    }
+
+    public function withMfaRecoveryThrottle(AttemptThrottle $mfaRecoveryThrottle) : self
+    {
+        $this->mfaRecoveryThrottle = $mfaRecoveryThrottle;
+
+        return $this;
+    }
+
+    public function withClock(Clock $clock) : self
+    {
+        $this->clock = $clock;
+
+        return $this;
+    }
+
+    public function withSessionRegistry(SessionRegistryInterface $sessionRegistry) : self
+    {
+        $this->sessionRegistry = $sessionRegistry;
+
+        return $this;
+    }
+
     public function withMfaAttemptLimit(LimitMfaAttempts $mfaAttemptLimit) : self
     {
         $this->mfaAttemptLimit = $mfaAttemptLimit;
@@ -219,7 +258,7 @@ final class AuthBuilder
         $identity                 = $this->identity;
         $passwordHasher           = $this->passwordHasher ?? new PasswordHasher();
         $auditLog                 = $this->auditLog ?? new NullAuditLog();
-        $clock                    = new \Avax\Auth\System\Foundation\Clock();
+        $clock                    = $this->clock ?? new Clock();
         $passwordResetStore       = $this->passwordResetStore ?? new InMemoryPasswordResetStore();
         $emailVerificationStore   = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore();
         $emailVerificationState   = $this->emailVerificationState ?? new InMemoryEmailVerificationStateStore();
@@ -229,6 +268,18 @@ final class AuthBuilder
         $mfaAttemptLimit          = $this->mfaAttemptLimit ?? new LimitMfaAttempts(
             storage: new InMemoryAttemptLimitStorage(),
             clock  : $clock
+        );
+        $passwordResetThrottle    = $this->passwordResetThrottle ?? new AttemptThrottle(
+            store       : new InMemoryAttemptThrottleStore(),
+            clock       : $clock,
+            maxAttempts : 5,
+            decaySeconds: 900
+        );
+        $mfaRecoveryThrottle      = $this->mfaRecoveryThrottle ?? new AttemptThrottle(
+            store       : new InMemoryAttemptThrottleStore(),
+            clock       : $clock,
+            maxAttempts : 3,
+            decaySeconds: 1800
         );
         $projectAuthenticatedUser = new ProjectAuthenticatedUser(
             emailVerificationState: $emailVerificationState,
@@ -297,10 +348,32 @@ final class AuthBuilder
                                         identity             : $identity,
                                         currentAuthentication: $currentAuthentication,
                                         auditLog             : $auditLog,
+                                        clock                : $clock,
+                                        sessionRegistry      : $this->sessionRegistry,
+                                        refreshTokenStore    : $this->refreshTokenStore
+                                    ),
+            logoutAllSessions     : new LogoutAllSessions(
+                                        identity             : $identity,
+                                        currentAuthentication: $currentAuthentication,
+                                        auditLog             : $auditLog,
+                                        clock                : $clock,
+                                        sessionRegistry      : $this->sessionRegistry,
                                         refreshTokenStore    : $this->refreshTokenStore
                                     ),
             checkAuthentication   : $checkAuthentication,
             readCurrentUser       : $readCurrentUser,
+            readActiveSessions    : new ReadActiveSessions(
+                                        currentAuthentication: $currentAuthentication,
+                                        clock                : $clock,
+                                        sessionRegistry      : $this->sessionRegistry
+                                    ),
+            revokeSession         : new RevokeSession(
+                                        identity             : $identity,
+                                        currentAuthentication: $currentAuthentication,
+                                        auditLog             : $auditLog,
+                                        clock                : $clock,
+                                        sessionRegistry      : $this->sessionRegistry
+                                    ),
             currentAuthentication : $currentAuthentication,
             access                : $access,
             changePassword        : new ChangePassword(
@@ -309,6 +382,9 @@ final class AuthBuilder
                                         identity             : $identity,
                                         currentAuthentication: $currentAuthentication,
                                         auditLog             : $auditLog,
+                                        clock                : $clock,
+                                        sessionRegistry      : $this->sessionRegistry,
+                                        mfaChallengeStore    : $mfaChallengeStore,
                                         refreshTokenStore    : $this->refreshTokenStore,
                                         rateLimit            : $this->rateLimit,
                                         requireFreshMfa      : $requireFreshMfa
@@ -335,7 +411,8 @@ final class AuthBuilder
                                         userSource        : $this->userSource,
                                         passwordResetStore: $passwordResetStore,
                                         auditLog          : $auditLog,
-                                        clock             : $clock
+                                        clock             : $clock,
+                                        attemptThrottle   : $passwordResetThrottle
                                     ),
             resetPassword         : new ResetPassword(
                                         userSource        : $this->userSource,
@@ -343,6 +420,8 @@ final class AuthBuilder
                                         passwordResetStore: $passwordResetStore,
                                         auditLog          : $auditLog,
                                         clock             : $clock,
+                                        sessionRegistry   : $this->sessionRegistry,
+                                        mfaChallengeStore : $mfaChallengeStore,
                                         refreshTokenStore : $this->refreshTokenStore
                                     ),
             beginEmailVerification: new BeginEmailVerification(
@@ -411,16 +490,18 @@ final class AuthBuilder
                                         refreshTokenStore    : $this->refreshTokenStore
                                     ),
             startMfaRecovery      : new StartMfaRecovery(
-                                        userSource: $this->userSource,
-                                        mfaStore  : $mfaStore,
-                                        auditLog  : $auditLog,
-                                        clock     : $clock
+                                        userSource     : $this->userSource,
+                                        mfaStore       : $mfaStore,
+                                        auditLog       : $auditLog,
+                                        clock          : $clock,
+                                        attemptThrottle: $mfaRecoveryThrottle
                                     ),
             confirmMfaRecovery    : new ConfirmMfaRecovery(
                                         mfaStore             : $mfaStore,
                                         mfaChallengeStore    : $mfaChallengeStore,
                                         auditLog             : $auditLog,
                                         clock                : $clock,
+                                        sessionRegistry      : $this->sessionRegistry,
                                         refreshTokenStore    : $this->refreshTokenStore,
                                         currentAuthentication: $currentAuthentication,
                                         identity             : $identity

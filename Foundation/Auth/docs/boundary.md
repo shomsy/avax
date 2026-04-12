@@ -8,6 +8,9 @@ This package is now split into two explicit lanes:
 The package does not try to be a full identity platform. It owns application
 auth flows. It does not own enterprise control-plane products.
 
+Current delivery posture is documented in
+`docs/adr/001-auth-scope-and-trust-boundaries.md`.
+
 ## Auth Kernel
 
 `System/` owns:
@@ -18,7 +21,7 @@ auth flows. It does not own enterprise control-plane products.
 - core flows: `AuthenticateRequest`, `Login`, `Register`, `Logout`, `Refresh`,
   `Recover`, `Verify`, `Mfa`, `ChangePassword`, `ReadCurrentUser`
 - shared auth capabilities: `Access`, `Identity`, `PasswordHashing`,
-  `UserSource`
+  `Session`, `Throttle`, `UserSource`
 - package-owned contracts: session store, token issuer/verifier, refresh store,
   audit log, clock, MFA store, user source
 - package-owned runtime strategies for session and token auth
@@ -49,10 +52,10 @@ Integration rule:
 
 ## Explicit Non-Goals
 
-This package does not own:
+This package does not own today:
 
 - central IdP behavior
-- OAuth or OIDC authorization-server features
+- package-owned OAuth or OIDC authorization-server features
 - SAML federation brokering
 - SCIM provisioning
 - workforce lifecycle management
@@ -71,6 +74,8 @@ System/
     Access/
     Identity/
     PasswordHashing/
+    Session/
+    Throttle/
     User/
     UserSource/
   Flow/
@@ -118,6 +123,7 @@ Stable application API to keep public:
 - `AuthenticationContext`
 - `AuthenticationResult`
 - `AuthenticationState`
+- `Flow/Session/ActiveSession`
 - `AuthenticatedUser`
 - `Credentials`
 - `RegistrationData`

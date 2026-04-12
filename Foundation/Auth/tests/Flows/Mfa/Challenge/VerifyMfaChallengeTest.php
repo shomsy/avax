@@ -108,6 +108,7 @@ final class VerifyMfaChallengeTest extends TestCase
                 );
             }
         );
+        $identity->shouldReceive('sessionIdentity')->andReturn(null);
 
         $flow = new VerifyMfaChallenge(
             challengeStore          : $challengeStore,

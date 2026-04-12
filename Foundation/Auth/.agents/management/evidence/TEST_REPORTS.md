@@ -13,6 +13,61 @@ Concrete records of executed verification.
 
 ## Reports
 
+- `executed_at`: 2026-04-12 15:04 CEST
+- `scope`: full PHPUnit suite after `REFAKTOR.md` scope artifacts and session subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: full PHPUnit suite passes after adding tracked session registry contracts, session facade flows, and session
+  revocation wiring; result `OK (102 tests, 239 assertions)`
+
+- `executed_at`: 2026-04-12 15:04 CEST
+- `scope`: baseline static analysis after `REFAKTOR.md` scope artifacts and session subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes across the expanded session capability and new auth facade/session flow surface
+
+- `executed_at`: 2026-04-12 15:04 CEST
+- `scope`: strict static analysis after `REFAKTOR.md` scope artifacts and session subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after the session registry, logout-all, and session revoke changes
+
+- `executed_at`: 2026-04-12 15:04 CEST
+- `scope`: targeted regression suite for session subsystem v1, password-reset revocation, and updated auth facade flows
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `vendor/bin/phpunit tests/Capabilities/Identity/Session/SessionIdentityTest.php tests/Flows/Login/LoginTest.php tests/Flows/Mfa/Challenge/VerifyMfaChallengeTest.php tests/Flows/Logout/LogoutTest.php tests/Flows/ChangePassword/ChangePasswordTest.php tests/Flows/Recover/BeginPasswordResetTest.php tests/Flows/Recover/ResetPasswordTest.php tests/Flows/Mfa/Recover/MfaRecoveryTest.php tests/Flows/Session/ReadActiveSessionsTest.php tests/Flows/Session/LogoutAllSessionsTest.php tests/Flows/Session/RevokeSessionTest.php tests/System/AuthTest.php`
+- `result`: pass
+- `notes`: targeted regression suite passes after adding tracked session registry contracts, logout-all, targeted
+  session revoke, and reset-driven session/challenge revocation; result `OK (31 tests, 86 assertions)`
+
+- `executed_at`: 2026-04-12 14:25 CEST
+- `scope`: full PHPUnit suite after auth-kernel hardening for session lifetime, recovery throttling, and password policy
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: PHPUnit passes after the new session lifetime, recovery throttling, and password rehash coverage changes;
+  result `OK (97 tests, 219 assertions)`
+
+- `executed_at`: 2026-04-12 14:25 CEST
+- `scope`: baseline static analysis after auth-kernel hardening for session lifetime, recovery throttling, and password
+  policy
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes with the new `Throttle` capability, `SessionLifetime` enforcement, and hasher policy
+  changes
+
+- `executed_at`: 2026-04-12 14:25 CEST
+- `scope`: strict static analysis after auth-kernel hardening for session lifetime, recovery throttling, and password
+  policy
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after tightening iterable types and default password-hashing behavior
+
 - `executed_at`: 2026-04-09 21:44 CEST
 - `scope`: mutation execution after installing a repo-local coverage-driver fallback
 - `environment`: local CLI PHP 8.4.11 with repo-local `pcov` loaded via `tooling/run-with-coverage-driver`

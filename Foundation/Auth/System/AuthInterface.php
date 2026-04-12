@@ -24,6 +24,7 @@ use Avax\Auth\System\Flow\Recover\PasswordResetChallenge;
 use Avax\Auth\System\Flow\Recover\ResetPasswordData;
 use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Flow\Register\RegistrationResult;
+use Avax\Auth\System\Flow\Session\ActiveSession;
 use Avax\Auth\System\Flow\Token\RefreshAuthenticationRequest;
 use Avax\Auth\System\Flow\Verify\BeginEmailVerificationData;
 use Avax\Auth\System\Flow\Verify\EmailVerificationChallenge;
@@ -43,6 +44,15 @@ interface AuthInterface
     public function current() : AuthenticationContext;
 
     public function logout() : void;
+
+    public function logoutAllSessions() : void;
+
+    /**
+     * @return list<ActiveSession>
+     */
+    public function readActiveSessions() : array;
+
+    public function revokeSession(string $sessionId) : void;
 
     public function check() : bool;
 

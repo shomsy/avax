@@ -69,6 +69,7 @@ class ChangePasswordTest extends TestCase
             identity             : $identity,
             currentAuthentication: $currentAuthentication,
             auditLog             : new InMemoryAuditLog(),
+            clock                : new Clock(),
             refreshTokenStore    : $refreshTokenStore
         );
 
@@ -100,7 +101,8 @@ class ChangePasswordTest extends TestCase
             passwordHasher       : $passwordHasher,
             identity             : Mockery::mock(IdentityInterface::class),
             currentAuthentication: $currentAuthentication,
-            auditLog             : new InMemoryAuditLog()
+            auditLog             : new InMemoryAuditLog(),
+            clock                : new Clock()
         );
 
         $this->expectException(exception: PasswordChangeFailed::class);
@@ -117,7 +119,8 @@ class ChangePasswordTest extends TestCase
             passwordHasher       : $this->passwordHasher(),
             identity             : Mockery::mock(IdentityInterface::class),
             currentAuthentication: new CurrentAuthentication(),
-            auditLog             : new InMemoryAuditLog()
+            auditLog             : new InMemoryAuditLog(),
+            clock                : new Clock()
         );
 
         $this->expectException(Unauthenticated::class);
@@ -148,6 +151,7 @@ class ChangePasswordTest extends TestCase
             identity             : Mockery::mock(IdentityInterface::class),
             currentAuthentication: $currentAuthentication,
             auditLog             : new InMemoryAuditLog(),
+            clock                : new Clock(),
             requireFreshMfa      : new RequireFreshMfa(
                                        currentAuthentication: $currentAuthentication,
                                        clock                : new Clock()

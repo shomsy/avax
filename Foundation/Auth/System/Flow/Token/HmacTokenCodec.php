@@ -15,7 +15,8 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
 {
     public function __construct(
         #[SensitiveParameter] private string $secret,
-        private string                       $algorithm = 'HS256'
+        private string                       $algorithm = 'HS256',
+        private string|null                  $keyId = null
     )
     {
         if ($this->secret === '') {
@@ -48,6 +49,10 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
             'typ' => 'JWT',
             'alg' => $this->algorithm,
         ];
+
+        if ($this->keyId !== null && trim($this->keyId) !== '') {
+            $header['kid'] = trim($this->keyId);
+        }
 
         $headerSegment = $this->base64UrlEncode($this->encodeJson($header));
         $claimSegment  = $this->base64UrlEncode($this->encodeJson($claims));
@@ -91,6 +96,10 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
         $header = $this->decodeJson($this->base64UrlDecode($headerSegment));
 
         if (! is_array($header) || ($header['alg'] ?? null) !== $this->algorithm) {
+            return null;
+        }
+
+        if ($this->keyId !== null && ($header['kid'] ?? null) !== $this->keyId) {
             return null;
         }
 

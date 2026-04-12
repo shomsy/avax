@@ -27,4 +27,9 @@ final class OAuthTokenExchangeFailed extends RuntimeException
     {
         return new self('Invalid PKCE verifier.');
     }
+
+    public static function invalidSenderConstraint() : self
+    {
+        return new self('Invalid sender constraint proof.');
+    }
 }

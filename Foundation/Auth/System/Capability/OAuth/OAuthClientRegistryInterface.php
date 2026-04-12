@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\OAuth;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use SensitiveParameter;
 
 /**
@@ -14,12 +15,17 @@ interface OAuthClientRegistryInterface
     /**
      * @param list<string> $redirectUris
      * @param list<string> $allowedScopes
+     * @param list<OAuthGrantType> $allowedGrantTypes
      */
     public function register(
         string $name,
         OAuthClientType $type,
         array $redirectUris,
-        array $allowedScopes = []
+        array $allowedScopes = [],
+        array $allowedGrantTypes = [],
+        OAuthSenderConstraintType|null $requiredSenderConstraint = null,
+        bool $workloadIdentity = false,
+        bool $phishingResistantRequired = false
     ) : RegisteredOAuthClient;
 
     public function find(string $clientId) : OAuthClient|null;

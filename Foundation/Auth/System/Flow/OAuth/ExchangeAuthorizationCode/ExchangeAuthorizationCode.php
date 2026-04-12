@@ -7,6 +7,7 @@ namespace Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\PkceMethod;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
@@ -41,6 +42,11 @@ final readonly class ExchangeAuthorizationCode
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
+        if (! $client->allowsGrantType(OAuthGrantType::AUTHORIZATION_CODE)) {
+            $this->recordFailure($data, 'grant_type_not_allowed');
+            throw OAuthTokenExchangeFailed::invalidClient();
+        }
+
         $record = $this->codeStore->find($data->code);
 
         if ($record === null) {
@@ -61,6 +67,16 @@ final readonly class ExchangeAuthorizationCode
         if ($record->redirectUri !== $data->redirectUri) {
             $this->recordFailure($data, 'redirect_uri_mismatch');
             throw OAuthTokenExchangeFailed::invalidRedirectUri();
+        }
+
+        if ($client->requiredSenderConstraint !== null) {
+            if (
+                $data->senderConstraint === null
+                || $data->senderConstraint->type !== $client->requiredSenderConstraint
+            ) {
+                $this->recordFailure($data, 'sender_constraint_missing_or_wrong_type');
+                throw OAuthTokenExchangeFailed::invalidSenderConstraint();
+            }
         }
 
         if ($record->codeChallenge !== null) {
@@ -91,7 +107,8 @@ final readonly class ExchangeAuthorizationCode
             mfaVerifiedAt: $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
-            scopes       : $record->scopes
+            scopes       : $record->scopes,
+            senderConstraint: $data->senderConstraint
         );
         $refreshToken = $this->refreshTokenStore->issue(
             userId       : $user->getId(),
@@ -99,7 +116,8 @@ final readonly class ExchangeAuthorizationCode
             mfaVerifiedAt: $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
-            scopes       : $record->scopes
+            scopes       : $record->scopes,
+            senderConstraint: $data->senderConstraint
         );
 
         $this->auditLog->record(new AuditEvent(
@@ -121,7 +139,9 @@ final readonly class ExchangeAuthorizationCode
             refreshToken         : $refreshToken->token,
             clientId             : $client->clientId,
             userId               : $user->getId()->value,
-            scopes               : $record->scopes
+            scopes               : $record->scopes,
+            tokenType            : $data->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
+            senderConstraint     : $data->senderConstraint
         );
     }
 

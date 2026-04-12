@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\OAuth;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use InvalidArgumentException;
 use SensitiveParameter;
@@ -24,14 +25,27 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         string $name,
         OAuthClientType $type,
         array $redirectUris,
-        array $allowedScopes = []
+        array $allowedScopes = [],
+        array $allowedGrantTypes = [],
+        OAuthSenderConstraintType|null $requiredSenderConstraint = null,
+        bool $workloadIdentity = false,
+        bool $phishingResistantRequired = false
     ) : RegisteredOAuthClient
     {
         $normalizedRedirectUris = $this->normalizeRedirectUris($redirectUris);
         $normalizedScopes       = $this->normalizeScopes($allowedScopes);
+        $normalizedGrantTypes   = $this->normalizeGrantTypes($type, $allowedGrantTypes);
 
         if ($normalizedRedirectUris === []) {
             throw new InvalidArgumentException('OAuth clients require at least one redirect URI.');
+        }
+
+        if ($workloadIdentity && $type !== OAuthClientType::CONFIDENTIAL) {
+            throw new InvalidArgumentException('Workload identity clients must be confidential.');
+        }
+
+        if ($workloadIdentity && $requiredSenderConstraint === null) {
+            throw new InvalidArgumentException('Workload identity clients require sender-constrained tokens.');
         }
 
         $clientId   = 'oauth_' . bin2hex(random_bytes(12));
@@ -49,6 +63,10 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             type         : $type,
             redirectUris : $normalizedRedirectUris,
             allowedScopes: $normalizedScopes,
+            allowedGrantTypes: $normalizedGrantTypes,
+            requiredSenderConstraint: $requiredSenderConstraint,
+            workloadIdentity: $workloadIdentity,
+            phishingResistantRequired: $phishingResistantRequired,
             secretHash   : $secretHash
         );
 
@@ -132,6 +150,36 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         }
 
         sort($normalized);
+
+        return $normalized;
+    }
+
+    /**
+     * @param list<OAuthGrantType> $allowedGrantTypes
+     * @return list<OAuthGrantType>
+     */
+    private function normalizeGrantTypes(OAuthClientType $type, array $allowedGrantTypes) : array
+    {
+        if ($allowedGrantTypes === []) {
+            return [
+                OAuthGrantType::AUTHORIZATION_CODE,
+                OAuthGrantType::REFRESH_TOKEN,
+            ];
+        }
+
+        $normalized = [];
+
+        foreach ($allowedGrantTypes as $grantType) {
+            if (in_array($grantType, $normalized, true)) {
+                continue;
+            }
+
+            if ($grantType === OAuthGrantType::CLIENT_CREDENTIALS && $type !== OAuthClientType::CONFIDENTIAL) {
+                throw new InvalidArgumentException('Public clients cannot use the client credentials grant.');
+            }
+
+            $normalized[] = $grantType;
+        }
 
         return $normalized;
     }

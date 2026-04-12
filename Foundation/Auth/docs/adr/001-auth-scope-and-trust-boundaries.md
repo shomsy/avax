@@ -26,6 +26,9 @@ The package already owns:
 - deterministic risk rules and refresh-reuse review signals
 - admin elevation and user lifecycle provisioning
 - audit events and auth ingress ownership
+- explicit actor assurance policy tiers
+- sender-constrained OAuth token posture metadata
+- key-version-aware HMAC token codec support
 
 The package does not yet own:
 
@@ -62,7 +65,7 @@ The package owns and ships:
 The package may add:
 
 - optional OAuth interoperability adapters
-- stronger passkey assurance propagation
+- stronger sender-constraint proof verification adapters
 - domain verification and federation metadata sync
 - external SCIM and SIEM adapters
 - deeper tenant membership ownership

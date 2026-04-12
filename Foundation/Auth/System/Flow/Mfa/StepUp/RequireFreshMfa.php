@@ -24,10 +24,11 @@ final readonly class RequireFreshMfa
      * @throws Unauthenticated
      * @throws FreshMfaRequired
      */
-    public function execute() : void
+    public function execute(int|null $maxAgeSeconds = null) : void
     {
         $context = $this->currentAuthentication->read();
         $user    = $context->user();
+        $maxAgeSeconds ??= $this->maxAgeSeconds;
 
         if ($user === null) {
             throw new Unauthenticated();
@@ -40,13 +41,13 @@ final readonly class RequireFreshMfa
         $verifiedAt = $context->mfaVerifiedAt();
 
         if ($verifiedAt === null) {
-            throw new FreshMfaRequired($this->maxAgeSeconds);
+            throw new FreshMfaRequired($maxAgeSeconds);
         }
 
         $age = $this->clock->now()->getTimestamp() - $verifiedAt->getTimestamp();
 
-        if ($age > $this->maxAgeSeconds) {
-            throw new FreshMfaRequired($this->maxAgeSeconds);
+        if ($age > $maxAgeSeconds) {
+            throw new FreshMfaRequired($maxAgeSeconds);
         }
     }
 }

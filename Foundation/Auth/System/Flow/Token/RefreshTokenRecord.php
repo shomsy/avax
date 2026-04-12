@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Token;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
 
@@ -25,7 +26,8 @@ final readonly class RefreshTokenRecord
         public DateTimeImmutable|null $mfaVerifiedAt = null,
         public bool                   $phishingResistant = false,
         public string|null            $clientId = null,
-        public array                  $scopes = []
+        public array                  $scopes = [],
+        public OAuthSenderConstraint|null $senderConstraint = null
     ) {}
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool

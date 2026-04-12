@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken;
 
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\Risk\DeterministicRiskEngine;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
@@ -40,6 +41,11 @@ final readonly class ExchangeRefreshToken
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
+        if (! $client->allowsGrantType(OAuthGrantType::REFRESH_TOKEN)) {
+            $this->recordFailure($data, 'grant_type_not_allowed');
+            throw OAuthTokenExchangeFailed::invalidClient();
+        }
+
         $record = $this->refreshTokenStore->find($data->refreshToken);
 
         if (
@@ -50,6 +56,18 @@ final readonly class ExchangeRefreshToken
         ) {
             $this->recordFailure($data, 'grant_not_found_or_expired');
             throw OAuthTokenExchangeFailed::invalidGrant();
+        }
+
+        if ($client->requiredSenderConstraint !== null) {
+            if (
+                $data->senderConstraint === null
+                || $data->senderConstraint->type !== $client->requiredSenderConstraint
+                || $record->senderConstraint === null
+                || ! $record->senderConstraint->equals($data->senderConstraint)
+            ) {
+                $this->recordFailure($data, 'sender_constraint_mismatch');
+                throw OAuthTokenExchangeFailed::invalidSenderConstraint();
+            }
         }
 
         if ($record->wasRotated()) {
@@ -81,7 +99,8 @@ final readonly class ExchangeRefreshToken
             mfaVerifiedAt: $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
-            scopes       : $record->scopes
+            scopes       : $record->scopes,
+            senderConstraint: $record->senderConstraint
         );
         $refreshToken = $this->refreshTokenStore->issue(
             userId       : $record->userId,
@@ -90,7 +109,8 @@ final readonly class ExchangeRefreshToken
             mfaVerifiedAt: $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
-            scopes       : $record->scopes
+            scopes       : $record->scopes,
+            senderConstraint: $record->senderConstraint
         );
 
         $this->refreshTokenStore->markRotated($record->tokenId, $refreshToken->tokenId);
@@ -113,7 +133,9 @@ final readonly class ExchangeRefreshToken
             refreshToken         : $refreshToken->token,
             clientId             : $client->clientId,
             userId               : $user->getId()->value,
-            scopes               : $record->scopes
+            scopes               : $record->scopes,
+            tokenType            : $record->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
+            senderConstraint     : $record->senderConstraint
         );
     }
 

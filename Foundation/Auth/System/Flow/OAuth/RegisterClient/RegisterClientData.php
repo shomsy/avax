@@ -4,18 +4,25 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\OAuth\RegisterClient;
 
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\OAuthClientType;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 
 final readonly class RegisterClientData
 {
     /**
      * @param list<string> $redirectUris
      * @param list<string> $allowedScopes
+     * @param list<OAuthGrantType> $allowedGrantTypes
      */
     public function __construct(
-        public string          $name,
-        public OAuthClientType $type,
-        public array           $redirectUris,
-        public array           $allowedScopes = []
+        public string                         $name,
+        public OAuthClientType                $type,
+        public array                          $redirectUris,
+        public array                          $allowedScopes = [],
+        public array                          $allowedGrantTypes = [],
+        public OAuthSenderConstraintType|null $requiredSenderConstraint = null,
+        public bool                           $workloadIdentity = false,
+        public bool                           $phishingResistantRequired = false
     ) {}
 }

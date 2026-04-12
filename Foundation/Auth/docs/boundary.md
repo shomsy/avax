@@ -61,10 +61,14 @@ This package does not own today:
 - central IdP behavior
 - OIDC provider behavior
 - SAML federation brokering runtime
-- SCIM provisioning runtime
+- SCIM provisioning runtime for enterprise workforce or B2B control planes
 - full tenant membership control plane
 - KMS/HSM, mail, SIEM, and queue infrastructure
 - enterprise IAM approval workflows
+
+SCIM remains a conditional enterprise requirement. It is a must-have when the
+product targets enterprise workforce or B2B provisioning, but it is not a
+universal requirement for every deployment of this package.
 
 ## Final Target Tree
 
@@ -186,7 +190,13 @@ Stable extension contracts to keep public:
 - `TokenCodecInterface`
 - `HmacTokenCodec`
 - `OAuthClientRegistryInterface`
+- `OAuthGrantType`
+- `OAuthSenderConstraint`
+- `OAuthSenderConstraintType`
 - `AuthorizationCodeStoreInterface`
+- `AccessPolicy`
+- `IdentityPolicy`
+- `IdentityPolicyCatalog`
 - `FederationRuntimeInterface`
 - `FederationConnectionStoreInterface`
 - `FederatedIdentityLinkStoreInterface`

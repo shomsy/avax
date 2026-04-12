@@ -13,6 +13,8 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 - tracked web sessions with idle and absolute expiry
 - active session listing, single-session revoke, and logout-all
 - OAuth client registry, authorization-code issuance, PKCE enforcement, refresh exchange, revoke, and introspection
+- explicit actor assurance policy catalog and composed access-policy tiers
+- phishing-resistant-required OAuth client posture and sender-constrained token binding metadata
 - admin elevation and privileged-user lifecycle flows
 - passkey registration, authentication, rename, and revoke behind a runtime seam
 - tenant-aware federation connections, login discovery, start/complete login, and JIT linking
@@ -21,6 +23,7 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 - cleanup/export maintenance flows for sessions, reset tokens, MFA/passkey challenges, authorization codes, and audit
   events
 - audit events across security-sensitive flows
+- first-class privacy retention, authorization hardening, assurance matrix, and crypto lifecycle docs
 
 ## Next Delivery Order
 
@@ -37,8 +40,8 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 
 ### Sprint 3
 
-- package-owned passkey assurance propagation for admin passkey-required policy
-- add explicit email-change flow with fresh-auth ownership
+- evaluate richer sender-constraint proof verification adapters for HTTP and mTLS environments
+- add package examples for high-assurance admin passkey policy and OAuth client posture
 
 ### Sprint 4
 
@@ -51,7 +54,7 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 
 ### Sprint 6
 
-- SCIM/runtime adapters, deeper tenant membership model, and external control-plane integration
+- conditional SCIM/runtime adapters, deeper tenant membership model, and external control-plane integration
 
 ## Non-Goals For This Package Today
 

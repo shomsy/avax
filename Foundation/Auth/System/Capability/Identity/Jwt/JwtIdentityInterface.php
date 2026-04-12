@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Identity\Jwt;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Flow\Token\IssuedRefreshToken;
 use Avax\Auth\System\Flow\Token\IssuedToken;
@@ -25,7 +26,8 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
         DateTimeImmutable|null $mfaVerifiedAt = null,
         bool $phishingResistant = false,
         string|null $clientId = null,
-        array $scopes = []
+        array $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedToken;
 
     public function resolve(string $token) : ResolvedToken|null;
@@ -38,7 +40,8 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
         DateTimeImmutable|null $mfaVerifiedAt = null,
         bool $phishingResistant = false,
         string|null $clientId = null,
-        array $scopes = []
+        array $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedRefreshToken|null;
 
     public function revoke(string $tokenId, DateTimeImmutable $expiresAt) : void;

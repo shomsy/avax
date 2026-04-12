@@ -22391,6 +22391,23 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-022
+- `created_at`: 2026-04-12 22:39 CEST
+- `updated_at`: 2026-04-12 23:10 CEST
+- `completed_at`: 2026-04-12 23:10 CEST
+- `status`: done
+- `estimate`: 3h
+- `actual`: 31m
+- `outcome`: Add explicit assurance policy tiers, sender-constrained OAuth posture, key-versioned token artifacts, and
+  first-class privacy, authorization, and crypto governance docs for the enterprise-to-ideal auth pass
+- `acceptance`: `Capability/Access/Policy/IdentityPolicyCatalog` exists; `AccessPolicy` can express actor-tier
+  assurance; OAuth clients can require phishing-resistant auth and sender-constrained tokens; HMAC JWTs support `kid`;
+  README/docs/evidence reflect assurance, retention, authz, crypto, and SCIM conditional posture; PHPUnit and PHPStan
+  lanes pass
+- `links`: System/Capability/Access/Policy/, System/Capability/OAuth/, System/Flow/OAuth/, System/Flow/Token/,
+  docs/assurance-policy.md, docs/privacy-retention-policy.md, docs/authorization-hardening.md,
+  docs/crypto-key-lifecycle.md
+
 - `id`: AUTH-021
 - `created_at`: 2026-04-12 22:39 CEST
 - `updated_at`: 2026-04-12 22:39 CEST
@@ -22613,6 +22630,9 @@ Update rules:
 
 ## Current Ledger
 
+- `2026-04-12 23:10 CEST` | `AUTH-022` | shipped explicit assurance policy tiers, phishing-resistant-required OAuth
+  client posture, sender-constrained token binding metadata for DPoP and mTLS, JWT `kid` support, new regression
+  tests, and first-class docs for assurance, privacy retention, authorization hardening, and crypto lifecycle
 - `2026-04-12 22:39 CEST` | `AUTH-021` | normalized the phishing-resistant access naming, moved the guard into an explicit capability namespace, made
   `ChangeEmail` a first-class flow keyed by `UserId`, and added regression tests for email-change and admin-elevation
   policy paths
@@ -22751,19 +22771,32 @@ Tracks active and accepted risks.
 
 ## Active Risks
 
-- `id`: AUTH-RISK-007
-- `identified_at`: 2026-04-12 21:32 CEST
-- `updated_at`: 2026-04-12 21:32 CEST
+- `id`: AUTH-RISK-008
+- `identified_at`: 2026-04-12 23:10 CEST
+- `updated_at`: 2026-04-12 23:10 CEST
 - `severity`: medium
 - `likelihood`: medium
-- `impact`: The package now owns passkey and admin-realm slices, but passkey assurance is not yet propagated through the
-  general auth context as a first-class policy claim; an application that wants "admin must currently be passkey-authenticated"
-  still needs an explicit step-up design over the passkey runtime seam.
-- `mitigation`: The kernel already owns passkey registration/authentication and admin elevation. Next iteration should
-  add a package-owned phishing-resistant assurance claim or passkey step-up flow before enforcing passkey-required admin
-  policy globally.
+- `impact`: The kernel now owns sender-constrained token binding metadata and refresh enforcement, but actual HTTP DPoP
+  proof verification and mTLS certificate validation remain integration-owned; a deployment could still pass untrusted
+  thumbprints into the kernel if its transport layer is weak.
+- `mitigation`: Keep sender-constraint verification at the transport or adapter boundary, document that trust boundary
+  in `docs/assurance-policy.md` and `docs/boundary.md`, and add concrete HTTP or mTLS adapters before claiming
+  full replay-resistant enforcement in a specific deployment.
+- `owner`: OAuth integrations
+- `status`: accepted
+
+- `id`: AUTH-RISK-007
+- `identified_at`: 2026-04-12 21:32 CEST
+- `updated_at`: 2026-04-12 23:10 CEST
+- `severity`: medium
+- `likelihood`: medium
+- `impact`: The package previously lacked an explicit package-owned assurance policy for phishing-resistant privileged
+  posture.
+- `mitigation`: `Capability/Access/Policy/IdentityPolicyCatalog`, `AccessPolicy::forIdentityPolicy()`, the renamed
+  phishing-resistant policy requirement, and OAuth client high-assurance posture now provide first-class package-owned
+  enforcement seams.
 - `owner`: passkey + admin realm slices
-- `status`: open
+- `status`: mitigated
 
 - `id`: AUTH-RISK-006
 - `identified_at`: 2026-04-12 15:36 CEST
@@ -22858,6 +22891,31 @@ Concrete records of executed verification.
 - `notes`:
 
 ## Reports
+
+- `executed_at`: 2026-04-12 23:10 CEST
+- `scope`: full PHPUnit suite after assurance policy tiers, sender-constrained OAuth posture, and key-versioned JWT
+  artifacts
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: PHPUnit passes after adding `IdentityPolicyCatalog`, OAuth sender-constraint enforcement, phishing-resistant
+  OAuth client policy, JWT `kid` handling, and new regression coverage; result `OK (138 tests, 355 assertions)`
+
+- `executed_at`: 2026-04-12 23:10 CEST
+- `scope`: baseline static analysis after enterprise-to-ideal auth policy expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes across the new `Capability/Access/Policy` types, OAuth sender-constraint contracts,
+  and JWT token-version support
+
+- `executed_at`: 2026-04-12 23:10 CEST
+- `scope`: strict static analysis after enterprise-to-ideal auth policy expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after tightening grant-type normalization, sender-constraint iterable contracts, and
+  explicit assurance-policy seams
 
 - `executed_at`: 2026-04-12 22:39 CEST
 - `scope`: targeted regression suite for phishing-resistant access naming, admin elevation policy, and ChangeEmail flow
@@ -24586,15 +24644,17 @@ admin elevation, and a thin optional integration surface.
 - `Auth::current()`, `Auth::check()`, and `Auth::user()` now read one immutable `AuthenticationContext`.
 - Session and JWT now share the same public result model, logout path, and refresh/revocation lifecycle.
 - OAuth v1 now owns client registration, authorization-code issuance, PKCE verification, refresh exchange,
-  introspection, and token revocation.
-- `Access` now supports composed access policies with role, permission, resource-owner, fresh-MFA, and admin-elevation
-  conditions.
+  introspection, token revocation, sender-constrained token binding metadata, and explicit client policy posture.
+- `Access` now supports composed access policies with role, permission, resource-owner, fresh-MFA, admin-elevation,
+  and actor-tier assurance policies.
 - Passkeys now own registration/authentication plus listing, rename, and revoke flows behind a runtime contract.
 - Federation now owns tenant-aware connection registration, discovery, start/complete login, JIT linking, and
   group-to-role mapping.
 - Admin realm, provisioning, deterministic risk, and cleanup/export maintenance flows are package-owned slices.
 - Password reset, email verification, MFA enrollment/challenge/recovery, refresh rotation, audit events, and
   anti-enumeration flows are package-owned.
+- Assurance, privacy retention, authorization hardening, and crypto lifecycle now have first-class repo docs instead of
+  being implied follow-up work.
 
 ## Quick Start
 
@@ -24749,20 +24809,28 @@ non-goals.
 - Active session listing, targeted session revoke, and logout-all flow support.
 - Token revocation and refresh rotation through package-owned stores.
 - OAuth public clients require PKCE and OAuth refresh reuse revokes the full token family.
+- High-assurance OAuth clients can require phishing-resistant auth before authorization-code issuance.
+- OAuth clients can require sender-constrained access and refresh tokens with DPoP or mTLS binding metadata.
 - Password reset and login failures keep safe public messages.
 - Password reset begin flow is anti-enumeration by default.
 - Email change requires the current password, fresh MFA, and revokes the current auth/session family on confirmation.
 - MFA uses TOTP with replay protection, backup codes, recovery tokens, step-up freshness checks, and per-user challenge
   throttling.
 - Passkeys support multiple credentials per account, user-owned rename/revoke, and strict challenge replay prevention.
-- Admin-sensitive actions can be expressed through `AccessPolicy` and enforced with fresh MFA plus admin elevation.
+- Admin-sensitive actions can be expressed through `AccessPolicy` and enforced with explicit phishing-resistant,
+  fresh-MFA, and admin-elevation policy.
 - Federation login is tenant-aware at the connection boundary, leaves an audit trail, and can JIT link or create users.
 - Deterministic risk rules flag new environments and refresh-token reuse for review-oriented follow-up.
 - Auth context is immutable and password hashes never leave the internal `User` entity.
+- HMAC JWTs can carry an explicit `kid` key version for rollover-aware deployments.
 
 ## Delivery Docs
 
 - [docs/adr/001-auth-scope-and-trust-boundaries.md](docs/adr/001-auth-scope-and-trust-boundaries.md)
+- [docs/assurance-policy.md](docs/assurance-policy.md)
+- [docs/authorization-hardening.md](docs/authorization-hardening.md)
+- [docs/privacy-retention-policy.md](docs/privacy-retention-policy.md)
+- [docs/crypto-key-lifecycle.md](docs/crypto-key-lifecycle.md)
 - [docs/threat-model.md](docs/threat-model.md)
 - [docs/implementation-roadmap.md](docs/implementation-roadmap.md)
 
@@ -27332,8 +27400,367 @@ final readonly class AccessPolicy
         public int|null $resourceOwnerUserId = null,
         public bool $freshMfa = false,
         public bool $adminElevation = false,
-        public bool $phishingResistant = false
+        public bool $phishingResistantRequired = false,
+        public int|null $freshMfaMaxAgeSeconds = null,
+        public IdentityPolicy|null $identityPolicy = null
     ) {}
+
+    public static function forIdentityPolicy(
+        IdentityPolicy $identityPolicy,
+        UserRole|null $requiredRole = null,
+        UserPermission|null $requiredPermission = null,
+        int|null $resourceOwnerUserId = null
+    ) : self
+    {
+        return new self(
+            requiredRole             : $requiredRole,
+            requiredPermission       : $requiredPermission,
+            resourceOwnerUserId      : $resourceOwnerUserId,
+            freshMfa                 : $identityPolicy->freshMfaMaxAgeSeconds !== null,
+            adminElevation           : $identityPolicy->adminElevationRequired,
+            phishingResistantRequired: $identityPolicy->phishingResistantRequired,
+            freshMfaMaxAgeSeconds    : $identityPolicy->freshMfaMaxAgeSeconds,
+            identityPolicy           : $identityPolicy
+        );
+    }
+
+    public static function admin(
+        UserPermission|null $requiredPermission = null,
+        int|null $resourceOwnerUserId = null
+    ) : self
+    {
+        return self::forIdentityPolicy(
+            identityPolicy      : IdentityPolicyCatalog::admin(),
+            requiredRole        : UserRole::ADMIN,
+            requiredPermission  : $requiredPermission,
+            resourceOwnerUserId : $resourceOwnerUserId
+        );
+    }
+
+    public static function tenantAdmin(
+        UserPermission|null $requiredPermission = null,
+        int|null $resourceOwnerUserId = null
+    ) : self
+    {
+        return self::forIdentityPolicy(
+            identityPolicy      : IdentityPolicyCatalog::tenantAdmin(),
+            requiredRole        : UserRole::ADMIN,
+            requiredPermission  : $requiredPermission,
+            resourceOwnerUserId : $resourceOwnerUserId
+        );
+    }
+}
+
+=== System/Capability/Access/Policy/AssuranceTier.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Access\Policy;
+
+/**
+ * Assurance level attached to an identity policy.
+ */
+enum AssuranceTier: string
+{
+    case STANDARD = 'standard';
+    case HIGH = 'high';
+    case PHISHING_RESISTANT = 'phishing_resistant';
+    case EMERGENCY = 'emergency';
+}
+
+=== System/Capability/Access/Policy/AuthenticationFactor.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Access\Policy;
+
+/**
+ * Factors referenced by identity assurance policy tiers.
+ */
+enum AuthenticationFactor: string
+{
+    case PASSWORD = 'password';
+    case TOTP = 'totp';
+    case BACKUP_CODE = 'backup_code';
+    case PASSKEY = 'passkey';
+    case FEDERATED_SSO = 'federated_sso';
+    case DPOP = 'dpop';
+    case MTLS = 'mtls';
+}
+
+=== System/Capability/Access/Policy/IdentityActor.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Access\Policy;
+
+/**
+ * Actor lanes that receive different auth and authorization posture.
+ */
+enum IdentityActor: string
+{
+    case USER = 'user';
+    case PRIVILEGED_USER = 'privileged_user';
+    case ADMIN = 'admin';
+    case SUPPORT = 'support';
+    case MACHINE_IDENTITY = 'machine_identity';
+    case TENANT_ADMIN = 'tenant_admin';
+    case BREAK_GLASS = 'break_glass';
+}
+
+=== System/Capability/Access/Policy/IdentityPolicy.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Access\Policy;
+
+/**
+ * Explicit assurance matrix entry for one actor lane.
+ */
+final readonly class IdentityPolicy
+{
+    /**
+     * @param list<AuthenticationFactor> $allowedFactors
+     * @param list<AuthenticationFactor> $requiredFactors
+     */
+    public function __construct(
+        public IdentityActor   $actor,
+        public AssuranceTier   $assuranceTier,
+        public array           $allowedFactors,
+        public array           $requiredFactors,
+        public int             $idleTimeoutSeconds,
+        public int             $absoluteTimeoutSeconds,
+        public int|null        $freshMfaMaxAgeSeconds,
+        public RecoveryPath    $recoveryPath,
+        public bool            $phishingResistantRequired = false,
+        public bool            $adminElevationRequired = false,
+        public bool            $senderConstrainedTokensRequired = false,
+        public bool            $denyByDefault = true,
+        public bool            $resourceChecksRequired = true,
+        public bool            $separationOfDutiesRequired = false,
+        public bool            $privilegedApprovalRequired = false
+    ) {}
+
+    public function allowsFactor(AuthenticationFactor $factor) : bool
+    {
+        return in_array($factor, $this->allowedFactors, true);
+    }
+
+    public function requiresFactor(AuthenticationFactor $factor) : bool
+    {
+        return in_array($factor, $this->requiredFactors, true);
+    }
+}
+
+=== System/Capability/Access/Policy/IdentityPolicyCatalog.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Access\Policy;
+
+/**
+ * Package-owned assurance defaults for the main identity lanes.
+ */
+final class IdentityPolicyCatalog
+{
+    public static function user() : IdentityPolicy
+    {
+        return new IdentityPolicy(
+            actor                : IdentityActor::USER,
+            assuranceTier        : AssuranceTier::STANDARD,
+            allowedFactors       : [
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+                AuthenticationFactor::BACKUP_CODE,
+                AuthenticationFactor::PASSKEY,
+                AuthenticationFactor::FEDERATED_SSO,
+            ],
+            requiredFactors      : [
+                AuthenticationFactor::PASSWORD,
+            ],
+            idleTimeoutSeconds   : 1_800,
+            absoluteTimeoutSeconds: 43_200,
+            freshMfaMaxAgeSeconds: null,
+            recoveryPath         : RecoveryPath::PASSWORD_RESET
+        );
+    }
+
+    public static function privilegedUser() : IdentityPolicy
+    {
+        return new IdentityPolicy(
+            actor                : IdentityActor::PRIVILEGED_USER,
+            assuranceTier        : AssuranceTier::HIGH,
+            allowedFactors       : [
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+                AuthenticationFactor::BACKUP_CODE,
+                AuthenticationFactor::PASSKEY,
+                AuthenticationFactor::FEDERATED_SSO,
+            ],
+            requiredFactors      : [
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+            ],
+            idleTimeoutSeconds   : 900,
+            absoluteTimeoutSeconds: 28_800,
+            freshMfaMaxAgeSeconds: 300,
+            recoveryPath         : RecoveryPath::MFA_RECOVERY
+        );
+    }
+
+    public static function admin() : IdentityPolicy
+    {
+        return new IdentityPolicy(
+            actor                : IdentityActor::ADMIN,
+            assuranceTier        : AssuranceTier::PHISHING_RESISTANT,
+            allowedFactors       : [
+                AuthenticationFactor::PASSKEY,
+                AuthenticationFactor::FEDERATED_SSO,
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+                AuthenticationFactor::BACKUP_CODE,
+            ],
+            requiredFactors      : [
+                AuthenticationFactor::PASSKEY,
+            ],
+            idleTimeoutSeconds   : 600,
+            absoluteTimeoutSeconds: 14_400,
+            freshMfaMaxAgeSeconds: 180,
+            recoveryPath         : RecoveryPath::ADMIN_APPROVAL,
+            phishingResistantRequired: true,
+            adminElevationRequired: true,
+            separationOfDutiesRequired: true,
+            privilegedApprovalRequired: true
+        );
+    }
+
+    public static function support() : IdentityPolicy
+    {
+        return new IdentityPolicy(
+            actor                : IdentityActor::SUPPORT,
+            assuranceTier        : AssuranceTier::HIGH,
+            allowedFactors       : [
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+                AuthenticationFactor::PASSKEY,
+                AuthenticationFactor::FEDERATED_SSO,
+            ],
+            requiredFactors      : [
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+            ],
+            idleTimeoutSeconds   : 600,
+            absoluteTimeoutSeconds: 21_600,
+            freshMfaMaxAgeSeconds: 180,
+            recoveryPath         : RecoveryPath::ADMIN_APPROVAL,
+            separationOfDutiesRequired: true,
+            privilegedApprovalRequired: true
+        );
+    }
+
+    public static function tenantAdmin() : IdentityPolicy
+    {
+        return new IdentityPolicy(
+            actor                : IdentityActor::TENANT_ADMIN,
+            assuranceTier        : AssuranceTier::PHISHING_RESISTANT,
+            allowedFactors       : [
+                AuthenticationFactor::PASSKEY,
+                AuthenticationFactor::FEDERATED_SSO,
+                AuthenticationFactor::PASSWORD,
+                AuthenticationFactor::TOTP,
+            ],
+            requiredFactors      : [
+                AuthenticationFactor::PASSKEY,
+            ],
+            idleTimeoutSeconds   : 900,
+            absoluteTimeoutSeconds: 21_600,
+            freshMfaMaxAgeSeconds: 180,
+            recoveryPath         : RecoveryPath::ADMIN_APPROVAL,
+            phishingResistantRequired: true,
+            separationOfDutiesRequired: true
+        );
+    }
+
+    public static function machineIdentity() : IdentityPolicy
+    {
+        return new IdentityPolicy(
+            actor                : IdentityActor::MACHINE_IDENTITY,
+            assuranceTier        : AssuranceTier::HIGH,
+            allowedFactors       : [
+                AuthenticationFactor::DPOP,
+                AuthenticationFactor::MTLS,
+            ],
+            requiredFactors      : [
+                AuthenticationFactor::MTLS,
+            ],
+            idleTimeoutSeconds   : 300,
+            absoluteTimeoutSeconds: 3_600,
+            freshMfaMaxAgeSeconds: null,
+            recoveryPath         : RecoveryPath::NONE,
+            senderConstrainedTokensRequired: true
+        );
+    }
+
+    public static function breakGlass() : IdentityPolicy
+    {
+        return new IdentityPolicy(
+            actor                : IdentityActor::BREAK_GLASS,
+            assuranceTier        : AssuranceTier::EMERGENCY,
+            allowedFactors       : [
+                AuthenticationFactor::PASSKEY,
+            ],
+            requiredFactors      : [
+                AuthenticationFactor::PASSKEY,
+            ],
+            idleTimeoutSeconds   : 300,
+            absoluteTimeoutSeconds: 1_800,
+            freshMfaMaxAgeSeconds: 60,
+            recoveryPath         : RecoveryPath::ADMIN_APPROVAL,
+            phishingResistantRequired: true,
+            separationOfDutiesRequired: true,
+            privilegedApprovalRequired: true
+        );
+    }
+
+    /**
+     * @return list<IdentityPolicy>
+     */
+    public static function all() : array
+    {
+        return [
+            self::user(),
+            self::privilegedUser(),
+            self::admin(),
+            self::support(),
+            self::tenantAdmin(),
+            self::machineIdentity(),
+            self::breakGlass(),
+        ];
+    }
+}
+
+=== System/Capability/Access/Policy/RecoveryPath.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Access\Policy;
+
+/**
+ * Recovery posture expressed by an identity policy.
+ */
+enum RecoveryPath: string
+{
+    case PASSWORD_RESET = 'password_reset';
+    case MFA_RECOVERY = 'mfa_recovery';
+    case FEDERATED_REPROVISION = 'federated_reprovision';
+    case ADMIN_APPROVAL = 'admin_approval';
+    case NONE = 'none';
 }
 
 === System/Capability/Access/RequireAccessPolicy/RequireAccessPolicy.php ===
@@ -27386,6 +27813,7 @@ final readonly class RequireAccessPolicy
     public function execute(AccessPolicy $policy) : void
     {
         $this->requireAuthentication->execute();
+        $identityPolicy = $policy->identityPolicy;
 
         if ($policy->requiredRole !== null) {
             $this->requireRole->execute($policy->requiredRole);
@@ -27399,15 +27827,18 @@ final readonly class RequireAccessPolicy
             $this->requireResourceOwner->execute($policy->resourceOwnerUserId);
         }
 
-        if ($policy->phishingResistant) {
+        if ($policy->phishingResistantRequired || $identityPolicy?->phishingResistantRequired === true) {
             $this->requirePhishingResistantAuthentication->execute();
         }
 
-        if ($policy->freshMfa) {
-            $this->requireFreshMfa->execute();
+        $freshMfaMaxAgeSeconds = $policy->freshMfaMaxAgeSeconds
+            ?? $identityPolicy?->freshMfaMaxAgeSeconds;
+
+        if ($policy->freshMfa || $freshMfaMaxAgeSeconds !== null) {
+            $this->requireFreshMfa->execute($freshMfaMaxAgeSeconds);
         }
 
-        if ($policy->adminElevation) {
+        if ($policy->adminElevation || $identityPolicy?->adminElevationRequired === true) {
             $this->requireAdminElevation->execute();
         }
     }
@@ -28187,6 +28618,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Identity\Jwt;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
@@ -28259,7 +28692,10 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             $phishingResistant = ($claims['phr'] ?? 0) === 1;
             $clientId      = $claims['client_id'] ?? null;
             $scopeClaim    = $claims['scope'] ?? null;
+            $senderConstraintType = $claims['cnf_typ'] ?? null;
+            $senderConstraintThumbprint = $claims['cnf_thumbprint'] ?? null;
             $scopes        = [];
+            $senderConstraint = null;
 
             if (is_int($mfaTimestamp)) {
                 $mfaVerifiedAt = new DateTimeImmutable("@{$mfaTimestamp}");
@@ -28271,6 +28707,17 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
             if (is_string($scopeClaim) && $scopeClaim !== '') {
                 $scopes = array_values(array_filter(explode(' ', $scopeClaim), static fn (string $scope) : bool => $scope !== ''));
+            }
+
+            if ($senderConstraintType !== null || $senderConstraintThumbprint !== null) {
+                if (! is_string($senderConstraintType) || ! is_string($senderConstraintThumbprint)) {
+                    return null;
+                }
+
+                $senderConstraint = new OAuthSenderConstraint(
+                    type      : OAuthSenderConstraintType::from($senderConstraintType),
+                    thumbprint: $senderConstraintThumbprint
+                );
             }
 
             $user = $this->userSource->findById(new UserId($subject));
@@ -28286,7 +28733,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 mfaVerifiedAt: $mfaVerifiedAt,
                 phishingResistant: $phishingResistant,
                 clientId     : $clientId,
-                scopes       : $scopes
+                scopes       : $scopes,
+                senderConstraint: $senderConstraint
             );
         } catch (Throwable) {
             return null;
@@ -28301,7 +28749,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         DateTimeImmutable|null $mfaVerifiedAt = null,
         bool $phishingResistant = false,
         string|null $clientId = null,
-        array $scopes = []
+        array $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedRefreshToken|null
     {
         if ($this->refreshTokenStore === null) {
@@ -28314,7 +28763,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             mfaVerifiedAt: $mfaVerifiedAt,
             phishingResistant: $phishingResistant,
             clientId     : $clientId,
-            scopes       : $scopes
+            scopes       : $scopes,
+            senderConstraint: $senderConstraint
         );
     }
 
@@ -28326,7 +28776,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         DateTimeImmutable|null $mfaVerifiedAt = null,
         bool $phishingResistant = false,
         string|null $clientId = null,
-        array $scopes = []
+        array $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedToken
     {
         if (! $user->isActive()) {
@@ -28361,6 +28812,11 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             $payload['scope'] = implode(' ', array_values($scopes));
         }
 
+        if ($senderConstraint !== null) {
+            $payload['cnf_typ'] = $senderConstraint->type->value;
+            $payload['cnf_thumbprint'] = $senderConstraint->thumbprint;
+        }
+
         return new IssuedToken(
             token    : $this->codec->encode($payload),
             tokenId  : $tokenId,
@@ -28381,6 +28837,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Identity\Jwt;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Flow\Token\IssuedRefreshToken;
 use Avax\Auth\System\Flow\Token\IssuedToken;
@@ -28402,7 +28859,8 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
         DateTimeImmutable|null $mfaVerifiedAt = null,
         bool $phishingResistant = false,
         string|null $clientId = null,
-        array $scopes = []
+        array $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedToken;
 
     public function resolve(string $token) : ResolvedToken|null;
@@ -28415,7 +28873,8 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
         DateTimeImmutable|null $mfaVerifiedAt = null,
         bool $phishingResistant = false,
         string|null $clientId = null,
-        array $scopes = []
+        array $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedRefreshToken|null;
 
     public function revoke(string $tokenId, DateTimeImmutable $expiresAt) : void;
@@ -28973,6 +29432,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\OAuth;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use InvalidArgumentException;
 use SensitiveParameter;
@@ -28993,14 +29453,27 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         string $name,
         OAuthClientType $type,
         array $redirectUris,
-        array $allowedScopes = []
+        array $allowedScopes = [],
+        array $allowedGrantTypes = [],
+        OAuthSenderConstraintType|null $requiredSenderConstraint = null,
+        bool $workloadIdentity = false,
+        bool $phishingResistantRequired = false
     ) : RegisteredOAuthClient
     {
         $normalizedRedirectUris = $this->normalizeRedirectUris($redirectUris);
         $normalizedScopes       = $this->normalizeScopes($allowedScopes);
+        $normalizedGrantTypes   = $this->normalizeGrantTypes($type, $allowedGrantTypes);
 
         if ($normalizedRedirectUris === []) {
             throw new InvalidArgumentException('OAuth clients require at least one redirect URI.');
+        }
+
+        if ($workloadIdentity && $type !== OAuthClientType::CONFIDENTIAL) {
+            throw new InvalidArgumentException('Workload identity clients must be confidential.');
+        }
+
+        if ($workloadIdentity && $requiredSenderConstraint === null) {
+            throw new InvalidArgumentException('Workload identity clients require sender-constrained tokens.');
         }
 
         $clientId   = 'oauth_' . bin2hex(random_bytes(12));
@@ -29018,6 +29491,10 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             type         : $type,
             redirectUris : $normalizedRedirectUris,
             allowedScopes: $normalizedScopes,
+            allowedGrantTypes: $normalizedGrantTypes,
+            requiredSenderConstraint: $requiredSenderConstraint,
+            workloadIdentity: $workloadIdentity,
+            phishingResistantRequired: $phishingResistantRequired,
             secretHash   : $secretHash
         );
 
@@ -29104,6 +29581,36 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
 
         return $normalized;
     }
+
+    /**
+     * @param list<OAuthGrantType> $allowedGrantTypes
+     * @return list<OAuthGrantType>
+     */
+    private function normalizeGrantTypes(OAuthClientType $type, array $allowedGrantTypes) : array
+    {
+        if ($allowedGrantTypes === []) {
+            return [
+                OAuthGrantType::AUTHORIZATION_CODE,
+                OAuthGrantType::REFRESH_TOKEN,
+            ];
+        }
+
+        $normalized = [];
+
+        foreach ($allowedGrantTypes as $grantType) {
+            if (in_array($grantType, $normalized, true)) {
+                continue;
+            }
+
+            if ($grantType === OAuthGrantType::CLIENT_CREDENTIALS && $type !== OAuthClientType::CONFIDENTIAL) {
+                throw new InvalidArgumentException('Public clients cannot use the client credentials grant.');
+            }
+
+            $normalized[] = $grantType;
+        }
+
+        return $normalized;
+    }
 }
 
 === System/Capability/OAuth/IssuedAuthorizationCode.php ===
@@ -29135,6 +29642,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\OAuth;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
+
 /**
  * Registered OAuth client contract.
  */
@@ -29143,14 +29652,19 @@ final readonly class OAuthClient
     /**
      * @param list<string> $redirectUris
      * @param list<string> $allowedScopes
+     * @param list<OAuthGrantType> $allowedGrantTypes
      */
     public function __construct(
-        public string          $clientId,
-        public string          $name,
-        public OAuthClientType $type,
-        public array           $redirectUris,
-        public array           $allowedScopes,
-        public string|null     $secretHash = null
+        public string                          $clientId,
+        public string                          $name,
+        public OAuthClientType                 $type,
+        public array                           $redirectUris,
+        public array                           $allowedScopes,
+        public array                           $allowedGrantTypes = [],
+        public OAuthSenderConstraintType|null  $requiredSenderConstraint = null,
+        public bool                            $workloadIdentity = false,
+        public bool                            $phishingResistantRequired = false,
+        public string|null                     $secretHash = null
     ) {}
 
     public function isPublic() : bool
@@ -29181,6 +29695,16 @@ final readonly class OAuthClient
 
         return true;
     }
+
+    public function allowsGrantType(OAuthGrantType $grantType) : bool
+    {
+        return in_array($grantType, $this->allowedGrantTypes, true);
+    }
+
+    public function requiresSenderConstraint() : bool
+    {
+        return $this->requiredSenderConstraint !== null;
+    }
 }
 
 === System/Capability/OAuth/OAuthClientRegistryInterface.php ===
@@ -29190,6 +29714,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\OAuth;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use SensitiveParameter;
 
 /**
@@ -29200,12 +29725,17 @@ interface OAuthClientRegistryInterface
     /**
      * @param list<string> $redirectUris
      * @param list<string> $allowedScopes
+     * @param list<OAuthGrantType> $allowedGrantTypes
      */
     public function register(
         string $name,
         OAuthClientType $type,
         array $redirectUris,
-        array $allowedScopes = []
+        array $allowedScopes = [],
+        array $allowedGrantTypes = [],
+        OAuthSenderConstraintType|null $requiredSenderConstraint = null,
+        bool $workloadIdentity = false,
+        bool $phishingResistantRequired = false
     ) : RegisteredOAuthClient;
 
     public function find(string $clientId) : OAuthClient|null;
@@ -29232,6 +29762,23 @@ enum OAuthClientType : string
 {
     case PUBLIC = 'public';
     case CONFIDENTIAL = 'confidential';
+}
+
+=== System/Capability/OAuth/OAuthGrantType.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth;
+
+/**
+ * OAuth grant types explicitly supported by the package-owned client policy.
+ */
+enum OAuthGrantType: string
+{
+    case AUTHORIZATION_CODE = 'authorization_code';
+    case REFRESH_TOKEN = 'refresh_token';
+    case CLIENT_CREDENTIALS = 'client_credentials';
 }
 
 === System/Capability/OAuth/PkceMethod.php ===
@@ -29276,6 +29823,46 @@ final readonly class RegisteredOAuthClient
         public OAuthClient  $client,
         public string|null  $plainTextSecret = null
     ) {}
+}
+
+=== System/Capability/OAuth/SenderConstraint/OAuthSenderConstraint.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth\SenderConstraint;
+
+/**
+ * Bound proof material attached to a sender-constrained OAuth token.
+ */
+final readonly class OAuthSenderConstraint
+{
+    public function __construct(
+        public OAuthSenderConstraintType $type,
+        public string $thumbprint
+    ) {}
+
+    public function equals(self $other) : bool
+    {
+        return $this->type === $other->type
+            && hash_equals($this->thumbprint, $other->thumbprint);
+    }
+}
+
+=== System/Capability/OAuth/SenderConstraint/OAuthSenderConstraintType.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth\SenderConstraint;
+
+/**
+ * Sender-constrained token modes supported by the OAuth lane.
+ */
+enum OAuthSenderConstraintType: string
+{
+    case DPOP = 'dpop';
+    case MTLS = 'mtls';
 }
 
 === System/Capability/Passkey/InMemoryPasskeyChallengeStore.php ===
@@ -31622,7 +32209,7 @@ final class AuthBuilder
                                         elevationStore       : $adminElevationStore,
                                         auditLog             : $auditLog,
                                         clock                : $clock,
-                                        requirePhishingResistant: $this->adminPhishingResistantRequired
+                                        phishingResistantRequired: $this->adminPhishingResistantRequired
                                     ),
             endAdminElevation     : new EndAdminElevation(
                                         currentAuthentication: $currentAuthentication,
@@ -31966,7 +32553,7 @@ final readonly class BeginAdminElevation
         private AdminElevationStoreInterface $elevationStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        private bool $requirePhishingResistant = false
+        private bool $phishingResistantRequired = false
     ) {}
 
     /**
@@ -31985,7 +32572,7 @@ final readonly class BeginAdminElevation
             throw AdminElevationFailed::forbidden();
         }
 
-        if ($this->requirePhishingResistant && ! $context->isPhishingResistant()) {
+        if ($this->phishingResistantRequired && ! $context->isPhishingResistant()) {
             throw AdminElevationFailed::phishingResistantRequired();
         }
 
@@ -36565,10 +37152,11 @@ final readonly class RequireFreshMfa
      * @throws Unauthenticated
      * @throws FreshMfaRequired
      */
-    public function execute() : void
+    public function execute(int|null $maxAgeSeconds = null) : void
     {
         $context = $this->currentAuthentication->read();
         $user    = $context->user();
+        $maxAgeSeconds ??= $this->maxAgeSeconds;
 
         if ($user === null) {
             throw new Unauthenticated();
@@ -36581,13 +37169,13 @@ final readonly class RequireFreshMfa
         $verifiedAt = $context->mfaVerifiedAt();
 
         if ($verifiedAt === null) {
-            throw new FreshMfaRequired($this->maxAgeSeconds);
+            throw new FreshMfaRequired($maxAgeSeconds);
         }
 
         $age = $this->clock->now()->getTimestamp() - $verifiedAt->getTimestamp();
 
-        if ($age > $this->maxAgeSeconds) {
-            throw new FreshMfaRequired($this->maxAgeSeconds);
+        if ($age > $maxAgeSeconds) {
+            throw new FreshMfaRequired($maxAgeSeconds);
         }
     }
 }
@@ -36880,6 +37468,7 @@ namespace Avax\Auth\System\Flow\OAuth\AuthorizeCode;
 use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
 use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\PkceMethod;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
@@ -36928,6 +37517,11 @@ final readonly class AuthorizeCode
             throw OAuthAuthorizationFailed::invalidClient();
         }
 
+        if (! $client->allowsGrantType(OAuthGrantType::AUTHORIZATION_CODE)) {
+            $this->recordFailure($data, 'grant_type_not_allowed');
+            throw OAuthAuthorizationFailed::invalidClient();
+        }
+
         if (! $client->allowsRedirectUri($data->redirectUri)) {
             $this->recordFailure($data, 'redirect_uri_mismatch');
             throw OAuthAuthorizationFailed::invalidRedirectUri();
@@ -36945,6 +37539,11 @@ final readonly class AuthorizeCode
                 $this->recordFailure($data, 'pkce_required');
                 throw OAuthAuthorizationFailed::invalidPkce();
             }
+        }
+
+        if ($client->phishingResistantRequired && ! $context->isPhishingResistant()) {
+            $this->recordFailure($data, 'phishing_resistant_required');
+            throw OAuthAuthorizationFailed::phishingResistantRequired();
         }
 
         $issued = $this->codeStore->issue(
@@ -37078,6 +37677,7 @@ namespace Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\PkceMethod;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
@@ -37112,6 +37712,11 @@ final readonly class ExchangeAuthorizationCode
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
+        if (! $client->allowsGrantType(OAuthGrantType::AUTHORIZATION_CODE)) {
+            $this->recordFailure($data, 'grant_type_not_allowed');
+            throw OAuthTokenExchangeFailed::invalidClient();
+        }
+
         $record = $this->codeStore->find($data->code);
 
         if ($record === null) {
@@ -37132,6 +37737,16 @@ final readonly class ExchangeAuthorizationCode
         if ($record->redirectUri !== $data->redirectUri) {
             $this->recordFailure($data, 'redirect_uri_mismatch');
             throw OAuthTokenExchangeFailed::invalidRedirectUri();
+        }
+
+        if ($client->requiredSenderConstraint !== null) {
+            if (
+                $data->senderConstraint === null
+                || $data->senderConstraint->type !== $client->requiredSenderConstraint
+            ) {
+                $this->recordFailure($data, 'sender_constraint_missing_or_wrong_type');
+                throw OAuthTokenExchangeFailed::invalidSenderConstraint();
+            }
         }
 
         if ($record->codeChallenge !== null) {
@@ -37162,7 +37777,8 @@ final readonly class ExchangeAuthorizationCode
             mfaVerifiedAt: $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
-            scopes       : $record->scopes
+            scopes       : $record->scopes,
+            senderConstraint: $data->senderConstraint
         );
         $refreshToken = $this->refreshTokenStore->issue(
             userId       : $user->getId(),
@@ -37170,7 +37786,8 @@ final readonly class ExchangeAuthorizationCode
             mfaVerifiedAt: $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
-            scopes       : $record->scopes
+            scopes       : $record->scopes,
+            senderConstraint: $data->senderConstraint
         );
 
         $this->auditLog->record(new AuditEvent(
@@ -37192,7 +37809,9 @@ final readonly class ExchangeAuthorizationCode
             refreshToken         : $refreshToken->token,
             clientId             : $client->clientId,
             userId               : $user->getId()->value,
-            scopes               : $record->scopes
+            scopes               : $record->scopes,
+            tokenType            : $data->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
+            senderConstraint     : $data->senderConstraint
         );
     }
 
@@ -37227,6 +37846,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use SensitiveParameter;
 
 final readonly class ExchangeAuthorizationCodeData
@@ -37238,7 +37858,8 @@ final readonly class ExchangeAuthorizationCodeData
         #[SensitiveParameter] public string|null $clientSecret = null,
         #[SensitiveParameter] public string|null $codeVerifier = null,
         public string|null $ipAddress = null,
-        public string|null $userAgent = null
+        public string|null $userAgent = null,
+        public OAuthSenderConstraint|null $senderConstraint = null
     ) {}
 }
 
@@ -37251,6 +37872,7 @@ namespace Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken;
 
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\Risk\DeterministicRiskEngine;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
@@ -37285,6 +37907,11 @@ final readonly class ExchangeRefreshToken
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
+        if (! $client->allowsGrantType(OAuthGrantType::REFRESH_TOKEN)) {
+            $this->recordFailure($data, 'grant_type_not_allowed');
+            throw OAuthTokenExchangeFailed::invalidClient();
+        }
+
         $record = $this->refreshTokenStore->find($data->refreshToken);
 
         if (
@@ -37295,6 +37922,18 @@ final readonly class ExchangeRefreshToken
         ) {
             $this->recordFailure($data, 'grant_not_found_or_expired');
             throw OAuthTokenExchangeFailed::invalidGrant();
+        }
+
+        if ($client->requiredSenderConstraint !== null) {
+            if (
+                $data->senderConstraint === null
+                || $data->senderConstraint->type !== $client->requiredSenderConstraint
+                || $record->senderConstraint === null
+                || ! $record->senderConstraint->equals($data->senderConstraint)
+            ) {
+                $this->recordFailure($data, 'sender_constraint_mismatch');
+                throw OAuthTokenExchangeFailed::invalidSenderConstraint();
+            }
         }
 
         if ($record->wasRotated()) {
@@ -37326,7 +37965,8 @@ final readonly class ExchangeRefreshToken
             mfaVerifiedAt: $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
-            scopes       : $record->scopes
+            scopes       : $record->scopes,
+            senderConstraint: $record->senderConstraint
         );
         $refreshToken = $this->refreshTokenStore->issue(
             userId       : $record->userId,
@@ -37335,7 +37975,8 @@ final readonly class ExchangeRefreshToken
             mfaVerifiedAt: $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
-            scopes       : $record->scopes
+            scopes       : $record->scopes,
+            senderConstraint: $record->senderConstraint
         );
 
         $this->refreshTokenStore->markRotated($record->tokenId, $refreshToken->tokenId);
@@ -37358,7 +37999,9 @@ final readonly class ExchangeRefreshToken
             refreshToken         : $refreshToken->token,
             clientId             : $client->clientId,
             userId               : $user->getId()->value,
-            scopes               : $record->scopes
+            scopes               : $record->scopes,
+            tokenType            : $record->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
+            senderConstraint     : $record->senderConstraint
         );
     }
 
@@ -37392,6 +38035,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use SensitiveParameter;
 
 final readonly class ExchangeRefreshTokenData
@@ -37401,7 +38045,8 @@ final readonly class ExchangeRefreshTokenData
         #[SensitiveParameter] public string $refreshToken,
         #[SensitiveParameter] public string|null $clientSecret = null,
         public string|null $ipAddress = null,
-        public string|null $userAgent = null
+        public string|null $userAgent = null,
+        public OAuthSenderConstraint|null $senderConstraint = null
     ) {}
 }
 
@@ -37451,7 +38096,8 @@ final readonly class IntrospectToken
                 scopes       : $resolved->scopes,
                 expiresAt    : $resolved->expiresAt,
                 mfaVerifiedAt: $resolved->mfaVerifiedAt,
-                phishingResistant: $resolved->phishingResistant
+                phishingResistant: $resolved->phishingResistant,
+                senderConstraint: $resolved->senderConstraint
             );
         }
 
@@ -37493,6 +38139,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\OAuth\IntrospectToken;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use DateTimeImmutable;
 
 final readonly class TokenIntrospection
@@ -37507,7 +38154,8 @@ final readonly class TokenIntrospection
         public array                  $scopes = [],
         public DateTimeImmutable|null $expiresAt = null,
         public DateTimeImmutable|null $mfaVerifiedAt = null,
-        public bool                   $phishingResistant = false
+        public bool                   $phishingResistant = false,
+        public OAuthSenderConstraint|null $senderConstraint = null
     ) {}
 
     public static function inactive() : self
@@ -37556,6 +38204,11 @@ final class OAuthAuthorizationFailed extends RuntimeException
     {
         return new self('PKCE is required for this client.');
     }
+
+    public static function phishingResistantRequired() : self
+    {
+        return new self('Phishing-resistant authentication is required for this client.');
+    }
 }
 
 === System/Flow/OAuth/OAuthTokenExchangeFailed.php ===
@@ -37588,6 +38241,11 @@ final class OAuthTokenExchangeFailed extends RuntimeException
     {
         return new self('Invalid PKCE verifier.');
     }
+
+    public static function invalidSenderConstraint() : self
+    {
+        return new self('Invalid sender constraint proof.');
+    }
 }
 
 === System/Flow/OAuth/OAuthTokenGrant.php ===
@@ -37597,6 +38255,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\OAuth;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use DateTimeImmutable;
 
 /**
@@ -37612,9 +38271,10 @@ final readonly class OAuthTokenGrant
         public DateTimeImmutable $accessTokenExpiresAt,
         public string|null       $refreshToken,
         public string            $clientId,
-        public int               $userId,
+        public int|null          $userId,
         public array             $scopes = [],
-        public string            $tokenType = 'Bearer'
+        public string            $tokenType = 'Bearer',
+        public OAuthSenderConstraint|null $senderConstraint = null
     ) {}
 
     public function expiresIn(DateTimeImmutable $moment) : int
@@ -37677,10 +38337,14 @@ final readonly class RegisterClient
     public function execute(RegisterClientData $data) : RegisteredOAuthClient
     {
         $registered = $this->clientRegistry->register(
-            name         : $data->name,
-            type         : $data->type,
-            redirectUris : $data->redirectUris,
-            allowedScopes: $data->allowedScopes
+            name                      : $data->name,
+            type                      : $data->type,
+            redirectUris              : $data->redirectUris,
+            allowedScopes             : $data->allowedScopes,
+            allowedGrantTypes         : $data->allowedGrantTypes,
+            requiredSenderConstraint  : $data->requiredSenderConstraint,
+            workloadIdentity          : $data->workloadIdentity,
+            phishingResistantRequired : $data->phishingResistantRequired
         );
 
         $this->auditLog->record(new AuditEvent(
@@ -37690,6 +38354,8 @@ final readonly class RegisterClient
                 'client_id' => $registered->client->clientId,
                 'name' => $registered->client->name,
                 'type' => $registered->client->type->value,
+                'workload_identity' => $registered->client->workloadIdentity ? 1 : 0,
+                'sender_constraint' => $registered->client->requiredSenderConstraint?->value,
             ]
         ));
 
@@ -37704,19 +38370,26 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\OAuth\RegisterClient;
 
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\OAuthClientType;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 
 final readonly class RegisterClientData
 {
     /**
      * @param list<string> $redirectUris
      * @param list<string> $allowedScopes
+     * @param list<OAuthGrantType> $allowedGrantTypes
      */
     public function __construct(
-        public string          $name,
-        public OAuthClientType $type,
-        public array           $redirectUris,
-        public array           $allowedScopes = []
+        public string                         $name,
+        public OAuthClientType                $type,
+        public array                          $redirectUris,
+        public array                          $allowedScopes = [],
+        public array                          $allowedGrantTypes = [],
+        public OAuthSenderConstraintType|null $requiredSenderConstraint = null,
+        public bool                           $workloadIdentity = false,
+        public bool                           $phishingResistantRequired = false
     ) {}
 }
 
@@ -39718,7 +40391,8 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
 {
     public function __construct(
         #[SensitiveParameter] private string $secret,
-        private string                       $algorithm = 'HS256'
+        private string                       $algorithm = 'HS256',
+        private string|null                  $keyId = null
     )
     {
         if ($this->secret === '') {
@@ -39751,6 +40425,10 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
             'typ' => 'JWT',
             'alg' => $this->algorithm,
         ];
+
+        if ($this->keyId !== null && trim($this->keyId) !== '') {
+            $header['kid'] = trim($this->keyId);
+        }
 
         $headerSegment = $this->base64UrlEncode($this->encodeJson($header));
         $claimSegment  = $this->base64UrlEncode($this->encodeJson($claims));
@@ -39794,6 +40472,10 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
         $header = $this->decodeJson($this->base64UrlDecode($headerSegment));
 
         if (! is_array($header) || ($header['alg'] ?? null) !== $this->algorithm) {
+            return null;
+        }
+
+        if ($this->keyId !== null && ($header['kid'] ?? null) !== $this->keyId) {
             return null;
         }
 
@@ -39854,6 +40536,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Token;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
 
@@ -39878,7 +40561,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
         DateTimeImmutable|null $mfaVerifiedAt = null,
         bool                   $phishingResistant = false,
         string|null            $clientId = null,
-        array                  $scopes = []
+        array                  $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedRefreshToken
     {
         $plainToken = bin2hex(random_bytes(32));
@@ -39893,7 +40577,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             mfaVerifiedAt: $mfaVerifiedAt,
             phishingResistant: $phishingResistant,
             clientId     : $clientId,
-            scopes       : array_values($scopes)
+            scopes       : array_values($scopes),
+            senderConstraint: $senderConstraint
         );
 
         $this->records[$tokenId]                       = $record;
@@ -39908,7 +40593,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             mfaVerifiedAt: $mfaVerifiedAt,
             phishingResistant: $phishingResistant,
             clientId     : $clientId,
-            scopes       : array_values($scopes)
+            scopes       : array_values($scopes),
+            senderConstraint: $senderConstraint
         );
     }
 
@@ -39946,7 +40632,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             mfaVerifiedAt     : $record->mfaVerifiedAt,
             phishingResistant : $record->phishingResistant,
             clientId          : $record->clientId,
-            scopes            : $record->scopes
+            scopes            : $record->scopes,
+            senderConstraint  : $record->senderConstraint
         );
     }
 
@@ -39967,7 +40654,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
                 mfaVerifiedAt     : $record->mfaVerifiedAt,
                 phishingResistant : $record->phishingResistant,
                 clientId          : $record->clientId,
-                scopes            : $record->scopes
+                scopes            : $record->scopes,
+                senderConstraint  : $record->senderConstraint
             );
         }
     }
@@ -39986,7 +40674,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
                     mfaVerifiedAt     : $record->mfaVerifiedAt,
                     phishingResistant : $record->phishingResistant,
                     clientId          : $record->clientId,
-                    scopes            : $record->scopes
+                    scopes            : $record->scopes,
+                    senderConstraint  : $record->senderConstraint
                 );
             }
         }
@@ -40030,6 +40719,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Token;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
 
@@ -40050,7 +40740,8 @@ final readonly class IssuedRefreshToken
         public DateTimeImmutable|null $mfaVerifiedAt = null,
         public bool                   $phishingResistant = false,
         public string|null            $clientId = null,
-        public array                  $scopes = []
+        public array                  $scopes = [],
+        public OAuthSenderConstraint|null $senderConstraint = null
     ) {}
 }
 
@@ -40270,6 +40961,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Token;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
 
@@ -40291,7 +40983,8 @@ final readonly class RefreshTokenRecord
         public DateTimeImmutable|null $mfaVerifiedAt = null,
         public bool                   $phishingResistant = false,
         public string|null            $clientId = null,
-        public array                  $scopes = []
+        public array                  $scopes = [],
+        public OAuthSenderConstraint|null $senderConstraint = null
     ) {}
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool
@@ -40312,6 +41005,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Token;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
 
@@ -40330,7 +41024,8 @@ interface RefreshTokenStoreInterface
         DateTimeImmutable|null $mfaVerifiedAt = null,
         bool                   $phishingResistant = false,
         string|null            $clientId = null,
-        array                  $scopes = []
+        array                  $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedRefreshToken;
 
     public function find(string $plainToken) : RefreshTokenRecord|null;
@@ -40349,6 +41044,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Token;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\User\User;
 use DateTimeImmutable;
 
@@ -40367,7 +41063,8 @@ final readonly class ResolvedToken
         public DateTimeImmutable|null $mfaVerifiedAt = null,
         public bool                   $phishingResistant = false,
         public string|null            $clientId = null,
-        public array                  $scopes = []
+        public array                  $scopes = [],
+        public OAuthSenderConstraint|null $senderConstraint = null
     ) {}
 }
 
@@ -40401,6 +41098,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Token;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\User\User;
 
 /**
@@ -40416,7 +41114,8 @@ interface TokenIssuerInterface
         \DateTimeImmutable|null $mfaVerifiedAt = null,
         bool $phishingResistant = false,
         string|null $clientId = null,
-        array $scopes = []
+        array $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedToken;
 }
 
@@ -45150,6 +45849,9 @@ The package already owns:
 - deterministic risk rules and refresh-reuse review signals
 - admin elevation and user lifecycle provisioning
 - audit events and auth ingress ownership
+- explicit actor assurance policy tiers
+- sender-constrained OAuth token posture metadata
+- key-version-aware HMAC token codec support
 
 The package does not yet own:
 
@@ -45186,7 +45888,7 @@ The package owns and ships:
 The package may add:
 
 - optional OAuth interoperability adapters
-- stronger passkey assurance propagation
+- stronger sender-constraint proof verification adapters
 - domain verification and federation metadata sync
 - external SCIM and SIEM adapters
 - deeper tenant membership ownership
@@ -45346,9 +46048,12 @@ integrations/
 - Request authentication happens only in `Flow/AuthenticateRequest/AuthenticateRequest.php`.
 - Authorization reads `CurrentAuthentication`; it no longer reaches into session/JWT adapters directly.
 - `Capability/Access/Policy/AccessPolicy` is the package-owned way to combine role, permission, resource-owner,
-  fresh-MFA, and admin-elevation requirements.
+  fresh-MFA, admin-elevation, and explicit actor-tier assurance requirements.
+- `Capability/Access/Policy/IdentityPolicyCatalog` owns the package default assurance matrix for user, privileged user,
+  admin, support, tenant admin, machine identity, and break-glass posture.
 - Passkeys and federation stay adapter-first: the kernel owns orchestration and storage contracts, while standards-heavy
   protocol work stays behind runtime interfaces.
+- `Capability/OAuth/SenderConstraint/` owns DPoP and mTLS binding metadata for sender-constrained token posture.
 - Maintenance work stays local to the owning slice through `CleanupExpired*` flows and `Flow/Diagnostics/ExportAuditEvents/`.
 - MFA freshness now survives ingress boundaries through package-owned session/JWT claims (`mfaVerifiedAt`).
 - Exception mapping stays at public or ingress boundaries; deep flow code returns domain-safe failures.
@@ -45359,6 +46064,59 @@ integrations/
 - `System/Configuration/AuthServiceProvider` moved to `Integrations/AvaxContainer/AuthServiceProvider`.
 - Session/JWT adapters stay reusable, but public consumers should code to `Auth`, `AuthenticationContext`, and
   `AuthenticationResult`.
+
+=== docs/assurance-policy.md ===
+# Assurance Policy Matrix
+
+This package treats assurance as an explicit policy surface, not as a side
+effect of whichever factor happened to succeed.
+
+## Primary Rules
+
+- passkeys or another phishing-resistant factor are required for admin and
+  tenant-admin posture
+- password plus TOTP remains a compatibility path, not the preferred primary
+  path for high-assurance users
+- sender-constrained tokens are the default high-security API posture
+- machine identities must use sender-constrained tokens when the deployment
+  enables workload identity
+
+## Policy Matrix
+
+| Actor | Assurance | Allowed Factors | Required Factors | Idle | Absolute | Fresh MFA | Recovery | Extra Rules |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `user` | `standard` | password, TOTP, backup code, passkey, federated SSO | password | 30m | 12h | n/a | password reset | deny by default |
+| `privileged_user` | `high` | password, TOTP, backup code, passkey, federated SSO | password + TOTP | 15m | 8h | 5m | MFA recovery | resource checks required |
+| `admin` | `phishing_resistant` | passkey, federated SSO, password, TOTP, backup code | passkey | 10m | 4h | 3m | admin approval | phishing-resistant, admin elevation, SoD, approval path |
+| `support` | `high` | password, TOTP, passkey, federated SSO | password + TOTP | 10m | 6h | 3m | admin approval | SoD and approval path |
+| `tenant_admin` | `phishing_resistant` | passkey, federated SSO, password, TOTP | passkey | 15m | 6h | 3m | admin approval | phishing-resistant and SoD |
+| `machine_identity` | `high` | DPoP, mTLS | mTLS | 5m | 1h | n/a | none | sender-constrained tokens required |
+| `break_glass` | `emergency` | passkey | passkey | 5m | 30m | 1m | admin approval | phishing-resistant, SoD, approval path |
+
+## Package Surface
+
+- `Capability/Access/Policy/IdentityPolicy.php` owns one matrix row
+- `Capability/Access/Policy/IdentityPolicyCatalog.php` owns the default package
+  catalog
+- `Capability/Access/Policy/AccessPolicy.php` can be built from an explicit
+  identity policy
+- `Flow/OAuth/RegisterClient/RegisterClientData.php` and `Capability/OAuth/`
+  own client-level phishing-resistant and sender-constraint posture
+
+## OAuth And API Notes
+
+- high-assurance OAuth clients can require phishing-resistant user auth before
+  authorization-code issuance
+- sender-constrained tokens are represented by
+  `Capability/OAuth/SenderConstraint/OAuthSenderConstraint.php`
+- DPoP is the preferred public-client binding
+- mTLS is the preferred enterprise server-to-server binding
+
+## Compatibility Note
+
+This package owns policy and enforcement seams. Applications still own final
+transport integration, real passkey runtime integration, certificate
+verification, DPoP proof verification, and session-store configuration.
 
 === docs/authorization-flow.md ===
 # Authorization Flow
@@ -45383,6 +46141,61 @@ Authorization is now a thin boundary over `CurrentAuthentication`.
 
 - Authorization no longer knows whether the user came from session or bearer token.
 - Protected routes, jobs, and events can all delegate to the same current-context boundary.
+
+=== docs/authorization-hardening.md ===
+# Authorization Hardening
+
+Authorization is not complete when roles exist. It is complete when the system
+can show how it denies, reviews, and tests access decisions.
+
+## Mandatory Rules
+
+- deny by default
+- require object or resource checks for object-scoped actions
+- treat separation of duties as mandatory for admin, support, tenant-admin, and
+  break-glass posture
+- require approval paths for privileged administrative actions
+- review permissions and role assignments on a fixed cadence
+- test both horizontal and vertical escalation paths
+
+## Package Surface
+
+- `Capability/Access/Access.php` is the single authorization facade
+- `Capability/Access/Policy/AccessPolicy.php` is the composed requirement model
+- `Capability/Access/Policy/IdentityPolicyCatalog.php` owns the default actor
+  tiers
+- `Capability/Access/RequireAccessPolicy/RequireAccessPolicy.php` enforces role,
+  permission, resource-owner, phishing-resistant, fresh-MFA, and admin
+  elevation checks in one place
+
+## Review Checklist
+
+- confirm the flow has one clear owner
+- confirm the access decision is local to the owning flow or capability
+- confirm the request path starts from deny by default
+- confirm resource ownership is checked where data is user- or tenant-scoped
+- confirm privileged actions require recent auth or admin elevation
+- confirm approval and SoD expectations are documented when the action is
+  privileged
+- confirm the negative test matrix covers missing role, missing permission,
+  wrong resource owner, stale MFA, and missing elevation
+
+## Test Matrix
+
+- unauthenticated caller -> denied
+- authenticated wrong role -> denied
+- authenticated missing permission -> denied
+- authenticated different resource owner -> denied
+- authenticated stale MFA -> denied
+- authenticated missing phishing-resistant factor -> denied
+- authenticated missing admin elevation -> denied
+- authenticated valid subject -> allowed
+
+## Operational Cadence
+
+- review role mappings at least quarterly
+- review high-risk permissions before each release affecting privileged flows
+- review break-glass assignments after every use
 
 === docs/boundary.md ===
 # Kernel And Integration Boundary
@@ -45448,10 +46261,14 @@ This package does not own today:
 - central IdP behavior
 - OIDC provider behavior
 - SAML federation brokering runtime
-- SCIM provisioning runtime
+- SCIM provisioning runtime for enterprise workforce or B2B control planes
 - full tenant membership control plane
 - KMS/HSM, mail, SIEM, and queue infrastructure
 - enterprise IAM approval workflows
+
+SCIM remains a conditional enterprise requirement. It is a must-have when the
+product targets enterprise workforce or B2B provisioning, but it is not a
+universal requirement for every deployment of this package.
 
 ## Final Target Tree
 
@@ -45573,7 +46390,13 @@ Stable extension contracts to keep public:
 - `TokenCodecInterface`
 - `HmacTokenCodec`
 - `OAuthClientRegistryInterface`
+- `OAuthGrantType`
+- `OAuthSenderConstraint`
+- `OAuthSenderConstraintType`
 - `AuthorizationCodeStoreInterface`
+- `AccessPolicy`
+- `IdentityPolicy`
+- `IdentityPolicyCatalog`
 - `FederationRuntimeInterface`
 - `FederationConnectionStoreInterface`
 - `FederatedIdentityLinkStoreInterface`
@@ -45631,6 +46454,53 @@ Replace or deprecate:
 5. Document extension points, non-goals, and compatibility risks.
 6. Verify kernel-only and adapter smoke paths.
 
+=== docs/crypto-key-lifecycle.md ===
+# Crypto And Key Lifecycle
+
+This package does not own KMS or HSM infrastructure, but it does own the
+runtime contract that token artifacts must support key versioning and rotation
+discipline.
+
+## Package-Owned Controls
+
+- `Flow/Token/HmacTokenCodec.php` can stamp a `kid` header on issued JWTs
+- JWT verification rejects tokens whose `kid` does not match the configured key
+  version
+- token claims remain algorithm-agnostic at the kernel boundary
+
+## Required Operational Practices
+
+- assign a versioned `kid` to every active signing key
+- rehearse signing-key rollover before using it in production
+- document a forced-compromise drill for leaked or suspected leaked signing
+  material
+- keep backup and restore posture for encryption materials under application
+  control
+- preserve crypto agility by not coupling callers to one concrete algorithm
+
+## Recommended Rollover Procedure
+
+1. publish the next key version in the application environment
+2. switch issuers to the new `kid`
+3. continue accepting the previous `kid` for a bounded overlap window at the
+   application boundary
+4. revoke or age out tokens signed by the retired `kid`
+5. remove the retired key from active verification
+
+## Forced Compromise Drill
+
+1. stop issuing with the suspected key immediately
+2. rotate to a new `kid`
+3. revoke active token families if compromise scope is uncertain
+4. audit unusual token introspection, refresh reuse, and admin activity
+5. preserve evidence under legal hold when needed
+
+## Boundary Note
+
+Multi-key verification and external KMS orchestration remain application or
+adapter concerns. The kernel provides the token artifact seam and the explicit
+`kid` contract.
+
 === docs/implementation-roadmap.md ===
 # Implementation Roadmap
 
@@ -45647,6 +46517,8 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 - tracked web sessions with idle and absolute expiry
 - active session listing, single-session revoke, and logout-all
 - OAuth client registry, authorization-code issuance, PKCE enforcement, refresh exchange, revoke, and introspection
+- explicit actor assurance policy catalog and composed access-policy tiers
+- phishing-resistant-required OAuth client posture and sender-constrained token binding metadata
 - admin elevation and privileged-user lifecycle flows
 - passkey registration, authentication, rename, and revoke behind a runtime seam
 - tenant-aware federation connections, login discovery, start/complete login, and JIT linking
@@ -45655,6 +46527,7 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 - cleanup/export maintenance flows for sessions, reset tokens, MFA/passkey challenges, authorization codes, and audit
   events
 - audit events across security-sensitive flows
+- first-class privacy retention, authorization hardening, assurance matrix, and crypto lifecycle docs
 
 ## Next Delivery Order
 
@@ -45671,8 +46544,8 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 
 ### Sprint 3
 
-- package-owned passkey assurance propagation for admin passkey-required policy
-- add explicit email-change flow with fresh-auth ownership
+- evaluate richer sender-constraint proof verification adapters for HTTP and mTLS environments
+- add package examples for high-assurance admin passkey policy and OAuth client posture
 
 ### Sprint 4
 
@@ -45685,7 +46558,7 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 
 ### Sprint 6
 
-- SCIM/runtime adapters, deeper tenant membership model, and external control-plane integration
+- conditional SCIM/runtime adapters, deeper tenant membership model, and external control-plane integration
 
 ## Non-Goals For This Package Today
 
@@ -45789,6 +46662,60 @@ JWT login still returns `AuthenticationResult`, the same shape used by session-b
 - `BeginMfaRecoveryData`
 - `ConfirmMfaRecoveryData`
 
+=== docs/privacy-retention-policy.md ===
+# Privacy, Retention, And Deletion Policy
+
+This package treats privacy posture as part of auth design, not as an afterthought.
+
+## Data Minimization
+
+- do not log passwords, passkeys, TOTP secrets, backup codes, access tokens,
+  refresh tokens, reset tokens, or client secrets
+- keep only the minimum identity and event context needed for auth decisions,
+  audit, incident response, and revocation
+- prefer hashed or derived identifiers for reset, recovery, and token storage
+
+## Recommended Retention Windows
+
+| Record | Recommended Retention |
+| --- | --- |
+| audit events | 365 days |
+| security events | 400 days |
+| revoked sessions and token-family compromise markers | 90 days after expiry |
+| password reset and MFA recovery records | purge immediately after use or TTL expiry |
+| temporary auth challenges | purge immediately after use or TTL expiry |
+
+## Deletion And Anonymization
+
+- revoke active sessions and refresh-token families before account deletion
+- delete one-time auth challenges and recovery artifacts immediately after
+  success or expiry
+- anonymize audit rows when the retention window expires unless legal hold is
+  active
+- treat exported forensics as separate controlled artifacts owned by the
+  application environment
+
+## Legal Hold And Forensics Exception
+
+- legal hold overrides normal anonymization and purge schedules
+- legal hold must be explicit, time-bounded, and auditable
+- break-glass or compromise investigations may preserve more context, but only
+  through a documented incident path
+
+## Residency And Segregation
+
+- tenant or regional segregation is application-owned persistence policy
+- the package keeps auth artifacts slice-local so applications can store them
+  per region, per tenant, or per compliance boundary
+- SCIM, SAML, and regional control-plane rules are conditional enterprise
+  posture, not universal package defaults
+
+## Ownership Boundary
+
+The kernel owns safe defaults and event discipline. Applications own actual
+database retention jobs, SIEM export retention, residency routing, and legal
+hold enforcement.
+
 === docs/register-flow.md ===
 # Register Flow
 
@@ -45829,6 +46756,9 @@ Registration does not automatically log the user in. Email verification can be i
 - Regenerate session IDs on login and invalidate sessions on logout.
 - Track server-side sessions in an owned registry when the application provides one.
 - Rotate refresh tokens and revoke reused families.
+- Prefer phishing-resistant auth for privileged posture and enforce it
+  explicitly where policy requires it.
+- Prefer sender-constrained tokens for high-security API clients.
 - Do not log raw passwords, access tokens, refresh tokens, or MFA codes.
 - Do not log TOTP secrets, otpauth URIs, recovery tokens, or plain backup codes.
 
@@ -45840,12 +46770,15 @@ Registration does not automatically log the user in. Email verification can be i
 - immutable auth context and public auth user snapshot
 - access token revocation
 - refresh token rotation and reuse detection
+- sender-constrained OAuth access and refresh token binding metadata
 - secure logout invalidation
 - tracked-session listing, revoke, logout-all, and idle/absolute expiry enforcement
 - email verification state and one-time challenges
 - TOTP MFA enrollment with first-proof activation
 - MFA challenge throttling, replay protection, backup codes, recovery tokens, and fresh-MFA step-up guards
 - audit events for login, logout, reset, verify, refresh, and MFA actions
+- actor-tier assurance catalog for user, admin, tenant-admin, support, break-glass, and machine posture
+- token key-version support through `kid` in the HMAC JWT codec
 
 ## Extension Points
 
@@ -45914,14 +46847,15 @@ This document captures the current auth-kernel threat model and the controls own
 | brute force | login rate limiting, MFA attempt throttling | implemented |
 | session hijack | secure cookies, session ID regeneration, idle timeout, absolute timeout, tracked session revocation | implemented |
 | stolen authorization code | short TTL, single use, redirect URI match, PKCE verification for public clients | implemented |
-| stolen refresh token | rotation, reuse detection, family revocation | implemented |
+| stolen refresh token | rotation, reuse detection, family revocation, optional sender-constrained binding checks | implemented |
+| bearer token replay | DPoP or mTLS binding metadata for clients that require sender-constrained tokens | implemented |
 | passkey replay | single-use passkey challenge lifecycle and revoked-credential checks | implemented |
 | MFA bypass | challenge lifecycle, replay protection, backup code one-time use, fresh-MFA checks | implemented |
 | recovery takeover | anti-enumeration start, recovery throttling, reset-driven revocation, MFA recovery auditing | implemented |
-| admin account takeover | admin elevation, fresh-MFA step-up, audit trail, provisioning revocation | partial |
-| email change takeover | dedicated email-change flow not yet package-owned | planned |
+| admin account takeover | explicit phishing-resistant admin policy, admin elevation, fresh-MFA step-up, passkey support, audit trail | implemented |
+| email change takeover | dedicated email-change flow, current-password proof, fresh MFA, one-time confirmation, audit | implemented |
 | refresh token reuse | family revocation, risk review signal, and audit | implemented |
-| insider misuse | audit trail and admin-elevation state exist; approval workflows are application-owned | partial |
+| insider misuse | audit trail, admin-elevation state, and authorization hardening checklist exist; approval workflows remain application-owned | partial |
 | tenant isolation bug | tenant-aware federation connection boundary exists, but full tenant membership model is not package-owned | partial |
 
 ## Incident Classes
@@ -45960,6 +46894,10 @@ This document captures the current auth-kernel threat model and the controls own
 
 - authorization codes are single use and short lived
 - public clients require `S256` PKCE before token exchange
+- high-assurance clients can require phishing-resistant user auth before code
+  issuance
+- sender-constrained clients must present the same DPoP or mTLS binding on
+  refresh exchange
 - refresh reuse revokes the entire token family
 - revoke and introspection flows exist for downstream incident handling
 
@@ -46942,6 +47880,7 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Capability\Access;
 
 use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
+use Avax\Auth\System\Capability\Access\Policy\IdentityPolicyCatalog;
 use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
 use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
@@ -46957,6 +47896,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
@@ -47025,12 +47965,50 @@ final class AccessPolicyTest extends TestCase
 
         $policy->execute(new AccessPolicy(
             requiredRole   : UserRole::ADMIN,
-            phishingResistant: true,
+            phishingResistantRequired: true,
             freshMfa       : true,
             adminElevation : true
         ));
 
         $this->assertTrue(true);
+    }
+
+    public function testAdminIdentityPolicyUsesItsOwnFreshMfaWindow() : void
+    {
+        $clock = new Clock();
+        $current = new CurrentAuthentication();
+        $current->store(AuthenticationContext::authenticated(
+            user         : new AuthenticatedUser(
+                id         : 1,
+                email      : 'admin@example.com',
+                username   : 'admin',
+                roles      : [UserRole::ADMIN->value],
+                mfaEnabled : true
+            ),
+            mode         : AuthenticationMode::SESSION,
+            sessionId    : 'session-admin',
+            mfaVerifiedAt: $clock->now()->modify('-4 minutes'),
+            phishingResistant: true
+        ));
+        $store = new InMemoryAdminElevationStore();
+        $store->start(new AdminElevationRecord(
+            userId    : 1,
+            bindingId : 'session-admin',
+            expiresAt : new \DateTimeImmutable('+5 minutes')
+        ));
+
+        $policy = new RequireAccessPolicy(
+            requireAuthentication: new RequireAuthentication($current),
+            requireRole          : new RequireRole($current),
+            requirePermission    : new RequirePermission($current),
+            requireResourceOwner : new RequireResourceOwner($current),
+            requirePhishingResistantAuthentication: new RequirePhishingResistantAuthentication($current),
+            requireFreshMfa      : new RequireFreshMfa($current, $clock),
+            requireAdminElevation: new RequireAdminElevation($current, $store, $clock)
+        );
+
+        $this->expectException(FreshMfaRequired::class);
+        $policy->execute(AccessPolicy::forIdentityPolicy(IdentityPolicyCatalog::admin()));
     }
 }
 
@@ -47122,6 +48100,41 @@ class AccessTest extends TestCase
         ));
 
         $this->assertTrue(condition: true);
+    }
+}
+
+=== tests/Capabilities/Access/IdentityPolicyCatalogTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Tests\Capability\Access;
+
+use Avax\Auth\System\Capability\Access\Policy\AuthenticationFactor;
+use Avax\Auth\System\Capability\Access\Policy\IdentityActor;
+use Avax\Auth\System\Capability\Access\Policy\IdentityPolicyCatalog;
+use PHPUnit\Framework\TestCase;
+
+final class IdentityPolicyCatalogTest extends TestCase
+{
+    public function testAdminPolicyRequiresPhishingResistantFactor() : void
+    {
+        $policy = IdentityPolicyCatalog::admin();
+
+        $this->assertSame(IdentityActor::ADMIN, $policy->actor);
+        $this->assertTrue($policy->phishingResistantRequired);
+        $this->assertTrue($policy->requiresFactor(AuthenticationFactor::PASSKEY));
+        $this->assertTrue($policy->privilegedApprovalRequired);
+    }
+
+    public function testMachineIdentityPolicyRequiresSenderConstrainedTokens() : void
+    {
+        $policy = IdentityPolicyCatalog::machineIdentity();
+
+        $this->assertSame(IdentityActor::MACHINE_IDENTITY, $policy->actor);
+        $this->assertTrue($policy->senderConstrainedTokensRequired);
+        $this->assertTrue($policy->requiresFactor(AuthenticationFactor::MTLS));
+        $this->assertFalse($policy->allowsFactor(AuthenticationFactor::PASSWORD));
     }
 }
 
@@ -47530,6 +48543,8 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Capability\Identity\Jwt;
 
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserEmail;
 use Avax\Auth\System\Capability\User\UserId;
@@ -47688,6 +48703,41 @@ class JwtIdentityTest extends TestCase
         $this->assertSame(['email', 'profile'], $resolved?->scopes);
     }
 
+    public function testJwtIdentityPreservesSenderConstraintClaims() : void
+    {
+        $user = new User(
+            id          : new UserId(13),
+            email       : new UserEmail('oauth-binding@example.com'),
+            username    : 'oauth-binding',
+            passwordHash: 'hash'
+        );
+
+        $userSource = new InMemoryUserSource();
+        $userSource->create($user);
+
+        $jwt = new JwtIdentity(
+            userSource: $userSource,
+            codec     : new HmacTokenCodec(secret: 'super-secret-key'),
+            clock     : new Clock()
+        );
+
+        $issued = $jwt->issue(
+            user            : $user,
+            clientId        : 'oauth_client',
+            scopes          : ['profile'],
+            senderConstraint: new OAuthSenderConstraint(
+                type      : OAuthSenderConstraintType::DPOP,
+                thumbprint: 'thumb-123'
+            )
+        );
+        $resolved = $jwt->resolve($issued->token);
+
+        $this->assertNotNull($resolved);
+        $this->assertNotNull($resolved?->senderConstraint);
+        $this->assertSame(OAuthSenderConstraintType::DPOP, $resolved?->senderConstraint?->type);
+        $this->assertSame('thumb-123', $resolved?->senderConstraint?->thumbprint);
+    }
+
     protected function tearDown() : void
     {
         Mockery::close();
@@ -47778,8 +48828,11 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Capability\OAuth;
 
 use Avax\Auth\System\Capability\OAuth\InMemoryOAuthClientRegistry;
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\OAuthClientType;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class InMemoryOAuthClientRegistryTest extends TestCase
@@ -47814,6 +48867,41 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
         $this->assertSame(OAuthClientType::PUBLIC, $registered->client->type);
         $this->assertNull($registered->plainTextSecret);
         $this->assertTrue($registry->verifySecret($registered->client->clientId, null));
+    }
+
+    public function testClientRegistrationPersistsGrantTypesAndSenderConstraint() : void
+    {
+        $registry = new InMemoryOAuthClientRegistry(new PasswordHasher());
+
+        $registered = $registry->register(
+            name                     : 'Partner API',
+            type                     : OAuthClientType::CONFIDENTIAL,
+            redirectUris             : ['https://api.example.test/callback'],
+            allowedScopes            : ['profile'],
+            allowedGrantTypes        : [OAuthGrantType::AUTHORIZATION_CODE, OAuthGrantType::REFRESH_TOKEN],
+            requiredSenderConstraint : OAuthSenderConstraintType::DPOP,
+            phishingResistantRequired: true
+        );
+
+        $this->assertTrue($registered->client->allowsGrantType(OAuthGrantType::AUTHORIZATION_CODE));
+        $this->assertSame(OAuthSenderConstraintType::DPOP, $registered->client->requiredSenderConstraint);
+        $this->assertTrue($registered->client->phishingResistantRequired);
+    }
+
+    public function testWorkloadIdentityRequiresSenderConstraint() : void
+    {
+        $registry = new InMemoryOAuthClientRegistry(new PasswordHasher());
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Workload identity clients require sender-constrained tokens.');
+
+        $registry->register(
+            name            : 'Machine API',
+            type            : OAuthClientType::CONFIDENTIAL,
+            redirectUris    : ['https://api.example.test/callback'],
+            allowedScopes   : ['jobs.run'],
+            workloadIdentity: true
+        );
     }
 }
 
@@ -48222,7 +49310,7 @@ final class AdminElevationTest extends TestCase
             elevationStore       : $store,
             auditLog             : new InMemoryAuditLog(),
             clock                : $clock,
-            requirePhishingResistant: true
+            phishingResistantRequired: true
         );
         $guard = new RequireAdminElevation($current, $store, $clock);
         $end   = new EndAdminElevation($current, $store, new InMemoryAuditLog(), $clock);
@@ -48260,7 +49348,7 @@ final class AdminElevationTest extends TestCase
             elevationStore       : new InMemoryAdminElevationStore(),
             auditLog             : new InMemoryAuditLog(),
             clock                : $clock,
-            requirePhishingResistant: true
+            phishingResistantRequired: true
         );
 
         $this->expectException(AdminElevationFailed::class);
@@ -50249,8 +51337,11 @@ namespace Avax\Auth\Tests\Flow\OAuth;
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\PkceMethod;
 use Avax\Auth\System\Capability\OAuth\OAuthClientType;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\Login\Credentials;
@@ -50389,6 +51480,106 @@ final class OAuthFlowTest extends TestCase
         ));
 
         $this->assertFalse($inactive->active);
+    }
+
+    public function testPhishingResistantOAuthClientRejectsCompatibilityLoginAsPrimaryPath() : void
+    {
+        $auth = $this->buildAuth();
+
+        $auth->register(new RegistrationData(
+            email   : 'oauth-high-assurance@example.com',
+            username: 'oauth-high-assurance',
+            password: 'secret'
+        ));
+        $auth->login(new Credentials(
+            identifier: 'oauth-high-assurance@example.com',
+            password  : 'secret'
+        ));
+
+        $client = $auth->registerOAuthClient(new RegisterClientData(
+            name                     : 'High Assurance Backoffice',
+            type                     : OAuthClientType::CONFIDENTIAL,
+            redirectUris             : ['https://secure.example.test/callback'],
+            allowedScopes            : ['profile'],
+            phishingResistantRequired: true
+        ));
+
+        $this->expectException(OAuthAuthorizationFailed::class);
+        $this->expectExceptionMessage('Phishing-resistant authentication is required for this client.');
+
+        $auth->authorizeOAuthCode(new AuthorizeCodeData(
+            clientId   : $client->client->clientId,
+            redirectUri: 'https://secure.example.test/callback',
+            scopes     : ['profile']
+        ));
+    }
+
+    public function testOAuthRefreshRequiresMatchingSenderConstraint() : void
+    {
+        $auth = $this->buildAuth();
+
+        $auth->register(new RegistrationData(
+            email   : 'oauth-bound@example.com',
+            username: 'oauth-bound',
+            password: 'secret'
+        ));
+        $auth->login(new Credentials(
+            identifier: 'oauth-bound@example.com',
+            password  : 'secret'
+        ));
+
+        $client = $auth->registerOAuthClient(new RegisterClientData(
+            name                     : 'Bound API',
+            type                     : OAuthClientType::CONFIDENTIAL,
+            redirectUris             : ['https://bound.example.test/callback'],
+            allowedScopes            : ['profile'],
+            allowedGrantTypes        : [OAuthGrantType::AUTHORIZATION_CODE, OAuthGrantType::REFRESH_TOKEN],
+            requiredSenderConstraint : OAuthSenderConstraintType::DPOP
+        ));
+
+        $code = $auth->authorizeOAuthCode(new AuthorizeCodeData(
+            clientId   : $client->client->clientId,
+            redirectUri: 'https://bound.example.test/callback',
+            scopes     : ['profile']
+        ));
+        $binding = new OAuthSenderConstraint(
+            type      : OAuthSenderConstraintType::DPOP,
+            thumbprint: 'thumb-1'
+        );
+
+        $grant = $auth->exchangeOAuthCode(new ExchangeAuthorizationCodeData(
+            clientId         : $client->client->clientId,
+            clientSecret     : $client->plainTextSecret,
+            code             : $code->code,
+            redirectUri      : 'https://bound.example.test/callback',
+            senderConstraint : $binding
+        ));
+
+        $this->assertSame('DPoP', $grant->tokenType);
+        $this->assertNotNull($grant->senderConstraint);
+        $this->assertSame('thumb-1', $grant->senderConstraint?->thumbprint);
+
+        $refreshed = $auth->exchangeOAuthRefreshToken(new ExchangeRefreshTokenData(
+            clientId         : $client->client->clientId,
+            clientSecret     : $client->plainTextSecret,
+            refreshToken     : $grant->refreshToken ?? '',
+            senderConstraint : $binding
+        ));
+
+        $this->assertSame('DPoP', $refreshed->tokenType);
+
+        $this->expectException(OAuthTokenExchangeFailed::class);
+        $this->expectExceptionMessage('Invalid sender constraint proof.');
+
+        $auth->exchangeOAuthRefreshToken(new ExchangeRefreshTokenData(
+            clientId         : $client->client->clientId,
+            clientSecret     : $client->plainTextSecret,
+            refreshToken     : $refreshed->refreshToken ?? '',
+            senderConstraint : new OAuthSenderConstraint(
+                type      : OAuthSenderConstraintType::DPOP,
+                thumbprint: 'thumb-2'
+            )
+        ));
     }
 
     private function buildAuth(InMemoryAuditLog|null $auditLog = null) : Auth
@@ -51414,6 +52605,42 @@ final class SessionCookieSettingsTest extends TestCase
         $this->expectExceptionMessage('Cookie sameSite None requires a secure cookie.');
 
         new SessionCookieSettings(secure: false, sameSite: 'None');
+    }
+}
+
+=== tests/Flows/Token/HmacTokenCodecTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Tests\Flow\Token;
+
+use Avax\Auth\System\Flow\Token\HmacTokenCodec;
+use PHPUnit\Framework\TestCase;
+
+final class HmacTokenCodecTest extends TestCase
+{
+    public function testCodecRejectsTokenSignedWithDifferentKeyVersion() : void
+    {
+        $encoder = new HmacTokenCodec(
+            secret: 'secret',
+            keyId : '2026-04-primary'
+        );
+        $otherKeyVersion = new HmacTokenCodec(
+            secret: 'secret',
+            keyId : '2026-05-primary'
+        );
+
+        $token = $encoder->encode([
+            'sub' => 1,
+            'iat' => 1,
+            'nbf' => 1,
+            'exp' => 2,
+            'jti' => 'token-1',
+        ]);
+
+        $this->assertNull($otherKeyVersion->decode($token));
+        $this->assertNotNull($encoder->decode($token));
     }
 }
 

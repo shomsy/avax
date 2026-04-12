@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Token;
 
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
 
@@ -28,7 +29,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
         DateTimeImmutable|null $mfaVerifiedAt = null,
         bool                   $phishingResistant = false,
         string|null            $clientId = null,
-        array                  $scopes = []
+        array                  $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedRefreshToken
     {
         $plainToken = bin2hex(random_bytes(32));
@@ -43,7 +45,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             mfaVerifiedAt: $mfaVerifiedAt,
             phishingResistant: $phishingResistant,
             clientId     : $clientId,
-            scopes       : array_values($scopes)
+            scopes       : array_values($scopes),
+            senderConstraint: $senderConstraint
         );
 
         $this->records[$tokenId]                       = $record;
@@ -58,7 +61,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             mfaVerifiedAt: $mfaVerifiedAt,
             phishingResistant: $phishingResistant,
             clientId     : $clientId,
-            scopes       : array_values($scopes)
+            scopes       : array_values($scopes),
+            senderConstraint: $senderConstraint
         );
     }
 
@@ -96,7 +100,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             mfaVerifiedAt     : $record->mfaVerifiedAt,
             phishingResistant : $record->phishingResistant,
             clientId          : $record->clientId,
-            scopes            : $record->scopes
+            scopes            : $record->scopes,
+            senderConstraint  : $record->senderConstraint
         );
     }
 
@@ -117,7 +122,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
                 mfaVerifiedAt     : $record->mfaVerifiedAt,
                 phishingResistant : $record->phishingResistant,
                 clientId          : $record->clientId,
-                scopes            : $record->scopes
+                scopes            : $record->scopes,
+                senderConstraint  : $record->senderConstraint
             );
         }
     }
@@ -136,7 +142,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
                     mfaVerifiedAt     : $record->mfaVerifiedAt,
                     phishingResistant : $record->phishingResistant,
                     clientId          : $record->clientId,
-                    scopes            : $record->scopes
+                    scopes            : $record->scopes,
+                    senderConstraint  : $record->senderConstraint
                 );
             }
         }

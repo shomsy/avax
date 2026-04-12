@@ -7,6 +7,7 @@ namespace Avax\Auth\System\Flow\OAuth\AuthorizeCode;
 use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
 use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\PkceMethod;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
@@ -55,6 +56,11 @@ final readonly class AuthorizeCode
             throw OAuthAuthorizationFailed::invalidClient();
         }
 
+        if (! $client->allowsGrantType(OAuthGrantType::AUTHORIZATION_CODE)) {
+            $this->recordFailure($data, 'grant_type_not_allowed');
+            throw OAuthAuthorizationFailed::invalidClient();
+        }
+
         if (! $client->allowsRedirectUri($data->redirectUri)) {
             $this->recordFailure($data, 'redirect_uri_mismatch');
             throw OAuthAuthorizationFailed::invalidRedirectUri();
@@ -72,6 +78,11 @@ final readonly class AuthorizeCode
                 $this->recordFailure($data, 'pkce_required');
                 throw OAuthAuthorizationFailed::invalidPkce();
             }
+        }
+
+        if ($client->phishingResistantRequired && ! $context->isPhishingResistant()) {
+            $this->recordFailure($data, 'phishing_resistant_required');
+            throw OAuthAuthorizationFailed::phishingResistantRequired();
         }
 
         $issued = $this->codeStore->issue(

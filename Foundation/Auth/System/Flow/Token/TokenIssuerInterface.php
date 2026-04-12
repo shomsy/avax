@@ -11,5 +11,13 @@ use Avax\Auth\System\Capability\User\User;
  */
 interface TokenIssuerInterface
 {
-    public function issue(User $user) : IssuedToken;
+    /**
+     * @param list<string> $scopes
+     */
+    public function issue(
+        User $user,
+        \DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null $clientId = null,
+        array $scopes = []
+    ) : IssuedToken;
 }

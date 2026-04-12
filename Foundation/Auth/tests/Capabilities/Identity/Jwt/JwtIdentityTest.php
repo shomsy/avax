@@ -133,6 +133,36 @@ class JwtIdentityTest extends TestCase
         $this->assertSame($user->getId()->value, $refresh?->userId->value);
     }
 
+    public function testJwtIdentityPreservesOAuthClientClaims() : void
+    {
+        $user = new User(
+            id          : new UserId(12),
+            email       : new UserEmail('oauth-claims@example.com'),
+            username    : 'oauth-claims',
+            passwordHash: 'hash'
+        );
+
+        $userSource = new InMemoryUserSource();
+        $userSource->create($user);
+
+        $jwt = new JwtIdentity(
+            userSource: $userSource,
+            codec     : new HmacTokenCodec(secret: 'super-secret-key'),
+            clock     : new Clock()
+        );
+
+        $issued   = $jwt->issue(
+            user     : $user,
+            clientId : 'oauth_client',
+            scopes   : ['email', 'profile']
+        );
+        $resolved = $jwt->resolve($issued->token);
+
+        $this->assertNotNull($resolved);
+        $this->assertSame('oauth_client', $resolved?->clientId);
+        $this->assertSame(['email', 'profile'], $resolved?->scopes);
+    }
+
     protected function tearDown() : void
     {
         Mockery::close();

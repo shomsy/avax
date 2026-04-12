@@ -41,6 +41,7 @@ System/
 ├── Capability/
 │   ├── Access/          # authorization boundary
 │   ├── Identity/        # session/JWT strategy coordination
+│   ├── OAuth/           # client registry and auth-code contracts
 │   ├── PasswordHashing/
 │   ├── Session/         # tracked session ownership and revocation
 │   ├── Throttle/        # auth-sensitive throttling contracts
@@ -60,6 +61,7 @@ System/
 │   │   ├── Enroll/
 │   │   ├── Recover/
 │   │   └── StepUp/
+│   ├── OAuth/
 │   ├── ReadCurrentUser/
 │   ├── Recover/
 │   ├── Register/
@@ -80,6 +82,7 @@ integrations/
 - kernel code never imports the `Integrations` namespace
 - optional adapters depend on kernel contracts only
 - Session and JWT are strategies behind the same `Identity` coordination contract.
+- OAuth owns a separate machine/API lane and does not reuse browser session flows as its token model.
 - `Capability/Session/` is the durable truth for tracked web sessions when the application provides a registry.
 - Request authentication happens only in `Flow/AuthenticateRequest/AuthenticateRequest.php`.
 - Authorization reads `CurrentAuthentication`; it no longer reaches into session/JWT adapters directly.

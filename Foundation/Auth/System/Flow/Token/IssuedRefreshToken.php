@@ -12,12 +12,17 @@ use DateTimeImmutable;
  */
 final readonly class IssuedRefreshToken
 {
+    /**
+     * @param list<string> $scopes
+     */
     public function __construct(
         public string                 $token,
         public string                 $tokenId,
         public string                 $familyId,
         public UserId                 $userId,
         public DateTimeImmutable      $expiresAt,
-        public DateTimeImmutable|null $mfaVerifiedAt = null
+        public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public string|null            $clientId = null,
+        public array                  $scopes = []
     ) {}
 }

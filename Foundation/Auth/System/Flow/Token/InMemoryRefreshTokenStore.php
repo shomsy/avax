@@ -18,11 +18,16 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
     /** @var array<string, RefreshTokenRecord> */
     private array $records = [];
 
+    /**
+     * @param list<string> $scopes
+     */
     public function issue(
         UserId                 $userId,
         DateTimeImmutable      $expiresAt,
         string|null            $familyId = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null            $clientId = null,
+        array                  $scopes = []
     ) : IssuedRefreshToken
     {
         $plainToken = bin2hex(random_bytes(32));
@@ -34,7 +39,9 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             familyId     : $familyId,
             userId       : $userId,
             expiresAt    : $expiresAt,
-            mfaVerifiedAt: $mfaVerifiedAt
+            mfaVerifiedAt: $mfaVerifiedAt,
+            clientId     : $clientId,
+            scopes       : array_values($scopes)
         );
 
         $this->records[$tokenId]                       = $record;
@@ -46,7 +53,9 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             familyId     : $familyId,
             userId       : $userId,
             expiresAt    : $expiresAt,
-            mfaVerifiedAt: $mfaVerifiedAt
+            mfaVerifiedAt: $mfaVerifiedAt,
+            clientId     : $clientId,
+            scopes       : array_values($scopes)
         );
     }
 
@@ -81,7 +90,9 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             expiresAt         : $record->expiresAt,
             replacementTokenId: $replacementTokenId,
             revoked           : $record->revoked,
-            mfaVerifiedAt     : $record->mfaVerifiedAt
+            mfaVerifiedAt     : $record->mfaVerifiedAt,
+            clientId          : $record->clientId,
+            scopes            : $record->scopes
         );
     }
 
@@ -99,7 +110,9 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
                 expiresAt         : $record->expiresAt,
                 replacementTokenId: $record->replacementTokenId,
                 revoked           : true,
-                mfaVerifiedAt     : $record->mfaVerifiedAt
+                mfaVerifiedAt     : $record->mfaVerifiedAt,
+                clientId          : $record->clientId,
+                scopes            : $record->scopes
             );
         }
     }
@@ -115,7 +128,9 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
                     expiresAt         : $record->expiresAt,
                     replacementTokenId: $record->replacementTokenId,
                     revoked           : true,
-                    mfaVerifiedAt     : $record->mfaVerifiedAt
+                    mfaVerifiedAt     : $record->mfaVerifiedAt,
+                    clientId          : $record->clientId,
+                    scopes            : $record->scopes
                 );
             }
         }

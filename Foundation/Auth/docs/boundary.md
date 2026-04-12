@@ -19,9 +19,9 @@ Current delivery posture is documented in
   `AccessInterface`, `AuthenticationRequest`, `AuthenticationContext`,
   `AuthenticationResult`, `AuthenticatedUser`
 - core flows: `AuthenticateRequest`, `Login`, `Register`, `Logout`, `Refresh`,
-  `Recover`, `Verify`, `Mfa`, `ChangePassword`, `ReadCurrentUser`
+  `Recover`, `Verify`, `Mfa`, `ChangePassword`, `ReadCurrentUser`, `OAuth`
 - shared auth capabilities: `Access`, `Identity`, `PasswordHashing`,
-  `Session`, `Throttle`, `UserSource`
+  `OAuth`, `Session`, `Throttle`, `UserSource`
 - package-owned contracts: session store, token issuer/verifier, refresh store,
   audit log, clock, MFA store, user source
 - package-owned runtime strategies for session and token auth
@@ -55,7 +55,7 @@ Integration rule:
 This package does not own today:
 
 - central IdP behavior
-- package-owned OAuth or OIDC authorization-server features
+- OIDC provider behavior
 - SAML federation brokering
 - SCIM provisioning
 - workforce lifecycle management
@@ -73,6 +73,7 @@ System/
   Capability/
     Access/
     Identity/
+    OAuth/
     PasswordHashing/
     Session/
     Throttle/
@@ -86,6 +87,7 @@ System/
     Login/
     Logout/
     Mfa/
+    OAuth/
     ReadCurrentUser/
     Recover/
     Register/
@@ -130,6 +132,15 @@ Stable application API to keep public:
 - `RegistrationResult`
 - `ChangePasswordData`
 - `RefreshAuthenticationRequest`
+- `RegisterClientData`
+- `AuthorizeCodeData`
+- `ExchangeAuthorizationCodeData`
+- `ExchangeRefreshTokenData`
+- `RevokeTokenData`
+- `IntrospectTokenData`
+- `OAuthTokenGrant`
+- `IssuedAuthorizationCode`
+- `TokenIntrospection`
 - `PasswordResetChallenge`
 - `EmailVerificationChallenge`
 - `MfaEnrollment`
@@ -153,6 +164,8 @@ Stable extension contracts to keep public:
 - `TokenVerifierInterface`
 - `TokenCodecInterface`
 - `HmacTokenCodec`
+- `OAuthClientRegistryInterface`
+- `AuthorizationCodeStoreInterface`
 - `JwtIdentityInterface`
 - `JwtIdentity`
 - `RefreshTokenStoreInterface`

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
+use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
+use Avax\Auth\System\Capability\OAuth\OAuthClient;
+use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
@@ -19,6 +22,14 @@ use Avax\Auth\System\Flow\Mfa\MfaRecoveryChallenge;
 use Avax\Auth\System\Flow\Mfa\Recover\BeginMfaRecoveryData;
 use Avax\Auth\System\Flow\Mfa\Recover\ConfirmMfaRecoveryData;
 use Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData;
+use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
+use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
+use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshTokenData;
+use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectTokenData;
+use Avax\Auth\System\Flow\OAuth\IntrospectToken\TokenIntrospection;
+use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
+use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
 use Avax\Auth\System\Flow\Recover\BeginPasswordResetData;
 use Avax\Auth\System\Flow\Recover\PasswordResetChallenge;
 use Avax\Auth\System\Flow\Recover\ResetPasswordData;
@@ -65,6 +76,23 @@ interface AuthInterface
     public function register(RegistrationData $data) : RegistrationResult;
 
     public function refresh(RefreshAuthenticationRequest $request) : AuthenticationResult;
+
+    public function registerOAuthClient(RegisterClientData $data) : RegisteredOAuthClient;
+
+    /**
+     * @return list<OAuthClient>
+     */
+    public function readOAuthClients() : array;
+
+    public function authorizeOAuthCode(AuthorizeCodeData $data) : IssuedAuthorizationCode;
+
+    public function exchangeOAuthCode(ExchangeAuthorizationCodeData $data) : OAuthTokenGrant;
+
+    public function exchangeOAuthRefreshToken(ExchangeRefreshTokenData $data) : OAuthTokenGrant;
+
+    public function revokeOAuthToken(RevokeTokenData $data) : void;
+
+    public function introspectOAuthToken(IntrospectTokenData $data) : TokenIntrospection;
 
     public function beginPasswordReset(BeginPasswordResetData $data) : PasswordResetChallenge;
 

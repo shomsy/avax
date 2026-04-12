@@ -55,6 +55,20 @@ final readonly class RefreshAuthentication
             throw RefreshAuthenticationFailed::invalidToken();
         }
 
+        if ($record->clientId !== null) {
+            $this->auditLog->record(new AuditEvent(
+                                        name      : 'auth.refresh.failed',
+                                        occurredAt: $now,
+                                        context   : [
+                                                        'reason'     => 'oauth_bound_token',
+                                                        'ip_address' => $request->ipAddress,
+                                                        'user_agent' => $request->userAgent,
+                                                    ]
+                                    ));
+
+            throw RefreshAuthenticationFailed::invalidToken();
+        }
+
         if ($record->wasRotated()) {
             $this->refreshTokenStore->revokeFamily($record->familyId);
             $this->auditLog->record(new AuditEvent(
@@ -78,12 +92,19 @@ final readonly class RefreshAuthentication
             throw RefreshAuthenticationFailed::invalidToken();
         }
 
-        $accessToken  = $this->jwtIdentity->issue($user, $record->mfaVerifiedAt);
+        $accessToken  = $this->jwtIdentity->issue(
+            user         : $user,
+            mfaVerifiedAt: $record->mfaVerifiedAt,
+            clientId     : $record->clientId,
+            scopes       : $record->scopes
+        );
         $refreshToken = $this->refreshTokenStore->issue(
             userId       : $record->userId,
             expiresAt    : $now->modify('+30 days'),
             familyId     : $record->familyId,
-            mfaVerifiedAt: $record->mfaVerifiedAt
+            mfaVerifiedAt: $record->mfaVerifiedAt,
+            clientId     : $record->clientId,
+            scopes       : $record->scopes
         );
         $this->refreshTokenStore->markRotated($record->tokenId, $refreshToken->tokenId);
 

@@ -12,6 +12,9 @@ use DateTimeImmutable;
  */
 final readonly class RefreshTokenRecord
 {
+    /**
+     * @param list<string> $scopes
+     */
     public function __construct(
         public string                 $tokenId,
         public string                 $familyId,
@@ -19,7 +22,9 @@ final readonly class RefreshTokenRecord
         public DateTimeImmutable      $expiresAt,
         public string|null            $replacementTokenId = null,
         public bool                   $revoked = false,
-        public DateTimeImmutable|null $mfaVerifiedAt = null
+        public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public string|null            $clientId = null,
+        public array                  $scopes = []
     ) {}
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool

@@ -12,11 +12,16 @@ use DateTimeImmutable;
  */
 interface RefreshTokenStoreInterface
 {
+    /**
+     * @param list<string> $scopes
+     */
     public function issue(
         UserId                 $userId,
         DateTimeImmutable      $expiresAt,
         string|null            $familyId = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null            $clientId = null,
+        array                  $scopes = []
     ) : IssuedRefreshToken;
 
     public function find(string $plainToken) : RefreshTokenRecord|null;

@@ -17,11 +17,27 @@ use DateTimeImmutable;
  */
 interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterface
 {
-    public function issue(User $user, DateTimeImmutable|null $mfaVerifiedAt = null) : IssuedToken;
+    /**
+     * @param list<string> $scopes
+     */
+    public function issue(
+        User $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null $clientId = null,
+        array $scopes = []
+    ) : IssuedToken;
 
     public function resolve(string $token) : ResolvedToken|null;
 
-    public function issueRefreshToken(User $user, DateTimeImmutable|null $mfaVerifiedAt = null) : IssuedRefreshToken|null;
+    /**
+     * @param list<string> $scopes
+     */
+    public function issueRefreshToken(
+        User $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        string|null $clientId = null,
+        array $scopes = []
+    ) : IssuedRefreshToken|null;
 
     public function revoke(string $tokenId, DateTimeImmutable $expiresAt) : void;
 }

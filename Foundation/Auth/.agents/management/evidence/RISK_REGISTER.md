@@ -16,6 +16,18 @@ Tracks active and accepted risks.
 
 ## Active Risks
 
+- `id`: AUTH-RISK-006
+- `identified_at`: 2026-04-12 15:36 CEST
+- `updated_at`: 2026-04-12 15:36 CEST
+- `severity`: medium
+- `likelihood`: medium
+- `impact`: The package now owns OAuth authorization-code and refresh flows for user-bound API access, but it still does
+  not ship OIDC, client-credentials, federation, or SCIM; teams could mistake OAuth v1 for a full identity platform.
+- `mitigation`: Boundary docs, ADR-001, and the roadmap now state the exact delivered OAuth scope and keep OIDC,
+  federation, provisioning, and risk/admin realms as separate future tracks.
+- `owner`: OAuth slice
+- `status`: accepted
+
 - `id`: AUTH-RISK-005
 - `identified_at`: 2026-04-09 19:21 CEST
 - `updated_at`: 2026-04-09 19:21 CEST

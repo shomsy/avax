@@ -21,7 +21,7 @@ flowchart LR
     end
 
     subgraph Verify["Verify / Review"]
-        V1["AUTH-018 | REFAKTOR scope + session subsystem v1 | updated 2026-04-12 15:04 CEST"]
+        V1["AUTH-019 | OAuth/API auth subsystem v1 | updated 2026-04-12 15:36 CEST"]
     end
 
     Ready --> InProgress

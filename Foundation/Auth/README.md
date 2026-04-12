@@ -1,7 +1,7 @@
 # Avax Auth
 
 Pure PHP 8.3+ auth kernel with one obvious ingress, immutable auth context, interchangeable session/JWT runtime
-strategies, first-class MFA, and a thin optional integration surface.
+strategies, first-class MFA, package-owned OAuth client/token flows, and a thin optional integration surface.
 
 ## What Changed
 
@@ -9,6 +9,8 @@ strategies, first-class MFA, and a thin optional integration surface.
 - `Auth::authenticateRequest()` is the canonical request ingress for bearer token/session resolution.
 - `Auth::current()`, `Auth::check()`, and `Auth::user()` now read one immutable `AuthenticationContext`.
 - Session and JWT now share the same public result model, logout path, and refresh/revocation lifecycle.
+- OAuth v1 now owns client registration, authorization-code issuance, PKCE verification, refresh exchange,
+  introspection, and token revocation.
 - Password reset, email verification, MFA enrollment/challenge/recovery, refresh rotation, audit events, and
   anti-enumeration flows are package-owned.
 
@@ -81,6 +83,13 @@ $backupCodes = $auth->confirmMfaEnrollment(
 - `changePassword(ChangePasswordData): void`
 - `register(RegistrationData): RegistrationResult`
 - `refresh(RefreshAuthenticationRequest): AuthenticationResult`
+- `registerOAuthClient(RegisterClientData): RegisteredOAuthClient`
+- `readOAuthClients(): list<OAuthClient>`
+- `authorizeOAuthCode(AuthorizeCodeData): IssuedAuthorizationCode`
+- `exchangeOAuthCode(ExchangeAuthorizationCodeData): OAuthTokenGrant`
+- `exchangeOAuthRefreshToken(ExchangeRefreshTokenData): OAuthTokenGrant`
+- `revokeOAuthToken(RevokeTokenData): void`
+- `introspectOAuthToken(IntrospectTokenData): TokenIntrospection`
 - `beginPasswordReset(BeginPasswordResetData): PasswordResetChallenge`
 - `resetPassword(ResetPasswordData): bool`
 - `beginEmailVerification(BeginEmailVerificationData): EmailVerificationChallenge`
@@ -106,6 +115,8 @@ Runtime ownership lives in auth-flow slices:
 
 - `System/Flow/AuthenticateRequest/` owns ingress resolution and current auth context.
 - `System/Flow/Login/`, `Register/`, `Logout/`, `Recover/`, `Verify/`, `Mfa/`, and `Token/` own package behavior.
+- `System/Capability/OAuth/` owns client registry and authorization-code persistence contracts.
+- `System/Flow/OAuth/` owns client registration, authorization-code issuance, token exchange, revoke, and introspection.
 - `System/Capability/Session/` owns durable tracked-session state and revocation contracts.
 - `System/Capability/Identity/` now only coordinates strategy issuance/clear semantics.
 - `System/Capability/User/` stays internal domain state; public auth output is `AuthenticatedUser`.
@@ -122,6 +133,7 @@ non-goals.
 - Idle and absolute session lifetime enforcement with tracked-session revocation hooks.
 - Active session listing, targeted session revoke, and logout-all flow support.
 - Token revocation and refresh rotation through package-owned stores.
+- OAuth public clients require PKCE and OAuth refresh reuse revokes the full token family.
 - Password reset and login failures keep safe public messages.
 - Password reset begin flow is anti-enumeration by default.
 - MFA uses TOTP with replay protection, backup codes, recovery tokens, step-up freshness checks, and per-user challenge

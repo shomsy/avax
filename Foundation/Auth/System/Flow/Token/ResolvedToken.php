@@ -12,10 +12,15 @@ use DateTimeImmutable;
  */
 final readonly class ResolvedToken
 {
+    /**
+     * @param list<string> $scopes
+     */
     public function __construct(
         public User                   $user,
         public string                 $tokenId,
         public DateTimeImmutable      $expiresAt,
-        public DateTimeImmutable|null $mfaVerifiedAt = null
+        public DateTimeImmutable|null $mfaVerifiedAt = null,
+        public string|null            $clientId = null,
+        public array                  $scopes = []
     ) {}
 }

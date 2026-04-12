@@ -19,12 +19,12 @@ The package already owns:
 - password authentication
 - server-side session identity
 - token issuance and refresh rotation
+- OAuth client registration, authorization-code issuance, PKCE verification, token revocation, and introspection
 - MFA enrollment, challenge, recovery, and fresh-MFA checks
 - audit events and auth ingress ownership
 
 The package does not yet own:
 
-- OAuth authorization-server interoperability through a standards library
 - WebAuthn / passkeys
 - enterprise federation
 - SCIM provisioning
@@ -46,6 +46,7 @@ The package owns and ships:
 - MFA with TOTP and backup codes
 - password reset and MFA recovery
 - refresh rotation and reuse detection
+- OAuth authorization-code and refresh grants for package-owned clients
 - audit events
 - active session management
 
@@ -54,7 +55,7 @@ The package owns and ships:
 The package may add:
 
 - passkeys / WebAuthn
-- OAuth authorization-server contracts
+- optional OAuth interoperability adapters
 - tenant-aware federation
 - provisioning contracts
 - deterministic risk rules

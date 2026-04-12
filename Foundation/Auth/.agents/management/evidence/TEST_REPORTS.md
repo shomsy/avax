@@ -13,6 +13,36 @@ Concrete records of executed verification.
 
 ## Reports
 
+- `executed_at`: 2026-04-12 15:36 CEST
+- `scope`: full PHPUnit suite after OAuth/API auth subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: PHPUnit passes after adding `Capability/OAuth`, `Flow/OAuth`, client-bound JWT claims, and new OAuth facade
+  methods; result `OK (107 tests, 260 assertions)`
+
+- `executed_at`: 2026-04-12 15:36 CEST
+- `scope`: baseline static analysis after OAuth/API auth subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes across the new OAuth capability and flow slices
+
+- `executed_at`: 2026-04-12 15:36 CEST
+- `scope`: strict static analysis after OAuth/API auth subsystem v1 implementation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after tightening iterable contracts for client/scope-aware token issuance
+
+- `executed_at`: 2026-04-12 15:36 CEST
+- `scope`: targeted OAuth regression suite and JWT claim coverage
+- `environment`: local CLI PHP 8.4.11 with vendor dependencies installed
+- `checks`: `vendor/bin/phpunit tests/Capabilities/OAuth/InMemoryOAuthClientRegistryTest.php tests/Capabilities/Identity/Jwt/JwtIdentityTest.php tests/Flows/OAuth/OAuthFlowTest.php tests/System/AuthTest.php`
+- `result`: pass
+- `notes`: targeted OAuth regression suite passes for PKCE enforcement, authorization-code exchange, refresh reuse
+  detection, introspection, revoke, and client-claim preservation; result `OK (12 tests, 47 assertions)`
+
 - `executed_at`: 2026-04-12 15:04 CEST
 - `scope`: full PHPUnit suite after `REFAKTOR.md` scope artifacts and session subsystem v1 implementation
 - `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed

@@ -17,6 +17,17 @@ final readonly class AuditEvent
     public function __construct(
         public string            $name,
         public DateTimeImmutable $occurredAt,
-        public array             $context = []
+        public array             $context = [],
+        public string|null       $correlationId = null
     ) {}
+
+    public function withCorrelationId(string $correlationId) : self
+    {
+        return new self(
+            name         : $this->name,
+            occurredAt   : $this->occurredAt,
+            context      : $this->context,
+            correlationId: $correlationId
+        );
+    }
 }

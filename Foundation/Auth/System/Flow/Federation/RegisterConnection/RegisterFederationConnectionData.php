@@ -17,6 +17,8 @@ final readonly class RegisterFederationConnectionData
         public FederationProvider $provider,
         public string $domain,
         public bool $ssoOnly = false,
-        public array $groupRoleMap = []
+        public array $groupRoleMap = [],
+        public string|null $metadataUrl = null,
+        public bool $breakGlassAllowed = false
     ) {}
 }

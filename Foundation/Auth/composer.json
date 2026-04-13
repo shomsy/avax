@@ -42,6 +42,7 @@
     "psr-4": {
       "Avax\\Auth\\System\\": "System/",
       "Avax\\Auth\\Integrations\\AvaxContainer\\": "integrations/avax-container/",
+      "Avax\\Auth\\Integrations\\Diagnostics\\": "integrations/diagnostics/",
       "Avax\\Auth\\Integrations\\Http\\": "integrations/http/",
       "Avax\\Auth\\Integrations\\Headers\\": "integrations/headers/",
       "Avax\\Auth\\Integrations\\Cookies\\": "integrations/cookies/"

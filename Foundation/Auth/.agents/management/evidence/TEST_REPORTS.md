@@ -13,6 +13,30 @@ Concrete records of executed verification.
 
 ## Reports
 
+- `executed_at`: 2026-04-13 13:18 CEST
+- `scope`: full PHPUnit suite after sender-constrained HTTP adapters, SIEM-grade audit exporters, federation
+  operations, high-assurance policy examples, and multi-key token verification
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: full PHPUnit suite passes after DPoP and mTLS verification, audit correlation/export adapters, federation
+  domain verification and health policy, new docs/examples, and `MultiKeyHmacTokenCodec`; result `OK (148 tests, 402 assertions)`
+
+- `executed_at`: 2026-04-13 13:19 CEST
+- `scope`: baseline static analysis after the new `REFAKTOR.md` operational and adapter pass
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes across the new diagnostics exporters, sender-constraint HTTP adapters,
+  federation-operation flows, and multi-key token codec
+
+- `executed_at`: 2026-04-13 13:19 CEST
+- `scope`: strict static analysis after the new `REFAKTOR.md` operational and adapter pass
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after tightening the JSON-lines audit exporter and new federation/diagnostics seams
+
 - `executed_at`: 2026-04-12 23:10 CEST
 - `scope`: full PHPUnit suite after assurance policy tiers, sender-constrained OAuth posture, and key-versioned JWT
   artifacts

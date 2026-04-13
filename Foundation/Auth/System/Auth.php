@@ -6,6 +6,7 @@ namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
 use Avax\Auth\System\Capability\Federation\FederationConnection;
+use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
 use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
 use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
 use Avax\Auth\System\Capability\OAuth\OAuthClient;
@@ -33,12 +34,17 @@ use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLogin;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLoginData;
+use Avax\Auth\System\Flow\Federation\CheckHealth\CheckFederationConnectionHealth;
 use Avax\Auth\System\Flow\Federation\DiscoverConnection\DiscoverFederationConnection;
+use Avax\Auth\System\Flow\Federation\EvaluateBreakGlass\EvaluateFederationBreakGlassBypass;
 use Avax\Auth\System\Flow\Federation\ReadConnections\ReadFederationConnections;
 use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnection;
 use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
 use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLogin;
 use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLoginData;
+use Avax\Auth\System\Flow\Federation\SyncMetadata\SyncFederationMetadata;
+use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomain;
+use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomainData;
 use Avax\Auth\System\Flow\Login\AuthenticationResult;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\Login\Login;
@@ -160,6 +166,10 @@ final readonly class Auth implements AuthInterface
         private RevokePasskeyFlow|null $revokePasskey,
         private RegisterFederationConnection|null $registerFederationConnection,
         private ReadFederationConnections|null $readFederationConnections,
+        private VerifyFederationDomain|null $verifyFederationDomain,
+        private SyncFederationMetadata|null $syncFederationMetadata,
+        private CheckFederationConnectionHealth|null $checkFederationConnectionHealth,
+        private EvaluateFederationBreakGlassBypass|null $evaluateFederationBreakGlassBypass,
         private DiscoverFederationConnection|null $discoverFederationConnection,
         private StartFederatedLogin|null $startFederatedLogin,
         private CompleteFederatedLogin|null $completeFederatedLogin,
@@ -373,6 +383,26 @@ final readonly class Auth implements AuthInterface
         return $this->readFederationConnectionsOrFail()->execute();
     }
 
+    public function verifyFederationDomain(VerifyFederationDomainData $data) : FederationConnection
+    {
+        return $this->verifyFederationDomainOrFail()->execute($data);
+    }
+
+    public function syncFederationMetadata(string $connectionId) : FederationConnection
+    {
+        return $this->syncFederationMetadataOrFail()->execute($connectionId);
+    }
+
+    public function checkFederationConnectionHealth(string $connectionId) : FederationConnectionHealth
+    {
+        return $this->checkFederationConnectionHealthOrFail()->execute($connectionId);
+    }
+
+    public function evaluateFederationBreakGlassBypass(string $connectionId) : bool
+    {
+        return $this->evaluateFederationBreakGlassBypassOrFail()->execute($connectionId);
+    }
+
     public function discoverFederationConnection(string $email) : FederationConnection|null
     {
         return $this->discoverFederationConnectionOrFail()->execute($email);
@@ -566,6 +596,26 @@ final readonly class Auth implements AuthInterface
     private function readFederationConnectionsOrFail() : ReadFederationConnections
     {
         return $this->readFederationConnections ?? throw new RuntimeException('Federation runtime is not configured.');
+    }
+
+    private function verifyFederationDomainOrFail() : VerifyFederationDomain
+    {
+        return $this->verifyFederationDomain ?? throw new RuntimeException('Federation runtime is not configured.');
+    }
+
+    private function syncFederationMetadataOrFail() : SyncFederationMetadata
+    {
+        return $this->syncFederationMetadata ?? throw new RuntimeException('Federation metadata runtime is not configured.');
+    }
+
+    private function checkFederationConnectionHealthOrFail() : CheckFederationConnectionHealth
+    {
+        return $this->checkFederationConnectionHealth ?? throw new RuntimeException('Federation health checks are not configured.');
+    }
+
+    private function evaluateFederationBreakGlassBypassOrFail() : EvaluateFederationBreakGlassBypass
+    {
+        return $this->evaluateFederationBreakGlassBypass ?? throw new RuntimeException('Federation runtime is not configured.');
     }
 
     private function discoverFederationConnectionOrFail() : DiscoverFederationConnection

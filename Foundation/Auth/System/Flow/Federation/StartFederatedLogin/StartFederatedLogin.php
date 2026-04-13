@@ -32,6 +32,14 @@ final readonly class StartFederatedLogin
             throw FederationFailed::notFound();
         }
 
+        if (! $connection->isDomainVerified()) {
+            throw FederationFailed::domainNotVerified();
+        }
+
+        if ($connection->health === \Avax\Auth\System\Capability\Federation\FederationConnectionHealth::UNAVAILABLE) {
+            throw FederationFailed::connectionUnavailable();
+        }
+
         $started = $this->runtime->startLogin($connection, $data->redirectUri, $data->state);
         $this->auditLog->record(new AuditEvent(
             name      : 'auth.federation.login.started',

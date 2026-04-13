@@ -15,8 +15,8 @@ admin elevation, and a thin optional integration surface.
 - `Access` now supports composed access policies with role, permission, resource-owner, fresh-MFA, admin-elevation,
   and actor-tier assurance policies.
 - Passkeys now own registration/authentication plus listing, rename, and revoke flows behind a runtime contract.
-- Federation now owns tenant-aware connection registration, discovery, start/complete login, JIT linking, and
-  group-to-role mapping.
+- Federation now owns tenant-aware connection registration, domain verification, metadata sync, health checks,
+  discovery, start/complete login, JIT linking, break-glass policy evaluation, and group-to-role mapping.
 - Admin realm, provisioning, deterministic risk, and cleanup/export maintenance flows are package-owned slices.
 - Password reset, email verification, MFA enrollment/challenge/recovery, refresh rotation, audit events, and
   anti-enumeration flows are package-owned.
@@ -119,6 +119,10 @@ $backupCodes = $auth->confirmMfaEnrollment(
 - `revokePasskey(string): void`
 - `registerFederationConnection(RegisterFederationConnectionData): FederationConnection`
 - `readFederationConnections(): list<FederationConnection>`
+- `verifyFederationDomain(VerifyFederationDomainData): FederationConnection`
+- `syncFederationMetadata(string): FederationConnection`
+- `checkFederationConnectionHealth(string): FederationConnectionHealth`
+- `evaluateFederationBreakGlassBypass(string): bool`
 - `discoverFederationConnection(string): ?FederationConnection`
 - `startFederatedLogin(StartFederatedLoginData): StartedFederatedLogin`
 - `completeFederatedLogin(CompleteFederatedLoginData): AuthenticationResult`
@@ -163,7 +167,10 @@ Runtime ownership lives in auth-flow slices:
 - `System/Capability/Identity/` now only coordinates strategy issuance/clear semantics.
 - `System/Capability/User/` stays internal domain state; public auth output is `AuthenticatedUser`.
 - `System/Flow/Diagnostics/` owns audit events without becoming a second source of truth.
-- `integrations/http/` maps transport input and safe failures without leaking HTTP concerns into the kernel.
+- `integrations/http/` maps transport input, safe failures, and sender-constrained request verification without leaking
+  HTTP concerns into the kernel.
+- `integrations/diagnostics/` owns export and notification adapters for JSON lines, syslog, webhook, queue, and
+  security-notification delivery.
 - `integrations/avax-container/` is the optional container adapter.
 
 See [docs/boundary.md](docs/boundary.md) for the final kernel vs integration boundary, API freeze, target tree, and
@@ -178,6 +185,8 @@ non-goals.
 - OAuth public clients require PKCE and OAuth refresh reuse revokes the full token family.
 - High-assurance OAuth clients can require phishing-resistant auth before authorization-code issuance.
 - OAuth clients can require sender-constrained access and refresh tokens with DPoP or mTLS binding metadata.
+- HTTP adapters now include DPoP proof verification, mTLS binding verification, and explicit sender-constraint
+  enforcement for protected API requests.
 - Password reset and login failures keep safe public messages.
 - Password reset begin flow is anti-enumeration by default.
 - Email change requires the current password, fresh MFA, and revokes the current auth/session family on confirmation.
@@ -186,18 +195,30 @@ non-goals.
 - Passkeys support multiple credentials per account, user-owned rename/revoke, and strict challenge replay prevention.
 - Admin-sensitive actions can be expressed through `AccessPolicy` and enforced with explicit phishing-resistant,
   fresh-MFA, and admin-elevation policy.
-- Federation login is tenant-aware at the connection boundary, leaves an audit trail, and can JIT link or create users.
+- Federation login now requires verified domains for discovery/start, records metadata and health state, and can JIT
+  link or create users.
 - Deterministic risk rules flag new environments and refresh-token reuse for review-oriented follow-up.
 - Auth context is immutable and password hashes never leave the internal `User` entity.
 - HMAC JWTs can carry an explicit `kid` key version for rollover-aware deployments.
+- `MultiKeyHmacTokenCodec` supports overlap verification during signing-key rollover windows.
 
 ## Delivery Docs
 
 - [docs/adr/001-auth-scope-and-trust-boundaries.md](docs/adr/001-auth-scope-and-trust-boundaries.md)
 - [docs/assurance-policy.md](docs/assurance-policy.md)
 - [docs/authorization-hardening.md](docs/authorization-hardening.md)
+- [docs/audit-export-operations.md](docs/audit-export-operations.md)
+- [docs/federation-operations.md](docs/federation-operations.md)
+- [docs/high-assurance-admin-examples.md](docs/high-assurance-admin-examples.md)
 - [docs/privacy-retention-policy.md](docs/privacy-retention-policy.md)
 - [docs/crypto-key-lifecycle.md](docs/crypto-key-lifecycle.md)
+- [docs/oidc-provider-boundary.md](docs/oidc-provider-boundary.md)
+- [docs/scim-runtime-boundary.md](docs/scim-runtime-boundary.md)
+- [docs/tenant-control-plane.md](docs/tenant-control-plane.md)
+- [docs/release-hardening.md](docs/release-hardening.md)
+- [docs/sso-cutover-runbook.md](docs/sso-cutover-runbook.md)
+- [docs/verification-matrix.md](docs/verification-matrix.md)
+- [docs/workload-identity.md](docs/workload-identity.md)
 - [docs/threat-model.md](docs/threat-model.md)
 - [docs/implementation-roadmap.md](docs/implementation-roadmap.md)
 

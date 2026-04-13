@@ -22,6 +22,8 @@ final readonly class DiscoverFederationConnection
             return null;
         }
 
-        return $this->connectionStore->findByDomain($domain);
+        $connection = $this->connectionStore->findByDomain($domain);
+
+        return $connection?->isDomainVerified() === true ? $connection : null;
     }
 }

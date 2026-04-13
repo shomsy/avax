@@ -12,6 +12,7 @@ use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
 use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Configuration\AuthBuilder;
+use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\Register\RegistrationData;
@@ -116,5 +117,44 @@ final class AuthTest extends TestCase
 
         $this->assertFalse($auth->check());
         $this->assertNull($auth->user());
+    }
+
+    public function testAuthBuilderPropagatesAuditCorrelationIdAcrossFlows() : void
+    {
+        $userSource = new InMemoryUserSource();
+        $refreshTokens = new InMemoryRefreshTokenStore();
+        $auditLog = new InMemoryAuditLog();
+        $auth = Auth::configuration()
+            ->forUser($userSource)
+            ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
+                userSource       : $userSource,
+                codec            : new HmacTokenCodec('auth-correlation-secret'),
+                clock            : new Clock(),
+                revocationStore  : new InMemoryTokenRevocationStore(),
+                refreshTokenStore: $refreshTokens
+            )))
+            ->withRefreshTokenStore($refreshTokens)
+            ->withAuditLog($auditLog)
+            ->withAuditCorrelationId('corr-auth-1')
+            ->ready();
+
+        $auth->register(new RegistrationData(
+            email   : 'trace@example.com',
+            username: 'trace-user',
+            password: 'secret'
+        ));
+        $auth->login(new Credentials(
+            identifier: 'trace@example.com',
+            password  : 'secret'
+        ));
+        $auth->logout();
+
+        $events = $auditLog->events();
+        $this->assertNotSame([], $events);
+        $this->assertContainsOnlyInstancesOf(\Avax\Auth\System\Flow\Diagnostics\AuditEvent::class, $events);
+        $this->assertSame(
+            ['corr-auth-1'],
+            array_values(array_unique(array_filter(array_map(static fn ($event) => $event->correlationId, $events))))
+        );
     }
 }

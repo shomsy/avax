@@ -43,8 +43,12 @@ Kernel rule:
 - container adapters such as `Integrations/AvaxContainer/AuthServiceProvider`
 - transport-to-kernel mapping such as
   `Integrations/Http/MapAuthenticationRequest`
+- transport-owned sender-constraint verification such as
+  `Integrations/Http/VerifyOAuthSenderConstraint`
 - boundary failure mapping such as `Integrations/Http/MapAuthFailure`
 - header and cookie extraction glue used by transport mappers
+- diagnostics export and notification adapters such as
+  `Integrations/Diagnostics/*`
 - optional persistence, observability, and framework adapters that depend on
   kernel contracts only
 

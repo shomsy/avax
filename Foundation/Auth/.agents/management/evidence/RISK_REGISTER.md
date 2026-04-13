@@ -18,17 +18,16 @@ Tracks active and accepted risks.
 
 - `id`: AUTH-RISK-008
 - `identified_at`: 2026-04-12 23:10 CEST
-- `updated_at`: 2026-04-12 23:10 CEST
+- `updated_at`: 2026-04-13 13:20 CEST
 - `severity`: medium
 - `likelihood`: medium
-- `impact`: The kernel now owns sender-constrained token binding metadata and refresh enforcement, but actual HTTP DPoP
-  proof verification and mTLS certificate validation remain integration-owned; a deployment could still pass untrusted
-  thumbprints into the kernel if its transport layer is weak.
-- `mitigation`: Keep sender-constraint verification at the transport or adapter boundary, document that trust boundary
-  in `docs/assurance-policy.md` and `docs/boundary.md`, and add concrete HTTP or mTLS adapters before claiming
-  full replay-resistant enforcement in a specific deployment.
+- `impact`: Sender-constrained posture is now enforced by concrete HTTP DPoP and mTLS adapters, but certificate-chain
+  trust and reverse-proxy correctness still remain deployment-owned.
+- `mitigation`: Use `integrations/http/VerifyOAuthSenderConstraint.php`, keep mTLS certificate validation at the trusted
+  edge, and document the remaining transport trust boundary in `docs/assurance-policy.md`,
+  `docs/audit-export-operations.md`, and `docs/boundary.md`.
 - `owner`: OAuth integrations
-- `status`: accepted
+- `status`: mitigated
 
 - `id`: AUTH-RISK-007
 - `identified_at`: 2026-04-12 21:32 CEST
@@ -45,15 +44,15 @@ Tracks active and accepted risks.
 
 - `id`: AUTH-RISK-006
 - `identified_at`: 2026-04-12 15:36 CEST
-- `updated_at`: 2026-04-12 21:32 CEST
+- `updated_at`: 2026-04-13 13:20 CEST
 - `severity`: medium
 - `likelihood`: medium
 - `impact`: The package now owns OAuth, passkey, federation, provisioning, risk, and admin-realm kernel slices, but it
   still does not ship OIDC provider behavior, client-credentials, SCIM runtime, or a full tenant/control-plane model;
   teams could mistake the kernel for a full identity platform.
-- `mitigation`: Boundary docs, ADR-001, threat model, and the roadmap now state the exact delivered kernel scope and
-  keep OIDC provider, SCIM runtime, deeper tenant ownership, and control-plane workflows as explicit non-goals or next
-  tracks.
+- `mitigation`: Boundary docs, ADR-001, the workload identity/OIDC/SCIM/control-plane docs, and the roadmap state the
+  exact delivered kernel scope and keep OIDC provider, SCIM runtime, deeper tenant ownership, and control-plane
+  workflows as explicit non-goals or next tracks.
 - `owner`: boundary docs
 - `status`: accepted
 
@@ -72,13 +71,14 @@ Tracks active and accepted risks.
 
 - `id`: AUTH-RISK-003
 - `identified_at`: 2026-04-09 18:10 CEST
-- `updated_at`: 2026-04-09 18:10 CEST
+- `updated_at`: 2026-04-13 13:20 CEST
 - `severity`: medium
 - `likelihood`: medium
 - `impact`: The package does not yet ship trusted-device support; MFA UX always requires a second factor or a backup
   code on each new login.
-- `mitigation`: This is an explicit product choice for now; the MFA slice keeps trusted-device support optional until a
-  package-owned device-token and revocation contract is designed safely.
+- `mitigation`: This is now an explicit documented product choice in `docs/trusted-device-policy.md`; the MFA slice
+  does not imply remembered-device bypass until a package-owned device-token and revocation contract is designed
+  safely.
 - `owner`: MFA slice
 - `status`: accepted
 

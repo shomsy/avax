@@ -26,6 +26,7 @@ use Avax\Auth\System\Flow\Passkey\CompleteAuthentication\CompletePasskeyAuthenti
 use Avax\Auth\System\Flow\Passkey\CompleteRegistration\CompletePasskeyRegistration;
 use Avax\Auth\System\Flow\Passkey\CompleteRegistration\CompletePasskeyRegistrationData;
 use Avax\Auth\System\Flow\Passkey\ListPasskeys\ListPasskeys;
+use Avax\Auth\System\Flow\Passkey\PasskeyOperationFailed;
 use Avax\Auth\System\Flow\Passkey\RenamePasskey\RenamePasskey;
 use Avax\Auth\System\Flow\Passkey\RenamePasskey\RenamePasskeyData;
 use Avax\Auth\System\Flow\Passkey\RevokePasskey\RevokePasskey;
@@ -154,5 +155,74 @@ final class PasskeyFlowTest extends TestCase
         ))->execute('cred-1');
 
         $this->assertTrue($credentialStore->find('cred-1')?->isRevoked() ?? false);
+    }
+
+    public function testPasskeyAuthenticationChallengeCannotBeReplayed() : void
+    {
+        $clock           = new Clock();
+        $userSource      = new InMemoryUserSource();
+        $credentialStore = new InMemoryPasskeyCredentialStore();
+        $challengeStore  = new InMemoryPasskeyChallengeStore();
+        $current         = new CurrentAuthentication();
+        $user            = User::create(
+            id          : new UserId(6),
+            email       : new UserEmail('passkey-replay@example.com'),
+            username    : 'passkey-replay',
+            passwordHash: 'hash'
+        );
+        $userSource->create($user);
+        $credentialStore->save(new \Avax\Auth\System\Capability\Passkey\PasskeyCredential(
+            userId      : 6,
+            credentialId: 'cred-replay',
+            label       : 'Replay Device',
+            registeredAt: $clock->now()
+        ));
+
+        $runtime = new FakePasskeyRuntime();
+        $challenge = (new BeginPasskeyAuthentication(
+            userSource      : $userSource,
+            runtime         : $runtime,
+            credentialStore : $credentialStore,
+            challengeStore  : $challengeStore,
+            auditLog        : new InMemoryAuditLog(),
+            clock           : $clock,
+            rpId            : 'example.test'
+        ))->execute(new BeginPasskeyAuthenticationData(identifier: 'passkey-replay@example.com'));
+
+        $complete = new CompletePasskeyAuthentication(
+            runtime              : $runtime,
+            challengeStore       : $challengeStore,
+            credentialStore      : $credentialStore,
+            userSource           : $userSource,
+            identity             : new Identity(jwtIdentity: new JwtIdentity(
+                userSource       : $userSource,
+                codec            : new HmacTokenCodec('passkey-replay-secret'),
+                clock            : $clock,
+                revocationStore  : new InMemoryTokenRevocationStore(),
+                refreshTokenStore: new InMemoryRefreshTokenStore()
+            )),
+            projectAuthenticatedUser: new ProjectAuthenticatedUser(
+                emailVerificationState: new InMemoryEmailVerificationStateStore(),
+                mfaStore              : new InMemoryMfaStore()
+            ),
+            currentAuthentication: $current,
+            auditLog             : new InMemoryAuditLog(),
+            clock                : $clock,
+            rpId                 : 'example.test'
+        );
+
+        $result = $complete->execute(new CompletePasskeyAuthenticationData(
+            challengeId: $challenge->challengeId,
+            response   : ['credential_id' => 'cred-replay']
+        ));
+        $this->assertTrue($result->isAuthenticated());
+
+        $this->expectException(PasskeyOperationFailed::class);
+        $this->expectExceptionMessage('Passkey challenge has already been used.');
+
+        $complete->execute(new CompletePasskeyAuthenticationData(
+            challengeId: $challenge->challengeId,
+            response   : ['credential_id' => 'cred-replay']
+        ));
     }
 }

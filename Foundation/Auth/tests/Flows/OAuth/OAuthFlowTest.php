@@ -17,6 +17,7 @@ use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
+use Avax\Auth\System\Flow\OAuth\ExchangeClientCredentials\ExchangeClientCredentialsData;
 use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshTokenData;
 use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectTokenData;
 use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
@@ -250,6 +251,137 @@ final class OAuthFlowTest extends TestCase
                 thumbprint: 'thumb-2'
             )
         ));
+    }
+
+    public function testOAuthClientCredentialsIssuesWorkloadTokenWithAudienceAndConstraint() : void
+    {
+        $auth = $this->buildAuth();
+
+        $client = $auth->registerOAuthClient(new RegisterClientData(
+            name                    : 'Orders Worker',
+            type                    : OAuthClientType::CONFIDENTIAL,
+            redirectUris            : ['urn:avax:oauth:orders-worker'],
+            allowedScopes           : ['orders.read', 'orders.write'],
+            allowedAudiences        : ['orders-api'],
+            allowedGrantTypes       : [OAuthGrantType::CLIENT_CREDENTIALS],
+            audienceScopeBoundaries : [
+                'orders-api' => ['orders.read'],
+            ],
+            requiredSenderConstraint: OAuthSenderConstraintType::MTLS,
+            workloadIdentity        : true
+        ));
+
+        $grant = $auth->exchangeOAuthClientCredentials(new ExchangeClientCredentialsData(
+            clientId         : $client->client->clientId,
+            clientSecret     : $client->plainTextSecret,
+            scopes           : ['orders.read'],
+            audience         : 'orders-api',
+            senderConstraint : new OAuthSenderConstraint(
+                type      : OAuthSenderConstraintType::MTLS,
+                thumbprint: 'cert-thumb-1'
+            )
+        ));
+
+        $this->assertTrue($grant->workloadIdentity);
+        $this->assertSame('client:' . $client->client->clientId, $grant->subject);
+        $this->assertSame('orders-api', $grant->audience);
+        $this->assertNull($grant->refreshToken);
+
+        $introspection = $auth->introspectOAuthToken(new IntrospectTokenData(
+            clientId         : $client->client->clientId,
+            clientSecret     : $client->plainTextSecret,
+            token            : $grant->accessToken,
+            expectedAudience : 'orders-api'
+        ));
+
+        $this->assertTrue($introspection->active);
+        $this->assertTrue($introspection->workloadIdentity);
+        $this->assertSame($grant->subject, $introspection->subject);
+        $this->assertSame('orders-api', $introspection->audience);
+        $this->assertSame(OAuthSenderConstraintType::MTLS, $introspection->senderConstraint?->type);
+
+        $auth->revokeOAuthToken(new RevokeTokenData(
+            clientId      : $client->client->clientId,
+            clientSecret  : $client->plainTextSecret,
+            token         : $grant->accessToken,
+            tokenTypeHint : 'access_token'
+        ));
+
+        $inactive = $auth->introspectOAuthToken(new IntrospectTokenData(
+            clientId         : $client->client->clientId,
+            clientSecret     : $client->plainTextSecret,
+            token            : $grant->accessToken,
+            expectedAudience : 'orders-api'
+        ));
+
+        $this->assertFalse($inactive->active);
+    }
+
+    public function testOAuthClientCredentialsRejectsAudienceScopeBoundaryViolations() : void
+    {
+        $auth = $this->buildAuth();
+
+        $client = $auth->registerOAuthClient(new RegisterClientData(
+            name                    : 'Orders Worker',
+            type                    : OAuthClientType::CONFIDENTIAL,
+            redirectUris            : ['urn:avax:oauth:orders-worker'],
+            allowedScopes           : ['orders.read', 'orders.write'],
+            allowedAudiences        : ['orders-api'],
+            allowedGrantTypes       : [OAuthGrantType::CLIENT_CREDENTIALS],
+            audienceScopeBoundaries : [
+                'orders-api' => ['orders.read'],
+            ],
+            requiredSenderConstraint: OAuthSenderConstraintType::MTLS,
+            workloadIdentity        : true
+        ));
+
+        $this->expectException(OAuthTokenExchangeFailed::class);
+        $this->expectExceptionMessage('Invalid OAuth grant.');
+
+        $auth->exchangeOAuthClientCredentials(new ExchangeClientCredentialsData(
+            clientId         : $client->client->clientId,
+            clientSecret     : $client->plainTextSecret,
+            scopes           : ['orders.write'],
+            audience         : 'orders-api',
+            senderConstraint : new OAuthSenderConstraint(
+                type      : OAuthSenderConstraintType::MTLS,
+                thumbprint: 'cert-thumb-1'
+            )
+        ));
+    }
+
+    public function testReadWorkloadIdentitiesReturnsRegisteredMachineClients() : void
+    {
+        $auth = $this->buildAuth();
+
+        $machineClient = $auth->registerOAuthClient(new RegisterClientData(
+            name                    : 'Billing Worker',
+            type                    : OAuthClientType::CONFIDENTIAL,
+            redirectUris            : ['urn:avax:oauth:billing-worker'],
+            allowedScopes           : ['billing.read', 'billing.write'],
+            allowedAudiences        : ['billing-api'],
+            allowedGrantTypes       : [OAuthGrantType::CLIENT_CREDENTIALS],
+            audienceScopeBoundaries : [
+                'billing-api' => ['billing.read'],
+            ],
+            requiredSenderConstraint: OAuthSenderConstraintType::MTLS,
+            workloadIdentity        : true,
+            phishingResistantRequired: true
+        ));
+        $auth->registerOAuthClient(new RegisterClientData(
+            name         : 'Human Backoffice',
+            type         : OAuthClientType::CONFIDENTIAL,
+            redirectUris : ['https://app.example.test/callback'],
+            allowedScopes: ['profile']
+        ));
+
+        $profiles = $auth->readWorkloadIdentities();
+
+        $this->assertCount(1, $profiles);
+        $this->assertSame($machineClient->client->clientId, $profiles[0]->clientId);
+        $this->assertSame(['billing-api'], $profiles[0]->allowedAudiences);
+        $this->assertSame(['billing.read'], $profiles[0]->audienceScopeBoundaries['billing-api']);
+        $this->assertTrue($profiles[0]->phishingResistantRequired);
     }
 
     private function buildAuth(InMemoryAuditLog|null $auditLog = null) : Auth

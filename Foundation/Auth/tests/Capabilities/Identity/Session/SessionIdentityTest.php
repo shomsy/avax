@@ -71,4 +71,23 @@ final class SessionIdentityTest extends TestCase
         $this->assertNull($identity->resolveUserId());
         $this->assertSame('absolute_timeout', $auditLog->events()[0]->context['reason']);
     }
+
+    public function testIssueRegeneratesExistingSessionIdToPreventFixation() : void
+    {
+        $store = new ArraySessionStore();
+        $store->start();
+        $preLoginSessionId = $store->id();
+
+        $identity = new SessionIdentity(
+            store   : $store,
+            clock   : new FrozenClock(new DateTimeImmutable('2026-04-12T10:00:00+00:00')),
+            lifetime: new SessionLifetime(idleTimeoutSeconds: 900, absoluteTimeoutSeconds: 43200)
+        );
+
+        $issuedSessionId = $identity->issue(userId: 42);
+
+        $this->assertNotSame($preLoginSessionId, $issuedSessionId);
+        $this->assertSame('session-2', $issuedSessionId);
+        $this->assertSame(42, $identity->resolveUserId());
+    }
 }

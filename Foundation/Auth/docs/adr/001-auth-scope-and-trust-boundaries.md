@@ -20,9 +20,13 @@ The package already owns:
 - server-side session identity
 - token issuance and refresh rotation
 - OAuth client registration, authorization-code issuance, PKCE verification, token revocation, and introspection
+- workload `client_credentials` issuance and workload inventory
 - MFA enrollment, challenge, recovery, and fresh-MFA checks
 - adapter-first passkey registration and authentication
 - tenant-aware federation connection and login orchestration
+- kernel-local OIDC provider metadata, JWKS, ID-token issuance, and userinfo
+- SCIM directory registration, token rotation, provisioning, delete, and group sync
+- tenant security request, approval, apply, and rollback workflow
 - deterministic risk rules and refresh-reuse review signals
 - admin elevation and user lifecycle provisioning
 - audit events and auth ingress ownership
@@ -34,11 +38,12 @@ The package already owns:
 
 The package does not yet own:
 
-- OIDC provider behavior
-- SCIM runtime integration
-- full tenant membership control plane
+- full standards-certified OIDC provider product surface
+- OIDC dynamic client registration or logout/session-management products
+- SCIM RFC 7644 HTTP transport surface
+- full tenant membership control plane or tenant-admin UI product
 - KMS/HSM, mail, SIEM, and queue infrastructure
-- approval-driven privileged workflows
+- cross-organization approval tooling
 
 ## Decision
 
@@ -56,9 +61,12 @@ The package owns and ships:
 - password reset and MFA recovery
 - refresh rotation and reuse detection
 - OAuth authorization-code and refresh grants for package-owned clients
+- OAuth `client_credentials` for workload identities
+- kernel-local OIDC provider artifacts for discovery, JWKS, ID tokens, and userinfo
 - audit events
 - active session management
 - admin elevation and lifecycle provisioning
+- SCIM directory runtime and tenant security change workflow
 - adapter-first passkeys and tenant-aware federation flows
 - deterministic risk decisions and maintenance cleanup/export flows
 
@@ -67,8 +75,8 @@ The package owns and ships:
 The package may add:
 
 - optional OAuth interoperability adapters
-- external SCIM and SIEM adapters
-- deeper tenant membership ownership
+- external SCIM and OIDC HTTP adapters, SIEM adapters
+- deeper tenant membership ownership and tenant-admin surfaces
 
 ### Future Dependency Strategy
 
@@ -76,7 +84,7 @@ Do not hand-roll standards-heavy subsystems when mature PHP libraries exist.
 
 - OAuth: `league/oauth2-server`
 - WebAuthn / passkeys: `web-auth/webauthn-framework` or `web-auth/webauthn-lib`
-- Federation and SCIM: adapter-first, standards-based contracts over package-owned glue
+- OIDC and SCIM HTTP products: adapter-first, standards-based packages over package-owned kernel glue
 
 ## Trust Boundaries
 

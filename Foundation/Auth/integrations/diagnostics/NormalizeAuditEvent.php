@@ -13,7 +13,8 @@ final readonly class NormalizeAuditEvent
 {
     public function __construct(
         private MaskAuditContext $maskAuditContext = new MaskAuditContext(),
-        private bool $maskSensitiveContext = true
+        private bool $maskSensitiveContext = true,
+        private AuditLegalHoldPolicyInterface|null $legalHoldPolicy = null
     ) {}
 
     /**
@@ -21,7 +22,9 @@ final readonly class NormalizeAuditEvent
      */
     public function execute(AuditEvent $event) : array
     {
-        $context = $this->maskSensitiveContext
+        $maskSensitiveContext = $this->maskSensitiveContext
+            && ! ($this->legalHoldPolicy?->preserveSensitiveContext($event) ?? false);
+        $context = $maskSensitiveContext
             ? $this->maskAuditContext->execute($event->context)
             : $event->context;
 

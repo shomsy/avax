@@ -22,6 +22,7 @@ final readonly class AuthorizationCodeRecord
         public string                 $redirectUri,
         public array                  $scopes,
         public DateTimeImmutable      $expiresAt,
+        public string|null            $nonce = null,
         public string|null            $codeChallenge = null,
         public PkceMethod|null        $codeChallengeMethod = null,
         public DateTimeImmutable|null $usedAt = null,

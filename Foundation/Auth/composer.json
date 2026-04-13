@@ -45,7 +45,8 @@
       "Avax\\Auth\\Integrations\\Diagnostics\\": "integrations/diagnostics/",
       "Avax\\Auth\\Integrations\\Http\\": "integrations/http/",
       "Avax\\Auth\\Integrations\\Headers\\": "integrations/headers/",
-      "Avax\\Auth\\Integrations\\Cookies\\": "integrations/cookies/"
+      "Avax\\Auth\\Integrations\\Cookies\\": "integrations/cookies/",
+      "Avax\\Auth\\Integrations\\Release\\": "integrations/release/"
     }
   },
   "autoload-dev": {
@@ -56,6 +57,10 @@
       "Avax\\Auth\\Tests\\Foundation\\": "tests/Foundation/",
       "Avax\\Auth\\Tests\\Integration\\": "tests/Integration/",
       "Avax\\Auth\\Tests\\Integrations\\": "tests/Integrations/",
+      "Avax\\Auth\\Examples\\Http\\": "examples/http/",
+      "Avax\\Auth\\Examples\\Jobs\\": "examples/jobs/",
+      "Avax\\Auth\\Examples\\Persistence\\": "examples/persistence/",
+      "Avax\\Auth\\Examples\\Policies\\": "examples/policies/",
       "Avax\\Auth\\Tests\\Support\\": "tests/Support/",
       "Avax\\Auth\\Tests\\System\\": "tests/System/",
       "Avax\\Container\\Core\\": "tests/Support/AvaxContainer/Core/",
@@ -75,6 +80,18 @@
     "test:coverage": "tooling/run-with-coverage-driver vendor/bin/phpunit --coverage-html coverage",
     "analyse": "phpstan analyse --memory-limit=1G",
     "analyse:strict": "phpstan analyse --memory-limit=1G -c phpstan.strict.neon",
+    "dependency-review": "php tooling/review-composer-dependencies.php",
+    "sbom": "php tooling/generate-sbom.php",
+    "secret-scan": "php tooling/scan-committed-secrets.php",
+    "release:provenance": "php tooling/create-release-provenance.php",
+    "rollback:proof": "php tooling/create-rollback-evidence.php",
+    "release:gate": [
+      "@dependency-review",
+      "@secret-scan",
+      "@sbom",
+      "@release:provenance",
+      "@rollback:proof"
+    ],
     "rector": "rector process --dry-run",
     "rector:apply": "rector process",
     "mutation": [

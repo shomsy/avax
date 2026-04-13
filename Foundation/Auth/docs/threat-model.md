@@ -21,7 +21,7 @@ This document captures the current auth-kernel threat model and the controls own
 | email change takeover | dedicated email-change flow, current-password proof, fresh MFA, one-time confirmation, audit | implemented |
 | refresh token reuse | family revocation, risk review signal, and audit | implemented |
 | insider misuse | audit trail, admin-elevation state, and authorization hardening checklist exist; approval workflows remain application-owned | partial |
-| tenant isolation bug | unique-domain federation policy, verified-domain discovery, health-gated SSO start, and tenant-aware connection boundary exist; full tenant membership model is still not package-owned | partial |
+| tenant isolation bug | unique-domain federation policy, verified-domain discovery, health-gated SSO start, SCIM directory scoping, and tenant security change validation with rollback exist; full tenant membership model is still not package-owned | partial |
 
 ## Incident Classes
 
@@ -79,6 +79,12 @@ This document captures the current auth-kernel threat model and the controls own
 - completed federated login leaves an audit trail with tenant context
 - invalid group mappings are rejected at registration time and federated groups
   only map into known package roles
+
+### Tenant Security Misconfiguration
+
+- tenant security changes validate referenced federation and SCIM resources
+- apply requires approval and rollback is explicit
+- configuration changes emit an auditable diff and rollout version
 
 ## Severity Matrix
 

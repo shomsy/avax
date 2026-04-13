@@ -225,6 +225,31 @@ final class VerifyMfaChallengeTest extends TestCase
         }
     }
 
+    public function testTotpCodeCannotBeReplayedWithinSameTimeStep() : void
+    {
+        [$flow, $totp, $clock, $challengeStore] = $this->makeFlow();
+        $code = $totp->codeAt('SECRETSECRETSECRETSECRETSECRETSE', $clock->now());
+
+        $challengeStore->issue($this->challengeRecord(
+            challengeId: 'challenge-1',
+            expiresAt  : $clock->now()->add(new DateInterval('PT5M'))
+        ));
+        $result = $flow->execute(new VerifyMfaChallengeData('challenge-1', $code));
+        $this->assertTrue($result->isAuthenticated());
+
+        $challengeStore->issue($this->challengeRecord(
+            challengeId: 'challenge-2',
+            expiresAt  : $clock->now()->add(new DateInterval('PT5M'))
+        ));
+
+        try {
+            $flow->execute(new VerifyMfaChallengeData('challenge-2', $code));
+            self::fail('Expected replayed TOTP code to fail.');
+        } catch (MfaChallengeFailed $exception) {
+            $this->assertSame(MfaChallengeFailure::INVALID, $exception->reason());
+        }
+    }
+
     /**
      * @return array{0: VerifyMfaChallenge, 1: Totp, 2: FrozenClock, 3: InMemoryMfaChallengeStore, 4:
      *                  CurrentAuthentication, 5: string}

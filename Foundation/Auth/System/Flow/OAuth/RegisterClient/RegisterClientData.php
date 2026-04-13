@@ -13,14 +13,18 @@ final readonly class RegisterClientData
     /**
      * @param list<string> $redirectUris
      * @param list<string> $allowedScopes
+     * @param list<string> $allowedAudiences
      * @param list<OAuthGrantType> $allowedGrantTypes
+     * @param array<string, list<string>> $audienceScopeBoundaries
      */
     public function __construct(
         public string                         $name,
         public OAuthClientType                $type,
         public array                          $redirectUris,
         public array                          $allowedScopes = [],
+        public array                          $allowedAudiences = [],
         public array                          $allowedGrantTypes = [],
+        public array                          $audienceScopeBoundaries = [],
         public OAuthSenderConstraintType|null $requiredSenderConstraint = null,
         public bool                           $workloadIdentity = false,
         public bool                           $phishingResistantRequired = false

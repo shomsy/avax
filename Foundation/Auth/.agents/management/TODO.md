@@ -14,6 +14,75 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-027
+- `created_at`: 2026-04-13 20:25 CEST
+- `updated_at`: 2026-04-13 20:25 CEST
+- `completed_at`: 2026-04-13 20:25 CEST
+- `status`: done
+- `estimate`: 4h
+- `actual`: 1h 18m
+- `outcome`: Close the remaining adapter and release-hardening gaps with OIDC, SCIM, and tenant-security HTTP surfaces,
+  dependency review and rollback evidence tooling, and CI-enforced quality/release gates
+- `acceptance`: Framework-neutral HTTP adapters publish OIDC discovery/JWKS/userinfo, SCIM metadata plus `/Users` CRUD,
+  and tenant security admin routes; dependency review policy and rollback evidence are first-class release integrations;
+  Composer scripts and GitHub workflows enforce dependency review, secret scan, provenance, SBOM, and rollback proof;
+  README/docs/REFAKTOR reflect the new package boundary and remaining external gaps; PHPUnit and PHPStan lanes pass
+- `links`: integrations/http/Oidc/, integrations/http/Scim/, integrations/http/TenantSecurity/, integrations/release/,
+  tooling/review-composer-dependencies.php, tooling/create-rollback-evidence.php, .github/workflows/, REFAKTOR.md
+
+- `id`: AUTH-026
+- `created_at`: 2026-04-13 19:20 CEST
+- `updated_at`: 2026-04-13 19:20 CEST
+- `completed_at`: 2026-04-13 19:20 CEST
+- `status`: done
+- `estimate`: 6h
+- `actual`: 2h 05m
+- `outcome`: Close the remaining kernel-local identity-platform gaps with OIDC provider behavior, SCIM runtime,
+  tenant-security control-plane workflow, rollover-aware OIDC signing overlap, and truthful repo documentation/status
+- `acceptance`: `Capability/Oidc/`, `Capability/Scim/`, and `Capability/TenantSecurity/` ship validated runtime behavior;
+  `Auth` exposes OIDC, SCIM, workload, and tenant-security public flows; OIDC JWKS overlap is supported through
+  `RotatingOidcProvider`; README/docs/REFAKTOR reflect delivered kernel scope and remaining external surfaces; PHPUnit,
+  PHPStan, and strict PHPStan lanes pass
+- `links`: System/Capability/Oidc/, System/Capability/Scim/, System/Capability/TenantSecurity/, System/Flow/Oidc/,
+  System/Flow/Scim/, System/Flow/TenantSecurity/, docs/oidc-conformance-matrix.md,
+  docs/oidc-key-rollover-runbook.md, REFAKTOR.md
+
+- `id`: AUTH-025
+- `created_at`: 2026-04-13 15:12 CEST
+- `updated_at`: 2026-04-13 15:12 CEST
+- `completed_at`: 2026-04-13 15:12 CEST
+- `status`: done
+- `estimate`: 5h
+- `actual`: 1h 12m
+- `outcome`: Close the remaining kernel-local machine-identity and release-rigor gaps with workload inventory,
+  audience-bound workload policies, reloadable key-ring runtime, release tooling, and safer optional Foundation HTTP
+  CSRF adapters
+- `acceptance`: OAuth workload clients expose inventory and per-audience scope boundaries; runtime HMAC key rings can
+  rotate without redeploy; automated rollover and compromise drills plus crypto-agility tests pass; local SBOM,
+  provenance, artifact-signing, and secret-scan tooling exists; optional `Foundation/HTTP/Security` CSRF utilities no
+  longer log raw tokens and keep bounded token windows; PHPUnit and PHPStan lanes pass
+- `links`: System/Flow/OAuth/ReadWorkloadIdentities/, System/Flow/Token/FileBackedHmacKeyRingCodec.php,
+  integrations/release/, tooling/generate-sbom.php, tooling/create-release-provenance.php,
+  tooling/scan-committed-secrets.php, tests/Integrations/Release/ReleaseToolingTest.php,
+  ../HTTP/Security/CsrfTokenManager.php, ../HTTP/Security/VerifyCsrfToken.php
+
+- `id`: AUTH-024
+- `created_at`: 2026-04-13 13:35 CEST
+- `updated_at`: 2026-04-13 14:39 CEST
+- `completed_at`: 2026-04-13 14:39 CEST
+- `status`: done
+- `estimate`: 4h
+- `actual`: 1h 04m
+- `outcome`: Close the remaining kernel-local perfection gaps with workload identity runtime, legal-hold aware audit
+  export, explicit replay/fixation/CSRF regressions, and adapter-ready persistence/job examples
+- `acceptance`: OAuth supports `client_credentials` for workload clients with audience and sender-constraint posture;
+  audit export can preserve evidence under legal hold; explicit tests cover DPoP URI mismatch, TOTP replay, passkey
+  replay, CSRF example middleware, session fixation, break-glass auditability, and full deprovision revocation; example
+  migrations and maintenance-job entrypoints exist; PHPUnit and PHPStan lanes pass
+- `links`: System/Flow/OAuth/ExchangeClientCredentials/, System/Flow/Token/ResolvedWorkloadToken.php,
+  integrations/diagnostics/ContextFlagAuditLegalHoldPolicy.php, tests/Flows/OAuth/OAuthFlowTest.php,
+  tests/Integrations/Http/RequireCsrfProtectionTest.php, examples/persistence/migrations/, examples/jobs/
+
 - `id`: AUTH-023
 - `created_at`: 2026-04-13 11:35 CEST
 - `updated_at`: 2026-04-13 13:20 CEST

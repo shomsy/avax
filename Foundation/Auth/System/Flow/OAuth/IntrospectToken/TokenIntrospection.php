@@ -20,7 +20,11 @@ final readonly class TokenIntrospection
         public DateTimeImmutable|null $expiresAt = null,
         public DateTimeImmutable|null $mfaVerifiedAt = null,
         public bool                   $phishingResistant = false,
-        public OAuthSenderConstraint|null $senderConstraint = null
+        public OAuthSenderConstraint|null $senderConstraint = null,
+        public string|null            $subject = null,
+        public string|null            $audience = null,
+        public string|null            $issuer = null,
+        public bool                   $workloadIdentity = false
     ) {}
 
     public static function inactive() : self

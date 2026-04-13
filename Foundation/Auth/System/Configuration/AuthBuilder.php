@@ -23,6 +23,7 @@ use Avax\Auth\System\Capability\Federation\GroupRoleMappingValidator;
 use Avax\Auth\System\Capability\Federation\InMemoryFederatedIdentityLinkStore;
 use Avax\Auth\System\Capability\Federation\InMemoryFederationConnectionStore;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
 use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
 use Avax\Auth\System\Capability\OAuth\InMemoryAuthorizationCodeStore;
 use Avax\Auth\System\Capability\OAuth\InMemoryOAuthClientRegistry;
@@ -35,7 +36,15 @@ use Avax\Auth\System\Capability\Passkey\PasskeyRuntimeInterface;
 use Avax\Auth\System\Capability\Risk\DeterministicRiskEngine;
 use Avax\Auth\System\Capability\Risk\InMemoryKnownAuthenticationEnvironmentStore;
 use Avax\Auth\System\Capability\Risk\InMemoryRiskSignalStore;
+use Avax\Auth\System\Capability\Scim\InMemoryScimDirectoryStore;
+use Avax\Auth\System\Capability\Scim\InMemoryScimProvisionedIdentityStore;
+use Avax\Auth\System\Capability\Scim\ScimDirectoryStoreInterface;
+use Avax\Auth\System\Capability\Scim\ScimProvisionedIdentityStoreInterface;
 use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
+use Avax\Auth\System\Capability\TenantSecurity\InMemoryTenantSecurityChangeRequestStore;
+use Avax\Auth\System\Capability\TenantSecurity\InMemoryTenantSecurityConfigurationStore;
+use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequestStoreInterface;
+use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityConfigurationStoreInterface;
 use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
 use Avax\Auth\System\Capability\Throttle\InMemoryAttemptThrottleStore;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
@@ -90,11 +99,16 @@ use Avax\Auth\System\Flow\Mfa\Totp;
 use Avax\Auth\System\Flow\Mfa\TotpInterface;
 use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCode;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCode;
+use Avax\Auth\System\Flow\OAuth\ExchangeClientCredentials\ExchangeClientCredentials;
 use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshToken;
 use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectToken;
 use Avax\Auth\System\Flow\OAuth\ReadClients\ReadClients;
+use Avax\Auth\System\Flow\OAuth\ReadWorkloadIdentities\ReadWorkloadIdentities;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClient;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeToken;
+use Avax\Auth\System\Flow\Oidc\ReadJsonWebKeySet\ReadOidcJsonWebKeySet;
+use Avax\Auth\System\Flow\Oidc\ReadProviderMetadata\ReadOidcProviderMetadata;
+use Avax\Auth\System\Flow\Oidc\ReadUserInfo\ReadOidcUserInfo;
 use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthentication;
 use Avax\Auth\System\Flow\Passkey\BeginRegistration\BeginPasskeyRegistration;
 use Avax\Auth\System\Flow\Passkey\CompleteAuthentication\CompletePasskeyAuthentication;
@@ -113,9 +127,23 @@ use Avax\Auth\System\Flow\Recover\ResetPassword;
 use Avax\Auth\System\Flow\Register\Register;
 use Avax\Auth\System\Flow\Risk\AssessCurrentRisk\AssessCurrentRisk;
 use Avax\Auth\System\Flow\Risk\ReadRiskSignals\ReadRiskSignals;
+use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUser;
+use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUser;
+use Avax\Auth\System\Flow\Scim\ReadDirectories\ReadScimDirectories;
+use Avax\Auth\System\Flow\Scim\ReadUsers\ReadScimUsers;
+use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectory;
+use Avax\Auth\System\Flow\Scim\RotateToken\RotateScimToken;
+use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroups;
 use Avax\Auth\System\Flow\Session\LogoutAllSessions\LogoutAllSessions;
 use Avax\Auth\System\Flow\Session\ReadActiveSessions\ReadActiveSessions;
 use Avax\Auth\System\Flow\Session\RevokeSession\RevokeSession;
+use Avax\Auth\System\Flow\TenantSecurity\ApplyChange\ApplyTenantSecurityChange;
+use Avax\Auth\System\Flow\TenantSecurity\ApproveChange\ApproveTenantSecurityChange;
+use Avax\Auth\System\Flow\TenantSecurity\BeginChange\BeginTenantSecurityChange;
+use Avax\Auth\System\Flow\TenantSecurity\ReadChangeRequest\ReadTenantSecurityChangeRequest;
+use Avax\Auth\System\Flow\TenantSecurity\ReadChangeRequests\ReadTenantSecurityChangeRequests;
+use Avax\Auth\System\Flow\TenantSecurity\ReadConfiguration\ReadTenantSecurityConfiguration;
+use Avax\Auth\System\Flow\TenantSecurity\RollbackChange\RollbackTenantSecurityChange;
 use Avax\Auth\System\Flow\Token\RefreshAuthentication;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Flow\Verify\BeginEmailVerification;
@@ -166,6 +194,11 @@ final class AuthBuilder
     private FederationRuntimeInterface|null           $federationRuntime      = null;
     private FederationConnectionStoreInterface|null   $federationConnectionStore = null;
     private FederatedIdentityLinkStoreInterface|null  $federatedIdentityLinkStore = null;
+    private OidcProviderInterface|null                $oidcProvider           = null;
+    private ScimDirectoryStoreInterface|null          $scimDirectoryStore     = null;
+    private ScimProvisionedIdentityStoreInterface|null $scimProvisionedIdentityStore = null;
+    private TenantSecurityConfigurationStoreInterface|null $tenantSecurityConfigurationStore = null;
+    private TenantSecurityChangeRequestStoreInterface|null $tenantSecurityChangeRequestStore = null;
     private string                                    $mfaIssuer              = 'Avax Auth';
     private string                                    $passkeyRpId            = 'localhost';
     private string                                    $passkeyRpName          = 'Avax Auth';
@@ -404,6 +437,41 @@ final class AuthBuilder
         return $this;
     }
 
+    public function withOidcProvider(OidcProviderInterface $oidcProvider) : self
+    {
+        $this->oidcProvider = $oidcProvider;
+
+        return $this;
+    }
+
+    public function withScimDirectoryStore(ScimDirectoryStoreInterface $scimDirectoryStore) : self
+    {
+        $this->scimDirectoryStore = $scimDirectoryStore;
+
+        return $this;
+    }
+
+    public function withScimProvisionedIdentityStore(ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore) : self
+    {
+        $this->scimProvisionedIdentityStore = $scimProvisionedIdentityStore;
+
+        return $this;
+    }
+
+    public function withTenantSecurityConfigurationStore(TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore) : self
+    {
+        $this->tenantSecurityConfigurationStore = $tenantSecurityConfigurationStore;
+
+        return $this;
+    }
+
+    public function withTenantSecurityChangeRequestStore(TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore) : self
+    {
+        $this->tenantSecurityChangeRequestStore = $tenantSecurityChangeRequestStore;
+
+        return $this;
+    }
+
     public function withMfaAttemptLimit(LimitMfaAttempts $mfaAttemptLimit) : self
     {
         $this->mfaAttemptLimit = $mfaAttemptLimit;
@@ -526,13 +594,27 @@ final class AuthBuilder
         $readOAuthClients         = new ReadClients(
             clientRegistry: $oauthClientRegistry
         );
+        $readWorkloadIdentities   = new ReadWorkloadIdentities(
+            clientRegistry: $oauthClientRegistry
+        );
+        $readOidcProviderMetadata = $this->oidcProvider !== null
+            ? new ReadOidcProviderMetadata($this->oidcProvider)
+            : null;
+        $readOidcJsonWebKeySet    = $this->oidcProvider !== null
+            ? new ReadOidcJsonWebKeySet($this->oidcProvider)
+            : null;
+        $jwtIdentity              = $identity->jwtIdentity();
+        $readOidcUserInfo         = $jwtIdentity !== null && $this->oidcProvider !== null
+            ? new ReadOidcUserInfo($jwtIdentity)
+            : null;
         $authorizeOAuthCode       = new AuthorizeCode(
             currentAuthentication: $currentAuthentication,
             userSource           : $this->userSource,
             clientRegistry       : $oauthClientRegistry,
             codeStore            : $authorizationCodeStore,
             auditLog             : $auditLog,
-            clock                : $clock
+            clock                : $clock,
+            oidcProvider         : $this->oidcProvider
         );
         $oauthReady               = $identity->jwtIdentity() !== null && $this->refreshTokenStore !== null;
         $requireAdminElevation    = new RequireAdminElevation(
@@ -572,8 +654,52 @@ final class AuthBuilder
         $provisionableUserSource  = $this->userSource instanceof ProvisionableUserSourceInterface
             ? $this->userSource
             : null;
+        $scimDirectoryStore       = $this->scimDirectoryStore ?? new InMemoryScimDirectoryStore($passwordHasher);
+        $scimProvisionedIdentityStore = $this->scimProvisionedIdentityStore ?? new InMemoryScimProvisionedIdentityStore();
+        $tenantSecurityConfigurationStore = $this->tenantSecurityConfigurationStore ?? new InMemoryTenantSecurityConfigurationStore();
+        $tenantSecurityChangeRequestStore = $this->tenantSecurityChangeRequestStore ?? new InMemoryTenantSecurityChangeRequestStore();
+        $readTenantSecurityConfiguration = new ReadTenantSecurityConfiguration($tenantSecurityConfigurationStore);
+        $beginTenantSecurityChange = new BeginTenantSecurityChange(
+            configurationStore      : $tenantSecurityConfigurationStore,
+            changeRequestStore      : $tenantSecurityChangeRequestStore,
+            federationConnectionStore: $federationConnectionStore,
+            scimDirectoryStore      : $scimDirectoryStore,
+            auditLog                : $auditLog,
+            clock                   : $clock
+        );
+        $approveTenantSecurityChange = new ApproveTenantSecurityChange(
+            changeRequestStore : $tenantSecurityChangeRequestStore,
+            auditLog           : $auditLog,
+            clock              : $clock
+        );
+        $applyTenantSecurityChange = new ApplyTenantSecurityChange(
+            configurationStore : $tenantSecurityConfigurationStore,
+            changeRequestStore : $tenantSecurityChangeRequestStore,
+            auditLog           : $auditLog,
+            clock              : $clock
+        );
+        $rollbackTenantSecurityChange = new RollbackTenantSecurityChange(
+            configurationStore : $tenantSecurityConfigurationStore,
+            changeRequestStore : $tenantSecurityChangeRequestStore,
+            auditLog           : $auditLog,
+            clock              : $clock
+        );
+        $readTenantSecurityChangeRequest = new ReadTenantSecurityChangeRequest($tenantSecurityChangeRequestStore);
+        $readTenantSecurityChangeRequests = new ReadTenantSecurityChangeRequests($tenantSecurityChangeRequestStore);
         $passkeyReady             = $this->passkeyRuntime !== null;
         $federationReady          = $this->federationRuntime !== null;
+        $scimReady                = $provisionableUserSource !== null;
+        $provisionScimUser        = $scimReady
+            ? new ProvisionScimUser(
+                userSource      : $provisionableUserSource,
+                directoryStore  : $scimDirectoryStore,
+                identityStore   : $scimProvisionedIdentityStore,
+                passwordHasher  : $passwordHasher,
+                idGenerator     : $this->idGenerator ?? new IdGenerator(),
+                auditLog        : $auditLog,
+                clock           : $clock
+            )
+            : null;
 
         return new Auth(
             login                 : new Login(
@@ -678,6 +804,10 @@ final class AuthBuilder
                                     ),
             registerOAuthClient   : $oauthReady ? $registerOAuthClient : null,
             readOAuthClients      : $oauthReady ? $readOAuthClients : null,
+            readWorkloadIdentities: $oauthReady ? $readWorkloadIdentities : null,
+            readOidcProviderMetadata: $oauthReady ? $readOidcProviderMetadata : null,
+            readOidcJsonWebKeySet : $oauthReady ? $readOidcJsonWebKeySet : null,
+            readOidcUserInfo      : $oauthReady ? $readOidcUserInfo : null,
             authorizeOAuthCode    : $oauthReady ? $authorizeOAuthCode : null,
             exchangeOAuthCode     : $oauthReady
                 ? new ExchangeAuthorizationCode(
@@ -687,7 +817,16 @@ final class AuthBuilder
                     jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
                     refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException('Refresh token store is required.'),
                     auditLog         : $auditLog,
-                    clock            : $clock
+                    clock            : $clock,
+                    oidcProvider     : $this->oidcProvider
+                )
+                : null,
+            exchangeOAuthClientCredentials: $oauthReady
+                ? new ExchangeClientCredentials(
+                    clientRegistry: $oauthClientRegistry,
+                    jwtIdentity   : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
+                    auditLog      : $auditLog,
+                    clock         : $clock
                 )
                 : null,
             exchangeOAuthRefreshToken: $oauthReady
@@ -905,6 +1044,57 @@ final class AuthBuilder
                     riskEngine            : $riskEngine
                 )
                 : null,
+            registerScimDirectory : $scimReady
+                ? new RegisterScimDirectory(
+                    directoryStore          : $scimDirectoryStore,
+                    passwordHasher          : $passwordHasher,
+                    groupRoleMappingValidator: new GroupRoleMappingValidator(),
+                    auditLog                : $auditLog,
+                    clock                   : $clock
+                )
+                : null,
+            readScimDirectories   : $scimReady
+                ? new ReadScimDirectories($scimDirectoryStore)
+                : null,
+            rotateScimToken       : $scimReady
+                ? new RotateScimToken(
+                    directoryStore : $scimDirectoryStore,
+                    passwordHasher : $passwordHasher,
+                    auditLog       : $auditLog,
+                    clock          : $clock
+                )
+                : null,
+            provisionScimUser     : $provisionScimUser,
+            deleteScimUser        : $scimReady
+                ? new DeleteScimUser(
+                    userSource     : $provisionableUserSource,
+                    directoryStore : $scimDirectoryStore,
+                    identityStore  : $scimProvisionedIdentityStore,
+                    auditLog       : $auditLog,
+                    clock          : $clock
+                )
+                : null,
+            readScimUsers         : $scimReady
+                ? new ReadScimUsers(
+                    identityStore : $scimProvisionedIdentityStore,
+                    userSource    : $this->userSource
+                )
+                : null,
+            syncScimGroups        : $scimReady && $provisionScimUser !== null
+                ? new SyncScimGroups(
+                    directoryStore   : $scimDirectoryStore,
+                    identityStore    : $scimProvisionedIdentityStore,
+                    userSource       : $this->userSource,
+                    provisionScimUser: $provisionScimUser
+                )
+                : null,
+            readTenantSecurityConfiguration: $readTenantSecurityConfiguration,
+            readTenantSecurityChangeRequest: $readTenantSecurityChangeRequest,
+            readTenantSecurityChangeRequests: $readTenantSecurityChangeRequests,
+            beginTenantSecurityChange: $beginTenantSecurityChange,
+            approveTenantSecurityChange: $approveTenantSecurityChange,
+            applyTenantSecurityChange: $applyTenantSecurityChange,
+            rollbackTenantSecurityChange: $rollbackTenantSecurityChange,
             assessCurrentRisk     : new AssessCurrentRisk(
                                         currentAuthentication: $currentAuthentication,
                                         userSource           : $this->userSource,

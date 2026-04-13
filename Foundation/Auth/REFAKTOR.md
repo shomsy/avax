@@ -1,675 +1,251 @@
-Ovo je tačan implementation TODO koji bih stavio u plan/ToDo za PHP enterprise auth.
-Nije wishlist, nego redosled rada sa konkretnim modulima, tabelama, endpointima, poslovima u pozadini i security kriterijumima.
-Za stvari koje su suvise obimne (koje ne vredi pisati od nule sto preferiram), koristi spoljasnje biblioteke, implementacije, 3rd API ukoliko je potrebno, samo me obavesti o tome da znam.
-
-Arhitektura koju ciljaš je:
-
-web app → server-side session cookie
-API / mobile / third-party → OAuth 2.1 style access + refresh model
-phishing-resistant future path → passkeys / WebAuthn
-enterprise path → OIDC / SAML federation + SCIM/JIT provisioning
-authorization odvojeno od authentication-a
-audit/risk/admin realm kao zasebni podsistemi
-
-To je redosled koji najbolje prati moderne smernice: jake sesije za web, PKCE i sigurniji token model za OAuth klijente, i phishing-resistant autentikacija kao viši cilj.
-
-0. Izaberi pristup i zamrzni scope
-
-Rangirano:
-
-1. Balanced — preporuka
-Praviš svoj auth core u PHP-u, ali za OAuth i WebAuthn koristiš proverene biblioteke. league/oauth2-server je standards-compliant OAuth 2.0 authorization server za PHP, a web-auth/webauthn-framework i web-auth/webauthn-lib postoje baš za FIDO2/WebAuthn integraciju u PHP aplikacijama.
-
-2. Fast enterprise
-Local accounts + session core zadržiš kod sebe, a SSO/federation nasloniš na spoljnog IdP-a.
-
-3. Full custom identity platform
-Radi samo ako ti je identity core product.
-
-TODO
-
- Napiši 1 ADR: “Auth scope and trust boundaries”
- Odluči: monolith auth module ili zaseban auth service
- Odluči: local accounts only, local + enterprise SSO, ili full IdP ambitions
- Zamrzni v1 scope: password + session + MFA + refresh rotation + audit
- Zamrzni v2 scope: passkeys + federation + SCIM + risk engine
-1. Napravi repo/module granice
-
-Moduli koje treba da imaš:
-
-identity
-authentication
-session
-token
-mfa
-passkeys
-authorization
-audit
-risk
-admin-realm
-federation
-provisioning
-
-TODO
-
- Napravi module namespaces i ownership granice
- Svaki modul dobija svoj facade/service entry
- Zabraniti “misc auth helpers” i “global services” bucket
- Definiši public contracts između modula
- Definiši koje stvari su sync request path, a koje idu kroz queue/jobs
-2. Threat model i security baseline
-
-Pre koda napiši napadače i failure scenarije.
-
-Threat scenarios
-
-credential stuffing
-brute force
-session hijack
-stolen refresh token
-MFA bypass
-recovery takeover
-admin account takeover
-email change takeover
-refresh token reuse
-insider misuse
-tenant isolation bug
-
-TODO
-
- Napiši threat model dokument
- Mapiraj svaki threat na kontrolu
- Definiši severity matriks
- Definiši incident classes: auth incident, credential incident, session incident, admin incident
- Definiši recovery/rollback za compromise scenario
-3. Data model — tabele koje moraš imati
-
-Ovo je osnova. Ne kreći bez ovoga.
-
-3.1 Identity
- users
-id
-tenant_id
-email
-email_normalized
-email_verified_at
-status (active, locked, disabled, pending)
-password_hash
-password_algo
-password_changed_at
-last_login_at
-created_at
-updated_at
- user_aliases
-za future username/login aliases
- tenants
-id, name, slug, status, created_at
-3.2 Sessions
- sessions
-id
-user_id
-tenant_id
-session_secret_hash
-ip_created
-user_agent_created
-last_seen_at
-idle_expires_at
-absolute_expires_at
-revoked_at
-revoke_reason
-3.3 OAuth / API tokens
- oauth_clients
- oauth_access_tokens
- oauth_refresh_tokens
- oauth_refresh_token_families
- oauth_authorization_codes
-
-Za refresh tokene čuvaj:
-
-token_id
-family_id
-parent_token_id
-user_id
-client_id
-issued_at
-expires_at
-used_at
-revoked_at
-reuse_detected_at
-
-League OAuth2 Server ima jasan model authorization servera, access token repository-ja i refresh token repository-ja, pa ti može dati dobru bazu za ovaj sloj.
-
-3.4 MFA
- mfa_factors
-id
-user_id
-type (totp, webauthn, backup_code)
-label
-secret_encrypted
-enabled_at
-last_used_at
-revoked_at
- backup_codes
-čuvati hash, nikad plaintext
- mfa_challenges
-id
-user_id
-session_candidate_id
-challenge_type
-expires_at
-verified_at
-attempt_count
-blocked_until
-3.5 Passkeys / WebAuthn
- webauthn_credentials
-id
-user_id
-credential_id
-public_key
-sign_count
-aaguid
-transports
-backup_eligible
-backup_state
-attestation_format
-last_used_at
-revoked_at
-3.6 Audit / Risk
- audit_events
- security_events
- risk_signals
- admin_actions
-3.7 Federation
- federation_connections
- federated_identities
- scim_tokens
- provisioning_jobs
-4. Password subsystem
-
-Passwordi nisu krajnji cilj, ali su baza za migration path. PHP nativno podržava password_hash() i Argon2id gde je dostupan, što je dobar temelj za password sloj.
-
-TODO
-
- Standardizuj hashing na Argon2id gde je dostupan
- Dodaj fallback policy ako build ne podržava Argon2id
- Na login-u proveravaj da li hash treba rehash
- Password reset uvek invalidira:
-sve aktivne web sessione
-sve refresh token family-je
-sve active login challenges
- Password change traži fresh auth
- Password reset tokeni:
-random
-single use
-hashed in DB
-short TTL
-auditovani
- Generic failure poruke, bez user enumeration
- Rate limit za:
-login
-forgot password
-reset confirmation
-
-Acceptance criteria
-
- Stari session više ne važi nakon password reset-a
- Reset link ne može da se iskoristi dvaput
- Promena lozinke radi session/token revocation
-5. Web session subsystem
-
-Za browser web aplikacije idi na server-side sessions sa strogim cookie pravilima. OWASP posebno naglašava absolute timeout, session ID regeneration i jake cookie kontrole.
-
-TODO
-
- Session ID regeneracija odmah nakon uspešnog login-a
- Session cookie:
-HttpOnly
-Secure
-SameSite=Lax ili Strict gde može
- Idle timeout
- Absolute timeout
- Separate remember-me policy ako postoji
- Session revocation endpoint
- “Logout all devices”
- Device/session listing UI
- Last-used metadata po sesiji
- CSRF zaštita za cookie-auth web akcije
-
-API/Methods
-
- POST /auth/login
- POST /auth/logout
- POST /auth/logout-all
- GET /auth/sessions
- DELETE /auth/sessions/{id}
-
-Acceptance criteria
-
- Session fixation ne prolazi
- Logout ubija server-side session state
- Idle/absolute timeout stvarno invalidiraju sesiju
- Session list prikazuje sve aktivne sesije korisnika
-6. MFA subsystem v1 — TOTP + backup codes
-
-NIST i OWASP tretiraju authenticator lifecycle ozbiljno, ne samo proveru koda.
-
-TODO
-
- TOTP enroll
- TOTP confirm
- TOTP disable uz fresh auth
- Backup code generation
- Backup code regeneration invalidira stare
- MFA challenge throttling
- Replay protection za challenge token
- Fresh-MFA zahtev za:
-password change
-email change
-factor removal
-recovery initiation
-admin elevation
-
-API
-
- POST /auth/mfa/totp/enroll
- POST /auth/mfa/totp/confirm
- POST /auth/mfa/totp/verify
- POST /auth/mfa/backup-codes/regenerate
- DELETE /auth/mfa/factors/{id}
-
-Acceptance criteria
-
- Nije moguće ukloniti poslednji faktor bez dodatne provere
- Backup code je single-use
- MFA brute force je throttled i auditovan
-7. Recovery subsystem
-
-Ovo je critical path. Recovery često ruši inače dobar auth.
-
-TODO
-
- Recovery flow odvoji od običnog password reset-a
- Recovery traži:
-email verification
-fresh password knowledge ili existing factor gde postoji
-cooldown za promenu kritičnih atributa
- Promena email-a:
-traži fresh auth
-traži MFA ako je upaljen
-odlaže finalizaciju kroz verify link
- Factor reset generiše security event
- Admin-assisted recovery mora imati approval i audit trail
-
-Acceptance criteria
-
- Email takeover preko pending change flow-a nije moguć bez verifikacije
- Recovery reset invalidira stare recovery artefakte
- Suspicious recovery kreira alert
-8. OAuth / API auth subsystem
-
-Za SPA/mobile/public clients koristi Authorization Code + PKCE, a ne implicit flow. OAuth 2.1 i OAuth security BCP guraju moderniji i sigurniji tok, a RFC 9700 dodatno pojačava best practice posture.
-
-TODO
-
- Uvedi Authorization Server
- Uvedi Resource Server middleware
- Podrži grantove:
-Authorization Code + PKCE
-Refresh Token
-Client Credentials
- Access token kratkog TTL-a
- Refresh token rotation
- Refresh reuse detection
- Family revocation pri reuse detection
- Revocation endpoint
- Introspection endpoint ako treba
- Scope model
- Client registry
- Separate confidential vs public clients
-
-League OAuth2 Server već ima authorization server, resource server i repository interfejse za access i refresh tokene, što ga čini dobrim osnovom za PHP implementaciju.
-
-API
-
- GET /oauth/authorize
- POST /oauth/token
- POST /oauth/revoke
- POST /oauth/introspect
- GET /oauth/clients
- POST /oauth/clients
-
-Acceptance criteria
-
- Refresh token ne može biti ponovo korišćen bez family revocation-a
- PKCE obavezan za public clients
- Access token kratak i verifikovan na resource layer-u
-9. Passkeys / WebAuthn subsystem
-
-Passkeys su phishing-resistant i bazirani na public-key kriptografiji; FIDO i NIST ih jasno guraju kao jači pravac od lozinki/TOTP-only pristupa.
-
-TODO
-
- Dodaj WebAuthn registration start
- Dodaj WebAuthn registration finish
- Dodaj authentication start
- Dodaj authentication finish
- Više credentiala po useru
- Credential rename/revoke
- Step-up sa passkey faktorom za privilegovane akcije
- Admin policy:
-admins must have phishing-resistant factor
- Device migration UX
- Fallback path za legacy korisnike
-
-Za PHP su relevantne biblioteke web-auth/webauthn-framework i web-auth/webauthn-lib; postoji i metadata service podrška u istom ekosistemu.
-
-API
-
- POST /auth/passkeys/register/options
- POST /auth/passkeys/register/verify
- POST /auth/passkeys/auth/options
- POST /auth/passkeys/auth/verify
- GET /auth/passkeys
- DELETE /auth/passkeys/{id}
-
-Acceptance criteria
-
- Origin/RPID validacija stroga
- Credential replay ne prolazi
- Revoked credential više ne autentifikuje korisnika
-10. Authorization subsystem
-
-Authn i authz ne smeju biti isti projekat.
-
-TODO
-
- Uvedi RBAC kao bazu
- Tabele:
-roles
-permissions
-role_permissions
-user_roles
-tenant_roles
- Claims samo za coarse-grained pristup
- Policy engine za fine-grained odluke
- Resource ownership checks
- Tenant isolation checks
- Fresh auth / fresh MFA kao authz condition, ne hardcoded svuda
- Admin elevation kao poseban state
-
-Acceptance criteria
-
- Zabranjeno oslanjanje samo na frontend role checks
- Tenant crossing testovi prolaze
- Sensitive actions traže step-up kad policy to traži
-11. Federation / Enterprise SSO
-
-Kad dođeš do enterprise kupaca, ovo postaje P0 feature.
-
-TODO
-
- Tenant-level OIDC connection model
- SAML connection model ako targetiraš enterprise IT
- Domain verification
- Login discovery po domenu
- JIT provisioning
- Optional SCIM provisioning
- Group-to-role mapping
- Federation metadata rotate/update
- Separate policy za:
-local-only tenant
-SSO-only tenant
-hybrid tenant
-
-Acceptance criteria
-
- Tenant ne može greškom ući u tuđi connection config
- Group mapping ne može eskalirati privilegije bez eksplicitne politike
- SSO login ostavlja puni audit trail
-12. Admin realm
-
-Admin auth mora biti odvojen i tvrđi.
-
-TODO
-
- Poseban admin login surface ili poseban policy realm
- Kraći session timeout za admine
- Obavezan MFA, kasnije obavezan passkey
- Separate audit stream za admin akcije
- IP allowlist ili stronger network controls gde ima smisla
- Break-glass nalozi
- Break-glass access runbook
- JIT admin elevation
- Approval flow za high-impact admin akcije
-
-Acceptance criteria
-
- Admin nije samo “user sa role=admin”
- Admin logout-all radi odvojeno
- Break-glass pristup je strogo auditovan
-13. Audit & security events
-
-Bez ovoga nemaš enterprise.
-
-TODO
-
- Central audit_events
- Event taxonomy:
-login succeeded
-login failed
-password reset requested
-password reset completed
-MFA enrolled
-MFA removed
-passkey added
-passkey removed
-session revoked
-refresh reuse detected
-tenant SSO updated
-admin elevation
- Correlation ID po request-u
- Actor, subject, tenant, session, IP, UA polja
- Export/integration ka SIEM-u
- Tamper-evident storage strategy ako može
-
-Acceptance criteria
-
- Svaka security-sensitive akcija ima audit event
- Događaji imaju dovoljno konteksta za forenziku
- PII masking policy definisana
-14. Risk engine v1
-
-Nemoj AI magiju. Počni sa deterministic pravilima.
-
-Signals
-
- new country
- new ASN/IP range
- impossible travel
- too many failed logins
- refresh reuse detected
- factor removed + password changed kratko jedan za drugim
- admin login from new environment
-
-Actions
-
- allow
- require MFA
- require passkey
- soft lock
- revoke sessions
- revoke refresh family
- open incident ticket
-
-Acceptance criteria
-
- Risk rules ne blokiraju legitimne flow-ove bez observability-ja
- Svaka risk odluka ima razlog u logu
- False positive review loop postoji
-15. Provisioning / lifecycle
-
-Enterprise auth nije gotov bez lifecycle-a.
-
-TODO
-
- User create/disable/delete posture
- Tenant membership model
- Role assignment workflow
- Deprovisioning invalidira:
-sessions
-refresh tokens
-API clients gde je potrebno
- Group sync iz federation izvora
- SCIM token auth i rotation
- Suspend vs delete semantika
-
-Acceptance criteria
-
- Disabled user više ne može ništa sa starom sesijom ili refresh tokenom
- Deprovisioning je idempotentan
- Membership drift se vidi u audit-u
-16. Infra / secrets / keys
-
-TODO
-
- Private keys za OAuth van koda i repo-a
- KMS/HSM plan gde ima smisla
- Encryption-at-rest za MFA secrets
- Key rotation plan
- Secret rotation playbook
- Separate signing keys po environment-u
- Clock sync / NTP hygiene
- Redis ili DB strategy za rate limiting i session/risk state
-
-Acceptance criteria
-
- Nema hardcoded secrets
- Rotation test dokumentovan
- Recovery od izgubljenog signing key incidenta postoji
-17. Background jobs
-
-TODO
-
- Cleanup expired sessions
- Cleanup expired reset tokens
- Cleanup expired MFA challenges
- Revoke token families after reuse detection
- Send security emails
- Sync federation metadata
- SCIM sync jobs
- Risk aggregation jobs
- Audit export jobs
-18. Testing backlog
-Unit
- password hasher
- TOTP validator
- recovery token validator
- refresh family state machine
- policy engine
- risk rules
-Integration
- login + MFA
- logout-all
- password reset invalidates sessions
- refresh rotation
- refresh reuse detection
- WebAuthn register/auth
- OIDC tenant discovery
- SCIM create/update/disable
-Security
- session fixation test
- CSRF test
- brute force/rate limit test
- enumeration test
- replay test
- tenant isolation test
- privilege escalation test
- stale admin session test
-19. Go-live gates
-
-Ne puštaj u produkciju dok ovo nije zeleno:
-
- Session regeneration radi
- Absolute + idle timeout rade
- Password reset ubija sesije i refresh family-je
- MFA remove traži fresh auth
- Refresh rotation + reuse detection rade
- Audit coverage za sve security-critical akcije postoji
- Admin realm ima jaču politiku
- Tenant isolation testovi prolaze
- Incident runbook postoji
- On-call zna kako da revoke-uje user/session/client/family/tenant pristup
-20. Redosled isporuke po sprintovima
-Sprint 1
- ADR + threat model
- tabele users, sessions, audit_events
- password hashing
- basic login/logout
- secure cookies
- session regeneration
- rate limiting v1
-Sprint 2
- forgot/reset password
- logout-all
- active sessions UI/API
- basic audit coverage
- CSRF protection
-Sprint 3
- TOTP enroll/verify
- backup codes
- MFA challenges
- fresh auth middleware
-Sprint 4
- OAuth client registry
- access token issuance
- refresh token issuance
- resource server validation
-Sprint 5
- refresh rotation
- reuse detection
- family revocation
- suspicious token security events
-Sprint 6
- RBAC base
- tenant isolation hardening
- admin realm v1
-Sprint 7
- passkeys registration/auth
- passkey management UI/API
- admin passkey-required policy
-Sprint 8
- OIDC tenant federation
- domain discovery
- JIT provisioning
-Sprint 9
- SCIM v1
- risk engine v1
- SIEM export
-
-21. Tri najveće rupe koje moraš sprečiti
-
-1. Previše rano uvodiš federation i passkeys, a session/recovery ti još nisu tvrdi.
-To pravi lep demo, ali lošu bezbednost. OWASP session discipline i NIST authenticator lifecycle su osnova, ne ukras.
-
-2. Pokušavaš da isti auth model služi i browseru i API klijentima.
-Za browser je session često prirodniji, za OAuth klijente authorization code + PKCE i token model.
-
-3. TOTP proglasiš “gotovom MFA pričom”.
-TOTP je dobar, ali passkeys/WebAuthn su jači cilj jer su phishing-resistant.
-
-Najkraći zaključak
-
-Ako hoćeš najbolji ROI, uradi ovim redom:
-
-password + session hardening
-MFA + recovery
-OAuth token hygiene
-RBAC + admin realm
-passkeys
-federation + provisioning
-risk engine
-
-To je najzdraviji put od “jak PHP auth” do “enterprise-grade identity system”.
+Napravi ovo da bude na enterprise grade, world class nivou, da bude u visini kvaliteta poznatih framework-a, programskih jezika, biblioteka. Da nam svi oni zavide zapravo. Za sam kvalitet koda i arhitekture pogledaj dole STANDARDI I KVALITET KOJI ZAHTEVAM sekciju i pridrzavaj se striktno pravila agents.md odnosno .agents harness-a.
+
+Evo **tačnog TODO-a za “baš perfect auth system”**.
+
+> Status audit: 2026-04-13
+>
+> Legenda:
+> - `[x]` implementirano u repo-u
+> - `[~]` delimično implementirano ili zatvoreno kroz docs/boundary, bez punog runtime-a
+> - `[ ]` nije implementirano
+
+## P0 — zatvori sve što je ostalo do “perfect auth kernel”
+
+### 1) Browser/session deployment hardening
+
+* [x] Napiši **cookie-auth deployment guide** za web:
+
+  * `Secure`, `HttpOnly`, `SameSite`
+  * CSRF model po surface-u
+  * origin/referer pravila
+  * session fixation test proceduru
+* [x] Dodaj **reference middleware primer** za CSRF zaštitu
+* [x] Dodaj **persistent session registry primer**:
+
+  * DB schema
+  * revoke one
+  * logout-all
+  * revoke on password reset
+  * revoke on factor reset
+* [x] Dodaj **session compromise runbook**
+* [x] Dodaj **browser storage policy**: zabrani dugotrajne tokene u browser storage-u za session-based surface
+
+Ovo je must-have jer OWASP traži eksplicitan CSRF posture za browser-attached credentials, realnu invalidaciju sesije i stroge cookie kontrole, ne samo “login radi”.   ([OWASP Cheat Sheet Series][1])
+
+### 2) Sender-constrained tokeni moraju biti stvarno operativni, ne samo metadata
+
+* [x] Implementiraj **DPoP proof verification adapter**
+* [x] Implementiraj **mTLS-bound token verification adapter**
+* [x] Dodaj testove za:
+
+  * `[x]` replay sa istim proof-om
+  * `[x]` proof/token mismatch
+  * `[x]` wrong `htu` / `htm`
+  * `[x]` key rotation
+* [x] Dodaj policy switch:
+
+  * `[x]` standard bearer
+  * `[x]` DPoP required
+  * `[x]` mTLS required
+* [x] Dodaj audit event za proof failure i sender-constraint mismatch
+
+Tvoj kernel već ima sender-constraint metadata i high-security posture, ali za “perfect” moraš zatvoriti i punu proof verifikaciju. DPoP je standard baš za sender-constraining i replay detekciju, a OAuth BCP tretira sender-constrained tokene kao jači posture od običnih bearer tokena.   ([IETF Datatracker][2])
+
+### 3) Audit/export mora biti SIEM-grade
+
+* [x] Dodaj **rich audit exporter adaptere**:
+
+  * `[x]` JSON lines
+  * `[x]` syslog
+  * `[x]` webhook
+  * `[x]` queue export
+* [x] Dodaj **security notification adaptere**:
+
+  * `[x]` refresh reuse detected
+  * `[x]` admin elevation
+  * `[x]` factor removed
+  * `[x]` password changed after suspicious activity
+* [x] Dodaj **correlation-id propagation** kroz sve auth flow-ove
+* [x] Dodaj **tamper-evident export strategy**
+* [x] Dodaj **PII masking verification tests**
+
+Logging i audit nisu finiš bez operativnog izvoza i discipline oko osetljivih podataka. OWASP logging smernice i tvoj privacy policy idu baš u tom pravcu.   ([OWASP Cheat Sheet Series][3])
+
+### 4) Federation operativa
+
+* [x] Implementiraj **domain verification**
+* [x] Implementiraj **federation metadata sync**
+* [x] Dodaj **stronger tenant connection policy**
+* [x] Dodaj **connection health checks**
+* [x] Dodaj **group-to-role mapping validator**
+* [x] Dodaj **tenant isolation tests** za connection config
+* [x] Dodaj **break-glass bypass policy** kad je IdP nedostupan
+* [x] Dodaj **SSO cutover runbook**
+
+Roadmap ti već navodi domain verification, metadata sync i jači tenant connection policy kao naredni sprint. Bez toga federation postoji, ali nije “baš perfect”. 
+
+### 5) High-assurance admin posture examples
+
+* [x] Dodaj gotov primer za **admin passkey-required policy**
+* [x] Dodaj gotov primer za **tenant-admin phishing-resistant policy**
+* [x] Dodaj primer za **fresh-MFA / fresh-passkey enforcement**
+* [x] Dodaj primer za **approval path** za high-impact admin akcije
+* [x] Dodaj primer za **SoD** pravilo u policy engine-u
+
+Tvoj assurance matrix već kaže da admin i tenant-admin moraju imati phishing-resistant faktor; za AAL3 NIST traži phishing-resistant autentikator sa ne-eksportabilnim ključem. Za “perfect” treba da ovo bude ne samo dokumentovano nego i isporučeno kao gotov policy paket.  ([NIST Publications][4])
+
+## P1 — zatvori otvorene accepted-risk stavke
+
+### 6) Trusted device / remembered device
+
+* [x] Odluči da li trusted-device **ulazi** ili se **trajno odbija**  
+  Odluka: funkcija je eksplicitno odbijena u ovoj iteraciji.
+* [ ] Ako ulazi:
+
+  * device token model
+  * device binding
+  * revocation
+  * per-device audit
+  * suspicious device re-challenge
+* [x] Ako ne ulazi:
+
+  * `[x]` napiši explicit policy da je to svesno odbijena funkcija zbog sigurnosti
+  * `[x]` ukloni sve future ambiguity iz UX-a i docs-a
+
+Trenutno je trusted-device podrška eksplicitno “accepted risk / not yet shipped”. Za “perfect” to mora biti zatvoreno na jedan ili drugi način. 
+
+### 7) Complete persistence-contract examples
+
+* [x] Dodaj pune DB primere za:
+
+  * `[x]` `SessionRegistry`
+  * `[x]` refresh token family store
+  * `[x]` token revocation store
+  * `[x]` MFA challenge store
+  * `[x]` audit export cursor store
+* [x] Dodaj migration primere
+* [x] Dodaj locking/concurrency scenarije za refresh reuse detection
+* [x] Dodaj cleanup jobs i TTL primere
+
+Ovo nije glamurozno, ali bez toga timovi lako pogrešno implementiraju sigurnosni model i “pokvare” kernel na adapter sloju.  
+
+## P2 — ako hoćeš “perfect identity platform”, ne samo perfect kernel
+
+### 8) OIDC provider behavior
+
+* [x] Implementiraj kernel-local OIDC provider lane
+
+  * `[x]` discovery
+  * `[x]` JWKS
+  * `[x]` id token issuance
+  * `[x]` userinfo
+  * `[x]` RP metadata posture
+* [x] Dodaj conformance test matrix
+* [x] Dodaj key rollover/JWKS overlap runbook
+* [~] Formal OIDC product surface i certification ostaju zaseban adapter/paket  
+  Napomena: kernel runtime, `.well-known` publishing adapter, conformance matrix i rollover runbook su isporučeni; logout i formalna certification staza nisu package-owned.
+
+### 9) Full machine identity lane
+
+* [x] Dodaj **client_credentials / workload identity** runtime
+* [x] Inventory svih non-human identities
+* [x] Audience/issuer/transport validation
+* [x] Rotation posture bez emergency redeploy-a
+* [x] Per-service scope boundaries
+
+### 10) SCIM runtime
+
+* [x] Implementiraj SCIM CRUD runtime
+* [x] SCIM token auth + rotation
+* [x] Group sync
+* [x] disable vs suspend semantics
+* [x] idempotency + drift detection
+* [x] audit za provisioning akcije
+* [~] Full SCIM HTTP RFC 7644 surface ostaje zaseban adapter/paket  
+  Napomena: kernel runtime, schema metadata, token-authenticated `/Users` CRUD adapter i audit su isporučeni; bulk i potpuna RFC 7644 produktizacija nisu package-owned.
+
+### 11) Tenant/control-plane
+
+* [~] Tenant admin UI/API za:
+
+  * `[x]` SSO config
+  * `[x]` SCIM config
+  * `[x]` domain verification references
+  * `[x]` group mapping
+  * `[x]` policy posture
+  * `[x]` dedicated HTTP surface
+* [x] Approval path za tenant security changes
+* [x] Config change audit diff
+* [x] safe rollout / rollback po tenantu
+
+Kernel-local tenant security workflow i framework-neutral admin HTTP surface su sada isporučeni. Ono što ostaje van punog scope-a je tenant-admin UI i širi tenant membership/control-plane proizvod. 
+
+## P3 — regulated / top-tier ops sloj
+
+### 12) Crypto & incident rigor
+
+* [x] Uvedi **multi-key verification** u runtime adapteru
+* [x] Uvedi **automated key rollover drill**
+* [x] Uvedi **forced key compromise drill** kao testiran playbook
+* [x] Uvedi **evidence preservation under legal hold**
+* [x] Uvedi **crypto agility acceptance tests**
+
+### 13) Supply-chain i release hardening
+
+* [x] Dependency review gate
+* [x] SBOM generisanje
+* [x] artifact signing
+* [x] secret scanning u CI
+* [x] release provenance
+* [x] rollback dokaz za auth-sensitive release
+
+### 14) Verification matrix za final perfection
+
+* [x] login success/failure
+* [x] MFA replay
+* [x] passkey replay
+* [x] refresh reuse
+* [x] DPoP replay
+* [x] mTLS mismatch
+* [x] CSRF za browser flows
+* [x] session fixation
+* [x] tenant crossing
+* [x] admin elevation abuse
+* [x] break-glass auditability
+* [x] deprovisioning revokes everything
+* [x] legal hold overrides anonymization correctly
+
+Tvoj crypto lifecycle je već dokumentovan, ali “perfect” znači i redovno uvežbane operativne drill-ove i release discipline. OAuth BCP i NIST smernice su tu dobar sever, ali ovo je već deployment-grade rigor, ne samo feature lista.   ([NIST Publications][4])
+
+## Moj iskren prioritetni redosled
+
+**Zatvoreno u kernelu:**
+
+1. CSRF/browser hardening
+2. DPoP/mTLS proof verification
+3. audit exporters + security notifications
+4. domain verification + metadata sync
+5. trusted-device decision closure
+6. OIDC provider
+7. SCIM runtime
+8. client_credentials / workload identity
+9. tenant control-plane
+
+**Preostalo van kernela:**
+
+1. OIDC logout/certification lane
+2. SCIM bulk i potpuna RFC 7644 produktizacija
+3. tenant-admin UI i širi membership/billing control-plane proizvod
+
+To je trenutno najkraći put od “baš jak auth kernel” do “kompletna identity platforma”.
+
+
+[1]: https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html?utm_source=chatgpt.com "Session Management Cheat Sheet"
+[2]: https://datatracker.ietf.org/doc/rfc9700/?utm_source=chatgpt.com "RFC 9700 - Best Current Practice for OAuth 2.0 Security"
+[3]: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html?utm_source=chatgpt.com "Logging Cheat Sheet"
+[4]: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf?utm_source=chatgpt.com "NIST.SP.800-63B-4.pdf"
+
+
 
 
 STANDARDI I KVALITET KOJI ZAHTEVAM:
@@ -1655,6 +1231,3 @@ STANDARDI I KVALITET KOJI ZAHTEVAM:
   If a structure looks simple and remains strong under pressure, it succeeded.
 
   ```
-
-
-

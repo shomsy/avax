@@ -75,6 +75,14 @@ final class FederationFlowTest extends TestCase
         $runtime->health = FederationConnectionHealth::UNAVAILABLE;
         $this->assertSame(FederationConnectionHealth::UNAVAILABLE, $auth->checkFederationConnectionHealth($connection->connectionId));
         $this->assertTrue($auth->evaluateFederationBreakGlassBypass($connection->connectionId));
+        $this->assertContains(
+            'auth.federation.break_glass.denied',
+            array_map(static fn ($event) => $event->name, $auditLog->events())
+        );
+        $this->assertContains(
+            'auth.federation.break_glass.allowed',
+            array_map(static fn ($event) => $event->name, $auditLog->events())
+        );
 
         try {
             $auth->startFederatedLogin(new StartFederatedLoginData(

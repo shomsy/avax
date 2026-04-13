@@ -200,6 +200,44 @@ class JwtIdentityTest extends TestCase
         $this->assertSame('thumb-123', $resolved?->senderConstraint?->thumbprint);
     }
 
+    public function testJwtIdentityIssuesAndResolvesWorkloadTokens() : void
+    {
+        $jwt = new JwtIdentity(
+            userSource      : new InMemoryUserSource(),
+            codec           : new HmacTokenCodec(secret: 'super-secret-key'),
+            clock           : new Clock(),
+            revocationStore : new InMemoryTokenRevocationStore()
+        );
+
+        $issued = $jwt->issueWorkloadToken(
+            subject         : 'client:machine-worker',
+            clientId        : 'oauth_machine',
+            scopes          : ['metrics.read', 'orders.sync'],
+            senderConstraint: new OAuthSenderConstraint(
+                type      : OAuthSenderConstraintType::MTLS,
+                thumbprint: 'cert-thumb-1'
+            ),
+            audience        : 'orders-api'
+        );
+        $resolved = $jwt->resolveWorkloadToken(
+            token           : $issued->token,
+            expectedAudience: 'orders-api'
+        );
+
+        $this->assertNotNull($resolved);
+        $this->assertSame('client:machine-worker', $resolved?->subject);
+        $this->assertSame('oauth_machine', $resolved?->clientId);
+        $this->assertSame(['metrics.read', 'orders.sync'], $resolved?->scopes);
+        $this->assertSame('orders-api', $resolved?->audience);
+        $this->assertSame(OAuthSenderConstraintType::MTLS, $resolved?->senderConstraint?->type);
+
+        $this->assertNull($jwt->resolveWorkloadToken($issued->token, expectedAudience: 'billing-api'));
+
+        $jwt->revoke($issued->tokenId, $issued->expiresAt);
+
+        $this->assertNull($jwt->resolveWorkloadToken($issued->token, expectedAudience: 'orders-api'));
+    }
+
     protected function tearDown() : void
     {
         Mockery::close();

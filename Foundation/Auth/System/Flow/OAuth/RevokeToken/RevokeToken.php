@@ -51,6 +51,13 @@ final readonly class RevokeToken
                 $this->jwtIdentity->revoke($access->tokenId, $access->expiresAt);
                 $revoked = true;
             }
+
+            $workload = $this->jwtIdentity->resolveWorkloadToken($data->token);
+
+            if ($workload !== null && $workload->clientId === $data->clientId) {
+                $this->jwtIdentity->revoke($workload->tokenId, $workload->expiresAt);
+                $revoked = true;
+            }
         }
 
         $this->auditLog->record(new AuditEvent(

@@ -25,7 +25,9 @@ final readonly class RegisterClient
             type                      : $data->type,
             redirectUris              : $data->redirectUris,
             allowedScopes             : $data->allowedScopes,
+            allowedAudiences          : $data->allowedAudiences,
             allowedGrantTypes         : $data->allowedGrantTypes,
+            audienceScopeBoundaries   : $data->audienceScopeBoundaries,
             requiredSenderConstraint  : $data->requiredSenderConstraint,
             workloadIdentity          : $data->workloadIdentity,
             phishingResistantRequired : $data->phishingResistantRequired
@@ -39,6 +41,7 @@ final readonly class RegisterClient
                 'name' => $registered->client->name,
                 'type' => $registered->client->type->value,
                 'workload_identity' => $registered->client->workloadIdentity ? 1 : 0,
+                'allowed_audiences' => implode(' ', $registered->client->allowedAudiences),
                 'sender_constraint' => $registered->client->requiredSenderConstraint?->value,
             ]
         ));

@@ -13,6 +13,7 @@ use Avax\Auth\System\Flow\Token\IssuedRefreshToken;
 use Avax\Auth\System\Flow\Token\IssuedToken;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Flow\Token\ResolvedToken;
+use Avax\Auth\System\Flow\Token\ResolvedWorkloadToken;
 use Avax\Auth\System\Flow\Token\TokenCodecInterface;
 use Avax\Auth\System\Flow\Token\TokenRevocationStoreInterface;
 use DateTimeImmutable;
@@ -50,9 +51,12 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             $notBefore = $claims['nbf'] ?? null;
             $subject   = $claims['sub'] ?? null;
             $tokenId   = $claims['jti'] ?? null;
+            $issuer    = $claims['iss'] ?? null;
 
             if (
-                ! is_int($expiresAt)
+                ! is_string($issuer)
+                || $issuer !== $this->issuer
+                || ! is_int($expiresAt)
                 || ! is_int($issuedAt)
                 || ! is_int($notBefore)
                 || ! is_int($subject)
@@ -121,6 +125,151 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 clientId     : $clientId,
                 scopes       : $scopes,
                 senderConstraint: $senderConstraint
+            );
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * @param list<string> $scopes
+     */
+    public function issueWorkloadToken(
+        string $subject,
+        string $clientId,
+        array $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null,
+        string|null $audience = null
+    ) : IssuedToken
+    {
+        $normalizedSubject = trim($subject);
+
+        if ($normalizedSubject === '') {
+            throw new InvalidArgumentException('Workload token subject cannot be empty.');
+        }
+
+        $issuedAt  = $this->clock->now();
+        $expiresAt = $issuedAt->modify("+{$this->tokenExpiry} seconds");
+        $tokenId   = bin2hex(random_bytes(16));
+        $payload   = [
+            'iss' => $this->issuer,
+            'sub' => $normalizedSubject,
+            'iat' => $issuedAt->getTimestamp(),
+            'nbf' => $issuedAt->getTimestamp(),
+            'exp' => $expiresAt->getTimestamp(),
+            'jti' => $tokenId,
+            'wli' => 1,
+            'client_id' => $clientId,
+        ];
+
+        if ($scopes !== []) {
+            $payload['scope'] = implode(' ', array_values($scopes));
+        }
+
+        if ($audience !== null && trim($audience) !== '') {
+            $payload['aud'] = trim($audience);
+        }
+
+        if ($senderConstraint !== null) {
+            $payload['cnf_typ'] = $senderConstraint->type->value;
+            $payload['cnf_thumbprint'] = $senderConstraint->thumbprint;
+        }
+
+        return new IssuedToken(
+            token    : $this->codec->encode($payload),
+            tokenId  : $tokenId,
+            expiresAt: $expiresAt
+        );
+    }
+
+    public function resolveWorkloadToken(
+        #[SensitiveParameter] string $token,
+        string|null $expectedAudience = null,
+        string|null $expectedIssuer = null
+    ) : ResolvedWorkloadToken|null
+    {
+        try {
+            $claims = $this->codec->decode($token);
+
+            if ($claims === null) {
+                return null;
+            }
+
+            $expiresAt = $claims['exp'] ?? null;
+            $issuedAt  = $claims['iat'] ?? null;
+            $notBefore = $claims['nbf'] ?? null;
+            $subject   = $claims['sub'] ?? null;
+            $tokenId   = $claims['jti'] ?? null;
+            $clientId  = $claims['client_id'] ?? null;
+            $issuer    = $claims['iss'] ?? null;
+            $audience  = $claims['aud'] ?? null;
+            $workloadIdentity = ($claims['wli'] ?? 0) === 1;
+            $scopeClaim = $claims['scope'] ?? null;
+            $senderConstraintType = $claims['cnf_typ'] ?? null;
+            $senderConstraintThumbprint = $claims['cnf_thumbprint'] ?? null;
+            $scopes = [];
+            $senderConstraint = null;
+
+            if (
+                ! $workloadIdentity
+                || ! is_int($expiresAt)
+                || ! is_int($issuedAt)
+                || ! is_int($notBefore)
+                || ! is_string($subject)
+                || trim($subject) === ''
+                || ! is_string($tokenId)
+                || ! is_string($clientId)
+                || ! is_string($issuer)
+            ) {
+                return null;
+            }
+
+            if ($issuer !== ($expectedIssuer ?? $this->issuer)) {
+                return null;
+            }
+
+            if ($audience !== null && ! is_string($audience)) {
+                return null;
+            }
+
+            if ($expectedAudience !== null && $audience !== $expectedAudience) {
+                return null;
+            }
+
+            $now = $this->clock->now();
+
+            if ($issuedAt > $now->getTimestamp() || $notBefore > $now->getTimestamp() || $expiresAt <= $now->getTimestamp()) {
+                return null;
+            }
+
+            if ($this->revocationStore?->isRevoked($tokenId, $now) === true) {
+                return null;
+            }
+
+            if (is_string($scopeClaim) && $scopeClaim !== '') {
+                $scopes = array_values(array_filter(explode(' ', $scopeClaim), static fn (string $scope) : bool => $scope !== ''));
+            }
+
+            if ($senderConstraintType !== null || $senderConstraintThumbprint !== null) {
+                if (! is_string($senderConstraintType) || ! is_string($senderConstraintThumbprint)) {
+                    return null;
+                }
+
+                $senderConstraint = new OAuthSenderConstraint(
+                    type      : OAuthSenderConstraintType::from($senderConstraintType),
+                    thumbprint: $senderConstraintThumbprint
+                );
+            }
+
+            return new ResolvedWorkloadToken(
+                subject          : $subject,
+                clientId         : $clientId,
+                tokenId          : $tokenId,
+                expiresAt        : new DateTimeImmutable("@{$expiresAt}"),
+                scopes           : $scopes,
+                audience         : $audience,
+                issuer           : $issuer,
+                senderConstraint : $senderConstraint
             );
         } catch (Throwable) {
             return null;

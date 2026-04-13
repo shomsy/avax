@@ -9,6 +9,7 @@ use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Flow\Token\IssuedRefreshToken;
 use Avax\Auth\System\Flow\Token\IssuedToken;
 use Avax\Auth\System\Flow\Token\ResolvedToken;
+use Avax\Auth\System\Flow\Token\ResolvedWorkloadToken;
 use Avax\Auth\System\Flow\Token\TokenIssuerInterface;
 use Avax\Auth\System\Flow\Token\TokenVerifierInterface;
 use DateTimeImmutable;
@@ -31,6 +32,23 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
     ) : IssuedToken;
 
     public function resolve(string $token) : ResolvedToken|null;
+
+    /**
+     * @param list<string> $scopes
+     */
+    public function issueWorkloadToken(
+        string $subject,
+        string $clientId,
+        array $scopes = [],
+        OAuthSenderConstraint|null $senderConstraint = null,
+        string|null $audience = null
+    ) : IssuedToken;
+
+    public function resolveWorkloadToken(
+        string $token,
+        string|null $expectedAudience = null,
+        string|null $expectedIssuer = null
+    ) : ResolvedWorkloadToken|null;
 
     /**
      * @param list<string> $scopes

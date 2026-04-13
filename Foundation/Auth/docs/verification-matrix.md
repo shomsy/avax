@@ -15,6 +15,9 @@ scenarios.
 ## Token And Sender Constraint
 
 - refresh reuse
+- OIDC discovery metadata and JWKS exposure
+- OIDC nonce-bound ID-token issuance
+- OIDC userinfo reads from active access tokens
 - DPoP replay
 - DPoP method and URI mismatch
 - mTLS mismatch
@@ -23,9 +26,17 @@ scenarios.
 ## Tenant And Admin
 
 - tenant crossing rejection
+- tenant security approval gating
+- tenant security apply and rollback
 - admin elevation abuse
 - break-glass auditability
 - deprovisioning revokes active access
+
+## Provisioning And Directory
+
+- SCIM directory token rotation
+- SCIM idempotent update
+- SCIM drift detection during group sync
 
 ## Data And Compliance
 

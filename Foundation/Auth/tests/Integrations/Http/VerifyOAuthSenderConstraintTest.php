@@ -108,6 +108,14 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
             'jkt' => 'thumb-1',
             'ath' => $this->hashAccessToken('different-token'),
         ]);
+        $wrongUriProof = $oldCodec->encode([
+            'jti' => 'proof-3b',
+            'iat' => time(),
+            'htu' => 'https://api.example.test/admin',
+            'htm' => 'GET',
+            'jkt' => 'thumb-1',
+            'ath' => $this->hashAccessToken('access-token'),
+        ]);
 
         $verifier = new VerifyDpopProof(
             codec      : $oldCodec,
@@ -137,6 +145,18 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
             $this->fail('Expected access token mismatch.');
         } catch (DpopProofFailed $exception) {
             $this->assertStringContainsString('access_token_mismatch', $exception->getMessage());
+        }
+
+        try {
+            $verifier->execute(new HttpOAuthProofInput(
+                method     : 'GET',
+                uri        : 'https://api.example.test/me',
+                headers    : ['DPoP' => $wrongUriProof],
+                accessToken: 'access-token'
+            ));
+            $this->fail('Expected URI mismatch.');
+        } catch (DpopProofFailed $exception) {
+            $this->assertStringContainsString('uri_mismatch', $exception->getMessage());
         }
 
         $rotatedVerifier = new VerifyDpopProof(

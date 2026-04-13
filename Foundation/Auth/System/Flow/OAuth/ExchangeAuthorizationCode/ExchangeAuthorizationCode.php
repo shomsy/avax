@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode;
 
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
+use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
 use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
@@ -26,7 +27,8 @@ final readonly class ExchangeAuthorizationCode
         private JwtIdentityInterface            $jwtIdentity,
         private RefreshTokenStoreInterface      $refreshTokenStore,
         private AuditLogInterface               $auditLog,
-        private Clock                           $clock
+        private Clock                           $clock,
+        private OidcProviderInterface|null      $oidcProvider = null
     ) {}
 
     /**
@@ -119,6 +121,23 @@ final readonly class ExchangeAuthorizationCode
             scopes       : $record->scopes,
             senderConstraint: $data->senderConstraint
         );
+        $idToken = null;
+
+        if (in_array('openid', $record->scopes, true)) {
+            if ($this->oidcProvider === null) {
+                $this->recordFailure($data, 'oidc_provider_not_configured');
+                throw OAuthTokenExchangeFailed::invalidGrant();
+            }
+
+            $idToken = $this->oidcProvider->issueIdToken(
+                user              : $user,
+                clientId          : $client->clientId,
+                scopes            : $record->scopes,
+                nonce             : $record->nonce,
+                authenticatedAt   : $record->mfaVerifiedAt,
+                phishingResistant : $record->phishingResistant
+            )->token;
+        }
 
         $this->auditLog->record(new AuditEvent(
             name      : 'auth.oauth.authorization_code.exchanged',
@@ -137,6 +156,7 @@ final readonly class ExchangeAuthorizationCode
             accessToken          : $accessToken->token,
             accessTokenExpiresAt : $accessToken->expiresAt,
             refreshToken         : $refreshToken->token,
+            idToken              : $idToken,
             clientId             : $client->clientId,
             userId               : $user->getId()->value,
             scopes               : $record->scopes,

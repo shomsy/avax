@@ -32,39 +32,39 @@ final class ResetPasswordTest extends TestCase
 {
     public function testResetPasswordRevokesSessionsAndChallenges() : void
     {
-        $clock             = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $clock             = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
         $passwordHasher    = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
         $userSource        = new InMemoryUserSource();
         $passwordResetStore = new InMemoryPasswordResetStore();
         $user              = User::create(
-            id          : new UserId(1),
-            email       : new UserEmail('user@example.com'),
+            id          : new UserId(value: 1),
+            email       : new UserEmail(value: 'user@example.com'),
             username    : 'user',
-            passwordHash: $passwordHasher->hash('old-password')
+            passwordHash: $passwordHasher->hash(password: 'old-password')
         );
-        $userSource->create($user);
-        $challenge = $passwordResetStore->issue(new UserId(1), $clock->now()->add(new DateInterval('PT1H')));
+        $userSource->create(user: $user);
+        $challenge = $passwordResetStore->issue(userId: new UserId(value: 1), expiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT1H')));
 
         $sessionRegistry = new InMemorySessionRegistry();
-        $sessionRegistry->track(new SessionRecord(
+        $sessionRegistry->track(record: new SessionRecord(
             sessionId        : 'session-1',
-            userId           : new UserId(1),
-            createdAt        : $clock->now()->sub(new DateInterval('PT30M')),
+            userId           : new UserId(value: 1),
+            createdAt        : $clock->now()->sub(interval: new DateInterval(duration: 'PT30M')),
             lastSeenAt       : $clock->now(),
-            idleExpiresAt    : $clock->now()->add(new DateInterval('PT15M')),
-            absoluteExpiresAt: $clock->now()->add(new DateInterval('PT12H'))
+            idleExpiresAt    : $clock->now()->add(interval: new DateInterval(duration: 'PT15M')),
+            absoluteExpiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT12H'))
         ));
         $challengeStore = new InMemoryMfaChallengeStore();
-        $challengeStore->issue(new MfaChallengeRecord(
+        $challengeStore->issue(record: new MfaChallengeRecord(
             challengeId: 'challenge-1',
-            userId     : new UserId(1),
+            userId     : new UserId(value: 1),
             purpose    : MfaChallengePurpose::LOGIN,
             createdAt  : $clock->now(),
-            expiresAt  : $clock->now()->add(new DateInterval('PT5M'))
+            expiresAt  : $clock->now()->add(interval: new DateInterval(duration: 'PT5M'))
         ));
 
         $refreshTokens = Mockery::mock(RefreshTokenStoreInterface::class);
-        $refreshTokens->shouldReceive('revokeUser')->once()->with(Mockery::type(UserId::class));
+        $refreshTokens->shouldReceive('revokeUser')->once()->with(Mockery::type(expected: UserId::class));
 
         $flow = new ResetPassword(
             userSource        : $userSource,
@@ -77,15 +77,15 @@ final class ResetPasswordTest extends TestCase
             refreshTokenStore : $refreshTokens
         );
 
-        $result = $flow->execute(new ResetPasswordData(
+        $result = $flow->execute(data: new ResetPasswordData(
             token      : $challenge->token ?? '',
             newPassword: 'new-password'
         ));
 
-        $this->assertTrue($result);
-        $this->assertSame('password_reset', $sessionRegistry->find('session-1')?->revokeReason);
-        $this->assertNull($challengeStore->find('challenge-1'));
-        $this->assertTrue($passwordHasher->verify('new-password', $userSource->findById(new UserId(1))?->getPasswordHash() ?? ''));
+        $this->assertTrue(condition: $result);
+        $this->assertSame(expected: 'password_reset', actual: $sessionRegistry->find(sessionId: 'session-1')?->revokeReason);
+        $this->assertNull(actual: $challengeStore->find(challengeId: 'challenge-1'));
+        $this->assertTrue(condition: $passwordHasher->verify(password: 'new-password', hash: $userSource->findById(id: new UserId(value: 1))?->getPasswordHash() ?? ''));
     }
 
     protected function tearDown() : void

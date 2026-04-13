@@ -16,7 +16,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 final readonly class RequirePermission
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication
     ) {}
 
     /**

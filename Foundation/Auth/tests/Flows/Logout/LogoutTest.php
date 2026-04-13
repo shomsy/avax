@@ -24,7 +24,7 @@ class LogoutTest extends TestCase
     public function testLogoutClearsIdentity() : void
     {
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(id: 7, email: 'logout@example.com', username: 'logout'),
             mode: AuthenticationMode::TOKEN
         ));

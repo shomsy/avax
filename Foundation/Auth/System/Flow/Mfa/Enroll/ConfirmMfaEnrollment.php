@@ -25,12 +25,12 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class ConfirmMfaEnrollment
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface     $mfaStore,
-        private TotpInterface         $totp,
-        private GenerateBackupCodes   $generateBackupCodes,
-        private AuditLogInterface     $auditLog,
-        private Clock                 $clock
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private MfaStoreInterface                            $mfaStore,
+        private TotpInterface                                $totp,
+        #[\SensitiveParameter] private GenerateBackupCodes   $generateBackupCodes,
+        private AuditLogInterface                            $auditLog,
+        private Clock                                        $clock
     ) {}
 
     /**
@@ -45,8 +45,8 @@ final readonly class ConfirmMfaEnrollment
             throw new Unauthenticated();
         }
 
-        $userId = new UserId($user->id);
-        $record = $this->mfaStore->findPendingEnrollment($userId);
+        $userId = new UserId(value: $user->id);
+        $record = $this->mfaStore->findPendingEnrollment(userId: $userId);
 
         if ($record === null) {
             throw MfaEnrollmentFailed::missingEnrollment();
@@ -54,15 +54,15 @@ final readonly class ConfirmMfaEnrollment
 
         $now = $this->clock->now();
 
-        if ($record->isExpiredAt($now)) {
-            $this->mfaStore->cancelEnrollment($userId);
+        if ($record->isExpiredAt(moment: $now)) {
+            $this->mfaStore->cancelEnrollment(userId: $userId);
             throw MfaEnrollmentFailed::expiredEnrollment();
         }
 
-        $verification = $this->totp->verify($record->secret, $data->code, $now);
+        $verification = $this->totp->verify(secret: $record->secret, code: $data->code, moment: $now);
 
         if (! $verification->accepted || $verification->timeStep === null) {
-            $this->auditLog->record(new AuditEvent(
+            $this->auditLog->record(event: new AuditEvent(
                                         name      : 'auth.mfa.enrollment.failed',
                                         occurredAt: $now,
                                         context   : [
@@ -75,7 +75,7 @@ final readonly class ConfirmMfaEnrollment
         }
 
         $generated = $this->generateBackupCodes->execute();
-        $this->mfaStore->saveMethod(new MfaMethodRecord(
+        $this->mfaStore->saveMethod(record: new MfaMethodRecord(
                                         userId              : $userId,
                                         method              : $record->method,
                                         secret              : $record->secret,
@@ -83,7 +83,7 @@ final readonly class ConfirmMfaEnrollment
                                         backupCodes         : $generated->records,
                                         lastAcceptedTimeStep: $verification->timeStep
                                     ));
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.mfa.enrollment.completed',
                                     occurredAt: $now,
                                     context   : [
@@ -91,7 +91,7 @@ final readonly class ConfirmMfaEnrollment
                                                     'method'  => $record->method->value,
                                                 ]
                                 ));
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.mfa.enabled',
                                     occurredAt: $now,
                                     context   : [
@@ -100,7 +100,7 @@ final readonly class ConfirmMfaEnrollment
                                                 ]
                                 ));
         $context = $this->currentAuthentication->read();
-        $this->currentAuthentication->store(AuthenticationContext::authenticated(
+        $this->currentAuthentication->store(context: AuthenticationContext::authenticated(
             user                : new AuthenticatedUser(
                                       id           : $user->id,
                                       email        : $user->email,

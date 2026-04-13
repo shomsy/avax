@@ -39,13 +39,13 @@ final readonly class MaskAuditContext
         $masked = [];
 
         foreach ($context as $key => $value) {
-            if ($this->isSensitiveKey($key)) {
+            if ($this->isSensitiveKey(key: $key)) {
                 $masked[$key] = '[redacted]';
                 continue;
             }
 
             if (is_array($value)) {
-                $masked[$key] = $this->maskArray($value);
+                $masked[$key] = $this->maskArray(value: $value);
                 continue;
             }
 
@@ -64,13 +64,13 @@ final readonly class MaskAuditContext
         $masked = [];
 
         foreach ($value as $itemKey => $itemValue) {
-            if (is_string($itemKey) && $this->isSensitiveKey($itemKey)) {
+            if (is_string($itemKey) && $this->isSensitiveKey(key: $itemKey)) {
                 $masked[$itemKey] = '[redacted]';
                 continue;
             }
 
             if (is_array($itemValue)) {
-                $masked[$itemKey] = $this->maskArray($itemValue);
+                $masked[$itemKey] = $this->maskArray(value: $itemValue);
                 continue;
             }
 

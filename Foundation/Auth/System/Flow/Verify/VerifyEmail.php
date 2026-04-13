@@ -14,18 +14,18 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class VerifyEmail
 {
     public function __construct(
-        private EmailVerificationStoreInterface      $emailVerificationStore,
-        private EmailVerificationStateStoreInterface $emailVerificationState,
-        private AuditLogInterface                    $auditLog,
-        private Clock                                $clock
+        #[\SensitiveParameter] private EmailVerificationStoreInterface      $emailVerificationStore,
+        #[\SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
+        private AuditLogInterface                                           $auditLog,
+        private Clock                                                       $clock
     ) {}
 
     public function execute(VerifyEmailData $data) : bool
     {
-        $userId = $this->emailVerificationStore->consume($data->token, $this->clock->now());
+        $userId = $this->emailVerificationStore->consume(token: $data->token, now: $this->clock->now());
 
         if ($userId === null) {
-            $this->auditLog->record(new AuditEvent(
+            $this->auditLog->record(event: new AuditEvent(
                                         name      : 'auth.email_verification.failed',
                                         occurredAt: $this->clock->now(),
                                         context   : [
@@ -38,8 +38,8 @@ final readonly class VerifyEmail
             return false;
         }
 
-        $this->emailVerificationState->markVerified($userId);
-        $this->auditLog->record(new AuditEvent(
+        $this->emailVerificationState->markVerified(userId: $userId);
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.email_verification.completed',
                                     occurredAt: $this->clock->now(),
                                     context   : [

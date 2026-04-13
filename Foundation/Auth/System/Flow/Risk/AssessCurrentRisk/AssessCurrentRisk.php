@@ -13,12 +13,12 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 final readonly class AssessCurrentRisk
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private UserSourceInterface $userSource,
-        private DeterministicRiskEngine $riskEngine
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private UserSourceInterface                          $userSource,
+        private DeterministicRiskEngine                      $riskEngine
     ) {}
 
-    public function execute(string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
+    public function execute(#[\SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
     {
         $user = $this->currentAuthentication->read()->user();
 
@@ -26,12 +26,12 @@ final readonly class AssessCurrentRisk
             return null;
         }
 
-        $entity = $this->userSource->findById(new UserId($user->id));
+        $entity = $this->userSource->findById(id: new UserId(value: $user->id));
 
         if ($entity === null) {
             return null;
         }
 
-        return $this->riskEngine->assessSuccessfulAuthentication($entity, $ipAddress, $userAgent);
+        return $this->riskEngine->assessSuccessfulAuthentication(user: $entity, ipAddress: $ipAddress, userAgent: $userAgent);
     }
 }

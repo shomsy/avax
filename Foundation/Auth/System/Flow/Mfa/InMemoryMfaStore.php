@@ -52,13 +52,13 @@ final class InMemoryMfaStore implements MfaStoreInterface
     public function disable(UserId $userId) : void
     {
         unset($this->methods[$userId->value], $this->pendingEnrollments[$userId->value]);
-        $this->forgetRecoveryForUser($userId);
+        $this->forgetRecoveryForUser(userId: $userId);
     }
 
     public function forgetRecoveryForUser(UserId $userId) : void
     {
         foreach ($this->recoveryTokens as $tokenHash => $record) {
-            if ($record->userId->equals($userId)) {
+            if ($record->userId->equals(other: $userId)) {
                 unset($this->recoveryTokens[$tokenHash]);
             }
         }
@@ -81,16 +81,16 @@ final class InMemoryMfaStore implements MfaStoreInterface
 
     public function saveRecovery(MfaRecoveryRecord $record) : void
     {
-        $this->forgetRecoveryForUser($record->userId);
+        $this->forgetRecoveryForUser(userId: $record->userId);
         $this->recoveryTokens[$record->tokenHash] = $record;
     }
 
-    public function findRecovery(string $tokenHash) : MfaRecoveryRecord|null
+    public function findRecovery(#[\SensitiveParameter] string $tokenHash) : MfaRecoveryRecord|null
     {
         return $this->recoveryTokens[$tokenHash] ?? null;
     }
 
-    public function forgetRecovery(string $tokenHash) : void
+    public function forgetRecovery(#[\SensitiveParameter] string $tokenHash) : void
     {
         unset($this->recoveryTokens[$tokenHash]);
     }

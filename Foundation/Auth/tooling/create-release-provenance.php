@@ -10,7 +10,7 @@ $root = dirname(__DIR__);
 $generator = new CreateReleaseProvenance();
 
 echo json_encode(
-    $generator->execute($root, [
+    $generator->execute(repositoryRoot: $root, validationCommands: [
         'php composer.phar test',
         'php composer.phar analyse',
         'php composer.phar analyse:strict',

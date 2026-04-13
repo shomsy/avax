@@ -18,6 +18,6 @@ final readonly class ReadTenantSecurityChangeRequests
      */
     public function execute(string $tenantSlug) : array
     {
-        return $this->changeRequestStore->allForTenant($tenantSlug);
+        return $this->changeRequestStore->allForTenant(tenantSlug: $tenantSlug);
     }
 }

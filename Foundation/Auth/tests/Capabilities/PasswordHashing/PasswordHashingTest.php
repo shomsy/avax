@@ -19,12 +19,12 @@ class PasswordHashingTest extends TestCase
         $info   = password_get_info($hash);
 
         if (defined('PASSWORD_ARGON2ID')) {
-            $this->assertSame('argon2id', $info['algoName']);
+            $this->assertSame(expected: 'argon2id', actual: $info['algoName']);
 
             return;
         }
 
-        $this->assertNotSame('unknown', $info['algoName']);
+        $this->assertNotSame(expected: 'unknown', actual: $info['algoName']);
     }
 
     public function testHashAndVerify() : void

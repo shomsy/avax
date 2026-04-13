@@ -230,7 +230,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
     {
         $this->addExtender(
             abstract  : $abstract,
-            extender  : Closure::fromCallable($closure),
+            extender  : Closure::fromCallable(callback: $closure),
             descriptor: 'extender'
         );
     }
@@ -256,7 +256,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
         if (is_callable($decorator)) {
             $this->addExtender(
                 abstract  : $abstract,
-                extender  : Closure::fromCallable($decorator),
+                extender  : Closure::fromCallable(callback: $decorator),
                 descriptor: $this->describeDecorator(decorator: $decorator)
             );
 
@@ -274,7 +274,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
                 }
 
                 if ($resolved instanceof DecoratorInterface) {
-                    return $resolved->decorate($instance, $container);
+                    return $resolved->decorate(instance: $instance, container: $container);
                 }
 
                 if (is_callable($resolved)) {

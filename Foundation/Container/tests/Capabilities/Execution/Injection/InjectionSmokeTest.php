@@ -34,14 +34,14 @@ final class InjectionTarget
 }
 
 $container = makeTestContainer();
-$container->bind(InjectionGreeterContract::class, InjectionGreeter::class);
+$container->bind(abstract: InjectionGreeterContract::class, concrete: InjectionGreeter::class);
 
-$target = $container->injectInto(new InjectionTarget());
-$report = $container->inspectInjection($target);
+$target = $container->injectInto(target: new InjectionTarget());
+$report = $container->inspectInjection(target: $target);
 
-assertSame('injected', $target->greeter->message(), 'Property injection should resolve bound services.');
-assertTrue($target->methodInjected, 'Method injection should run after property injection.');
-assertTrue($container->canInject($target), 'Container should report injectable targets.');
-assertTrue($report->success, 'Injection report should describe injectable targets.');
+assertSame(expected: 'injected', actual: $target->greeter->message(), message: 'Property injection should resolve bound services.');
+assertTrue(condition: $target->methodInjected, message: 'Method injection should run after property injection.');
+assertTrue(condition: $container->canInject(target: $target), message: 'Container should report injectable targets.');
+assertTrue(condition: $report->success, message: 'Injection report should describe injectable targets.');
 
 echo basename(__FILE__) . " ok\n";

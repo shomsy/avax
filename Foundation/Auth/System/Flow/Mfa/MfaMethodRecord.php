@@ -18,18 +18,18 @@ final readonly class MfaMethodRecord
      * @param list<BackupCodeRecord> $backupCodes
      */
     public function __construct(
-        public UserId            $userId,
-        public MfaMethod         $method,
-        public string            $secret,
-        public DateTimeImmutable $enabledAt,
-        public array             $backupCodes = [],
-        public int|null          $lastAcceptedTimeStep = null
+        public UserId                        $userId,
+        public MfaMethod                     $method,
+        #[\SensitiveParameter] public string $secret,
+        public DateTimeImmutable             $enabledAt,
+        #[\SensitiveParameter] public array  $backupCodes = [],
+        public int|null                      $lastAcceptedTimeStep = null
     ) {}
 
     /**
      * @param list<BackupCodeRecord> $backupCodes
      */
-    public function withBackupCodes(array $backupCodes) : self
+    public function withBackupCodes(#[\SensitiveParameter] array $backupCodes) : self
     {
         return new self(
             userId              : $this->userId,

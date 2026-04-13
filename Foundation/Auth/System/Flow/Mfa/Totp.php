@@ -19,21 +19,21 @@ final readonly class Totp implements TotpInterface
     )
     {
         if ($this->digits < 6) {
-            throw new InvalidArgumentException('TOTP digits must be at least 6.');
+            throw new InvalidArgumentException(message: 'TOTP digits must be at least 6.');
         }
 
         if ($this->periodSeconds < 1) {
-            throw new InvalidArgumentException('TOTP period must be at least 1 second.');
+            throw new InvalidArgumentException(message: 'TOTP period must be at least 1 second.');
         }
 
         if ($this->allowedSkewSteps < 0) {
-            throw new InvalidArgumentException('Allowed skew steps cannot be negative.');
+            throw new InvalidArgumentException(message: 'Allowed skew steps cannot be negative.');
         }
     }
 
     public function generateSecret() : string
     {
-        return $this->base32Encode(random_bytes(20));
+        return $this->base32Encode(bytes: random_bytes(20));
     }
 
     private function base32Encode(string $bytes) : string
@@ -60,13 +60,13 @@ final readonly class Totp implements TotpInterface
         return $encoded;
     }
 
-    public function provisioningUri(string $issuer, string $accountLabel, string $secret) : string
+    public function provisioningUri(string $issuer, #[\SensitiveParameter] string $accountLabel, #[\SensitiveParameter] string $secret) : string
     {
         $issuer       = trim($issuer);
         $accountLabel = trim($accountLabel);
 
         if ($issuer === '' || $accountLabel === '') {
-            throw new InvalidArgumentException('Issuer and account label are required for MFA enrollment.');
+            throw new InvalidArgumentException(message: 'Issuer and account label are required for MFA enrollment.');
         }
 
         $label       = rawurlencode("{$issuer}:{$accountLabel}");
@@ -77,20 +77,20 @@ final readonly class Totp implements TotpInterface
     }
 
     public function verify(
-        string            $secret,
-        string            $code,
-        DateTimeImmutable $moment,
-        int|null          $lastAcceptedTimeStep = null
+        #[\SensitiveParameter] string $secret,
+        #[\SensitiveParameter] string $code,
+        DateTimeImmutable             $moment,
+        int|null                      $lastAcceptedTimeStep = null
     ) : TotpVerification
     {
         if (preg_match('/^\d{6,8}$/', $code) !== 1) {
-            return TotpVerification::invalid('format_invalid');
+            return TotpVerification::invalid(reason: 'format_invalid');
         }
 
-        $secretBytes = $this->base32Decode($secret);
+        $secretBytes = $this->base32Decode(secret: $secret);
 
         if ($secretBytes === null) {
-            return TotpVerification::invalid('secret_invalid');
+            return TotpVerification::invalid(reason: 'secret_invalid');
         }
 
         $currentTimeStep = intdiv($moment->getTimestamp(), $this->periodSeconds);
@@ -106,25 +106,25 @@ final readonly class Totp implements TotpInterface
                 continue;
             }
 
-            $expected = $this->hotp($secretBytes, $timeStep);
+            $expected = $this->hotp(secret: $secretBytes, counter: $timeStep);
 
             if (hash_equals($expected, $code)) {
-                return TotpVerification::accepted($timeStep);
+                return TotpVerification::accepted(timeStep: $timeStep);
             }
         }
 
         if ($lastAcceptedTimeStep !== null) {
-            $currentCode = $this->hotp($secretBytes, $currentTimeStep);
+            $currentCode = $this->hotp(secret: $secretBytes, counter: $currentTimeStep);
 
             if (hash_equals($currentCode, $code) && $currentTimeStep <= $lastAcceptedTimeStep) {
-                return TotpVerification::invalid('replayed');
+                return TotpVerification::invalid(reason: 'replayed');
             }
         }
 
         return TotpVerification::invalid();
     }
 
-    private function base32Decode(string $secret) : string|null
+    private function base32Decode(#[\SensitiveParameter] string $secret) : string|null
     {
         $alphabet   = array_flip(str_split('ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'));
         $normalized = strtoupper(preg_replace('/[^A-Z2-7]/', '', $secret) ?? '');
@@ -159,7 +159,7 @@ final readonly class Totp implements TotpInterface
         return $bytes;
     }
 
-    private function hotp(string $secret, int $counter) : string
+    private function hotp(#[\SensitiveParameter] string $secret, int $counter) : string
     {
         $binaryCounter = pack('N2', ($counter >> 32) & 0xFFFFFFFF, $counter & 0xFFFFFFFF);
         $hash          = hash_hmac('sha1', $binaryCounter, $secret, true);
@@ -168,7 +168,7 @@ final readonly class Totp implements TotpInterface
         $unpacked      = unpack('N', $chunk);
 
         if ($unpacked === false || ! isset($unpacked[1])) {
-            throw new InvalidArgumentException('TOTP hash unpack failed.');
+            throw new InvalidArgumentException(message: 'TOTP hash unpack failed.');
         }
 
         $value         = $unpacked[1] & 0x7FFFFFFF;
@@ -177,16 +177,16 @@ final readonly class Totp implements TotpInterface
         return str_pad((string) ($value % $modulo), $this->digits, '0', STR_PAD_LEFT);
     }
 
-    public function codeAt(string $secret, DateTimeImmutable $moment) : string
+    public function codeAt(#[\SensitiveParameter] string $secret, DateTimeImmutable $moment) : string
     {
-        $secretBytes = $this->base32Decode($secret);
+        $secretBytes = $this->base32Decode(secret: $secret);
 
         if ($secretBytes === null) {
-            throw new InvalidArgumentException('TOTP secret is invalid.');
+            throw new InvalidArgumentException(message: 'TOTP secret is invalid.');
         }
 
         $timeStep = intdiv($moment->getTimestamp(), $this->periodSeconds);
 
-        return $this->hotp($secretBytes, $timeStep);
+        return $this->hotp(secret: $secretBytes, counter: $timeStep);
     }
 }

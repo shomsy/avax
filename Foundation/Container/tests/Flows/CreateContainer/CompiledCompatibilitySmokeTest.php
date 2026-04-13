@@ -22,16 +22,16 @@ final class CompatibilityTarget
 $cacheDir = sys_get_temp_dir() . '/container-compatibility-' . uniqid();
 $version  = 'compiled-compatibility-smoke';
 
-$compiled = makeTestContainer(CreateContainerConfig::create(
+$compiled = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir    : $cacheDir,
     cacheVersion: $version,
     compileMode : CreateContainerConfig::COMPILE_MODE_PRODUCTION,
     settings    : ['app_env' => 'prod'],
 ));
-$compiled->singleton(CompatibilityDependency::class, CompatibilityDependency::class);
-$compiled->compileContainer([CompatibilityTarget::class, CompatibilityDependency::class]);
+$compiled->singleton(abstract: CompatibilityDependency::class, concrete: CompatibilityDependency::class);
+$compiled->compileContainer(serviceIds: [CompatibilityTarget::class, CompatibilityDependency::class]);
 
-$reloaded = makeTestContainer(CreateContainerConfig::create(
+$reloaded = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir       : $cacheDir,
     cacheVersion   : $version,
     compileMode    : CreateContainerConfig::COMPILE_MODE_DEV,
@@ -39,28 +39,28 @@ $reloaded = makeTestContainer(CreateContainerConfig::create(
     debug          : true,
     diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_DETAILED,
 ));
-$reloaded->singleton(CompatibilityDependency::class, CompatibilityDependency::class);
+$reloaded->singleton(abstract: CompatibilityDependency::class, concrete: CompatibilityDependency::class);
 
-$report   = $reloaded->compileReport([CompatibilityTarget::class]);
-$resolved = $reloaded->get(CompatibilityTarget::class);
+$report   = $reloaded->compileReport(serviceIds: [CompatibilityTarget::class]);
+$resolved = $reloaded->get(id: CompatibilityTarget::class);
 
-assertTrue($report !== null, 'Compile reports should still exist for incompatible artifacts.');
-assertTrue(! $report->available, 'Incompatible compiled artifacts must not be reported as available.');
-assertTrue(! $report->compatible, 'Incompatible compiled artifacts must report compatibility failure.');
-assertSame('incompatible', $report->freshnessState, 'Incompatible compiled artifacts must expose an incompatible freshness state.');
+assertTrue(condition: $report !== null, message: 'Compile reports should still exist for incompatible artifacts.');
+assertTrue(condition: ! $report->available, message: 'Incompatible compiled artifacts must not be reported as available.');
+assertTrue(condition: ! $report->compatible, message: 'Incompatible compiled artifacts must report compatibility failure.');
+assertSame(expected: 'incompatible', actual: $report->freshnessState, message: 'Incompatible compiled artifacts must expose an incompatible freshness state.');
 assertTrue(
-    in_array('config hash mismatch', $report->compatibilityIssues, true),
-    'Compile reports should expose config compatibility mismatches.'
+    condition: in_array('config hash mismatch', $report->compatibilityIssues, true),
+    message  : 'Compile reports should expose config compatibility mismatches.'
 );
 assertTrue(
-    in_array('compile mode mismatch', $report->compatibilityIssues, true),
-    'Compile reports should expose compile mode compatibility mismatches.'
+    condition: in_array('compile mode mismatch', $report->compatibilityIssues, true),
+    message  : 'Compile reports should expose compile mode compatibility mismatches.'
 );
 assertTrue(
-    in_array('diagnostics mode mismatch', $report->compatibilityIssues, true),
-    'Compile reports should expose diagnostics mode compatibility mismatches.'
+    condition: in_array('diagnostics mode mismatch', $report->compatibilityIssues, true),
+    message  : 'Compile reports should expose diagnostics mode compatibility mismatches.'
 );
-assertTrue(! $reloaded->isCompiled(CompatibilityTarget::class), 'Incompatible artifacts must not report compiled service availability.');
-assertSame('compatibility', $resolved->dependency->id(), 'Runtime should fall back to dynamic resolution for incompatible artifacts.');
+assertTrue(condition: ! $reloaded->isCompiled(id: CompatibilityTarget::class), message: 'Incompatible artifacts must not report compiled service availability.');
+assertSame(expected: 'compatibility', actual: $resolved->dependency->id(), message: 'Runtime should fall back to dynamic resolution for incompatible artifacts.');
 
 echo basename(__FILE__) . " ok\n";

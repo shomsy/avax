@@ -19,11 +19,11 @@ final readonly class GenerateReleaseSbom
      */
     public function execute(string $composerJsonPath, string|null $composerLockPath = null) : array
     {
-        $composerJson = $this->readJsonFile($composerJsonPath);
+        $composerJson = $this->readJsonFile(path: $composerJsonPath);
         $lockPath = $composerLockPath ?? dirname($composerJsonPath) . '/composer.lock';
         $components = [];
 
-        foreach ($this->readLockPackages($lockPath) as $package) {
+        foreach ($this->readLockPackages(composerLockPath: $lockPath) as $package) {
             $components[] = [
                 'type' => 'library',
                 'name' => (string) ($package['name'] ?? 'unknown'),
@@ -63,7 +63,7 @@ final readonly class GenerateReleaseSbom
             return [];
         }
 
-        $lock = $this->readJsonFile($composerLockPath);
+        $lock = $this->readJsonFile(path: $composerLockPath);
         $packages = [];
 
         foreach (['packages', 'packages-dev'] as $section) {
@@ -87,17 +87,17 @@ final readonly class GenerateReleaseSbom
         $json = file_get_contents($path);
 
         if ($json === false) {
-            throw new RuntimeException("Could not read JSON file: {$path}");
+            throw new RuntimeException(message: "Could not read JSON file: {$path}");
         }
 
         try {
             $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
-            throw new RuntimeException("Could not decode JSON file: {$path}", previous: $exception);
+            throw new RuntimeException(message: "Could not decode JSON file: {$path}", previous: $exception);
         }
 
         if (! is_array($decoded)) {
-            throw new RuntimeException("JSON file must decode to an object: {$path}");
+            throw new RuntimeException(message: "JSON file must decode to an object: {$path}");
         }
 
         return $decoded;

@@ -22,20 +22,20 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class StartMfaChallenge
 {
     public function __construct(
-        private CurrentAuthentication      $currentAuthentication,
-        private MfaStoreInterface          $mfaStore,
-        private MfaChallengeStoreInterface $challengeStore,
-        private AuditLogInterface          $auditLog,
-        private Clock                      $clock,
-        private int                        $expiresAfterSeconds = 300,
-        private int                        $maxAttempts = 5
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private MfaStoreInterface                            $mfaStore,
+        private MfaChallengeStoreInterface                   $challengeStore,
+        private AuditLogInterface                            $auditLog,
+        private Clock                                        $clock,
+        private int                                          $expiresAfterSeconds = 300,
+        private int                                          $maxAttempts = 5
     ) {}
 
     /**
      * @throws Unauthenticated
      * @throws MfaChallengeFailed
      */
-    public function execute(string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
+    public function execute(#[\SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
     {
         $user = $this->currentAuthentication->read()->user();
 
@@ -44,7 +44,7 @@ final readonly class StartMfaChallenge
         }
 
         return $this->issueForUserId(
-            userId   : new UserId($user->id),
+            userId   : new UserId(value: $user->id),
             purpose  : MfaChallengePurpose::STEP_UP,
             ipAddress: $ipAddress,
             userAgent: $userAgent
@@ -55,17 +55,17 @@ final readonly class StartMfaChallenge
      * @throws MfaChallengeFailed
      */
     private function issueForUserId(
-        UserId              $userId,
-        MfaChallengePurpose $purpose,
-        string|null         $ipAddress,
-        string|null         $userAgent
+        UserId                             $userId,
+        MfaChallengePurpose                $purpose,
+        #[\SensitiveParameter] string|null $ipAddress,
+        string|null                        $userAgent
     ) : MfaChallenge
     {
-        if (! $this->mfaStore->isEnabled($userId)) {
+        if (! $this->mfaStore->isEnabled(userId: $userId)) {
             throw MfaChallengeFailed::notEnabled();
         }
 
-        $this->challengeStore->forgetForUser($userId);
+        $this->challengeStore->forgetForUser(userId: $userId);
 
         $now    = $this->clock->now();
         $record = new MfaChallengeRecord(
@@ -73,12 +73,12 @@ final readonly class StartMfaChallenge
             userId     : $userId,
             purpose    : $purpose,
             createdAt  : $now,
-            expiresAt  : $now->modify("+{$this->expiresAfterSeconds} seconds"),
+            expiresAt  : $now->modify(modifier: "+{$this->expiresAfterSeconds} seconds"),
             maxAttempts: $this->maxAttempts
         );
 
-        $this->challengeStore->issue($record);
-        $this->auditLog->record(new AuditEvent(
+        $this->challengeStore->issue(record: $record);
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.mfa.challenge.requested',
                                     occurredAt: $now,
                                     context   : [
@@ -96,7 +96,7 @@ final readonly class StartMfaChallenge
     /**
      * @throws MfaChallengeFailed
      */
-    public function issueForLogin(User $user, string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
+    public function issueForLogin(User $user, #[\SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
     {
         return $this->issueForUserId(
             userId   : $user->getId(),

@@ -24,7 +24,7 @@ final readonly class EvaluateFederationBreakGlassBypass
      */
     public function execute(string $connectionId) : bool
     {
-        $connection = $this->connectionStore->find($connectionId);
+        $connection = $this->connectionStore->find(connectionId: $connectionId);
 
         if ($connection === null) {
             throw FederationFailed::notFound();
@@ -33,7 +33,7 @@ final readonly class EvaluateFederationBreakGlassBypass
         $allowed = $connection->breakGlassAllowed
             && in_array($connection->health, [FederationConnectionHealth::DEGRADED, FederationConnectionHealth::UNAVAILABLE], true);
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : $allowed
                 ? 'auth.federation.break_glass.allowed'
                 : 'auth.federation.break_glass.denied',

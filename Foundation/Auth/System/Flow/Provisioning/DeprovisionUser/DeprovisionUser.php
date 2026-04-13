@@ -17,26 +17,26 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class DeprovisionUser
 {
     public function __construct(
-        private ProvisionableUserSourceInterface $userSource,
-        private RequireAdminElevation $requireAdminElevation,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        private SessionRegistryInterface|null $sessionRegistry = null,
-        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        private AdminElevationStoreInterface|null $adminElevationStore = null
+        private ProvisionableUserSourceInterface                       $userSource,
+        private RequireAdminElevation                                  $requireAdminElevation,
+        private AuditLogInterface                                      $auditLog,
+        private Clock                                                  $clock,
+        #[\SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
+        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        private AdminElevationStoreInterface|null                      $adminElevationStore = null
     ) {}
 
     public function execute(int $userId) : void
     {
         $this->requireAdminElevation->execute();
-        $id = new UserId($userId);
-        $this->userSource->replaceRoles($id, []);
-        $this->userSource->replacePermissions($id, []);
-        $this->userSource->deactivate($id);
-        $this->sessionRegistry?->revokeForUser($id, $this->clock->now(), 'deprovisioned');
-        $this->refreshTokenStore?->revokeUser($id);
-        $this->adminElevationStore?->revokeUser($userId);
-        $this->auditLog->record(new AuditEvent(
+        $id = new UserId(value: $userId);
+        $this->userSource->replaceRoles(id: $id, roles: []);
+        $this->userSource->replacePermissions(id: $id, permissions: []);
+        $this->userSource->deactivate(id: $id);
+        $this->sessionRegistry?->revokeForUser(userId: $id, revokedAt: $this->clock->now(), reason: 'deprovisioned');
+        $this->refreshTokenStore?->revokeUser(userId: $id);
+        $this->adminElevationStore?->revokeUser(userId: $userId);
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.provisioning.user.deprovisioned',
             occurredAt: $this->clock->now(),
             context   : ['subject_user_id' => $userId]

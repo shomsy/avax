@@ -75,86 +75,86 @@ final class JobScopedService {}
 
 $cacheDir  = sys_get_temp_dir() . '/container-advanced-lifetimes-' . uniqid('', true);
 $config    = CreateContainerConfig::create(cacheDir: $cacheDir);
-$container = makeTestContainer($config);
+$container = makeTestContainer(config: $config);
 
-$container->singleton(WarmSingletonService::class, WarmSingletonService::class)->warm();
-$container->singleton(LazySingletonService::class, LazySingletonService::class)->warm()->lazy();
-$container->scoped(RequestScopedDisposableService::class, RequestScopedDisposableService::class)->request()->dispose();
-$container->singleton(SharedDisposableService::class, SharedDisposableService::class)->dispose();
-$container->bind(PlainTransientDependency::class, PlainTransientDependency::class);
-$container->singleton(SharedCapturesTransientService::class, SharedCapturesTransientService::class);
-$container->singleton(SharedCapturesRequestScopedService::class, SharedCapturesRequestScopedService::class);
-$container->singleton(InvalidDisposableService::class, InvalidDisposableService::class)->dispose();
-$container->bind(InvalidTransientDisposableService::class, InvalidTransientDisposableService::class)->dispose();
-$container->scoped(JobScopedService::class, JobScopedService::class)->job();
+$container->singleton(abstract: WarmSingletonService::class, concrete: WarmSingletonService::class)->warm();
+$container->singleton(abstract: LazySingletonService::class, concrete: LazySingletonService::class)->warm()->lazy();
+$container->scoped(abstract: RequestScopedDisposableService::class, concrete: RequestScopedDisposableService::class)->request()->dispose();
+$container->singleton(abstract: SharedDisposableService::class, concrete: SharedDisposableService::class)->dispose();
+$container->bind(abstract: PlainTransientDependency::class, concrete: PlainTransientDependency::class);
+$container->singleton(abstract: SharedCapturesTransientService::class, concrete: SharedCapturesTransientService::class);
+$container->singleton(abstract: SharedCapturesRequestScopedService::class, concrete: SharedCapturesRequestScopedService::class);
+$container->singleton(abstract: InvalidDisposableService::class, concrete: InvalidDisposableService::class)->dispose();
+$container->bind(abstract: InvalidTransientDisposableService::class, concrete: InvalidTransientDisposableService::class)->dispose();
+$container->scoped(abstract: JobScopedService::class, concrete: JobScopedService::class)->job();
 
-$issues = implode("\n", $container->validate([
+$issues = implode("\n", $container->validate(serviceIds: [
                                                  SharedCapturesTransientService::class,
                                                  SharedCapturesRequestScopedService::class,
                                                  InvalidDisposableService::class,
                                              ]));
 
 assertTrue(
-    str_contains($issues, 'captures transient dependency [' . PlainTransientDependency::class . ']'),
-    'Validation should detect captured transient dependencies.'
+    condition: str_contains($issues, 'captures transient dependency [' . PlainTransientDependency::class . ']'),
+    message  : 'Validation should detect captured transient dependencies.'
 );
 assertTrue(
-    str_contains($issues, 'captures scoped dependency [' . RequestScopedDisposableService::class . ']'),
-    'Validation should detect shared services that capture scoped dependencies.'
+    condition: str_contains($issues, 'captures scoped dependency [' . RequestScopedDisposableService::class . ']'),
+    message  : 'Validation should detect shared services that capture scoped dependencies.'
 );
 assertTrue(
-    str_contains($issues, 'does not expose dispose() or implement DisposableInterface'),
-    'Validation should reject invalid disposable registrations.'
+    condition: str_contains($issues, 'does not expose dispose() or implement DisposableInterface'),
+    message  : 'Validation should reject invalid disposable registrations.'
 );
 assertTrue(
-    str_contains($issues, 'uses transient lifetime, so the container cannot own its disposal boundary'),
-    'Validation should reject disposable transient services because the container cannot own their disposal boundary.'
+    condition: str_contains($issues, 'uses transient lifetime, so the container cannot own its disposal boundary'),
+    message  : 'Validation should reject disposable transient services because the container cannot own their disposal boundary.'
 );
 
-$container->warmCompiled([WarmSingletonService::class, LazySingletonService::class]);
+$container->warmCompiled(serviceIds: [WarmSingletonService::class, LazySingletonService::class]);
 
-assertSame(1, AdvancedLifetimeSequence::$warmSingletons, 'Warm shared services should build during warmCompiled().');
-assertSame(0, AdvancedLifetimeSequence::$lazySingletons, 'Lazy shared services should not build during warmCompiled().');
+assertSame(expected: 1, actual: AdvancedLifetimeSequence::$warmSingletons, message: 'Warm shared services should build during warmCompiled().');
+assertSame(expected: 0, actual: AdvancedLifetimeSequence::$lazySingletons, message: 'Lazy shared services should not build during warmCompiled().');
 
-$container->get(LazySingletonService::class);
-assertSame(1, AdvancedLifetimeSequence::$lazySingletons, 'Lazy shared services should build on first resolve.');
+$container->get(id: LazySingletonService::class);
+assertSame(expected: 1, actual: AdvancedLifetimeSequence::$lazySingletons, message: 'Lazy shared services should build on first resolve.');
 
 assertThrows(
 /**
  * @throws \Psr\Container\ContainerExceptionInterface
  * @throws \Psr\Container\NotFoundExceptionInterface
- */ ContainerException::class,
-    static fn () => $container->get(RequestScopedDisposableService::class),
-    'Request-scoped services should require an active request scope.'
+ */ expectedClass: ContainerException::class,
+    callback     : static fn () => $container->get(id: RequestScopedDisposableService::class),
+    message      : 'Request-scoped services should require an active request scope.'
 );
 
-$container->openScope(ScopeKind::REQUEST, 'request-1');
-$requestFirst  = $container->get(RequestScopedDisposableService::class);
-$requestSecond = $container->get(RequestScopedDisposableService::class);
-assertSame($requestFirst, $requestSecond, 'Request-scoped services should reuse the same instance inside one request scope.');
-$container->closeScope(ScopeKind::REQUEST);
+$container->openScope(kind: ScopeKind::REQUEST, scopeId: 'request-1');
+$requestFirst  = $container->get(id: RequestScopedDisposableService::class);
+$requestSecond = $container->get(id: RequestScopedDisposableService::class);
+assertSame(expected: $requestFirst, actual: $requestSecond, message: 'Request-scoped services should reuse the same instance inside one request scope.');
+$container->closeScope(kind: ScopeKind::REQUEST);
 
-assertSame(1, AdvancedLifetimeSequence::$requestDisposals, 'Closing a request scope should dispose request-owned disposable services.');
+assertSame(expected: 1, actual: AdvancedLifetimeSequence::$requestDisposals, message: 'Closing a request scope should dispose request-owned disposable services.');
 
 assertThrows(
 /**
  * @throws \Psr\Container\ContainerExceptionInterface
  * @throws \Psr\Container\NotFoundExceptionInterface
- */ ContainerException::class,
-    static fn () => $container->get(JobScopedService::class),
-    'Job-scoped services should require an active job scope.'
+ */ expectedClass: ContainerException::class,
+    callback     : static fn () => $container->get(id: JobScopedService::class),
+    message      : 'Job-scoped services should require an active job scope.'
 );
 
-$container->openScope(ScopeKind::JOB, 'job-1');
-$jobFirst  = $container->get(JobScopedService::class);
-$jobSecond = $container->get(JobScopedService::class);
-assertSame($jobFirst, $jobSecond, 'Job-scoped services should reuse the same instance inside one job scope.');
-$container->closeScope(ScopeKind::JOB);
+$container->openScope(kind: ScopeKind::JOB, scopeId: 'job-1');
+$jobFirst  = $container->get(id: JobScopedService::class);
+$jobSecond = $container->get(id: JobScopedService::class);
+assertSame(expected: $jobFirst, actual: $jobSecond, message: 'Job-scoped services should reuse the same instance inside one job scope.');
+$container->closeScope(kind: ScopeKind::JOB);
 
-$container->get(SharedDisposableService::class);
+$container->get(id: SharedDisposableService::class);
 $container->reset();
 
-assertSame(1, AdvancedLifetimeSequence::$sharedDisposals, 'Reset should dispose explicitly disposable shared services.');
+assertSame(expected: 1, actual: AdvancedLifetimeSequence::$sharedDisposals, message: 'Reset should dispose explicitly disposable shared services.');
 
 @rmdir($cacheDir);
 

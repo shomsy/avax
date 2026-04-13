@@ -20,22 +20,22 @@ $groupJson             = shell_exec('php ' . escapeshellarg($tool) . ' group ' .
 $selectionJson         = shell_exec('php ' . escapeshellarg($tool) . ' selection ' . escapeshellarg($fixture) . ' GraphToolIdentityService');
 $architectureDebugJson = shell_exec('php ' . escapeshellarg($tool) . ' architecture:debug ' . escapeshellarg($fixture));
 
-assertTrue(is_string($dependencyJson) && str_contains($dependencyJson, '"kind": "dependency"'), 'Graph tool should export machine-readable dependency graphs.');
-assertTrue(is_string($dependencyJson) && str_contains($dependencyJson, '"nodes"'), 'Dependency graph export should include node payloads.');
-assertTrue(is_string($sliceMermaid) && str_contains($sliceMermaid, 'flowchart LR'), 'Graph tool should export Mermaid graphs.');
-assertTrue(is_string($policyDot) && str_contains($policyDot, 'digraph container'), 'Graph tool should export Graphviz DOT graphs.');
-assertTrue(is_string($explorerHtml) && str_contains($explorerHtml, 'Container Graph Explorer'), 'Graph tool should export an HTML explorer surface.');
-assertTrue(is_string($architectureJson) && str_contains($architectureJson, '"kind": "architecture"'), 'Graph tool should export architecture graph artifacts.');
-assertTrue(is_string($governanceJson) && str_contains($governanceJson, '"stage": "policy-governance"'), 'Graph governance command should expose the governance stage report.');
-assertTrue(is_string($diffJson) && str_contains($diffJson, '"kind": "diff"'), 'Graph diff export should expose a diff artifact.');
+assertTrue(condition: is_string($dependencyJson) && str_contains($dependencyJson, '"kind": "dependency"'), message: 'Graph tool should export machine-readable dependency graphs.');
+assertTrue(condition: is_string($dependencyJson) && str_contains($dependencyJson, '"nodes"'), message: 'Dependency graph export should include node payloads.');
+assertTrue(condition: is_string($sliceMermaid) && str_contains($sliceMermaid, 'flowchart LR'), message: 'Graph tool should export Mermaid graphs.');
+assertTrue(condition: is_string($policyDot) && str_contains($policyDot, 'digraph container'), message: 'Graph tool should export Graphviz DOT graphs.');
+assertTrue(condition: is_string($explorerHtml) && str_contains($explorerHtml, 'Container Graph Explorer'), message: 'Graph tool should export an HTML explorer surface.');
+assertTrue(condition: is_string($architectureJson) && str_contains($architectureJson, '"kind": "architecture"'), message: 'Graph tool should export architecture graph artifacts.');
+assertTrue(condition: is_string($governanceJson) && str_contains($governanceJson, '"stage": "policy-governance"'), message: 'Graph governance command should expose the governance stage report.');
+assertTrue(condition: is_string($diffJson) && str_contains($diffJson, '"kind": "diff"'), message: 'Graph diff export should expose a diff artifact.');
 assertTrue(
-    is_string($diffJson) && (str_contains($diffJson, '"ownershipMoves"') || str_contains($diffJson, '"addedEdges"')),
-    'Graph diff export should expose structural changes.'
+    condition: is_string($diffJson) && (str_contains($diffJson, '"ownershipMoves"') || str_contains($diffJson, '"addedEdges"')),
+    message  : 'Graph diff export should expose structural changes.'
 );
-assertTrue(is_string($sliceJson) && str_contains($sliceJson, '"slice": "flow.login"'), 'graph:slice should return per-slice diagnostics.');
-assertTrue(is_string($whyJson) && str_contains($whyJson, '"why"'), 'Architectural debugger commands should return story-grade payloads.');
-assertTrue(is_string($groupJson) && str_contains($groupJson, '"group": "graph.steps"'), 'Group diagnostics command should expose grouped selection state.');
-assertTrue(is_string($selectionJson) && str_contains($selectionJson, '"service": "GraphToolIdentityService"'), 'Selection diagnostics command should expose service selection state.');
-assertTrue(is_string($architectureDebugJson) && str_contains($architectureDebugJson, '"structuralDrift"'), 'Architecture debugger command should expose refactor intelligence output.');
+assertTrue(condition: is_string($sliceJson) && str_contains($sliceJson, '"slice": "flow.login"'), message: 'graph:slice should return per-slice diagnostics.');
+assertTrue(condition: is_string($whyJson) && str_contains($whyJson, '"why"'), message: 'Architectural debugger commands should return story-grade payloads.');
+assertTrue(condition: is_string($groupJson) && str_contains($groupJson, '"group": "graph.steps"'), message: 'Group diagnostics command should expose grouped selection state.');
+assertTrue(condition: is_string($selectionJson) && str_contains($selectionJson, '"service": "GraphToolIdentityService"'), message: 'Selection diagnostics command should expose service selection state.');
+assertTrue(condition: is_string($architectureDebugJson) && str_contains($architectureDebugJson, '"structuralDrift"'), message: 'Architecture debugger command should expose refactor intelligence output.');
 
 echo basename(__FILE__) . " ok\n";

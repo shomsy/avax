@@ -16,18 +16,18 @@ final readonly class OAuthTokenGrant
      * @param list<string> $scopes
      */
     public function __construct(
-        public string            $accessToken,
-        public DateTimeImmutable $accessTokenExpiresAt,
-        public string|null       $refreshToken,
-        public string|null       $idToken,
-        public string            $clientId,
-        public int|null          $userId,
-        public array             $scopes = [],
-        public string            $tokenType = 'Bearer',
-        public OAuthSenderConstraint|null $senderConstraint = null,
-        public string|null       $subject = null,
-        public string|null       $audience = null,
-        public bool              $workloadIdentity = false
+        #[\SensitiveParameter] public string            $accessToken,
+        #[\SensitiveParameter] public DateTimeImmutable $accessTokenExpiresAt,
+        #[\SensitiveParameter] public string|null       $refreshToken,
+        #[\SensitiveParameter] public string|null       $idToken,
+        public string                                   $clientId,
+        public int|null                                 $userId,
+        public array                                    $scopes = [],
+        #[\SensitiveParameter] public string            $tokenType = 'Bearer',
+        public OAuthSenderConstraint|null               $senderConstraint = null,
+        public string|null                              $subject = null,
+        public string|null                              $audience = null,
+        public bool                                     $workloadIdentity = false
     ) {}
 
     public function expiresIn(DateTimeImmutable $moment) : int

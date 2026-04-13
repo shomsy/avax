@@ -39,42 +39,42 @@ $version  = 'compiled-container-smoke';
 $config   = CreateContainerConfig::create(cacheDir: $cacheDir, cacheVersion: $version);
 $artifact = $cacheDir . '/container/' . rawurlencode($version) . '/compiled/container.php';
 
-$first = makeTestContainer($config);
-$first->bind(CompiledGreeterContract::class, CompiledGreeter::class);
-$first->singleton(CompiledConfiguredMessage::class, CompiledConfiguredMessage::class)->withArgument('name', 'from-compiled');
-$first->singleton(CompiledNeedsObjectArgument::class, CompiledNeedsObjectArgument::class)
-    ->withArgument('payload', (object) ['kind' => 'dynamic-fallback']);
-$first->compileContainer([CompiledNeedsGreeter::class, CompiledConfiguredMessage::class, CompiledNeedsObjectArgument::class]);
+$first = makeTestContainer(config: $config);
+$first->bind(abstract: CompiledGreeterContract::class, concrete: CompiledGreeter::class);
+$first->singleton(abstract: CompiledConfiguredMessage::class, concrete: CompiledConfiguredMessage::class)->withArgument(name: 'name', value: 'from-compiled');
+$first->singleton(abstract: CompiledNeedsObjectArgument::class, concrete: CompiledNeedsObjectArgument::class)
+    ->withArgument(name: 'payload', value: (object) ['kind' => 'dynamic-fallback']);
+$first->compileContainer(serviceIds: [CompiledNeedsGreeter::class, CompiledConfiguredMessage::class, CompiledNeedsObjectArgument::class]);
 
-assertTrue(is_file($artifact), 'CompileContainer should write a generated compiled runtime artifact.');
+assertTrue(condition: is_file($artifact), message: 'CompileContainer should write a generated compiled runtime artifact.');
 
-$resolvedFromCompiled       = $first->get(CompiledNeedsGreeter::class);
-$configuredFromCompiled     = $first->get(CompiledConfiguredMessage::class);
-$objectArgumentFromCompiled = $first->get(CompiledNeedsObjectArgument::class);
-assertSame('compiled-runtime', $resolvedFromCompiled->greeter->message(), 'Compiled runtime should resolve bound dependencies.');
-assertSame('from-compiled', $configuredFromCompiled->name, 'Compiled runtime should preserve registration constructor arguments.');
-assertSame('dynamic-fallback', $objectArgumentFromCompiled->payload->kind, 'Non-compile-safe constructor arguments should still resolve through the dynamic fallback path.');
+$resolvedFromCompiled       = $first->get(id: CompiledNeedsGreeter::class);
+$configuredFromCompiled     = $first->get(id: CompiledConfiguredMessage::class);
+$objectArgumentFromCompiled = $first->get(id: CompiledNeedsObjectArgument::class);
+assertSame(expected: 'compiled-runtime', actual: $resolvedFromCompiled->greeter->message(), message: 'Compiled runtime should resolve bound dependencies.');
+assertSame(expected: 'from-compiled', actual: $configuredFromCompiled->name, message: 'Compiled runtime should preserve registration constructor arguments.');
+assertSame(expected: 'dynamic-fallback', actual: $objectArgumentFromCompiled->payload->kind, message: 'Non-compile-safe constructor arguments should still resolve through the dynamic fallback path.');
 assertTrue(
-    str_contains($first->exportMetrics(), 'container_compiled_container_resolve_total'),
-    'Compiled runtime should record hot-path resolution metrics.'
+    condition: str_contains($first->exportMetrics(), 'container_compiled_container_resolve_total'),
+    message  : 'Compiled runtime should record hot-path resolution metrics.'
 );
 
-$second = makeTestContainer($config);
-$second->bind(CompiledGreeterContract::class, CompiledGreeter::class);
-$second->singleton(CompiledConfiguredMessage::class, CompiledConfiguredMessage::class)->withArgument('name', 'from-compiled');
-$second->singleton(CompiledNeedsObjectArgument::class, CompiledNeedsObjectArgument::class)
-    ->withArgument('payload', (object) ['kind' => 'dynamic-fallback']);
-$resolvedFromDisk       = $second->get(CompiledNeedsGreeter::class);
-$configuredFromDisk     = $second->get(CompiledConfiguredMessage::class);
-$objectArgumentFromDisk = $second->get(CompiledNeedsObjectArgument::class);
+$second = makeTestContainer(config: $config);
+$second->bind(abstract: CompiledGreeterContract::class, concrete: CompiledGreeter::class);
+$second->singleton(abstract: CompiledConfiguredMessage::class, concrete: CompiledConfiguredMessage::class)->withArgument(name: 'name', value: 'from-compiled');
+$second->singleton(abstract: CompiledNeedsObjectArgument::class, concrete: CompiledNeedsObjectArgument::class)
+    ->withArgument(name: 'payload', value: (object) ['kind' => 'dynamic-fallback']);
+$resolvedFromDisk       = $second->get(id: CompiledNeedsGreeter::class);
+$configuredFromDisk     = $second->get(id: CompiledConfiguredMessage::class);
+$objectArgumentFromDisk = $second->get(id: CompiledNeedsObjectArgument::class);
 $metrics                = $second->exportMetrics();
 
-assertSame('compiled-runtime', $resolvedFromDisk->greeter->message(), 'A second container should load the compiled runtime from disk.');
-assertSame('from-compiled', $configuredFromDisk->name, 'Disk-loaded compiled runtime should preserve registration constructor arguments.');
-assertSame('dynamic-fallback', $objectArgumentFromDisk->payload->kind, 'Disk-loaded runtime should preserve dynamic fallback services with object arguments.');
+assertSame(expected: 'compiled-runtime', actual: $resolvedFromDisk->greeter->message(), message: 'A second container should load the compiled runtime from disk.');
+assertSame(expected: 'from-compiled', actual: $configuredFromDisk->name, message: 'Disk-loaded compiled runtime should preserve registration constructor arguments.');
+assertSame(expected: 'dynamic-fallback', actual: $objectArgumentFromDisk->payload->kind, message: 'Disk-loaded runtime should preserve dynamic fallback services with object arguments.');
 assertTrue(
-    str_contains($metrics, 'container_compiled_container_hits_total'),
-    'Loading a generated runtime from disk should be reported.'
+    condition: str_contains($metrics, 'container_compiled_container_hits_total'),
+    message  : 'Loading a generated runtime from disk should be reported.'
 );
 
 echo basename(__FILE__) . " ok\n";

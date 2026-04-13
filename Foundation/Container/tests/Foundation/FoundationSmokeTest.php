@@ -13,10 +13,10 @@ $generator = new IdGenerator();
 $first = $clock->now();
 usleep(10);
 $second = $clock->now();
-$id     = $generator->next('svc_');
+$id     = $generator->next(prefix: 'svc_');
 
-assertTrue($second >= $first, 'Clock should move forward.');
-assertTrue(str_starts_with($id, 'svc_'), 'Generated ids should preserve the prefix.');
-assertTrue(strlen($id) > 4, 'Generated ids should include random content.');
+assertTrue(condition: $second >= $first, message: 'Clock should move forward.');
+assertTrue(condition: str_starts_with($id, 'svc_'), message: 'Generated ids should preserve the prefix.');
+assertTrue(condition: strlen($id) > 4, message: 'Generated ids should include random content.');
 
 echo basename(__FILE__) . " ok\n";

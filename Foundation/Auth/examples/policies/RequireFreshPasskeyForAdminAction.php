@@ -15,12 +15,12 @@ use Avax\Auth\System\Capability\Access\Policy\AuthenticationFactor;
 final readonly class RequireFreshPasskeyForAdminAction
 {
     public function __construct(
-        private RequireAccessPolicy $requireAccessPolicy
+        #[\SensitiveParameter] private RequireAccessPolicy $requireAccessPolicy
     ) {}
 
     public function execute() : void
     {
-        $this->requireAccessPolicy->execute(new AccessPolicy(
+        $this->requireAccessPolicy->execute(policy: new AccessPolicy(
             requiredRoles               : ['admin'],
             requiredPermissions         : ['admin.high_impact.write'],
             phishingResistantRequired   : true,

@@ -20,32 +20,32 @@ final class PoolBucketService implements ResettableInterface
 $pool     = new ServicePool();
 $instance = new stdClass();
 
-assertSame(false, $pool->has('shared'), 'Service pool should start empty.');
+assertSame(expected: false, actual: $pool->has(abstract: 'shared'), message: 'Service pool should start empty.');
 
-$pool->set('shared', $instance);
-assertSame(true, $pool->has('shared'), 'Service pool should store shared instances.');
-assertSame($instance, $pool->get('shared'), 'Service pool should return the stored shared instance.');
-assertSame(1, $pool->count(), 'Service pool should expose the number of stored shared instances.');
-assertSame(['shared'], $pool->ids(), 'Service pool should expose deterministic stored ids.');
+$pool->set(abstract: 'shared', instance: $instance);
+assertSame(expected: true, actual: $pool->has(abstract: 'shared'), message: 'Service pool should store shared instances.');
+assertSame(expected: $instance, actual: $pool->get(abstract: 'shared'), message: 'Service pool should return the stored shared instance.');
+assertSame(expected: 1, actual: $pool->count(), message: 'Service pool should expose the number of stored shared instances.');
+assertSame(expected: ['shared'], actual: $pool->ids(), message: 'Service pool should expose deterministic stored ids.');
 
-$pool->forget('shared');
-assertSame(null, $pool->get('shared'), 'Service pool should forget removed instances.');
+$pool->forget(abstract: 'shared');
+assertSame(expected: null, actual: $pool->get(abstract: 'shared'), message: 'Service pool should forget removed instances.');
 
-$pool->set('shared', $instance);
+$pool->set(abstract: 'shared', instance: $instance);
 $pool->flush();
-assertSame(null, $pool->get('shared'), 'Service pool flush should clear all shared instances.');
-assertSame(0, $pool->count(), 'Service pool flush should reset the shared instance count.');
+assertSame(expected: null, actual: $pool->get(abstract: 'shared'), message: 'Service pool flush should clear all shared instances.');
+assertSame(expected: 0, actual: $pool->count(), message: 'Service pool flush should reset the shared instance count.');
 
 $pooled   = new PoolBucketService();
-$released = $pool->releasePooled('pooled', $pooled, maxSize: 2, resetBeforeReuse: true);
-assertSame(true, $released['returned'], 'Pooled services should return to the available bucket when reset succeeds.');
-assertSame(1, $pooled->resets, 'Pooled release should reset the instance before reuse.');
-assertSame(true, $pool->hasPooled('pooled'), 'Service pool should expose available pooled instances.');
-assertSame(1, $pool->pooledCount('pooled'), 'Pooled buckets should expose deterministic counts.');
+$released = $pool->releasePooled(abstract: 'pooled', instance: $pooled, maxSize: 2, resetBeforeReuse: true);
+assertSame(expected: true, actual: $released['returned'], message: 'Pooled services should return to the available bucket when reset succeeds.');
+assertSame(expected: 1, actual: $pooled->resets, message: 'Pooled release should reset the instance before reuse.');
+assertSame(expected: true, actual: $pool->hasPooled(abstract: 'pooled'), message: 'Service pool should expose available pooled instances.');
+assertSame(expected: 1, actual: $pool->pooledCount(abstract: 'pooled'), message: 'Pooled buckets should expose deterministic counts.');
 
-$checkedOut = $pool->checkoutPooled('pooled');
-assertSame(true, $checkedOut['hit'], 'Pooled checkout should reuse returned pooled instances.');
-assertInstanceOf(PoolBucketService::class, $checkedOut['instance'], 'Pooled checkout should return the stored object instance.');
-assertSame(0, $pool->pooledCount('pooled'), 'Checkout should remove the instance from the available bucket.');
+$checkedOut = $pool->checkoutPooled(abstract: 'pooled');
+assertSame(expected: true, actual: $checkedOut['hit'], message: 'Pooled checkout should reuse returned pooled instances.');
+assertInstanceOf(expectedClass: PoolBucketService::class, value: $checkedOut['instance'], message: 'Pooled checkout should return the stored object instance.');
+assertSame(expected: 0, actual: $pool->pooledCount(abstract: 'pooled'), message: 'Checkout should remove the instance from the available bucket.');
 
 echo basename(__FILE__) . " ok\n";

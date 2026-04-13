@@ -31,7 +31,7 @@ final class AccessPolicyTest extends TestCase
     public function testPolicyStopsWrongResourceOwner() : void
     {
         $current = new CurrentAuthentication();
-        $current->store(AuthenticationContext::authenticated(
+        $current->store(context: AuthenticationContext::authenticated(
             user      : new AuthenticatedUser(
                 id       : 9,
                 email    : 'owner@example.com',
@@ -42,23 +42,23 @@ final class AccessPolicyTest extends TestCase
             sessionId : 'session-9'
         ));
         $policy = new RequireAccessPolicy(
-            requireAuthentication: new RequireAuthentication($current),
-            requireRole          : new RequireRole($current),
-            requirePermission    : new RequirePermission($current),
-            requireResourceOwner : new RequireResourceOwner($current),
-            requirePhishingResistantAuthentication: new RequirePhishingResistantAuthentication($current),
-            requireFreshMfa      : new RequireFreshMfa($current, new Clock()),
-            requireAdminElevation: new RequireAdminElevation($current, new InMemoryAdminElevationStore(), new Clock())
+            requireAuthentication: new RequireAuthentication(currentAuthentication: $current),
+            requireRole          : new RequireRole(currentAuthentication: $current),
+            requirePermission    : new RequirePermission(currentAuthentication: $current),
+            requireResourceOwner : new RequireResourceOwner(currentAuthentication: $current),
+            requirePhishingResistantAuthentication: new RequirePhishingResistantAuthentication(currentAuthentication: $current),
+            requireFreshMfa      : new RequireFreshMfa(currentAuthentication: $current, clock: new Clock()),
+            requireAdminElevation: new RequireAdminElevation(currentAuthentication: $current, elevationStore: new InMemoryAdminElevationStore(), clock: new Clock())
         );
 
         $this->expectException(ResourceOwnerDenied::class);
-        $policy->execute(new AccessPolicy(resourceOwnerUserId: 11));
+        $policy->execute(policy: new AccessPolicy(resourceOwnerUserId: 11));
     }
 
     public function testPolicySupportsFreshMfaAndAdminElevation() : void
     {
         $current = new CurrentAuthentication();
-        $current->store(AuthenticationContext::authenticated(
+        $current->store(context: AuthenticationContext::authenticated(
             user         : new AuthenticatedUser(
                 id         : 1,
                 email      : 'admin@example.com',
@@ -72,37 +72,37 @@ final class AccessPolicyTest extends TestCase
             phishingResistant: true
         ));
         $store = new InMemoryAdminElevationStore();
-        $store->start(new AdminElevationRecord(
+        $store->start(record: new AdminElevationRecord(
             userId    : 1,
             bindingId : 'session-admin',
-            expiresAt : new \DateTimeImmutable('+5 minutes')
+            expiresAt : new \DateTimeImmutable(datetime: '+5 minutes')
         ));
 
         $policy = new RequireAccessPolicy(
-            requireAuthentication: new RequireAuthentication($current),
-            requireRole          : new RequireRole($current),
-            requirePermission    : new RequirePermission($current),
-            requireResourceOwner : new RequireResourceOwner($current),
-            requirePhishingResistantAuthentication: new RequirePhishingResistantAuthentication($current),
-            requireFreshMfa      : new RequireFreshMfa($current, new Clock()),
-            requireAdminElevation: new RequireAdminElevation($current, $store, new Clock())
+            requireAuthentication: new RequireAuthentication(currentAuthentication: $current),
+            requireRole          : new RequireRole(currentAuthentication: $current),
+            requirePermission    : new RequirePermission(currentAuthentication: $current),
+            requireResourceOwner : new RequireResourceOwner(currentAuthentication: $current),
+            requirePhishingResistantAuthentication: new RequirePhishingResistantAuthentication(currentAuthentication: $current),
+            requireFreshMfa      : new RequireFreshMfa(currentAuthentication: $current, clock: new Clock()),
+            requireAdminElevation: new RequireAdminElevation(currentAuthentication: $current, elevationStore: $store, clock: new Clock())
         );
 
-        $policy->execute(new AccessPolicy(
+        $policy->execute(policy: new AccessPolicy(
             requiredRole   : UserRole::ADMIN,
             phishingResistantRequired: true,
             freshMfa       : true,
             adminElevation : true
         ));
 
-        $this->assertTrue(true);
+        $this->assertTrue(condition: true);
     }
 
     public function testAdminIdentityPolicyUsesItsOwnFreshMfaWindow() : void
     {
         $clock = new Clock();
         $current = new CurrentAuthentication();
-        $current->store(AuthenticationContext::authenticated(
+        $current->store(context: AuthenticationContext::authenticated(
             user         : new AuthenticatedUser(
                 id         : 1,
                 email      : 'admin@example.com',
@@ -112,27 +112,27 @@ final class AccessPolicyTest extends TestCase
             ),
             mode         : AuthenticationMode::SESSION,
             sessionId    : 'session-admin',
-            mfaVerifiedAt: $clock->now()->modify('-4 minutes'),
+            mfaVerifiedAt: $clock->now()->modify(modifier: '-4 minutes'),
             phishingResistant: true
         ));
         $store = new InMemoryAdminElevationStore();
-        $store->start(new AdminElevationRecord(
+        $store->start(record: new AdminElevationRecord(
             userId    : 1,
             bindingId : 'session-admin',
-            expiresAt : new \DateTimeImmutable('+5 minutes')
+            expiresAt : new \DateTimeImmutable(datetime: '+5 minutes')
         ));
 
         $policy = new RequireAccessPolicy(
-            requireAuthentication: new RequireAuthentication($current),
-            requireRole          : new RequireRole($current),
-            requirePermission    : new RequirePermission($current),
-            requireResourceOwner : new RequireResourceOwner($current),
-            requirePhishingResistantAuthentication: new RequirePhishingResistantAuthentication($current),
-            requireFreshMfa      : new RequireFreshMfa($current, $clock),
-            requireAdminElevation: new RequireAdminElevation($current, $store, $clock)
+            requireAuthentication: new RequireAuthentication(currentAuthentication: $current),
+            requireRole          : new RequireRole(currentAuthentication: $current),
+            requirePermission    : new RequirePermission(currentAuthentication: $current),
+            requireResourceOwner : new RequireResourceOwner(currentAuthentication: $current),
+            requirePhishingResistantAuthentication: new RequirePhishingResistantAuthentication(currentAuthentication: $current),
+            requireFreshMfa      : new RequireFreshMfa(currentAuthentication: $current, clock: $clock),
+            requireAdminElevation: new RequireAdminElevation(currentAuthentication: $current, elevationStore: $store, clock: $clock)
         );
 
         $this->expectException(FreshMfaRequired::class);
-        $policy->execute(AccessPolicy::forIdentityPolicy(IdentityPolicyCatalog::admin()));
+        $policy->execute(policy: AccessPolicy::forIdentityPolicy(identityPolicy: IdentityPolicyCatalog::admin()));
     }
 }

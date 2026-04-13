@@ -26,16 +26,16 @@ final readonly class CheckFederationConnectionHealth
      */
     public function execute(string $connectionId) : FederationConnectionHealth
     {
-        $connection = $this->connectionStore->find($connectionId);
+        $connection = $this->connectionStore->find(connectionId: $connectionId);
 
         if ($connection === null) {
             throw FederationFailed::notFound();
         }
 
-        $health = $this->runtime->checkHealth($connection);
-        $updated = $connection->withHealth($health, $this->clock->now());
-        $this->connectionStore->save($updated);
-        $this->auditLog->record(new AuditEvent(
+        $health = $this->runtime->checkHealth(connection: $connection);
+        $updated = $connection->withHealth(health: $health, checkedAt: $this->clock->now());
+        $this->connectionStore->save(connection: $updated);
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.federation.health.checked',
             occurredAt: $this->clock->now(),
             context   : [

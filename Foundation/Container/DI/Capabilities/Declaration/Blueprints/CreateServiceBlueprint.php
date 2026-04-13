@@ -59,19 +59,19 @@ final readonly class CreateServiceBlueprint
             return $cached;
         }
 
-        $reflection  = new ReflectionClass($class);
+        $reflection  = new ReflectionClass(objectOrClass: $class);
         $fingerprint = $fingerprint !== '' ? $fingerprint : $this->cacheFingerprintForReflection(reflection: $reflection);
 
         $properties = array_values(array_filter(
                                        $reflection->getProperties(),
-                                       static fn ($property) => $property->getAttributes(Inject::class) !== [] && ! $property->isStatic()
+                                       static fn ($property) => $property->getAttributes(name: Inject::class) !== [] && ! $property->isStatic()
                                    ));
         $methods    = array_values(array_filter(
                                        $reflection->getMethods(),
-                                       static fn ($method) => $method->getAttributes(Inject::class) !== [] && ! $method->isStatic()
+                                       static fn ($method) => $method->getAttributes(name: Inject::class) !== [] && ! $method->isStatic()
                                    ));
 
-        return $this->cache->put(new ServiceBlueprint(
+        return $this->cache->put(blueprint: new ServiceBlueprint(
                                      class               : $class,
                                      instantiable        : $reflection->isInstantiable(),
                                      constructor         : $reflection->getConstructor() !== null
@@ -92,7 +92,7 @@ final readonly class CreateServiceBlueprint
                                                                ],
                                                                $methods
                                                            ),
-                                     shared              : $reflection->getAttributes(Singleton::class) !== [],
+                                     shared              : $reflection->getAttributes(name: Singleton::class) !== [],
                                      fingerprint         : $fingerprint
                                  ));
     }
@@ -102,7 +102,7 @@ final readonly class CreateServiceBlueprint
      */
     private function cacheFingerprintFor(string $class) : string
     {
-        return $this->cacheFingerprintForReflection(reflection: new ReflectionClass($class));
+        return $this->cacheFingerprintForReflection(reflection: new ReflectionClass(objectOrClass: $class));
     }
 
     /**
@@ -138,7 +138,7 @@ final readonly class CreateServiceBlueprint
         }
 
         foreach (class_parents($reflection->getName()) ?: [] as $parent) {
-            $parentReflection = new ReflectionClass($parent);
+            $parentReflection = new ReflectionClass(objectOrClass: $parent);
             $parentFile       = $parentReflection->getFileName();
             if (is_string($parentFile) && $parentFile !== '') {
                 $files[] = $parentFile;
@@ -147,7 +147,7 @@ final readonly class CreateServiceBlueprint
         }
 
         foreach (class_implements($reflection->getName()) ?: [] as $interface) {
-            $interfaceReflection = new ReflectionClass($interface);
+            $interfaceReflection = new ReflectionClass(objectOrClass: $interface);
             $interfaceFile       = $interfaceReflection->getFileName();
             if (is_string($interfaceFile) && $interfaceFile !== '') {
                 $files[] = $interfaceFile;
@@ -183,7 +183,7 @@ final readonly class CreateServiceBlueprint
      */
     private function serviceIdFor(ReflectionProperty $property) : string|null
     {
-        $attributes = $property->getAttributes(Inject::class);
+        $attributes = $property->getAttributes(name: Inject::class);
         if ($attributes !== []) {
             $inject = $attributes[0]->newInstance();
             if (is_string($inject->abstract) && $inject->abstract !== '') {

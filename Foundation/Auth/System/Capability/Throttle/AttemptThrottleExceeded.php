@@ -15,7 +15,7 @@ final class AttemptThrottleExceeded extends RuntimeException
         private readonly int $retryAfter
     )
     {
-        parent::__construct('Too many attempts.', 429);
+        parent::__construct(message: 'Too many attempts.', code: 429);
     }
 
     public function retryAfter() : int

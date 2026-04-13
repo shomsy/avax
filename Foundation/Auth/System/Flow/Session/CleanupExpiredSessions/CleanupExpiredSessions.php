@@ -10,8 +10,8 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class CleanupExpiredSessions
 {
     public function __construct(
-        private PruneExpiredSessionsInterface|null $sessionRegistry,
-        private Clock $clock
+        #[\SensitiveParameter] private PruneExpiredSessionsInterface|null $sessionRegistry,
+        private Clock                                                     $clock
     ) {}
 
     public function execute() : int
@@ -20,6 +20,6 @@ final readonly class CleanupExpiredSessions
             return 0;
         }
 
-        return $this->sessionRegistry->pruneExpired($this->clock->now());
+        return $this->sessionRegistry->pruneExpired(now: $this->clock->now());
     }
 }

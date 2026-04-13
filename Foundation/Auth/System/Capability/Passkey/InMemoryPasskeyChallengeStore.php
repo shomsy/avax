@@ -49,7 +49,7 @@ final class InMemoryPasskeyChallengeStore implements PasskeyChallengeStoreInterf
         $removed = 0;
 
         foreach ($this->records as $challengeId => $record) {
-            if (! $record->wasUsed() && ! $record->isExpiredAt($now)) {
+            if (! $record->wasUsed() && ! $record->isExpiredAt(moment: $now)) {
                 continue;
             }
 

@@ -23,14 +23,14 @@ final readonly class NormalizeAuditEvent
     public function execute(AuditEvent $event) : array
     {
         $maskSensitiveContext = $this->maskSensitiveContext
-            && ! ($this->legalHoldPolicy?->preserveSensitiveContext($event) ?? false);
+            && ! ($this->legalHoldPolicy?->preserveSensitiveContext(event: $event) ?? false);
         $context = $maskSensitiveContext
-            ? $this->maskAuditContext->execute($event->context)
+            ? $this->maskAuditContext->execute(context: $event->context)
             : $event->context;
 
         return [
             'name' => $event->name,
-            'occurred_at' => $event->occurredAt->format(DATE_ATOM),
+            'occurred_at' => $event->occurredAt->format(format: DATE_ATOM),
             'correlation_id' => $event->correlationId,
             'context' => $context,
         ];

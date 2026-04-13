@@ -13,13 +13,13 @@ use DateTimeImmutable;
 final readonly class MfaEnrollmentRecord
 {
     public function __construct(
-        public UserId            $userId,
-        public MfaMethod         $method,
-        public string            $accountLabel,
-        public string            $issuer,
-        public string            $secret,
-        public DateTimeImmutable $startedAt,
-        public DateTimeImmutable $expiresAt
+        public UserId                        $userId,
+        public MfaMethod                     $method,
+        #[\SensitiveParameter] public string $accountLabel,
+        public string                        $issuer,
+        #[\SensitiveParameter] public string $secret,
+        public DateTimeImmutable             $startedAt,
+        public DateTimeImmutable             $expiresAt
     ) {}
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool

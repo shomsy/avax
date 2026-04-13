@@ -273,7 +273,7 @@ final class ServiceRegistration
     {
         return $this
             ->ownedBy(ownerSlice: $ownerSlice)
-            ->category(RegistrationCategory::FLOW);
+            ->category(category: RegistrationCategory::FLOW);
     }
 
     public function category(string $category) : self
@@ -294,26 +294,26 @@ final class ServiceRegistration
     {
         return $this
             ->ownedBy(ownerSlice: $ownerSlice)
-            ->category(RegistrationCategory::CAPABILITY);
+            ->category(category: RegistrationCategory::CAPABILITY);
     }
 
     public function asConfiguration(string $ownerSlice) : self
     {
         return $this
             ->ownedBy(ownerSlice: $ownerSlice)
-            ->category(RegistrationCategory::CONFIGURATION);
+            ->category(category: RegistrationCategory::CONFIGURATION);
     }
 
     public function asFoundation(string $ownerSlice) : self
     {
         return $this
             ->ownedBy(ownerSlice: $ownerSlice)
-            ->category(RegistrationCategory::FOUNDATION);
+            ->category(category: RegistrationCategory::FOUNDATION);
     }
 
     public function asPrivate() : self
     {
-        return $this->visibility(RegistrationVisibility::PRIVATE);
+        return $this->visibility(visibility: RegistrationVisibility::PRIVATE);
     }
 
     public function visibility(string $visibility) : self
@@ -325,17 +325,17 @@ final class ServiceRegistration
 
     public function asShared() : self
     {
-        return $this->visibility(RegistrationVisibility::SHARED);
+        return $this->visibility(visibility: RegistrationVisibility::SHARED);
     }
 
     public function asPublic() : self
     {
-        return $this->visibility(RegistrationVisibility::PUBLIC);
+        return $this->visibility(visibility: RegistrationVisibility::PUBLIC);
     }
 
     public function asInternal() : self
     {
-        return $this->visibility(RegistrationVisibility::INTERNAL);
+        return $this->visibility(visibility: RegistrationVisibility::INTERNAL);
     }
 
     public function entry(bool $entry = true) : self

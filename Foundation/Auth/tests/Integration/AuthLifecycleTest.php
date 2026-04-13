@@ -54,13 +54,13 @@ class AuthLifecycleTest extends TestCase
         // 2. Login
         $credentials = new Credentials(identifier: 'integration@test.com', password: 'initial-password');
         $loggedIn    = $this->auth->login(credentials: $credentials);
-        $this->assertTrue($loggedIn->isAuthenticated());
-        $this->assertSame('integration@test.com', $loggedIn->user()?->email);
-        $this->assertNotNull($loggedIn->accessToken());
-        $this->assertNotNull($loggedIn->refreshToken());
+        $this->assertTrue(condition: $loggedIn->isAuthenticated());
+        $this->assertSame(expected: 'integration@test.com', actual: $loggedIn->user()?->email);
+        $this->assertNotNull(actual: $loggedIn->accessToken());
+        $this->assertNotNull(actual: $loggedIn->refreshToken());
 
-        $resolved = $this->auth->authenticateRequest(AuthenticationRequest::bearer($loggedIn->accessToken()));
-        $this->assertTrue($resolved->isAuthenticated());
+        $resolved = $this->auth->authenticateRequest(request: AuthenticationRequest::bearer(bearerToken: $loggedIn->accessToken()));
+        $this->assertTrue(condition: $resolved->isAuthenticated());
 
         // 3. Change Password
         $cpData = new ChangePasswordData(
@@ -72,45 +72,45 @@ class AuthLifecycleTest extends TestCase
         // 4. Login with NEW password
         $newCredentials = new Credentials(identifier: 'itest', password: 'new-secure-password');
         $reLoggedIn     = $this->auth->login(credentials: $newCredentials);
-        $this->assertTrue($reLoggedIn->isAuthenticated());
+        $this->assertTrue(condition: $reLoggedIn->isAuthenticated());
 
         // 5. Refresh
-        $refreshed = $this->auth->refresh(new RefreshAuthenticationRequest($reLoggedIn->refreshToken()));
-        $this->assertTrue($refreshed->isAuthenticated());
-        $this->assertNotSame($reLoggedIn->refreshToken(), $refreshed->refreshToken());
+        $refreshed = $this->auth->refresh(request: new RefreshAuthenticationRequest(refreshToken: $reLoggedIn->refreshToken()));
+        $this->assertTrue(condition: $refreshed->isAuthenticated());
+        $this->assertNotSame(expected: $reLoggedIn->refreshToken(), actual: $refreshed->refreshToken());
 
         // 6. Enroll MFA and verify challenge
         $enrollment  = $this->auth->startMfaEnrollment();
-        $backupCodes = $this->auth->confirmMfaEnrollment(new ConfirmMfaEnrollmentData(
-                                                             code: (new Totp())->codeAt($enrollment->secret(), new \DateTimeImmutable())
+        $backupCodes = $this->auth->confirmMfaEnrollment(data: new ConfirmMfaEnrollmentData(
+                                                             code: (new Totp())->codeAt(secret: $enrollment->secret(), moment: new \DateTimeImmutable())
                                                          ));
-        $this->assertCount(10, $backupCodes->codes);
-        $mfaLogin = $this->auth->login(new Credentials(identifier: 'itest', password: 'new-secure-password'));
-        $this->assertTrue($mfaLogin->requiresMfa());
-        $this->assertNull($mfaLogin->accessToken());
-        $this->assertNull($mfaLogin->refreshToken());
-        $mfaCompleted = $this->auth->verifyMfaChallenge(new VerifyMfaChallengeData(
+        $this->assertCount(expectedCount: 10, haystack: $backupCodes->codes);
+        $mfaLogin = $this->auth->login(credentials: new Credentials(identifier: 'itest', password: 'new-secure-password'));
+        $this->assertTrue(condition: $mfaLogin->requiresMfa());
+        $this->assertNull(actual: $mfaLogin->accessToken());
+        $this->assertNull(actual: $mfaLogin->refreshToken());
+        $mfaCompleted = $this->auth->verifyMfaChallenge(data: new VerifyMfaChallengeData(
                                                             challengeId: $mfaLogin->mfaChallengeId(),
                                                             code       : $backupCodes->values()[0]
                                                         ));
-        $this->assertTrue($mfaCompleted->isAuthenticated());
-        $this->assertNotNull($mfaCompleted->context()->mfaVerifiedAt());
+        $this->assertTrue(condition: $mfaCompleted->isAuthenticated());
+        $this->assertNotNull(actual: $mfaCompleted->context()->mfaVerifiedAt());
 
         // 7. Backup codes can be regenerated after fresh MFA
         $regeneratedBackupCodes = $this->auth->regenerateBackupCodes();
-        $this->assertCount(10, $regeneratedBackupCodes->codes);
+        $this->assertCount(expectedCount: 10, haystack: $regeneratedBackupCodes->codes);
 
         // 8. Email verification
-        $verificationChallenge = $this->auth->beginEmailVerification(new BeginEmailVerificationData('integration@test.com'));
-        $this->assertTrue($this->auth->verifyEmail(new \Avax\Auth\System\Flow\Verify\VerifyEmailData($verificationChallenge->token ?? '')));
+        $verificationChallenge = $this->auth->beginEmailVerification(data: new BeginEmailVerificationData(email: 'integration@test.com'));
+        $this->assertTrue(condition: $this->auth->verifyEmail(data: new \Avax\Auth\System\Flow\Verify\VerifyEmailData(token: $verificationChallenge->token ?? '')));
 
         // 9. Password reset
-        $resetChallenge = $this->auth->beginPasswordReset(new BeginPasswordResetData('integration@test.com'));
-        $this->assertTrue($this->auth->resetPassword(new ResetPasswordData($resetChallenge->token ?? '', 'reset-password')));
+        $resetChallenge = $this->auth->beginPasswordReset(data: new BeginPasswordResetData(email: 'integration@test.com'));
+        $this->assertTrue(condition: $this->auth->resetPassword(data: new ResetPasswordData(token: $resetChallenge->token ?? '', newPassword: 'reset-password')));
 
         // 10. Lost-device recovery resets MFA
-        $recoveryChallenge = $this->auth->beginMfaRecovery(new BeginMfaRecoveryData('integration@test.com'));
-        $this->auth->confirmMfaRecovery(new ConfirmMfaRecoveryData($recoveryChallenge->token ?? ''));
+        $recoveryChallenge = $this->auth->beginMfaRecovery(data: new BeginMfaRecoveryData(email: 'integration@test.com'));
+        $this->auth->confirmMfaRecovery(data: new ConfirmMfaRecoveryData(token: $recoveryChallenge->token ?? ''));
 
         // 11. Logout
         $this->auth->logout();
@@ -151,7 +151,7 @@ class AuthLifecycleTest extends TestCase
         $refreshTokens    = new InMemoryRefreshTokenStore();
         $jwtIdentity      = new JwtIdentity(
             userSource       : $this->userSource,
-            codec            : new HmacTokenCodec('integration-secret'),
+            codec            : new HmacTokenCodec(secret: 'integration-secret'),
             clock            : new Clock(),
             revocationStore  : new InMemoryTokenRevocationStore(),
             refreshTokenStore: $refreshTokens
@@ -161,7 +161,7 @@ class AuthLifecycleTest extends TestCase
         $this->auth = Auth::configuration()
             ->forUser(userSource: $this->userSource)
             ->withIdentity(identity: $identity)
-            ->withRefreshTokenStore($refreshTokens)
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->ready();
     }
 }

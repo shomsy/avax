@@ -17,13 +17,13 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class CompletePasskeyRegistration
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private PasskeyRuntimeInterface $runtime,
-        private PasskeyCredentialStoreInterface $credentialStore,
-        private PasskeyChallengeStoreInterface $challengeStore,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        private string $rpId
+        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private PasskeyRuntimeInterface                                $runtime,
+        #[\SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyChallengeStoreInterface                         $challengeStore,
+        private AuditLogInterface                                      $auditLog,
+        private Clock                                                  $clock,
+        private string                                                 $rpId
     ) {}
 
     /**
@@ -37,7 +37,7 @@ final readonly class CompletePasskeyRegistration
             throw PasskeyOperationFailed::unauthenticated();
         }
 
-        $challenge = $this->challengeStore->find($data->challengeId);
+        $challenge = $this->challengeStore->find(challengeId: $data->challengeId);
 
         if ($challenge === null || $challenge->userId !== $user->id) {
             throw PasskeyOperationFailed::notFound();
@@ -47,8 +47,8 @@ final readonly class CompletePasskeyRegistration
             throw PasskeyOperationFailed::alreadyUsed();
         }
 
-        if ($challenge->isExpiredAt($this->clock->now())) {
-            $this->challengeStore->forget($data->challengeId);
+        if ($challenge->isExpiredAt(moment: $this->clock->now())) {
+            $this->challengeStore->forget(challengeId: $data->challengeId);
             throw PasskeyOperationFailed::expired();
         }
 
@@ -65,9 +65,9 @@ final readonly class CompletePasskeyRegistration
             registeredAt: $this->clock->now()
         );
 
-        $this->credentialStore->save($credential);
-        $this->challengeStore->markUsed($data->challengeId, $this->clock->now());
-        $this->auditLog->record(new AuditEvent(
+        $this->credentialStore->save(credential: $credential);
+        $this->challengeStore->markUsed(challengeId: $data->challengeId, usedAt: $this->clock->now());
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.passkey.registered',
             occurredAt: $this->clock->now(),
             context   : [

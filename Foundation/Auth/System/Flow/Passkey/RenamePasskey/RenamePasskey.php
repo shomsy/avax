@@ -12,8 +12,8 @@ use Avax\Auth\System\Flow\Passkey\PasskeyOperationFailed;
 final readonly class RenamePasskey
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private PasskeyCredentialStoreInterface $credentialStore
+        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        #[\SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore
     ) {}
 
     /**
@@ -22,7 +22,7 @@ final readonly class RenamePasskey
     public function execute(RenamePasskeyData $data) : PasskeyCredential
     {
         $user       = $this->currentAuthentication->read()->user();
-        $credential = $this->credentialStore->find($data->credentialId);
+        $credential = $this->credentialStore->find(credentialId: $data->credentialId);
 
         if ($user === null) {
             throw PasskeyOperationFailed::unauthenticated();
@@ -38,9 +38,9 @@ final readonly class RenamePasskey
             throw PasskeyOperationFailed::invalidLabel();
         }
 
-        $this->credentialStore->rename($credential->credentialId, $label);
+        $this->credentialStore->rename(credentialId: $credential->credentialId, label: $label);
 
-        return $this->credentialStore->find($credential->credentialId)
+        return $this->credentialStore->find(credentialId: $credential->credentialId)
             ?? throw PasskeyOperationFailed::notFound();
     }
 }

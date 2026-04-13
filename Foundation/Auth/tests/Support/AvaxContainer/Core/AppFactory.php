@@ -17,7 +17,7 @@ final class AppFactory
 
         foreach ($providers as $provider) {
             $provider = is_string($provider) ? new $provider() : $provider;
-            $provider->setApp($container);
+            $provider->setApp(app: $container);
             $provider->register();
         }
 

@@ -30,21 +30,21 @@ final class CompileContainer
     private ArtifactMetadata|null $lastMetadata = null;
 
     public function __construct(
-        private readonly ServiceRegistry        $registrations,
-        private readonly CreateServiceBlueprint $blueprints,
-        private readonly string                 $cacheDir = '',
-        private readonly string                 $cacheVersion = 'container-v1',
-        private readonly string                 $configHash = '',
-        private readonly string                 $diagnosticsMode = 'minimal',
-        private readonly string                 $environment = '',
-        private readonly string                 $compileMode = 'production',
-        private readonly bool                   $strict = false,
-        private readonly string                 $settingsFingerprint = '',
-        private readonly string                 $benchmarkBuildMarker = '',
-        private readonly string                 $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
-        private readonly string                 $pruneMode = CreateContainerConfig::PRUNE_MODE_NONE,
-        private readonly bool                   $validateOnLoad = false,
-        private readonly bool                   $failClosedOnCorruption = true,
+        private readonly ServiceRegistry               $registrations,
+        private readonly CreateServiceBlueprint        $blueprints,
+        private readonly string                        $cacheDir = '',
+        private readonly string                        $cacheVersion = 'container-v1',
+        #[\SensitiveParameter] private readonly string $configHash = '',
+        private readonly string                        $diagnosticsMode = 'minimal',
+        private readonly string                        $environment = '',
+        private readonly string                        $compileMode = 'production',
+        private readonly bool                          $strict = false,
+        private readonly string                        $settingsFingerprint = '',
+        private readonly string                        $benchmarkBuildMarker = '',
+        private readonly string                        $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
+        private readonly string                        $pruneMode = CreateContainerConfig::PRUNE_MODE_NONE,
+        private readonly bool                          $validateOnLoad = false,
+        private readonly bool                          $failClosedOnCorruption = true,
         private readonly bool                   $validateBeforeCompile = false,
         private readonly ResolutionMetrics|null $metrics = null,
         ServiceCompiler|null                    $services = null
@@ -817,14 +817,14 @@ final class CompileContainer
             : sys_get_temp_dir() . '/avax-container-runtime';
 
         if (! is_dir($directory) && ! mkdir($directory, 0775, true) && ! is_dir($directory)) {
-            throw new RuntimeException("Cannot create temporary compiled container directory [{$directory}].");
+            throw new RuntimeException(message: "Cannot create temporary compiled container directory [{$directory}].");
         }
 
         $path = $directory . '/runtime-' . uniqid('', true) . '.php';
         $body = '<?php' . PHP_EOL . PHP_EOL . $source . PHP_EOL;
 
         if (file_put_contents($path, $body, LOCK_EX) === false) {
-            throw new RuntimeException("Cannot materialize compiled container source [{$path}].");
+            throw new RuntimeException(message: "Cannot materialize compiled container source [{$path}].");
         }
 
         try {
@@ -843,7 +843,7 @@ final class CompileContainer
     {
         $compiledDirectory = $this->compiledDirectory();
         if (! is_dir($compiledDirectory) && ! mkdir($compiledDirectory, 0775, true) && ! is_dir($compiledDirectory)) {
-            throw new RuntimeException("Cannot create compiled container directory [{$compiledDirectory}].");
+            throw new RuntimeException(message: "Cannot create compiled container directory [{$compiledDirectory}].");
         }
 
         $body = '<?php' . PHP_EOL . PHP_EOL . $source . PHP_EOL;
@@ -862,12 +862,12 @@ final class CompileContainer
         $temp = $path . '.' . uniqid('tmp', true);
 
         if (file_put_contents($temp, $body, LOCK_EX) === false) {
-            throw new RuntimeException("Cannot write compiled container artifact [{$temp}].");
+            throw new RuntimeException(message: "Cannot write compiled container artifact [{$temp}].");
         }
 
         if (! rename($temp, $path)) {
             @unlink($temp);
-            throw new RuntimeException("Cannot publish compiled container artifact [{$path}].");
+            throw new RuntimeException(message: "Cannot publish compiled container artifact [{$path}].");
         }
     }
 

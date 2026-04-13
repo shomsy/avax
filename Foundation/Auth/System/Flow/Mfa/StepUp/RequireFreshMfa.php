@@ -15,9 +15,9 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class RequireFreshMfa
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private Clock                 $clock,
-        private int                   $maxAgeSeconds = 300
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private Clock                                        $clock,
+        private int                                          $maxAgeSeconds = 300
     ) {}
 
     /**
@@ -41,13 +41,13 @@ final readonly class RequireFreshMfa
         $verifiedAt = $context->mfaVerifiedAt();
 
         if ($verifiedAt === null) {
-            throw new FreshMfaRequired($maxAgeSeconds);
+            throw new FreshMfaRequired(maxAgeSeconds: $maxAgeSeconds);
         }
 
         $age = $this->clock->now()->getTimestamp() - $verifiedAt->getTimestamp();
 
         if ($age > $maxAgeSeconds) {
-            throw new FreshMfaRequired($maxAgeSeconds);
+            throw new FreshMfaRequired(maxAgeSeconds: $maxAgeSeconds);
         }
     }
 }

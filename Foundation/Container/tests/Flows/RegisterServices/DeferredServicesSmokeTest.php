@@ -22,18 +22,18 @@ final class DeferredWorkerService
 
 $container = makeTestContainer();
 
-$container->singleton(DeferredRegularService::class, DeferredRegularService::class);
-$container->defer(DeferredWorkerService::class, DeferredWorkerService::class);
+$container->singleton(abstract: DeferredRegularService::class, concrete: DeferredRegularService::class);
+$container->defer(abstract: DeferredWorkerService::class, concrete: DeferredWorkerService::class);
 $container->warmCompiled();
 
-$regular             = $container->get(DeferredRegularService::class);
-$deferred            = $container->get(DeferredWorkerService::class);
-$regularDescription  = $container->describeService(DeferredRegularService::class);
-$deferredDescription = $container->describeService(DeferredWorkerService::class);
+$regular             = $container->get(id: DeferredRegularService::class);
+$deferred            = $container->get(id: DeferredWorkerService::class);
+$regularDescription  = $container->describeService(id: DeferredRegularService::class);
+$deferredDescription = $container->describeService(id: DeferredWorkerService::class);
 
-assertSame('regular', $regular->id(), 'Regular services should still resolve after warmup.');
-assertSame('deferred', $deferred->id(), 'Deferred services should still resolve on demand.');
-assertTrue($regularDescription['compiled'], 'Non-deferred warmable services should be compiled.');
-assertTrue(! $deferredDescription['compiled'], 'Deferred services should stay out of the default compile path.');
+assertSame(expected: 'regular', actual: $regular->id(), message: 'Regular services should still resolve after warmup.');
+assertSame(expected: 'deferred', actual: $deferred->id(), message: 'Deferred services should still resolve on demand.');
+assertTrue(condition: $regularDescription['compiled'], message: 'Non-deferred warmable services should be compiled.');
+assertTrue(condition: ! $deferredDescription['compiled'], message: 'Deferred services should stay out of the default compile path.');
 
 echo basename(__FILE__) . " ok\n";

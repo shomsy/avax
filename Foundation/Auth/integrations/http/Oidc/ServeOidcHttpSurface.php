@@ -16,17 +16,17 @@ use Throwable;
 final readonly class ServeOidcHttpSurface
 {
     public function __construct(
-        private AuthInterface $auth,
-        private ReadBearerToken $readBearerToken = new ReadBearerToken()
+        #[\SensitiveParameter] private AuthInterface   $auth,
+        #[\SensitiveParameter] private ReadBearerToken $readBearerToken = new ReadBearerToken()
     ) {}
 
     public function execute(HttpEndpointInput $input) : JsonHttpResponse
     {
         $metadata = $this->auth->readOidcProviderMetadata();
-        $path = $this->normalizePath($input->path);
+        $path = $this->normalizePath(path: $input->path);
         $method = strtoupper(trim($input->method));
-        $jwksPath = $this->normalizePath((string) parse_url($metadata->jsonWebKeySetUri, PHP_URL_PATH));
-        $userInfoPath = $this->normalizePath((string) parse_url($metadata->userInfoEndpoint, PHP_URL_PATH));
+        $jwksPath = $this->normalizePath(path: (string) parse_url($metadata->jsonWebKeySetUri, PHP_URL_PATH));
+        $userInfoPath = $this->normalizePath(path: (string) parse_url($metadata->userInfoEndpoint, PHP_URL_PATH));
 
         if ($method === 'GET' && $path === '/.well-known/openid-configuration') {
             return new JsonHttpResponse(
@@ -77,16 +77,16 @@ final readonly class ServeOidcHttpSurface
         }
 
         if (in_array($method, ['GET', 'POST'], true) && $path === $userInfoPath) {
-            $accessToken = $this->readBearerToken->execute($input->headers, $input->server);
+            $accessToken = $this->readBearerToken->execute(headers: $input->headers, server: $input->server);
 
             if ($accessToken === null) {
-                return $this->error(401, 'invalid_token', 'Bearer access token is required for OIDC userinfo.');
+                return $this->error(statusCode: 401, errorCode: 'invalid_token', message: 'Bearer access token is required for OIDC userinfo.');
             }
 
             try {
-                $userInfo = $this->auth->readOidcUserInfo($accessToken);
+                $userInfo = $this->auth->readOidcUserInfo(accessToken: $accessToken);
             } catch (Throwable) {
-                return $this->error(401, 'invalid_token', 'Active access token is required for OIDC userinfo.');
+                return $this->error(statusCode: 401, errorCode: 'invalid_token', message: 'Active access token is required for OIDC userinfo.');
             }
 
             return new JsonHttpResponse(
@@ -99,10 +99,10 @@ final readonly class ServeOidcHttpSurface
             );
         }
 
-        return $this->error(404, 'not_found', 'OIDC route was not found.');
+        return $this->error(statusCode: 404, errorCode: 'not_found', message: 'OIDC route was not found.');
     }
 
-    private function error(int $statusCode, string $errorCode, string $message) : JsonHttpResponse
+    private function error(int $statusCode, #[\SensitiveParameter] string $errorCode, string $message) : JsonHttpResponse
     {
         return new JsonHttpResponse(
             statusCode: $statusCode,

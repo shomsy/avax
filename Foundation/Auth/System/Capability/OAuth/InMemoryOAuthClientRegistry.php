@@ -34,31 +34,31 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         bool $phishingResistantRequired = false
     ) : RegisteredOAuthClient
     {
-        $normalizedRedirectUris = $this->normalizeRedirectUris($redirectUris);
-        $normalizedScopes       = $this->normalizeScopes($allowedScopes);
-        $normalizedAudiences    = $this->normalizeStrings($allowedAudiences);
-        $normalizedGrantTypes   = $this->normalizeGrantTypes($type, $allowedGrantTypes);
-        $normalizedAudienceScopeBoundaries = $this->normalizeAudienceScopeBoundaries($audienceScopeBoundaries);
+        $normalizedRedirectUris = $this->normalizeRedirectUris(redirectUris: $redirectUris);
+        $normalizedScopes       = $this->normalizeScopes(allowedScopes: $allowedScopes);
+        $normalizedAudiences    = $this->normalizeStrings(values: $allowedAudiences);
+        $normalizedGrantTypes   = $this->normalizeGrantTypes(type: $type, allowedGrantTypes: $allowedGrantTypes);
+        $normalizedAudienceScopeBoundaries = $this->normalizeAudienceScopeBoundaries(audienceScopeBoundaries: $audienceScopeBoundaries);
 
         if ($normalizedRedirectUris === []) {
-            throw new InvalidArgumentException('OAuth clients require at least one redirect URI.');
+            throw new InvalidArgumentException(message: 'OAuth clients require at least one redirect URI.');
         }
 
         if ($workloadIdentity && $type !== OAuthClientType::CONFIDENTIAL) {
-            throw new InvalidArgumentException('Workload identity clients must be confidential.');
+            throw new InvalidArgumentException(message: 'Workload identity clients must be confidential.');
         }
 
         if ($workloadIdentity && $requiredSenderConstraint === null) {
-            throw new InvalidArgumentException('Workload identity clients require sender-constrained tokens.');
+            throw new InvalidArgumentException(message: 'Workload identity clients require sender-constrained tokens.');
         }
 
         if ($workloadIdentity && $normalizedAudiences === []) {
-            throw new InvalidArgumentException('Workload identity clients require at least one allowed audience.');
+            throw new InvalidArgumentException(message: 'Workload identity clients require at least one allowed audience.');
         }
 
         foreach (array_keys($normalizedAudienceScopeBoundaries) as $audience) {
             if (! in_array($audience, $normalizedAudiences, true)) {
-                throw new InvalidArgumentException('Audience scope boundaries must target a declared allowed audience.');
+                throw new InvalidArgumentException(message: 'Audience scope boundaries must target a declared allowed audience.');
             }
         }
 
@@ -68,7 +68,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
 
         if ($type === OAuthClientType::CONFIDENTIAL) {
             $plainSecret = bin2hex(random_bytes(24));
-            $secretHash  = $this->passwordHasher->hash($plainSecret);
+            $secretHash  = $this->passwordHasher->hash(password: $plainSecret);
         }
 
         $client = new OAuthClient(
@@ -109,7 +109,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         #[SensitiveParameter] string|null $plainTextSecret
     ) : bool
     {
-        $client = $this->find($clientId);
+        $client = $this->find(clientId: $clientId);
 
         if ($client === null) {
             return false;
@@ -123,7 +123,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             return false;
         }
 
-        return $this->passwordHasher->verify($plainTextSecret, $client->secretHash);
+        return $this->passwordHasher->verify(password: $plainTextSecret, hash: $client->secretHash);
     }
 
     /**
@@ -153,7 +153,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
      */
     private function normalizeScopes(array $allowedScopes) : array
     {
-        return $this->normalizeStrings($allowedScopes);
+        return $this->normalizeStrings(values: $allowedScopes);
     }
 
     /**
@@ -194,7 +194,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
                 continue;
             }
 
-            $normalized[$normalizedAudience] = $this->normalizeStrings($scopes);
+            $normalized[$normalizedAudience] = $this->normalizeStrings(values: $scopes);
         }
 
         ksort($normalized);
@@ -223,7 +223,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             }
 
             if ($grantType === OAuthGrantType::CLIENT_CREDENTIALS && $type !== OAuthClientType::CONFIDENTIAL) {
-                throw new InvalidArgumentException('Public clients cannot use the client credentials grant.');
+                throw new InvalidArgumentException(message: 'Public clients cannot use the client credentials grant.');
             }
 
             $normalized[] = $grantType;

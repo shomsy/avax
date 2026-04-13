@@ -30,18 +30,18 @@ final class CallArgumentTarget
 }
 
 $container = makeTestContainer();
-$container->bind(CallArgumentGreeterContract::class, CallArgumentGreeter::class);
+$container->bind(abstract: CallArgumentGreeterContract::class, concrete: CallArgumentGreeter::class);
 
-$resolver   = $container->get(ServiceResolver::class);
-$arguments  = new ResolveCallArguments(new ResolveDependencies());
-$reflection = new ReflectionMethod(CallArgumentTarget::class, 'handle');
+$resolver   = $container->get(id: ServiceResolver::class);
+$arguments  = new ResolveCallArguments(dependencies: new ResolveDependencies());
+$reflection = new ReflectionMethod(objectOrMethod: CallArgumentTarget::class, method: 'handle');
 $resolved   = $arguments->resolve(
     parameters: $reflection->getParameters(),
     overrides : ['name' => 'custom'],
     resolver  : $resolver
 );
 
-assertSame('args', $resolved[0]->message(), 'Call arguments should resolve container-backed dependencies.');
-assertSame('custom', $resolved[1], 'Call arguments should honor explicit overrides.');
+assertSame(expected: 'args', actual: $resolved[0]->message(), message: 'Call arguments should resolve container-backed dependencies.');
+assertSame(expected: 'custom', actual: $resolved[1], message: 'Call arguments should honor explicit overrides.');
 
 echo basename(__FILE__) . " ok\n";

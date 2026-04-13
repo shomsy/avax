@@ -70,11 +70,11 @@ final class FunctionCaller
                 ? $normalized
                 : (is_array($normalized) && is_object($normalized[0]) ? $normalized[0] : null);
 
-            return $reflection->invokeArgs($object, $arguments);
+            return $reflection->invokeArgs(object: $object, args: $arguments);
         }
 
         /** @var ReflectionFunction $reflection */
-        return $reflection->invokeArgs($arguments);
+        return $reflection->invokeArgs(args: $arguments);
     }
 
     /**
@@ -103,7 +103,7 @@ final class FunctionCaller
 
         if (is_string($target) && str_contains($target, '::')) {
             [$class, $method] = explode('::', $target, 2);
-            $reflection = new ReflectionMethod($class, $method);
+            $reflection = new ReflectionMethod(objectOrMethod: $class, method: $method);
 
             return $reflection->isStatic()
                 ? [$class, $method]
@@ -116,7 +116,7 @@ final class FunctionCaller
         }
 
         if (is_array($target) && is_string($target[0]) && class_exists($target[0])) {
-            $reflection = new ReflectionMethod($target[0], (string) $target[1]);
+            $reflection = new ReflectionMethod(objectOrMethod: $target[0], method: (string) $target[1]);
             if (! $reflection->isStatic()) {
                 return [
                     $context !== []
@@ -136,15 +136,15 @@ final class FunctionCaller
     private function reflect(callable|string|array $target) : ReflectionFunctionAbstract
     {
         if (is_array($target)) {
-            return new ReflectionMethod($target[0], (string) $target[1]);
+            return new ReflectionMethod(objectOrMethod: $target[0], method: (string) $target[1]);
         }
 
         if ($target instanceof Closure || is_string($target)) {
-            return new ReflectionFunction($target);
+            return new ReflectionFunction(function: $target);
         }
 
         if (is_object($target) && method_exists($target, '__invoke')) {
-            return new ReflectionMethod($target, '__invoke');
+            return new ReflectionMethod(objectOrMethod: $target, method: '__invoke');
         }
 
         throw new ContainerException(message: 'Unsupported callable target.');

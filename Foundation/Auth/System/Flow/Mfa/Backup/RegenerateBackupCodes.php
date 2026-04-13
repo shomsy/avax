@@ -22,12 +22,12 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class RegenerateBackupCodes
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private RequireFreshMfa       $requireFreshMfa,
-        private MfaStoreInterface     $mfaStore,
-        private GenerateBackupCodes   $generateBackupCodes,
-        private AuditLogInterface     $auditLog,
-        private Clock                 $clock
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private RequireFreshMfa                              $requireFreshMfa,
+        private MfaStoreInterface                            $mfaStore,
+        #[\SensitiveParameter] private GenerateBackupCodes   $generateBackupCodes,
+        private AuditLogInterface                            $auditLog,
+        private Clock                                        $clock
     ) {}
 
     /**
@@ -45,15 +45,15 @@ final readonly class RegenerateBackupCodes
         }
 
         $this->requireFreshMfa->execute();
-        $userId = new UserId($user->id);
-        $method = $this->mfaStore->findMethod($userId);
+        $userId = new UserId(value: $user->id);
+        $method = $this->mfaStore->findMethod(userId: $userId);
 
         if ($method === null) {
             throw MfaChallengeFailed::notEnabled();
         }
 
         $generated = $this->generateBackupCodes->execute();
-        $this->mfaStore->saveMethod(new MfaMethodRecord(
+        $this->mfaStore->saveMethod(record: new MfaMethodRecord(
                                         userId              : $method->userId,
                                         method              : $method->method,
                                         secret              : $method->secret,
@@ -61,7 +61,7 @@ final readonly class RegenerateBackupCodes
                                         backupCodes         : $generated->records,
                                         lastAcceptedTimeStep: $method->lastAcceptedTimeStep
                                     ));
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.mfa.backup_codes.regenerated',
                                     occurredAt: $this->clock->now(),
                                     context   : [

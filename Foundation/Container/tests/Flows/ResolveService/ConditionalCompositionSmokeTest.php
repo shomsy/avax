@@ -38,27 +38,27 @@ $activeConfig = CreateContainerConfig::create(settings: [
                                                             ],
                                                         ]);
 
-$active = makeTestContainer($activeConfig);
-$active->singleton(ConditionalGateway::class, ActiveConditionalGateway::class)
-    ->asCapability('payments')
+$active = makeTestContainer(config: $activeConfig);
+$active->singleton(abstract: ConditionalGateway::class, concrete: ActiveConditionalGateway::class)
+    ->asCapability(ownerSlice: 'payments')
     ->asShared()
     ->export()
-    ->profiles(['prod'])
-    ->flags(['beta'])
-    ->tenants(['tenant-a'])
-    ->regions(['eu'])
-    ->modes(['online'])
-    ->because('regional payments gateway');
+    ->profiles(profiles: ['prod'])
+    ->flags(flags: ['beta'])
+    ->tenants(tenants: ['tenant-a'])
+    ->regions(regions: ['eu'])
+    ->modes(modes: ['online'])
+    ->because(reason: 'regional payments gateway');
 
-$activeDescription = $active->describeService(ConditionalGateway::class);
+$activeDescription = $active->describeService(id: ConditionalGateway::class);
 $activeGraph       = $active->debugGraph();
 
-assertTrue($active->has(ConditionalGateway::class), 'Active conditional registrations should remain resolvable.');
-assertSame('active', $active->get(ConditionalGateway::class)->name(), 'Active conditional registrations should resolve normally.');
-assertTrue($activeDescription['conditions']['active'], 'Service descriptions should expose when composition conditions are active.');
+assertTrue(condition: $active->has(id: ConditionalGateway::class), message: 'Active conditional registrations should remain resolvable.');
+assertSame(expected: 'active', actual: $active->get(id: ConditionalGateway::class)->name(), message: 'Active conditional registrations should resolve normally.');
+assertTrue(condition: $activeDescription['conditions']['active'], message: 'Service descriptions should expose when composition conditions are active.');
 assertTrue(
-    ($activeGraph['conditions'][ConditionalGateway::class]['active'] ?? false) === true,
-    'Graph diagnostics should expose active condition state per service.'
+    condition: ($activeGraph['conditions'][ConditionalGateway::class]['active'] ?? false) === true,
+    message  : 'Graph diagnostics should expose active condition state per service.'
 );
 
 $inactiveConfig = CreateContainerConfig::create(settings: [
@@ -71,70 +71,70 @@ $inactiveConfig = CreateContainerConfig::create(settings: [
                                                               ],
                                                           ]);
 
-$inactive = makeTestContainer($inactiveConfig);
-$inactive->singleton(ConditionalGateway::class, ActiveConditionalGateway::class)
-    ->asCapability('payments')
+$inactive = makeTestContainer(config: $inactiveConfig);
+$inactive->singleton(abstract: ConditionalGateway::class, concrete: ActiveConditionalGateway::class)
+    ->asCapability(ownerSlice: 'payments')
     ->asShared()
     ->export()
-    ->profiles(['prod'])
-    ->flags(['beta'])
-    ->tenants(['tenant-a'])
-    ->regions(['eu'])
-    ->modes(['online']);
+    ->profiles(profiles: ['prod'])
+    ->flags(flags: ['beta'])
+    ->tenants(tenants: ['tenant-a'])
+    ->regions(regions: ['eu'])
+    ->modes(modes: ['online']);
 
-assertTrue(! $inactive->has(ConditionalGateway::class), 'Inactive conditional registrations should not report as resolvable.');
+assertTrue(condition: ! $inactive->has(id: ConditionalGateway::class), message: 'Inactive conditional registrations should not report as resolvable.');
 assertTrue(
-    in_array(
+    condition: in_array(
         'region [us] is not in [eu]',
-        $inactive->describeService(ConditionalGateway::class)['conditions']['reasons'],
+        $inactive->describeService(id: ConditionalGateway::class)['conditions']['reasons'],
         true
     ),
-    'Service descriptions should explain why a conditional registration is inactive.'
+    message  : 'Service descriptions should explain why a conditional registration is inactive.'
 );
 
-$inactiveIssues = implode("\n", $inactive->validate([ConditionalGateway::class]));
+$inactiveIssues = implode("\n", $inactive->validate(serviceIds: [ConditionalGateway::class]));
 assertTrue(
-    str_contains($inactiveIssues, 'region [us] is not in [eu]'),
-    'Validation should report the exact inactive composition reason.'
+    condition: str_contains($inactiveIssues, 'region [us] is not in [eu]'),
+    message  : 'Validation should report the exact inactive composition reason.'
 );
 
 try {
-    $inactive->get(ConditionalGateway::class);
-    throw new RuntimeException('Inactive conditional registrations should fail when resolved.');
+    $inactive->get(id: ConditionalGateway::class);
+    throw new RuntimeException(message: 'Inactive conditional registrations should fail when resolved.');
 } catch (ContainerException $exception) {
     assertTrue(
-        str_contains($exception->getMessage(), 'region [us] is not in [eu]'),
-        'Runtime failures should explain the inactive composition condition.'
+        condition: str_contains($exception->getMessage(), 'region [us] is not in [eu]'),
+        message  : 'Runtime failures should explain the inactive composition condition.'
     );
     assertTrue(
-        str_contains($exception->getMessage(), 'Likely fix: activate a matching profile, flag set, tenant, region, or mode'),
-        'Runtime failures should suggest how to activate a matching composition.'
+        condition: str_contains($exception->getMessage(), 'Likely fix: activate a matching profile, flag set, tenant, region, or mode'),
+        message  : 'Runtime failures should suggest how to activate a matching composition.'
     );
 }
 
-$override = makeTestContainer($activeConfig);
-$override->singleton(ConditionalGateway::class, ActiveConditionalGateway::class)
-    ->asCapability('payments')
+$override = makeTestContainer(config: $activeConfig);
+$override->singleton(abstract: ConditionalGateway::class, concrete: ActiveConditionalGateway::class)
+    ->asCapability(ownerSlice: 'payments')
     ->asShared()
     ->export()
-    ->profiles(['prod'])
-    ->concept('payments.gateway');
-$override->singleton(ConditionalGateway::class, OverrideConditionalGateway::class)
-    ->asFoundation('foundation.testing')
+    ->profiles(profiles: ['prod'])
+    ->concept(concept: 'payments.gateway');
+$override->singleton(abstract: ConditionalGateway::class, concrete: OverrideConditionalGateway::class)
+    ->asFoundation(ownerSlice: 'foundation.testing')
     ->asInternal()
-    ->export(false)
-    ->profiles(['prod'])
-    ->overrideSource('test-double')
-    ->because('test override')
-    ->concept('payments.gateway');
+    ->export(exported: false)
+    ->profiles(profiles: ['prod'])
+    ->overrideSource(source: 'test-double')
+    ->because(reason: 'test override')
+    ->concept(concept: 'payments.gateway');
 
-$overrideDebug  = $override->debugGraph(ConditionalGateway::class);
-$overrideIssues = implode("\n", $override->validate([ConditionalGateway::class]));
+$overrideDebug  = $override->debugGraph(id: ConditionalGateway::class);
+$overrideIssues = implode("\n", $override->validate(serviceIds: [ConditionalGateway::class]));
 
-assertTrue($overrideDebug['overrides'] !== [], 'Graph diagnostics should expose override history for rebound abstracts.');
+assertTrue(condition: $overrideDebug['overrides'] !== [], message: 'Graph diagnostics should expose override history for rebound abstracts.');
 assertTrue(
-    str_contains($overrideIssues, 'Override collision for service [' . ConditionalGateway::class . '] changes ownership posture'),
-    'Validation should reject overlapping overrides that change ownership posture silently.'
+    condition: str_contains($overrideIssues, 'Override collision for service [' . ConditionalGateway::class . '] changes ownership posture'),
+    message  : 'Validation should reject overlapping overrides that change ownership posture silently.'
 );
 
 echo basename(__FILE__) . " ok\n";

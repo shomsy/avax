@@ -10,21 +10,21 @@ final class ScimFailed extends RuntimeException
 {
     public static function invalidDirectoryToken() : self
     {
-        return new self('Invalid SCIM directory token.');
+        return new self(message: 'Invalid SCIM directory token.');
     }
 
     public static function invalidGroupRoleMapping() : self
     {
-        return new self('SCIM group-to-role mapping is invalid.');
+        return new self(message: 'SCIM group-to-role mapping is invalid.');
     }
 
     public static function unknownDirectory() : self
     {
-        return new self('SCIM directory is not registered.');
+        return new self(message: 'SCIM directory is not registered.');
     }
 
     public static function unknownProvisionedIdentity() : self
     {
-        return new self('SCIM provisioned identity was not found.');
+        return new self(message: 'SCIM provisioned identity was not found.');
     }
 }

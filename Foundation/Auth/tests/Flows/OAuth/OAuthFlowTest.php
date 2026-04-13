@@ -37,17 +37,17 @@ final class OAuthFlowTest extends TestCase
     {
         $auth = $this->buildAuth();
 
-        $auth->register(new RegistrationData(
+        $auth->register(data: new RegistrationData(
             email   : 'oauth-public@example.com',
             username: 'oauth-public',
             password: 'secret'
         ));
-        $auth->login(new Credentials(
+        $auth->login(credentials: new Credentials(
             identifier: 'oauth-public@example.com',
             password  : 'secret'
         ));
 
-        $client = $auth->registerOAuthClient(new RegisterClientData(
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
             name         : 'Public SPA',
             type         : OAuthClientType::PUBLIC,
             redirectUris : ['https://spa.example.test/callback'],
@@ -57,7 +57,7 @@ final class OAuthFlowTest extends TestCase
         $this->expectException(OAuthAuthorizationFailed::class);
         $this->expectExceptionMessage('PKCE is required for this client.');
 
-        $auth->authorizeOAuthCode(new AuthorizeCodeData(
+        $auth->authorizeOAuthCode(data: new AuthorizeCodeData(
             clientId   : $client->client->clientId,
             redirectUri: 'https://spa.example.test/callback',
             scopes     : ['profile']
@@ -67,107 +67,107 @@ final class OAuthFlowTest extends TestCase
     public function testOAuthAuthorizationCodeRefreshIntrospectionAndRevokeCycle() : void
     {
         $auditLog = new InMemoryAuditLog();
-        $auth     = $this->buildAuth($auditLog);
+        $auth     = $this->buildAuth(auditLog: $auditLog);
 
-        $auth->register(new RegistrationData(
+        $auth->register(data: new RegistrationData(
             email   : 'oauth@example.com',
             username: 'oauth-user',
             password: 'secret'
         ));
-        $auth->login(new Credentials(
+        $auth->login(credentials: new Credentials(
             identifier: 'oauth@example.com',
             password  : 'secret'
         ));
 
-        $client = $auth->registerOAuthClient(new RegisterClientData(
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
             name         : 'Backoffice',
             type         : OAuthClientType::CONFIDENTIAL,
             redirectUris : ['https://app.example.test/callback'],
             allowedScopes: ['email', 'profile']
         ));
 
-        $code = $auth->authorizeOAuthCode(new AuthorizeCodeData(
+        $code = $auth->authorizeOAuthCode(data: new AuthorizeCodeData(
             clientId   : $client->client->clientId,
             redirectUri: 'https://app.example.test/callback',
             scopes     : ['profile', 'email']
         ));
 
-        $grant = $auth->exchangeOAuthCode(new ExchangeAuthorizationCodeData(
+        $grant = $auth->exchangeOAuthCode(data: new ExchangeAuthorizationCodeData(
             clientId    : $client->client->clientId,
             clientSecret: $client->plainTextSecret,
             code        : $code->code,
             redirectUri : 'https://app.example.test/callback'
         ));
 
-        $this->assertSame($client->client->clientId, $grant->clientId);
-        $this->assertSame(['email', 'profile'], $grant->scopes);
-        $this->assertNotNull($grant->refreshToken);
+        $this->assertSame(expected: $client->client->clientId, actual: $grant->clientId);
+        $this->assertSame(expected: ['email', 'profile'], actual: $grant->scopes);
+        $this->assertNotNull(actual: $grant->refreshToken);
 
-        $introspection = $auth->introspectOAuthToken(new IntrospectTokenData(
+        $introspection = $auth->introspectOAuthToken(data: new IntrospectTokenData(
             clientId    : $client->client->clientId,
             clientSecret: $client->plainTextSecret,
             token       : $grant->accessToken
         ));
 
-        $this->assertTrue($introspection->active);
-        $this->assertSame($client->client->clientId, $introspection->clientId);
-        $this->assertSame(['email', 'profile'], $introspection->scopes);
+        $this->assertTrue(condition: $introspection->active);
+        $this->assertSame(expected: $client->client->clientId, actual: $introspection->clientId);
+        $this->assertSame(expected: ['email', 'profile'], actual: $introspection->scopes);
 
-        $refreshed = $auth->exchangeOAuthRefreshToken(new ExchangeRefreshTokenData(
+        $refreshed = $auth->exchangeOAuthRefreshToken(data: new ExchangeRefreshTokenData(
             clientId    : $client->client->clientId,
             clientSecret: $client->plainTextSecret,
             refreshToken: $grant->refreshToken ?? ''
         ));
 
-        $this->assertNotSame($grant->refreshToken, $refreshed->refreshToken);
+        $this->assertNotSame(expected: $grant->refreshToken, actual: $refreshed->refreshToken);
 
         try {
-            $auth->exchangeOAuthRefreshToken(new ExchangeRefreshTokenData(
+            $auth->exchangeOAuthRefreshToken(data: new ExchangeRefreshTokenData(
                 clientId    : $client->client->clientId,
                 clientSecret: $client->plainTextSecret,
                 refreshToken: $grant->refreshToken ?? ''
             ));
-            $this->fail('Expected refresh token reuse to fail.');
+            $this->fail(message: 'Expected refresh token reuse to fail.');
         } catch (OAuthTokenExchangeFailed $exception) {
-            $this->assertSame('Invalid OAuth grant.', $exception->getMessage());
+            $this->assertSame(expected: 'Invalid OAuth grant.', actual: $exception->getMessage());
         }
 
         $this->assertContains(
-            'auth.oauth.refresh.reuse_detected',
-            array_map(static fn ($event) => $event->name, $auditLog->events())
+            needle  : 'auth.oauth.refresh.reuse_detected',
+            haystack: array_map(static fn ($event) => $event->name, $auditLog->events())
         );
 
-        $auth->revokeOAuthToken(new RevokeTokenData(
+        $auth->revokeOAuthToken(data: new RevokeTokenData(
             clientId    : $client->client->clientId,
             clientSecret: $client->plainTextSecret,
             token       : $refreshed->accessToken,
             tokenTypeHint: 'access_token'
         ));
 
-        $inactive = $auth->introspectOAuthToken(new IntrospectTokenData(
+        $inactive = $auth->introspectOAuthToken(data: new IntrospectTokenData(
             clientId    : $client->client->clientId,
             clientSecret: $client->plainTextSecret,
             token       : $refreshed->accessToken
         ));
 
-        $this->assertFalse($inactive->active);
+        $this->assertFalse(condition: $inactive->active);
     }
 
     public function testPhishingResistantOAuthClientRejectsCompatibilityLoginAsPrimaryPath() : void
     {
         $auth = $this->buildAuth();
 
-        $auth->register(new RegistrationData(
+        $auth->register(data: new RegistrationData(
             email   : 'oauth-high-assurance@example.com',
             username: 'oauth-high-assurance',
             password: 'secret'
         ));
-        $auth->login(new Credentials(
+        $auth->login(credentials: new Credentials(
             identifier: 'oauth-high-assurance@example.com',
             password  : 'secret'
         ));
 
-        $client = $auth->registerOAuthClient(new RegisterClientData(
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
             name                     : 'High Assurance Backoffice',
             type                     : OAuthClientType::CONFIDENTIAL,
             redirectUris             : ['https://secure.example.test/callback'],
@@ -178,7 +178,7 @@ final class OAuthFlowTest extends TestCase
         $this->expectException(OAuthAuthorizationFailed::class);
         $this->expectExceptionMessage('Phishing-resistant authentication is required for this client.');
 
-        $auth->authorizeOAuthCode(new AuthorizeCodeData(
+        $auth->authorizeOAuthCode(data: new AuthorizeCodeData(
             clientId   : $client->client->clientId,
             redirectUri: 'https://secure.example.test/callback',
             scopes     : ['profile']
@@ -189,17 +189,17 @@ final class OAuthFlowTest extends TestCase
     {
         $auth = $this->buildAuth();
 
-        $auth->register(new RegistrationData(
+        $auth->register(data: new RegistrationData(
             email   : 'oauth-bound@example.com',
             username: 'oauth-bound',
             password: 'secret'
         ));
-        $auth->login(new Credentials(
+        $auth->login(credentials: new Credentials(
             identifier: 'oauth-bound@example.com',
             password  : 'secret'
         ));
 
-        $client = $auth->registerOAuthClient(new RegisterClientData(
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
             name                     : 'Bound API',
             type                     : OAuthClientType::CONFIDENTIAL,
             redirectUris             : ['https://bound.example.test/callback'],
@@ -208,7 +208,7 @@ final class OAuthFlowTest extends TestCase
             requiredSenderConstraint : OAuthSenderConstraintType::DPOP
         ));
 
-        $code = $auth->authorizeOAuthCode(new AuthorizeCodeData(
+        $code = $auth->authorizeOAuthCode(data: new AuthorizeCodeData(
             clientId   : $client->client->clientId,
             redirectUri: 'https://bound.example.test/callback',
             scopes     : ['profile']
@@ -218,7 +218,7 @@ final class OAuthFlowTest extends TestCase
             thumbprint: 'thumb-1'
         );
 
-        $grant = $auth->exchangeOAuthCode(new ExchangeAuthorizationCodeData(
+        $grant = $auth->exchangeOAuthCode(data: new ExchangeAuthorizationCodeData(
             clientId         : $client->client->clientId,
             clientSecret     : $client->plainTextSecret,
             code             : $code->code,
@@ -226,23 +226,23 @@ final class OAuthFlowTest extends TestCase
             senderConstraint : $binding
         ));
 
-        $this->assertSame('DPoP', $grant->tokenType);
-        $this->assertNotNull($grant->senderConstraint);
-        $this->assertSame('thumb-1', $grant->senderConstraint?->thumbprint);
+        $this->assertSame(expected: 'DPoP', actual: $grant->tokenType);
+        $this->assertNotNull(actual: $grant->senderConstraint);
+        $this->assertSame(expected: 'thumb-1', actual: $grant->senderConstraint?->thumbprint);
 
-        $refreshed = $auth->exchangeOAuthRefreshToken(new ExchangeRefreshTokenData(
+        $refreshed = $auth->exchangeOAuthRefreshToken(data: new ExchangeRefreshTokenData(
             clientId         : $client->client->clientId,
             clientSecret     : $client->plainTextSecret,
             refreshToken     : $grant->refreshToken ?? '',
             senderConstraint : $binding
         ));
 
-        $this->assertSame('DPoP', $refreshed->tokenType);
+        $this->assertSame(expected: 'DPoP', actual: $refreshed->tokenType);
 
         $this->expectException(OAuthTokenExchangeFailed::class);
         $this->expectExceptionMessage('Invalid sender constraint proof.');
 
-        $auth->exchangeOAuthRefreshToken(new ExchangeRefreshTokenData(
+        $auth->exchangeOAuthRefreshToken(data: new ExchangeRefreshTokenData(
             clientId         : $client->client->clientId,
             clientSecret     : $client->plainTextSecret,
             refreshToken     : $refreshed->refreshToken ?? '',
@@ -257,7 +257,7 @@ final class OAuthFlowTest extends TestCase
     {
         $auth = $this->buildAuth();
 
-        $client = $auth->registerOAuthClient(new RegisterClientData(
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
             name                    : 'Orders Worker',
             type                    : OAuthClientType::CONFIDENTIAL,
             redirectUris            : ['urn:avax:oauth:orders-worker'],
@@ -271,7 +271,7 @@ final class OAuthFlowTest extends TestCase
             workloadIdentity        : true
         ));
 
-        $grant = $auth->exchangeOAuthClientCredentials(new ExchangeClientCredentialsData(
+        $grant = $auth->exchangeOAuthClientCredentials(data: new ExchangeClientCredentialsData(
             clientId         : $client->client->clientId,
             clientSecret     : $client->plainTextSecret,
             scopes           : ['orders.read'],
@@ -282,46 +282,46 @@ final class OAuthFlowTest extends TestCase
             )
         ));
 
-        $this->assertTrue($grant->workloadIdentity);
-        $this->assertSame('client:' . $client->client->clientId, $grant->subject);
-        $this->assertSame('orders-api', $grant->audience);
-        $this->assertNull($grant->refreshToken);
+        $this->assertTrue(condition: $grant->workloadIdentity);
+        $this->assertSame(expected: 'client:' . $client->client->clientId, actual: $grant->subject);
+        $this->assertSame(expected: 'orders-api', actual: $grant->audience);
+        $this->assertNull(actual: $grant->refreshToken);
 
-        $introspection = $auth->introspectOAuthToken(new IntrospectTokenData(
+        $introspection = $auth->introspectOAuthToken(data: new IntrospectTokenData(
             clientId         : $client->client->clientId,
             clientSecret     : $client->plainTextSecret,
             token            : $grant->accessToken,
             expectedAudience : 'orders-api'
         ));
 
-        $this->assertTrue($introspection->active);
-        $this->assertTrue($introspection->workloadIdentity);
-        $this->assertSame($grant->subject, $introspection->subject);
-        $this->assertSame('orders-api', $introspection->audience);
-        $this->assertSame(OAuthSenderConstraintType::MTLS, $introspection->senderConstraint?->type);
+        $this->assertTrue(condition: $introspection->active);
+        $this->assertTrue(condition: $introspection->workloadIdentity);
+        $this->assertSame(expected: $grant->subject, actual: $introspection->subject);
+        $this->assertSame(expected: 'orders-api', actual: $introspection->audience);
+        $this->assertSame(expected: OAuthSenderConstraintType::MTLS, actual: $introspection->senderConstraint?->type);
 
-        $auth->revokeOAuthToken(new RevokeTokenData(
+        $auth->revokeOAuthToken(data: new RevokeTokenData(
             clientId      : $client->client->clientId,
             clientSecret  : $client->plainTextSecret,
             token         : $grant->accessToken,
             tokenTypeHint : 'access_token'
         ));
 
-        $inactive = $auth->introspectOAuthToken(new IntrospectTokenData(
+        $inactive = $auth->introspectOAuthToken(data: new IntrospectTokenData(
             clientId         : $client->client->clientId,
             clientSecret     : $client->plainTextSecret,
             token            : $grant->accessToken,
             expectedAudience : 'orders-api'
         ));
 
-        $this->assertFalse($inactive->active);
+        $this->assertFalse(condition: $inactive->active);
     }
 
     public function testOAuthClientCredentialsRejectsAudienceScopeBoundaryViolations() : void
     {
         $auth = $this->buildAuth();
 
-        $client = $auth->registerOAuthClient(new RegisterClientData(
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
             name                    : 'Orders Worker',
             type                    : OAuthClientType::CONFIDENTIAL,
             redirectUris            : ['urn:avax:oauth:orders-worker'],
@@ -338,7 +338,7 @@ final class OAuthFlowTest extends TestCase
         $this->expectException(OAuthTokenExchangeFailed::class);
         $this->expectExceptionMessage('Invalid OAuth grant.');
 
-        $auth->exchangeOAuthClientCredentials(new ExchangeClientCredentialsData(
+        $auth->exchangeOAuthClientCredentials(data: new ExchangeClientCredentialsData(
             clientId         : $client->client->clientId,
             clientSecret     : $client->plainTextSecret,
             scopes           : ['orders.write'],
@@ -354,7 +354,7 @@ final class OAuthFlowTest extends TestCase
     {
         $auth = $this->buildAuth();
 
-        $machineClient = $auth->registerOAuthClient(new RegisterClientData(
+        $machineClient = $auth->registerOAuthClient(data: new RegisterClientData(
             name                    : 'Billing Worker',
             type                    : OAuthClientType::CONFIDENTIAL,
             redirectUris            : ['urn:avax:oauth:billing-worker'],
@@ -368,7 +368,7 @@ final class OAuthFlowTest extends TestCase
             workloadIdentity        : true,
             phishingResistantRequired: true
         ));
-        $auth->registerOAuthClient(new RegisterClientData(
+        $auth->registerOAuthClient(data: new RegisterClientData(
             name         : 'Human Backoffice',
             type         : OAuthClientType::CONFIDENTIAL,
             redirectUris : ['https://app.example.test/callback'],
@@ -377,11 +377,11 @@ final class OAuthFlowTest extends TestCase
 
         $profiles = $auth->readWorkloadIdentities();
 
-        $this->assertCount(1, $profiles);
-        $this->assertSame($machineClient->client->clientId, $profiles[0]->clientId);
-        $this->assertSame(['billing-api'], $profiles[0]->allowedAudiences);
-        $this->assertSame(['billing.read'], $profiles[0]->audienceScopeBoundaries['billing-api']);
-        $this->assertTrue($profiles[0]->phishingResistantRequired);
+        $this->assertCount(expectedCount: 1, haystack: $profiles);
+        $this->assertSame(expected: $machineClient->client->clientId, actual: $profiles[0]->clientId);
+        $this->assertSame(expected: ['billing-api'], actual: $profiles[0]->allowedAudiences);
+        $this->assertSame(expected: ['billing.read'], actual: $profiles[0]->audienceScopeBoundaries['billing-api']);
+        $this->assertTrue(condition: $profiles[0]->phishingResistantRequired);
     }
 
     private function buildAuth(InMemoryAuditLog|null $auditLog = null) : Auth
@@ -390,17 +390,17 @@ final class OAuthFlowTest extends TestCase
         $refreshTokens = new InMemoryRefreshTokenStore();
         $jwtIdentity   = new JwtIdentity(
             userSource       : $userSource,
-            codec            : new HmacTokenCodec('oauth-flow-secret'),
+            codec            : new HmacTokenCodec(secret: 'oauth-flow-secret'),
             clock            : new Clock(),
             revocationStore  : new InMemoryTokenRevocationStore(),
             refreshTokenStore: $refreshTokens
         );
 
         return Auth::configuration()
-            ->forUser($userSource)
-            ->withIdentity(new Identity(jwtIdentity: $jwtIdentity))
-            ->withRefreshTokenStore($refreshTokens)
-            ->withAuditLog($auditLog ?? new InMemoryAuditLog())
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: $jwtIdentity))
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
+            ->withAuditLog(auditLog: $auditLog ?? new InMemoryAuditLog())
             ->ready();
     }
 }

@@ -20,11 +20,11 @@ final readonly class AttemptThrottle
     )
     {
         if ($this->maxAttempts < 1) {
-            throw new InvalidArgumentException('Max attempts must be at least 1.');
+            throw new InvalidArgumentException(message: 'Max attempts must be at least 1.');
         }
 
         if ($this->decaySeconds < 0) {
-            throw new InvalidArgumentException('Decay seconds cannot be negative.');
+            throw new InvalidArgumentException(message: 'Decay seconds cannot be negative.');
         }
     }
 
@@ -33,30 +33,30 @@ final readonly class AttemptThrottle
      */
     public function check(string $key) : void
     {
-        $attempts = $this->store->get($key);
+        $attempts = $this->store->get(key: $key);
 
         if ($attempts < $this->maxAttempts) {
             return;
         }
 
-        $elapsed = $this->clock->now()->getTimestamp() - $this->store->getLastAttemptTime($key);
+        $elapsed = $this->clock->now()->getTimestamp() - $this->store->getLastAttemptTime(key: $key);
 
         if ($elapsed >= $this->decaySeconds) {
-            $this->store->reset($key);
+            $this->store->reset(key: $key);
 
             return;
         }
 
-        throw new AttemptThrottleExceeded(max(0, $this->decaySeconds - $elapsed));
+        throw new AttemptThrottleExceeded(retryAfter: max(0, $this->decaySeconds - $elapsed));
     }
 
     public function recordAttempt(string $key) : void
     {
-        $this->store->increment($key, $this->clock->now()->getTimestamp());
+        $this->store->increment(key: $key, timestamp: $this->clock->now()->getTimestamp());
     }
 
     public function reset(string $key) : void
     {
-        $this->store->reset($key);
+        $this->store->reset(key: $key);
     }
 }

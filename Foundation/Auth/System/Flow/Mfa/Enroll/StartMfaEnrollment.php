@@ -24,13 +24,13 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class StartMfaEnrollment
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface     $mfaStore,
-        private TotpInterface         $totp,
-        private AuditLogInterface     $auditLog,
-        private Clock                 $clock,
-        private string                $issuer = 'Avax Auth',
-        private int                   $expiresAfterSeconds = 900
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private MfaStoreInterface                            $mfaStore,
+        private TotpInterface                                $totp,
+        private AuditLogInterface                            $auditLog,
+        private Clock                                        $clock,
+        private string                                       $issuer = 'Avax Auth',
+        private int                                          $expiresAfterSeconds = 900
     ) {}
 
     /**
@@ -45,9 +45,9 @@ final readonly class StartMfaEnrollment
             throw new Unauthenticated();
         }
 
-        $userId = new UserId($user->id);
+        $userId = new UserId(value: $user->id);
 
-        if ($this->mfaStore->isEnabled($userId)) {
+        if ($this->mfaStore->isEnabled(userId: $userId)) {
             throw MfaEnrollmentFailed::alreadyEnabled();
         }
 
@@ -59,10 +59,10 @@ final readonly class StartMfaEnrollment
             issuer      : $this->issuer,
             secret      : $this->totp->generateSecret(),
             startedAt   : $startedAt,
-            expiresAt   : $startedAt->modify("+{$this->expiresAfterSeconds} seconds")
+            expiresAt   : $startedAt->modify(modifier: "+{$this->expiresAfterSeconds} seconds")
         );
-        $this->mfaStore->startEnrollment($record);
-        $this->auditLog->record(new AuditEvent(
+        $this->mfaStore->startEnrollment(record: $record);
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.mfa.enrollment.started',
                                     occurredAt: $startedAt,
                                     context   : [
@@ -77,7 +77,7 @@ final readonly class StartMfaEnrollment
             accountLabel: $record->accountLabel,
             issuer      : $record->issuer,
             secret      : $record->secret,
-            otpauthUri  : $this->totp->provisioningUri($record->issuer, $record->accountLabel, $record->secret),
+            otpauthUri  : $this->totp->provisioningUri(issuer: $record->issuer, accountLabel: $record->accountLabel, secret: $record->secret),
             startedAt   : $record->startedAt,
             expiresAt   : $record->expiresAt
         );

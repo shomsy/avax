@@ -28,9 +28,9 @@ final class PasswordHasher
     )
     {
         $this->algo    = $algo
-            ?? $this->inferAlgorithmFromOptions($options)
+            ?? $this->inferAlgorithmFromOptions(options: $options)
             ?? $this->defaultAlgorithm();
-        $this->options = $options ?? $this->defaultOptions($this->algo);
+        $this->options = $options ?? $this->defaultOptions(algo: $this->algo);
     }
 
     public function hash(#[SensitiveParameter] string $password) : string

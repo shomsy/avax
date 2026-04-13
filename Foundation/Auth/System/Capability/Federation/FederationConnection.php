@@ -12,22 +12,22 @@ final readonly class FederationConnection
      * @param array<string, list<string>> $groupRoleMap
      */
     public function __construct(
-        public string $connectionId,
-        public string $tenantSlug,
-        public string $name,
-        public FederationProvider $provider,
-        public string $domain,
-        public bool $ssoOnly = false,
-        public array $groupRoleMap = [],
-        public string|null $metadataUrl = null,
-        public string|null $metadataIssuer = null,
-        public string|null $metadataHash = null,
-        public DateTimeImmutable|null $metadataSyncedAt = null,
-        public string|null $domainVerificationToken = null,
-        public DateTimeImmutable|null $domainVerifiedAt = null,
-        public FederationConnectionHealth $health = FederationConnectionHealth::UNKNOWN,
-        public DateTimeImmutable|null $healthCheckedAt = null,
-        public bool $breakGlassAllowed = false
+        public string                             $connectionId,
+        public string                             $tenantSlug,
+        public string                             $name,
+        public FederationProvider                 $provider,
+        public string                             $domain,
+        public bool                               $ssoOnly = false,
+        public array                              $groupRoleMap = [],
+        public string|null                        $metadataUrl = null,
+        public string|null                        $metadataIssuer = null,
+        #[\SensitiveParameter] public string|null $metadataHash = null,
+        public DateTimeImmutable|null             $metadataSyncedAt = null,
+        #[\SensitiveParameter] public string|null $domainVerificationToken = null,
+        public DateTimeImmutable|null             $domainVerifiedAt = null,
+        public FederationConnectionHealth         $health = FederationConnectionHealth::UNKNOWN,
+        public DateTimeImmutable|null             $healthCheckedAt = null,
+        public bool                               $breakGlassAllowed = false
     ) {}
 
     public function isDomainVerified() : bool
@@ -58,9 +58,9 @@ final readonly class FederationConnection
     }
 
     public function withMetadata(
-        string $metadataIssuer,
-        string $metadataHash,
-        DateTimeImmutable $syncedAt
+        string                        $metadataIssuer,
+        #[\SensitiveParameter] string $metadataHash,
+        DateTimeImmutable             $syncedAt
     ) : self
     {
         return new self(

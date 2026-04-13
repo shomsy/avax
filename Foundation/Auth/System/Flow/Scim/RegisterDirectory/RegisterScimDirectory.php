@@ -30,7 +30,7 @@ final readonly class RegisterScimDirectory
      */
     public function execute(RegisterScimDirectoryData $data) : RegisteredScimDirectory
     {
-        if (! $this->groupRoleMappingValidator->isValid($data->groupRoleMap)) {
+        if (! $this->groupRoleMappingValidator->isValid(groupRoleMap: $data->groupRoleMap)) {
             throw ScimFailed::invalidGroupRoleMapping();
         }
 
@@ -39,13 +39,13 @@ final readonly class RegisterScimDirectory
             directoryId : 'scim_' . bin2hex(random_bytes(12)),
             tenantSlug  : trim($data->tenantSlug),
             name        : trim($data->name),
-            tokenHash   : $this->passwordHasher->hash($plainTextToken),
+            tokenHash   : $this->passwordHasher->hash(password: $plainTextToken),
             groupRoleMap: $data->groupRoleMap,
             createdAt   : $this->clock->now()
         );
 
-        $this->directoryStore->save($directory);
-        $this->auditLog->record(new AuditEvent(
+        $this->directoryStore->save(directory: $directory);
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.scim.directory.registered',
             occurredAt: $this->clock->now(),
             context   : [
@@ -55,6 +55,6 @@ final readonly class RegisterScimDirectory
             ]
         ));
 
-        return new RegisteredScimDirectory($directory, $plainTextToken);
+        return new RegisteredScimDirectory(directory: $directory, plainTextToken: $plainTextToken);
     }
 }

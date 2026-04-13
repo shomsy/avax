@@ -18,10 +18,10 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class CancelMfaEnrollment
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface     $mfaStore,
-        private AuditLogInterface     $auditLog,
-        private Clock                 $clock
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private MfaStoreInterface                            $mfaStore,
+        private AuditLogInterface                            $auditLog,
+        private Clock                                        $clock
     ) {}
 
     /**
@@ -35,8 +35,8 @@ final readonly class CancelMfaEnrollment
             throw new Unauthenticated();
         }
 
-        $this->mfaStore->cancelEnrollment(new UserId($user->id));
-        $this->auditLog->record(new AuditEvent(
+        $this->mfaStore->cancelEnrollment(userId: new UserId(value: $user->id));
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.mfa.enrollment.cancelled',
                                     occurredAt: $this->clock->now(),
                                     context   : [

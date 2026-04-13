@@ -10,8 +10,8 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class CleanupExpiredPasswordResets
 {
     public function __construct(
-        private PruneExpiredPasswordResetsInterface|null $passwordResetStore,
-        private Clock $clock
+        #[\SensitiveParameter] private PruneExpiredPasswordResetsInterface|null $passwordResetStore,
+        private Clock                                                           $clock
     ) {}
 
     public function execute() : int
@@ -20,6 +20,6 @@ final readonly class CleanupExpiredPasswordResets
             return 0;
         }
 
-        return $this->passwordResetStore->pruneExpired($this->clock->now());
+        return $this->passwordResetStore->pruneExpired(now: $this->clock->now());
     }
 }

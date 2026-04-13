@@ -14,9 +14,9 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class RequireAdminElevation
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private AdminElevationStoreInterface $elevationStore,
-        private Clock $clock
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private AdminElevationStoreInterface                 $elevationStore,
+        private Clock                                        $clock
     ) {}
 
     /**
@@ -26,13 +26,13 @@ final readonly class RequireAdminElevation
     {
         $context = $this->currentAuthentication->read();
         $user    = $context->user();
-        $bindingId = $this->bindingId($context);
+        $bindingId = $this->bindingId(context: $context);
 
         if ($user === null) {
             throw AdminElevationFailed::unauthenticated();
         }
 
-        if (! $user->hasRole(UserRole::ADMIN)) {
+        if (! $user->hasRole(role: UserRole::ADMIN)) {
             throw AdminElevationFailed::forbidden();
         }
 
@@ -40,10 +40,10 @@ final readonly class RequireAdminElevation
             throw AdminElevationFailed::missingBinding();
         }
 
-        $record = $this->elevationStore->find($bindingId);
+        $record = $this->elevationStore->find(bindingId: $bindingId);
 
-        if ($record === null || $record->userId !== $user->id || $record->isExpiredAt($this->clock->now())) {
-            $this->elevationStore->revoke($bindingId);
+        if ($record === null || $record->userId !== $user->id || $record->isExpiredAt(moment: $this->clock->now())) {
+            $this->elevationStore->revoke(bindingId: $bindingId);
             throw AdminElevationFailed::notElevated();
         }
     }

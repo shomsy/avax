@@ -6,7 +6,7 @@ require_once dirname(__DIR__) . '/bootstrap.php';
 
 $artifactDir = sys_get_temp_dir() . '/container-benchmark-peer-' . uniqid();
 if (! mkdir($artifactDir, 0775, true) && ! is_dir($artifactDir)) {
-    throw new RuntimeException("Cannot create benchmark peer artifact directory [{$artifactDir}].");
+    throw new RuntimeException(message: "Cannot create benchmark peer artifact directory [{$artifactDir}].");
 }
 
 $current = $artifactDir . '/current.json';
@@ -51,12 +51,12 @@ $command = 'php tests/benchmarks/peer_matrix.php --json --output='
 $peerOutput = [];
 exec($command, $peerOutput, $status);
 
-assertSame(0, $status, 'Peer benchmark matrix runner should emit a JSON artifact.');
-assertTrue(is_file($output), 'Peer benchmark matrix runner should write the requested JSON artifact.');
+assertSame(expected: 0, actual: $status, message: 'Peer benchmark matrix runner should emit a JSON artifact.');
+assertTrue(condition: is_file($output), message: 'Peer benchmark matrix runner should write the requested JSON artifact.');
 
 $json = implode(PHP_EOL, $peerOutput);
-assertTrue(str_contains($json, '"schemaVersion"'), 'Peer benchmark matrix output should expose a schema version.');
-assertTrue(str_contains($json, '"comparisons"'), 'Peer benchmark matrix output should expose peer comparison rows.');
-assertTrue(str_contains($json, '"regressions"'), 'Peer benchmark matrix output should expose regression rows.');
+assertTrue(condition: str_contains($json, '"schemaVersion"'), message: 'Peer benchmark matrix output should expose a schema version.');
+assertTrue(condition: str_contains($json, '"comparisons"'), message: 'Peer benchmark matrix output should expose peer comparison rows.');
+assertTrue(condition: str_contains($json, '"regressions"'), message: 'Peer benchmark matrix output should expose regression rows.');
 
 echo basename(__FILE__) . " ok\n";

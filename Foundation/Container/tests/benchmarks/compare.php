@@ -11,17 +11,17 @@ require_once dirname(__DIR__) . '/bootstrap.php';
 function readBenchmarkArtifact(string $path) : array
 {
     if (! is_file($path)) {
-        throw new RuntimeException("Benchmark artifact [{$path}] does not exist.");
+        throw new RuntimeException(message: "Benchmark artifact [{$path}] does not exist.");
     }
 
     $json = file_get_contents($path);
     if (! is_string($json) || $json === '') {
-        throw new RuntimeException("Benchmark artifact [{$path}] could not be read.");
+        throw new RuntimeException(message: "Benchmark artifact [{$path}] could not be read.");
     }
 
     $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
     if (! is_array($decoded)) {
-        throw new RuntimeException("Benchmark artifact [{$path}] is invalid.");
+        throw new RuntimeException(message: "Benchmark artifact [{$path}] is invalid.");
     }
 
     $meta = $decoded['meta'] ?? [];
@@ -31,7 +31,7 @@ function readBenchmarkArtifact(string $path) : array
 
     $results = $decoded['results'] ?? $decoded;
     if (! is_array($results)) {
-        throw new RuntimeException("Benchmark artifact [{$path}] does not contain benchmark results.");
+        throw new RuntimeException(message: "Benchmark artifact [{$path}] does not contain benchmark results.");
     }
 
     return [
@@ -57,7 +57,7 @@ function benchmarkTargets(array $arguments) : array
         $parts = explode('=', $argument, 2);
         if (count($parts) !== 2 || $parts[0] === '' || $parts[1] === '') {
             throw new RuntimeException(
-                'Comparison targets must use the form name=/absolute/or/relative/path/to/report.json.'
+                message: 'Comparison targets must use the form name=/absolute/or/relative/path/to/report.json.'
             );
         }
 
@@ -65,7 +65,7 @@ function benchmarkTargets(array $arguments) : array
     }
 
     if (count($targets) < 2) {
-        throw new RuntimeException('Benchmark comparison requires at least two benchmark artifacts.');
+        throw new RuntimeException(message: 'Benchmark comparison requires at least two benchmark artifacts.');
     }
 
     return $targets;
@@ -107,7 +107,7 @@ function comparisonPayload(array $artifacts, string $baselineName) : array
     $common   = commonScenarios(reports: $reports);
     $baseline = $reports[$baselineName] ?? null;
     if (! is_array($baseline)) {
-        throw new RuntimeException("Baseline report [{$baselineName}] is missing.");
+        throw new RuntimeException(message: "Baseline report [{$baselineName}] is missing.");
     }
 
     $scenarios = [];

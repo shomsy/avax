@@ -16,7 +16,7 @@ final class FreshMfaRequired extends RuntimeException
         string               $message = 'Fresh MFA verification is required.'
     )
     {
-        parent::__construct($message, 403);
+        parent::__construct(message: $message, code: 403);
     }
 
     public function maxAgeSeconds() : int

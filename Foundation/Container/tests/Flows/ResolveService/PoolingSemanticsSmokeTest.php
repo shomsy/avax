@@ -42,7 +42,7 @@ final class PoolingDecorator implements DecoratorInterface
 {
     public function decorate(mixed $instance, ContainerInterface|null $container = null) : mixed
     {
-        assertInstanceOf(PoolingService::class, $instance, 'Pooling decorators should receive the resolved singleton instance.');
+        assertInstanceOf(expectedClass: PoolingService::class, value: $instance, message: 'Pooling decorators should receive the resolved singleton instance.');
         $instance->decorated = true;
 
         return $instance;
@@ -85,36 +85,36 @@ final class DeferredPoolingProvider implements DeferredProviderInterface
 
     public function register() : void
     {
-        $this->app->singleton(DeferredPoolingContract::class, DeferredPoolingService::class);
+        $this->app->singleton(abstract: DeferredPoolingContract::class, concrete: DeferredPoolingService::class);
     }
 
     public function boot() : void {}
 }
 
 $container = makeTestContainer();
-$container->singleton(PoolingContract::class, PoolingService::class);
-$container->alias('pooling.alias', PoolingContract::class);
-$container->decorate(PoolingContract::class, new PoolingDecorator());
-$container->bootProviders([DeferredPoolingProvider::class]);
+$container->singleton(abstract: PoolingContract::class, concrete: PoolingService::class);
+$container->alias(alias: 'pooling.alias', abstract: PoolingContract::class);
+$container->decorate(abstract: PoolingContract::class, decorator: new PoolingDecorator());
+$container->bootProviders(providers: [DeferredPoolingProvider::class]);
 
-$first          = $container->get(PoolingContract::class);
-$aliased        = $container->get('pooling.alias');
-$deferredFirst  = $container->get(DeferredPoolingContract::class);
-$deferredSecond = $container->get(DeferredPoolingContract::class);
+$first          = $container->get(id: PoolingContract::class);
+$aliased        = $container->get(id: 'pooling.alias');
+$deferredFirst  = $container->get(id: DeferredPoolingContract::class);
+$deferredSecond = $container->get(id: DeferredPoolingContract::class);
 
-assertSame($first, $aliased, 'Aliased singleton resolution should reuse the same pooled instance.');
-assertTrue($first->decorated, 'Decorated singletons should be stored in pooled form after decoration.');
-assertSame($deferredFirst, $deferredSecond, 'Deferred provider singletons should reuse the same pooled instance.');
+assertSame(expected: $first, actual: $aliased, message: 'Aliased singleton resolution should reuse the same pooled instance.');
+assertTrue(condition: $first->decorated, message: 'Decorated singletons should be stored in pooled form after decoration.');
+assertSame(expected: $deferredFirst, actual: $deferredSecond, message: 'Deferred provider singletons should reuse the same pooled instance.');
 
 $container->reset();
 
-$afterReset         = $container->get(PoolingContract::class);
-$afterResetAlias    = $container->get('pooling.alias');
-$afterResetDeferred = $container->get(DeferredPoolingContract::class);
+$afterReset         = $container->get(id: PoolingContract::class);
+$afterResetAlias    = $container->get(id: 'pooling.alias');
+$afterResetDeferred = $container->get(id: DeferredPoolingContract::class);
 
-assertNotSame($first, $afterReset, 'Reset should clear shared pooled instances so singletons rebuild cleanly.');
-assertSame($afterReset, $afterResetAlias, 'Alias resolution should still reuse the rebuilt pooled singleton after reset.');
-assertNotSame($deferredFirst, $afterResetDeferred, 'Reset should also clear deferred-provider singleton instances from the pool.');
-assertTrue($afterReset->decorated, 'Rebuilt pooled singletons should keep decoration semantics after reset.');
+assertNotSame(expected: $first, actual: $afterReset, message: 'Reset should clear shared pooled instances so singletons rebuild cleanly.');
+assertSame(expected: $afterReset, actual: $afterResetAlias, message: 'Alias resolution should still reuse the rebuilt pooled singleton after reset.');
+assertNotSame(expected: $deferredFirst, actual: $afterResetDeferred, message: 'Reset should also clear deferred-provider singleton instances from the pool.');
+assertTrue(condition: $afterReset->decorated, message: 'Rebuilt pooled singletons should keep decoration semantics after reset.');
 
 echo basename(__FILE__) . " ok\n";

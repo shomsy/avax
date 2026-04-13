@@ -12,8 +12,8 @@ use SensitiveParameter;
 final readonly class RefreshAuthenticationRequest
 {
     public function __construct(
-        #[SensitiveParameter] public string $refreshToken,
-        public string|null                  $ipAddress = null,
-        public string|null                  $userAgent = null
+        #[SensitiveParameter] public string      $refreshToken,
+        #[SensitiveParameter] public string|null $ipAddress = null,
+        public string|null                       $userAgent = null
     ) {}
 }

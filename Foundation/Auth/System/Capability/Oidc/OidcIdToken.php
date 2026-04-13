@@ -9,7 +9,7 @@ use DateTimeImmutable;
 final readonly class OidcIdToken
 {
     public function __construct(
-        public string $token,
-        public DateTimeImmutable $expiresAt
+        #[\SensitiveParameter] public string $token,
+        public DateTimeImmutable             $expiresAt
     ) {}
 }

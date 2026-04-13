@@ -7,7 +7,7 @@ use Avax\HTTP\Router\Routing\HttpRequestRouter;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use Avax\HTTP\URI\UriBuilder;
 
-$router = new HttpRequestRouter(constraintValidator: new RouteConstraintValidator, matcher: new \Avax\HTTP\Router\Routing\RouteMatcher(new \Psr\Log\NullLogger));
+$router = new HttpRequestRouter(constraintValidator: new RouteConstraintValidator, matcher: new \Avax\HTTP\Router\Routing\RouteMatcher(logger: new \Psr\Log\NullLogger));
 $router->registerRoute(method: 'GET', path: '/users/{id?}', action: 'handler', defaults: ['id' => '42']);
 
 $ref = new ReflectionMethod(objectOrMethod: HttpRequestRouter::class, method: 'compileRoutePattern');

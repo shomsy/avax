@@ -64,7 +64,7 @@ final readonly class Register
         $createdUser = $this->userSource->create(user: $user);
 
         $this->rateLimit?->reset(identifier: $data->email);
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.register.succeeded',
                                     occurredAt: new \DateTimeImmutable(),
                                     context   : [
@@ -76,7 +76,7 @@ final readonly class Register
                                 ));
 
         return new RegistrationResult(
-            user                     : $this->projectAuthenticatedUser->fromUser($createdUser),
+            user                     : $this->projectAuthenticatedUser->fromUser(user: $createdUser),
             emailVerificationRequired: $this->emailVerificationRequired
         );
     }

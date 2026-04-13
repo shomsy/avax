@@ -23,13 +23,13 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
      */
     public function encode(array $claims) : string
     {
-        return $this->buildCodec()->encode($claims);
+        return $this->buildCodec()->encode(claims: $claims);
     }
 
     public function decode(#[SensitiveParameter] string $token) : array|null
     {
         try {
-            return $this->buildCodec()->decode($token);
+            return $this->buildCodec()->decode(token: $token);
         } catch (Throwable) {
             return null;
         }
@@ -38,11 +38,11 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
     private function buildCodec() : TokenCodecInterface
     {
         $configuration = $this->readConfiguration();
-        $primary = $this->createCodec($configuration['primary']);
+        $primary = $this->createCodec(configuration: $configuration['primary']);
         $verification = [];
 
         foreach ($configuration['verification'] as $key) {
-            $verification[] = $this->createCodec($key);
+            $verification[] = $this->createCodec(configuration: $key);
         }
 
         return new MultiKeyHmacTokenCodec(
@@ -60,30 +60,30 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
     private function readConfiguration() : array
     {
         if (! is_file($this->keyRingPath) || ! is_readable($this->keyRingPath)) {
-            throw new InvalidArgumentException("Key ring file is not readable: {$this->keyRingPath}");
+            throw new InvalidArgumentException(message: "Key ring file is not readable: {$this->keyRingPath}");
         }
 
         $json = file_get_contents($this->keyRingPath);
 
         if ($json === false) {
-            throw new InvalidArgumentException("Key ring file could not be read: {$this->keyRingPath}");
+            throw new InvalidArgumentException(message: "Key ring file could not be read: {$this->keyRingPath}");
         }
 
         try {
             $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
-            throw new InvalidArgumentException('Key ring file is not valid JSON.', previous: $exception);
+            throw new InvalidArgumentException(message: 'Key ring file is not valid JSON.', previous: $exception);
         }
 
         if (! is_array($decoded)) {
-            throw new InvalidArgumentException('Key ring file must decode to an object.');
+            throw new InvalidArgumentException(message: 'Key ring file must decode to an object.');
         }
 
-        $primary = $this->normalizeKey($decoded['primary'] ?? null, 'primary');
+        $primary = $this->normalizeKey(candidate: $decoded['primary'] ?? null, label: 'primary');
         $verification = [];
 
         foreach ($decoded['verification'] ?? [] as $index => $key) {
-            $verification[] = $this->normalizeKey($key, "verification[$index]");
+            $verification[] = $this->normalizeKey(candidate: $key, label: "verification[$index]");
         }
 
         return [
@@ -99,7 +99,7 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
     private function normalizeKey(mixed $candidate, string $label) : array
     {
         if (! is_array($candidate)) {
-            throw new InvalidArgumentException("Key ring {$label} entry must be an object.");
+            throw new InvalidArgumentException(message: "Key ring {$label} entry must be an object.");
         }
 
         $secret = trim((string) ($candidate['secret'] ?? ''));
@@ -107,7 +107,7 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
         $kid = trim((string) ($candidate['kid'] ?? ''));
 
         if ($secret === '') {
-            throw new InvalidArgumentException("Key ring {$label} secret cannot be empty.");
+            throw new InvalidArgumentException(message: "Key ring {$label} secret cannot be empty.");
         }
 
         return [

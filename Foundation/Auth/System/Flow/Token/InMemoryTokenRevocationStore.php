@@ -14,12 +14,12 @@ final class InMemoryTokenRevocationStore implements TokenRevocationStoreInterfac
     /** @var array<string, int> */
     private array $revokedUntil = [];
 
-    public function revoke(string $tokenId, DateTimeImmutable $expiresAt) : void
+    public function revoke(#[\SensitiveParameter] string $tokenId, DateTimeImmutable $expiresAt) : void
     {
         $this->revokedUntil[$tokenId] = $expiresAt->getTimestamp();
     }
 
-    public function isRevoked(string $tokenId, DateTimeImmutable $moment) : bool
+    public function isRevoked(#[\SensitiveParameter] string $tokenId, DateTimeImmutable $moment) : bool
     {
         $expiresAt = $this->revokedUntil[$tokenId] ?? null;
 

@@ -67,7 +67,7 @@ class IdentityTest extends TestCase
         $jwt->shouldReceive('issue')->once()->with($user, null, false)->andReturn(new IssuedToken(
                                                                                token    : 'token-10',
                                                                                tokenId  : 'token-id',
-                                                                               expiresAt: new \DateTimeImmutable('+1 hour')
+                                                                               expiresAt: new \DateTimeImmutable(datetime: '+1 hour')
                                                                            ));
         $jwt->shouldReceive('issueRefreshToken')->once()->with($user, null, false)->andReturn(null);
 
@@ -78,9 +78,9 @@ class IdentityTest extends TestCase
 
         $issued = $identity->issue(user: $user);
 
-        $this->assertSame(AuthenticationMode::HYBRID, $issued->mode);
-        $this->assertSame('session-10', $issued->sessionId);
-        $this->assertSame('token-10', $issued->accessToken?->token);
+        $this->assertSame(expected: AuthenticationMode::HYBRID, actual: $issued->mode);
+        $this->assertSame(expected: 'session-10', actual: $issued->sessionId);
+        $this->assertSame(expected: 'token-10', actual: $issued->accessToken?->token);
     }
 
     public function testIdentityClearsAllConfiguredBackends() : void
@@ -89,18 +89,18 @@ class IdentityTest extends TestCase
         $session->shouldReceive('clear')->once();
 
         $jwt = Mockery::mock(JwtIdentityInterface::class);
-        $jwt->shouldReceive('revoke')->once()->with('token-10', Mockery::type(\DateTimeImmutable::class));
+        $jwt->shouldReceive('revoke')->once()->with('token-10', Mockery::type(expected: \DateTimeImmutable::class));
 
         $identity = new Identity(
             sessionIdentity: $session,
             jwtIdentity    : $jwt
         );
 
-        $identity->clear(AuthenticationContext::authenticated(
+        $identity->clear(context: AuthenticationContext::authenticated(
             user                : new \Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser(id: 10, email: 'identity@example.com', username: 'identity'),
             mode                : AuthenticationMode::TOKEN,
             accessTokenId       : 'token-10',
-            accessTokenExpiresAt: new \DateTimeImmutable('+1 hour')
+            accessTokenExpiresAt: new \DateTimeImmutable(datetime: '+1 hour')
         ));
 
         $this->assertTrue(condition: true);
@@ -113,8 +113,8 @@ class IdentityTest extends TestCase
 
         $identity = new Identity(sessionIdentity: $session, jwtIdentity: $jwt);
 
-        $this->assertSame($session, $identity->sessionIdentity());
-        $this->assertSame($jwt, $identity->jwtIdentity());
+        $this->assertSame(expected: $session, actual: $identity->sessionIdentity());
+        $this->assertSame(expected: $jwt, actual: $identity->jwtIdentity());
     }
 
     protected function tearDown() : void

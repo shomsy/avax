@@ -12,7 +12,7 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
     /** @var array<string, array{user_id: int, new_email: string, expires_at: int}> */
     private array $records = [];
 
-    public function issue(UserId $userId, string $newEmail, DateTimeImmutable $expiresAt) : EmailChangeChallenge
+    public function issue(UserId $userId, #[\SensitiveParameter] string $newEmail, DateTimeImmutable $expiresAt) : EmailChangeChallenge
     {
         $token = bin2hex(random_bytes(32));
         $this->records[hash('sha256', $token)] = [
@@ -28,7 +28,7 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
         );
     }
 
-    public function consume(string $token, DateTimeImmutable $now) : EmailChangeRecord|null
+    public function consume(#[\SensitiveParameter] string $token, DateTimeImmutable $now) : EmailChangeRecord|null
     {
         $key    = hash('sha256', $token);
         $record = $this->records[$key] ?? null;
@@ -39,9 +39,9 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
         }
 
         return new EmailChangeRecord(
-            userId   : new UserId($record['user_id']),
+            userId   : new UserId(value: $record['user_id']),
             newEmail : $record['new_email'],
-            expiresAt: new DateTimeImmutable('@' . $record['expires_at'])
+            expiresAt: new DateTimeImmutable(datetime: '@' . $record['expires_at'])
         );
     }
 }

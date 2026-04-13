@@ -17,7 +17,7 @@ final class RequirePhishingResistantAuthenticationTest extends TestCase
     public function testRequirePhishingResistantAuthenticationSuccess() : void
     {
         $current = new CurrentAuthentication();
-        $current->store(AuthenticationContext::authenticated(
+        $current->store(context: AuthenticationContext::authenticated(
             user               : new AuthenticatedUser(
                 id       : 1,
                 email    : 'user@example.com',
@@ -27,16 +27,16 @@ final class RequirePhishingResistantAuthenticationTest extends TestCase
             phishingResistant  : true
         ));
 
-        $requirement = new RequirePhishingResistantAuthentication($current);
+        $requirement = new RequirePhishingResistantAuthentication(currentAuthentication: $current);
         $requirement->execute();
 
-        $this->assertTrue(true);
+        $this->assertTrue(condition: true);
     }
 
     public function testRequirePhishingResistantAuthenticationFailure() : void
     {
         $current = new CurrentAuthentication();
-        $current->store(AuthenticationContext::authenticated(
+        $current->store(context: AuthenticationContext::authenticated(
             user  : new AuthenticatedUser(
                 id       : 1,
                 email    : 'user@example.com',
@@ -45,7 +45,7 @@ final class RequirePhishingResistantAuthenticationTest extends TestCase
             mode  : AuthenticationMode::SESSION
         ));
 
-        $requirement = new RequirePhishingResistantAuthentication($current);
+        $requirement = new RequirePhishingResistantAuthentication(currentAuthentication: $current);
 
         $this->expectException(PhishingResistantAuthenticationRequired::class);
         $requirement->execute();

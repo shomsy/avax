@@ -21,9 +21,9 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
 {
     public function testTenantSecurityHttpSurfacePublishesAdminApi() : void
     {
-        $surface = new ServeTenantSecurityHttpSurface($this->buildAuth());
+        $surface = new ServeTenantSecurityHttpSurface(auth: $this->buildAuth());
 
-        $connection = $surface->execute(new HttpEndpointInput(
+        $connection = $surface->execute(input: new HttpEndpointInput(
             method: 'POST',
             path  : '/tenants/acme/security/federation-connections',
             body  : [
@@ -39,20 +39,20 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
         $connectionId = $connection->body['connection']['connectionId'];
         $verificationToken = $connection->body['connection']['domainVerificationToken'];
 
-        $verified = $surface->execute(new HttpEndpointInput(
+        $verified = $surface->execute(input: new HttpEndpointInput(
             method: 'POST',
             path  : '/tenants/acme/security/federation-connections/' . rawurlencode($connectionId) . '/verify-domain',
             body  : ['verificationToken' => $verificationToken]
         ));
-        $metadataSynced = $surface->execute(new HttpEndpointInput(
+        $metadataSynced = $surface->execute(input: new HttpEndpointInput(
             method: 'POST',
             path  : '/tenants/acme/security/federation-connections/' . rawurlencode($connectionId) . '/sync-metadata'
         ));
-        $health = $surface->execute(new HttpEndpointInput(
+        $health = $surface->execute(input: new HttpEndpointInput(
             method: 'GET',
             path  : '/tenants/acme/security/federation-connections/' . rawurlencode($connectionId) . '/health'
         ));
-        $directory = $surface->execute(new HttpEndpointInput(
+        $directory = $surface->execute(input: new HttpEndpointInput(
             method: 'POST',
             path  : '/tenants/acme/security/scim-directories',
             body  : [
@@ -62,7 +62,7 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
         ));
         $directoryId = $directory->body['directory']['directoryId'];
 
-        $change = $surface->execute(new HttpEndpointInput(
+        $change = $surface->execute(input: new HttpEndpointInput(
             method: 'POST',
             path  : '/tenants/acme/security/changes',
             body  : [
@@ -76,48 +76,48 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
             ]
         ));
         $changeId = $change->body['change']['changeId'];
-        $changes = $surface->execute(new HttpEndpointInput(
+        $changes = $surface->execute(input: new HttpEndpointInput(
             method: 'GET',
             path  : '/tenants/acme/security/changes'
         ));
-        $approved = $surface->execute(new HttpEndpointInput(
+        $approved = $surface->execute(input: new HttpEndpointInput(
             method: 'POST',
             path  : '/tenants/acme/security/changes/' . rawurlencode($changeId) . '/approve',
             body  : ['approvedBy' => 'approver']
         ));
-        $applied = $surface->execute(new HttpEndpointInput(
+        $applied = $surface->execute(input: new HttpEndpointInput(
             method: 'POST',
             path  : '/tenants/acme/security/changes/' . rawurlencode($changeId) . '/apply'
         ));
-        $summary = $surface->execute(new HttpEndpointInput(
+        $summary = $surface->execute(input: new HttpEndpointInput(
             method: 'GET',
             path  : '/tenants/acme/security'
         ));
-        $rolledBack = $surface->execute(new HttpEndpointInput(
+        $rolledBack = $surface->execute(input: new HttpEndpointInput(
             method: 'POST',
             path  : '/tenants/acme/security/changes/' . rawurlencode($changeId) . '/rollback'
         ));
 
-        $this->assertSame(201, $connection->statusCode);
-        $this->assertSame(200, $verified->statusCode);
-        $this->assertNotNull($verified->body['connection']['domainVerifiedAt']);
-        $this->assertSame(200, $metadataSynced->statusCode);
-        $this->assertSame('healthy', $health->body['health']);
-        $this->assertSame(201, $directory->statusCode);
-        $this->assertArrayHasKey('plainTextToken', $directory->body);
-        $this->assertSame(201, $change->statusCode);
-        $this->assertCount(1, $changes->body['changes']);
-        $this->assertSame('approved', $approved->body['change']['status']);
-        $this->assertSame($connectionId, $applied->body['configuration']['federationConnectionId']);
-        $this->assertSame($directoryId, $summary->body['configuration']['scimDirectoryId']);
-        $this->assertSame(1, count($summary->body['federationConnections']));
-        $this->assertNull($rolledBack->body['configuration']['federationConnectionId']);
+        $this->assertSame(expected: 201, actual: $connection->statusCode);
+        $this->assertSame(expected: 200, actual: $verified->statusCode);
+        $this->assertNotNull(actual: $verified->body['connection']['domainVerifiedAt']);
+        $this->assertSame(expected: 200, actual: $metadataSynced->statusCode);
+        $this->assertSame(expected: 'healthy', actual: $health->body['health']);
+        $this->assertSame(expected: 201, actual: $directory->statusCode);
+        $this->assertArrayHasKey(key: 'plainTextToken', array: $directory->body);
+        $this->assertSame(expected: 201, actual: $change->statusCode);
+        $this->assertCount(expectedCount: 1, haystack: $changes->body['changes']);
+        $this->assertSame(expected: 'approved', actual: $approved->body['change']['status']);
+        $this->assertSame(expected: $connectionId, actual: $applied->body['configuration']['federationConnectionId']);
+        $this->assertSame(expected: $directoryId, actual: $summary->body['configuration']['scimDirectoryId']);
+        $this->assertSame(expected: 1, actual: count($summary->body['federationConnections']));
+        $this->assertNull(actual: $rolledBack->body['configuration']['federationConnectionId']);
     }
 
     public function testTenantSecurityHttpSurfaceRejectsApplyWithoutApproval() : void
     {
-        $surface = new ServeTenantSecurityHttpSurface($this->buildAuth());
-        $change = $surface->execute(new HttpEndpointInput(
+        $surface = new ServeTenantSecurityHttpSurface(auth: $this->buildAuth());
+        $change = $surface->execute(input: new HttpEndpointInput(
             method: 'POST',
             path  : '/tenants/acme/security/changes',
             body  : [
@@ -127,13 +127,13 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
             ]
         ));
 
-        $response = $surface->execute(new HttpEndpointInput(
+        $response = $surface->execute(input: new HttpEndpointInput(
             method: 'POST',
             path  : '/tenants/acme/security/changes/' . rawurlencode($change->body['change']['changeId']) . '/apply'
         ));
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertSame('tenant_security_failed', $response->body['error']);
+        $this->assertSame(expected: 422, actual: $response->statusCode);
+        $this->assertSame(expected: 'tenant_security_failed', actual: $response->body['error']);
     }
 
     private function buildAuth() : Auth
@@ -142,16 +142,16 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
         $refreshTokens = new InMemoryRefreshTokenStore();
 
         return Auth::configuration()
-            ->forUser($userSource)
-            ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
                 userSource       : $userSource,
-                codec            : new HmacTokenCodec('tenant-http-secret'),
+                codec            : new HmacTokenCodec(secret: 'tenant-http-secret'),
                 clock            : new Clock(),
                 revocationStore  : new InMemoryTokenRevocationStore(),
                 refreshTokenStore: $refreshTokens
             )))
-            ->withRefreshTokenStore($refreshTokens)
-            ->withFederationRuntime(new FakeFederationRuntime())
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
+            ->withFederationRuntime(federationRuntime: new FakeFederationRuntime())
             ->ready();
     }
 }

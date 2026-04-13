@@ -20,12 +20,12 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class LogoutAllSessions
 {
     public function __construct(
-        private IdentityInterface               $identity,
-        private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface               $auditLog,
-        private Clock                           $clock,
-        private SessionRegistryInterface|null   $sessionRegistry = null,
-        private RefreshTokenStoreInterface|null $refreshTokenStore = null
+        private IdentityInterface                                      $identity,
+        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private AuditLogInterface                                      $auditLog,
+        private Clock                                                  $clock,
+        #[\SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
+        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
     ) {}
 
     /**
@@ -40,15 +40,15 @@ final readonly class LogoutAllSessions
             throw new Unauthenticated();
         }
 
-        $userId = new UserId($user->id);
+        $userId = new UserId(value: $user->id);
         $now    = $this->clock->now();
 
-        $this->sessionRegistry?->revokeForUser($userId, $now, 'logout_all');
-        $this->refreshTokenStore?->revokeUser($userId);
-        $this->identity->clear($context);
+        $this->sessionRegistry?->revokeForUser(userId: $userId, revokedAt: $now, reason: 'logout_all');
+        $this->refreshTokenStore?->revokeUser(userId: $userId);
+        $this->identity->clear(context: $context);
         $this->currentAuthentication->clear();
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.sessions.revoked',
             occurredAt: $now,
             context   : [

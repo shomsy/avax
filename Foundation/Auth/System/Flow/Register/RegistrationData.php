@@ -14,10 +14,10 @@ use SensitiveParameter;
 final readonly class RegistrationData
 {
     public function __construct(
-        #[SensitiveParameter] public string $email,
-        public string                       $username,
-        #[SensitiveParameter] public string $password,
-        public string|null                  $ipAddress = null,
-        public string|null                  $userAgent = null
+        #[SensitiveParameter] public string      $email,
+        public string                            $username,
+        #[SensitiveParameter] public string      $password,
+        #[SensitiveParameter] public string|null $ipAddress = null,
+        public string|null                       $userAgent = null
     ) {}
 }

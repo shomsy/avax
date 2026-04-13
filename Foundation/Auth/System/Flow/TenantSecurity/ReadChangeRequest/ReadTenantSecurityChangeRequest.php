@@ -15,6 +15,6 @@ final readonly class ReadTenantSecurityChangeRequest
 
     public function execute(string $changeId) : TenantSecurityChangeRequest|null
     {
-        return $this->changeRequestStore->find($changeId);
+        return $this->changeRequestStore->find(changeId: $changeId);
     }
 }

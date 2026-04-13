@@ -22,20 +22,20 @@ final class ServeScimHttpSurfaceTest extends TestCase
     public function testScimHttpSurfaceServesMetadataCrudAndPatchFlow() : void
     {
         $auth = $this->buildAuth();
-        $directory = $auth->registerScimDirectory(new RegisterScimDirectoryData(
+        $directory = $auth->registerScimDirectory(data: new RegisterScimDirectoryData(
             tenantSlug  : 'acme',
             name        : 'Acme Workforce',
             groupRoleMap: ['admins' => ['admin'], 'users' => ['user']]
         ));
-        $surface = new ServeScimHttpSurface($auth);
+        $surface = new ServeScimHttpSurface(auth: $auth);
         $directoryId = $directory->directory->directoryId;
         $authHeader = ['Authorization' => 'Bearer ' . $directory->plainTextToken];
 
-        $serviceProviderConfig = $surface->execute(new HttpEndpointInput(
+        $serviceProviderConfig = $surface->execute(input: new HttpEndpointInput(
             method: 'GET',
             path  : '/scim/v2/ServiceProviderConfig'
         ));
-        $created = $surface->execute(new HttpEndpointInput(
+        $created = $surface->execute(input: new HttpEndpointInput(
             method         : 'POST',
             path           : '/scim/v2/Users',
             headers        : $authHeader,
@@ -48,7 +48,7 @@ final class ServeScimHttpSurfaceTest extends TestCase
                 'active' => true,
             ]
         ));
-        $patched = $surface->execute(new HttpEndpointInput(
+        $patched = $surface->execute(input: new HttpEndpointInput(
             method         : 'PATCH',
             path           : '/scim/v2/Users/ext-1',
             headers        : $authHeader,
@@ -60,52 +60,52 @@ final class ServeScimHttpSurfaceTest extends TestCase
                 ],
             ]
         ));
-        $listed = $surface->execute(new HttpEndpointInput(
+        $listed = $surface->execute(input: new HttpEndpointInput(
             method         : 'GET',
             path           : '/scim/v2/Users',
             headers        : $authHeader,
             routeParameters: ['directoryId' => $directoryId],
             query          : ['filter' => 'externalId eq "ext-1"']
         ));
-        $deleted = $surface->execute(new HttpEndpointInput(
+        $deleted = $surface->execute(input: new HttpEndpointInput(
             method         : 'DELETE',
             path           : '/scim/v2/Users/ext-1',
             headers        : $authHeader,
             routeParameters: ['directoryId' => $directoryId]
         ));
-        $missing = $surface->execute(new HttpEndpointInput(
+        $missing = $surface->execute(input: new HttpEndpointInput(
             method         : 'GET',
             path           : '/scim/v2/Users/ext-1',
             headers        : $authHeader,
             routeParameters: ['directoryId' => $directoryId]
         ));
 
-        $this->assertSame(200, $serviceProviderConfig->statusCode);
-        $this->assertTrue($serviceProviderConfig->body['patch']['supported']);
-        $this->assertSame(201, $created->statusCode);
-        $this->assertSame('ext-1', $created->body['externalId']);
-        $this->assertSame(200, $patched->statusCode);
-        $this->assertFalse($patched->body['active']);
-        $this->assertSame('suspended', $patched->body['urn:avax:params:scim:schemas:auth:1.0:User']['state']);
-        $this->assertSame(200, $listed->statusCode);
-        $this->assertSame(1, $listed->body['totalResults']);
-        $this->assertSame('users', $listed->body['Resources'][0]['groups'][0]['value']);
-        $this->assertSame(204, $deleted->statusCode);
-        $this->assertSame(404, $missing->statusCode);
+        $this->assertSame(expected: 200, actual: $serviceProviderConfig->statusCode);
+        $this->assertTrue(condition: $serviceProviderConfig->body['patch']['supported']);
+        $this->assertSame(expected: 201, actual: $created->statusCode);
+        $this->assertSame(expected: 'ext-1', actual: $created->body['externalId']);
+        $this->assertSame(expected: 200, actual: $patched->statusCode);
+        $this->assertFalse(condition: $patched->body['active']);
+        $this->assertSame(expected: 'suspended', actual: $patched->body['urn:avax:params:scim:schemas:auth:1.0:User']['state']);
+        $this->assertSame(expected: 200, actual: $listed->statusCode);
+        $this->assertSame(expected: 1, actual: $listed->body['totalResults']);
+        $this->assertSame(expected: 'users', actual: $listed->body['Resources'][0]['groups'][0]['value']);
+        $this->assertSame(expected: 204, actual: $deleted->statusCode);
+        $this->assertSame(expected: 404, actual: $missing->statusCode);
     }
 
     public function testScimHttpSurfaceRejectsMissingDirectoryToken() : void
     {
-        $surface = new ServeScimHttpSurface($this->buildAuth());
+        $surface = new ServeScimHttpSurface(auth: $this->buildAuth());
 
-        $response = $surface->execute(new HttpEndpointInput(
+        $response = $surface->execute(input: new HttpEndpointInput(
             method         : 'GET',
             path           : '/scim/v2/Users',
             routeParameters: ['directoryId' => 'scim_missing']
         ));
 
-        $this->assertSame(400, $response->statusCode);
-        $this->assertSame('invalidValue', $response->body['scimType']);
+        $this->assertSame(expected: 400, actual: $response->statusCode);
+        $this->assertSame(expected: 'invalidValue', actual: $response->body['scimType']);
     }
 
     private function buildAuth() : Auth
@@ -114,15 +114,15 @@ final class ServeScimHttpSurfaceTest extends TestCase
         $refreshTokens = new InMemoryRefreshTokenStore();
 
         return Auth::configuration()
-            ->forUser($userSource)
-            ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
                 userSource       : $userSource,
-                codec            : new HmacTokenCodec('scim-http-secret'),
+                codec            : new HmacTokenCodec(secret: 'scim-http-secret'),
                 clock            : new Clock(),
                 revocationStore  : new InMemoryTokenRevocationStore(),
                 refreshTokenStore: $refreshTokens
             )))
-            ->withRefreshTokenStore($refreshTokens)
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->ready();
     }
 }

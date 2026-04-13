@@ -14,6 +14,6 @@ final readonly class TenantAdminPhishingResistantPolicy
 {
     public function execute() : AccessPolicy
     {
-        return AccessPolicy::forIdentityPolicy(IdentityPolicyCatalog::tenantAdmin());
+        return AccessPolicy::forIdentityPolicy(identityPolicy: IdentityPolicyCatalog::tenantAdmin());
     }
 }

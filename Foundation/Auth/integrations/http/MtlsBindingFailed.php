@@ -10,11 +10,11 @@ final class MtlsBindingFailed extends RuntimeException
 {
     public static function missingCertificate() : self
     {
-        return new self('mTLS client certificate is required.');
+        return new self(message: 'mTLS client certificate is required.');
     }
 
     public static function mismatch() : self
     {
-        return new self('mTLS sender constraint does not match the token binding.');
+        return new self(message: 'mTLS sender constraint does not match the token binding.');
     }
 }

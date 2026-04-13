@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Http;
 
+use SensitiveParameter;
+
 /**
  * JSON-ready transport response for optional HTTP adapters.
  */
@@ -14,8 +16,8 @@ final readonly class JsonHttpResponse
      * @param array<string, string> $headers
      */
     public function __construct(
-        public int $statusCode,
+        public int                         $statusCode,
         public array $body = [],
-        public array $headers = ['Content-Type' => 'application/json']
+        #[SensitiveParameter] public array $headers = ['Content-Type' => 'application/json']
     ) {}
 }

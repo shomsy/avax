@@ -98,7 +98,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
             id      : $id,
             mutate  : static fn (User $user) : User => User::create(
                 id          : $user->id,
-                email       : new UserEmail($email),
+                email       : new UserEmail(value: $email),
                 username    : $user->username,
                 passwordHash: $user->passwordHash,
                 roles       : $user->roles,
@@ -142,12 +142,12 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
 
     public function deactivate(UserId $id) : void
     {
-        $this->setActive($id, false);
+        $this->setActive(id: $id, isActive: false);
     }
 
     public function activate(UserId $id) : void
     {
-        $this->setActive($id, true);
+        $this->setActive(id: $id, isActive: true);
     }
 
     public function create(User $user) : User

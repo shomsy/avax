@@ -16,8 +16,8 @@ final class ExportAuditEventsTest extends TestCase
     public function testExportDrainsAuditEvents() : void
     {
         $log = new InMemoryAuditLog();
-        $log->record(new AuditEvent('auth.login.succeeded', new \DateTimeImmutable()));
-        $log->record(new AuditEvent('auth.logout.completed', new \DateTimeImmutable()));
+        $log->record(event: new AuditEvent(name: 'auth.login.succeeded', occurredAt: new \DateTimeImmutable()));
+        $log->record(event: new AuditEvent(name: 'auth.logout.completed', occurredAt: new \DateTimeImmutable()));
         $capture = new stdClass();
         $capture->events = [];
 
@@ -37,8 +37,8 @@ final class ExportAuditEventsTest extends TestCase
             }
         ))->execute();
 
-        $this->assertSame(2, $count);
-        $this->assertCount(2, $capture->events);
-        $this->assertSame([], $log->events());
+        $this->assertSame(expected: 2, actual: $count);
+        $this->assertCount(expectedCount: 2, haystack: $capture->events);
+        $this->assertSame(expected: [], actual: $log->events());
     }
 }

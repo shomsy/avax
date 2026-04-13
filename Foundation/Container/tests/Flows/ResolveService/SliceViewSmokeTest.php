@@ -38,141 +38,141 @@ final class SliceBillingOwnedService {}
 
 $container = makeTestContainer();
 
-$container->singleton(SlicePaymentGateway::class, ExportedSliceGateway::class)
-    ->asCapability('capability.payments')
+$container->singleton(abstract: SlicePaymentGateway::class, concrete: ExportedSliceGateway::class)
+    ->asCapability(ownerSlice: 'capability.payments')
     ->asShared()
     ->export();
 
-$container->bind(SliceInternalAudit::class, SliceInternalAudit::class)
-    ->asCapability('capability.payments')
+$container->bind(abstract: SliceInternalAudit::class, concrete: SliceInternalAudit::class)
+    ->asCapability(ownerSlice: 'capability.payments')
     ->asInternal();
 
-$container->bind(SliceBillingEntry::class, SliceBillingEntry::class)
-    ->asFlow('flow.billing')
+$container->bind(abstract: SliceBillingEntry::class, concrete: SliceBillingEntry::class)
+    ->asFlow(ownerSlice: 'flow.billing')
     ->asPrivate()
     ->entry()
-    ->import('capability.payments');
+    ->import(slices: 'capability.payments');
 
-$container->bind(SliceBillingHelper::class, SliceBillingHelper::class)
-    ->asFlow('flow.billing')
+$container->bind(abstract: SliceBillingHelper::class, concrete: SliceBillingHelper::class)
+    ->asFlow(ownerSlice: 'flow.billing')
     ->asInternal();
 
-$container->bind(SliceLoginSecret::class, SliceLoginSecret::class)
-    ->asFlow('flow.login')
+$container->bind(abstract: SliceLoginSecret::class, concrete: SliceLoginSecret::class)
+    ->asFlow(ownerSlice: 'flow.login')
     ->asPrivate();
 
-$container->bind(SliceConfigProbe::class, SliceConfigProbe::class)
-    ->asConfiguration('configuration.runtime')
+$container->bind(abstract: SliceConfigProbe::class, concrete: SliceConfigProbe::class)
+    ->asConfiguration(ownerSlice: 'configuration.runtime')
     ->asInternal();
 
-$container->bind(SliceClock::class, SliceClock::class)
-    ->asFoundation('foundation.time')
+$container->bind(abstract: SliceClock::class, concrete: SliceClock::class)
+    ->asFoundation(ownerSlice: 'foundation.time')
     ->asInternal();
 
-$billing       = $container->forSlice('flow.billing');
-$payments      = $container->forSlice('capability.payments');
-$configuration = $container->forSlice('configuration.runtime');
-$foundation    = $container->forSlice('foundation.time');
+$billing       = $container->forSlice(slice: 'flow.billing');
+$payments      = $container->forSlice(slice: 'capability.payments');
+$configuration = $container->forSlice(slice: 'configuration.runtime');
+$foundation    = $container->forSlice(slice: 'foundation.time');
 
-assertTrue($billing->has(SliceBillingEntry::class), 'Flow slice views should expose their entry units.');
-assertTrue($billing->has(SliceBillingHelper::class), 'Flow slice views should expose their internal units.');
-assertTrue($billing->has(SlicePaymentGateway::class), 'Flow slice views should expose imported shared exports.');
-assertTrue(! $billing->has(SliceInternalAudit::class), 'Flow slice views should not expose internal capability units.');
-assertTrue(! $billing->has(SliceLoginSecret::class), 'Flow slice views should not expose private units from another flow.');
-assertSame('payments', $billing->get(SliceBillingEntry::class)->gateway->label(), 'Flow slice views should resolve their imported dependencies.');
+assertTrue(condition: $billing->has(id: SliceBillingEntry::class), message: 'Flow slice views should expose their entry units.');
+assertTrue(condition: $billing->has(id: SliceBillingHelper::class), message: 'Flow slice views should expose their internal units.');
+assertTrue(condition: $billing->has(id: SlicePaymentGateway::class), message: 'Flow slice views should expose imported shared exports.');
+assertTrue(condition: ! $billing->has(id: SliceInternalAudit::class), message: 'Flow slice views should not expose internal capability units.');
+assertTrue(condition: ! $billing->has(id: SliceLoginSecret::class), message: 'Flow slice views should not expose private units from another flow.');
+assertSame(expected: 'payments', actual: $billing->get(id: SliceBillingEntry::class)->gateway->label(), message: 'Flow slice views should resolve their imported dependencies.');
 
-assertTrue($payments->has(SliceInternalAudit::class), 'Capability slice views should expose their internal implementation units.');
-assertTrue(! $payments->has(SliceBillingHelper::class), 'Capability slice views should not expose flow-private internals.');
+assertTrue(condition: $payments->has(id: SliceInternalAudit::class), message: 'Capability slice views should expose their internal implementation units.');
+assertTrue(condition: ! $payments->has(id: SliceBillingHelper::class), message: 'Capability slice views should not expose flow-private internals.');
 
-assertTrue($configuration->has(SliceConfigProbe::class), 'Configuration slice views should expose their own units.');
-assertTrue(! $configuration->has(SliceBillingHelper::class), 'Configuration slice views should not expose unrelated flow internals.');
+assertTrue(condition: $configuration->has(id: SliceConfigProbe::class), message: 'Configuration slice views should expose their own units.');
+assertTrue(condition: ! $configuration->has(id: SliceBillingHelper::class), message: 'Configuration slice views should not expose unrelated flow internals.');
 
-assertTrue($foundation->has(SliceClock::class), 'Foundation slice views should expose their own units.');
-assertTrue(! $foundation->has(SliceInternalAudit::class), 'Foundation slice views should not expose capability internals.');
+assertTrue(condition: $foundation->has(id: SliceClock::class), message: 'Foundation slice views should expose their own units.');
+assertTrue(condition: ! $foundation->has(id: SliceInternalAudit::class), message: 'Foundation slice views should not expose capability internals.');
 
 $billingGraph        = $billing->debugGraph();
-$billingServiceGraph = $billing->debugGraph(SliceInternalAudit::class);
-$billingDescription  = $billing->describeService(SliceInternalAudit::class);
-$globalBillingGraph  = $container->debugGraph('flow.billing');
+$billingServiceGraph = $billing->debugGraph(id: SliceInternalAudit::class);
+$billingDescription  = $billing->describeService(id: SliceInternalAudit::class);
+$globalBillingGraph  = $container->debugGraph(id: 'flow.billing');
 $billingSlice        = $billing->debugSlice();
 $billingImports      = $billing->debugImports();
 $paymentsExports     = $payments->debugExports();
-$violations          = $billing->debugVisibilityViolations([SliceInternalAudit::class]);
+$violations          = $billing->debugVisibilityViolations(serviceIds: [SliceInternalAudit::class]);
 $billingGovernance   = $billing->debugGovernance();
 $billingArchitecture = $billing->debugArchitecture();
 
-assertSame('flow.billing', $billingGraph['sliceView']['slice'] ?? null, 'Slice graph diagnostics should expose the active slice view.');
-assertSame('flow.billing', $globalBillingGraph['sliceView']['slice'] ?? null, 'Global graph diagnostics should be able to pivot into one slice view.');
-assertSame('flow.billing', $billingSlice['slice'] ?? null, 'debugSlice() should expose the active slice manifest.');
+assertSame(expected: 'flow.billing', actual: $billingGraph['sliceView']['slice'] ?? null, message: 'Slice graph diagnostics should expose the active slice view.');
+assertSame(expected: 'flow.billing', actual: $globalBillingGraph['sliceView']['slice'] ?? null, message: 'Global graph diagnostics should be able to pivot into one slice view.');
+assertSame(expected: 'flow.billing', actual: $billingSlice['slice'] ?? null, message: 'debugSlice() should expose the active slice manifest.');
 assertTrue(
-    in_array(SliceBillingEntry::class, array_column($billingGraph['sliceView']['visible'] ?? [], 'serviceId'), true),
-    'Slice graph diagnostics should list visible services.'
+    condition: in_array(SliceBillingEntry::class, array_column($billingGraph['sliceView']['visible'] ?? [], 'serviceId'), true),
+    message  : 'Slice graph diagnostics should list visible services.'
 );
 assertTrue(
-    in_array(SlicePaymentGateway::class, array_column($billingSlice['visible'] ?? [], 'serviceId'), true),
-    'Slice diagnostics should expose imported shared exports.'
+    condition: in_array(SlicePaymentGateway::class, array_column($billingSlice['visible'] ?? [], 'serviceId'), true),
+    message  : 'Slice diagnostics should expose imported shared exports.'
 );
 assertTrue(
-    in_array(SliceInternalAudit::class, array_column($billingGraph['hiddenServices'] ?? [], 'serviceId'), true),
-    'Slice graph diagnostics should list hidden services with reasons.'
+    condition: in_array(SliceInternalAudit::class, array_column($billingGraph['hiddenServices'] ?? [], 'serviceId'), true),
+    message  : 'Slice graph diagnostics should list hidden services with reasons.'
 );
-assertSame(['capability.payments'], array_column($billingImports['imports'] ?? [], 'slice'), 'debugImports() should expose imported slice manifests.');
-assertSame([SlicePaymentGateway::class], array_column($paymentsExports['exports'] ?? [], 'serviceId'), 'debugExports() should expose explicitly exported units.');
+assertSame(expected: ['capability.payments'], actual: array_column($billingImports['imports'] ?? [], 'slice'), message: 'debugImports() should expose imported slice manifests.');
+assertSame(expected: [SlicePaymentGateway::class], actual: array_column($paymentsExports['exports'] ?? [], 'serviceId'), message: 'debugExports() should expose explicitly exported units.');
 assertTrue(
-    in_array(SliceInternalAudit::class, array_column($violations['violations'] ?? [], 'dependencyId'), true),
-    'debugVisibilityViolations() should report blocked slice access attempts.'
+    condition: in_array(SliceInternalAudit::class, array_column($violations['violations'] ?? [], 'dependencyId'), true),
+    message  : 'debugVisibilityViolations() should report blocked slice access attempts.'
 );
-assertSame('flow.billing', $billingGovernance['sliceView']['slice'] ?? null, 'Slice governance diagnostics should expose the active slice view.');
-assertSame('flow.billing', $billingArchitecture['sliceView']['slice'] ?? null, 'Slice architecture diagnostics should expose the active slice view.');
-assertSame(false, $billingServiceGraph['viewAccess']['allowed'] ?? true, 'Per-service slice graph diagnostics should explain blocked access.');
-assertSame(false, $billingDescription['viewAccess']['allowed'] ?? true, 'Slice-aware descriptions should expose blocked view access.');
+assertSame(expected: 'flow.billing', actual: $billingGovernance['sliceView']['slice'] ?? null, message: 'Slice governance diagnostics should expose the active slice view.');
+assertSame(expected: 'flow.billing', actual: $billingArchitecture['sliceView']['slice'] ?? null, message: 'Slice architecture diagnostics should expose the active slice view.');
+assertSame(expected: false, actual: $billingServiceGraph['viewAccess']['allowed'] ?? true, message: 'Per-service slice graph diagnostics should explain blocked access.');
+assertSame(expected: false, actual: $billingDescription['viewAccess']['allowed'] ?? true, message: 'Slice-aware descriptions should expose blocked view access.');
 
-$ownedRegistration = $billing->bind(SliceBillingOwnedService::class, SliceBillingOwnedService::class);
+$ownedRegistration = $billing->bind(abstract: SliceBillingOwnedService::class, concrete: SliceBillingOwnedService::class);
 
-assertSame('flow.billing', $ownedRegistration->metadata->ownerSlice, 'Strict slice views should stamp new registrations with the active slice owner.');
-assertSame('flow', $ownedRegistration->metadata->category, 'Strict slice views should stamp new registrations with the active slice category.');
+assertSame(expected: 'flow.billing', actual: $ownedRegistration->metadata->ownerSlice, message: 'Strict slice views should stamp new registrations with the active slice owner.');
+assertSame(expected: 'flow', actual: $ownedRegistration->metadata->category, message: 'Strict slice views should stamp new registrations with the active slice category.');
 
 assertThrows(
-    LogicException::class,
-    static function () use ($ownedRegistration) : void {
-        $ownedRegistration->asCapability('capability.payments');
+    expectedClass: LogicException::class,
+    callback     : static function () use ($ownedRegistration) : void {
+        $ownedRegistration->asCapability(ownerSlice: 'capability.payments');
     },
-    'Strict slice views should lock registration ownership against cross-slice mutation.'
+    message      : 'Strict slice views should lock registration ownership against cross-slice mutation.'
 );
 
 assertThrows(
-    InvalidArgumentException::class,
-    static function () use ($billing) : void {
-        $billing->tag(SlicePaymentGateway::class, 'illegal');
+    expectedClass: InvalidArgumentException::class,
+    callback     : static function () use ($billing) : void {
+        $billing->tag(abstracts: SlicePaymentGateway::class, tags: 'illegal');
     },
-    'Strict slice views should block mutating imported services.'
+    message      : 'Strict slice views should block mutating imported services.'
 );
 
 assertThrows(
-    InvalidArgumentException::class,
-    static function () use ($billing) : void {
-        $billing->alias('billing.gateway', SlicePaymentGateway::class);
+    expectedClass: InvalidArgumentException::class,
+    callback     : static function () use ($billing) : void {
+        $billing->alias(alias: 'billing.gateway', abstract: SlicePaymentGateway::class);
     },
-    'Strict slice views should block global alias mutation.'
+    message      : 'Strict slice views should block global alias mutation.'
 );
 
 assertThrows(
-    InvalidArgumentException::class,
-    static function () use ($billing) : void {
+    expectedClass: InvalidArgumentException::class,
+    callback     : static function () use ($billing) : void {
         $billing->flushCompiled();
     },
-    'Strict slice views should block global compiled artifact mutation.'
+    message      : 'Strict slice views should block global compiled artifact mutation.'
 );
 
 assertThrows(
 /**
  * @throws \Psr\Container\ContainerExceptionInterface
  * @throws \Psr\Container\NotFoundExceptionInterface
- */ ContainerException::class,
-    static function () use ($billing) : void {
-        $billing->get(SliceInternalAudit::class);
+ */ expectedClass: ContainerException::class,
+    callback     : static function () use ($billing) : void {
+        $billing->get(id: SliceInternalAudit::class);
     },
-    'Flow slice views should block direct resolution of hidden capability internals.'
+    message      : 'Flow slice views should block direct resolution of hidden capability internals.'
 );
 
 echo basename(__FILE__) . " ok\n";

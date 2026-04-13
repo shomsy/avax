@@ -47,136 +47,136 @@ final class SharedOwnershipFacade
 
 final class DevOnlyOwnershipProbe {}
 
-$container = makeTestContainer(CreateContainerConfig::create(settings: ['app_env' => 'prod']));
+$container = makeTestContainer(config: CreateContainerConfig::create(settings: ['app_env' => 'prod']));
 
-$container->singleton(OwnershipGateway::class, SharedOwnershipGateway::class)
-    ->asCapability('capability.payments')
+$container->singleton(abstract: OwnershipGateway::class, concrete: SharedOwnershipGateway::class)
+    ->asCapability(ownerSlice: 'capability.payments')
     ->asShared()
     ->export()
-    ->because('Expose one shared payments gateway to importing flows.')
-    ->provenance('ownership-composition-smoke');
+    ->because(reason: 'Expose one shared payments gateway to importing flows.')
+    ->provenance(provenance: 'ownership-composition-smoke');
 
-$container->bind(InternalAuditTrail::class, InternalAuditTrail::class)
-    ->asCapability('capability.payments')
+$container->bind(abstract: InternalAuditTrail::class, concrete: InternalAuditTrail::class)
+    ->asCapability(ownerSlice: 'capability.payments')
     ->asInternal()
-    ->because('Keep audit details internal to the payments capability.');
+    ->because(reason: 'Keep audit details internal to the payments capability.');
 
-$container->scoped(ScopedOwnershipState::class, ScopedOwnershipState::class)
-    ->asFlow('flow.request')
+$container->scoped(abstract: ScopedOwnershipState::class, concrete: ScopedOwnershipState::class)
+    ->asFlow(ownerSlice: 'flow.request')
     ->asInternal()
-    ->because('Keep request state inside the active operation scope.');
+    ->because(reason: 'Keep request state inside the active operation scope.');
 
-$container->bind(BillingFlowUsesGateway::class, BillingFlowUsesGateway::class)
-    ->asFlow('flow.billing')
+$container->bind(abstract: BillingFlowUsesGateway::class, concrete: BillingFlowUsesGateway::class)
+    ->asFlow(ownerSlice: 'flow.billing')
     ->asPrivate()
     ->entry()
-    ->import('capability.payments')
-    ->because('Compose billing flow from an imported payments capability.');
+    ->import(slices: 'capability.payments')
+    ->because(reason: 'Compose billing flow from an imported payments capability.');
 
-$container->bind(BillingFlowUsesInternalAudit::class, BillingFlowUsesInternalAudit::class)
-    ->asFlow('flow.billing')
+$container->bind(abstract: BillingFlowUsesInternalAudit::class, concrete: BillingFlowUsesInternalAudit::class)
+    ->asFlow(ownerSlice: 'flow.billing')
     ->asPrivate()
     ->entry()
-    ->because('This intentionally violates visibility to exercise the validator.');
+    ->because(reason: 'This intentionally violates visibility to exercise the validator.');
 
-$container->singleton(SharedOwnershipFacade::class, SharedOwnershipFacade::class)
-    ->asCapability('capability.analytics')
+$container->singleton(abstract: SharedOwnershipFacade::class, concrete: SharedOwnershipFacade::class)
+    ->asCapability(ownerSlice: 'capability.analytics')
     ->asPublic()
-    ->because('This intentionally captures scoped state to exercise lifetime validation.');
+    ->because(reason: 'This intentionally captures scoped state to exercise lifetime validation.');
 
-$container->bind(DevOnlyOwnershipProbe::class, DevOnlyOwnershipProbe::class)
-    ->asConfiguration('configuration.dev')
+$container->bind(abstract: DevOnlyOwnershipProbe::class, concrete: DevOnlyOwnershipProbe::class)
+    ->asConfiguration(ownerSlice: 'configuration.dev')
     ->asInternal()
-    ->profiles(['dev'])
-    ->because('This probe should stay disabled outside the dev environment.');
+    ->profiles(profiles: ['dev'])
+    ->because(reason: 'This probe should stay disabled outside the dev environment.');
 
-$container->bind('flow.billing.clock', DateTimeImmutable::class)
-    ->asFlow('flow.billing')
+$container->bind(abstract: 'flow.billing.clock', concrete: DateTimeImmutable::class)
+    ->asFlow(ownerSlice: 'flow.billing')
     ->asPrivate()
-    ->concept('clock');
+    ->concept(concept: 'clock');
 
-$container->bind('flow.login.clock', DateTimeImmutable::class)
-    ->asFlow('flow.login')
+$container->bind(abstract: 'flow.login.clock', concrete: DateTimeImmutable::class)
+    ->asFlow(ownerSlice: 'flow.login')
     ->asPrivate()
-    ->concept('clock');
+    ->concept(concept: 'clock');
 
-$description        = $container->describeService(OwnershipGateway::class);
-$graph              = $container->debugGraph(BillingFlowUsesGateway::class);
+$description        = $container->describeService(id: OwnershipGateway::class);
+$graph              = $container->debugGraph(id: BillingFlowUsesGateway::class);
 $fullGraph          = $container->debugGraph();
-$validGatewayIssues = $container->validate([BillingFlowUsesGateway::class]);
-$invalidAuditIssues = $container->validate([BillingFlowUsesInternalAudit::class]);
-$lifetimeIssues     = $container->validate([SharedOwnershipFacade::class]);
-$profileIssues      = $container->validate([DevOnlyOwnershipProbe::class]);
+$validGatewayIssues = $container->validate(serviceIds: [BillingFlowUsesGateway::class]);
+$invalidAuditIssues = $container->validate(serviceIds: [BillingFlowUsesInternalAudit::class]);
+$lifetimeIssues     = $container->validate(serviceIds: [SharedOwnershipFacade::class]);
+$profileIssues      = $container->validate(serviceIds: [DevOnlyOwnershipProbe::class]);
 
-assertSame('capability.payments', $description['ownership']['ownerSlice'] ?? null, 'Service descriptions should expose the owner slice.');
-assertSame('shared', $description['ownership']['visibility'] ?? null, 'Service descriptions should expose visibility.');
+assertSame(expected: 'capability.payments', actual: $description['ownership']['ownerSlice'] ?? null, message: 'Service descriptions should expose the owner slice.');
+assertSame(expected: 'shared', actual: $description['ownership']['visibility'] ?? null, message: 'Service descriptions should expose visibility.');
 assertSame(
-    'service is shared and explicitly exported',
-    $description['topLevelAccess']['reason'] ?? null,
-    'Service descriptions should explain why a service is on the top-level surface.'
+    expected: 'service is shared and explicitly exported',
+    actual  : $description['topLevelAccess']['reason'] ?? null,
+    message : 'Service descriptions should explain why a service is on the top-level surface.'
 );
 assertSame(
-    ['capability.payments'],
-    $graph['owner']['imports'] ?? [],
-    'Service graph reports should expose declared slice imports.'
+    expected: ['capability.payments'],
+    actual  : $graph['owner']['imports'] ?? [],
+    message : 'Service graph reports should expose declared slice imports.'
 );
-assertTrue(isset($fullGraph['slices']['capability.payments']), 'Full graph reports should include slice manifests.');
-assertTrue(isset($fullGraph['duplicateConcepts'][0]['concept']), 'Full graph reports should include duplicate concept reports.');
-assertTrue(in_array(BillingFlowUsesGateway::class, $fullGraph['deadRegistrations'], true) === false, 'Live flow services should not be reported as dead.');
-assertSame([], array_values(array_filter(
+assertTrue(condition: isset($fullGraph['slices']['capability.payments']), message: 'Full graph reports should include slice manifests.');
+assertTrue(condition: isset($fullGraph['duplicateConcepts'][0]['concept']), message: 'Full graph reports should include duplicate concept reports.');
+assertTrue(condition: in_array(BillingFlowUsesGateway::class, $fullGraph['deadRegistrations'], true) === false, message: 'Live flow services should not be reported as dead.');
+assertSame(                     expected: [], actual: array_values(array_filter(
                                 $validGatewayIssues,
                                 static fn (string $issue) : bool => str_contains($issue, BillingFlowUsesGateway::class)
-                            )), 'Imported shared capability dependencies should validate cleanly.');
+                            )), message : 'Imported shared capability dependencies should validate cleanly.');
 
 $invalidAuditText = implode("\n", $invalidAuditIssues);
 assertTrue(
-    str_contains($invalidAuditText, 'cannot use dependency [' . InternalAuditTrail::class . ']'),
-    'Validation should block illegal internal cross-slice dependencies.'
+    condition: str_contains($invalidAuditText, 'cannot use dependency [' . InternalAuditTrail::class . ']'),
+    message  : 'Validation should block illegal internal cross-slice dependencies.'
 );
 
 $lifetimeText = implode("\n", $lifetimeIssues);
 assertTrue(
-    str_contains($lifetimeText, 'captures scoped dependency [' . ScopedOwnershipState::class . ']'),
-    'Validation should detect shared-to-scoped lifetime capture.'
+    condition: str_contains($lifetimeText, 'captures scoped dependency [' . ScopedOwnershipState::class . ']'),
+    message  : 'Validation should detect shared-to-scoped lifetime capture.'
 );
 
 $profileText = implode("\n", $profileIssues);
 assertTrue(
-    str_contains($profileText, 'environment [prod] is not in [dev]'),
-    'Validation should explain environment/profile mismatches.'
+    condition: str_contains($profileText, 'environment [prod] is not in [dev]'),
+    message  : 'Validation should explain environment/profile mismatches.'
 );
 
 assertSame(
-    'shared-gateway',
-    $container->get(OwnershipGateway::class)->label(),
-    'Exported shared capabilities should still resolve normally.'
+    expected: 'shared-gateway',
+    actual  : $container->get(id: OwnershipGateway::class)->label(),
+    message : 'Exported shared capabilities should still resolve normally.'
 );
 assertSame(
-    'shared-gateway',
-    $container->get(BillingFlowUsesGateway::class)->gateway->label(),
-    'Importing flows should resolve exported shared capabilities.'
+    expected: 'shared-gateway',
+    actual  : $container->get(id: BillingFlowUsesGateway::class)->gateway->label(),
+    message : 'Importing flows should resolve exported shared capabilities.'
 );
 
 assertThrows(
 /**
  * @throws \Psr\Container\ContainerExceptionInterface
  * @throws \Psr\Container\NotFoundExceptionInterface
- */ ContainerException::class,
-    static function () use ($container) : void {
-        $container->get(InternalAuditTrail::class);
+ */ expectedClass: ContainerException::class,
+    callback     : static function () use ($container) : void {
+        $container->get(id: InternalAuditTrail::class);
     },
-    'Top-level internal services should be blocked from direct resolution.'
+    message      : 'Top-level internal services should be blocked from direct resolution.'
 );
 
 assertThrows(
 /**
  * @throws \Psr\Container\ContainerExceptionInterface
  * @throws \Psr\Container\NotFoundExceptionInterface
- */ ContainerException::class,
-    static function () use ($container) : void {
-        $container->get(BillingFlowUsesInternalAudit::class);
+ */ expectedClass: ContainerException::class,
+    callback     : static function () use ($container) : void {
+        $container->get(id: BillingFlowUsesInternalAudit::class);
     },
-    'Illegal cross-slice runtime dependencies should fail fast during resolution.'
+    message      : 'Illegal cross-slice runtime dependencies should fail fast during resolution.'
 );
 
 echo basename(__FILE__) . " ok\n";

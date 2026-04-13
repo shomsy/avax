@@ -15,16 +15,16 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class BeginEmailVerification
 {
     public function __construct(
-        private UserSourceInterface             $userSource,
-        private EmailVerificationStoreInterface $emailVerificationStore,
-        private AuditLogInterface               $auditLog,
-        private Clock                           $clock,
-        private int                             $expiresAfterSeconds = 86400
+        private UserSourceInterface                                    $userSource,
+        #[\SensitiveParameter] private EmailVerificationStoreInterface $emailVerificationStore,
+        private AuditLogInterface                                      $auditLog,
+        private Clock                                                  $clock,
+        private int                                                    $expiresAfterSeconds = 86400
     ) {}
 
     public function execute(BeginEmailVerificationData $data) : EmailVerificationChallenge
     {
-        $user = $this->userSource->findByEmail($data->email);
+        $user = $this->userSource->findByEmail(email: $data->email);
 
         if ($user === null || ! $user->isActive()) {
             return EmailVerificationChallenge::hidden();
@@ -32,10 +32,10 @@ final readonly class BeginEmailVerification
 
         $challenge = $this->emailVerificationStore->issue(
             userId   : $user->getId(),
-            expiresAt: $this->clock->now()->modify("+{$this->expiresAfterSeconds} seconds")
+            expiresAt: $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds")
         );
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.email_verification.requested',
                                     occurredAt: $this->clock->now(),
                                     context   : [

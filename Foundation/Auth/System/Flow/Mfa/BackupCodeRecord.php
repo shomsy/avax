@@ -12,9 +12,9 @@ use DateTimeImmutable;
 final readonly class BackupCodeRecord
 {
     public function __construct(
-        public string                 $backupCodeId,
-        public string                 $codeHash,
-        public DateTimeImmutable|null $usedAt = null
+        #[\SensitiveParameter] public string $backupCodeId,
+        #[\SensitiveParameter] public string $codeHash,
+        public DateTimeImmutable|null        $usedAt = null
     ) {}
 
     public function isUsed() : bool

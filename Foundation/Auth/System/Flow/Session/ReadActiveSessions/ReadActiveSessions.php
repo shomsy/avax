@@ -18,9 +18,9 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class ReadActiveSessions
 {
     public function __construct(
-        private CurrentAuthentication           $currentAuthentication,
-        private Clock                           $clock,
-        private SessionRegistryInterface|null   $sessionRegistry = null
+        #[\SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
+        private Clock                                                $clock,
+        #[\SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null
     ) {}
 
     /**
@@ -44,18 +44,18 @@ final readonly class ReadActiveSessions
         $now              = $this->clock->now();
         $sessions         = [];
 
-        foreach ($this->sessionRegistry->listForUser(new UserId($user->id)) as $record) {
-            if (! $record->isActiveAt($now)) {
+        foreach ($this->sessionRegistry->listForUser(userId: new UserId(value: $user->id)) as $record) {
+            if (! $record->isActiveAt(moment: $now)) {
                 continue;
             }
 
-            $sessions[] = $this->toBoundary($record, $currentSessionId);
+            $sessions[] = $this->toBoundary(record: $record, currentSessionId: $currentSessionId);
         }
 
         return $sessions;
     }
 
-    private function toBoundary(SessionRecord $record, string|null $currentSessionId) : ActiveSession
+    private function toBoundary(SessionRecord $record, #[\SensitiveParameter] string|null $currentSessionId) : ActiveSession
     {
         return new ActiveSession(
             sessionId        : $record->sessionId,

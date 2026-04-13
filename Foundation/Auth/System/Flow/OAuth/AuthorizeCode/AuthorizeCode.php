@@ -21,13 +21,13 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class AuthorizeCode
 {
     public function __construct(
-        private CurrentAuthentication        $currentAuthentication,
-        private UserSourceInterface          $userSource,
-        private OAuthClientRegistryInterface $clientRegistry,
-        private AuthorizationCodeStoreInterface $codeStore,
-        private AuditLogInterface            $auditLog,
-        private Clock                        $clock,
-        private OidcProviderInterface|null   $oidcProvider = null
+        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private UserSourceInterface                                    $userSource,
+        private OAuthClientRegistryInterface                           $clientRegistry,
+        #[\SensitiveParameter] private AuthorizationCodeStoreInterface $codeStore,
+        private AuditLogInterface                                      $auditLog,
+        private Clock                                                  $clock,
+        private OidcProviderInterface|null                             $oidcProvider = null
     ) {}
 
     /**
@@ -40,62 +40,62 @@ final readonly class AuthorizeCode
         $now     = $this->clock->now();
 
         if ($actor === null) {
-            $this->recordFailure($data, 'unauthenticated');
+            $this->recordFailure(data: $data, reason: 'unauthenticated');
             throw OAuthAuthorizationFailed::unauthenticated();
         }
 
-        $user = $this->userSource->findById(new UserId($actor->id));
+        $user = $this->userSource->findById(id: new UserId(value: $actor->id));
 
         if ($user === null || ! $user->isActive()) {
-            $this->recordFailure($data, 'user_not_active');
+            $this->recordFailure(data: $data, reason: 'user_not_active');
             throw OAuthAuthorizationFailed::unauthenticated();
         }
 
-        $client = $this->clientRegistry->find($data->clientId);
+        $client = $this->clientRegistry->find(clientId: $data->clientId);
 
         if ($client === null) {
-            $this->recordFailure($data, 'client_not_found');
+            $this->recordFailure(data: $data, reason: 'client_not_found');
             throw OAuthAuthorizationFailed::invalidClient();
         }
 
-        if (! $client->allowsGrantType(OAuthGrantType::AUTHORIZATION_CODE)) {
-            $this->recordFailure($data, 'grant_type_not_allowed');
+        if (! $client->allowsGrantType(grantType: OAuthGrantType::AUTHORIZATION_CODE)) {
+            $this->recordFailure(data: $data, reason: 'grant_type_not_allowed');
             throw OAuthAuthorizationFailed::invalidClient();
         }
 
-        if (! $client->allowsRedirectUri($data->redirectUri)) {
-            $this->recordFailure($data, 'redirect_uri_mismatch');
+        if (! $client->allowsRedirectUri(redirectUri: $data->redirectUri)) {
+            $this->recordFailure(data: $data, reason: 'redirect_uri_mismatch');
             throw OAuthAuthorizationFailed::invalidRedirectUri();
         }
 
-        $scopes = $this->normalizeScopes($data->scopes);
+        $scopes = $this->normalizeScopes(scopes: $data->scopes);
 
-        if (! $client->allowsScopes($scopes)) {
-            $this->recordFailure($data, 'scope_mismatch');
+        if (! $client->allowsScopes(scopes: $scopes)) {
+            $this->recordFailure(data: $data, reason: 'scope_mismatch');
             throw OAuthAuthorizationFailed::invalidScopes();
         }
 
         if (in_array('openid', $scopes, true)) {
             if ($this->oidcProvider === null) {
-                $this->recordFailure($data, 'oidc_provider_not_configured');
+                $this->recordFailure(data: $data, reason: 'oidc_provider_not_configured');
                 throw OAuthAuthorizationFailed::openIdProviderNotConfigured();
             }
 
             if ($data->nonce === null || trim($data->nonce) === '') {
-                $this->recordFailure($data, 'oidc_nonce_required');
+                $this->recordFailure(data: $data, reason: 'oidc_nonce_required');
                 throw OAuthAuthorizationFailed::nonceRequired();
             }
         }
 
         if ($client->isPublic()) {
             if ($data->codeChallenge === null || $data->codeChallengeMethod !== PkceMethod::S256) {
-                $this->recordFailure($data, 'pkce_required');
+                $this->recordFailure(data: $data, reason: 'pkce_required');
                 throw OAuthAuthorizationFailed::invalidPkce();
             }
         }
 
         if ($client->phishingResistantRequired && ! $context->isPhishingResistant()) {
-            $this->recordFailure($data, 'phishing_resistant_required');
+            $this->recordFailure(data: $data, reason: 'phishing_resistant_required');
             throw OAuthAuthorizationFailed::phishingResistantRequired();
         }
 
@@ -104,7 +104,7 @@ final readonly class AuthorizeCode
             clientId           : $client->clientId,
             redirectUri        : $data->redirectUri,
             scopes             : $scopes,
-            expiresAt          : $now->modify('+5 minutes'),
+            expiresAt          : $now->modify(modifier: '+5 minutes'),
             state              : $data->state,
             nonce              : $data->nonce,
             codeChallenge      : $data->codeChallenge,
@@ -113,7 +113,7 @@ final readonly class AuthorizeCode
             phishingResistant  : $context->isPhishingResistant()
         );
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.oauth.authorization_code.issued',
             occurredAt: $now,
             context   : [
@@ -154,7 +154,7 @@ final readonly class AuthorizeCode
 
     private function recordFailure(AuthorizeCodeData $data, string $reason) : void
     {
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.oauth.authorization_code.failed',
             occurredAt: $this->clock->now(),
             context   : [

@@ -13,7 +13,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 final readonly class RequireResourceOwner
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication
     ) {}
 
     /**
@@ -29,7 +29,7 @@ final readonly class RequireResourceOwner
         }
 
         if ($user->id !== $ownerUserId) {
-            throw new ResourceOwnerDenied($ownerUserId);
+            throw new ResourceOwnerDenied(ownerUserId: $ownerUserId);
         }
     }
 }

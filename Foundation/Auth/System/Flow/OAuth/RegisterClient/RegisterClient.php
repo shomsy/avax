@@ -33,7 +33,7 @@ final readonly class RegisterClient
             phishingResistantRequired : $data->phishingResistantRequired
         );
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.oauth.client.registered',
             occurredAt: $this->clock->now(),
             context   : [

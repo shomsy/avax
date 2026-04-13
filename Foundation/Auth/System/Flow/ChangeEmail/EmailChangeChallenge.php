@@ -9,8 +9,8 @@ use DateTimeImmutable;
 final readonly class EmailChangeChallenge
 {
     public function __construct(
-        public bool $dispatched,
-        public string|null $token = null,
-        public DateTimeImmutable|null $expiresAt = null
+        public bool                               $dispatched,
+        #[\SensitiveParameter] public string|null $token = null,
+        public DateTimeImmutable|null             $expiresAt = null
     ) {}
 }

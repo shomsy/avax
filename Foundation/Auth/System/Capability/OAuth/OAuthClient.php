@@ -30,7 +30,7 @@ final readonly class OAuthClient
         public OAuthSenderConstraintType|null  $requiredSenderConstraint = null,
         public bool                            $workloadIdentity = false,
         public bool                            $phishingResistantRequired = false,
-        public string|null                     $secretHash = null
+        #[\SensitiveParameter] public string|null $secretHash = null
     ) {}
 
     public function isPublic() : bool
@@ -90,7 +90,7 @@ final readonly class OAuthClient
      */
     public function allowsAudienceScopes(string|null $audience, array $scopes) : bool
     {
-        if (! $this->allowsScopes($scopes)) {
+        if (! $this->allowsScopes(scopes: $scopes)) {
             return false;
         }
 

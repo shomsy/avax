@@ -40,32 +40,32 @@ $config   = CreateContainerConfig::create(
     compileMode : CreateContainerConfig::COMPILE_MODE_PRODUCTION
 );
 
-$compiled = makeTestContainer($config);
-$compiled->singleton(FreshnessDependencyContract::class, FreshnessDependencyV1::class);
-$compiled->compileContainer([FreshnessConsumer::class, FreshnessDependencyContract::class]);
+$compiled = makeTestContainer(config: $config);
+$compiled->singleton(abstract: FreshnessDependencyContract::class, concrete: FreshnessDependencyV1::class);
+$compiled->compileContainer(serviceIds: [FreshnessConsumer::class, FreshnessDependencyContract::class]);
 
-$reloaded = makeTestContainer($config);
-$reloaded->singleton(FreshnessDependencyContract::class, FreshnessDependencyV2::class);
+$reloaded = makeTestContainer(config: $config);
+$reloaded->singleton(abstract: FreshnessDependencyContract::class, concrete: FreshnessDependencyV2::class);
 
-$report   = $reloaded->compileReport([FreshnessConsumer::class, FreshnessDependencyContract::class]);
-$debug    = $reloaded->debugService(FreshnessDependencyContract::class);
-$resolved = $reloaded->get(FreshnessConsumer::class);
+$report   = $reloaded->compileReport(serviceIds: [FreshnessConsumer::class, FreshnessDependencyContract::class]);
+$debug    = $reloaded->debugService(id: FreshnessDependencyContract::class);
+$resolved = $reloaded->get(id: FreshnessConsumer::class);
 
-assertTrue($report !== null, 'Freshness checks should still expose compile reports.');
-assertTrue(! $report->available, 'Stale compiled artifacts must not stay available.');
-assertTrue($report->compatible, 'Stale artifacts should still report structural compatibility when only service signatures changed.');
-assertSame('stale', $report->freshnessState, 'Stale service signatures must be reported explicitly.');
+assertTrue(condition: $report !== null, message: 'Freshness checks should still expose compile reports.');
+assertTrue(condition: ! $report->available, message: 'Stale compiled artifacts must not stay available.');
+assertTrue(condition: $report->compatible, message: 'Stale artifacts should still report structural compatibility when only service signatures changed.');
+assertSame(expected: 'stale', actual: $report->freshnessState, message: 'Stale service signatures must be reported explicitly.');
 assertTrue(
-    in_array('compiled artifact signatures are stale', $report->warnings, true),
-    'Compile reports should warn when compiled service signatures are stale.'
+    condition: in_array('compiled artifact signatures are stale', $report->warnings, true),
+    message  : 'Compile reports should warn when compiled service signatures are stale.'
 );
-assertTrue(! $reloaded->isCompiled(FreshnessConsumer::class), 'Stale compiled artifacts must not report compiled availability.');
-assertSame('dynamic', $debug['compiledState']['decision'], 'Debug diagnostics should expose dynamic fallback for stale artifacts.');
+assertTrue(condition: ! $reloaded->isCompiled(id: FreshnessConsumer::class), message: 'Stale compiled artifacts must not report compiled availability.');
+assertSame(expected: 'dynamic', actual: $debug['compiledState']['decision'], message: 'Debug diagnostics should expose dynamic fallback for stale artifacts.');
 assertSame(
-    'compiled artifact is stale',
-    $debug['explain']['fallback']['reason'],
-    'Explain diagnostics should expose stale-artifact fallback reasons.'
+    expected: 'compiled artifact is stale',
+    actual  : $debug['explain']['fallback']['reason'],
+    message : 'Explain diagnostics should expose stale-artifact fallback reasons.'
 );
-assertSame('v2', $resolved->dependency->version(), 'Runtime should resolve the fresh dynamic graph after signature drift.');
+assertSame(expected: 'v2', actual: $resolved->dependency->version(), message: 'Runtime should resolve the fresh dynamic graph after signature drift.');
 
 echo basename(__FILE__) . " ok\n";

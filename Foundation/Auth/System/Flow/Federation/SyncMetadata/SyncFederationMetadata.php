@@ -26,7 +26,7 @@ final readonly class SyncFederationMetadata
      */
     public function execute(string $connectionId) : FederationConnection
     {
-        $connection = $this->connectionStore->find($connectionId);
+        $connection = $this->connectionStore->find(connectionId: $connectionId);
 
         if ($connection === null) {
             throw FederationFailed::notFound();
@@ -36,7 +36,7 @@ final readonly class SyncFederationMetadata
             throw FederationFailed::metadataUrlMissing();
         }
 
-        $metadata = $this->runtime->readMetadata($connection);
+        $metadata = $this->runtime->readMetadata(connection: $connection);
         $synced = $connection->withMetadata(
             metadataIssuer: $metadata->issuer,
             metadataHash  : hash('sha256', json_encode([
@@ -46,8 +46,8 @@ final readonly class SyncFederationMetadata
             ], JSON_THROW_ON_ERROR)),
             syncedAt      : $this->clock->now()
         );
-        $this->connectionStore->save($synced);
-        $this->auditLog->record(new AuditEvent(
+        $this->connectionStore->save(connection: $synced);
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.federation.metadata.synced',
             occurredAt: $this->clock->now(),
             context   : [

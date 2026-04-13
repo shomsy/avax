@@ -32,30 +32,30 @@ final class OidcFlowTest extends TestCase
     {
         [$auth, $provider] = $this->buildAuthWithOidc();
 
-        $auth->register(new RegistrationData(
+        $auth->register(data: new RegistrationData(
             email   : 'oidc@example.com',
             username: 'oidc-user',
             password: 'secret'
         ));
-        $auth->login(new Credentials(
+        $auth->login(credentials: new Credentials(
             identifier: 'oidc@example.com',
             password  : 'secret'
         ));
 
-        $client = $auth->registerOAuthClient(new RegisterClientData(
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
             name         : 'OIDC Web',
             type         : OAuthClientType::CONFIDENTIAL,
             redirectUris : ['https://rp.example.test/callback'],
             allowedScopes: ['openid', 'profile', 'email']
         ));
 
-        $code = $auth->authorizeOAuthCode(new AuthorizeCodeData(
+        $code = $auth->authorizeOAuthCode(data: new AuthorizeCodeData(
             clientId   : $client->client->clientId,
             redirectUri: 'https://rp.example.test/callback',
             scopes     : ['openid', 'profile', 'email'],
             nonce      : 'nonce-1'
         ));
-        $grant = $auth->exchangeOAuthCode(new ExchangeAuthorizationCodeData(
+        $grant = $auth->exchangeOAuthCode(data: new ExchangeAuthorizationCodeData(
             clientId    : $client->client->clientId,
             clientSecret: $client->plainTextSecret,
             code        : $code->code,
@@ -64,34 +64,34 @@ final class OidcFlowTest extends TestCase
 
         $metadata = $auth->readOidcProviderMetadata();
         $jsonWebKeySet = $auth->readOidcJsonWebKeySet();
-        $userInfo = $auth->readOidcUserInfo($grant->accessToken);
-        $claims = $provider->resolveIdToken($grant->idToken ?? '');
+        $userInfo = $auth->readOidcUserInfo(accessToken: $grant->accessToken);
+        $claims = $provider->resolveIdToken(idToken: $grant->idToken ?? '');
 
-        $this->assertSame('https://auth.example.test', $metadata->issuer);
-        $this->assertSame('https://auth.example.test/.well-known/jwks.json', $metadata->jsonWebKeySetUri);
-        $this->assertCount(1, $jsonWebKeySet->keys);
-        $this->assertNotNull($grant->idToken);
-        $this->assertSame('nonce-1', $claims['nonce'] ?? null);
-        $this->assertSame($client->client->clientId, $claims['aud'] ?? null);
-        $this->assertSame('oidc@example.com', $userInfo->claims['email'] ?? null);
-        $this->assertSame('oidc-user', $userInfo->claims['preferred_username'] ?? null);
+        $this->assertSame(expected: 'https://auth.example.test', actual: $metadata->issuer);
+        $this->assertSame(expected: 'https://auth.example.test/.well-known/jwks.json', actual: $metadata->jsonWebKeySetUri);
+        $this->assertCount(expectedCount: 1, haystack: $jsonWebKeySet->keys);
+        $this->assertNotNull(actual: $grant->idToken);
+        $this->assertSame(expected: 'nonce-1', actual: $claims['nonce'] ?? null);
+        $this->assertSame(expected: $client->client->clientId, actual: $claims['aud'] ?? null);
+        $this->assertSame(expected: 'oidc@example.com', actual: $userInfo->claims['email'] ?? null);
+        $this->assertSame(expected: 'oidc-user', actual: $userInfo->claims['preferred_username'] ?? null);
     }
 
     public function testOidcAuthorizationRequiresNonce() : void
     {
         [$auth] = $this->buildAuthWithOidc();
 
-        $auth->register(new RegistrationData(
+        $auth->register(data: new RegistrationData(
             email   : 'oidc-nonce@example.com',
             username: 'oidc-nonce',
             password: 'secret'
         ));
-        $auth->login(new Credentials(
+        $auth->login(credentials: new Credentials(
             identifier: 'oidc-nonce@example.com',
             password  : 'secret'
         ));
 
-        $client = $auth->registerOAuthClient(new RegisterClientData(
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
             name         : 'OIDC Web',
             type         : OAuthClientType::CONFIDENTIAL,
             redirectUris : ['https://rp.example.test/callback'],
@@ -101,7 +101,7 @@ final class OidcFlowTest extends TestCase
         $this->expectException(OAuthAuthorizationFailed::class);
         $this->expectExceptionMessage('OIDC nonce is required for this authorization request.');
 
-        $auth->authorizeOAuthCode(new AuthorizeCodeData(
+        $auth->authorizeOAuthCode(data: new AuthorizeCodeData(
             clientId   : $client->client->clientId,
             redirectUri: 'https://rp.example.test/callback',
             scopes     : ['openid']
@@ -113,28 +113,28 @@ final class OidcFlowTest extends TestCase
         $userSource = new InMemoryUserSource();
         $refreshTokens = new InMemoryRefreshTokenStore();
         $auth = Auth::configuration()
-            ->forUser($userSource)
-            ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
                 userSource       : $userSource,
-                codec            : new HmacTokenCodec('oidc-auth-secret'),
+                codec            : new HmacTokenCodec(secret: 'oidc-auth-secret'),
                 clock            : new Clock(),
                 revocationStore  : new InMemoryTokenRevocationStore(),
                 refreshTokenStore: $refreshTokens
             )))
-            ->withRefreshTokenStore($refreshTokens)
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->ready();
 
-        $auth->register(new RegistrationData(
+        $auth->register(data: new RegistrationData(
             email   : 'oidc-missing@example.com',
             username: 'oidc-missing',
             password: 'secret'
         ));
-        $auth->login(new Credentials(
+        $auth->login(credentials: new Credentials(
             identifier: 'oidc-missing@example.com',
             password  : 'secret'
         ));
 
-        $client = $auth->registerOAuthClient(new RegisterClientData(
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
             name         : 'OIDC Web',
             type         : OAuthClientType::CONFIDENTIAL,
             redirectUris : ['https://rp.example.test/callback'],
@@ -144,7 +144,7 @@ final class OidcFlowTest extends TestCase
         $this->expectException(OAuthAuthorizationFailed::class);
         $this->expectExceptionMessage('OIDC provider support is not configured.');
 
-        $auth->authorizeOAuthCode(new AuthorizeCodeData(
+        $auth->authorizeOAuthCode(data: new AuthorizeCodeData(
             clientId   : $client->client->clientId,
             redirectUri: 'https://rp.example.test/callback',
             scopes     : ['openid'],
@@ -154,15 +154,15 @@ final class OidcFlowTest extends TestCase
 
     public function testRotatingOidcProviderPublishesOverlapKeysAndVerifiesLegacyTokens() : void
     {
-        $legacyProvider = $this->createOidcProvider('oidc-key-legacy');
-        $activeProvider = $this->createOidcProvider('oidc-key-active');
+        $legacyProvider = $this->createOidcProvider(keyId: 'oidc-key-legacy');
+        $activeProvider = $this->createOidcProvider(keyId: 'oidc-key-active');
         $provider = new RotatingOidcProvider(
             activeProvider       : $activeProvider,
             verificationProviders: [$legacyProvider]
         );
         $user = User::create(
-            id          : new UserId(77),
-            email       : new UserEmail('rotate@example.com'),
+            id          : new UserId(value: 77),
+            email       : new UserEmail(value: 'rotate@example.com'),
             username    : 'rotate',
             passwordHash: 'hash'
         );
@@ -175,11 +175,11 @@ final class OidcFlowTest extends TestCase
         );
 
         $keys = $provider->readJsonWebKeySet()->keys;
-        $claims = $provider->resolveIdToken($legacyToken->token);
+        $claims = $provider->resolveIdToken(idToken: $legacyToken->token);
 
-        $this->assertCount(2, $keys);
-        $this->assertSame('nonce-rotate', $claims['nonce'] ?? null);
-        $this->assertSame('rotate@example.com', $claims['email'] ?? null);
+        $this->assertCount(expectedCount: 2, haystack: $keys);
+        $this->assertSame(expected: 'nonce-rotate', actual: $claims['nonce'] ?? null);
+        $this->assertSame(expected: 'rotate@example.com', actual: $claims['email'] ?? null);
     }
 
     /**
@@ -191,17 +191,17 @@ final class OidcFlowTest extends TestCase
         $refreshTokens = new InMemoryRefreshTokenStore();
         $jwtIdentity = new JwtIdentity(
             userSource       : $userSource,
-            codec            : new HmacTokenCodec('oidc-auth-secret'),
+            codec            : new HmacTokenCodec(secret: 'oidc-auth-secret'),
             clock            : new Clock(),
             revocationStore  : new InMemoryTokenRevocationStore(),
             refreshTokenStore: $refreshTokens
         );
         $provider = $this->createOidcProvider();
         $auth = Auth::configuration()
-            ->forUser($userSource)
-            ->withIdentity(new Identity(jwtIdentity: $jwtIdentity))
-            ->withRefreshTokenStore($refreshTokens)
-            ->withOidcProvider($provider)
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: $jwtIdentity))
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
+            ->withOidcProvider(oidcProvider: $provider)
             ->ready();
 
         return [$auth, $provider];
@@ -213,7 +213,7 @@ final class OidcFlowTest extends TestCase
             'private_key_bits' => 2048,
             'private_key_type' => OPENSSL_KEYTYPE_RSA,
         ]);
-        self::assertNotFalse($key);
+        self::assertNotFalse(condition: $key);
         openssl_pkey_export($key, $privateKeyPem);
 
         return new OpenSslOidcProvider(

@@ -29,6 +29,6 @@ class FoundationTest extends TestCase
         $generator = new IdGenerator();
         $id        = $generator->generate();
         $this->assertIsInt(actual: $id);
-        $this->assertGreaterThan(0, $id);
+        $this->assertGreaterThan(expected: 0, actual: $id);
     }
 }

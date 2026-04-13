@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Container\DI\Capabilities\Resolution;
 
+use SensitiveParameter;
+
 /**
  * Resolution policy for the container runtime.
  */
@@ -37,7 +39,7 @@ final readonly class ResolutionPolicy
         return class_exists($abstract) || interface_exists($abstract);
     }
 
-    public function severityFor(string $code, string $defaultSeverity) : string
+    public function severityFor(#[SensitiveParameter] string $code, string $defaultSeverity) : string
     {
         return match ($this->profile) {
             self::PROFILE_RELAXED => match ($code) {

@@ -23,8 +23,8 @@ final readonly class ReactivateUser
     public function execute(int $userId) : void
     {
         $this->requireAdminElevation->execute();
-        $this->userSource->activate(new UserId($userId));
-        $this->auditLog->record(new AuditEvent(
+        $this->userSource->activate(id: new UserId(value: $userId));
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.provisioning.user.reactivated',
             occurredAt: $this->clock->now(),
             context   : ['subject_user_id' => $userId]

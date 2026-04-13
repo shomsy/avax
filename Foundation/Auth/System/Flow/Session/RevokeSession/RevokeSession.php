@@ -19,17 +19,17 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class RevokeSession
 {
     public function __construct(
-        private IdentityInterface             $identity,
-        private CurrentAuthentication         $currentAuthentication,
-        private AuditLogInterface             $auditLog,
-        private Clock                         $clock,
-        private SessionRegistryInterface|null $sessionRegistry = null
+        private IdentityInterface                                    $identity,
+        #[\SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
+        private AuditLogInterface                                    $auditLog,
+        private Clock                                                $clock,
+        #[\SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null
     ) {}
 
     /**
      * @throws Unauthenticated
      */
-    public function execute(string $sessionId) : void
+    public function execute(#[\SensitiveParameter] string $sessionId) : void
     {
         $context = $this->currentAuthentication->read();
         $user    = $context->user();
@@ -42,21 +42,21 @@ final readonly class RevokeSession
             return;
         }
 
-        $record = $this->sessionRegistry->find($sessionId);
+        $record = $this->sessionRegistry->find(sessionId: $sessionId);
 
-        if ($record === null || ! $record->userId->equals(new UserId($user->id))) {
+        if ($record === null || ! $record->userId->equals(other: new UserId(value: $user->id))) {
             return;
         }
 
         $now = $this->clock->now();
-        $this->sessionRegistry->revoke($sessionId, $now, 'user_revoke');
+        $this->sessionRegistry->revoke(sessionId: $sessionId, revokedAt: $now, reason: 'user_revoke');
 
         if ($context->sessionId() === $sessionId) {
-            $this->identity->clear($context);
+            $this->identity->clear(context: $context);
             $this->currentAuthentication->clear();
         }
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.session.revoked',
             occurredAt: $now,
             context   : [

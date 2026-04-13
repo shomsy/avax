@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\AuthenticateRequest;
 
 use DateTimeImmutable;
 use InvalidArgumentException;
+use SensitiveParameter;
 
 /**
  * Immutable authentication context captured at the ingress boundary.
@@ -13,24 +14,24 @@ use InvalidArgumentException;
 final readonly class AuthenticationContext
 {
     public function __construct(
-        private bool                   $authenticated,
-        private AuthenticationMode     $mode,
-        private AuthenticatedUser|null $user = null,
-        private string|null            $reason = null,
-        private string|null            $sessionId = null,
-        private string|null            $accessTokenId = null,
-        private DateTimeImmutable|null $accessTokenExpiresAt = null,
-        private string|null            $refreshTokenId = null,
-        private DateTimeImmutable|null $mfaVerifiedAt = null,
-        private bool                   $phishingResistant = false
+        private bool                                         $authenticated,
+        private AuthenticationMode                           $mode,
+        private AuthenticatedUser|null                       $user = null,
+        private string|null                                  $reason = null,
+        #[SensitiveParameter] private string|null            $sessionId = null,
+        #[SensitiveParameter] private string|null            $accessTokenId = null,
+        #[SensitiveParameter] private DateTimeImmutable|null $accessTokenExpiresAt = null,
+        #[SensitiveParameter] private string|null            $refreshTokenId = null,
+        private DateTimeImmutable|null                       $mfaVerifiedAt = null,
+        private bool                                         $phishingResistant = false
     )
     {
         if ($this->authenticated && $this->user === null) {
-            throw new InvalidArgumentException('Authenticated context requires a user.');
+            throw new InvalidArgumentException(message: 'Authenticated context requires a user.');
         }
 
         if (! $this->authenticated && $this->mode !== AuthenticationMode::NONE) {
-            throw new InvalidArgumentException('Guest context must use AuthenticationMode::NONE.');
+            throw new InvalidArgumentException(message: 'Guest context must use AuthenticationMode::NONE.');
         }
     }
 
@@ -44,14 +45,14 @@ final readonly class AuthenticationContext
     }
 
     public static function authenticated(
-        AuthenticatedUser      $user,
-        AuthenticationMode     $mode,
-        string|null            $sessionId = null,
-        string|null            $accessTokenId = null,
-        DateTimeImmutable|null $accessTokenExpiresAt = null,
-        string|null            $refreshTokenId = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool                   $phishingResistant = false
+        AuthenticatedUser                            $user,
+        AuthenticationMode                           $mode,
+        #[SensitiveParameter] string|null            $sessionId = null,
+        #[SensitiveParameter] string|null            $accessTokenId = null,
+        #[SensitiveParameter] DateTimeImmutable|null $accessTokenExpiresAt = null,
+        #[SensitiveParameter] string|null            $refreshTokenId = null,
+        DateTimeImmutable|null                       $mfaVerifiedAt = null,
+        bool                                         $phishingResistant = false
     ) : self
     {
         return new self(

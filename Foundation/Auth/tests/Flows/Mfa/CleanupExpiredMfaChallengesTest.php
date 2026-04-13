@@ -17,25 +17,25 @@ final class CleanupExpiredMfaChallengesTest extends TestCase
     public function testCleanupRemovesExpiredMfaChallenges() : void
     {
         $store = new InMemoryMfaChallengeStore();
-        $store->issue(new MfaChallengeRecord(
+        $store->issue(record: new MfaChallengeRecord(
             challengeId: 'expired',
-            userId     : new UserId(1),
+            userId     : new UserId(value: 1),
             purpose    : MfaChallengePurpose::LOGIN,
-            createdAt  : new \DateTimeImmutable('-10 minutes'),
-            expiresAt  : new \DateTimeImmutable('-5 minutes')
+            createdAt  : new \DateTimeImmutable(datetime: '-10 minutes'),
+            expiresAt  : new \DateTimeImmutable(datetime: '-5 minutes')
         ));
-        $store->issue(new MfaChallengeRecord(
+        $store->issue(record: new MfaChallengeRecord(
             challengeId: 'active',
-            userId     : new UserId(1),
+            userId     : new UserId(value: 1),
             purpose    : MfaChallengePurpose::LOGIN,
             createdAt  : new \DateTimeImmutable(),
-            expiresAt  : new \DateTimeImmutable('+5 minutes')
+            expiresAt  : new \DateTimeImmutable(datetime: '+5 minutes')
         ));
 
-        $removed = (new CleanupExpiredMfaChallenges($store, new Clock()))->execute();
+        $removed = (new CleanupExpiredMfaChallenges(challengeStore: $store, clock: new Clock()))->execute();
 
-        $this->assertSame(1, $removed);
-        $this->assertNull($store->find('expired'));
-        $this->assertNotNull($store->find('active'));
+        $this->assertSame(expected: 1, actual: $removed);
+        $this->assertNull(actual: $store->find(challengeId: 'expired'));
+        $this->assertNotNull(actual: $store->find(challengeId: 'active'));
     }
 }

@@ -28,23 +28,23 @@ final class LogoutAllSessionsTest extends TestCase
 {
     public function testLogoutAllSessionsRevokesTrackedSessionsAndClearsContext() : void
     {
-        $clock    = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $clock    = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
         $registry = new InMemorySessionRegistry();
-        $registry->track(new SessionRecord(
+        $registry->track(record: new SessionRecord(
             sessionId        : 'session-1',
-            userId           : new UserId(1),
-            createdAt        : $clock->now()->sub(new DateInterval('PT30M')),
+            userId           : new UserId(value: 1),
+            createdAt        : $clock->now()->sub(interval: new DateInterval(duration: 'PT30M')),
             lastSeenAt       : $clock->now(),
-            idleExpiresAt    : $clock->now()->add(new DateInterval('PT15M')),
-            absoluteExpiresAt: $clock->now()->add(new DateInterval('PT12H'))
+            idleExpiresAt    : $clock->now()->add(interval: new DateInterval(duration: 'PT15M')),
+            absoluteExpiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT12H'))
         ));
-        $registry->track(new SessionRecord(
+        $registry->track(record: new SessionRecord(
             sessionId        : 'session-2',
-            userId           : new UserId(1),
-            createdAt        : $clock->now()->sub(new DateInterval('PT1H')),
+            userId           : new UserId(value: 1),
+            createdAt        : $clock->now()->sub(interval: new DateInterval(duration: 'PT1H')),
             lastSeenAt       : $clock->now(),
-            idleExpiresAt    : $clock->now()->add(new DateInterval('PT15M')),
-            absoluteExpiresAt: $clock->now()->add(new DateInterval('PT12H'))
+            idleExpiresAt    : $clock->now()->add(interval: new DateInterval(duration: 'PT15M')),
+            absoluteExpiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT12H'))
         ));
 
         $context = AuthenticationContext::authenticated(
@@ -53,12 +53,12 @@ final class LogoutAllSessionsTest extends TestCase
             sessionId: 'session-1'
         );
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store($context);
+        $currentAuthentication->store(context: $context);
 
         $identity = Mockery::mock(IdentityInterface::class);
         $identity->shouldReceive('clear')->once()->with($context);
         $refreshTokens = Mockery::mock(RefreshTokenStoreInterface::class);
-        $refreshTokens->shouldReceive('revokeUser')->once()->with(Mockery::type(UserId::class));
+        $refreshTokens->shouldReceive('revokeUser')->once()->with(Mockery::type(expected: UserId::class));
 
         $flow = new LogoutAllSessions(
             identity             : $identity,
@@ -71,10 +71,10 @@ final class LogoutAllSessionsTest extends TestCase
 
         $flow->execute();
 
-        $this->assertFalse($currentAuthentication->read()->isAuthenticated());
-        $this->assertNotNull($registry->find('session-1')?->revokedAt);
-        $this->assertNotNull($registry->find('session-2')?->revokedAt);
-        $this->assertSame('logout_all', $registry->find('session-1')?->revokeReason);
+        $this->assertFalse(condition: $currentAuthentication->read()->isAuthenticated());
+        $this->assertNotNull(actual: $registry->find(sessionId: 'session-1')?->revokedAt);
+        $this->assertNotNull(actual: $registry->find(sessionId: 'session-2')?->revokedAt);
+        $this->assertSame(expected: 'logout_all', actual: $registry->find(sessionId: 'session-1')?->revokeReason);
     }
 
     protected function tearDown() : void

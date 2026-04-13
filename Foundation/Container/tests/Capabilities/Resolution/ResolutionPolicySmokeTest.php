@@ -9,9 +9,9 @@ use Avax\Container\DI\Capabilities\Resolution\ResolutionPolicy;
 $strict  = new ResolutionPolicy(strict: true, debug: false);
 $relaxed = new ResolutionPolicy(strict: false, debug: false);
 
-assertTrue($strict->isAllowed(DateTimeImmutable::class), 'Strict policy should allow instantiable classes.');
-assertTrue($strict->isAllowed(Countable::class), 'Strict policy should allow interfaces.');
-assertTrue(! $strict->isAllowed('custom-alias'), 'Strict policy should reject unknown aliases.');
-assertTrue($relaxed->isAllowed('custom-alias'), 'Relaxed policy should allow unknown aliases.');
+assertTrue(condition: $strict->isAllowed(abstract: DateTimeImmutable::class), message: 'Strict policy should allow instantiable classes.');
+assertTrue(condition: $strict->isAllowed(abstract: Countable::class), message: 'Strict policy should allow interfaces.');
+assertTrue(condition: ! $strict->isAllowed(abstract: 'custom-alias'), message: 'Strict policy should reject unknown aliases.');
+assertTrue(condition: $relaxed->isAllowed(abstract: 'custom-alias'), message: 'Relaxed policy should allow unknown aliases.');
 
 echo basename(__FILE__) . " ok\n";

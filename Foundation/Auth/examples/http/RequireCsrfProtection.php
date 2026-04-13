@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Examples\Http;
 
+use SensitiveParameter;
+
 /**
  * Framework-neutral reference middleware for cookie-auth CSRF protection.
  */
 final readonly class RequireCsrfProtection
 {
     public function __construct(
-        private string $cookieName = 'csrf_token',
-        private string $headerName = 'x-csrf-token'
+        private string                       $cookieName = 'csrf_token',
+        #[SensitiveParameter] private string $headerName = 'x-csrf-token'
     ) {}
 
     /**
@@ -20,26 +22,26 @@ final readonly class RequireCsrfProtection
      * @param array<string, mixed> $cookies
      */
     public function execute(
-        string $method,
-        array $server = [],
-        array $headers = [],
-        array $cookies = []
+        string                      $method,
+        array                       $server = [],
+        #[SensitiveParameter] array $headers = [],
+        array                       $cookies = []
     ) : bool
     {
-        if ($this->isSafeMethod($method)) {
+        if ($this->isSafeMethod(method: $method)) {
             return true;
         }
 
-        $origin = $this->readValue($server, 'HTTP_ORIGIN');
-        $referer = $this->readValue($server, 'HTTP_REFERER');
-        $host = $this->readValue($server, 'HTTP_HOST');
+        $origin = $this->readValue(values: $server, key: 'HTTP_ORIGIN');
+        $referer = $this->readValue(values: $server, key: 'HTTP_REFERER');
+        $host = $this->readValue(values: $server, key: 'HTTP_HOST');
 
-        if (! $this->sameOrigin($origin, $host) && ! $this->sameOrigin($referer, $host)) {
+        if (! $this->sameOrigin(originLikeValue: $origin, host: $host) && ! $this->sameOrigin(originLikeValue: $referer, host: $host)) {
             return false;
         }
 
-        $cookieToken = $this->readValue($cookies, $this->cookieName);
-        $headerToken = $this->readValue($headers, $this->headerName);
+        $cookieToken = $this->readValue(values: $cookies, key: $this->cookieName);
+        $headerToken = $this->readValue(values: $headers, key: $this->headerName);
 
         if ($cookieToken === null || $headerToken === null) {
             return false;

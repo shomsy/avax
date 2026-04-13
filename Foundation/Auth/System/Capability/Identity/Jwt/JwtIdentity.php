@@ -27,20 +27,20 @@ use Throwable;
 final readonly class JwtIdentity implements JwtIdentityInterface
 {
     public function __construct(
-        private UserSourceInterface                $userSource,
-        private TokenCodecInterface                $codec,
-        private \Avax\Auth\System\Foundation\Clock $clock,
-        private TokenRevocationStoreInterface|null $revocationStore = null,
-        private RefreshTokenStoreInterface|null    $refreshTokenStore = null,
-        private int                                $tokenExpiry = 3600,
-        private int                                $refreshTokenExpiry = 2_592_000,
-        private string                             $issuer = 'avax-auth-system'
+        private UserSourceInterface                                    $userSource,
+        private TokenCodecInterface                                    $codec,
+        private \Avax\Auth\System\Foundation\Clock                     $clock,
+        private TokenRevocationStoreInterface|null                     $revocationStore = null,
+        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        private int                                                    $tokenExpiry = 3600,
+        private int                                                    $refreshTokenExpiry = 2_592_000,
+        private string                                                 $issuer = 'avax-auth-system'
     ) {}
 
     public function resolve(#[SensitiveParameter] string $token) : ResolvedToken|null
     {
         try {
-            $claims = $this->codec->decode($token);
+            $claims = $this->codec->decode(token: $token);
 
             if ($claims === null) {
                 return null;
@@ -71,9 +71,9 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 return null;
             }
 
-            $expiryMoment = new DateTimeImmutable("@{$expiresAt}");
+            $expiryMoment = new DateTimeImmutable(datetime: "@{$expiresAt}");
 
-            if ($this->revocationStore?->isRevoked($tokenId, $now) === true) {
+            if ($this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $now) === true) {
                 return null;
             }
 
@@ -88,7 +88,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             $senderConstraint = null;
 
             if (is_int($mfaTimestamp)) {
-                $mfaVerifiedAt = new DateTimeImmutable("@{$mfaTimestamp}");
+                $mfaVerifiedAt = new DateTimeImmutable(datetime: "@{$mfaTimestamp}");
             }
 
             if (! is_string($clientId) && $clientId !== null) {
@@ -105,12 +105,12 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 }
 
                 $senderConstraint = new OAuthSenderConstraint(
-                    type      : OAuthSenderConstraintType::from($senderConstraintType),
+                    type      : OAuthSenderConstraintType::from(value: $senderConstraintType),
                     thumbprint: $senderConstraintThumbprint
                 );
             }
 
-            $user = $this->userSource->findById(new UserId($subject));
+            $user = $this->userSource->findById(id: new UserId(value: $subject));
 
             if ($user === null || ! $user->isActive()) {
                 return null;
@@ -145,11 +145,11 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         $normalizedSubject = trim($subject);
 
         if ($normalizedSubject === '') {
-            throw new InvalidArgumentException('Workload token subject cannot be empty.');
+            throw new InvalidArgumentException(message: 'Workload token subject cannot be empty.');
         }
 
         $issuedAt  = $this->clock->now();
-        $expiresAt = $issuedAt->modify("+{$this->tokenExpiry} seconds");
+        $expiresAt = $issuedAt->modify(modifier: "+{$this->tokenExpiry} seconds");
         $tokenId   = bin2hex(random_bytes(16));
         $payload   = [
             'iss' => $this->issuer,
@@ -176,7 +176,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         }
 
         return new IssuedToken(
-            token    : $this->codec->encode($payload),
+            token    : $this->codec->encode(claims: $payload),
             tokenId  : $tokenId,
             expiresAt: $expiresAt
         );
@@ -189,7 +189,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
     ) : ResolvedWorkloadToken|null
     {
         try {
-            $claims = $this->codec->decode($token);
+            $claims = $this->codec->decode(token: $token);
 
             if ($claims === null) {
                 return null;
@@ -242,7 +242,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 return null;
             }
 
-            if ($this->revocationStore?->isRevoked($tokenId, $now) === true) {
+            if ($this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $now) === true) {
                 return null;
             }
 
@@ -256,7 +256,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 }
 
                 $senderConstraint = new OAuthSenderConstraint(
-                    type      : OAuthSenderConstraintType::from($senderConstraintType),
+                    type      : OAuthSenderConstraintType::from(value: $senderConstraintType),
                     thumbprint: $senderConstraintThumbprint
                 );
             }
@@ -265,7 +265,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 subject          : $subject,
                 clientId         : $clientId,
                 tokenId          : $tokenId,
-                expiresAt        : new DateTimeImmutable("@{$expiresAt}"),
+                expiresAt        : new DateTimeImmutable(datetime: "@{$expiresAt}"),
                 scopes           : $scopes,
                 audience         : $audience,
                 issuer           : $issuer,
@@ -294,7 +294,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
         return $this->refreshTokenStore->issue(
             userId       : $user->getId(),
-            expiresAt    : $this->clock->now()->modify("+{$this->refreshTokenExpiry} seconds"),
+            expiresAt    : $this->clock->now()->modify(modifier: "+{$this->refreshTokenExpiry} seconds"),
             mfaVerifiedAt: $mfaVerifiedAt,
             phishingResistant: $phishingResistant,
             clientId     : $clientId,
@@ -320,7 +320,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         }
 
         $issuedAt  = $this->clock->now();
-        $expiresAt = $issuedAt->modify("+{$this->tokenExpiry} seconds");
+        $expiresAt = $issuedAt->modify(modifier: "+{$this->tokenExpiry} seconds");
         $tokenId   = bin2hex(random_bytes(16));
         $payload   = [
             'iss' => $this->issuer,
@@ -353,14 +353,14 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         }
 
         return new IssuedToken(
-            token    : $this->codec->encode($payload),
+            token    : $this->codec->encode(claims: $payload),
             tokenId  : $tokenId,
             expiresAt: $expiresAt
         );
     }
 
-    public function revoke(string $tokenId, DateTimeImmutable $expiresAt) : void
+    public function revoke(#[\SensitiveParameter] string $tokenId, DateTimeImmutable $expiresAt) : void
     {
-        $this->revocationStore?->revoke($tokenId, $expiresAt);
+        $this->revocationStore?->revoke(tokenId: $tokenId, expiresAt: $expiresAt);
     }
 }

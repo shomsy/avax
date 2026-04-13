@@ -16,7 +16,7 @@ final class HintRuntimeInputConsumer
 {
     public function __construct(
         public HintIdentityService             $identity,
-        #[RuntimeInput('token')] public string $token
+        #[\SensitiveParameter] #[RuntimeInput(name: 'token')] public string $token
     ) {}
 }
 
@@ -24,30 +24,30 @@ final class HintConditionalService {}
 
 $container = makeTestContainer();
 
-$container->singleton(HintIdentityService::class, HintIdentityService::class)
-    ->asCapability('capability.identity')
+$container->singleton(abstract: HintIdentityService::class, concrete: HintIdentityService::class)
+    ->asCapability(ownerSlice: 'capability.identity')
     ->asShared()
     ->export();
-$container->bind(HintPipelineStepA::class, HintPipelineStepA::class)
-    ->asFlow('flow.hints')
+$container->bind(abstract: HintPipelineStepA::class, concrete: HintPipelineStepA::class)
+    ->asFlow(ownerSlice: 'flow.hints')
     ->asPrivate()
-    ->group('hint.pipeline', 10)
+    ->group(group: 'hint.pipeline', order: 10)
     ->entry()
-    ->import('capability.identity');
-$container->bind(HintPipelineStepB::class, HintPipelineStepB::class)
-    ->asFlow('flow.hints')
+    ->import(slices: 'capability.identity');
+$container->bind(abstract: HintPipelineStepB::class, concrete: HintPipelineStepB::class)
+    ->asFlow(ownerSlice: 'flow.hints')
     ->asPrivate()
-    ->group('hint.pipeline', 20)
-    ->import('capability.identity');
-$container->bind(HintRuntimeInputConsumer::class, HintRuntimeInputConsumer::class)
-    ->asFlow('flow.hints')
+    ->group(group: 'hint.pipeline', order: 20)
+    ->import(slices: 'capability.identity');
+$container->bind(abstract: HintRuntimeInputConsumer::class, concrete: HintRuntimeInputConsumer::class)
+    ->asFlow(ownerSlice: 'flow.hints')
     ->asPrivate()
-    ->import('capability.identity');
-$container->singleton(HintConditionalService::class, HintConditionalService::class)
-    ->asCapability('capability.identity')
+    ->import(slices: 'capability.identity');
+$container->singleton(abstract: HintConditionalService::class, concrete: HintConditionalService::class)
+    ->asCapability(ownerSlice: 'capability.identity')
     ->asShared()
     ->export()
-    ->profiles('prod')
-    ->flags('beta');
+    ->profiles(profiles: 'prod')
+    ->flags(flags: 'beta');
 
 return $container;

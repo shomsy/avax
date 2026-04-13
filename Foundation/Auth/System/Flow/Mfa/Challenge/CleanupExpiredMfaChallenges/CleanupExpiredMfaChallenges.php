@@ -20,6 +20,6 @@ final readonly class CleanupExpiredMfaChallenges
             return 0;
         }
 
-        return $this->challengeStore->pruneExpired($this->clock->now());
+        return $this->challengeStore->pruneExpired(now: $this->clock->now());
     }
 }

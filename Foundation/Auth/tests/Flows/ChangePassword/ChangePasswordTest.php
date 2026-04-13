@@ -42,8 +42,8 @@ class ChangePasswordTest extends TestCase
             user: new AuthenticatedUser(id: 1, email: 'user@example.com', username: 'user'),
             mode: AuthenticationMode::TOKEN
         );
-        $currentAuthentication->store($context);
-        $user = $this->userWithPassword($passwordHasher, userId: 1, password: 'old_password');
+        $currentAuthentication->store(context: $context);
+        $user = $this->userWithPassword(passwordHasher: $passwordHasher, userId: 1, password: 'old_password');
 
         $data = new ChangePasswordData(
             currentPassword: 'old_password',
@@ -52,10 +52,10 @@ class ChangePasswordTest extends TestCase
 
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('findById')->once()->andReturn($user);
-        $userSource->shouldReceive('updatePassword')->once()->withArgs(function (UserId $id, string $passwordHash) use ($user, $passwordHasher) {
+        $userSource->shouldReceive('updatePassword')->once()->withArgs(argsOrClosure: function (UserId $id, #[\SensitiveParameter] string $passwordHash) use ($user, $passwordHasher) {
             return $id->value === $user->getId()->value
                 && $passwordHash !== $user->getPasswordHash()
-                && $passwordHasher->verify('new_password', $passwordHash);
+                && $passwordHasher->verify(password: 'new_password', hash: $passwordHash);
         });
 
         $identity = Mockery::mock(IdentityInterface::class);
@@ -82,11 +82,11 @@ class ChangePasswordTest extends TestCase
     {
         $passwordHasher = $this->passwordHasher();
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(id: 1, email: 'user@example.com', username: 'user'),
             mode: AuthenticationMode::TOKEN
         ));
-        $user = $this->userWithPassword($passwordHasher, userId: 1, password: 'old_password');
+        $user = $this->userWithPassword(passwordHasher: $passwordHasher, userId: 1, password: 'old_password');
 
         $data = new ChangePasswordData(
             currentPassword: 'wrong_password',
@@ -124,14 +124,14 @@ class ChangePasswordTest extends TestCase
         );
 
         $this->expectException(Unauthenticated::class);
-        $changePassword->execute(new ChangePasswordData('old', 'new'));
+        $changePassword->execute(data: new ChangePasswordData(currentPassword: 'old', newPassword: 'new'));
     }
 
     public function testChangePasswordRequiresFreshMfaWhenUserHasMfaEnabled() : void
     {
         $passwordHasher = $this->passwordHasher();
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(
                       id        : 1,
                       email     : 'user@example.com',
@@ -142,7 +142,7 @@ class ChangePasswordTest extends TestCase
         ));
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('findById')->once()->andReturn(
-            $this->userWithPassword($passwordHasher, userId: 1, password: 'old')
+            $this->userWithPassword(passwordHasher: $passwordHasher, userId: 1, password: 'old')
         );
 
         $changePassword = new ChangePassword(
@@ -159,7 +159,7 @@ class ChangePasswordTest extends TestCase
         );
 
         $this->expectException(FreshMfaRequired::class);
-        $changePassword->execute(new ChangePasswordData('old', 'new'));
+        $changePassword->execute(data: new ChangePasswordData(currentPassword: 'old', newPassword: 'new'));
     }
 
     protected function tearDown() : void
@@ -172,13 +172,13 @@ class ChangePasswordTest extends TestCase
         return new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
     }
 
-    private function userWithPassword(PasswordHasher $passwordHasher, int $userId, string $password, bool $isActive = true) : User
+    private function userWithPassword(#[\SensitiveParameter] PasswordHasher $passwordHasher, int $userId, #[\SensitiveParameter] string $password, bool $isActive = true) : User
     {
         return User::create(
-            id          : new UserId($userId),
-            email       : new UserEmail("user{$userId}@example.com"),
+            id          : new UserId(value: $userId),
+            email       : new UserEmail(value: "user{$userId}@example.com"),
             username    : "user{$userId}",
-            passwordHash: $passwordHasher->hash($password),
+            passwordHash: $passwordHasher->hash(password: $password),
             isActive    : $isActive
         );
     }

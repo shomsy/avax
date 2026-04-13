@@ -40,8 +40,8 @@ final readonly class VerifyOAuthSenderConstraint
         }
 
         $binding = match ($requiredType) {
-            OAuthSenderConstraintType::DPOP => $this->verifyDpopProof->execute($input),
-            OAuthSenderConstraintType::MTLS => $this->verifyMtlsSenderConstraint->execute(new HttpOAuthProofInput(
+            OAuthSenderConstraintType::DPOP => $this->verifyDpopProof->execute(input: $input),
+            OAuthSenderConstraintType::MTLS => $this->verifyMtlsSenderConstraint->execute(input: new HttpOAuthProofInput(
                 method                : $input->method,
                 uri                   : $input->uri,
                 headers               : $input->headers,
@@ -51,8 +51,8 @@ final readonly class VerifyOAuthSenderConstraint
             )),
         };
 
-        if ($expectedSenderConstraint !== null && ! $expectedSenderConstraint->equals($binding)) {
-            $this->auditLog->record(new AuditEvent(
+        if ($expectedSenderConstraint !== null && ! $expectedSenderConstraint->equals(other: $binding)) {
+            $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.oauth.sender_constraint.mismatch',
                 occurredAt: new DateTimeImmutable(),
                 context   : [

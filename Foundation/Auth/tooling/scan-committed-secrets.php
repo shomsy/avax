@@ -8,7 +8,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 $root = dirname(__DIR__);
 $scanner = new ScanCommittedSecrets();
-$findings = $scanner->execute($root);
+$findings = $scanner->execute(rootPath: $root);
 
 echo json_encode(
     [

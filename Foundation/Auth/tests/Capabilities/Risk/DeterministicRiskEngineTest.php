@@ -25,18 +25,18 @@ final class DeterministicRiskEngineTest extends TestCase
             clock            : new Clock()
         );
         $user   = User::create(
-            id          : new UserId(1),
-            email       : new UserEmail('admin@example.com'),
+            id          : new UserId(value: 1),
+            email       : new UserEmail(value: 'admin@example.com'),
             username    : 'admin',
             passwordHash: 'hash',
             roles       : [UserRole::ADMIN]
         );
 
-        $decision = $engine->assessSuccessfulAuthentication($user, '127.0.0.1', 'PHPUnit');
+        $decision = $engine->assessSuccessfulAuthentication(user: $user, ipAddress: '127.0.0.1', userAgent: 'PHPUnit');
 
-        $this->assertSame(RiskAction::OPEN_REVIEW, $decision->action);
-        $this->assertSame(['admin_new_environment'], $decision->reasons);
-        $this->assertCount(1, $engine->readSignalsForUser(1));
+        $this->assertSame(expected: RiskAction::OPEN_REVIEW, actual: $decision->action);
+        $this->assertSame(expected: ['admin_new_environment'], actual: $decision->reasons);
+        $this->assertCount(expectedCount: 1, haystack: $engine->readSignalsForUser(userId: 1));
     }
 
     public function testRefreshReuseRevokesSessions() : void
@@ -47,9 +47,9 @@ final class DeterministicRiskEngineTest extends TestCase
             clock            : new Clock()
         );
 
-        $decision = $engine->recordRefreshReuse(42, 'client-1');
+        $decision = $engine->recordRefreshReuse(userId: 42, clientId: 'client-1');
 
-        $this->assertSame(RiskAction::REVOKE_SESSIONS, $decision->action);
-        $this->assertCount(1, $engine->readSignalsForUser(42));
+        $this->assertSame(expected: RiskAction::REVOKE_SESSIONS, actual: $decision->action);
+        $this->assertCount(expectedCount: 1, haystack: $engine->readSignalsForUser(userId: 42));
     }
 }

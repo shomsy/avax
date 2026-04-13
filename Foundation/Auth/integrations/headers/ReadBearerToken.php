@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Integrations\Headers;
 
+use SensitiveParameter;
+
 /**
  * Reads a bearer token from generic HTTP header inputs.
  */
@@ -13,12 +15,12 @@ final class ReadBearerToken
      * @param array<string, mixed> $headers
      * @param array<string, mixed> $server
      */
-    public function execute(array $headers = [], array $server = []) : string|null
+    public function execute(#[SensitiveParameter] array $headers = [], array $server = []) : string|null
     {
         $candidates = [
-            $this->readValue($headers, 'Authorization'),
-            $this->readValue($server, 'HTTP_AUTHORIZATION'),
-            $this->readValue($server, 'REDIRECT_HTTP_AUTHORIZATION'),
+            $this->readValue(values: $headers, key: 'Authorization'),
+            $this->readValue(values: $server, key: 'HTTP_AUTHORIZATION'),
+            $this->readValue(values: $server, key: 'REDIRECT_HTTP_AUTHORIZATION'),
         ];
 
         foreach ($candidates as $authorization) {

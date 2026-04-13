@@ -249,11 +249,11 @@ final readonly class CheckCompositionPolicies
      * @return array{code: string, severity: string, category: string, message: string}
      */
     private function finding(
-        ResolutionPolicy $policy,
-        string           $code,
-        string           $severity,
-        string           $category,
-        string           $message
+        ResolutionPolicy              $policy,
+        #[\SensitiveParameter] string $code,
+        string                        $severity,
+        string                        $category,
+        string                        $message
     ) : array
     {
         return [

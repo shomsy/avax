@@ -17,15 +17,15 @@ final readonly class SessionLifetime
     )
     {
         if ($this->idleTimeoutSeconds < 1) {
-            throw new InvalidArgumentException('Idle timeout must be at least 1 second.');
+            throw new InvalidArgumentException(message: 'Idle timeout must be at least 1 second.');
         }
 
         if ($this->absoluteTimeoutSeconds < 1) {
-            throw new InvalidArgumentException('Absolute timeout must be at least 1 second.');
+            throw new InvalidArgumentException(message: 'Absolute timeout must be at least 1 second.');
         }
 
         if ($this->absoluteTimeoutSeconds < $this->idleTimeoutSeconds) {
-            throw new InvalidArgumentException('Absolute timeout must be greater than or equal to idle timeout.');
+            throw new InvalidArgumentException(message: 'Absolute timeout must be greater than or equal to idle timeout.');
         }
     }
 }

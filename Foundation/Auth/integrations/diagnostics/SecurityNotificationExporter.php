@@ -20,19 +20,19 @@ final readonly class SecurityNotificationExporter implements AuditExporterInterf
     public function export(array $events) : void
     {
         foreach ($events as $event) {
-            $notification = $this->mapEvent($event);
+            $notification = $this->mapEvent(event: $event);
 
             if ($notification === null) {
                 continue;
             }
 
-            $this->sender->send($notification);
+            $this->sender->send(notification: $notification);
         }
     }
 
     private function mapEvent(AuditEvent $event) : SecurityNotification|null
     {
-        $payload = $this->normalizeAuditEvent->execute($event);
+        $payload = $this->normalizeAuditEvent->execute(event: $event);
 
         return match ($event->name) {
             'auth.oauth.refresh.reuse_detected' => new SecurityNotification(

@@ -8,8 +8,8 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 $root = dirname(__DIR__);
 $review = (new ReviewComposerDependencies())->execute(
-    $root . '/composer.lock',
-    $root . '/tooling/dependency-review-policy.json'
+    composerLockPath: $root . '/composer.lock',
+    policyPath      : $root . '/tooling/dependency-review-policy.json'
 );
 
 echo json_encode(

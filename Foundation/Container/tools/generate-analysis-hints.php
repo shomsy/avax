@@ -42,7 +42,7 @@ sort($serviceIds);
 $runtimeInputs = [];
 $conditionals  = [];
 foreach ($serviceIds as $serviceId) {
-    $plan                      = $container->debugPlan($serviceId);
+    $plan                      = $container->debugPlan(id: $serviceId);
     $runtimeInputs[$serviceId] = array_values(array_map(
                                                   static fn (array $parameter) : string => (string) ($parameter['inputName'] ?? $parameter['name'] ?? ''),
                                                   array_values(array_filter(
@@ -66,7 +66,7 @@ foreach ($serviceIds as $serviceId) {
                                                                static fn (string $name) : bool => $name !== ''
                                                            )));
 
-    $description = $container->describeService($serviceId);
+    $description = $container->describeService(id: $serviceId);
     $conditions  = $description['ownership'] ?? [];
     if (($description['conditions']['active'] ?? true) === false || ($conditions['profiles'] ?? []) !== [] || ($conditions['flags'] ?? []) !== [] || ($conditions['tenants'] ?? []) !== [] || ($conditions['regions'] ?? []) !== [] || ($conditions['modes'] ?? []) !== []) {
         $conditionals[$serviceId] = [

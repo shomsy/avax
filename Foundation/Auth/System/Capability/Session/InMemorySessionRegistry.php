@@ -20,7 +20,7 @@ final class InMemorySessionRegistry implements SessionRegistryInterface, PruneEx
         $this->records[$record->sessionId] = $record;
     }
 
-    public function find(string $sessionId) : SessionRecord|null
+    public function find(#[\SensitiveParameter] string $sessionId) : SessionRecord|null
     {
         return $this->records[$sessionId] ?? null;
     }
@@ -35,7 +35,7 @@ final class InMemorySessionRegistry implements SessionRegistryInterface, PruneEx
         $records = [];
 
         foreach ($this->records as $record) {
-            if ($record->userId->equals($userId)) {
+            if ($record->userId->equals(other: $userId)) {
                 $records[] = $record;
             }
         }
@@ -48,7 +48,7 @@ final class InMemorySessionRegistry implements SessionRegistryInterface, PruneEx
         return $records;
     }
 
-    public function revoke(string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void
+    public function revoke(#[\SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void
     {
         $record = $this->records[$sessionId] ?? null;
 
@@ -56,17 +56,17 @@ final class InMemorySessionRegistry implements SessionRegistryInterface, PruneEx
             return;
         }
 
-        $this->records[$sessionId] = $record->withRevocation($revokedAt, $reason);
+        $this->records[$sessionId] = $record->withRevocation(revokedAt: $revokedAt, revokeReason: $reason);
     }
 
     public function revokeForUser(UserId $userId, DateTimeImmutable $revokedAt, string $reason) : void
     {
         foreach ($this->records as $sessionId => $record) {
-            if (! $record->userId->equals($userId) || $record->isRevoked()) {
+            if (! $record->userId->equals(other: $userId) || $record->isRevoked()) {
                 continue;
             }
 
-            $this->records[$sessionId] = $record->withRevocation($revokedAt, $reason);
+            $this->records[$sessionId] = $record->withRevocation(revokedAt: $revokedAt, revokeReason: $reason);
         }
     }
 
@@ -75,7 +75,7 @@ final class InMemorySessionRegistry implements SessionRegistryInterface, PruneEx
         $removed = 0;
 
         foreach ($this->records as $sessionId => $record) {
-            if ($record->isRevoked() || $record->isExpiredAt($now)) {
+            if ($record->isRevoked() || $record->isExpiredAt(moment: $now)) {
                 unset($this->records[$sessionId]);
                 $removed++;
             }

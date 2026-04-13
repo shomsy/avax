@@ -16,9 +16,9 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class GenerateBackupCodes
 {
     public function __construct(
-        private PasswordHasher $passwordHasher,
-        private Clock          $clock,
-        private int            $count = 10
+        #[\SensitiveParameter] private PasswordHasher $passwordHasher,
+        private Clock                                 $clock,
+        private int                                   $count = 10
     ) {}
 
     public function execute() : GeneratedBackupCodes
@@ -29,10 +29,10 @@ final readonly class GenerateBackupCodes
 
         for ($index = 0; $index < $this->count; $index++) {
             $plain        = strtoupper(bin2hex(random_bytes(4)) . '-' . bin2hex(random_bytes(4)));
-            $plainCodes[] = new BackupCode($plain);
+            $plainCodes[] = new BackupCode(value: $plain);
             $records[]    = new BackupCodeRecord(
                 backupCodeId: bin2hex(random_bytes(16)),
-                codeHash    : $this->passwordHasher->hash($plain)
+                codeHash    : $this->passwordHasher->hash(password: $plain)
             );
         }
 

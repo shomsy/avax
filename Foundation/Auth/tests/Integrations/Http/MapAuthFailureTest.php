@@ -18,48 +18,48 @@ final class MapAuthFailureTest extends TestCase
 {
     public function testMapAuthFailureReturnsSafeHttpOutcomeForAccessDenial() : void
     {
-        $failure = (new MapAuthFailure())->execute(new PermissionDenied(new UserPermission('write')));
+        $failure = (new MapAuthFailure())->execute(failure: new PermissionDenied(requirement: new UserPermission(value: 'write')));
 
-        $this->assertSame(403, $failure->statusCode);
-        $this->assertSame('access_denied', $failure->errorCode);
-        $this->assertSame('Access denied.', $failure->message);
+        $this->assertSame(expected: 403, actual: $failure->statusCode);
+        $this->assertSame(expected: 'access_denied', actual: $failure->errorCode);
+        $this->assertSame(expected: 'Access denied.', actual: $failure->message);
     }
 
     public function testMapAuthFailureRedactsAuthenticationFailureDetails() : void
     {
-        $failure = (new MapAuthFailure())->execute(AuthenticationFailed::invalidCredentials());
+        $failure = (new MapAuthFailure())->execute(failure: AuthenticationFailed::invalidCredentials());
 
-        $this->assertSame(401, $failure->statusCode);
-        $this->assertSame('authentication_failed', $failure->errorCode);
-        $this->assertSame('Authentication failed.', $failure->message);
+        $this->assertSame(expected: 401, actual: $failure->statusCode);
+        $this->assertSame(expected: 'authentication_failed', actual: $failure->errorCode);
+        $this->assertSame(expected: 'Authentication failed.', actual: $failure->message);
     }
 
     public function testMapAuthFailureCarriesRetryAfterForRateLimits() : void
     {
-        $loginFailure = (new MapAuthFailure())->execute(new RateLimitException('Slow down.', 30));
-        $mfaFailure   = (new MapAuthFailure())->execute(new MfaAttemptLimitReached(45));
+        $loginFailure = (new MapAuthFailure())->execute(failure: new RateLimitException(message: 'Slow down.', retryAfter: 30));
+        $mfaFailure   = (new MapAuthFailure())->execute(failure: new MfaAttemptLimitReached(retryAfter: 45));
 
-        $this->assertSame(429, $loginFailure->statusCode);
-        $this->assertSame(30, $loginFailure->retryAfterSeconds);
-        $this->assertSame(429, $mfaFailure->statusCode);
-        $this->assertSame(45, $mfaFailure->retryAfterSeconds);
+        $this->assertSame(expected: 429, actual: $loginFailure->statusCode);
+        $this->assertSame(expected: 30, actual: $loginFailure->retryAfterSeconds);
+        $this->assertSame(expected: 429, actual: $mfaFailure->statusCode);
+        $this->assertSame(expected: 45, actual: $mfaFailure->retryAfterSeconds);
     }
 
     public function testMapAuthFailureMarksFreshMfaBoundary() : void
     {
-        $failure = (new MapAuthFailure())->execute(new FreshMfaRequired(300));
+        $failure = (new MapAuthFailure())->execute(failure: new FreshMfaRequired(maxAgeSeconds: 300));
 
-        $this->assertSame(403, $failure->statusCode);
-        $this->assertSame('fresh_mfa_required', $failure->errorCode);
-        $this->assertSame('Fresh MFA verification required.', $failure->message);
+        $this->assertSame(expected: 403, actual: $failure->statusCode);
+        $this->assertSame(expected: 'fresh_mfa_required', actual: $failure->errorCode);
+        $this->assertSame(expected: 'Fresh MFA verification required.', actual: $failure->message);
     }
 
     public function testMapAuthFailureFallsBackToInternalErrorForUnknownFailures() : void
     {
-        $failure = (new MapAuthFailure())->execute(new RuntimeException('boom'));
+        $failure = (new MapAuthFailure())->execute(failure: new RuntimeException(message: 'boom'));
 
-        $this->assertSame(500, $failure->statusCode);
-        $this->assertSame('auth_error', $failure->errorCode);
-        $this->assertSame('Authentication flow failed.', $failure->message);
+        $this->assertSame(expected: 500, actual: $failure->statusCode);
+        $this->assertSame(expected: 'auth_error', actual: $failure->errorCode);
+        $this->assertSame(expected: 'Authentication flow failed.', actual: $failure->message);
     }
 }

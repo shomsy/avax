@@ -17,11 +17,11 @@ final readonly class CorrelatingAuditLog implements AuditLogInterface
     public function record(AuditEvent $event) : void
     {
         if ($event->correlationId !== null && trim($event->correlationId) !== '') {
-            $this->inner->record($event);
+            $this->inner->record(event: $event);
 
             return;
         }
 
-        $this->inner->record($event->withCorrelationId($this->correlationId));
+        $this->inner->record(event: $event->withCorrelationId(correlationId: $this->correlationId));
     }
 }

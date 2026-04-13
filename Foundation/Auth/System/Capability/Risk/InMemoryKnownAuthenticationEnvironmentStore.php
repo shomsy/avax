@@ -4,22 +4,24 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Risk;
 
+use SensitiveParameter;
+
 final class InMemoryKnownAuthenticationEnvironmentStore implements KnownAuthenticationEnvironmentStoreInterface
 {
     /** @var array<int, array<string, true>> */
     private array $seen = [];
 
-    public function hasSeen(int $userId, string|null $ipAddress, string|null $userAgent) : bool
+    public function hasSeen(int $userId, #[SensitiveParameter] string|null $ipAddress, string|null $userAgent) : bool
     {
-        return isset($this->seen[$userId][$this->key($ipAddress, $userAgent)]);
+        return isset($this->seen[$userId][$this->key(ipAddress: $ipAddress, userAgent: $userAgent)]);
     }
 
-    public function remember(int $userId, string|null $ipAddress, string|null $userAgent) : void
+    public function remember(int $userId, #[SensitiveParameter] string|null $ipAddress, string|null $userAgent) : void
     {
-        $this->seen[$userId][$this->key($ipAddress, $userAgent)] = true;
+        $this->seen[$userId][$this->key(ipAddress: $ipAddress, userAgent: $userAgent)] = true;
     }
 
-    private function key(string|null $ipAddress, string|null $userAgent) : string
+    private function key(#[SensitiveParameter] string|null $ipAddress, string|null $userAgent) : string
     {
         return strtolower(trim($ipAddress ?? 'unknown')) . '|' . strtolower(trim($userAgent ?? 'unknown'));
     }

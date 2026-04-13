@@ -26,13 +26,13 @@ use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 final readonly class RequireAccessPolicy
 {
     public function __construct(
-        private RequireAuthentication $requireAuthentication,
-        private RequireRole $requireRole,
-        private RequirePermission $requirePermission,
-        private RequireResourceOwner $requireResourceOwner,
-        private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
-        private RequireFreshMfa $requireFreshMfa,
-        private RequireAdminElevation $requireAdminElevation
+        #[\SensitiveParameter] private RequireAuthentication                  $requireAuthentication,
+        private RequireRole                                                   $requireRole,
+        private RequirePermission                                             $requirePermission,
+        private RequireResourceOwner                                          $requireResourceOwner,
+        #[\SensitiveParameter] private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
+        private RequireFreshMfa                                               $requireFreshMfa,
+        private RequireAdminElevation                                         $requireAdminElevation
     ) {}
 
     /**
@@ -50,15 +50,15 @@ final readonly class RequireAccessPolicy
         $identityPolicy = $policy->identityPolicy;
 
         if ($policy->requiredRole !== null) {
-            $this->requireRole->execute($policy->requiredRole);
+            $this->requireRole->execute(requiredRole: $policy->requiredRole);
         }
 
         if ($policy->requiredPermission !== null) {
-            $this->requirePermission->execute($policy->requiredPermission);
+            $this->requirePermission->execute(permission: $policy->requiredPermission);
         }
 
         if ($policy->resourceOwnerUserId !== null) {
-            $this->requireResourceOwner->execute($policy->resourceOwnerUserId);
+            $this->requireResourceOwner->execute(ownerUserId: $policy->resourceOwnerUserId);
         }
 
         if ($policy->phishingResistantRequired || $identityPolicy?->phishingResistantRequired === true) {
@@ -69,7 +69,7 @@ final readonly class RequireAccessPolicy
             ?? $identityPolicy?->freshMfaMaxAgeSeconds;
 
         if ($policy->freshMfa || $freshMfaMaxAgeSeconds !== null) {
-            $this->requireFreshMfa->execute($freshMfaMaxAgeSeconds);
+            $this->requireFreshMfa->execute(maxAgeSeconds: $freshMfaMaxAgeSeconds);
         }
 
         if ($policy->adminElevation || $identityPolicy?->adminElevationRequired === true) {

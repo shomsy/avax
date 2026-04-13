@@ -19,12 +19,12 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class BeginAdminElevation
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private RequireFreshMfa $requireFreshMfa,
-        private AdminElevationStoreInterface $elevationStore,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        private bool $phishingResistantRequired = false
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private RequireFreshMfa                              $requireFreshMfa,
+        private AdminElevationStoreInterface                 $elevationStore,
+        private AuditLogInterface                            $auditLog,
+        private Clock                                        $clock,
+        private bool                                         $phishingResistantRequired = false
     ) {}
 
     /**
@@ -39,7 +39,7 @@ final readonly class BeginAdminElevation
             throw AdminElevationFailed::unauthenticated();
         }
 
-        if (! $user->hasRole(UserRole::ADMIN)) {
+        if (! $user->hasRole(role: UserRole::ADMIN)) {
             throw AdminElevationFailed::forbidden();
         }
 
@@ -49,20 +49,20 @@ final readonly class BeginAdminElevation
 
         $this->requireFreshMfa->execute();
 
-        $bindingId = $this->bindingId($context);
+        $bindingId = $this->bindingId(context: $context);
 
         if ($bindingId === null) {
             throw AdminElevationFailed::missingBinding();
         }
 
-        $expiresAt = $this->clock->now()->modify('+15 minutes');
-        $this->elevationStore->start(new AdminElevationRecord(
+        $expiresAt = $this->clock->now()->modify(modifier: '+15 minutes');
+        $this->elevationStore->start(record: new AdminElevationRecord(
             userId    : $user->id,
             bindingId : $bindingId,
             expiresAt : $expiresAt
         ));
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.admin.elevation.started',
             occurredAt: $this->clock->now(),
             context   : [

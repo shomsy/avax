@@ -14,8 +14,8 @@ use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
 final readonly class MapAuthenticationRequest
 {
     public function __construct(
-        private ReadBearerToken         $readBearerToken = new ReadBearerToken(),
-        private ResolveSessionAllowance $resolveSessionAllowance = new ResolveSessionAllowance()
+        #[\SensitiveParameter] private ReadBearerToken         $readBearerToken = new ReadBearerToken(),
+        #[\SensitiveParameter] private ResolveSessionAllowance $resolveSessionAllowance = new ResolveSessionAllowance()
     ) {}
 
     public function execute(HttpAuthenticationInput $input) : AuthenticationRequest
@@ -27,9 +27,9 @@ final readonly class MapAuthenticationRequest
                               allowSession     : $input->allowSession,
                               sessionCookieName: $input->sessionCookieName
                           ),
-            ipAddress   : $this->readServerValue($input->server, 'REMOTE_ADDR'),
-            userAgent   : $this->readServerValue($input->server, 'HTTP_USER_AGENT')
-                              ?? $this->readHeaderValue($input->headers, 'User-Agent')
+            ipAddress   : $this->readServerValue(server: $input->server, name: 'REMOTE_ADDR'),
+            userAgent   : $this->readServerValue(server: $input->server, name: 'HTTP_USER_AGENT')
+                              ?? $this->readHeaderValue(headers: $input->headers, name: 'User-Agent')
         );
     }
 
@@ -46,7 +46,7 @@ final readonly class MapAuthenticationRequest
     /**
      * @param array<string, mixed> $headers
      */
-    private function readHeaderValue(array $headers, string $name) : string|null
+    private function readHeaderValue(#[\SensitiveParameter] array $headers, string $name) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
             if (strcasecmp($candidateKey, $name) !== 0) {

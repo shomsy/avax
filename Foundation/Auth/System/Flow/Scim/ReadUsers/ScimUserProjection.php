@@ -13,12 +13,12 @@ final readonly class ScimUserProjection
      * @param list<string> $groups
      */
     public function __construct(
-        public string $externalId,
-        public int $userId,
-        public string $email,
-        public string $username,
-        public array $roles,
-        public array $groups,
-        public ScimAccountState $state
+        public string                        $externalId,
+        public int                           $userId,
+        #[\SensitiveParameter] public string $email,
+        public string                        $username,
+        public array                         $roles,
+        public array                         $groups,
+        public ScimAccountState              $state
     ) {}
 }

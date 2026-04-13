@@ -34,6 +34,6 @@ final class FrozenClock extends Clock
 
     public function advance(DateInterval $interval) : void
     {
-        $this->now = $this->now->add($interval);
+        $this->now = $this->now->add(interval: $interval);
     }
 }

@@ -98,7 +98,7 @@ final class HotPathInliner
             throw new ContainerException(message: "No compiled entry exists for [{$serviceId}].");
         }
 
-        $call = $this->calls[$method] ??= Closure::fromCallable([$this->compiled, $method]);
+        $call = $this->calls[$method] ??= Closure::fromCallable(callback: [$this->compiled, $method]);
 
         return $call($resolver, $request, $request->overrides);
     }

@@ -27,7 +27,7 @@ class RequireRoleTest extends TestCase
     {
         $role                  = UserRole::ADMIN;
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(
                       id      : 1,
                       email   : 'admin@example.com',
@@ -50,7 +50,7 @@ class RequireRoleTest extends TestCase
     {
         $role                  = UserRole::ADMIN;
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(
                       id      : 1,
                       email   : 'user@example.com',
@@ -63,10 +63,10 @@ class RequireRoleTest extends TestCase
         $requirement = new RequireRole(currentAuthentication: $currentAuthentication);
         try {
             $requirement->execute(requiredRole: $role);
-            self::fail('RoleDenied was not raised.');
+            self::fail(message: 'RoleDenied was not raised.');
         } catch (RoleDenied $exception) {
-            $this->assertSame('Access denied.', $exception->getMessage());
-            $this->assertSame(UserRole::ADMIN, $exception->requirement());
+            $this->assertSame(expected: 'Access denied.', actual: $exception->getMessage());
+            $this->assertSame(expected: UserRole::ADMIN, actual: $exception->requirement());
         }
     }
 

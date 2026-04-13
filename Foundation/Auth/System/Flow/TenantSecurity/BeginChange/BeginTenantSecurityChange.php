@@ -33,9 +33,9 @@ final readonly class BeginTenantSecurityChange
      */
     public function execute(BeginTenantSecurityChangeData $data) : TenantSecurityChangeRequest
     {
-        $this->assertKnownReferences($data->after);
+        $this->assertKnownReferences(after: $data->after);
 
-        $before = $this->configurationStore->find($data->tenantSlug);
+        $before = $this->configurationStore->find(tenantSlug: $data->tenantSlug);
         $after = new TenantSecurityConfiguration(
             tenantSlug             : $data->tenantSlug,
             federationConnectionId : $data->after->federationConnectionId,
@@ -52,20 +52,20 @@ final readonly class BeginTenantSecurityChange
             reason       : trim($data->reason),
             before       : $before,
             after        : $after,
-            diff         : $this->diff($before, $after),
+            diff         : $this->diff(before: $before, after: $after),
             status       : TenantSecurityChangeRequestStatus::PENDING_APPROVAL,
             requestedAt  : $this->clock->now()
         );
 
-        $this->changeRequestStore->save($changeRequest);
-        $this->auditLog->record(new AuditEvent(
+        $this->changeRequestStore->save(changeRequest: $changeRequest);
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.tenant_security.change.requested',
             occurredAt: $this->clock->now(),
             context   : [
-                'change_id' => $changeRequest->changeId,
-                'tenant' => $changeRequest->tenantSlug,
-                'requested_by' => $changeRequest->requestedBy,
-                'diff' => $this->encodeDiff($changeRequest->diff),
+                            'change_id' => $changeRequest->changeId,
+                            'tenant' => $changeRequest->tenantSlug,
+                            'requested_by' => $changeRequest->requestedBy,
+                            'diff' => $this->encodeDiff(value: $changeRequest->diff),
             ]
         ));
 
@@ -77,8 +77,8 @@ final readonly class BeginTenantSecurityChange
      */
     private function diff(TenantSecurityConfiguration|null $before, TenantSecurityConfiguration $after) : array
     {
-        $beforeSnapshot = $this->snapshot($before);
-        $afterSnapshot = $this->snapshot($after);
+        $beforeSnapshot = $this->snapshot(configuration: $before);
+        $afterSnapshot = $this->snapshot(configuration: $after);
         $diff = [];
 
         foreach ($afterSnapshot as $field => $afterValue) {
@@ -109,7 +109,7 @@ final readonly class BeginTenantSecurityChange
             'federation_connection_id' => (string) $configuration->federationConnectionId,
             'scim_directory_id' => (string) $configuration->scimDirectoryId,
             'verified_domains' => implode(',', $configuration->verifiedDomains),
-            'group_role_map' => $this->encodeDiff($configuration->groupRoleMap),
+            'group_role_map' => $this->encodeDiff(value: $configuration->groupRoleMap),
             'policy_profile' => $configuration->policyProfile,
             'rollout_version' => (string) $configuration->rolloutVersion,
         ];
@@ -134,14 +134,14 @@ final readonly class BeginTenantSecurityChange
     {
         if (
             $after->federationConnectionId !== null
-            && $this->federationConnectionStore?->find($after->federationConnectionId) === null
+            && $this->federationConnectionStore?->find(connectionId: $after->federationConnectionId) === null
         ) {
             throw TenantSecurityFailed::unknownFederationConnection();
         }
 
         if (
             $after->scimDirectoryId !== null
-            && $this->scimDirectoryStore?->find($after->scimDirectoryId) === null
+            && $this->scimDirectoryStore?->find(directoryId: $after->scimDirectoryId) === null
         ) {
             throw TenantSecurityFailed::unknownScimDirectory();
         }

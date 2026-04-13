@@ -23,7 +23,7 @@ final class RequestOnlyStoryService {}
 
 final class StoryRuntimeInputConsumer
 {
-    public function __construct(#[RuntimeInput('token')] public string $token) {}
+    public function __construct(#[\SensitiveParameter] #[RuntimeInput(name: 'token')] public string $token) {}
 }
 
 final class StoryLocatorDrift
@@ -32,102 +32,102 @@ final class StoryLocatorDrift
 }
 
 $topLevelContainer = makeTestContainer();
-$topLevelContainer->bind(StoryFlowLocalService::class, StoryFlowLocalService::class)
-    ->asFlow('login')
+$topLevelContainer->bind(abstract: StoryFlowLocalService::class, concrete: StoryFlowLocalService::class)
+    ->asFlow(ownerSlice: 'login')
     ->asPrivate();
 
 try {
-    $topLevelContainer->get(StoryFlowLocalService::class);
-    throw new RuntimeException('Flow-local services should not resolve from the top-level surface.');
+    $topLevelContainer->get(id: StoryFlowLocalService::class);
+    throw new RuntimeException(message: 'Flow-local services should not resolve from the top-level surface.');
 } catch (ContainerException $exception) {
     assertTrue(
-        str_contains($exception->getMessage(), 'is not part of the top-level container surface'),
-        'Top-level access failures should explain the surface violation.'
+        condition: str_contains($exception->getMessage(), 'is not part of the top-level container surface'),
+        message  : 'Top-level access failures should explain the surface violation.'
     );
     assertTrue(
-        str_contains($exception->getMessage(), 'Likely fix: mark the flow root as entry(), export the shared capability'),
-        'Top-level access failures should suggest an ownership-aware fix.'
+        condition: str_contains($exception->getMessage(), 'Likely fix: mark the flow root as entry(), export the shared capability'),
+        message  : 'Top-level access failures should suggest an ownership-aware fix.'
     );
 }
 
 $scopedContainer = makeTestContainer();
-$scopedContainer->scoped(RequestOnlyStoryService::class, RequestOnlyStoryService::class)->request();
+$scopedContainer->scoped(abstract: RequestOnlyStoryService::class, concrete: RequestOnlyStoryService::class)->request();
 
 try {
-    $scopedContainer->get(RequestOnlyStoryService::class);
-    throw new RuntimeException('Request-scoped services should require an active request scope.');
+    $scopedContainer->get(id: RequestOnlyStoryService::class);
+    throw new RuntimeException(message: 'Request-scoped services should require an active request scope.');
 } catch (ContainerException $exception) {
     assertTrue(
-        str_contains($exception->getMessage(), 'requires an active [request] scope'),
-        'Scope failures should name the missing required scope.'
+        condition: str_contains($exception->getMessage(), 'requires an active [request] scope'),
+        message  : 'Scope failures should name the missing required scope.'
     );
     assertTrue(
-        str_contains($exception->getMessage(), "openScope('request') before resolving it"),
-        'Scope failures should suggest the exact scope operation to open.'
+        condition: str_contains($exception->getMessage(), "openScope('request') before resolving it"),
+        message  : 'Scope failures should suggest the exact scope operation to open.'
     );
 }
 
 $crossSliceContainer = makeTestContainer();
-$crossSliceContainer->singleton(StoryInternalContract::class, StoryInternalService::class)
-    ->asCapability('payments')
+$crossSliceContainer->singleton(abstract: StoryInternalContract::class, concrete: StoryInternalService::class)
+    ->asCapability(ownerSlice: 'payments')
     ->asInternal();
-$crossSliceContainer->bind(StoryFlowEntry::class, StoryFlowEntry::class)
-    ->asFlow('checkout')
+$crossSliceContainer->bind(abstract: StoryFlowEntry::class, concrete: StoryFlowEntry::class)
+    ->asFlow(ownerSlice: 'checkout')
     ->asPrivate()
     ->entry();
 
 try {
-    $crossSliceContainer->get(StoryFlowEntry::class);
-    throw new RuntimeException('Cross-slice internal dependencies should be blocked.');
+    $crossSliceContainer->get(id: StoryFlowEntry::class);
+    throw new RuntimeException(message: 'Cross-slice internal dependencies should be blocked.');
 } catch (ContainerException $exception) {
     assertTrue(
-        str_contains($exception->getMessage(), 'Illegal cross-slice dependency'),
-        'Cross-slice failures should name the blocked dependency edge.'
+        condition: str_contains($exception->getMessage(), 'Illegal cross-slice dependency'),
+        message  : 'Cross-slice failures should name the blocked dependency edge.'
     );
     assertTrue(
-        str_contains($exception->getMessage(), 'Consumer slice [checkout] cannot use dependency slice [payments]'),
-        'Cross-slice failures should expose the consumer and dependency slices.'
+        condition: str_contains($exception->getMessage(), 'Consumer slice [checkout] cannot use dependency slice [payments]'),
+        message  : 'Cross-slice failures should expose the consumer and dependency slices.'
     );
     assertTrue(
-        str_contains($exception->getMessage(), 'Likely fix: export the dependency intentionally, import its slice'),
-        'Cross-slice failures should suggest an ownership-aware fix.'
+        condition: str_contains($exception->getMessage(), 'Likely fix: export the dependency intentionally, import its slice'),
+        message  : 'Cross-slice failures should suggest an ownership-aware fix.'
     );
 }
 
 $runtimeInputContainer = makeTestContainer();
-$runtimeInputContainer->bind(StoryRuntimeInputConsumer::class, StoryRuntimeInputConsumer::class);
+$runtimeInputContainer->bind(abstract: StoryRuntimeInputConsumer::class, concrete: StoryRuntimeInputConsumer::class);
 
 try {
-    $runtimeInputContainer->make(StoryRuntimeInputConsumer::class);
-    throw new RuntimeException('Missing runtime input should fail.');
+    $runtimeInputContainer->make(abstract: StoryRuntimeInputConsumer::class);
+    throw new RuntimeException(message: 'Missing runtime input should fail.');
 } catch (ContainerException $exception) {
     assertTrue(
-        str_contains($exception->getMessage(), 'Runtime input [$token] is missing'),
-        'Runtime-input failures should name the missing input.'
+        condition: str_contains($exception->getMessage(), 'Runtime input [$token] is missing'),
+        message  : 'Runtime-input failures should name the missing input.'
     );
     assertTrue(
-        str_contains($exception->getMessage(), 'Likely fix: pass an explicit override, use forContext(), or add a default value.'),
-        'Runtime-input failures should remain fix-oriented.'
+        condition: str_contains($exception->getMessage(), 'Likely fix: pass an explicit override, use forContext(), or add a default value.'),
+        message  : 'Runtime-input failures should remain fix-oriented.'
     );
 }
 
 $locatorDriftContainer = makeTestContainer();
-$locatorDriftContainer->bind(StoryLocatorDrift::class, StoryLocatorDrift::class)
-    ->asCapability('checkout')
+$locatorDriftContainer->bind(abstract: StoryLocatorDrift::class, concrete: StoryLocatorDrift::class)
+    ->asCapability(ownerSlice: 'checkout')
     ->asShared()
     ->export();
 
 try {
-    $locatorDriftContainer->get(StoryLocatorDrift::class);
-    throw new RuntimeException('Service locator drift should fail fast.');
+    $locatorDriftContainer->get(id: StoryLocatorDrift::class);
+    throw new RuntimeException(message: 'Service locator drift should fail fast.');
 } catch (ContainerException $exception) {
     assertTrue(
-        str_contains($exception->getMessage(), 'Service locator drift blocked'),
-        'Service locator failures should name the anti-pattern explicitly.'
+        condition: str_contains($exception->getMessage(), 'Service locator drift blocked'),
+        message  : 'Service locator failures should name the anti-pattern explicitly.'
     );
     assertTrue(
-        str_contains($exception->getMessage(), 'inject the concrete dependency boundary instead of the container'),
-        'Service locator failures should suggest an ownership-safe fix.'
+        condition: str_contains($exception->getMessage(), 'inject the concrete dependency boundary instead of the container'),
+        message  : 'Service locator failures should suggest an ownership-safe fix.'
     );
 }
 

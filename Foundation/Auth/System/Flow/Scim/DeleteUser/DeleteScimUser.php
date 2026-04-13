@@ -28,18 +28,18 @@ final readonly class DeleteScimUser
      */
     public function execute(DeleteScimUserData $data) : void
     {
-        $directory = $this->authenticateDirectory($data->directoryId, $data->directoryToken);
-        $identity = $this->identityStore->find($directory->directoryId, $data->externalId);
+        $directory = $this->authenticateDirectory(directoryId: $data->directoryId, directoryToken: $data->directoryToken);
+        $identity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);
 
         if ($identity === null) {
             throw ScimFailed::unknownProvisionedIdentity();
         }
 
-        $this->userSource->deactivate($identity->userId);
-        $this->userSource->replaceRoles($identity->userId, []);
-        $this->userSource->replacePermissions($identity->userId, []);
-        $this->identityStore->remove($directory->directoryId, $data->externalId);
-        $this->auditLog->record(new AuditEvent(
+        $this->userSource->deactivate(id: $identity->userId);
+        $this->userSource->replaceRoles(id: $identity->userId, roles: []);
+        $this->userSource->replacePermissions(id: $identity->userId, permissions: []);
+        $this->identityStore->remove(directoryId: $directory->directoryId, externalId: $data->externalId);
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.scim.user.deleted',
             occurredAt: $this->clock->now(),
             context   : [
@@ -59,13 +59,13 @@ final readonly class DeleteScimUser
         #[SensitiveParameter] string $directoryToken
     ) : \Avax\Auth\System\Capability\Scim\ScimDirectory
     {
-        $directory = $this->directoryStore->find($directoryId);
+        $directory = $this->directoryStore->find(directoryId: $directoryId);
 
         if ($directory === null) {
             throw ScimFailed::unknownDirectory();
         }
 
-        if (! $this->directoryStore->verifyToken($directoryId, $directoryToken)) {
+        if (! $this->directoryStore->verifyToken(directoryId: $directoryId, plainTextToken: $directoryToken)) {
             throw ScimFailed::invalidDirectoryToken();
         }
 

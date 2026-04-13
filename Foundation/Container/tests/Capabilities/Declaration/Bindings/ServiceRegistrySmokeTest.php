@@ -8,26 +8,26 @@ use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
 
 $registry = new ServiceRegistry();
 
-$registry->bind('logger', DateTimeImmutable::class)->tag('infra');
-$deferred = $registry->defer('deferred.logger', ArrayObject::class);
-$registry->singleton('cache', ArrayObject::class);
-$registry->scoped('request', stdClass::class);
-$registry->when('Consumer')->needs('logger')->give(DirectoryIterator::class);
+$registry->bind(abstract: 'logger', concrete: DateTimeImmutable::class)->tag(tags: 'infra');
+$deferred = $registry->defer(abstract: 'deferred.logger', concrete: ArrayObject::class);
+$registry->singleton(abstract: 'cache', concrete: ArrayObject::class);
+$registry->scoped(abstract: 'request', concrete: stdClass::class);
+$registry->when(consumer: 'Consumer')->needs(abstract: 'logger')->give(implementation: DirectoryIterator::class);
 
-assertTrue($registry->has('logger'), 'Service registry should store bindings.');
-assertSame(DateTimeImmutable::class, $registry->get('logger')?->concrete, 'Bindings should keep their concrete target.');
-assertTrue($deferred->deferred, 'Deferred registrations should be marked as deferred.');
-assertSame(['logger'], $registry->getTaggedIds('infra'), 'Tags should resolve back to registered ids.');
-assertSame(DirectoryIterator::class, $registry->getContextualMatch('Consumer', 'logger'), 'Target overrides should resolve.');
-assertTrue(isset($registry->all()['cache']), 'Registry should expose stored registrations.');
+assertTrue(condition: $registry->has(abstract: 'logger'), message: 'Service registry should store bindings.');
+assertSame(expected: DateTimeImmutable::class, actual: $registry->get(abstract: 'logger')?->concrete, message: 'Bindings should keep their concrete target.');
+assertTrue(condition: $deferred->deferred, message: 'Deferred registrations should be marked as deferred.');
+assertSame(expected: ['logger'], actual: $registry->getTaggedIds(tag: 'infra'), message: 'Tags should resolve back to registered ids.');
+assertSame(expected: DirectoryIterator::class, actual: $registry->getContextualMatch(consumer: 'Consumer', needs: 'logger'), message: 'Target overrides should resolve.');
+assertTrue(condition: isset($registry->all()['cache']), message: 'Registry should expose stored registrations.');
 
 assertThrows(
-    LogicException::class,
-    static function () use ($registry) : void {
-        $registry->alias('logger.alias', 'logger');
-        $registry->alias('logger', 'logger.alias');
+    expectedClass: LogicException::class,
+    callback     : static function () use ($registry) : void {
+        $registry->alias(alias: 'logger.alias', abstract: 'logger');
+        $registry->alias(alias: 'logger', abstract: 'logger.alias');
     },
-    'Alias cycles should fail fast at registration time.'
+    message      : 'Alias cycles should fail fast at registration time.'
 );
 
 echo basename(__FILE__) . " ok\n";

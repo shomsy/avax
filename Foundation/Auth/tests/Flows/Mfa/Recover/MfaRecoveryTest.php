@@ -38,25 +38,25 @@ final class MfaRecoveryTest extends TestCase
 {
     public function testRecoveryResetsMfaAndClearsCurrentSession() : void
     {
-        $clock      = new FrozenClock(new DateTimeImmutable('2026-04-09T12:00:00+00:00'));
+        $clock      = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));
         $userSource = new InMemoryUserSource();
         $user       = User::create(
-            id          : new UserId(1),
-            email       : new UserEmail('user@example.com'),
+            id          : new UserId(value: 1),
+            email       : new UserEmail(value: 'user@example.com'),
             username    : 'user',
             passwordHash: 'hash'
         );
-        $userSource->create($user);
+        $userSource->create(user: $user);
 
         $mfaStore = new InMemoryMfaStore();
-        $mfaStore->saveMethod(new MfaMethodRecord(
-                                  userId   : new UserId(1),
+        $mfaStore->saveMethod(record: new MfaMethodRecord(
+                                  userId   : new UserId(value: 1),
                                   method   : MfaMethod::TOTP,
                                   secret   : 'SECRETSECRETSECRETSECRETSECRETSE',
                                   enabledAt: $clock->now()
                               ));
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user         : new AuthenticatedUser(
                                id        : 1,
                                email     : 'user@example.com',
@@ -67,7 +67,7 @@ final class MfaRecoveryTest extends TestCase
             mfaVerifiedAt: $clock->now()
         ));
         $refreshTokens = Mockery::mock(RefreshTokenStoreInterface::class);
-        $refreshTokens->shouldReceive('revokeUser')->once()->with(Mockery::type(UserId::class));
+        $refreshTokens->shouldReceive('revokeUser')->once()->with(Mockery::type(expected: UserId::class));
         $identity = Mockery::mock(IdentityInterface::class);
         $identity->shouldReceive('clear')->once();
 
@@ -87,14 +87,14 @@ final class MfaRecoveryTest extends TestCase
             identity             : $identity
         );
 
-        $challenge = $start->execute(new BeginMfaRecoveryData('user@example.com'));
-        $this->assertTrue($challenge->dispatched);
-        $this->assertNotNull($challenge->token);
+        $challenge = $start->execute(data: new BeginMfaRecoveryData(email: 'user@example.com'));
+        $this->assertTrue(condition: $challenge->dispatched);
+        $this->assertNotNull(actual: $challenge->token);
 
-        $confirm->execute(new ConfirmMfaRecoveryData($challenge->token ?? ''));
+        $confirm->execute(data: new ConfirmMfaRecoveryData(token: $challenge->token ?? ''));
 
-        $this->assertFalse($mfaStore->isEnabled(new UserId(1)));
-        $this->assertFalse($currentAuthentication->read()->isAuthenticated());
+        $this->assertFalse(condition: $mfaStore->isEnabled(userId: new UserId(value: 1)));
+        $this->assertFalse(condition: $currentAuthentication->read()->isAuthenticated());
     }
 
     public function testRecoveryUsesAntiEnumerationForMissingUser() : void
@@ -103,13 +103,13 @@ final class MfaRecoveryTest extends TestCase
             userSource: new InMemoryUserSource(),
             mfaStore  : new InMemoryMfaStore(),
             auditLog  : new InMemoryAuditLog(),
-            clock     : new FrozenClock(new DateTimeImmutable('2026-04-09T12:00:00+00:00'))
+            clock     : new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'))
         );
 
-        $challenge = $start->execute(new BeginMfaRecoveryData('missing@example.com'));
+        $challenge = $start->execute(data: new BeginMfaRecoveryData(email: 'missing@example.com'));
 
-        $this->assertTrue($challenge->dispatched);
-        $this->assertNull($challenge->token);
+        $this->assertTrue(condition: $challenge->dispatched);
+        $this->assertNull(actual: $challenge->token);
     }
 
     public function testRecoveryRejectsUnknownToken() : void
@@ -118,27 +118,27 @@ final class MfaRecoveryTest extends TestCase
             mfaStore         : new InMemoryMfaStore(),
             mfaChallengeStore: new InMemoryMfaChallengeStore(),
             auditLog         : new InMemoryAuditLog(),
-            clock            : new FrozenClock(new DateTimeImmutable('2026-04-09T12:00:00+00:00'))
+            clock            : new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'))
         );
 
         $this->expectException(MfaRecoveryFailed::class);
         $this->expectExceptionMessage('MFA recovery token is invalid.');
-        $confirm->execute(new ConfirmMfaRecoveryData('missing-token'));
+        $confirm->execute(data: new ConfirmMfaRecoveryData(token: 'missing-token'));
     }
 
     public function testRecoveryStartIsThrottledAfterConfiguredLimit() : void
     {
-        $clock      = new FrozenClock(new DateTimeImmutable('2026-04-09T12:00:00+00:00'));
+        $clock      = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));
         $userSource = new InMemoryUserSource();
-        $userSource->create(User::create(
-            id          : new UserId(1),
-            email       : new UserEmail('user@example.com'),
+        $userSource->create(user: User::create(
+            id          : new UserId(value: 1),
+            email       : new UserEmail(value: 'user@example.com'),
             username    : 'user',
             passwordHash: 'hash'
         ));
         $mfaStore = new InMemoryMfaStore();
-        $mfaStore->saveMethod(new MfaMethodRecord(
-            userId   : new UserId(1),
+        $mfaStore->saveMethod(record: new MfaMethodRecord(
+            userId   : new UserId(value: 1),
             method   : MfaMethod::TOTP,
             secret   : 'SECRETSECRETSECRETSECRETSECRETSE',
             enabledAt: $clock->now()
@@ -157,20 +157,20 @@ final class MfaRecoveryTest extends TestCase
             )
         );
 
-        $first = $start->execute(new BeginMfaRecoveryData(
+        $first = $start->execute(data: new BeginMfaRecoveryData(
             email    : 'user@example.com',
             ipAddress: '127.0.0.1',
             userAgent: 'PHPUnit'
         ));
-        $second = $start->execute(new BeginMfaRecoveryData(
+        $second = $start->execute(data: new BeginMfaRecoveryData(
             email    : 'user@example.com',
             ipAddress: '127.0.0.1',
             userAgent: 'PHPUnit'
         ));
 
-        $this->assertNotNull($first->token);
-        $this->assertNull($second->token);
-        $this->assertSame('auth.mfa.recovery.throttled', $auditLog->events()[1]->name);
+        $this->assertNotNull(actual: $first->token);
+        $this->assertNull(actual: $second->token);
+        $this->assertSame(expected: 'auth.mfa.recovery.throttled', actual: $auditLog->events()[1]->name);
     }
 
     protected function tearDown() : void

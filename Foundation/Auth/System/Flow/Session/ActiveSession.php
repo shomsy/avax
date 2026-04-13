@@ -12,15 +12,15 @@ use DateTimeImmutable;
 final readonly class ActiveSession
 {
     public function __construct(
-        public string             $sessionId,
-        public DateTimeImmutable  $createdAt,
-        public DateTimeImmutable  $lastSeenAt,
-        public DateTimeImmutable  $idleExpiresAt,
-        public DateTimeImmutable  $absoluteExpiresAt,
-        public string|null        $ipAddress = null,
-        public string|null        $userAgent = null,
-        public bool               $current = false,
-        public DateTimeImmutable|null $revokedAt = null,
-        public string|null        $revokeReason = null
+        #[\SensitiveParameter] public string      $sessionId,
+        public DateTimeImmutable                  $createdAt,
+        public DateTimeImmutable                  $lastSeenAt,
+        public DateTimeImmutable                  $idleExpiresAt,
+        public DateTimeImmutable                  $absoluteExpiresAt,
+        #[\SensitiveParameter] public string|null $ipAddress = null,
+        public string|null                        $userAgent = null,
+        public bool                               $current = false,
+        public DateTimeImmutable|null             $revokedAt = null,
+        public string|null                        $revokeReason = null
     ) {}
 }

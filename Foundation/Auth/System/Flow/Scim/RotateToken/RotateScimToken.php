@@ -27,7 +27,7 @@ final readonly class RotateScimToken
      */
     public function execute(string $directoryId) : RotatedScimToken
     {
-        $directory = $this->directoryStore->find($directoryId);
+        $directory = $this->directoryStore->find(directoryId: $directoryId);
 
         if ($directory === null) {
             throw ScimFailed::unknownDirectory();
@@ -38,14 +38,14 @@ final readonly class RotateScimToken
             directoryId : $directory->directoryId,
             tenantSlug  : $directory->tenantSlug,
             name        : $directory->name,
-            tokenHash   : $this->passwordHasher->hash($plainTextToken),
+            tokenHash   : $this->passwordHasher->hash(password: $plainTextToken),
             groupRoleMap: $directory->groupRoleMap,
             createdAt   : $directory->createdAt,
             rotatedAt   : $this->clock->now()
         );
 
-        $this->directoryStore->save($rotated);
-        $this->auditLog->record(new AuditEvent(
+        $this->directoryStore->save(directory: $rotated);
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.scim.directory.token_rotated',
             occurredAt: $this->clock->now(),
             context   : [
@@ -54,6 +54,6 @@ final readonly class RotateScimToken
             ]
         ));
 
-        return new RotatedScimToken($rotated, $plainTextToken);
+        return new RotatedScimToken(directory: $rotated, plainTextToken: $plainTextToken);
     }
 }

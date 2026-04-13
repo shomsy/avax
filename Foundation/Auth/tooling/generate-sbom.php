@@ -10,6 +10,6 @@ $root = dirname(__DIR__);
 $generator = new GenerateReleaseSbom();
 
 echo json_encode(
-    $generator->execute($root . '/composer.json', $root . '/composer.lock'),
+    $generator->execute(composerJsonPath: $root . '/composer.json', composerLockPath: $root . '/composer.lock'),
     JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
 ) . PHP_EOL;

@@ -19,13 +19,13 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class ExchangeRefreshToken
 {
     public function __construct(
-        private OAuthClientRegistryInterface $clientRegistry,
-        private RefreshTokenStoreInterface   $refreshTokenStore,
-        private UserSourceInterface          $userSource,
-        private JwtIdentityInterface         $jwtIdentity,
-        private AuditLogInterface            $auditLog,
-        private Clock                        $clock,
-        private DeterministicRiskEngine|null $riskEngine = null
+        private OAuthClientRegistryInterface                      $clientRegistry,
+        #[\SensitiveParameter] private RefreshTokenStoreInterface $refreshTokenStore,
+        private UserSourceInterface                               $userSource,
+        #[\SensitiveParameter] private JwtIdentityInterface       $jwtIdentity,
+        private AuditLogInterface                                 $auditLog,
+        private Clock                                             $clock,
+        private DeterministicRiskEngine|null                      $riskEngine = null
     ) {}
 
     /**
@@ -34,27 +34,27 @@ final readonly class ExchangeRefreshToken
     public function execute(ExchangeRefreshTokenData $data) : OAuthTokenGrant
     {
         $now    = $this->clock->now();
-        $client = $this->clientRegistry->find($data->clientId);
+        $client = $this->clientRegistry->find(clientId: $data->clientId);
 
-        if ($client === null || ! $this->clientRegistry->verifySecret($data->clientId, $data->clientSecret)) {
-            $this->recordFailure($data, 'client_authentication_failed');
+        if ($client === null || ! $this->clientRegistry->verifySecret(clientId: $data->clientId, plainTextSecret: $data->clientSecret)) {
+            $this->recordFailure(data: $data, reason: 'client_authentication_failed');
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
-        if (! $client->allowsGrantType(OAuthGrantType::REFRESH_TOKEN)) {
-            $this->recordFailure($data, 'grant_type_not_allowed');
+        if (! $client->allowsGrantType(grantType: OAuthGrantType::REFRESH_TOKEN)) {
+            $this->recordFailure(data: $data, reason: 'grant_type_not_allowed');
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
-        $record = $this->refreshTokenStore->find($data->refreshToken);
+        $record = $this->refreshTokenStore->find(plainToken: $data->refreshToken);
 
         if (
             $record === null
             || $record->clientId !== $data->clientId
             || $record->revoked
-            || $record->isExpiredAt($now)
+            || $record->isExpiredAt(moment: $now)
         ) {
-            $this->recordFailure($data, 'grant_not_found_or_expired');
+            $this->recordFailure(data: $data, reason: 'grant_not_found_or_expired');
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
@@ -63,17 +63,17 @@ final readonly class ExchangeRefreshToken
                 $data->senderConstraint === null
                 || $data->senderConstraint->type !== $client->requiredSenderConstraint
                 || $record->senderConstraint === null
-                || ! $record->senderConstraint->equals($data->senderConstraint)
+                || ! $record->senderConstraint->equals(other: $data->senderConstraint)
             ) {
-                $this->recordFailure($data, 'sender_constraint_mismatch');
+                $this->recordFailure(data: $data, reason: 'sender_constraint_mismatch');
                 throw OAuthTokenExchangeFailed::invalidSenderConstraint();
             }
         }
 
         if ($record->wasRotated()) {
-            $this->refreshTokenStore->revokeFamily($record->familyId);
-            $riskDecision = $this->riskEngine?->recordRefreshReuse($record->userId->value, $record->clientId);
-            $this->auditLog->record(new AuditEvent(
+            $this->refreshTokenStore->revokeFamily(familyId: $record->familyId);
+            $riskDecision = $this->riskEngine?->recordRefreshReuse(userId: $record->userId->value, clientId: $record->clientId);
+            $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.oauth.refresh.review.opened',
                 occurredAt: $now,
                 context   : [
@@ -82,15 +82,15 @@ final readonly class ExchangeRefreshToken
                     'risk_action' => $riskDecision?->action->value,
                 ]
             ));
-            $this->recordFailure($data, 'reuse_detected', suspicious: true);
+            $this->recordFailure(data: $data, reason: 'reuse_detected', suspicious: true);
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
-        $user = $this->userSource->findById($record->userId);
+        $user = $this->userSource->findById(id: $record->userId);
 
         if ($user === null || ! $user->isActive()) {
-            $this->refreshTokenStore->revokeFamily($record->familyId);
-            $this->recordFailure($data, 'user_not_active');
+            $this->refreshTokenStore->revokeFamily(familyId: $record->familyId);
+            $this->recordFailure(data: $data, reason: 'user_not_active');
             throw OAuthTokenExchangeFailed::invalidGrant();
         }
 
@@ -104,7 +104,7 @@ final readonly class ExchangeRefreshToken
         );
         $refreshToken = $this->refreshTokenStore->issue(
             userId       : $record->userId,
-            expiresAt    : $now->modify('+30 days'),
+            expiresAt    : $now->modify(modifier: '+30 days'),
             familyId     : $record->familyId,
             mfaVerifiedAt: $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
@@ -113,8 +113,8 @@ final readonly class ExchangeRefreshToken
             senderConstraint: $record->senderConstraint
         );
 
-        $this->refreshTokenStore->markRotated($record->tokenId, $refreshToken->tokenId);
-        $this->auditLog->record(new AuditEvent(
+        $this->refreshTokenStore->markRotated(tokenId: $record->tokenId, replacementTokenId: $refreshToken->tokenId);
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.oauth.refresh.exchanged',
             occurredAt: $now,
             context   : [
@@ -150,7 +150,7 @@ final readonly class ExchangeRefreshToken
             ? 'auth.oauth.refresh.reuse_detected'
             : 'auth.oauth.refresh.failed';
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : $name,
             occurredAt: $this->clock->now(),
             context   : [

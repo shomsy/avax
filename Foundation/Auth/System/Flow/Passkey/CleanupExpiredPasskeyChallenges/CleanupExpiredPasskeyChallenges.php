@@ -20,6 +20,6 @@ final readonly class CleanupExpiredPasskeyChallenges
             return 0;
         }
 
-        return $this->challengeStore->pruneExpired($this->clock->now());
+        return $this->challengeStore->pruneExpired(now: $this->clock->now());
     }
 }

@@ -31,7 +31,7 @@ final class MfaEnrollmentTest extends TestCase
 {
     public function testEnrollmentStartsAndCompletesOnlyAfterValidTotpProof() : void
     {
-        $clock                 = new FrozenClock(new DateTimeImmutable('2026-04-09T12:00:00+00:00'));
+        $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));
         $currentAuthentication = $this->authenticatedContext();
         $mfaStore              = new InMemoryMfaStore();
         $auditLog              = new InMemoryAuditLog();
@@ -58,23 +58,23 @@ final class MfaEnrollmentTest extends TestCase
         );
 
         $enrollment = $start->execute();
-        $this->assertSame(MfaStatus::ENROLLMENT_PENDING, $enrollment->status);
-        $this->assertStringStartsWith('otpauth://totp/', $enrollment->otpauthUri);
-        $this->assertFalse($mfaStore->isEnabled(new \Avax\Auth\System\Capability\User\UserId(1)));
+        $this->assertSame(expected: MfaStatus::ENROLLMENT_PENDING, actual: $enrollment->status);
+        $this->assertStringStartsWith(prefix: 'otpauth://totp/', string: $enrollment->otpauthUri);
+        $this->assertFalse(condition: $mfaStore->isEnabled(userId: new \Avax\Auth\System\Capability\User\UserId(value: 1)));
 
-        $backupCodes = $confirm->execute(new ConfirmMfaEnrollmentData(
-                                             code: $totp->codeAt($enrollment->secret(), $clock->now())
+        $backupCodes = $confirm->execute(data: new ConfirmMfaEnrollmentData(
+                                             code: $totp->codeAt(secret: $enrollment->secret(), moment: $clock->now())
                                          ));
 
-        $this->assertCount(10, $backupCodes->codes);
-        $this->assertTrue($mfaStore->isEnabled(new \Avax\Auth\System\Capability\User\UserId(1)));
-        $this->assertTrue($currentAuthentication->read()->user()?->mfaEnabled);
-        $this->assertNotNull($currentAuthentication->read()->mfaVerifiedAt());
-        $this->assertSame([
+        $this->assertCount(expectedCount: 10, haystack: $backupCodes->codes);
+        $this->assertTrue(condition: $mfaStore->isEnabled(userId: new \Avax\Auth\System\Capability\User\UserId(value: 1)));
+        $this->assertTrue(condition: $currentAuthentication->read()->user()?->mfaEnabled);
+        $this->assertNotNull(actual: $currentAuthentication->read()->mfaVerifiedAt());
+        $this->assertSame(   expected: [
                               'auth.mfa.enrollment.started',
                               'auth.mfa.enrollment.completed',
                               'auth.mfa.enabled',
-                          ], array_map(
+                          ], actual  : array_map(
                               static fn ($event) : string => $event->name,
                               $auditLog->events()
                           ));
@@ -83,7 +83,7 @@ final class MfaEnrollmentTest extends TestCase
     private function authenticatedContext() : CurrentAuthentication
     {
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(
                       id      : 1,
                       email   : 'user@example.com',
@@ -97,7 +97,7 @@ final class MfaEnrollmentTest extends TestCase
 
     public function testEnrollmentRejectsInvalidFirstCodeAndDoesNotHalfEnableMfa() : void
     {
-        $clock                 = new FrozenClock(new DateTimeImmutable('2026-04-09T12:00:00+00:00'));
+        $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));
         $currentAuthentication = $this->authenticatedContext();
         $mfaStore              = new InMemoryMfaStore();
         $totp                  = new Totp();
@@ -127,16 +127,16 @@ final class MfaEnrollmentTest extends TestCase
         $this->expectExceptionMessage('MFA code is invalid.');
 
         try {
-            $confirm->execute(new ConfirmMfaEnrollmentData('000000'));
+            $confirm->execute(data: new ConfirmMfaEnrollmentData(code: '000000'));
         } finally {
-            $this->assertFalse($mfaStore->isEnabled(new \Avax\Auth\System\Capability\User\UserId(1)));
-            $this->assertSame(MfaStatus::ENROLLMENT_PENDING, $mfaStore->status(new \Avax\Auth\System\Capability\User\UserId(1)));
+            $this->assertFalse(condition: $mfaStore->isEnabled(userId: new \Avax\Auth\System\Capability\User\UserId(value: 1)));
+            $this->assertSame(expected: MfaStatus::ENROLLMENT_PENDING, actual: $mfaStore->status(userId: new \Avax\Auth\System\Capability\User\UserId(value: 1)));
         }
     }
 
     public function testEnrollmentCanBeCancelledSafely() : void
     {
-        $clock                 = new FrozenClock(new DateTimeImmutable('2026-04-09T12:00:00+00:00'));
+        $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));
         $currentAuthentication = $this->authenticatedContext();
         $mfaStore              = new InMemoryMfaStore();
 
@@ -157,12 +157,12 @@ final class MfaEnrollmentTest extends TestCase
         $start->execute();
         $cancel->execute();
 
-        $this->assertSame(MfaStatus::DISABLED, $mfaStore->status(new \Avax\Auth\System\Capability\User\UserId(1)));
+        $this->assertSame(expected: MfaStatus::DISABLED, actual: $mfaStore->status(userId: new \Avax\Auth\System\Capability\User\UserId(value: 1)));
     }
 
     public function testEnrollmentExpires() : void
     {
-        $clock                 = new FrozenClock(new DateTimeImmutable('2026-04-09T12:00:00+00:00'));
+        $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));
         $currentAuthentication = $this->authenticatedContext();
         $mfaStore              = new InMemoryMfaStore();
         $totp                  = new Totp();
@@ -187,13 +187,13 @@ final class MfaEnrollmentTest extends TestCase
         );
 
         $enrollment = $start->execute();
-        $clock->advance(new DateInterval('PT16M'));
+        $clock->advance(interval: new DateInterval(duration: 'PT16M'));
 
         $this->expectException(MfaEnrollmentFailed::class);
         $this->expectExceptionMessage('MFA enrollment has expired.');
 
-        $confirm->execute(new ConfirmMfaEnrollmentData(
-                              code: $totp->codeAt($enrollment->secret(), $clock->now())
+        $confirm->execute(data: new ConfirmMfaEnrollmentData(
+                              code: $totp->codeAt(secret: $enrollment->secret(), moment: $clock->now())
                           ));
     }
 }

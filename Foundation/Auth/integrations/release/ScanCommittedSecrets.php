@@ -17,7 +17,7 @@ final readonly class ScanCommittedSecrets
     public function execute(string $rootPath, array $ignoredDirectories = ['vendor', '.git', 'build']) : array
     {
         $findings = [];
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath));
+        $iterator = new RecursiveIteratorIterator(iterator: new RecursiveDirectoryIterator(directory: $rootPath));
 
         /** @var SplFileInfo $file */
         foreach ($iterator as $file) {
@@ -27,7 +27,7 @@ final readonly class ScanCommittedSecrets
 
             $path = $file->getPathname();
 
-            if ($this->isIgnored($path, $ignoredDirectories)) {
+            if ($this->isIgnored(path: $path, ignoredDirectories: $ignoredDirectories)) {
                 continue;
             }
 
@@ -37,7 +37,7 @@ final readonly class ScanCommittedSecrets
 
             foreach ($lines !== false ? $lines : [] as $line) {
                 $lineNumber++;
-                $matchedPattern = $this->matchPattern($line);
+                $matchedPattern = $this->matchPattern(line: $line);
 
                 if ($matchedPattern === null) {
                     continue;

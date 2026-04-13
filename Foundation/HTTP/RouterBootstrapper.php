@@ -74,7 +74,7 @@ final class RouterBootstrapper
             $route = $route->withMiddleware($this->routeMiddleware[$method . ' ' . $path]);
         }
 
-        $this->routeCollection->addRoute($route);
+        $this->routeCollection->addRoute(route: $route);
 
         return $this;
     }

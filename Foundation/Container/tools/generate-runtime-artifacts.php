@@ -55,10 +55,10 @@ $writeJson = static function (string $path, array $payload) : void {
 $compileReport = $container->compileReport();
 $runtimeReport = $container->runtimeReport();
 
-$writeJson($outputDir . '/compile-report.json', $compileReport?->toArray() ?? []);
-$writeJson($outputDir . '/runtime-report.json', $runtimeReport->toArray());
-$writeJson($outputDir . '/governance.json', $container->debugGovernance());
-$writeJson($outputDir . '/architecture.json', $container->debugArchitecture());
+$writeJson(path: $outputDir . '/compile-report.json', payload: $compileReport?->toArray() ?? []);
+$writeJson(path: $outputDir . '/runtime-report.json', payload: $runtimeReport->toArray());
+$writeJson(path: $outputDir . '/governance.json', payload: $container->debugGovernance());
+$writeJson(path: $outputDir . '/architecture.json', payload: $container->debugArchitecture());
 file_put_contents($outputDir . '/dependency-graph.html', $container->exportGraph(format: 'html', kind: 'dependency'));
 
 echo json_encode(

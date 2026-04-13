@@ -10,26 +10,26 @@ final class EmailChangeFailed extends RuntimeException
 {
     public static function unauthenticated() : self
     {
-        return new self('Authentication is required.', 401);
+        return new self(message: 'Authentication is required.', code: 401);
     }
 
     public static function invalidEmail() : self
     {
-        return new self('Email change request is invalid.', 422);
+        return new self(message: 'Email change request is invalid.', code: 422);
     }
 
     public static function emailInUse() : self
     {
-        return new self('Email address is already in use.', 409);
+        return new self(message: 'Email address is already in use.', code: 409);
     }
 
     public static function invalidPassword() : self
     {
-        return new self('Current password is invalid.', 403);
+        return new self(message: 'Current password is invalid.', code: 403);
     }
 
     public static function invalidToken() : self
     {
-        return new self('Email change token is invalid.', 410);
+        return new self(message: 'Email change token is invalid.', code: 410);
     }
 }

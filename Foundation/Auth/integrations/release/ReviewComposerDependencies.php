@@ -21,12 +21,12 @@ final readonly class ReviewComposerDependencies
      */
     public function execute(string $composerLockPath, string $policyPath) : array
     {
-        $lock = $this->readJsonFile($composerLockPath);
-        $policy = $this->readJsonFile($policyPath);
-        $packages = $this->readPackages($lock);
-        $reviewedPackages = $this->readStringList($policy, 'reviewed_packages');
-        $approvedPlugins = array_fill_keys($this->readStringList($policy, 'allowed_plugin_packages'), true);
-        $approvedHosts = array_fill_keys($this->readStringList($policy, 'allowed_source_hosts'), true);
+        $lock = $this->readJsonFile(path: $composerLockPath);
+        $policy = $this->readJsonFile(path: $policyPath);
+        $packages = $this->readPackages(json: $lock);
+        $reviewedPackages = $this->readStringList(json: $policy, key: 'reviewed_packages');
+        $approvedPlugins = array_fill_keys($this->readStringList(json: $policy, key: 'allowed_plugin_packages'), true);
+        $approvedHosts = array_fill_keys($this->readStringList(json: $policy, key: 'allowed_source_hosts'), true);
 
         $unreviewed = [];
         $unstable = [];
@@ -42,7 +42,7 @@ final readonly class ReviewComposerDependencies
                 $unreviewed[] = $name;
             }
 
-            if ($this->isUnstableVersion($version)) {
+            if ($this->isUnstableVersion(version: $version)) {
                 $unstable[] = $name . '@' . $version;
             }
 
@@ -50,7 +50,7 @@ final readonly class ReviewComposerDependencies
                 $unapprovedPlugins[] = $name;
             }
 
-            $host = $this->readPackageHost($package);
+            $host = $this->readPackageHost(package: $package);
 
             if ($host !== null && $approvedHosts !== [] && ! array_key_exists($host, $approvedHosts)) {
                 $unapprovedHosts[] = $name . '@' . $host;
@@ -165,17 +165,17 @@ final readonly class ReviewComposerDependencies
         $json = file_get_contents($path);
 
         if ($json === false) {
-            throw new RuntimeException("Could not read JSON file: {$path}");
+            throw new RuntimeException(message: "Could not read JSON file: {$path}");
         }
 
         try {
             $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
-            throw new RuntimeException("Could not decode JSON file: {$path}", previous: $exception);
+            throw new RuntimeException(message: "Could not decode JSON file: {$path}", previous: $exception);
         }
 
         if (! is_array($decoded)) {
-            throw new RuntimeException("JSON file must decode to an object: {$path}");
+            throw new RuntimeException(message: "JSON file must decode to an object: {$path}");
         }
 
         return $decoded;

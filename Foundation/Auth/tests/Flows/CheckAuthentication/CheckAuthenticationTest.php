@@ -19,7 +19,7 @@ class CheckAuthenticationTest extends TestCase
     public function testCheckAuthenticationSuccessSession() : void
     {
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(id: 1, email: 'active@example.com', username: 'active'),
             mode: AuthenticationMode::SESSION
         ));

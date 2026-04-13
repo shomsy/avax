@@ -10,21 +10,21 @@ final class TenantSecurityFailed extends RuntimeException
 {
     public static function unknownChangeRequest() : self
     {
-        return new self('Tenant security change request was not found.');
+        return new self(message: 'Tenant security change request was not found.');
     }
 
     public static function approvalRequired() : self
     {
-        return new self('Tenant security approval is required before apply.');
+        return new self(message: 'Tenant security approval is required before apply.');
     }
 
     public static function unknownFederationConnection() : self
     {
-        return new self('Tenant security references an unknown federation connection.');
+        return new self(message: 'Tenant security references an unknown federation connection.');
     }
 
     public static function unknownScimDirectory() : self
     {
-        return new self('Tenant security references an unknown SCIM directory.');
+        return new self(message: 'Tenant security references an unknown SCIM directory.');
     }
 }

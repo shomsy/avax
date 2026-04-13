@@ -22391,6 +22391,25 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-023
+- `created_at`: 2026-04-13 11:35 CEST
+- `updated_at`: 2026-04-13 13:20 CEST
+- `completed_at`: 2026-04-13 13:20 CEST
+- `status`: done
+- `estimate`: 5h
+- `actual`: 1h 45m
+- `outcome`: Close the new `REFAKTOR.md` P0/P1 operational gaps with browser-session guidance, sender-constrained HTTP
+  adapters, SIEM-grade audit exporters, federation operations, policy examples, multi-key token verification, and the
+  missing runbook/control-plane docs
+- `acceptance`: Browser/session docs and examples exist; DPoP and mTLS verification adapters plus tests exist; audit
+  exporters, security notifications, correlation propagation, and PII masking tests exist; federation domain
+  verification, metadata sync, health checks, and break-glass policy flows exist with tests; high-assurance examples,
+  workload/OIDC/SCIM/control-plane docs, and multi-key token verification are committed; PHPUnit and PHPStan lanes pass
+- `links`: docs/browser-session-deployment.md, docs/audit-export-operations.md, docs/federation-operations.md,
+  docs/sso-cutover-runbook.md, docs/workload-identity.md, docs/oidc-provider-boundary.md,
+  docs/scim-runtime-boundary.md, docs/tenant-control-plane.md, System/Flow/Federation/,
+  integrations/http/VerifyOAuthSenderConstraint.php, integrations/diagnostics/, System/Flow/Token/MultiKeyHmacTokenCodec.php
+
 - `id`: AUTH-022
 - `created_at`: 2026-04-12 22:39 CEST
 - `updated_at`: 2026-04-12 23:10 CEST
@@ -22773,17 +22792,16 @@ Tracks active and accepted risks.
 
 - `id`: AUTH-RISK-008
 - `identified_at`: 2026-04-12 23:10 CEST
-- `updated_at`: 2026-04-12 23:10 CEST
+- `updated_at`: 2026-04-13 13:20 CEST
 - `severity`: medium
 - `likelihood`: medium
-- `impact`: The kernel now owns sender-constrained token binding metadata and refresh enforcement, but actual HTTP DPoP
-  proof verification and mTLS certificate validation remain integration-owned; a deployment could still pass untrusted
-  thumbprints into the kernel if its transport layer is weak.
-- `mitigation`: Keep sender-constraint verification at the transport or adapter boundary, document that trust boundary
-  in `docs/assurance-policy.md` and `docs/boundary.md`, and add concrete HTTP or mTLS adapters before claiming
-  full replay-resistant enforcement in a specific deployment.
+- `impact`: Sender-constrained posture is now enforced by concrete HTTP DPoP and mTLS adapters, but certificate-chain
+  trust and reverse-proxy correctness still remain deployment-owned.
+- `mitigation`: Use `integrations/http/VerifyOAuthSenderConstraint.php`, keep mTLS certificate validation at the trusted
+  edge, and document the remaining transport trust boundary in `docs/assurance-policy.md`,
+  `docs/audit-export-operations.md`, and `docs/boundary.md`.
 - `owner`: OAuth integrations
-- `status`: accepted
+- `status`: mitigated
 
 - `id`: AUTH-RISK-007
 - `identified_at`: 2026-04-12 21:32 CEST
@@ -22800,15 +22818,15 @@ Tracks active and accepted risks.
 
 - `id`: AUTH-RISK-006
 - `identified_at`: 2026-04-12 15:36 CEST
-- `updated_at`: 2026-04-12 21:32 CEST
+- `updated_at`: 2026-04-13 13:20 CEST
 - `severity`: medium
 - `likelihood`: medium
 - `impact`: The package now owns OAuth, passkey, federation, provisioning, risk, and admin-realm kernel slices, but it
   still does not ship OIDC provider behavior, client-credentials, SCIM runtime, or a full tenant/control-plane model;
   teams could mistake the kernel for a full identity platform.
-- `mitigation`: Boundary docs, ADR-001, threat model, and the roadmap now state the exact delivered kernel scope and
-  keep OIDC provider, SCIM runtime, deeper tenant ownership, and control-plane workflows as explicit non-goals or next
-  tracks.
+- `mitigation`: Boundary docs, ADR-001, the workload identity/OIDC/SCIM/control-plane docs, and the roadmap state the
+  exact delivered kernel scope and keep OIDC provider, SCIM runtime, deeper tenant ownership, and control-plane
+  workflows as explicit non-goals or next tracks.
 - `owner`: boundary docs
 - `status`: accepted
 
@@ -22827,13 +22845,14 @@ Tracks active and accepted risks.
 
 - `id`: AUTH-RISK-003
 - `identified_at`: 2026-04-09 18:10 CEST
-- `updated_at`: 2026-04-09 18:10 CEST
+- `updated_at`: 2026-04-13 13:20 CEST
 - `severity`: medium
 - `likelihood`: medium
 - `impact`: The package does not yet ship trusted-device support; MFA UX always requires a second factor or a backup
   code on each new login.
-- `mitigation`: This is an explicit product choice for now; the MFA slice keeps trusted-device support optional until a
-  package-owned device-token and revocation contract is designed safely.
+- `mitigation`: This is now an explicit documented product choice in `docs/trusted-device-policy.md`; the MFA slice
+  does not imply remembered-device bypass until a package-owned device-token and revocation contract is designed
+  safely.
 - `owner`: MFA slice
 - `status`: accepted
 
@@ -22891,6 +22910,30 @@ Concrete records of executed verification.
 - `notes`:
 
 ## Reports
+
+- `executed_at`: 2026-04-13 13:18 CEST
+- `scope`: full PHPUnit suite after sender-constrained HTTP adapters, SIEM-grade audit exporters, federation
+  operations, high-assurance policy examples, and multi-key token verification
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: full PHPUnit suite passes after DPoP and mTLS verification, audit correlation/export adapters, federation
+  domain verification and health policy, new docs/examples, and `MultiKeyHmacTokenCodec`; result `OK (148 tests, 402 assertions)`
+
+- `executed_at`: 2026-04-13 13:19 CEST
+- `scope`: baseline static analysis after the new `REFAKTOR.md` operational and adapter pass
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse`
+- `result`: pass
+- `notes`: baseline PHPStan passes across the new diagnostics exporters, sender-constraint HTTP adapters,
+  federation-operation flows, and multi-key token codec
+
+- `executed_at`: 2026-04-13 13:19 CEST
+- `scope`: strict static analysis after the new `REFAKTOR.md` operational and adapter pass
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict`
+- `result`: pass
+- `notes`: strict PHPStan passes after tightening the JSON-lines audit exporter and new federation/diagnostics seams
 
 - `executed_at`: 2026-04-12 23:10 CEST
 - `scope`: full PHPUnit suite after assurance policy tiers, sender-constrained OAuth posture, and key-versioned JWT
@@ -24648,8 +24691,8 @@ admin elevation, and a thin optional integration surface.
 - `Access` now supports composed access policies with role, permission, resource-owner, fresh-MFA, admin-elevation,
   and actor-tier assurance policies.
 - Passkeys now own registration/authentication plus listing, rename, and revoke flows behind a runtime contract.
-- Federation now owns tenant-aware connection registration, discovery, start/complete login, JIT linking, and
-  group-to-role mapping.
+- Federation now owns tenant-aware connection registration, domain verification, metadata sync, health checks,
+  discovery, start/complete login, JIT linking, break-glass policy evaluation, and group-to-role mapping.
 - Admin realm, provisioning, deterministic risk, and cleanup/export maintenance flows are package-owned slices.
 - Password reset, email verification, MFA enrollment/challenge/recovery, refresh rotation, audit events, and
   anti-enumeration flows are package-owned.
@@ -24752,6 +24795,10 @@ $backupCodes = $auth->confirmMfaEnrollment(
 - `revokePasskey(string): void`
 - `registerFederationConnection(RegisterFederationConnectionData): FederationConnection`
 - `readFederationConnections(): list<FederationConnection>`
+- `verifyFederationDomain(VerifyFederationDomainData): FederationConnection`
+- `syncFederationMetadata(string): FederationConnection`
+- `checkFederationConnectionHealth(string): FederationConnectionHealth`
+- `evaluateFederationBreakGlassBypass(string): bool`
 - `discoverFederationConnection(string): ?FederationConnection`
 - `startFederatedLogin(StartFederatedLoginData): StartedFederatedLogin`
 - `completeFederatedLogin(CompleteFederatedLoginData): AuthenticationResult`
@@ -24796,7 +24843,10 @@ Runtime ownership lives in auth-flow slices:
 - `System/Capability/Identity/` now only coordinates strategy issuance/clear semantics.
 - `System/Capability/User/` stays internal domain state; public auth output is `AuthenticatedUser`.
 - `System/Flow/Diagnostics/` owns audit events without becoming a second source of truth.
-- `integrations/http/` maps transport input and safe failures without leaking HTTP concerns into the kernel.
+- `integrations/http/` maps transport input, safe failures, and sender-constrained request verification without leaking
+  HTTP concerns into the kernel.
+- `integrations/diagnostics/` owns export and notification adapters for JSON lines, syslog, webhook, queue, and
+  security-notification delivery.
 - `integrations/avax-container/` is the optional container adapter.
 
 See [docs/boundary.md](docs/boundary.md) for the final kernel vs integration boundary, API freeze, target tree, and
@@ -24811,6 +24861,8 @@ non-goals.
 - OAuth public clients require PKCE and OAuth refresh reuse revokes the full token family.
 - High-assurance OAuth clients can require phishing-resistant auth before authorization-code issuance.
 - OAuth clients can require sender-constrained access and refresh tokens with DPoP or mTLS binding metadata.
+- HTTP adapters now include DPoP proof verification, mTLS binding verification, and explicit sender-constraint
+  enforcement for protected API requests.
 - Password reset and login failures keep safe public messages.
 - Password reset begin flow is anti-enumeration by default.
 - Email change requires the current password, fresh MFA, and revokes the current auth/session family on confirmation.
@@ -24819,18 +24871,30 @@ non-goals.
 - Passkeys support multiple credentials per account, user-owned rename/revoke, and strict challenge replay prevention.
 - Admin-sensitive actions can be expressed through `AccessPolicy` and enforced with explicit phishing-resistant,
   fresh-MFA, and admin-elevation policy.
-- Federation login is tenant-aware at the connection boundary, leaves an audit trail, and can JIT link or create users.
+- Federation login now requires verified domains for discovery/start, records metadata and health state, and can JIT
+  link or create users.
 - Deterministic risk rules flag new environments and refresh-token reuse for review-oriented follow-up.
 - Auth context is immutable and password hashes never leave the internal `User` entity.
 - HMAC JWTs can carry an explicit `kid` key version for rollover-aware deployments.
+- `MultiKeyHmacTokenCodec` supports overlap verification during signing-key rollover windows.
 
 ## Delivery Docs
 
 - [docs/adr/001-auth-scope-and-trust-boundaries.md](docs/adr/001-auth-scope-and-trust-boundaries.md)
 - [docs/assurance-policy.md](docs/assurance-policy.md)
 - [docs/authorization-hardening.md](docs/authorization-hardening.md)
+- [docs/audit-export-operations.md](docs/audit-export-operations.md)
+- [docs/federation-operations.md](docs/federation-operations.md)
+- [docs/high-assurance-admin-examples.md](docs/high-assurance-admin-examples.md)
 - [docs/privacy-retention-policy.md](docs/privacy-retention-policy.md)
 - [docs/crypto-key-lifecycle.md](docs/crypto-key-lifecycle.md)
+- [docs/oidc-provider-boundary.md](docs/oidc-provider-boundary.md)
+- [docs/scim-runtime-boundary.md](docs/scim-runtime-boundary.md)
+- [docs/tenant-control-plane.md](docs/tenant-control-plane.md)
+- [docs/release-hardening.md](docs/release-hardening.md)
+- [docs/sso-cutover-runbook.md](docs/sso-cutover-runbook.md)
+- [docs/verification-matrix.md](docs/verification-matrix.md)
+- [docs/workload-identity.md](docs/workload-identity.md)
 - [docs/threat-model.md](docs/threat-model.md)
 - [docs/implementation-roadmap.md](docs/implementation-roadmap.md)
 
@@ -24840,678 +24904,237 @@ non-goals.
 require that package.
 
 === REFAKTOR.md ===
-Ovo je tačan implementation TODO koji bih stavio u plan/ToDo za PHP enterprise auth.
-Nije wishlist, nego redosled rada sa konkretnim modulima, tabelama, endpointima, poslovima u pozadini i security kriterijumima.
-Za stvari koje su suvise obimne (koje ne vredi pisati od nule sto preferiram), koristi spoljasnje biblioteke, implementacije, 3rd API ukoliko je potrebno, samo me obavesti o tome da znam.
-
-Arhitektura koju ciljaš je:
-
-web app → server-side session cookie
-API / mobile / third-party → OAuth 2.1 style access + refresh model
-phishing-resistant future path → passkeys / WebAuthn
-enterprise path → OIDC / SAML federation + SCIM/JIT provisioning
-authorization odvojeno od authentication-a
-audit/risk/admin realm kao zasebni podsistemi
-
-To je redosled koji najbolje prati moderne smernice: jake sesije za web, PKCE i sigurniji token model za OAuth klijente, i phishing-resistant autentikacija kao viši cilj.
-
-0. Izaberi pristup i zamrzni scope
-
-Rangirano:
-
-1. Balanced — preporuka
-Praviš svoj auth core u PHP-u, ali za OAuth i WebAuthn koristiš proverene biblioteke. league/oauth2-server je standards-compliant OAuth 2.0 authorization server za PHP, a web-auth/webauthn-framework i web-auth/webauthn-lib postoje baš za FIDO2/WebAuthn integraciju u PHP aplikacijama.
-
-2. Fast enterprise
-Local accounts + session core zadržiš kod sebe, a SSO/federation nasloniš na spoljnog IdP-a.
-
-3. Full custom identity platform
-Radi samo ako ti je identity core product.
-
-TODO
-
- Napiši 1 ADR: “Auth scope and trust boundaries”
- Odluči: monolith auth module ili zaseban auth service
- Odluči: local accounts only, local + enterprise SSO, ili full IdP ambitions
- Zamrzni v1 scope: password + session + MFA + refresh rotation + audit
- Zamrzni v2 scope: passkeys + federation + SCIM + risk engine
-1. Napravi repo/module granice
-
-Moduli koje treba da imaš:
-
-identity
-authentication
-session
-token
-mfa
-passkeys
-authorization
-audit
-risk
-admin-realm
-federation
-provisioning
-
-TODO
-
- Napravi module namespaces i ownership granice
- Svaki modul dobija svoj facade/service entry
- Zabraniti “misc auth helpers” i “global services” bucket
- Definiši public contracts između modula
- Definiši koje stvari su sync request path, a koje idu kroz queue/jobs
-2. Threat model i security baseline
-
-Pre koda napiši napadače i failure scenarije.
-
-Threat scenarios
-
-credential stuffing
-brute force
-session hijack
-stolen refresh token
-MFA bypass
-recovery takeover
-admin account takeover
-email change takeover
-refresh token reuse
-insider misuse
-tenant isolation bug
-
-TODO
-
- Napiši threat model dokument
- Mapiraj svaki threat na kontrolu
- Definiši severity matriks
- Definiši incident classes: auth incident, credential incident, session incident, admin incident
- Definiši recovery/rollback za compromise scenario
-3. Data model — tabele koje moraš imati
-
-Ovo je osnova. Ne kreći bez ovoga.
-
-3.1 Identity
- users
-id
-tenant_id
-email
-email_normalized
-email_verified_at
-status (active, locked, disabled, pending)
-password_hash
-password_algo
-password_changed_at
-last_login_at
-created_at
-updated_at
- user_aliases
-za future username/login aliases
- tenants
-id, name, slug, status, created_at
-3.2 Sessions
- sessions
-id
-user_id
-tenant_id
-session_secret_hash
-ip_created
-user_agent_created
-last_seen_at
-idle_expires_at
-absolute_expires_at
-revoked_at
-revoke_reason
-3.3 OAuth / API tokens
- oauth_clients
- oauth_access_tokens
- oauth_refresh_tokens
- oauth_refresh_token_families
- oauth_authorization_codes
-
-Za refresh tokene čuvaj:
-
-token_id
-family_id
-parent_token_id
-user_id
-client_id
-issued_at
-expires_at
-used_at
-revoked_at
-reuse_detected_at
-
-League OAuth2 Server ima jasan model authorization servera, access token repository-ja i refresh token repository-ja, pa ti može dati dobru bazu za ovaj sloj.
-
-3.4 MFA
- mfa_factors
-id
-user_id
-type (totp, webauthn, backup_code)
-label
-secret_encrypted
-enabled_at
-last_used_at
-revoked_at
- backup_codes
-čuvati hash, nikad plaintext
- mfa_challenges
-id
-user_id
-session_candidate_id
-challenge_type
-expires_at
-verified_at
-attempt_count
-blocked_until
-3.5 Passkeys / WebAuthn
- webauthn_credentials
-id
-user_id
-credential_id
-public_key
-sign_count
-aaguid
-transports
-backup_eligible
-backup_state
-attestation_format
-last_used_at
-revoked_at
-3.6 Audit / Risk
- audit_events
- security_events
- risk_signals
- admin_actions
-3.7 Federation
- federation_connections
- federated_identities
- scim_tokens
- provisioning_jobs
-4. Password subsystem
-
-Passwordi nisu krajnji cilj, ali su baza za migration path. PHP nativno podržava password_hash() i Argon2id gde je dostupan, što je dobar temelj za password sloj.
-
-TODO
-
- Standardizuj hashing na Argon2id gde je dostupan
- Dodaj fallback policy ako build ne podržava Argon2id
- Na login-u proveravaj da li hash treba rehash
- Password reset uvek invalidira:
-sve aktivne web sessione
-sve refresh token family-je
-sve active login challenges
- Password change traži fresh auth
- Password reset tokeni:
-random
-single use
-hashed in DB
-short TTL
-auditovani
- Generic failure poruke, bez user enumeration
- Rate limit za:
-login
-forgot password
-reset confirmation
-
-Acceptance criteria
-
- Stari session više ne važi nakon password reset-a
- Reset link ne može da se iskoristi dvaput
- Promena lozinke radi session/token revocation
-5. Web session subsystem
-
-Za browser web aplikacije idi na server-side sessions sa strogim cookie pravilima. OWASP posebno naglašava absolute timeout, session ID regeneration i jake cookie kontrole.
-
-TODO
-
- Session ID regeneracija odmah nakon uspešnog login-a
- Session cookie:
-HttpOnly
-Secure
-SameSite=Lax ili Strict gde može
- Idle timeout
- Absolute timeout
- Separate remember-me policy ako postoji
- Session revocation endpoint
- “Logout all devices”
- Device/session listing UI
- Last-used metadata po sesiji
- CSRF zaštita za cookie-auth web akcije
-
-API/Methods
-
- POST /auth/login
- POST /auth/logout
- POST /auth/logout-all
- GET /auth/sessions
- DELETE /auth/sessions/{id}
-
-Acceptance criteria
-
- Session fixation ne prolazi
- Logout ubija server-side session state
- Idle/absolute timeout stvarno invalidiraju sesiju
- Session list prikazuje sve aktivne sesije korisnika
-6. MFA subsystem v1 — TOTP + backup codes
-
-NIST i OWASP tretiraju authenticator lifecycle ozbiljno, ne samo proveru koda.
-
-TODO
-
- TOTP enroll
- TOTP confirm
- TOTP disable uz fresh auth
- Backup code generation
- Backup code regeneration invalidira stare
- MFA challenge throttling
- Replay protection za challenge token
- Fresh-MFA zahtev za:
-password change
-email change
-factor removal
-recovery initiation
-admin elevation
-
-API
-
- POST /auth/mfa/totp/enroll
- POST /auth/mfa/totp/confirm
- POST /auth/mfa/totp/verify
- POST /auth/mfa/backup-codes/regenerate
- DELETE /auth/mfa/factors/{id}
-
-Acceptance criteria
-
- Nije moguće ukloniti poslednji faktor bez dodatne provere
- Backup code je single-use
- MFA brute force je throttled i auditovan
-7. Recovery subsystem
-
-Ovo je critical path. Recovery često ruši inače dobar auth.
-
-TODO
-
- Recovery flow odvoji od običnog password reset-a
- Recovery traži:
-email verification
-fresh password knowledge ili existing factor gde postoji
-cooldown za promenu kritičnih atributa
- Promena email-a:
-traži fresh auth
-traži MFA ako je upaljen
-odlaže finalizaciju kroz verify link
- Factor reset generiše security event
- Admin-assisted recovery mora imati approval i audit trail
-
-Acceptance criteria
-
- Email takeover preko pending change flow-a nije moguć bez verifikacije
- Recovery reset invalidira stare recovery artefakte
- Suspicious recovery kreira alert
-8. OAuth / API auth subsystem
-
-Za SPA/mobile/public clients koristi Authorization Code + PKCE, a ne implicit flow. OAuth 2.1 i OAuth security BCP guraju moderniji i sigurniji tok, a RFC 9700 dodatno pojačava best practice posture.
-
-TODO
-
- Uvedi Authorization Server
- Uvedi Resource Server middleware
- Podrži grantove:
-Authorization Code + PKCE
-Refresh Token
-Client Credentials
- Access token kratkog TTL-a
- Refresh token rotation
- Refresh reuse detection
- Family revocation pri reuse detection
- Revocation endpoint
- Introspection endpoint ako treba
- Scope model
- Client registry
- Separate confidential vs public clients
-
-League OAuth2 Server već ima authorization server, resource server i repository interfejse za access i refresh tokene, što ga čini dobrim osnovom za PHP implementaciju.
-
-API
-
- GET /oauth/authorize
- POST /oauth/token
- POST /oauth/revoke
- POST /oauth/introspect
- GET /oauth/clients
- POST /oauth/clients
-
-Acceptance criteria
-
- Refresh token ne može biti ponovo korišćen bez family revocation-a
- PKCE obavezan za public clients
- Access token kratak i verifikovan na resource layer-u
-9. Passkeys / WebAuthn subsystem
-
-Passkeys su phishing-resistant i bazirani na public-key kriptografiji; FIDO i NIST ih jasno guraju kao jači pravac od lozinki/TOTP-only pristupa.
-
-TODO
-
- Dodaj WebAuthn registration start
- Dodaj WebAuthn registration finish
- Dodaj authentication start
- Dodaj authentication finish
- Više credentiala po useru
- Credential rename/revoke
- Step-up sa passkey faktorom za privilegovane akcije
- Admin policy:
-admins must have phishing-resistant factor
- Device migration UX
- Fallback path za legacy korisnike
-
-Za PHP su relevantne biblioteke web-auth/webauthn-framework i web-auth/webauthn-lib; postoji i metadata service podrška u istom ekosistemu.
-
-API
-
- POST /auth/passkeys/register/options
- POST /auth/passkeys/register/verify
- POST /auth/passkeys/auth/options
- POST /auth/passkeys/auth/verify
- GET /auth/passkeys
- DELETE /auth/passkeys/{id}
-
-Acceptance criteria
-
- Origin/RPID validacija stroga
- Credential replay ne prolazi
- Revoked credential više ne autentifikuje korisnika
-10. Authorization subsystem
-
-Authn i authz ne smeju biti isti projekat.
-
-TODO
-
- Uvedi RBAC kao bazu
- Tabele:
-roles
-permissions
-role_permissions
-user_roles
-tenant_roles
- Claims samo za coarse-grained pristup
- Policy engine za fine-grained odluke
- Resource ownership checks
- Tenant isolation checks
- Fresh auth / fresh MFA kao authz condition, ne hardcoded svuda
- Admin elevation kao poseban state
-
-Acceptance criteria
-
- Zabranjeno oslanjanje samo na frontend role checks
- Tenant crossing testovi prolaze
- Sensitive actions traže step-up kad policy to traži
-11. Federation / Enterprise SSO
-
-Kad dođeš do enterprise kupaca, ovo postaje P0 feature.
-
-TODO
-
- Tenant-level OIDC connection model
- SAML connection model ako targetiraš enterprise IT
- Domain verification
- Login discovery po domenu
- JIT provisioning
- Optional SCIM provisioning
- Group-to-role mapping
- Federation metadata rotate/update
- Separate policy za:
-local-only tenant
-SSO-only tenant
-hybrid tenant
-
-Acceptance criteria
-
- Tenant ne može greškom ući u tuđi connection config
- Group mapping ne može eskalirati privilegije bez eksplicitne politike
- SSO login ostavlja puni audit trail
-12. Admin realm
-
-Admin auth mora biti odvojen i tvrđi.
-
-TODO
-
- Poseban admin login surface ili poseban policy realm
- Kraći session timeout za admine
- Obavezan MFA, kasnije obavezan passkey
- Separate audit stream za admin akcije
- IP allowlist ili stronger network controls gde ima smisla
- Break-glass nalozi
- Break-glass access runbook
- JIT admin elevation
- Approval flow za high-impact admin akcije
-
-Acceptance criteria
-
- Admin nije samo “user sa role=admin”
- Admin logout-all radi odvojeno
- Break-glass pristup je strogo auditovan
-13. Audit & security events
-
-Bez ovoga nemaš enterprise.
-
-TODO
-
- Central audit_events
- Event taxonomy:
-login succeeded
-login failed
-password reset requested
-password reset completed
-MFA enrolled
-MFA removed
-passkey added
-passkey removed
-session revoked
-refresh reuse detected
-tenant SSO updated
-admin elevation
- Correlation ID po request-u
- Actor, subject, tenant, session, IP, UA polja
- Export/integration ka SIEM-u
- Tamper-evident storage strategy ako može
-
-Acceptance criteria
-
- Svaka security-sensitive akcija ima audit event
- Događaji imaju dovoljno konteksta za forenziku
- PII masking policy definisana
-14. Risk engine v1
-
-Nemoj AI magiju. Počni sa deterministic pravilima.
-
-Signals
-
- new country
- new ASN/IP range
- impossible travel
- too many failed logins
- refresh reuse detected
- factor removed + password changed kratko jedan za drugim
- admin login from new environment
-
-Actions
-
- allow
- require MFA
- require passkey
- soft lock
- revoke sessions
- revoke refresh family
- open incident ticket
-
-Acceptance criteria
-
- Risk rules ne blokiraju legitimne flow-ove bez observability-ja
- Svaka risk odluka ima razlog u logu
- False positive review loop postoji
-15. Provisioning / lifecycle
-
-Enterprise auth nije gotov bez lifecycle-a.
-
-TODO
-
- User create/disable/delete posture
- Tenant membership model
- Role assignment workflow
- Deprovisioning invalidira:
-sessions
-refresh tokens
-API clients gde je potrebno
- Group sync iz federation izvora
- SCIM token auth i rotation
- Suspend vs delete semantika
-
-Acceptance criteria
-
- Disabled user više ne može ništa sa starom sesijom ili refresh tokenom
- Deprovisioning je idempotentan
- Membership drift se vidi u audit-u
-16. Infra / secrets / keys
-
-TODO
-
- Private keys za OAuth van koda i repo-a
- KMS/HSM plan gde ima smisla
- Encryption-at-rest za MFA secrets
- Key rotation plan
- Secret rotation playbook
- Separate signing keys po environment-u
- Clock sync / NTP hygiene
- Redis ili DB strategy za rate limiting i session/risk state
-
-Acceptance criteria
-
- Nema hardcoded secrets
- Rotation test dokumentovan
- Recovery od izgubljenog signing key incidenta postoji
-17. Background jobs
-
-TODO
-
- Cleanup expired sessions
- Cleanup expired reset tokens
- Cleanup expired MFA challenges
- Revoke token families after reuse detection
- Send security emails
- Sync federation metadata
- SCIM sync jobs
- Risk aggregation jobs
- Audit export jobs
-18. Testing backlog
-Unit
- password hasher
- TOTP validator
- recovery token validator
- refresh family state machine
- policy engine
- risk rules
-Integration
- login + MFA
- logout-all
- password reset invalidates sessions
- refresh rotation
- refresh reuse detection
- WebAuthn register/auth
- OIDC tenant discovery
- SCIM create/update/disable
-Security
- session fixation test
- CSRF test
- brute force/rate limit test
- enumeration test
- replay test
- tenant isolation test
- privilege escalation test
- stale admin session test
-19. Go-live gates
-
-Ne puštaj u produkciju dok ovo nije zeleno:
-
- Session regeneration radi
- Absolute + idle timeout rade
- Password reset ubija sesije i refresh family-je
- MFA remove traži fresh auth
- Refresh rotation + reuse detection rade
- Audit coverage za sve security-critical akcije postoji
- Admin realm ima jaču politiku
- Tenant isolation testovi prolaze
- Incident runbook postoji
- On-call zna kako da revoke-uje user/session/client/family/tenant pristup
-20. Redosled isporuke po sprintovima
-Sprint 1
- ADR + threat model
- tabele users, sessions, audit_events
- password hashing
- basic login/logout
- secure cookies
- session regeneration
- rate limiting v1
-Sprint 2
- forgot/reset password
- logout-all
- active sessions UI/API
- basic audit coverage
- CSRF protection
-Sprint 3
- TOTP enroll/verify
- backup codes
- MFA challenges
- fresh auth middleware
-Sprint 4
- OAuth client registry
- access token issuance
- refresh token issuance
- resource server validation
-Sprint 5
- refresh rotation
- reuse detection
- family revocation
- suspicious token security events
-Sprint 6
- RBAC base
- tenant isolation hardening
- admin realm v1
-Sprint 7
- passkeys registration/auth
- passkey management UI/API
- admin passkey-required policy
-Sprint 8
- OIDC tenant federation
- domain discovery
- JIT provisioning
-Sprint 9
- SCIM v1
- risk engine v1
- SIEM export
-
-21. Tri najveće rupe koje moraš sprečiti
-
-1. Previše rano uvodiš federation i passkeys, a session/recovery ti još nisu tvrdi.
-To pravi lep demo, ali lošu bezbednost. OWASP session discipline i NIST authenticator lifecycle su osnova, ne ukras.
-
-2. Pokušavaš da isti auth model služi i browseru i API klijentima.
-Za browser je session često prirodniji, za OAuth klijente authorization code + PKCE i token model.
-
-3. TOTP proglasiš “gotovom MFA pričom”.
-TOTP je dobar, ali passkeys/WebAuthn su jači cilj jer su phishing-resistant.
-
-Najkraći zaključak
-
-Ako hoćeš najbolji ROI, uradi ovim redom:
-
-password + session hardening
-MFA + recovery
-OAuth token hygiene
-RBAC + admin realm
-passkeys
-federation + provisioning
-risk engine
-
-To je najzdraviji put od “jak PHP auth” do “enterprise-grade identity system”.
+Napravi ovo da bude na enterprise grade, world class nivou, da bude u visini kvaliteta poznatih framework-a, programskih jezika, biblioteka. Da nam svi oni zavide zapravo. Za sam kvalitet koda i arhitekture pogledaj dole STANDARDI I KVALITET KOJI ZAHTEVAM sekciju i pridrzavaj se striktno pravila agents.md odnosno .agents harness-a.
+
+Evo **tačnog TODO-a za “baš perfect auth system”**.
+
+## P0 — zatvori sve što je ostalo do “perfect auth kernel”
+
+### 1) Browser/session deployment hardening
+
+* [ ] Napiši **cookie-auth deployment guide** za web:
+
+  * `Secure`, `HttpOnly`, `SameSite`
+  * CSRF model po surface-u
+  * origin/referer pravila
+  * session fixation test proceduru
+* [ ] Dodaj **reference middleware primer** za CSRF zaštitu
+* [ ] Dodaj **persistent session registry primer**:
+
+  * DB schema
+  * revoke one
+  * logout-all
+  * revoke on password reset
+  * revoke on factor reset
+* [ ] Dodaj **session compromise runbook**
+* [ ] Dodaj **browser storage policy**: zabrani dugotrajne tokene u browser storage-u za session-based surface
+
+Ovo je must-have jer OWASP traži eksplicitan CSRF posture za browser-attached credentials, realnu invalidaciju sesije i stroge cookie kontrole, ne samo “login radi”.   ([OWASP Cheat Sheet Series][1])
+
+### 2) Sender-constrained tokeni moraju biti stvarno operativni, ne samo metadata
+
+* [ ] Implementiraj **DPoP proof verification adapter**
+* [ ] Implementiraj **mTLS-bound token verification adapter**
+* [ ] Dodaj testove za:
+
+  * replay sa istim proof-om
+  * proof/token mismatch
+  * wrong `htu` / `htm`
+  * key rotation
+* [ ] Dodaj policy switch:
+
+  * standard bearer
+  * DPoP required
+  * mTLS required
+* [ ] Dodaj audit event za proof failure i sender-constraint mismatch
+
+Tvoj kernel već ima sender-constraint metadata i high-security posture, ali za “perfect” moraš zatvoriti i punu proof verifikaciju. DPoP je standard baš za sender-constraining i replay detekciju, a OAuth BCP tretira sender-constrained tokene kao jači posture od običnih bearer tokena.   ([IETF Datatracker][2])
+
+### 3) Audit/export mora biti SIEM-grade
+
+* [ ] Dodaj **rich audit exporter adaptere**:
+
+  * JSON lines
+  * syslog
+  * webhook
+  * queue export
+* [ ] Dodaj **security notification adaptere**:
+
+  * refresh reuse detected
+  * admin elevation
+  * factor removed
+  * password changed after suspicious activity
+* [ ] Dodaj **correlation-id propagation** kroz sve auth flow-ove
+* [ ] Dodaj **tamper-evident export strategy**
+* [ ] Dodaj **PII masking verification tests**
+
+Logging i audit nisu finiš bez operativnog izvoza i discipline oko osetljivih podataka. OWASP logging smernice i tvoj privacy policy idu baš u tom pravcu.   ([OWASP Cheat Sheet Series][3])
+
+### 4) Federation operativa
+
+* [ ] Implementiraj **domain verification**
+* [ ] Implementiraj **federation metadata sync**
+* [ ] Dodaj **stronger tenant connection policy**
+* [ ] Dodaj **connection health checks**
+* [ ] Dodaj **group-to-role mapping validator**
+* [ ] Dodaj **tenant isolation tests** za connection config
+* [ ] Dodaj **break-glass bypass policy** kad je IdP nedostupan
+* [ ] Dodaj **SSO cutover runbook**
+
+Roadmap ti već navodi domain verification, metadata sync i jači tenant connection policy kao naredni sprint. Bez toga federation postoji, ali nije “baš perfect”.
+
+### 5) High-assurance admin posture examples
+
+* [ ] Dodaj gotov primer za **admin passkey-required policy**
+* [ ] Dodaj gotov primer za **tenant-admin phishing-resistant policy**
+* [ ] Dodaj primer za **fresh-MFA / fresh-passkey enforcement**
+* [ ] Dodaj primer za **approval path** za high-impact admin akcije
+* [ ] Dodaj primer za **SoD** pravilo u policy engine-u
+
+Tvoj assurance matrix već kaže da admin i tenant-admin moraju imati phishing-resistant faktor; za AAL3 NIST traži phishing-resistant autentikator sa ne-eksportabilnim ključem. Za “perfect” treba da ovo bude ne samo dokumentovano nego i isporučeno kao gotov policy paket.  ([NIST Publications][4])
+
+## P1 — zatvori otvorene accepted-risk stavke
+
+### 6) Trusted device / remembered device
+
+* [ ] Odluči da li trusted-device **ulazi** ili se **trajno odbija**
+* [ ] Ako ulazi:
+
+  * device token model
+  * device binding
+  * revocation
+  * per-device audit
+  * suspicious device re-challenge
+* [ ] Ako ne ulazi:
+
+  * napiši explicit policy da je to svesno odbijena funkcija zbog sigurnosti
+  * ukloni sve future ambiguity iz UX-a i docs-a
+
+Trenutno je trusted-device podrška eksplicitno “accepted risk / not yet shipped”. Za “perfect” to mora biti zatvoreno na jedan ili drugi način.
+
+### 7) Complete persistence-contract examples
+
+* [ ] Dodaj pune DB primere za:
+
+  * `SessionRegistry`
+  * refresh token family store
+  * token revocation store
+  * MFA challenge store
+  * audit export cursor store
+* [ ] Dodaj migration primere
+* [ ] Dodaj locking/concurrency scenarije za refresh reuse detection
+* [ ] Dodaj cleanup jobs i TTL primere
+
+Ovo nije glamurozno, ali bez toga timovi lako pogrešno implementiraju sigurnosni model i “pokvare” kernel na adapter sloju.
+
+## P2 — ako hoćeš “perfect identity platform”, ne samo perfect kernel
+
+### 8) OIDC provider behavior
+
+* [ ] Implementiraj ili izdvoj kao zaseban paket:
+
+  * discovery
+  * JWKS
+  * id token issuance
+  * userinfo
+  * RP metadata posture
+* [ ] Dodaj conformance test matrix
+* [ ] Dodaj key rollover/JWKS overlap runbook
+
+### 9) Full machine identity lane
+
+* [ ] Dodaj **client_credentials / workload identity** runtime
+* [ ] Inventory svih non-human identities
+* [ ] Audience/issuer/transport validation
+* [ ] Rotation posture bez emergency redeploy-a
+* [ ] Per-service scope boundaries
+
+### 10) SCIM runtime
+
+* [ ] Implementiraj SCIM CRUD runtime
+* [ ] SCIM token auth + rotation
+* [ ] Group sync
+* [ ] disable vs suspend semantics
+* [ ] idempotency + drift detection
+* [ ] audit za provisioning akcije
+
+### 11) Tenant/control-plane
+
+* [ ] Tenant admin UI/API za:
+
+  * SSO config
+  * SCIM config
+  * domain verification
+  * group mapping
+  * policy posture
+* [ ] Approval path za tenant security changes
+* [ ] Config change audit diff
+* [ ] safe rollout / rollback po tenantu
+
+Ove stvari su i dalje eksplicitno van punog scope-a trenutnog kernela. Ako ti cilj nije samo savršen auth kernel nego i savršena identity platforma, ovo je sledeći blok posla.
+
+## P3 — regulated / top-tier ops sloj
+
+### 12) Crypto & incident rigor
+
+* [ ] Uvedi **multi-key verification** u runtime adapteru
+* [ ] Uvedi **automated key rollover drill**
+* [ ] Uvedi **forced key compromise drill** kao testiran playbook
+* [ ] Uvedi **evidence preservation under legal hold**
+* [ ] Uvedi **crypto agility acceptance tests**
+
+### 13) Supply-chain i release hardening
+
+* [ ] Dependency review gate
+* [ ] SBOM generisanje
+* [ ] artifact signing
+* [ ] secret scanning u CI
+* [ ] release provenance
+* [ ] rollback dokaz za auth-sensitive release
+
+### 14) Verification matrix za final perfection
+
+* [ ] login success/failure
+* [ ] MFA replay
+* [ ] passkey replay
+* [ ] refresh reuse
+* [ ] DPoP replay
+* [ ] mTLS mismatch
+* [ ] CSRF za browser flows
+* [ ] session fixation
+* [ ] tenant crossing
+* [ ] admin elevation abuse
+* [ ] break-glass auditability
+* [ ] deprovisioning revokes everything
+* [ ] legal hold overrides anonymization correctly
+
+Tvoj crypto lifecycle je već dokumentovan, ali “perfect” znači i redovno uvežbane operativne drill-ove i release discipline. OAuth BCP i NIST smernice su tu dobar sever, ali ovo je već deployment-grade rigor, ne samo feature lista.   ([NIST Publications][4])
+
+## Moj iskren prioritetni redosled
+
+**Prvo uradi ovo:**
+
+1. CSRF/browser hardening
+2. DPoP/mTLS proof verification
+3. audit exporters + security notifications
+4. domain verification + metadata sync
+5. trusted-device decision closure
+
+**Zatim:**
+6. OIDC provider
+7. SCIM runtime
+8. client_credentials / workload identity
+9. tenant control-plane
+
+To je najkraći put od “skoro savršeno” do “baš perfect”.
+
+
+[1]: https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html?utm_source=chatgpt.com "Session Management Cheat Sheet"
+[2]: https://datatracker.ietf.org/doc/rfc9700/?utm_source=chatgpt.com "RFC 9700 - Best Current Practice for OAuth 2.0 Security"
+[3]: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html?utm_source=chatgpt.com "Logging Cheat Sheet"
+[4]: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf?utm_source=chatgpt.com "NIST.SP.800-63B-4.pdf"
+
+
 
 
 STANDARDI I KVALITET KOJI ZAHTEVAM:
@@ -26510,6 +26133,7 @@ namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
 use Avax\Auth\System\Capability\Federation\FederationConnection;
+use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
 use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
 use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
 use Avax\Auth\System\Capability\OAuth\OAuthClient;
@@ -26537,12 +26161,17 @@ use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLogin;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLoginData;
+use Avax\Auth\System\Flow\Federation\CheckHealth\CheckFederationConnectionHealth;
 use Avax\Auth\System\Flow\Federation\DiscoverConnection\DiscoverFederationConnection;
+use Avax\Auth\System\Flow\Federation\EvaluateBreakGlass\EvaluateFederationBreakGlassBypass;
 use Avax\Auth\System\Flow\Federation\ReadConnections\ReadFederationConnections;
 use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnection;
 use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
 use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLogin;
 use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLoginData;
+use Avax\Auth\System\Flow\Federation\SyncMetadata\SyncFederationMetadata;
+use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomain;
+use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomainData;
 use Avax\Auth\System\Flow\Login\AuthenticationResult;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\Login\Login;
@@ -26664,6 +26293,10 @@ final readonly class Auth implements AuthInterface
         private RevokePasskeyFlow|null $revokePasskey,
         private RegisterFederationConnection|null $registerFederationConnection,
         private ReadFederationConnections|null $readFederationConnections,
+        private VerifyFederationDomain|null $verifyFederationDomain,
+        private SyncFederationMetadata|null $syncFederationMetadata,
+        private CheckFederationConnectionHealth|null $checkFederationConnectionHealth,
+        private EvaluateFederationBreakGlassBypass|null $evaluateFederationBreakGlassBypass,
         private DiscoverFederationConnection|null $discoverFederationConnection,
         private StartFederatedLogin|null $startFederatedLogin,
         private CompleteFederatedLogin|null $completeFederatedLogin,
@@ -26877,6 +26510,26 @@ final readonly class Auth implements AuthInterface
         return $this->readFederationConnectionsOrFail()->execute();
     }
 
+    public function verifyFederationDomain(VerifyFederationDomainData $data) : FederationConnection
+    {
+        return $this->verifyFederationDomainOrFail()->execute($data);
+    }
+
+    public function syncFederationMetadata(string $connectionId) : FederationConnection
+    {
+        return $this->syncFederationMetadataOrFail()->execute($connectionId);
+    }
+
+    public function checkFederationConnectionHealth(string $connectionId) : FederationConnectionHealth
+    {
+        return $this->checkFederationConnectionHealthOrFail()->execute($connectionId);
+    }
+
+    public function evaluateFederationBreakGlassBypass(string $connectionId) : bool
+    {
+        return $this->evaluateFederationBreakGlassBypassOrFail()->execute($connectionId);
+    }
+
     public function discoverFederationConnection(string $email) : FederationConnection|null
     {
         return $this->discoverFederationConnectionOrFail()->execute($email);
@@ -27072,6 +26725,26 @@ final readonly class Auth implements AuthInterface
         return $this->readFederationConnections ?? throw new RuntimeException('Federation runtime is not configured.');
     }
 
+    private function verifyFederationDomainOrFail() : VerifyFederationDomain
+    {
+        return $this->verifyFederationDomain ?? throw new RuntimeException('Federation runtime is not configured.');
+    }
+
+    private function syncFederationMetadataOrFail() : SyncFederationMetadata
+    {
+        return $this->syncFederationMetadata ?? throw new RuntimeException('Federation metadata runtime is not configured.');
+    }
+
+    private function checkFederationConnectionHealthOrFail() : CheckFederationConnectionHealth
+    {
+        return $this->checkFederationConnectionHealth ?? throw new RuntimeException('Federation health checks are not configured.');
+    }
+
+    private function evaluateFederationBreakGlassBypassOrFail() : EvaluateFederationBreakGlassBypass
+    {
+        return $this->evaluateFederationBreakGlassBypass ?? throw new RuntimeException('Federation runtime is not configured.');
+    }
+
     private function discoverFederationConnectionOrFail() : DiscoverFederationConnection
     {
         return $this->discoverFederationConnection ?? throw new RuntimeException('Federation runtime is not configured.');
@@ -27097,6 +26770,7 @@ namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
 use Avax\Auth\System\Capability\Federation\FederationConnection;
+use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
 use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
 use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
 use Avax\Auth\System\Capability\OAuth\OAuthClient;
@@ -27117,6 +26791,7 @@ use Avax\Auth\System\Flow\AdminRealm\AdminElevation;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLoginData;
 use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
 use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLoginData;
+use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomainData;
 use Avax\Auth\System\Flow\Mfa\BackupCodeSet;
 use Avax\Auth\System\Flow\Mfa\Enroll\ConfirmMfaEnrollmentData;
 use Avax\Auth\System\Flow\Mfa\MfaChallenge;
@@ -27242,6 +26917,14 @@ interface AuthInterface
      * @return list<FederationConnection>
      */
     public function readFederationConnections() : array;
+
+    public function verifyFederationDomain(VerifyFederationDomainData $data) : FederationConnection;
+
+    public function syncFederationMetadata(string $connectionId) : FederationConnection;
+
+    public function checkFederationConnectionHealth(string $connectionId) : FederationConnectionHealth;
+
+    public function evaluateFederationBreakGlassBypass(string $connectionId) : bool;
 
     public function discoverFederationConnection(string $email) : FederationConnection|null;
 
@@ -28288,6 +27971,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Federation;
 
+use DateTimeImmutable;
+
 final readonly class FederationConnection
 {
     /**
@@ -28300,8 +27985,110 @@ final readonly class FederationConnection
         public FederationProvider $provider,
         public string $domain,
         public bool $ssoOnly = false,
-        public array $groupRoleMap = []
+        public array $groupRoleMap = [],
+        public string|null $metadataUrl = null,
+        public string|null $metadataIssuer = null,
+        public string|null $metadataHash = null,
+        public DateTimeImmutable|null $metadataSyncedAt = null,
+        public string|null $domainVerificationToken = null,
+        public DateTimeImmutable|null $domainVerifiedAt = null,
+        public FederationConnectionHealth $health = FederationConnectionHealth::UNKNOWN,
+        public DateTimeImmutable|null $healthCheckedAt = null,
+        public bool $breakGlassAllowed = false
     ) {}
+
+    public function isDomainVerified() : bool
+    {
+        return $this->domainVerifiedAt !== null;
+    }
+
+    public function withVerifiedDomain(DateTimeImmutable $verifiedAt) : self
+    {
+        return new self(
+            connectionId           : $this->connectionId,
+            tenantSlug             : $this->tenantSlug,
+            name                   : $this->name,
+            provider               : $this->provider,
+            domain                 : $this->domain,
+            ssoOnly                : $this->ssoOnly,
+            groupRoleMap           : $this->groupRoleMap,
+            metadataUrl            : $this->metadataUrl,
+            metadataIssuer         : $this->metadataIssuer,
+            metadataHash           : $this->metadataHash,
+            metadataSyncedAt       : $this->metadataSyncedAt,
+            domainVerificationToken: $this->domainVerificationToken,
+            domainVerifiedAt       : $verifiedAt,
+            health                 : $this->health,
+            healthCheckedAt        : $this->healthCheckedAt,
+            breakGlassAllowed      : $this->breakGlassAllowed
+        );
+    }
+
+    public function withMetadata(
+        string $metadataIssuer,
+        string $metadataHash,
+        DateTimeImmutable $syncedAt
+    ) : self
+    {
+        return new self(
+            connectionId           : $this->connectionId,
+            tenantSlug             : $this->tenantSlug,
+            name                   : $this->name,
+            provider               : $this->provider,
+            domain                 : $this->domain,
+            ssoOnly                : $this->ssoOnly,
+            groupRoleMap           : $this->groupRoleMap,
+            metadataUrl            : $this->metadataUrl,
+            metadataIssuer         : $metadataIssuer,
+            metadataHash           : $metadataHash,
+            metadataSyncedAt       : $syncedAt,
+            domainVerificationToken: $this->domainVerificationToken,
+            domainVerifiedAt       : $this->domainVerifiedAt,
+            health                 : $this->health,
+            healthCheckedAt        : $this->healthCheckedAt,
+            breakGlassAllowed      : $this->breakGlassAllowed
+        );
+    }
+
+    public function withHealth(
+        FederationConnectionHealth $health,
+        DateTimeImmutable $checkedAt
+    ) : self
+    {
+        return new self(
+            connectionId           : $this->connectionId,
+            tenantSlug             : $this->tenantSlug,
+            name                   : $this->name,
+            provider               : $this->provider,
+            domain                 : $this->domain,
+            ssoOnly                : $this->ssoOnly,
+            groupRoleMap           : $this->groupRoleMap,
+            metadataUrl            : $this->metadataUrl,
+            metadataIssuer         : $this->metadataIssuer,
+            metadataHash           : $this->metadataHash,
+            metadataSyncedAt       : $this->metadataSyncedAt,
+            domainVerificationToken: $this->domainVerificationToken,
+            domainVerifiedAt       : $this->domainVerifiedAt,
+            health                 : $health,
+            healthCheckedAt        : $checkedAt,
+            breakGlassAllowed      : $this->breakGlassAllowed
+        );
+    }
+}
+
+=== System/Capability/Federation/FederationConnectionHealth.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Federation;
+
+enum FederationConnectionHealth: string
+{
+    case UNKNOWN = 'unknown';
+    case HEALTHY = 'healthy';
+    case DEGRADED = 'degraded';
+    case UNAVAILABLE = 'unavailable';
 }
 
 === System/Capability/Federation/FederationConnectionStoreInterface.php ===
@@ -28323,6 +28110,52 @@ interface FederationConnectionStoreInterface
      * @return list<FederationConnection>
      */
     public function all() : array;
+}
+
+=== System/Capability/Federation/FederationHealthCheckInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Federation;
+
+interface FederationHealthCheckInterface
+{
+    public function checkHealth(FederationConnection $connection) : FederationConnectionHealth;
+}
+
+=== System/Capability/Federation/FederationMetadata.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Federation;
+
+/**
+ * Stable metadata snapshot fetched from a federation provider.
+ */
+final readonly class FederationMetadata
+{
+    /**
+     * @param array<string, string> $claims
+     */
+    public function __construct(
+        public string $issuer,
+        public string $singleSignOnUrl,
+        public array $claims = []
+    ) {}
+}
+
+=== System/Capability/Federation/FederationMetadataRuntimeInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Federation;
+
+interface FederationMetadataRuntimeInterface
+{
+    public function readMetadata(FederationConnection $connection) : FederationMetadata;
 }
 
 === System/Capability/Federation/FederationProvider.php ===
@@ -28360,6 +28193,41 @@ interface FederationRuntimeInterface
         FederationConnection $connection,
         array $payload
     ) : FederatedIdentity;
+}
+
+=== System/Capability/Federation/GroupRoleMappingValidator.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\Federation;
+
+use Avax\Auth\System\Capability\User\UserRole;
+
+/**
+ * Validates tenant-owned federation group-to-role mappings.
+ */
+final readonly class GroupRoleMappingValidator
+{
+    /**
+     * @param array<string, list<string>> $groupRoleMap
+     */
+    public function isValid(array $groupRoleMap) : bool
+    {
+        foreach ($groupRoleMap as $group => $roles) {
+            if (trim($group) === '') {
+                return false;
+            }
+
+            foreach ($roles as $roleValue) {
+                if (UserRole::tryFrom($roleValue) === null) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 }
 
 === System/Capability/Federation/InMemoryFederatedIdentityLinkStore.php ===
@@ -29823,6 +29691,60 @@ final readonly class RegisteredOAuthClient
         public OAuthClient  $client,
         public string|null  $plainTextSecret = null
     ) {}
+}
+
+=== System/Capability/OAuth/SenderConstraint/DpopProofReplayStoreInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth\SenderConstraint;
+
+use DateTimeImmutable;
+
+/**
+ * Stores seen DPoP proof ids to reject replay.
+ */
+interface DpopProofReplayStoreInterface
+{
+    public function remember(string $proofId, DateTimeImmutable $expiresAt) : bool;
+}
+
+=== System/Capability/OAuth/SenderConstraint/InMemoryDpopProofReplayStore.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\OAuth\SenderConstraint;
+
+use DateTimeImmutable;
+
+/**
+ * In-memory replay store for DPoP proof ids.
+ */
+final class InMemoryDpopProofReplayStore implements DpopProofReplayStoreInterface
+{
+    /** @var array<string, DateTimeImmutable> */
+    private array $proofs = [];
+
+    public function remember(string $proofId, DateTimeImmutable $expiresAt) : bool
+    {
+        $now = new DateTimeImmutable();
+
+        foreach ($this->proofs as $storedId => $storedExpiry) {
+            if ($storedExpiry <= $now) {
+                unset($this->proofs[$storedId]);
+            }
+        }
+
+        if (isset($this->proofs[$proofId])) {
+            return false;
+        }
+
+        $this->proofs[$proofId] = $expiresAt;
+
+        return true;
+    }
 }
 
 === System/Capability/OAuth/SenderConstraint/OAuthSenderConstraint.php ===
@@ -31525,7 +31447,10 @@ use Avax\Auth\System\Capability\AdminRealm\AdminElevationStoreInterface;
 use Avax\Auth\System\Capability\AdminRealm\InMemoryAdminElevationStore;
 use Avax\Auth\System\Capability\Federation\FederatedIdentityLinkStoreInterface;
 use Avax\Auth\System\Capability\Federation\FederationConnectionStoreInterface;
+use Avax\Auth\System\Capability\Federation\FederationHealthCheckInterface;
+use Avax\Auth\System\Capability\Federation\FederationMetadataRuntimeInterface;
 use Avax\Auth\System\Capability\Federation\FederationRuntimeInterface;
+use Avax\Auth\System\Capability\Federation\GroupRoleMappingValidator;
 use Avax\Auth\System\Capability\Federation\InMemoryFederatedIdentityLinkStore;
 use Avax\Auth\System\Capability\Federation\InMemoryFederationConnectionStore;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
@@ -31560,12 +31485,17 @@ use Avax\Auth\System\Flow\ChangeEmail\InMemoryEmailChangeStore;
 use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Diagnostics\CorrelatingAuditLog;
 use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLogin;
+use Avax\Auth\System\Flow\Federation\CheckHealth\CheckFederationConnectionHealth;
 use Avax\Auth\System\Flow\Federation\DiscoverConnection\DiscoverFederationConnection;
+use Avax\Auth\System\Flow\Federation\EvaluateBreakGlass\EvaluateFederationBreakGlassBypass;
 use Avax\Auth\System\Flow\Federation\ReadConnections\ReadFederationConnections;
 use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnection;
 use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLogin;
+use Avax\Auth\System\Flow\Federation\SyncMetadata\SyncFederationMetadata;
+use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomain;
 use Avax\Auth\System\Flow\Login\Login;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Flow\Logout\Logout;
@@ -31643,6 +31573,7 @@ final class AuthBuilder
     private PasswordHasher|null                       $passwordHasher         = null;
     private IdGeneratorInterface|null                 $idGenerator            = null;
     private AuditLogInterface|null                    $auditLog               = null;
+    private string|null                               $auditCorrelationId     = null;
     private EmailVerificationStateStoreInterface|null $emailVerificationState = null;
     private MfaStoreInterface|null                    $mfaStore               = null;
     private RefreshTokenStoreInterface|null           $refreshTokenStore      = null;
@@ -31724,6 +31655,13 @@ final class AuthBuilder
     public function withAuditLog(AuditLogInterface $auditLog) : self
     {
         $this->auditLog = $auditLog;
+
+        return $this;
+    }
+
+    public function withAuditCorrelationId(string $correlationId) : self
+    {
+        $this->auditCorrelationId = trim($correlationId) !== '' ? trim($correlationId) : null;
 
         return $this;
     }
@@ -31927,6 +31865,13 @@ final class AuthBuilder
         $identity                 = $this->identity;
         $passwordHasher           = $this->passwordHasher ?? new PasswordHasher();
         $auditLog                 = $this->auditLog ?? new NullAuditLog();
+
+        if ($this->auditCorrelationId !== null) {
+            $auditLog = new CorrelatingAuditLog(
+                inner         : $auditLog,
+                correlationId : $this->auditCorrelationId
+            );
+        }
         $clock                    = $this->clock ?? new Clock();
         $oauthClientRegistry      = $this->oauthClientRegistry ?? new InMemoryOAuthClientRegistry($passwordHasher);
         $authorizationCodeStore   = $this->authorizationCodeStore ?? new InMemoryAuthorizationCodeStore();
@@ -31940,6 +31885,7 @@ final class AuthBuilder
         $passkeyChallengeStore    = $this->passkeyChallengeStore ?? new InMemoryPasskeyChallengeStore();
         $federationConnectionStore = $this->federationConnectionStore ?? new InMemoryFederationConnectionStore();
         $federatedIdentityLinkStore = $this->federatedIdentityLinkStore ?? new InMemoryFederatedIdentityLinkStore();
+        $groupRoleMappingValidator = new GroupRoleMappingValidator();
         $passwordResetStore       = $this->passwordResetStore ?? new InMemoryPasswordResetStore();
         $emailVerificationStore   = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore();
         $emailChangeStore         = $this->emailChangeStore ?? new InMemoryEmailChangeStore();
@@ -32321,6 +32267,7 @@ final class AuthBuilder
             registerFederationConnection: $federationReady
                 ? new RegisterFederationConnection(
                     connectionStore: $federationConnectionStore,
+                    groupRoleMappingValidator: $groupRoleMappingValidator,
                     auditLog      : $auditLog,
                     clock         : $clock
                 )
@@ -32328,6 +32275,36 @@ final class AuthBuilder
             readFederationConnections: $federationReady
                 ? new ReadFederationConnections(
                     connectionStore: $federationConnectionStore
+                )
+                : null,
+            verifyFederationDomain: $federationReady
+                ? new VerifyFederationDomain(
+                    connectionStore: $federationConnectionStore,
+                    auditLog      : $auditLog,
+                    clock         : $clock
+                )
+                : null,
+            syncFederationMetadata: $federationReady && $this->federationRuntime instanceof FederationMetadataRuntimeInterface
+                ? new SyncFederationMetadata(
+                    connectionStore: $federationConnectionStore,
+                    runtime        : $this->federationRuntime,
+                    auditLog       : $auditLog,
+                    clock          : $clock
+                )
+                : null,
+            checkFederationConnectionHealth: $federationReady && $this->federationRuntime instanceof FederationHealthCheckInterface
+                ? new CheckFederationConnectionHealth(
+                    connectionStore: $federationConnectionStore,
+                    runtime        : $this->federationRuntime,
+                    auditLog       : $auditLog,
+                    clock          : $clock
+                )
+                : null,
+            evaluateFederationBreakGlassBypass: $federationReady
+                ? new EvaluateFederationBreakGlassBypass(
+                    connectionStore: $federationConnectionStore,
+                    auditLog       : $auditLog,
+                    clock          : $clock
                 )
                 : null,
             discoverFederationConnection: $federationReady
@@ -33750,8 +33727,19 @@ final readonly class AuditEvent
     public function __construct(
         public string            $name,
         public DateTimeImmutable $occurredAt,
-        public array             $context = []
+        public array             $context = [],
+        public string|null       $correlationId = null
     ) {}
+
+    public function withCorrelationId(string $correlationId) : self
+    {
+        return new self(
+            name         : $this->name,
+            occurredAt   : $this->occurredAt,
+            context      : $this->context,
+            correlationId: $correlationId
+        );
+    }
 }
 
 === System/Flow/Diagnostics/AuditExporterInterface.php ===
@@ -33782,6 +33770,35 @@ namespace Avax\Auth\System\Flow\Diagnostics;
 interface AuditLogInterface
 {
     public function record(AuditEvent $event) : void;
+}
+
+=== System/Flow/Diagnostics/CorrelatingAuditLog.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\Diagnostics;
+
+/**
+ * Decorates audit events with a request correlation id when flows do not set one.
+ */
+final readonly class CorrelatingAuditLog implements AuditLogInterface
+{
+    public function __construct(
+        private AuditLogInterface $inner,
+        private string $correlationId
+    ) {}
+
+    public function record(AuditEvent $event) : void
+    {
+        if ($event->correlationId !== null && trim($event->correlationId) !== '') {
+            $this->inner->record($event);
+
+            return;
+        }
+
+        $this->inner->record($event->withCorrelationId($this->correlationId));
+    }
 }
 
 === System/Flow/Diagnostics/DrainAuditLogInterface.php ===
@@ -33882,6 +33899,58 @@ final class NullAuditLog implements AuditLogInterface
     public function record(AuditEvent $event) : void {}
 }
 
+=== System/Flow/Federation/CheckHealth/CheckFederationConnectionHealth.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\Federation\CheckHealth;
+
+use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
+use Avax\Auth\System\Capability\Federation\FederationConnectionStoreInterface;
+use Avax\Auth\System\Capability\Federation\FederationHealthCheckInterface;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Federation\FederationFailed;
+use Avax\Auth\System\Foundation\Clock;
+
+final readonly class CheckFederationConnectionHealth
+{
+    public function __construct(
+        private FederationConnectionStoreInterface $connectionStore,
+        private FederationHealthCheckInterface $runtime,
+        private AuditLogInterface $auditLog,
+        private Clock $clock
+    ) {}
+
+    /**
+     * @throws FederationFailed
+     */
+    public function execute(string $connectionId) : FederationConnectionHealth
+    {
+        $connection = $this->connectionStore->find($connectionId);
+
+        if ($connection === null) {
+            throw FederationFailed::notFound();
+        }
+
+        $health = $this->runtime->checkHealth($connection);
+        $updated = $connection->withHealth($health, $this->clock->now());
+        $this->connectionStore->save($updated);
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.federation.health.checked',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'connection_id' => $updated->connectionId,
+                'tenant' => $updated->tenantSlug,
+                'health' => $health->value,
+            ]
+        ));
+
+        return $health;
+    }
+}
+
 === System/Flow/Federation/CompleteFederatedLogin/CompleteFederatedLogin.php ===
 <?php
 
@@ -33938,6 +34007,10 @@ final readonly class CompleteFederatedLogin
 
         if ($connection === null) {
             throw FederationFailed::notFound();
+        }
+
+        if (! $connection->isDomainVerified()) {
+            throw FederationFailed::domainNotVerified();
         }
 
         $federated = $this->runtime->completeLogin($connection, $data->payload);
@@ -34115,7 +34188,62 @@ final readonly class DiscoverFederationConnection
             return null;
         }
 
-        return $this->connectionStore->findByDomain($domain);
+        $connection = $this->connectionStore->findByDomain($domain);
+
+        return $connection?->isDomainVerified() === true ? $connection : null;
+    }
+}
+
+=== System/Flow/Federation/EvaluateBreakGlass/EvaluateFederationBreakGlassBypass.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\Federation\EvaluateBreakGlass;
+
+use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
+use Avax\Auth\System\Capability\Federation\FederationConnectionStoreInterface;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Federation\FederationFailed;
+use Avax\Auth\System\Foundation\Clock;
+
+final readonly class EvaluateFederationBreakGlassBypass
+{
+    public function __construct(
+        private FederationConnectionStoreInterface $connectionStore,
+        private AuditLogInterface $auditLog,
+        private Clock $clock
+    ) {}
+
+    /**
+     * @throws FederationFailed
+     */
+    public function execute(string $connectionId) : bool
+    {
+        $connection = $this->connectionStore->find($connectionId);
+
+        if ($connection === null) {
+            throw FederationFailed::notFound();
+        }
+
+        $allowed = $connection->breakGlassAllowed
+            && in_array($connection->health, [FederationConnectionHealth::DEGRADED, FederationConnectionHealth::UNAVAILABLE], true);
+
+        $this->auditLog->record(new AuditEvent(
+            name      : $allowed
+                ? 'auth.federation.break_glass.allowed'
+                : 'auth.federation.break_glass.denied',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'connection_id' => $connection->connectionId,
+                'tenant' => $connection->tenantSlug,
+                'health' => $connection->health->value,
+                'break_glass_allowed' => $connection->breakGlassAllowed ? 1 : 0,
+            ]
+        ));
+
+        return $allowed;
     }
 }
 
@@ -34138,6 +34266,51 @@ final class FederationFailed extends RuntimeException
     public static function runtimeNotConfigured() : self
     {
         return new self('Federation runtime is not configured.');
+    }
+
+    public static function domainConflict() : self
+    {
+        return new self('Federation domain is already registered for another tenant.');
+    }
+
+    public static function invalidGroupRoleMapping() : self
+    {
+        return new self('Federation group-to-role mapping is invalid.');
+    }
+
+    public static function invalidDomainVerificationToken() : self
+    {
+        return new self('Federation domain verification token is invalid.');
+    }
+
+    public static function domainNotVerified() : self
+    {
+        return new self('Federation domain is not verified.');
+    }
+
+    public static function metadataRuntimeNotConfigured() : self
+    {
+        return new self('Federation metadata runtime is not configured.');
+    }
+
+    public static function healthCheckNotConfigured() : self
+    {
+        return new self('Federation health checks are not configured.');
+    }
+
+    public static function metadataUrlMissing() : self
+    {
+        return new self('Federation metadata URL is not configured.');
+    }
+
+    public static function connectionUnavailable() : self
+    {
+        return new self('Federation connection is unavailable.');
+    }
+
+    public static function invalidBreakGlassPolicy() : self
+    {
+        return new self('Break-glass bypass requires an SSO-only federation connection.');
     }
 }
 
@@ -34174,29 +34347,55 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Federation\RegisterConnection;
 
 use Avax\Auth\System\Capability\Federation\FederationConnection;
+use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
 use Avax\Auth\System\Capability\Federation\FederationConnectionStoreInterface;
+use Avax\Auth\System\Capability\Federation\GroupRoleMappingValidator;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Federation\FederationFailed;
 use Avax\Auth\System\Foundation\Clock;
 
 final readonly class RegisterFederationConnection
 {
     public function __construct(
         private FederationConnectionStoreInterface $connectionStore,
+        private GroupRoleMappingValidator $groupRoleMappingValidator,
         private AuditLogInterface $auditLog,
         private Clock $clock
     ) {}
 
+    /**
+     * @throws FederationFailed
+     */
     public function execute(RegisterFederationConnectionData $data) : FederationConnection
     {
+        $domain = strtolower(trim($data->domain));
+        $existing = $this->connectionStore->findByDomain($domain);
+
+        if ($existing !== null) {
+            throw FederationFailed::domainConflict();
+        }
+
+        if (! $this->groupRoleMappingValidator->isValid($data->groupRoleMap)) {
+            throw FederationFailed::invalidGroupRoleMapping();
+        }
+
+        if ($data->breakGlassAllowed && ! $data->ssoOnly) {
+            throw FederationFailed::invalidBreakGlassPolicy();
+        }
+
         $connection = new FederationConnection(
             connectionId: 'fed_' . bin2hex(random_bytes(12)),
             tenantSlug  : trim($data->tenantSlug),
             name        : trim($data->name),
             provider    : $data->provider,
-            domain      : strtolower(trim($data->domain)),
+            domain      : $domain,
             ssoOnly     : $data->ssoOnly,
-            groupRoleMap: $data->groupRoleMap
+            groupRoleMap: $data->groupRoleMap,
+            metadataUrl : $data->metadataUrl,
+            domainVerificationToken: bin2hex(random_bytes(16)),
+            health      : FederationConnectionHealth::UNKNOWN,
+            breakGlassAllowed: $data->breakGlassAllowed
         );
 
         $this->connectionStore->save($connection);
@@ -34208,6 +34407,7 @@ final readonly class RegisterFederationConnection
                 'tenant' => $connection->tenantSlug,
                 'domain' => $connection->domain,
                 'provider' => $connection->provider->value,
+                'break_glass_allowed' => $connection->breakGlassAllowed ? 1 : 0,
             ]
         ));
 
@@ -34235,7 +34435,9 @@ final readonly class RegisterFederationConnectionData
         public FederationProvider $provider,
         public string $domain,
         public bool $ssoOnly = false,
-        public array $groupRoleMap = []
+        public array $groupRoleMap = [],
+        public string|null $metadataUrl = null,
+        public bool $breakGlassAllowed = false
     ) {}
 }
 
@@ -34274,6 +34476,14 @@ final readonly class StartFederatedLogin
             throw FederationFailed::notFound();
         }
 
+        if (! $connection->isDomainVerified()) {
+            throw FederationFailed::domainNotVerified();
+        }
+
+        if ($connection->health === \Avax\Auth\System\Capability\Federation\FederationConnectionHealth::UNAVAILABLE) {
+            throw FederationFailed::connectionUnavailable();
+        }
+
         $started = $this->runtime->startLogin($connection, $data->redirectUri, $data->state);
         $this->auditLog->record(new AuditEvent(
             name      : 'auth.federation.login.started',
@@ -34301,6 +34511,141 @@ final readonly class StartFederatedLoginData
         public string $connectionId,
         public string $redirectUri,
         public string|null $state = null
+    ) {}
+}
+
+=== System/Flow/Federation/SyncMetadata/SyncFederationMetadata.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\Federation\SyncMetadata;
+
+use Avax\Auth\System\Capability\Federation\FederationConnection;
+use Avax\Auth\System\Capability\Federation\FederationConnectionStoreInterface;
+use Avax\Auth\System\Capability\Federation\FederationMetadataRuntimeInterface;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Federation\FederationFailed;
+use Avax\Auth\System\Foundation\Clock;
+
+final readonly class SyncFederationMetadata
+{
+    public function __construct(
+        private FederationConnectionStoreInterface $connectionStore,
+        private FederationMetadataRuntimeInterface $runtime,
+        private AuditLogInterface $auditLog,
+        private Clock $clock
+    ) {}
+
+    /**
+     * @throws FederationFailed
+     */
+    public function execute(string $connectionId) : FederationConnection
+    {
+        $connection = $this->connectionStore->find($connectionId);
+
+        if ($connection === null) {
+            throw FederationFailed::notFound();
+        }
+
+        if ($connection->metadataUrl === null || trim($connection->metadataUrl) === '') {
+            throw FederationFailed::metadataUrlMissing();
+        }
+
+        $metadata = $this->runtime->readMetadata($connection);
+        $synced = $connection->withMetadata(
+            metadataIssuer: $metadata->issuer,
+            metadataHash  : hash('sha256', json_encode([
+                'issuer' => $metadata->issuer,
+                'single_sign_on_url' => $metadata->singleSignOnUrl,
+                'claims' => $metadata->claims,
+            ], JSON_THROW_ON_ERROR)),
+            syncedAt      : $this->clock->now()
+        );
+        $this->connectionStore->save($synced);
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.federation.metadata.synced',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'connection_id' => $synced->connectionId,
+                'tenant' => $synced->tenantSlug,
+                'metadata_issuer' => $synced->metadataIssuer,
+            ]
+        ));
+
+        return $synced;
+    }
+}
+
+=== System/Flow/Federation/VerifyDomain/VerifyFederationDomain.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\Federation\VerifyDomain;
+
+use Avax\Auth\System\Capability\Federation\FederationConnection;
+use Avax\Auth\System\Capability\Federation\FederationConnectionStoreInterface;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Federation\FederationFailed;
+use Avax\Auth\System\Foundation\Clock;
+
+final readonly class VerifyFederationDomain
+{
+    public function __construct(
+        private FederationConnectionStoreInterface $connectionStore,
+        private AuditLogInterface $auditLog,
+        private Clock $clock
+    ) {}
+
+    /**
+     * @throws FederationFailed
+     */
+    public function execute(VerifyFederationDomainData $data) : FederationConnection
+    {
+        $connection = $this->connectionStore->find($data->connectionId);
+
+        if ($connection === null) {
+            throw FederationFailed::notFound();
+        }
+
+        if (
+            $connection->domainVerificationToken === null
+            || ! hash_equals($connection->domainVerificationToken, trim($data->verificationToken))
+        ) {
+            throw FederationFailed::invalidDomainVerificationToken();
+        }
+
+        $verified = $connection->withVerifiedDomain($this->clock->now());
+        $this->connectionStore->save($verified);
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.federation.domain.verified',
+            occurredAt: $this->clock->now(),
+            context   : [
+                'connection_id' => $verified->connectionId,
+                'tenant' => $verified->tenantSlug,
+                'domain' => $verified->domain,
+            ]
+        ));
+
+        return $verified;
+    }
+}
+
+=== System/Flow/Federation/VerifyDomain/VerifyFederationDomainData.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\Federation\VerifyDomain;
+
+final readonly class VerifyFederationDomainData
+{
+    public function __construct(
+        public string $connectionId,
+        public string $verificationToken
     ) {}
 }
 
@@ -40766,6 +41111,51 @@ final readonly class IssuedToken
     ) {}
 }
 
+=== System/Flow/Token/MultiKeyHmacTokenCodec.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\Token;
+
+/**
+ * Issues tokens with one active key and verifies them against a rollover key ring.
+ */
+final readonly class MultiKeyHmacTokenCodec implements TokenCodecInterface
+{
+    /**
+     * @param list<TokenCodecInterface> $verificationCodecs
+     */
+    public function __construct(
+        private TokenCodecInterface $primaryCodec,
+        private array $verificationCodecs = []
+    ) {}
+
+    public function encode(array $claims) : string
+    {
+        return $this->primaryCodec->encode($claims);
+    }
+
+    public function decode(string $token) : array|null
+    {
+        $claims = $this->primaryCodec->decode($token);
+
+        if ($claims !== null) {
+            return $claims;
+        }
+
+        foreach ($this->verificationCodecs as $codec) {
+            $claims = $codec->decode($token);
+
+            if ($claims !== null) {
+                return $claims;
+            }
+        }
+
+        return null;
+    }
+}
+
 === System/Flow/Token/RefreshAuthentication.php ===
 <?php
 
@@ -41614,6 +42004,7 @@ Updated: 2026-04-06 14:50 CET
     "psr-4": {
       "Avax\\Auth\\System\\": "System/",
       "Avax\\Auth\\Integrations\\AvaxContainer\\": "integrations/avax-container/",
+      "Avax\\Auth\\Integrations\\Diagnostics\\": "integrations/diagnostics/",
       "Avax\\Auth\\Integrations\\Http\\": "integrations/http/",
       "Avax\\Auth\\Integrations\\Headers\\": "integrations/headers/",
       "Avax\\Auth\\Integrations\\Cookies\\": "integrations/cookies/"
@@ -45852,6 +46243,8 @@ The package already owns:
 - explicit actor assurance policy tiers
 - sender-constrained OAuth token posture metadata
 - key-version-aware HMAC token codec support
+- HTTP DPoP proof verification and mTLS binding verification adapters
+- federation domain verification, metadata sync, health checks, and break-glass policy evaluation
 
 The package does not yet own:
 
@@ -45888,8 +46281,6 @@ The package owns and ships:
 The package may add:
 
 - optional OAuth interoperability adapters
-- stronger sender-constraint proof verification adapters
-- domain verification and federation metadata sync
 - external SCIM and SIEM adapters
 - deeper tenant membership ownership
 
@@ -46118,6 +46509,47 @@ This package owns policy and enforcement seams. Applications still own final
 transport integration, real passkey runtime integration, certificate
 verification, DPoP proof verification, and session-store configuration.
 
+=== docs/audit-export-operations.md ===
+# Audit Export Operations
+
+This package now treats audit export as an explicit operational lane, not as a
+debugging afterthought.
+
+## Export Adapters
+
+- JSON lines export for durable SIEM ingestion
+- syslog export through an adapter boundary
+- webhook export for downstream security tooling
+- queue export for internal asynchronous pipelines
+
+## Correlation
+
+- wrap the package audit log with `CorrelatingAuditLog` or use
+  `Auth::configuration()->withAuditCorrelationId(...)`
+- correlation ids must be stable for one request, login journey, or incident
+  trace
+- exported payloads keep `correlation_id` as a first-class field
+
+## Tamper Evidence
+
+- JSON lines export can chain each record with `previous_hash` and
+  `record_hash`
+- downstream storage should preserve record order
+- legal hold keeps chained evidence intact even when normal retention would
+  anonymize or purge it
+
+## Notification Rules
+
+The reference notification adapter routes:
+
+- refresh token reuse
+- admin elevation
+- factor removal
+- password change after suspicious activity
+
+Applications may extend the mapping, but these are the baseline high-signal
+events.
+
 === docs/authorization-flow.md ===
 # Authorization Flow
 
@@ -46243,8 +46675,12 @@ Kernel rule:
 - container adapters such as `Integrations/AvaxContainer/AuthServiceProvider`
 - transport-to-kernel mapping such as
   `Integrations/Http/MapAuthenticationRequest`
+- transport-owned sender-constraint verification such as
+  `Integrations/Http/VerifyOAuthSenderConstraint`
 - boundary failure mapping such as `Integrations/Http/MapAuthFailure`
 - header and cookie extraction glue used by transport mappers
+- diagnostics export and notification adapters such as
+  `Integrations/Diagnostics/*`
 - optional persistence, observability, and framework adapters that depend on
   kernel contracts only
 
@@ -46454,6 +46890,68 @@ Replace or deprecate:
 5. Document extension points, non-goals, and compatibility risks.
 6. Verify kernel-only and adapter smoke paths.
 
+=== docs/browser-session-deployment.md ===
+# Browser Session Deployment Guide
+
+This package keeps browser-session auth and API-token auth as separate lanes.
+For browser-attached credentials, deployments must keep the following posture.
+
+## Cookie Policy
+
+- set session cookies with `Secure`
+- set session cookies with `HttpOnly`
+- prefer `SameSite=Lax`
+- use `SameSite=Strict` for highly contained backoffice surfaces when the
+  product flow allows it
+- never use `SameSite=None` without `Secure`
+
+## CSRF Model
+
+Use cookie-bound session auth only with explicit CSRF posture.
+
+- state-changing browser routes must require a CSRF token
+- routes that accept cross-site redirects must also validate `Origin` or
+  `Referer`
+- logout, password change, factor reset, email change, and admin actions are
+  always CSRF-protected routes
+- bearer-token API surfaces do not reuse the cookie CSRF model
+
+See [examples/http/RequireCsrfProtection.php](../examples/http/RequireCsrfProtection.php)
+for a framework-neutral reference middleware.
+
+## Origin And Referer Rules
+
+- allow exact same-origin requests
+- for browsers that omit `Origin`, fall back to `Referer`
+- reject cross-origin unsafe methods unless the route is intentionally public
+- do not trust `X-Forwarded-*` headers without proxy hardening outside the
+  package
+
+## Browser Storage Policy
+
+- session-based browser surfaces do not store long-lived access or refresh
+  tokens in `localStorage`, `sessionStorage`, or IndexedDB
+- cookie-based auth stores the session identifier only in the session cookie
+- refresh tokens are for token clients, not for session-cookie browser flows
+- if an SPA needs OAuth tokens, it uses a public-client flow and not the
+  package session-cookie lane
+
+## Session Fixation Procedure
+
+1. create an anonymous session
+2. capture the pre-login session id
+3. perform a successful login
+4. assert the session id changed
+5. assert the old session id no longer resolves a valid user
+6. repeat after re-auth or factor reset
+
+## Compromise Response
+
+- revoke one session when a single browser session is suspected
+- revoke all tracked sessions after password reset or factor reset
+- rotate refresh token families if token compromise scope is unclear
+- review correlated audit events before restoring privileged access
+
 === docs/crypto-key-lifecycle.md ===
 # Crypto And Key Lifecycle
 
@@ -46501,6 +46999,63 @@ Multi-key verification and external KMS orchestration remain application or
 adapter concerns. The kernel provides the token artifact seam and the explicit
 `kid` contract.
 
+=== docs/federation-operations.md ===
+# Federation Operations
+
+Federation is now treated as a tenant-owned operating surface instead of only a
+login connector.
+
+## Connection Lifecycle
+
+1. register the tenant connection with domain, provider, optional metadata URL,
+   and group-to-role mapping
+2. verify the domain with the issued verification token
+3. sync metadata from the provider
+4. run health checks before or during cutover
+5. allow discovery only for verified domains
+
+## Strong Tenant Policy
+
+- one domain maps to one tenant connection
+- invalid group-to-role mappings are rejected at registration time
+- break-glass bypass is allowed only for `ssoOnly` connections
+- unavailable federation health blocks SSO start and forces explicit fallback
+  handling
+
+## Break-Glass
+
+- break-glass is a policy decision, not an implicit fallback
+- use `evaluateFederationBreakGlassBypass()` only after a health check records
+  `degraded` or `unavailable`
+- every allow or deny decision leaves an audit event
+
+## Metadata Sync
+
+- store the provider issuer and a metadata hash
+- resync on schedule and before large tenant cutovers
+- review hash changes before enabling new provider posture in production
+
+=== docs/high-assurance-admin-examples.md ===
+# High-Assurance Admin Examples
+
+The package now ships policy examples that can be copied into host
+applications.
+
+## Included Examples
+
+- `examples/policies/AdminPasskeyRequiredPolicy.php`
+- `examples/policies/TenantAdminPhishingResistantPolicy.php`
+- `examples/policies/RequireFreshAssuranceForAdminAction.php`
+- `examples/policies/RequireApprovalForPrivilegedAction.php`
+- `examples/policies/EnforceSeparationOfDuties.php`
+
+## Intent
+
+- admin paths default to phishing-resistant posture
+- tenant-admin paths keep the same phishing-resistant minimum
+- sensitive actions can require fresh assurance instead of stale login state
+- approval and SoD are policy decisions, not scattered `if` statements
+
 === docs/implementation-roadmap.md ===
 # Implementation Roadmap
 
@@ -46519,44 +47074,30 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 - OAuth client registry, authorization-code issuance, PKCE enforcement, refresh exchange, revoke, and introspection
 - explicit actor assurance policy catalog and composed access-policy tiers
 - phishing-resistant-required OAuth client posture and sender-constrained token binding metadata
+- DPoP proof verification, mTLS binding verification, and transport-level sender-constraint enforcement adapters
 - admin elevation and privileged-user lifecycle flows
 - passkey registration, authentication, rename, and revoke behind a runtime seam
-- tenant-aware federation connections, login discovery, start/complete login, and JIT linking
+- tenant-aware federation connections, verified-domain discovery, metadata sync, health checks, break-glass policy
+  evaluation, start/complete login, and JIT linking
 - deterministic risk signals and refresh-reuse review hooks
 - composed access-policy enforcement for role, permission, resource-owner, fresh-MFA, and admin-elevation checks
 - cleanup/export maintenance flows for sessions, reset tokens, MFA/passkey challenges, authorization codes, and audit
   events
 - audit events across security-sensitive flows
-- first-class privacy retention, authorization hardening, assurance matrix, and crypto lifecycle docs
+- first-class privacy retention, authorization hardening, assurance matrix, crypto lifecycle, workload identity,
+  release-hardening, verification-matrix, and runbook docs
+- multi-key HMAC verification for key rollover windows
 
 ## Next Delivery Order
 
-### Sprint 1
+### Next
 
-- complete session-backed integration examples
-- document CSRF expectations for cookie-auth deployments
-- add persistent session registry contract examples
-
-### Sprint 2
-
-- complete OAuth-backed adapter examples and persistence contracts
-- add richer audit exporters and security-notification adapter examples
-
-### Sprint 3
-
-- evaluate richer sender-constraint proof verification adapters for HTTP and mTLS environments
-- add package examples for high-assurance admin passkey policy and OAuth client posture
-
-### Sprint 4
-
+- complete executable tests for every remaining example and adapter seam
+- add optional client-credentials workload runtime if the kernel grows a non-human principal boundary
 - evaluate optional `league/oauth2-server` interop adapter without breaking package-owned OAuth kernel contracts
 - evaluate optional WebAuthn interop adapter packaging over the runtime seam
 
-### Sprint 5
-
-- domain verification, federation metadata sync, and stronger tenant connection policy
-
-### Sprint 6
+### Future
 
 - conditional SCIM/runtime adapters, deeper tenant membership model, and external control-plane integration
 
@@ -46662,6 +47203,36 @@ JWT login still returns `AuthenticationResult`, the same shape used by session-b
 - `BeginMfaRecoveryData`
 - `ConfirmMfaRecoveryData`
 
+=== docs/oidc-provider-boundary.md ===
+# OIDC Provider Boundary
+
+Full OIDC provider behavior is larger than this package's current kernel
+ownership and should remain a dedicated package or adapter surface.
+
+## Why
+
+- discovery and JWKS require explicit signing-key publication strategy
+- ID token issuance needs RP-facing claims, nonce handling, and conformance
+  discipline
+- userinfo and RP metadata posture belong to a provider surface, not to the
+  core auth kernel
+
+## Package Posture
+
+- keep OAuth client and token issuance in the kernel
+- expose provider behavior through a separate OIDC package when the product
+  truly needs it
+- use `MultiKeyHmacTokenCodec` or stronger asymmetric codecs for rollover-aware
+  verification during migrations
+
+## Required Provider Deliverables
+
+- discovery document
+- JWKS surface with overlap during rollover
+- ID token issuance
+- userinfo
+- RP metadata review and conformance matrix
+
 === docs/privacy-retention-policy.md ===
 # Privacy, Retention, And Deletion Policy
 
@@ -46744,6 +47315,51 @@ Registration now returns `RegistrationResult`, not the internal `User` entity.
 Registration does not automatically log the user in. Email verification can be initiated separately through
 `beginEmailVerification()`.
 
+=== docs/release-hardening.md ===
+# Release Hardening
+
+Auth-sensitive releases need a stricter release bar than ordinary feature
+packages.
+
+## Required Gates
+
+- dependency review
+- SBOM generation
+- secret scanning in CI
+- artifact signing
+- release provenance
+- rollback proof for auth-sensitive releases
+
+## Incident Drills
+
+- signing-key rollover drill
+- forced key-compromise drill
+- legal-hold evidence preservation drill
+- crypto-agility acceptance tests
+
+=== docs/scim-runtime-boundary.md ===
+# SCIM Runtime Boundary
+
+SCIM is conditional and becomes a must-have when the product targets enterprise
+workforce or B2B provisioning.
+
+## Required Runtime Behaviors
+
+- CRUD over provisioned users
+- group sync
+- token authentication and rotation
+- idempotent updates
+- drift detection
+- explicit disable vs suspend semantics
+- audit trail for provisioning actions
+
+## Package Posture
+
+- keep user lifecycle primitives in `Provisioning/`
+- keep the full SCIM HTTP surface in a separate adapter or package
+- require tenant-owned approval and config audit before enabling SCIM for a
+  tenant
+
 === docs/security-rules.md ===
 # Security Rules
 
@@ -46794,6 +47410,42 @@ Registration does not automatically log the user in. Email verification can be i
 - `TotpInterface`
 - `AuditLogInterface`
 
+=== docs/session-compromise-runbook.md ===
+# Session Compromise Runbook
+
+Use this runbook when a browser session or tracked session family is suspected.
+
+## Trigger Signals
+
+- user reports an unknown active session
+- privileged action appears from an unknown browser or location
+- password reset or factor reset follows suspicious activity
+- audit exporter flags repeated session failures or replay-like behavior
+
+## Immediate Actions
+
+1. identify the affected user and session ids
+2. revoke the known session if the blast radius is clear
+3. revoke all tracked sessions for the user if the blast radius is unclear
+4. revoke refresh-token families for the same subject
+5. require fresh login and MFA before continuing
+
+## Follow-Up
+
+- review login, logout, password change, factor reset, and admin elevation audit
+  events
+- preserve audit evidence under legal hold when required
+- notify security operations if privileged posture was involved
+- review browser origin, CSRF, and cookie deployment posture if the incident
+  used browser-attached credentials
+
+## Recovery Exit Criteria
+
+- all suspicious sessions are revoked
+- password and factor posture is re-established
+- follow-up login succeeds with current policies
+- audit evidence is exported and retained according to policy
+
 === docs/session-flow.md ===
 # Session Flow
 
@@ -46832,6 +47484,57 @@ Custom session backends can implement `SessionStoreInterface`.
 - `revokeSession(string $sessionId)` revokes one owned tracked session.
 - `logoutAllSessions()` revokes all tracked sessions for the current user.
 
+=== docs/sso-cutover-runbook.md ===
+# SSO Cutover Runbook
+
+Use this when moving a tenant from local login to tenant-owned federation.
+
+## Before Cutover
+
+1. register the federation connection
+2. verify the tenant domain
+3. sync metadata and record the initial metadata hash
+4. validate group-to-role mappings against allowed roles
+5. run a health check and confirm it is `healthy`
+6. decide whether break-glass bypass is allowed for this tenant
+
+## During Cutover
+
+1. notify tenant admins of the exact cutover window
+2. flip the tenant to `ssoOnly` only after health is green
+3. test discovery from a verified tenant email
+4. test full start and complete login with a tenant admin account
+5. export and review the correlated audit events for the cutover
+
+## Rollback
+
+1. disable `ssoOnly`
+2. keep the connection config but mark the cutover as rolled back
+3. retain audit evidence, metadata hash, and health state
+4. re-open cutover only after the cause is fixed and revalidated
+
+=== docs/tenant-control-plane.md ===
+# Tenant Control-Plane Posture
+
+Tenant security changes are high-impact operations and need a control-plane,
+not ad hoc admin toggles.
+
+## Minimum Control-Plane Fields
+
+- SSO configuration
+- SCIM configuration
+- verified domains
+- group mapping
+- tenant policy posture
+
+## Required Change Controls
+
+- approval path for tenant security changes
+- config diff in audit
+- safe rollout by tenant
+- safe rollback by tenant
+- correlated evidence for every sensitive change
+
 === docs/threat-model.md ===
 # Threat Model
 
@@ -46848,7 +47551,7 @@ This document captures the current auth-kernel threat model and the controls own
 | session hijack | secure cookies, session ID regeneration, idle timeout, absolute timeout, tracked session revocation | implemented |
 | stolen authorization code | short TTL, single use, redirect URI match, PKCE verification for public clients | implemented |
 | stolen refresh token | rotation, reuse detection, family revocation, optional sender-constrained binding checks | implemented |
-| bearer token replay | DPoP or mTLS binding metadata for clients that require sender-constrained tokens | implemented |
+| bearer token replay | DPoP proof verification, mTLS binding verification, binding mismatch audit, and sender-constrained token policy | implemented |
 | passkey replay | single-use passkey challenge lifecycle and revoked-credential checks | implemented |
 | MFA bypass | challenge lifecycle, replay protection, backup code one-time use, fresh-MFA checks | implemented |
 | recovery takeover | anti-enumeration start, recovery throttling, reset-driven revocation, MFA recovery auditing | implemented |
@@ -46856,7 +47559,7 @@ This document captures the current auth-kernel threat model and the controls own
 | email change takeover | dedicated email-change flow, current-password proof, fresh MFA, one-time confirmation, audit | implemented |
 | refresh token reuse | family revocation, risk review signal, and audit | implemented |
 | insider misuse | audit trail, admin-elevation state, and authorization hardening checklist exist; approval workflows remain application-owned | partial |
-| tenant isolation bug | tenant-aware federation connection boundary exists, but full tenant membership model is not package-owned | partial |
+| tenant isolation bug | unique-domain federation policy, verified-domain discovery, health-gated SSO start, and tenant-aware connection boundary exist; full tenant membership model is still not package-owned | partial |
 
 ## Incident Classes
 
@@ -46897,7 +47600,7 @@ This document captures the current auth-kernel threat model and the controls own
 - high-assurance clients can require phishing-resistant user auth before code
   issuance
 - sender-constrained clients must present the same DPoP or mTLS binding on
-  refresh exchange
+  refresh exchange and can enforce the same binding at the HTTP adapter boundary
 - refresh reuse revokes the entire token family
 - revoke and introspection flows exist for downstream incident handling
 
@@ -46909,9 +47612,11 @@ This document captures the current auth-kernel threat model and the controls own
 
 ### Federation Misrouting
 
-- login discovery resolves by normalized domain into one tenant-owned connection
+- login discovery resolves by normalized domain into one verified tenant-owned
+  connection
 - completed federated login leaves an audit trail with tenant context
-- group mapping only maps into known package roles and ignores unknown values
+- invalid group mappings are rejected at registration time and federated groups
+  only map into known package roles
 
 ## Severity Matrix
 
@@ -46921,6 +47626,606 @@ This document captures the current auth-kernel threat model and the controls own
 | high | one-user takeover or reusable token/session compromise |
 | medium | throttled attack signal, weak audit gap, or single-flow bypass attempt |
 | low | observability gap without immediate auth bypass |
+
+=== docs/trusted-device-policy.md ===
+# Trusted Device Policy
+
+This package explicitly does **not** ship a remembered-device or trusted-device
+feature at this time.
+
+## Decision
+
+Trusted-device behavior is intentionally rejected for the current package scope.
+
+## Reason
+
+- it weakens the guarantee that phishing-resistant and fresh-factor policies are
+  enforced consistently
+- it introduces a new revocation surface and device-token lifecycle that should
+  not be half-owned
+- it creates ambiguity in UX if the application cannot clearly explain why MFA
+  is bypassed on one device but not another
+
+## Product Rule
+
+- documentation, examples, and policies must not imply that remembered-device
+  bypass exists
+- applications that want device trust must implement a separate, explicit
+  device-binding subsystem with its own audit, revocation, and suspicious-device
+  re-challenge model
+
+## Revisit Trigger
+
+Re-open this decision only when the package can own:
+
+- device-token issuance
+- device binding
+- per-device revocation
+- suspicious-device re-challenge
+- device audit trail
+
+=== docs/verification-matrix.md ===
+# Verification Matrix
+
+The final verification bar for this package now includes the following
+scenarios.
+
+## Authentication And Session
+
+- login success and failure
+- session fixation
+- CSRF on browser session routes
+- password reset
+- MFA replay rejection
+- passkey replay rejection
+
+## Token And Sender Constraint
+
+- refresh reuse
+- DPoP replay
+- DPoP method and URI mismatch
+- mTLS mismatch
+- multi-key token verification during rollover
+
+## Tenant And Admin
+
+- tenant crossing rejection
+- admin elevation abuse
+- break-glass auditability
+- deprovisioning revokes active access
+
+## Data And Compliance
+
+- PII masking in audit export
+- legal hold overrides anonymization correctly
+
+=== docs/workload-identity.md ===
+# Workload Identity Posture
+
+This package now documents workload identity as a first-class policy lane even
+when host applications keep the full runtime in a separate adapter or package.
+
+## Baseline Rules
+
+- inventory every non-human client
+- use confidential OAuth clients only
+- use short-lived access tokens
+- require sender-constrained posture for high-security workloads
+- scope every workload to the smallest service boundary that works
+
+## Recommended Client Policy
+
+- `allowedGrantTypes`: include `client_credentials` only for non-human clients
+- `workloadIdentity`: true
+- `requiredSenderConstraint`: `mTLS` or `DPoP`
+
+## Operational Rules
+
+- rotate client secrets or certificates without emergency redeploys
+- pin issuer and audience expectations per service
+- keep transport validation at the adapter boundary
+- prefer secretless or short-lived credential exchange when the host platform
+  supports it
+
+=== examples/http/RequireCsrfProtection.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Examples\Http;
+
+/**
+ * Framework-neutral reference middleware for cookie-auth CSRF protection.
+ */
+final readonly class RequireCsrfProtection
+{
+    public function __construct(
+        private string $cookieName = 'csrf_token',
+        private string $headerName = 'x-csrf-token'
+    ) {}
+
+    /**
+     * @param array<string, mixed> $server
+     * @param array<string, mixed> $headers
+     * @param array<string, mixed> $cookies
+     */
+    public function execute(
+        string $method,
+        array $server = [],
+        array $headers = [],
+        array $cookies = []
+    ) : bool
+    {
+        if ($this->isSafeMethod($method)) {
+            return true;
+        }
+
+        $origin = $this->readValue($server, 'HTTP_ORIGIN');
+        $referer = $this->readValue($server, 'HTTP_REFERER');
+        $host = $this->readValue($server, 'HTTP_HOST');
+
+        if (! $this->sameOrigin($origin, $host) && ! $this->sameOrigin($referer, $host)) {
+            return false;
+        }
+
+        $cookieToken = $this->readValue($cookies, $this->cookieName);
+        $headerToken = $this->readValue($headers, $this->headerName);
+
+        if ($cookieToken === null || $headerToken === null) {
+            return false;
+        }
+
+        return hash_equals($cookieToken, $headerToken);
+    }
+
+    private function isSafeMethod(string $method) : bool
+    {
+        return in_array(strtoupper($method), ['GET', 'HEAD', 'OPTIONS'], true);
+    }
+
+    /**
+     * @param array<string, mixed> $values
+     */
+    private function readValue(array $values, string $key) : string|null
+    {
+        foreach ($values as $candidateKey => $value) {
+            if (strcasecmp($candidateKey, $key) !== 0) {
+                continue;
+            }
+
+            if (is_array($value)) {
+                $value = reset($value);
+            }
+
+            return is_scalar($value) ? (string) $value : null;
+        }
+
+        return null;
+    }
+
+    private function sameOrigin(string|null $originLikeValue, string|null $host) : bool
+    {
+        if ($originLikeValue === null || $host === null) {
+            return false;
+        }
+
+        $parts = parse_url($originLikeValue);
+
+        if (! is_array($parts)) {
+            return false;
+        }
+
+        return strcasecmp((string) ($parts['host'] ?? ''), $host) === 0;
+    }
+}
+
+=== examples/http/VerifySenderConstrainedRequest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Examples\Http;
+
+use Avax\Auth\Integrations\Http\HttpOAuthProofInput;
+use Avax\Auth\Integrations\Http\VerifyDpopProof;
+use Avax\Auth\Integrations\Http\VerifyMtlsSenderConstraint;
+use Avax\Auth\Integrations\Http\VerifyOAuthSenderConstraint;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\InMemoryDpopProofReplayStore;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
+use Avax\Auth\System\Flow\Token\HmacTokenCodec;
+
+/**
+ * Reference adapter for enforcing bearer, DPoP, or mTLS request posture.
+ */
+final readonly class VerifySenderConstrainedRequest
+{
+    /**
+     * @param array<string, mixed> $headers
+     * @param array<string, mixed> $server
+     */
+    public function execute(
+        string $method,
+        string $uri,
+        array $headers,
+        array $server,
+        string|null $accessToken,
+        OAuthSenderConstraint|null $expectedSenderConstraint = null,
+        OAuthSenderConstraintType|null $requiredSenderConstraint = null
+    ) : OAuthSenderConstraint|null
+    {
+        $auditLog = new NullAuditLog();
+
+        return (new VerifyOAuthSenderConstraint(
+            verifyDpopProof: new VerifyDpopProof(
+                codec      : new HmacTokenCodec(secret: 'replace-me'),
+                replayStore: new InMemoryDpopProofReplayStore(),
+                auditLog   : $auditLog
+            ),
+            verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint($auditLog),
+            auditLog                  : $auditLog
+        ))->execute(
+            input: new HttpOAuthProofInput(
+                method     : $method,
+                uri        : $uri,
+                headers    : $headers,
+                server     : $server,
+                accessToken: $accessToken
+            ),
+            expectedSenderConstraint: $expectedSenderConstraint,
+            requiredSenderConstraint: $requiredSenderConstraint
+        );
+    }
+}
+
+=== examples/persistence/PdoSessionRegistry.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Examples\Persistence;
+
+use Avax\Auth\System\Capability\Session\SessionRecord;
+use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
+use Avax\Auth\System\Capability\User\UserId;
+use DateTimeImmutable;
+use PDO;
+
+/**
+ * Reference PDO implementation for the durable session registry contract.
+ */
+final readonly class PdoSessionRegistry implements SessionRegistryInterface
+{
+    public function __construct(
+        private PDO $pdo
+    ) {}
+
+    public function track(SessionRecord $record) : void
+    {
+        $statement = $this->pdo->prepare(
+            'INSERT INTO auth_sessions (
+                session_id, user_id, created_at, last_seen_at, idle_expires_at, absolute_expires_at,
+                ip_created, user_agent_created, revoked_at, revoke_reason
+            ) VALUES (
+                :session_id, :user_id, :created_at, :last_seen_at, :idle_expires_at, :absolute_expires_at,
+                :ip_created, :user_agent_created, :revoked_at, :revoke_reason
+            )
+            ON CONFLICT (session_id) DO UPDATE SET
+                last_seen_at = EXCLUDED.last_seen_at,
+                idle_expires_at = EXCLUDED.idle_expires_at,
+                absolute_expires_at = EXCLUDED.absolute_expires_at,
+                ip_created = COALESCE(EXCLUDED.ip_created, auth_sessions.ip_created),
+                user_agent_created = COALESCE(EXCLUDED.user_agent_created, auth_sessions.user_agent_created),
+                revoked_at = EXCLUDED.revoked_at,
+                revoke_reason = EXCLUDED.revoke_reason'
+        );
+
+        $statement->execute($this->mapRecord($record));
+    }
+
+    public function find(string $sessionId) : SessionRecord|null
+    {
+        $statement = $this->pdo->prepare('SELECT * FROM auth_sessions WHERE session_id = :session_id LIMIT 1');
+        $statement->execute(['session_id' => $sessionId]);
+        $row = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return is_array($row) ? $this->hydrate($row) : null;
+    }
+
+    public function save(SessionRecord $record) : void
+    {
+        $this->track($record);
+    }
+
+    public function listForUser(UserId $userId) : array
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT * FROM auth_sessions WHERE user_id = :user_id ORDER BY last_seen_at DESC'
+        );
+        $statement->execute(['user_id' => $userId->value]);
+        $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(fn (array $row) : SessionRecord => $this->hydrate($row), $rows);
+    }
+
+    public function revoke(string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void
+    {
+        $statement = $this->pdo->prepare(
+            'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE session_id = :session_id'
+        );
+        $statement->execute([
+            'session_id' => $sessionId,
+            'revoked_at' => $revokedAt->format(DATE_ATOM),
+            'revoke_reason' => $reason,
+        ]);
+    }
+
+    public function revokeForUser(UserId $userId, DateTimeImmutable $revokedAt, string $reason) : void
+    {
+        $statement = $this->pdo->prepare(
+            'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE user_id = :user_id'
+        );
+        $statement->execute([
+            'user_id' => $userId->value,
+            'revoked_at' => $revokedAt->format(DATE_ATOM),
+            'revoke_reason' => $reason,
+        ]);
+    }
+
+    /**
+     * @return array<string, string|int|null>
+     */
+    private function mapRecord(SessionRecord $record) : array
+    {
+        return [
+            'session_id' => $record->sessionId,
+            'user_id' => $record->userId->value,
+            'created_at' => $record->createdAt->format(DATE_ATOM),
+            'last_seen_at' => $record->lastSeenAt->format(DATE_ATOM),
+            'idle_expires_at' => $record->idleExpiresAt->format(DATE_ATOM),
+            'absolute_expires_at' => $record->absoluteExpiresAt->format(DATE_ATOM),
+            'ip_created' => $record->ipCreated,
+            'user_agent_created' => $record->userAgentCreated,
+            'revoked_at' => $record->revokedAt?->format(DATE_ATOM),
+            'revoke_reason' => $record->revokeReason,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $row
+     */
+    private function hydrate(array $row) : SessionRecord
+    {
+        return new SessionRecord(
+            sessionId        : (string) $row['session_id'],
+            userId           : new UserId((int) $row['user_id']),
+            createdAt        : new DateTimeImmutable((string) $row['created_at']),
+            lastSeenAt       : new DateTimeImmutable((string) $row['last_seen_at']),
+            idleExpiresAt    : new DateTimeImmutable((string) $row['idle_expires_at']),
+            absoluteExpiresAt: new DateTimeImmutable((string) $row['absolute_expires_at']),
+            ipCreated        : isset($row['ip_created']) ? (string) $row['ip_created'] : null,
+            userAgentCreated : isset($row['user_agent_created']) ? (string) $row['user_agent_created'] : null,
+            revokedAt        : isset($row['revoked_at']) && $row['revoked_at'] !== null
+                ? new DateTimeImmutable((string) $row['revoked_at'])
+                : null,
+            revokeReason     : isset($row['revoke_reason']) ? (string) $row['revoke_reason'] : null
+        );
+    }
+}
+
+=== examples/persistence/README.md ===
+# Persistence Contract Examples
+
+This directory contains reference persistence artifacts for the auth kernel.
+
+## Included Artifacts
+
+- `PdoSessionRegistry.php`: durable implementation example for
+  `SessionRegistryInterface`
+- `sql/session-registry.sql`: tracked session schema
+- `sql/refresh-token-family.sql`: refresh family and rotation schema
+- `sql/token-revocation.sql`: access token revocation schema
+- `sql/mfa-challenge.sql`: MFA challenge schema
+- `sql/audit-export-cursor.sql`: durable export cursor schema
+
+## Concurrency Notes
+
+- refresh-token reuse detection should lock one token row or family row during
+  rotation
+- use `SELECT ... FOR UPDATE` or the equivalent database locking primitive
+- mark the old token as rotated before committing the replacement token
+- revoke the full family when a reused token appears after rotation
+
+## Cleanup Notes
+
+- prune expired sessions, reset tokens, MFA challenges, authorization codes,
+  and passkey challenges with time-based jobs
+- revoke or delete refresh-token families after retention windows expire
+- keep audit export cursors only as long as the downstream export pipeline
+  requires replay protection
+
+=== examples/persistence/sql/audit-export-cursor.sql ===
+CREATE TABLE auth_audit_export_cursors (
+    exporter_name TEXT PRIMARY KEY,
+    last_exported_at TIMESTAMPTZ NULL,
+    last_event_name TEXT NULL,
+    last_event_fingerprint TEXT NULL,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+=== examples/persistence/sql/mfa-challenge.sql ===
+CREATE TABLE auth_mfa_challenges (
+    challenge_id TEXT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    session_candidate_id TEXT NULL,
+    challenge_type TEXT NOT NULL,
+    expires_at TIMESTAMPTZ NOT NULL,
+    verified_at TIMESTAMPTZ NULL,
+    attempt_count INT NOT NULL DEFAULT 0,
+    blocked_until TIMESTAMPTZ NULL
+);
+
+CREATE INDEX auth_mfa_challenges_user_idx ON auth_mfa_challenges (user_id, expires_at);
+
+=== examples/persistence/sql/refresh-token-family.sql ===
+CREATE TABLE auth_refresh_token_families (
+    family_id TEXT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    client_id TEXT NULL,
+    created_at TIMESTAMPTZ NOT NULL,
+    revoked_at TIMESTAMPTZ NULL,
+    revoke_reason TEXT NULL
+);
+
+CREATE TABLE auth_refresh_tokens (
+    token_id TEXT PRIMARY KEY,
+    family_id TEXT NOT NULL REFERENCES auth_refresh_token_families (family_id),
+    token_hash TEXT NOT NULL UNIQUE,
+    user_id BIGINT NOT NULL,
+    client_id TEXT NULL,
+    replacement_token_id TEXT NULL,
+    expires_at TIMESTAMPTZ NOT NULL,
+    used_at TIMESTAMPTZ NULL,
+    revoked_at TIMESTAMPTZ NULL,
+    reuse_detected_at TIMESTAMPTZ NULL
+);
+
+CREATE INDEX auth_refresh_tokens_family_idx ON auth_refresh_tokens (family_id);
+CREATE INDEX auth_refresh_tokens_hash_idx ON auth_refresh_tokens (token_hash);
+
+=== examples/persistence/sql/session-registry.sql ===
+CREATE TABLE auth_sessions (
+    session_id TEXT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL,
+    last_seen_at TIMESTAMPTZ NOT NULL,
+    idle_expires_at TIMESTAMPTZ NOT NULL,
+    absolute_expires_at TIMESTAMPTZ NOT NULL,
+    ip_created TEXT NULL,
+    user_agent_created TEXT NULL,
+    revoked_at TIMESTAMPTZ NULL,
+    revoke_reason TEXT NULL
+);
+
+CREATE INDEX auth_sessions_user_last_seen_idx ON auth_sessions (user_id, last_seen_at DESC);
+CREATE INDEX auth_sessions_active_idx ON auth_sessions (user_id, revoked_at, idle_expires_at, absolute_expires_at);
+
+=== examples/persistence/sql/token-revocation.sql ===
+CREATE TABLE auth_token_revocations (
+    token_id TEXT PRIMARY KEY,
+    expires_at TIMESTAMPTZ NOT NULL,
+    revoked_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX auth_token_revocations_expiry_idx ON auth_token_revocations (expires_at);
+
+=== examples/policies/AdminPasskeyRequiredPolicy.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Examples\Policies;
+
+use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
+use Avax\Auth\System\Capability\Access\Policy\IdentityPolicyCatalog;
+
+/**
+ * Example: admin routes require phishing-resistant assurance.
+ */
+final readonly class AdminPasskeyRequiredPolicy
+{
+    public function execute() : AccessPolicy
+    {
+        return AccessPolicy::forIdentityPolicy(IdentityPolicyCatalog::admin());
+    }
+}
+
+=== examples/policies/EnforceSeparationOfDuties.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Examples\Policies;
+
+use Avax\Auth\System\Capability\Access\Policy\IdentityPolicyCatalog;
+
+/**
+ * Example: policy-driven separation of duties gate.
+ */
+final readonly class EnforceSeparationOfDuties
+{
+    public function execute() : bool
+    {
+        return IdentityPolicyCatalog::admin()->separationOfDutiesRequired;
+    }
+}
+
+=== examples/policies/RequireApprovalForPrivilegedAction.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Examples\Policies;
+
+use Avax\Auth\System\Capability\Access\Policy\IdentityPolicyCatalog;
+
+/**
+ * Example: host applications can branch on policy for approval workflows.
+ */
+final readonly class RequireApprovalForPrivilegedAction
+{
+    public function execute() : bool
+    {
+        return IdentityPolicyCatalog::admin()->privilegedApprovalRequired;
+    }
+}
+
+=== examples/policies/RequireFreshAssuranceForAdminAction.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Examples\Policies;
+
+use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
+use Avax\Auth\System\Capability\Access\Policy\IdentityPolicyCatalog;
+use Avax\Auth\System\Capability\User\UserPermission;
+
+/**
+ * Example: high-impact admin action requires fresh assurance.
+ */
+final readonly class RequireFreshAssuranceForAdminAction
+{
+    public function execute() : AccessPolicy
+    {
+        return AccessPolicy::forIdentityPolicy(
+            identityPolicy     : IdentityPolicyCatalog::admin(),
+            requiredPermission : new UserPermission('billing.refund.approve')
+        );
+    }
+}
+
+=== examples/policies/TenantAdminPhishingResistantPolicy.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Examples\Policies;
+
+use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
+use Avax\Auth\System\Capability\Access\Policy\IdentityPolicyCatalog;
+
+/**
+ * Example: tenant-admin posture mirrors high-assurance phishing-resistant auth.
+ */
+final readonly class TenantAdminPhishingResistantPolicy
+{
+    public function execute() : AccessPolicy
+    {
+        return AccessPolicy::forIdentityPolicy(IdentityPolicyCatalog::tenantAdmin());
+    }
+}
 
 === examples/session-login.php ===
 <?php
@@ -47146,6 +48451,439 @@ final class ResolveSessionAllowance
     }
 }
 
+=== integrations/diagnostics/JsonLinesAuditExporter.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Diagnostics;
+
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditExporterInterface;
+use JsonException;
+use RuntimeException;
+
+/**
+ * Exports audit events as JSON lines, optionally chained for tamper evidence.
+ */
+final class JsonLinesAuditExporter implements AuditExporterInterface
+{
+    private string|null $previousHash = null;
+
+    public function __construct(
+        private readonly string $path,
+        private readonly NormalizeAuditEvent $normalizeAuditEvent = new NormalizeAuditEvent(),
+        private readonly bool $tamperEvident = true
+    ) {}
+
+    public function export(array $events) : void
+    {
+        $lines = [];
+
+        foreach ($events as $event) {
+            $payload = $this->normalizeAuditEvent->execute($event);
+
+            if ($this->tamperEvident) {
+                $payload['previous_hash'] = $this->previousHash;
+                $payload['record_hash'] = $this->hashPayload($payload);
+                $this->previousHash = $payload['record_hash'];
+            }
+
+            $lines[] = $this->encode($payload);
+        }
+
+        if ($lines === []) {
+            return;
+        }
+
+        file_put_contents($this->path, implode(PHP_EOL, $lines) . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function hashPayload(array $payload) : string
+    {
+        return hash('sha256', $this->encode($payload));
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function encode(array $payload) : string
+    {
+        try {
+            return json_encode($payload, JSON_THROW_ON_ERROR);
+        } catch (JsonException $exception) {
+            throw new RuntimeException('Audit payload could not be encoded.', previous: $exception);
+        }
+    }
+}
+
+=== integrations/diagnostics/MaskAuditContext.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Diagnostics;
+
+/**
+ * Removes or masks sensitive audit context keys before export.
+ */
+final readonly class MaskAuditContext
+{
+    /**
+     * @param list<string> $sensitiveKeys
+     */
+    public function __construct(
+        private array $sensitiveKeys = [
+            'email',
+            'ip_address',
+            'user_agent',
+            'access_token',
+            'refresh_token',
+            'token',
+            'client_secret',
+            'secret',
+            'authorization',
+            'cookie',
+            'password',
+            'password_hash',
+            'code',
+        ]
+    ) {}
+
+    /**
+     * @param array<string, mixed> $context
+     * @return array<string, mixed>
+     */
+    public function execute(array $context) : array
+    {
+        $masked = [];
+
+        foreach ($context as $key => $value) {
+            if ($this->isSensitiveKey($key)) {
+                $masked[$key] = '[redacted]';
+                continue;
+            }
+
+            if (is_array($value)) {
+                $masked[$key] = $this->maskArray($value);
+                continue;
+            }
+
+            $masked[$key] = $value;
+        }
+
+        return $masked;
+    }
+
+    /**
+     * @param array<mixed> $value
+     * @return array<mixed>
+     */
+    private function maskArray(array $value) : array
+    {
+        $masked = [];
+
+        foreach ($value as $itemKey => $itemValue) {
+            if (is_string($itemKey) && $this->isSensitiveKey($itemKey)) {
+                $masked[$itemKey] = '[redacted]';
+                continue;
+            }
+
+            if (is_array($itemValue)) {
+                $masked[$itemKey] = $this->maskArray($itemValue);
+                continue;
+            }
+
+            $masked[$itemKey] = $itemValue;
+        }
+
+        return $masked;
+    }
+
+    private function isSensitiveKey(string $key) : bool
+    {
+        $normalized = strtolower(trim($key));
+
+        foreach ($this->sensitiveKeys as $candidate) {
+            if ($normalized === strtolower($candidate)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+=== integrations/diagnostics/NormalizeAuditEvent.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Diagnostics;
+
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+
+/**
+ * Builds stable export payloads for audit adapters.
+ */
+final readonly class NormalizeAuditEvent
+{
+    public function __construct(
+        private MaskAuditContext $maskAuditContext = new MaskAuditContext(),
+        private bool $maskSensitiveContext = true
+    ) {}
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function execute(AuditEvent $event) : array
+    {
+        $context = $this->maskSensitiveContext
+            ? $this->maskAuditContext->execute($event->context)
+            : $event->context;
+
+        return [
+            'name' => $event->name,
+            'occurred_at' => $event->occurredAt->format(DATE_ATOM),
+            'correlation_id' => $event->correlationId,
+            'context' => $context,
+        ];
+    }
+}
+
+=== integrations/diagnostics/PublishAuditMessageInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Diagnostics;
+
+interface PublishAuditMessageInterface
+{
+    /**
+     * @param array<string, mixed> $message
+     */
+    public function publish(string $topic, array $message) : void;
+}
+
+=== integrations/diagnostics/QueueAuditExporter.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Diagnostics;
+
+use Avax\Auth\System\Flow\Diagnostics\AuditExporterInterface;
+
+/**
+ * Publishes normalized audit events into a queue adapter.
+ */
+final readonly class QueueAuditExporter implements AuditExporterInterface
+{
+    public function __construct(
+        private PublishAuditMessageInterface $publisher,
+        private string $topic = 'auth.audit',
+        private NormalizeAuditEvent $normalizeAuditEvent = new NormalizeAuditEvent()
+    ) {}
+
+    public function export(array $events) : void
+    {
+        foreach ($events as $event) {
+            $this->publisher->publish($this->topic, $this->normalizeAuditEvent->execute($event));
+        }
+    }
+}
+
+=== integrations/diagnostics/SecurityNotification.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Diagnostics;
+
+/**
+ * Outbound security notification emitted from audit events.
+ */
+final readonly class SecurityNotification
+{
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function __construct(
+        public string $name,
+        public string $severity,
+        public array $context = [],
+        public string|null $correlationId = null
+    ) {}
+}
+
+=== integrations/diagnostics/SecurityNotificationExporter.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Diagnostics;
+
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditExporterInterface;
+
+/**
+ * Routes selected high-signal audit events to a notification adapter.
+ */
+final readonly class SecurityNotificationExporter implements AuditExporterInterface
+{
+    public function __construct(
+        private SendSecurityNotificationInterface $sender,
+        private NormalizeAuditEvent $normalizeAuditEvent = new NormalizeAuditEvent()
+    ) {}
+
+    public function export(array $events) : void
+    {
+        foreach ($events as $event) {
+            $notification = $this->mapEvent($event);
+
+            if ($notification === null) {
+                continue;
+            }
+
+            $this->sender->send($notification);
+        }
+    }
+
+    private function mapEvent(AuditEvent $event) : SecurityNotification|null
+    {
+        $payload = $this->normalizeAuditEvent->execute($event);
+
+        return match ($event->name) {
+            'auth.oauth.refresh.reuse_detected' => new SecurityNotification(
+                name          : 'refresh_reuse_detected',
+                severity      : 'critical',
+                context       : $payload,
+                correlationId : $event->correlationId
+            ),
+            'auth.admin.elevation.started' => new SecurityNotification(
+                name          : 'admin_elevation_started',
+                severity      : 'high',
+                context       : $payload,
+                correlationId : $event->correlationId
+            ),
+            'auth.mfa.disabled',
+            'auth.mfa.reset' => new SecurityNotification(
+                name          : 'factor_removed',
+                severity      : 'high',
+                context       : $payload,
+                correlationId : $event->correlationId
+            ),
+            'auth.password.changed' => (($event->context['suspicious_activity'] ?? 0) === 1 || ($event->context['risk_action'] ?? null) === 'review')
+                ? new SecurityNotification(
+                    name          : 'password_changed_after_suspicious_activity',
+                    severity      : 'high',
+                    context       : $payload,
+                    correlationId : $event->correlationId
+                )
+                : null,
+            default => null,
+        };
+    }
+}
+
+=== integrations/diagnostics/SendAuditWebhookInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Diagnostics;
+
+interface SendAuditWebhookInterface
+{
+    /**
+     * @param array<string, mixed> $payload
+     */
+    public function send(array $payload) : void;
+}
+
+=== integrations/diagnostics/SendSecurityNotificationInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Diagnostics;
+
+interface SendSecurityNotificationInterface
+{
+    public function send(SecurityNotification $notification) : void;
+}
+
+=== integrations/diagnostics/SendSyslogMessageInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Diagnostics;
+
+interface SendSyslogMessageInterface
+{
+    public function send(string $severity, string $message) : void;
+}
+
+=== integrations/diagnostics/SyslogAuditExporter.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Diagnostics;
+
+use Avax\Auth\System\Flow\Diagnostics\AuditExporterInterface;
+
+/**
+ * Sends normalized audit events to a syslog-compatible adapter.
+ */
+final readonly class SyslogAuditExporter implements AuditExporterInterface
+{
+    public function __construct(
+        private SendSyslogMessageInterface $sender,
+        private NormalizeAuditEvent $normalizeAuditEvent = new NormalizeAuditEvent()
+    ) {}
+
+    public function export(array $events) : void
+    {
+        foreach ($events as $event) {
+            $payload = $this->normalizeAuditEvent->execute($event);
+            $this->sender->send('info', json_encode($payload, JSON_THROW_ON_ERROR));
+        }
+    }
+}
+
+=== integrations/diagnostics/WebhookAuditExporter.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Diagnostics;
+
+use Avax\Auth\System\Flow\Diagnostics\AuditExporterInterface;
+
+/**
+ * Delivers normalized audit batches to an external webhook adapter.
+ */
+final readonly class WebhookAuditExporter implements AuditExporterInterface
+{
+    public function __construct(
+        private SendAuditWebhookInterface $sender,
+        private NormalizeAuditEvent $normalizeAuditEvent = new NormalizeAuditEvent()
+    ) {}
+
+    public function export(array $events) : void
+    {
+        foreach ($events as $event) {
+            $this->sender->send($this->normalizeAuditEvent->execute($event));
+        }
+    }
+}
+
 === integrations/headers/ReadBearerToken.php ===
 <?php
 
@@ -47210,6 +48948,28 @@ final class ReadBearerToken
     }
 }
 
+=== integrations/http/DpopProofFailed.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Http;
+
+use RuntimeException;
+
+final class DpopProofFailed extends RuntimeException
+{
+    public static function missing() : self
+    {
+        return new self('DPoP proof is required.');
+    }
+
+    public static function invalid(string $reason = 'invalid_proof') : self
+    {
+        return new self("DPoP proof is invalid: {$reason}.");
+    }
+}
+
 === integrations/http/HttpAuthFailure.php ===
 <?php
 
@@ -47253,6 +49013,32 @@ final readonly class HttpAuthenticationInput
         public array       $server = [],
         public bool        $allowSession = true,
         public string|null $sessionCookieName = null
+    ) {}
+}
+
+=== integrations/http/HttpOAuthProofInput.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Http;
+
+/**
+ * Framework-neutral input for sender-constrained OAuth verification.
+ */
+final readonly class HttpOAuthProofInput
+{
+    /**
+     * @param array<string, mixed> $headers
+     * @param array<string, mixed> $server
+     */
+    public function __construct(
+        public string $method,
+        public string $uri,
+        public array $headers = [],
+        public array $server = [],
+        public string|null $accessToken = null,
+        public string|null $expectedTokenThumbprint = null
     ) {}
 }
 
@@ -47422,6 +49208,370 @@ final readonly class MapAuthenticationRequest
         }
 
         return null;
+    }
+}
+
+=== integrations/http/MtlsBindingFailed.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Http;
+
+use RuntimeException;
+
+final class MtlsBindingFailed extends RuntimeException
+{
+    public static function missingCertificate() : self
+    {
+        return new self('mTLS client certificate is required.');
+    }
+
+    public static function mismatch() : self
+    {
+        return new self('mTLS sender constraint does not match the token binding.');
+    }
+}
+
+=== integrations/http/SenderConstraintVerificationFailed.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Http;
+
+use RuntimeException;
+
+final class SenderConstraintVerificationFailed extends RuntimeException
+{
+    public static function mismatch() : self
+    {
+        return new self('OAuth sender constraint does not match the bound token.');
+    }
+}
+
+=== integrations/http/VerifyDpopProof.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Http;
+
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\DpopProofReplayStoreInterface;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
+use Avax\Auth\System\Flow\Token\TokenCodecInterface;
+use DateTimeImmutable;
+
+/**
+ * Verifies a DPoP-like proof and converts it into a sender constraint binding.
+ */
+final readonly class VerifyDpopProof
+{
+    public function __construct(
+        private TokenCodecInterface $codec,
+        private DpopProofReplayStoreInterface $replayStore,
+        private AuditLogInterface $auditLog = new NullAuditLog(),
+        private int $maxAgeSeconds = 300
+    ) {}
+
+    /**
+     * @throws DpopProofFailed
+     */
+    public function execute(HttpOAuthProofInput $input) : OAuthSenderConstraint
+    {
+        $proof = $this->readHeader($input->headers, 'DPoP')
+            ?? $this->readServerValue($input->server, 'HTTP_DPOP');
+
+        if ($proof === null || $proof === '') {
+            $this->recordFailure($input, 'missing_proof');
+            throw DpopProofFailed::missing();
+        }
+
+        $claims = $this->codec->decode($proof);
+
+        if (! is_array($claims)) {
+            $this->recordFailure($input, 'decode_failed');
+            throw DpopProofFailed::invalid('decode_failed');
+        }
+
+        $jti = $claims['jti'] ?? null;
+        $iat = $claims['iat'] ?? null;
+        $htu = $claims['htu'] ?? null;
+        $htm = $claims['htm'] ?? null;
+        $thumbprint = $claims['jkt'] ?? null;
+        $ath = $claims['ath'] ?? null;
+
+        if (
+            ! is_string($jti)
+            || ! is_int($iat)
+            || ! is_string($htu)
+            || ! is_string($htm)
+            || ! is_string($thumbprint)
+        ) {
+            $this->recordFailure($input, 'missing_required_claims');
+            throw DpopProofFailed::invalid('missing_required_claims');
+        }
+
+        $now = new DateTimeImmutable();
+        $issuedAt = new DateTimeImmutable("@{$iat}");
+        $age = abs($now->getTimestamp() - $issuedAt->getTimestamp());
+
+        if ($age > $this->maxAgeSeconds) {
+            $this->recordFailure($input, 'proof_expired');
+            throw DpopProofFailed::invalid('proof_expired');
+        }
+
+        if (strtoupper($htm) !== strtoupper($input->method)) {
+            $this->recordFailure($input, 'method_mismatch');
+            throw DpopProofFailed::invalid('method_mismatch');
+        }
+
+        if (! $this->sameUri($htu, $input->uri)) {
+            $this->recordFailure($input, 'uri_mismatch');
+            throw DpopProofFailed::invalid('uri_mismatch');
+        }
+
+        if ($input->accessToken !== null) {
+            $expectedAth = rtrim(strtr(base64_encode(hash('sha256', $input->accessToken, true)), '+/', '-_'), '=');
+
+            if (! is_string($ath) || ! hash_equals($expectedAth, $ath)) {
+                $this->recordFailure($input, 'access_token_mismatch');
+                throw DpopProofFailed::invalid('access_token_mismatch');
+            }
+        }
+
+        $proofId = hash('sha256', "{$thumbprint}:{$jti}");
+
+        if (! $this->replayStore->remember($proofId, $issuedAt->modify("+{$this->maxAgeSeconds} seconds"))) {
+            $this->recordFailure($input, 'replay_detected');
+            throw DpopProofFailed::invalid('replay_detected');
+        }
+
+        return new OAuthSenderConstraint(
+            type      : OAuthSenderConstraintType::DPOP,
+            thumbprint: $thumbprint
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $headers
+     */
+    private function readHeader(array $headers, string $name) : string|null
+    {
+        foreach ($headers as $candidateKey => $value) {
+            if (strcasecmp($candidateKey, $name) !== 0) {
+                continue;
+            }
+
+            if (is_array($value)) {
+                $value = reset($value);
+            }
+
+            return is_scalar($value) ? (string) $value : null;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<string, mixed> $server
+     */
+    private function readServerValue(array $server, string $name) : string|null
+    {
+        $value = $server[$name] ?? null;
+
+        return is_scalar($value) ? (string) $value : null;
+    }
+
+    private function sameUri(string $expected, string $actual) : bool
+    {
+        return rtrim($expected, '/') === rtrim($actual, '/');
+    }
+
+    private function recordFailure(HttpOAuthProofInput $input, string $reason) : void
+    {
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.oauth.sender_constraint.dpop.failed',
+            occurredAt: new DateTimeImmutable(),
+            context   : [
+                'reason' => $reason,
+                'method' => strtoupper($input->method),
+                'uri' => $input->uri,
+            ]
+        ));
+    }
+}
+
+=== integrations/http/VerifyMtlsSenderConstraint.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Http;
+
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
+use DateTimeImmutable;
+
+/**
+ * Resolves and verifies mTLS-bound token posture from generic server input.
+ */
+final readonly class VerifyMtlsSenderConstraint
+{
+    public function __construct(
+        private AuditLogInterface $auditLog = new NullAuditLog()
+    ) {}
+
+    /**
+     * @throws MtlsBindingFailed
+     */
+    public function execute(HttpOAuthProofInput $input) : OAuthSenderConstraint
+    {
+        $thumbprint = $this->readServerValue($input->server, 'TLS_CLIENT_CERT_SHA256')
+            ?? $this->readHeader($input->headers, 'x-tls-client-cert-sha256');
+
+        if ($thumbprint === null || $thumbprint === '') {
+            $this->recordFailure('missing_certificate', $input);
+            throw MtlsBindingFailed::missingCertificate();
+        }
+
+        if (
+            $input->expectedTokenThumbprint !== null
+            && ! hash_equals($input->expectedTokenThumbprint, $thumbprint)
+        ) {
+            $this->recordFailure('binding_mismatch', $input);
+            throw MtlsBindingFailed::mismatch();
+        }
+
+        return new OAuthSenderConstraint(
+            type      : OAuthSenderConstraintType::MTLS,
+            thumbprint: $thumbprint
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $headers
+     */
+    private function readHeader(array $headers, string $name) : string|null
+    {
+        foreach ($headers as $candidateKey => $value) {
+            if (strcasecmp($candidateKey, $name) !== 0) {
+                continue;
+            }
+
+            if (is_array($value)) {
+                $value = reset($value);
+            }
+
+            return is_scalar($value) ? (string) $value : null;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<string, mixed> $server
+     */
+    private function readServerValue(array $server, string $name) : string|null
+    {
+        $value = $server[$name] ?? null;
+
+        return is_scalar($value) ? (string) $value : null;
+    }
+
+    private function recordFailure(string $reason, HttpOAuthProofInput $input) : void
+    {
+        $this->auditLog->record(new AuditEvent(
+            name      : 'auth.oauth.sender_constraint.mtls.failed',
+            occurredAt: new DateTimeImmutable(),
+            context   : [
+                'reason' => $reason,
+                'method' => strtoupper($input->method),
+                'uri' => $input->uri,
+            ]
+        ));
+    }
+}
+
+=== integrations/http/VerifyOAuthSenderConstraint.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Integrations\Http;
+
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
+use DateTimeImmutable;
+
+/**
+ * Enforces bearer, DPoP, or mTLS policy for a verified OAuth token.
+ */
+final readonly class VerifyOAuthSenderConstraint
+{
+    public function __construct(
+        private VerifyDpopProof $verifyDpopProof,
+        private VerifyMtlsSenderConstraint $verifyMtlsSenderConstraint,
+        private AuditLogInterface $auditLog = new NullAuditLog()
+    ) {}
+
+    /**
+     * @throws DpopProofFailed
+     * @throws MtlsBindingFailed
+     * @throws SenderConstraintVerificationFailed
+     */
+    public function execute(
+        HttpOAuthProofInput $input,
+        OAuthSenderConstraint|null $expectedSenderConstraint = null,
+        OAuthSenderConstraintType|null $requiredSenderConstraint = null
+    ) : OAuthSenderConstraint|null
+    {
+        $requiredType = $expectedSenderConstraint?->type ?? $requiredSenderConstraint;
+
+        if ($requiredType === null) {
+            return null;
+        }
+
+        $binding = match ($requiredType) {
+            OAuthSenderConstraintType::DPOP => $this->verifyDpopProof->execute($input),
+            OAuthSenderConstraintType::MTLS => $this->verifyMtlsSenderConstraint->execute(new HttpOAuthProofInput(
+                method                : $input->method,
+                uri                   : $input->uri,
+                headers               : $input->headers,
+                server                : $input->server,
+                accessToken           : $input->accessToken,
+                expectedTokenThumbprint: $expectedSenderConstraint?->thumbprint
+            )),
+        };
+
+        if ($expectedSenderConstraint !== null && ! $expectedSenderConstraint->equals($binding)) {
+            $this->auditLog->record(new AuditEvent(
+                name      : 'auth.oauth.sender_constraint.mismatch',
+                occurredAt: new DateTimeImmutable(),
+                context   : [
+                    'expected_type' => $expectedSenderConstraint->type->value,
+                    'expected_thumbprint' => $expectedSenderConstraint->thumbprint,
+                    'actual_type' => $binding->type->value,
+                    'actual_thumbprint' => $binding->thumbprint,
+                    'method' => strtoupper($input->method),
+                    'uri' => $input->uri,
+                ]
+            ));
+
+            throw SenderConstraintVerificationFailed::mismatch();
+        }
+
+        return $binding;
     }
 }
 
@@ -49927,12 +52077,15 @@ namespace Avax\Auth\Tests\Flow\Federation;
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
 use Avax\Auth\System\Capability\Federation\FederationProvider;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flow\Federation\FederationFailed;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLoginData;
 use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
 use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLoginData;
+use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomainData;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
@@ -49947,6 +52100,7 @@ final class FederationFlowTest extends TestCase
         $auditLog      = new InMemoryAuditLog();
         $userSource    = new InMemoryUserSource();
         $refreshTokens = new InMemoryRefreshTokenStore();
+        $runtime       = new FakeFederationRuntime();
         $auth          = Auth::configuration()
             ->forUser($userSource)
             ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
@@ -49958,7 +52112,7 @@ final class FederationFlowTest extends TestCase
             )))
             ->withRefreshTokenStore($refreshTokens)
             ->withAuditLog($auditLog)
-            ->withFederationRuntime(new FakeFederationRuntime())
+            ->withFederationRuntime($runtime)
             ->ready();
 
         $connection = $auth->registerFederationConnection(new RegisterFederationConnectionData(
@@ -49966,10 +52120,45 @@ final class FederationFlowTest extends TestCase
             name        : 'Acme OIDC',
             provider    : FederationProvider::OIDC,
             domain      : 'acme.test',
-            groupRoleMap: ['admins' => ['admin']]
+            groupRoleMap: ['admins' => ['admin']],
+            metadataUrl : 'https://idp.example.test/.well-known/openid-configuration',
+            ssoOnly     : true,
+            breakGlassAllowed: true
         ));
 
+        $this->assertNull($auth->discoverFederationConnection('user@acme.test'));
+
+        $verified = $auth->verifyFederationDomain(new VerifyFederationDomainData(
+            connectionId      : $connection->connectionId,
+            verificationToken : $connection->domainVerificationToken ?? ''
+        ));
+        $this->assertTrue($verified->isDomainVerified());
         $this->assertSame($connection->connectionId, $auth->discoverFederationConnection('user@acme.test')?->connectionId);
+
+        $synced = $auth->syncFederationMetadata($connection->connectionId);
+        $this->assertNotNull($synced->metadataHash);
+        $this->assertNotNull($synced->metadataIssuer);
+
+        $this->assertSame(FederationConnectionHealth::HEALTHY, $auth->checkFederationConnectionHealth($connection->connectionId));
+        $this->assertFalse($auth->evaluateFederationBreakGlassBypass($connection->connectionId));
+
+        $runtime->health = FederationConnectionHealth::UNAVAILABLE;
+        $this->assertSame(FederationConnectionHealth::UNAVAILABLE, $auth->checkFederationConnectionHealth($connection->connectionId));
+        $this->assertTrue($auth->evaluateFederationBreakGlassBypass($connection->connectionId));
+
+        try {
+            $auth->startFederatedLogin(new StartFederatedLoginData(
+                connectionId: $connection->connectionId,
+                redirectUri : 'https://app.example.test/callback',
+                state       : 'state-break-glass'
+            ));
+            $this->fail('Expected unavailable federation connection to block SSO start.');
+        } catch (FederationFailed $exception) {
+            $this->assertSame('Federation connection is unavailable.', $exception->getMessage());
+        }
+
+        $runtime->health = FederationConnectionHealth::HEALTHY;
+        $auth->checkFederationConnectionHealth($connection->connectionId);
 
         $started = $auth->startFederatedLogin(new StartFederatedLoginData(
             connectionId: $connection->connectionId,
@@ -49993,6 +52182,67 @@ final class FederationFlowTest extends TestCase
         $this->assertTrue($result->isAuthenticated());
         $this->assertSame('admin@acme.test', $result->user()?->email);
         $this->assertNotEmpty($auth->readRiskSignals($result->user()?->id));
+    }
+
+    public function testFederationConnectionPolicyRejectsTenantCrossingAndInvalidMappings() : void
+    {
+        $auth = $this->buildAuth();
+        $connection = $auth->registerFederationConnection(new RegisterFederationConnectionData(
+            tenantSlug  : 'acme',
+            name        : 'Acme OIDC',
+            provider    : FederationProvider::OIDC,
+            domain      : 'acme.test',
+            groupRoleMap: ['admins' => ['admin']],
+            metadataUrl : 'https://idp.example.test/.well-known/openid-configuration'
+        ));
+
+        $this->assertNotNull($connection->domainVerificationToken);
+
+        try {
+            $auth->registerFederationConnection(new RegisterFederationConnectionData(
+                tenantSlug  : 'other-tenant',
+                name        : 'Cross Tenant',
+                provider    : FederationProvider::OIDC,
+                domain      : 'acme.test',
+                groupRoleMap: ['admins' => ['admin']]
+            ));
+            $this->fail('Expected duplicate domain registration to fail.');
+        } catch (FederationFailed $exception) {
+            $this->assertSame('Federation domain is already registered for another tenant.', $exception->getMessage());
+        }
+
+        try {
+            $auth->registerFederationConnection(new RegisterFederationConnectionData(
+                tenantSlug  : 'invalid-map',
+                name        : 'Invalid Map',
+                provider    : FederationProvider::OIDC,
+                domain      : 'invalid.test',
+                groupRoleMap: ['admins' => ['super-admin']]
+            ));
+            $this->fail('Expected invalid role mapping to fail.');
+        } catch (FederationFailed $exception) {
+            $this->assertSame('Federation group-to-role mapping is invalid.', $exception->getMessage());
+        }
+    }
+
+    private function buildAuth() : Auth
+    {
+        $userSource    = new InMemoryUserSource();
+        $refreshTokens = new InMemoryRefreshTokenStore();
+
+        return Auth::configuration()
+            ->forUser($userSource)
+            ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
+                userSource       : $userSource,
+                codec            : new HmacTokenCodec('federation-secret'),
+                clock            : new Clock(),
+                revocationStore  : new InMemoryTokenRevocationStore(),
+                refreshTokenStore: $refreshTokens
+            )))
+            ->withRefreshTokenStore($refreshTokens)
+            ->withAuditLog(new InMemoryAuditLog())
+            ->withFederationRuntime(new FakeFederationRuntime())
+            ->ready();
     }
 }
 
@@ -52644,6 +54894,41 @@ final class HmacTokenCodecTest extends TestCase
     }
 }
 
+=== tests/Flows/Token/MultiKeyHmacTokenCodecTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Tests\Flow\Token;
+
+use Avax\Auth\System\Flow\Token\HmacTokenCodec;
+use Avax\Auth\System\Flow\Token\MultiKeyHmacTokenCodec;
+use PHPUnit\Framework\TestCase;
+
+final class MultiKeyHmacTokenCodecTest extends TestCase
+{
+    public function testCodecVerifiesTokensAcrossKeyRolloverWindow() : void
+    {
+        $oldKey = new HmacTokenCodec(secret: 'secret-old', keyId: '2026-03-primary');
+        $newKey = new HmacTokenCodec(secret: 'secret-new', keyId: '2026-04-primary');
+        $codec = new MultiKeyHmacTokenCodec(
+            primaryCodec      : $newKey,
+            verificationCodecs: [$oldKey]
+        );
+
+        $claims = [
+            'sub' => 1,
+            'iat' => 1,
+            'nbf' => 1,
+            'exp' => 2,
+            'jti' => 'token-1',
+        ];
+
+        $this->assertSame($claims, $codec->decode($oldKey->encode($claims)));
+        $this->assertSame($claims, $codec->decode($codec->encode($claims)));
+    }
+}
+
 === tests/Foundation/FoundationTest.php ===
 <?php
 
@@ -52951,6 +55236,153 @@ class AuthServiceProviderTest extends TestCase
     }
 }
 
+=== tests/Integrations/Diagnostics/AuditExporterAdaptersTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Tests\Integrations\Diagnostics;
+
+use Avax\Auth\Integrations\Diagnostics\JsonLinesAuditExporter;
+use Avax\Auth\Integrations\Diagnostics\NormalizeAuditEvent;
+use Avax\Auth\Integrations\Diagnostics\PublishAuditMessageInterface;
+use Avax\Auth\Integrations\Diagnostics\QueueAuditExporter;
+use Avax\Auth\Integrations\Diagnostics\SecurityNotification;
+use Avax\Auth\Integrations\Diagnostics\SecurityNotificationExporter;
+use Avax\Auth\Integrations\Diagnostics\SendAuditWebhookInterface;
+use Avax\Auth\Integrations\Diagnostics\SendSecurityNotificationInterface;
+use Avax\Auth\Integrations\Diagnostics\SendSyslogMessageInterface;
+use Avax\Auth\Integrations\Diagnostics\SyslogAuditExporter;
+use Avax\Auth\Integrations\Diagnostics\WebhookAuditExporter;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use DateTimeImmutable;
+use PHPUnit\Framework\TestCase;
+use stdClass;
+
+final class AuditExporterAdaptersTest extends TestCase
+{
+    public function testJsonLinesExporterMasksSensitiveContextAndChainsHashes() : void
+    {
+        $path = tempnam(sys_get_temp_dir(), 'auth-audit-');
+        $this->assertIsString($path);
+
+        $exporter = new JsonLinesAuditExporter($path);
+        $exporter->export([
+            new AuditEvent(
+                name         : 'auth.login.succeeded',
+                occurredAt   : new DateTimeImmutable('2026-04-13T10:00:00+00:00'),
+                context      : ['email' => 'user@example.com', 'ip_address' => '127.0.0.1', 'risk_action' => 'allow'],
+                correlationId: 'corr-1'
+            ),
+            new AuditEvent(
+                name       : 'auth.logout.succeeded',
+                occurredAt : new DateTimeImmutable('2026-04-13T10:01:00+00:00'),
+                context    : ['user_id' => 1]
+            ),
+        ]);
+
+        $lines = file($path, FILE_IGNORE_NEW_LINES);
+        $this->assertIsArray($lines);
+        $this->assertCount(2, $lines);
+
+        $first = json_decode($lines[0], true, 512, JSON_THROW_ON_ERROR);
+        $second = json_decode($lines[1], true, 512, JSON_THROW_ON_ERROR);
+
+        $this->assertSame('[redacted]', $first['context']['email']);
+        $this->assertSame('[redacted]', $first['context']['ip_address']);
+        $this->assertArrayHasKey('record_hash', $first);
+        $this->assertArrayHasKey('record_hash', $second);
+        $this->assertSame($first['record_hash'], $second['previous_hash']);
+
+        @unlink($path);
+    }
+
+    public function testSyslogWebhookAndQueueExportersSendNormalizedPayloads() : void
+    {
+        $capture = new stdClass();
+        $capture->syslog = [];
+        $capture->webhook = [];
+        $capture->queue = [];
+        $event = new AuditEvent(
+            name         : 'auth.oauth.refresh.reuse_detected',
+            occurredAt   : new DateTimeImmutable('2026-04-13T11:00:00+00:00'),
+            context      : ['refresh_token' => 'secret-token', 'user_id' => 1],
+            correlationId: 'corr-2'
+        );
+
+        (new SyslogAuditExporter(
+            sender: new class($capture) implements SendSyslogMessageInterface
+            {
+                public function __construct(private stdClass $capture) {}
+
+                public function send(string $severity, string $message) : void
+                {
+                    $this->capture->syslog[] = [$severity, json_decode($message, true, 512, JSON_THROW_ON_ERROR)];
+                }
+            }
+        ))->export([$event]);
+
+        (new WebhookAuditExporter(
+            sender: new class($capture) implements SendAuditWebhookInterface
+            {
+                public function __construct(private stdClass $capture) {}
+
+                public function send(array $payload) : void
+                {
+                    $this->capture->webhook[] = $payload;
+                }
+            }
+        ))->export([$event]);
+
+        (new QueueAuditExporter(
+            publisher: new class($capture) implements PublishAuditMessageInterface
+            {
+                public function __construct(private stdClass $capture) {}
+
+                public function publish(string $topic, array $message) : void
+                {
+                    $this->capture->queue[] = [$topic, $message];
+                }
+            }
+        ))->export([$event]);
+
+        $this->assertSame('info', $capture->syslog[0][0]);
+        $this->assertSame('[redacted]', $capture->syslog[0][1]['context']['refresh_token']);
+        $this->assertSame('corr-2', $capture->webhook[0]['correlation_id']);
+        $this->assertSame('auth.audit', $capture->queue[0][0]);
+        $this->assertSame('auth.oauth.refresh.reuse_detected', $capture->queue[0][1]['name']);
+    }
+
+    public function testSecurityNotificationExporterRoutesHighSignalEvents() : void
+    {
+        $capture = new stdClass();
+        $capture->notifications = [];
+
+        $exporter = new SecurityNotificationExporter(
+            sender: new class($capture) implements SendSecurityNotificationInterface
+            {
+                public function __construct(private stdClass $capture) {}
+
+                public function send(SecurityNotification $notification) : void
+                {
+                    $this->capture->notifications[] = $notification;
+                }
+            },
+            normalizeAuditEvent: new NormalizeAuditEvent()
+        );
+
+        $exporter->export([
+            new AuditEvent('auth.admin.elevation.started', new DateTimeImmutable(), ['user_id' => 1], 'corr-3'),
+            new AuditEvent('auth.password.changed', new DateTimeImmutable(), ['suspicious_activity' => 1], 'corr-3'),
+            new AuditEvent('auth.login.succeeded', new DateTimeImmutable(), ['user_id' => 1], 'corr-3'),
+        ]);
+
+        $this->assertCount(2, $capture->notifications);
+        $this->assertSame('admin_elevation_started', $capture->notifications[0]->name);
+        $this->assertSame('password_changed_after_suspicious_activity', $capture->notifications[1]->name);
+    }
+}
+
 === tests/Integrations/Http/MapAuthFailureTest.php ===
 <?php
 
@@ -53074,6 +55506,254 @@ final class MapAuthenticationRequestTest extends TestCase
         $this->assertNull($request->bearerToken);
         $this->assertFalse($request->allowSession);
         $this->assertSame('header-agent', $request->userAgent);
+    }
+}
+
+=== tests/Integrations/Http/VerifyOAuthSenderConstraintTest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\Tests\Integrations\Http;
+
+use Avax\Auth\Integrations\Http\DpopProofFailed;
+use Avax\Auth\Integrations\Http\HttpOAuthProofInput;
+use Avax\Auth\Integrations\Http\MtlsBindingFailed;
+use Avax\Auth\Integrations\Http\SenderConstraintVerificationFailed;
+use Avax\Auth\Integrations\Http\VerifyDpopProof;
+use Avax\Auth\Integrations\Http\VerifyMtlsSenderConstraint;
+use Avax\Auth\Integrations\Http\VerifyOAuthSenderConstraint;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\InMemoryDpopProofReplayStore;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
+use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flow\Token\HmacTokenCodec;
+use DateTimeImmutable;
+use PHPUnit\Framework\TestCase;
+
+final class VerifyOAuthSenderConstraintTest extends TestCase
+{
+    public function testBearerPolicyDoesNotRequireConstraintProof() : void
+    {
+        $auditLog = new InMemoryAuditLog();
+        $verifier = new VerifyOAuthSenderConstraint(
+            verifyDpopProof: new VerifyDpopProof(
+                codec      : new HmacTokenCodec('proof-secret'),
+                replayStore: new InMemoryDpopProofReplayStore(),
+                auditLog   : $auditLog
+            ),
+            verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint($auditLog),
+            auditLog                  : $auditLog
+        );
+
+        $binding = $verifier->execute(new HttpOAuthProofInput(
+            method: 'GET',
+            uri   : 'https://api.example.test/me'
+        ));
+
+        $this->assertNull($binding);
+        $this->assertSame([], $auditLog->events());
+    }
+
+    public function testDpopReplayIsRejectedAndAudited() : void
+    {
+        $auditLog = new InMemoryAuditLog();
+        $codec = new HmacTokenCodec('proof-secret', keyId: 'dpop-2026-04');
+        $proof = $codec->encode([
+            'jti' => 'proof-1',
+            'iat' => time(),
+            'htu' => 'https://api.example.test/me',
+            'htm' => 'GET',
+            'jkt' => 'thumb-1',
+            'ath' => $this->hashAccessToken('access-token'),
+        ]);
+        $verifier = new VerifyOAuthSenderConstraint(
+            verifyDpopProof: new VerifyDpopProof(
+                codec      : $codec,
+                replayStore: new InMemoryDpopProofReplayStore(),
+                auditLog   : $auditLog
+            ),
+            verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint($auditLog),
+            auditLog                  : $auditLog
+        );
+        $input = new HttpOAuthProofInput(
+            method     : 'GET',
+            uri        : 'https://api.example.test/me',
+            headers    : ['DPoP' => $proof],
+            accessToken: 'access-token'
+        );
+
+        $binding = $verifier->execute(
+            input                   : $input,
+            requiredSenderConstraint: OAuthSenderConstraintType::DPOP
+        );
+
+        $this->assertSame('thumb-1', $binding?->thumbprint);
+
+        $this->expectException(DpopProofFailed::class);
+        $this->expectExceptionMessage('replay_detected');
+
+        $verifier->execute(
+            input                   : $input,
+            requiredSenderConstraint: OAuthSenderConstraintType::DPOP
+        );
+    }
+
+    public function testDpopProofMismatchAndKeyRotationAreRejected() : void
+    {
+        $auditLog = new InMemoryAuditLog();
+        $oldCodec = new HmacTokenCodec('proof-secret', keyId: 'dpop-2026-04');
+        $newCodec = new HmacTokenCodec('proof-secret', keyId: 'dpop-2026-05');
+        $wrongMethodProof = $oldCodec->encode([
+            'jti' => 'proof-2',
+            'iat' => time(),
+            'htu' => 'https://api.example.test/me',
+            'htm' => 'POST',
+            'jkt' => 'thumb-1',
+            'ath' => $this->hashAccessToken('access-token'),
+        ]);
+        $wrongAthProof = $oldCodec->encode([
+            'jti' => 'proof-3',
+            'iat' => time(),
+            'htu' => 'https://api.example.test/me',
+            'htm' => 'GET',
+            'jkt' => 'thumb-1',
+            'ath' => $this->hashAccessToken('different-token'),
+        ]);
+
+        $verifier = new VerifyDpopProof(
+            codec      : $oldCodec,
+            replayStore: new InMemoryDpopProofReplayStore(),
+            auditLog   : $auditLog
+        );
+
+        try {
+            $verifier->execute(new HttpOAuthProofInput(
+                method     : 'GET',
+                uri        : 'https://api.example.test/me',
+                headers    : ['DPoP' => $wrongMethodProof],
+                accessToken: 'access-token'
+            ));
+            $this->fail('Expected method mismatch.');
+        } catch (DpopProofFailed $exception) {
+            $this->assertStringContainsString('method_mismatch', $exception->getMessage());
+        }
+
+        try {
+            $verifier->execute(new HttpOAuthProofInput(
+                method     : 'GET',
+                uri        : 'https://api.example.test/me',
+                headers    : ['DPoP' => $wrongAthProof],
+                accessToken: 'access-token'
+            ));
+            $this->fail('Expected access token mismatch.');
+        } catch (DpopProofFailed $exception) {
+            $this->assertStringContainsString('access_token_mismatch', $exception->getMessage());
+        }
+
+        $rotatedVerifier = new VerifyDpopProof(
+            codec      : $newCodec,
+            replayStore: new InMemoryDpopProofReplayStore(),
+            auditLog   : $auditLog
+        );
+        $validOldProof = $oldCodec->encode([
+            'jti' => 'proof-4',
+            'iat' => time(),
+            'htu' => 'https://api.example.test/me',
+            'htm' => 'GET',
+            'jkt' => 'thumb-1',
+            'ath' => $this->hashAccessToken('access-token'),
+        ]);
+
+        $this->expectException(DpopProofFailed::class);
+        $this->expectExceptionMessage('decode_failed');
+
+        $rotatedVerifier->execute(new HttpOAuthProofInput(
+            method     : 'GET',
+            uri        : 'https://api.example.test/me',
+            headers    : ['DPoP' => $validOldProof],
+            accessToken: 'access-token'
+        ));
+    }
+
+    public function testSenderConstraintMismatchAndMtlsPolicyAreRejected() : void
+    {
+        $auditLog = new InMemoryAuditLog();
+        $codec = new HmacTokenCodec('proof-secret');
+        $proof = $codec->encode([
+            'jti' => 'proof-5',
+            'iat' => time(),
+            'htu' => 'https://api.example.test/me',
+            'htm' => 'GET',
+            'jkt' => 'thumb-actual',
+            'ath' => $this->hashAccessToken('access-token'),
+        ]);
+        $verifier = new VerifyOAuthSenderConstraint(
+            verifyDpopProof: new VerifyDpopProof(
+                codec      : $codec,
+                replayStore: new InMemoryDpopProofReplayStore(),
+                auditLog   : $auditLog
+            ),
+            verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint($auditLog),
+            auditLog                  : $auditLog
+        );
+
+        try {
+            $verifier->execute(
+                input                    : new HttpOAuthProofInput(
+                    method     : 'GET',
+                    uri        : 'https://api.example.test/me',
+                    headers    : ['DPoP' => $proof],
+                    accessToken: 'access-token'
+                ),
+                expectedSenderConstraint : new OAuthSenderConstraint(
+                    type      : OAuthSenderConstraintType::DPOP,
+                    thumbprint: 'thumb-expected'
+                )
+            );
+            $this->fail('Expected sender-constraint mismatch.');
+        } catch (SenderConstraintVerificationFailed $exception) {
+            $this->assertSame('OAuth sender constraint does not match the bound token.', $exception->getMessage());
+        }
+
+        $this->assertContains(
+            'auth.oauth.sender_constraint.mismatch',
+            array_map(static fn ($event) => $event->name, $auditLog->events())
+        );
+
+        $mtlsBinding = $verifier->execute(
+            input                    : new HttpOAuthProofInput(
+                method : 'GET',
+                uri    : 'https://api.example.test/me',
+                server : ['TLS_CLIENT_CERT_SHA256' => 'mtls-thumb-1']
+            ),
+            expectedSenderConstraint : new OAuthSenderConstraint(
+                type      : OAuthSenderConstraintType::MTLS,
+                thumbprint: 'mtls-thumb-1'
+            )
+        );
+
+        $this->assertSame(OAuthSenderConstraintType::MTLS, $mtlsBinding?->type);
+
+        $this->expectException(MtlsBindingFailed::class);
+        $this->expectExceptionMessage('does not match');
+
+        $verifier->execute(
+            input                    : new HttpOAuthProofInput(
+                method : 'GET',
+                uri    : 'https://api.example.test/me',
+                server : ['TLS_CLIENT_CERT_SHA256' => 'mtls-thumb-2']
+            ),
+            expectedSenderConstraint : new OAuthSenderConstraint(
+                type      : OAuthSenderConstraintType::MTLS,
+                thumbprint: 'mtls-thumb-1'
+            )
+        );
+    }
+
+    private function hashAccessToken(string $token) : string
+    {
+        return rtrim(strtr(base64_encode(hash('sha256', $token, true)), '+/', '-_'), '=');
     }
 }
 
@@ -53306,11 +55986,17 @@ namespace Avax\Auth\Tests\Support;
 
 use Avax\Auth\System\Capability\Federation\FederatedIdentity;
 use Avax\Auth\System\Capability\Federation\FederationConnection;
+use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
+use Avax\Auth\System\Capability\Federation\FederationHealthCheckInterface;
+use Avax\Auth\System\Capability\Federation\FederationMetadata;
+use Avax\Auth\System\Capability\Federation\FederationMetadataRuntimeInterface;
 use Avax\Auth\System\Capability\Federation\FederationRuntimeInterface;
 use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
 
-final class FakeFederationRuntime implements FederationRuntimeInterface
+final class FakeFederationRuntime implements FederationRuntimeInterface, FederationMetadataRuntimeInterface, FederationHealthCheckInterface
 {
+    public FederationConnectionHealth $health = FederationConnectionHealth::HEALTHY;
+
     public function startLogin(
         FederationConnection $connection,
         string $redirectUri,
@@ -53335,6 +56021,20 @@ final class FakeFederationRuntime implements FederationRuntimeInterface
             groups       : array_values(array_map('strval', $payload['groups'] ?? [])),
             emailVerified: (bool) ($payload['email_verified'] ?? true)
         );
+    }
+
+    public function readMetadata(FederationConnection $connection) : FederationMetadata
+    {
+        return new FederationMetadata(
+            issuer         : 'https://idp.example.test/' . $connection->connectionId,
+            singleSignOnUrl: 'https://idp.example.test/sso/' . $connection->connectionId,
+            claims         : ['provider' => $connection->provider->value]
+        );
+    }
+
+    public function checkHealth(FederationConnection $connection) : FederationConnectionHealth
+    {
+        return $this->health;
     }
 }
 
@@ -53478,6 +56178,7 @@ use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
 use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Configuration\AuthBuilder;
+use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\Register\RegistrationData;
@@ -53582,6 +56283,45 @@ final class AuthTest extends TestCase
 
         $this->assertFalse($auth->check());
         $this->assertNull($auth->user());
+    }
+
+    public function testAuthBuilderPropagatesAuditCorrelationIdAcrossFlows() : void
+    {
+        $userSource = new InMemoryUserSource();
+        $refreshTokens = new InMemoryRefreshTokenStore();
+        $auditLog = new InMemoryAuditLog();
+        $auth = Auth::configuration()
+            ->forUser($userSource)
+            ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
+                userSource       : $userSource,
+                codec            : new HmacTokenCodec('auth-correlation-secret'),
+                clock            : new Clock(),
+                revocationStore  : new InMemoryTokenRevocationStore(),
+                refreshTokenStore: $refreshTokens
+            )))
+            ->withRefreshTokenStore($refreshTokens)
+            ->withAuditLog($auditLog)
+            ->withAuditCorrelationId('corr-auth-1')
+            ->ready();
+
+        $auth->register(new RegistrationData(
+            email   : 'trace@example.com',
+            username: 'trace-user',
+            password: 'secret'
+        ));
+        $auth->login(new Credentials(
+            identifier: 'trace@example.com',
+            password  : 'secret'
+        ));
+        $auth->logout();
+
+        $events = $auditLog->events();
+        $this->assertNotSame([], $events);
+        $this->assertContainsOnlyInstancesOf(\Avax\Auth\System\Flow\Diagnostics\AuditEvent::class, $events);
+        $this->assertSame(
+            ['corr-auth-1'],
+            array_values(array_unique(array_filter(array_map(static fn ($event) => $event->correlationId, $events))))
+        );
     }
 }
 

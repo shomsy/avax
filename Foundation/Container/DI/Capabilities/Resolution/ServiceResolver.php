@@ -43,6 +43,7 @@ use Avax\Container\DI\Container;
 use Avax\Container\DI\ContainerInterface;
 use Closure;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
+use ReflectionException;
 use ReflectionFunction;
 use Throwable;
 
@@ -146,7 +147,7 @@ final class ServiceResolver
      * @param string $id
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugService(string $id) : array
     {
@@ -155,7 +156,7 @@ final class ServiceResolver
 
     /**
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function describeService(string $id) : array
     {
@@ -389,7 +390,7 @@ final class ServiceResolver
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function registrationFor(ResolveRequest $request) : ServiceRegistration|null
     {
@@ -869,7 +870,7 @@ final class ServiceResolver
      *
      * @return mixed
      * @throws Throwable
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function resolveDynamicRequest(ResolveRequest $request) : mixed
     {
@@ -925,7 +926,7 @@ final class ServiceResolver
      *
      * @return mixed
      * @throws Throwable
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function evaluateCandidate(mixed $candidate, ResolveRequest $request, ServiceRegistration|null $registration) : mixed
     {
@@ -975,7 +976,7 @@ final class ServiceResolver
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function invokeFactory(Closure $factory, array $overrides = []) : mixed
     {
@@ -993,7 +994,7 @@ final class ServiceResolver
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function applyExtenders(string $abstract, mixed $instance) : mixed
     {
@@ -1326,7 +1327,7 @@ final class ServiceResolver
      * @param array                    $decorationChain
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function explainService(
         string                   $id,
@@ -1468,7 +1469,7 @@ final class ServiceResolver
      * @param list<string> $seen
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function dependencyChainFor(string $serviceId, array $seen) : array
     {
@@ -1611,7 +1612,7 @@ final class ServiceResolver
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugPlanInContext(string $id, array $context) : array
     {
@@ -1632,7 +1633,7 @@ final class ServiceResolver
 
     /**
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugPlan(string $id) : array
     {
@@ -1722,6 +1723,7 @@ final class ServiceResolver
      * @param array<string, list<string>> $dependents
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     private function governanceReport(array $graph, array $dependents) : array
     {
@@ -1869,6 +1871,7 @@ final class ServiceResolver
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugExportsInContext(string $slice, array $context) : array
     {
@@ -1881,7 +1884,7 @@ final class ServiceResolver
      * @param string $slice
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugExports(string $slice = '') : array
     {
@@ -1909,6 +1912,8 @@ final class ServiceResolver
      * @param array<string, mixed> $context
      *
      * @return list<string>
+     * @throws ReflectionException
+     * @throws ReflectionException
      */
     public function validateInContext(array $serviceIds, array $context) : array
     {
@@ -1937,7 +1942,7 @@ final class ServiceResolver
      * @param list<string> $serviceIds
      *
      * @return list<string>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function validate(array $serviceIds = []) : array
     {
@@ -2039,7 +2044,7 @@ final class ServiceResolver
      * @param list<string> $serviceIds
      *
      * @return list<string>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function classesForValidation(array $serviceIds) : array
     {
@@ -2792,6 +2797,7 @@ final class ServiceResolver
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugGroupInContext(string $group, array $context) : array
     {
@@ -2820,7 +2826,7 @@ final class ServiceResolver
      * @param string $group
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugGroup(string $group) : array
     {
@@ -2851,6 +2857,7 @@ final class ServiceResolver
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugSelectionInContext(string $id, array $context) : array
     {
@@ -2872,7 +2879,7 @@ final class ServiceResolver
      * @param string $id
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugSelection(string $id) : array
     {
@@ -2902,7 +2909,7 @@ final class ServiceResolver
      * @param string $tag
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugTags(string $tag) : array
     {
@@ -2923,6 +2930,8 @@ final class ServiceResolver
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
+     * @throws ReflectionException
      */
     public function debugTagsInContext(string $tag, array $context) : array
     {
@@ -2967,7 +2976,7 @@ final class ServiceResolver
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function describeServiceInContext(string $id, array $context) : array
     {
@@ -3683,7 +3692,7 @@ final class ServiceResolver
      * @param string $id
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function why(string $id) : array
     {
@@ -3699,6 +3708,7 @@ final class ServiceResolver
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function whyInContext(string $id, array $context) : array
     {
@@ -3714,6 +3724,7 @@ final class ServiceResolver
 
     /**
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function whoUses(string $id) : array
     {
@@ -3730,7 +3741,7 @@ final class ServiceResolver
      * @param string $id
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugGraph(string $id = '') : array
     {
@@ -3824,6 +3835,7 @@ final class ServiceResolver
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugGraphInContext(string $id, array $context) : array
     {
@@ -4082,6 +4094,7 @@ final class ServiceResolver
 
     /**
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function whatBreaksIf(string $id) : array
     {
@@ -4114,7 +4127,7 @@ final class ServiceResolver
      * @param string $id
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function showOwner(string $id) : array
     {
@@ -4132,6 +4145,7 @@ final class ServiceResolver
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function showOwnerInContext(string $id, array $context) : array
     {
@@ -4206,7 +4220,7 @@ final class ServiceResolver
      * @param array<string, mixed> $context
      *
      * @return mixed
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function callInContext(callable|string $callable, array $parameters, array $context) : mixed
     {
@@ -4226,6 +4240,7 @@ final class ServiceResolver
      *
      * @throws ContainerException
      * @throws ServiceNotFoundException
+     * @throws ReflectionException
      */
     public function call(callable|string $callable, array $parameters = []) : mixed
     {
@@ -4235,7 +4250,7 @@ final class ServiceResolver
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function callableName(callable|string $callable) : string
     {
@@ -4277,7 +4292,7 @@ final class ServiceResolver
      * @param object $target
      *
      * @return object
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function injectInto(object $target) : object
     {
@@ -4288,7 +4303,8 @@ final class ServiceResolver
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
+     * @throws Throwable
      */
     private function injectTarget(object $target, ResolveRequest $request) : object
     {
@@ -4319,7 +4335,7 @@ final class ServiceResolver
      * @param array<string, mixed> $context
      *
      * @return object
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function injectIntoInContext(object $target, array $context) : object
     {
@@ -4331,6 +4347,8 @@ final class ServiceResolver
 
     /**
      * Returns whether one object has injectable members.
+     *
+     * @throws ReflectionException
      */
     public function canInject(object $target) : bool
     {
@@ -4342,7 +4360,7 @@ final class ServiceResolver
     /**
      * Returns the injectable members discovered on one object.
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function inspectInjection(object $target) : InjectionReport
     {
@@ -4396,6 +4414,7 @@ final class ServiceResolver
      * Compiles and marks the runtime as warmed up.
      *
      * @throws ContainerException
+     * @throws ReflectionException
      */
     public function warmCompiled(array $serviceIds = []) : void
     {
@@ -4407,7 +4426,8 @@ final class ServiceResolver
      * @param list<string> $serviceIds
      * @param bool         $warmed
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
+     * @throws Throwable
      */
     private function compileArtifacts(array $serviceIds, bool $warmed) : void
     {
@@ -4451,7 +4471,7 @@ final class ServiceResolver
      * @param list<string> $serviceIds
      *
      * @return list<string>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function classesForWarmup(array $serviceIds) : array
     {
@@ -4599,6 +4619,7 @@ final class ServiceResolver
      * Builds compiled runtime artifacts for the requested service set.
      *
      * @throws ContainerException
+     * @throws ReflectionException
      */
     public function compileContainer(array $serviceIds = []) : void
     {
@@ -4611,6 +4632,7 @@ final class ServiceResolver
      * @return list<mixed>
      * @throws ContainerException
      * @throws ServiceNotFoundException
+     * @throws Throwable
      */
     public function tagged(string $tag) : array
     {
@@ -4626,6 +4648,7 @@ final class ServiceResolver
      * @return list<mixed>
      * @throws ContainerException
      * @throws ServiceNotFoundException
+     * @throws Throwable
      */
     public function taggedInContext(string $tag, array $context) : array
     {
@@ -4668,6 +4691,7 @@ final class ServiceResolver
      * @return list<mixed>
      * @throws ContainerException
      * @throws ServiceNotFoundException
+     * @throws Throwable
      */
     public function grouped(string $group) : array
     {
@@ -4683,6 +4707,7 @@ final class ServiceResolver
      * @return list<mixed>
      * @throws ContainerException
      * @throws ServiceNotFoundException
+     * @throws Throwable
      */
     public function groupedInContext(string $group, array $context) : array
     {
@@ -4822,7 +4847,8 @@ final class ServiceResolver
      * Finishes one compiled object by running injections and decorators.
      *
      * @throws ContainerException
-     * @throws \ReflectionException
+     * @throws ReflectionException
+     * @throws Throwable
      */
     public function finishCompiledService(
         string         $serviceId,

@@ -13,7 +13,9 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Login\AuthenticationResult;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Rotates refresh tokens and re-issues access state.
@@ -21,20 +23,21 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class RefreshAuthentication
 {
     public function __construct(
-        private UserSourceInterface                                    $userSource,
-        private ProjectAuthenticatedUser                               $projectAuthenticatedUser,
-        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock,
-        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        #[\SensitiveParameter] private JwtIdentityInterface|null       $jwtIdentity = null,
-        private DeterministicRiskEngine|null                           $riskEngine = null
+        private UserSourceInterface                                   $userSource,
+        private ProjectAuthenticatedUser                              $projectAuthenticatedUser,
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        #[SensitiveParameter] private JwtIdentityInterface|null       $jwtIdentity = null,
+        private DeterministicRiskEngine|null                          $riskEngine = null
     ) {}
 
     /**
      * @throws RefreshAuthenticationFailed
+     * @throws \DateMalformedStringException
      */
-    public function execute(RefreshAuthenticationRequest $request) : \Avax\Auth\System\Flow\Login\AuthenticationResult
+    public function execute(RefreshAuthenticationRequest $request) : AuthenticationResult
     {
         if ($this->refreshTokenStore === null || $this->jwtIdentity === null) {
             throw RefreshAuthenticationFailed::invalidToken();
@@ -136,7 +139,7 @@ final readonly class RefreshAuthentication
                                                 ]
                                 ));
 
-        return \Avax\Auth\System\Flow\Login\AuthenticationResult::success(
+        return AuthenticationResult::success(
             context     : $context,
             accessToken : $accessToken->token,
             refreshToken: $refreshToken->token

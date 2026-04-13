@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Container\DI\Flows\ExplainService;
 
 use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
+use ReflectionException;
 
 /**
  * Public diagnostics flow for service and slice explainability.
@@ -20,7 +21,7 @@ final readonly class ExplainService
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function describe(string $id, array $context = []) : array
     {
@@ -36,7 +37,7 @@ final readonly class ExplainService
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function debugPlan(string $id, array $context = []) : array
     {
@@ -111,6 +112,7 @@ final readonly class ExplainService
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugExports(string|null $slice = null, array $context = []) : array
     {
@@ -145,6 +147,7 @@ final readonly class ExplainService
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugTags(string $tag, array $context = []) : array
     {
@@ -159,6 +162,7 @@ final readonly class ExplainService
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugGroup(string $group, array $context = []) : array
     {
@@ -173,6 +177,7 @@ final readonly class ExplainService
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws ReflectionException
      */
     public function debugSelection(string $id, array $context = []) : array
     {

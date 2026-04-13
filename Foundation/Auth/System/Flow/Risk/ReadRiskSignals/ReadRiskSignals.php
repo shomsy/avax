@@ -7,12 +7,13 @@ namespace Avax\Auth\System\Flow\Risk\ReadRiskSignals;
 use Avax\Auth\System\Capability\Risk\DeterministicRiskEngine;
 use Avax\Auth\System\Capability\Risk\RiskSignal;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use SensitiveParameter;
 
 final readonly class ReadRiskSignals
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private DeterministicRiskEngine                      $riskEngine
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private DeterministicRiskEngine                     $riskEngine
     ) {}
 
     /**

@@ -9,6 +9,7 @@ use Avax\Container\DI\Capabilities\Resolution\ResolvePlan;
 use Avax\Container\DI\Capabilities\Resolution\ResolveRequest;
 use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
 use Closure;
+use ReflectionException;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
@@ -43,7 +44,7 @@ final class FunctionCaller
      * @param ResolveRequest|null  $request
      *
      * @return mixed
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function call(
         callable|string     $target,
@@ -78,7 +79,15 @@ final class FunctionCaller
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
+     * @throws \Throwable
+     * @throws \Throwable
+     * @throws \Throwable
+     * @throws \Throwable
+     * @throws \Throwable
+     * @throws \Throwable
+     * @throws \Throwable
+     * @throws \Throwable
      */
     private function normalizeTarget(callable|string $target, ResolveRequest|null $request = null) : callable|string|array
     {
@@ -131,7 +140,7 @@ final class FunctionCaller
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function reflect(callable|string|array $target) : ReflectionFunctionAbstract
     {

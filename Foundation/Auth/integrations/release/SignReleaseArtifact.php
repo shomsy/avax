@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Avax\Auth\Integrations\Release;
 
 use RuntimeException;
+use SensitiveParameter;
 
 final readonly class SignReleaseArtifact
 {
-    public function execute(string $artifactPath, #[\SensitiveParameter] string $privateKeyPem) : string
+    public function execute(string $artifactPath, #[SensitiveParameter] string $privateKeyPem) : string
     {
         $artifact = file_get_contents($artifactPath);
 

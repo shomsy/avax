@@ -11,14 +11,15 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class EndAdminElevation
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private AdminElevationStoreInterface                 $elevationStore,
-        private AuditLogInterface                            $auditLog,
-        private Clock                                        $clock
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private AdminElevationStoreInterface                $elevationStore,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock
     ) {}
 
     /**

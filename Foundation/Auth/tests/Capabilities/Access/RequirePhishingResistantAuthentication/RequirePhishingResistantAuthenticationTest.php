@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Capability\Access\RequirePhishingResistantAuthentication;
 
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\PhishingResistantAuthenticationRequired;
 use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
@@ -14,6 +15,9 @@ use PHPUnit\Framework\TestCase;
 
 final class RequirePhishingResistantAuthenticationTest extends TestCase
 {
+    /**
+     * @throws Unauthenticated
+     */
     public function testRequirePhishingResistantAuthenticationSuccess() : void
     {
         $current = new CurrentAuthentication();
@@ -33,6 +37,9 @@ final class RequirePhishingResistantAuthenticationTest extends TestCase
         $this->assertTrue(condition: true);
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function testRequirePhishingResistantAuthenticationFailure() : void
     {
         $current = new CurrentAuthentication();

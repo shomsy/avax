@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\OAuth;
 
 use DateTimeImmutable;
+use SensitiveParameter;
 
 /**
  * One-time authorization code returned to the client redirect layer.
@@ -12,9 +13,9 @@ use DateTimeImmutable;
 final readonly class IssuedAuthorizationCode
 {
     public function __construct(
-        #[\SensitiveParameter] public string $code,
-        #[\SensitiveParameter] public string $codeId,
-        public DateTimeImmutable             $expiresAt,
-        public string|null                   $state = null
+        #[SensitiveParameter] public string $code,
+        #[SensitiveParameter] public string $codeId,
+        public DateTimeImmutable            $expiresAt,
+        public string|null                  $state = null
     ) {}
 }

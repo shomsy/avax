@@ -8,12 +8,13 @@ use Avax\Auth\System\Capability\Passkey\PasskeyCredential;
 use Avax\Auth\System\Capability\Passkey\PasskeyCredentialStoreInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Passkey\PasskeyOperationFailed;
+use SensitiveParameter;
 
 final readonly class RenamePasskey
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        #[\SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore
     ) {}
 
     /**

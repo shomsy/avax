@@ -16,8 +16,10 @@ use Avax\Auth\System\Flow\Token\ResolvedToken;
 use Avax\Auth\System\Flow\Token\ResolvedWorkloadToken;
 use Avax\Auth\System\Flow\Token\TokenCodecInterface;
 use Avax\Auth\System\Flow\Token\TokenRevocationStoreInterface;
+use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
 use InvalidArgumentException;
+use Random\RandomException;
 use SensitiveParameter;
 use Throwable;
 
@@ -29,7 +31,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
     public function __construct(
         private UserSourceInterface                                    $userSource,
         private TokenCodecInterface                                    $codec,
-        private \Avax\Auth\System\Foundation\Clock                     $clock,
+        private Clock                     $clock,
         private TokenRevocationStoreInterface|null                     $revocationStore = null,
         #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
         private int                                                    $tokenExpiry = 3600,
@@ -133,6 +135,9 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
     /**
      * @param list<string> $scopes
+     *
+     * @throws RandomException
+     * @throws \DateMalformedStringException
      */
     public function issueWorkloadToken(
         string $subject,
@@ -278,6 +283,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
     /**
      * @param list<string> $scopes
+     *
+     * @throws \DateMalformedStringException
      */
     public function issueRefreshToken(
         User $user,
@@ -305,6 +312,9 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
     /**
      * @param list<string> $scopes
+     *
+     * @throws RandomException
+     * @throws \DateMalformedStringException
      */
     public function issue(
         User $user,

@@ -15,21 +15,23 @@ use Avax\Auth\System\Flow\OAuth\OAuthTokenExchangeFailed;
 use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class ExchangeRefreshToken
 {
     public function __construct(
-        private OAuthClientRegistryInterface                      $clientRegistry,
-        #[\SensitiveParameter] private RefreshTokenStoreInterface $refreshTokenStore,
-        private UserSourceInterface                               $userSource,
-        #[\SensitiveParameter] private JwtIdentityInterface       $jwtIdentity,
-        private AuditLogInterface                                 $auditLog,
-        private Clock                                             $clock,
-        private DeterministicRiskEngine|null                      $riskEngine = null
+        private OAuthClientRegistryInterface                     $clientRegistry,
+        #[SensitiveParameter] private RefreshTokenStoreInterface $refreshTokenStore,
+        private UserSourceInterface                              $userSource,
+        #[SensitiveParameter] private JwtIdentityInterface       $jwtIdentity,
+        private AuditLogInterface                                $auditLog,
+        private Clock                                            $clock,
+        private DeterministicRiskEngine|null                     $riskEngine = null
     ) {}
 
     /**
      * @throws OAuthTokenExchangeFailed
+     * @throws \DateMalformedStringException
      */
     public function execute(ExchangeRefreshTokenData $data) : OAuthTokenGrant
     {

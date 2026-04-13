@@ -17,22 +17,24 @@ use Avax\Auth\System\Flow\OAuth\OAuthTokenExchangeFailed;
 use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class ExchangeAuthorizationCode
 {
     public function __construct(
-        private OAuthClientRegistryInterface                           $clientRegistry,
-        #[\SensitiveParameter] private AuthorizationCodeStoreInterface $codeStore,
-        private UserSourceInterface                                    $userSource,
-        #[\SensitiveParameter] private JwtIdentityInterface            $jwtIdentity,
-        #[\SensitiveParameter] private RefreshTokenStoreInterface      $refreshTokenStore,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock,
-        private OidcProviderInterface|null                             $oidcProvider = null
+        private OAuthClientRegistryInterface                          $clientRegistry,
+        #[SensitiveParameter] private AuthorizationCodeStoreInterface $codeStore,
+        private UserSourceInterface                                   $userSource,
+        #[SensitiveParameter] private JwtIdentityInterface            $jwtIdentity,
+        #[SensitiveParameter] private RefreshTokenStoreInterface      $refreshTokenStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        private OidcProviderInterface|null                            $oidcProvider = null
     ) {}
 
     /**
      * @throws OAuthTokenExchangeFailed
+     * @throws \DateMalformedStringException
      */
     public function execute(ExchangeAuthorizationCodeData $data) : OAuthTokenGrant
     {

@@ -13,6 +13,8 @@ use Avax\Migrations\Design\Table\Blueprint;
 return new class extends BaseMigration {
     /**
      * Run the migrations.
+     *
+     * @throws Throwable
      */
     public function up() : void
     {
@@ -83,6 +85,8 @@ return new class extends BaseMigration {
 
     /**
      * Reverse the migrations.
+     *
+     * @throws Throwable
      */
     public function down() : void
     {

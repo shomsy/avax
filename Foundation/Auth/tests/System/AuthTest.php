@@ -15,6 +15,7 @@ use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType
 use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Configuration\AuthBuilder;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
 use Avax\Auth\System\Flow\Login\Credentials;
@@ -155,7 +156,7 @@ final class AuthTest extends TestCase
 
         $events = $auditLog->events();
         $this->assertNotSame(expected: [], actual: $events);
-        $this->assertContainsOnlyInstancesOf(className: \Avax\Auth\System\Flow\Diagnostics\AuditEvent::class, haystack: $events);
+        $this->assertContainsOnlyInstancesOf(className: AuditEvent::class, haystack: $events);
         $this->assertSame(
             expected: ['corr-auth-1'],
             actual  : array_values(array_unique(array_filter(array_map(static fn ($event) => $event->correlationId, $events))))

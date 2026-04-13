@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Mfa;
 
 use DateTimeImmutable;
+use SensitiveParameter;
 
 /**
  * Stored one-time backup code hash.
@@ -12,9 +13,9 @@ use DateTimeImmutable;
 final readonly class BackupCodeRecord
 {
     public function __construct(
-        #[\SensitiveParameter] public string $backupCodeId,
-        #[\SensitiveParameter] public string $codeHash,
-        public DateTimeImmutable|null        $usedAt = null
+        #[SensitiveParameter] public string $backupCodeId,
+        #[SensitiveParameter] public string $codeHash,
+        public DateTimeImmutable|null       $usedAt = null
     ) {}
 
     public function isUsed() : bool

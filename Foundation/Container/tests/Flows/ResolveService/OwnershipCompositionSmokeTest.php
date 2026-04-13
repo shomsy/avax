@@ -6,6 +6,8 @@ require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 interface OwnershipGateway
 {
@@ -159,8 +161,8 @@ assertSame(
 
 assertThrows(
 /**
- * @throws \Psr\Container\ContainerExceptionInterface
- * @throws \Psr\Container\NotFoundExceptionInterface
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
  */ expectedClass: ContainerException::class,
     callback     : static function () use ($container) : void {
         $container->get(id: InternalAuditTrail::class);
@@ -170,8 +172,8 @@ assertThrows(
 
 assertThrows(
 /**
- * @throws \Psr\Container\ContainerExceptionInterface
- * @throws \Psr\Container\NotFoundExceptionInterface
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
  */ expectedClass: ContainerException::class,
     callback     : static function () use ($container) : void {
         $container->get(id: BillingFlowUsesInternalAudit::class);

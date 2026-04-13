@@ -8,6 +8,8 @@ use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Container\DI\Capabilities\Runtime\Scopes\DisposableInterface;
 use Avax\Container\DI\Capabilities\Runtime\Scopes\ScopeKind;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 final class AdvancedLifetimeSequence
 {
@@ -121,8 +123,8 @@ assertSame(expected: 1, actual: AdvancedLifetimeSequence::$lazySingletons, messa
 
 assertThrows(
 /**
- * @throws \Psr\Container\ContainerExceptionInterface
- * @throws \Psr\Container\NotFoundExceptionInterface
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
  */ expectedClass: ContainerException::class,
     callback     : static fn () => $container->get(id: RequestScopedDisposableService::class),
     message      : 'Request-scoped services should require an active request scope.'
@@ -138,8 +140,8 @@ assertSame(expected: 1, actual: AdvancedLifetimeSequence::$requestDisposals, mes
 
 assertThrows(
 /**
- * @throws \Psr\Container\ContainerExceptionInterface
- * @throws \Psr\Container\NotFoundExceptionInterface
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
  */ expectedClass: ContainerException::class,
     callback     : static fn () => $container->get(id: JobScopedService::class),
     message      : 'Job-scoped services should require an active job scope.'

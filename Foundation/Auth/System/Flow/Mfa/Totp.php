@@ -6,6 +6,8 @@ namespace Avax\Auth\System\Flow\Mfa;
 
 use DateTimeImmutable;
 use InvalidArgumentException;
+use Random\RandomException;
+use SensitiveParameter;
 
 /**
  * RFC 6238 TOTP implementation owned by the package.
@@ -31,6 +33,9 @@ final readonly class Totp implements TotpInterface
         }
     }
 
+    /**
+     * @throws RandomException
+     */
     public function generateSecret() : string
     {
         return $this->base32Encode(bytes: random_bytes(20));
@@ -60,7 +65,7 @@ final readonly class Totp implements TotpInterface
         return $encoded;
     }
 
-    public function provisioningUri(string $issuer, #[\SensitiveParameter] string $accountLabel, #[\SensitiveParameter] string $secret) : string
+    public function provisioningUri(string $issuer, #[SensitiveParameter] string $accountLabel, #[SensitiveParameter] string $secret) : string
     {
         $issuer       = trim($issuer);
         $accountLabel = trim($accountLabel);
@@ -77,10 +82,10 @@ final readonly class Totp implements TotpInterface
     }
 
     public function verify(
-        #[\SensitiveParameter] string $secret,
-        #[\SensitiveParameter] string $code,
-        DateTimeImmutable             $moment,
-        int|null                      $lastAcceptedTimeStep = null
+        #[SensitiveParameter] string $secret,
+        #[SensitiveParameter] string $code,
+        DateTimeImmutable            $moment,
+        int|null                     $lastAcceptedTimeStep = null
     ) : TotpVerification
     {
         if (preg_match('/^\d{6,8}$/', $code) !== 1) {
@@ -124,7 +129,7 @@ final readonly class Totp implements TotpInterface
         return TotpVerification::invalid();
     }
 
-    private function base32Decode(#[\SensitiveParameter] string $secret) : string|null
+    private function base32Decode(#[SensitiveParameter] string $secret) : string|null
     {
         $alphabet   = array_flip(str_split('ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'));
         $normalized = strtoupper(preg_replace('/[^A-Z2-7]/', '', $secret) ?? '');
@@ -159,7 +164,7 @@ final readonly class Totp implements TotpInterface
         return $bytes;
     }
 
-    private function hotp(#[\SensitiveParameter] string $secret, int $counter) : string
+    private function hotp(#[SensitiveParameter] string $secret, int $counter) : string
     {
         $binaryCounter = pack('N2', ($counter >> 32) & 0xFFFFFFFF, $counter & 0xFFFFFFFF);
         $hash          = hash_hmac('sha1', $binaryCounter, $secret, true);
@@ -177,7 +182,7 @@ final readonly class Totp implements TotpInterface
         return str_pad((string) ($value % $modulo), $this->digits, '0', STR_PAD_LEFT);
     }
 
-    public function codeAt(#[\SensitiveParameter] string $secret, DateTimeImmutable $moment) : string
+    public function codeAt(#[SensitiveParameter] string $secret, DateTimeImmutable $moment) : string
     {
         $secretBytes = $this->base32Decode(secret: $secret);
 

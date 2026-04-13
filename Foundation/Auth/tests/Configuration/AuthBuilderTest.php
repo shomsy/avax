@@ -11,6 +11,7 @@ use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
+use Exception;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -57,7 +58,7 @@ class AuthBuilderTest extends TestCase
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function testAuthBuilderUsesConfiguredIdGenerator() : void
     {

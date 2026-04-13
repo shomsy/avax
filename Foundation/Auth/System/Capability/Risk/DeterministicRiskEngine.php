@@ -7,6 +7,7 @@ namespace Avax\Auth\System\Capability\Risk;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserRole;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Small deterministic risk engine for environment changes and token abuse.
@@ -20,9 +21,9 @@ final readonly class DeterministicRiskEngine
     ) {}
 
     public function assessSuccessfulAuthentication(
-        User                               $user,
-        #[\SensitiveParameter] string|null $ipAddress,
-        string|null                        $userAgent
+        User                              $user,
+        #[SensitiveParameter] string|null $ipAddress,
+        string|null                       $userAgent
     ) : RiskDecision
     {
         $userId = $user->getId()->value;

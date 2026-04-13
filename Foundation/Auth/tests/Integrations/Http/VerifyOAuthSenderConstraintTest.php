@@ -18,6 +18,7 @@ use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
+use SensitiveParameter;
 
 final class VerifyOAuthSenderConstraintTest extends TestCase
 {
@@ -259,7 +260,7 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
         );
     }
 
-    private function hashAccessToken(#[\SensitiveParameter] string $token) : string
+    private function hashAccessToken(#[SensitiveParameter] string $token) : string
     {
         return rtrim(strtr(base64_encode(hash('sha256', $token, true)), '+/', '-_'), '=');
     }

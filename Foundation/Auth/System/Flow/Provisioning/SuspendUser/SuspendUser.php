@@ -13,17 +13,18 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class SuspendUser
 {
     public function __construct(
-        private ProvisionableUserSourceInterface                       $userSource,
-        private RequireAdminElevation                                  $requireAdminElevation,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock,
-        #[\SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
-        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        private AdminElevationStoreInterface|null                      $adminElevationStore = null
+        private ProvisionableUserSourceInterface                      $userSource,
+        private RequireAdminElevation                                 $requireAdminElevation,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        private AdminElevationStoreInterface|null                     $adminElevationStore = null
     ) {}
 
     public function execute(int $userId) : void

@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\ReadCurrentUser;
 
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use SensitiveParameter;
 
 /**
  * Retrieve the currently authenticated user entity.
@@ -15,7 +16,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 final readonly class ReadCurrentUser
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication
     ) {}
 
     public function execute() : AuthenticatedUser|null

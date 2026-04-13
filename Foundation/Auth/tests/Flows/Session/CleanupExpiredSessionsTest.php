@@ -9,14 +9,18 @@ use Avax\Auth\System\Capability\Session\SessionRecord;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Flow\Session\CleanupExpiredSessions\CleanupExpiredSessions;
 use Avax\Auth\System\Foundation\Clock;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 final class CleanupExpiredSessionsTest extends TestCase
 {
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function testCleanupRemovesExpiredAndRevokedSessions() : void
     {
         $registry = new InMemorySessionRegistry();
-        $now      = new \DateTimeImmutable();
+        $now      = new DateTimeImmutable();
         $registry->track(record: new SessionRecord(
             sessionId        : 'expired',
             userId           : new UserId(value: 1),

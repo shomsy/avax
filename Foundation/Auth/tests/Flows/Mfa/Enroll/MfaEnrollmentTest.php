@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flow\Mfa\Enroll;
 
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
@@ -29,6 +31,9 @@ use PHPUnit\Framework\TestCase;
  */
 final class MfaEnrollmentTest extends TestCase
 {
+    /**
+     * @throws Unauthenticated
+     */
     public function testEnrollmentStartsAndCompletesOnlyAfterValidTotpProof() : void
     {
         $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));
@@ -60,14 +65,14 @@ final class MfaEnrollmentTest extends TestCase
         $enrollment = $start->execute();
         $this->assertSame(expected: MfaStatus::ENROLLMENT_PENDING, actual: $enrollment->status);
         $this->assertStringStartsWith(prefix: 'otpauth://totp/', string: $enrollment->otpauthUri);
-        $this->assertFalse(condition: $mfaStore->isEnabled(userId: new \Avax\Auth\System\Capability\User\UserId(value: 1)));
+        $this->assertFalse(condition: $mfaStore->isEnabled(userId: new UserId(value: 1)));
 
         $backupCodes = $confirm->execute(data: new ConfirmMfaEnrollmentData(
                                              code: $totp->codeAt(secret: $enrollment->secret(), moment: $clock->now())
                                          ));
 
         $this->assertCount(expectedCount: 10, haystack: $backupCodes->codes);
-        $this->assertTrue(condition: $mfaStore->isEnabled(userId: new \Avax\Auth\System\Capability\User\UserId(value: 1)));
+        $this->assertTrue(condition: $mfaStore->isEnabled(userId: new UserId(value: 1)));
         $this->assertTrue(condition: $currentAuthentication->read()->user()?->mfaEnabled);
         $this->assertNotNull(actual: $currentAuthentication->read()->mfaVerifiedAt());
         $this->assertSame(   expected: [
@@ -95,6 +100,9 @@ final class MfaEnrollmentTest extends TestCase
         return $currentAuthentication;
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function testEnrollmentRejectsInvalidFirstCodeAndDoesNotHalfEnableMfa() : void
     {
         $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));
@@ -129,11 +137,14 @@ final class MfaEnrollmentTest extends TestCase
         try {
             $confirm->execute(data: new ConfirmMfaEnrollmentData(code: '000000'));
         } finally {
-            $this->assertFalse(condition: $mfaStore->isEnabled(userId: new \Avax\Auth\System\Capability\User\UserId(value: 1)));
-            $this->assertSame(expected: MfaStatus::ENROLLMENT_PENDING, actual: $mfaStore->status(userId: new \Avax\Auth\System\Capability\User\UserId(value: 1)));
+            $this->assertFalse(condition: $mfaStore->isEnabled(userId: new UserId(value: 1)));
+            $this->assertSame(expected: MfaStatus::ENROLLMENT_PENDING, actual: $mfaStore->status(userId: new UserId(value: 1)));
         }
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function testEnrollmentCanBeCancelledSafely() : void
     {
         $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));
@@ -157,9 +168,12 @@ final class MfaEnrollmentTest extends TestCase
         $start->execute();
         $cancel->execute();
 
-        $this->assertSame(expected: MfaStatus::DISABLED, actual: $mfaStore->status(userId: new \Avax\Auth\System\Capability\User\UserId(value: 1)));
+        $this->assertSame(expected: MfaStatus::DISABLED, actual: $mfaStore->status(userId: new UserId(value: 1)));
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function testEnrollmentExpires() : void
     {
         $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));

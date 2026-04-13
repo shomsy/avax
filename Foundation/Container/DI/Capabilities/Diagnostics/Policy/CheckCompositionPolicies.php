@@ -19,6 +19,8 @@ use Avax\Container\DI\Capabilities\Runtime\Scopes\ResettableInterface;
 use Avax\Container\DI\Container;
 use Avax\Container\DI\ContainerInterface;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
+use ReflectionException;
+use SensitiveParameter;
 
 /**
  * Evaluates structural composition policies and returns machine-readable findings.
@@ -30,7 +32,7 @@ final readonly class CheckCompositionPolicies
      * @param array<string, list<string>> $dependents
      *
      * @return array<string, list<array{code: string, severity: string, category: string, message: string}>>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function check(
         array                  $graph,
@@ -249,11 +251,11 @@ final readonly class CheckCompositionPolicies
      * @return array{code: string, severity: string, category: string, message: string}
      */
     private function finding(
-        ResolutionPolicy              $policy,
-        #[\SensitiveParameter] string $code,
-        string                        $severity,
-        string                        $category,
-        string                        $message
+        ResolutionPolicy             $policy,
+        #[SensitiveParameter] string $code,
+        string                       $severity,
+        string                       $category,
+        string                       $message
     ) : array
     {
         return [

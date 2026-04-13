@@ -14,6 +14,7 @@ use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Flow\Register\RegistrationFailed;
 use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
+use Exception;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -23,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 class RegisterTest extends TestCase
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function testRegisterSuccess() : void
     {

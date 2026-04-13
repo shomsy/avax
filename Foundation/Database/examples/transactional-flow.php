@@ -12,12 +12,14 @@
 
 declare(strict_types=1);
 
+use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Identity\IdentityMap;
 use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 use Avax\Database\QueryBuilder\Core\Executor\PDOExecutor;
 use Avax\Database\QueryBuilder\Core\Executor\QueryOrchestrator;
 use Avax\Database\QueryBuilder\Core\Grammar\MySQLGrammar;
 use Avax\Database\Support\ExecutionScope;
+use Avax\Database\Transaction\Transaction;
 use Avax\Database\Transaction\TransactionManager;
 
 // 1. Bootstrap the infrastructure
@@ -25,7 +27,7 @@ $pdo = new PDO(dsn: 'mysql:host=localhost;dbname=example', username: 'user', pas
 $pdo->setAttribute(attribute: PDO::ATTR_ERRMODE, value: PDO::ERRMODE_EXCEPTION);
 
 $grammar        = new MySQLGrammar;
-$connection     = new class($pdo) implements \Avax\Database\Connection\Contracts\DatabaseConnection {
+$connection     = new class($pdo) implements DatabaseConnection {
     public function __construct(private PDO $pdo) {}
 
     public function getConnection() : PDO { return $this->pdo; }
@@ -41,7 +43,7 @@ $connection     = new class($pdo) implements \Avax\Database\Connection\Contracts
     public function disconnect() : void {}
 };
 $executor       = new PDOExecutor(connection: $connection, connectionName: 'primary');
-$transactionMgr = \Avax\Database\Transaction\Transaction::on(connection: $connection);
+$transactionMgr = Transaction::on(connection: $connection);
 $orchestrator   = new QueryOrchestrator(
     executor          : $executor,
     transactionManager: $transactionMgr

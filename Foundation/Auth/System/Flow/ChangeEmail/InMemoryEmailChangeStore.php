@@ -6,13 +6,18 @@ namespace Avax\Auth\System\Flow\ChangeEmail;
 
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
+use Random\RandomException;
+use SensitiveParameter;
 
 final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
 {
     /** @var array<string, array{user_id: int, new_email: string, expires_at: int}> */
     private array $records = [];
 
-    public function issue(UserId $userId, #[\SensitiveParameter] string $newEmail, DateTimeImmutable $expiresAt) : EmailChangeChallenge
+    /**
+     * @throws RandomException
+     */
+    public function issue(UserId $userId, #[SensitiveParameter] string $newEmail, DateTimeImmutable $expiresAt) : EmailChangeChallenge
     {
         $token = bin2hex(random_bytes(32));
         $this->records[hash('sha256', $token)] = [
@@ -28,7 +33,10 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
         );
     }
 
-    public function consume(#[\SensitiveParameter] string $token, DateTimeImmutable $now) : EmailChangeRecord|null
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function consume(#[SensitiveParameter] string $token, DateTimeImmutable $now) : EmailChangeRecord|null
     {
         $key    = hash('sha256', $token);
         $record = $this->records[$key] ?? null;

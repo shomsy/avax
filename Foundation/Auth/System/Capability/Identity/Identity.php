@@ -11,6 +11,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
 use DateTimeImmutable;
 use InvalidArgumentException;
+use SensitiveParameter;
 
 /**
  * Unified identity façade that coordinates session and JWT authentication state.
@@ -18,8 +19,8 @@ use InvalidArgumentException;
 final readonly class Identity implements IdentityInterface
 {
     public function __construct(
-        #[\SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
-        #[\SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
+        #[SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
+        #[SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
     )
     {
         if ($this->sessionIdentity === null && $this->jwtIdentity === null) {

@@ -15,6 +15,8 @@ use Avax\Auth\System\Flow\Mfa\MfaChallengeFailed;
 use Avax\Auth\System\Flow\Mfa\MfaChallengePurpose;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use Random\RandomException;
+use SensitiveParameter;
 
 /**
  * Starts MFA challenges for login completion and step-up actions.
@@ -22,20 +24,20 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class StartMfaChallenge
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface                            $mfaStore,
-        private MfaChallengeStoreInterface                   $challengeStore,
-        private AuditLogInterface                            $auditLog,
-        private Clock                                        $clock,
-        private int                                          $expiresAfterSeconds = 300,
-        private int                                          $maxAttempts = 5
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private MfaStoreInterface                           $mfaStore,
+        private MfaChallengeStoreInterface                  $challengeStore,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock,
+        private int                                         $expiresAfterSeconds = 300,
+        private int                                         $maxAttempts = 5
     ) {}
 
     /**
      * @throws Unauthenticated
      * @throws MfaChallengeFailed
      */
-    public function execute(#[\SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
+    public function execute(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
     {
         $user = $this->currentAuthentication->read()->user();
 
@@ -53,12 +55,14 @@ final readonly class StartMfaChallenge
 
     /**
      * @throws MfaChallengeFailed
+     * @throws \DateMalformedStringException
+     * @throws RandomException
      */
     private function issueForUserId(
-        UserId                             $userId,
-        MfaChallengePurpose                $purpose,
-        #[\SensitiveParameter] string|null $ipAddress,
-        string|null                        $userAgent
+        UserId                            $userId,
+        MfaChallengePurpose               $purpose,
+        #[SensitiveParameter] string|null $ipAddress,
+        string|null                       $userAgent
     ) : MfaChallenge
     {
         if (! $this->mfaStore->isEnabled(userId: $userId)) {
@@ -96,7 +100,7 @@ final readonly class StartMfaChallenge
     /**
      * @throws MfaChallengeFailed
      */
-    public function issueForLogin(User $user, #[\SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
+    public function issueForLogin(User $user, #[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : MfaChallenge
     {
         return $this->issueForUserId(
             userId   : $user->getId(),

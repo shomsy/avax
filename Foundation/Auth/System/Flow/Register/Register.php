@@ -13,7 +13,9 @@ use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
+use DateTimeImmutable;
 use SensitiveParameter;
 
 /**
@@ -35,6 +37,7 @@ final readonly class Register
 
     /**
      * @throws RegistrationFailed
+     * @throws RateLimitException
      */
     public function execute(RegistrationData $data) : RegistrationResult
     {
@@ -66,7 +69,7 @@ final readonly class Register
         $this->rateLimit?->reset(identifier: $data->email);
         $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.register.succeeded',
-                                    occurredAt: new \DateTimeImmutable(),
+                                    occurredAt: new DateTimeImmutable(),
                                     context   : [
                                                     'user_id'    => $createdUser->getId()->value,
                                                     'email'      => strtolower($createdUser->getEmail()->value),

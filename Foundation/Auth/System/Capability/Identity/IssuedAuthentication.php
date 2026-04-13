@@ -8,6 +8,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
 use Avax\Auth\System\Flow\Token\IssuedRefreshToken;
 use Avax\Auth\System\Flow\Token\IssuedToken;
 use DateTimeImmutable;
+use SensitiveParameter;
 
 /**
  * Internal aggregate returned when auth state is established.
@@ -15,11 +16,11 @@ use DateTimeImmutable;
 final readonly class IssuedAuthentication
 {
     public function __construct(
-        public AuthenticationMode                             $mode,
-        #[\SensitiveParameter] public string|null             $sessionId = null,
-        #[\SensitiveParameter] public IssuedToken|null        $accessToken = null,
-        #[\SensitiveParameter] public IssuedRefreshToken|null $refreshToken = null,
-        public DateTimeImmutable|null                         $mfaVerifiedAt = null,
-        public bool                                           $phishingResistant = false
+        public AuthenticationMode                            $mode,
+        #[SensitiveParameter] public string|null             $sessionId = null,
+        #[SensitiveParameter] public IssuedToken|null        $accessToken = null,
+        #[SensitiveParameter] public IssuedRefreshToken|null $refreshToken = null,
+        public DateTimeImmutable|null                        $mfaVerifiedAt = null,
+        public bool                                          $phishingResistant = false
     ) {}
 }

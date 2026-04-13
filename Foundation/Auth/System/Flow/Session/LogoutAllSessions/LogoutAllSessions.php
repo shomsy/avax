@@ -13,6 +13,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Revokes every tracked session for the current user.
@@ -20,12 +21,12 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class LogoutAllSessions
 {
     public function __construct(
-        private IdentityInterface                                      $identity,
-        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock,
-        #[\SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
-        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
+        private IdentityInterface                                     $identity,
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
     ) {}
 
     /**

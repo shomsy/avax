@@ -6,6 +6,8 @@ namespace Avax\Auth\System\Flow\Recover;
 
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
+use Random\RandomException;
+use SensitiveParameter;
 
 /**
  * In-memory password reset storage for tests and demos.
@@ -15,6 +17,9 @@ final class InMemoryPasswordResetStore implements PasswordResetStoreInterface, P
     /** @var array<string, array{user_id: int, expires_at: int}> */
     private array $records = [];
 
+    /**
+     * @throws RandomException
+     */
     public function issue(UserId $userId, DateTimeImmutable $expiresAt) : PasswordResetChallenge
     {
         $token                                 = bin2hex(random_bytes(32));
@@ -30,7 +35,7 @@ final class InMemoryPasswordResetStore implements PasswordResetStoreInterface, P
         );
     }
 
-    public function consume(#[\SensitiveParameter] string $token, DateTimeImmutable $now) : UserId|null
+    public function consume(#[SensitiveParameter] string $token, DateTimeImmutable $now) : UserId|null
     {
         $key    = hash('sha256', $token);
         $record = $this->records[$key] ?? null;

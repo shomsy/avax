@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Mfa\Challenge;
 
 use Avax\Auth\System\Capability\User\UserId;
+use DateTimeImmutable;
 
 /**
  * In-memory MFA challenge store for tests and demos.
@@ -43,7 +44,7 @@ final class InMemoryMfaChallengeStore implements MfaChallengeStoreInterface, Pru
         }
     }
 
-    public function pruneExpired(\DateTimeImmutable $now) : int
+    public function pruneExpired(DateTimeImmutable $now) : int
     {
         $removed = 0;
 

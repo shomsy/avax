@@ -8,6 +8,8 @@ use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterfa
 use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
 use Avax\Container\DI\ContainerInterface;
 use Avax\Container\DI\Flows\BootProviders\BootProviders;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 interface DeferredProvidedContract
 {
@@ -38,8 +40,8 @@ final class BaseProvider implements ServiceProviderInterface
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function boot() : void
     {
@@ -58,8 +60,8 @@ final class DemoProvider implements ServiceProviderInterface
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function register() : void
     {
@@ -73,8 +75,8 @@ final class DemoProvider implements ServiceProviderInterface
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function boot() : void
     {

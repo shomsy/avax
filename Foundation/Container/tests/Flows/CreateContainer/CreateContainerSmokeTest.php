@@ -5,6 +5,8 @@ declare(strict_types=1);
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 interface CreateGreeterContract
 {
@@ -32,8 +34,8 @@ assertInstanceOf(expectedClass: NeedsCreateGreeter::class, value: $resolved, mes
 assertSame(expected: 'hi', actual: $resolved->greeter->message(), message: 'Bound dependency should be injected.');
 assertThrows(
 /**
- * @throws \Psr\Container\ContainerExceptionInterface
- * @throws \Psr\Container\NotFoundExceptionInterface
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
  */ expectedClass: ServiceNotFoundException::class,
     callback     : static fn () => $container->get(id: 'Missing\\Service'),
     message      : 'Missing services must use the not-found contract.'

@@ -27,4 +27,14 @@ final class ScimFailed extends RuntimeException
     {
         return new self(message: 'SCIM provisioned identity was not found.');
     }
+
+    public static function invalidBulkRequest(string $message) : self
+    {
+        return new self(message: $message);
+    }
+
+    public static function tooManyBulkOperations(int $provided, int $maximum) : self
+    {
+        return new self(message: "Too many bulk operations: {$provided}. Maximum allowed: {$maximum}");
+    }
 }

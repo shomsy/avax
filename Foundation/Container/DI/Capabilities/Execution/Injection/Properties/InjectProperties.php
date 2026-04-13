@@ -9,6 +9,7 @@ use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Container\DI\Capabilities\Resolution\ResolveRequest;
 use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
 use Closure;
+use Throwable;
 
 /**
  * Applies property injection from one compiled or reflected service blueprint.
@@ -25,7 +26,7 @@ final class InjectProperties
      * @param ServiceResolver      $resolver
      * @param ResolveRequest       $request
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function inject(
         object           $target,

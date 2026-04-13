@@ -156,6 +156,7 @@ use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGenerator;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use RuntimeException;
+use SensitiveParameter;
 
 /**
  * Fluent builder for creating Auth system instances.
@@ -237,7 +238,7 @@ final class AuthBuilder
     /**
      * Configure a custom password hasher.
      */
-    public function usingHasher(#[\SensitiveParameter] PasswordHasher $passwordHasher) : self
+    public function usingHasher(#[SensitiveParameter] PasswordHasher $passwordHasher) : self
     {
         $this->passwordHasher = $passwordHasher;
 
@@ -268,7 +269,7 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withEmailVerificationState(#[\SensitiveParameter] EmailVerificationStateStoreInterface $emailVerificationState) : self
+    public function withEmailVerificationState(#[SensitiveParameter] EmailVerificationStateStoreInterface $emailVerificationState) : self
     {
         $this->emailVerificationState = $emailVerificationState;
 
@@ -282,28 +283,28 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withRefreshTokenStore(#[\SensitiveParameter] RefreshTokenStoreInterface $refreshTokenStore) : self
+    public function withRefreshTokenStore(#[SensitiveParameter] RefreshTokenStoreInterface $refreshTokenStore) : self
     {
         $this->refreshTokenStore = $refreshTokenStore;
 
         return $this;
     }
 
-    public function withPasswordResetStore(#[\SensitiveParameter] PasswordResetStoreInterface $passwordResetStore) : self
+    public function withPasswordResetStore(#[SensitiveParameter] PasswordResetStoreInterface $passwordResetStore) : self
     {
         $this->passwordResetStore = $passwordResetStore;
 
         return $this;
     }
 
-    public function withEmailVerificationStore(#[\SensitiveParameter] EmailVerificationStoreInterface $emailVerificationStore) : self
+    public function withEmailVerificationStore(#[SensitiveParameter] EmailVerificationStoreInterface $emailVerificationStore) : self
     {
         $this->emailVerificationStore = $emailVerificationStore;
 
         return $this;
     }
 
-    public function withEmailChangeStore(#[\SensitiveParameter] EmailChangeStoreInterface $emailChangeStore) : self
+    public function withEmailChangeStore(#[SensitiveParameter] EmailChangeStoreInterface $emailChangeStore) : self
     {
         $this->emailChangeStore = $emailChangeStore;
 
@@ -324,7 +325,7 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withPasswordResetThrottle(#[\SensitiveParameter] AttemptThrottle $passwordResetThrottle) : self
+    public function withPasswordResetThrottle(#[SensitiveParameter] AttemptThrottle $passwordResetThrottle) : self
     {
         $this->passwordResetThrottle = $passwordResetThrottle;
 
@@ -345,21 +346,21 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withSessionRegistry(#[\SensitiveParameter] SessionRegistryInterface $sessionRegistry) : self
+    public function withSessionRegistry(#[SensitiveParameter] SessionRegistryInterface $sessionRegistry) : self
     {
         $this->sessionRegistry = $sessionRegistry;
 
         return $this;
     }
 
-    public function withOAuthClientRegistry(#[\SensitiveParameter] OAuthClientRegistryInterface $oauthClientRegistry) : self
+    public function withOAuthClientRegistry(#[SensitiveParameter] OAuthClientRegistryInterface $oauthClientRegistry) : self
     {
         $this->oauthClientRegistry = $oauthClientRegistry;
 
         return $this;
     }
 
-    public function withAuthorizationCodeStore(#[\SensitiveParameter] AuthorizationCodeStoreInterface $authorizationCodeStore) : self
+    public function withAuthorizationCodeStore(#[SensitiveParameter] AuthorizationCodeStoreInterface $authorizationCodeStore) : self
     {
         $this->authorizationCodeStore = $authorizationCodeStore;
 
@@ -387,7 +388,7 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withPasskeyCredentialStore(#[\SensitiveParameter] PasskeyCredentialStoreInterface $passkeyCredentialStore) : self
+    public function withPasskeyCredentialStore(#[SensitiveParameter] PasskeyCredentialStoreInterface $passkeyCredentialStore) : self
     {
         $this->passkeyCredentialStore = $passkeyCredentialStore;
 
@@ -458,14 +459,14 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withTenantSecurityConfigurationStore(#[\SensitiveParameter] TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore) : self
+    public function withTenantSecurityConfigurationStore(#[SensitiveParameter] TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore) : self
     {
         $this->tenantSecurityConfigurationStore = $tenantSecurityConfigurationStore;
 
         return $this;
     }
 
-    public function withTenantSecurityChangeRequestStore(#[\SensitiveParameter] TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore) : self
+    public function withTenantSecurityChangeRequestStore(#[SensitiveParameter] TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore) : self
     {
         $this->tenantSecurityChangeRequestStore = $tenantSecurityChangeRequestStore;
 

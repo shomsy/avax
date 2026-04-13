@@ -7,6 +7,7 @@ namespace Avax\Container\DI\Capabilities\Diagnostics\Policy;
 use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
 use Avax\Container\DI\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
 use Avax\Container\DI\Capabilities\Resolution\ResolutionPolicy;
+use ReflectionException;
 
 /**
  * Runs the policy lane as a separate governance stage over the authored graph.
@@ -30,7 +31,7 @@ final readonly class GovernComposition
      *     summary: array{error: int, warn: int},
      *     findings: array<string, list<array{code: string, severity: string, category: string, message: string}>>
      * }
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function report(
         array                  $graph,

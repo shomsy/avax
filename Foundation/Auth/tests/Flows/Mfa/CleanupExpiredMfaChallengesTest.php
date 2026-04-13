@@ -10,6 +10,7 @@ use Avax\Auth\System\Flow\Mfa\Challenge\InMemoryMfaChallengeStore;
 use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeRecord;
 use Avax\Auth\System\Flow\Mfa\MfaChallengePurpose;
 use Avax\Auth\System\Foundation\Clock;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 final class CleanupExpiredMfaChallengesTest extends TestCase
@@ -21,15 +22,15 @@ final class CleanupExpiredMfaChallengesTest extends TestCase
             challengeId: 'expired',
             userId     : new UserId(value: 1),
             purpose    : MfaChallengePurpose::LOGIN,
-            createdAt  : new \DateTimeImmutable(datetime: '-10 minutes'),
-            expiresAt  : new \DateTimeImmutable(datetime: '-5 minutes')
+            createdAt  : new DateTimeImmutable(datetime: '-10 minutes'),
+            expiresAt  : new DateTimeImmutable(datetime: '-5 minutes')
         ));
         $store->issue(record: new MfaChallengeRecord(
             challengeId: 'active',
             userId     : new UserId(value: 1),
             purpose    : MfaChallengePurpose::LOGIN,
-            createdAt  : new \DateTimeImmutable(),
-            expiresAt  : new \DateTimeImmutable(datetime: '+5 minutes')
+            createdAt  : new DateTimeImmutable(),
+            expiresAt  : new DateTimeImmutable(datetime: '+5 minutes')
         ));
 
         $removed = (new CleanupExpiredMfaChallenges(challengeStore: $store, clock: new Clock()))->execute();

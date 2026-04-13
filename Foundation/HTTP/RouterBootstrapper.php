@@ -7,6 +7,7 @@ namespace Avax\HTTP;
 use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Middleware\MiddlewareInterface;
 use Avax\HTTP\Router\RouterInterface;
+use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteCollection;
 use Avax\HTTP\Router\Routing\RouteDefinition;
@@ -64,6 +65,7 @@ final class RouterBootstrapper
      * Register a route with optional middleware.
      *
      * @throws ReservedRouteNameException
+     * @throws DuplicateRouteException
      */
     public function route(string $method, string $path, callable|array|string $handler) : self
     {

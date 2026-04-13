@@ -9,16 +9,17 @@ use Avax\Auth\System\Capability\Risk\RiskDecision;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use SensitiveParameter;
 
 final readonly class AssessCurrentRisk
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private UserSourceInterface                          $userSource,
-        private DeterministicRiskEngine                      $riskEngine
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private UserSourceInterface                         $userSource,
+        private DeterministicRiskEngine                     $riskEngine
     ) {}
 
-    public function execute(#[\SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
+    public function execute(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
     {
         $user = $this->currentAuthentication->read()->user();
 

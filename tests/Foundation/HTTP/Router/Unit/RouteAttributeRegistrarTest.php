@@ -10,8 +10,10 @@ use Avax\HTTP\Router\Routing\Attributes\Route;
 use Avax\HTTP\Router\Routing\Exceptions\DuplicateRouteException;
 use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\HttpRequestRouter;
+use Avax\HTTP\Router\Routing\RouteMatcher;
 use Avax\HTTP\Router\Validation\RouteConstraintValidator;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use ReflectionException;
 
 #[Route(path: '/api', name: 'api', middleware: ['api'], defaults: ['locale' => 'en'], constraints: ['locale' => '[a-z]+'])]
@@ -30,7 +32,7 @@ final class RouteAttributeRegistrarTest extends TestCase
      */
     public function test_registers_routes_from_attributes() : void
     {
-        $router     = new HttpRequestRouter(constraintValidator: new RouteConstraintValidator, matcher: new \Avax\HTTP\Router\Routing\RouteMatcher(logger: new \Psr\Log\NullLogger));
+        $router     = new HttpRequestRouter(constraintValidator: new RouteConstraintValidator, matcher: new RouteMatcher(logger: new NullLogger));
         $registrar  = new AttributeRouteRegistrar(router: $router);
         $controller = SampleAttributeController::class;
 

@@ -8,11 +8,14 @@ use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
 use Avax\Auth\System\Capability\Access\Policy\IdentityPolicyCatalog;
 use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
 use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequireResourceOwner\RequireResourceOwner;
 use Avax\Auth\System\Capability\Access\RequireResourceOwner\ResourceOwnerDenied;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
+use Avax\Auth\System\Capability\Access\RequireRole\RoleDenied;
 use Avax\Auth\System\Capability\AdminRealm\AdminElevationRecord;
 use Avax\Auth\System\Capability\AdminRealm\InMemoryAdminElevationStore;
 use Avax\Auth\System\Capability\User\UserRole;
@@ -24,10 +27,16 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 final class AccessPolicyTest extends TestCase
 {
+    /**
+     * @throws Unauthenticated
+     * @throws PermissionDenied
+     * @throws RoleDenied
+     */
     public function testPolicyStopsWrongResourceOwner() : void
     {
         $current = new CurrentAuthentication();
@@ -55,6 +64,11 @@ final class AccessPolicyTest extends TestCase
         $policy->execute(policy: new AccessPolicy(resourceOwnerUserId: 11));
     }
 
+    /**
+     * @throws Unauthenticated
+     * @throws PermissionDenied
+     * @throws RoleDenied
+     */
     public function testPolicySupportsFreshMfaAndAdminElevation() : void
     {
         $current = new CurrentAuthentication();
@@ -68,14 +82,14 @@ final class AccessPolicyTest extends TestCase
             ),
             mode         : AuthenticationMode::SESSION,
             sessionId    : 'session-admin',
-            mfaVerifiedAt: new \DateTimeImmutable(),
+            mfaVerifiedAt: new DateTimeImmutable(),
             phishingResistant: true
         ));
         $store = new InMemoryAdminElevationStore();
         $store->start(record: new AdminElevationRecord(
             userId    : 1,
             bindingId : 'session-admin',
-            expiresAt : new \DateTimeImmutable(datetime: '+5 minutes')
+            expiresAt : new DateTimeImmutable(datetime: '+5 minutes')
         ));
 
         $policy = new RequireAccessPolicy(
@@ -98,6 +112,12 @@ final class AccessPolicyTest extends TestCase
         $this->assertTrue(condition: true);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws Unauthenticated
+     * @throws PermissionDenied
+     * @throws RoleDenied
+     */
     public function testAdminIdentityPolicyUsesItsOwnFreshMfaWindow() : void
     {
         $clock = new Clock();
@@ -119,7 +139,7 @@ final class AccessPolicyTest extends TestCase
         $store->start(record: new AdminElevationRecord(
             userId    : 1,
             bindingId : 'session-admin',
-            expiresAt : new \DateTimeImmutable(datetime: '+5 minutes')
+            expiresAt : new DateTimeImmutable(datetime: '+5 minutes')
         ));
 
         $policy = new RequireAccessPolicy(

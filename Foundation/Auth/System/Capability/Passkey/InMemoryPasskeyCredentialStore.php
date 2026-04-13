@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\Passkey;
 
 use DateTimeImmutable;
+use SensitiveParameter;
 
 final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInterface
 {
     /** @var array<string, PasskeyCredential> */
     private array $credentials = [];
 
-    public function save(#[\SensitiveParameter] PasskeyCredential $credential) : void
+    public function save(#[SensitiveParameter] PasskeyCredential $credential) : void
     {
         $this->credentials[$credential->credentialId] = $credential;
     }
 
-    public function find(#[\SensitiveParameter] string $credentialId) : PasskeyCredential|null
+    public function find(#[SensitiveParameter] string $credentialId) : PasskeyCredential|null
     {
         return $this->credentials[$credentialId] ?? null;
     }
@@ -25,11 +26,11 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
     {
         return array_values(array_filter(
             $this->credentials,
-            static fn (#[\SensitiveParameter] PasskeyCredential $credential) : bool => $credential->userId === $userId
+            static fn (#[SensitiveParameter] PasskeyCredential $credential) : bool => $credential->userId === $userId
         ));
     }
 
-    public function touch(#[\SensitiveParameter] string $credentialId, DateTimeImmutable $usedAt) : void
+    public function touch(#[SensitiveParameter] string $credentialId, DateTimeImmutable $usedAt) : void
     {
         $credential = $this->credentials[$credentialId] ?? null;
 
@@ -47,7 +48,7 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
         );
     }
 
-    public function rename(#[\SensitiveParameter] string $credentialId, string $label) : void
+    public function rename(#[SensitiveParameter] string $credentialId, string $label) : void
     {
         $credential = $this->credentials[$credentialId] ?? null;
 
@@ -65,7 +66,7 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
         );
     }
 
-    public function revoke(#[\SensitiveParameter] string $credentialId, DateTimeImmutable $revokedAt) : void
+    public function revoke(#[SensitiveParameter] string $credentialId, DateTimeImmutable $revokedAt) : void
     {
         $credential = $this->credentials[$credentialId] ?? null;
 

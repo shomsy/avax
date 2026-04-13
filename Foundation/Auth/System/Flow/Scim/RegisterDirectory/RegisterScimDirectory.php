@@ -13,6 +13,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Scim\ScimFailed;
 use Avax\Auth\System\Foundation\Clock;
+use Random\RandomException;
 use SensitiveParameter;
 
 final readonly class RegisterScimDirectory
@@ -27,6 +28,8 @@ final readonly class RegisterScimDirectory
 
     /**
      * @throws ScimFailed
+     * @throws RandomException
+     * @throws RandomException
      */
     public function execute(RegisterScimDirectoryData $data) : RegisteredScimDirectory
     {

@@ -6,12 +6,13 @@ namespace Avax\Auth\System\Flow\ChangeEmail;
 
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
+use SensitiveParameter;
 
 final readonly class EmailChangeRecord
 {
     public function __construct(
-        public UserId                        $userId,
-        #[\SensitiveParameter] public string $newEmail,
-        public DateTimeImmutable             $expiresAt
+        public UserId                       $userId,
+        #[SensitiveParameter] public string $newEmail,
+        public DateTimeImmutable            $expiresAt
     ) {}
 }

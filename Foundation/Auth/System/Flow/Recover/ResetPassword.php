@@ -12,6 +12,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeStoreInterface;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Completes password reset by consuming a one-time token.
@@ -19,14 +20,14 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class ResetPassword
 {
     public function __construct(
-        private UserSourceInterface                                    $userSource,
-        #[\SensitiveParameter] private PasswordHasher                  $passwordHasher,
-        #[\SensitiveParameter] private PasswordResetStoreInterface     $passwordResetStore,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock,
-        #[\SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
-        private MfaChallengeStoreInterface|null                        $mfaChallengeStore = null,
-        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
+        private UserSourceInterface                                   $userSource,
+        #[SensitiveParameter] private PasswordHasher                  $passwordHasher,
+        #[SensitiveParameter] private PasswordResetStoreInterface     $passwordResetStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null                       $mfaChallengeStore = null,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
     ) {}
 
     public function execute(ResetPasswordData $data) : bool

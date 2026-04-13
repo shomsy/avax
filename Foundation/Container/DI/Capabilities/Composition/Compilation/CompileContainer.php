@@ -13,7 +13,9 @@ use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
 use Avax\Container\DI\Capabilities\Resolution\LifetimePlan;
 use Closure;
 use JsonException;
+use ReflectionException;
 use RuntimeException;
+use SensitiveParameter;
 use Throwable;
 
 /**
@@ -30,21 +32,21 @@ final class CompileContainer
     private ArtifactMetadata|null $lastMetadata = null;
 
     public function __construct(
-        private readonly ServiceRegistry               $registrations,
-        private readonly CreateServiceBlueprint        $blueprints,
-        private readonly string                        $cacheDir = '',
-        private readonly string                        $cacheVersion = 'container-v1',
-        #[\SensitiveParameter] private readonly string $configHash = '',
-        private readonly string                        $diagnosticsMode = 'minimal',
-        private readonly string                        $environment = '',
-        private readonly string                        $compileMode = 'production',
-        private readonly bool                          $strict = false,
-        private readonly string                        $settingsFingerprint = '',
-        private readonly string                        $benchmarkBuildMarker = '',
-        private readonly string                        $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
-        private readonly string                        $pruneMode = CreateContainerConfig::PRUNE_MODE_NONE,
-        private readonly bool                          $validateOnLoad = false,
-        private readonly bool                          $failClosedOnCorruption = true,
+        private readonly ServiceRegistry              $registrations,
+        private readonly CreateServiceBlueprint       $blueprints,
+        private readonly string                       $cacheDir = '',
+        private readonly string                       $cacheVersion = 'container-v1',
+        #[SensitiveParameter] private readonly string $configHash = '',
+        private readonly string                       $diagnosticsMode = 'minimal',
+        private readonly string                       $environment = '',
+        private readonly string                       $compileMode = 'production',
+        private readonly bool                         $strict = false,
+        private readonly string                       $settingsFingerprint = '',
+        private readonly string                       $benchmarkBuildMarker = '',
+        private readonly string                       $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
+        private readonly string                       $pruneMode = CreateContainerConfig::PRUNE_MODE_NONE,
+        private readonly bool                         $validateOnLoad = false,
+        private readonly bool                         $failClosedOnCorruption = true,
         private readonly bool                   $validateBeforeCompile = false,
         private readonly ResolutionMetrics|null $metrics = null,
         ServiceCompiler|null                    $services = null
@@ -73,7 +75,7 @@ final class CompileContainer
      *
      * @return CompiledContainer
      * @throws JsonException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function compile(array|null $serviceIds = null, array|null $validationIssues = null, bool $warmed = false) : CompiledContainer
     {
@@ -128,7 +130,7 @@ final class CompileContainer
      *     lifetimes: array<string, array{name: string, shared: bool, scoped: bool, transient: bool, pooled: bool,
      *     poolSize: int, poolResetBeforeReuse: bool}>, deferred: array<string, bool>, decorations: array<string, int>
      * }
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function snapshot(array $serviceIds) : array
     {
@@ -366,7 +368,7 @@ final class CompileContainer
      * @param list<string> $serviceIds
      *
      * @return list<string>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function collectServiceIds(array $serviceIds) : array
     {
@@ -534,7 +536,7 @@ final class CompileContainer
 
     /**
      * @return list<string>
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function dependenciesForService(string $serviceId) : array
     {
@@ -941,6 +943,9 @@ final class CompileContainer
         return $metadata->includes(serviceIds: $serviceIds);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function requestedServicesAreFresh(ArtifactMetadata $metadata, array $serviceIds) : bool
     {
         $ids = $this->requestedServiceClosure(metadata: $metadata, serviceIds: $serviceIds);

@@ -17,6 +17,7 @@ use Avax\Auth\System\Capability\Risk\RiskDecision;
 use Avax\Auth\System\Capability\Risk\RiskSignal;
 use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
 use Avax\Auth\System\Capability\Scim\RegisteredScimDirectory;
+use Avax\Auth\System\Capability\Scim\ScimDirectory;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequest;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityConfiguration;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
@@ -200,7 +201,7 @@ interface AuthInterface
     public function registerScimDirectory(RegisterScimDirectoryData $data) : RegisteredScimDirectory;
 
     /**
-     * @return list<\Avax\Auth\System\Capability\Scim\ScimDirectory>
+     * @return list<ScimDirectory>
      */
     public function readScimDirectories(string|null $tenantSlug = null) : array;
 

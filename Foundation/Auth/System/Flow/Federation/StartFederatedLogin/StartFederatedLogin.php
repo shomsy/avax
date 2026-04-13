@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Federation\StartFederatedLogin;
 
+use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
 use Avax\Auth\System\Capability\Federation\FederationConnectionStoreInterface;
 use Avax\Auth\System\Capability\Federation\FederationRuntimeInterface;
 use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
@@ -36,7 +37,7 @@ final readonly class StartFederatedLogin
             throw FederationFailed::domainNotVerified();
         }
 
-        if ($connection->health === \Avax\Auth\System\Capability\Federation\FederationConnectionHealth::UNAVAILABLE) {
+        if ($connection->health === FederationConnectionHealth::UNAVAILABLE) {
             throw FederationFailed::connectionUnavailable();
         }
 

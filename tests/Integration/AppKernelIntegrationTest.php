@@ -7,6 +7,7 @@ use Avax\HTTP\Dispatcher\ControllerDispatcher;
 use Avax\HTTP\Middleware\CsrfVerificationMiddleware;
 use Avax\HTTP\Response\ResponseFactory;
 use Avax\HTTP\Router\RouterInterface;
+use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
 use Avax\HTTP\Router\Routing\RouteCollection;
 use Avax\HTTP\RouterBootstrapper;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -34,9 +35,9 @@ class AppKernelIntegrationTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
+     * @throws ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function router_bootstrapper_registers_routes() : void
     {
@@ -56,7 +57,7 @@ class AppKernelIntegrationTest extends TestCase
     /**
      * @test
      * @throws ReflectionException
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function app_kernel_handles_complete_request_flow() : void
     {
@@ -89,7 +90,7 @@ class AppKernelIntegrationTest extends TestCase
 
     /**
      * @test
-     * @throws \Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException
+     * @throws ReservedRouteNameException
      */
     public function middleware_groups_work_in_bootstrapper() : void
     {

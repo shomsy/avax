@@ -11,6 +11,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Cancels a pending MFA enrollment safely.
@@ -18,10 +19,10 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class CancelMfaEnrollment
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface                            $mfaStore,
-        private AuditLogInterface                            $auditLog,
-        private Clock                                        $clock
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private MfaStoreInterface                           $mfaStore,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock
     ) {}
 
     /**

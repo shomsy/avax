@@ -7,6 +7,7 @@ namespace Avax\Auth\Integrations\Http;
 use Avax\Auth\Integrations\Cookies\ResolveSessionAllowance;
 use Avax\Auth\Integrations\Headers\ReadBearerToken;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
+use SensitiveParameter;
 
 /**
  * Maps HTTP transport input into the kernel auth ingress request.
@@ -14,8 +15,8 @@ use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
 final readonly class MapAuthenticationRequest
 {
     public function __construct(
-        #[\SensitiveParameter] private ReadBearerToken         $readBearerToken = new ReadBearerToken(),
-        #[\SensitiveParameter] private ResolveSessionAllowance $resolveSessionAllowance = new ResolveSessionAllowance()
+        #[SensitiveParameter] private ReadBearerToken         $readBearerToken = new ReadBearerToken(),
+        #[SensitiveParameter] private ResolveSessionAllowance $resolveSessionAllowance = new ResolveSessionAllowance()
     ) {}
 
     public function execute(HttpAuthenticationInput $input) : AuthenticationRequest
@@ -46,7 +47,7 @@ final readonly class MapAuthenticationRequest
     /**
      * @param array<string, mixed> $headers
      */
-    private function readHeaderValue(#[\SensitiveParameter] array $headers, string $name) : string|null
+    private function readHeaderValue(#[SensitiveParameter] array $headers, string $name) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
             if (strcasecmp($candidateKey, $name) !== 0) {

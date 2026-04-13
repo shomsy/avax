@@ -9,6 +9,7 @@ use Avax\Auth\System\Capability\Passkey\PasskeyChallengePurpose;
 use Avax\Auth\System\Capability\Passkey\PasskeyChallengeRecord;
 use Avax\Auth\System\Flow\Passkey\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
 use Avax\Auth\System\Foundation\Clock;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 final class CleanupExpiredPasskeyChallengesTest extends TestCase
@@ -20,21 +21,21 @@ final class CleanupExpiredPasskeyChallengesTest extends TestCase
             challengeId: 'expired',
             challenge  : 'expired-challenge',
             purpose    : PasskeyChallengePurpose::AUTHENTICATION,
-            expiresAt  : new \DateTimeImmutable(datetime: '-1 minute')
+            expiresAt  : new DateTimeImmutable(datetime: '-1 minute')
         ));
         $store->issue(record: new PasskeyChallengeRecord(
             challengeId: 'used',
             challenge  : 'used-challenge',
             purpose    : PasskeyChallengePurpose::REGISTRATION,
-            expiresAt  : new \DateTimeImmutable(datetime: '+10 minutes'),
+            expiresAt  : new DateTimeImmutable(datetime: '+10 minutes'),
             userId     : 1,
-            usedAt     : new \DateTimeImmutable()
+            usedAt     : new DateTimeImmutable()
         ));
         $store->issue(record: new PasskeyChallengeRecord(
             challengeId: 'active',
             challenge  : 'active-challenge',
             purpose    : PasskeyChallengePurpose::AUTHENTICATION,
-            expiresAt  : new \DateTimeImmutable(datetime: '+10 minutes')
+            expiresAt  : new DateTimeImmutable(datetime: '+10 minutes')
         ));
 
         $removed = (new CleanupExpiredPasskeyChallenges(challengeStore: $store, clock: new Clock()))->execute();

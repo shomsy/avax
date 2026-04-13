@@ -10,6 +10,7 @@ use Avax\Container\DI\Capabilities\Execution\Injection\Attributes\RuntimeInput;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
+use Throwable;
 
 /**
  * Compiles and resolves parameter plans for constructors, methods, and calls.
@@ -42,6 +43,7 @@ final class ResolveDependencies
      *
      * @return array<int, mixed>
      * @throws ContainerException
+     * @throws Throwable
      */
     public function resolvePlan(
         ResolvePlan         $plan,
@@ -72,7 +74,7 @@ final class ResolveDependencies
      * @param ResolveRequest|null                           $request
      *
      * @return mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
     private function resolveCompiledParameter(
         array               $parameter,

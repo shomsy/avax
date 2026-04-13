@@ -8,6 +8,7 @@ use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
 use Avax\Auth\System\Capability\Passkey\InMemoryPasskeyChallengeStore;
 use Avax\Auth\System\Capability\Passkey\InMemoryPasskeyCredentialStore;
+use Avax\Auth\System\Capability\Passkey\PasskeyCredential;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserEmail;
 use Avax\Auth\System\Capability\User\UserId;
@@ -171,7 +172,7 @@ final class PasskeyFlowTest extends TestCase
             passwordHash: 'hash'
         );
         $userSource->create(user: $user);
-        $credentialStore->save(credential: new \Avax\Auth\System\Capability\Passkey\PasskeyCredential(
+        $credentialStore->save(credential: new PasskeyCredential(
             userId      : 6,
             credentialId: 'cred-replay',
             label       : 'Replay Device',

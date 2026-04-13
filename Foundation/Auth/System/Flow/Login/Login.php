@@ -14,8 +14,10 @@ use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Flow\Mfa\Challenge\StartMfaChallenge;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
+use DateTimeImmutable;
 use SensitiveParameter;
 
 /**
@@ -40,6 +42,7 @@ final readonly class Login
 
     /**
      * @throws AuthenticationFailed
+     * @throws RateLimitException
      */
     public function execute(#[SensitiveParameter] Credentials $credentials) : AuthenticationResult
     {
@@ -55,7 +58,7 @@ final readonly class Login
             $this->rateLimit?->recordFailed(identifier: $credentials->identifier);
             $this->auditLog->record(event: new AuditEvent(
                                         name      : 'auth.login.failed',
-                                        occurredAt: new \DateTimeImmutable(),
+                                        occurredAt: new DateTimeImmutable(),
                                         context   : [
                                                         'identifier' => strtolower($credentials->identifier),
                                                         'ip_address' => $credentials->ipAddress,
@@ -112,7 +115,7 @@ final readonly class Login
         $this->rateLimit?->reset(identifier: $credentials->identifier);
         $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.login.succeeded',
-                                    occurredAt: new \DateTimeImmutable(),
+                                    occurredAt: new DateTimeImmutable(),
                                     context   : [
                                                     'user_id'    => $user->getId()->value,
                                                     'mode'       => $issued->mode->value,

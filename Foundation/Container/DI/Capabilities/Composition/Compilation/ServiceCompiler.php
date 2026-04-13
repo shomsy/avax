@@ -9,6 +9,7 @@ use Avax\Container\DI\Capabilities\Declaration\Bindings\ServiceRegistry;
 use Avax\Container\DI\Capabilities\Declaration\Blueprints\CreateServiceBlueprint;
 use Avax\Container\DI\Capabilities\Resolution\ResolvePlan;
 use Closure;
+use ReflectionException;
 use ReflectionFunction;
 
 /**
@@ -26,7 +27,7 @@ final readonly class ServiceCompiler
      * @param string $serviceId
      *
      * @return array{serviceId: string, method: string, signature: string, source: string}
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function compile(string $serviceId) : array
     {
@@ -79,7 +80,7 @@ final readonly class ServiceCompiler
      *   registrationArguments: array<string, mixed>,
      *   needsFinish: bool
      * }
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function describe(string $serviceId) : array
     {
@@ -175,7 +176,7 @@ final readonly class ServiceCompiler
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function dynamicSignature(mixed $candidate) : string
     {

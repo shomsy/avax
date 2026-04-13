@@ -10,9 +10,11 @@ use Avax\Auth\System\Capability\Identity\Session\SessionIdentityInterface;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserEmail;
 use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
 use Avax\Auth\System\Flow\Token\IssuedToken;
+use DateTimeImmutable;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -67,7 +69,7 @@ class IdentityTest extends TestCase
         $jwt->shouldReceive('issue')->once()->with($user, null, false)->andReturn(new IssuedToken(
                                                                                token    : 'token-10',
                                                                                tokenId  : 'token-id',
-                                                                               expiresAt: new \DateTimeImmutable(datetime: '+1 hour')
+                                                                               expiresAt: new DateTimeImmutable(datetime: '+1 hour')
                                                                            ));
         $jwt->shouldReceive('issueRefreshToken')->once()->with($user, null, false)->andReturn(null);
 
@@ -89,7 +91,7 @@ class IdentityTest extends TestCase
         $session->shouldReceive('clear')->once();
 
         $jwt = Mockery::mock(JwtIdentityInterface::class);
-        $jwt->shouldReceive('revoke')->once()->with('token-10', Mockery::type(expected: \DateTimeImmutable::class));
+        $jwt->shouldReceive('revoke')->once()->with('token-10', Mockery::type(expected: DateTimeImmutable::class));
 
         $identity = new Identity(
             sessionIdentity: $session,
@@ -97,10 +99,10 @@ class IdentityTest extends TestCase
         );
 
         $identity->clear(context: AuthenticationContext::authenticated(
-            user                : new \Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser(id: 10, email: 'identity@example.com', username: 'identity'),
+            user                : new AuthenticatedUser(id: 10, email: 'identity@example.com', username: 'identity'),
             mode                : AuthenticationMode::TOKEN,
             accessTokenId       : 'token-10',
-            accessTokenExpiresAt: new \DateTimeImmutable(datetime: '+1 hour')
+            accessTokenExpiresAt: new DateTimeImmutable(datetime: '+1 hour')
         ));
 
         $this->assertTrue(condition: true);

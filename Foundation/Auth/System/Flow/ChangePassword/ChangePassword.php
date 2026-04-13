@@ -14,6 +14,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
+use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeStoreInterface;
 use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
@@ -45,6 +46,7 @@ final readonly class ChangePassword
     /**
      * @throws PasswordChangeFailed
      * @throws Unauthenticated
+     * @throws RateLimitException
      */
     public function execute(ChangePasswordData $data) : void
     {

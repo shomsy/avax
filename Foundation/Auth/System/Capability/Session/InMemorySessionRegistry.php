@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Capability\Session;
 
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
+use SensitiveParameter;
 
 /**
  * In-memory session registry for tests and lightweight deployments.
@@ -20,7 +21,7 @@ final class InMemorySessionRegistry implements SessionRegistryInterface, PruneEx
         $this->records[$record->sessionId] = $record;
     }
 
-    public function find(#[\SensitiveParameter] string $sessionId) : SessionRecord|null
+    public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
     {
         return $this->records[$sessionId] ?? null;
     }
@@ -48,7 +49,7 @@ final class InMemorySessionRegistry implements SessionRegistryInterface, PruneEx
         return $records;
     }
 
-    public function revoke(#[\SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void
+    public function revoke(#[SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void
     {
         $record = $this->records[$sessionId] ?? null;
 

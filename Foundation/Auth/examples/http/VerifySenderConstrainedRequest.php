@@ -13,6 +13,7 @@ use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
+use SensitiveParameter;
 
 /**
  * Reference adapter for enforcing bearer, DPoP, or mTLS request posture.
@@ -24,13 +25,13 @@ final readonly class VerifySenderConstrainedRequest
      * @param array<string, mixed> $server
      */
     public function execute(
-        string                             $method,
-        string                             $uri,
-        #[\SensitiveParameter] array       $headers,
-        array                              $server,
-        #[\SensitiveParameter] string|null $accessToken,
-        OAuthSenderConstraint|null         $expectedSenderConstraint = null,
-        OAuthSenderConstraintType|null     $requiredSenderConstraint = null
+        string                            $method,
+        string                            $uri,
+        #[SensitiveParameter] array       $headers,
+        array                             $server,
+        #[SensitiveParameter] string|null $accessToken,
+        OAuthSenderConstraint|null        $expectedSenderConstraint = null,
+        OAuthSenderConstraintType|null    $requiredSenderConstraint = null
     ) : OAuthSenderConstraint|null
     {
         $auditLog = new NullAuditLog();

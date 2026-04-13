@@ -8,6 +8,7 @@ use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Issues email verification challenges without leaking account presence.
@@ -15,13 +16,16 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class BeginEmailVerification
 {
     public function __construct(
-        private UserSourceInterface                                    $userSource,
-        #[\SensitiveParameter] private EmailVerificationStoreInterface $emailVerificationStore,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock,
-        private int                                                    $expiresAfterSeconds = 86400
+        private UserSourceInterface                                   $userSource,
+        #[SensitiveParameter] private EmailVerificationStoreInterface $emailVerificationStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        private int                                                   $expiresAfterSeconds = 86400
     ) {}
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function execute(BeginEmailVerificationData $data) : EmailVerificationChallenge
     {
         $user = $this->userSource->findByEmail(email: $data->email);

@@ -25,9 +25,14 @@ use Avax\Auth\System\Flow\Provisioning\SuspendUser\SuspendUser;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Foundation\Clock;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 final class ProvisioningTest extends TestCase
 {
+    /**
+     * @throws RandomException
+     * @throws \DateMalformedStringException
+     */
     public function testSuspendReactivateAndDeprovisionLifecycle() : void
     {
         $clock         = new Clock();

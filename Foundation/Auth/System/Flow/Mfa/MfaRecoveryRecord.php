@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\Mfa;
 
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
+use SensitiveParameter;
 
 /**
  * Stored MFA recovery token state.
@@ -13,9 +14,9 @@ use DateTimeImmutable;
 final readonly class MfaRecoveryRecord
 {
     public function __construct(
-        #[\SensitiveParameter] public string $tokenHash,
-        public UserId                        $userId,
-        public DateTimeImmutable             $expiresAt
+        #[SensitiveParameter] public string $tokenHash,
+        public UserId                       $userId,
+        public DateTimeImmutable            $expiresAt
     ) {}
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool

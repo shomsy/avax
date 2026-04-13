@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\CheckAuthentication;
 
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use SensitiveParameter;
 
 /**
  * Check if there is an active authentication state.
@@ -14,7 +15,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 final readonly class CheckAuthentication
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication
     ) {}
 
     public function execute() : bool

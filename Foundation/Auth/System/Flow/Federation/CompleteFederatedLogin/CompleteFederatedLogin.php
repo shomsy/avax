@@ -26,22 +26,24 @@ use Avax\Auth\System\Flow\Federation\FederationFailed;
 use Avax\Auth\System\Flow\Login\AuthenticationResult;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
+use Random\RandomException;
+use SensitiveParameter;
 
 final readonly class CompleteFederatedLogin
 {
     public function __construct(
-        private FederationConnectionStoreInterface           $connectionStore,
-        private FederationRuntimeInterface                   $runtime,
-        private FederatedIdentityLinkStoreInterface          $linkStore,
-        private UserSourceInterface                          $userSource,
-        private IdentityInterface                            $identity,
-        private ProjectAuthenticatedUser                     $projectAuthenticatedUser,
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        #[\SensitiveParameter] private PasswordHasher        $passwordHasher,
-        private IdGeneratorInterface                         $idGenerator,
-        private AuditLogInterface                            $auditLog,
-        private Clock                                        $clock,
-        private DeterministicRiskEngine|null                 $riskEngine = null
+        private FederationConnectionStoreInterface          $connectionStore,
+        private FederationRuntimeInterface                  $runtime,
+        private FederatedIdentityLinkStoreInterface         $linkStore,
+        private UserSourceInterface                         $userSource,
+        private IdentityInterface                           $identity,
+        private ProjectAuthenticatedUser                    $projectAuthenticatedUser,
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        #[SensitiveParameter] private PasswordHasher        $passwordHasher,
+        private IdGeneratorInterface                        $idGenerator,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock,
+        private DeterministicRiskEngine|null                $riskEngine = null
     ) {}
 
     /**
@@ -131,7 +133,10 @@ final readonly class CompleteFederatedLogin
         );
     }
 
-    private function provisionUser(#[\SensitiveParameter] string $email, string $displayName) : User
+    /**
+     * @throws RandomException
+     */
+    private function provisionUser(#[SensitiveParameter] string $email, string $displayName) : User
     {
         $username = $this->uniqueUsername(displayName: $displayName, email: $email);
 
@@ -165,7 +170,7 @@ final readonly class CompleteFederatedLogin
         return $roles;
     }
 
-    private function uniqueUsername(string $displayName, #[\SensitiveParameter] string $email) : string
+    private function uniqueUsername(string $displayName, #[SensitiveParameter] string $email) : string
     {
         $normalizedDisplayName = preg_replace('/[^a-z0-9]+/i', '-', strtolower(trim($displayName)));
         $base                  = $normalizedDisplayName !== null && $normalizedDisplayName !== ''

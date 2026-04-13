@@ -16,6 +16,8 @@ use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnec
 use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomainData;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
 use Avax\Auth\System\Flow\TenantSecurity\BeginChange\BeginTenantSecurityChangeData;
+use InvalidArgumentException;
+use SensitiveParameter;
 use Throwable;
 
 /**
@@ -24,7 +26,7 @@ use Throwable;
 final readonly class ServeTenantSecurityHttpSurface
 {
     public function __construct(
-        #[\SensitiveParameter] private AuthInterface $auth
+        #[SensitiveParameter] private AuthInterface $auth
     ) {}
 
     public function execute(HttpEndpointInput $input) : JsonHttpResponse
@@ -355,7 +357,7 @@ final readonly class ServeTenantSecurityHttpSurface
         $value = $this->nullableString(body: $body, field: $field);
 
         if ($value === null || $value === '') {
-            throw new \InvalidArgumentException(message: "{$field} is required.");
+            throw new InvalidArgumentException(message: "{$field} is required.");
         }
 
         return $value;
@@ -419,7 +421,7 @@ final readonly class ServeTenantSecurityHttpSurface
             return urldecode($matches[1]);
         }
 
-        throw new \InvalidArgumentException(message: 'tenantSlug is required.');
+        throw new InvalidArgumentException(message: 'tenantSlug is required.');
     }
 
     /**
@@ -434,7 +436,7 @@ final readonly class ServeTenantSecurityHttpSurface
         );
     }
 
-    private function error(int $statusCode, #[\SensitiveParameter] string $errorCode, string $message) : JsonHttpResponse
+    private function error(int $statusCode, #[SensitiveParameter] string $errorCode, string $message) : JsonHttpResponse
     {
         return $this->response(statusCode: $statusCode, body: [
             'error' => $errorCode,

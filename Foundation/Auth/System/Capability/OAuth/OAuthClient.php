@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\OAuth;
 
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
+use SensitiveParameter;
 
 /**
  * Registered OAuth client contract.
@@ -30,7 +31,7 @@ final readonly class OAuthClient
         public OAuthSenderConstraintType|null  $requiredSenderConstraint = null,
         public bool                            $workloadIdentity = false,
         public bool                            $phishingResistantRequired = false,
-        #[\SensitiveParameter] public string|null $secretHash = null
+        #[SensitiveParameter] public string|null $secretHash = null
     ) {}
 
     public function isPublic() : bool

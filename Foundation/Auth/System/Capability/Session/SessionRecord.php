@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Capability\Session;
 
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
+use SensitiveParameter;
 
 /**
  * Durable server-side session state owned by the session subsystem.
@@ -13,16 +14,16 @@ use DateTimeImmutable;
 final readonly class SessionRecord
 {
     public function __construct(
-        #[\SensitiveParameter] public string $sessionId,
-        public UserId                        $userId,
-        public DateTimeImmutable             $createdAt,
-        public DateTimeImmutable             $lastSeenAt,
-        public DateTimeImmutable             $idleExpiresAt,
-        public DateTimeImmutable             $absoluteExpiresAt,
-        public string|null                   $ipCreated = null,
-        public string|null                   $userAgentCreated = null,
-        public DateTimeImmutable|null        $revokedAt = null,
-        public string|null                   $revokeReason = null
+        #[SensitiveParameter] public string $sessionId,
+        public UserId                       $userId,
+        public DateTimeImmutable            $createdAt,
+        public DateTimeImmutable            $lastSeenAt,
+        public DateTimeImmutable            $idleExpiresAt,
+        public DateTimeImmutable            $absoluteExpiresAt,
+        public string|null                  $ipCreated = null,
+        public string|null                  $userAgentCreated = null,
+        public DateTimeImmutable|null       $revokedAt = null,
+        public string|null                  $revokeReason = null
     ) {}
 
     public function isRevoked() : bool
@@ -40,6 +41,9 @@ final readonly class SessionRecord
         return ! $this->isRevoked() && ! $this->isExpiredAt(moment: $moment);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function withTouch(DateTimeImmutable $lastSeenAt, int $idleTimeoutSeconds) : self
     {
         return new self(
@@ -56,7 +60,7 @@ final readonly class SessionRecord
         );
     }
 
-    public function withClientMetadata(#[\SensitiveParameter] string|null $ipAddress, string|null $userAgent) : self
+    public function withClientMetadata(#[SensitiveParameter] string|null $ipAddress, string|null $userAgent) : self
     {
         return new self(
             sessionId        : $this->sessionId,

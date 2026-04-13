@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Token;
 
 use DateTimeImmutable;
+use SensitiveParameter;
 
 /**
  * In-memory access token revocation store.
@@ -14,12 +15,12 @@ final class InMemoryTokenRevocationStore implements TokenRevocationStoreInterfac
     /** @var array<string, int> */
     private array $revokedUntil = [];
 
-    public function revoke(#[\SensitiveParameter] string $tokenId, DateTimeImmutable $expiresAt) : void
+    public function revoke(#[SensitiveParameter] string $tokenId, DateTimeImmutable $expiresAt) : void
     {
         $this->revokedUntil[$tokenId] = $expiresAt->getTimestamp();
     }
 
-    public function isRevoked(#[\SensitiveParameter] string $tokenId, DateTimeImmutable $moment) : bool
+    public function isRevoked(#[SensitiveParameter] string $tokenId, DateTimeImmutable $moment) : bool
     {
         $expiresAt = $this->revokedUntil[$tokenId] ?? null;
 

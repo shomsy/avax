@@ -24,12 +24,17 @@ use DateInterval;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 
 /**
  * Unit tests for password reset completion hardening.
  */
 final class ResetPasswordTest extends TestCase
 {
+    /**
+     * @throws \DateInvalidOperationException
+     * @throws RandomException
+     */
     public function testResetPasswordRevokesSessionsAndChallenges() : void
     {
         $clock             = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));

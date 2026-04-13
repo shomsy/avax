@@ -23,6 +23,9 @@ use stdClass;
 
 final class AuditExporterAdaptersTest extends TestCase
 {
+    /**
+     * @throws \JsonException
+     */
     public function testJsonLinesExporterMasksSensitiveContextAndChainsHashes() : void
     {
         $path = tempnam(sys_get_temp_dir(), 'auth-audit-');
@@ -59,6 +62,9 @@ final class AuditExporterAdaptersTest extends TestCase
         @unlink($path);
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function testSyslogWebhookAndQueueExportersSendNormalizedPayloads() : void
     {
         $capture = new stdClass();
@@ -115,6 +121,9 @@ final class AuditExporterAdaptersTest extends TestCase
         $this->assertSame(expected: 'auth.oauth.refresh.reuse_detected', actual: $capture->queue[0][1]['name']);
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function testLegalHoldPreservesSensitiveContextForForensicExport() : void
     {
         $path = tempnam(sys_get_temp_dir(), 'auth-audit-hold-');

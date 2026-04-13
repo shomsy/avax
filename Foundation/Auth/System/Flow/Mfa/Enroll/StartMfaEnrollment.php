@@ -17,6 +17,7 @@ use Avax\Auth\System\Flow\Mfa\MfaStatus;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Flow\Mfa\TotpInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Starts TOTP MFA enrollment for the current user.
@@ -24,18 +25,19 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class StartMfaEnrollment
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface                            $mfaStore,
-        private TotpInterface                                $totp,
-        private AuditLogInterface                            $auditLog,
-        private Clock                                        $clock,
-        private string                                       $issuer = 'Avax Auth',
-        private int                                          $expiresAfterSeconds = 900
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private MfaStoreInterface                           $mfaStore,
+        private TotpInterface                               $totp,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock,
+        private string                                      $issuer = 'Avax Auth',
+        private int                                         $expiresAfterSeconds = 900
     ) {}
 
     /**
      * @throws Unauthenticated
      * @throws MfaEnrollmentFailed
+     * @throws \DateMalformedStringException
      */
     public function execute() : MfaEnrollment
     {

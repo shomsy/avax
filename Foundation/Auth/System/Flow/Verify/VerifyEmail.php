@@ -7,6 +7,7 @@ namespace Avax\Auth\System\Flow\Verify;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Completes email verification by consuming a one-time token.
@@ -14,10 +15,10 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class VerifyEmail
 {
     public function __construct(
-        #[\SensitiveParameter] private EmailVerificationStoreInterface      $emailVerificationStore,
-        #[\SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
-        private AuditLogInterface                                           $auditLog,
-        private Clock                                                       $clock
+        #[SensitiveParameter] private EmailVerificationStoreInterface      $emailVerificationStore,
+        #[SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
+        private AuditLogInterface                                          $auditLog,
+        private Clock                                                      $clock
     ) {}
 
     public function execute(VerifyEmailData $data) : bool

@@ -17,6 +17,8 @@ final readonly class ExportGraph
 
     /**
      * @param array<string, mixed> $context
+     *
+     * @throws \ReflectionException
      */
     public function debugGraph(string|null $id = null, array $context = []) : array
     {
@@ -66,6 +68,7 @@ final readonly class ExportGraph
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws \ReflectionException
      */
     public function why(string $id, array $context = []) : array
     {
@@ -108,6 +111,7 @@ final readonly class ExportGraph
      * @param array<string, mixed> $context
      *
      * @return array<string, mixed>
+     * @throws \ReflectionException
      */
     public function showOwner(string $id, array $context = []) : array
     {

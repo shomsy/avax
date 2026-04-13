@@ -7,6 +7,8 @@ namespace Avax\Auth\System\Flow\Token;
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
+use Random\RandomException;
+use SensitiveParameter;
 
 /**
  * In-memory refresh token storage for tests and demos.
@@ -21,6 +23,10 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
 
     /**
      * @param list<string> $scopes
+     *
+     * @throws RandomException
+     * @throws RandomException
+     * @throws RandomException
      */
     public function issue(
         UserId                 $userId,
@@ -66,12 +72,12 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
         );
     }
 
-    private function hash(#[\SensitiveParameter] string $plainToken) : string
+    private function hash(#[SensitiveParameter] string $plainToken) : string
     {
         return hash('sha256', $plainToken);
     }
 
-    public function find(#[\SensitiveParameter] string $plainToken) : RefreshTokenRecord|null
+    public function find(#[SensitiveParameter] string $plainToken) : RefreshTokenRecord|null
     {
         $tokenId = $this->hashToTokenId[$this->hash(plainToken: $plainToken)] ?? null;
 
@@ -82,7 +88,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
         return $this->records[$tokenId] ?? null;
     }
 
-    public function markRotated(#[\SensitiveParameter] string $tokenId, #[\SensitiveParameter] string $replacementTokenId) : void
+    public function markRotated(#[SensitiveParameter] string $tokenId, #[SensitiveParameter] string $replacementTokenId) : void
     {
         $record = $this->records[$tokenId] ?? null;
 

@@ -10,14 +10,15 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\OAuth\OAuthTokenExchangeFailed;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class IntrospectToken
 {
     public function __construct(
-        private OAuthClientRegistryInterface                $clientRegistry,
-        #[\SensitiveParameter] private JwtIdentityInterface $jwtIdentity,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock
+        private OAuthClientRegistryInterface               $clientRegistry,
+        #[SensitiveParameter] private JwtIdentityInterface $jwtIdentity,
+        private AuditLogInterface                          $auditLog,
+        private Clock                                      $clock
     ) {}
 
     /**

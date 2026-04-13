@@ -16,6 +16,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\TenantSecurity\TenantSecurityFailed;
 use Avax\Auth\System\Foundation\Clock;
 use JsonException;
+use Random\RandomException;
 
 final readonly class BeginTenantSecurityChange
 {
@@ -30,6 +31,7 @@ final readonly class BeginTenantSecurityChange
 
     /**
      * @throws TenantSecurityFailed
+     * @throws RandomException
      */
     public function execute(BeginTenantSecurityChangeData $data) : TenantSecurityChangeRequest
     {

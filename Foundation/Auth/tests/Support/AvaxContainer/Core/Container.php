@@ -71,6 +71,9 @@ final class Container
         };
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function build(string $class) : object
     {
         $reflection = new ReflectionClass(objectOrClass: $class);

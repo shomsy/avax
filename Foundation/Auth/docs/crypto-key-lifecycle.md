@@ -9,6 +9,8 @@ discipline.
 - `Flow/Token/HmacTokenCodec.php` can stamp a `kid` header on issued JWTs
 - JWT verification rejects tokens whose `kid` does not match the configured key
   version
+- `Flow/Token/FileBackedHmacKeyRingCodec.php` reloads the active and rollover
+  key ring from a JSON file at runtime
 - token claims remain algorithm-agnostic at the kernel boundary
 
 ## Required Operational Practices
@@ -41,5 +43,11 @@ discipline.
 ## Boundary Note
 
 Multi-key verification and external KMS orchestration remain application or
-adapter concerns. The kernel provides the token artifact seam and the explicit
-`kid` contract.
+adapter concerns. The kernel now also ships executable drills:
+
+- `php tooling/run-key-rollover-drill.php <key-ring.json>`
+- `php tooling/run-key-compromise-drill.php <before.json> <after.json>`
+
+The package provides the token artifact seam, the explicit `kid` contract, and
+reloadable HMAC key rings. External KMS orchestration still belongs to the host
+application or sibling infrastructure packages.

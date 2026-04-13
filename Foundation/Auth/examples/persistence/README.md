@@ -11,6 +11,8 @@ This directory contains reference persistence artifacts for the auth kernel.
 - `sql/token-revocation.sql`: access token revocation schema
 - `sql/mfa-challenge.sql`: MFA challenge schema
 - `sql/audit-export-cursor.sql`: durable export cursor schema
+- `migrations/*.sql`: sequential migration examples for adapter-owned rollout
+- `sql/refresh-token-family-locking.sql`: transaction pattern for reuse detection
 
 ## Concurrency Notes
 
@@ -27,3 +29,5 @@ This directory contains reference persistence artifacts for the auth kernel.
 - revoke or delete refresh-token families after retention windows expire
 - keep audit export cursors only as long as the downstream export pipeline
   requires replay protection
+- `../jobs/RunAuthMaintenanceJobs.php` shows one package-owned scheduler entry
+  that can run all cleanup and export flows

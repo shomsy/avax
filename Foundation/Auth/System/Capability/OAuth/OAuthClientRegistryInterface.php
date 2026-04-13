@@ -15,14 +15,18 @@ interface OAuthClientRegistryInterface
     /**
      * @param list<string> $redirectUris
      * @param list<string> $allowedScopes
+     * @param list<string> $allowedAudiences
      * @param list<OAuthGrantType> $allowedGrantTypes
+     * @param array<string, list<string>> $audienceScopeBoundaries
      */
     public function register(
         string $name,
         OAuthClientType $type,
         array $redirectUris,
         array $allowedScopes = [],
+        array $allowedAudiences = [],
         array $allowedGrantTypes = [],
+        array $audienceScopeBoundaries = [],
         OAuthSenderConstraintType|null $requiredSenderConstraint = null,
         bool $workloadIdentity = false,
         bool $phishingResistantRequired = false

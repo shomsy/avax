@@ -26,6 +26,20 @@ Use cookie-bound session auth only with explicit CSRF posture.
 See [examples/http/RequireCsrfProtection.php](../examples/http/RequireCsrfProtection.php)
 for a framework-neutral reference middleware.
 
+## Optional Foundation Integration
+
+This package stays decoupled from `Foundation/HTTP`, but host applications in
+the same ecosystem may reuse:
+
+- `Foundation/HTTP/Security/CsrfTokenManager.php`
+- `Foundation/HTTP/Security/VerifyCsrfToken.php`
+- `Foundation/HTTP/Session/*`
+
+Auth keeps those as optional adapter boundaries so the kernel does not become a
+framework inside a framework. `Foundation/HTTP/Security` is now hardened to
+avoid logging raw CSRF tokens and to keep a bounded token window per session,
+which makes it a safer optional host-layer choice.
+
 ## Origin And Referer Rules
 
 - allow exact same-origin requests

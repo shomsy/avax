@@ -7,6 +7,8 @@ namespace Avax\Auth\System;
 use Avax\Auth\System\Capability\Access\AccessInterface;
 use Avax\Auth\System\Capability\Federation\FederationConnection;
 use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
+use Avax\Auth\System\Capability\Oidc\OidcJsonWebKeySet;
+use Avax\Auth\System\Capability\Oidc\OidcProviderMetadata;
 use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
 use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
 use Avax\Auth\System\Capability\OAuth\OAuthClient;
@@ -14,6 +16,9 @@ use Avax\Auth\System\Capability\Passkey\PasskeyCredential;
 use Avax\Auth\System\Capability\Risk\RiskDecision;
 use Avax\Auth\System\Capability\Risk\RiskSignal;
 use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
+use Avax\Auth\System\Capability\Scim\RegisteredScimDirectory;
+use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequest;
+use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityConfiguration;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
@@ -38,12 +43,15 @@ use Avax\Auth\System\Flow\Mfa\Recover\ConfirmMfaRecoveryData;
 use Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData;
 use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
+use Avax\Auth\System\Flow\OAuth\ExchangeClientCredentials\ExchangeClientCredentialsData;
 use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshTokenData;
 use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectTokenData;
 use Avax\Auth\System\Flow\OAuth\IntrospectToken\TokenIntrospection;
 use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Flow\OAuth\ReadWorkloadIdentities\WorkloadIdentityProfile;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
+use Avax\Auth\System\Flow\Oidc\ReadUserInfo\OidcUserInfo;
 use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthenticationData;
 use Avax\Auth\System\Flow\Passkey\CompleteAuthentication\CompletePasskeyAuthenticationData;
 use Avax\Auth\System\Flow\Passkey\CompleteRegistration\CompletePasskeyRegistrationData;
@@ -55,7 +63,15 @@ use Avax\Auth\System\Flow\Recover\PasswordResetChallenge;
 use Avax\Auth\System\Flow\Recover\ResetPasswordData;
 use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Flow\Register\RegistrationResult;
+use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUserData;
+use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
+use Avax\Auth\System\Flow\Scim\ProvisionUser\ScimProvisioningResult;
+use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
+use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
+use Avax\Auth\System\Flow\Scim\RotateToken\RotatedScimToken;
+use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroupsData;
 use Avax\Auth\System\Flow\Session\ActiveSession;
+use Avax\Auth\System\Flow\TenantSecurity\BeginChange\BeginTenantSecurityChangeData;
 use Avax\Auth\System\Flow\Token\RefreshAuthenticationRequest;
 use Avax\Auth\System\Flow\Verify\BeginEmailVerificationData;
 use Avax\Auth\System\Flow\Verify\EmailVerificationChallenge;
@@ -108,9 +124,22 @@ interface AuthInterface
      */
     public function readOAuthClients() : array;
 
+    /**
+     * @return list<WorkloadIdentityProfile>
+     */
+    public function readWorkloadIdentities() : array;
+
+    public function readOidcProviderMetadata() : OidcProviderMetadata;
+
+    public function readOidcJsonWebKeySet() : OidcJsonWebKeySet;
+
+    public function readOidcUserInfo(string $accessToken) : OidcUserInfo;
+
     public function authorizeOAuthCode(AuthorizeCodeData $data) : IssuedAuthorizationCode;
 
     public function exchangeOAuthCode(ExchangeAuthorizationCodeData $data) : OAuthTokenGrant;
+
+    public function exchangeOAuthClientCredentials(ExchangeClientCredentialsData $data) : OAuthTokenGrant;
 
     public function exchangeOAuthRefreshToken(ExchangeRefreshTokenData $data) : OAuthTokenGrant;
 
@@ -167,6 +196,43 @@ interface AuthInterface
     public function startFederatedLogin(StartFederatedLoginData $data) : StartedFederatedLogin;
 
     public function completeFederatedLogin(CompleteFederatedLoginData $data) : AuthenticationResult;
+
+    public function registerScimDirectory(RegisterScimDirectoryData $data) : RegisteredScimDirectory;
+
+    /**
+     * @return list<\Avax\Auth\System\Capability\Scim\ScimDirectory>
+     */
+    public function readScimDirectories(string|null $tenantSlug = null) : array;
+
+    public function rotateScimToken(string $directoryId) : RotatedScimToken;
+
+    public function provisionScimUser(ProvisionScimUserData $data) : ScimProvisioningResult;
+
+    public function deleteScimUser(DeleteScimUserData $data) : void;
+
+    /**
+     * @return list<ScimUserProjection>
+     */
+    public function readScimUsers(string $directoryId) : array;
+
+    public function syncScimGroups(SyncScimGroupsData $data) : ScimProvisioningResult;
+
+    public function readTenantSecurityConfiguration(string $tenantSlug) : TenantSecurityConfiguration|null;
+
+    public function readTenantSecurityChangeRequest(string $changeId) : TenantSecurityChangeRequest|null;
+
+    /**
+     * @return list<TenantSecurityChangeRequest>
+     */
+    public function readTenantSecurityChangeRequests(string $tenantSlug) : array;
+
+    public function beginTenantSecurityChange(BeginTenantSecurityChangeData $data) : TenantSecurityChangeRequest;
+
+    public function approveTenantSecurityChange(string $changeId, string $approvedBy) : TenantSecurityChangeRequest;
+
+    public function applyTenantSecurityChange(string $changeId) : TenantSecurityConfiguration;
+
+    public function rollbackTenantSecurityChange(string $changeId) : TenantSecurityConfiguration;
 
     public function assessCurrentRisk(string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null;
 

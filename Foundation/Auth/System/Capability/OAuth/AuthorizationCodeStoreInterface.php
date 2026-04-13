@@ -22,6 +22,7 @@ interface AuthorizationCodeStoreInterface
         array $scopes,
         DateTimeImmutable $expiresAt,
         string|null $state = null,
+        string|null $nonce = null,
         string|null $codeChallenge = null,
         PkceMethod|null $codeChallengeMethod = null,
         DateTimeImmutable|null $mfaVerifiedAt = null,

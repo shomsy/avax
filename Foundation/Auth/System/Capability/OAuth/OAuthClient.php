@@ -14,7 +14,9 @@ final readonly class OAuthClient
     /**
      * @param list<string> $redirectUris
      * @param list<string> $allowedScopes
+     * @param list<string> $allowedAudiences
      * @param list<OAuthGrantType> $allowedGrantTypes
+     * @param array<string, list<string>> $audienceScopeBoundaries
      */
     public function __construct(
         public string                          $clientId,
@@ -22,7 +24,9 @@ final readonly class OAuthClient
         public OAuthClientType                 $type,
         public array                           $redirectUris,
         public array                           $allowedScopes,
+        public array                           $allowedAudiences = [],
         public array                           $allowedGrantTypes = [],
+        public array                           $audienceScopeBoundaries = [],
         public OAuthSenderConstraintType|null  $requiredSenderConstraint = null,
         public bool                            $workloadIdentity = false,
         public bool                            $phishingResistantRequired = false,
@@ -61,6 +65,48 @@ final readonly class OAuthClient
     public function allowsGrantType(OAuthGrantType $grantType) : bool
     {
         return in_array($grantType, $this->allowedGrantTypes, true);
+    }
+
+    public function requiresAudience() : bool
+    {
+        return $this->allowedAudiences !== [];
+    }
+
+    public function allowsAudience(string|null $audience) : bool
+    {
+        if ($this->allowedAudiences === []) {
+            return $audience === null || trim($audience) === '';
+        }
+
+        if ($audience === null || trim($audience) === '') {
+            return false;
+        }
+
+        return in_array(trim($audience), $this->allowedAudiences, true);
+    }
+
+    /**
+     * @param list<string> $scopes
+     */
+    public function allowsAudienceScopes(string|null $audience, array $scopes) : bool
+    {
+        if (! $this->allowsScopes($scopes)) {
+            return false;
+        }
+
+        $normalizedAudience = trim((string) $audience);
+
+        if ($normalizedAudience === '' || ! isset($this->audienceScopeBoundaries[$normalizedAudience])) {
+            return true;
+        }
+
+        foreach ($scopes as $scope) {
+            if (! in_array($scope, $this->audienceScopeBoundaries[$normalizedAudience], true)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function requiresSenderConstraint() : bool

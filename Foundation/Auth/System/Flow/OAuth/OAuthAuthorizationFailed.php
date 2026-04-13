@@ -37,4 +37,14 @@ final class OAuthAuthorizationFailed extends RuntimeException
     {
         return new self('Phishing-resistant authentication is required for this client.');
     }
+
+    public static function openIdProviderNotConfigured() : self
+    {
+        return new self('OIDC provider support is not configured.');
+    }
+
+    public static function nonceRequired() : self
+    {
+        return new self('OIDC nonce is required for this authorization request.');
+    }
 }

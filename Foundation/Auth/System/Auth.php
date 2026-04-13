@@ -8,12 +8,17 @@ use Avax\Auth\System\Capability\Access\AccessInterface;
 use Avax\Auth\System\Capability\Federation\FederationConnection;
 use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
 use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
+use Avax\Auth\System\Capability\Oidc\OidcJsonWebKeySet;
+use Avax\Auth\System\Capability\Oidc\OidcProviderMetadata;
 use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
 use Avax\Auth\System\Capability\OAuth\OAuthClient;
 use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
 use Avax\Auth\System\Capability\Passkey\PasskeyCredential;
 use Avax\Auth\System\Capability\Risk\RiskDecision;
 use Avax\Auth\System\Capability\Risk\RiskSignal;
+use Avax\Auth\System\Capability\Scim\RegisteredScimDirectory;
+use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequest;
+use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityConfiguration;
 use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticateRequest;
@@ -70,6 +75,8 @@ use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCode;
 use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCode;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
+use Avax\Auth\System\Flow\OAuth\ExchangeClientCredentials\ExchangeClientCredentials;
+use Avax\Auth\System\Flow\OAuth\ExchangeClientCredentials\ExchangeClientCredentialsData;
 use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshToken;
 use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshTokenData;
 use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectToken;
@@ -77,10 +84,16 @@ use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectTokenData;
 use Avax\Auth\System\Flow\OAuth\IntrospectToken\TokenIntrospection;
 use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
 use Avax\Auth\System\Flow\OAuth\ReadClients\ReadClients;
+use Avax\Auth\System\Flow\OAuth\ReadWorkloadIdentities\ReadWorkloadIdentities;
+use Avax\Auth\System\Flow\OAuth\ReadWorkloadIdentities\WorkloadIdentityProfile;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClient;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeToken;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
+use Avax\Auth\System\Flow\Oidc\ReadJsonWebKeySet\ReadOidcJsonWebKeySet;
+use Avax\Auth\System\Flow\Oidc\ReadProviderMetadata\ReadOidcProviderMetadata;
+use Avax\Auth\System\Flow\Oidc\ReadUserInfo\OidcUserInfo;
+use Avax\Auth\System\Flow\Oidc\ReadUserInfo\ReadOidcUserInfo;
 use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthentication;
 use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthenticationData;
 use Avax\Auth\System\Flow\Passkey\BeginRegistration\BeginPasskeyRegistration;
@@ -108,10 +121,32 @@ use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Flow\Register\RegistrationResult;
 use Avax\Auth\System\Flow\Risk\AssessCurrentRisk\AssessCurrentRisk;
 use Avax\Auth\System\Flow\Risk\ReadRiskSignals\ReadRiskSignals;
+use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUser;
+use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUserData;
+use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUser;
+use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
+use Avax\Auth\System\Flow\Scim\ProvisionUser\ScimProvisioningResult;
+use Avax\Auth\System\Flow\Scim\ReadDirectories\ReadScimDirectories;
+use Avax\Auth\System\Flow\Scim\ReadUsers\ReadScimUsers;
+use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
+use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectory;
+use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
+use Avax\Auth\System\Flow\Scim\RotateToken\RotateScimToken;
+use Avax\Auth\System\Flow\Scim\RotateToken\RotatedScimToken;
+use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroups;
+use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroupsData;
 use Avax\Auth\System\Flow\Session\ActiveSession;
 use Avax\Auth\System\Flow\Session\LogoutAllSessions\LogoutAllSessions;
 use Avax\Auth\System\Flow\Session\ReadActiveSessions\ReadActiveSessions;
 use Avax\Auth\System\Flow\Session\RevokeSession\RevokeSession;
+use Avax\Auth\System\Flow\TenantSecurity\ApplyChange\ApplyTenantSecurityChange;
+use Avax\Auth\System\Flow\TenantSecurity\ApproveChange\ApproveTenantSecurityChange;
+use Avax\Auth\System\Flow\TenantSecurity\BeginChange\BeginTenantSecurityChange;
+use Avax\Auth\System\Flow\TenantSecurity\BeginChange\BeginTenantSecurityChangeData;
+use Avax\Auth\System\Flow\TenantSecurity\ReadChangeRequest\ReadTenantSecurityChangeRequest;
+use Avax\Auth\System\Flow\TenantSecurity\ReadChangeRequests\ReadTenantSecurityChangeRequests;
+use Avax\Auth\System\Flow\TenantSecurity\ReadConfiguration\ReadTenantSecurityConfiguration;
+use Avax\Auth\System\Flow\TenantSecurity\RollbackChange\RollbackTenantSecurityChange;
 use Avax\Auth\System\Flow\Token\RefreshAuthentication;
 use Avax\Auth\System\Flow\Token\RefreshAuthenticationRequest;
 use Avax\Auth\System\Flow\Verify\BeginEmailVerification;
@@ -146,8 +181,13 @@ final readonly class Auth implements AuthInterface
         private RefreshAuthentication  $refreshAuthentication,
         private RegisterClient|null    $registerOAuthClient,
         private ReadClients|null       $readOAuthClients,
+        private ReadWorkloadIdentities|null $readWorkloadIdentities,
+        private ReadOidcProviderMetadata|null $readOidcProviderMetadata,
+        private ReadOidcJsonWebKeySet|null $readOidcJsonWebKeySet,
+        private ReadOidcUserInfo|null $readOidcUserInfo,
         private AuthorizeCode|null     $authorizeOAuthCode,
         private ExchangeAuthorizationCode|null $exchangeOAuthCode,
+        private ExchangeClientCredentials|null $exchangeOAuthClientCredentials,
         private ExchangeRefreshToken|null $exchangeOAuthRefreshToken,
         private RevokeToken|null       $revokeOAuthToken,
         private IntrospectToken|null   $introspectOAuthToken,
@@ -173,6 +213,20 @@ final readonly class Auth implements AuthInterface
         private DiscoverFederationConnection|null $discoverFederationConnection,
         private StartFederatedLogin|null $startFederatedLogin,
         private CompleteFederatedLogin|null $completeFederatedLogin,
+        private RegisterScimDirectory|null $registerScimDirectory,
+        private ReadScimDirectories|null $readScimDirectories,
+        private RotateScimToken|null $rotateScimToken,
+        private ProvisionScimUser|null $provisionScimUser,
+        private DeleteScimUser|null $deleteScimUser,
+        private ReadScimUsers|null $readScimUsers,
+        private SyncScimGroups|null $syncScimGroups,
+        private ReadTenantSecurityConfiguration $readTenantSecurityConfiguration,
+        private ReadTenantSecurityChangeRequest $readTenantSecurityChangeRequest,
+        private ReadTenantSecurityChangeRequests $readTenantSecurityChangeRequests,
+        private BeginTenantSecurityChange $beginTenantSecurityChange,
+        private ApproveTenantSecurityChange $approveTenantSecurityChange,
+        private ApplyTenantSecurityChange $applyTenantSecurityChange,
+        private RollbackTenantSecurityChange $rollbackTenantSecurityChange,
         private AssessCurrentRisk      $assessCurrentRisk,
         private ReadRiskSignals        $readRiskSignals,
         private BeginPasswordReset     $beginPasswordReset,
@@ -283,6 +337,99 @@ final readonly class Auth implements AuthInterface
         return $this->readOAuthClientsOrFail()->execute();
     }
 
+    /**
+     * @return list<WorkloadIdentityProfile>
+     */
+    public function readWorkloadIdentities() : array
+    {
+        return $this->readWorkloadIdentitiesOrFail()->execute();
+    }
+
+    public function readOidcProviderMetadata() : OidcProviderMetadata
+    {
+        return $this->readOidcProviderMetadataOrFail()->execute();
+    }
+
+    public function readOidcJsonWebKeySet() : OidcJsonWebKeySet
+    {
+        return $this->readOidcJsonWebKeySetOrFail()->execute();
+    }
+
+    public function readOidcUserInfo(string $accessToken) : OidcUserInfo
+    {
+        return $this->readOidcUserInfoOrFail()->execute($accessToken);
+    }
+
+    public function registerScimDirectory(RegisterScimDirectoryData $data) : RegisteredScimDirectory
+    {
+        return $this->registerScimDirectoryOrFail()->execute($data);
+    }
+
+    public function readScimDirectories(string|null $tenantSlug = null) : array
+    {
+        return $this->readScimDirectoriesOrFail()->execute($tenantSlug);
+    }
+
+    public function rotateScimToken(string $directoryId) : RotatedScimToken
+    {
+        return $this->rotateScimTokenOrFail()->execute($directoryId);
+    }
+
+    public function provisionScimUser(ProvisionScimUserData $data) : ScimProvisioningResult
+    {
+        return $this->provisionScimUserOrFail()->execute($data);
+    }
+
+    public function deleteScimUser(DeleteScimUserData $data) : void
+    {
+        $this->deleteScimUserOrFail()->execute($data);
+    }
+
+    public function readScimUsers(string $directoryId) : array
+    {
+        return $this->readScimUsersOrFail()->execute($directoryId);
+    }
+
+    public function syncScimGroups(SyncScimGroupsData $data) : ScimProvisioningResult
+    {
+        return $this->syncScimGroupsOrFail()->execute($data);
+    }
+
+    public function readTenantSecurityConfiguration(string $tenantSlug) : TenantSecurityConfiguration|null
+    {
+        return $this->readTenantSecurityConfiguration->execute($tenantSlug);
+    }
+
+    public function readTenantSecurityChangeRequest(string $changeId) : TenantSecurityChangeRequest|null
+    {
+        return $this->readTenantSecurityChangeRequest->execute($changeId);
+    }
+
+    public function readTenantSecurityChangeRequests(string $tenantSlug) : array
+    {
+        return $this->readTenantSecurityChangeRequests->execute($tenantSlug);
+    }
+
+    public function beginTenantSecurityChange(BeginTenantSecurityChangeData $data) : TenantSecurityChangeRequest
+    {
+        return $this->beginTenantSecurityChange->execute($data);
+    }
+
+    public function approveTenantSecurityChange(string $changeId, string $approvedBy) : TenantSecurityChangeRequest
+    {
+        return $this->approveTenantSecurityChange->execute($changeId, $approvedBy);
+    }
+
+    public function applyTenantSecurityChange(string $changeId) : TenantSecurityConfiguration
+    {
+        return $this->applyTenantSecurityChange->execute($changeId);
+    }
+
+    public function rollbackTenantSecurityChange(string $changeId) : TenantSecurityConfiguration
+    {
+        return $this->rollbackTenantSecurityChange->execute($changeId);
+    }
+
     public function authorizeOAuthCode(AuthorizeCodeData $data) : IssuedAuthorizationCode
     {
         return $this->authorizeOAuthCodeOrFail()->execute($data);
@@ -291,6 +438,11 @@ final readonly class Auth implements AuthInterface
     public function exchangeOAuthCode(ExchangeAuthorizationCodeData $data) : OAuthTokenGrant
     {
         return $this->exchangeOAuthCodeOrFail()->execute($data);
+    }
+
+    public function exchangeOAuthClientCredentials(ExchangeClientCredentialsData $data) : OAuthTokenGrant
+    {
+        return $this->exchangeOAuthClientCredentialsOrFail()->execute($data);
     }
 
     public function exchangeOAuthRefreshToken(ExchangeRefreshTokenData $data) : OAuthTokenGrant
@@ -503,6 +655,61 @@ final readonly class Auth implements AuthInterface
         return $this->readOAuthClients ?? throw new RuntimeException('OAuth client registry is not configured.');
     }
 
+    private function readWorkloadIdentitiesOrFail() : ReadWorkloadIdentities
+    {
+        return $this->readWorkloadIdentities ?? throw new RuntimeException('OAuth client registry is not configured.');
+    }
+
+    private function readOidcProviderMetadataOrFail() : ReadOidcProviderMetadata
+    {
+        return $this->readOidcProviderMetadata ?? throw new RuntimeException('OIDC provider is not configured.');
+    }
+
+    private function readOidcJsonWebKeySetOrFail() : ReadOidcJsonWebKeySet
+    {
+        return $this->readOidcJsonWebKeySet ?? throw new RuntimeException('OIDC provider is not configured.');
+    }
+
+    private function readOidcUserInfoOrFail() : ReadOidcUserInfo
+    {
+        return $this->readOidcUserInfo ?? throw new RuntimeException('OIDC provider is not configured.');
+    }
+
+    private function registerScimDirectoryOrFail() : RegisterScimDirectory
+    {
+        return $this->registerScimDirectory ?? throw new RuntimeException('SCIM runtime is not configured.');
+    }
+
+    private function rotateScimTokenOrFail() : RotateScimToken
+    {
+        return $this->rotateScimToken ?? throw new RuntimeException('SCIM runtime is not configured.');
+    }
+
+    private function readScimDirectoriesOrFail() : ReadScimDirectories
+    {
+        return $this->readScimDirectories ?? throw new RuntimeException('SCIM runtime is not configured.');
+    }
+
+    private function provisionScimUserOrFail() : ProvisionScimUser
+    {
+        return $this->provisionScimUser ?? throw new RuntimeException('SCIM runtime is not configured.');
+    }
+
+    private function deleteScimUserOrFail() : DeleteScimUser
+    {
+        return $this->deleteScimUser ?? throw new RuntimeException('SCIM runtime is not configured.');
+    }
+
+    private function readScimUsersOrFail() : ReadScimUsers
+    {
+        return $this->readScimUsers ?? throw new RuntimeException('SCIM runtime is not configured.');
+    }
+
+    private function syncScimGroupsOrFail() : SyncScimGroups
+    {
+        return $this->syncScimGroups ?? throw new RuntimeException('SCIM runtime is not configured.');
+    }
+
     private function authorizeOAuthCodeOrFail() : AuthorizeCode
     {
         return $this->authorizeOAuthCode ?? throw new RuntimeException('OAuth authorization code flow is not configured.');
@@ -511,6 +718,11 @@ final readonly class Auth implements AuthInterface
     private function exchangeOAuthCodeOrFail() : ExchangeAuthorizationCode
     {
         return $this->exchangeOAuthCode ?? throw new RuntimeException('OAuth token exchange is not configured.');
+    }
+
+    private function exchangeOAuthClientCredentialsOrFail() : ExchangeClientCredentials
+    {
+        return $this->exchangeOAuthClientCredentials ?? throw new RuntimeException('OAuth client credentials flow is not configured.');
     }
 
     private function exchangeOAuthRefreshTokenOrFail() : ExchangeRefreshToken

@@ -55,6 +55,7 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
             type                     : OAuthClientType::CONFIDENTIAL,
             redirectUris             : ['https://api.example.test/callback'],
             allowedScopes            : ['profile'],
+            allowedAudiences         : ['partner-api'],
             allowedGrantTypes        : [OAuthGrantType::AUTHORIZATION_CODE, OAuthGrantType::REFRESH_TOKEN],
             requiredSenderConstraint : OAuthSenderConstraintType::DPOP,
             phishingResistantRequired: true
@@ -63,6 +64,7 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
         $this->assertTrue($registered->client->allowsGrantType(OAuthGrantType::AUTHORIZATION_CODE));
         $this->assertSame(OAuthSenderConstraintType::DPOP, $registered->client->requiredSenderConstraint);
         $this->assertTrue($registered->client->phishingResistantRequired);
+        $this->assertTrue($registered->client->allowsAudience('partner-api'));
     }
 
     public function testWorkloadIdentityRequiresSenderConstraint() : void
@@ -77,7 +79,26 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
             type            : OAuthClientType::CONFIDENTIAL,
             redirectUris    : ['https://api.example.test/callback'],
             allowedScopes   : ['jobs.run'],
+            allowedAudiences: ['jobs-api'],
             workloadIdentity: true
+        );
+    }
+
+    public function testWorkloadIdentityRequiresAudienceBoundaries() : void
+    {
+        $registry = new InMemoryOAuthClientRegistry(new PasswordHasher());
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Workload identity clients require at least one allowed audience.');
+
+        $registry->register(
+            name                    : 'Machine API',
+            type                    : OAuthClientType::CONFIDENTIAL,
+            redirectUris            : ['https://api.example.test/callback'],
+            allowedScopes           : ['jobs.run'],
+            allowedGrantTypes       : [OAuthGrantType::CLIENT_CREDENTIALS],
+            requiredSenderConstraint: OAuthSenderConstraintType::MTLS,
+            workloadIdentity        : true
         );
     }
 }

@@ -1,8 +1,8 @@
 # Avax Auth
 
 Pure PHP 8.3+ auth kernel with one obvious ingress, immutable auth context, separate web-session and API-token lanes,
-first-class MFA, package-owned OAuth client/token flows, adapter-first passkeys and federation, deterministic risk,
-admin elevation, and a thin optional integration surface.
+first-class MFA, package-owned OAuth, OIDC, SCIM, and tenant-security flows, workload identity, adapter-first passkeys
+and federation, deterministic risk, admin elevation, and a thin optional integration surface.
 
 ## What Changed
 
@@ -11,17 +11,26 @@ admin elevation, and a thin optional integration surface.
 - `Auth::current()`, `Auth::check()`, and `Auth::user()` now read one immutable `AuthenticationContext`.
 - Session and JWT now share the same public result model, logout path, and refresh/revocation lifecycle.
 - OAuth v1 now owns client registration, authorization-code issuance, PKCE verification, refresh exchange,
-  introspection, token revocation, sender-constrained token binding metadata, and explicit client policy posture.
+  `client_credentials`, introspection, token revocation, sender-constrained token binding metadata, workload inventory,
+  and explicit client policy posture.
+- OIDC now owns provider metadata, JWKS publication, RS256 ID-token issuance, nonce enforcement, and userinfo reads
+  behind a dedicated provider seam.
 - `Access` now supports composed access policies with role, permission, resource-owner, fresh-MFA, admin-elevation,
   and actor-tier assurance policies.
 - Passkeys now own registration/authentication plus listing, rename, and revoke flows behind a runtime contract.
 - Federation now owns tenant-aware connection registration, domain verification, metadata sync, health checks,
   discovery, start/complete login, JIT linking, break-glass policy evaluation, and group-to-role mapping.
+- SCIM now owns directory registration, token rotation, user provisioning, delete, group sync, idempotency, drift
+  detection, and explicit account-state semantics behind a package-owned runtime lane.
+- Tenant security now owns requested, approved, applied, and rolled-back security configuration changes with auditable
+  config diffs and rollout versioning.
 - Admin realm, provisioning, deterministic risk, and cleanup/export maintenance flows are package-owned slices.
 - Password reset, email verification, MFA enrollment/challenge/recovery, refresh rotation, audit events, and
   anti-enumeration flows are package-owned.
 - Assurance, privacy retention, authorization hardening, and crypto lifecycle now have first-class repo docs instead of
   being implied follow-up work.
+- Release hardening now has repo-owned dependency review, rollback evidence, SBOM, provenance, secret-scan tooling, and
+  CI workflows instead of doc-only intent.
 
 ## Quick Start
 
@@ -99,11 +108,16 @@ $backupCodes = $auth->confirmMfaEnrollment(
 - `refresh(RefreshAuthenticationRequest): AuthenticationResult`
 - `registerOAuthClient(RegisterClientData): RegisteredOAuthClient`
 - `readOAuthClients(): list<OAuthClient>`
+- `readWorkloadIdentities(): list<WorkloadIdentityProfile>`
 - `authorizeOAuthCode(AuthorizeCodeData): IssuedAuthorizationCode`
 - `exchangeOAuthCode(ExchangeAuthorizationCodeData): OAuthTokenGrant`
+- `exchangeOAuthClientCredentials(ExchangeClientCredentialsData): OAuthTokenGrant`
 - `exchangeOAuthRefreshToken(ExchangeRefreshTokenData): OAuthTokenGrant`
 - `revokeOAuthToken(RevokeTokenData): void`
 - `introspectOAuthToken(IntrospectTokenData): TokenIntrospection`
+- `readOidcProviderMetadata(): OidcProviderMetadata`
+- `readOidcJsonWebKeySet(): OidcJsonWebKeySet`
+- `readOidcUserInfo(string): OidcUserInfo`
 - `beginAdminElevation(): AdminElevation`
 - `endAdminElevation(): void`
 - `requireAdminElevation(): void`
@@ -126,6 +140,17 @@ $backupCodes = $auth->confirmMfaEnrollment(
 - `discoverFederationConnection(string): ?FederationConnection`
 - `startFederatedLogin(StartFederatedLoginData): StartedFederatedLogin`
 - `completeFederatedLogin(CompleteFederatedLoginData): AuthenticationResult`
+- `registerScimDirectory(RegisterScimDirectoryData): RegisteredScimDirectory`
+- `rotateScimToken(string): RotatedScimToken`
+- `provisionScimUser(ProvisionScimUserData): ScimProvisioningResult`
+- `deleteScimUser(DeleteScimUserData): void`
+- `readScimUsers(string): list<ScimUserProjection>`
+- `syncScimGroups(SyncScimGroupsData): ScimProvisioningResult`
+- `readTenantSecurityConfiguration(string): ?TenantSecurityConfiguration`
+- `beginTenantSecurityChange(BeginTenantSecurityChangeData): TenantSecurityChangeRequest`
+- `approveTenantSecurityChange(string, string): TenantSecurityChangeRequest`
+- `applyTenantSecurityChange(string): TenantSecurityConfiguration`
+- `rollbackTenantSecurityChange(string): TenantSecurityConfiguration`
 - `assessCurrentRisk(?string, ?string): ?RiskDecision`
 - `readRiskSignals(?int): list<RiskSignal>`
 - `beginPasswordReset(BeginPasswordResetData): PasswordResetChallenge`
@@ -153,10 +178,18 @@ Runtime ownership lives in auth-flow slices:
 
 - `System/Flow/AuthenticateRequest/` owns ingress resolution and current auth context.
 - `System/Flow/Login/`, `Register/`, `Logout/`, `Recover/`, `ChangeEmail/`, `Verify/`, `Mfa/`, `Token/`, `Session/`,
-  `AdminRealm/`, `Passkey/`, `Federation/`, `Provisioning/`, and `Risk/` own package behavior.
+  `AdminRealm/`, `Passkey/`, `Federation/`, `Oidc/`, `Scim/`, `TenantSecurity/`, `Provisioning/`, and `Risk/` own
+  package behavior.
 - `System/Capability/Access/` owns authorization boundaries and composed access-policy evaluation.
 - `System/Capability/OAuth/` owns client registry and authorization-code persistence contracts.
-- `System/Flow/OAuth/` owns client registration, authorization-code issuance, token exchange, revoke, and introspection.
+- `System/Flow/OAuth/` owns client registration, authorization-code issuance, workload-token exchange, revoke, and
+  introspection.
+- `System/Capability/Oidc/` and `System/Flow/Oidc/` own provider metadata, JWKS, ID-token issuance seams, and userinfo
+  behavior.
+- `System/Capability/Scim/` and `System/Flow/Scim/` own directory configuration, token rotation, provisioning state,
+  and group-sync orchestration.
+- `System/Capability/TenantSecurity/` and `System/Flow/TenantSecurity/` own tenant security configuration state,
+  approval workflow, config diff, rollout, and rollback.
 - `System/Capability/Session/` owns durable tracked-session state and revocation contracts.
 - `System/Capability/Passkey/` owns credential and challenge contracts; runtime verification stays behind
   `PasskeyRuntimeInterface`.
@@ -168,9 +201,10 @@ Runtime ownership lives in auth-flow slices:
 - `System/Capability/User/` stays internal domain state; public auth output is `AuthenticatedUser`.
 - `System/Flow/Diagnostics/` owns audit events without becoming a second source of truth.
 - `integrations/http/` maps transport input, safe failures, and sender-constrained request verification without leaking
-  HTTP concerns into the kernel.
+  HTTP concerns into the kernel, including framework-neutral OIDC, SCIM, and tenant-security admin surfaces.
 - `integrations/diagnostics/` owns export and notification adapters for JSON lines, syslog, webhook, queue, and
   security-notification delivery.
+- `integrations/release/` owns dependency review, provenance, rollback evidence, signing, and key-drill tooling.
 - `integrations/avax-container/` is the optional container adapter.
 
 See [docs/boundary.md](docs/boundary.md) for the final kernel vs integration boundary, API freeze, target tree, and
@@ -183,8 +217,11 @@ non-goals.
 - Active session listing, targeted session revoke, and logout-all flow support.
 - Token revocation and refresh rotation through package-owned stores.
 - OAuth public clients require PKCE and OAuth refresh reuse revokes the full token family.
+- Workload clients can use `client_credentials` with per-service audience and scope ceilings.
 - High-assurance OAuth clients can require phishing-resistant auth before authorization-code issuance.
 - OAuth clients can require sender-constrained access and refresh tokens with DPoP or mTLS binding metadata.
+- OIDC `openid` requests require a nonce, authorization-code exchange can emit RS256 ID tokens, and `Auth` can expose
+  discovery metadata, JWKS, and userinfo for relying parties.
 - HTTP adapters now include DPoP proof verification, mTLS binding verification, and explicit sender-constraint
   enforcement for protected API requests.
 - Password reset and login failures keep safe public messages.
@@ -197,10 +234,15 @@ non-goals.
   fresh-MFA, and admin-elevation policy.
 - Federation login now requires verified domains for discovery/start, records metadata and health state, and can JIT
   link or create users.
+- SCIM directory tokens rotate safely, provisioning updates are idempotent, drift is detectable, and provisioning
+  actions are audited.
+- Tenant security changes require explicit request, approval, apply, and rollback flow ownership with auditable diffs.
 - Deterministic risk rules flag new environments and refresh-token reuse for review-oriented follow-up.
 - Auth context is immutable and password hashes never leave the internal `User` entity.
 - HMAC JWTs can carry an explicit `kid` key version for rollover-aware deployments.
 - `MultiKeyHmacTokenCodec` supports overlap verification during signing-key rollover windows.
+- `RotatingOidcProvider` supports overlap JWKS publication and legacy ID-token verification during OIDC signing-key
+  rollover windows.
 
 ## Delivery Docs
 
@@ -210,6 +252,8 @@ non-goals.
 - [docs/audit-export-operations.md](docs/audit-export-operations.md)
 - [docs/federation-operations.md](docs/federation-operations.md)
 - [docs/high-assurance-admin-examples.md](docs/high-assurance-admin-examples.md)
+- [docs/oidc-conformance-matrix.md](docs/oidc-conformance-matrix.md)
+- [docs/oidc-key-rollover-runbook.md](docs/oidc-key-rollover-runbook.md)
 - [docs/privacy-retention-policy.md](docs/privacy-retention-policy.md)
 - [docs/crypto-key-lifecycle.md](docs/crypto-key-lifecycle.md)
 - [docs/oidc-provider-boundary.md](docs/oidc-provider-boundary.md)

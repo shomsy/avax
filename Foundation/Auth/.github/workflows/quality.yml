@@ -1,0 +1,44 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Install dependencies
+        run: php composer.phar install --no-interaction --prefer-dist
+
+      - name: Static analysis
+        run: php composer.phar analyse
+
+      - name: Strict static analysis
+        run: php composer.phar analyse:strict
+
+      - name: Test suite
+        run: php composer.phar test
+
+      - name: Dependency review
+        run: php composer.phar dependency-review
+
+      - name: Secret scan
+        run: php composer.phar secret-scan

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Integrations\Diagnostics;
 
 use Avax\Auth\Integrations\Diagnostics\JsonLinesAuditExporter;
+use Avax\Auth\Integrations\Diagnostics\ContextFlagAuditLegalHoldPolicy;
 use Avax\Auth\Integrations\Diagnostics\NormalizeAuditEvent;
 use Avax\Auth\Integrations\Diagnostics\PublishAuditMessageInterface;
 use Avax\Auth\Integrations\Diagnostics\QueueAuditExporter;
@@ -112,6 +113,39 @@ final class AuditExporterAdaptersTest extends TestCase
         $this->assertSame('corr-2', $capture->webhook[0]['correlation_id']);
         $this->assertSame('auth.audit', $capture->queue[0][0]);
         $this->assertSame('auth.oauth.refresh.reuse_detected', $capture->queue[0][1]['name']);
+    }
+
+    public function testLegalHoldPreservesSensitiveContextForForensicExport() : void
+    {
+        $path = tempnam(sys_get_temp_dir(), 'auth-audit-hold-');
+        $this->assertIsString($path);
+
+        $exporter = new JsonLinesAuditExporter(
+            path              : $path,
+            normalizeAuditEvent: new NormalizeAuditEvent(
+                legalHoldPolicy: new ContextFlagAuditLegalHoldPolicy()
+            )
+        );
+        $exporter->export([
+            new AuditEvent(
+                name       : 'auth.admin.incident.review_opened',
+                occurredAt : new DateTimeImmutable('2026-04-13T12:00:00+00:00'),
+                context    : [
+                    'email' => 'admin@example.com',
+                    'ip_address' => '127.0.0.1',
+                    'legal_hold' => 1,
+                ]
+            ),
+        ]);
+
+        $lines = file($path, FILE_IGNORE_NEW_LINES);
+        $this->assertIsArray($lines);
+        $payload = json_decode($lines[0], true, 512, JSON_THROW_ON_ERROR);
+
+        $this->assertSame('admin@example.com', $payload['context']['email']);
+        $this->assertSame('127.0.0.1', $payload['context']['ip_address']);
+
+        @unlink($path);
     }
 
     public function testSecurityNotificationExporterRoutesHighSignalEvents() : void

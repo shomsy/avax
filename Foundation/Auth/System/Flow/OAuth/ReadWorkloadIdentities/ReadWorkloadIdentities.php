@@ -1,0 +1,48 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Flow\OAuth\ReadWorkloadIdentities;
+
+use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
+
+final readonly class ReadWorkloadIdentities
+{
+    public function __construct(
+        private OAuthClientRegistryInterface $clientRegistry
+    ) {}
+
+    /**
+     * @return list<WorkloadIdentityProfile>
+     */
+    public function execute() : array
+    {
+        $profiles = [];
+
+        foreach ($this->clientRegistry->all() as $client) {
+            if (! $client->workloadIdentity) {
+                continue;
+            }
+
+            $profiles[] = new WorkloadIdentityProfile(
+                clientId                   : $client->clientId,
+                name                       : $client->name,
+                allowedScopes              : $client->allowedScopes,
+                allowedAudiences           : $client->allowedAudiences,
+                audienceScopeBoundaries    : $client->audienceScopeBoundaries,
+                requiredSenderConstraint   : $client->requiredSenderConstraint,
+                phishingResistantRequired  : $client->phishingResistantRequired
+            );
+        }
+
+        usort(
+            $profiles,
+            static fn (WorkloadIdentityProfile $left, WorkloadIdentityProfile $right) : int => strcmp(
+                $left->clientId,
+                $right->clientId
+            )
+        );
+
+        return $profiles;
+    }
+}

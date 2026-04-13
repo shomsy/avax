@@ -1,0 +1,59 @@
+name: Release Hardening
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Install dependencies
+        run: php composer.phar install --no-interaction --prefer-dist
+
+      - name: Validate codebase
+        run: |
+          php composer.phar analyse
+          php composer.phar analyse:strict
+          php composer.phar test
+
+      - name: Prepare release evidence directory
+        run: mkdir -p build/release
+
+      - name: Run dependency review gate
+        run: php composer.phar dependency-review > build/release/dependency-review.json
+
+      - name: Run secret scan gate
+        run: php composer.phar secret-scan > build/release/secret-scan.json
+
+      - name: Generate SBOM
+        run: php composer.phar sbom > build/release/sbom.json
+
+      - name: Generate release provenance
+        run: php composer.phar release:provenance > build/release/provenance.json
+
+      - name: Generate rollback evidence
+        run: php composer.phar rollback:proof > build/release/rollback-proof.json
+
+      - name: Upload release evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: auth-release-evidence
+          path: build/release/

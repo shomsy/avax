@@ -33,9 +33,7 @@ final readonly class IntrospectToken
 
         $resolved = $this->jwtIdentity->resolve($data->token);
 
-        if ($resolved === null || $resolved->clientId !== $data->clientId) {
-            $result = TokenIntrospection::inactive();
-        } else {
+        if ($resolved !== null && $resolved->clientId === $data->clientId) {
             $result = new TokenIntrospection(
                 active       : true,
                 clientId     : $resolved->clientId,
@@ -46,6 +44,28 @@ final readonly class IntrospectToken
                 phishingResistant: $resolved->phishingResistant,
                 senderConstraint: $resolved->senderConstraint
             );
+        } else {
+            $workload = $this->jwtIdentity->resolveWorkloadToken(
+                token           : $data->token,
+                expectedAudience: $data->expectedAudience,
+                expectedIssuer  : $data->expectedIssuer
+            );
+
+            if ($workload === null || $workload->clientId !== $data->clientId) {
+                $result = TokenIntrospection::inactive();
+            } else {
+                $result = new TokenIntrospection(
+                    active           : true,
+                    clientId         : $workload->clientId,
+                    scopes           : $workload->scopes,
+                    expiresAt        : $workload->expiresAt,
+                    senderConstraint : $workload->senderConstraint,
+                    subject          : $workload->subject,
+                    audience         : $workload->audience,
+                    issuer           : $workload->issuer,
+                    workloadIdentity : true
+                );
+            }
         }
 
         $this->auditLog->record(new AuditEvent(

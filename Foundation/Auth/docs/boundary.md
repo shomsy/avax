@@ -5,8 +5,10 @@ This package is now split into two explicit lanes:
 1. `System/` is the auth kernel.
 2. `integrations/` is the optional integration surface.
 
-The package does not try to be a full identity platform. It owns application
-auth flows. It does not own enterprise control-plane products.
+The package does not try to be a full identity product suite. It owns
+application auth flows plus the kernel-local identity-platform primitives that
+those flows depend on. It still does not own full external control-plane
+products, admin UIs, or formal protocol certification products.
 
 Current delivery posture is documented in
 `docs/adr/001-auth-scope-and-trust-boundaries.md`.
@@ -20,13 +22,16 @@ Current delivery posture is documented in
   `AuthenticationResult`, `AuthenticatedUser`
 - core flows: `AuthenticateRequest`, `Login`, `Register`, `Logout`, `Refresh`,
   `Recover`, `Verify`, `Mfa`, `ChangePassword`, `ReadCurrentUser`, `Session`,
-  `OAuth`, `AdminRealm`, `Passkey`, `Federation`, `Provisioning`, `Risk`
+  `OAuth`, `Oidc`, `AdminRealm`, `Passkey`, `Federation`, `Scim`,
+  `TenantSecurity`, `Provisioning`, `Risk`
 - shared auth capabilities: `Access`, `AdminRealm`, `Federation`, `Identity`,
-  `OAuth`, `Passkey`, `PasswordHashing`, `Risk`, `Session`, `Throttle`,
-  `UserSource`
+  `Oidc`, `OAuth`, `Passkey`, `PasswordHashing`, `Risk`, `Scim`, `Session`,
+  `TenantSecurity`, `Throttle`, `UserSource`
 - package-owned contracts: session store, token issuer/verifier, refresh store,
   audit log/export, clock, MFA store, user source
 - package-owned runtime strategies for session and token auth
+- package-owned workload identity, OIDC provider, SCIM directory, and tenant
+  security change-workflow seams
 - auth diagnostics contracts and audit events
 - package-owned maintenance flows for cleanup and audit export when stores/logs
   expose the relevant seams
@@ -43,6 +48,10 @@ Kernel rule:
 - container adapters such as `Integrations/AvaxContainer/AuthServiceProvider`
 - transport-to-kernel mapping such as
   `Integrations/Http/MapAuthenticationRequest`
+- framework-neutral protocol publication such as
+  `Integrations/Http/Oidc/ServeOidcHttpSurface`,
+  `Integrations/Http/Scim/ServeScimHttpSurface`, and
+  `Integrations/Http/TenantSecurity/ServeTenantSecurityHttpSurface`
 - transport-owned sender-constraint verification such as
   `Integrations/Http/VerifyOAuthSenderConstraint`
 - boundary failure mapping such as `Integrations/Http/MapAuthFailure`
@@ -62,13 +71,14 @@ Integration rule:
 
 This package does not own today:
 
-- central IdP behavior
-- OIDC provider behavior
+- full standards-certified OIDC provider product surface
+- OIDC dynamic client registration, front-channel or back-channel logout, and
+  pairwise subject handling
 - SAML federation brokering runtime
-- SCIM provisioning runtime for enterprise workforce or B2B control planes
-- full tenant membership control plane
+- SCIM bulk APIs and full RFC 7644 product surface
+- tenant admin UI and broader tenant membership control plane
 - KMS/HSM, mail, SIEM, and queue infrastructure
-- enterprise IAM approval workflows
+- cross-organization approval tooling and enterprise IAM governance systems
 
 SCIM remains a conditional enterprise requirement. It is a must-have when the
 product targets enterprise workforce or B2B provisioning, but it is not a
@@ -87,11 +97,14 @@ System/
     AdminRealm/
     Federation/
     Identity/
+    Oidc/
     OAuth/
     Passkey/
     PasswordHashing/
     Risk/
+    Scim/
     Session/
+    TenantSecurity/
     Throttle/
     User/
     UserSource/
@@ -105,6 +118,7 @@ System/
     Login/
     Logout/
     Mfa/
+    Oidc/
     OAuth/
     Passkey/
     Provisioning/
@@ -112,7 +126,9 @@ System/
     Recover/
     Register/
     Risk/
+    Scim/
     Session/
+    TenantSecurity/
     Token/
     Verify/
   Foundation/
@@ -154,6 +170,7 @@ Stable application API to keep public:
 - `ChangePasswordData`
 - `RefreshAuthenticationRequest`
 - `RegisterClientData`
+- `ExchangeClientCredentialsData`
 - `AuthorizeCodeData`
 - `ExchangeAuthorizationCodeData`
 - `ExchangeRefreshTokenData`
@@ -162,9 +179,24 @@ Stable application API to keep public:
 - `OAuthTokenGrant`
 - `IssuedAuthorizationCode`
 - `TokenIntrospection`
+- `WorkloadIdentityProfile`
+- `OidcProviderMetadata`
+- `OidcJsonWebKeySet`
+- `OidcUserInfo`
+- `RegisterScimDirectoryData`
+- `ProvisionScimUserData`
+- `DeleteScimUserData`
+- `SyncScimGroupsData`
+- `BeginTenantSecurityChangeData`
 - `AdminElevation`
 - `FederationConnection`
 - `StartedFederatedLogin`
+- `RegisteredScimDirectory`
+- `RotatedScimToken`
+- `ScimProvisioningResult`
+- `ScimUserProjection`
+- `TenantSecurityConfiguration`
+- `TenantSecurityChangeRequest`
 - `PasskeyCredential`
 - `PasskeyRegistration`
 - `PasskeyAuthenticationChallenge`
@@ -198,6 +230,9 @@ Stable extension contracts to keep public:
 - `OAuthSenderConstraint`
 - `OAuthSenderConstraintType`
 - `AuthorizationCodeStoreInterface`
+- `OidcProviderInterface`
+- `OpenSslOidcProvider`
+- `RotatingOidcProvider`
 - `AccessPolicy`
 - `IdentityPolicy`
 - `IdentityPolicyCatalog`
@@ -209,7 +244,11 @@ Stable extension contracts to keep public:
 - `PasskeyRuntimeInterface`
 - `PasskeyCredentialStoreInterface`
 - `PasskeyChallengeStoreInterface`
+- `ScimDirectoryStoreInterface`
+- `ScimProvisionedIdentityStoreInterface`
 - `RefreshTokenStoreInterface`
+- `TenantSecurityConfigurationStoreInterface`
+- `TenantSecurityChangeRequestStoreInterface`
 - `TokenRevocationStoreInterface`
 - `PasswordResetStoreInterface`
 - `EmailVerificationStoreInterface`

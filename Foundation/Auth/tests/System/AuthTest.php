@@ -9,12 +9,16 @@ use Avax\Auth\System\Capability\Access\AccessInterface;
 use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
 use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
+use Avax\Auth\System\Capability\OAuth\OAuthClientType;
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
 use Avax\Auth\System\Flow\Login\Credentials;
+use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
@@ -156,5 +160,38 @@ final class AuthTest extends TestCase
             ['corr-auth-1'],
             array_values(array_unique(array_filter(array_map(static fn ($event) => $event->correlationId, $events))))
         );
+    }
+
+    public function testAuthFacadeReadsWorkloadIdentityInventory() : void
+    {
+        $userSource = new InMemoryUserSource();
+        $refreshTokens = new InMemoryRefreshTokenStore();
+        $auth = Auth::configuration()
+            ->forUser($userSource)
+            ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
+                userSource       : $userSource,
+                codec            : new HmacTokenCodec('auth-workload-secret'),
+                clock            : new Clock(),
+                revocationStore  : new InMemoryTokenRevocationStore(),
+                refreshTokenStore: $refreshTokens
+            )))
+            ->withRefreshTokenStore($refreshTokens)
+            ->ready();
+
+        $auth->registerOAuthClient(new RegisterClientData(
+            name                    : 'Search Worker',
+            type                    : OAuthClientType::CONFIDENTIAL,
+            redirectUris            : ['urn:avax:oauth:search-worker'],
+            allowedScopes           : ['search.read'],
+            allowedAudiences        : ['search-api'],
+            allowedGrantTypes       : [OAuthGrantType::CLIENT_CREDENTIALS],
+            requiredSenderConstraint: OAuthSenderConstraintType::MTLS,
+            workloadIdentity        : true
+        ));
+
+        $profiles = $auth->readWorkloadIdentities();
+
+        $this->assertCount(1, $profiles);
+        $this->assertSame(['search-api'], $profiles[0]->allowedAudiences);
     }
 }

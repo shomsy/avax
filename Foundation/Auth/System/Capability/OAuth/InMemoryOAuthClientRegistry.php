@@ -26,7 +26,9 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         OAuthClientType $type,
         array $redirectUris,
         array $allowedScopes = [],
+        array $allowedAudiences = [],
         array $allowedGrantTypes = [],
+        array $audienceScopeBoundaries = [],
         OAuthSenderConstraintType|null $requiredSenderConstraint = null,
         bool $workloadIdentity = false,
         bool $phishingResistantRequired = false
@@ -34,7 +36,9 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     {
         $normalizedRedirectUris = $this->normalizeRedirectUris($redirectUris);
         $normalizedScopes       = $this->normalizeScopes($allowedScopes);
+        $normalizedAudiences    = $this->normalizeStrings($allowedAudiences);
         $normalizedGrantTypes   = $this->normalizeGrantTypes($type, $allowedGrantTypes);
+        $normalizedAudienceScopeBoundaries = $this->normalizeAudienceScopeBoundaries($audienceScopeBoundaries);
 
         if ($normalizedRedirectUris === []) {
             throw new InvalidArgumentException('OAuth clients require at least one redirect URI.');
@@ -46,6 +50,16 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
 
         if ($workloadIdentity && $requiredSenderConstraint === null) {
             throw new InvalidArgumentException('Workload identity clients require sender-constrained tokens.');
+        }
+
+        if ($workloadIdentity && $normalizedAudiences === []) {
+            throw new InvalidArgumentException('Workload identity clients require at least one allowed audience.');
+        }
+
+        foreach (array_keys($normalizedAudienceScopeBoundaries) as $audience) {
+            if (! in_array($audience, $normalizedAudiences, true)) {
+                throw new InvalidArgumentException('Audience scope boundaries must target a declared allowed audience.');
+            }
         }
 
         $clientId   = 'oauth_' . bin2hex(random_bytes(12));
@@ -63,7 +77,9 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             type         : $type,
             redirectUris : $normalizedRedirectUris,
             allowedScopes: $normalizedScopes,
+            allowedAudiences: $normalizedAudiences,
             allowedGrantTypes: $normalizedGrantTypes,
+            audienceScopeBoundaries: $normalizedAudienceScopeBoundaries,
             requiredSenderConstraint: $requiredSenderConstraint,
             workloadIdentity: $workloadIdentity,
             phishingResistantRequired: $phishingResistantRequired,
@@ -137,10 +153,19 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
      */
     private function normalizeScopes(array $allowedScopes) : array
     {
+        return $this->normalizeStrings($allowedScopes);
+    }
+
+    /**
+     * @param list<string> $values
+     * @return list<string>
+     */
+    private function normalizeStrings(array $values) : array
+    {
         $normalized = [];
 
-        foreach ($allowedScopes as $scope) {
-            $value = trim($scope);
+        foreach ($values as $value) {
+            $value = trim($value);
 
             if ($value === '' || in_array($value, $normalized, true)) {
                 continue;
@@ -150,6 +175,29 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         }
 
         sort($normalized);
+
+        return $normalized;
+    }
+
+    /**
+     * @param array<string, list<string>> $audienceScopeBoundaries
+     * @return array<string, list<string>>
+     */
+    private function normalizeAudienceScopeBoundaries(array $audienceScopeBoundaries) : array
+    {
+        $normalized = [];
+
+        foreach ($audienceScopeBoundaries as $audience => $scopes) {
+            $normalizedAudience = trim($audience);
+
+            if ($normalizedAudience === '') {
+                continue;
+            }
+
+            $normalized[$normalizedAudience] = $this->normalizeStrings($scopes);
+        }
+
+        ksort($normalized);
 
         return $normalized;
     }

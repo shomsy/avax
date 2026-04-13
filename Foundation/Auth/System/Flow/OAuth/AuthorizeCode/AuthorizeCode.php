@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\OAuth\AuthorizeCode;
 
 use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
+use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
 use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
@@ -25,7 +26,8 @@ final readonly class AuthorizeCode
         private OAuthClientRegistryInterface $clientRegistry,
         private AuthorizationCodeStoreInterface $codeStore,
         private AuditLogInterface            $auditLog,
-        private Clock                        $clock
+        private Clock                        $clock,
+        private OidcProviderInterface|null   $oidcProvider = null
     ) {}
 
     /**
@@ -73,6 +75,18 @@ final readonly class AuthorizeCode
             throw OAuthAuthorizationFailed::invalidScopes();
         }
 
+        if (in_array('openid', $scopes, true)) {
+            if ($this->oidcProvider === null) {
+                $this->recordFailure($data, 'oidc_provider_not_configured');
+                throw OAuthAuthorizationFailed::openIdProviderNotConfigured();
+            }
+
+            if ($data->nonce === null || trim($data->nonce) === '') {
+                $this->recordFailure($data, 'oidc_nonce_required');
+                throw OAuthAuthorizationFailed::nonceRequired();
+            }
+        }
+
         if ($client->isPublic()) {
             if ($data->codeChallenge === null || $data->codeChallengeMethod !== PkceMethod::S256) {
                 $this->recordFailure($data, 'pkce_required');
@@ -92,6 +106,7 @@ final readonly class AuthorizeCode
             scopes             : $scopes,
             expiresAt          : $now->modify('+5 minutes'),
             state              : $data->state,
+            nonce              : $data->nonce,
             codeChallenge      : $data->codeChallenge,
             codeChallengeMethod: $data->codeChallengeMethod,
             mfaVerifiedAt      : $context->mfaVerifiedAt(),

@@ -131,6 +131,7 @@ final readonly class ExchangeRefreshToken
             accessToken          : $accessToken->token,
             accessTokenExpiresAt : $accessToken->expiresAt,
             refreshToken         : $refreshToken->token,
+            idToken              : null,
             clientId             : $client->clientId,
             userId               : $user->getId()->value,
             scopes               : $record->scopes,

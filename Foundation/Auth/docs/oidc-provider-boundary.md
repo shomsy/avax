@@ -1,28 +1,36 @@
 # OIDC Provider Boundary
 
-Full OIDC provider behavior is larger than this package's current kernel
-ownership and should remain a dedicated package or adapter surface.
+The kernel now owns a practical OIDC provider lane. It does not yet claim to be
+a full standards-certified OIDC product.
 
-## Why
+## Kernel-Owned Today
 
-- discovery and JWKS require explicit signing-key publication strategy
-- ID token issuance needs RP-facing claims, nonce handling, and conformance
-  discipline
-- userinfo and RP metadata posture belong to a provider surface, not to the
-  core auth kernel
+- discovery metadata through `Auth::readOidcProviderMetadata()`
+- JWKS publication through `Auth::readOidcJsonWebKeySet()`
+- RS256 ID-token issuance during authorization-code exchange when `openid` is
+  requested
+- nonce enforcement for `openid` authorization requests
+- userinfo through `Auth::readOidcUserInfo()`
+- OpenSSL-backed asymmetric signing through `OpenSslOidcProvider`
+- overlap JWKS publication and legacy token verification through
+  `RotatingOidcProvider`
+- framework-neutral HTTP publication through
+  `integrations/http/Oidc/ServeOidcHttpSurface.php`
 
-## Package Posture
+## Still Outside This Package
 
-- keep OAuth client and token issuance in the kernel
-- expose provider behavior through a separate OIDC package when the product
-  truly needs it
-- use `MultiKeyHmacTokenCodec` or stronger asymmetric codecs for rollover-aware
-  verification during migrations
+- dynamic client registration
+- front-channel or back-channel logout
+- pairwise subject identifiers
+- JAR, PAR, JARM, and other advanced request-object surfaces
+- external conformance certification
 
-## Required Provider Deliverables
+## Operational Posture
 
-- discovery document
-- JWKS surface with overlap during rollover
-- ID token issuance
-- userinfo
-- RP metadata review and conformance matrix
+- keep the active signing key in `OpenSslOidcProvider`
+- during rollover, publish a `RotatingOidcProvider` with the new active provider
+  plus one or more retiring verification providers
+- keep retiring keys published until the maximum ID-token lifetime and RP cache
+  TTL have both elapsed
+- verify delivery against [oidc-conformance-matrix.md](oidc-conformance-matrix.md)
+  and [oidc-key-rollover-runbook.md](oidc-key-rollover-runbook.md)

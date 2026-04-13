@@ -66,7 +66,7 @@ class IdentityTest extends TestCase
         $session->shouldReceive('issue')->once()->with(10, null, false)->andReturn('session-10');
 
         $jwt = Mockery::mock(JwtIdentityInterface::class);
-        $jwt->shouldReceive('issue')->once()->with($user, null, false)->andReturn(new IssuedToken(
+        $jwt->shouldReceive('issue')->once()->with($user, null, false, null, [], null, null)->andReturn(new IssuedToken(
                                                                                token    : 'token-10',
                                                                                tokenId  : 'token-id',
                                                                                expiresAt: new DateTimeImmutable(datetime: '+1 hour')

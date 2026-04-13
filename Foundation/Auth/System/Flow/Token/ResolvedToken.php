@@ -25,6 +25,7 @@ final readonly class ResolvedToken
         public bool                         $phishingResistant = false,
         public string|null                  $clientId = null,
         public array                        $scopes = [],
-        public OAuthSenderConstraint|null   $senderConstraint = null
+        public OAuthSenderConstraint|null   $senderConstraint = null,
+        public string|null                  $familyId = null
     ) {}
 }

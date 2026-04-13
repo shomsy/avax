@@ -43,6 +43,16 @@ final class PasswordHasher
         return password_verify(password: $password, hash: $hash);
     }
 
+    /**
+     * Generates a dummy hash for timing attack mitigation.
+     */
+    public function dummyHash() : string
+    {
+        // Use a fixed cost dummy hash that looks real.
+        // This hash is for the password 'password' with cost 12.
+        return '$2y$12$nO.MMTy.SQpyLSIsZpXOnuSnt.SQpyLSIsZpXOnuSnt.SQpyLSi';
+    }
+
     public function needsRehash(#[SensitiveParameter] string $hash) : bool
     {
         return password_needs_rehash(hash: $hash, algo: $this->algo, options: $this->options);

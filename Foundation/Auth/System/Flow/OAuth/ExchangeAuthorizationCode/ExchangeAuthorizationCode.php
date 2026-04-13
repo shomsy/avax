@@ -106,14 +106,6 @@ final readonly class ExchangeAuthorizationCode
 
         $this->codeStore->markUsed(codeId: $record->codeId, usedAt: $now);
 
-        $accessToken = $this->jwtIdentity->issue(
-            user         : $user,
-            mfaVerifiedAt: $record->mfaVerifiedAt,
-            phishingResistant: $record->phishingResistant,
-            clientId     : $client->clientId,
-            scopes       : $record->scopes,
-            senderConstraint: $data->senderConstraint
-        );
         $refreshToken = $this->refreshTokenStore->issue(
             userId       : $user->getId(),
             expiresAt    : $now->modify(modifier: '+30 days'),
@@ -122,6 +114,15 @@ final readonly class ExchangeAuthorizationCode
             clientId     : $client->clientId,
             scopes       : $record->scopes,
             senderConstraint: $data->senderConstraint
+        );
+        $accessToken = $this->jwtIdentity->issue(
+            user         : $user,
+            mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
+            clientId     : $client->clientId,
+            scopes       : $record->scopes,
+            senderConstraint: $data->senderConstraint,
+            refreshTokenFamilyId: $refreshToken->familyId
         );
         $idToken = null;
 

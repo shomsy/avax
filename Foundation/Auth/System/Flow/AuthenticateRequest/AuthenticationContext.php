@@ -22,6 +22,7 @@ final readonly class AuthenticationContext
         #[SensitiveParameter] private string|null            $accessTokenId = null,
         #[SensitiveParameter] private DateTimeImmutable|null $accessTokenExpiresAt = null,
         #[SensitiveParameter] private string|null            $refreshTokenId = null,
+        #[SensitiveParameter] private string|null            $refreshTokenFamilyId = null,
         private DateTimeImmutable|null                       $mfaVerifiedAt = null,
         private bool                                         $phishingResistant = false
     )
@@ -51,6 +52,7 @@ final readonly class AuthenticationContext
         #[SensitiveParameter] string|null            $accessTokenId = null,
         #[SensitiveParameter] DateTimeImmutable|null $accessTokenExpiresAt = null,
         #[SensitiveParameter] string|null            $refreshTokenId = null,
+        #[SensitiveParameter] string|null            $refreshTokenFamilyId = null,
         DateTimeImmutable|null                       $mfaVerifiedAt = null,
         bool                                         $phishingResistant = false
     ) : self
@@ -63,6 +65,7 @@ final readonly class AuthenticationContext
             accessTokenId       : $accessTokenId,
             accessTokenExpiresAt: $accessTokenExpiresAt,
             refreshTokenId      : $refreshTokenId,
+            refreshTokenFamilyId: $refreshTokenFamilyId,
             mfaVerifiedAt       : $mfaVerifiedAt,
             phishingResistant   : $phishingResistant
         );
@@ -106,6 +109,11 @@ final readonly class AuthenticationContext
     public function refreshTokenId() : string|null
     {
         return $this->refreshTokenId;
+    }
+
+    public function refreshTokenFamilyId() : string|null
+    {
+        return $this->refreshTokenFamilyId;
     }
 
     public function mfaVerifiedAt() : DateTimeImmutable|null

@@ -38,6 +38,11 @@ final readonly class Identity implements IdentityInterface
             throw new InvalidArgumentException(message: 'Inactive users cannot be authenticated.');
         }
 
+        $refreshToken = $this->jwtIdentity?->issueRefreshToken(
+            user               : $user,
+            mfaVerifiedAt      : $mfaVerifiedAt,
+            phishingResistant  : $phishingResistant
+        );
         $sessionId    = $this->sessionIdentity?->issue(
             userId       : $user->getId()->value,
             mfaVerifiedAt: $mfaVerifiedAt,
@@ -46,12 +51,8 @@ final readonly class Identity implements IdentityInterface
         $accessToken  = $this->jwtIdentity?->issue(
             user               : $user,
             mfaVerifiedAt      : $mfaVerifiedAt,
-            phishingResistant  : $phishingResistant
-        );
-        $refreshToken = $this->jwtIdentity?->issueRefreshToken(
-            user               : $user,
-            mfaVerifiedAt      : $mfaVerifiedAt,
-            phishingResistant  : $phishingResistant
+            phishingResistant  : $phishingResistant,
+            refreshTokenFamilyId: $refreshToken?->familyId
         );
 
         return new IssuedAuthentication(

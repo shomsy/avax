@@ -102,7 +102,8 @@ final readonly class ExchangeRefreshToken
             phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
             scopes       : $record->scopes,
-            senderConstraint: $record->senderConstraint
+            senderConstraint: $record->senderConstraint,
+            refreshTokenFamilyId: $record->familyId
         );
         $refreshToken = $this->refreshTokenStore->issue(
             userId       : $record->userId,

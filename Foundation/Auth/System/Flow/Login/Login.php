@@ -49,10 +49,13 @@ final readonly class Login
         $this->rateLimit?->check(identifier: $credentials->identifier);
 
         $user = $this->userSource->findByCredentials(credentials: $credentials);
+        $hash = $user?->getPasswordHash() ?? $this->passwordHasher->dummyHash();
+
+        $passwordValid = $this->passwordHasher->verify(password: $credentials->password, hash: $hash);
 
         if (
             $user === null
-            || ! $this->passwordHasher->verify(password: $credentials->password, hash: $user->getPasswordHash())
+            || ! $passwordValid
             || ! $user->isActive()
         ) {
             $this->rateLimit?->recordFailed(identifier: $credentials->identifier);

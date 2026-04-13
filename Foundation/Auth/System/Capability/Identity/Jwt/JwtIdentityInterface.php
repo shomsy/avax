@@ -28,7 +28,8 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
         bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = [],
-        OAuthSenderConstraint|null $senderConstraint = null
+        OAuthSenderConstraint|null $senderConstraint = null,
+        string|null $refreshTokenFamilyId = null
     ) : IssuedToken;
 
     public function resolve(string $token) : ResolvedToken|null;

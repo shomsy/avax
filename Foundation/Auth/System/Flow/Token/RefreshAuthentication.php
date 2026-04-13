@@ -104,7 +104,8 @@ final readonly class RefreshAuthentication
             mfaVerifiedAt: $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
             clientId     : $record->clientId,
-            scopes       : $record->scopes
+            scopes       : $record->scopes,
+            refreshTokenFamilyId: $record->familyId
         );
         $refreshToken = $this->refreshTokenStore->issue(
             userId       : $record->userId,

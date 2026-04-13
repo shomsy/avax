@@ -63,6 +63,7 @@ final readonly class AuthenticateRequest
                 sessionId           : $sessionId,
                 accessTokenId       : $resolvedToken->tokenId,
                 accessTokenExpiresAt: $resolvedToken->expiresAt,
+                refreshTokenFamilyId: $resolvedToken->familyId,
                 mfaVerifiedAt       : $this->latestMfaMoment(left: $sessionMfaVerifiedAt, right: $resolvedToken->mfaVerifiedAt),
                 phishingResistant   : $sessionPhishingResistant || $resolvedToken->phishingResistant
             );
@@ -92,6 +93,7 @@ final readonly class AuthenticateRequest
                 mode                : AuthenticationMode::TOKEN,
                 accessTokenId       : $resolvedToken->tokenId,
                 accessTokenExpiresAt: $resolvedToken->expiresAt,
+                refreshTokenFamilyId: $resolvedToken->familyId,
                 mfaVerifiedAt       : $resolvedToken->mfaVerifiedAt,
                 phishingResistant   : $resolvedToken->phishingResistant
             );

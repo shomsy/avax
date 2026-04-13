@@ -36,7 +36,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
         private int                                                    $tokenExpiry = 3600,
         private int                                                    $refreshTokenExpiry = 2_592_000,
-        private string                                                 $issuer = 'avax-auth-system'
+        private string                                                 $issuer = 'avax-auth-system',
+        private int                                                    $leeway = 60
     ) {}
 
     public function resolve(#[SensitiveParameter] string $token) : ResolvedToken|null
@@ -61,21 +62,21 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 || ! is_int($expiresAt)
                 || ! is_int($issuedAt)
                 || ! is_int($notBefore)
-                || ! is_int($subject)
+                || ! is_scalar($subject)
                 || ! is_string($tokenId)
             ) {
                 return null;
             }
 
-            $now = $this->clock->now();
+            $nowTimestamp = $this->clock->now()->getTimestamp();
 
-            if ($issuedAt > $now->getTimestamp() || $notBefore > $now->getTimestamp() || $expiresAt <= $now->getTimestamp()) {
+            if ($issuedAt > ($nowTimestamp + $this->leeway) || $notBefore > ($nowTimestamp + $this->leeway) || $expiresAt <= ($nowTimestamp - $this->leeway)) {
                 return null;
             }
 
             $expiryMoment = new DateTimeImmutable(datetime: "@{$expiresAt}");
 
-            if ($this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $now) === true) {
+            if ($this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $this->clock->now()) === true) {
                 return null;
             }
 
@@ -86,6 +87,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             $scopeClaim    = $claims['scope'] ?? null;
             $senderConstraintType = $claims['cnf_typ'] ?? null;
             $senderConstraintThumbprint = $claims['cnf_thumbprint'] ?? null;
+            $familyId      = $claims['fid'] ?? null;
             $scopes        = [];
             $senderConstraint = null;
 
@@ -112,7 +114,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 );
             }
 
-            $user = $this->userSource->findById(id: new UserId(value: $subject));
+            $user = $this->userSource->findById(id: new UserId(value: (int) $subject));
 
             if ($user === null || ! $user->isActive()) {
                 return null;
@@ -126,7 +128,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 phishingResistant: $phishingResistant,
                 clientId     : $clientId,
                 scopes       : $scopes,
-                senderConstraint: $senderConstraint
+                senderConstraint: $senderConstraint,
+                familyId     : is_string($familyId) ? $familyId : null
             );
         } catch (Throwable) {
             return null;
@@ -241,13 +244,13 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 return null;
             }
 
-            $now = $this->clock->now();
+            $nowTimestamp = $this->clock->now()->getTimestamp();
 
-            if ($issuedAt > $now->getTimestamp() || $notBefore > $now->getTimestamp() || $expiresAt <= $now->getTimestamp()) {
+            if ($issuedAt > ($nowTimestamp + $this->leeway) || $notBefore > ($nowTimestamp + $this->leeway) || $expiresAt <= ($nowTimestamp - $this->leeway)) {
                 return null;
             }
 
-            if ($this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $now) === true) {
+            if ($this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $this->clock->now()) === true) {
                 return null;
             }
 
@@ -322,7 +325,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = [],
-        OAuthSenderConstraint|null $senderConstraint = null
+        OAuthSenderConstraint|null $senderConstraint = null,
+        string|null $refreshTokenFamilyId = null
     ) : IssuedToken
     {
         if (! $user->isActive()) {
@@ -340,6 +344,10 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             'exp' => $expiresAt->getTimestamp(),
             'jti' => $tokenId,
         ];
+
+        if ($refreshTokenFamilyId !== null) {
+            $payload['fid'] = $refreshTokenFamilyId;
+        }
 
         if ($mfaVerifiedAt !== null) {
             $payload['mfa_at'] = $mfaVerifiedAt->getTimestamp();

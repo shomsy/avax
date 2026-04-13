@@ -140,16 +140,22 @@ final readonly class AuthorizeCode
         $normalized = [];
 
         foreach ($scopes as $scope) {
-            $value = trim($scope);
+            $parts = preg_split(pattern: '/\s+/', subject: trim($scope), flags: PREG_SPLIT_NO_EMPTY);
 
-            if ($value === '' || in_array($value, $normalized, true)) {
+            if ($parts === false) {
                 continue;
             }
 
-            $normalized[] = $value;
+            foreach ($parts as $value) {
+                if (in_array(needle: $value, haystack: $normalized, strict: true)) {
+                    continue;
+                }
+
+                $normalized[] = $value;
+            }
         }
 
-        sort($normalized);
+        sort(array: $normalized);
 
         return $normalized;
     }

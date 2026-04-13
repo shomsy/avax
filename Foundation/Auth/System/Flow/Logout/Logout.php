@@ -41,7 +41,10 @@ final readonly class Logout
                 $this->sessionRegistry?->revoke(sessionId: $context->sessionId(), revokedAt: $now, reason: 'logout');
             }
 
-            $this->refreshTokenStore?->revokeUser(userId: new UserId(value: $user->id));
+            if ($context->refreshTokenFamilyId() !== null) {
+                $this->refreshTokenStore?->revokeFamily(familyId: $context->refreshTokenFamilyId());
+            }
+
             $this->auditLog->record(event: new AuditEvent(
                                         name      : 'auth.logout.succeeded',
                                         occurredAt: $now,

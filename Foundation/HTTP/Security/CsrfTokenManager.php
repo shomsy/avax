@@ -37,7 +37,9 @@ final readonly class CsrfTokenManager
      */
     public function __construct(
         #[SensitiveParameter] private Session $session,
-        private LoggerInterface               $logger
+        private LoggerInterface               $logger,
+        private int                           $tokenExpirationMinutes = self::TOKEN_EXPIRATION_MINUTES,
+        private int                           $maxTokensPerSession = self::MAX_TOKENS_PER_SESSION
     ) {}
 
     /**
@@ -49,24 +51,22 @@ final readonly class CsrfTokenManager
      */
     public function getToken() : string
     {
-        $tokens = $this->getTokens();
-        $tokens = $this->pruneExpiredTokens(tokens: $tokens);
+        $tokens = $this->pruneExcessTokens($this->pruneExpiredTokens($this->getTokens()));
+        $activeToken = $this->readMostRecentToken($tokens);
 
-        if (count($tokens) >= self::MAX_TOKENS_PER_SESSION) {
-            $this->logger->warning(
-                message: 'Maximum CSRF token limit reached.',
-                context: ['tokens' => $tokens]
-            );
+        if ($activeToken !== null) {
+            $this->storeTokens(tokens: $tokens);
+
+            return $activeToken;
         }
 
         $newToken          = $this->generateToken();
         $tokens[$newToken] = time();
-
         $this->storeTokens(tokens: $tokens);
 
         $this->logger->info(
-            message: 'Generated new CSRF token.',
-            context: ['token' => $newToken]
+            message: 'Generated CSRF token.',
+            context: ['token_count' => count($tokens)]
         );
 
         return $newToken;
@@ -101,8 +101,43 @@ final readonly class CsrfTokenManager
 
         return array_filter(
             $tokens,
-            static fn ($timestamp) => $currentTime - $timestamp <= self::TOKEN_EXPIRATION_MINUTES * 60
+            fn ($timestamp) => is_int($timestamp) && $currentTime - $timestamp <= $this->tokenExpirationMinutes * 60
         );
+    }
+
+    /**
+     * @param array<string, int> $tokens
+     * @return array<string, int>
+     */
+    private function pruneExcessTokens(#[SensitiveParameter] array $tokens) : array
+    {
+        if (count($tokens) <= $this->maxTokensPerSession) {
+            return $tokens;
+        }
+
+        asort($tokens);
+        $trimmed = array_slice($tokens, -$this->maxTokensPerSession, null, true);
+
+        $this->logger->warning(
+            message: 'Trimmed excess CSRF tokens for the session.',
+            context: ['token_count' => count($tokens), 'max_tokens' => $this->maxTokensPerSession]
+        );
+
+        return $trimmed;
+    }
+
+    /**
+     * @param array<string, int> $tokens
+     */
+    private function readMostRecentToken(#[SensitiveParameter] array $tokens) : string|null
+    {
+        if ($tokens === []) {
+            return null;
+        }
+
+        arsort($tokens);
+
+        return (string) array_key_first($tokens);
     }
 
     /**
@@ -118,21 +153,21 @@ final readonly class CsrfTokenManager
      */
     public function validateToken(#[SensitiveParameter] string|null $token) : bool
     {
-        $tokens = $this->getTokens();
+        $tokens = $this->pruneExpiredTokens($this->getTokens());
 
         if ($token === null || ! isset($tokens[$token])) {
             $this->logger->warning(
                 message: 'CSRF validation failed: Missing or invalid token.',
-                context: ['token' => $token]
+                context: ['token_present' => $token !== null]
             );
 
             return false;
         }
 
-        $isExpired = time() - $tokens[$token] > self::TOKEN_EXPIRATION_MINUTES * 60;
+        $isExpired = time() - $tokens[$token] > $this->tokenExpirationMinutes * 60;
 
         if ($isExpired) {
-            $this->logger->info(message: 'CSRF token expired.', context: ['token' => $token]);
+            $this->logger->info(message: 'CSRF token expired.');
             unset($tokens[$token]);
             $this->storeTokens(tokens: $tokens);
 
@@ -140,15 +175,11 @@ final readonly class CsrfTokenManager
         }
 
         unset($tokens[$token]);
-        $newToken          = $this->generateToken();
-        $tokens[$newToken] = time();
         $this->storeTokens(tokens: $tokens);
 
-        $this->session->regenerate(); // Updated for Avax Session
-
         $this->logger->info(
-            message: 'CSRF token validated and rotated.',
-            context: ['new_token' => $newToken]
+            message: 'CSRF token validated and consumed.',
+            context: ['remaining_token_count' => count($tokens)]
         );
 
         return true;

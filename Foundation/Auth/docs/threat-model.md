@@ -13,7 +13,7 @@ This document captures the current auth-kernel threat model and the controls own
 | session hijack | secure cookies, session ID regeneration, idle timeout, absolute timeout, tracked session revocation | implemented |
 | stolen authorization code | short TTL, single use, redirect URI match, PKCE verification for public clients | implemented |
 | stolen refresh token | rotation, reuse detection, family revocation, optional sender-constrained binding checks | implemented |
-| bearer token replay | DPoP or mTLS binding metadata for clients that require sender-constrained tokens | implemented |
+| bearer token replay | DPoP proof verification, mTLS binding verification, binding mismatch audit, and sender-constrained token policy | implemented |
 | passkey replay | single-use passkey challenge lifecycle and revoked-credential checks | implemented |
 | MFA bypass | challenge lifecycle, replay protection, backup code one-time use, fresh-MFA checks | implemented |
 | recovery takeover | anti-enumeration start, recovery throttling, reset-driven revocation, MFA recovery auditing | implemented |
@@ -21,7 +21,7 @@ This document captures the current auth-kernel threat model and the controls own
 | email change takeover | dedicated email-change flow, current-password proof, fresh MFA, one-time confirmation, audit | implemented |
 | refresh token reuse | family revocation, risk review signal, and audit | implemented |
 | insider misuse | audit trail, admin-elevation state, and authorization hardening checklist exist; approval workflows remain application-owned | partial |
-| tenant isolation bug | tenant-aware federation connection boundary exists, but full tenant membership model is not package-owned | partial |
+| tenant isolation bug | unique-domain federation policy, verified-domain discovery, health-gated SSO start, and tenant-aware connection boundary exist; full tenant membership model is still not package-owned | partial |
 
 ## Incident Classes
 
@@ -62,7 +62,7 @@ This document captures the current auth-kernel threat model and the controls own
 - high-assurance clients can require phishing-resistant user auth before code
   issuance
 - sender-constrained clients must present the same DPoP or mTLS binding on
-  refresh exchange
+  refresh exchange and can enforce the same binding at the HTTP adapter boundary
 - refresh reuse revokes the entire token family
 - revoke and introspection flows exist for downstream incident handling
 
@@ -74,9 +74,11 @@ This document captures the current auth-kernel threat model and the controls own
 
 ### Federation Misrouting
 
-- login discovery resolves by normalized domain into one tenant-owned connection
+- login discovery resolves by normalized domain into one verified tenant-owned
+  connection
 - completed federated login leaves an audit trail with tenant context
-- group mapping only maps into known package roles and ignores unknown values
+- invalid group mappings are rejected at registration time and federated groups
+  only map into known package roles
 
 ## Severity Matrix
 

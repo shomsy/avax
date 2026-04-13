@@ -16,7 +16,10 @@ use Avax\Auth\System\Capability\AdminRealm\AdminElevationStoreInterface;
 use Avax\Auth\System\Capability\AdminRealm\InMemoryAdminElevationStore;
 use Avax\Auth\System\Capability\Federation\FederatedIdentityLinkStoreInterface;
 use Avax\Auth\System\Capability\Federation\FederationConnectionStoreInterface;
+use Avax\Auth\System\Capability\Federation\FederationHealthCheckInterface;
+use Avax\Auth\System\Capability\Federation\FederationMetadataRuntimeInterface;
 use Avax\Auth\System\Capability\Federation\FederationRuntimeInterface;
+use Avax\Auth\System\Capability\Federation\GroupRoleMappingValidator;
 use Avax\Auth\System\Capability\Federation\InMemoryFederatedIdentityLinkStore;
 use Avax\Auth\System\Capability\Federation\InMemoryFederationConnectionStore;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
@@ -51,12 +54,17 @@ use Avax\Auth\System\Flow\ChangeEmail\InMemoryEmailChangeStore;
 use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Diagnostics\CorrelatingAuditLog;
 use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLogin;
+use Avax\Auth\System\Flow\Federation\CheckHealth\CheckFederationConnectionHealth;
 use Avax\Auth\System\Flow\Federation\DiscoverConnection\DiscoverFederationConnection;
+use Avax\Auth\System\Flow\Federation\EvaluateBreakGlass\EvaluateFederationBreakGlassBypass;
 use Avax\Auth\System\Flow\Federation\ReadConnections\ReadFederationConnections;
 use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnection;
 use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLogin;
+use Avax\Auth\System\Flow\Federation\SyncMetadata\SyncFederationMetadata;
+use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomain;
 use Avax\Auth\System\Flow\Login\Login;
 use Avax\Auth\System\Flow\Login\RateLimit\LoginRateLimit;
 use Avax\Auth\System\Flow\Logout\Logout;
@@ -134,6 +142,7 @@ final class AuthBuilder
     private PasswordHasher|null                       $passwordHasher         = null;
     private IdGeneratorInterface|null                 $idGenerator            = null;
     private AuditLogInterface|null                    $auditLog               = null;
+    private string|null                               $auditCorrelationId     = null;
     private EmailVerificationStateStoreInterface|null $emailVerificationState = null;
     private MfaStoreInterface|null                    $mfaStore               = null;
     private RefreshTokenStoreInterface|null           $refreshTokenStore      = null;
@@ -215,6 +224,13 @@ final class AuthBuilder
     public function withAuditLog(AuditLogInterface $auditLog) : self
     {
         $this->auditLog = $auditLog;
+
+        return $this;
+    }
+
+    public function withAuditCorrelationId(string $correlationId) : self
+    {
+        $this->auditCorrelationId = trim($correlationId) !== '' ? trim($correlationId) : null;
 
         return $this;
     }
@@ -418,6 +434,13 @@ final class AuthBuilder
         $identity                 = $this->identity;
         $passwordHasher           = $this->passwordHasher ?? new PasswordHasher();
         $auditLog                 = $this->auditLog ?? new NullAuditLog();
+
+        if ($this->auditCorrelationId !== null) {
+            $auditLog = new CorrelatingAuditLog(
+                inner         : $auditLog,
+                correlationId : $this->auditCorrelationId
+            );
+        }
         $clock                    = $this->clock ?? new Clock();
         $oauthClientRegistry      = $this->oauthClientRegistry ?? new InMemoryOAuthClientRegistry($passwordHasher);
         $authorizationCodeStore   = $this->authorizationCodeStore ?? new InMemoryAuthorizationCodeStore();
@@ -431,6 +454,7 @@ final class AuthBuilder
         $passkeyChallengeStore    = $this->passkeyChallengeStore ?? new InMemoryPasskeyChallengeStore();
         $federationConnectionStore = $this->federationConnectionStore ?? new InMemoryFederationConnectionStore();
         $federatedIdentityLinkStore = $this->federatedIdentityLinkStore ?? new InMemoryFederatedIdentityLinkStore();
+        $groupRoleMappingValidator = new GroupRoleMappingValidator();
         $passwordResetStore       = $this->passwordResetStore ?? new InMemoryPasswordResetStore();
         $emailVerificationStore   = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore();
         $emailChangeStore         = $this->emailChangeStore ?? new InMemoryEmailChangeStore();
@@ -812,6 +836,7 @@ final class AuthBuilder
             registerFederationConnection: $federationReady
                 ? new RegisterFederationConnection(
                     connectionStore: $federationConnectionStore,
+                    groupRoleMappingValidator: $groupRoleMappingValidator,
                     auditLog      : $auditLog,
                     clock         : $clock
                 )
@@ -819,6 +844,36 @@ final class AuthBuilder
             readFederationConnections: $federationReady
                 ? new ReadFederationConnections(
                     connectionStore: $federationConnectionStore
+                )
+                : null,
+            verifyFederationDomain: $federationReady
+                ? new VerifyFederationDomain(
+                    connectionStore: $federationConnectionStore,
+                    auditLog      : $auditLog,
+                    clock         : $clock
+                )
+                : null,
+            syncFederationMetadata: $federationReady && $this->federationRuntime instanceof FederationMetadataRuntimeInterface
+                ? new SyncFederationMetadata(
+                    connectionStore: $federationConnectionStore,
+                    runtime        : $this->federationRuntime,
+                    auditLog       : $auditLog,
+                    clock          : $clock
+                )
+                : null,
+            checkFederationConnectionHealth: $federationReady && $this->federationRuntime instanceof FederationHealthCheckInterface
+                ? new CheckFederationConnectionHealth(
+                    connectionStore: $federationConnectionStore,
+                    runtime        : $this->federationRuntime,
+                    auditLog       : $auditLog,
+                    clock          : $clock
+                )
+                : null,
+            evaluateFederationBreakGlassBypass: $federationReady
+                ? new EvaluateFederationBreakGlassBypass(
+                    connectionStore: $federationConnectionStore,
+                    auditLog       : $auditLog,
+                    clock          : $clock
                 )
                 : null,
             discoverFederationConnection: $federationReady

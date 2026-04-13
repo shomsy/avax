@@ -29,6 +29,8 @@ The package already owns:
 - explicit actor assurance policy tiers
 - sender-constrained OAuth token posture metadata
 - key-version-aware HMAC token codec support
+- HTTP DPoP proof verification and mTLS binding verification adapters
+- federation domain verification, metadata sync, health checks, and break-glass policy evaluation
 
 The package does not yet own:
 
@@ -65,8 +67,6 @@ The package owns and ships:
 The package may add:
 
 - optional OAuth interoperability adapters
-- stronger sender-constraint proof verification adapters
-- domain verification and federation metadata sync
 - external SCIM and SIEM adapters
 - deeper tenant membership ownership
 

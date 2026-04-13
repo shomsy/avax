@@ -14,6 +14,25 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-023
+- `created_at`: 2026-04-13 11:35 CEST
+- `updated_at`: 2026-04-13 13:20 CEST
+- `completed_at`: 2026-04-13 13:20 CEST
+- `status`: done
+- `estimate`: 5h
+- `actual`: 1h 45m
+- `outcome`: Close the new `REFAKTOR.md` P0/P1 operational gaps with browser-session guidance, sender-constrained HTTP
+  adapters, SIEM-grade audit exporters, federation operations, policy examples, multi-key token verification, and the
+  missing runbook/control-plane docs
+- `acceptance`: Browser/session docs and examples exist; DPoP and mTLS verification adapters plus tests exist; audit
+  exporters, security notifications, correlation propagation, and PII masking tests exist; federation domain
+  verification, metadata sync, health checks, and break-glass policy flows exist with tests; high-assurance examples,
+  workload/OIDC/SCIM/control-plane docs, and multi-key token verification are committed; PHPUnit and PHPStan lanes pass
+- `links`: docs/browser-session-deployment.md, docs/audit-export-operations.md, docs/federation-operations.md,
+  docs/sso-cutover-runbook.md, docs/workload-identity.md, docs/oidc-provider-boundary.md,
+  docs/scim-runtime-boundary.md, docs/tenant-control-plane.md, System/Flow/Federation/,
+  integrations/http/VerifyOAuthSenderConstraint.php, integrations/diagnostics/, System/Flow/Token/MultiKeyHmacTokenCodec.php
+
 - `id`: AUTH-022
 - `created_at`: 2026-04-12 22:39 CEST
 - `updated_at`: 2026-04-12 23:10 CEST

@@ -55,6 +55,10 @@ final readonly class CompleteFederatedLogin
             throw FederationFailed::notFound();
         }
 
+        if (! $connection->isDomainVerified()) {
+            throw FederationFailed::domainNotVerified();
+        }
+
         $federated = $this->runtime->completeLogin($connection, $data->payload);
         $link      = $this->linkStore->find($connection->connectionId, $federated->subject);
         $user      = $link !== null

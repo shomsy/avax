@@ -6,6 +6,7 @@ namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
 use Avax\Auth\System\Capability\Federation\FederationConnection;
+use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
 use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
 use Avax\Auth\System\Capability\OAuth\IssuedAuthorizationCode;
 use Avax\Auth\System\Capability\OAuth\OAuthClient;
@@ -26,6 +27,7 @@ use Avax\Auth\System\Flow\AdminRealm\AdminElevation;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLoginData;
 use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
 use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLoginData;
+use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomainData;
 use Avax\Auth\System\Flow\Mfa\BackupCodeSet;
 use Avax\Auth\System\Flow\Mfa\Enroll\ConfirmMfaEnrollmentData;
 use Avax\Auth\System\Flow\Mfa\MfaChallenge;
@@ -151,6 +153,14 @@ interface AuthInterface
      * @return list<FederationConnection>
      */
     public function readFederationConnections() : array;
+
+    public function verifyFederationDomain(VerifyFederationDomainData $data) : FederationConnection;
+
+    public function syncFederationMetadata(string $connectionId) : FederationConnection;
+
+    public function checkFederationConnectionHealth(string $connectionId) : FederationConnectionHealth;
+
+    public function evaluateFederationBreakGlassBypass(string $connectionId) : bool;
 
     public function discoverFederationConnection(string $email) : FederationConnection|null;
 

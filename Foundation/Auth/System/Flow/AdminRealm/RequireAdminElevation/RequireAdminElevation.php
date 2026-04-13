@@ -10,13 +10,14 @@ use Avax\Auth\System\Flow\AdminRealm\AdminElevationFailed;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class RequireAdminElevation
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private AdminElevationStoreInterface                 $elevationStore,
-        private Clock                                        $clock
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private AdminElevationStoreInterface                $elevationStore,
+        private Clock                                       $clock
     ) {}
 
     /**

@@ -23,6 +23,7 @@ final readonly class SyncFederationMetadata
 
     /**
      * @throws FederationFailed
+     * @throws \JsonException
      */
     public function execute(string $connectionId) : FederationConnection
     {

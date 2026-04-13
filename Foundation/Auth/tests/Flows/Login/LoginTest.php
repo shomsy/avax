@@ -34,8 +34,10 @@ use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
 use Avax\Auth\Tests\Support\FrozenClock;
 use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
+use Exception;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use SensitiveParameter;
 
 /**
  * Unit test for Login flow.
@@ -45,7 +47,7 @@ use PHPUnit\Framework\TestCase;
 class LoginTest extends TestCase
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function testLoginSuccess() : void
     {
@@ -196,6 +198,9 @@ class LoginTest extends TestCase
         }
     }
 
+    /**
+     * @throws AuthenticationFailed
+     */
     public function testLoginFailedDueToRateLimiting() : void
     {
         $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
@@ -235,6 +240,10 @@ class LoginTest extends TestCase
         $login->execute(credentials: $credentials);
     }
 
+    /**
+     * @throws RateLimitException
+     * @throws AuthenticationFailed
+     */
     public function testLoginReturnsMfaChallengeWhenMfaIsEnabled() : void
     {
         $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
@@ -283,6 +292,10 @@ class LoginTest extends TestCase
         $this->assertSame(expected: MfaChallengePurpose::LOGIN, actual: $result->mfaChallenge()?->purpose);
     }
 
+    /**
+     * @throws RateLimitException
+     * @throws AuthenticationFailed
+     */
     public function testLoginRehashesStoredPasswordWhenHasherPolicyChanged() : void
     {
         $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
@@ -299,7 +312,7 @@ class LoginTest extends TestCase
         $userSource->shouldReceive('findByCredentials')->once()->with($credentials)->andReturn($user);
         $userSource->shouldReceive('updatePassword')->once()->with(
             $userId,
-            Mockery::on(closure: static fn (#[\SensitiveParameter] string $hash) : bool => password_verify('password', $hash))
+            Mockery::on(closure: static fn (#[SensitiveParameter] string $hash) : bool => password_verify('password', $hash))
         );
 
         $identity = Mockery::mock(IdentityInterface::class);
@@ -343,10 +356,10 @@ class LoginTest extends TestCase
     }
 
     private function userWithPassword(
-        #[\SensitiveParameter] PasswordHasher $passwordHasher,
-        UserId                                $userId,
-        #[\SensitiveParameter] string         $password,
-        bool                                  $isActive = true
+        #[SensitiveParameter] PasswordHasher $passwordHasher,
+        UserId                               $userId,
+        #[SensitiveParameter] string         $password,
+        bool                                 $isActive = true
     ) : User {
         return User::create(
             id          : $userId,

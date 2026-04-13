@@ -5,6 +5,8 @@ declare(strict_types=1);
 require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 interface SlicePaymentGateway
 {
@@ -166,8 +168,8 @@ assertThrows(
 
 assertThrows(
 /**
- * @throws \Psr\Container\ContainerExceptionInterface
- * @throws \Psr\Container\NotFoundExceptionInterface
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
  */ expectedClass: ContainerException::class,
     callback     : static function () use ($billing) : void {
         $billing->get(id: SliceInternalAudit::class);

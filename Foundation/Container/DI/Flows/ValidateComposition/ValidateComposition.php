@@ -20,6 +20,7 @@ final readonly class ValidateComposition
      * @param array<string, mixed> $context
      *
      * @return list<string>
+     * @throws \ReflectionException
      */
     public function validate(array|null $serviceIds = null, array $context = []) : array
     {

@@ -8,6 +8,7 @@ use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Guards sensitive actions behind recent MFA proof.
@@ -15,9 +16,9 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class RequireFreshMfa
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private Clock                                        $clock,
-        private int                                          $maxAgeSeconds = 300
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private Clock                                       $clock,
+        private int                                         $maxAgeSeconds = 300
     ) {}
 
     /**

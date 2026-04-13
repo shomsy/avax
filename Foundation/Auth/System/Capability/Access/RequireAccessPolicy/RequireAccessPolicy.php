@@ -19,6 +19,7 @@ use Avax\Auth\System\Flow\AdminRealm\AdminElevationFailed;
 use Avax\Auth\System\Flow\AdminRealm\RequireAdminElevation\RequireAdminElevation;
 use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
+use SensitiveParameter;
 
 /**
  * Evaluates composed authorization requirements in one place.
@@ -26,13 +27,13 @@ use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 final readonly class RequireAccessPolicy
 {
     public function __construct(
-        #[\SensitiveParameter] private RequireAuthentication                  $requireAuthentication,
-        private RequireRole                                                   $requireRole,
-        private RequirePermission                                             $requirePermission,
-        private RequireResourceOwner                                          $requireResourceOwner,
-        #[\SensitiveParameter] private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
-        private RequireFreshMfa                                               $requireFreshMfa,
-        private RequireAdminElevation                                         $requireAdminElevation
+        #[SensitiveParameter] private RequireAuthentication                  $requireAuthentication,
+        private RequireRole                                                  $requireRole,
+        private RequirePermission                                            $requirePermission,
+        private RequireResourceOwner                                         $requireResourceOwner,
+        #[SensitiveParameter] private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
+        private RequireFreshMfa                                              $requireFreshMfa,
+        private RequireAdminElevation                                        $requireAdminElevation
     ) {}
 
     /**

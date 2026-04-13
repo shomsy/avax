@@ -17,21 +17,23 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class AuthorizeCode
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private UserSourceInterface                                    $userSource,
-        private OAuthClientRegistryInterface                           $clientRegistry,
-        #[\SensitiveParameter] private AuthorizationCodeStoreInterface $codeStore,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock,
-        private OidcProviderInterface|null                             $oidcProvider = null
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private UserSourceInterface                                   $userSource,
+        private OAuthClientRegistryInterface                          $clientRegistry,
+        #[SensitiveParameter] private AuthorizationCodeStoreInterface $codeStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        private OidcProviderInterface|null                            $oidcProvider = null
     ) {}
 
     /**
      * @throws OAuthAuthorizationFailed
+     * @throws \DateMalformedStringException
      */
     public function execute(AuthorizeCodeData $data) : IssuedAuthorizationCode
     {

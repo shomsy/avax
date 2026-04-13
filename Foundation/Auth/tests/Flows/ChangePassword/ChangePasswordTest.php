@@ -19,12 +19,15 @@ use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
 use Avax\Auth\System\Flow\ChangePassword\PasswordChangeFailed;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use Exception;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use SensitiveParameter;
 
 /**
  * Unit test for ChangePassword flow.
@@ -32,7 +35,7 @@ use PHPUnit\Framework\TestCase;
 class ChangePasswordTest extends TestCase
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function testChangePasswordSuccess() : void
     {
@@ -52,7 +55,7 @@ class ChangePasswordTest extends TestCase
 
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('findById')->once()->andReturn($user);
-        $userSource->shouldReceive('updatePassword')->once()->withArgs(argsOrClosure: function (UserId $id, #[\SensitiveParameter] string $passwordHash) use ($user, $passwordHasher) {
+        $userSource->shouldReceive('updatePassword')->once()->withArgs(argsOrClosure: function (UserId $id, #[SensitiveParameter] string $passwordHash) use ($user, $passwordHasher) {
             return $id->value === $user->getId()->value
                 && $passwordHash !== $user->getPasswordHash()
                 && $passwordHasher->verify(password: 'new_password', hash: $passwordHash);
@@ -78,6 +81,10 @@ class ChangePasswordTest extends TestCase
         $this->assertTrue(condition: true);
     }
 
+    /**
+     * @throws RateLimitException
+     * @throws Unauthenticated
+     */
     public function testChangePasswordFailureIncorrectCurrentPassword() : void
     {
         $passwordHasher = $this->passwordHasher();
@@ -112,6 +119,10 @@ class ChangePasswordTest extends TestCase
         $changePassword->execute(data: $data);
     }
 
+    /**
+     * @throws RateLimitException
+     * @throws PasswordChangeFailed
+     */
     public function testChangePasswordRequiresAuthenticatedContext() : void
     {
         $changePassword = new ChangePassword(
@@ -127,6 +138,11 @@ class ChangePasswordTest extends TestCase
         $changePassword->execute(data: new ChangePasswordData(currentPassword: 'old', newPassword: 'new'));
     }
 
+    /**
+     * @throws Unauthenticated
+     * @throws RateLimitException
+     * @throws PasswordChangeFailed
+     */
     public function testChangePasswordRequiresFreshMfaWhenUserHasMfaEnabled() : void
     {
         $passwordHasher = $this->passwordHasher();
@@ -172,7 +188,7 @@ class ChangePasswordTest extends TestCase
         return new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
     }
 
-    private function userWithPassword(#[\SensitiveParameter] PasswordHasher $passwordHasher, int $userId, #[\SensitiveParameter] string $password, bool $isActive = true) : User
+    private function userWithPassword(#[SensitiveParameter] PasswordHasher $passwordHasher, int $userId, #[SensitiveParameter] string $password, bool $isActive = true) : User
     {
         return User::create(
             id          : new UserId(value: $userId),

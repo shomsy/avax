@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\Federation\DiscoverConnection;
 
 use Avax\Auth\System\Capability\Federation\FederationConnection;
 use Avax\Auth\System\Capability\Federation\FederationConnectionStoreInterface;
+use SensitiveParameter;
 
 final readonly class DiscoverFederationConnection
 {
@@ -13,7 +14,7 @@ final readonly class DiscoverFederationConnection
         private FederationConnectionStoreInterface $connectionStore
     ) {}
 
-    public function execute(#[\SensitiveParameter] string $email) : FederationConnection|null
+    public function execute(#[SensitiveParameter] string $email) : FederationConnection|null
     {
         $separator = strrchr($email, '@');
         $domain    = strtolower(trim(substr($separator !== false ? $separator : '', 1)));

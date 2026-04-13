@@ -11,6 +11,8 @@ use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use DateTimeImmutable;
+use SensitiveParameter;
 
 /**
  * Canonical ingress owner for request authentication.
@@ -18,12 +20,12 @@ use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 final readonly class AuthenticateRequest
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
-        private ProjectAuthenticatedUser                             $projectAuthenticatedUser,
-        private UserSourceInterface                                  $userSource,
-        private AuditLogInterface                                    $auditLog,
-        #[\SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
-        #[\SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
+        #[SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
+        private ProjectAuthenticatedUser                            $projectAuthenticatedUser,
+        private UserSourceInterface                                 $userSource,
+        private AuditLogInterface                                   $auditLog,
+        #[SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
+        #[SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
     ) {}
 
     public function execute(AuthenticationRequest $request) : AuthenticationContext
@@ -42,7 +44,7 @@ final readonly class AuthenticateRequest
 
             $this->auditLog->record(event: new AuditEvent(
                                         name      : 'auth.ingress.conflict',
-                                        occurredAt: new \DateTimeImmutable(),
+                                        occurredAt: new DateTimeImmutable(),
                                         context   : [
                                                         'ip_address' => $request->ipAddress,
                                                         'user_agent' => $request->userAgent,
@@ -106,7 +108,7 @@ final readonly class AuthenticateRequest
     }
 
     /**
-     * @return array{0: User|null, 1: string|null, 2: \DateTimeImmutable|null, 3: bool}
+     * @return array{0: User|null, 1: string|null, 2: DateTimeImmutable|null, 3: bool}
      */
     private function resolveSessionUser(AuthenticationRequest $request) : array
     {
@@ -135,9 +137,9 @@ final readonly class AuthenticateRequest
     }
 
     private function latestMfaMoment(
-        \DateTimeImmutable|null $left,
-        \DateTimeImmutable|null $right
-    ) : \DateTimeImmutable|null
+        DateTimeImmutable|null $left,
+        DateTimeImmutable|null $right
+    ) : DateTimeImmutable|null
     {
         if ($left === null) {
             return $right;

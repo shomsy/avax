@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Scim\DeleteUser;
 
+use Avax\Auth\System\Capability\Scim\ScimDirectory;
 use Avax\Auth\System\Capability\Scim\ScimDirectoryStoreInterface;
 use Avax\Auth\System\Capability\Scim\ScimProvisionedIdentityStoreInterface;
 use Avax\Auth\System\Capability\UserSource\ProvisionableUserSourceInterface;
@@ -57,7 +58,7 @@ final readonly class DeleteScimUser
     private function authenticateDirectory(
         string $directoryId,
         #[SensitiveParameter] string $directoryToken
-    ) : \Avax\Auth\System\Capability\Scim\ScimDirectory
+    ) : ScimDirectory
     {
         $directory = $this->directoryStore->find(directoryId: $directoryId);
 

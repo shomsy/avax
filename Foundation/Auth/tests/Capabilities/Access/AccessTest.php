@@ -8,10 +8,13 @@ use Avax\Auth\System\Capability\Access\Access;
 use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
 use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequireResourceOwner\RequireResourceOwner;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
+use Avax\Auth\System\Capability\Access\RequireRole\RoleDenied;
 use Avax\Auth\System\Capability\AdminRealm\AdminElevationRecord;
 use Avax\Auth\System\Capability\AdminRealm\InMemoryAdminElevationStore;
 use Avax\Auth\System\Capability\User\UserPermission;
@@ -23,6 +26,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,6 +34,11 @@ use PHPUnit\Framework\TestCase;
  */
 class AccessTest extends TestCase
 {
+    /**
+     * @throws Unauthenticated
+     * @throws PermissionDenied
+     * @throws RoleDenied
+     */
     public function testAccessFacadeDelegatesToBoundaries() : void
     {
         $currentAuthentication = new CurrentAuthentication();
@@ -44,13 +53,13 @@ class AccessTest extends TestCase
                   ),
             mode: AuthenticationMode::SESSION,
             sessionId: 'session-42',
-            mfaVerifiedAt: new \DateTimeImmutable()
+            mfaVerifiedAt: new DateTimeImmutable()
         ));
         $adminElevationStore = new InMemoryAdminElevationStore();
         $adminElevationStore->start(record: new AdminElevationRecord(
             userId: 42,
             bindingId: 'session-42',
-            expiresAt: new \DateTimeImmutable(datetime: '+10 minutes')
+            expiresAt: new DateTimeImmutable(datetime: '+10 minutes')
         ));
         $clock = new Clock();
         $requireAuthentication = new RequireAuthentication(currentAuthentication: $currentAuthentication);

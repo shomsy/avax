@@ -12,6 +12,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Federation\FederationFailed;
 use Avax\Auth\System\Foundation\Clock;
+use Random\RandomException;
 
 final readonly class RegisterFederationConnection
 {
@@ -24,6 +25,8 @@ final readonly class RegisterFederationConnection
 
     /**
      * @throws FederationFailed
+     * @throws RandomException
+     * @throws RandomException
      */
     public function execute(RegisterFederationConnectionData $data) : FederationConnection
     {

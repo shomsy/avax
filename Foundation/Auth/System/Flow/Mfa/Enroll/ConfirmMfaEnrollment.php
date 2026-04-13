@@ -18,6 +18,7 @@ use Avax\Auth\System\Flow\Mfa\MfaMethodRecord;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Flow\Mfa\TotpInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Completes MFA enrollment only after a valid first TOTP proof.
@@ -25,12 +26,12 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class ConfirmMfaEnrollment
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface                            $mfaStore,
-        private TotpInterface                                $totp,
-        #[\SensitiveParameter] private GenerateBackupCodes   $generateBackupCodes,
-        private AuditLogInterface                            $auditLog,
-        private Clock                                        $clock
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private MfaStoreInterface                           $mfaStore,
+        private TotpInterface                               $totp,
+        #[SensitiveParameter] private GenerateBackupCodes   $generateBackupCodes,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock
     ) {}
 
     /**

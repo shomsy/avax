@@ -8,6 +8,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditExporterInterface;
 use Avax\Auth\System\Flow\Diagnostics\ExportAuditEvents\ExportAuditEvents;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -16,8 +17,8 @@ final class ExportAuditEventsTest extends TestCase
     public function testExportDrainsAuditEvents() : void
     {
         $log = new InMemoryAuditLog();
-        $log->record(event: new AuditEvent(name: 'auth.login.succeeded', occurredAt: new \DateTimeImmutable()));
-        $log->record(event: new AuditEvent(name: 'auth.logout.completed', occurredAt: new \DateTimeImmutable()));
+        $log->record(event: new AuditEvent(name: 'auth.login.succeeded', occurredAt: new DateTimeImmutable()));
+        $log->record(event: new AuditEvent(name: 'auth.logout.completed', occurredAt: new DateTimeImmutable()));
         $capture = new stdClass();
         $capture->events = [];
 

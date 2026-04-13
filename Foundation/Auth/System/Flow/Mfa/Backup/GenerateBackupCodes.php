@@ -9,6 +9,8 @@ use Avax\Auth\System\Flow\Mfa\BackupCode;
 use Avax\Auth\System\Flow\Mfa\BackupCodeRecord;
 use Avax\Auth\System\Flow\Mfa\BackupCodeSet;
 use Avax\Auth\System\Foundation\Clock;
+use Random\RandomException;
+use SensitiveParameter;
 
 /**
  * Generates one-time MFA backup codes and their stored hashes.
@@ -16,11 +18,14 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class GenerateBackupCodes
 {
     public function __construct(
-        #[\SensitiveParameter] private PasswordHasher $passwordHasher,
-        private Clock                                 $clock,
-        private int                                   $count = 10
+        #[SensitiveParameter] private PasswordHasher $passwordHasher,
+        private Clock                                $clock,
+        private int                                  $count = 10
     ) {}
 
+    /**
+     * @throws RandomException
+     */
     public function execute() : GeneratedBackupCodes
     {
         $plainCodes  = [];

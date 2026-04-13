@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Mfa;
 
 use DateTimeImmutable;
+use SensitiveParameter;
 
 /**
  * Plain-text backup codes returned after generation or regeneration.
@@ -17,8 +18,8 @@ final readonly class BackupCodeSet
      * @param list<BackupCode> $codes
      */
     public function __construct(
-        #[\SensitiveParameter] public array $codes,
-        public DateTimeImmutable            $generatedAt
+        #[SensitiveParameter] public array $codes,
+        public DateTimeImmutable           $generatedAt
     ) {}
 
     /**
@@ -27,7 +28,7 @@ final readonly class BackupCodeSet
     public function values() : array
     {
         return array_map(
-            static fn (#[\SensitiveParameter] BackupCode $code) : string => $code->value(),
+            static fn (#[SensitiveParameter] BackupCode $code) : string => $code->value(),
             $this->codes
         );
     }
@@ -39,7 +40,7 @@ final readonly class BackupCodeSet
     {
         return [
             'codes'       => array_map(
-                static fn (#[\SensitiveParameter] BackupCode $code) : string => $code->masked(),
+                static fn (#[SensitiveParameter] BackupCode $code) : string => $code->masked(),
                 $this->codes
             ),
             'generatedAt' => $this->generatedAt,

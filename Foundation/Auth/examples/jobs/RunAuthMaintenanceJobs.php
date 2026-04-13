@@ -10,6 +10,7 @@ use Avax\Auth\System\Flow\OAuth\CleanupExpiredAuthorizationCodes\CleanupExpiredA
 use Avax\Auth\System\Flow\Passkey\CleanupExpiredPasskeyChallenges\CleanupExpiredPasskeyChallenges;
 use Avax\Auth\System\Flow\Recover\CleanupExpiredPasswordResets\CleanupExpiredPasswordResets;
 use Avax\Auth\System\Flow\Session\CleanupExpiredSessions\CleanupExpiredSessions;
+use SensitiveParameter;
 
 /**
  * Reference scheduler entrypoint for auth maintenance and export jobs.
@@ -17,12 +18,12 @@ use Avax\Auth\System\Flow\Session\CleanupExpiredSessions\CleanupExpiredSessions;
 final readonly class RunAuthMaintenanceJobs
 {
     public function __construct(
-        #[\SensitiveParameter] private CleanupExpiredSessions           $cleanupExpiredSessions,
-        #[\SensitiveParameter] private CleanupExpiredPasswordResets     $cleanupExpiredPasswordResets,
-        private CleanupExpiredMfaChallenges                             $cleanupExpiredMfaChallenges,
-        #[\SensitiveParameter] private CleanupExpiredAuthorizationCodes $cleanupExpiredAuthorizationCodes,
-        private CleanupExpiredPasskeyChallenges                         $cleanupExpiredPasskeyChallenges,
-        private ExportAuditEvents                                       $exportAuditEvents
+        #[SensitiveParameter] private CleanupExpiredSessions           $cleanupExpiredSessions,
+        #[SensitiveParameter] private CleanupExpiredPasswordResets     $cleanupExpiredPasswordResets,
+        private CleanupExpiredMfaChallenges                            $cleanupExpiredMfaChallenges,
+        #[SensitiveParameter] private CleanupExpiredAuthorizationCodes $cleanupExpiredAuthorizationCodes,
+        private CleanupExpiredPasskeyChallenges                        $cleanupExpiredPasskeyChallenges,
+        private ExportAuditEvents                                      $exportAuditEvents
     ) {}
 
     /**

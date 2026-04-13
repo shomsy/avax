@@ -6,6 +6,8 @@ namespace Avax\Auth\System\Capability\OAuth;
 
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
+use Random\RandomException;
+use SensitiveParameter;
 
 /**
  * In-memory authorization code storage.
@@ -18,18 +20,21 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
     /** @var array<string, AuthorizationCodeRecord> */
     private array $records = [];
 
+    /**
+     * @throws RandomException
+     */
     public function issue(
-        UserId                                 $userId,
-        string                                 $clientId,
-        string                                 $redirectUri,
-        array                                  $scopes,
-        DateTimeImmutable                      $expiresAt,
-        string|null                            $state = null,
-        string|null                            $nonce = null,
-        #[\SensitiveParameter] string|null     $codeChallenge = null,
-        #[\SensitiveParameter] PkceMethod|null $codeChallengeMethod = null,
-        DateTimeImmutable|null                 $mfaVerifiedAt = null,
-        bool                                   $phishingResistant = false
+        UserId                                $userId,
+        string                                $clientId,
+        string                                $redirectUri,
+        array                                 $scopes,
+        DateTimeImmutable                     $expiresAt,
+        string|null                           $state = null,
+        string|null                           $nonce = null,
+        #[SensitiveParameter] string|null     $codeChallenge = null,
+        #[SensitiveParameter] PkceMethod|null $codeChallengeMethod = null,
+        DateTimeImmutable|null                $mfaVerifiedAt = null,
+        bool                                  $phishingResistant = false
     ) : IssuedAuthorizationCode
     {
         $plainCode = bin2hex(random_bytes(32));
@@ -58,7 +63,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         );
     }
 
-    public function find(#[\SensitiveParameter] string $plainCode) : AuthorizationCodeRecord|null
+    public function find(#[SensitiveParameter] string $plainCode) : AuthorizationCodeRecord|null
     {
         $codeId = $this->hashToCodeId[$this->hash(plainCode: $plainCode)] ?? null;
 
@@ -69,7 +74,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         return $this->records[$codeId] ?? null;
     }
 
-    public function markUsed(#[\SensitiveParameter] string $codeId, DateTimeImmutable $usedAt) : void
+    public function markUsed(#[SensitiveParameter] string $codeId, DateTimeImmutable $usedAt) : void
     {
         $record = $this->records[$codeId] ?? null;
 
@@ -112,13 +117,13 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
 
         $this->hashToCodeId = array_filter(
             $this->hashToCodeId,
-            fn (#[\SensitiveParameter] string $codeId) : bool => isset($this->records[$codeId])
+            fn (#[SensitiveParameter] string $codeId) : bool => isset($this->records[$codeId])
         );
 
         return $removed;
     }
 
-    private function hash(#[\SensitiveParameter] string $plainCode) : string
+    private function hash(#[SensitiveParameter] string $plainCode) : string
     {
         return hash('sha256', $plainCode);
     }

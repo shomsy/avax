@@ -10,6 +10,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
 use DateTimeImmutable;
+use SensitiveParameter;
 
 /**
  * Resolves and verifies mTLS-bound token posture from generic server input.
@@ -50,7 +51,7 @@ final readonly class VerifyMtlsSenderConstraint
     /**
      * @param array<string, mixed> $headers
      */
-    private function readHeader(#[\SensitiveParameter] array $headers, string $name) : string|null
+    private function readHeader(#[SensitiveParameter] array $headers, string $name) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
             if (strcasecmp($candidateKey, $name) !== 0) {

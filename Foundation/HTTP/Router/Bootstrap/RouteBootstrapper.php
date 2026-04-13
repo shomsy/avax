@@ -332,6 +332,7 @@ final readonly class RouteBootstrapper
      *
      * @throws FilesystemException
      * @throws ReservedRouteNameException
+     * @throws DuplicateRouteException
      */
     private function loadRoutesFromDiskAndCache(string $routesPath, string $cachePath) : void
     {

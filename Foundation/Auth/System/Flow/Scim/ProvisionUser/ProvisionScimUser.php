@@ -21,6 +21,7 @@ use Avax\Auth\System\Flow\Scim\ScimFailed;
 use Avax\Auth\System\Foundation\Clock;
 use Avax\Auth\System\Foundation\IdGeneratorInterface;
 use JsonException;
+use Random\RandomException;
 use SensitiveParameter;
 
 final readonly class ProvisionScimUser
@@ -37,6 +38,7 @@ final readonly class ProvisionScimUser
 
     /**
      * @throws ScimFailed
+     * @throws RandomException
      */
     public function execute(ProvisionScimUserData $data) : ScimProvisioningResult
     {

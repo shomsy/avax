@@ -58,6 +58,9 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         $this->publicKey = $publicKey;
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function issueIdToken(
         User $user,
         string $clientId,

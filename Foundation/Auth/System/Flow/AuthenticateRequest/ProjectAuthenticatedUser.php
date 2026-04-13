@@ -7,6 +7,7 @@ namespace Avax\Auth\System\Flow\AuthenticateRequest;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Flow\Verify\EmailVerificationStateStoreInterface;
+use SensitiveParameter;
 
 /**
  * Builds the public auth user snapshot from internal auth state.
@@ -14,8 +15,8 @@ use Avax\Auth\System\Flow\Verify\EmailVerificationStateStoreInterface;
 final readonly class ProjectAuthenticatedUser
 {
     public function __construct(
-        #[\SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
-        private MfaStoreInterface                                           $mfaStore
+        #[SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
+        private MfaStoreInterface                                          $mfaStore
     ) {}
 
     public function fromUser(User $user) : AuthenticatedUser

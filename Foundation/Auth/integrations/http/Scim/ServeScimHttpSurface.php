@@ -14,6 +14,7 @@ use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
 use Avax\Auth\System\Flow\Scim\ScimFailed;
 use InvalidArgumentException;
+use SensitiveParameter;
 
 /**
  * Publishes a framework-neutral SCIM HTTP surface over the package-owned SCIM runtime.
@@ -27,8 +28,8 @@ final readonly class ServeScimHttpSurface
     private const USER_EXTENSION_SCHEMA = 'urn:avax:params:scim:schemas:auth:1.0:User';
 
     public function __construct(
-        #[\SensitiveParameter] private AuthInterface   $auth,
-        #[\SensitiveParameter] private ReadBearerToken $readBearerToken = new ReadBearerToken()
+        #[SensitiveParameter] private AuthInterface   $auth,
+        #[SensitiveParameter] private ReadBearerToken $readBearerToken = new ReadBearerToken()
     ) {}
 
     public function execute(HttpEndpointInput $input) : JsonHttpResponse

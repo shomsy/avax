@@ -8,17 +8,18 @@ use Avax\Auth\System\Capability\Passkey\PasskeyCredential;
 use Avax\Auth\System\Capability\Passkey\PasskeyRuntimeInterface;
 use Avax\Auth\System\Capability\Passkey\ResolvedPasskeyCredential;
 use Avax\Auth\System\Capability\Passkey\VerifiedPasskeyAuthentication;
+use SensitiveParameter;
 
 final class FakePasskeyRuntime implements PasskeyRuntimeInterface
 {
     public function beginRegistration(
-        string $rpId,
-        string $rpName,
-        int $userId,
-        string $userName,
-        string $displayName,
-        string $challenge,
-        #[\SensitiveParameter] array $excludeCredentialIds
+        string                      $rpId,
+        string                      $rpName,
+        int                         $userId,
+        string                      $userName,
+        string                      $displayName,
+        string                      $challenge,
+        #[SensitiveParameter] array $excludeCredentialIds
     ) : array
     {
         return [
@@ -45,7 +46,7 @@ final class FakePasskeyRuntime implements PasskeyRuntimeInterface
     public function beginAuthentication(
         string $rpId,
         string $challenge,
-        #[\SensitiveParameter] array $allowCredentialIds
+        #[SensitiveParameter] array $allowCredentialIds
     ) : array
     {
         return [
@@ -59,7 +60,7 @@ final class FakePasskeyRuntime implements PasskeyRuntimeInterface
         string $rpId,
         string $challenge,
         array $response,
-        #[\SensitiveParameter] array $knownCredentials
+        #[SensitiveParameter] array $knownCredentials
     ) : VerifiedPasskeyAuthentication
     {
         $credentialId = (string) ($response['credential_id'] ?? '');

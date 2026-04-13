@@ -49,6 +49,10 @@ final class CompiledRuntime
         return $this->compiler?->shouldValidateBeforeCompile() ?? false;
     }
 
+    /**
+     * @throws \ReflectionException
+     * @throws \JsonException
+     */
     public function compile(array|null $serviceIds = null, array|null $validationIssues = null, bool $warmed = false) : CompiledContainer|null
     {
         $serviceIds       ??= [];

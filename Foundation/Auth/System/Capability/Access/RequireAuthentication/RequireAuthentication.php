@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\Access\RequireAuthentication;
 
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use SensitiveParameter;
 
 /**
  * Requirement for authentication presence.
@@ -14,7 +15,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 final readonly class RequireAuthentication
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication
     ) {}
 
     /**

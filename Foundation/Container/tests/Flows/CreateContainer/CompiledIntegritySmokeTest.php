@@ -6,6 +6,8 @@ require_once dirname(__DIR__, 2) . '/bootstrap.php';
 
 use Avax\Container\DI\Capabilities\Composition\CreateContainerConfig;
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 final class IntegrityDependency
 {
@@ -49,8 +51,8 @@ $productionReload->singleton(abstract: IntegrityDependency::class, concrete: Int
 
 assertThrows(
 /**
- * @throws \Psr\Container\ContainerExceptionInterface
- * @throws \Psr\Container\NotFoundExceptionInterface
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
  */ expectedClass: ContainerException::class,
     callback     : static fn () => $productionReload->get(id: IntegrityTarget::class),
     message      : 'Production mode should fail closed when the compiled artifact is corrupted.'

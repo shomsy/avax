@@ -21,6 +21,7 @@ use Avax\Auth\System\Flow\Mfa\MfaVerificationAttempt;
 use Avax\Auth\System\Flow\Mfa\TotpInterface;
 use Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Completes MFA verification and establishes final auth state.
@@ -28,18 +29,18 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class VerifyMfaChallenge
 {
     public function __construct(
-        private MfaChallengeStoreInterface                   $challengeStore,
-        private MfaStoreInterface                            $mfaStore,
-        private TotpInterface                                $totp,
-        #[\SensitiveParameter] private VerifyBackupCode      $verifyBackupCode,
-        private UserSourceInterface                          $userSource,
-        private IdentityInterface                            $identity,
-        private ProjectAuthenticatedUser                     $projectAuthenticatedUser,
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private AuditLogInterface                            $auditLog,
-        private Clock                                        $clock,
-        private LimitMfaAttempts|null                        $attemptLimit = null,
-        private DeterministicRiskEngine|null                 $riskEngine = null
+        private MfaChallengeStoreInterface                  $challengeStore,
+        private MfaStoreInterface                           $mfaStore,
+        private TotpInterface                               $totp,
+        #[SensitiveParameter] private VerifyBackupCode      $verifyBackupCode,
+        private UserSourceInterface                         $userSource,
+        private IdentityInterface                           $identity,
+        private ProjectAuthenticatedUser                    $projectAuthenticatedUser,
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock,
+        private LimitMfaAttempts|null                       $attemptLimit = null,
+        private DeterministicRiskEngine|null                $riskEngine = null
     ) {}
 
     /**
@@ -204,12 +205,12 @@ final readonly class VerifyMfaChallenge
     }
 
     private function recordFailure(
-        string                             $challengeId,
-        string                             $reason,
-        #[\SensitiveParameter] string|null $ipAddress,
-        string|null                        $userAgent,
-        int|null                           $userId = null,
-        bool                               $suspicious = false
+        string                            $challengeId,
+        string                            $reason,
+        #[SensitiveParameter] string|null $ipAddress,
+        string|null                       $userAgent,
+        int|null                          $userId = null,
+        bool                              $suspicious = false
     ) : void
     {
         $this->auditLog->record(event: new AuditEvent(

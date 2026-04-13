@@ -55,11 +55,17 @@ readonly class ContextContainer implements ContainerInterface
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function make(string $abstract, array $parameters = []) : object
     {
         return $this->resolver->makeInContext(id: $abstract, parameters: $parameters, context: $this->context);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function call(callable|string $callable, array $parameters = []) : mixed
     {
         return $this->resolver->callInContext(
@@ -69,6 +75,9 @@ readonly class ContextContainer implements ContainerInterface
         );
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function injectInto(object $target) : object
     {
         return $this->resolver->injectIntoInContext(target: $target, context: $this->context);
@@ -137,6 +146,9 @@ readonly class ContextContainer implements ContainerInterface
         return new ValidateComposition(resolver: $this->resolver);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function describeService(string $id) : array
     {
         return $this->explainService()->describe(id: $id, context: $this->context);
@@ -147,11 +159,17 @@ readonly class ContextContainer implements ContainerInterface
         return new ExplainService(resolver: $this->resolver);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function debugService(string $id) : array
     {
         return $this->explainService()->describe(id: $id, context: $this->context);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function debugPlan(string $id) : array
     {
         return $this->explainService()->debugPlan(id: $id, context: $this->context);
@@ -478,6 +496,9 @@ readonly class ContextContainer implements ContainerInterface
         }
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function get(string $id) : mixed
     {
         return $this->resolver->getInContext(id: $id, context: $this->context);

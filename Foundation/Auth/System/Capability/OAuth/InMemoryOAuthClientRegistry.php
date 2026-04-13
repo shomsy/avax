@@ -7,6 +7,7 @@ namespace Avax\Auth\System\Capability\OAuth;
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use InvalidArgumentException;
+use Random\RandomException;
 use SensitiveParameter;
 
 /**
@@ -21,6 +22,9 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         #[SensitiveParameter] private readonly PasswordHasher $passwordHasher
     ) {}
 
+    /**
+     * @throws RandomException
+     */
     public function register(
         string $name,
         OAuthClientType $type,

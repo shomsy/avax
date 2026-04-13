@@ -11,6 +11,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Scim\ScimFailed;
 use Avax\Auth\System\Foundation\Clock;
+use Random\RandomException;
 use SensitiveParameter;
 
 final readonly class RotateScimToken
@@ -24,6 +25,7 @@ final readonly class RotateScimToken
 
     /**
      * @throws ScimFailed
+     * @throws RandomException
      */
     public function execute(string $directoryId) : RotatedScimToken
     {

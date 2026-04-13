@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Container\DI\Capabilities\Composition\Compilation;
 
 use Avax\Container\DI\Capabilities\Resolution\LifetimePlan;
+use SensitiveParameter;
 
 /**
  * Typed compiled artifact metadata. This keeps the sidecar schema explicit.
@@ -35,21 +36,21 @@ final readonly class ArtifactMetadata
      * @param array<string, int>                                          $statistics
      */
     public function __construct(
-        public string                        $format,
-        public int                           $schemaVersion,
-        public string                        $compiledAt,
-        public string                        $cacheVersion,
-        #[\SensitiveParameter] public string $configHash,
-        public string                        $settingsFingerprint,
-        public string                        $environment,
-        public string                        $compileMode,
-        public string                        $executionMode,
-        public string                        $pruneMode,
-        public string                        $diagnosticsMode,
-        public bool                          $strict,
-        public string                        $fingerprint,
-        public string                        $dependencyGraphRevision,
-        public array                         $artifactPaths,
+        public string                       $format,
+        public int                          $schemaVersion,
+        public string                       $compiledAt,
+        public string                       $cacheVersion,
+        #[SensitiveParameter] public string $configHash,
+        public string                       $settingsFingerprint,
+        public string                       $environment,
+        public string                       $compileMode,
+        public string                       $executionMode,
+        public string                       $pruneMode,
+        public string                       $diagnosticsMode,
+        public bool                         $strict,
+        public string                       $fingerprint,
+        public string                       $dependencyGraphRevision,
+        public array                        $artifactPaths,
         public bool   $warmed,
         public string $benchmarkBuildMarker,
         public array  $entries,

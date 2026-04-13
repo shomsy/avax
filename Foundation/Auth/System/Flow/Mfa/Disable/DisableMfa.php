@@ -12,10 +12,12 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Mfa\Challenge\MfaChallengeStoreInterface;
+use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Disables MFA after fresh proof and clears recovery material.
@@ -23,18 +25,18 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class DisableMfa
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private RequireFreshMfa                                        $requireFreshMfa,
-        private MfaStoreInterface                                      $mfaStore,
-        private MfaChallengeStoreInterface                             $mfaChallengeStore,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock,
-        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private RequireFreshMfa                                       $requireFreshMfa,
+        private MfaStoreInterface                                     $mfaStore,
+        private MfaChallengeStoreInterface                            $mfaChallengeStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
     ) {}
 
     /**
      * @throws Unauthenticated
-     * @throws \Avax\Auth\System\Flow\Mfa\FreshMfaRequired
+     * @throws FreshMfaRequired
      */
     public function execute() : void
     {

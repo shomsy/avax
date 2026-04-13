@@ -8,6 +8,10 @@ use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
 use Avax\Auth\System\Capability\Access\Policy\AssuranceTier;
 use Avax\Auth\System\Capability\Access\Policy\AuthenticationFactor;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
+use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
+use Avax\Auth\System\Capability\Access\RequireRole\RoleDenied;
+use SensitiveParameter;
 
 /**
  * Reference policy for high-impact admin actions that require recent passkey-backed assurance.
@@ -15,9 +19,14 @@ use Avax\Auth\System\Capability\Access\Policy\AuthenticationFactor;
 final readonly class RequireFreshPasskeyForAdminAction
 {
     public function __construct(
-        #[\SensitiveParameter] private RequireAccessPolicy $requireAccessPolicy
+        #[SensitiveParameter] private RequireAccessPolicy $requireAccessPolicy
     ) {}
 
+    /**
+     * @throws Unauthenticated
+     * @throws PermissionDenied
+     * @throws RoleDenied
+     */
     public function execute() : void
     {
         $this->requireAccessPolicy->execute(policy: new AccessPolicy(

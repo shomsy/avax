@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Passkey\RevokePasskey;
 
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Passkey\PasskeyCredentialStoreInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
@@ -11,21 +12,23 @@ use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Flow\Passkey\PasskeyOperationFailed;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class RevokePasskey
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private RequireFreshMfa                                        $requireFreshMfa,
-        #[\SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private RequireFreshMfa                                       $requireFreshMfa,
+        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock
     ) {}
 
     /**
      * @throws PasskeyOperationFailed
+     * @throws Unauthenticated
      */
-    public function execute(#[\SensitiveParameter] string $credentialId) : void
+    public function execute(#[SensitiveParameter] string $credentialId) : void
     {
         $user = $this->currentAuthentication->read()->user();
 

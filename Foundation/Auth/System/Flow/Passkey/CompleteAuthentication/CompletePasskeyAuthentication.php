@@ -19,20 +19,21 @@ use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Login\AuthenticationResult;
 use Avax\Auth\System\Flow\Passkey\PasskeyOperationFailed;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class CompletePasskeyAuthentication
 {
     public function __construct(
-        private PasskeyRuntimeInterface                                $runtime,
-        private PasskeyChallengeStoreInterface                         $challengeStore,
-        #[\SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private UserSourceInterface                                    $userSource,
-        private IdentityInterface                                      $identity,
-        private ProjectAuthenticatedUser                               $projectAuthenticatedUser,
-        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock,
-        private string                                                 $rpId
+        private PasskeyRuntimeInterface                               $runtime,
+        private PasskeyChallengeStoreInterface                        $challengeStore,
+        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private UserSourceInterface                                   $userSource,
+        private IdentityInterface                                     $identity,
+        private ProjectAuthenticatedUser                              $projectAuthenticatedUser,
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        private string                                                $rpId
     ) {}
 
     /**

@@ -38,6 +38,8 @@ use DateInterval;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
+use RuntimeException;
 
 /**
  * Unit tests for MFA challenge verification.
@@ -140,6 +142,9 @@ final class VerifyMfaChallengeTest extends TestCase
         return [$flow, $totp, $clock, $challengeStore, $currentAuthentication];
     }
 
+    /**
+     * @throws \DateInvalidOperationException
+     */
     private function challengeRecord(DateTimeImmutable $expiresAt, string $challengeId = 'challenge-1') : MfaChallengeRecord
     {
         return new MfaChallengeRecord(
@@ -164,6 +169,9 @@ final class VerifyMfaChallengeTest extends TestCase
         }
     }
 
+    /**
+     * @throws \DateInvalidOperationException
+     */
     public function testExpiredChallengeFails() : void
     {
         [$flow, $totp, $clock, $challengeStore] = $this->makeFlow();
@@ -261,12 +269,12 @@ final class VerifyMfaChallengeTest extends TestCase
             passwordHasher: new PasswordHasher(),
             clock         : $clock
         ))->execute();
-        $mfaStoreProperty = new \ReflectionProperty(class: VerifyMfaChallenge::class, property: 'mfaStore');
+        $mfaStoreProperty = new ReflectionProperty(class: VerifyMfaChallenge::class, property: 'mfaStore');
         $mfaStoreProperty->setAccessible(accessible: true);
         /** @var InMemoryMfaStore $mfaStore */
         $mfaStore = $mfaStoreProperty->getValue(object: $flow);
         $method   = $mfaStore->findMethod(userId: new UserId(value: 1));
-        $mfaStore->saveMethod(record: $method?->withBackupCodes(backupCodes: $generated->records) ?? throw new \RuntimeException(message: 'Missing MFA method.'));
+        $mfaStore->saveMethod(record: $method?->withBackupCodes(backupCodes: $generated->records) ?? throw new RuntimeException(message: 'Missing MFA method.'));
 
         return [$flow, $totp, $clock, $challengeStore, $currentAuthentication, $generated->backupCodeSet->values()[0]];
     }

@@ -7,6 +7,7 @@ namespace Avax\Auth\System\Flow\AuthenticateRequest;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserPermission;
 use Avax\Auth\System\Capability\User\UserRole;
+use SensitiveParameter;
 
 /**
  * Immutable public auth user snapshot.
@@ -18,13 +19,13 @@ final readonly class AuthenticatedUser
      * @param list<string> $permissions
      */
     public function __construct(
-        public int                           $id,
-        #[\SensitiveParameter] public string $email,
-        public string                        $username,
-        public array                         $roles = [],
-        public array                         $permissions = [],
-        public bool                          $emailVerified = false,
-        public bool                          $mfaEnabled = false
+        public int                          $id,
+        #[SensitiveParameter] public string $email,
+        public string                       $username,
+        public array                        $roles = [],
+        public array                        $permissions = [],
+        public bool                         $emailVerified = false,
+        public bool                         $mfaEnabled = false
     ) {}
 
     public static function fromUser(

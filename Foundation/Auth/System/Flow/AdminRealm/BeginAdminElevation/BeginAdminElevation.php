@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\AdminRealm\BeginAdminElevation;
 
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\AdminRealm\AdminElevationRecord;
 use Avax\Auth\System\Capability\AdminRealm\AdminElevationStoreInterface;
 use Avax\Auth\System\Capability\User\UserRole;
@@ -15,20 +16,23 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class BeginAdminElevation
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private RequireFreshMfa                              $requireFreshMfa,
-        private AdminElevationStoreInterface                 $elevationStore,
-        private AuditLogInterface                            $auditLog,
-        private Clock                                        $clock,
-        private bool                                         $phishingResistantRequired = false
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private RequireFreshMfa                             $requireFreshMfa,
+        private AdminElevationStoreInterface                $elevationStore,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock,
+        private bool                                        $phishingResistantRequired = false
     ) {}
 
     /**
      * @throws AdminElevationFailed
+     * @throws \DateMalformedStringException
+     * @throws Unauthenticated
      */
     public function execute() : AdminElevation
     {

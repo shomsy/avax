@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Avax\Container\DI\Capabilities\Diagnostics\Errors\ContainerException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 require_once dirname(__DIR__, 3) . '/bootstrap.php';
 
@@ -13,8 +15,8 @@ $container->scoped(abstract: ScopedService::class, concrete: ScopedService::clas
 
 assertThrows(
 /**
- * @throws \Psr\Container\ContainerExceptionInterface
- * @throws \Psr\Container\NotFoundExceptionInterface
+ * @throws ContainerExceptionInterface
+ * @throws NotFoundExceptionInterface
  */ expectedClass: ContainerException::class,
     callback     : static fn () => $container->get(id: ScopedService::class),
     message      : 'Scoped services must fail closed without an active scope.'

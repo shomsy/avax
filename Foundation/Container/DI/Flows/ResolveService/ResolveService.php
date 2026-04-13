@@ -20,6 +20,7 @@ final readonly class ResolveService
     /**
      * @throws ContainerException
      * @throws ServiceNotFoundException
+     * @throws \Throwable
      */
     public function get(string $id) : mixed
     {
@@ -31,6 +32,7 @@ final readonly class ResolveService
      *
      * @throws ContainerException
      * @throws ServiceNotFoundException
+     * @throws \Throwable
      */
     public function make(string $abstract, array $parameters = []) : object
     {

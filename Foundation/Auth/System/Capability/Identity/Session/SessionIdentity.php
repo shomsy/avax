@@ -14,6 +14,8 @@ use Avax\Auth\System\Flow\Session\NativeSessionStore;
 use Avax\Auth\System\Flow\Session\SessionStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
 use DateTimeImmutable;
+use Exception;
+use SensitiveParameter;
 
 /**
  * Standard implementation of session-based identity storage within the Auth System.
@@ -21,18 +23,21 @@ use DateTimeImmutable;
 final class SessionIdentity implements SessionIdentityInterface
 {
     public function __construct(
-        private SessionStoreInterface                                $store = new NativeSessionStore(),
-        private Clock                                                $clock = new Clock(),
-        private AuditLogInterface                                    $auditLog = new NullAuditLog(),
-        private SessionLifetime                                      $lifetime = new SessionLifetime(),
-        #[\SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null,
-        #[\SensitiveParameter] private string                        $sessionKey = 'auth_user_id',
-        private string                                               $mfaVerifiedAtKey = 'auth_mfa_verified_at',
-        private string                                               $phishingResistantKey = 'auth_phishing_resistant',
-        private string                                               $issuedAtKey = 'auth_session_issued_at',
-        private string                                               $lastSeenAtKey = 'auth_session_last_seen_at'
+        private SessionStoreInterface                               $store = new NativeSessionStore(),
+        private Clock                                               $clock = new Clock(),
+        private AuditLogInterface                                   $auditLog = new NullAuditLog(),
+        private SessionLifetime                                     $lifetime = new SessionLifetime(),
+        #[SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null,
+        #[SensitiveParameter] private string                        $sessionKey = 'auth_user_id',
+        private string                                              $mfaVerifiedAtKey = 'auth_mfa_verified_at',
+        private string                                              $phishingResistantKey = 'auth_phishing_resistant',
+        private string                                              $issuedAtKey = 'auth_session_issued_at',
+        private string                                              $lastSeenAtKey = 'auth_session_last_seen_at'
     ) {}
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function issue(
         int $userId,
         DateTimeImmutable|null $mfaVerifiedAt = null,
@@ -72,7 +77,10 @@ final class SessionIdentity implements SessionIdentityInterface
         return $this->store->id();
     }
 
-    public function captureCurrentSession(#[\SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : void
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function captureCurrentSession(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : void
     {
         $sessionId = $this->currentSessionId();
 
@@ -146,7 +154,7 @@ final class SessionIdentity implements SessionIdentityInterface
 
         try {
             return new DateTimeImmutable(datetime: $stored);
-        } catch (\Exception) {
+        } catch (Exception) {
             return null;
         }
     }
@@ -160,6 +168,9 @@ final class SessionIdentity implements SessionIdentityInterface
         return $this->store->get(key: $this->phishingResistantKey) === '1';
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     private function isSessionActive() : bool
     {
         $sessionId = $this->currentSessionId();
@@ -244,7 +255,7 @@ final class SessionIdentity implements SessionIdentityInterface
 
         try {
             return new DateTimeImmutable(datetime: $stored);
-        } catch (\Exception) {
+        } catch (Exception) {
             return null;
         }
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\ChangeEmail;
 
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
@@ -12,22 +13,25 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class BeginEmailChange
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication     $currentAuthentication,
-        private UserSourceInterface                              $userSource,
-        #[\SensitiveParameter] private PasswordHasher            $passwordHasher,
-        #[\SensitiveParameter] private EmailChangeStoreInterface $emailChangeStore,
-        private RequireFreshMfa                                  $requireFreshMfa,
-        private AuditLogInterface                                $auditLog,
-        private Clock                                            $clock,
-        private int                                              $expiresAfterSeconds = 1800
+        #[SensitiveParameter] private CurrentAuthentication     $currentAuthentication,
+        private UserSourceInterface                             $userSource,
+        #[SensitiveParameter] private PasswordHasher            $passwordHasher,
+        #[SensitiveParameter] private EmailChangeStoreInterface $emailChangeStore,
+        private RequireFreshMfa                                 $requireFreshMfa,
+        private AuditLogInterface                               $auditLog,
+        private Clock                                           $clock,
+        private int                                             $expiresAfterSeconds = 1800
     ) {}
 
     /**
      * @throws EmailChangeFailed
+     * @throws \DateMalformedStringException
+     * @throws Unauthenticated
      */
     public function execute(BeginEmailChangeData $data) : EmailChangeChallenge
     {

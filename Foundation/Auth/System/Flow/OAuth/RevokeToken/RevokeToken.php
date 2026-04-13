@@ -11,15 +11,16 @@ use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\OAuth\OAuthTokenExchangeFailed;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class RevokeToken
 {
     public function __construct(
-        private OAuthClientRegistryInterface                      $clientRegistry,
-        #[\SensitiveParameter] private RefreshTokenStoreInterface $refreshTokenStore,
-        #[\SensitiveParameter] private JwtIdentityInterface       $jwtIdentity,
-        private AuditLogInterface                                 $auditLog,
-        private Clock                                             $clock
+        private OAuthClientRegistryInterface                     $clientRegistry,
+        #[SensitiveParameter] private RefreshTokenStoreInterface $refreshTokenStore,
+        #[SensitiveParameter] private JwtIdentityInterface       $jwtIdentity,
+        private AuditLogInterface                                $auditLog,
+        private Clock                                            $clock
     ) {}
 
     /**

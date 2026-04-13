@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Mfa;
 
 use Avax\Auth\System\Capability\User\UserId;
+use SensitiveParameter;
 
 /**
  * In-memory MFA state for tests and demos.
@@ -85,12 +86,12 @@ final class InMemoryMfaStore implements MfaStoreInterface
         $this->recoveryTokens[$record->tokenHash] = $record;
     }
 
-    public function findRecovery(#[\SensitiveParameter] string $tokenHash) : MfaRecoveryRecord|null
+    public function findRecovery(#[SensitiveParameter] string $tokenHash) : MfaRecoveryRecord|null
     {
         return $this->recoveryTokens[$tokenHash] ?? null;
     }
 
-    public function forgetRecovery(#[\SensitiveParameter] string $tokenHash) : void
+    public function forgetRecovery(#[SensitiveParameter] string $tokenHash) : void
     {
         unset($this->recoveryTokens[$tokenHash]);
     }

@@ -13,17 +13,18 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Passkey\PasskeyOperationFailed;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class CompletePasskeyRegistration
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private PasskeyRuntimeInterface                                $runtime,
-        #[\SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private PasskeyChallengeStoreInterface                         $challengeStore,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock,
-        private string                                                 $rpId
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private PasskeyRuntimeInterface                               $runtime,
+        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyChallengeStoreInterface                        $challengeStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        private string                                                $rpId
     ) {}
 
     /**

@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\Token;
 
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraint;
 use Avax\Auth\System\Capability\User\User;
+use DateTimeImmutable;
 
 /**
  * Issues signed access tokens.
@@ -17,7 +18,7 @@ interface TokenIssuerInterface
      */
     public function issue(
         User $user,
-        \DateTimeImmutable|null $mfaVerifiedAt = null,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
         bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = [],

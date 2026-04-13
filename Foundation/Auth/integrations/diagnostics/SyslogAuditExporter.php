@@ -16,6 +16,9 @@ final readonly class SyslogAuditExporter implements AuditExporterInterface
         private NormalizeAuditEvent $normalizeAuditEvent = new NormalizeAuditEvent()
     ) {}
 
+    /**
+     * @throws \JsonException
+     */
     public function export(array $events) : void
     {
         foreach ($events as $event) {

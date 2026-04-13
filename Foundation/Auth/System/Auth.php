@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Federation\FederationConnection;
 use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
 use Avax\Auth\System\Capability\Federation\StartedFederatedLogin;
@@ -36,6 +37,7 @@ use Avax\Auth\System\Flow\ChangeEmail\ConfirmEmailChangeData;
 use Avax\Auth\System\Flow\ChangeEmail\EmailChangeChallenge;
 use Avax\Auth\System\Flow\ChangePassword\ChangePassword;
 use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
+use Avax\Auth\System\Flow\ChangePassword\PasswordChangeFailed;
 use Avax\Auth\System\Flow\CheckAuthentication\CheckAuthentication;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLogin;
 use Avax\Auth\System\Flow\Federation\CompleteFederatedLogin\CompleteFederatedLoginData;
@@ -50,6 +52,7 @@ use Avax\Auth\System\Flow\Federation\StartFederatedLogin\StartFederatedLoginData
 use Avax\Auth\System\Flow\Federation\SyncMetadata\SyncFederationMetadata;
 use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomain;
 use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomainData;
+use Avax\Auth\System\Flow\Login\AuthenticationFailed;
 use Avax\Auth\System\Flow\Login\AuthenticationResult;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\Login\Login;
@@ -118,6 +121,7 @@ use Avax\Auth\System\Flow\Recover\ResetPassword;
 use Avax\Auth\System\Flow\Recover\ResetPasswordData;
 use Avax\Auth\System\Flow\Register\Register;
 use Avax\Auth\System\Flow\Register\RegistrationData;
+use Avax\Auth\System\Flow\Register\RegistrationFailed;
 use Avax\Auth\System\Flow\Register\RegistrationResult;
 use Avax\Auth\System\Flow\Risk\AssessCurrentRisk\AssessCurrentRisk;
 use Avax\Auth\System\Flow\Risk\ReadRiskSignals\ReadRiskSignals;
@@ -148,6 +152,7 @@ use Avax\Auth\System\Flow\TenantSecurity\ReadChangeRequests\ReadTenantSecurityCh
 use Avax\Auth\System\Flow\TenantSecurity\ReadConfiguration\ReadTenantSecurityConfiguration;
 use Avax\Auth\System\Flow\TenantSecurity\RollbackChange\RollbackTenantSecurityChange;
 use Avax\Auth\System\Flow\Token\RefreshAuthentication;
+use Avax\Auth\System\Flow\Token\RefreshAuthenticationFailed;
 use Avax\Auth\System\Flow\Token\RefreshAuthenticationRequest;
 use Avax\Auth\System\Flow\Verify\BeginEmailVerification;
 use Avax\Auth\System\Flow\Verify\BeginEmailVerificationData;
@@ -155,6 +160,7 @@ use Avax\Auth\System\Flow\Verify\EmailVerificationChallenge;
 use Avax\Auth\System\Flow\Verify\VerifyEmail;
 use Avax\Auth\System\Flow\Verify\VerifyEmailData;
 use RuntimeException;
+use SensitiveParameter;
 
 /**
  * Main entry point for Avax Auth System.
@@ -164,84 +170,84 @@ use RuntimeException;
 final readonly class Auth implements AuthInterface
 {
     public function __construct(
-        private Login                                                     $login,
-        private AuthenticateRequest                                       $authenticateRequest,
-        private Logout                                                    $logout,
-        #[\SensitiveParameter] private LogoutAllSessions                  $logoutAllSessions,
-        #[\SensitiveParameter] private CheckAuthentication                $checkAuthentication,
-        private ReadCurrentUser                                           $readCurrentUser,
-        #[\SensitiveParameter] private ReadActiveSessions                 $readActiveSessions,
-        #[\SensitiveParameter] private RevokeSession                      $revokeSession,
-        #[\SensitiveParameter] private CurrentAuthentication              $currentAuthentication,
-        #[\SensitiveParameter] private AccessInterface                    $access,
-        #[\SensitiveParameter] private ChangePassword                     $changePassword,
-        #[\SensitiveParameter] private BeginEmailChange|null              $beginEmailChange,
-        #[\SensitiveParameter] private ConfirmEmailChange|null            $confirmEmailChange,
-        private Register                                                  $register,
-        #[\SensitiveParameter] private RefreshAuthentication              $refreshAuthentication,
-        private RegisterClient|null                                       $registerOAuthClient,
-        private ReadClients|null                                          $readOAuthClients,
-        private ReadWorkloadIdentities|null                               $readWorkloadIdentities,
-        private ReadOidcProviderMetadata|null                             $readOidcProviderMetadata,
-        private ReadOidcJsonWebKeySet|null                                $readOidcJsonWebKeySet,
-        private ReadOidcUserInfo|null                                     $readOidcUserInfo,
-        #[\SensitiveParameter] private AuthorizeCode|null                 $authorizeOAuthCode,
-        #[\SensitiveParameter] private ExchangeAuthorizationCode|null     $exchangeOAuthCode,
-        #[\SensitiveParameter] private ExchangeClientCredentials|null     $exchangeOAuthClientCredentials,
-        #[\SensitiveParameter] private ExchangeRefreshToken|null          $exchangeOAuthRefreshToken,
-        #[\SensitiveParameter] private RevokeToken|null                   $revokeOAuthToken,
-        #[\SensitiveParameter] private IntrospectToken|null               $introspectOAuthToken,
-        private BeginAdminElevation                                       $beginAdminElevation,
-        private EndAdminElevation                                         $endAdminElevation,
-        private RequireAdminElevation                                     $requireAdminElevation,
-        private SuspendUser|null                                          $suspendUser,
-        private ReactivateUser|null                                       $reactivateUser,
-        private DeprovisionUser|null                                      $deprovisionUser,
-        private BeginPasskeyRegistration|null                             $beginPasskeyRegistration,
-        private CompletePasskeyRegistration|null                          $completePasskeyRegistration,
-        #[\SensitiveParameter] private BeginPasskeyAuthentication|null    $beginPasskeyAuthentication,
-        #[\SensitiveParameter] private CompletePasskeyAuthentication|null $completePasskeyAuthentication,
-        private ListPasskeys|null                                         $readPasskeys,
-        private RenamePasskey|null                                        $renamePasskey,
-        private RevokePasskeyFlow|null                                    $revokePasskey,
-        private RegisterFederationConnection|null                         $registerFederationConnection,
-        private ReadFederationConnections|null                            $readFederationConnections,
-        private VerifyFederationDomain|null                               $verifyFederationDomain,
-        private SyncFederationMetadata|null                               $syncFederationMetadata,
-        private CheckFederationConnectionHealth|null                      $checkFederationConnectionHealth,
-        private EvaluateFederationBreakGlassBypass|null                   $evaluateFederationBreakGlassBypass,
-        private DiscoverFederationConnection|null                         $discoverFederationConnection,
-        private StartFederatedLogin|null                                  $startFederatedLogin,
-        private CompleteFederatedLogin|null                               $completeFederatedLogin,
-        private RegisterScimDirectory|null                                $registerScimDirectory,
-        private ReadScimDirectories|null                                  $readScimDirectories,
-        #[\SensitiveParameter] private RotateScimToken|null               $rotateScimToken,
-        private ProvisionScimUser|null                                    $provisionScimUser,
-        private DeleteScimUser|null                                       $deleteScimUser,
-        private ReadScimUsers|null                                        $readScimUsers,
-        private SyncScimGroups|null                                       $syncScimGroups,
-        #[\SensitiveParameter] private ReadTenantSecurityConfiguration    $readTenantSecurityConfiguration,
-        #[\SensitiveParameter] private ReadTenantSecurityChangeRequest    $readTenantSecurityChangeRequest,
-        #[\SensitiveParameter] private ReadTenantSecurityChangeRequests   $readTenantSecurityChangeRequests,
-        #[\SensitiveParameter] private BeginTenantSecurityChange          $beginTenantSecurityChange,
-        #[\SensitiveParameter] private ApproveTenantSecurityChange        $approveTenantSecurityChange,
-        #[\SensitiveParameter] private ApplyTenantSecurityChange          $applyTenantSecurityChange,
-        #[\SensitiveParameter] private RollbackTenantSecurityChange       $rollbackTenantSecurityChange,
-        private AssessCurrentRisk                                         $assessCurrentRisk,
-        private ReadRiskSignals                                           $readRiskSignals,
-        #[\SensitiveParameter] private BeginPasswordReset                 $beginPasswordReset,
-        #[\SensitiveParameter] private ResetPassword                      $resetPassword,
-        #[\SensitiveParameter] private BeginEmailVerification             $beginEmailVerification,
-        #[\SensitiveParameter] private VerifyEmail                        $verifyEmail,
-        private StartMfaEnrollment                                        $startMfaEnrollment,
-        private ConfirmMfaEnrollment                                      $confirmMfaEnrollment,
-        private CancelMfaEnrollment                                       $cancelMfaEnrollment,
-        private StartMfaChallenge                                         $startMfaChallenge,
-        private VerifyMfaChallenge                                        $verifyMfaChallenge,
-        #[\SensitiveParameter] private RegenerateBackupCodes              $regenerateBackupCodes,
-        private DisableMfa                                                $disableMfa,
-        private StartMfaRecovery                                          $startMfaRecovery,
-        private ConfirmMfaRecovery                                        $confirmMfaRecovery
+        private Login                                                    $login,
+        private AuthenticateRequest                                      $authenticateRequest,
+        private Logout                                                   $logout,
+        #[SensitiveParameter] private LogoutAllSessions                  $logoutAllSessions,
+        #[SensitiveParameter] private CheckAuthentication                $checkAuthentication,
+        private ReadCurrentUser                                          $readCurrentUser,
+        #[SensitiveParameter] private ReadActiveSessions                 $readActiveSessions,
+        #[SensitiveParameter] private RevokeSession                      $revokeSession,
+        #[SensitiveParameter] private CurrentAuthentication              $currentAuthentication,
+        #[SensitiveParameter] private AccessInterface                    $access,
+        #[SensitiveParameter] private ChangePassword                     $changePassword,
+        #[SensitiveParameter] private BeginEmailChange|null              $beginEmailChange,
+        #[SensitiveParameter] private ConfirmEmailChange|null            $confirmEmailChange,
+        private Register                                                 $register,
+        #[SensitiveParameter] private RefreshAuthentication              $refreshAuthentication,
+        private RegisterClient|null                                      $registerOAuthClient,
+        private ReadClients|null                                         $readOAuthClients,
+        private ReadWorkloadIdentities|null                              $readWorkloadIdentities,
+        private ReadOidcProviderMetadata|null                            $readOidcProviderMetadata,
+        private ReadOidcJsonWebKeySet|null                               $readOidcJsonWebKeySet,
+        private ReadOidcUserInfo|null                                    $readOidcUserInfo,
+        #[SensitiveParameter] private AuthorizeCode|null                 $authorizeOAuthCode,
+        #[SensitiveParameter] private ExchangeAuthorizationCode|null     $exchangeOAuthCode,
+        #[SensitiveParameter] private ExchangeClientCredentials|null     $exchangeOAuthClientCredentials,
+        #[SensitiveParameter] private ExchangeRefreshToken|null          $exchangeOAuthRefreshToken,
+        #[SensitiveParameter] private RevokeToken|null                   $revokeOAuthToken,
+        #[SensitiveParameter] private IntrospectToken|null               $introspectOAuthToken,
+        private BeginAdminElevation                                      $beginAdminElevation,
+        private EndAdminElevation                                        $endAdminElevation,
+        private RequireAdminElevation                                    $requireAdminElevation,
+        private SuspendUser|null                                         $suspendUser,
+        private ReactivateUser|null                                      $reactivateUser,
+        private DeprovisionUser|null                                     $deprovisionUser,
+        private BeginPasskeyRegistration|null                            $beginPasskeyRegistration,
+        private CompletePasskeyRegistration|null                         $completePasskeyRegistration,
+        #[SensitiveParameter] private BeginPasskeyAuthentication|null    $beginPasskeyAuthentication,
+        #[SensitiveParameter] private CompletePasskeyAuthentication|null $completePasskeyAuthentication,
+        private ListPasskeys|null                                        $readPasskeys,
+        private RenamePasskey|null                                       $renamePasskey,
+        private RevokePasskeyFlow|null                                   $revokePasskey,
+        private RegisterFederationConnection|null                        $registerFederationConnection,
+        private ReadFederationConnections|null                           $readFederationConnections,
+        private VerifyFederationDomain|null                              $verifyFederationDomain,
+        private SyncFederationMetadata|null                              $syncFederationMetadata,
+        private CheckFederationConnectionHealth|null                     $checkFederationConnectionHealth,
+        private EvaluateFederationBreakGlassBypass|null                  $evaluateFederationBreakGlassBypass,
+        private DiscoverFederationConnection|null                        $discoverFederationConnection,
+        private StartFederatedLogin|null                                 $startFederatedLogin,
+        private CompleteFederatedLogin|null                              $completeFederatedLogin,
+        private RegisterScimDirectory|null                               $registerScimDirectory,
+        private ReadScimDirectories|null                                 $readScimDirectories,
+        #[SensitiveParameter] private RotateScimToken|null               $rotateScimToken,
+        private ProvisionScimUser|null                                   $provisionScimUser,
+        private DeleteScimUser|null                                      $deleteScimUser,
+        private ReadScimUsers|null                                       $readScimUsers,
+        private SyncScimGroups|null                                      $syncScimGroups,
+        #[SensitiveParameter] private ReadTenantSecurityConfiguration    $readTenantSecurityConfiguration,
+        #[SensitiveParameter] private ReadTenantSecurityChangeRequest    $readTenantSecurityChangeRequest,
+        #[SensitiveParameter] private ReadTenantSecurityChangeRequests   $readTenantSecurityChangeRequests,
+        #[SensitiveParameter] private BeginTenantSecurityChange          $beginTenantSecurityChange,
+        #[SensitiveParameter] private ApproveTenantSecurityChange        $approveTenantSecurityChange,
+        #[SensitiveParameter] private ApplyTenantSecurityChange          $applyTenantSecurityChange,
+        #[SensitiveParameter] private RollbackTenantSecurityChange       $rollbackTenantSecurityChange,
+        private AssessCurrentRisk                                        $assessCurrentRisk,
+        private ReadRiskSignals                                          $readRiskSignals,
+        #[SensitiveParameter] private BeginPasswordReset                 $beginPasswordReset,
+        #[SensitiveParameter] private ResetPassword                      $resetPassword,
+        #[SensitiveParameter] private BeginEmailVerification             $beginEmailVerification,
+        #[SensitiveParameter] private VerifyEmail                        $verifyEmail,
+        private StartMfaEnrollment                                       $startMfaEnrollment,
+        private ConfirmMfaEnrollment                                     $confirmMfaEnrollment,
+        private CancelMfaEnrollment                                      $cancelMfaEnrollment,
+        private StartMfaChallenge                                        $startMfaChallenge,
+        private VerifyMfaChallenge                                       $verifyMfaChallenge,
+        #[SensitiveParameter] private RegenerateBackupCodes              $regenerateBackupCodes,
+        private DisableMfa                                               $disableMfa,
+        private StartMfaRecovery                                         $startMfaRecovery,
+        private ConfirmMfaRecovery                                       $confirmMfaRecovery
     ) {}
 
     /**
@@ -252,7 +258,10 @@ final readonly class Auth implements AuthInterface
         return new AuthBuilder();
     }
 
-    public function login(#[\SensitiveParameter] Credentials $credentials) : AuthenticationResult
+    /**
+     * @throws AuthenticationFailed
+     */
+    public function login(#[SensitiveParameter] Credentials $credentials) : AuthenticationResult
     {
         return $this->login->execute(credentials: $credentials);
     }
@@ -272,17 +281,26 @@ final readonly class Auth implements AuthInterface
         $this->logout->execute();
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function logoutAllSessions() : void
     {
         $this->logoutAllSessions->execute();
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function readActiveSessions() : array
     {
         return $this->readActiveSessions->execute();
     }
 
-    public function revokeSession(#[\SensitiveParameter] string $sessionId) : void
+    /**
+     * @throws Unauthenticated
+     */
+    public function revokeSession(#[SensitiveParameter] string $sessionId) : void
     {
         $this->revokeSession->execute(sessionId: $sessionId);
     }
@@ -302,6 +320,10 @@ final readonly class Auth implements AuthInterface
         return $this->access;
     }
 
+    /**
+     * @throws Unauthenticated
+     * @throws PasswordChangeFailed
+     */
     public function changePassword(ChangePasswordData $data) : void
     {
         $this->changePassword->execute(data: $data);
@@ -317,11 +339,17 @@ final readonly class Auth implements AuthInterface
         return $this->confirmEmailChangeOrFail()->execute(data: $data);
     }
 
+    /**
+     * @throws RegistrationFailed
+     */
     public function register(RegistrationData $data) : RegistrationResult
     {
         return $this->register->execute(data: $data);
     }
 
+    /**
+     * @throws RefreshAuthenticationFailed
+     */
     public function refresh(RefreshAuthenticationRequest $request) : AuthenticationResult
     {
         return $this->refreshAuthentication->execute(request: $request);
@@ -355,7 +383,7 @@ final readonly class Auth implements AuthInterface
         return $this->readOidcJsonWebKeySetOrFail()->execute();
     }
 
-    public function readOidcUserInfo(#[\SensitiveParameter] string $accessToken) : OidcUserInfo
+    public function readOidcUserInfo(#[SensitiveParameter] string $accessToken) : OidcUserInfo
     {
         return $this->readOidcUserInfoOrFail()->execute(accessToken: $accessToken);
     }
@@ -520,7 +548,7 @@ final readonly class Auth implements AuthInterface
         return $this->renamePasskeyOrFail()->execute(data: $data);
     }
 
-    public function revokePasskey(#[\SensitiveParameter] string $credentialId) : void
+    public function revokePasskey(#[SensitiveParameter] string $credentialId) : void
     {
         $this->revokePasskeyOrFail()->execute(credentialId: $credentialId);
     }
@@ -555,7 +583,7 @@ final readonly class Auth implements AuthInterface
         return $this->evaluateFederationBreakGlassBypassOrFail()->execute(connectionId: $connectionId);
     }
 
-    public function discoverFederationConnection(#[\SensitiveParameter] string $email) : FederationConnection|null
+    public function discoverFederationConnection(#[SensitiveParameter] string $email) : FederationConnection|null
     {
         return $this->discoverFederationConnectionOrFail()->execute(email: $email);
     }
@@ -570,7 +598,7 @@ final readonly class Auth implements AuthInterface
         return $this->completeFederatedLoginOrFail()->execute(data: $data);
     }
 
-    public function assessCurrentRisk(#[\SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
+    public function assessCurrentRisk(#[SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
     {
         return $this->assessCurrentRisk->execute(ipAddress: $ipAddress, userAgent: $userAgent);
     }
@@ -600,21 +628,33 @@ final readonly class Auth implements AuthInterface
         return $this->verifyEmail->execute(data: $data);
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function startMfaEnrollment() : MfaEnrollment
     {
         return $this->startMfaEnrollment->execute();
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function confirmMfaEnrollment(ConfirmMfaEnrollmentData $data) : BackupCodeSet
     {
         return $this->confirmMfaEnrollment->execute(data: $data);
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function cancelMfaEnrollment() : void
     {
         $this->cancelMfaEnrollment->execute();
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function beginMfaChallenge() : MfaChallenge
     {
         return $this->startMfaChallenge->execute();
@@ -625,11 +665,17 @@ final readonly class Auth implements AuthInterface
         return $this->verifyMfaChallenge->execute(data: $data);
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function regenerateBackupCodes() : BackupCodeSet
     {
         return $this->regenerateBackupCodes->execute();
     }
 
+    /**
+     * @throws Unauthenticated
+     */
     public function disableMfa() : void
     {
         $this->disableMfa->execute();

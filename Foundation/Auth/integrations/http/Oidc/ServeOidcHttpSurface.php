@@ -8,6 +8,7 @@ use Avax\Auth\Integrations\Headers\ReadBearerToken;
 use Avax\Auth\Integrations\Http\HttpEndpointInput;
 use Avax\Auth\Integrations\Http\JsonHttpResponse;
 use Avax\Auth\System\AuthInterface;
+use SensitiveParameter;
 use Throwable;
 
 /**
@@ -16,8 +17,8 @@ use Throwable;
 final readonly class ServeOidcHttpSurface
 {
     public function __construct(
-        #[\SensitiveParameter] private AuthInterface   $auth,
-        #[\SensitiveParameter] private ReadBearerToken $readBearerToken = new ReadBearerToken()
+        #[SensitiveParameter] private AuthInterface   $auth,
+        #[SensitiveParameter] private ReadBearerToken $readBearerToken = new ReadBearerToken()
     ) {}
 
     public function execute(HttpEndpointInput $input) : JsonHttpResponse
@@ -102,7 +103,7 @@ final readonly class ServeOidcHttpSurface
         return $this->error(statusCode: 404, errorCode: 'not_found', message: 'OIDC route was not found.');
     }
 
-    private function error(int $statusCode, #[\SensitiveParameter] string $errorCode, string $message) : JsonHttpResponse
+    private function error(int $statusCode, #[SensitiveParameter] string $errorCode, string $message) : JsonHttpResponse
     {
         return new JsonHttpResponse(
             statusCode: $statusCode,

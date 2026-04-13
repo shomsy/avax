@@ -7,6 +7,7 @@ namespace Avax\Auth\System\Capability\Access\RequirePermission;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\User\UserPermission;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use SensitiveParameter;
 
 /**
  * Requirement for specific permissions within the Auth System.
@@ -16,7 +17,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 final readonly class RequirePermission
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication
     ) {}
 
     /**

@@ -12,6 +12,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Diagnostics\NullAuditLog;
 use Avax\Auth\System\Flow\Token\TokenCodecInterface;
 use DateTimeImmutable;
+use SensitiveParameter;
 
 /**
  * Verifies a DPoP-like proof and converts it into a sender constraint binding.
@@ -27,6 +28,7 @@ final readonly class VerifyDpopProof
 
     /**
      * @throws DpopProofFailed
+     * @throws \DateMalformedStringException
      */
     public function execute(HttpOAuthProofInput $input) : OAuthSenderConstraint
     {
@@ -107,7 +109,7 @@ final readonly class VerifyDpopProof
     /**
      * @param array<string, mixed> $headers
      */
-    private function readHeader(#[\SensitiveParameter] array $headers, string $name) : string|null
+    private function readHeader(#[SensitiveParameter] array $headers, string $name) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
             if (strcasecmp($candidateKey, $name) !== 0) {

@@ -9,6 +9,7 @@ use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
 use Avax\Auth\System\Capability\User\UserId;
 use DateTimeImmutable;
 use PDO;
+use SensitiveParameter;
 
 /**
  * Reference PDO implementation for the durable session registry contract.
@@ -42,7 +43,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
         $statement->execute(params: $this->mapRecord(record: $record));
     }
 
-    public function find(#[\SensitiveParameter] string $sessionId) : SessionRecord|null
+    public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
     {
         $statement = $this->pdo->prepare(query: 'SELECT * FROM auth_sessions WHERE session_id = :session_id LIMIT 1');
         $statement->execute(params: ['session_id' => $sessionId]);
@@ -67,7 +68,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
         return array_map(fn (array $row) : SessionRecord => $this->hydrate(row: $row), $rows);
     }
 
-    public function revoke(#[\SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void
+    public function revoke(#[SensitiveParameter] string $sessionId, DateTimeImmutable $revokedAt, string $reason) : void
     {
         $statement = $this->pdo->prepare(
             query: 'UPDATE auth_sessions SET revoked_at = :revoked_at, revoke_reason = :revoke_reason WHERE session_id = :session_id'
@@ -112,6 +113,12 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
 
     /**
      * @param array<string, mixed> $row
+     *
+     * @throws \DateMalformedStringException
+     * @throws \DateMalformedStringException
+     * @throws \DateMalformedStringException
+     * @throws \DateMalformedStringException
+     * @throws \DateMalformedStringException
      */
     private function hydrate(array $row) : SessionRecord
     {

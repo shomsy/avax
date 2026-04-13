@@ -16,6 +16,7 @@ use Avax\Auth\System\Capability\User\UserPermission;
 use Avax\Auth\System\Capability\User\UserRole;
 use Avax\Auth\System\Flow\AdminRealm\AdminElevationFailed;
 use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
+use SensitiveParameter;
 
 /**
  * Root access façade for the authorization capability.
@@ -23,10 +24,10 @@ use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
 final readonly class Access implements AccessInterface
 {
     public function __construct(
-        #[\SensitiveParameter] private RequireAuthenticationBoundary $requireAuthentication,
-        private RequireRoleBoundary                                  $requireRole,
-        private RequirePermissionBoundary                            $requirePermission,
-        #[\SensitiveParameter] private RequireAccessPolicyBoundary   $requireAccessPolicy
+        #[SensitiveParameter] private RequireAuthenticationBoundary $requireAuthentication,
+        private RequireRoleBoundary                                 $requireRole,
+        private RequirePermissionBoundary                           $requirePermission,
+        #[SensitiveParameter] private RequireAccessPolicyBoundary   $requireAccessPolicy
     ) {}
 
     /**

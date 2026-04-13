@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\Mfa\Recover;
 
 use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
 use Avax\Auth\System\Capability\Throttle\AttemptThrottleExceeded;
+use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
@@ -13,6 +14,7 @@ use Avax\Auth\System\Flow\Mfa\MfaRecoveryChallenge;
 use Avax\Auth\System\Flow\Mfa\MfaRecoveryRecord;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use Random\RandomException;
 use SensitiveParameter;
 
 /**
@@ -71,6 +73,10 @@ final readonly class StartMfaRecovery
         return $this->issue(userId: $user->getId()->value, data: $data);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     */
     private function issue(int $userId, BeginMfaRecoveryData $data) : MfaRecoveryChallenge
     {
         $plainToken = bin2hex(random_bytes(32));
@@ -78,7 +84,7 @@ final readonly class StartMfaRecovery
         $tokenHash  = $this->hash(token: $plainToken);
         $this->mfaStore->saveRecovery(record: new MfaRecoveryRecord(
                                           tokenHash: $tokenHash,
-                                          userId   : new \Avax\Auth\System\Capability\User\UserId(value: $userId),
+                                          userId   : new UserId(value: $userId),
                                           expiresAt: $expiresAt
                                       ));
         $this->auditLog->record(event: new AuditEvent(

@@ -7,6 +7,7 @@ namespace Avax\Auth\System\Flow\Login;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationContext;
 use Avax\Auth\System\Flow\Mfa\MfaChallenge;
+use SensitiveParameter;
 
 /**
  * Stable public result of a login or refresh operation.
@@ -14,18 +15,18 @@ use Avax\Auth\System\Flow\Mfa\MfaChallenge;
 final readonly class AuthenticationResult
 {
     public function __construct(
-        private AuthenticationState                $state,
-        private AuthenticationContext              $context,
-        private AuthenticatedUser|null             $user = null,
-        #[\SensitiveParameter] private string|null $accessToken = null,
-        #[\SensitiveParameter] private string|null $refreshToken = null,
-        private MfaChallenge|null                  $mfaChallenge = null
+        private AuthenticationState               $state,
+        private AuthenticationContext             $context,
+        private AuthenticatedUser|null            $user = null,
+        #[SensitiveParameter] private string|null $accessToken = null,
+        #[SensitiveParameter] private string|null $refreshToken = null,
+        private MfaChallenge|null                 $mfaChallenge = null
     ) {}
 
     public static function success(
-        AuthenticationContext              $context,
-        #[\SensitiveParameter] string|null $accessToken = null,
-        #[\SensitiveParameter] string|null $refreshToken = null
+        AuthenticationContext             $context,
+        #[SensitiveParameter] string|null $accessToken = null,
+        #[SensitiveParameter] string|null $refreshToken = null
     ) : self
     {
         return new self(

@@ -14,20 +14,21 @@ use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Flow\Verify\EmailVerificationStateStoreInterface;
 use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 final readonly class ConfirmEmailChange
 {
     public function __construct(
-        private ProvisionableUserSourceInterface                            $userSource,
-        #[\SensitiveParameter] private EmailChangeStoreInterface            $emailChangeStore,
-        #[\SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
-        private AuditLogInterface                                           $auditLog,
-        private Clock                                                       $clock,
-        #[\SensitiveParameter] private CurrentAuthentication                $currentAuthentication,
-        private IdentityInterface                                           $identity,
-        #[\SensitiveParameter] private SessionRegistryInterface|null        $sessionRegistry = null,
-        private MfaChallengeStoreInterface|null                             $mfaChallengeStore = null,
-        #[\SensitiveParameter] private RefreshTokenStoreInterface|null      $refreshTokenStore = null
+        private ProvisionableUserSourceInterface                           $userSource,
+        #[SensitiveParameter] private EmailChangeStoreInterface            $emailChangeStore,
+        #[SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
+        private AuditLogInterface                                          $auditLog,
+        private Clock                                                      $clock,
+        #[SensitiveParameter] private CurrentAuthentication                $currentAuthentication,
+        private IdentityInterface                                          $identity,
+        #[SensitiveParameter] private SessionRegistryInterface|null        $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null                            $mfaChallengeStore = null,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null      $refreshTokenStore = null
     ) {}
 
     /**

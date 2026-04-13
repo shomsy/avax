@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Passkey\BeginRegistration;
 
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Passkey\PasskeyChallengePurpose;
 use Avax\Auth\System\Capability\Passkey\PasskeyChallengeRecord;
 use Avax\Auth\System\Capability\Passkey\PasskeyChallengeStoreInterface;
@@ -16,23 +17,29 @@ use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Flow\Passkey\PasskeyOperationFailed;
 use Avax\Auth\System\Flow\Passkey\PasskeyRegistration;
 use Avax\Auth\System\Foundation\Clock;
+use Random\RandomException;
+use SensitiveParameter;
 
 final readonly class BeginPasskeyRegistration
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private RequireFreshMfa                                        $requireFreshMfa,
-        private PasskeyRuntimeInterface                                $runtime,
-        #[\SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private PasskeyChallengeStoreInterface                         $challengeStore,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock,
-        private string                                                 $rpId,
-        private string                                                 $rpName
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private RequireFreshMfa                                       $requireFreshMfa,
+        private PasskeyRuntimeInterface                               $runtime,
+        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyChallengeStoreInterface                        $challengeStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        private string                                                $rpId,
+        private string                                                $rpName
     ) {}
 
     /**
      * @throws PasskeyOperationFailed
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     * @throws RandomException
+     * @throws Unauthenticated
      */
     public function execute() : PasskeyRegistration
     {
@@ -47,7 +54,7 @@ final readonly class BeginPasskeyRegistration
         $challengeId = 'pkreg_' . bin2hex(random_bytes(12));
         $challenge   = bin2hex(random_bytes(32));
         $excludeIds  = array_map(
-            static fn (#[\SensitiveParameter] $credential) => $credential->credentialId,
+            static fn (#[SensitiveParameter] $credential) => $credential->credentialId,
             $this->credentialStore->forUser(userId: $user->id)
         );
 

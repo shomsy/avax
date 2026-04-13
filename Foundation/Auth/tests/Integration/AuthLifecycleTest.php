@@ -10,6 +10,7 @@ use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
 use Avax\Auth\System\Flow\ChangePassword\ChangePasswordData;
+use Avax\Auth\System\Flow\Login\AuthenticationFailed;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\Mfa\Enroll\ConfirmMfaEnrollmentData;
 use Avax\Auth\System\Flow\Mfa\Recover\BeginMfaRecoveryData;
@@ -19,12 +20,16 @@ use Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData;
 use Avax\Auth\System\Flow\Recover\BeginPasswordResetData;
 use Avax\Auth\System\Flow\Recover\ResetPasswordData;
 use Avax\Auth\System\Flow\Register\RegistrationData;
+use Avax\Auth\System\Flow\Register\RegistrationFailed;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Flow\Token\RefreshAuthenticationRequest;
 use Avax\Auth\System\Flow\Verify\BeginEmailVerificationData;
+use Avax\Auth\System\Flow\Verify\VerifyEmailData;
 use Avax\Auth\System\Foundation\Clock;
+use DateTimeImmutable;
+use Exception;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -38,7 +43,7 @@ class AuthLifecycleTest extends TestCase
     private InMemoryUserSource $userSource;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function testFullUserLifecyclePositive() : void
     {
@@ -82,7 +87,7 @@ class AuthLifecycleTest extends TestCase
         // 6. Enroll MFA and verify challenge
         $enrollment  = $this->auth->startMfaEnrollment();
         $backupCodes = $this->auth->confirmMfaEnrollment(data: new ConfirmMfaEnrollmentData(
-                                                             code: (new Totp())->codeAt(secret: $enrollment->secret(), moment: new \DateTimeImmutable())
+                                                             code: (new Totp())->codeAt(secret: $enrollment->secret(), moment: new DateTimeImmutable())
                                                          ));
         $this->assertCount(expectedCount: 10, haystack: $backupCodes->codes);
         $mfaLogin = $this->auth->login(credentials: new Credentials(identifier: 'itest', password: 'new-secure-password'));
@@ -102,7 +107,7 @@ class AuthLifecycleTest extends TestCase
 
         // 8. Email verification
         $verificationChallenge = $this->auth->beginEmailVerification(data: new BeginEmailVerificationData(email: 'integration@test.com'));
-        $this->assertTrue(condition: $this->auth->verifyEmail(data: new \Avax\Auth\System\Flow\Verify\VerifyEmailData(token: $verificationChallenge->token ?? '')));
+        $this->assertTrue(condition: $this->auth->verifyEmail(data: new VerifyEmailData(token: $verificationChallenge->token ?? '')));
 
         // 9. Password reset
         $resetChallenge = $this->auth->beginPasswordReset(data: new BeginPasswordResetData(email: 'integration@test.com'));
@@ -126,7 +131,7 @@ class AuthLifecycleTest extends TestCase
         $this->auth->register(data: new RegistrationData(email: 'fail@test.com', username: 'fail', password: 'pass'));
 
         // 2. Try to register with SAME email (Negative)
-        $this->expectException(exception: \Avax\Auth\System\Flow\Register\RegistrationFailed::class);
+        $this->expectException(exception: RegistrationFailed::class);
         $this->expectExceptionMessage(message: 'Email is already taken.');
         $this->auth->register(data: new RegistrationData(email: 'fail@test.com', username: 'other', password: 'pass'));
     }
@@ -140,7 +145,7 @@ class AuthLifecycleTest extends TestCase
         $this->auth->register(data: new RegistrationData(email: 'login@fail.com', username: 'loginfail', password: 'correct'));
 
         // 2. Try login with WRONG password (Negative)
-        $this->expectException(exception: \Avax\Auth\System\Flow\Login\AuthenticationFailed::class);
+        $this->expectException(exception: AuthenticationFailed::class);
         $this->expectExceptionMessage(message: 'Invalid credentials.');
         $this->auth->login(credentials: new Credentials(identifier: 'login@fail.com', password: 'WRONG'));
     }

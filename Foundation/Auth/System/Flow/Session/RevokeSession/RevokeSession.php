@@ -12,6 +12,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Revokes one tracked session owned by the current user.
@@ -19,17 +20,17 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class RevokeSession
 {
     public function __construct(
-        private IdentityInterface                                    $identity,
-        #[\SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
-        private AuditLogInterface                                    $auditLog,
-        private Clock                                                $clock,
-        #[\SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null
+        private IdentityInterface                                   $identity,
+        #[SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
+        private AuditLogInterface                                   $auditLog,
+        private Clock                                               $clock,
+        #[SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null
     ) {}
 
     /**
      * @throws Unauthenticated
      */
-    public function execute(#[\SensitiveParameter] string $sessionId) : void
+    public function execute(#[SensitiveParameter] string $sessionId) : void
     {
         $context = $this->currentAuthentication->read();
         $user    = $context->user();

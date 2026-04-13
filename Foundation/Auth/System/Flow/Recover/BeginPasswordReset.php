@@ -10,6 +10,7 @@ use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Starts password reset without leaking user existence.
@@ -17,14 +18,17 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class BeginPasswordReset
 {
     public function __construct(
-        private UserSourceInterface                                $userSource,
-        #[\SensitiveParameter] private PasswordResetStoreInterface $passwordResetStore,
-        private AuditLogInterface                                  $auditLog,
-        private Clock                                              $clock,
-        private int                                                $expiresAfterSeconds = 3600,
-        private AttemptThrottle|null                               $attemptThrottle = null
+        private UserSourceInterface                               $userSource,
+        #[SensitiveParameter] private PasswordResetStoreInterface $passwordResetStore,
+        private AuditLogInterface                                 $auditLog,
+        private Clock                                             $clock,
+        private int                                               $expiresAfterSeconds = 3600,
+        private AttemptThrottle|null                              $attemptThrottle = null
     ) {}
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function execute(BeginPasswordResetData $data) : PasswordResetChallenge
     {
         $throttleKey = $this->throttleKey(email: $data->email, ipAddress: $data->ipAddress);
@@ -83,7 +87,7 @@ final readonly class BeginPasswordReset
         return $challenge;
     }
 
-    private function throttleKey(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string|null $ipAddress) : string
+    private function throttleKey(#[SensitiveParameter] string $email, #[SensitiveParameter] string|null $ipAddress) : string
     {
         $normalizedEmail = strtolower(trim($email));
 

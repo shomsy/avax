@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Database\Tests\Unit;
 
+use Avax\Database\Connection\Contracts\DatabaseConnection;
 use Avax\Database\Identity\IdentityMap;
 use Avax\Database\QueryBuilder\Core\Builder\QueryBuilder;
 use Avax\Database\QueryBuilder\Core\Executor\PDOExecutor;
 use Avax\Database\QueryBuilder\Core\Executor\QueryOrchestrator;
 use Avax\Database\QueryBuilder\Core\Grammar\MySQLGrammar;
 use Avax\Database\QueryBuilder\Exceptions\QueryException;
+use Avax\Database\Transaction\Transaction;
 use Avax\Database\Transaction\TransactionManager;
 use Exception;
 use PDO;
@@ -35,7 +37,7 @@ final class CriticalPathTest extends TestCase
     public function test_transaction_rollback_on_failure() : void
     {
         $grammar        = new MySQLGrammar;
-        $connection     = new class($this->pdo) implements \Avax\Database\Connection\Contracts\DatabaseConnection {
+        $connection     = new class($this->pdo) implements DatabaseConnection {
             public function __construct(private PDO $pdo) {}
 
             public function getConnection() : PDO { return $this->pdo; }
@@ -51,7 +53,7 @@ final class CriticalPathTest extends TestCase
             public function disconnect() : void {}
         };
         $executor       = new PDOExecutor(connection: $connection, connectionName: 'test');
-        $transactionMgr = \Avax\Database\Transaction\Transaction::on(connection: $connection);
+        $transactionMgr = Transaction::on(connection: $connection);
         $orchestrator   = new QueryOrchestrator(executor: $executor, transactionManager: $transactionMgr);
         $builder        = new QueryBuilder(grammar: $grammar, orchestrator: $orchestrator);
 
@@ -79,7 +81,7 @@ final class CriticalPathTest extends TestCase
     public function test_identity_map_defers_execution() : void
     {
         $grammar        = new MySQLGrammar;
-        $connection     = new class($this->pdo) implements \Avax\Database\Connection\Contracts\DatabaseConnection {
+        $connection     = new class($this->pdo) implements DatabaseConnection {
             public function __construct(private PDO $pdo) {}
 
             public function getConnection() : PDO { return $this->pdo; }
@@ -95,7 +97,7 @@ final class CriticalPathTest extends TestCase
             public function disconnect() : void {}
         };
         $executor       = new PDOExecutor(connection: $connection, connectionName: 'test');
-        $transactionMgr = \Avax\Database\Transaction\Transaction::on(connection: $connection);
+        $transactionMgr = Transaction::on(connection: $connection);
         $orchestrator   = new QueryOrchestrator(executor: $executor, transactionManager: $transactionMgr);
         $identityMap    = new IdentityMap(transactionManager: $transactionMgr, connection: $connection);
         $builder        = new QueryBuilder(grammar: $grammar, orchestrator: $orchestrator->withIdentityMap(map: $identityMap));
@@ -123,7 +125,7 @@ final class CriticalPathTest extends TestCase
     public function test_query_exception_redacts_bindings_by_default() : void
     {
         $grammar      = new MySQLGrammar;
-        $connection   = new class($this->pdo) implements \Avax\Database\Connection\Contracts\DatabaseConnection {
+        $connection   = new class($this->pdo) implements DatabaseConnection {
             public function __construct(private PDO $pdo) {}
 
             public function getConnection() : PDO { return $this->pdo; }

@@ -12,21 +12,28 @@ use Avax\Auth\System\Capability\Passkey\PasskeyRuntimeInterface;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Passkey\PasskeyAuthenticationChallenge;
 use Avax\Auth\System\Foundation\Clock;
+use Random\RandomException;
+use SensitiveParameter;
 
 final readonly class BeginPasskeyAuthentication
 {
     public function __construct(
-        private UserSourceInterface                                    $userSource,
-        private PasskeyRuntimeInterface                                $runtime,
-        #[\SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private PasskeyChallengeStoreInterface                         $challengeStore,
-        private AuditLogInterface                                      $auditLog,
-        private Clock                                                  $clock,
-        private string                                                 $rpId
+        private UserSourceInterface                                   $userSource,
+        private PasskeyRuntimeInterface                               $runtime,
+        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyChallengeStoreInterface                        $challengeStore,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        private string                                                $rpId
     ) {}
 
-    public function execute(BeginPasskeyAuthenticationData $data) : \Avax\Auth\System\Flow\Passkey\PasskeyAuthenticationChallenge
+    /**
+     * @throws \DateMalformedStringException
+     * @throws RandomException
+     */
+    public function execute(BeginPasskeyAuthenticationData $data) : PasskeyAuthenticationChallenge
     {
         $challengeId = 'pkauth_' . bin2hex(random_bytes(12));
         $challenge   = bin2hex(random_bytes(32));
@@ -39,7 +46,7 @@ final readonly class BeginPasskeyAuthentication
             if ($user !== null) {
                 $userId   = $user->getId()->value;
                 $allowIds = array_map(
-                    static fn (#[\SensitiveParameter] $credential) => $credential->credentialId,
+                    static fn (#[SensitiveParameter] $credential) => $credential->credentialId,
                     $this->credentialStore->forUser(userId: $userId)
                 );
             }
@@ -65,6 +72,6 @@ final readonly class BeginPasskeyAuthentication
             context   : ['challenge_id' => $challengeId, 'user_id' => $userId]
         ));
 
-        return new \Avax\Auth\System\Flow\Passkey\PasskeyAuthenticationChallenge(challengeId: $challengeId, options: $options);
+        return new PasskeyAuthenticationChallenge(challengeId: $challengeId, options: $options);
     }
 }

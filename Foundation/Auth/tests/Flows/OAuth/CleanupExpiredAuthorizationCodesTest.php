@@ -9,6 +9,7 @@ use Avax\Auth\System\Capability\OAuth\PkceMethod;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Flow\OAuth\CleanupExpiredAuthorizationCodes\CleanupExpiredAuthorizationCodes;
 use Avax\Auth\System\Foundation\Clock;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 final class CleanupExpiredAuthorizationCodesTest extends TestCase
@@ -21,7 +22,7 @@ final class CleanupExpiredAuthorizationCodesTest extends TestCase
             clientId           : 'client-expired',
             redirectUri        : 'https://example.test/callback',
             scopes             : ['openid'],
-            expiresAt          : new \DateTimeImmutable(datetime: '-1 minute'),
+            expiresAt          : new DateTimeImmutable(datetime: '-1 minute'),
             codeChallenge      : 'challenge',
             codeChallengeMethod: PkceMethod::S256
         );
@@ -30,7 +31,7 @@ final class CleanupExpiredAuthorizationCodesTest extends TestCase
             clientId           : 'client-used',
             redirectUri        : 'https://example.test/callback',
             scopes             : ['openid'],
-            expiresAt          : new \DateTimeImmutable(datetime: '+5 minutes'),
+            expiresAt          : new DateTimeImmutable(datetime: '+5 minutes'),
             codeChallenge      : 'challenge',
             codeChallengeMethod: PkceMethod::S256
         );
@@ -39,11 +40,11 @@ final class CleanupExpiredAuthorizationCodesTest extends TestCase
             clientId           : 'client-active',
             redirectUri        : 'https://example.test/callback',
             scopes             : ['openid'],
-            expiresAt          : new \DateTimeImmutable(datetime: '+5 minutes'),
+            expiresAt          : new DateTimeImmutable(datetime: '+5 minutes'),
             codeChallenge      : 'challenge',
             codeChallengeMethod: PkceMethod::S256
         );
-        $store->markUsed(codeId: $used->codeId, usedAt: new \DateTimeImmutable());
+        $store->markUsed(codeId: $used->codeId, usedAt: new DateTimeImmutable());
 
         $removed = (new CleanupExpiredAuthorizationCodes(codeStore: $store, clock: new Clock()))->execute();
 

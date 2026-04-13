@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flow\Session;
 
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
 use Avax\Auth\System\Capability\Session\SessionRecord;
 use Avax\Auth\System\Capability\User\UserId;
@@ -22,6 +23,10 @@ use PHPUnit\Framework\TestCase;
  */
 final class ReadActiveSessionsTest extends TestCase
 {
+    /**
+     * @throws \DateInvalidOperationException
+     * @throws Unauthenticated
+     */
     public function testReadActiveSessionsReturnsCurrentUsersTrackedSessions() : void
     {
         $clock    = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));

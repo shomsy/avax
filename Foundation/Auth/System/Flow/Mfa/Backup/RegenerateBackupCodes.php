@@ -10,11 +10,13 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Mfa\BackupCodeSet;
+use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
 use Avax\Auth\System\Flow\Mfa\MfaChallengeFailed;
 use Avax\Auth\System\Flow\Mfa\MfaMethodRecord;
 use Avax\Auth\System\Flow\Mfa\MfaStoreInterface;
 use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Replaces MFA backup codes after fresh MFA proof.
@@ -22,17 +24,17 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class RegenerateBackupCodes
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private RequireFreshMfa                              $requireFreshMfa,
-        private MfaStoreInterface                            $mfaStore,
-        #[\SensitiveParameter] private GenerateBackupCodes   $generateBackupCodes,
-        private AuditLogInterface                            $auditLog,
-        private Clock                                        $clock
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private RequireFreshMfa                             $requireFreshMfa,
+        private MfaStoreInterface                           $mfaStore,
+        #[SensitiveParameter] private GenerateBackupCodes   $generateBackupCodes,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock
     ) {}
 
     /**
      * @throws Unauthenticated
-     * @throws \Avax\Auth\System\Flow\Mfa\FreshMfaRequired
+     * @throws FreshMfaRequired
      * @throws MfaChallengeFailed
      */
     public function execute() : BackupCodeSet

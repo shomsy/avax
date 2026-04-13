@@ -11,6 +11,7 @@ use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Session\ActiveSession;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * Reads the current user's tracked sessions.
@@ -18,9 +19,9 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class ReadActiveSessions
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
-        private Clock                                                $clock,
-        #[\SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null
+        #[SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
+        private Clock                                               $clock,
+        #[SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null
     ) {}
 
     /**
@@ -55,7 +56,7 @@ final readonly class ReadActiveSessions
         return $sessions;
     }
 
-    private function toBoundary(SessionRecord $record, #[\SensitiveParameter] string|null $currentSessionId) : ActiveSession
+    private function toBoundary(SessionRecord $record, #[SensitiveParameter] string|null $currentSessionId) : ActiveSession
     {
         return new ActiveSession(
             sessionId        : $record->sessionId,

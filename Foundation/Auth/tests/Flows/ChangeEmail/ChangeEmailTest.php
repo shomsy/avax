@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flow\ChangeEmail;
 
+use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
@@ -34,9 +35,15 @@ use DateInterval;
 use DateTimeImmutable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use SensitiveParameter;
 
 final class ChangeEmailTest extends TestCase
 {
+    /**
+     * @throws \DateInvalidOperationException
+     * @throws \DateMalformedStringException
+     * @throws Unauthenticated
+     */
     public function testBeginEmailChangeSuccess() : void
     {
         $clock = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
@@ -78,6 +85,11 @@ final class ChangeEmailTest extends TestCase
         $this->assertSame(expected: 'auth.email_change.requested', actual: $auditLog->events()[0]->name);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws Unauthenticated
+     * @throws \DateInvalidOperationException
+     */
     public function testBeginEmailChangeFailureInvalidPasswordTakesPrecedenceOverTakenEmail() : void
     {
         $clock = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
@@ -120,6 +132,11 @@ final class ChangeEmailTest extends TestCase
         ));
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws \DateInvalidOperationException
+     * @throws Unauthenticated
+     */
     public function testBeginEmailChangeFailureEmailTaken() : void
     {
         $clock = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
@@ -162,6 +179,9 @@ final class ChangeEmailTest extends TestCase
         ));
     }
 
+    /**
+     * @throws \DateInvalidOperationException
+     */
     public function testConfirmEmailChangeSuccess() : void
     {
         $clock = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
@@ -274,7 +294,7 @@ final class ChangeEmailTest extends TestCase
         return new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
     }
 
-    private function userWithPassword(#[\SensitiveParameter] PasswordHasher $passwordHasher, int $userId, #[\SensitiveParameter] string $password, #[\SensitiveParameter] string $email) : User
+    private function userWithPassword(#[SensitiveParameter] PasswordHasher $passwordHasher, int $userId, #[SensitiveParameter] string $password, #[SensitiveParameter] string $email) : User
     {
         return User::create(
             id          : new UserId(value: $userId),

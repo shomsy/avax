@@ -6,11 +6,12 @@ namespace Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthenticat
 
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
+use SensitiveParameter;
 
 final readonly class RequirePhishingResistantAuthentication
 {
     public function __construct(
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication
+        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication
     ) {}
 
     /**

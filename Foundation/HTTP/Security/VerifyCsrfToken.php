@@ -61,7 +61,7 @@ class VerifyCsrfToken
      */
     private function isSafeMethod(Request $request) : bool
     {
-        return in_array(needle: $request->getMethod(), haystack: self::SAFE_METHODS, strict: true);
+        return in_array(needle: strtoupper($request->getMethod()), haystack: self::SAFE_METHODS, strict: true);
     }
 
     /**
@@ -79,13 +79,27 @@ class VerifyCsrfToken
             return $headerToken;
         }
 
-        if ($request->getHeaderLine(name: 'Content-Type') === 'application/json') {
-            $data = json_decode(json: $request->getBody()->getContents(), associative: true);
+        $xsrfToken = $request->getHeaderLine(name: 'X-XSRF-TOKEN');
 
-            return $data['_token'] ?? null;
+        if ($xsrfToken !== '' && $xsrfToken !== '0') {
+            return $xsrfToken;
         }
 
-        return $request->input(key: '_token');
+        $contentType = strtolower($request->getHeaderLine(name: 'Content-Type'));
+
+        if (str_starts_with($contentType, 'application/json')) {
+            $data = json_decode(json: $request->getBody()->getContents(), associative: true);
+
+            if (is_array($data)) {
+                $jsonToken = $data['_csrf_token'] ?? $data['_token'] ?? null;
+
+                return is_string($jsonToken) && $jsonToken !== '' ? $jsonToken : null;
+            }
+        }
+
+        $inputToken = $request->input(key: '_csrf_token') ?? $request->input(key: '_token');
+
+        return is_string($inputToken) && $inputToken !== '' ? $inputToken : null;
     }
 
     /**
@@ -108,6 +122,8 @@ class VerifyCsrfToken
                     )
         );
 
-        return $response->withHeader(name: 'Content-Type', value: 'application/json');
+        return $response
+            ->withHeader(name: 'Content-Type', value: 'application/json')
+            ->withHeader(name: 'Cache-Control', value: 'no-store');
     }
 }

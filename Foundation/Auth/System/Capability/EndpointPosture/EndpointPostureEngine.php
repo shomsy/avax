@@ -1,0 +1,82 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Auth\System\Capability\EndpointPosture;
+
+/**
+ * Endpoint posture engine for risk-based access decisions.
+ */
+final readonly class EndpointPostureEngine
+{
+    /**
+     * Evaluates posture signals and determines action.
+     */
+    public function evaluate(
+        array $signals,
+        EndpointPosturePolicy $policy
+    ) : EndpointPostureDecision {
+        $riskScore = $this->calculateRiskScore($signals);
+
+        return match (true) {
+            $riskScore >= $policy->denyThreshold => EndpointPostureDecision::DENY,
+            $riskScore >= $policy->stepUpThreshold => EndpointPostureDecision::STEP_UP,
+            $riskScore >= $policy->quarantineThreshold => EndpointPostureDecision::QUARANTINE,
+            default => EndpointPostureDecision::ALLOW,
+        };
+    }
+
+    /**
+     * Calculates aggregate risk score from signals.
+     */
+    private function calculateRiskScore(array $signals) : float
+    {
+        if ($signals === []) {
+            return 0.0;
+        }
+
+        $totalScore = 0.0;
+        $weightSum = 0.0;
+
+        foreach ($signals as /** @var EndpointPostureSignalData $signal */ $signal) {
+            $weight = match ($signal->type) {
+                EndpointPostureSignal::IP_REPUTATION => 0.3,
+                EndpointPostureSignal::IMPOSSIBLE_TRAVEL => 0.4,
+                EndpointPostureSignal::VPN_DETECTION => 0.25,
+                EndpointPostureSignal::PROXY_DETECTION => 0.25,
+                EndpointPostureSignal::GEO_VELOCITY => 0.2,
+                EndpointPostureSignal::ASN_REPUTATION => 0.15,
+                EndpointPostureSignal::DEVICE_FINGERPRINT => 0.1,
+                EndpointPostureSignal::BROWSER_FINGERPRINT => 0.1,
+            };
+
+            $totalScore += $signal->score * $weight;
+            $weightSum += $weight;
+        }
+
+        return $weightSum > 0 ? $totalScore / $weightSum : 0.0;
+    }
+}
+
+/**
+ * Policy thresholds for endpoint posture decisions.
+ */
+final readonly class EndpointPosturePolicy
+{
+    public function __construct(
+        public float $denyThreshold = 0.8,
+        public float $stepUpThreshold = 0.5,
+        public float $quarantineThreshold = 0.3
+    ) {}
+}
+
+/**
+ * Endpoint posture decision outcomes.
+ */
+enum EndpointPostureDecision: string
+{
+    case ALLOW = 'allow';
+    case STEP_UP = 'step_up';
+    case DENY = 'deny';
+    case QUARANTINE = 'quarantine';
+}

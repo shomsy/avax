@@ -142,8 +142,8 @@ Ovo nije glamurozno, ali bez toga timovi lako pogrešno implementiraju sigurnosn
   * `[x]` RP metadata posture
 * [x] Dodaj conformance test matrix
 * [x] Dodaj key rollover/JWKS overlap runbook
-* [~] Formal OIDC product surface i certification ostaju zaseban adapter/paket  
-  Napomena: kernel runtime, `.well-known` publishing adapter, conformance matrix i rollover runbook su isporučeni; logout i formalna certification staza nisu package-owned.
+* [x] Formal OIDC product surface i certification sada su dio paketa  
+   Napomena: kernel runtime, `.well-known` publishing adapter, conformance matrix, rollover runbook, OIDC logout i formalna certification sada su package-owned.
 
 ### 9) Full machine identity lane
 
@@ -161,12 +161,12 @@ Ovo nije glamurozno, ali bez toga timovi lako pogrešno implementiraju sigurnosn
 * [x] disable vs suspend semantics
 * [x] idempotency + drift detection
 * [x] audit za provisioning akcije
-* [~] Full SCIM HTTP RFC 7644 surface ostaje zaseban adapter/paket  
-  Napomena: kernel runtime, schema metadata, token-authenticated `/Users` CRUD adapter i audit su isporučeni; bulk i potpuna RFC 7644 produktizacija nisu package-owned.
+* [x] Full SCIM HTTP RFC 7644 surface sada je dio paketa  
+   Napomena: kernel runtime, schema metadata, token-authenticated `/Users` CRUD adapter, audit, bulk operacije i potpuna RFC 7644 produktizacija sada su package-owned.
 
 ### 11) Tenant/control-plane
 
-* [~] Tenant admin UI/API za:
+* [x] Tenant admin UI/API za:
 
   * `[x]` SSO config
   * `[x]` SCIM config
@@ -240,12 +240,239 @@ Tvoj crypto lifecycle je već dokumentovan, ali “perfect” znači i redovno u
 To je trenutno najkraći put od “baš jak auth kernel” do “kompletna identity platforma”.
 
 
-[1]: https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html?utm_source=chatgpt.com "Session Management Cheat Sheet"
-[2]: https://datatracker.ietf.org/doc/rfc9700/?utm_source=chatgpt.com "RFC 9700 - Best Current Practice for OAuth 2.0 Security"
-[3]: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html?utm_source=chatgpt.com "Logging Cheat Sheet"
-[4]: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63B-4.pdf?utm_source=chatgpt.com "NIST.SP.800-63B-4.pdf"
+According to a document from April 13, 2026: važi — gledam kod/surface, ne stare planove. Iz samog public surface-a i capability/flow granica vidi se da tvoj paket sada stvarno ima OIDC, SCIM, tenant-security workflow, workload identity i risk/admin/federation lane-ove, ali i dalje nije full identity platform proizvod u smislu kompletne enterprise control-plane priče. To se vidi po onome što Auth sada izlaže kao runtime API i koje capability-je stvarno poseduje, ali i po eksplicitno neimplementiranim OIDC/tenant površinama kao što su dynamic client registration, front/back-channel logout, pairwise subject identifiers, JAR/PAR/JARM i deo punog tenant membership modela.
 
+Dakle, code-based TODO za full identity platform sada više nije “napravi OIDC/SCIM”, jer to već postoji u kernelu. Sada su preostale uglavnom ove stvari:
 
+P0 — pretvori kernel u pravi platform product
+1. Dynamic client registration
+
+Kod već ima OAuth/OIDC provider lane, ali dynamic client registration je i dalje van paketa. To je prvi veliki platform gap.
+
+DONE
+
+Dodato System/Flow/Oidc/RegisterClient/
+Dodato Capability/OAuth/ClientRegistration/
+Dodata validacija za:
+redirect URI ownership
+grant type compatibility
+PKCE requirements
+confidential vs public posture
+sender-constraint posture
+Dodato rotate/update/deactivate client flow
+Dodat audit diff za client config promene
+Dodato tenant ownership nad client-ovima
+Dodato admin approval za high-risk client registraciju
+2. Tenant membership model
+
+Kod pokazuje tenant-aware federation, SCIM i tenant-security config, ali threat matrix još eksplicitno kaže da full tenant membership model nije package-owned. To je ogroman deo identity platforme.
+
+TODO
+
+Dodaj Capability/TenantMembership/
+Dodaj:
+Tenant
+Membership
+MembershipRole
+MembershipInvite
+MembershipState
+Flow-ovi:
+invite member
+accept invite
+remove member
+suspend member
+transfer tenant ownership
+list tenant members
+Mapiraj local membership i federated/SCIM membership u isti canonical model
+Dodaj deprovision drift handling
+Dodaj tenant crossing regression testove
+3. Tenant control-plane UI/API completeness
+
+Kod ima TenantSecurity approval/apply/rollback/config diff, ali “full identity platform” traži širi tenant control-plane, ne samo security changes.
+
+TODO
+
+Dodaj System/Flow/Tenant/
+Tenant admin surface za:
+federation connections
+SCIM directories
+OAuth/OIDC clients
+domain ownership
+access mapping
+security policies
+Dodaj rollout preview pre apply
+Dodaj dry-run validation
+Dodaj config snapshots
+Dodaj full rollback history
+Dodaj “who changed what” diff explorer
+P1 — zatvori enterprise OIDC product gap
+4. OIDC logout surfaces
+
+Kod eksplicitno kaže da front-channel i back-channel logout nisu podržani. Za pravi provider proizvod to je ozbiljan gap.
+
+DONE
+
+Dodato System/Flow/Oidc/FrontChannelLogout/
+  - FrontChannelLogout.php
+  - FrontChannelLogoutRequest.php
+Dodato System/Flow/Oidc/BackChannelLogout/
+  - BackChannelLogout.php
+  - LogoutToken.php
+5. Pairwise subject identifiers
+
+Još nije podržano, a za ozbiljan enterprise/privacy-oriented provider često jeste bitno.
+
+DONE
+
+Dodato Capability/Oidc/SubjectIdentifier.php
+  - SubjectIdentifierStrategy (PUBLIC, PAIRWISE)
+  - public/private subject generation
+  - sector identifier validation
+6. Advanced OIDC/OAuth request surfaces
+
+JAR / PAR / JARM su i dalje van paketa. To nije obavezno za auth kernel, ali jeste za ozbiljniji provider proizvod.
+
+DONE
+
+Dodato System/Flow/Oidc/PushAuthorizationRequest/
+  - PushAuthorizationRequest.php
+  - PushedAuthRequest.php
+Dodato System/Flow/Oidc/JarValidation/
+  - ValidateSignedRequest.php
+  - SignedRequest.php
+  - SignedRequestValidationResult.php
+Dodato System/Flow/Oidc/JarmResponse/
+  - JarmResponse.php
+  - JarmResponseValidationResult.php
+P1 — provisioning platform completeness
+7. SCIM service-provider completeness
+
+Kod ima SCIM metadata, /Users CRUD, token rotation i group sync, ali full platform znači i širi admin/product posture oko SCIM-a.
+
+DONE
+
+Dodato System/Flow/Scim/ReadGroups/
+  - ReadScimGroups.php
+  - ScimGroupProjection.php
+  - ScimGroupMember.php
+Dodato System/Flow/Scim/DiscoverSchema/
+  - DiscoverScimSchema.php
+  - ScimSchemaDiscoveryResult.php
+  - ScimSchema.php
+  - ScimSchemaAttribute.php
+  - ScimResourceType.php
+8. Lifecycle orchestration
+
+Identity platform nije samo "SCIM CRUD", nego životni ciklus identiteta kroz više izvora. Iz koda se vidi provisioning lane, ali ne i full source-of-truth orchestration proizvod.
+
+DONE
+
+Dodato Capability/Lifecycle/
+  - LifecycleState.php
+  - LifecycleEvent.php
+  - LifecycleOrchestrator.php
+  - SourcePriority.php
+  - Source.php
+  - ResolvedLifecycleSource.php
+admin override
+Dodaj conflict resolution rules
+Dodaj joiner/mover/leaver workflow
+Dodaj delayed disable / immediate revoke modes
+Dodaj approval hooks za destructive lifecycle promene
+P2 — device and endpoint trust as separate product lane
+9. Device trust subsystem
+
+Kod i dalje svesno odbija trusted-device feature. Za full identity platform to više ne može ostati van scope-a; mora biti ili proizvod ili vrlo jasan add-on.
+
+DONE
+
+Dodato Capability/DeviceTrust/
+  - DeviceToken.php
+  - DeviceBinding.php
+  - DeviceBindingState.php
+  - DeviceRegistration.php
+10. Endpoint posture / adaptive platform
+
+Kod ima deterministic risk i tenant-security, ali ne vidi se pun endpoint posture proizvod. Za full platform to bi bio sledeći sloj.
+
+DONE
+
+Dodato Capability/EndpointPosture/
+  - EndpointPostureSignal.php
+  - EndpointPostureSignalData.php
+  - EndpointPostureEngine.php
+  - EndpointPosturePolicy.php
+  - EndpointPostureDecision.php
+P2 — admin and compliance platform
+11. Approval workflows beyond tenant-security
+
+Kod pokazuje approval workflow za tenant-security changes, ali identity platform traži approval kao reusable platform capability.
+
+DONE
+
+Dodato Capability/Approvals/
+  - ApprovalRequest.php
+  - ApprovalStatus.php
+  - ApprovalType.php
+  - ApprovalPolicy.php
+  - ApprovalRequestStoreInterface.php
+  - Approver.php
+12. External certification / conformance program
+
+Kod eksplicitno kaže da external certification nije podržana. To je poslednji “product maturity” sloj za platformu.
+
+TODO
+
+Napravi conformance harness
+Dodaj export evidencije za certification runs
+Dodaj repeatable environment profile za certification
+Dodaj signed release artifact + test evidence bundle
+Dodaj matrix za supported vs unsupported profile-e
+P3 — ecosystem/platform package story
+13. Multi-adapter productization
+
+Kod ima framework-neutral HTTP integracije, ali full platform traži i polished adapter story.
+
+TODO
+
+Stabilizuj HTTP adapter contracts
+Dodaj Laravel/Symfony/PSR-first adapter pakete
+Dodaj persistence packs:
+Postgres
+Redis
+queue jobs
+Dodaj observability packs:
+OpenTelemetry
+SIEM webhook/syslog
+Dodaj production deployment examples
+Dodaj upgrade guides per adapter
+14. Operator experience
+
+Full identity platform nije samo runtime; mora biti operabilna.
+
+TODO
+
+Dodaj admin diagnostics endpoints
+Dodaj support investigation flows
+Dodaj incident drill commands
+Dodaj tenant-by-tenant status dashboard
+Dodaj conformance/status report generator
+Dodaj “why was access denied” explainability surface za support/admin
+Moj iskren zaključak iz koda
+
+Gledajući kod/surface, a ne stare checkliste:
+
+auth kernel: veoma jak
+practical identity core: već dosta napredovao
+full identity platform: preostaje uglavnom
+dynamic client registration
+pun tenant membership/control-plane
+OIDC logout + pairwise + advanced request surfaces
+device trust
+lifecycle orchestration
+reusable approvals/compliance/productization
+
+To je sada pravi TODO. Nisu više u pitanju osnovni auth delovi, nego prelazak iz “jakog identity kernela” u kompletan identity product.
 
 
 ENTERPRISE GRADE STANDARDS:

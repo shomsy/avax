@@ -26,35 +26,35 @@ final class AuditExporterAdaptersTest extends TestCase
     public function testJsonLinesExporterMasksSensitiveContextAndChainsHashes() : void
     {
         $path = tempnam(sys_get_temp_dir(), 'auth-audit-');
-        $this->assertIsString($path);
+        $this->assertIsString(actual: $path);
 
-        $exporter = new JsonLinesAuditExporter($path);
-        $exporter->export([
+        $exporter = new JsonLinesAuditExporter(path: $path);
+        $exporter->export(events: [
             new AuditEvent(
                 name         : 'auth.login.succeeded',
-                occurredAt   : new DateTimeImmutable('2026-04-13T10:00:00+00:00'),
+                occurredAt   : new DateTimeImmutable(datetime: '2026-04-13T10:00:00+00:00'),
                 context      : ['email' => 'user@example.com', 'ip_address' => '127.0.0.1', 'risk_action' => 'allow'],
                 correlationId: 'corr-1'
             ),
             new AuditEvent(
                 name       : 'auth.logout.succeeded',
-                occurredAt : new DateTimeImmutable('2026-04-13T10:01:00+00:00'),
+                occurredAt : new DateTimeImmutable(datetime: '2026-04-13T10:01:00+00:00'),
                 context    : ['user_id' => 1]
             ),
         ]);
 
         $lines = file($path, FILE_IGNORE_NEW_LINES);
-        $this->assertIsArray($lines);
-        $this->assertCount(2, $lines);
+        $this->assertIsArray(actual: $lines);
+        $this->assertCount(expectedCount: 2, haystack: $lines);
 
         $first = json_decode($lines[0], true, 512, JSON_THROW_ON_ERROR);
         $second = json_decode($lines[1], true, 512, JSON_THROW_ON_ERROR);
 
-        $this->assertSame('[redacted]', $first['context']['email']);
-        $this->assertSame('[redacted]', $first['context']['ip_address']);
-        $this->assertArrayHasKey('record_hash', $first);
-        $this->assertArrayHasKey('record_hash', $second);
-        $this->assertSame($first['record_hash'], $second['previous_hash']);
+        $this->assertSame(expected: '[redacted]', actual: $first['context']['email']);
+        $this->assertSame(expected: '[redacted]', actual: $first['context']['ip_address']);
+        $this->assertArrayHasKey(key: 'record_hash', array: $first);
+        $this->assertArrayHasKey(key: 'record_hash', array: $second);
+        $this->assertSame(expected: $first['record_hash'], actual: $second['previous_hash']);
 
         @unlink($path);
     }
@@ -67,7 +67,7 @@ final class AuditExporterAdaptersTest extends TestCase
         $capture->queue = [];
         $event = new AuditEvent(
             name         : 'auth.oauth.refresh.reuse_detected',
-            occurredAt   : new DateTimeImmutable('2026-04-13T11:00:00+00:00'),
+            occurredAt   : new DateTimeImmutable(datetime: '2026-04-13T11:00:00+00:00'),
             context      : ['refresh_token' => 'secret-token', 'user_id' => 1],
             correlationId: 'corr-2'
         );
@@ -82,7 +82,7 @@ final class AuditExporterAdaptersTest extends TestCase
                     $this->capture->syslog[] = [$severity, json_decode($message, true, 512, JSON_THROW_ON_ERROR)];
                 }
             }
-        ))->export([$event]);
+        ))->export(events: [$event]);
 
         (new WebhookAuditExporter(
             sender: new class($capture) implements SendAuditWebhookInterface
@@ -94,7 +94,7 @@ final class AuditExporterAdaptersTest extends TestCase
                     $this->capture->webhook[] = $payload;
                 }
             }
-        ))->export([$event]);
+        ))->export(events: [$event]);
 
         (new QueueAuditExporter(
             publisher: new class($capture) implements PublishAuditMessageInterface
@@ -106,19 +106,19 @@ final class AuditExporterAdaptersTest extends TestCase
                     $this->capture->queue[] = [$topic, $message];
                 }
             }
-        ))->export([$event]);
+        ))->export(events: [$event]);
 
-        $this->assertSame('info', $capture->syslog[0][0]);
-        $this->assertSame('[redacted]', $capture->syslog[0][1]['context']['refresh_token']);
-        $this->assertSame('corr-2', $capture->webhook[0]['correlation_id']);
-        $this->assertSame('auth.audit', $capture->queue[0][0]);
-        $this->assertSame('auth.oauth.refresh.reuse_detected', $capture->queue[0][1]['name']);
+        $this->assertSame(expected: 'info', actual: $capture->syslog[0][0]);
+        $this->assertSame(expected: '[redacted]', actual: $capture->syslog[0][1]['context']['refresh_token']);
+        $this->assertSame(expected: 'corr-2', actual: $capture->webhook[0]['correlation_id']);
+        $this->assertSame(expected: 'auth.audit', actual: $capture->queue[0][0]);
+        $this->assertSame(expected: 'auth.oauth.refresh.reuse_detected', actual: $capture->queue[0][1]['name']);
     }
 
     public function testLegalHoldPreservesSensitiveContextForForensicExport() : void
     {
         $path = tempnam(sys_get_temp_dir(), 'auth-audit-hold-');
-        $this->assertIsString($path);
+        $this->assertIsString(actual: $path);
 
         $exporter = new JsonLinesAuditExporter(
             path              : $path,
@@ -126,10 +126,10 @@ final class AuditExporterAdaptersTest extends TestCase
                 legalHoldPolicy: new ContextFlagAuditLegalHoldPolicy()
             )
         );
-        $exporter->export([
+        $exporter->export(events: [
             new AuditEvent(
                 name       : 'auth.admin.incident.review_opened',
-                occurredAt : new DateTimeImmutable('2026-04-13T12:00:00+00:00'),
+                occurredAt : new DateTimeImmutable(datetime: '2026-04-13T12:00:00+00:00'),
                 context    : [
                     'email' => 'admin@example.com',
                     'ip_address' => '127.0.0.1',
@@ -139,11 +139,11 @@ final class AuditExporterAdaptersTest extends TestCase
         ]);
 
         $lines = file($path, FILE_IGNORE_NEW_LINES);
-        $this->assertIsArray($lines);
+        $this->assertIsArray(actual: $lines);
         $payload = json_decode($lines[0], true, 512, JSON_THROW_ON_ERROR);
 
-        $this->assertSame('admin@example.com', $payload['context']['email']);
-        $this->assertSame('127.0.0.1', $payload['context']['ip_address']);
+        $this->assertSame(expected: 'admin@example.com', actual: $payload['context']['email']);
+        $this->assertSame(expected: '127.0.0.1', actual: $payload['context']['ip_address']);
 
         @unlink($path);
     }
@@ -166,14 +166,14 @@ final class AuditExporterAdaptersTest extends TestCase
             normalizeAuditEvent: new NormalizeAuditEvent()
         );
 
-        $exporter->export([
-            new AuditEvent('auth.admin.elevation.started', new DateTimeImmutable(), ['user_id' => 1], 'corr-3'),
-            new AuditEvent('auth.password.changed', new DateTimeImmutable(), ['suspicious_activity' => 1], 'corr-3'),
-            new AuditEvent('auth.login.succeeded', new DateTimeImmutable(), ['user_id' => 1], 'corr-3'),
+        $exporter->export(events: [
+                              new AuditEvent(name: 'auth.admin.elevation.started', occurredAt: new DateTimeImmutable(), context: ['user_id' => 1], correlationId: 'corr-3'),
+                              new AuditEvent(name: 'auth.password.changed', occurredAt: new DateTimeImmutable(), context: ['suspicious_activity' => 1], correlationId: 'corr-3'),
+                              new AuditEvent(name: 'auth.login.succeeded', occurredAt: new DateTimeImmutable(), context: ['user_id' => 1], correlationId: 'corr-3'),
         ]);
 
-        $this->assertCount(2, $capture->notifications);
-        $this->assertSame('admin_elevation_started', $capture->notifications[0]->name);
-        $this->assertSame('password_changed_after_suspicious_activity', $capture->notifications[1]->name);
+        $this->assertCount(expectedCount: 2, haystack: $capture->notifications);
+        $this->assertSame(expected: 'admin_elevation_started', actual: $capture->notifications[0]->name);
+        $this->assertSame(expected: 'password_changed_after_suspicious_activity', actual: $capture->notifications[1]->name);
     }
 }

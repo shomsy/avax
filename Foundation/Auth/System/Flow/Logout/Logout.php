@@ -12,6 +12,7 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Token\RefreshTokenStoreInterface;
 use Avax\Auth\System\Foundation\Clock;
+use SensitiveParameter;
 
 /**
  * High-level orchestrator for the logout process.
@@ -21,12 +22,12 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class Logout
 {
     public function __construct(
-        private IdentityInterface               $identity,
-        private CurrentAuthentication           $currentAuthentication,
-        private AuditLogInterface               $auditLog,
-        private Clock                           $clock,
-        private SessionRegistryInterface|null   $sessionRegistry = null,
-        private RefreshTokenStoreInterface|null $refreshTokenStore = null
+        private IdentityInterface                                     $identity,
+        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private AuditLogInterface                                     $auditLog,
+        private Clock                                                 $clock,
+        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
+        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
     ) {}
 
     public function execute() : void
@@ -37,11 +38,11 @@ final readonly class Logout
 
         if ($user !== null) {
             if ($context->sessionId() !== null) {
-                $this->sessionRegistry?->revoke($context->sessionId(), $now, 'logout');
+                $this->sessionRegistry?->revoke(sessionId: $context->sessionId(), revokedAt: $now, reason: 'logout');
             }
 
-            $this->refreshTokenStore?->revokeUser(new UserId($user->id));
-            $this->auditLog->record(new AuditEvent(
+            $this->refreshTokenStore?->revokeUser(userId: new UserId(value: $user->id));
+            $this->auditLog->record(event: new AuditEvent(
                                         name      : 'auth.logout.succeeded',
                                         occurredAt: $now,
                                         context   : [
@@ -52,7 +53,7 @@ final readonly class Logout
                                     ));
         }
 
-        $this->identity->clear($context);
+        $this->identity->clear(context: $context);
         $this->currentAuthentication->clear();
     }
 }

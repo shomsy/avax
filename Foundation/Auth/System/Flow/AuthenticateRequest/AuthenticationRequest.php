@@ -14,14 +14,14 @@ final readonly class AuthenticationRequest
     public function __construct(
         #[SensitiveParameter] public string|null $bearerToken = null,
         public bool                              $allowSession = true,
-        public string|null                       $ipAddress = null,
+        #[SensitiveParameter] public string|null $ipAddress = null,
         public string|null                       $userAgent = null
     ) {}
 
     public static function bearer(
-        #[SensitiveParameter] string $bearerToken,
-        string|null                  $ipAddress = null,
-        string|null                  $userAgent = null
+        #[SensitiveParameter] string      $bearerToken,
+        #[SensitiveParameter] string|null $ipAddress = null,
+        string|null                       $userAgent = null
     ) : self
     {
         return new self(

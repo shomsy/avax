@@ -11,8 +11,8 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 final readonly class ReadRiskSignals
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private DeterministicRiskEngine $riskEngine
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private DeterministicRiskEngine                      $riskEngine
     ) {}
 
     /**
@@ -26,6 +26,6 @@ final readonly class ReadRiskSignals
             return [];
         }
 
-        return $this->riskEngine->readSignalsForUser($resolvedUserId);
+        return $this->riskEngine->readSignalsForUser(userId: $resolvedUserId);
     }
 }

@@ -26,7 +26,7 @@ final class ScimFlowTest extends TestCase
     {
         $auth = $this->buildAuth();
 
-        $directory = $auth->registerScimDirectory(new RegisterScimDirectoryData(
+        $directory = $auth->registerScimDirectory(data: new RegisterScimDirectoryData(
             tenantSlug  : 'acme',
             name        : 'Acme Workforce',
             groupRoleMap: [
@@ -35,7 +35,7 @@ final class ScimFlowTest extends TestCase
             ]
         ));
 
-        $provisioned = $auth->provisionScimUser(new ProvisionScimUserData(
+        $provisioned = $auth->provisionScimUser(data: new ProvisionScimUserData(
             directoryId    : $directory->directory->directoryId,
             directoryToken : $directory->plainTextToken,
             externalId     : 'ext-1',
@@ -44,7 +44,7 @@ final class ScimFlowTest extends TestCase
             groups         : ['admins'],
             state          : ScimAccountState::ACTIVE
         ));
-        $idempotent = $auth->provisionScimUser(new ProvisionScimUserData(
+        $idempotent = $auth->provisionScimUser(data: new ProvisionScimUserData(
             directoryId    : $directory->directory->directoryId,
             directoryToken : $directory->plainTextToken,
             externalId     : 'ext-1',
@@ -53,27 +53,27 @@ final class ScimFlowTest extends TestCase
             groups         : ['admins'],
             state          : ScimAccountState::ACTIVE
         ));
-        $synced = $auth->syncScimGroups(new SyncScimGroupsData(
+        $synced = $auth->syncScimGroups(data: new SyncScimGroupsData(
             directoryId    : $directory->directory->directoryId,
             directoryToken : $directory->plainTextToken,
             externalId     : 'ext-1',
             groups         : ['users'],
             state          : ScimAccountState::SUSPENDED
         ));
-        $users = $auth->readScimUsers($directory->directory->directoryId);
+        $users = $auth->readScimUsers(directoryId: $directory->directory->directoryId);
 
-        $this->assertTrue($provisioned->created);
-        $this->assertFalse($provisioned->idempotent);
-        $this->assertTrue($idempotent->idempotent);
-        $this->assertTrue($synced->driftDetected);
-        $this->assertSame(['user'], $synced->roles);
-        $this->assertCount(1, $users);
-        $this->assertSame(ScimAccountState::SUSPENDED, $users[0]->state);
+        $this->assertTrue(condition: $provisioned->created);
+        $this->assertFalse(condition: $provisioned->idempotent);
+        $this->assertTrue(condition: $idempotent->idempotent);
+        $this->assertTrue(condition: $synced->driftDetected);
+        $this->assertSame(expected: ['user'], actual: $synced->roles);
+        $this->assertCount(expectedCount: 1, haystack: $users);
+        $this->assertSame(expected: ScimAccountState::SUSPENDED, actual: $users[0]->state);
 
-        $rotated = $auth->rotateScimToken($directory->directory->directoryId);
+        $rotated = $auth->rotateScimToken(directoryId: $directory->directory->directoryId);
 
         try {
-            $auth->provisionScimUser(new ProvisionScimUserData(
+            $auth->provisionScimUser(data: new ProvisionScimUserData(
                 directoryId    : $directory->directory->directoryId,
                 directoryToken : $directory->plainTextToken,
                 externalId     : 'ext-2',
@@ -81,18 +81,18 @@ final class ScimFlowTest extends TestCase
                 username       : 'old-token',
                 groups         : ['users']
             ));
-            $this->fail('Expected old SCIM token to fail after rotation.');
+            $this->fail(message: 'Expected old SCIM token to fail after rotation.');
         } catch (ScimFailed $exception) {
-            $this->assertSame('Invalid SCIM directory token.', $exception->getMessage());
+            $this->assertSame(expected: 'Invalid SCIM directory token.', actual: $exception->getMessage());
         }
 
-        $auth->deleteScimUser(new DeleteScimUserData(
+        $auth->deleteScimUser(data: new DeleteScimUserData(
             directoryId    : $rotated->directory->directoryId,
             directoryToken : $rotated->plainTextToken,
             externalId     : 'ext-1'
         ));
 
-        $this->assertSame([], $auth->readScimUsers($directory->directory->directoryId));
+        $this->assertSame(expected: [], actual: $auth->readScimUsers(directoryId: $directory->directory->directoryId));
     }
 
     private function buildAuth() : Auth
@@ -101,15 +101,15 @@ final class ScimFlowTest extends TestCase
         $refreshTokens = new InMemoryRefreshTokenStore();
 
         return Auth::configuration()
-            ->forUser($userSource)
-            ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
                 userSource       : $userSource,
-                codec            : new HmacTokenCodec('scim-auth-secret'),
+                codec            : new HmacTokenCodec(secret: 'scim-auth-secret'),
                 clock            : new Clock(),
                 revocationStore  : new InMemoryTokenRevocationStore(),
                 refreshTokenStore: $refreshTokens
             )))
-            ->withRefreshTokenStore($refreshTokens)
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->ready();
     }
 }

@@ -41,7 +41,7 @@ $connection     = new class($pdo) implements \Avax\Database\Connection\Contracts
     public function disconnect() : void {}
 };
 $executor       = new PDOExecutor(connection: $connection, connectionName: 'primary');
-$transactionMgr = \Avax\Database\Transaction\Transaction::on($connection);
+$transactionMgr = \Avax\Database\Transaction\Transaction::on(connection: $connection);
 $orchestrator   = new QueryOrchestrator(
     executor          : $executor,
     transactionManager: $transactionMgr

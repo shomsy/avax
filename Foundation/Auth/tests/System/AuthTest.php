@@ -34,7 +34,7 @@ final class AuthTest extends TestCase
 {
     public function testAuthConfigurationReturnsBuilder() : void
     {
-        $this->assertInstanceOf(AuthBuilder::class, Auth::configuration());
+        $this->assertInstanceOf(expected: AuthBuilder::class, actual: Auth::configuration());
     }
 
     public function testAuthFacadeRunsCorePublicFlowSurface() : void
@@ -42,45 +42,45 @@ final class AuthTest extends TestCase
         $userSource = new InMemoryUserSource();
         $refreshTokens = new InMemoryRefreshTokenStore();
         $auth = Auth::configuration()
-            ->forUser($userSource)
-            ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
                 userSource       : $userSource,
-                codec            : new HmacTokenCodec('auth-test-secret'),
+                codec            : new HmacTokenCodec(secret: 'auth-test-secret'),
                 clock            : new Clock(),
                 revocationStore  : new InMemoryTokenRevocationStore(),
                 refreshTokenStore: $refreshTokens
             )))
-            ->withRefreshTokenStore($refreshTokens)
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->ready();
 
-        $registration = $auth->register(new RegistrationData(
+        $registration = $auth->register(data: new RegistrationData(
             email   : 'facade@example.com',
             username: 'facade',
             password: 'secret'
         ));
-        $this->assertSame('facade@example.com', $registration->user()->email);
+        $this->assertSame(expected: 'facade@example.com', actual: $registration->user()->email);
 
-        $login = $auth->login(new Credentials(
+        $login = $auth->login(credentials: new Credentials(
             identifier: 'facade@example.com',
             password  : 'secret'
         ));
 
-        $this->assertTrue($login->isAuthenticated());
-        $this->assertNotNull($login->accessToken());
-        $this->assertNotNull($login->refreshToken());
-        $this->assertTrue($auth->check());
-        $this->assertSame($login->user()?->id, $auth->current()->user()?->id);
-        $this->assertSame($login->user()?->email, $auth->user()?->email);
-        $this->assertInstanceOf(AccessInterface::class, $auth->access());
+        $this->assertTrue(condition: $login->isAuthenticated());
+        $this->assertNotNull(actual: $login->accessToken());
+        $this->assertNotNull(actual: $login->refreshToken());
+        $this->assertTrue(condition: $auth->check());
+        $this->assertSame(expected: $login->user()?->id, actual: $auth->current()->user()?->id);
+        $this->assertSame(expected: $login->user()?->email, actual: $auth->user()?->email);
+        $this->assertInstanceOf(expected: AccessInterface::class, actual: $auth->access());
 
-        $resolved = $auth->authenticateRequest(AuthenticationRequest::bearer($login->accessToken() ?? ''));
-        $this->assertTrue($resolved->isAuthenticated());
-        $this->assertSame('facade@example.com', $resolved->user()?->email);
+        $resolved = $auth->authenticateRequest(request: AuthenticationRequest::bearer(bearerToken: $login->accessToken() ?? ''));
+        $this->assertTrue(condition: $resolved->isAuthenticated());
+        $this->assertSame(expected: 'facade@example.com', actual: $resolved->user()?->email);
 
         $auth->logout();
 
-        $this->assertFalse($auth->check());
-        $this->assertNull($auth->user());
+        $this->assertFalse(condition: $auth->check());
+        $this->assertNull(actual: $auth->user());
     }
 
     public function testAuthFacadeCanReadAndRevokeTrackedSessions() : void
@@ -89,38 +89,38 @@ final class AuthTest extends TestCase
         $sessionRegistry  = new InMemorySessionRegistry();
         $sessionStore     = new ArraySessionStore();
         $auth             = Auth::configuration()
-            ->forUser($userSource)
-            ->withIdentity(new Identity(
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(
                 sessionIdentity: new SessionIdentity(
                     store          : $sessionStore,
                     sessionRegistry: $sessionRegistry
                 )
             ))
-            ->withSessionRegistry($sessionRegistry)
+            ->withSessionRegistry(sessionRegistry: $sessionRegistry)
             ->ready();
 
-        $auth->register(new RegistrationData(
+        $auth->register(data: new RegistrationData(
             email   : 'session@example.com',
             username: 'session-user',
             password: 'secret'
         ));
 
-        $login = $auth->login(new Credentials(
+        $login = $auth->login(credentials: new Credentials(
             identifier: 'session@example.com',
             password  : 'secret',
             ipAddress : '127.0.0.1',
             userAgent : 'PHPUnit'
         ));
 
-        $this->assertTrue($login->isAuthenticated());
+        $this->assertTrue(condition: $login->isAuthenticated());
         $sessions = $auth->readActiveSessions();
-        $this->assertCount(1, $sessions);
-        $this->assertTrue($sessions[0]->current);
+        $this->assertCount(expectedCount: 1, haystack: $sessions);
+        $this->assertTrue(condition: $sessions[0]->current);
 
-        $auth->revokeSession($sessions[0]->sessionId);
+        $auth->revokeSession(sessionId: $sessions[0]->sessionId);
 
-        $this->assertFalse($auth->check());
-        $this->assertNull($auth->user());
+        $this->assertFalse(condition: $auth->check());
+        $this->assertNull(actual: $auth->user());
     }
 
     public function testAuthBuilderPropagatesAuditCorrelationIdAcrossFlows() : void
@@ -129,36 +129,36 @@ final class AuthTest extends TestCase
         $refreshTokens = new InMemoryRefreshTokenStore();
         $auditLog = new InMemoryAuditLog();
         $auth = Auth::configuration()
-            ->forUser($userSource)
-            ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
                 userSource       : $userSource,
-                codec            : new HmacTokenCodec('auth-correlation-secret'),
+                codec            : new HmacTokenCodec(secret: 'auth-correlation-secret'),
                 clock            : new Clock(),
                 revocationStore  : new InMemoryTokenRevocationStore(),
                 refreshTokenStore: $refreshTokens
             )))
-            ->withRefreshTokenStore($refreshTokens)
-            ->withAuditLog($auditLog)
-            ->withAuditCorrelationId('corr-auth-1')
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
+            ->withAuditLog(auditLog: $auditLog)
+            ->withAuditCorrelationId(correlationId: 'corr-auth-1')
             ->ready();
 
-        $auth->register(new RegistrationData(
+        $auth->register(data: new RegistrationData(
             email   : 'trace@example.com',
             username: 'trace-user',
             password: 'secret'
         ));
-        $auth->login(new Credentials(
+        $auth->login(credentials: new Credentials(
             identifier: 'trace@example.com',
             password  : 'secret'
         ));
         $auth->logout();
 
         $events = $auditLog->events();
-        $this->assertNotSame([], $events);
-        $this->assertContainsOnlyInstancesOf(\Avax\Auth\System\Flow\Diagnostics\AuditEvent::class, $events);
+        $this->assertNotSame(expected: [], actual: $events);
+        $this->assertContainsOnlyInstancesOf(className: \Avax\Auth\System\Flow\Diagnostics\AuditEvent::class, haystack: $events);
         $this->assertSame(
-            ['corr-auth-1'],
-            array_values(array_unique(array_filter(array_map(static fn ($event) => $event->correlationId, $events))))
+            expected: ['corr-auth-1'],
+            actual  : array_values(array_unique(array_filter(array_map(static fn ($event) => $event->correlationId, $events))))
         );
     }
 
@@ -167,18 +167,18 @@ final class AuthTest extends TestCase
         $userSource = new InMemoryUserSource();
         $refreshTokens = new InMemoryRefreshTokenStore();
         $auth = Auth::configuration()
-            ->forUser($userSource)
-            ->withIdentity(new Identity(jwtIdentity: new JwtIdentity(
+            ->forUser(userSource: $userSource)
+            ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
                 userSource       : $userSource,
-                codec            : new HmacTokenCodec('auth-workload-secret'),
+                codec            : new HmacTokenCodec(secret: 'auth-workload-secret'),
                 clock            : new Clock(),
                 revocationStore  : new InMemoryTokenRevocationStore(),
                 refreshTokenStore: $refreshTokens
             )))
-            ->withRefreshTokenStore($refreshTokens)
+            ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->ready();
 
-        $auth->registerOAuthClient(new RegisterClientData(
+        $auth->registerOAuthClient(data: new RegisterClientData(
             name                    : 'Search Worker',
             type                    : OAuthClientType::CONFIDENTIAL,
             redirectUris            : ['urn:avax:oauth:search-worker'],
@@ -191,7 +191,7 @@ final class AuthTest extends TestCase
 
         $profiles = $auth->readWorkloadIdentities();
 
-        $this->assertCount(1, $profiles);
-        $this->assertSame(['search-api'], $profiles[0]->allowedAudiences);
+        $this->assertCount(expectedCount: 1, haystack: $profiles);
+        $this->assertSame(expected: ['search-api'], actual: $profiles[0]->allowedAudiences);
     }
 }

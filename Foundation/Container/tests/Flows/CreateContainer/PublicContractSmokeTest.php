@@ -76,8 +76,8 @@ $expectedMethods = [
 ];
 
 foreach ($expectedMethods as $method) {
-    assertTrue(method_exists(ContainerInterface::class, $method), "ContainerInterface should expose [{$method}].");
-    assertTrue(method_exists(Container::class, $method), "Container should implement [{$method}].");
+    assertTrue(condition: method_exists(ContainerInterface::class, $method), message: "ContainerInterface should expose [{$method}].");
+    assertTrue(condition: method_exists(Container::class, $method), message: "Container should implement [{$method}].");
 }
 
 $forbiddenLegacyMethods = [
@@ -86,8 +86,8 @@ $forbiddenLegacyMethods = [
 ];
 
 foreach ($forbiddenLegacyMethods as $method) {
-    assertTrue(! method_exists(ContainerInterface::class, $method), "Legacy public method [{$method}] must stay absent from ContainerInterface.");
-    assertTrue(! method_exists(Container::class, $method), "Legacy public method [{$method}] must stay absent from Container.");
+    assertTrue(condition: ! method_exists(ContainerInterface::class, $method), message: "Legacy public method [{$method}] must stay absent from ContainerInterface.");
+    assertTrue(condition: ! method_exists(Container::class, $method), message: "Legacy public method [{$method}] must stay absent from Container.");
 }
 
 echo basename(__FILE__) . " ok\n";

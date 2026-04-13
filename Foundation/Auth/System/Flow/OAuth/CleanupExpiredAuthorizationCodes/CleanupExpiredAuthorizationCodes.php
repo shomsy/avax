@@ -10,8 +10,8 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class CleanupExpiredAuthorizationCodes
 {
     public function __construct(
-        private PruneExpiredAuthorizationCodesInterface|null $codeStore,
-        private Clock $clock
+        #[\SensitiveParameter] private PruneExpiredAuthorizationCodesInterface|null $codeStore,
+        private Clock                                                               $clock
     ) {}
 
     public function execute() : int
@@ -20,6 +20,6 @@ final readonly class CleanupExpiredAuthorizationCodes
             return 0;
         }
 
-        return $this->codeStore->pruneExpired($this->clock->now());
+        return $this->codeStore->pruneExpired(now: $this->clock->now());
     }
 }

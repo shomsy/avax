@@ -13,7 +13,7 @@ final class ResourceOwnerDenied extends RuntimeException
         string $message = 'Current user does not own this resource.'
     )
     {
-        parent::__construct($message, 403);
+        parent::__construct(message: $message, code: 403);
     }
 
     public function ownerUserId() : int

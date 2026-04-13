@@ -51,7 +51,7 @@ final class CriticalPathTest extends TestCase
             public function disconnect() : void {}
         };
         $executor       = new PDOExecutor(connection: $connection, connectionName: 'test');
-        $transactionMgr = \Avax\Database\Transaction\Transaction::on($connection);
+        $transactionMgr = \Avax\Database\Transaction\Transaction::on(connection: $connection);
         $orchestrator   = new QueryOrchestrator(executor: $executor, transactionManager: $transactionMgr);
         $builder        = new QueryBuilder(grammar: $grammar, orchestrator: $orchestrator);
 
@@ -95,7 +95,7 @@ final class CriticalPathTest extends TestCase
             public function disconnect() : void {}
         };
         $executor       = new PDOExecutor(connection: $connection, connectionName: 'test');
-        $transactionMgr = \Avax\Database\Transaction\Transaction::on($connection);
+        $transactionMgr = \Avax\Database\Transaction\Transaction::on(connection: $connection);
         $orchestrator   = new QueryOrchestrator(executor: $executor, transactionManager: $transactionMgr);
         $identityMap    = new IdentityMap(transactionManager: $transactionMgr, connection: $connection);
         $builder        = new QueryBuilder(grammar: $grammar, orchestrator: $orchestrator->withIdentityMap(map: $identityMap));

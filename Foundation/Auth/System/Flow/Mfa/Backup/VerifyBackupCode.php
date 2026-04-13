@@ -18,15 +18,15 @@ use SensitiveParameter;
 final readonly class VerifyBackupCode
 {
     public function __construct(
-        private MfaStoreInterface $mfaStore,
-        private PasswordHasher    $passwordHasher,
-        private AuditLogInterface $auditLog,
-        private Clock             $clock
+        private MfaStoreInterface                     $mfaStore,
+        #[\SensitiveParameter] private PasswordHasher $passwordHasher,
+        private AuditLogInterface                     $auditLog,
+        private Clock                                 $clock
     ) {}
 
     public function execute(UserId $userId, #[SensitiveParameter] string $code) : bool
     {
-        $method = $this->mfaStore->findMethod($userId);
+        $method = $this->mfaStore->findMethod(userId: $userId);
 
         if ($method === null) {
             return false;
@@ -37,14 +37,14 @@ final readonly class VerifyBackupCode
                 continue;
             }
 
-            if (! $this->passwordHasher->verify($code, $backupCode->codeHash)) {
+            if (! $this->passwordHasher->verify(password: $code, hash: $backupCode->codeHash)) {
                 continue;
             }
 
             $codes         = $method->backupCodes;
-            $codes[$index] = $backupCode->markUsed($this->clock->now());
-            $this->mfaStore->saveMethod($method->withBackupCodes(array_values($codes)));
-            $this->auditLog->record(new AuditEvent(
+            $codes[$index] = $backupCode->markUsed(moment: $this->clock->now());
+            $this->mfaStore->saveMethod(record: $method->withBackupCodes(backupCodes: array_values($codes)));
+            $this->auditLog->record(event: new AuditEvent(
                                         name      : 'auth.mfa.backup_code.used',
                                         occurredAt: $this->clock->now(),
                                         context   : [

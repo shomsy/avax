@@ -35,7 +35,7 @@ class JwtIdentityTest extends TestCase
         );
 
         $userSource = new InMemoryUserSource();
-        $userSource->create($user);
+        $userSource->create(user: $user);
         $revocationStore = new InMemoryTokenRevocationStore();
 
         $jwt = new JwtIdentity(
@@ -47,14 +47,14 @@ class JwtIdentityTest extends TestCase
         );
 
         $issued   = $jwt->issue(user: $user);
-        $resolved = $jwt->resolve($issued->token);
+        $resolved = $jwt->resolve(token: $issued->token);
 
-        $this->assertNotNull($resolved);
-        $this->assertSame($user->getId()->value, $resolved?->user->getId()->value);
+        $this->assertNotNull(actual: $resolved);
+        $this->assertSame(expected: $user->getId()->value, actual: $resolved?->user->getId()->value);
 
-        $jwt->revoke($issued->tokenId, $issued->expiresAt);
+        $jwt->revoke(tokenId: $issued->tokenId, expiresAt: $issued->expiresAt);
 
-        $this->assertNull($jwt->resolve($issued->token));
+        $this->assertNull(actual: $jwt->resolve(token: $issued->token));
     }
 
     public function testJwtIdentityRejectsInactiveUsersWhenIssuing() : void
@@ -98,7 +98,7 @@ class JwtIdentityTest extends TestCase
 
         $userSource = Mockery::mock(UserSourceInterface::class);
         $userSource->shouldReceive('findById')
-            ->with(Mockery::on(fn ($id) => $id instanceof UserId && $id->value === 9))
+            ->with(Mockery::on(closure: fn ($id) => $id instanceof UserId && $id->value === 9))
             ->andReturn($inactiveUser);
 
         $jwt = new JwtIdentity(
@@ -109,14 +109,14 @@ class JwtIdentityTest extends TestCase
 
         $token = $jwt->issue(user: $activeUser);
 
-        $this->assertNull($jwt->resolve($token->token));
+        $this->assertNull(actual: $jwt->resolve(token: $token->token));
     }
 
     public function testJwtIdentityIssuesRefreshTokenWhenStoreConfigured() : void
     {
         $user = new User(
-            id          : new UserId(11),
-            email       : new UserEmail('refresh@example.com'),
+            id          : new UserId(value: 11),
+            email       : new UserEmail(value: 'refresh@example.com'),
             username    : 'refresh',
             passwordHash: 'hash'
         );
@@ -129,23 +129,23 @@ class JwtIdentityTest extends TestCase
             refreshTokenStore: $store
         );
 
-        $refresh = $jwt->issueRefreshToken($user);
+        $refresh = $jwt->issueRefreshToken(user: $user);
 
-        $this->assertNotNull($refresh);
-        $this->assertSame($user->getId()->value, $refresh?->userId->value);
+        $this->assertNotNull(actual: $refresh);
+        $this->assertSame(expected: $user->getId()->value, actual: $refresh?->userId->value);
     }
 
     public function testJwtIdentityPreservesOAuthClientClaims() : void
     {
         $user = new User(
-            id          : new UserId(12),
-            email       : new UserEmail('oauth-claims@example.com'),
+            id          : new UserId(value: 12),
+            email       : new UserEmail(value: 'oauth-claims@example.com'),
             username    : 'oauth-claims',
             passwordHash: 'hash'
         );
 
         $userSource = new InMemoryUserSource();
-        $userSource->create($user);
+        $userSource->create(user: $user);
 
         $jwt = new JwtIdentity(
             userSource: $userSource,
@@ -158,24 +158,24 @@ class JwtIdentityTest extends TestCase
             clientId : 'oauth_client',
             scopes   : ['email', 'profile']
         );
-        $resolved = $jwt->resolve($issued->token);
+        $resolved = $jwt->resolve(token: $issued->token);
 
-        $this->assertNotNull($resolved);
-        $this->assertSame('oauth_client', $resolved?->clientId);
-        $this->assertSame(['email', 'profile'], $resolved?->scopes);
+        $this->assertNotNull(actual: $resolved);
+        $this->assertSame(expected: 'oauth_client', actual: $resolved?->clientId);
+        $this->assertSame(expected: ['email', 'profile'], actual: $resolved?->scopes);
     }
 
     public function testJwtIdentityPreservesSenderConstraintClaims() : void
     {
         $user = new User(
-            id          : new UserId(13),
-            email       : new UserEmail('oauth-binding@example.com'),
+            id          : new UserId(value: 13),
+            email       : new UserEmail(value: 'oauth-binding@example.com'),
             username    : 'oauth-binding',
             passwordHash: 'hash'
         );
 
         $userSource = new InMemoryUserSource();
-        $userSource->create($user);
+        $userSource->create(user: $user);
 
         $jwt = new JwtIdentity(
             userSource: $userSource,
@@ -192,12 +192,12 @@ class JwtIdentityTest extends TestCase
                 thumbprint: 'thumb-123'
             )
         );
-        $resolved = $jwt->resolve($issued->token);
+        $resolved = $jwt->resolve(token: $issued->token);
 
-        $this->assertNotNull($resolved);
-        $this->assertNotNull($resolved?->senderConstraint);
-        $this->assertSame(OAuthSenderConstraintType::DPOP, $resolved?->senderConstraint?->type);
-        $this->assertSame('thumb-123', $resolved?->senderConstraint?->thumbprint);
+        $this->assertNotNull(actual: $resolved);
+        $this->assertNotNull(actual: $resolved?->senderConstraint);
+        $this->assertSame(expected: OAuthSenderConstraintType::DPOP, actual: $resolved?->senderConstraint?->type);
+        $this->assertSame(expected: 'thumb-123', actual: $resolved?->senderConstraint?->thumbprint);
     }
 
     public function testJwtIdentityIssuesAndResolvesWorkloadTokens() : void
@@ -224,18 +224,18 @@ class JwtIdentityTest extends TestCase
             expectedAudience: 'orders-api'
         );
 
-        $this->assertNotNull($resolved);
-        $this->assertSame('client:machine-worker', $resolved?->subject);
-        $this->assertSame('oauth_machine', $resolved?->clientId);
-        $this->assertSame(['metrics.read', 'orders.sync'], $resolved?->scopes);
-        $this->assertSame('orders-api', $resolved?->audience);
-        $this->assertSame(OAuthSenderConstraintType::MTLS, $resolved?->senderConstraint?->type);
+        $this->assertNotNull(actual: $resolved);
+        $this->assertSame(expected: 'client:machine-worker', actual: $resolved?->subject);
+        $this->assertSame(expected: 'oauth_machine', actual: $resolved?->clientId);
+        $this->assertSame(expected: ['metrics.read', 'orders.sync'], actual: $resolved?->scopes);
+        $this->assertSame(expected: 'orders-api', actual: $resolved?->audience);
+        $this->assertSame(expected: OAuthSenderConstraintType::MTLS, actual: $resolved?->senderConstraint?->type);
 
-        $this->assertNull($jwt->resolveWorkloadToken($issued->token, expectedAudience: 'billing-api'));
+        $this->assertNull(actual: $jwt->resolveWorkloadToken(token: $issued->token, expectedAudience: 'billing-api'));
 
-        $jwt->revoke($issued->tokenId, $issued->expiresAt);
+        $jwt->revoke(tokenId: $issued->tokenId, expiresAt: $issued->expiresAt);
 
-        $this->assertNull($jwt->resolveWorkloadToken($issued->token, expectedAudience: 'orders-api'));
+        $this->assertNull(actual: $jwt->resolveWorkloadToken(token: $issued->token, expectedAudience: 'orders-api'));
     }
 
     protected function tearDown() : void

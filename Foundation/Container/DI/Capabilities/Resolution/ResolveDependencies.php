@@ -146,11 +146,11 @@ final class ResolveDependencies
      */
     private function serviceIdFor(ReflectionParameter $parameter) : string|null
     {
-        if ($parameter->getAttributes(RuntimeInput::class) !== []) {
+        if ($parameter->getAttributes(name: RuntimeInput::class) !== []) {
             return null;
         }
 
-        $attributes = $parameter->getAttributes(Inject::class);
+        $attributes = $parameter->getAttributes(name: Inject::class);
         if ($attributes !== []) {
             $inject = $attributes[0]->newInstance();
             if (is_string($inject->abstract) && $inject->abstract !== '') {
@@ -180,7 +180,7 @@ final class ResolveDependencies
 
     private function inputNameFor(ReflectionParameter $parameter) : string
     {
-        $attributes = $parameter->getAttributes(RuntimeInput::class);
+        $attributes = $parameter->getAttributes(name: RuntimeInput::class);
         if ($attributes === []) {
             return $parameter->getName();
         }

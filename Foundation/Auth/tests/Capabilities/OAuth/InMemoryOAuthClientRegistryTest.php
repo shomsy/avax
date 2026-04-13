@@ -16,7 +16,7 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
 {
     public function testConfidentialClientRegistrationReturnsOneTimeSecret() : void
     {
-        $registry = new InMemoryOAuthClientRegistry(new PasswordHasher());
+        $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
 
         $registered = $registry->register(
             name         : 'Backoffice',
@@ -25,14 +25,14 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
             allowedScopes: ['profile', 'email']
         );
 
-        $this->assertSame(OAuthClientType::CONFIDENTIAL, $registered->client->type);
-        $this->assertNotNull($registered->plainTextSecret);
-        $this->assertTrue($registry->verifySecret($registered->client->clientId, $registered->plainTextSecret));
+        $this->assertSame(expected: OAuthClientType::CONFIDENTIAL, actual: $registered->client->type);
+        $this->assertNotNull(actual: $registered->plainTextSecret);
+        $this->assertTrue(condition: $registry->verifySecret(clientId: $registered->client->clientId, plainTextSecret: $registered->plainTextSecret));
     }
 
     public function testPublicClientDoesNotRequireSecret() : void
     {
-        $registry = new InMemoryOAuthClientRegistry(new PasswordHasher());
+        $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
 
         $registered = $registry->register(
             name         : 'SPA',
@@ -41,14 +41,14 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
             allowedScopes: ['profile']
         );
 
-        $this->assertSame(OAuthClientType::PUBLIC, $registered->client->type);
-        $this->assertNull($registered->plainTextSecret);
-        $this->assertTrue($registry->verifySecret($registered->client->clientId, null));
+        $this->assertSame(expected: OAuthClientType::PUBLIC, actual: $registered->client->type);
+        $this->assertNull(actual: $registered->plainTextSecret);
+        $this->assertTrue(condition: $registry->verifySecret(clientId: $registered->client->clientId, plainTextSecret: null));
     }
 
     public function testClientRegistrationPersistsGrantTypesAndSenderConstraint() : void
     {
-        $registry = new InMemoryOAuthClientRegistry(new PasswordHasher());
+        $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
 
         $registered = $registry->register(
             name                     : 'Partner API',
@@ -61,15 +61,15 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
             phishingResistantRequired: true
         );
 
-        $this->assertTrue($registered->client->allowsGrantType(OAuthGrantType::AUTHORIZATION_CODE));
-        $this->assertSame(OAuthSenderConstraintType::DPOP, $registered->client->requiredSenderConstraint);
-        $this->assertTrue($registered->client->phishingResistantRequired);
-        $this->assertTrue($registered->client->allowsAudience('partner-api'));
+        $this->assertTrue(condition: $registered->client->allowsGrantType(grantType: OAuthGrantType::AUTHORIZATION_CODE));
+        $this->assertSame(expected: OAuthSenderConstraintType::DPOP, actual: $registered->client->requiredSenderConstraint);
+        $this->assertTrue(condition: $registered->client->phishingResistantRequired);
+        $this->assertTrue(condition: $registered->client->allowsAudience(audience: 'partner-api'));
     }
 
     public function testWorkloadIdentityRequiresSenderConstraint() : void
     {
-        $registry = new InMemoryOAuthClientRegistry(new PasswordHasher());
+        $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Workload identity clients require sender-constrained tokens.');
@@ -86,7 +86,7 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
 
     public function testWorkloadIdentityRequiresAudienceBoundaries() : void
     {
-        $registry = new InMemoryOAuthClientRegistry(new PasswordHasher());
+        $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Workload identity clients require at least one allowed audience.');

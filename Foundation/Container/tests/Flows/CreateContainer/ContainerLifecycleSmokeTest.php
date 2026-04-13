@@ -29,40 +29,40 @@ $version  = 'lifecycle-smoke';
 $config   = CreateContainerConfig::create(cacheDir: $cacheDir, cacheVersion: $version);
 $artifact = $cacheDir . '/container/' . rawurlencode($version) . '/compiled/container.php';
 
-$container = makeTestContainer($config);
-$container->singleton(LifecycleContract::class, LifecycleService::class);
-$container->scoped(LifecycleScopedService::class, LifecycleScopedService::class);
+$container = makeTestContainer(config: $config);
+$container->singleton(abstract: LifecycleContract::class, concrete: LifecycleService::class);
+$container->scoped(abstract: LifecycleScopedService::class, concrete: LifecycleScopedService::class);
 $container->openScope();
 
-$shared = $container->get(LifecycleContract::class);
-$scoped = $container->get(LifecycleScopedService::class);
-$container->compileContainer([LifecycleContract::class, LifecycleScopedService::class]);
+$shared = $container->get(id: LifecycleContract::class);
+$scoped = $container->get(id: LifecycleScopedService::class);
+$container->compileContainer(serviceIds: [LifecycleContract::class, LifecycleScopedService::class]);
 
-assertSame('lifecycle', $shared->id(), 'Shared registrations should resolve before flush.');
-assertSame('scoped', $scoped->name, 'Scoped registrations should resolve before flush.');
-assertTrue(is_file($artifact), 'Compiled runtime artifacts should be written before flush.');
-assertTrue($container->debugScope()['shared'] !== [], 'Shared runtime storage should be populated before flush.');
-assertTrue($container->debugScope()['scoped'] !== [], 'Scoped runtime storage should be populated before flush.');
+assertSame(expected: 'lifecycle', actual: $shared->id(), message: 'Shared registrations should resolve before flush.');
+assertSame(expected: 'scoped', actual: $scoped->name, message: 'Scoped registrations should resolve before flush.');
+assertTrue(condition: is_file($artifact), message: 'Compiled runtime artifacts should be written before flush.');
+assertTrue(condition: $container->debugScope()['shared'] !== [], message: 'Shared runtime storage should be populated before flush.');
+assertTrue(condition: $container->debugScope()['scoped'] !== [], message: 'Scoped runtime storage should be populated before flush.');
 
 $container->flush();
 
-assertTrue(! is_file($artifact), 'Flush should remove the compiled runtime artifact.');
-assertSame([], $container->debugScope()['shared'], 'Flush should clear shared runtime storage.');
-assertSame([], $container->debugScope()['scoped'], 'Flush should clear scoped runtime storage.');
-assertSame('lifecycle', $container->get(LifecycleContract::class)->id(), 'Flush should preserve canonical registrations.');
+assertTrue(condition: ! is_file($artifact), message: 'Flush should remove the compiled runtime artifact.');
+assertSame(expected: [], actual: $container->debugScope()['shared'], message: 'Flush should clear shared runtime storage.');
+assertSame(expected: [], actual: $container->debugScope()['scoped'], message: 'Flush should clear scoped runtime storage.');
+assertSame(expected: 'lifecycle', actual: $container->get(id: LifecycleContract::class)->id(), message: 'Flush should preserve canonical registrations.');
 $container->openScope();
-assertSame('scoped', $container->get(LifecycleScopedService::class)->name, 'Flush should preserve scoped registrations.');
+assertSame(expected: 'scoped', actual: $container->get(id: LifecycleScopedService::class)->name, message: 'Flush should preserve scoped registrations.');
 $container->closeScope();
 
-$container->compileContainer([LifecycleContract::class, LifecycleScopedService::class]);
-$container->get(LifecycleContract::class);
+$container->compileContainer(serviceIds: [LifecycleContract::class, LifecycleScopedService::class]);
+$container->get(id: LifecycleContract::class);
 $container->openScope();
-$container->get(LifecycleScopedService::class);
+$container->get(id: LifecycleScopedService::class);
 $container->reset();
 
-assertTrue(is_file($artifact), 'Reset should preserve compiled artifacts on disk.');
-assertSame([], $container->debugScope()['shared'], 'Reset should also leave shared runtime storage empty.');
-assertSame([], $container->debugScope()['scoped'], 'Reset should also leave scoped runtime storage empty.');
-assertSame('lifecycle', $container->get(LifecycleContract::class)->id(), 'Reset should preserve canonical registrations.');
+assertTrue(condition: is_file($artifact), message: 'Reset should preserve compiled artifacts on disk.');
+assertSame(expected: [], actual: $container->debugScope()['shared'], message: 'Reset should also leave shared runtime storage empty.');
+assertSame(expected: [], actual: $container->debugScope()['scoped'], message: 'Reset should also leave scoped runtime storage empty.');
+assertSame(expected: 'lifecycle', actual: $container->get(id: LifecycleContract::class)->id(), message: 'Reset should preserve canonical registrations.');
 
 echo basename(__FILE__) . " ok\n";

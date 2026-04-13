@@ -18,40 +18,40 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
     private OpenSSLAsymmetricKey $publicKey;
 
     public function __construct(
-        private string $issuer,
-        #[SensitiveParameter] string $privateKeyPem,
-        private string $keyId,
-        private string $authorizationEndpoint,
-        private string $tokenEndpoint,
-        private string $userInfoEndpoint,
-        private string $jsonWebKeySetUri,
-        private int $idTokenLifetime = 600,
-        private string $algorithm = 'RS256'
+        private string                        $issuer,
+        #[SensitiveParameter] string          $privateKeyPem,
+        private string                        $keyId,
+        private string                        $authorizationEndpoint,
+        #[\SensitiveParameter] private string $tokenEndpoint,
+        private string                        $userInfoEndpoint,
+        private string                        $jsonWebKeySetUri,
+        private int                           $idTokenLifetime = 600,
+        private string                        $algorithm = 'RS256'
     ) {
         if (trim($issuer) === '') {
-            throw new InvalidArgumentException('OIDC issuer cannot be empty.');
+            throw new InvalidArgumentException(message: 'OIDC issuer cannot be empty.');
         }
 
         if ($algorithm !== 'RS256') {
-            throw new InvalidArgumentException('Only RS256 is currently supported for OIDC ID tokens.');
+            throw new InvalidArgumentException(message: 'Only RS256 is currently supported for OIDC ID tokens.');
         }
 
         $privateKey = openssl_pkey_get_private($privateKeyPem);
 
         if (! $privateKey instanceof OpenSSLAsymmetricKey) {
-            throw new InvalidArgumentException('OIDC private key could not be loaded.');
+            throw new InvalidArgumentException(message: 'OIDC private key could not be loaded.');
         }
 
         $details = openssl_pkey_get_details($privateKey);
 
         if (! is_array($details) || ! is_string($details['key'] ?? null)) {
-            throw new InvalidArgumentException('OIDC public key details could not be derived.');
+            throw new InvalidArgumentException(message: 'OIDC public key details could not be derived.');
         }
 
         $publicKey = openssl_pkey_get_public($details['key']);
 
         if (! $publicKey instanceof OpenSSLAsymmetricKey) {
-            throw new InvalidArgumentException('OIDC public key could not be loaded.');
+            throw new InvalidArgumentException(message: 'OIDC public key could not be loaded.');
         }
 
         $this->privateKey = $privateKey;
@@ -68,7 +68,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
     ) : OidcIdToken
     {
         $issuedAt = new DateTimeImmutable();
-        $expiresAt = $issuedAt->modify('+' . $this->idTokenLifetime . ' seconds');
+        $expiresAt = $issuedAt->modify(modifier: '+' . $this->idTokenLifetime . ' seconds');
         $claims = [
             'iss' => $this->issuer,
             'sub' => (string) $user->getId()->value,
@@ -96,7 +96,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         }
 
         return new OidcIdToken(
-            token     : $this->encode($claims),
+            token     : $this->encode(claims: $claims),
             expiresAt : $expiresAt
         );
     }
@@ -123,17 +123,17 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         $details = openssl_pkey_get_details($this->publicKey);
 
         if (! is_array($details) || ! isset($details['rsa']['n'], $details['rsa']['e'])) {
-            throw new RuntimeException('OIDC RSA key details are not available.');
+            throw new RuntimeException(message: 'OIDC RSA key details are not available.');
         }
 
-        return new OidcJsonWebKeySet([
+        return new OidcJsonWebKeySet(keys: [
             new OidcJsonWebKey(
                 keyType  : 'RSA',
                 keyId    : $this->keyId,
                 algorithm: $this->algorithm,
                 use      : 'sig',
-                modulus  : $this->base64UrlEncode($details['rsa']['n']),
-                exponent : $this->base64UrlEncode($details['rsa']['e'])
+                modulus  : $this->base64UrlEncode(value: $details['rsa']['n']),
+                exponent : $this->base64UrlEncode(value: $details['rsa']['e'])
             ),
         ]);
     }
@@ -147,9 +147,9 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         }
 
         [$headerSegment, $claimSegment, $signatureSegment] = $segments;
-        $headerJson = $this->base64UrlDecode($headerSegment);
-        $claimsJson = $this->base64UrlDecode($claimSegment);
-        $signature = $this->base64UrlDecode($signatureSegment);
+        $headerJson = $this->base64UrlDecode(value: $headerSegment);
+        $claimsJson = $this->base64UrlDecode(value: $claimSegment);
+        $signature = $this->base64UrlDecode(value: $signatureSegment);
 
         if ($headerJson === null || $claimsJson === null || $signature === null) {
             return null;
@@ -207,15 +207,15 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
             'kid' => $this->keyId,
         ];
 
-        $headerSegment = $this->base64UrlEncode($this->encodeJson($header));
-        $claimSegment = $this->base64UrlEncode($this->encodeJson($claims));
+        $headerSegment = $this->base64UrlEncode(value: $this->encodeJson(payload: $header));
+        $claimSegment = $this->base64UrlEncode(value: $this->encodeJson(payload: $claims));
         $signature = '';
 
         if (! openssl_sign($headerSegment . '.' . $claimSegment, $signature, $this->privateKey, OPENSSL_ALGO_SHA256)) {
-            throw new RuntimeException('OIDC ID token signing failed.');
+            throw new RuntimeException(message: 'OIDC ID token signing failed.');
         }
 
-        return $headerSegment . '.' . $claimSegment . '.' . $this->base64UrlEncode($signature);
+        return $headerSegment . '.' . $claimSegment . '.' . $this->base64UrlEncode(value: $signature);
     }
 
     /**
@@ -226,7 +226,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         try {
             return json_encode($payload, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
-            throw new InvalidArgumentException('OIDC payload could not be encoded.', previous: $exception);
+            throw new InvalidArgumentException(message: 'OIDC payload could not be encoded.', previous: $exception);
         }
     }
 

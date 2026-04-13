@@ -17,6 +17,6 @@ if (! is_string($beforePath) || $beforePath === '' || ! is_string($afterPath) ||
 $drill = new RunKeyCompromiseDrill();
 
 echo json_encode(
-    $drill->execute($beforePath, $afterPath),
+    $drill->execute(preRotationKeyRingPath: $beforePath, postCompromiseKeyRingPath: $afterPath),
     JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
 ) . PHP_EOL;

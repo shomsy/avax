@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Oidc;
 
+use SensitiveParameter;
+
 final readonly class OidcProviderMetadata
 {
     /**
@@ -15,16 +17,16 @@ final readonly class OidcProviderMetadata
      * @param list<string> $codeChallengeMethodsSupported
      */
     public function __construct(
-        public string $issuer,
-        public string $authorizationEndpoint,
-        public string $tokenEndpoint,
-        public string $userInfoEndpoint,
-        public string $jsonWebKeySetUri,
-        public array $scopesSupported,
-        public array $responseTypesSupported,
-        public array $grantTypesSupported,
-        public array $subjectTypesSupported,
-        public array $idTokenSigningAlgValuesSupported,
-        public array $codeChallengeMethodsSupported
+        public string                       $issuer,
+        public string                       $authorizationEndpoint,
+        #[SensitiveParameter] public string $tokenEndpoint,
+        public string                       $userInfoEndpoint,
+        public string                       $jsonWebKeySetUri,
+        public array                        $scopesSupported,
+        public array                        $responseTypesSupported,
+        public array                        $grantTypesSupported,
+        public array                        $subjectTypesSupported,
+        #[SensitiveParameter] public array  $idTokenSigningAlgValuesSupported,
+        #[SensitiveParameter] public array  $codeChallengeMethodsSupported
     ) {}
 }

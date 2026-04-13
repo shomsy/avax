@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Token;
 
+use SensitiveParameter;
+
 /**
  * Issues tokens with one active key and verifies them against a rollover key ring.
  */
@@ -19,19 +21,19 @@ final readonly class MultiKeyHmacTokenCodec implements TokenCodecInterface
 
     public function encode(array $claims) : string
     {
-        return $this->primaryCodec->encode($claims);
+        return $this->primaryCodec->encode(claims: $claims);
     }
 
-    public function decode(string $token) : array|null
+    public function decode(#[SensitiveParameter] string $token) : array|null
     {
-        $claims = $this->primaryCodec->decode($token);
+        $claims = $this->primaryCodec->decode(token: $token);
 
         if ($claims !== null) {
             return $claims;
         }
 
         foreach ($this->verificationCodecs as $codec) {
-            $claims = $codec->decode($token);
+            $claims = $codec->decode(token: $token);
 
             if ($claims !== null) {
                 return $claims;

@@ -33,7 +33,7 @@ final class Container
 
         if (array_key_exists($id, $this->bindings)) {
             $binding = $this->bindings[$id];
-            $resolved = $this->resolve($binding['implementation']);
+            $resolved = $this->resolve(implementation: $binding['implementation']);
 
             if ($binding['shared']) {
                 $this->instances[$id] = $resolved;
@@ -43,10 +43,10 @@ final class Container
         }
 
         if (class_exists($id)) {
-            return $this->build($id);
+            return $this->build(class: $id);
         }
 
-        throw new RuntimeException("Container binding [$id] is missing.");
+        throw new RuntimeException(message: "Container binding [$id] is missing.");
     }
 
     public function singleton(string $id, mixed $implementation = null) : void
@@ -66,17 +66,17 @@ final class Container
     {
         return match (true) {
             $implementation instanceof Closure => $implementation(),
-            is_string($implementation) => $this->build($implementation),
+            is_string($implementation) => $this->build(class: $implementation),
             default => $implementation,
         };
     }
 
     private function build(string $class) : object
     {
-        $reflection = new ReflectionClass($class);
+        $reflection = new ReflectionClass(objectOrClass: $class);
 
         if (! $reflection->isInstantiable()) {
-            throw new RuntimeException("Class [$class] is not instantiable.");
+            throw new RuntimeException(message: "Class [$class] is not instantiable.");
         }
 
         $constructor = $reflection->getConstructor();
@@ -91,7 +91,7 @@ final class Container
             $type = $parameter->getType();
 
             if ($type !== null && ! $type->isBuiltin()) {
-                $arguments[] = $this->get($type->getName());
+                $arguments[] = $this->get(id: $type->getName());
                 continue;
             }
 
@@ -100,9 +100,9 @@ final class Container
                 continue;
             }
 
-            throw new RuntimeException("Container cannot resolve parameter [{$parameter->getName()}] for [$class].");
+            throw new RuntimeException(message: "Container cannot resolve parameter [{$parameter->getName()}] for [$class].");
         }
 
-        return $reflection->newInstanceArgs($arguments);
+        return $reflection->newInstanceArgs(args: $arguments);
     }
 }

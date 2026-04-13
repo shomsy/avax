@@ -25,17 +25,17 @@ class AuthServiceProviderTest extends TestCase
     public function testAuthServiceProviderResolvesAuthFacade() : void
     {
         if (! class_exists(AppFactory::class)) {
-            self::markTestSkipped('Avax container is not installed in this environment.');
+            self::markTestSkipped(message: 'Avax container is not installed in this environment.');
         }
 
         $dependencies = new class extends ServiceProvider {
             public function register() : void
             {
-                $this->app->singleton(UserSourceInterface::class, InMemoryUserSource::class);
-                $this->app->singleton(SessionIdentityInterface::class, SessionIdentity::class);
+                $this->app->singleton(id: UserSourceInterface::class, implementation: InMemoryUserSource::class);
+                $this->app->singleton(id: SessionIdentityInterface::class, implementation: SessionIdentity::class);
                 $this->app->instance(
-                    IdGeneratorInterface::class,
-                    new class implements IdGeneratorInterface {
+                    id            : IdGeneratorInterface::class,
+                    implementation: new class implements IdGeneratorInterface {
                         public function generate() : int
                         {
                             return 424242;
@@ -50,7 +50,7 @@ class AuthServiceProviderTest extends TestCase
             cacheDir : sys_get_temp_dir()
         );
 
-        $auth = $container->get(AuthInterface::class);
+        $auth = $container->get(id: AuthInterface::class);
 
         $this->assertInstanceOf(expected: AuthInterface::class, actual: $auth);
 
@@ -66,16 +66,16 @@ class AuthServiceProviderTest extends TestCase
     public function testAuthServiceProviderFailsWithoutIdentityBackend() : void
     {
         if (! class_exists(AppFactory::class)) {
-            self::markTestSkipped('Avax container is not installed in this environment.');
+            self::markTestSkipped(message: 'Avax container is not installed in this environment.');
         }
 
         $dependencies = new class extends ServiceProvider {
             public function register() : void
             {
-                $this->app->singleton(UserSourceInterface::class, InMemoryUserSource::class);
+                $this->app->singleton(id: UserSourceInterface::class, implementation: InMemoryUserSource::class);
                 $this->app->instance(
-                    IdGeneratorInterface::class,
-                    new class implements IdGeneratorInterface {
+                    id            : IdGeneratorInterface::class,
+                    implementation: new class implements IdGeneratorInterface {
                         public function generate() : int
                         {
                             return 424242;
@@ -95,6 +95,6 @@ class AuthServiceProviderTest extends TestCase
             message: 'AuthServiceProvider requires a SessionIdentityInterface or JwtIdentityInterface binding.'
         );
 
-        $container->get(AuthInterface::class);
+        $container->get(id: AuthInterface::class);
     }
 }

@@ -21,8 +21,8 @@ final readonly class ReadScimUsers
     {
         $projections = [];
 
-        foreach ($this->identityStore->allForDirectory($directoryId) as $identity) {
-            $user = $this->userSource->findById($identity->userId);
+        foreach ($this->identityStore->allForDirectory(directoryId: $directoryId) as $identity) {
+            $user = $this->userSource->findById(id: $identity->userId);
 
             if ($user === null) {
                 continue;

@@ -27,15 +27,15 @@ final class RevokeSessionTest extends TestCase
 {
     public function testRevokeSessionRevokesOwnedCurrentSessionAndClearsContext() : void
     {
-        $clock    = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $clock    = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
         $registry = new InMemorySessionRegistry();
-        $registry->track(new SessionRecord(
+        $registry->track(record: new SessionRecord(
             sessionId        : 'session-1',
-            userId           : new UserId(1),
-            createdAt        : $clock->now()->sub(new DateInterval('PT30M')),
+            userId           : new UserId(value: 1),
+            createdAt        : $clock->now()->sub(interval: new DateInterval(duration: 'PT30M')),
             lastSeenAt       : $clock->now(),
-            idleExpiresAt    : $clock->now()->add(new DateInterval('PT15M')),
-            absoluteExpiresAt: $clock->now()->add(new DateInterval('PT12H'))
+            idleExpiresAt    : $clock->now()->add(interval: new DateInterval(duration: 'PT15M')),
+            absoluteExpiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT12H'))
         ));
 
         $context = AuthenticationContext::authenticated(
@@ -44,7 +44,7 @@ final class RevokeSessionTest extends TestCase
             sessionId: 'session-1'
         );
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store($context);
+        $currentAuthentication->store(context: $context);
 
         $identity = Mockery::mock(IdentityInterface::class);
         $identity->shouldReceive('clear')->once()->with($context);
@@ -57,10 +57,10 @@ final class RevokeSessionTest extends TestCase
             sessionRegistry      : $registry
         );
 
-        $flow->execute('session-1');
+        $flow->execute(sessionId: 'session-1');
 
-        $this->assertFalse($currentAuthentication->read()->isAuthenticated());
-        $this->assertSame('user_revoke', $registry->find('session-1')?->revokeReason);
+        $this->assertFalse(condition: $currentAuthentication->read()->isAuthenticated());
+        $this->assertSame(expected: 'user_revoke', actual: $registry->find(sessionId: 'session-1')?->revokeReason);
     }
 
     protected function tearDown() : void

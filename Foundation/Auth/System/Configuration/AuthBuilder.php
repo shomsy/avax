@@ -237,7 +237,7 @@ final class AuthBuilder
     /**
      * Configure a custom password hasher.
      */
-    public function usingHasher(PasswordHasher $passwordHasher) : self
+    public function usingHasher(#[\SensitiveParameter] PasswordHasher $passwordHasher) : self
     {
         $this->passwordHasher = $passwordHasher;
 
@@ -268,7 +268,7 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withEmailVerificationState(EmailVerificationStateStoreInterface $emailVerificationState) : self
+    public function withEmailVerificationState(#[\SensitiveParameter] EmailVerificationStateStoreInterface $emailVerificationState) : self
     {
         $this->emailVerificationState = $emailVerificationState;
 
@@ -282,28 +282,28 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withRefreshTokenStore(RefreshTokenStoreInterface $refreshTokenStore) : self
+    public function withRefreshTokenStore(#[\SensitiveParameter] RefreshTokenStoreInterface $refreshTokenStore) : self
     {
         $this->refreshTokenStore = $refreshTokenStore;
 
         return $this;
     }
 
-    public function withPasswordResetStore(PasswordResetStoreInterface $passwordResetStore) : self
+    public function withPasswordResetStore(#[\SensitiveParameter] PasswordResetStoreInterface $passwordResetStore) : self
     {
         $this->passwordResetStore = $passwordResetStore;
 
         return $this;
     }
 
-    public function withEmailVerificationStore(EmailVerificationStoreInterface $emailVerificationStore) : self
+    public function withEmailVerificationStore(#[\SensitiveParameter] EmailVerificationStoreInterface $emailVerificationStore) : self
     {
         $this->emailVerificationStore = $emailVerificationStore;
 
         return $this;
     }
 
-    public function withEmailChangeStore(EmailChangeStoreInterface $emailChangeStore) : self
+    public function withEmailChangeStore(#[\SensitiveParameter] EmailChangeStoreInterface $emailChangeStore) : self
     {
         $this->emailChangeStore = $emailChangeStore;
 
@@ -324,7 +324,7 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withPasswordResetThrottle(AttemptThrottle $passwordResetThrottle) : self
+    public function withPasswordResetThrottle(#[\SensitiveParameter] AttemptThrottle $passwordResetThrottle) : self
     {
         $this->passwordResetThrottle = $passwordResetThrottle;
 
@@ -345,21 +345,21 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withSessionRegistry(SessionRegistryInterface $sessionRegistry) : self
+    public function withSessionRegistry(#[\SensitiveParameter] SessionRegistryInterface $sessionRegistry) : self
     {
         $this->sessionRegistry = $sessionRegistry;
 
         return $this;
     }
 
-    public function withOAuthClientRegistry(OAuthClientRegistryInterface $oauthClientRegistry) : self
+    public function withOAuthClientRegistry(#[\SensitiveParameter] OAuthClientRegistryInterface $oauthClientRegistry) : self
     {
         $this->oauthClientRegistry = $oauthClientRegistry;
 
         return $this;
     }
 
-    public function withAuthorizationCodeStore(AuthorizationCodeStoreInterface $authorizationCodeStore) : self
+    public function withAuthorizationCodeStore(#[\SensitiveParameter] AuthorizationCodeStoreInterface $authorizationCodeStore) : self
     {
         $this->authorizationCodeStore = $authorizationCodeStore;
 
@@ -387,7 +387,7 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withPasskeyCredentialStore(PasskeyCredentialStoreInterface $passkeyCredentialStore) : self
+    public function withPasskeyCredentialStore(#[\SensitiveParameter] PasskeyCredentialStoreInterface $passkeyCredentialStore) : self
     {
         $this->passkeyCredentialStore = $passkeyCredentialStore;
 
@@ -458,14 +458,14 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withTenantSecurityConfigurationStore(TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore) : self
+    public function withTenantSecurityConfigurationStore(#[\SensitiveParameter] TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore) : self
     {
         $this->tenantSecurityConfigurationStore = $tenantSecurityConfigurationStore;
 
         return $this;
     }
 
-    public function withTenantSecurityChangeRequestStore(TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore) : self
+    public function withTenantSecurityChangeRequestStore(#[\SensitiveParameter] TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore) : self
     {
         $this->tenantSecurityChangeRequestStore = $tenantSecurityChangeRequestStore;
 
@@ -510,7 +510,7 @@ final class AuthBuilder
             );
         }
         $clock                    = $this->clock ?? new Clock();
-        $oauthClientRegistry      = $this->oauthClientRegistry ?? new InMemoryOAuthClientRegistry($passwordHasher);
+        $oauthClientRegistry      = $this->oauthClientRegistry ?? new InMemoryOAuthClientRegistry(passwordHasher: $passwordHasher);
         $authorizationCodeStore   = $this->authorizationCodeStore ?? new InMemoryAuthorizationCodeStore();
         $adminElevationStore      = $this->adminElevationStore ?? new InMemoryAdminElevationStore();
         $riskEngine               = $this->riskEngine ?? new DeterministicRiskEngine(
@@ -598,14 +598,14 @@ final class AuthBuilder
             clientRegistry: $oauthClientRegistry
         );
         $readOidcProviderMetadata = $this->oidcProvider !== null
-            ? new ReadOidcProviderMetadata($this->oidcProvider)
+            ? new ReadOidcProviderMetadata(oidcProvider: $this->oidcProvider)
             : null;
         $readOidcJsonWebKeySet    = $this->oidcProvider !== null
-            ? new ReadOidcJsonWebKeySet($this->oidcProvider)
+            ? new ReadOidcJsonWebKeySet(oidcProvider: $this->oidcProvider)
             : null;
         $jwtIdentity              = $identity->jwtIdentity();
         $readOidcUserInfo         = $jwtIdentity !== null && $this->oidcProvider !== null
-            ? new ReadOidcUserInfo($jwtIdentity)
+            ? new ReadOidcUserInfo(jwtIdentity: $jwtIdentity)
             : null;
         $authorizeOAuthCode       = new AuthorizeCode(
             currentAuthentication: $currentAuthentication,
@@ -654,11 +654,11 @@ final class AuthBuilder
         $provisionableUserSource  = $this->userSource instanceof ProvisionableUserSourceInterface
             ? $this->userSource
             : null;
-        $scimDirectoryStore       = $this->scimDirectoryStore ?? new InMemoryScimDirectoryStore($passwordHasher);
+        $scimDirectoryStore       = $this->scimDirectoryStore ?? new InMemoryScimDirectoryStore(passwordHasher: $passwordHasher);
         $scimProvisionedIdentityStore = $this->scimProvisionedIdentityStore ?? new InMemoryScimProvisionedIdentityStore();
         $tenantSecurityConfigurationStore = $this->tenantSecurityConfigurationStore ?? new InMemoryTenantSecurityConfigurationStore();
         $tenantSecurityChangeRequestStore = $this->tenantSecurityChangeRequestStore ?? new InMemoryTenantSecurityChangeRequestStore();
-        $readTenantSecurityConfiguration = new ReadTenantSecurityConfiguration($tenantSecurityConfigurationStore);
+        $readTenantSecurityConfiguration = new ReadTenantSecurityConfiguration(configurationStore: $tenantSecurityConfigurationStore);
         $beginTenantSecurityChange = new BeginTenantSecurityChange(
             configurationStore      : $tenantSecurityConfigurationStore,
             changeRequestStore      : $tenantSecurityChangeRequestStore,
@@ -684,8 +684,8 @@ final class AuthBuilder
             auditLog           : $auditLog,
             clock              : $clock
         );
-        $readTenantSecurityChangeRequest = new ReadTenantSecurityChangeRequest($tenantSecurityChangeRequestStore);
-        $readTenantSecurityChangeRequests = new ReadTenantSecurityChangeRequests($tenantSecurityChangeRequestStore);
+        $readTenantSecurityChangeRequest = new ReadTenantSecurityChangeRequest(changeRequestStore: $tenantSecurityChangeRequestStore);
+        $readTenantSecurityChangeRequests = new ReadTenantSecurityChangeRequests(changeRequestStore: $tenantSecurityChangeRequestStore);
         $passkeyReady             = $this->passkeyRuntime !== null;
         $federationReady          = $this->federationRuntime !== null;
         $scimReady                = $provisionableUserSource !== null;
@@ -814,8 +814,8 @@ final class AuthBuilder
                     clientRegistry   : $oauthClientRegistry,
                     codeStore        : $authorizationCodeStore,
                     userSource       : $this->userSource,
-                    jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
-                    refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException('Refresh token store is required.'),
+                    jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException(message: 'JWT identity is required.'),
+                    refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException(message: 'Refresh token store is required.'),
                     auditLog         : $auditLog,
                     clock            : $clock,
                     oidcProvider     : $this->oidcProvider
@@ -824,7 +824,7 @@ final class AuthBuilder
             exchangeOAuthClientCredentials: $oauthReady
                 ? new ExchangeClientCredentials(
                     clientRegistry: $oauthClientRegistry,
-                    jwtIdentity   : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
+                    jwtIdentity   : $identity->jwtIdentity() ?? throw new RuntimeException(message: 'JWT identity is required.'),
                     auditLog      : $auditLog,
                     clock         : $clock
                 )
@@ -832,9 +832,9 @@ final class AuthBuilder
             exchangeOAuthRefreshToken: $oauthReady
                 ? new ExchangeRefreshToken(
                     clientRegistry   : $oauthClientRegistry,
-                    refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException('Refresh token store is required.'),
+                    refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException(message: 'Refresh token store is required.'),
                     userSource       : $this->userSource,
-                    jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
+                    jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException(message: 'JWT identity is required.'),
                     auditLog         : $auditLog,
                     clock            : $clock,
                     riskEngine       : $riskEngine
@@ -843,8 +843,8 @@ final class AuthBuilder
             revokeOAuthToken      : $oauthReady
                 ? new RevokeToken(
                     clientRegistry   : $oauthClientRegistry,
-                    refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException('Refresh token store is required.'),
-                    jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
+                    refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException(message: 'Refresh token store is required.'),
+                    jwtIdentity      : $identity->jwtIdentity() ?? throw new RuntimeException(message: 'JWT identity is required.'),
                     auditLog         : $auditLog,
                     clock            : $clock
                 )
@@ -852,7 +852,7 @@ final class AuthBuilder
             introspectOAuthToken  : $oauthReady
                 ? new IntrospectToken(
                     clientRegistry: $oauthClientRegistry,
-                    jwtIdentity   : $identity->jwtIdentity() ?? throw new RuntimeException('JWT identity is required.'),
+                    jwtIdentity   : $identity->jwtIdentity() ?? throw new RuntimeException(message: 'JWT identity is required.'),
                     auditLog      : $auditLog,
                     clock         : $clock
                 )
@@ -906,7 +906,7 @@ final class AuthBuilder
                 ? new BeginPasskeyRegistration(
                     currentAuthentication: $currentAuthentication,
                     requireFreshMfa      : $requireFreshMfa,
-                    runtime              : $this->passkeyRuntime ?? throw new RuntimeException('Passkey runtime is required.'),
+                    runtime              : $this->passkeyRuntime ?? throw new RuntimeException(message: 'Passkey runtime is required.'),
                     credentialStore      : $passkeyCredentialStore,
                     challengeStore       : $passkeyChallengeStore,
                     auditLog             : $auditLog,
@@ -918,7 +918,7 @@ final class AuthBuilder
             completePasskeyRegistration: $passkeyReady
                 ? new CompletePasskeyRegistration(
                     currentAuthentication: $currentAuthentication,
-                    runtime              : $this->passkeyRuntime ?? throw new RuntimeException('Passkey runtime is required.'),
+                    runtime              : $this->passkeyRuntime ?? throw new RuntimeException(message: 'Passkey runtime is required.'),
                     credentialStore      : $passkeyCredentialStore,
                     challengeStore       : $passkeyChallengeStore,
                     auditLog             : $auditLog,
@@ -929,7 +929,7 @@ final class AuthBuilder
             beginPasskeyAuthentication: $passkeyReady
                 ? new BeginPasskeyAuthentication(
                     userSource      : $this->userSource,
-                    runtime         : $this->passkeyRuntime ?? throw new RuntimeException('Passkey runtime is required.'),
+                    runtime         : $this->passkeyRuntime ?? throw new RuntimeException(message: 'Passkey runtime is required.'),
                     credentialStore : $passkeyCredentialStore,
                     challengeStore  : $passkeyChallengeStore,
                     auditLog        : $auditLog,
@@ -939,7 +939,7 @@ final class AuthBuilder
                 : null,
             completePasskeyAuthentication: $passkeyReady
                 ? new CompletePasskeyAuthentication(
-                    runtime              : $this->passkeyRuntime ?? throw new RuntimeException('Passkey runtime is required.'),
+                    runtime              : $this->passkeyRuntime ?? throw new RuntimeException(message: 'Passkey runtime is required.'),
                     challengeStore       : $passkeyChallengeStore,
                     credentialStore      : $passkeyCredentialStore,
                     userSource           : $this->userSource,
@@ -1023,7 +1023,7 @@ final class AuthBuilder
             startFederatedLogin   : $federationReady
                 ? new StartFederatedLogin(
                     connectionStore: $federationConnectionStore,
-                    runtime        : $this->federationRuntime ?? throw new RuntimeException('Federation runtime is required.'),
+                    runtime        : $this->federationRuntime ?? throw new RuntimeException(message: 'Federation runtime is required.'),
                     auditLog       : $auditLog,
                     clock          : $clock
                 )
@@ -1031,7 +1031,7 @@ final class AuthBuilder
             completeFederatedLogin: $federationReady
                 ? new CompleteFederatedLogin(
                     connectionStore       : $federationConnectionStore,
-                    runtime               : $this->federationRuntime ?? throw new RuntimeException('Federation runtime is required.'),
+                    runtime               : $this->federationRuntime ?? throw new RuntimeException(message: 'Federation runtime is required.'),
                     linkStore             : $federatedIdentityLinkStore,
                     userSource            : $this->userSource,
                     identity              : $identity,
@@ -1054,7 +1054,7 @@ final class AuthBuilder
                 )
                 : null,
             readScimDirectories   : $scimReady
-                ? new ReadScimDirectories($scimDirectoryStore)
+                ? new ReadScimDirectories(directoryStore: $scimDirectoryStore)
                 : null,
             rotateScimToken       : $scimReady
                 ? new RotateScimToken(

@@ -16,14 +16,14 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class BeginEmailChange
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private UserSourceInterface $userSource,
-        private PasswordHasher $passwordHasher,
-        private EmailChangeStoreInterface $emailChangeStore,
-        private RequireFreshMfa $requireFreshMfa,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        private int $expiresAfterSeconds = 1800
+        #[\SensitiveParameter] private CurrentAuthentication     $currentAuthentication,
+        private UserSourceInterface                              $userSource,
+        #[\SensitiveParameter] private PasswordHasher            $passwordHasher,
+        #[\SensitiveParameter] private EmailChangeStoreInterface $emailChangeStore,
+        private RequireFreshMfa                                  $requireFreshMfa,
+        private AuditLogInterface                                $auditLog,
+        private Clock                                            $clock,
+        private int                                              $expiresAfterSeconds = 1800
     ) {}
 
     /**
@@ -38,7 +38,7 @@ final readonly class BeginEmailChange
             throw EmailChangeFailed::unauthenticated();
         }
 
-        $user = $this->userSource->findById(new UserId($actor->id));
+        $user = $this->userSource->findById(id: new UserId(value: $actor->id));
 
         if ($user === null || ! $user->isActive()) {
             throw EmailChangeFailed::unauthenticated();
@@ -50,8 +50,8 @@ final readonly class BeginEmailChange
             throw EmailChangeFailed::invalidEmail();
         }
 
-        if (! $this->passwordHasher->verify($data->currentPassword, $user->getPasswordHash())) {
-            $this->auditLog->record(new AuditEvent(
+        if (! $this->passwordHasher->verify(password: $data->currentPassword, hash: $user->getPasswordHash())) {
+            $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.email_change.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
@@ -65,7 +65,7 @@ final readonly class BeginEmailChange
             throw EmailChangeFailed::invalidPassword();
         }
 
-        if ($this->userSource->emailExists($newEmail)) {
+        if ($this->userSource->emailExists(email: $newEmail)) {
             throw EmailChangeFailed::emailInUse();
         }
 
@@ -73,10 +73,10 @@ final readonly class BeginEmailChange
         $challenge = $this->emailChangeStore->issue(
             userId    : $user->getId(),
             newEmail  : $newEmail,
-            expiresAt : $this->clock->now()->modify("+{$this->expiresAfterSeconds} seconds")
+            expiresAt : $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds")
         );
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.email_change.requested',
             occurredAt: $this->clock->now(),
             context   : [

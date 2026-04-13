@@ -9,11 +9,11 @@ use SensitiveParameter;
 final readonly class RevokeTokenData
 {
     public function __construct(
-        public string $clientId,
-        #[SensitiveParameter] public string $token,
+        public string                            $clientId,
+        #[SensitiveParameter] public string      $token,
         #[SensitiveParameter] public string|null $clientSecret = null,
-        public string|null $tokenTypeHint = null,
-        public string|null $ipAddress = null,
-        public string|null $userAgent = null
+        #[SensitiveParameter] public string|null $tokenTypeHint = null,
+        #[SensitiveParameter] public string|null $ipAddress = null,
+        public string|null                       $userAgent = null
     ) {}
 }

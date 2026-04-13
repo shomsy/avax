@@ -26,16 +26,16 @@ use SensitiveParameter;
 final readonly class Login
 {
     public function __construct(
-        private UserSourceInterface                     $userSource,
-        #[SensitiveParameter] private PasswordHasher    $passwordHasher,
-        #[SensitiveParameter] private IdentityInterface $identity,
-        private ProjectAuthenticatedUser                $projectAuthenticatedUser,
-        private CurrentAuthentication                   $currentAuthentication,
-        private AuditLogInterface                       $auditLog,
-        private MfaStoreInterface                       $mfaStore,
-        private StartMfaChallenge                       $startMfaChallenge,
-        private LoginRateLimit|null                     $rateLimit = null,
-        private DeterministicRiskEngine|null            $riskEngine = null
+        private UserSourceInterface                          $userSource,
+        #[SensitiveParameter] private PasswordHasher         $passwordHasher,
+        #[SensitiveParameter] private IdentityInterface      $identity,
+        private ProjectAuthenticatedUser                     $projectAuthenticatedUser,
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private AuditLogInterface                            $auditLog,
+        private MfaStoreInterface                            $mfaStore,
+        private StartMfaChallenge                            $startMfaChallenge,
+        private LoginRateLimit|null                          $rateLimit = null,
+        private DeterministicRiskEngine|null                 $riskEngine = null
     ) {}
 
     /**
@@ -53,7 +53,7 @@ final readonly class Login
             || ! $user->isActive()
         ) {
             $this->rateLimit?->recordFailed(identifier: $credentials->identifier);
-            $this->auditLog->record(new AuditEvent(
+            $this->auditLog->record(event: new AuditEvent(
                                         name      : 'auth.login.failed',
                                         occurredAt: new \DateTimeImmutable(),
                                         context   : [
@@ -66,14 +66,14 @@ final readonly class Login
             throw AuthenticationFailed::invalidCredentials();
         }
 
-        if ($this->passwordHasher->needsRehash($user->getPasswordHash())) {
+        if ($this->passwordHasher->needsRehash(hash: $user->getPasswordHash())) {
             $this->userSource->updatePassword(
                 id          : $user->getId(),
-                passwordHash: $this->passwordHasher->hash($credentials->password)
+                passwordHash: $this->passwordHasher->hash(password: $credentials->password)
             );
         }
 
-        if ($this->mfaStore->isEnabled($user->getId())) {
+        if ($this->mfaStore->isEnabled(userId: $user->getId())) {
             $challenge = $this->startMfaChallenge->issueForLogin(
                 user     : $user,
                 ipAddress: $credentials->ipAddress,
@@ -81,7 +81,7 @@ final readonly class Login
             );
 
             return AuthenticationResult::mfaRequired(
-                user     : $this->projectAuthenticatedUser->fromUser($user),
+                user     : $this->projectAuthenticatedUser->fromUser(user: $user),
                 challenge: $challenge
             );
         }
@@ -92,7 +92,7 @@ final readonly class Login
             userAgent: $credentials->userAgent
         );
         $context = AuthenticationContext::authenticated(
-            user                : $this->projectAuthenticatedUser->fromUser($user),
+            user                : $this->projectAuthenticatedUser->fromUser(user: $user),
             mode                : $issued->mode,
             sessionId           : $issued->sessionId,
             accessTokenId       : $issued->accessToken?->tokenId,
@@ -102,7 +102,7 @@ final readonly class Login
             phishingResistant   : $issued->phishingResistant
         );
 
-        $this->currentAuthentication->store($context);
+        $this->currentAuthentication->store(context: $context);
         $riskDecision = $this->riskEngine?->assessSuccessfulAuthentication(
             user      : $user,
             ipAddress : $credentials->ipAddress,
@@ -110,7 +110,7 @@ final readonly class Login
         );
 
         $this->rateLimit?->reset(identifier: $credentials->identifier);
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.login.succeeded',
                                     occurredAt: new \DateTimeImmutable(),
                                     context   : [

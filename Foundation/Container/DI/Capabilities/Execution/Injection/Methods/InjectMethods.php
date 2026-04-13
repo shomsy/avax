@@ -62,11 +62,11 @@ final class InjectMethods
         }
 
         return $this->invokers[$key] = Closure::bind(
-            static function (object $target, array $arguments) use ($method) : mixed {
+            closure : static function (object $target, array $arguments) use ($method) : mixed {
                 return $target->{$method}(...$arguments);
             },
-            null,
-            $class
+            newThis : null,
+            newScope: $class
         );
     }
 }

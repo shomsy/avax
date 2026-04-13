@@ -15,19 +15,19 @@ final class IdentityPolicyCatalogTest extends TestCase
     {
         $policy = IdentityPolicyCatalog::admin();
 
-        $this->assertSame(IdentityActor::ADMIN, $policy->actor);
-        $this->assertTrue($policy->phishingResistantRequired);
-        $this->assertTrue($policy->requiresFactor(AuthenticationFactor::PASSKEY));
-        $this->assertTrue($policy->privilegedApprovalRequired);
+        $this->assertSame(expected: IdentityActor::ADMIN, actual: $policy->actor);
+        $this->assertTrue(condition: $policy->phishingResistantRequired);
+        $this->assertTrue(condition: $policy->requiresFactor(factor: AuthenticationFactor::PASSKEY));
+        $this->assertTrue(condition: $policy->privilegedApprovalRequired);
     }
 
     public function testMachineIdentityPolicyRequiresSenderConstrainedTokens() : void
     {
         $policy = IdentityPolicyCatalog::machineIdentity();
 
-        $this->assertSame(IdentityActor::MACHINE_IDENTITY, $policy->actor);
-        $this->assertTrue($policy->senderConstrainedTokensRequired);
-        $this->assertTrue($policy->requiresFactor(AuthenticationFactor::MTLS));
-        $this->assertFalse($policy->allowsFactor(AuthenticationFactor::PASSWORD));
+        $this->assertSame(expected: IdentityActor::MACHINE_IDENTITY, actual: $policy->actor);
+        $this->assertTrue(condition: $policy->senderConstrainedTokensRequired);
+        $this->assertTrue(condition: $policy->requiresFactor(factor: AuthenticationFactor::MTLS));
+        $this->assertFalse(condition: $policy->allowsFactor(factor: AuthenticationFactor::PASSWORD));
     }
 }

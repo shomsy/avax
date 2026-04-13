@@ -13,15 +13,15 @@ final class RequireCsrfProtectionTest extends TestCase
     {
         $middleware = new RequireCsrfProtection();
 
-        $this->assertTrue($middleware->execute('GET'));
-        $this->assertTrue($middleware->execute('HEAD'));
+        $this->assertTrue(condition: $middleware->execute(method: 'GET'));
+        $this->assertTrue(condition: $middleware->execute(method: 'HEAD'));
     }
 
     public function testUnsafeMethodRequiresSameOriginAndMatchingToken() : void
     {
         $middleware = new RequireCsrfProtection();
 
-        $this->assertTrue($middleware->execute(
+        $this->assertTrue(condition: $middleware->execute(
             method  : 'POST',
             server  : [
                 'HTTP_ORIGIN' => 'https://app.example.test',
@@ -40,7 +40,7 @@ final class RequireCsrfProtectionTest extends TestCase
     {
         $middleware = new RequireCsrfProtection();
 
-        $this->assertFalse($middleware->execute(
+        $this->assertFalse(condition: $middleware->execute(
             method  : 'POST',
             server  : [
                 'HTTP_ORIGIN' => 'https://evil.example.test',

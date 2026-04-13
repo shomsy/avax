@@ -12,8 +12,8 @@ use Avax\Auth\System\Flow\Passkey\PasskeyOperationFailed;
 final readonly class ListPasskeys
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private PasskeyCredentialStoreInterface $credentialStore
+        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        #[\SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore
     ) {}
 
     /**
@@ -28,6 +28,6 @@ final readonly class ListPasskeys
             throw PasskeyOperationFailed::unauthenticated();
         }
 
-        return $this->credentialStore->forUser($user->id);
+        return $this->credentialStore->forUser(userId: $user->id);
     }
 }

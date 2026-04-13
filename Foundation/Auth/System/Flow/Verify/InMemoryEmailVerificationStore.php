@@ -30,7 +30,7 @@ final class InMemoryEmailVerificationStore implements EmailVerificationStoreInte
         );
     }
 
-    public function consume(string $token, DateTimeImmutable $now) : UserId|null
+    public function consume(#[\SensitiveParameter] string $token, DateTimeImmutable $now) : UserId|null
     {
         $key    = hash('sha256', $token);
         $record = $this->records[$key] ?? null;
@@ -40,6 +40,6 @@ final class InMemoryEmailVerificationStore implements EmailVerificationStoreInte
             return null;
         }
 
-        return new UserId($record['user_id']);
+        return new UserId(value: $record['user_id']);
     }
 }

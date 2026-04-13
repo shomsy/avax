@@ -23,13 +23,13 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class DisableMfa
 {
     public function __construct(
-        private CurrentAuthentication           $currentAuthentication,
-        private RequireFreshMfa                 $requireFreshMfa,
-        private MfaStoreInterface               $mfaStore,
-        private MfaChallengeStoreInterface      $mfaChallengeStore,
-        private AuditLogInterface               $auditLog,
-        private Clock                           $clock,
-        private RefreshTokenStoreInterface|null $refreshTokenStore = null
+        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private RequireFreshMfa                                        $requireFreshMfa,
+        private MfaStoreInterface                                      $mfaStore,
+        private MfaChallengeStoreInterface                             $mfaChallengeStore,
+        private AuditLogInterface                                      $auditLog,
+        private Clock                                                  $clock,
+        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
     ) {}
 
     /**
@@ -50,12 +50,12 @@ final readonly class DisableMfa
         }
 
         $this->requireFreshMfa->execute();
-        $userId = new UserId($user->id);
-        $this->mfaStore->disable($userId);
-        $this->mfaChallengeStore->forgetForUser($userId);
-        $this->refreshTokenStore?->revokeUser($userId);
+        $userId = new UserId(value: $user->id);
+        $this->mfaStore->disable(userId: $userId);
+        $this->mfaChallengeStore->forgetForUser(userId: $userId);
+        $this->refreshTokenStore?->revokeUser(userId: $userId);
 
-        $this->currentAuthentication->store(AuthenticationContext::authenticated(
+        $this->currentAuthentication->store(context: AuthenticationContext::authenticated(
             user                : new AuthenticatedUser(
                                       id           : $user->id,
                                       email        : $user->email,
@@ -72,7 +72,7 @@ final readonly class DisableMfa
             refreshTokenId      : $context->refreshTokenId()
         ));
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.mfa.disabled',
                                     occurredAt: $this->clock->now(),
                                     context   : [

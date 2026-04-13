@@ -49,8 +49,8 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             senderConstraint: $senderConstraint
         );
 
-        $this->records[$tokenId]                       = $record;
-        $this->hashToTokenId[$this->hash($plainToken)] = $tokenId;
+        $this->records[$tokenId]                                   = $record;
+        $this->hashToTokenId[$this->hash(plainToken: $plainToken)] = $tokenId;
 
         return new IssuedRefreshToken(
             token        : $plainToken,
@@ -66,14 +66,14 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
         );
     }
 
-    private function hash(string $plainToken) : string
+    private function hash(#[\SensitiveParameter] string $plainToken) : string
     {
         return hash('sha256', $plainToken);
     }
 
-    public function find(string $plainToken) : RefreshTokenRecord|null
+    public function find(#[\SensitiveParameter] string $plainToken) : RefreshTokenRecord|null
     {
-        $tokenId = $this->hashToTokenId[$this->hash($plainToken)] ?? null;
+        $tokenId = $this->hashToTokenId[$this->hash(plainToken: $plainToken)] ?? null;
 
         if ($tokenId === null) {
             return null;
@@ -82,7 +82,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
         return $this->records[$tokenId] ?? null;
     }
 
-    public function markRotated(string $tokenId, string $replacementTokenId) : void
+    public function markRotated(#[\SensitiveParameter] string $tokenId, #[\SensitiveParameter] string $replacementTokenId) : void
     {
         $record = $this->records[$tokenId] ?? null;
 
@@ -131,7 +131,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
     public function revokeUser(UserId $userId) : void
     {
         foreach ($this->records as $tokenId => $record) {
-            if ($record->userId->equals($userId)) {
+            if ($record->userId->equals(other: $userId)) {
                 $this->records[$tokenId] = new RefreshTokenRecord(
                     tokenId           : $record->tokenId,
                     familyId          : $record->familyId,

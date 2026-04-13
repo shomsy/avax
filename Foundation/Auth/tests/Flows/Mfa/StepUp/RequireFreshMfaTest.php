@@ -21,9 +21,9 @@ final class RequireFreshMfaTest extends TestCase
 {
     public function testFreshMfaPassesForRecentVerification() : void
     {
-        $clock                 = new FrozenClock(new DateTimeImmutable('2026-04-09T12:05:00+00:00'));
+        $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:05:00+00:00'));
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user         : new AuthenticatedUser(
                                id        : 1,
                                email     : 'user@example.com',
@@ -31,7 +31,7 @@ final class RequireFreshMfaTest extends TestCase
                                mfaEnabled: true
                            ),
             mode         : AuthenticationMode::TOKEN,
-            mfaVerifiedAt: new DateTimeImmutable('2026-04-09T12:02:00+00:00')
+            mfaVerifiedAt: new DateTimeImmutable(datetime: '2026-04-09T12:02:00+00:00')
         ));
 
         $guard = new RequireFreshMfa(
@@ -41,14 +41,14 @@ final class RequireFreshMfaTest extends TestCase
         );
 
         $guard->execute();
-        $this->assertTrue(true);
+        $this->assertTrue(condition: true);
     }
 
     public function testFreshMfaFailsForStaleVerification() : void
     {
-        $clock                 = new FrozenClock(new DateTimeImmutable('2026-04-09T12:10:01+00:00'));
+        $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:10:01+00:00'));
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user         : new AuthenticatedUser(
                                id        : 1,
                                email     : 'user@example.com',
@@ -56,7 +56,7 @@ final class RequireFreshMfaTest extends TestCase
                                mfaEnabled: true
                            ),
             mode         : AuthenticationMode::TOKEN,
-            mfaVerifiedAt: new DateTimeImmutable('2026-04-09T12:05:00+00:00')
+            mfaVerifiedAt: new DateTimeImmutable(datetime: '2026-04-09T12:05:00+00:00')
         ));
 
         $guard = new RequireFreshMfa(
@@ -72,7 +72,7 @@ final class RequireFreshMfaTest extends TestCase
     public function testFreshMfaIsNotRequiredWhenUserDoesNotUseMfa() : void
     {
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(
                       id        : 1,
                       email     : 'user@example.com',
@@ -84,11 +84,11 @@ final class RequireFreshMfaTest extends TestCase
 
         $guard = new RequireFreshMfa(
             currentAuthentication: $currentAuthentication,
-            clock                : new FrozenClock(new DateTimeImmutable('2026-04-09T12:10:01+00:00')),
+            clock                : new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:10:01+00:00')),
             maxAgeSeconds        : 300
         );
 
         $guard->execute();
-        $this->assertTrue(true);
+        $this->assertTrue(condition: true);
     }
 }

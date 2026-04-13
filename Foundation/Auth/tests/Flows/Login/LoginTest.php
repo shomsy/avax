@@ -70,14 +70,14 @@ class LoginTest extends TestCase
                                                                               accessToken : new IssuedToken(
                                                                                                 token    : 'token-123',
                                                                                                 tokenId  : 'access-123',
-                                                                                                expiresAt: new DateTimeImmutable('+1 hour')
+                                                                                                expiresAt: new DateTimeImmutable(datetime: '+1 hour')
                                                                                             ),
                                                                               refreshToken: new IssuedRefreshToken(
                                                                                                 token    : 'refresh-123',
                                                                                                 tokenId  : 'refresh-123',
                                                                                                 familyId : 'family-123',
                                                                                                 userId   : $userId,
-                                                                                                expiresAt: new DateTimeImmutable('+30 days')
+                                                                                                expiresAt: new DateTimeImmutable(datetime: '+30 days')
                                                                                             )
                                                                           ));
         $identity->shouldReceive('sessionIdentity')->andReturn(null);
@@ -93,14 +93,14 @@ class LoginTest extends TestCase
             currentAuthentication   : new CurrentAuthentication(),
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
-            startMfaChallenge       : $this->startMfaChallenge(new InMemoryMfaStore())
+            startMfaChallenge       : $this->startMfaChallenge(mfaStore: new InMemoryMfaStore())
         );
         $result = $login->execute(credentials: $credentials);
 
-        $this->assertTrue($result->isAuthenticated());
-        $this->assertSame('token-123', $result->accessToken());
-        $this->assertSame('refresh-123', $result->refreshToken());
-        $this->assertSame(1, $result->user()?->id);
+        $this->assertTrue(condition: $result->isAuthenticated());
+        $this->assertSame(expected: 'token-123', actual: $result->accessToken());
+        $this->assertSame(expected: 'refresh-123', actual: $result->refreshToken());
+        $this->assertSame(expected: 1, actual: $result->user()?->id);
     }
 
     public function testLoginFailedWithInvalidCredentials() : void
@@ -133,16 +133,16 @@ class LoginTest extends TestCase
             currentAuthentication   : new CurrentAuthentication(),
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
-            startMfaChallenge       : $this->startMfaChallenge(new InMemoryMfaStore()),
+            startMfaChallenge       : $this->startMfaChallenge(mfaStore: new InMemoryMfaStore()),
             rateLimit               : $rateLimit
         );
 
         try {
             $login->execute(credentials: $credentials);
-            self::fail('AuthenticationFailed was not raised.');
+            self::fail(message: 'AuthenticationFailed was not raised.');
         } catch (AuthenticationFailed $exception) {
-            $this->assertSame('Invalid credentials.', $exception->getMessage());
-            $this->assertSame(1, $rateLimitStorage->get('user@example.com'));
+            $this->assertSame(expected: 'Invalid credentials.', actual: $exception->getMessage());
+            $this->assertSame(expected: 1, actual: $rateLimitStorage->get(identifier: 'user@example.com'));
         }
     }
 
@@ -152,7 +152,7 @@ class LoginTest extends TestCase
         $passwordHasher = $this->passwordHasher();
         $user           = $this->userWithPassword(
             passwordHasher: $passwordHasher,
-            userId        : new UserId(1),
+            userId        : new UserId(value: 1),
             password      : 'password',
             isActive      : false
         );
@@ -183,16 +183,16 @@ class LoginTest extends TestCase
             currentAuthentication   : new CurrentAuthentication(),
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
-            startMfaChallenge       : $this->startMfaChallenge(new InMemoryMfaStore()),
+            startMfaChallenge       : $this->startMfaChallenge(mfaStore: new InMemoryMfaStore()),
             rateLimit               : $rateLimit
         );
 
         try {
             $login->execute(credentials: $credentials);
-            self::fail('AuthenticationFailed was not raised.');
+            self::fail(message: 'AuthenticationFailed was not raised.');
         } catch (AuthenticationFailed $exception) {
-            $this->assertSame('Invalid credentials.', $exception->getMessage());
-            $this->assertSame(1, $rateLimitStorage->get('user@example.com'));
+            $this->assertSame(expected: 'Invalid credentials.', actual: $exception->getMessage());
+            $this->assertSame(expected: 1, actual: $rateLimitStorage->get(identifier: 'user@example.com'));
         }
     }
 
@@ -206,10 +206,10 @@ class LoginTest extends TestCase
         $identity->shouldReceive('sessionIdentity')->andReturn(null);
 
         $rateLimitStorage = new InMemoryLoginRateLimitStorage();
-        $rateLimitStorage->increment('user@example.com');
+        $rateLimitStorage->increment(identifier: 'user@example.com');
         $rateLimit = new LoginRateLimit(
             storage     : $rateLimitStorage,
-            clock       : new FrozenClock(new DateTimeImmutable()),
+            clock       : new FrozenClock(now: new DateTimeImmutable()),
             maxAttempts : 1,
             decaySeconds: 60
         );
@@ -225,7 +225,7 @@ class LoginTest extends TestCase
             currentAuthentication   : new CurrentAuthentication(),
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
-            startMfaChallenge       : $this->startMfaChallenge(new InMemoryMfaStore()),
+            startMfaChallenge       : $this->startMfaChallenge(mfaStore: new InMemoryMfaStore()),
             rateLimit               : $rateLimit
         );
 
@@ -238,7 +238,7 @@ class LoginTest extends TestCase
     public function testLoginReturnsMfaChallengeWhenMfaIsEnabled() : void
     {
         $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
-        $userId      = new UserId(1);
+        $userId      = new UserId(value: 1);
         $passwordHasher = $this->passwordHasher();
         $user           = $this->userWithPassword(
             passwordHasher: $passwordHasher,
@@ -254,13 +254,13 @@ class LoginTest extends TestCase
         $identity->shouldReceive('sessionIdentity')->andReturn(null);
 
         $mfaStore = new InMemoryMfaStore();
-        $mfaStore->saveMethod(new MfaMethodRecord(
+        $mfaStore->saveMethod(record: new MfaMethodRecord(
             userId   : $userId,
             method   : MfaMethod::TOTP,
             secret   : 'SECRET',
-            enabledAt: new DateTimeImmutable('-1 minute')
+            enabledAt: new DateTimeImmutable(datetime: '-1 minute')
         ));
-        $startMfaChallenge = $this->startMfaChallenge($mfaStore);
+        $startMfaChallenge = $this->startMfaChallenge(mfaStore: $mfaStore);
 
         $login = new Login(
             userSource              : $userSource,
@@ -276,17 +276,17 @@ class LoginTest extends TestCase
             startMfaChallenge       : $startMfaChallenge
         );
 
-        $result = $login->execute($credentials);
+        $result = $login->execute(credentials: $credentials);
 
-        $this->assertTrue($result->requiresMfa());
-        $this->assertNotNull($result->mfaChallengeId());
-        $this->assertSame(MfaChallengePurpose::LOGIN, $result->mfaChallenge()?->purpose);
+        $this->assertTrue(condition: $result->requiresMfa());
+        $this->assertNotNull(actual: $result->mfaChallengeId());
+        $this->assertSame(expected: MfaChallengePurpose::LOGIN, actual: $result->mfaChallenge()?->purpose);
     }
 
     public function testLoginRehashesStoredPasswordWhenHasherPolicyChanged() : void
     {
         $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
-        $userId      = new UserId(1);
+        $userId      = new UserId(value: 1);
         $legacyHasher = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
         $user         = $this->userWithPassword(
             passwordHasher: $legacyHasher,
@@ -299,7 +299,7 @@ class LoginTest extends TestCase
         $userSource->shouldReceive('findByCredentials')->once()->with($credentials)->andReturn($user);
         $userSource->shouldReceive('updatePassword')->once()->with(
             $userId,
-            Mockery::on(static fn (string $hash) : bool => password_verify('password', $hash))
+            Mockery::on(closure: static fn (#[\SensitiveParameter] string $hash) : bool => password_verify('password', $hash))
         );
 
         $identity = Mockery::mock(IdentityInterface::class);
@@ -308,7 +308,7 @@ class LoginTest extends TestCase
             accessToken: new IssuedToken(
                 token    : 'token-123',
                 tokenId  : 'access-123',
-                expiresAt: new DateTimeImmutable('+1 hour')
+                expiresAt: new DateTimeImmutable(datetime: '+1 hour')
             )
         ));
         $identity->shouldReceive('sessionIdentity')->andReturn(null);
@@ -324,12 +324,12 @@ class LoginTest extends TestCase
             currentAuthentication   : new CurrentAuthentication(),
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
-            startMfaChallenge       : $this->startMfaChallenge(new InMemoryMfaStore())
+            startMfaChallenge       : $this->startMfaChallenge(mfaStore: new InMemoryMfaStore())
         );
 
-        $result = $login->execute($credentials);
+        $result = $login->execute(credentials: $credentials);
 
-        $this->assertTrue($result->isAuthenticated());
+        $this->assertTrue(condition: $result->isAuthenticated());
     }
 
     protected function tearDown() : void
@@ -343,16 +343,16 @@ class LoginTest extends TestCase
     }
 
     private function userWithPassword(
-        PasswordHasher $passwordHasher,
-        UserId $userId,
-        string $password,
-        bool $isActive = true
+        #[\SensitiveParameter] PasswordHasher $passwordHasher,
+        UserId                                $userId,
+        #[\SensitiveParameter] string         $password,
+        bool                                  $isActive = true
     ) : User {
         return User::create(
             id          : $userId,
-            email       : new UserEmail('user@example.com'),
+            email       : new UserEmail(value: 'user@example.com'),
             username    : 'user',
-            passwordHash: $passwordHasher->hash($password),
+            passwordHash: $passwordHasher->hash(password: $password),
             roles       : [],
             permissions : [],
             isActive    : $isActive

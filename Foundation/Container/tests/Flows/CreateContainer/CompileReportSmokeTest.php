@@ -44,114 +44,114 @@ $config   = CreateContainerConfig::create(
     compileMode : CreateContainerConfig::COMPILE_MODE_WARMUP
 );
 
-$container = makeTestContainer($config);
-$container->singleton(CompileReportContract::class, CompileReportService::class);
-$container->alias('compile.report', CompileReportContract::class);
-$container->tag(CompileReportContract::class, 'reports');
-$container->defer(CompileReportDeferredService::class, CompileReportDeferredService::class);
-$container->compileContainer([CompileReportContract::class, CompileReportDependency::class]);
-$container->compileContainer([CompileReportContract::class, CompileReportDependency::class]);
-$container->warmCompiled([CompileReportContract::class, CompileReportDependency::class]);
+$container = makeTestContainer(config: $config);
+$container->singleton(abstract: CompileReportContract::class, concrete: CompileReportService::class);
+$container->alias(alias: 'compile.report', abstract: CompileReportContract::class);
+$container->tag(abstracts: CompileReportContract::class, tags: 'reports');
+$container->defer(abstract: CompileReportDeferredService::class, concrete: CompileReportDeferredService::class);
+$container->compileContainer(serviceIds: [CompileReportContract::class, CompileReportDependency::class]);
+$container->compileContainer(serviceIds: [CompileReportContract::class, CompileReportDependency::class]);
+$container->warmCompiled(serviceIds: [CompileReportContract::class, CompileReportDependency::class]);
 
-$report = $container->compileReport([CompileReportContract::class]);
+$report = $container->compileReport(serviceIds: [CompileReportContract::class]);
 
-assertTrue($report !== null, 'Compile report should exist when compiler support is configured.');
-assertTrue($report->available, 'Compile report should mark the artifact as available.');
-assertTrue($report->compatible, 'Compile report should expose runtime compatibility for the attached artifact.');
-assertSame('fresh', $report->freshnessState, 'Healthy compile reports should expose a fresh artifact state.');
-assertSame([], $report->compatibilityIssues, 'Healthy compile reports should have no compatibility issues.');
-assertSame([], $report->warnings, 'Healthy compile reports should avoid warnings.');
-assertTrue(in_array(CompileReportContract::class, $report->entries, true), 'Compile report should expose compiled service ids.');
-assertSame(2, $report->compiledServicesCount, 'Compile report should expose the compiled service count.');
-assertSame(2, $report->totalServices, 'Compile report should expose the total compiled service set.');
-assertSame(1, $report->deferredServicesCount, 'Compile report should expose deferred service counts from metadata statistics.');
-assertSame(1, $report->tagIndexSize, 'Compile report should expose tag index size.');
-assertSame(1, $report->aliasMapSize, 'Compile report should expose alias map size.');
-assertSame(['shared' => 1, 'transient' => 2], $report->lifetimePlanSummary, 'Compile report should expose lifetime plan summaries.');
+assertTrue(condition: $report !== null, message: 'Compile report should exist when compiler support is configured.');
+assertTrue(condition: $report->available, message: 'Compile report should mark the artifact as available.');
+assertTrue(condition: $report->compatible, message: 'Compile report should expose runtime compatibility for the attached artifact.');
+assertSame(expected: 'fresh', actual: $report->freshnessState, message: 'Healthy compile reports should expose a fresh artifact state.');
+assertSame(expected: [], actual: $report->compatibilityIssues, message: 'Healthy compile reports should have no compatibility issues.');
+assertSame(expected: [], actual: $report->warnings, message: 'Healthy compile reports should avoid warnings.');
+assertTrue(condition: in_array(CompileReportContract::class, $report->entries, true), message: 'Compile report should expose compiled service ids.');
+assertSame(expected: 2, actual: $report->compiledServicesCount, message: 'Compile report should expose the compiled service count.');
+assertSame(expected: 2, actual: $report->totalServices, message: 'Compile report should expose the total compiled service set.');
+assertSame(expected: 1, actual: $report->deferredServicesCount, message: 'Compile report should expose deferred service counts from metadata statistics.');
+assertSame(expected: 1, actual: $report->tagIndexSize, message: 'Compile report should expose tag index size.');
+assertSame(expected: 1, actual: $report->aliasMapSize, message: 'Compile report should expose alias map size.');
+assertSame(expected: ['shared' => 1, 'transient' => 2], actual: $report->lifetimePlanSummary, message: 'Compile report should expose lifetime plan summaries.');
 assertSame(
-    'shared',
-    $report->metadata?->lifetimePlans()[CompileReportContract::class]->name,
-    'Compile metadata should expose first-class lifetime plans.'
+    expected: 'shared',
+    actual  : $report->metadata?->lifetimePlans()[CompileReportContract::class]->name,
+    message : 'Compile metadata should expose first-class lifetime plans.'
 );
 assertSame(
-    CompileReportContract::class,
-    $report->metadata?->aliases['compile.report'] ?? null,
-    'Compile metadata should expose flattened alias mappings.'
+    expected: CompileReportContract::class,
+    actual  : $report->metadata?->aliases['compile.report'] ?? null,
+    message : 'Compile metadata should expose flattened alias mappings.'
 );
 assertSame(
-    [CompileReportContract::class],
-    $report->metadata?->tags['reports'] ?? [],
-    'Compile metadata should expose deterministic tag indexes.'
+    expected: [CompileReportContract::class],
+    actual  : $report->metadata?->tags['reports'] ?? [],
+    message : 'Compile metadata should expose deterministic tag indexes.'
 );
 assertSame(
-    [CompileReportDependency::class],
-    $report->metadata?->dependencies[CompileReportContract::class] ?? [],
-    'Compile metadata should expose compiled dependency graphs.'
+    expected: [CompileReportDependency::class],
+    actual  : $report->metadata?->dependencies[CompileReportContract::class] ?? [],
+    message : 'Compile metadata should expose compiled dependency graphs.'
 );
 assertSame(
-    CreateContainerConfig::COMPILE_MODE_WARMUP,
-    $report->compileMode,
-    'Compile reports should expose the active compile mode.'
+    expected: CreateContainerConfig::COMPILE_MODE_WARMUP,
+    actual  : $report->compileMode,
+    message : 'Compile reports should expose the active compile mode.'
 );
 assertSame(
-    CreateContainerConfig::EXECUTION_MODE_COMPILED,
-    $report->executionMode,
-    'Compile reports should expose the active execution mode.'
+    expected: CreateContainerConfig::EXECUTION_MODE_COMPILED,
+    actual  : $report->executionMode,
+    message : 'Compile reports should expose the active execution mode.'
 );
 assertSame(
-    CreateContainerConfig::PRUNE_MODE_NONE,
-    $report->pruneMode,
-    'Compile reports should expose the active prune mode.'
+    expected: CreateContainerConfig::PRUNE_MODE_NONE,
+    actual  : $report->pruneMode,
+    message : 'Compile reports should expose the active prune mode.'
 );
 assertSame(
-    CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL,
-    $report->metadata?->diagnosticsMode,
-    'Compile metadata should expose the diagnostics mode that produced the artifact.'
+    expected: CreateContainerConfig::DIAGNOSTICS_MODE_MINIMAL,
+    actual  : $report->metadata?->diagnosticsMode,
+    message : 'Compile metadata should expose the diagnostics mode that produced the artifact.'
 );
-assertTrue($report->metadata?->warmed ?? false, 'Warm compilation should mark the artifact metadata as warmed.');
-assertSame(8, $report->metadata?->schemaVersion, 'Compile metadata should expose a stable schema version.');
-assertTrue(($report->metadata?->dependencyGraphRevision ?? '') !== '', 'Compile metadata should expose dependency graph provenance.');
+assertTrue(condition: $report->metadata?->warmed ?? false, message: 'Warm compilation should mark the artifact metadata as warmed.');
+assertSame(expected: 8, actual: $report->metadata?->schemaVersion, message: 'Compile metadata should expose a stable schema version.');
+assertTrue(condition: ($report->metadata?->dependencyGraphRevision ?? '') !== '', message: 'Compile metadata should expose dependency graph provenance.');
 assertSame(
-    CreateContainerConfig::EXECUTION_MODE_COMPILED,
-    $report->metadata?->executionMode,
-    'Compile metadata should expose the execution mode that produced the artifact.'
-);
-assertSame(
-    CreateContainerConfig::PRUNE_MODE_NONE,
-    $report->metadata?->pruneMode,
-    'Compile metadata should expose the prune mode that produced the artifact.'
+    expected: CreateContainerConfig::EXECUTION_MODE_COMPILED,
+    actual  : $report->metadata?->executionMode,
+    message : 'Compile metadata should expose the execution mode that produced the artifact.'
 );
 assertSame(
-    'default',
-    $report->metadata?->ownership[CompileReportContract::class]['ownerSlice'] ?? null,
-    'Compile metadata should expose derived ownership maps.'
+    expected: CreateContainerConfig::PRUNE_MODE_NONE,
+    actual  : $report->metadata?->pruneMode,
+    message : 'Compile metadata should expose the prune mode that produced the artifact.'
+);
+assertSame(
+    expected: 'default',
+    actual  : $report->metadata?->ownership[CompileReportContract::class]['ownerSlice'] ?? null,
+    message : 'Compile metadata should expose derived ownership maps.'
 );
 assertTrue(
-    isset($report->metadata?->slices['default']),
-    'Compile metadata should expose derived slice manifests.'
+    condition: isset($report->metadata?->slices['default']),
+    message  : 'Compile metadata should expose derived slice manifests.'
 );
 assertSame(
-    $report->path,
-    $report->metadata?->artifactPaths['compiled'] ?? null,
-    'Compile metadata should expose the compiled artifact path.'
+    expected: $report->path,
+    actual  : $report->metadata?->artifactPaths['compiled'] ?? null,
+    message : 'Compile metadata should expose the compiled artifact path.'
 );
 assertTrue(
-    array_key_exists('reusedServices', $report->statistics),
-    'Compile reports should expose incremental compilation statistics.'
+    condition: array_key_exists('reusedServices', $report->statistics),
+    message  : 'Compile reports should expose incremental compilation statistics.'
 );
 assertTrue(
-    ($report->statistics['reusedServices'] ?? 0) >= 1,
-    'Repeated compilation should reuse stable compiled service sources when signatures stay unchanged.'
+    condition: ($report->statistics['reusedServices'] ?? 0) >= 1,
+    message  : 'Repeated compilation should reuse stable compiled service sources when signatures stay unchanged.'
 );
 assertSame(
-    CreateContainerConfig::PRUNE_MODE_NONE,
-    $report->pruning['mode'] ?? null,
-    'Compile reports should expose pruning posture even when pruning is disabled.'
+    expected: CreateContainerConfig::PRUNE_MODE_NONE,
+    actual  : $report->pruning['mode'] ?? null,
+    message : 'Compile reports should expose pruning posture even when pruning is disabled.'
 );
 assertSame(
-    $report->invalidatedServices,
-    $report->metadata?->invalidatedServices ?? [],
-    'Compile reports and artifact metadata should agree on invalidated services.'
+    expected: $report->invalidatedServices,
+    actual  : $report->metadata?->invalidatedServices ?? [],
+    message : 'Compile reports and artifact metadata should agree on invalidated services.'
 );
 
 echo basename(__FILE__) . " ok\n";

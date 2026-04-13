@@ -28,14 +28,14 @@ final readonly class RollbackTenantSecurityChange
      */
     public function execute(string $changeId) : TenantSecurityConfiguration
     {
-        $changeRequest = $this->changeRequestStore->find($changeId);
+        $changeRequest = $this->changeRequestStore->find(changeId: $changeId);
 
         if ($changeRequest === null) {
             throw TenantSecurityFailed::unknownChangeRequest();
         }
 
-        $rollback = $changeRequest->before ?? new TenantSecurityConfiguration($changeRequest->tenantSlug);
-        $this->configurationStore->save($rollback);
+        $rollback = $changeRequest->before ?? new TenantSecurityConfiguration(tenantSlug: $changeRequest->tenantSlug);
+        $this->configurationStore->save(configuration: $rollback);
         $rolledBack = new TenantSecurityChangeRequest(
             changeId     : $changeRequest->changeId,
             tenantSlug   : $changeRequest->tenantSlug,
@@ -51,8 +51,8 @@ final readonly class RollbackTenantSecurityChange
             appliedAt    : $changeRequest->appliedAt,
             rolledBackAt : $this->clock->now()
         );
-        $this->changeRequestStore->save($rolledBack);
-        $this->auditLog->record(new AuditEvent(
+        $this->changeRequestStore->save(changeRequest: $rolledBack);
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.tenant_security.change.rolled_back',
             occurredAt: $this->clock->now(),
             context   : [

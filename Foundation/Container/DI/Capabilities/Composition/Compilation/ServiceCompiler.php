@@ -180,7 +180,7 @@ final readonly class ServiceCompiler
     private function dynamicSignature(mixed $candidate) : string
     {
         if ($candidate instanceof Closure) {
-            $reflection = new ReflectionFunction($candidate);
+            $reflection = new ReflectionFunction(function: $candidate);
 
             return 'closure:' . ($reflection->getFileName() ?: 'internal')
                 . ':' . $reflection->getStartLine()

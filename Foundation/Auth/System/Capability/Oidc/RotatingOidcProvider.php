@@ -52,13 +52,13 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
             }
         }
 
-        return new OidcJsonWebKeySet(array_values($keys));
+        return new OidcJsonWebKeySet(keys: array_values($keys));
     }
 
     public function resolveIdToken(#[SensitiveParameter] string $idToken) : array|null
     {
         foreach ($this->providers() as $provider) {
-            $claims = $provider->resolveIdToken($idToken);
+            $claims = $provider->resolveIdToken(idToken: $idToken);
 
             if ($claims !== null) {
                 return $claims;

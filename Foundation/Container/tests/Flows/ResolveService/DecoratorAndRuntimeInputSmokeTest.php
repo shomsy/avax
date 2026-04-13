@@ -28,7 +28,7 @@ final class OwnedDecorator implements DecoratorInterface
 {
     public function decorate(mixed $instance, ContainerInterface|null $container = null) : mixed
     {
-        assertInstanceOf(DecoratedService::class, $instance, 'Decorators should receive the resolved concrete instance.');
+        assertInstanceOf(expectedClass: DecoratedService::class, value: $instance, message: 'Decorators should receive the resolved concrete instance.');
         $instance->decorated = true;
 
         return $instance;
@@ -47,7 +47,7 @@ final class RuntimeInputConsumer
 {
     public function __construct(
         public DecoratedContract              $service,
-        #[RuntimeInput('name')] public string $name
+        #[RuntimeInput(name: 'name')] public string $name
     ) {}
 }
 
@@ -76,113 +76,113 @@ final class ConflictingGroupedStep
 }
 
 $container = makeTestContainer();
-$container->singleton(DecoratedContract::class, DecoratedService::class)
-    ->asCapability('billing')
+$container->singleton(abstract: DecoratedContract::class, concrete: DecoratedService::class)
+    ->asCapability(ownerSlice: 'billing')
     ->asShared()
     ->export();
-$container->singleton(OwnedDecorator::class, OwnedDecorator::class)
-    ->asCapability('billing')
+$container->singleton(abstract: OwnedDecorator::class, concrete: OwnedDecorator::class)
+    ->asCapability(ownerSlice: 'billing')
     ->asShared()
     ->export();
-$container->decorate(DecoratedContract::class, OwnedDecorator::class);
-$container->bind(RuntimeInputConsumer::class, RuntimeInputConsumer::class)
-    ->asFlow('checkout')
+$container->decorate(abstract: DecoratedContract::class, decorator: OwnedDecorator::class);
+$container->bind(abstract: RuntimeInputConsumer::class, concrete: RuntimeInputConsumer::class)
+    ->asFlow(ownerSlice: 'checkout')
     ->asPrivate()
     ->entry()
-    ->import(['billing']);
-$container->singleton(FirstGroupedStep::class, FirstGroupedStep::class)
-    ->asCapability('checkout.pipeline')
+    ->import(slices: ['billing']);
+$container->singleton(abstract: FirstGroupedStep::class, concrete: FirstGroupedStep::class)
+    ->asCapability(ownerSlice: 'checkout.pipeline')
     ->asShared()
     ->export()
-    ->group('checkout.steps', 20);
-$container->singleton(SecondGroupedStep::class, SecondGroupedStep::class)
-    ->asCapability('checkout.pipeline')
+    ->group(group: 'checkout.steps', order: 20);
+$container->singleton(abstract: SecondGroupedStep::class, concrete: SecondGroupedStep::class)
+    ->asCapability(ownerSlice: 'checkout.pipeline')
     ->asShared()
     ->export()
-    ->group('checkout.steps', 10);
+    ->group(group: 'checkout.steps', order: 10);
 
-$runtimeFactory  = $container->factory(RuntimeInputConsumer::class);
-$consumer        = $container->make(RuntimeInputConsumer::class, ['name' => 'Ada']);
+$runtimeFactory  = $container->factory(abstract: RuntimeInputConsumer::class);
+$consumer        = $container->make(abstract: RuntimeInputConsumer::class, parameters: ['name' => 'Ada']);
 $factoryConsumer = $runtimeFactory(['name' => 'Grace']);
-$description     = $container->describeService(DecoratedContract::class);
-$grouped         = $container->grouped('checkout.steps');
+$description     = $container->describeService(id: DecoratedContract::class);
+$grouped         = $container->grouped(group: 'checkout.steps');
 $graph           = $container->debugGraph();
-$groupReport     = $container->debugGroup('checkout.steps');
-$selectionReport = $container->debugSelection(DecoratedContract::class);
+$groupReport     = $container->debugGroup(group: 'checkout.steps');
+$selectionReport = $container->debugSelection(id: DecoratedContract::class);
 
-assertSame('Ada', $consumer->name, 'Runtime input should come from explicit caller overrides.');
-assertSame('Grace', $factoryConsumer->name, 'Factory closures should resolve the same authored selection path with caller overrides.');
-assertTrue($consumer->service instanceof DecoratedService && $consumer->service->decorated, 'Decorators should still run before runtime-input consumers receive the service.');
+assertSame(expected: 'Ada', actual: $consumer->name, message: 'Runtime input should come from explicit caller overrides.');
+assertSame(expected: 'Grace', actual: $factoryConsumer->name, message: 'Factory closures should resolve the same authored selection path with caller overrides.');
+assertTrue(condition: $consumer->service instanceof DecoratedService && $consumer->service->decorated, message: 'Decorators should still run before runtime-input consumers receive the service.');
 assertSame(
-    [SecondGroupedStep::class, FirstGroupedStep::class],
-    array_map(static fn (object $service) : string => $service::class, $grouped),
-    'Grouped multi-bindings should resolve in deterministic order.'
+    expected: [SecondGroupedStep::class, FirstGroupedStep::class],
+    actual  : array_map(static fn (object $service) : string => $service::class, $grouped),
+    message : 'Grouped multi-bindings should resolve in deterministic order.'
 );
 assertSame(
-    [SecondGroupedStep::class, FirstGroupedStep::class],
-    array_column($graph['groups']['checkout.steps'], 'serviceId'),
-    'Graph diagnostics should expose grouped binding order.'
+    expected: [SecondGroupedStep::class, FirstGroupedStep::class],
+    actual  : array_column($graph['groups']['checkout.steps'], 'serviceId'),
+    message : 'Graph diagnostics should expose grouped binding order.'
 );
 assertSame(
-    [SecondGroupedStep::class, FirstGroupedStep::class],
-    array_column($groupReport['items'], 'serviceId'),
-    'Group diagnostics should expose grouped binding order.'
+    expected: [SecondGroupedStep::class, FirstGroupedStep::class],
+    actual  : array_column($groupReport['items'], 'serviceId'),
+    message : 'Group diagnostics should expose grouped binding order.'
 );
-assertSame(OwnedDecorator::class, $description['decorationDetails'][0]['descriptor'] ?? null, 'Decorator diagnostics should expose the registered decorator descriptor.');
-assertSame('billing', $description['decorationDetails'][0]['owner'] ?? null, 'Decorator diagnostics should expose the decorator owner slice.');
-assertSame(DecoratedContract::class, $selectionReport['service'] ?? null, 'Selection diagnostics should expose the selected service id.');
-assertSame(OwnedDecorator::class, $selectionReport['decorators'][0]['descriptor'] ?? null, 'Selection diagnostics should expose decorator wiring.');
+assertSame(expected: OwnedDecorator::class, actual: $description['decorationDetails'][0]['descriptor'] ?? null, message: 'Decorator diagnostics should expose the registered decorator descriptor.');
+assertSame(expected: 'billing', actual: $description['decorationDetails'][0]['owner'] ?? null, message: 'Decorator diagnostics should expose the decorator owner slice.');
+assertSame(expected: DecoratedContract::class, actual: $selectionReport['service'] ?? null, message: 'Selection diagnostics should expose the selected service id.');
+assertSame(expected: OwnedDecorator::class, actual: $selectionReport['decorators'][0]['descriptor'] ?? null, message: 'Selection diagnostics should expose decorator wiring.');
 assertTrue(
-    ($description['decorationDetails'][0]['access']['allowed'] ?? false) === true,
-    'Decorator diagnostics should explain that visible decorators are allowed from the owning slice.'
+    condition: ($description['decorationDetails'][0]['access']['allowed'] ?? false) === true,
+    message  : 'Decorator diagnostics should explain that visible decorators are allowed from the owning slice.'
 );
 
 try {
-    $container->make(RuntimeInputConsumer::class);
-    throw new RuntimeException('Missing runtime input should fail.');
+    $container->make(abstract: RuntimeInputConsumer::class);
+    throw new RuntimeException(message: 'Missing runtime input should fail.');
 } catch (ContainerException $exception) {
     assertTrue(
-        str_contains($exception->getMessage(), 'Runtime input [$name] is missing'),
-        'Runtime input failures should name the missing input.'
+        condition: str_contains($exception->getMessage(), 'Runtime input [$name] is missing'),
+        message  : 'Runtime input failures should name the missing input.'
     );
     assertTrue(
-        str_contains($exception->getMessage(), 'Likely fix: pass an explicit override, use forContext(), or add a default value.'),
-        'Runtime input failures should be fix-oriented.'
+        condition: str_contains($exception->getMessage(), 'Likely fix: pass an explicit override, use forContext(), or add a default value.'),
+        message  : 'Runtime input failures should be fix-oriented.'
     );
 }
 
-$container->singleton(ConflictingGroupedStep::class, ConflictingGroupedStep::class)
-    ->asCapability('checkout.pipeline')
+$container->singleton(abstract: ConflictingGroupedStep::class, concrete: ConflictingGroupedStep::class)
+    ->asCapability(ownerSlice: 'checkout.pipeline')
     ->asShared()
     ->export()
-    ->group('checkout.steps', 10);
+    ->group(group: 'checkout.steps', order: 10);
 
-$groupIssues = implode("\n", $container->validate([
+$groupIssues = implode("\n", $container->validate(serviceIds: [
                                                       FirstGroupedStep::class,
                                                       SecondGroupedStep::class,
                                                       ConflictingGroupedStep::class,
                                                   ]));
 
 assertTrue(
-    str_contains($groupIssues, 'Group [checkout.steps] uses duplicate order [10]'),
-    'Validation should reject conflicting grouped binding order.'
+    condition: str_contains($groupIssues, 'Group [checkout.steps] uses duplicate order [10]'),
+    message  : 'Validation should reject conflicting grouped binding order.'
 );
 
 $invisibleDecoratorContainer = makeTestContainer();
-$invisibleDecoratorContainer->singleton(DecoratedContract::class, DecoratedService::class)
-    ->asCapability('billing')
+$invisibleDecoratorContainer->singleton(abstract: DecoratedContract::class, concrete: DecoratedService::class)
+    ->asCapability(ownerSlice: 'billing')
     ->asShared()
     ->export();
-$invisibleDecoratorContainer->singleton(InvisibleDecorator::class, InvisibleDecorator::class)
-    ->asCapability('audit')
+$invisibleDecoratorContainer->singleton(abstract: InvisibleDecorator::class, concrete: InvisibleDecorator::class)
+    ->asCapability(ownerSlice: 'audit')
     ->asInternal();
-$invisibleDecoratorContainer->decorate(DecoratedContract::class, InvisibleDecorator::class);
+$invisibleDecoratorContainer->decorate(abstract: DecoratedContract::class, decorator: InvisibleDecorator::class);
 
-$decoratorIssues = implode("\n", $invisibleDecoratorContainer->validate([DecoratedContract::class]));
+$decoratorIssues = implode("\n", $invisibleDecoratorContainer->validate(serviceIds: [DecoratedContract::class]));
 
 assertTrue(
-    str_contains($decoratorIssues, 'decorator is not visible from the service slice'),
-    'Validation should reject decorators that violate slice visibility.'
+    condition: str_contains($decoratorIssues, 'decorator is not visible from the service slice'),
+    message  : 'Validation should reject decorators that violate slice visibility.'
 );
 
 echo basename(__FILE__) . " ok\n";

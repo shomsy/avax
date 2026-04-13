@@ -17,8 +17,8 @@ final readonly class BackupCodeSet
      * @param list<BackupCode> $codes
      */
     public function __construct(
-        public array             $codes,
-        public DateTimeImmutable $generatedAt
+        #[\SensitiveParameter] public array $codes,
+        public DateTimeImmutable            $generatedAt
     ) {}
 
     /**
@@ -27,7 +27,7 @@ final readonly class BackupCodeSet
     public function values() : array
     {
         return array_map(
-            static fn (BackupCode $code) : string => $code->value(),
+            static fn (#[\SensitiveParameter] BackupCode $code) : string => $code->value(),
             $this->codes
         );
     }
@@ -39,7 +39,7 @@ final readonly class BackupCodeSet
     {
         return [
             'codes'       => array_map(
-                static fn (BackupCode $code) : string => $code->masked(),
+                static fn (#[\SensitiveParameter] BackupCode $code) : string => $code->masked(),
                 $this->codes
             ),
             'generatedAt' => $this->generatedAt,

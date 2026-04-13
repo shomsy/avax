@@ -18,16 +18,16 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class ConfirmEmailChange
 {
     public function __construct(
-        private ProvisionableUserSourceInterface $userSource,
-        private EmailChangeStoreInterface $emailChangeStore,
-        private EmailVerificationStateStoreInterface $emailVerificationState,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        private CurrentAuthentication $currentAuthentication,
-        private IdentityInterface $identity,
-        private SessionRegistryInterface|null $sessionRegistry = null,
-        private MfaChallengeStoreInterface|null $mfaChallengeStore = null,
-        private RefreshTokenStoreInterface|null $refreshTokenStore = null
+        private ProvisionableUserSourceInterface                            $userSource,
+        #[\SensitiveParameter] private EmailChangeStoreInterface            $emailChangeStore,
+        #[\SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
+        private AuditLogInterface                                           $auditLog,
+        private Clock                                                       $clock,
+        #[\SensitiveParameter] private CurrentAuthentication                $currentAuthentication,
+        private IdentityInterface                                           $identity,
+        #[\SensitiveParameter] private SessionRegistryInterface|null        $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null                             $mfaChallengeStore = null,
+        #[\SensitiveParameter] private RefreshTokenStoreInterface|null      $refreshTokenStore = null
     ) {}
 
     /**
@@ -36,10 +36,10 @@ final readonly class ConfirmEmailChange
     public function execute(ConfirmEmailChangeData $data) : bool
     {
         $context = $this->currentAuthentication->read();
-        $record = $this->emailChangeStore->consume($data->token, $this->clock->now());
+        $record = $this->emailChangeStore->consume(token: $data->token, now: $this->clock->now());
 
         if ($record === null) {
-            $this->auditLog->record(new AuditEvent(
+            $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.email_change.failed',
                 occurredAt: $this->clock->now(),
                 context   : [
@@ -52,26 +52,26 @@ final readonly class ConfirmEmailChange
             throw EmailChangeFailed::invalidToken();
         }
 
-        $existingUser = $this->userSource->findByEmail($record->newEmail);
+        $existingUser = $this->userSource->findByEmail(email: $record->newEmail);
 
-        if ($existingUser !== null && ! $existingUser->getId()->equals($record->userId)) {
+        if ($existingUser !== null && ! $existingUser->getId()->equals(other: $record->userId)) {
             throw EmailChangeFailed::emailInUse();
         }
 
-        $this->userSource->updateEmail($record->userId, $record->newEmail);
-        $this->emailVerificationState->markVerified($record->userId);
-        $this->sessionRegistry?->revokeForUser($record->userId, $this->clock->now(), 'email_change');
-        $this->mfaChallengeStore?->forgetForUser($record->userId);
-        $this->refreshTokenStore?->revokeUser($record->userId);
+        $this->userSource->updateEmail(id: $record->userId, email: $record->newEmail);
+        $this->emailVerificationState->markVerified(userId: $record->userId);
+        $this->sessionRegistry?->revokeForUser(userId: $record->userId, revokedAt: $this->clock->now(), reason: 'email_change');
+        $this->mfaChallengeStore?->forgetForUser(userId: $record->userId);
+        $this->refreshTokenStore?->revokeUser(userId: $record->userId);
 
         $currentUser = $context->user();
 
         if ($currentUser !== null && $currentUser->id === $record->userId->value) {
-            $this->identity->clear($context);
+            $this->identity->clear(context: $context);
             $this->currentAuthentication->clear();
         }
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.email_change.completed',
             occurredAt: $this->clock->now(),
             context   : [

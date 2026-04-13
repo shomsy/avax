@@ -26,7 +26,7 @@ class AccessBoundaryTest extends TestCase
     public function testRequireAuthenticationSuccess() : void
     {
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(id: 1, email: 'a@example.com', username: 'a'),
             mode: AuthenticationMode::SESSION
         ));
@@ -52,7 +52,7 @@ class AccessBoundaryTest extends TestCase
     {
         $permission            = new UserPermission(value: 'write');
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(
                       id         : 1,
                       email      : 'write@example.com',
@@ -85,7 +85,7 @@ class AccessBoundaryTest extends TestCase
     {
         $permission            = new UserPermission(value: 'write');
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(id: 1, email: 'read@example.com', username: 'reader'),
             mode: AuthenticationMode::SESSION
         ));

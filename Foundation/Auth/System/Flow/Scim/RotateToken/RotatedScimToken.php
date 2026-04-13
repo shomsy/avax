@@ -10,6 +10,6 @@ final readonly class RotatedScimToken
 {
     public function __construct(
         public ScimDirectory $directory,
-        public string $plainTextToken
+        #[\SensitiveParameter] public string $plainTextToken
     ) {}
 }

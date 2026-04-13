@@ -13,9 +13,9 @@ use DateTimeImmutable;
 final readonly class MfaRecoveryRecord
 {
     public function __construct(
-        public string            $tokenHash,
-        public UserId            $userId,
-        public DateTimeImmutable $expiresAt
+        #[\SensitiveParameter] public string $tokenHash,
+        public UserId                        $userId,
+        public DateTimeImmutable             $expiresAt
     ) {}
 
     public function isExpiredAt(DateTimeImmutable $moment) : bool

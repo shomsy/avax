@@ -14,15 +14,15 @@ final readonly class RunKeyRolloverDrill
      */
     public function execute(string $keyRingPath) : array
     {
-        $codec = new FileBackedHmacKeyRingCodec($keyRingPath);
-        $token = $codec->encode(['sub' => 42, 'iss' => 'drill']);
-        $claims = $codec->decode($token);
+        $codec = new FileBackedHmacKeyRingCodec(keyRingPath: $keyRingPath);
+        $token = $codec->encode(claims: ['sub' => 42, 'iss' => 'drill']);
+        $claims = $codec->decode(token: $token);
 
         if ($claims === null) {
-            throw new RuntimeException('Key rollover drill could not verify the issued token.');
+            throw new RuntimeException(message: 'Key rollover drill could not verify the issued token.');
         }
 
-        $issuedKid = $this->readPrimaryKid($keyRingPath);
+        $issuedKid = $this->readPrimaryKid(keyRingPath: $keyRingPath);
 
         return [
             'issued_kid' => $issuedKid,

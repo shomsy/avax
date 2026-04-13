@@ -24,6 +24,12 @@
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/Support/AvaxContainer/Providers" isTestSource="true" packagePrefix="Avax\Container\Providers\" />
       <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/tests/System" isTestSource="true" packagePrefix="Avax\Auth\Tests\System\" />
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/examples/http" isTestSource="true" packagePrefix="Avax\Auth\Examples\Http\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/examples/jobs" isTestSource="true" packagePrefix="Avax\Auth\Examples\Jobs\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/examples/persistence" isTestSource="true" packagePrefix="Avax\Auth\Examples\Persistence\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/examples/policies" isTestSource="true" packagePrefix="Avax\Auth\Examples\Policies\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/diagnostics" isTestSource="false" packagePrefix="Avax\Auth\Integrations\Diagnostics\" />
+      <sourceFolder url="file://$MODULE_DIR$/Foundation/Auth/integrations/release" isTestSource="false" packagePrefix="Avax\Auth\Integrations\Release\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/amphp/amp" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/amphp/byte-stream" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/amphp/cache" />

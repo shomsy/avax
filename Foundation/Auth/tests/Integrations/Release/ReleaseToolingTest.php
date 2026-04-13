@@ -19,27 +19,27 @@ final class ReleaseToolingTest extends TestCase
     public function testSbomContainsPackageMetadata() : void
     {
         $root = dirname(__DIR__, 3);
-        $sbom = (new GenerateReleaseSbom())->execute($root . '/composer.json', $root . '/composer.lock');
+        $sbom = (new GenerateReleaseSbom())->execute(composerJsonPath: $root . '/composer.json', composerLockPath: $root . '/composer.lock');
 
-        $this->assertSame('CycloneDX', $sbom['bomFormat']);
-        $this->assertSame('avax/auth', $sbom['metadata']['component']['name']);
+        $this->assertSame(expected: 'CycloneDX', actual: $sbom['bomFormat']);
+        $this->assertSame(expected: 'avax/auth', actual: $sbom['metadata']['component']['name']);
     }
 
     public function testReleaseProvenanceCapturesRepositoryState() : void
     {
         $root = dirname(__DIR__, 3);
-        $provenance = (new CreateReleaseProvenance())->execute($root, ['php composer.phar test']);
+        $provenance = (new CreateReleaseProvenance())->execute(repositoryRoot: $root, validationCommands: ['php composer.phar test']);
 
-        $this->assertSame('avax/auth', $provenance['package']);
-        $this->assertArrayHasKey('git_commit', $provenance);
-        $this->assertSame(['php composer.phar test'], $provenance['validation_commands']);
+        $this->assertSame(expected: 'avax/auth', actual: $provenance['package']);
+        $this->assertArrayHasKey(key: 'git_commit', array: $provenance);
+        $this->assertSame(expected: ['php composer.phar test'], actual: $provenance['validation_commands']);
     }
 
     public function testRollbackEvidenceCapturesRollbackTargetAndArtifactDigests() : void
     {
         $root = dirname(__DIR__, 3);
         $artifact = tempnam(sys_get_temp_dir(), 'auth-rollback-');
-        self::assertIsString($artifact);
+        self::assertIsString(actual: $artifact);
         file_put_contents($artifact, 'rollback-artifact');
 
         $evidence = (new GenerateRollbackEvidence())->execute(
@@ -49,10 +49,10 @@ final class ReleaseToolingTest extends TestCase
             validationCommands : ['php composer.phar test']
         );
 
-        $this->assertSame('avax/auth', $evidence['package']);
-        $this->assertTrue($evidence['rollback_ready']);
-        $this->assertNotNull($evidence['rollback_target']);
-        $this->assertSame(hash_file('sha256', $artifact), $evidence['artifacts'][0]['sha256']);
+        $this->assertSame(expected: 'avax/auth', actual: $evidence['package']);
+        $this->assertTrue(condition: $evidence['rollback_ready']);
+        $this->assertNotNull(actual: $evidence['rollback_target']);
+        $this->assertSame(expected: hash_file('sha256', $artifact), actual: $evidence['artifacts'][0]['sha256']);
     }
 
     public function testSecretScannerFindsCommittedSecretPatterns() : void
@@ -61,31 +61,31 @@ final class ReleaseToolingTest extends TestCase
         mkdir($directory);
         file_put_contents($directory . '/keys.txt', 'AKIA' . "IOSFODNN7EXAMPLE\n");
 
-        $findings = (new ScanCommittedSecrets())->execute($directory, []);
+        $findings = (new ScanCommittedSecrets())->execute(rootPath: $directory, ignoredDirectories: []);
 
-        $this->assertCount(1, $findings);
-        $this->assertSame('aws_access_key_id', $findings[0]['pattern']);
+        $this->assertCount(expectedCount: 1, haystack: $findings);
+        $this->assertSame(expected: 'aws_access_key_id', actual: $findings[0]['pattern']);
     }
 
     public function testDependencyReviewApprovesCurrentLockPolicy() : void
     {
         $root = dirname(__DIR__, 3);
         $review = (new ReviewComposerDependencies())->execute(
-            $root . '/composer.lock',
-            $root . '/tooling/dependency-review-policy.json'
+            composerLockPath: $root . '/composer.lock',
+            policyPath      : $root . '/tooling/dependency-review-policy.json'
         );
 
-        $this->assertTrue($review['approved']);
-        $this->assertSame([], $review['unreviewed_packages']);
-        $this->assertSame([], $review['unstable_packages']);
+        $this->assertTrue(condition: $review['approved']);
+        $this->assertSame(expected: [], actual: $review['unreviewed_packages']);
+        $this->assertSame(expected: [], actual: $review['unstable_packages']);
     }
 
     public function testDependencyReviewRejectsUnreviewedOrUnapprovedPackages() : void
     {
         $lockPath = tempnam(sys_get_temp_dir(), 'auth-lock-');
         $policyPath = tempnam(sys_get_temp_dir(), 'auth-policy-');
-        self::assertIsString($lockPath);
-        self::assertIsString($policyPath);
+        self::assertIsString(actual: $lockPath);
+        self::assertIsString(actual: $policyPath);
 
         file_put_contents($lockPath, json_encode([
             'packages' => [[
@@ -106,32 +106,32 @@ final class ReleaseToolingTest extends TestCase
             'allowed_source_hosts' => ['github.com'],
         ], JSON_THROW_ON_ERROR));
 
-        $review = (new ReviewComposerDependencies())->execute($lockPath, $policyPath);
+        $review = (new ReviewComposerDependencies())->execute(composerLockPath: $lockPath, policyPath: $policyPath);
 
-        $this->assertFalse($review['approved']);
-        $this->assertSame(['new/plugin-package'], $review['unreviewed_packages']);
-        $this->assertSame(['new/plugin-package@dev-main'], $review['unstable_packages']);
-        $this->assertSame(['new/plugin-package'], $review['unapproved_plugin_packages']);
-        $this->assertSame(['new/plugin-package@git.example.test'], $review['packages_from_unapproved_hosts']);
+        $this->assertFalse(condition: $review['approved']);
+        $this->assertSame(expected: ['new/plugin-package'], actual: $review['unreviewed_packages']);
+        $this->assertSame(expected: ['new/plugin-package@dev-main'], actual: $review['unstable_packages']);
+        $this->assertSame(expected: ['new/plugin-package'], actual: $review['unapproved_plugin_packages']);
+        $this->assertSame(expected: ['new/plugin-package@git.example.test'], actual: $review['packages_from_unapproved_hosts']);
     }
 
     public function testArtifactSignerProducesVerifiableSignature() : void
     {
         $artifact = tempnam(sys_get_temp_dir(), 'auth-artifact-');
-        self::assertIsString($artifact);
+        self::assertIsString(actual: $artifact);
         file_put_contents($artifact, 'release-artifact');
 
         $privateKey = openssl_pkey_new([
             'private_key_bits' => 2048,
             'private_key_type' => OPENSSL_KEYTYPE_RSA,
         ]);
-        self::assertNotFalse($privateKey);
+        self::assertNotFalse(condition: $privateKey);
         openssl_pkey_export($privateKey, $privateKeyPem);
         $details = openssl_pkey_get_details($privateKey);
-        self::assertIsArray($details);
+        self::assertIsArray(actual: $details);
         $publicKeyPem = $details['key'];
 
-        $signature = (new SignReleaseArtifact())->execute($artifact, $privateKeyPem);
+        $signature = (new SignReleaseArtifact())->execute(artifactPath: $artifact, privateKeyPem: $privateKeyPem);
 
         $verification = openssl_verify(
             'release-artifact',
@@ -140,12 +140,12 @@ final class ReleaseToolingTest extends TestCase
             OPENSSL_ALGO_SHA256
         );
 
-        $this->assertSame(1, $verification);
+        $this->assertSame(expected: 1, actual: $verification);
     }
 
     public function testKeyLifecycleDrillsRunAgainstKeyRingFiles() : void
     {
-        $before = $this->createKeyRingFile([
+        $before = $this->createKeyRingFile(configuration: [
             'primary' => [
                 'kid' => '2026-04',
                 'secret' => 'secret-a',
@@ -153,7 +153,7 @@ final class ReleaseToolingTest extends TestCase
             ],
             'verification' => [],
         ]);
-        $rollover = $this->createKeyRingFile([
+        $rollover = $this->createKeyRingFile(configuration: [
             'primary' => [
                 'kid' => '2026-05',
                 'secret' => 'secret-b',
@@ -167,7 +167,7 @@ final class ReleaseToolingTest extends TestCase
                 ],
             ],
         ]);
-        $postCompromise = $this->createKeyRingFile([
+        $postCompromise = $this->createKeyRingFile(configuration: [
             'primary' => [
                 'kid' => '2026-06',
                 'secret' => 'secret-c',
@@ -176,12 +176,12 @@ final class ReleaseToolingTest extends TestCase
             'verification' => [],
         ]);
 
-        $rolloverResult = (new RunKeyRolloverDrill())->execute($rollover);
-        $compromiseResult = (new RunKeyCompromiseDrill())->execute($before, $postCompromise);
+        $rolloverResult = (new RunKeyRolloverDrill())->execute(keyRingPath: $rollover);
+        $compromiseResult = (new RunKeyCompromiseDrill())->execute(preRotationKeyRingPath: $before, postCompromiseKeyRingPath: $postCompromise);
 
-        $this->assertSame('2026-05', $rolloverResult['issued_kid']);
-        $this->assertTrue($rolloverResult['rollover_verified']);
-        $this->assertTrue($compromiseResult['revoked_old_kid']);
+        $this->assertSame(expected: '2026-05', actual: $rolloverResult['issued_kid']);
+        $this->assertTrue(condition: $rolloverResult['rollover_verified']);
+        $this->assertTrue(condition: $compromiseResult['revoked_old_kid']);
     }
 
     /**
@@ -190,7 +190,7 @@ final class ReleaseToolingTest extends TestCase
     private function createKeyRingFile(array $configuration) : string
     {
         $path = tempnam(sys_get_temp_dir(), 'auth-release-');
-        self::assertIsString($path);
+        self::assertIsString(actual: $path);
         file_put_contents($path, json_encode($configuration, JSON_THROW_ON_ERROR));
 
         return $path;

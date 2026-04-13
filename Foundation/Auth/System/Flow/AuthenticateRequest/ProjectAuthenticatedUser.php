@@ -14,16 +14,16 @@ use Avax\Auth\System\Flow\Verify\EmailVerificationStateStoreInterface;
 final readonly class ProjectAuthenticatedUser
 {
     public function __construct(
-        private EmailVerificationStateStoreInterface $emailVerificationState,
-        private MfaStoreInterface                    $mfaStore
+        #[\SensitiveParameter] private EmailVerificationStateStoreInterface $emailVerificationState,
+        private MfaStoreInterface                                           $mfaStore
     ) {}
 
     public function fromUser(User $user) : AuthenticatedUser
     {
         return AuthenticatedUser::fromUser(
             user         : $user,
-            emailVerified: $this->emailVerificationState->isVerified($user->getId()),
-            mfaEnabled   : $this->mfaStore->isEnabled($user->getId())
+            emailVerified: $this->emailVerificationState->isVerified(userId: $user->getId()),
+            mfaEnabled   : $this->mfaStore->isEnabled(userId: $user->getId())
         );
     }
 }

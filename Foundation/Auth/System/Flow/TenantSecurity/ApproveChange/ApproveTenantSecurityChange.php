@@ -25,7 +25,7 @@ final readonly class ApproveTenantSecurityChange
      */
     public function execute(string $changeId, string $approvedBy) : TenantSecurityChangeRequest
     {
-        $changeRequest = $this->changeRequestStore->find($changeId);
+        $changeRequest = $this->changeRequestStore->find(changeId: $changeId);
 
         if ($changeRequest === null) {
             throw TenantSecurityFailed::unknownChangeRequest();
@@ -47,8 +47,8 @@ final readonly class ApproveTenantSecurityChange
             rolledBackAt : $changeRequest->rolledBackAt
         );
 
-        $this->changeRequestStore->save($approved);
-        $this->auditLog->record(new AuditEvent(
+        $this->changeRequestStore->save(changeRequest: $approved);
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.tenant_security.change.approved',
             occurredAt: $this->clock->now(),
             context   : [

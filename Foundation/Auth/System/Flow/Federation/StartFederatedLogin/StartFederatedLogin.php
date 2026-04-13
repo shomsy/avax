@@ -26,7 +26,7 @@ final readonly class StartFederatedLogin
      */
     public function execute(StartFederatedLoginData $data) : StartedFederatedLogin
     {
-        $connection = $this->connectionStore->find($data->connectionId);
+        $connection = $this->connectionStore->find(connectionId: $data->connectionId);
 
         if ($connection === null) {
             throw FederationFailed::notFound();
@@ -40,8 +40,8 @@ final readonly class StartFederatedLogin
             throw FederationFailed::connectionUnavailable();
         }
 
-        $started = $this->runtime->startLogin($connection, $data->redirectUri, $data->state);
-        $this->auditLog->record(new AuditEvent(
+        $started = $this->runtime->startLogin(connection: $connection, redirectUri: $data->redirectUri, state: $data->state);
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.federation.login.started',
             occurredAt: $this->clock->now(),
             context   : [

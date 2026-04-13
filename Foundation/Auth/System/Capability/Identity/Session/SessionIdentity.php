@@ -21,16 +21,16 @@ use DateTimeImmutable;
 final class SessionIdentity implements SessionIdentityInterface
 {
     public function __construct(
-        private SessionStoreInterface         $store = new NativeSessionStore(),
-        private Clock                         $clock = new Clock(),
-        private AuditLogInterface             $auditLog = new NullAuditLog(),
-        private SessionLifetime               $lifetime = new SessionLifetime(),
-        private SessionRegistryInterface|null $sessionRegistry = null,
-        private string                        $sessionKey = 'auth_user_id',
-        private string                        $mfaVerifiedAtKey = 'auth_mfa_verified_at',
-        private string                        $phishingResistantKey = 'auth_phishing_resistant',
-        private string                        $issuedAtKey = 'auth_session_issued_at',
-        private string                        $lastSeenAtKey = 'auth_session_last_seen_at'
+        private SessionStoreInterface                                $store = new NativeSessionStore(),
+        private Clock                                                $clock = new Clock(),
+        private AuditLogInterface                                    $auditLog = new NullAuditLog(),
+        private SessionLifetime                                      $lifetime = new SessionLifetime(),
+        #[\SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null,
+        #[\SensitiveParameter] private string                        $sessionKey = 'auth_user_id',
+        private string                                               $mfaVerifiedAtKey = 'auth_mfa_verified_at',
+        private string                                               $phishingResistantKey = 'auth_phishing_resistant',
+        private string                                               $issuedAtKey = 'auth_session_issued_at',
+        private string                                               $lastSeenAtKey = 'auth_session_last_seen_at'
     ) {}
 
     public function issue(
@@ -42,20 +42,20 @@ final class SessionIdentity implements SessionIdentityInterface
         $sessionId = $this->store->regenerate();
         $now       = $this->clock->now();
 
-        $this->store->put($this->sessionKey, $userId);
-        $this->store->put($this->mfaVerifiedAtKey, $mfaVerifiedAt?->format(DATE_ATOM));
-        $this->store->put($this->phishingResistantKey, $phishingResistant ? '1' : '0');
-        $this->store->put($this->issuedAtKey, $now->format(DATE_ATOM));
-        $this->store->put($this->lastSeenAtKey, $now->format(DATE_ATOM));
+        $this->store->put(key: $this->sessionKey, value: $userId);
+        $this->store->put(key: $this->mfaVerifiedAtKey, value: $mfaVerifiedAt?->format(format: DATE_ATOM));
+        $this->store->put(key: $this->phishingResistantKey, value: $phishingResistant ? '1' : '0');
+        $this->store->put(key: $this->issuedAtKey, value: $now->format(format: DATE_ATOM));
+        $this->store->put(key: $this->lastSeenAtKey, value: $now->format(format: DATE_ATOM));
 
         if ($sessionId !== '') {
-            $this->sessionRegistry?->track(new SessionRecord(
+            $this->sessionRegistry?->track(record: new SessionRecord(
                 sessionId        : $sessionId,
-                userId           : new UserId($userId),
+                userId           : new UserId(value: $userId),
                 createdAt        : $now,
                 lastSeenAt       : $now,
-                idleExpiresAt    : $now->modify("+{$this->lifetime->idleTimeoutSeconds} seconds"),
-                absoluteExpiresAt: $now->modify("+{$this->lifetime->absoluteTimeoutSeconds} seconds")
+                idleExpiresAt    : $now->modify(modifier: "+{$this->lifetime->idleTimeoutSeconds} seconds"),
+                absoluteExpiresAt: $now->modify(modifier: "+{$this->lifetime->absoluteTimeoutSeconds} seconds")
             ));
         }
 
@@ -72,7 +72,7 @@ final class SessionIdentity implements SessionIdentityInterface
         return $this->store->id();
     }
 
-    public function captureCurrentSession(string|null $ipAddress = null, string|null $userAgent = null) : void
+    public function captureCurrentSession(#[\SensitiveParameter] string|null $ipAddress = null, string|null $userAgent = null) : void
     {
         $sessionId = $this->currentSessionId();
 
@@ -80,7 +80,7 @@ final class SessionIdentity implements SessionIdentityInterface
             return;
         }
 
-        $record = $this->sessionRegistry->find($sessionId);
+        $record = $this->sessionRegistry->find(sessionId: $sessionId);
 
         if ($record === null) {
             $userId = $this->resolveUserId();
@@ -90,13 +90,13 @@ final class SessionIdentity implements SessionIdentityInterface
             }
 
             $now = $this->clock->now();
-            $this->sessionRegistry->track(new SessionRecord(
+            $this->sessionRegistry->track(record: new SessionRecord(
                 sessionId        : $sessionId,
-                userId           : new UserId($userId),
+                userId           : new UserId(value: $userId),
                 createdAt        : $now,
                 lastSeenAt       : $now,
-                idleExpiresAt    : $now->modify("+{$this->lifetime->idleTimeoutSeconds} seconds"),
-                absoluteExpiresAt: $now->modify("+{$this->lifetime->absoluteTimeoutSeconds} seconds"),
+                idleExpiresAt    : $now->modify(modifier: "+{$this->lifetime->idleTimeoutSeconds} seconds"),
+                absoluteExpiresAt: $now->modify(modifier: "+{$this->lifetime->absoluteTimeoutSeconds} seconds"),
                 ipCreated        : $ipAddress,
                 userAgentCreated : $userAgent
             ));
@@ -104,7 +104,7 @@ final class SessionIdentity implements SessionIdentityInterface
             return;
         }
 
-        $this->sessionRegistry->save($record->withClientMetadata($ipAddress, $userAgent));
+        $this->sessionRegistry->save(record: $record->withClientMetadata(ipAddress: $ipAddress, userAgent: $userAgent));
     }
 
     public function resolveUserId() : int|null
@@ -113,7 +113,7 @@ final class SessionIdentity implements SessionIdentityInterface
             return null;
         }
 
-        $storedUserId = $this->store->get($this->sessionKey);
+        $storedUserId = $this->store->get(key: $this->sessionKey);
 
         if (is_int($storedUserId)) {
             $this->touch();
@@ -127,7 +127,7 @@ final class SessionIdentity implements SessionIdentityInterface
             return (int) $storedUserId;
         }
 
-        $this->expire('invalid_user');
+        $this->expire(reason: 'invalid_user');
 
         return null;
     }
@@ -138,14 +138,14 @@ final class SessionIdentity implements SessionIdentityInterface
             return null;
         }
 
-        $stored = $this->store->get($this->mfaVerifiedAtKey);
+        $stored = $this->store->get(key: $this->mfaVerifiedAtKey);
 
         if (! is_string($stored) || $stored === '') {
             return null;
         }
 
         try {
-            return new DateTimeImmutable($stored);
+            return new DateTimeImmutable(datetime: $stored);
         } catch (\Exception) {
             return null;
         }
@@ -157,7 +157,7 @@ final class SessionIdentity implements SessionIdentityInterface
             return false;
         }
 
-        return $this->store->get($this->phishingResistantKey) === '1';
+        return $this->store->get(key: $this->phishingResistantKey) === '1';
     }
 
     private function isSessionActive() : bool
@@ -165,7 +165,7 @@ final class SessionIdentity implements SessionIdentityInterface
         $sessionId = $this->currentSessionId();
 
         if ($sessionId !== null && $this->sessionRegistry !== null) {
-            $record = $this->sessionRegistry->find($sessionId);
+            $record = $this->sessionRegistry->find(sessionId: $sessionId);
 
             if ($record !== null) {
                 $now = $this->clock->now();
@@ -176,22 +176,22 @@ final class SessionIdentity implements SessionIdentityInterface
                     return false;
                 }
 
-                if (! $record->isActiveAt($now)) {
+                if (! $record->isActiveAt(moment: $now)) {
                     $reason = $record->revokeReason
                         ?? ($record->absoluteExpiresAt <= $now ? 'absolute_timeout' : 'idle_timeout');
-                    $this->expire($reason);
+                    $this->expire(reason: $reason);
 
                     return false;
                 }
             }
         }
 
-        $issuedAt = $this->readDate($this->issuedAtKey);
-        $lastSeenAt = $this->readDate($this->lastSeenAtKey);
+        $issuedAt = $this->readDate(key: $this->issuedAtKey);
+        $lastSeenAt = $this->readDate(key: $this->lastSeenAtKey);
 
         if ($issuedAt === null || $lastSeenAt === null) {
-            if ($this->store->get($this->sessionKey) !== null) {
-                $this->expire('missing_metadata');
+            if ($this->store->get(key: $this->sessionKey) !== null) {
+                $this->expire(reason: 'missing_metadata');
             }
 
             return false;
@@ -199,14 +199,14 @@ final class SessionIdentity implements SessionIdentityInterface
 
         $now = $this->clock->now();
 
-        if ($issuedAt->modify("+{$this->lifetime->absoluteTimeoutSeconds} seconds") <= $now) {
-            $this->expire('absolute_timeout');
+        if ($issuedAt->modify(modifier: "+{$this->lifetime->absoluteTimeoutSeconds} seconds") <= $now) {
+            $this->expire(reason: 'absolute_timeout');
 
             return false;
         }
 
-        if ($lastSeenAt->modify("+{$this->lifetime->idleTimeoutSeconds} seconds") <= $now) {
-            $this->expire('idle_timeout');
+        if ($lastSeenAt->modify(modifier: "+{$this->lifetime->idleTimeoutSeconds} seconds") <= $now) {
+            $this->expire(reason: 'idle_timeout');
 
             return false;
         }
@@ -217,7 +217,7 @@ final class SessionIdentity implements SessionIdentityInterface
     private function touch() : void
     {
         $now = $this->clock->now();
-        $this->store->put($this->lastSeenAtKey, $now->format(DATE_ATOM));
+        $this->store->put(key: $this->lastSeenAtKey, value: $now->format(format: DATE_ATOM));
 
         $sessionId = $this->currentSessionId();
 
@@ -225,25 +225,25 @@ final class SessionIdentity implements SessionIdentityInterface
             return;
         }
 
-        $record = $this->sessionRegistry->find($sessionId);
+        $record = $this->sessionRegistry->find(sessionId: $sessionId);
 
         if ($record === null || $record->isRevoked()) {
             return;
         }
 
-        $this->sessionRegistry->save($record->withTouch($now, $this->lifetime->idleTimeoutSeconds));
+        $this->sessionRegistry->save(record: $record->withTouch(lastSeenAt: $now, idleTimeoutSeconds: $this->lifetime->idleTimeoutSeconds));
     }
 
     private function readDate(string $key) : DateTimeImmutable|null
     {
-        $stored = $this->store->get($key);
+        $stored = $this->store->get(key: $key);
 
         if (! is_string($stored) || $stored === '') {
             return null;
         }
 
         try {
-            return new DateTimeImmutable($stored);
+            return new DateTimeImmutable(datetime: $stored);
         } catch (\Exception) {
             return null;
         }
@@ -251,17 +251,17 @@ final class SessionIdentity implements SessionIdentityInterface
 
     private function expire(string $reason) : void
     {
-        $storedUserId = $this->store->get($this->sessionKey);
+        $storedUserId = $this->store->get(key: $this->sessionKey);
         $sessionId    = $this->currentSessionId();
         $userId       = is_int($storedUserId)
             ? $storedUserId
             : (is_string($storedUserId) && ctype_digit($storedUserId) ? (int) $storedUserId : null);
 
         if ($sessionId !== null) {
-            $this->sessionRegistry?->revoke($sessionId, $this->clock->now(), $reason);
+            $this->sessionRegistry?->revoke(sessionId: $sessionId, revokedAt: $this->clock->now(), reason: $reason);
         }
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.session.expired',
             occurredAt: $this->clock->now(),
             context   : [

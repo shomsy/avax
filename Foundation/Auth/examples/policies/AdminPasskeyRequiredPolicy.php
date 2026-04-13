@@ -14,6 +14,6 @@ final readonly class AdminPasskeyRequiredPolicy
 {
     public function execute() : AccessPolicy
     {
-        return AccessPolicy::forIdentityPolicy(IdentityPolicyCatalog::admin());
+        return AccessPolicy::forIdentityPolicy(identityPolicy: IdentityPolicyCatalog::admin());
     }
 }

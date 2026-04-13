@@ -18,7 +18,7 @@ final class MfaChallengeFailed extends RuntimeException
         int                                  $code = 401
     )
     {
-        parent::__construct($message, $code);
+        parent::__construct(message: $message, code: $code);
     }
 
     public static function invalidCode() : self

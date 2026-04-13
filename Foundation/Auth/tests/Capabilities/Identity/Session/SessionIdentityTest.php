@@ -23,20 +23,20 @@ final class SessionIdentityTest extends TestCase
         $store    = new ArraySessionStore();
         $identity = new SessionIdentity(
             store   : $store,
-            clock   : new FrozenClock(new DateTimeImmutable('2026-04-12T10:00:00+00:00')),
+            clock   : new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T10:00:00+00:00')),
             lifetime: new SessionLifetime(idleTimeoutSeconds: 900, absoluteTimeoutSeconds: 43200)
         );
 
         $sessionId = $identity->issue(userId: 42);
 
-        $this->assertSame('session-1', $sessionId);
-        $this->assertSame(42, $identity->resolveUserId());
-        $this->assertSame('session-1', $identity->currentSessionId());
+        $this->assertSame(expected: 'session-1', actual: $sessionId);
+        $this->assertSame(expected: 42, actual: $identity->resolveUserId());
+        $this->assertSame(expected: 'session-1', actual: $identity->currentSessionId());
     }
 
     public function testResolveUserIdExpiresIdleSession() : void
     {
-        $clock    = new FrozenClock(new DateTimeImmutable('2026-04-12T10:00:00+00:00'));
+        $clock    = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T10:00:00+00:00'));
         $auditLog = new InMemoryAuditLog();
         $identity = new SessionIdentity(
             store   : new ArraySessionStore(),
@@ -46,17 +46,17 @@ final class SessionIdentityTest extends TestCase
         );
 
         $identity->issue(userId: 42);
-        $clock->advance(new DateInterval('PT6M'));
+        $clock->advance(interval: new DateInterval(duration: 'PT6M'));
 
-        $this->assertNull($identity->resolveUserId());
-        $this->assertNull($identity->currentSessionId());
-        $this->assertSame('auth.session.expired', $auditLog->events()[0]->name);
-        $this->assertSame('idle_timeout', $auditLog->events()[0]->context['reason']);
+        $this->assertNull(actual: $identity->resolveUserId());
+        $this->assertNull(actual: $identity->currentSessionId());
+        $this->assertSame(expected: 'auth.session.expired', actual: $auditLog->events()[0]->name);
+        $this->assertSame(expected: 'idle_timeout', actual: $auditLog->events()[0]->context['reason']);
     }
 
     public function testResolveUserIdExpiresAbsoluteSession() : void
     {
-        $clock    = new FrozenClock(new DateTimeImmutable('2026-04-12T10:00:00+00:00'));
+        $clock    = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T10:00:00+00:00'));
         $auditLog = new InMemoryAuditLog();
         $identity = new SessionIdentity(
             store   : new ArraySessionStore(),
@@ -66,10 +66,10 @@ final class SessionIdentityTest extends TestCase
         );
 
         $identity->issue(userId: 42);
-        $clock->advance(new DateInterval('PT31M'));
+        $clock->advance(interval: new DateInterval(duration: 'PT31M'));
 
-        $this->assertNull($identity->resolveUserId());
-        $this->assertSame('absolute_timeout', $auditLog->events()[0]->context['reason']);
+        $this->assertNull(actual: $identity->resolveUserId());
+        $this->assertSame(expected: 'absolute_timeout', actual: $auditLog->events()[0]->context['reason']);
     }
 
     public function testIssueRegeneratesExistingSessionIdToPreventFixation() : void
@@ -80,14 +80,14 @@ final class SessionIdentityTest extends TestCase
 
         $identity = new SessionIdentity(
             store   : $store,
-            clock   : new FrozenClock(new DateTimeImmutable('2026-04-12T10:00:00+00:00')),
+            clock   : new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T10:00:00+00:00')),
             lifetime: new SessionLifetime(idleTimeoutSeconds: 900, absoluteTimeoutSeconds: 43200)
         );
 
         $issuedSessionId = $identity->issue(userId: 42);
 
-        $this->assertNotSame($preLoginSessionId, $issuedSessionId);
-        $this->assertSame('session-2', $issuedSessionId);
-        $this->assertSame(42, $identity->resolveUserId());
+        $this->assertNotSame(expected: $preLoginSessionId, actual: $issuedSessionId);
+        $this->assertSame(expected: 'session-2', actual: $issuedSessionId);
+        $this->assertSame(expected: 42, actual: $identity->resolveUserId());
     }
 }

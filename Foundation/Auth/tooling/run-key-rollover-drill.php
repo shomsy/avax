@@ -16,6 +16,6 @@ if (! is_string($keyRingPath) || $keyRingPath === '') {
 $drill = new RunKeyRolloverDrill();
 
 echo json_encode(
-    $drill->execute($keyRingPath),
+    $drill->execute(keyRingPath: $keyRingPath),
     JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
 ) . PHP_EOL;

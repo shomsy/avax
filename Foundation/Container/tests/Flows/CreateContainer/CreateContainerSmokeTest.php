@@ -25,18 +25,18 @@ final class NeedsCreateGreeter
 }
 
 $container = makeTestContainer();
-$container->bind(CreateGreeterContract::class, CreateGreeter::class);
+$container->bind(abstract: CreateGreeterContract::class, concrete: CreateGreeter::class);
 
-$resolved = $container->get(NeedsCreateGreeter::class);
-assertInstanceOf(NeedsCreateGreeter::class, $resolved, 'CreateContainer should support autowiring.');
-assertSame('hi', $resolved->greeter->message(), 'Bound dependency should be injected.');
+$resolved = $container->get(id: NeedsCreateGreeter::class);
+assertInstanceOf(expectedClass: NeedsCreateGreeter::class, value: $resolved, message: 'CreateContainer should support autowiring.');
+assertSame(expected: 'hi', actual: $resolved->greeter->message(), message: 'Bound dependency should be injected.');
 assertThrows(
 /**
  * @throws \Psr\Container\ContainerExceptionInterface
  * @throws \Psr\Container\NotFoundExceptionInterface
- */ ServiceNotFoundException::class,
-    static fn () => $container->get('Missing\\Service'),
-    'Missing services must use the not-found contract.'
+ */ expectedClass: ServiceNotFoundException::class,
+    callback     : static fn () => $container->get(id: 'Missing\\Service'),
+    message      : 'Missing services must use the not-found contract.'
 );
 
 echo basename(__FILE__) . " ok\n";

@@ -48,7 +48,7 @@ final class MethodEmitter
     {
         $className                     = '\\' . ltrim($class, '\\');
         $arguments                     = $this->emitArguments(plan: $plan, serviceId: $serviceId);
-        $compiledRegistrationArguments = $this->export(base64_encode(serialize($registrationArguments)));
+        $compiledRegistrationArguments = $this->export(value: base64_encode(serialize($registrationArguments)));
 
         $body = <<<PHP
             public function {$methodName}(\\Avax\\Container\\Capabilities\\Resolution\\ServiceResolver \$resolver, \\Avax\\Container\\Capabilities\\Resolution\\ResolveRequest \$request, array \$overrides = []) : mixed
@@ -75,9 +75,9 @@ final class MethodEmitter
         if ($needsFinish) {
             $body .= <<<PHP
                     return \$resolver->finishCompiledService(
-                        {$this->export($serviceId)},
+                        {$this->export(value: $serviceId)},
                         \$instance,
-                        {$this->export($class)},
+                        {$this->export(value: $class)},
                         \$request,
                         \$overrides
                     );
@@ -107,12 +107,12 @@ final class MethodEmitter
         $arguments = [];
 
         foreach ($plan->parameters as $parameter) {
-            $expression = 'array_key_exists(' . $this->export($parameter['name']) . ', $arguments)'
-                . ' ? $arguments[' . $this->export($parameter['name']) . ']';
+            $expression = 'array_key_exists(' . $this->export(value: $parameter['name']) . ', $arguments)'
+                . ' ? $arguments[' . $this->export(value: $parameter['name']) . ']';
 
             if ($parameter['serviceId'] === null) {
-                $expression .= ' : (array_key_exists(' . $this->export($parameter['name']) . ', $request->context)'
-                    . ' ? $request->context[' . $this->export($parameter['name']) . ']'
+                $expression .= ' : (array_key_exists(' . $this->export(value: $parameter['name']) . ', $request->context)'
+                    . ' ? $request->context[' . $this->export(value: $parameter['name']) . ']'
                     . ' : ' . $this->fallbackExpression(parameter: $parameter, serviceId: $serviceId) . ')';
             } else {
                 $expression .= ' : ' . $this->fallbackExpression(parameter: $parameter, serviceId: $serviceId);
@@ -137,13 +137,13 @@ final class MethodEmitter
     {
         if ($parameter['serviceId'] !== null) {
             return '$resolver->resolveCompiledDependency('
-                . $this->export($parameter['serviceId'])
+                . $this->export(value: $parameter['serviceId'])
                 . ', $request)';
         }
 
         if ($parameter['hasDefault']) {
             return '\\unserialize(\\base64_decode('
-                . $this->export($parameter['default'])
+                . $this->export(value: $parameter['default'])
                 . '), [\'allowed_classes\' => false])';
         }
 
@@ -152,7 +152,7 @@ final class MethodEmitter
         }
 
         return 'throw new \\Avax\\Container\\Capabilities\\Diagnostics\\Errors\\ContainerException('
-            . $this->export("Cannot resolve parameter [\${$parameter['name']}] for service [{$serviceId}].")
+            . $this->export(value: "Cannot resolve parameter [\${$parameter['name']}] for service [{$serviceId}].")
             . ')';
     }
 }

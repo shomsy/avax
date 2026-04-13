@@ -13,11 +13,11 @@ final class MfaRecoveryFailed extends RuntimeException
 {
     public static function invalidToken() : self
     {
-        return new self('MFA recovery token is invalid.', 401);
+        return new self(message: 'MFA recovery token is invalid.', code: 401);
     }
 
     public static function expiredToken() : self
     {
-        return new self('MFA recovery token has expired.', 410);
+        return new self(message: 'MFA recovery token has expired.', code: 410);
     }
 }

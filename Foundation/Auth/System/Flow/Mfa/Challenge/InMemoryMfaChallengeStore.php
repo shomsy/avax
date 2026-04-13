@@ -37,7 +37,7 @@ final class InMemoryMfaChallengeStore implements MfaChallengeStoreInterface, Pru
     public function forgetForUser(UserId $userId) : void
     {
         foreach ($this->records as $challengeId => $record) {
-            if ($record->userId->equals($userId)) {
+            if ($record->userId->equals(other: $userId)) {
                 unset($this->records[$challengeId]);
             }
         }
@@ -48,7 +48,7 @@ final class InMemoryMfaChallengeStore implements MfaChallengeStoreInterface, Pru
         $removed = 0;
 
         foreach ($this->records as $challengeId => $record) {
-            if (! $record->isExpiredAt($now)) {
+            if (! $record->isExpiredAt(moment: $now)) {
                 continue;
             }
 

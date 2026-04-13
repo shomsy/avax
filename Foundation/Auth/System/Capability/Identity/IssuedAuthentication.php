@@ -15,11 +15,11 @@ use DateTimeImmutable;
 final readonly class IssuedAuthentication
 {
     public function __construct(
-        public AuthenticationMode      $mode,
-        public string|null             $sessionId = null,
-        public IssuedToken|null        $accessToken = null,
-        public IssuedRefreshToken|null $refreshToken = null,
-        public DateTimeImmutable|null  $mfaVerifiedAt = null,
-        public bool                    $phishingResistant = false
+        public AuthenticationMode                             $mode,
+        #[\SensitiveParameter] public string|null             $sessionId = null,
+        #[\SensitiveParameter] public IssuedToken|null        $accessToken = null,
+        #[\SensitiveParameter] public IssuedRefreshToken|null $refreshToken = null,
+        public DateTimeImmutable|null                         $mfaVerifiedAt = null,
+        public bool                                           $phishingResistant = false
     ) {}
 }

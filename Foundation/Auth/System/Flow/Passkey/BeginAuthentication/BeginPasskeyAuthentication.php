@@ -17,13 +17,13 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class BeginPasskeyAuthentication
 {
     public function __construct(
-        private UserSourceInterface $userSource,
-        private PasskeyRuntimeInterface $runtime,
-        private PasskeyCredentialStoreInterface $credentialStore,
-        private PasskeyChallengeStoreInterface $challengeStore,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        private string $rpId
+        private UserSourceInterface                                    $userSource,
+        private PasskeyRuntimeInterface                                $runtime,
+        #[\SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private PasskeyChallengeStoreInterface                         $challengeStore,
+        private AuditLogInterface                                      $auditLog,
+        private Clock                                                  $clock,
+        private string                                                 $rpId
     ) {}
 
     public function execute(BeginPasskeyAuthenticationData $data) : \Avax\Auth\System\Flow\Passkey\PasskeyAuthenticationChallenge
@@ -34,22 +34,22 @@ final readonly class BeginPasskeyAuthentication
         $allowIds    = [];
 
         if ($data->identifier !== null && $data->identifier !== '') {
-            $user = $this->userSource->findByEmail($data->identifier);
+            $user = $this->userSource->findByEmail(email: $data->identifier);
 
             if ($user !== null) {
                 $userId   = $user->getId()->value;
                 $allowIds = array_map(
-                    static fn ($credential) => $credential->credentialId,
-                    $this->credentialStore->forUser($userId)
+                    static fn (#[\SensitiveParameter] $credential) => $credential->credentialId,
+                    $this->credentialStore->forUser(userId: $userId)
                 );
             }
         }
 
-        $this->challengeStore->issue(new PasskeyChallengeRecord(
+        $this->challengeStore->issue(record: new PasskeyChallengeRecord(
             challengeId: $challengeId,
             challenge  : $challenge,
             purpose    : PasskeyChallengePurpose::AUTHENTICATION,
-            expiresAt  : $this->clock->now()->modify('+5 minutes'),
+            expiresAt  : $this->clock->now()->modify(modifier: '+5 minutes'),
             userId     : $userId
         ));
 
@@ -59,12 +59,12 @@ final readonly class BeginPasskeyAuthentication
             allowCredentialIds: $allowIds
         );
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.passkey.authentication.started',
             occurredAt: $this->clock->now(),
             context   : ['challenge_id' => $challengeId, 'user_id' => $userId]
         ));
 
-        return new \Avax\Auth\System\Flow\Passkey\PasskeyAuthenticationChallenge($challengeId, $options);
+        return new \Avax\Auth\System\Flow\Passkey\PasskeyAuthenticationChallenge(challengeId: $challengeId, options: $options);
     }
 }

@@ -13,11 +13,11 @@ final readonly class CreateReleaseProvenance
     public function execute(string $repositoryRoot, array $validationCommands = []) : array
     {
         return [
-            'package' => $this->detectPackageName($repositoryRoot),
+            'package' => $this->detectPackageName(repositoryRoot: $repositoryRoot),
             'repository_root' => realpath($repositoryRoot) !== false ? realpath($repositoryRoot) : $repositoryRoot,
-            'git_commit' => $this->runGit($repositoryRoot, 'rev-parse HEAD'),
-            'git_branch' => $this->runGit($repositoryRoot, 'rev-parse --abbrev-ref HEAD'),
-            'git_dirty' => $this->runGit($repositoryRoot, 'status --short') !== '',
+            'git_commit' => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse HEAD'),
+            'git_branch' => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse --abbrev-ref HEAD'),
+            'git_dirty' => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'status --short') !== '',
             'generated_at' => gmdate(DATE_ATOM),
             'php_version' => PHP_VERSION,
             'validation_commands' => array_values($validationCommands),

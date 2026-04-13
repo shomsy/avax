@@ -26,34 +26,34 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
         $auditLog = new InMemoryAuditLog();
         $verifier = new VerifyOAuthSenderConstraint(
             verifyDpopProof: new VerifyDpopProof(
-                codec      : new HmacTokenCodec('proof-secret'),
+                codec      : new HmacTokenCodec(secret: 'proof-secret'),
                 replayStore: new InMemoryDpopProofReplayStore(),
                 auditLog   : $auditLog
             ),
-            verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint($auditLog),
+            verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint(auditLog: $auditLog),
             auditLog                  : $auditLog
         );
 
-        $binding = $verifier->execute(new HttpOAuthProofInput(
+        $binding = $verifier->execute(input: new HttpOAuthProofInput(
             method: 'GET',
             uri   : 'https://api.example.test/me'
         ));
 
-        $this->assertNull($binding);
-        $this->assertSame([], $auditLog->events());
+        $this->assertNull(actual: $binding);
+        $this->assertSame(expected: [], actual: $auditLog->events());
     }
 
     public function testDpopReplayIsRejectedAndAudited() : void
     {
         $auditLog = new InMemoryAuditLog();
-        $codec = new HmacTokenCodec('proof-secret', keyId: 'dpop-2026-04');
-        $proof = $codec->encode([
-            'jti' => 'proof-1',
-            'iat' => time(),
-            'htu' => 'https://api.example.test/me',
-            'htm' => 'GET',
-            'jkt' => 'thumb-1',
-            'ath' => $this->hashAccessToken('access-token'),
+        $codec = new HmacTokenCodec(secret: 'proof-secret', keyId: 'dpop-2026-04');
+        $proof = $codec->encode(claims: [
+                                    'jti' => 'proof-1',
+                                    'iat' => time(),
+                                    'htu' => 'https://api.example.test/me',
+                                    'htm' => 'GET',
+                                    'jkt' => 'thumb-1',
+                                    'ath' => $this->hashAccessToken(token: 'access-token'),
         ]);
         $verifier = new VerifyOAuthSenderConstraint(
             verifyDpopProof: new VerifyDpopProof(
@@ -61,7 +61,7 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
                 replayStore: new InMemoryDpopProofReplayStore(),
                 auditLog   : $auditLog
             ),
-            verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint($auditLog),
+            verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint(auditLog: $auditLog),
             auditLog                  : $auditLog
         );
         $input = new HttpOAuthProofInput(
@@ -76,7 +76,7 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
             requiredSenderConstraint: OAuthSenderConstraintType::DPOP
         );
 
-        $this->assertSame('thumb-1', $binding?->thumbprint);
+        $this->assertSame(expected: 'thumb-1', actual: $binding?->thumbprint);
 
         $this->expectException(DpopProofFailed::class);
         $this->expectExceptionMessage('replay_detected');
@@ -90,31 +90,31 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
     public function testDpopProofMismatchAndKeyRotationAreRejected() : void
     {
         $auditLog = new InMemoryAuditLog();
-        $oldCodec = new HmacTokenCodec('proof-secret', keyId: 'dpop-2026-04');
-        $newCodec = new HmacTokenCodec('proof-secret', keyId: 'dpop-2026-05');
-        $wrongMethodProof = $oldCodec->encode([
-            'jti' => 'proof-2',
-            'iat' => time(),
-            'htu' => 'https://api.example.test/me',
-            'htm' => 'POST',
-            'jkt' => 'thumb-1',
-            'ath' => $this->hashAccessToken('access-token'),
+        $oldCodec = new HmacTokenCodec(secret: 'proof-secret', keyId: 'dpop-2026-04');
+        $newCodec = new HmacTokenCodec(secret: 'proof-secret', keyId: 'dpop-2026-05');
+        $wrongMethodProof = $oldCodec->encode(claims: [
+                                                  'jti' => 'proof-2',
+                                                  'iat' => time(),
+                                                  'htu' => 'https://api.example.test/me',
+                                                  'htm' => 'POST',
+                                                  'jkt' => 'thumb-1',
+                                                  'ath' => $this->hashAccessToken(token: 'access-token'),
         ]);
-        $wrongAthProof = $oldCodec->encode([
-            'jti' => 'proof-3',
-            'iat' => time(),
-            'htu' => 'https://api.example.test/me',
-            'htm' => 'GET',
-            'jkt' => 'thumb-1',
-            'ath' => $this->hashAccessToken('different-token'),
+        $wrongAthProof = $oldCodec->encode(claims: [
+                                               'jti' => 'proof-3',
+                                               'iat' => time(),
+                                               'htu' => 'https://api.example.test/me',
+                                               'htm' => 'GET',
+                                               'jkt' => 'thumb-1',
+                                               'ath' => $this->hashAccessToken(token: 'different-token'),
         ]);
-        $wrongUriProof = $oldCodec->encode([
-            'jti' => 'proof-3b',
-            'iat' => time(),
-            'htu' => 'https://api.example.test/admin',
-            'htm' => 'GET',
-            'jkt' => 'thumb-1',
-            'ath' => $this->hashAccessToken('access-token'),
+        $wrongUriProof = $oldCodec->encode(claims: [
+                                               'jti' => 'proof-3b',
+                                               'iat' => time(),
+                                               'htu' => 'https://api.example.test/admin',
+                                               'htm' => 'GET',
+                                               'jkt' => 'thumb-1',
+                                               'ath' => $this->hashAccessToken(token: 'access-token'),
         ]);
 
         $verifier = new VerifyDpopProof(
@@ -124,39 +124,39 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
         );
 
         try {
-            $verifier->execute(new HttpOAuthProofInput(
+            $verifier->execute(input: new HttpOAuthProofInput(
                 method     : 'GET',
                 uri        : 'https://api.example.test/me',
                 headers    : ['DPoP' => $wrongMethodProof],
                 accessToken: 'access-token'
             ));
-            $this->fail('Expected method mismatch.');
+            $this->fail(message: 'Expected method mismatch.');
         } catch (DpopProofFailed $exception) {
-            $this->assertStringContainsString('method_mismatch', $exception->getMessage());
+            $this->assertStringContainsString(needle: 'method_mismatch', haystack: $exception->getMessage());
         }
 
         try {
-            $verifier->execute(new HttpOAuthProofInput(
+            $verifier->execute(input: new HttpOAuthProofInput(
                 method     : 'GET',
                 uri        : 'https://api.example.test/me',
                 headers    : ['DPoP' => $wrongAthProof],
                 accessToken: 'access-token'
             ));
-            $this->fail('Expected access token mismatch.');
+            $this->fail(message: 'Expected access token mismatch.');
         } catch (DpopProofFailed $exception) {
-            $this->assertStringContainsString('access_token_mismatch', $exception->getMessage());
+            $this->assertStringContainsString(needle: 'access_token_mismatch', haystack: $exception->getMessage());
         }
 
         try {
-            $verifier->execute(new HttpOAuthProofInput(
+            $verifier->execute(input: new HttpOAuthProofInput(
                 method     : 'GET',
                 uri        : 'https://api.example.test/me',
                 headers    : ['DPoP' => $wrongUriProof],
                 accessToken: 'access-token'
             ));
-            $this->fail('Expected URI mismatch.');
+            $this->fail(message: 'Expected URI mismatch.');
         } catch (DpopProofFailed $exception) {
-            $this->assertStringContainsString('uri_mismatch', $exception->getMessage());
+            $this->assertStringContainsString(needle: 'uri_mismatch', haystack: $exception->getMessage());
         }
 
         $rotatedVerifier = new VerifyDpopProof(
@@ -164,19 +164,19 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
             replayStore: new InMemoryDpopProofReplayStore(),
             auditLog   : $auditLog
         );
-        $validOldProof = $oldCodec->encode([
-            'jti' => 'proof-4',
-            'iat' => time(),
-            'htu' => 'https://api.example.test/me',
-            'htm' => 'GET',
-            'jkt' => 'thumb-1',
-            'ath' => $this->hashAccessToken('access-token'),
+        $validOldProof = $oldCodec->encode(claims: [
+                                               'jti' => 'proof-4',
+                                               'iat' => time(),
+                                               'htu' => 'https://api.example.test/me',
+                                               'htm' => 'GET',
+                                               'jkt' => 'thumb-1',
+                                               'ath' => $this->hashAccessToken(token: 'access-token'),
         ]);
 
         $this->expectException(DpopProofFailed::class);
         $this->expectExceptionMessage('decode_failed');
 
-        $rotatedVerifier->execute(new HttpOAuthProofInput(
+        $rotatedVerifier->execute(input: new HttpOAuthProofInput(
             method     : 'GET',
             uri        : 'https://api.example.test/me',
             headers    : ['DPoP' => $validOldProof],
@@ -187,14 +187,14 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
     public function testSenderConstraintMismatchAndMtlsPolicyAreRejected() : void
     {
         $auditLog = new InMemoryAuditLog();
-        $codec = new HmacTokenCodec('proof-secret');
-        $proof = $codec->encode([
-            'jti' => 'proof-5',
-            'iat' => time(),
-            'htu' => 'https://api.example.test/me',
-            'htm' => 'GET',
-            'jkt' => 'thumb-actual',
-            'ath' => $this->hashAccessToken('access-token'),
+        $codec = new HmacTokenCodec(secret: 'proof-secret');
+        $proof = $codec->encode(claims: [
+                                    'jti' => 'proof-5',
+                                    'iat' => time(),
+                                    'htu' => 'https://api.example.test/me',
+                                    'htm' => 'GET',
+                                    'jkt' => 'thumb-actual',
+                                    'ath' => $this->hashAccessToken(token: 'access-token'),
         ]);
         $verifier = new VerifyOAuthSenderConstraint(
             verifyDpopProof: new VerifyDpopProof(
@@ -202,7 +202,7 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
                 replayStore: new InMemoryDpopProofReplayStore(),
                 auditLog   : $auditLog
             ),
-            verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint($auditLog),
+            verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint(auditLog: $auditLog),
             auditLog                  : $auditLog
         );
 
@@ -219,14 +219,14 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
                     thumbprint: 'thumb-expected'
                 )
             );
-            $this->fail('Expected sender-constraint mismatch.');
+            $this->fail(message: 'Expected sender-constraint mismatch.');
         } catch (SenderConstraintVerificationFailed $exception) {
-            $this->assertSame('OAuth sender constraint does not match the bound token.', $exception->getMessage());
+            $this->assertSame(expected: 'OAuth sender constraint does not match the bound token.', actual: $exception->getMessage());
         }
 
         $this->assertContains(
-            'auth.oauth.sender_constraint.mismatch',
-            array_map(static fn ($event) => $event->name, $auditLog->events())
+            needle  : 'auth.oauth.sender_constraint.mismatch',
+            haystack: array_map(static fn ($event) => $event->name, $auditLog->events())
         );
 
         $mtlsBinding = $verifier->execute(
@@ -241,7 +241,7 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
             )
         );
 
-        $this->assertSame(OAuthSenderConstraintType::MTLS, $mtlsBinding?->type);
+        $this->assertSame(expected: OAuthSenderConstraintType::MTLS, actual: $mtlsBinding?->type);
 
         $this->expectException(MtlsBindingFailed::class);
         $this->expectExceptionMessage('does not match');
@@ -259,7 +259,7 @@ final class VerifyOAuthSenderConstraintTest extends TestCase
         );
     }
 
-    private function hashAccessToken(string $token) : string
+    private function hashAccessToken(#[\SensitiveParameter] string $token) : string
     {
         return rtrim(strtr(base64_encode(hash('sha256', $token, true)), '+/', '-_'), '=');
     }

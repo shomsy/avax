@@ -12,6 +12,6 @@ final class PhishingResistantAuthenticationRequired extends RuntimeException
         string $message = 'Phishing-resistant authentication is required.'
     )
     {
-        parent::__construct($message, 403);
+        parent::__construct(message: $message, code: 403);
     }
 }

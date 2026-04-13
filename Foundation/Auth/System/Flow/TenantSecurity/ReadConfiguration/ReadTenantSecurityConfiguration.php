@@ -15,6 +15,6 @@ final readonly class ReadTenantSecurityConfiguration
 
     public function execute(string $tenantSlug) : TenantSecurityConfiguration|null
     {
-        return $this->configurationStore->find($tenantSlug);
+        return $this->configurationStore->find(tenantSlug: $tenantSlug);
     }
 }

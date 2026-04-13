@@ -8,24 +8,24 @@ use Avax\Container\DI\Capabilities\Declaration\Providers\DeferredProviderInterfa
 use Avax\Container\DI\Capabilities\Declaration\Providers\ServiceProviderInterface;
 use Avax\Container\DI\ContainerInterface;
 
-$reflection  = new ReflectionClass(ServiceProviderInterface::class);
-$constructor = $reflection->getMethod('__construct');
-$dependsOn   = $reflection->getMethod('dependsOn');
-$register    = $reflection->getMethod('register');
-$boot        = $reflection->getMethod('boot');
+$reflection  = new ReflectionClass(objectOrClass: ServiceProviderInterface::class);
+$constructor = $reflection->getMethod(name: '__construct');
+$dependsOn   = $reflection->getMethod(name: 'dependsOn');
+$register    = $reflection->getMethod(name: 'register');
+$boot        = $reflection->getMethod(name: 'boot');
 
-assertSame(1, $constructor->getNumberOfParameters(), 'Provider contract should require the container boundary.');
-assertSame(ContainerInterface::class, $constructor->getParameters()[0]->getType()?->getName(), 'Provider contract should depend on ContainerInterface.');
-assertSame('dependsOn', $dependsOn->getName(), 'Provider contract should expose dependsOn().');
-assertSame('array', $dependsOn->getReturnType()?->getName(), 'Provider dependencies should be returned as an array.');
-assertSame('register', $register->getName(), 'Provider contract should expose register().');
-assertSame('boot', $boot->getName(), 'Provider contract should expose boot().');
+assertSame(expected: 1, actual: $constructor->getNumberOfParameters(), message: 'Provider contract should require the container boundary.');
+assertSame(expected: ContainerInterface::class, actual: $constructor->getParameters()[0]->getType()?->getName(), message: 'Provider contract should depend on ContainerInterface.');
+assertSame(expected: 'dependsOn', actual: $dependsOn->getName(), message: 'Provider contract should expose dependsOn().');
+assertSame(expected: 'array', actual: $dependsOn->getReturnType()?->getName(), message: 'Provider dependencies should be returned as an array.');
+assertSame(expected: 'register', actual: $register->getName(), message: 'Provider contract should expose register().');
+assertSame(expected: 'boot', actual: $boot->getName(), message: 'Provider contract should expose boot().');
 
-$deferredReflection = new ReflectionClass(DeferredProviderInterface::class);
+$deferredReflection = new ReflectionClass(objectOrClass: DeferredProviderInterface::class);
 
-assertTrue($deferredReflection->implementsInterface(ServiceProviderInterface::class), 'Deferred provider contract should extend the base provider contract.');
-assertSame('deferred', $deferredReflection->getMethod('deferred')->getName(), 'Deferred provider contract should expose deferred().');
-assertSame('provides', $deferredReflection->getMethod('provides')->getName(), 'Deferred provider contract should expose provides().');
-assertSame('array', $deferredReflection->getMethod('provides')->getReturnType()?->getName(), 'Deferred provider ownership should be returned as an array.');
+assertTrue(condition: $deferredReflection->implementsInterface(interface: ServiceProviderInterface::class), message: 'Deferred provider contract should extend the base provider contract.');
+assertSame(expected: 'deferred', actual: $deferredReflection->getMethod(name: 'deferred')->getName(), message: 'Deferred provider contract should expose deferred().');
+assertSame(expected: 'provides', actual: $deferredReflection->getMethod(name: 'provides')->getName(), message: 'Deferred provider contract should expose provides().');
+assertSame(expected: 'array', actual: $deferredReflection->getMethod(name: 'provides')->getReturnType()?->getName(), message: 'Deferred provider ownership should be returned as an array.');
 
 echo basename(__FILE__) . " ok\n";

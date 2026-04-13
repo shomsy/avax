@@ -110,7 +110,7 @@ final class CompiledRuntime
             serviceIds: $serviceId !== null ? [$serviceId] : []
         );
         if ($compiled !== null) {
-            $this->inliner->attach($compiled);
+            $this->inliner->attach(compiled: $compiled);
         } else {
             $artifactAvailable   = $this->compiler->report()->available;
             $requestedIsCompiled = $serviceId !== null && $this->compiler->contains(serviceId: $serviceId);
@@ -129,7 +129,7 @@ final class CompiledRuntime
 
     public function attach(CompiledContainer $compiled, int $revision) : void
     {
-        $this->inliner->attach($compiled);
+        $this->inliner->attach(compiled: $compiled);
         $this->compiledRevision = $revision;
     }
 

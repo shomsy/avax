@@ -10,11 +10,11 @@ final class DpopProofFailed extends RuntimeException
 {
     public static function missing() : self
     {
-        return new self('DPoP proof is required.');
+        return new self(message: 'DPoP proof is required.');
     }
 
     public static function invalid(string $reason = 'invalid_proof') : self
     {
-        return new self("DPoP proof is invalid: {$reason}.");
+        return new self(message: "DPoP proof is invalid: {$reason}.");
     }
 }

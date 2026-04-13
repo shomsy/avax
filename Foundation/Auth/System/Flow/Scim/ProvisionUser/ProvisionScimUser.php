@@ -40,10 +40,10 @@ final readonly class ProvisionScimUser
      */
     public function execute(ProvisionScimUserData $data) : ScimProvisioningResult
     {
-        $directory = $this->authenticateDirectory($data->directoryId, $data->directoryToken);
-        $roles = $this->resolveRoles($directory, $data->groups);
-        $fingerprint = $this->fingerprint($data, $roles);
-        $existingIdentity = $this->identityStore->find($directory->directoryId, $data->externalId);
+        $directory = $this->authenticateDirectory(directoryId: $data->directoryId, directoryToken: $data->directoryToken);
+        $roles = $this->resolveRoles(directory: $directory, groups: $data->groups);
+        $fingerprint = $this->fingerprint(data: $data, roles: $roles);
+        $existingIdentity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);
 
         if ($existingIdentity !== null && $existingIdentity->fingerprint === $fingerprint) {
             return new ScimProvisioningResult(
@@ -59,37 +59,37 @@ final readonly class ProvisionScimUser
         }
 
         $user = $existingIdentity !== null
-            ? $this->userSource->findById($existingIdentity->userId)
-            : $this->userSource->findByEmail($data->email);
+            ? $this->userSource->findById(id: $existingIdentity->userId)
+            : $this->userSource->findByEmail(email: $data->email);
 
         $created = false;
         $driftDetected = $existingIdentity !== null;
 
         if ($user === null) {
             $created = true;
-            $user = $this->userSource->create(User::create(
-                id          : new UserId($this->idGenerator->generate()),
-                email       : new UserEmail($data->email),
+            $user = $this->userSource->create(user: User::create(
+                id          : new UserId(value: $this->idGenerator->generate()),
+                email       : new UserEmail(value: $data->email),
                 username    : $data->username,
-                passwordHash: $this->passwordHasher->hash(bin2hex(random_bytes(16))),
+                passwordHash: $this->passwordHasher->hash(password: bin2hex(random_bytes(16))),
                 roles       : $data->state === ScimAccountState::DISABLED ? [] : $roles,
                 permissions : []
             ));
         }
 
-        $this->userSource->updateEmail($user->getId(), $data->email);
+        $this->userSource->updateEmail(id: $user->getId(), email: $data->email);
         $this->userSource->replaceRoles(
-            $user->getId(),
-            $data->state === ScimAccountState::DISABLED ? [] : $roles
+            id   : $user->getId(),
+            roles: $data->state === ScimAccountState::DISABLED ? [] : $roles
         );
-        $this->userSource->replacePermissions($user->getId(), []);
+        $this->userSource->replacePermissions(id: $user->getId(), permissions: []);
 
         match ($data->state) {
-            ScimAccountState::ACTIVE => $this->userSource->activate($user->getId()),
-            ScimAccountState::SUSPENDED, ScimAccountState::DISABLED => $this->userSource->deactivate($user->getId()),
+            ScimAccountState::ACTIVE => $this->userSource->activate(id: $user->getId()),
+            ScimAccountState::SUSPENDED, ScimAccountState::DISABLED => $this->userSource->deactivate(id: $user->getId()),
         };
 
-        $this->identityStore->save(new ScimProvisionedIdentity(
+        $this->identityStore->save(identity: new ScimProvisionedIdentity(
             directoryId     : $directory->directoryId,
             externalId      : $data->externalId,
             userId          : $user->getId(),
@@ -98,7 +98,7 @@ final readonly class ProvisionScimUser
             state           : $data->state,
             synchronizedAt  : $this->clock->now()
         ));
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.scim.user.provisioned',
             occurredAt: $this->clock->now(),
             context   : [
@@ -152,7 +152,7 @@ final readonly class ProvisionScimUser
 
         foreach ($groups as $group) {
             foreach ($directory->groupRoleMap[$group] ?? [] as $roleValue) {
-                $role = UserRole::tryFrom($roleValue);
+                $role = UserRole::tryFrom(value: $roleValue);
 
                 if ($role === null || in_array($role, $roles, true)) {
                     continue;
@@ -173,13 +173,13 @@ final readonly class ProvisionScimUser
         #[SensitiveParameter] string $directoryToken
     ) : ScimDirectory
     {
-        $directory = $this->directoryStore->find($directoryId);
+        $directory = $this->directoryStore->find(directoryId: $directoryId);
 
         if ($directory === null) {
             throw ScimFailed::unknownDirectory();
         }
 
-        if (! $this->directoryStore->verifyToken($directoryId, $directoryToken)) {
+        if (! $this->directoryStore->verifyToken(directoryId: $directoryId, plainTextToken: $directoryToken)) {
             throw ScimFailed::invalidDirectoryToken();
         }
 

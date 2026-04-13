@@ -13,21 +13,21 @@ final class MfaEnrollmentFailed extends RuntimeException
 {
     public static function alreadyEnabled() : self
     {
-        return new self('MFA is already enabled.', 409);
+        return new self(message: 'MFA is already enabled.', code: 409);
     }
 
     public static function missingEnrollment() : self
     {
-        return new self('MFA enrollment is missing.', 404);
+        return new self(message: 'MFA enrollment is missing.', code: 404);
     }
 
     public static function expiredEnrollment() : self
     {
-        return new self('MFA enrollment has expired.', 410);
+        return new self(message: 'MFA enrollment has expired.', code: 410);
     }
 
     public static function invalidCode() : self
     {
-        return new self('MFA code is invalid.', 422);
+        return new self(message: 'MFA code is invalid.', code: 422);
     }
 }

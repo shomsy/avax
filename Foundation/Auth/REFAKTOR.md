@@ -248,7 +248,7 @@ To je trenutno najkraći put od “baš jak auth kernel” do “kompletna ident
 
 
 
-STANDARDI I KVALITET KOJI ZAHTEVAM:
+ENTERPRISE GRADE STANDARDS:
 
 
   ````md

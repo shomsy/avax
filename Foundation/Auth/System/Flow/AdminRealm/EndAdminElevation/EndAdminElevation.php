@@ -15,10 +15,10 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class EndAdminElevation
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private AdminElevationStoreInterface $elevationStore,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        private AdminElevationStoreInterface                 $elevationStore,
+        private AuditLogInterface                            $auditLog,
+        private Clock                                        $clock
     ) {}
 
     /**
@@ -28,14 +28,14 @@ final readonly class EndAdminElevation
     {
         $context = $this->currentAuthentication->read();
         $user    = $context->user();
-        $bindingId = $this->bindingId($context);
+        $bindingId = $this->bindingId(context: $context);
 
         if ($user === null || $bindingId === null) {
             throw AdminElevationFailed::notElevated();
         }
 
-        $this->elevationStore->revoke($bindingId);
-        $this->auditLog->record(new AuditEvent(
+        $this->elevationStore->revoke(bindingId: $bindingId);
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.admin.elevation.ended',
             occurredAt: $this->clock->now(),
             context   : [

@@ -9,10 +9,10 @@ use Avax\Container\DI\Capabilities\Diagnostics\Errors\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-$containerException = new ContainerException('boom');
-$notFoundException  = new ServiceNotFoundException('missing');
+$containerException = new ContainerException(message: 'boom');
+$notFoundException  = new ServiceNotFoundException(message: 'missing');
 
-assertInstanceOf(ContainerExceptionInterface::class, $containerException, 'ContainerException should satisfy PSR.');
-assertInstanceOf(NotFoundExceptionInterface::class, $notFoundException, 'ServiceNotFoundException should satisfy PSR.');
+assertInstanceOf(expectedClass: ContainerExceptionInterface::class, value: $containerException, message: 'ContainerException should satisfy PSR.');
+assertInstanceOf(expectedClass: NotFoundExceptionInterface::class, value: $notFoundException, message: 'ServiceNotFoundException should satisfy PSR.');
 
 echo basename(__FILE__) . " ok\n";

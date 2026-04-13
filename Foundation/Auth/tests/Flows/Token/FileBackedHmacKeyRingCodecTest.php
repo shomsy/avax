@@ -11,7 +11,7 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
 {
     public function testCodecSupportsRolloverWithoutRedeploy() : void
     {
-        $path = $this->createKeyRingFile([
+        $path = $this->createKeyRingFile(configuration: [
             'primary' => [
                 'kid' => '2026-04',
                 'secret' => 'secret-a',
@@ -20,8 +20,8 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
             'verification' => [],
         ]);
 
-        $codec = new FileBackedHmacKeyRingCodec($path);
-        $oldToken = $codec->encode(['sub' => 1, 'iat' => 1, 'nbf' => 1, 'exp' => 2, 'jti' => 'old-token']);
+        $codec = new FileBackedHmacKeyRingCodec(keyRingPath: $path);
+        $oldToken = $codec->encode(claims: ['sub' => 1, 'iat' => 1, 'nbf' => 1, 'exp' => 2, 'jti' => 'old-token']);
 
         file_put_contents(
             $path,
@@ -41,15 +41,15 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
             ], JSON_THROW_ON_ERROR)
         );
 
-        $newToken = $codec->encode(['sub' => 1, 'iat' => 2, 'nbf' => 2, 'exp' => 3, 'jti' => 'new-token']);
+        $newToken = $codec->encode(claims: ['sub' => 1, 'iat' => 2, 'nbf' => 2, 'exp' => 3, 'jti' => 'new-token']);
 
-        $this->assertNotNull($codec->decode($oldToken));
-        $this->assertNotNull($codec->decode($newToken));
+        $this->assertNotNull(actual: $codec->decode(token: $oldToken));
+        $this->assertNotNull(actual: $codec->decode(token: $newToken));
     }
 
     public function testCodecSupportsCryptoAgilityAcrossAlgorithms() : void
     {
-        $path = $this->createKeyRingFile([
+        $path = $this->createKeyRingFile(configuration: [
             'primary' => [
                 'kid' => '2026-04',
                 'secret' => 'secret-a',
@@ -58,8 +58,8 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
             'verification' => [],
         ]);
 
-        $codec = new FileBackedHmacKeyRingCodec($path);
-        $oldToken = $codec->encode(['sub' => 7, 'iat' => 1, 'nbf' => 1, 'exp' => 2, 'jti' => 'agility-old']);
+        $codec = new FileBackedHmacKeyRingCodec(keyRingPath: $path);
+        $oldToken = $codec->encode(claims: ['sub' => 7, 'iat' => 1, 'nbf' => 1, 'exp' => 2, 'jti' => 'agility-old']);
 
         file_put_contents(
             $path,
@@ -79,10 +79,10 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
             ], JSON_THROW_ON_ERROR)
         );
 
-        $newToken = $codec->encode(['sub' => 7, 'iat' => 2, 'nbf' => 2, 'exp' => 3, 'jti' => 'agility-new']);
+        $newToken = $codec->encode(claims: ['sub' => 7, 'iat' => 2, 'nbf' => 2, 'exp' => 3, 'jti' => 'agility-new']);
 
-        $this->assertNotNull($codec->decode($oldToken));
-        $this->assertNotNull($codec->decode($newToken));
+        $this->assertNotNull(actual: $codec->decode(token: $oldToken));
+        $this->assertNotNull(actual: $codec->decode(token: $newToken));
     }
 
     /**
@@ -91,7 +91,7 @@ final class FileBackedHmacKeyRingCodecTest extends TestCase
     private function createKeyRingFile(array $configuration) : string
     {
         $path = tempnam(sys_get_temp_dir(), 'auth-keyring-');
-        self::assertIsString($path);
+        self::assertIsString(actual: $path);
         file_put_contents($path, json_encode($configuration, JSON_THROW_ON_ERROR));
 
         return $path;

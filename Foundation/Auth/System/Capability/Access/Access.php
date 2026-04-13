@@ -23,10 +23,10 @@ use Avax\Auth\System\Flow\Mfa\FreshMfaRequired;
 final readonly class Access implements AccessInterface
 {
     public function __construct(
-        private RequireAuthenticationBoundary $requireAuthentication,
-        private RequireRoleBoundary           $requireRole,
-        private RequirePermissionBoundary     $requirePermission,
-        private RequireAccessPolicyBoundary   $requireAccessPolicy
+        #[\SensitiveParameter] private RequireAuthenticationBoundary $requireAuthentication,
+        private RequireRoleBoundary                                  $requireRole,
+        private RequirePermissionBoundary                            $requirePermission,
+        #[\SensitiveParameter] private RequireAccessPolicyBoundary   $requireAccessPolicy
     ) {}
 
     /**
@@ -64,6 +64,6 @@ final readonly class Access implements AccessInterface
      */
     public function requirePolicy(AccessPolicy $policy) : void
     {
-        $this->requireAccessPolicy->execute($policy);
+        $this->requireAccessPolicy->execute(policy: $policy);
     }
 }

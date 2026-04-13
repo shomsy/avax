@@ -27,14 +27,14 @@ final readonly class ServeScimHttpSurface
     private const USER_EXTENSION_SCHEMA = 'urn:avax:params:scim:schemas:auth:1.0:User';
 
     public function __construct(
-        private AuthInterface $auth,
-        private ReadBearerToken $readBearerToken = new ReadBearerToken()
+        #[\SensitiveParameter] private AuthInterface   $auth,
+        #[\SensitiveParameter] private ReadBearerToken $readBearerToken = new ReadBearerToken()
     ) {}
 
     public function execute(HttpEndpointInput $input) : JsonHttpResponse
     {
         $method = strtoupper(trim($input->method));
-        $path = $this->normalizePath($input->path);
+        $path = $this->normalizePath(path: $input->path);
 
         try {
             if ($method === 'GET' && $path === '/ServiceProviderConfig') {
@@ -50,36 +50,36 @@ final readonly class ServeScimHttpSurface
             }
 
             if ($path === '/Users' && $method === 'GET') {
-                return $this->listUsers($input);
+                return $this->listUsers(input: $input);
             }
 
             if ($path === '/Users' && $method === 'POST') {
-                return $this->createUser($input);
+                return $this->createUser(input: $input);
             }
 
             if (preg_match('~^/Users/([^/]+)$~', $path, $matches) === 1) {
                 $externalId = urldecode($matches[1]);
 
                 return match ($method) {
-                    'GET' => $this->readUser($input, $externalId),
-                    'PUT' => $this->replaceUser($input, $externalId),
-                    'PATCH' => $this->patchUser($input, $externalId),
-                    'DELETE' => $this->deleteUser($input, $externalId),
-                    default => $this->error(405, 'invalidMethod', 'SCIM method is not supported for this route.'),
+                    'GET' => $this->readUser(input: $input, externalId: $externalId),
+                    'PUT' => $this->replaceUser(input: $input, externalId: $externalId),
+                    'PATCH' => $this->patchUser(input: $input, externalId: $externalId),
+                    'DELETE' => $this->deleteUser(input: $input, externalId: $externalId),
+                    default => $this->error(statusCode: 405, scimType: 'invalidMethod', detail: 'SCIM method is not supported for this route.'),
                 };
             }
         } catch (ScimFailed $exception) {
-            return $this->mapScimFailure($exception);
+            return $this->mapScimFailure(failure: $exception);
         } catch (InvalidArgumentException $exception) {
-            return $this->error(400, 'invalidValue', $exception->getMessage());
+            return $this->error(statusCode: 400, scimType: 'invalidValue', detail: $exception->getMessage());
         }
 
-        return $this->error(404, 'notFound', 'SCIM route was not found.');
+        return $this->error(statusCode: 404, scimType: 'notFound', detail: 'SCIM route was not found.');
     }
 
     private function serviceProviderConfig() : JsonHttpResponse
     {
-        return $this->response(200, [
+        return $this->response(statusCode: 200, body: [
             'schemas' => ['urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig'],
             'patch' => ['supported' => true],
             'bulk' => ['supported' => false, 'maxOperations' => 0, 'maxPayloadSize' => 0],
@@ -99,7 +99,7 @@ final readonly class ServeScimHttpSurface
 
     private function resourceTypes() : JsonHttpResponse
     {
-        return $this->listResponse([[
+        return $this->listResponse(resources: [[
             'schemas' => ['urn:ietf:params:scim:schemas:core:2.0:ResourceType'],
             'id' => 'User',
             'name' => 'User',
@@ -114,7 +114,7 @@ final readonly class ServeScimHttpSurface
 
     private function schemas() : JsonHttpResponse
     {
-        return $this->listResponse([
+        return $this->listResponse(resources: [
             [
                 'schemas' => ['urn:ietf:params:scim:schemas:core:2.0:Schema'],
                 'id' => self::USER_SCHEMA,
@@ -143,43 +143,43 @@ final readonly class ServeScimHttpSurface
 
     private function listUsers(HttpEndpointInput $input) : JsonHttpResponse
     {
-        $directoryId = $this->directoryId($input);
-        $this->directoryToken($input);
-        $users = $this->auth->readScimUsers($directoryId);
-        $users = $this->applyFilter($users, $this->stringValue($input->query, 'filter'));
-        $startIndex = max(1, $this->intValue($input->query, 'startIndex') ?? 1);
-        $count = $this->intValue($input->query, 'count') ?? count($users);
+        $directoryId = $this->directoryId(input: $input);
+        $this->directoryToken(input: $input);
+        $users = $this->auth->readScimUsers(directoryId: $directoryId);
+        $users = $this->applyFilter(users: $users, filter: $this->stringValue(source: $input->query, field: 'filter'));
+        $startIndex = max(1, $this->intValue(source: $input->query, field: 'startIndex') ?? 1);
+        $count = $this->intValue(source: $input->query, field: 'count') ?? count($users);
         $slice = array_slice($users, $startIndex - 1, $count);
 
-        return $this->response(200, [
+        return $this->response(statusCode: 200, body: [
             'schemas' => [self::LIST_RESPONSE_SCHEMA],
             'totalResults' => count($users),
             'startIndex' => $startIndex,
             'itemsPerPage' => count($slice),
-            'Resources' => array_map(fn (ScimUserProjection $user) : array => $this->userResource($user), $slice),
+            'Resources' => array_map(fn (ScimUserProjection $user) : array => $this->userResource(user: $user), $slice),
         ]);
     }
 
     private function readUser(HttpEndpointInput $input, string $externalId) : JsonHttpResponse
     {
-        $this->directoryToken($input);
-        $user = $this->findUser($this->directoryId($input), $externalId);
+        $this->directoryToken(input: $input);
+        $user = $this->findUser(directoryId: $this->directoryId(input: $input), externalId: $externalId);
 
         if ($user === null) {
-            return $this->error(404, 'notFound', 'SCIM user was not found.');
+            return $this->error(statusCode: 404, scimType: 'notFound', detail: 'SCIM user was not found.');
         }
 
-        return $this->response(200, $this->userResource($user));
+        return $this->response(statusCode: 200, body: $this->userResource(user: $user));
     }
 
     private function createUser(HttpEndpointInput $input) : JsonHttpResponse
     {
-        $result = $this->auth->provisionScimUser($this->provisionData($input));
-        $user = $this->findUser($this->directoryId($input), $result->externalId);
+        $result = $this->auth->provisionScimUser(data: $this->provisionData(input: $input));
+        $user = $this->findUser(directoryId: $this->directoryId(input: $input), externalId: $result->externalId);
 
         return new JsonHttpResponse(
             statusCode: 201,
-            body      : $user !== null ? $this->userResource($user) : [
+            body      : $user !== null ? $this->userResource(user: $user) : [
                 'externalId' => $result->externalId,
                 self::USER_EXTENSION_SCHEMA => ['state' => $result->state->value, 'roles' => $result->roles],
             ],
@@ -192,21 +192,21 @@ final readonly class ServeScimHttpSurface
 
     private function replaceUser(HttpEndpointInput $input, string $externalId) : JsonHttpResponse
     {
-        $this->auth->provisionScimUser($this->provisionData($input, $externalId));
-        $user = $this->findUser($this->directoryId($input), $externalId);
+        $this->auth->provisionScimUser(data: $this->provisionData(input: $input, forcedExternalId: $externalId));
+        $user = $this->findUser(directoryId: $this->directoryId(input: $input), externalId: $externalId);
 
-        return $this->response(200, $user !== null ? $this->userResource($user) : []);
+        return $this->response(statusCode: 200, body: $user !== null ? $this->userResource(user: $user) : []);
     }
 
     private function patchUser(HttpEndpointInput $input, string $externalId) : JsonHttpResponse
     {
-        $current = $this->findUser($this->directoryId($input), $externalId);
+        $current = $this->findUser(directoryId: $this->directoryId(input: $input), externalId: $externalId);
 
         if ($current === null) {
-            return $this->error(404, 'notFound', 'SCIM user was not found.');
+            return $this->error(statusCode: 404, scimType: 'notFound', detail: 'SCIM user was not found.');
         }
 
-        $patchedBody = $this->applyPatch($input->body, $current);
+        $patchedBody = $this->applyPatch(body: $input->body, current: $current);
         $patchedInput = new HttpEndpointInput(
             method         : 'PUT',
             path           : $input->path,
@@ -217,14 +217,14 @@ final readonly class ServeScimHttpSurface
             server         : $input->server
         );
 
-        return $this->replaceUser($patchedInput, $externalId);
+        return $this->replaceUser(input: $patchedInput, externalId: $externalId);
     }
 
     private function deleteUser(HttpEndpointInput $input, string $externalId) : JsonHttpResponse
     {
-        $this->auth->deleteScimUser(new DeleteScimUserData(
-            directoryId    : $this->directoryId($input),
-            directoryToken : $this->directoryToken($input),
+        $this->auth->deleteScimUser(data: new DeleteScimUserData(
+            directoryId    : $this->directoryId(input: $input),
+            directoryToken : $this->directoryToken(input: $input),
             externalId     : $externalId
         ));
 
@@ -246,7 +246,7 @@ final readonly class ServeScimHttpSurface
         }
 
         if (preg_match('/^(externalId|userName) eq "([^"]+)"$/', trim($filter), $matches) !== 1) {
-            throw new InvalidArgumentException('Unsupported SCIM filter syntax.');
+            throw new InvalidArgumentException(message: 'Unsupported SCIM filter syntax.');
         }
 
         $field = $matches[1];
@@ -263,7 +263,7 @@ final readonly class ServeScimHttpSurface
 
     private function findUser(string $directoryId, string $externalId) : ScimUserProjection|null
     {
-        foreach ($this->auth->readScimUsers($directoryId) as $user) {
+        foreach ($this->auth->readScimUsers(directoryId: $directoryId) as $user) {
             if ($user->externalId === $externalId) {
                 return $user;
             }
@@ -275,18 +275,18 @@ final readonly class ServeScimHttpSurface
     private function provisionData(HttpEndpointInput $input, string|null $forcedExternalId = null) : ProvisionScimUserData
     {
         $body = $input->body;
-        $directoryId = $this->directoryId($input);
-        $existing = $forcedExternalId !== null ? $this->findUser($directoryId, $forcedExternalId) : null;
-        $externalId = $forcedExternalId ?? $this->requiredString($body, 'externalId');
+        $directoryId = $this->directoryId(input: $input);
+        $existing = $forcedExternalId !== null ? $this->findUser(directoryId: $directoryId, externalId: $forcedExternalId) : null;
+        $externalId = $forcedExternalId ?? $this->requiredString(source: $body, field: 'externalId');
 
         return new ProvisionScimUserData(
             directoryId    : $directoryId,
-            directoryToken : $this->directoryToken($input),
+            directoryToken : $this->directoryToken(input: $input),
             externalId     : $externalId,
-            email          : $this->email($body, $existing?->email),
-            username       : $this->username($body, $existing?->username),
-            groups         : $this->groups($body, $existing?->groups ?? []),
-            state          : $this->state($body, $existing?->state ?? ScimAccountState::ACTIVE)
+            email          : $this->email(body: $body, fallback: $existing?->email),
+            username       : $this->username(body: $body, fallback: $existing?->username),
+            groups         : $this->groups(body: $body, fallback: $existing?->groups ?? []),
+            state          : $this->state(body: $body, fallback: $existing?->state ?? ScimAccountState::ACTIVE)
         );
     }
 
@@ -335,7 +335,7 @@ final readonly class ServeScimHttpSurface
                 'userName' => $patched['userName'] = is_scalar($value) ? (string) $value : $patched['userName'],
                 'emails' => $patched['emails'] = is_array($value) ? $value : $patched['emails'],
                 'groups' => $patched['groups'] = is_array($value) ? $value : $patched['groups'],
-                'active' => $this->applyActiveStatePatch($patched, $value),
+                'active' => $this->applyActiveStatePatch(patched: $patched, value: $value),
                 'state', self::USER_EXTENSION_SCHEMA . ':state' => $patched['state'] = is_scalar($value) ? (string) $value : $patched['state'],
                 default => null,
             };
@@ -391,7 +391,7 @@ final readonly class ServeScimHttpSurface
      */
     private function listResponse(array $resources) : JsonHttpResponse
     {
-        return $this->response(200, [
+        return $this->response(statusCode: 200, body: [
             'schemas' => [self::LIST_RESPONSE_SCHEMA],
             'totalResults' => count($resources),
             'startIndex' => 1,
@@ -415,10 +415,10 @@ final readonly class ServeScimHttpSurface
     private function mapScimFailure(ScimFailed $failure) : JsonHttpResponse
     {
         return match ($failure->getMessage()) {
-            'Invalid SCIM directory token.' => $this->error(401, 'invalidToken', $failure->getMessage()),
-            'SCIM directory is not registered.', 'SCIM provisioned identity was not found.' => $this->error(404, 'notFound', $failure->getMessage()),
-            'SCIM group-to-role mapping is invalid.' => $this->error(422, 'invalidValue', $failure->getMessage()),
-            default => $this->error(400, 'invalidValue', $failure->getMessage()),
+            'Invalid SCIM directory token.' => $this->error(statusCode: 401, scimType: 'invalidToken', detail: $failure->getMessage()),
+            'SCIM directory is not registered.', 'SCIM provisioned identity was not found.' => $this->error(statusCode: 404, scimType: 'notFound', detail: $failure->getMessage()),
+            'SCIM group-to-role mapping is invalid.' => $this->error(statusCode: 422, scimType: 'invalidValue', detail: $failure->getMessage()),
+            default => $this->error(statusCode: 400, scimType: 'invalidValue', detail: $failure->getMessage()),
         };
     }
 
@@ -438,15 +438,15 @@ final readonly class ServeScimHttpSurface
 
     private function directoryId(HttpEndpointInput $input) : string
     {
-        return $this->requiredString($input->routeParameters + $input->query, 'directoryId');
+        return $this->requiredString(source: $input->routeParameters + $input->query, field: 'directoryId');
     }
 
     private function directoryToken(HttpEndpointInput $input) : string
     {
-        $token = $this->readBearerToken->execute($input->headers, $input->server);
+        $token = $this->readBearerToken->execute(headers: $input->headers, server: $input->server);
 
         if ($token === null) {
-            throw new InvalidArgumentException('SCIM directory bearer token is required.');
+            throw new InvalidArgumentException(message: 'SCIM directory bearer token is required.');
         }
 
         return $token;
@@ -475,7 +475,7 @@ final readonly class ServeScimHttpSurface
             return $fallback;
         }
 
-        throw new InvalidArgumentException('SCIM email is required.');
+        throw new InvalidArgumentException(message: 'SCIM email is required.');
     }
 
     /**
@@ -495,7 +495,7 @@ final readonly class ServeScimHttpSurface
             return $fallback;
         }
 
-        throw new InvalidArgumentException('SCIM userName is required.');
+        throw new InvalidArgumentException(message: 'SCIM userName is required.');
     }
 
     /**
@@ -512,7 +512,7 @@ final readonly class ServeScimHttpSurface
         $groups = $body['groups'];
 
         if (! is_array($groups)) {
-            throw new InvalidArgumentException('SCIM groups must be an array.');
+            throw new InvalidArgumentException(message: 'SCIM groups must be an array.');
         }
 
         $resolved = [];
@@ -537,7 +537,7 @@ final readonly class ServeScimHttpSurface
     private function state(array $body, ScimAccountState $fallback) : ScimAccountState
     {
         if (is_scalar($body['state'] ?? null)) {
-            $state = ScimAccountState::tryFrom(strtolower(trim((string) $body['state'])));
+            $state = ScimAccountState::tryFrom(value: strtolower(trim((string) $body['state'])));
 
             if ($state !== null) {
                 return $state;
@@ -556,10 +556,10 @@ final readonly class ServeScimHttpSurface
      */
     private function requiredString(array $source, string $field) : string
     {
-        $value = $this->stringValue($source, $field);
+        $value = $this->stringValue(source: $source, field: $field);
 
         if ($value === null || $value === '') {
-            throw new InvalidArgumentException("SCIM {$field} is required.");
+            throw new InvalidArgumentException(message: "SCIM {$field} is required.");
         }
 
         return $value;

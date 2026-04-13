@@ -45,61 +45,61 @@ final class UnsafePooledService
     }
 }
 
-$container = makeTestContainer(CreateContainerConfig::create(
+$container = makeTestContainer(config: CreateContainerConfig::create(
     diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_CI
 ));
 
-$container->bind(ReusablePooledService::class, ReusablePooledService::class)
+$container->bind(abstract: ReusablePooledService::class, concrete: ReusablePooledService::class)
     ->pooled(maxSize: 1)
     ->dispose();
 
-$container->bind(UnsafePooledService::class, UnsafePooledService::class)
+$container->bind(abstract: UnsafePooledService::class, concrete: UnsafePooledService::class)
     ->pooled(maxSize: 1);
 
-$issues    = $container->validate([ReusablePooledService::class, UnsafePooledService::class]);
+$issues    = $container->validate(serviceIds: [ReusablePooledService::class, UnsafePooledService::class]);
 $issueText = implode("\n", $issues);
 
 assertTrue(
-    str_contains($issueText, 'does not implement ResettableInterface'),
-    'Validation should flag unsafe pooled candidates that cannot reset before reuse.'
+    condition: str_contains($issueText, 'does not implement ResettableInterface'),
+    message  : 'Validation should flag unsafe pooled candidates that cannot reset before reuse.'
 );
 
 $container->openScope();
-$first     = $container->get(ReusablePooledService::class);
-$sameScope = $container->get(ReusablePooledService::class);
-assertSame($first, $sameScope, 'Pooled services should reuse the checked-out instance inside one scope.');
+$first     = $container->get(id: ReusablePooledService::class);
+$sameScope = $container->get(id: ReusablePooledService::class);
+assertSame(expected: $first, actual: $sameScope, message: 'Pooled services should reuse the checked-out instance inside one scope.');
 $container->closeScope();
 
 $container->openScope();
-$reused = $container->get(ReusablePooledService::class);
-assertSame($first, $reused, 'Pooled services should reuse the available pooled instance across scopes.');
+$reused = $container->get(id: ReusablePooledService::class);
+assertSame(expected: $first, actual: $reused, message: 'Pooled services should reuse the available pooled instance across scopes.');
 $container->closeScope();
 
 $container->openScope(scopeId: 'outer');
-$outer = $container->get(ReusablePooledService::class);
+$outer = $container->get(id: ReusablePooledService::class);
 $container->openScope(scopeId: 'inner');
-$inner = $container->get(ReusablePooledService::class);
-assertNotSame($outer, $inner, 'Nested pooled scopes should build a second instance when the first is still checked out.');
+$inner = $container->get(id: ReusablePooledService::class);
+assertNotSame(expected: $outer, actual: $inner, message: 'Nested pooled scopes should build a second instance when the first is still checked out.');
 $container->closeScope();
 $container->closeScope();
 
-assertSame(4, PooledLifetimeSequence::$reset, 'Pooled services should reset before every return attempt, including overflowed returns.');
-assertSame(1, $container->runtimeReport()->scopes['pooledStats']['overflows'] ?? 0, 'Pooled overflow should be tracked in runtime diagnostics.');
-assertSame(1, PooledLifetimeSequence::$disposed, 'Overflowed pooled instances should be disposed when they cannot re-enter the bucket.');
+assertSame(expected: 4, actual: PooledLifetimeSequence::$reset, message: 'Pooled services should reset before every return attempt, including overflowed returns.');
+assertSame(expected: 1, actual: $container->runtimeReport()->scopes['pooledStats']['overflows'] ?? 0, message: 'Pooled overflow should be tracked in runtime diagnostics.');
+assertSame(expected: 1, actual: PooledLifetimeSequence::$disposed, message: 'Overflowed pooled instances should be disposed when they cannot re-enter the bucket.');
 
 $container->openScope();
-$unsafeFirst = $container->get(UnsafePooledService::class);
+$unsafeFirst = $container->get(id: UnsafePooledService::class);
 $container->closeScope();
 $container->openScope();
-$unsafeSecond = $container->get(UnsafePooledService::class);
+$unsafeSecond = $container->get(id: UnsafePooledService::class);
 $container->closeScope();
 
-assertNotSame($unsafeFirst, $unsafeSecond, 'Unsafe pooled instances should be dropped instead of being reused.');
-assertSame(2, $container->runtimeReport()->scopes['pooledStats']['unsafe'] ?? 0, 'Unsafe pooled reuse attempts should be tracked in runtime diagnostics.');
+assertNotSame(expected: $unsafeFirst, actual: $unsafeSecond, message: 'Unsafe pooled instances should be dropped instead of being reused.');
+assertSame(expected: 2, actual: $container->runtimeReport()->scopes['pooledStats']['unsafe'] ?? 0, message: 'Unsafe pooled reuse attempts should be tracked in runtime diagnostics.');
 
-$debug = $container->describeService(ReusablePooledService::class);
-assertSame('pooled', $debug['lifetimePlan']['name'] ?? null, 'Service diagnostics should expose pooled lifetime plans.');
-assertSame(1, $debug['lifetimePlan']['poolSize'] ?? null, 'Pooled lifetime plans should expose pool size.');
-assertSame(true, $debug['lifetimePlan']['poolResetBeforeReuse'] ?? null, 'Pooled lifetime plans should expose reset-before-reuse posture.');
+$debug = $container->describeService(id: ReusablePooledService::class);
+assertSame(expected: 'pooled', actual: $debug['lifetimePlan']['name'] ?? null, message: 'Service diagnostics should expose pooled lifetime plans.');
+assertSame(expected: 1, actual: $debug['lifetimePlan']['poolSize'] ?? null, message: 'Pooled lifetime plans should expose pool size.');
+assertSame(expected: true, actual: $debug['lifetimePlan']['poolResetBeforeReuse'] ?? null, message: 'Pooled lifetime plans should expose reset-before-reuse posture.');
 
 echo basename(__FILE__) . " ok\n";

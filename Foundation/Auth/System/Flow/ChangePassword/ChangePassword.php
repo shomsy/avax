@@ -29,17 +29,17 @@ use SensitiveParameter;
 final readonly class ChangePassword
 {
     public function __construct(
-        private UserSourceInterface                     $userSource,
-        #[SensitiveParameter] private PasswordHasher    $passwordHasher,
-        #[SensitiveParameter] private IdentityInterface $identity,
-        private CurrentAuthentication                   $currentAuthentication,
-        private AuditLogInterface                       $auditLog,
-        private Clock                                   $clock,
-        private SessionRegistryInterface|null           $sessionRegistry = null,
-        private MfaChallengeStoreInterface|null         $mfaChallengeStore = null,
-        private RefreshTokenStoreInterface|null         $refreshTokenStore = null,
-        private LoginRateLimit|null                     $rateLimit = null,
-        private RequireFreshMfa|null                    $requireFreshMfa = null
+        private UserSourceInterface                                    $userSource,
+        #[SensitiveParameter] private PasswordHasher                   $passwordHasher,
+        #[SensitiveParameter] private IdentityInterface                $identity,
+        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private AuditLogInterface                                      $auditLog,
+        private Clock                                                  $clock,
+        #[\SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null                        $mfaChallengeStore = null,
+        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        private LoginRateLimit|null                                    $rateLimit = null,
+        private RequireFreshMfa|null                                   $requireFreshMfa = null
     ) {}
 
     /**
@@ -55,7 +55,7 @@ final readonly class ChangePassword
             throw new Unauthenticated();
         }
 
-        $user = $this->userSource->findById(new UserId($currentUser->id));
+        $user = $this->userSource->findById(id: new UserId(value: $currentUser->id));
 
         if ($user === null || ! $user->isActive()) {
             throw new Unauthenticated();
@@ -63,7 +63,7 @@ final readonly class ChangePassword
 
         if ($currentUser->mfaEnabled) {
             if ($this->requireFreshMfa === null) {
-                throw new FreshMfaRequired(300);
+                throw new FreshMfaRequired(maxAgeSeconds: 300);
             }
 
             $this->requireFreshMfa->execute();
@@ -80,14 +80,14 @@ final readonly class ChangePassword
         $newHash = $this->passwordHasher->hash(password: $data->newPassword);
 
         $this->userSource->updatePassword(id: $user->getId(), passwordHash: $newHash);
-        $this->sessionRegistry?->revokeForUser($user->getId(), $this->clock->now(), 'password_changed');
-        $this->mfaChallengeStore?->forgetForUser($user->getId());
-        $this->refreshTokenStore?->revokeUser($user->getId());
-        $this->identity->clear($context);
+        $this->sessionRegistry?->revokeForUser(userId: $user->getId(), revokedAt: $this->clock->now(), reason: 'password_changed');
+        $this->mfaChallengeStore?->forgetForUser(userId: $user->getId());
+        $this->refreshTokenStore?->revokeUser(userId: $user->getId());
+        $this->identity->clear(context: $context);
         $this->currentAuthentication->clear();
 
         $this->rateLimit?->reset(identifier: (string) $user->getId());
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.password.changed',
                                     occurredAt: $this->clock->now(),
                                     context   : [

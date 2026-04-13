@@ -12,8 +12,8 @@ use DateTimeImmutable;
 final readonly class IssuedToken
 {
     public function __construct(
-        public string            $token,
-        public string            $tokenId,
-        public DateTimeImmutable $expiresAt
+        #[\SensitiveParameter] public string $token,
+        #[\SensitiveParameter] public string $tokenId,
+        public DateTimeImmutable             $expiresAt
     ) {}
 }

@@ -33,31 +33,31 @@ final class LoginFlowEntry
 }
 
 $composition = TestComposition::create();
-$composition->singletonCapability('time', TestingClockContract::class, RealTestingClock::class, exported: true);
-$composition->bindFlow('login', LoginFlowEntry::class, LoginFlowEntry::class, entry: true, imports: ['time']);
+$composition->singletonCapability(slice: 'time', abstract: TestingClockContract::class, concrete: RealTestingClock::class, exported: true);
+$composition->bindFlow(slice: 'login', abstract: LoginFlowEntry::class, concrete: LoginFlowEntry::class, entry: true, imports: ['time']);
 
 $container     = $composition->container();
-$entry         = $container->make(LoginFlowEntry::class);
-$entrySnapshot = $composition->snapshot(LoginFlowEntry::class);
+$entry         = $container->make(abstract: LoginFlowEntry::class);
+$entrySnapshot = $composition->snapshot(serviceId: LoginFlowEntry::class);
 
-assertInstanceOf(RealTestingClock::class, $entry->clock, 'Flow-only test composition should resolve required imported capabilities.');
-assertSame('login', $entrySnapshot['owner']['ownerSlice'] ?? null, 'Snapshot diagnostics should expose the owning flow slice.');
-assertSame(['time'], $entrySnapshot['owner']['imports'] ?? [], 'Snapshot diagnostics should expose minimal required imports.');
+assertInstanceOf(expectedClass: RealTestingClock::class, value: $entry->clock, message: 'Flow-only test composition should resolve required imported capabilities.');
+assertSame(expected: 'login', actual: $entrySnapshot['owner']['ownerSlice'] ?? null, message: 'Snapshot diagnostics should expose the owning flow slice.');
+assertSame(expected: ['time'], actual: $entrySnapshot['owner']['imports'] ?? [], message: 'Snapshot diagnostics should expose minimal required imports.');
 
-$composition->override(TestingClockContract::class, FakeTestingClock::class, 'test-double');
+$composition->override(abstract: TestingClockContract::class, concrete: FakeTestingClock::class, source: 'test-double');
 
-$overridden       = $container->make(LoginFlowEntry::class);
-$overrideSnapshot = $composition->snapshot(TestingClockContract::class);
+$overridden       = $container->make(abstract: LoginFlowEntry::class);
+$overrideSnapshot = $composition->snapshot(serviceId: TestingClockContract::class);
 
-assertInstanceOf(FakeTestingClock::class, $overridden->clock, 'Test overrides should replace dependencies cleanly inside the isolated composition.');
-assertTrue($overrideSnapshot['overrides'] !== [], 'Test composition snapshots should expose override history.');
+assertInstanceOf(expectedClass: FakeTestingClock::class, value: $overridden->clock, message: 'Test overrides should replace dependencies cleanly inside the isolated composition.');
+assertTrue(condition: $overrideSnapshot['overrides'] !== [], message: 'Test composition snapshots should expose override history.');
 
 $isolated = TestComposition::create();
-$isolated->singletonCapability('time', TestingClockContract::class, RealTestingClock::class, exported: true);
-$isolated->bindFlow('login', LoginFlowEntry::class, LoginFlowEntry::class, entry: true, imports: ['time']);
+$isolated->singletonCapability(slice: 'time', abstract: TestingClockContract::class, concrete: RealTestingClock::class, exported: true);
+$isolated->bindFlow(slice: 'login', abstract: LoginFlowEntry::class, concrete: LoginFlowEntry::class, entry: true, imports: ['time']);
 
-$isolatedEntry = $isolated->container()->make(LoginFlowEntry::class);
+$isolatedEntry = $isolated->container()->make(abstract: LoginFlowEntry::class);
 
-assertInstanceOf(RealTestingClock::class, $isolatedEntry->clock, 'Fresh test compositions should not leak runtime or override state from previous compositions.');
+assertInstanceOf(expectedClass: RealTestingClock::class, value: $isolatedEntry->clock, message: 'Fresh test compositions should not leak runtime or override state from previous compositions.');
 
 echo basename(__FILE__) . " ok\n";

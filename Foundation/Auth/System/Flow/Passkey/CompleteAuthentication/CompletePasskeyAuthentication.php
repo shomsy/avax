@@ -23,16 +23,16 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class CompletePasskeyAuthentication
 {
     public function __construct(
-        private PasskeyRuntimeInterface $runtime,
-        private PasskeyChallengeStoreInterface $challengeStore,
-        private PasskeyCredentialStoreInterface $credentialStore,
-        private UserSourceInterface $userSource,
-        private IdentityInterface $identity,
-        private ProjectAuthenticatedUser $projectAuthenticatedUser,
-        private CurrentAuthentication $currentAuthentication,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        private string $rpId
+        private PasskeyRuntimeInterface                                $runtime,
+        private PasskeyChallengeStoreInterface                         $challengeStore,
+        #[\SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private UserSourceInterface                                    $userSource,
+        private IdentityInterface                                      $identity,
+        private ProjectAuthenticatedUser                               $projectAuthenticatedUser,
+        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private AuditLogInterface                                      $auditLog,
+        private Clock                                                  $clock,
+        private string                                                 $rpId
     ) {}
 
     /**
@@ -40,7 +40,7 @@ final readonly class CompletePasskeyAuthentication
      */
     public function execute(CompletePasskeyAuthenticationData $data) : AuthenticationResult
     {
-        $challenge = $this->challengeStore->find($data->challengeId);
+        $challenge = $this->challengeStore->find(challengeId: $data->challengeId);
 
         if ($challenge === null) {
             throw PasskeyOperationFailed::notFound();
@@ -50,13 +50,13 @@ final readonly class CompletePasskeyAuthentication
             throw PasskeyOperationFailed::alreadyUsed();
         }
 
-        if ($challenge->isExpiredAt($this->clock->now())) {
-            $this->challengeStore->forget($data->challengeId);
+        if ($challenge->isExpiredAt(moment: $this->clock->now())) {
+            $this->challengeStore->forget(challengeId: $data->challengeId);
             throw PasskeyOperationFailed::expired();
         }
 
         $knownCredentials = $challenge->userId !== null
-            ? $this->credentialStore->forUser($challenge->userId)
+            ? $this->credentialStore->forUser(userId: $challenge->userId)
             : [];
         $verified         = $this->runtime->completeAuthentication(
             rpId            : $this->rpId,
@@ -64,25 +64,25 @@ final readonly class CompletePasskeyAuthentication
             response        : $data->response,
             knownCredentials: $knownCredentials
         );
-        $credential       = $this->credentialStore->find($verified->credentialId);
+        $credential       = $this->credentialStore->find(credentialId: $verified->credentialId);
 
         if ($credential === null || $credential->isRevoked()) {
             throw PasskeyOperationFailed::notFound();
         }
 
-        $user = $this->userSource->findById(new UserId($verified->userId));
+        $user = $this->userSource->findById(id: new UserId(value: $verified->userId));
 
         if ($user === null || ! $user->isActive()) {
             throw PasskeyOperationFailed::notFound();
         }
 
         $issued  = $this->identity->issue(
-            $user,
-            $this->clock->now(),
-            true
+            user             : $user,
+            mfaVerifiedAt    : $this->clock->now(),
+            phishingResistant: true
         );
         $context = AuthenticationContext::authenticated(
-            user                : $this->projectAuthenticatedUser->fromUser($user),
+            user                : $this->projectAuthenticatedUser->fromUser(user: $user),
             mode                : $issued->mode === AuthenticationMode::SESSION ? AuthenticationMode::SESSION : $issued->mode,
             sessionId           : $issued->sessionId,
             accessTokenId       : $issued->accessToken?->tokenId,
@@ -92,14 +92,14 @@ final readonly class CompletePasskeyAuthentication
             phishingResistant   : true
         );
 
-        $this->currentAuthentication->store($context);
+        $this->currentAuthentication->store(context: $context);
         $this->identity->sessionIdentity()?->captureCurrentSession(
             ipAddress: $data->ipAddress,
             userAgent: $data->userAgent
         );
-        $this->credentialStore->touch($credential->credentialId, $this->clock->now());
-        $this->challengeStore->markUsed($data->challengeId, $this->clock->now());
-        $this->auditLog->record(new AuditEvent(
+        $this->credentialStore->touch(credentialId: $credential->credentialId, usedAt: $this->clock->now());
+        $this->challengeStore->markUsed(challengeId: $data->challengeId, usedAt: $this->clock->now());
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.passkey.authentication.succeeded',
             occurredAt: $this->clock->now(),
             context   : [

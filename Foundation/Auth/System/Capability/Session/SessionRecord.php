@@ -13,16 +13,16 @@ use DateTimeImmutable;
 final readonly class SessionRecord
 {
     public function __construct(
-        public string             $sessionId,
-        public UserId             $userId,
-        public DateTimeImmutable  $createdAt,
-        public DateTimeImmutable  $lastSeenAt,
-        public DateTimeImmutable  $idleExpiresAt,
-        public DateTimeImmutable  $absoluteExpiresAt,
-        public string|null        $ipCreated = null,
-        public string|null        $userAgentCreated = null,
-        public DateTimeImmutable|null $revokedAt = null,
-        public string|null        $revokeReason = null
+        #[\SensitiveParameter] public string $sessionId,
+        public UserId                        $userId,
+        public DateTimeImmutable             $createdAt,
+        public DateTimeImmutable             $lastSeenAt,
+        public DateTimeImmutable             $idleExpiresAt,
+        public DateTimeImmutable             $absoluteExpiresAt,
+        public string|null                   $ipCreated = null,
+        public string|null                   $userAgentCreated = null,
+        public DateTimeImmutable|null        $revokedAt = null,
+        public string|null                   $revokeReason = null
     ) {}
 
     public function isRevoked() : bool
@@ -37,7 +37,7 @@ final readonly class SessionRecord
 
     public function isActiveAt(DateTimeImmutable $moment) : bool
     {
-        return ! $this->isRevoked() && ! $this->isExpiredAt($moment);
+        return ! $this->isRevoked() && ! $this->isExpiredAt(moment: $moment);
     }
 
     public function withTouch(DateTimeImmutable $lastSeenAt, int $idleTimeoutSeconds) : self
@@ -47,7 +47,7 @@ final readonly class SessionRecord
             userId           : $this->userId,
             createdAt        : $this->createdAt,
             lastSeenAt       : $lastSeenAt,
-            idleExpiresAt    : $lastSeenAt->modify("+{$idleTimeoutSeconds} seconds"),
+            idleExpiresAt    : $lastSeenAt->modify(modifier: "+{$idleTimeoutSeconds} seconds"),
             absoluteExpiresAt: $this->absoluteExpiresAt,
             ipCreated        : $this->ipCreated,
             userAgentCreated : $this->userAgentCreated,
@@ -56,7 +56,7 @@ final readonly class SessionRecord
         );
     }
 
-    public function withClientMetadata(string|null $ipAddress, string|null $userAgent) : self
+    public function withClientMetadata(#[\SensitiveParameter] string|null $ipAddress, string|null $userAgent) : self
     {
         return new self(
             sessionId        : $this->sessionId,

@@ -17,22 +17,22 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class BeginPasswordReset
 {
     public function __construct(
-        private UserSourceInterface         $userSource,
-        private PasswordResetStoreInterface $passwordResetStore,
-        private AuditLogInterface           $auditLog,
-        private Clock                       $clock,
-        private int                         $expiresAfterSeconds = 3600,
-        private AttemptThrottle|null        $attemptThrottle = null
+        private UserSourceInterface                                $userSource,
+        #[\SensitiveParameter] private PasswordResetStoreInterface $passwordResetStore,
+        private AuditLogInterface                                  $auditLog,
+        private Clock                                              $clock,
+        private int                                                $expiresAfterSeconds = 3600,
+        private AttemptThrottle|null                               $attemptThrottle = null
     ) {}
 
     public function execute(BeginPasswordResetData $data) : PasswordResetChallenge
     {
-        $throttleKey = $this->throttleKey($data->email, $data->ipAddress);
+        $throttleKey = $this->throttleKey(email: $data->email, ipAddress: $data->ipAddress);
 
         try {
-            $this->attemptThrottle?->check($throttleKey);
+            $this->attemptThrottle?->check(key: $throttleKey);
         } catch (AttemptThrottleExceeded $exception) {
-            $this->auditLog->record(new AuditEvent(
+            $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.password_reset.throttled',
                 occurredAt: $this->clock->now(),
                 context   : [
@@ -46,11 +46,11 @@ final readonly class BeginPasswordReset
             return PasswordResetChallenge::hidden();
         }
 
-        $this->attemptThrottle?->recordAttempt($throttleKey);
-        $user = $this->userSource->findByEmail($data->email);
+        $this->attemptThrottle?->recordAttempt(key: $throttleKey);
+        $user = $this->userSource->findByEmail(email: $data->email);
 
         if ($user === null || ! $user->isActive()) {
-            $this->auditLog->record(new AuditEvent(
+            $this->auditLog->record(event: new AuditEvent(
                                         name      : 'auth.password_reset.requested',
                                         occurredAt: $this->clock->now(),
                                         context   : [
@@ -66,10 +66,10 @@ final readonly class BeginPasswordReset
 
         $challenge = $this->passwordResetStore->issue(
             userId   : $user->getId(),
-            expiresAt: $this->clock->now()->modify("+{$this->expiresAfterSeconds} seconds")
+            expiresAt: $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds")
         );
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.password_reset.requested',
                                     occurredAt: $this->clock->now(),
                                     context   : [
@@ -83,7 +83,7 @@ final readonly class BeginPasswordReset
         return $challenge;
     }
 
-    private function throttleKey(string $email, string|null $ipAddress) : string
+    private function throttleKey(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string|null $ipAddress) : string
     {
         $normalizedEmail = strtolower(trim($email));
 

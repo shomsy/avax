@@ -25,12 +25,12 @@ final class BeginPasswordResetTest extends TestCase
 {
     public function testPasswordResetRequestsAreThrottledAfterConfiguredLimit() : void
     {
-        $clock      = new FrozenClock(new DateTimeImmutable('2026-04-12T10:00:00+00:00'));
+        $clock      = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T10:00:00+00:00'));
         $auditLog   = new InMemoryAuditLog();
         $userSource = new InMemoryUserSource();
-        $userSource->create(User::create(
-            id          : new UserId(1),
-            email       : new UserEmail('user@example.com'),
+        $userSource->create(user: User::create(
+            id          : new UserId(value: 1),
+            email       : new UserEmail(value: 'user@example.com'),
             username    : 'user',
             passwordHash: 'hash'
         ));
@@ -47,19 +47,19 @@ final class BeginPasswordResetTest extends TestCase
             )
         );
 
-        $first = $flow->execute(new BeginPasswordResetData(
+        $first = $flow->execute(data: new BeginPasswordResetData(
             email    : 'user@example.com',
             ipAddress: '127.0.0.1',
             userAgent: 'PHPUnit'
         ));
-        $second = $flow->execute(new BeginPasswordResetData(
+        $second = $flow->execute(data: new BeginPasswordResetData(
             email    : 'user@example.com',
             ipAddress: '127.0.0.1',
             userAgent: 'PHPUnit'
         ));
 
-        $this->assertNotNull($first->token);
-        $this->assertNull($second->token);
-        $this->assertSame('auth.password_reset.throttled', $auditLog->events()[1]->name);
+        $this->assertNotNull(actual: $first->token);
+        $this->assertNull(actual: $second->token);
+        $this->assertSame(expected: 'auth.password_reset.throttled', actual: $auditLog->events()[1]->name);
     }
 }

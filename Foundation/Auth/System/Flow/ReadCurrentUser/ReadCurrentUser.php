@@ -15,7 +15,7 @@ use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 final readonly class ReadCurrentUser
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication
     ) {}
 
     public function execute() : AuthenticatedUser|null

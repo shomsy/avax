@@ -19,8 +19,8 @@ final readonly class SyslogAuditExporter implements AuditExporterInterface
     public function export(array $events) : void
     {
         foreach ($events as $event) {
-            $payload = $this->normalizeAuditEvent->execute($event);
-            $this->sender->send('info', json_encode($payload, JSON_THROW_ON_ERROR));
+            $payload = $this->normalizeAuditEvent->execute(event: $event);
+            $this->sender->send(severity: 'info', message: json_encode($payload, JSON_THROW_ON_ERROR));
         }
     }
 }

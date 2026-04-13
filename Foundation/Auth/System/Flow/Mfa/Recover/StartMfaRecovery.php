@@ -31,12 +31,12 @@ final readonly class StartMfaRecovery
 
     public function execute(BeginMfaRecoveryData $data) : MfaRecoveryChallenge
     {
-        $throttleKey = $this->throttleKey($data->email, $data->ipAddress);
+        $throttleKey = $this->throttleKey(email: $data->email, ipAddress: $data->ipAddress);
 
         try {
-            $this->attemptThrottle?->check($throttleKey);
+            $this->attemptThrottle?->check(key: $throttleKey);
         } catch (AttemptThrottleExceeded $exception) {
-            $this->auditLog->record(new AuditEvent(
+            $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.mfa.recovery.throttled',
                 occurredAt: $this->clock->now(),
                 context   : [
@@ -50,11 +50,11 @@ final readonly class StartMfaRecovery
             return MfaRecoveryChallenge::hidden();
         }
 
-        $this->attemptThrottle?->recordAttempt($throttleKey);
-        $user = $this->userSource->findByEmail($data->email);
+        $this->attemptThrottle?->recordAttempt(key: $throttleKey);
+        $user = $this->userSource->findByEmail(email: $data->email);
 
-        if ($user === null || ! $user->isActive() || ! $this->mfaStore->isEnabled($user->getId())) {
-            $this->auditLog->record(new AuditEvent(
+        if ($user === null || ! $user->isActive() || ! $this->mfaStore->isEnabled(userId: $user->getId())) {
+            $this->auditLog->record(event: new AuditEvent(
                 name      : 'auth.mfa.recovery.started',
                 occurredAt: $this->clock->now(),
                 context   : [
@@ -68,20 +68,20 @@ final readonly class StartMfaRecovery
             return MfaRecoveryChallenge::hidden();
         }
 
-        return $this->issue($user->getId()->value, $data);
+        return $this->issue(userId: $user->getId()->value, data: $data);
     }
 
     private function issue(int $userId, BeginMfaRecoveryData $data) : MfaRecoveryChallenge
     {
         $plainToken = bin2hex(random_bytes(32));
-        $expiresAt  = $this->clock->now()->modify("+{$this->expiresAfterSeconds} seconds");
-        $tokenHash  = $this->hash($plainToken);
-        $this->mfaStore->saveRecovery(new MfaRecoveryRecord(
+        $expiresAt  = $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds");
+        $tokenHash  = $this->hash(token: $plainToken);
+        $this->mfaStore->saveRecovery(record: new MfaRecoveryRecord(
                                           tokenHash: $tokenHash,
-                                          userId   : new \Avax\Auth\System\Capability\User\UserId($userId),
+                                          userId   : new \Avax\Auth\System\Capability\User\UserId(value: $userId),
                                           expiresAt: $expiresAt
                                       ));
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.mfa.recovery.started',
                                     occurredAt: $this->clock->now(),
                                     context   : [
@@ -104,7 +104,7 @@ final readonly class StartMfaRecovery
         return hash('sha256', $token);
     }
 
-    private function throttleKey(string $email, string|null $ipAddress) : string
+    private function throttleKey(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string|null $ipAddress) : string
     {
         $normalizedEmail = strtolower(trim($email));
 

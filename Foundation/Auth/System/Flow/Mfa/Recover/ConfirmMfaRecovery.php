@@ -22,14 +22,14 @@ use SensitiveParameter;
 final readonly class ConfirmMfaRecovery
 {
     public function __construct(
-        private MfaStoreInterface               $mfaStore,
-        private MfaChallengeStoreInterface      $mfaChallengeStore,
-        private AuditLogInterface               $auditLog,
-        private Clock                           $clock,
-        private SessionRegistryInterface|null   $sessionRegistry = null,
-        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        private CurrentAuthentication|null      $currentAuthentication = null,
-        private IdentityInterface|null          $identity = null
+        private MfaStoreInterface                                      $mfaStore,
+        private MfaChallengeStoreInterface                             $mfaChallengeStore,
+        private AuditLogInterface                                      $auditLog,
+        private Clock                                                  $clock,
+        #[\SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
+        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        #[\SensitiveParameter] private CurrentAuthentication|null      $currentAuthentication = null,
+        private IdentityInterface|null                                 $identity = null
     ) {}
 
     /**
@@ -37,8 +37,8 @@ final readonly class ConfirmMfaRecovery
      */
     public function execute(ConfirmMfaRecoveryData $data) : void
     {
-        $tokenHash = $this->hash($data->token);
-        $record    = $this->mfaStore->findRecovery($tokenHash);
+        $tokenHash = $this->hash(token: $data->token);
+        $record    = $this->mfaStore->findRecovery(tokenHash: $tokenHash);
 
         if ($record === null) {
             throw MfaRecoveryFailed::invalidToken();
@@ -46,25 +46,25 @@ final readonly class ConfirmMfaRecovery
 
         $now = $this->clock->now();
 
-        if ($record->isExpiredAt($now)) {
-            $this->mfaStore->forgetRecovery($tokenHash);
+        if ($record->isExpiredAt(moment: $now)) {
+            $this->mfaStore->forgetRecovery(tokenHash: $tokenHash);
             throw MfaRecoveryFailed::expiredToken();
         }
 
-        $this->mfaStore->disable($record->userId);
-        $this->mfaStore->forgetRecovery($tokenHash);
-        $this->mfaChallengeStore->forgetForUser($record->userId);
-        $this->sessionRegistry?->revokeForUser($record->userId, $now, 'mfa_recovery');
-        $this->refreshTokenStore?->revokeUser($record->userId);
+        $this->mfaStore->disable(userId: $record->userId);
+        $this->mfaStore->forgetRecovery(tokenHash: $tokenHash);
+        $this->mfaChallengeStore->forgetForUser(userId: $record->userId);
+        $this->sessionRegistry?->revokeForUser(userId: $record->userId, revokedAt: $now, reason: 'mfa_recovery');
+        $this->refreshTokenStore?->revokeUser(userId: $record->userId);
 
         $context = $this->currentAuthentication?->read();
 
         if ($context?->user()?->id === $record->userId->value) {
-            $this->identity?->clear($context);
+            $this->identity?->clear(context: $context);
             $this->currentAuthentication?->clear();
         }
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.mfa.recovery.used',
                                     occurredAt: $now,
                                     context   : [
@@ -73,7 +73,7 @@ final readonly class ConfirmMfaRecovery
                                                     'user_agent' => $data->userAgent,
                                                 ]
                                 ));
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.mfa.reset',
                                     occurredAt: $now,
                                     context   : [

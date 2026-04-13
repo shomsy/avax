@@ -9,37 +9,37 @@ require_once dirname(__DIR__, 3) . '/bootstrap.php';
 final class ScopedService {}
 
 $container = makeTestContainer();
-$container->scoped(ScopedService::class, ScopedService::class);
+$container->scoped(abstract: ScopedService::class, concrete: ScopedService::class);
 
 assertThrows(
 /**
  * @throws \Psr\Container\ContainerExceptionInterface
  * @throws \Psr\Container\NotFoundExceptionInterface
- */ ContainerException::class,
-    static fn () => $container->get(ScopedService::class),
-    'Scoped services must fail closed without an active scope.'
+ */ expectedClass: ContainerException::class,
+    callback     : static fn () => $container->get(id: ScopedService::class),
+    message      : 'Scoped services must fail closed without an active scope.'
 );
 
 $fromWithinScope = $container->scopes()->withinScope(
-    static function () use ($container) : object {
-        $first  = $container->get(ScopedService::class);
-        $second = $container->get(ScopedService::class);
+    callback: static function () use ($container) : object {
+        $first  = $container->get(id: ScopedService::class);
+        $second = $container->get(id: ScopedService::class);
 
-        assertSame($first, $second, 'Scoped services should be reused inside one scope.');
+        assertSame(expected: $first, actual: $second, message: 'Scoped services should be reused inside one scope.');
 
         return $first;
     }
 );
 
 $container->openScope();
-$firstScope = $container->get(ScopedService::class);
+$firstScope = $container->get(id: ScopedService::class);
 $container->closeScope();
 
 $container->openScope();
-$secondScope = $container->get(ScopedService::class);
+$secondScope = $container->get(id: ScopedService::class);
 $container->closeScope();
 
-assertInstanceOf(ScopedService::class, $fromWithinScope, 'Scope callback should return the resolved service.');
-assertNotSame($firstScope, $secondScope, 'Scoped services should not leak across scopes.');
+assertInstanceOf(expectedClass: ScopedService::class, value: $fromWithinScope, message: 'Scope callback should return the resolved service.');
+assertNotSame(expected: $firstScope, actual: $secondScope, message: 'Scoped services should not leak across scopes.');
 
 echo basename(__FILE__) . " ok\n";

@@ -30,18 +30,18 @@ use Avax\Auth\System\Foundation\IdGeneratorInterface;
 final readonly class CompleteFederatedLogin
 {
     public function __construct(
-        private FederationConnectionStoreInterface $connectionStore,
-        private FederationRuntimeInterface $runtime,
-        private FederatedIdentityLinkStoreInterface $linkStore,
-        private UserSourceInterface $userSource,
-        private IdentityInterface $identity,
-        private ProjectAuthenticatedUser $projectAuthenticatedUser,
-        private CurrentAuthentication $currentAuthentication,
-        private PasswordHasher $passwordHasher,
-        private IdGeneratorInterface $idGenerator,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        private DeterministicRiskEngine|null $riskEngine = null
+        private FederationConnectionStoreInterface           $connectionStore,
+        private FederationRuntimeInterface                   $runtime,
+        private FederatedIdentityLinkStoreInterface          $linkStore,
+        private UserSourceInterface                          $userSource,
+        private IdentityInterface                            $identity,
+        private ProjectAuthenticatedUser                     $projectAuthenticatedUser,
+        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
+        #[\SensitiveParameter] private PasswordHasher        $passwordHasher,
+        private IdGeneratorInterface                         $idGenerator,
+        private AuditLogInterface                            $auditLog,
+        private Clock                                        $clock,
+        private DeterministicRiskEngine|null                 $riskEngine = null
     ) {}
 
     /**
@@ -49,7 +49,7 @@ final readonly class CompleteFederatedLogin
      */
     public function execute(CompleteFederatedLoginData $data) : AuthenticationResult
     {
-        $connection = $this->connectionStore->find($data->connectionId);
+        $connection = $this->connectionStore->find(connectionId: $data->connectionId);
 
         if ($connection === null) {
             throw FederationFailed::notFound();
@@ -59,18 +59,18 @@ final readonly class CompleteFederatedLogin
             throw FederationFailed::domainNotVerified();
         }
 
-        $federated = $this->runtime->completeLogin($connection, $data->payload);
-        $link      = $this->linkStore->find($connection->connectionId, $federated->subject);
+        $federated = $this->runtime->completeLogin(connection: $connection, payload: $data->payload);
+        $link      = $this->linkStore->find(connectionId: $connection->connectionId, subject: $federated->subject);
         $user      = $link !== null
-            ? $this->userSource->findById(new UserId($link->userId))
+            ? $this->userSource->findById(id: new UserId(value: $link->userId))
             : null;
 
         if ($user === null) {
-            $user = $this->userSource->findByEmail($federated->email);
+            $user = $this->userSource->findByEmail(email: $federated->email);
         }
 
         if ($user === null) {
-            $user = $this->provisionUser($federated->email, $federated->displayName);
+            $user = $this->provisionUser(email: $federated->email, displayName: $federated->displayName);
         }
 
         if (! $user->isActive()) {
@@ -78,30 +78,30 @@ final readonly class CompleteFederatedLogin
         }
 
         if ($this->userSource instanceof ProvisionableUserSourceInterface) {
-            $this->userSource->updateEmail($user->getId(), $federated->email);
-            $mappedRoles = $this->mapRoles($connection->groupRoleMap, $federated->groups);
+            $this->userSource->updateEmail(id: $user->getId(), email: $federated->email);
+            $mappedRoles = $this->mapRoles(groupRoleMap: $connection->groupRoleMap, groups: $federated->groups);
 
             if ($mappedRoles !== []) {
-                $this->userSource->replaceRoles($user->getId(), $mappedRoles);
-                $user = $this->userSource->findById($user->getId()) ?? $user;
+                $this->userSource->replaceRoles(id: $user->getId(), roles: $mappedRoles);
+                $user = $this->userSource->findById(id: $user->getId()) ?? $user;
             }
         }
 
-        $this->linkStore->save(new FederatedIdentityLink(
+        $this->linkStore->save(link: new FederatedIdentityLink(
             connectionId: $connection->connectionId,
             subject     : $federated->subject,
             userId      : $user->getId()->value
         ));
 
-        $decision = $this->riskEngine?->assessSuccessfulAuthentication($user, $data->ipAddress, $data->userAgent);
-        $issued   = $this->identity->issue($user);
+        $decision = $this->riskEngine?->assessSuccessfulAuthentication(user: $user, ipAddress: $data->ipAddress, userAgent: $data->userAgent);
+        $issued   = $this->identity->issue(user: $user);
         $this->identity->sessionIdentity()?->captureCurrentSession(
             ipAddress: $data->ipAddress,
             userAgent: $data->userAgent
         );
 
         $context = AuthenticationContext::authenticated(
-            user                : $this->projectAuthenticatedUser->fromUser($user),
+            user                : $this->projectAuthenticatedUser->fromUser(user: $user),
             mode                : $issued->mode,
             sessionId           : $issued->sessionId,
             accessTokenId       : $issued->accessToken?->tokenId,
@@ -109,9 +109,9 @@ final readonly class CompleteFederatedLogin
             refreshTokenId      : $issued->refreshToken?->tokenId,
             mfaVerifiedAt       : $issued->mfaVerifiedAt
         );
-        $this->currentAuthentication->store($context);
+        $this->currentAuthentication->store(context: $context);
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.federation.login.completed',
             occurredAt: $this->clock->now(),
             context   : [
@@ -131,15 +131,15 @@ final readonly class CompleteFederatedLogin
         );
     }
 
-    private function provisionUser(string $email, string $displayName) : User
+    private function provisionUser(#[\SensitiveParameter] string $email, string $displayName) : User
     {
-        $username = $this->uniqueUsername($displayName, $email);
+        $username = $this->uniqueUsername(displayName: $displayName, email: $email);
 
-        return $this->userSource->create(User::create(
-            id          : new UserId($this->idGenerator->generate()),
-            email       : new UserEmail($email),
+        return $this->userSource->create(user: User::create(
+            id          : new UserId(value: $this->idGenerator->generate()),
+            email       : new UserEmail(value: $email),
             username    : $username,
-            passwordHash: $this->passwordHasher->hash(bin2hex(random_bytes(24)))
+            passwordHash: $this->passwordHasher->hash(password: bin2hex(random_bytes(24)))
         ));
     }
 
@@ -154,7 +154,7 @@ final readonly class CompleteFederatedLogin
 
         foreach ($groups as $group) {
             foreach ($groupRoleMap[$group] ?? [] as $roleValue) {
-                $role = UserRole::tryFrom($roleValue);
+                $role = UserRole::tryFrom(value: $roleValue);
 
                 if ($role !== null && ! in_array($role, $roles, true)) {
                     $roles[] = $role;
@@ -165,7 +165,7 @@ final readonly class CompleteFederatedLogin
         return $roles;
     }
 
-    private function uniqueUsername(string $displayName, string $email) : string
+    private function uniqueUsername(string $displayName, #[\SensitiveParameter] string $email) : string
     {
         $normalizedDisplayName = preg_replace('/[^a-z0-9]+/i', '-', strtolower(trim($displayName)));
         $base                  = $normalizedDisplayName !== null && $normalizedDisplayName !== ''
@@ -180,7 +180,7 @@ final readonly class CompleteFederatedLogin
         $username = $candidate;
         $suffix   = 1;
 
-        while ($this->userSource->usernameExists($username)) {
+        while ($this->userSource->usernameExists(username: $username)) {
             $suffix++;
             $username = $candidate . '-' . $suffix;
         }

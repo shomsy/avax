@@ -31,37 +31,37 @@ $productionArtifactDir = $productionCache . '/container/' . rawurlencode($produc
 $productionArtifact    = $productionArtifactDir . '/container.php';
 $productionMetadata    = $productionArtifactDir . '/container.json';
 
-$production = makeTestContainer($productionConfig);
-$production->singleton(IntegrityDependency::class, IntegrityDependency::class);
-$production->compileContainer([IntegrityTarget::class, IntegrityDependency::class]);
+$production = makeTestContainer(config: $productionConfig);
+$production->singleton(abstract: IntegrityDependency::class, concrete: IntegrityDependency::class);
+$production->compileContainer(serviceIds: [IntegrityTarget::class, IntegrityDependency::class]);
 
-assertTrue(is_file($productionArtifact), 'Production compile should write a compiled container artifact.');
-assertTrue(is_file($productionMetadata), 'Production compile should write compiled container metadata.');
+assertTrue(condition: is_file($productionArtifact), message: 'Production compile should write a compiled container artifact.');
+assertTrue(condition: is_file($productionMetadata), message: 'Production compile should write compiled container metadata.');
 
 $productionMeta = json_decode((string) file_get_contents($productionMetadata), true);
-assertTrue(is_array($productionMeta), 'Compiled container metadata should be machine-readable JSON.');
-assertTrue(isset($productionMeta['checksum']), 'Compiled container metadata should include a checksum.');
+assertTrue(condition: is_array($productionMeta), message: 'Compiled container metadata should be machine-readable JSON.');
+assertTrue(condition: isset($productionMeta['checksum']), message: 'Compiled container metadata should include a checksum.');
 
 file_put_contents($productionArtifact, "<?php\n\nreturn ['broken' => true];\n");
 
-$productionReload = makeTestContainer($productionConfig);
-$productionReload->singleton(IntegrityDependency::class, IntegrityDependency::class);
+$productionReload = makeTestContainer(config: $productionConfig);
+$productionReload->singleton(abstract: IntegrityDependency::class, concrete: IntegrityDependency::class);
 
 assertThrows(
 /**
  * @throws \Psr\Container\ContainerExceptionInterface
  * @throws \Psr\Container\NotFoundExceptionInterface
- */ ContainerException::class,
-    static fn () => $productionReload->get(IntegrityTarget::class),
-    'Production mode should fail closed when the compiled artifact is corrupted.'
+ */ expectedClass: ContainerException::class,
+    callback     : static fn () => $productionReload->get(id: IntegrityTarget::class),
+    message      : 'Production mode should fail closed when the compiled artifact is corrupted.'
 );
 assertTrue(
-    glob($productionArtifactDir . '/quarantine/*.php') !== [],
-    'Corrupted production artifacts should be quarantined instead of silently reused.'
+    condition: glob($productionArtifactDir . '/quarantine/*.php') !== [],
+    message  : 'Corrupted production artifacts should be quarantined instead of silently reused.'
 );
 assertTrue(
-    glob($productionArtifactDir . '/quarantine/*.json') !== [],
-    'Corrupted production metadata should also be quarantined.'
+    condition: glob($productionArtifactDir . '/quarantine/*.json') !== [],
+    message  : 'Corrupted production metadata should also be quarantined.'
 );
 
 $developmentCache    = sys_get_temp_dir() . '/container-integrity-dev-' . uniqid();
@@ -74,20 +74,20 @@ $developmentConfig   = CreateContainerConfig::create(
 $developmentArtifact = $developmentCache
     . '/container/' . rawurlencode($developmentVersion) . '/compiled/container.php';
 
-$development = makeTestContainer($developmentConfig);
-$development->singleton(IntegrityDependency::class, IntegrityDependency::class);
-$development->compileContainer([IntegrityTarget::class, IntegrityDependency::class]);
+$development = makeTestContainer(config: $developmentConfig);
+$development->singleton(abstract: IntegrityDependency::class, concrete: IntegrityDependency::class);
+$development->compileContainer(serviceIds: [IntegrityTarget::class, IntegrityDependency::class]);
 file_put_contents($developmentArtifact, "<?php\n\nreturn ['broken' => true];\n");
 
-$developmentReload = makeTestContainer($developmentConfig);
-$developmentReload->singleton(IntegrityDependency::class, IntegrityDependency::class);
-$resolved = $developmentReload->get(IntegrityTarget::class);
+$developmentReload = makeTestContainer(config: $developmentConfig);
+$developmentReload->singleton(abstract: IntegrityDependency::class, concrete: IntegrityDependency::class);
+$resolved = $developmentReload->get(id: IntegrityTarget::class);
 
 assertInstanceOf(
-    IntegrityTarget::class,
-    $resolved,
-    'Development mode should fall back to dynamic resolution when the compiled artifact is corrupted.'
+    expectedClass: IntegrityTarget::class,
+    value        : $resolved,
+    message      : 'Development mode should fall back to dynamic resolution when the compiled artifact is corrupted.'
 );
-assertSame('ok', $resolved->dependency->value(), 'Fallback resolution should preserve service behavior.');
+assertSame(expected: 'ok', actual: $resolved->dependency->value(), message: 'Fallback resolution should preserve service behavior.');
 
 echo basename(__FILE__) . " ok\n";

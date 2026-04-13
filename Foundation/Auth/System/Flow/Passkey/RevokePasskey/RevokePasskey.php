@@ -15,17 +15,17 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class RevokePasskey
 {
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private RequireFreshMfa $requireFreshMfa,
-        private PasskeyCredentialStoreInterface $credentialStore,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
+        #[\SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
+        private RequireFreshMfa                                        $requireFreshMfa,
+        #[\SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
+        private AuditLogInterface                                      $auditLog,
+        private Clock                                                  $clock
     ) {}
 
     /**
      * @throws PasskeyOperationFailed
      */
-    public function execute(string $credentialId) : void
+    public function execute(#[\SensitiveParameter] string $credentialId) : void
     {
         $user = $this->currentAuthentication->read()->user();
 
@@ -33,15 +33,15 @@ final readonly class RevokePasskey
             throw PasskeyOperationFailed::unauthenticated();
         }
 
-        $credential = $this->credentialStore->find($credentialId);
+        $credential = $this->credentialStore->find(credentialId: $credentialId);
 
         if ($credential === null || $credential->userId !== $user->id) {
             throw PasskeyOperationFailed::notFound();
         }
 
         $this->requireFreshMfa->execute();
-        $this->credentialStore->revoke($credentialId, $this->clock->now());
-        $this->auditLog->record(new AuditEvent(
+        $this->credentialStore->revoke(credentialId: $credentialId, revokedAt: $this->clock->now());
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.passkey.revoked',
             occurredAt: $this->clock->now(),
             context   : ['user_id' => $user->id, 'credential_id' => $credentialId]

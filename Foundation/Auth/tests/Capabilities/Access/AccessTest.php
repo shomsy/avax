@@ -33,7 +33,7 @@ class AccessTest extends TestCase
     public function testAccessFacadeDelegatesToBoundaries() : void
     {
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(
                       id         : 42,
                       email      : 'access@example.com',
@@ -47,16 +47,16 @@ class AccessTest extends TestCase
             mfaVerifiedAt: new \DateTimeImmutable()
         ));
         $adminElevationStore = new InMemoryAdminElevationStore();
-        $adminElevationStore->start(new AdminElevationRecord(
+        $adminElevationStore->start(record: new AdminElevationRecord(
             userId: 42,
             bindingId: 'session-42',
-            expiresAt: new \DateTimeImmutable('+10 minutes')
+            expiresAt: new \DateTimeImmutable(datetime: '+10 minutes')
         ));
         $clock = new Clock();
         $requireAuthentication = new RequireAuthentication(currentAuthentication: $currentAuthentication);
         $requireRole = new RequireRole(currentAuthentication: $currentAuthentication);
         $requirePermission = new RequirePermission(currentAuthentication: $currentAuthentication);
-        $requirePhishingResistantAuthentication = new RequirePhishingResistantAuthentication($currentAuthentication);
+        $requirePhishingResistantAuthentication = new RequirePhishingResistantAuthentication(currentAuthentication: $currentAuthentication);
 
         $access = new Access(
             requireAuthentication: $requireAuthentication,
@@ -66,19 +66,19 @@ class AccessTest extends TestCase
                 requireAuthentication: $requireAuthentication,
                 requireRole          : $requireRole,
                 requirePermission    : $requirePermission,
-                requireResourceOwner : new RequireResourceOwner($currentAuthentication),
+                requireResourceOwner : new RequireResourceOwner(currentAuthentication: $currentAuthentication),
                 requirePhishingResistantAuthentication: $requirePhishingResistantAuthentication,
-                requireFreshMfa      : new RequireFreshMfa($currentAuthentication, $clock),
-                requireAdminElevation: new RequireAdminElevation($currentAuthentication, $adminElevationStore, $clock)
+                requireFreshMfa      : new RequireFreshMfa(currentAuthentication: $currentAuthentication, clock: $clock),
+                requireAdminElevation: new RequireAdminElevation(currentAuthentication: $currentAuthentication, elevationStore: $adminElevationStore, clock: $clock)
             )
         );
 
         $access->requireAuthentication();
         $access->requireRole(requiredRole: UserRole::USER);
         $access->requirePermission(permission: new UserPermission(value: 'write'));
-        $access->requirePolicy(new AccessPolicy(
+        $access->requirePolicy(policy: new AccessPolicy(
             requiredRole      : UserRole::USER,
-            requiredPermission: new UserPermission('write'),
+            requiredPermission: new UserPermission(value: 'write'),
             resourceOwnerUserId: 42,
             freshMfa          : true,
             adminElevation    : true

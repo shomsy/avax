@@ -14,13 +14,13 @@ final readonly class RunKeyCompromiseDrill
      */
     public function execute(string $preRotationKeyRingPath, string $postCompromiseKeyRingPath) : array
     {
-        $before = new FileBackedHmacKeyRingCodec($preRotationKeyRingPath);
-        $token = $before->encode(['sub' => 7, 'iss' => 'drill']);
+        $before = new FileBackedHmacKeyRingCodec(keyRingPath: $preRotationKeyRingPath);
+        $token = $before->encode(claims: ['sub' => 7, 'iss' => 'drill']);
 
-        $after = new FileBackedHmacKeyRingCodec($postCompromiseKeyRingPath);
+        $after = new FileBackedHmacKeyRingCodec(keyRingPath: $postCompromiseKeyRingPath);
 
-        if ($after->decode($token) !== null) {
-            throw new RuntimeException('Compromise drill failed because a retired key still verifies old tokens.');
+        if ($after->decode(token: $token) !== null) {
+            throw new RuntimeException(message: 'Compromise drill failed because a retired key still verifies old tokens.');
         }
 
         return [

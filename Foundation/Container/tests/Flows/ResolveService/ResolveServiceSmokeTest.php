@@ -24,10 +24,10 @@ final class ResolveWithParameters
 
 $container = makeTestContainer();
 
-$autowired = $container->get(NeedsResolveGreeter::class);
-$built     = $container->make(ResolveWithParameters::class, ['name' => 'custom']);
+$autowired = $container->get(id: NeedsResolveGreeter::class);
+$built     = $container->make(abstract: ResolveWithParameters::class, parameters: ['name' => 'custom']);
 
-assertSame('resolved', $autowired->greeter->message(), 'ResolveService should autowire instantiable classes.');
-assertSame('custom', $built->name, 'ResolveService should honor explicit make() overrides.');
+assertSame(expected: 'resolved', actual: $autowired->greeter->message(), message: 'ResolveService should autowire instantiable classes.');
+assertSame(expected: 'custom', actual: $built->name, message: 'ResolveService should honor explicit make() overrides.');
 
 echo basename(__FILE__) . " ok\n";

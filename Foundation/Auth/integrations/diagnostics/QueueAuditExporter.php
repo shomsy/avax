@@ -20,7 +20,7 @@ final readonly class QueueAuditExporter implements AuditExporterInterface
     public function export(array $events) : void
     {
         foreach ($events as $event) {
-            $this->publisher->publish($this->topic, $this->normalizeAuditEvent->execute($event));
+            $this->publisher->publish(topic: $this->topic, message: $this->normalizeAuditEvent->execute(event: $event));
         }
     }
 }

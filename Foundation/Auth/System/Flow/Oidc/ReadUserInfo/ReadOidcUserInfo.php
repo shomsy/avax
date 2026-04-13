@@ -11,15 +11,15 @@ use SensitiveParameter;
 final readonly class ReadOidcUserInfo
 {
     public function __construct(
-        private JwtIdentityInterface $jwtIdentity
+        #[\SensitiveParameter] private JwtIdentityInterface $jwtIdentity
     ) {}
 
     public function execute(#[SensitiveParameter] string $accessToken) : OidcUserInfo
     {
-        $resolved = $this->jwtIdentity->resolve($accessToken);
+        $resolved = $this->jwtIdentity->resolve(token: $accessToken);
 
         if ($resolved === null) {
-            throw new RuntimeException('Active access token is required for OIDC userinfo.');
+            throw new RuntimeException(message: 'Active access token is required for OIDC userinfo.');
         }
 
         $claims = [
@@ -39,6 +39,6 @@ final readonly class ReadOidcUserInfo
             $claims['acr'] = 'phr';
         }
 
-        return new OidcUserInfo($claims);
+        return new OidcUserInfo(claims: $claims);
     }
 }

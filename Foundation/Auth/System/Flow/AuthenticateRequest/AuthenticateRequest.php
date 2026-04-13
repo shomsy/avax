@@ -18,19 +18,19 @@ use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 final readonly class AuthenticateRequest
 {
     public function __construct(
-        private CurrentAuthentication         $currentAuthentication,
-        private ProjectAuthenticatedUser      $projectAuthenticatedUser,
-        private UserSourceInterface           $userSource,
-        private AuditLogInterface             $auditLog,
-        private SessionIdentityInterface|null $sessionIdentity = null,
-        private JwtIdentityInterface|null     $jwtIdentity = null
+        #[\SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
+        private ProjectAuthenticatedUser                             $projectAuthenticatedUser,
+        private UserSourceInterface                                  $userSource,
+        private AuditLogInterface                                    $auditLog,
+        #[\SensitiveParameter] private SessionIdentityInterface|null $sessionIdentity = null,
+        #[\SensitiveParameter] private JwtIdentityInterface|null     $jwtIdentity = null
     ) {}
 
     public function execute(AuthenticationRequest $request) : AuthenticationContext
     {
-        [$sessionUser, $sessionId, $sessionMfaVerifiedAt, $sessionPhishingResistant] = $this->resolveSessionUser($request);
+        [$sessionUser, $sessionId, $sessionMfaVerifiedAt, $sessionPhishingResistant] = $this->resolveSessionUser(request: $request);
         $resolvedToken = $request->bearerToken !== null
-            ? $this->jwtIdentity?->resolve($request->bearerToken)
+            ? $this->jwtIdentity?->resolve(token: $request->bearerToken)
             : null;
 
         if (
@@ -40,7 +40,7 @@ final readonly class AuthenticateRequest
         ) {
             $context = AuthenticationContext::guest(reason: 'credential_conflict');
 
-            $this->auditLog->record(new AuditEvent(
+            $this->auditLog->record(event: new AuditEvent(
                                         name      : 'auth.ingress.conflict',
                                         occurredAt: new \DateTimeImmutable(),
                                         context   : [
@@ -49,44 +49,44 @@ final readonly class AuthenticateRequest
                                                     ]
                                     ));
 
-            $this->currentAuthentication->store($context);
+            $this->currentAuthentication->store(context: $context);
 
             return $context;
         }
 
         if ($sessionUser !== null && $resolvedToken !== null) {
             $context = AuthenticationContext::authenticated(
-                user                : $this->projectAuthenticatedUser->fromUser($sessionUser),
+                user                : $this->projectAuthenticatedUser->fromUser(user: $sessionUser),
                 mode                : AuthenticationMode::HYBRID,
                 sessionId           : $sessionId,
                 accessTokenId       : $resolvedToken->tokenId,
                 accessTokenExpiresAt: $resolvedToken->expiresAt,
-                mfaVerifiedAt       : $this->latestMfaMoment($sessionMfaVerifiedAt, $resolvedToken->mfaVerifiedAt),
+                mfaVerifiedAt       : $this->latestMfaMoment(left: $sessionMfaVerifiedAt, right: $resolvedToken->mfaVerifiedAt),
                 phishingResistant   : $sessionPhishingResistant || $resolvedToken->phishingResistant
             );
 
-            $this->currentAuthentication->store($context);
+            $this->currentAuthentication->store(context: $context);
 
             return $context;
         }
 
         if ($sessionUser !== null) {
             $context = AuthenticationContext::authenticated(
-                user         : $this->projectAuthenticatedUser->fromUser($sessionUser),
+                user         : $this->projectAuthenticatedUser->fromUser(user: $sessionUser),
                 mode         : AuthenticationMode::SESSION,
                 sessionId    : $sessionId,
                 mfaVerifiedAt: $sessionMfaVerifiedAt,
                 phishingResistant: $sessionPhishingResistant
             );
 
-            $this->currentAuthentication->store($context);
+            $this->currentAuthentication->store(context: $context);
 
             return $context;
         }
 
         if ($resolvedToken !== null) {
             $context = AuthenticationContext::authenticated(
-                user                : $this->projectAuthenticatedUser->fromUser($resolvedToken->user),
+                user                : $this->projectAuthenticatedUser->fromUser(user: $resolvedToken->user),
                 mode                : AuthenticationMode::TOKEN,
                 accessTokenId       : $resolvedToken->tokenId,
                 accessTokenExpiresAt: $resolvedToken->expiresAt,
@@ -94,13 +94,13 @@ final readonly class AuthenticateRequest
                 phishingResistant   : $resolvedToken->phishingResistant
             );
 
-            $this->currentAuthentication->store($context);
+            $this->currentAuthentication->store(context: $context);
 
             return $context;
         }
 
         $context = AuthenticationContext::guest(reason: 'unauthenticated');
-        $this->currentAuthentication->store($context);
+        $this->currentAuthentication->store(context: $context);
 
         return $context;
     }
@@ -120,7 +120,7 @@ final readonly class AuthenticateRequest
             return [null, null, null, false];
         }
 
-        $user = $this->userSource->findById(new UserId($userId));
+        $user = $this->userSource->findById(id: new UserId(value: $userId));
 
         if ($user === null || ! $user->isActive()) {
             return [null, null, null, false];

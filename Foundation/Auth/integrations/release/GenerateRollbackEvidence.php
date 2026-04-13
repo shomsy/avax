@@ -17,18 +17,18 @@ final readonly class GenerateRollbackEvidence
         array $artifacts = [],
         array $validationCommands = []
     ) : array {
-        $resolvedTarget = $this->resolveRollbackTarget($repositoryRoot, $rollbackTarget);
+        $resolvedTarget = $this->resolveRollbackTarget(repositoryRoot: $repositoryRoot, rollbackTarget: $rollbackTarget);
 
         return [
-            'package' => $this->detectPackageName($repositoryRoot),
+            'package' => $this->detectPackageName(repositoryRoot: $repositoryRoot),
             'repository_root' => realpath($repositoryRoot) !== false ? realpath($repositoryRoot) : $repositoryRoot,
-            'current_commit' => $this->runGit($repositoryRoot, 'rev-parse HEAD'),
+            'current_commit' => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse HEAD'),
             'rollback_target' => $resolvedTarget,
             'rollback_ready' => $resolvedTarget !== null,
             'rollback_command' => $resolvedTarget !== null ? 'git checkout ' . $resolvedTarget : null,
             'generated_at' => gmdate(DATE_ATOM),
             'validation_commands' => array_values($validationCommands),
-            'artifacts' => $this->artifactEvidence($artifacts),
+            'artifacts' => $this->artifactEvidence(artifacts: $artifacts),
         ];
     }
 
@@ -50,7 +50,7 @@ final readonly class GenerateRollbackEvidence
     private function resolveRollbackTarget(string $repositoryRoot, string|null $rollbackTarget) : string|null
     {
         $candidate = $rollbackTarget ?? 'HEAD^';
-        $resolved = $this->runGit($repositoryRoot, 'rev-parse --verify ' . escapeshellarg($candidate));
+        $resolved = $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse --verify ' . escapeshellarg($candidate));
 
         return $resolved !== '' ? $resolved : null;
     }

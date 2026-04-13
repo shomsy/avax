@@ -50,13 +50,13 @@ final class PasskeyFlowTest extends TestCase
         $challengeStore  = new InMemoryPasskeyChallengeStore();
         $current         = new CurrentAuthentication();
         $user            = User::create(
-            id          : new UserId(5),
-            email       : new UserEmail('passkey@example.com'),
+            id          : new UserId(value: 5),
+            email       : new UserEmail(value: 'passkey@example.com'),
             username    : 'passkey-user',
             passwordHash: 'hash'
         );
-        $userSource->create($user);
-        $current->store(AuthenticationContext::authenticated(
+        $userSource->create(user: $user);
+        $current->store(context: AuthenticationContext::authenticated(
             user      : new AuthenticatedUser(
                 id       : 5,
                 email    : 'passkey@example.com',
@@ -69,7 +69,7 @@ final class PasskeyFlowTest extends TestCase
         $runtime = new FakePasskeyRuntime();
         $beginRegistration = new BeginPasskeyRegistration(
             currentAuthentication: $current,
-            requireFreshMfa      : new RequireFreshMfa($current, $clock),
+            requireFreshMfa      : new RequireFreshMfa(currentAuthentication: $current, clock: $clock),
             runtime              : $runtime,
             credentialStore      : $credentialStore,
             challengeStore       : $challengeStore,
@@ -89,26 +89,26 @@ final class PasskeyFlowTest extends TestCase
         );
 
         $registration = $beginRegistration->execute();
-        $credential   = $completeRegistration->execute(new CompletePasskeyRegistrationData(
+        $credential   = $completeRegistration->execute(data: new CompletePasskeyRegistrationData(
             challengeId: $registration->challengeId,
             response   : ['credential_id' => 'cred-1', 'label' => 'Laptop']
         ));
         $renamed      = (new RenamePasskey(
             currentAuthentication: $current,
             credentialStore      : $credentialStore
-        ))->execute(new RenamePasskeyData(
+        ))->execute(data: new RenamePasskeyData(
             credentialId: 'cred-1',
             label       : 'Primary Laptop'
         ));
 
-        $this->assertSame('cred-1', $credential->credentialId);
-        $this->assertSame('Primary Laptop', $renamed->label);
-        $this->assertCount(1, (new ListPasskeys($current, $credentialStore))->execute());
+        $this->assertSame(expected: 'cred-1', actual: $credential->credentialId);
+        $this->assertSame(expected: 'Primary Laptop', actual: $renamed->label);
+        $this->assertCount(expectedCount: 1, haystack: (new ListPasskeys(currentAuthentication: $current, credentialStore: $credentialStore))->execute());
 
         $current->clear();
         $identity = new Identity(jwtIdentity: new JwtIdentity(
             userSource       : $userSource,
-            codec            : new HmacTokenCodec('passkey-secret'),
+            codec            : new HmacTokenCodec(secret: 'passkey-secret'),
             clock            : $clock,
             revocationStore  : new InMemoryTokenRevocationStore(),
             refreshTokenStore: new InMemoryRefreshTokenStore()
@@ -138,23 +138,23 @@ final class PasskeyFlowTest extends TestCase
             rpId                 : 'example.test'
         );
 
-        $challenge = $beginAuthentication->execute(new BeginPasskeyAuthenticationData(identifier: 'passkey@example.com'));
-        $result    = $completeAuthentication->execute(new CompletePasskeyAuthenticationData(
+        $challenge = $beginAuthentication->execute(data: new BeginPasskeyAuthenticationData(identifier: 'passkey@example.com'));
+        $result    = $completeAuthentication->execute(data: new CompletePasskeyAuthenticationData(
             challengeId: $challenge->challengeId,
             response   : ['credential_id' => 'cred-1']
         ));
 
-        $this->assertTrue($result->isAuthenticated());
+        $this->assertTrue(condition: $result->isAuthenticated());
 
         (new RevokePasskey(
             currentAuthentication: $current,
-            requireFreshMfa      : new RequireFreshMfa($current, $clock),
+            requireFreshMfa      : new RequireFreshMfa(currentAuthentication: $current, clock: $clock),
             credentialStore      : $credentialStore,
             auditLog             : new InMemoryAuditLog(),
             clock                : $clock
-        ))->execute('cred-1');
+        ))->execute(credentialId: 'cred-1');
 
-        $this->assertTrue($credentialStore->find('cred-1')?->isRevoked() ?? false);
+        $this->assertTrue(condition: $credentialStore->find(credentialId: 'cred-1')?->isRevoked() ?? false);
     }
 
     public function testPasskeyAuthenticationChallengeCannotBeReplayed() : void
@@ -165,13 +165,13 @@ final class PasskeyFlowTest extends TestCase
         $challengeStore  = new InMemoryPasskeyChallengeStore();
         $current         = new CurrentAuthentication();
         $user            = User::create(
-            id          : new UserId(6),
-            email       : new UserEmail('passkey-replay@example.com'),
+            id          : new UserId(value: 6),
+            email       : new UserEmail(value: 'passkey-replay@example.com'),
             username    : 'passkey-replay',
             passwordHash: 'hash'
         );
-        $userSource->create($user);
-        $credentialStore->save(new \Avax\Auth\System\Capability\Passkey\PasskeyCredential(
+        $userSource->create(user: $user);
+        $credentialStore->save(credential: new \Avax\Auth\System\Capability\Passkey\PasskeyCredential(
             userId      : 6,
             credentialId: 'cred-replay',
             label       : 'Replay Device',
@@ -187,7 +187,7 @@ final class PasskeyFlowTest extends TestCase
             auditLog        : new InMemoryAuditLog(),
             clock           : $clock,
             rpId            : 'example.test'
-        ))->execute(new BeginPasskeyAuthenticationData(identifier: 'passkey-replay@example.com'));
+        ))->execute(data: new BeginPasskeyAuthenticationData(identifier: 'passkey-replay@example.com'));
 
         $complete = new CompletePasskeyAuthentication(
             runtime              : $runtime,
@@ -196,7 +196,7 @@ final class PasskeyFlowTest extends TestCase
             userSource           : $userSource,
             identity             : new Identity(jwtIdentity: new JwtIdentity(
                 userSource       : $userSource,
-                codec            : new HmacTokenCodec('passkey-replay-secret'),
+                codec            : new HmacTokenCodec(secret: 'passkey-replay-secret'),
                 clock            : $clock,
                 revocationStore  : new InMemoryTokenRevocationStore(),
                 refreshTokenStore: new InMemoryRefreshTokenStore()
@@ -211,16 +211,16 @@ final class PasskeyFlowTest extends TestCase
             rpId                 : 'example.test'
         );
 
-        $result = $complete->execute(new CompletePasskeyAuthenticationData(
+        $result = $complete->execute(data: new CompletePasskeyAuthenticationData(
             challengeId: $challenge->challengeId,
             response   : ['credential_id' => 'cred-replay']
         ));
-        $this->assertTrue($result->isAuthenticated());
+        $this->assertTrue(condition: $result->isAuthenticated());
 
         $this->expectException(PasskeyOperationFailed::class);
         $this->expectExceptionMessage('Passkey challenge has already been used.');
 
-        $complete->execute(new CompletePasskeyAuthenticationData(
+        $complete->execute(data: new CompletePasskeyAuthenticationData(
             challengeId: $challenge->challengeId,
             response   : ['credential_id' => 'cred-replay']
         ));

@@ -27,7 +27,7 @@ final class MultiKeyHmacTokenCodecTest extends TestCase
             'jti' => 'token-1',
         ];
 
-        $this->assertSame($claims, $codec->decode($oldKey->encode($claims)));
-        $this->assertSame($claims, $codec->decode($codec->encode($claims)));
+        $this->assertSame(expected: $claims, actual: $codec->decode(token: $oldKey->encode(claims: $claims)));
+        $this->assertSame(expected: $claims, actual: $codec->decode(token: $codec->encode(claims: $claims)));
     }
 }

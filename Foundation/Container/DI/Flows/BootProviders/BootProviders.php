@@ -115,7 +115,7 @@ final readonly class BootProviders
                 throw new InvalidArgumentException(message: "Provider class [{$provider}] does not exist.");
             }
 
-            $instance = $this->container->make($provider);
+            $instance = $this->container->make(abstract: $provider);
         } else {
             $instance = $provider;
         }
@@ -187,7 +187,7 @@ final readonly class BootProviders
     private function metrics() : ResolutionMetrics|null
     {
         try {
-            $metrics = $this->container->get(ResolutionMetrics::class);
+            $metrics = $this->container->get(id: ResolutionMetrics::class);
         } catch (Throwable) {
             return null;
         }
@@ -201,7 +201,7 @@ final readonly class BootProviders
     private function resolver() : ServiceResolver|null
     {
         try {
-            $resolver = $this->container->get(ServiceResolver::class);
+            $resolver = $this->container->get(id: ServiceResolver::class);
         } catch (Throwable) {
             return null;
         }

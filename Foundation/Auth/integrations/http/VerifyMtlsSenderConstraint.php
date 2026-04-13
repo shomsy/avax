@@ -25,11 +25,11 @@ final readonly class VerifyMtlsSenderConstraint
      */
     public function execute(HttpOAuthProofInput $input) : OAuthSenderConstraint
     {
-        $thumbprint = $this->readServerValue($input->server, 'TLS_CLIENT_CERT_SHA256')
-            ?? $this->readHeader($input->headers, 'x-tls-client-cert-sha256');
+        $thumbprint = $this->readServerValue(server: $input->server, name: 'TLS_CLIENT_CERT_SHA256')
+            ?? $this->readHeader(headers: $input->headers, name: 'x-tls-client-cert-sha256');
 
         if ($thumbprint === null || $thumbprint === '') {
-            $this->recordFailure('missing_certificate', $input);
+            $this->recordFailure(reason: 'missing_certificate', input: $input);
             throw MtlsBindingFailed::missingCertificate();
         }
 
@@ -37,7 +37,7 @@ final readonly class VerifyMtlsSenderConstraint
             $input->expectedTokenThumbprint !== null
             && ! hash_equals($input->expectedTokenThumbprint, $thumbprint)
         ) {
-            $this->recordFailure('binding_mismatch', $input);
+            $this->recordFailure(reason: 'binding_mismatch', input: $input);
             throw MtlsBindingFailed::mismatch();
         }
 
@@ -50,7 +50,7 @@ final readonly class VerifyMtlsSenderConstraint
     /**
      * @param array<string, mixed> $headers
      */
-    private function readHeader(array $headers, string $name) : string|null
+    private function readHeader(#[\SensitiveParameter] array $headers, string $name) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
             if (strcasecmp($candidateKey, $name) !== 0) {
@@ -79,7 +79,7 @@ final readonly class VerifyMtlsSenderConstraint
 
     private function recordFailure(string $reason, HttpOAuthProofInput $input) : void
     {
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.oauth.sender_constraint.mtls.failed',
             occurredAt: new DateTimeImmutable(),
             context   : [

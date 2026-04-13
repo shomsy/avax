@@ -13,7 +13,7 @@ final readonly class DiscoverFederationConnection
         private FederationConnectionStoreInterface $connectionStore
     ) {}
 
-    public function execute(string $email) : FederationConnection|null
+    public function execute(#[\SensitiveParameter] string $email) : FederationConnection|null
     {
         $separator = strrchr($email, '@');
         $domain    = strtolower(trim(substr($separator !== false ? $separator : '', 1)));
@@ -22,7 +22,7 @@ final readonly class DiscoverFederationConnection
             return null;
         }
 
-        $connection = $this->connectionStore->findByDomain($domain);
+        $connection = $this->connectionStore->findByDomain(domain: $domain);
 
         return $connection?->isDomainVerified() === true ? $connection : null;
     }

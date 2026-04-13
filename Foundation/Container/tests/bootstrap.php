@@ -49,7 +49,7 @@ namespace {
     function assertTrue(bool $condition, string $message) : void
     {
         if (! $condition) {
-            throw new RuntimeException($message);
+            throw new RuntimeException(message: $message);
         }
     }
 
@@ -57,7 +57,7 @@ namespace {
     {
         if ($expected !== $actual) {
             throw new RuntimeException(
-                $message . ' Expected ' . var_export($expected, true) . ' but got ' . var_export($actual, true) . '.'
+                message: $message . ' Expected ' . var_export($expected, true) . ' but got ' . var_export($actual, true) . '.'
             );
         }
     }
@@ -65,14 +65,14 @@ namespace {
     function assertNotSame(mixed $expected, mixed $actual, string $message) : void
     {
         if ($expected === $actual) {
-            throw new RuntimeException($message);
+            throw new RuntimeException(message: $message);
         }
     }
 
     function assertInstanceOf(string $expectedClass, mixed $value, string $message) : void
     {
         if (! $value instanceof $expectedClass) {
-            throw new RuntimeException($message . ' Expected instance of ' . $expectedClass . '.');
+            throw new RuntimeException(message: $message . ' Expected instance of ' . $expectedClass . '.');
         }
     }
 
@@ -86,13 +86,13 @@ namespace {
             }
 
             throw new RuntimeException(
-                $message . ' Expected ' . $expectedClass . ' but got ' . $throwable::class . '.',
-                0,
-                $throwable
+                message : $message . ' Expected ' . $expectedClass . ' but got ' . $throwable::class . '.',
+                code    : 0,
+                previous: $throwable
             );
         }
 
-        throw new RuntimeException($message . ' Expected ' . $expectedClass . ' but nothing was thrown.');
+        throw new RuntimeException(message: $message . ' Expected ' . $expectedClass . ' but nothing was thrown.');
     }
 
     function makeTestContainer(

@@ -30,19 +30,19 @@ final readonly class VerifyDpopProof
      */
     public function execute(HttpOAuthProofInput $input) : OAuthSenderConstraint
     {
-        $proof = $this->readHeader($input->headers, 'DPoP')
-            ?? $this->readServerValue($input->server, 'HTTP_DPOP');
+        $proof = $this->readHeader(headers: $input->headers, name: 'DPoP')
+            ?? $this->readServerValue(server: $input->server, name: 'HTTP_DPOP');
 
         if ($proof === null || $proof === '') {
-            $this->recordFailure($input, 'missing_proof');
+            $this->recordFailure(input: $input, reason: 'missing_proof');
             throw DpopProofFailed::missing();
         }
 
-        $claims = $this->codec->decode($proof);
+        $claims = $this->codec->decode(token: $proof);
 
         if (! is_array($claims)) {
-            $this->recordFailure($input, 'decode_failed');
-            throw DpopProofFailed::invalid('decode_failed');
+            $this->recordFailure(input: $input, reason: 'decode_failed');
+            throw DpopProofFailed::invalid(reason: 'decode_failed');
         }
 
         $jti = $claims['jti'] ?? null;
@@ -59,43 +59,43 @@ final readonly class VerifyDpopProof
             || ! is_string($htm)
             || ! is_string($thumbprint)
         ) {
-            $this->recordFailure($input, 'missing_required_claims');
-            throw DpopProofFailed::invalid('missing_required_claims');
+            $this->recordFailure(input: $input, reason: 'missing_required_claims');
+            throw DpopProofFailed::invalid(reason: 'missing_required_claims');
         }
 
         $now = new DateTimeImmutable();
-        $issuedAt = new DateTimeImmutable("@{$iat}");
+        $issuedAt = new DateTimeImmutable(datetime: "@{$iat}");
         $age = abs($now->getTimestamp() - $issuedAt->getTimestamp());
 
         if ($age > $this->maxAgeSeconds) {
-            $this->recordFailure($input, 'proof_expired');
-            throw DpopProofFailed::invalid('proof_expired');
+            $this->recordFailure(input: $input, reason: 'proof_expired');
+            throw DpopProofFailed::invalid(reason: 'proof_expired');
         }
 
         if (strtoupper($htm) !== strtoupper($input->method)) {
-            $this->recordFailure($input, 'method_mismatch');
-            throw DpopProofFailed::invalid('method_mismatch');
+            $this->recordFailure(input: $input, reason: 'method_mismatch');
+            throw DpopProofFailed::invalid(reason: 'method_mismatch');
         }
 
-        if (! $this->sameUri($htu, $input->uri)) {
-            $this->recordFailure($input, 'uri_mismatch');
-            throw DpopProofFailed::invalid('uri_mismatch');
+        if (! $this->sameUri(expected: $htu, actual: $input->uri)) {
+            $this->recordFailure(input: $input, reason: 'uri_mismatch');
+            throw DpopProofFailed::invalid(reason: 'uri_mismatch');
         }
 
         if ($input->accessToken !== null) {
             $expectedAth = rtrim(strtr(base64_encode(hash('sha256', $input->accessToken, true)), '+/', '-_'), '=');
 
             if (! is_string($ath) || ! hash_equals($expectedAth, $ath)) {
-                $this->recordFailure($input, 'access_token_mismatch');
-                throw DpopProofFailed::invalid('access_token_mismatch');
+                $this->recordFailure(input: $input, reason: 'access_token_mismatch');
+                throw DpopProofFailed::invalid(reason: 'access_token_mismatch');
             }
         }
 
         $proofId = hash('sha256', "{$thumbprint}:{$jti}");
 
-        if (! $this->replayStore->remember($proofId, $issuedAt->modify("+{$this->maxAgeSeconds} seconds"))) {
-            $this->recordFailure($input, 'replay_detected');
-            throw DpopProofFailed::invalid('replay_detected');
+        if (! $this->replayStore->remember(proofId: $proofId, expiresAt: $issuedAt->modify(modifier: "+{$this->maxAgeSeconds} seconds"))) {
+            $this->recordFailure(input: $input, reason: 'replay_detected');
+            throw DpopProofFailed::invalid(reason: 'replay_detected');
         }
 
         return new OAuthSenderConstraint(
@@ -107,7 +107,7 @@ final readonly class VerifyDpopProof
     /**
      * @param array<string, mixed> $headers
      */
-    private function readHeader(array $headers, string $name) : string|null
+    private function readHeader(#[\SensitiveParameter] array $headers, string $name) : string|null
     {
         foreach ($headers as $candidateKey => $value) {
             if (strcasecmp($candidateKey, $name) !== 0) {
@@ -141,7 +141,7 @@ final readonly class VerifyDpopProof
 
     private function recordFailure(HttpOAuthProofInput $input, string $reason) : void
     {
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.oauth.sender_constraint.dpop.failed',
             occurredAt: new DateTimeImmutable(),
             context   : [

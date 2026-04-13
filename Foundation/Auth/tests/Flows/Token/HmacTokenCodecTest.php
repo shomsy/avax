@@ -20,7 +20,7 @@ final class HmacTokenCodecTest extends TestCase
             keyId : '2026-05-primary'
         );
 
-        $token = $encoder->encode([
+        $token = $encoder->encode(claims: [
             'sub' => 1,
             'iat' => 1,
             'nbf' => 1,
@@ -28,7 +28,7 @@ final class HmacTokenCodecTest extends TestCase
             'jti' => 'token-1',
         ]);
 
-        $this->assertNull($otherKeyVersion->decode($token));
-        $this->assertNotNull($encoder->decode($token));
+        $this->assertNull(actual: $otherKeyVersion->decode(token: $token));
+        $this->assertNotNull(actual: $encoder->decode(token: $token));
     }
 }

@@ -14,81 +14,81 @@ final class ExecutionModeService
 }
 
 $generatedCacheDir = sys_get_temp_dir() . '/container-generated-mode-' . uniqid('', true);
-$generated         = makeTestContainer(CreateContainerConfig::create(
+$generated         = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir     : $generatedCacheDir,
     cacheVersion : 'generated-mode-smoke',
     executionMode: CreateContainerConfig::EXECUTION_MODE_GENERATED
 ));
-$generated->compileContainer([ExecutionModeService::class, ExecutionModeDependency::class]);
-$generated->get(ExecutionModeService::class);
+$generated->compileContainer(serviceIds: [ExecutionModeService::class, ExecutionModeDependency::class]);
+$generated->get(id: ExecutionModeService::class);
 
-$generatedCompileReport = $generated->compileReport([ExecutionModeService::class]);
+$generatedCompileReport = $generated->compileReport(serviceIds: [ExecutionModeService::class]);
 $generatedRuntimeReport = $generated->runtimeReport();
-$generatedDescription   = $generated->describeService(ExecutionModeService::class);
+$generatedDescription   = $generated->describeService(id: ExecutionModeService::class);
 
 assertSame(
-    CreateContainerConfig::EXECUTION_MODE_GENERATED,
-    $generatedCompileReport?->executionMode,
-    'Generated mode should be preserved in compile reports.'
+    expected: CreateContainerConfig::EXECUTION_MODE_GENERATED,
+    actual  : $generatedCompileReport?->executionMode,
+    message : 'Generated mode should be preserved in compile reports.'
 );
 assertSame(
-    CreateContainerConfig::EXECUTION_MODE_GENERATED,
-    $generatedRuntimeReport->executionMode,
-    'Generated mode should be preserved in runtime reports.'
+    expected: CreateContainerConfig::EXECUTION_MODE_GENERATED,
+    actual  : $generatedRuntimeReport->executionMode,
+    message : 'Generated mode should be preserved in runtime reports.'
 );
 assertSame(
-    'generated',
-    $generatedDescription['compiledState']['decision'] ?? null,
-    'Generated mode should resolve through the generated execution lane.'
+    expected: 'generated',
+    actual  : $generatedDescription['compiledState']['decision'] ?? null,
+    message : 'Generated mode should resolve through the generated execution lane.'
 );
 assertSame(
-    'generated execution path is attached and usable',
-    $generatedDescription['compiledState']['reason'] ?? null,
-    'Generated mode should remain explainable.'
+    expected: 'generated execution path is attached and usable',
+    actual  : $generatedDescription['compiledState']['reason'] ?? null,
+    message : 'Generated mode should remain explainable.'
 );
 
 $dynamicCacheDir = sys_get_temp_dir() . '/container-dynamic-mode-' . uniqid('', true);
-$dynamic         = makeTestContainer(CreateContainerConfig::create(
+$dynamic         = makeTestContainer(config: CreateContainerConfig::create(
     cacheDir     : $dynamicCacheDir,
     cacheVersion : 'dynamic-mode-smoke',
     executionMode: CreateContainerConfig::EXECUTION_MODE_DYNAMIC
 ));
-$dynamic->compileContainer([ExecutionModeService::class, ExecutionModeDependency::class]);
-$dynamic->get(ExecutionModeService::class);
+$dynamic->compileContainer(serviceIds: [ExecutionModeService::class, ExecutionModeDependency::class]);
+$dynamic->get(id: ExecutionModeService::class);
 
-$dynamicCompileReport = $dynamic->compileReport([ExecutionModeService::class]);
+$dynamicCompileReport = $dynamic->compileReport(serviceIds: [ExecutionModeService::class]);
 $dynamicRuntimeReport = $dynamic->runtimeReport();
-$dynamicDescription   = $dynamic->describeService(ExecutionModeService::class);
+$dynamicDescription   = $dynamic->describeService(id: ExecutionModeService::class);
 
 assertSame(
-    CreateContainerConfig::EXECUTION_MODE_DYNAMIC,
-    $dynamicCompileReport?->executionMode,
-    'Dynamic mode should be preserved in compile reports.'
+    expected: CreateContainerConfig::EXECUTION_MODE_DYNAMIC,
+    actual  : $dynamicCompileReport?->executionMode,
+    message : 'Dynamic mode should be preserved in compile reports.'
 );
 assertSame(
-    CreateContainerConfig::EXECUTION_MODE_DYNAMIC,
-    $dynamicRuntimeReport->executionMode,
-    'Dynamic mode should be preserved in runtime reports.'
+    expected: CreateContainerConfig::EXECUTION_MODE_DYNAMIC,
+    actual  : $dynamicRuntimeReport->executionMode,
+    message : 'Dynamic mode should be preserved in runtime reports.'
 );
 assertSame(
-    'dynamic',
-    $dynamicDescription['compiledState']['decision'] ?? null,
-    'Dynamic mode should disable the attached compiled hot path deterministically.'
+    expected: 'dynamic',
+    actual  : $dynamicDescription['compiledState']['decision'] ?? null,
+    message : 'Dynamic mode should disable the attached compiled hot path deterministically.'
 );
 assertSame(
-    'execution mode is dynamic',
-    $dynamicDescription['compiledState']['reason'] ?? null,
-    'Dynamic mode fallback should stay explainable.'
+    expected: 'execution mode is dynamic',
+    actual  : $dynamicDescription['compiledState']['reason'] ?? null,
+    message : 'Dynamic mode fallback should stay explainable.'
 );
 assertSame(
-    false,
-    $dynamicDescription['compiledState']['attached'] ?? true,
-    'Dynamic mode should keep compiled hot-path attachment disabled.'
+    expected: false,
+    actual  : $dynamicDescription['compiledState']['attached'] ?? true,
+    message : 'Dynamic mode should keep compiled hot-path attachment disabled.'
 );
 assertSame(
-    true,
-    $dynamicDescription['compiledState']['artifactAvailable'] ?? false,
-    'Dynamic mode should still preserve compiled artifacts as derived outputs.'
+    expected: true,
+    actual  : $dynamicDescription['compiledState']['artifactAvailable'] ?? false,
+    message : 'Dynamic mode should still preserve compiled artifacts as derived outputs.'
 );
 
 echo basename(__FILE__) . " ok\n";

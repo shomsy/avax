@@ -10,30 +10,30 @@ final class StrictSharedFlowService {}
 
 final class ConditionalInternalService {}
 
-$relaxed = makeTestContainer(CreateContainerConfig::create(
+$relaxed = makeTestContainer(config: CreateContainerConfig::create(
     policyProfile: CreateContainerConfig::POLICY_PROFILE_RELAXED
 ));
-$relaxed->bind(StrictSharedFlowService::class, StrictSharedFlowService::class)
-    ->asFlow('flow.relaxed')
+$relaxed->bind(abstract: StrictSharedFlowService::class, concrete: StrictSharedFlowService::class)
+    ->asFlow(ownerSlice: 'flow.relaxed')
     ->asShared();
-$relaxed->bind(ConditionalInternalService::class, ConditionalInternalService::class)
-    ->asCapability('capability.relaxed')
+$relaxed->bind(abstract: ConditionalInternalService::class, concrete: ConditionalInternalService::class)
+    ->asCapability(ownerSlice: 'capability.relaxed')
     ->asInternal()
-    ->profiles('prod');
+    ->profiles(profiles: 'prod');
 
-$strict = makeTestContainer(CreateContainerConfig::create(
+$strict = makeTestContainer(config: CreateContainerConfig::create(
     settings      : ['app_env' => 'prod'],
     policyProfile : CreateContainerConfig::POLICY_PROFILE_RELAXED,
     policyProfiles: ['prod' => CreateContainerConfig::POLICY_PROFILE_STRICT],
     policyFailMode: CreateContainerConfig::POLICY_FAIL_MODE_CLOSED
 ));
-$strict->bind(StrictSharedFlowService::class, StrictSharedFlowService::class)
-    ->asFlow('flow.strict')
+$strict->bind(abstract: StrictSharedFlowService::class, concrete: StrictSharedFlowService::class)
+    ->asFlow(ownerSlice: 'flow.strict')
     ->asShared();
-$strict->bind(ConditionalInternalService::class, ConditionalInternalService::class)
-    ->asCapability('capability.strict')
+$strict->bind(abstract: ConditionalInternalService::class, concrete: ConditionalInternalService::class)
+    ->asCapability(ownerSlice: 'capability.strict')
     ->asInternal()
-    ->profiles('prod');
+    ->profiles(profiles: 'prod');
 
 $relaxedFindings  = $relaxed->debugGraph()['policyFindings'];
 $strictFindings   = $strict->debugGraph()['policyFindings'];
@@ -44,12 +44,12 @@ $strictFlowSeverities         = array_column($strictFindings[StrictSharedFlowSer
 $relaxedConditionalSeverities = array_column($relaxedFindings[ConditionalInternalService::class] ?? [], 'severity', 'code');
 $strictConditionalSeverities  = array_column($strictFindings[ConditionalInternalService::class] ?? [], 'severity', 'code');
 
-assertSame('warn', $relaxedFlowSeverities['POL-006'] ?? null, 'Relaxed policy profile should keep POL-006 as a warning.');
-assertSame('error', $strictFlowSeverities['POL-006'] ?? null, 'Strict policy profile should escalate POL-006 to an error.');
-assertSame('warn', $relaxedConditionalSeverities['POL-013'] ?? null, 'Relaxed policy profile should keep hidden conditional findings as warnings.');
-assertSame('error', $strictConditionalSeverities['POL-013'] ?? null, 'Strict policy profile should escalate hidden conditional findings to errors.');
-assertSame('strict', $strictGovernance['profile'] ?? null, 'Environment-specific policy profile overrides should be reflected in governance diagnostics.');
-assertSame('closed', $strictGovernance['failMode'] ?? null, 'Governance diagnostics should expose the fail-open/fail-closed posture.');
-assertTrue(($strictGovernance['blocked'] ?? false) === true, 'Fail-closed governance should report when policy errors block the composition.');
+assertSame(expected: 'warn', actual: $relaxedFlowSeverities['POL-006'] ?? null, message: 'Relaxed policy profile should keep POL-006 as a warning.');
+assertSame(expected: 'error', actual: $strictFlowSeverities['POL-006'] ?? null, message: 'Strict policy profile should escalate POL-006 to an error.');
+assertSame(expected: 'warn', actual: $relaxedConditionalSeverities['POL-013'] ?? null, message: 'Relaxed policy profile should keep hidden conditional findings as warnings.');
+assertSame(expected: 'error', actual: $strictConditionalSeverities['POL-013'] ?? null, message: 'Strict policy profile should escalate hidden conditional findings to errors.');
+assertSame(expected: 'strict', actual: $strictGovernance['profile'] ?? null, message: 'Environment-specific policy profile overrides should be reflected in governance diagnostics.');
+assertSame(expected: 'closed', actual: $strictGovernance['failMode'] ?? null, message: 'Governance diagnostics should expose the fail-open/fail-closed posture.');
+assertTrue(condition: ($strictGovernance['blocked'] ?? false) === true, message: 'Fail-closed governance should report when policy errors block the composition.');
 
 echo basename(__FILE__) . " ok\n";

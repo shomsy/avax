@@ -26,25 +26,25 @@ final readonly class SyncScimGroups
      */
     public function execute(SyncScimGroupsData $data) : ScimProvisioningResult
     {
-        $directory = $this->directoryStore->find($data->directoryId);
+        $directory = $this->directoryStore->find(directoryId: $data->directoryId);
 
         if ($directory === null) {
             throw ScimFailed::unknownDirectory();
         }
 
-        $identity = $this->identityStore->find($directory->directoryId, $data->externalId);
+        $identity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);
 
         if ($identity === null) {
             throw ScimFailed::unknownProvisionedIdentity();
         }
 
-        $user = $this->userSource->findById($identity->userId);
+        $user = $this->userSource->findById(id: $identity->userId);
 
         if ($user === null) {
             throw ScimFailed::unknownProvisionedIdentity();
         }
 
-        return $this->provisionScimUser->execute(new ProvisionScimUserData(
+        return $this->provisionScimUser->execute(data: new ProvisionScimUserData(
             directoryId    : $data->directoryId,
             directoryToken : $data->directoryToken,
             externalId     : $data->externalId,

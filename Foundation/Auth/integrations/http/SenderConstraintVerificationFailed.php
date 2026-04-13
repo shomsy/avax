@@ -10,6 +10,6 @@ final class SenderConstraintVerificationFailed extends RuntimeException
 {
     public static function mismatch() : self
     {
-        return new self('OAuth sender constraint does not match the bound token.');
+        return new self(message: 'OAuth sender constraint does not match the bound token.');
     }
 }

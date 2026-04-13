@@ -23,7 +23,7 @@ class RequireAuthenticationTest extends TestCase
     public function testRequireAuthenticationSuccess() : void
     {
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(id: 1, email: 'user@example.com', username: 'user'),
             mode: AuthenticationMode::SESSION
         ));

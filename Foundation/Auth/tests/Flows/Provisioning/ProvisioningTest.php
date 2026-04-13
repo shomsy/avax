@@ -33,16 +33,16 @@ final class ProvisioningTest extends TestCase
         $clock         = new Clock();
         $userSource    = new InMemoryUserSource();
         $targetUser    = User::create(
-            id          : new UserId(2),
-            email       : new UserEmail('user@example.com'),
+            id          : new UserId(value: 2),
+            email       : new UserEmail(value: 'user@example.com'),
             username    : 'user',
             passwordHash: 'hash',
             roles       : [UserRole::USER]
         );
-        $userSource->create($targetUser);
+        $userSource->create(user: $targetUser);
 
         $current = new CurrentAuthentication();
-        $current->store(AuthenticationContext::authenticated(
+        $current->store(context: AuthenticationContext::authenticated(
             user      : new AuthenticatedUser(
                 id       : 1,
                 email    : 'admin@example.com',
@@ -53,25 +53,25 @@ final class ProvisioningTest extends TestCase
             sessionId : 'session-admin'
         ));
         $elevations = new InMemoryAdminElevationStore();
-        $elevations->start(new AdminElevationRecord(1, 'session-admin', $clock->now()->modify('+15 minutes')));
-        $elevations->start(new AdminElevationRecord(2, 'session-target-suspend', $clock->now()->modify('+15 minutes')));
+        $elevations->start(record: new AdminElevationRecord(userId: 1, bindingId: 'session-admin', expiresAt: $clock->now()->modify(modifier: '+15 minutes')));
+        $elevations->start(record: new AdminElevationRecord(userId: 2, bindingId: 'session-target-suspend', expiresAt: $clock->now()->modify(modifier: '+15 minutes')));
         $sessionRegistry = new InMemorySessionRegistry();
-        $sessionRegistry->track(new SessionRecord(
+        $sessionRegistry->track(record: new SessionRecord(
             sessionId        : 'session-target-suspend',
-            userId           : new UserId(2),
+            userId           : new UserId(value: 2),
             createdAt        : $clock->now(),
             lastSeenAt       : $clock->now(),
-            idleExpiresAt    : $clock->now()->modify('+15 minutes'),
-            absoluteExpiresAt: $clock->now()->modify('+8 hours')
+            idleExpiresAt    : $clock->now()->modify(modifier: '+15 minutes'),
+            absoluteExpiresAt: $clock->now()->modify(modifier: '+8 hours')
         ));
         $refreshTokens = new InMemoryRefreshTokenStore();
         $issuedRefresh = $refreshTokens->issue(
-            userId    : new UserId(2),
-            expiresAt : $clock->now()->modify('+30 days'),
+            userId    : new UserId(value: 2),
+            expiresAt : $clock->now()->modify(modifier: '+30 days'),
             clientId  : 'oauth-client'
         );
 
-        $guard      = new RequireAdminElevation($current, $elevations, $clock);
+        $guard      = new RequireAdminElevation(currentAuthentication: $current, elevationStore: $elevations, clock: $clock);
         $suspend    = new SuspendUser(
             userSource         : $userSource,
             requireAdminElevation: $guard,
@@ -81,7 +81,7 @@ final class ProvisioningTest extends TestCase
             refreshTokenStore  : $refreshTokens,
             adminElevationStore: $elevations
         );
-        $reactivate = new ReactivateUser($userSource, $guard, new InMemoryAuditLog(), $clock);
+        $reactivate = new ReactivateUser(userSource: $userSource, requireAdminElevation: $guard, auditLog: new InMemoryAuditLog(), clock: $clock);
         $deprovision = new DeprovisionUser(
             userSource         : $userSource,
             requireAdminElevation: $guard,
@@ -92,37 +92,37 @@ final class ProvisioningTest extends TestCase
             adminElevationStore: $elevations
         );
 
-        $suspend->execute(2);
-        $this->assertFalse($userSource->findById(new UserId(2))?->isActive() ?? true);
-        $this->assertTrue($sessionRegistry->find('session-target-suspend')?->isRevoked() ?? false);
-        $this->assertSame('suspended', $sessionRegistry->find('session-target-suspend')?->revokeReason);
-        $this->assertTrue($refreshTokens->find($issuedRefresh->token)?->revoked ?? false);
+        $suspend->execute(userId: 2);
+        $this->assertFalse(condition: $userSource->findById(id: new UserId(value: 2))?->isActive() ?? true);
+        $this->assertTrue(condition: $sessionRegistry->find(sessionId: 'session-target-suspend')?->isRevoked() ?? false);
+        $this->assertSame(expected: 'suspended', actual: $sessionRegistry->find(sessionId: 'session-target-suspend')?->revokeReason);
+        $this->assertTrue(condition: $refreshTokens->find(plainToken: $issuedRefresh->token)?->revoked ?? false);
 
-        $reactivate->execute(2);
-        $this->assertTrue($userSource->findById(new UserId(2))?->isActive() ?? false);
+        $reactivate->execute(userId: 2);
+        $this->assertTrue(condition: $userSource->findById(id: new UserId(value: 2))?->isActive() ?? false);
 
-        $sessionRegistry->track(new SessionRecord(
+        $sessionRegistry->track(record: new SessionRecord(
             sessionId        : 'session-target-deprovision',
-            userId           : new UserId(2),
+            userId           : new UserId(value: 2),
             createdAt        : $clock->now(),
             lastSeenAt       : $clock->now(),
-            idleExpiresAt    : $clock->now()->modify('+15 minutes'),
-            absoluteExpiresAt: $clock->now()->modify('+8 hours')
+            idleExpiresAt    : $clock->now()->modify(modifier: '+15 minutes'),
+            absoluteExpiresAt: $clock->now()->modify(modifier: '+8 hours')
         ));
         $issuedRefresh = $refreshTokens->issue(
-            userId    : new UserId(2),
-            expiresAt : $clock->now()->modify('+30 days'),
+            userId    : new UserId(value: 2),
+            expiresAt : $clock->now()->modify(modifier: '+30 days'),
             clientId  : 'oauth-client-2'
         );
-        $elevations->start(new AdminElevationRecord(2, 'session-target-deprovision', $clock->now()->modify('+15 minutes')));
+        $elevations->start(record: new AdminElevationRecord(userId: 2, bindingId: 'session-target-deprovision', expiresAt: $clock->now()->modify(modifier: '+15 minutes')));
 
-        $deprovision->execute(2);
-        $deprovisioned = $userSource->findById(new UserId(2));
-        $this->assertFalse($deprovisioned?->isActive() ?? true);
-        $this->assertSame([], $deprovisioned?->getRoles() ?? []);
-        $this->assertTrue($sessionRegistry->find('session-target-deprovision')?->isRevoked() ?? false);
-        $this->assertSame('deprovisioned', $sessionRegistry->find('session-target-deprovision')?->revokeReason);
-        $this->assertTrue($refreshTokens->find($issuedRefresh->token)?->revoked ?? false);
-        $this->assertNull($elevations->find('session-target-deprovision'));
+        $deprovision->execute(userId: 2);
+        $deprovisioned = $userSource->findById(id: new UserId(value: 2));
+        $this->assertFalse(condition: $deprovisioned?->isActive() ?? true);
+        $this->assertSame(expected: [], actual: $deprovisioned?->getRoles() ?? []);
+        $this->assertTrue(condition: $sessionRegistry->find(sessionId: 'session-target-deprovision')?->isRevoked() ?? false);
+        $this->assertSame(expected: 'deprovisioned', actual: $sessionRegistry->find(sessionId: 'session-target-deprovision')?->revokeReason);
+        $this->assertTrue(condition: $refreshTokens->find(plainToken: $issuedRefresh->token)?->revoked ?? false);
+        $this->assertNull(actual: $elevations->find(bindingId: 'session-target-deprovision'));
     }
 }

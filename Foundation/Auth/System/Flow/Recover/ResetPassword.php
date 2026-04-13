@@ -19,22 +19,22 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class ResetPassword
 {
     public function __construct(
-        private UserSourceInterface             $userSource,
-        private PasswordHasher                  $passwordHasher,
-        private PasswordResetStoreInterface     $passwordResetStore,
-        private AuditLogInterface               $auditLog,
-        private Clock                           $clock,
-        private SessionRegistryInterface|null   $sessionRegistry = null,
-        private MfaChallengeStoreInterface|null $mfaChallengeStore = null,
-        private RefreshTokenStoreInterface|null $refreshTokenStore = null
+        private UserSourceInterface                                    $userSource,
+        #[\SensitiveParameter] private PasswordHasher                  $passwordHasher,
+        #[\SensitiveParameter] private PasswordResetStoreInterface     $passwordResetStore,
+        private AuditLogInterface                                      $auditLog,
+        private Clock                                                  $clock,
+        #[\SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null                        $mfaChallengeStore = null,
+        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
     ) {}
 
     public function execute(ResetPasswordData $data) : bool
     {
-        $userId = $this->passwordResetStore->consume($data->token, $this->clock->now());
+        $userId = $this->passwordResetStore->consume(token: $data->token, now: $this->clock->now());
 
         if ($userId === null) {
-            $this->auditLog->record(new AuditEvent(
+            $this->auditLog->record(event: new AuditEvent(
                                         name      : 'auth.password_reset.failed',
                                         occurredAt: $this->clock->now(),
                                         context   : [
@@ -49,13 +49,13 @@ final readonly class ResetPassword
 
         $this->userSource->updatePassword(
             id          : $userId,
-            passwordHash: $this->passwordHasher->hash($data->newPassword)
+            passwordHash: $this->passwordHasher->hash(password: $data->newPassword)
         );
-        $this->sessionRegistry?->revokeForUser($userId, $this->clock->now(), 'password_reset');
-        $this->mfaChallengeStore?->forgetForUser($userId);
-        $this->refreshTokenStore?->revokeUser($userId);
+        $this->sessionRegistry?->revokeForUser(userId: $userId, revokedAt: $this->clock->now(), reason: 'password_reset');
+        $this->mfaChallengeStore?->forgetForUser(userId: $userId);
+        $this->refreshTokenStore?->revokeUser(userId: $userId);
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
                                     name      : 'auth.password_reset.completed',
                                     occurredAt: $this->clock->now(),
                                     context   : [

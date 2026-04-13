@@ -47,17 +47,17 @@ final class VerifyMfaChallengeTest extends TestCase
     public function testValidTotpCompletesAuthentication() : void
     {
         [$flow, $totp, $clock, $challengeStore, $currentAuthentication] = $this->makeFlow();
-        $challengeStore->issue($this->challengeRecord(expiresAt: $clock->now()->add(new DateInterval('PT5M'))));
+        $challengeStore->issue(record: $this->challengeRecord(expiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT5M'))));
 
-        $result = $flow->execute(new VerifyMfaChallengeData(
+        $result = $flow->execute(data: new VerifyMfaChallengeData(
                                      challengeId: 'challenge-1',
-                                     code       : $totp->codeAt('SECRETSECRETSECRETSECRETSECRETSE', $clock->now())
+                                     code       : $totp->codeAt(secret: 'SECRETSECRETSECRETSECRETSECRETSE', moment: $clock->now())
                                  ));
 
-        $this->assertTrue($result->isAuthenticated());
-        $this->assertNotNull($result->context()->mfaVerifiedAt());
-        $this->assertTrue($currentAuthentication->read()->isAuthenticated());
-        $this->assertNull($challengeStore->find('challenge-1'));
+        $this->assertTrue(condition: $result->isAuthenticated());
+        $this->assertNotNull(actual: $result->context()->mfaVerifiedAt());
+        $this->assertTrue(condition: $currentAuthentication->read()->isAuthenticated());
+        $this->assertNull(actual: $challengeStore->find(challengeId: 'challenge-1'));
     }
 
     /**
@@ -66,19 +66,19 @@ final class VerifyMfaChallengeTest extends TestCase
      */
     private function makeFlow(LimitMfaAttempts|null $attemptLimit = null) : array
     {
-        $clock      = new FrozenClock(new DateTimeImmutable('2026-04-09T12:00:00+00:00'));
+        $clock      = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));
         $userSource = new InMemoryUserSource();
         $user       = User::create(
-            id          : new UserId(1),
-            email       : new UserEmail('user@example.com'),
+            id          : new UserId(value: 1),
+            email       : new UserEmail(value: 'user@example.com'),
             username    : 'user',
             passwordHash: 'hash'
         );
-        $userSource->create($user);
+        $userSource->create(user: $user);
 
         $mfaStore = new InMemoryMfaStore();
-        $mfaStore->saveMethod(new MfaMethodRecord(
-                                  userId   : new UserId(1),
+        $mfaStore->saveMethod(record: new MfaMethodRecord(
+                                  userId   : new UserId(value: 1),
                                   method   : MfaMethod::TOTP,
                                   secret   : 'SECRETSECRETSECRETSECRETSECRETSE',
                                   enabledAt: $clock->now()
@@ -94,14 +94,14 @@ final class VerifyMfaChallengeTest extends TestCase
                     accessToken  : new IssuedToken(
                                        token    : 'access-token',
                                        tokenId  : 'access-id',
-                                       expiresAt: $verifiedAt->modify('+1 hour')
+                                       expiresAt: $verifiedAt->modify(modifier: '+1 hour')
                                    ),
                     refreshToken : new IssuedRefreshToken(
                                        token        : 'refresh-token',
                                        tokenId      : 'refresh-id',
                                        familyId     : 'family-id',
                                        userId       : $issuedUser->getId(),
-                                       expiresAt    : $verifiedAt->modify('+30 days'),
+                                       expiresAt    : $verifiedAt->modify(modifier: '+30 days'),
                                        mfaVerifiedAt: $verifiedAt
                                    ),
                     mfaVerifiedAt: $verifiedAt
@@ -144,9 +144,9 @@ final class VerifyMfaChallengeTest extends TestCase
     {
         return new MfaChallengeRecord(
             challengeId: $challengeId,
-            userId     : new UserId(1),
+            userId     : new UserId(value: 1),
             purpose    : MfaChallengePurpose::LOGIN,
-            createdAt  : $expiresAt->sub(new DateInterval('PT1M')),
+            createdAt  : $expiresAt->sub(interval: new DateInterval(duration: 'PT1M')),
             expiresAt  : $expiresAt
         );
     }
@@ -154,99 +154,99 @@ final class VerifyMfaChallengeTest extends TestCase
     public function testInvalidTotpFails() : void
     {
         [$flow, , $clock, $challengeStore] = $this->makeFlow();
-        $challengeStore->issue($this->challengeRecord(expiresAt: $clock->now()->add(new DateInterval('PT5M'))));
+        $challengeStore->issue(record: $this->challengeRecord(expiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT5M'))));
 
         try {
-            $flow->execute(new VerifyMfaChallengeData('challenge-1', '000000'));
-            self::fail('Expected MFA challenge failure.');
+            $flow->execute(data: new VerifyMfaChallengeData(challengeId: 'challenge-1', code: '000000'));
+            self::fail(message: 'Expected MFA challenge failure.');
         } catch (MfaChallengeFailed $exception) {
-            $this->assertSame(MfaChallengeFailure::INVALID, $exception->reason());
+            $this->assertSame(expected: MfaChallengeFailure::INVALID, actual: $exception->reason());
         }
     }
 
     public function testExpiredChallengeFails() : void
     {
         [$flow, $totp, $clock, $challengeStore] = $this->makeFlow();
-        $challengeStore->issue($this->challengeRecord(expiresAt: $clock->now()->sub(new DateInterval('PT1M'))));
+        $challengeStore->issue(record: $this->challengeRecord(expiresAt: $clock->now()->sub(interval: new DateInterval(duration: 'PT1M'))));
 
         try {
-            $flow->execute(new VerifyMfaChallengeData(
+            $flow->execute(data: new VerifyMfaChallengeData(
                                challengeId: 'challenge-1',
-                               code       : $totp->codeAt('SECRETSECRETSECRETSECRETSECRETSE', $clock->now())
+                               code       : $totp->codeAt(secret: 'SECRETSECRETSECRETSECRETSECRETSE', moment: $clock->now())
                            ));
-            self::fail('Expected MFA challenge failure.');
+            self::fail(message: 'Expected MFA challenge failure.');
         } catch (MfaChallengeFailed $exception) {
-            $this->assertSame(MfaChallengeFailure::EXPIRED, $exception->reason());
+            $this->assertSame(expected: MfaChallengeFailure::EXPIRED, actual: $exception->reason());
         }
     }
 
     public function testRepeatedFailuresBecomeLocked() : void
     {
-        $limitClock = new FrozenClock(new DateTimeImmutable('2026-04-09T12:00:00+00:00'));
+        $limitClock = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-09T12:00:00+00:00'));
         [$flow, , $clock, $challengeStore] = $this->makeFlow(attemptLimit: new LimitMfaAttempts(
                                                                                storage     : new InMemoryAttemptLimitStorage(),
                                                                                clock       : $limitClock,
                                                                                maxAttempts : 1,
                                                                                decaySeconds: 300
                                                                            ));
-        $challengeStore->issue($this->challengeRecord(expiresAt: $clock->now()->add(new DateInterval('PT5M'))));
+        $challengeStore->issue(record: $this->challengeRecord(expiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT5M'))));
 
         try {
-            $flow->execute(new VerifyMfaChallengeData('challenge-1', '000000'));
+            $flow->execute(data: new VerifyMfaChallengeData(challengeId: 'challenge-1', code: '000000'));
         } catch (MfaChallengeFailed) {
         }
 
         try {
-            $flow->execute(new VerifyMfaChallengeData('challenge-1', '000000'));
-            self::fail('Expected MFA challenge lock.');
+            $flow->execute(data: new VerifyMfaChallengeData(challengeId: 'challenge-1', code: '000000'));
+            self::fail(message: 'Expected MFA challenge lock.');
         } catch (MfaChallengeFailed $exception) {
-            $this->assertSame(MfaChallengeFailure::LOCKED, $exception->reason());
+            $this->assertSame(expected: MfaChallengeFailure::LOCKED, actual: $exception->reason());
         }
     }
 
     public function testBackupCodeCanCompleteChallengeOnlyOnce() : void
     {
         [$flow, , $clock, $challengeStore, , $plainBackupCode] = $this->makeFlowWithBackupCode();
-        $challengeStore->issue($this->challengeRecord(expiresAt: $clock->now()->add(new DateInterval('PT5M'))));
+        $challengeStore->issue(record: $this->challengeRecord(expiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT5M'))));
 
-        $result = $flow->execute(new VerifyMfaChallengeData('challenge-1', $plainBackupCode));
-        $this->assertTrue($result->isAuthenticated());
+        $result = $flow->execute(data: new VerifyMfaChallengeData(challengeId: 'challenge-1', code: $plainBackupCode));
+        $this->assertTrue(condition: $result->isAuthenticated());
 
-        $challengeStore->issue($this->challengeRecord(
+        $challengeStore->issue(record: $this->challengeRecord(
             challengeId: 'challenge-2',
-            expiresAt  : $clock->now()->add(new DateInterval('PT5M'))
+            expiresAt  : $clock->now()->add(interval: new DateInterval(duration: 'PT5M'))
         ));
 
         try {
-            $flow->execute(new VerifyMfaChallengeData('challenge-2', $plainBackupCode));
-            self::fail('Expected used backup code to fail.');
+            $flow->execute(data: new VerifyMfaChallengeData(challengeId: 'challenge-2', code: $plainBackupCode));
+            self::fail(message: 'Expected used backup code to fail.');
         } catch (MfaChallengeFailed $exception) {
-            $this->assertSame(MfaChallengeFailure::INVALID, $exception->reason());
+            $this->assertSame(expected: MfaChallengeFailure::INVALID, actual: $exception->reason());
         }
     }
 
     public function testTotpCodeCannotBeReplayedWithinSameTimeStep() : void
     {
         [$flow, $totp, $clock, $challengeStore] = $this->makeFlow();
-        $code = $totp->codeAt('SECRETSECRETSECRETSECRETSECRETSE', $clock->now());
+        $code = $totp->codeAt(secret: 'SECRETSECRETSECRETSECRETSECRETSE', moment: $clock->now());
 
-        $challengeStore->issue($this->challengeRecord(
+        $challengeStore->issue(record: $this->challengeRecord(
             challengeId: 'challenge-1',
-            expiresAt  : $clock->now()->add(new DateInterval('PT5M'))
+            expiresAt  : $clock->now()->add(interval: new DateInterval(duration: 'PT5M'))
         ));
-        $result = $flow->execute(new VerifyMfaChallengeData('challenge-1', $code));
-        $this->assertTrue($result->isAuthenticated());
+        $result = $flow->execute(data: new VerifyMfaChallengeData(challengeId: 'challenge-1', code: $code));
+        $this->assertTrue(condition: $result->isAuthenticated());
 
-        $challengeStore->issue($this->challengeRecord(
+        $challengeStore->issue(record: $this->challengeRecord(
             challengeId: 'challenge-2',
-            expiresAt  : $clock->now()->add(new DateInterval('PT5M'))
+            expiresAt  : $clock->now()->add(interval: new DateInterval(duration: 'PT5M'))
         ));
 
         try {
-            $flow->execute(new VerifyMfaChallengeData('challenge-2', $code));
-            self::fail('Expected replayed TOTP code to fail.');
+            $flow->execute(data: new VerifyMfaChallengeData(challengeId: 'challenge-2', code: $code));
+            self::fail(message: 'Expected replayed TOTP code to fail.');
         } catch (MfaChallengeFailed $exception) {
-            $this->assertSame(MfaChallengeFailure::INVALID, $exception->reason());
+            $this->assertSame(expected: MfaChallengeFailure::INVALID, actual: $exception->reason());
         }
     }
 
@@ -261,12 +261,12 @@ final class VerifyMfaChallengeTest extends TestCase
             passwordHasher: new PasswordHasher(),
             clock         : $clock
         ))->execute();
-        $mfaStoreProperty = new \ReflectionProperty(VerifyMfaChallenge::class, 'mfaStore');
-        $mfaStoreProperty->setAccessible(true);
+        $mfaStoreProperty = new \ReflectionProperty(class: VerifyMfaChallenge::class, property: 'mfaStore');
+        $mfaStoreProperty->setAccessible(accessible: true);
         /** @var InMemoryMfaStore $mfaStore */
-        $mfaStore = $mfaStoreProperty->getValue($flow);
-        $method   = $mfaStore->findMethod(new UserId(1));
-        $mfaStore->saveMethod($method?->withBackupCodes($generated->records) ?? throw new \RuntimeException('Missing MFA method.'));
+        $mfaStore = $mfaStoreProperty->getValue(object: $flow);
+        $method   = $mfaStore->findMethod(userId: new UserId(value: 1));
+        $mfaStore->saveMethod(record: $method?->withBackupCodes(backupCodes: $generated->records) ?? throw new \RuntimeException(message: 'Missing MFA method.'));
 
         return [$flow, $totp, $clock, $challengeStore, $currentAuthentication, $generated->backupCodeSet->values()[0]];
     }

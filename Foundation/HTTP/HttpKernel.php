@@ -98,7 +98,7 @@ final readonly class HttpKernel implements Kernel
             default                                             => 500
         };
 
-        return $this->responseFactory->createErrorResponse($statusCode, $exception->getMessage());
+        return $this->responseFactory->createErrorResponse(statusCode: $statusCode, message: $exception->getMessage());
     }
 }
 

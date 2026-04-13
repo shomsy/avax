@@ -20,7 +20,7 @@ class ReadCurrentUserTest extends TestCase
     {
         $currentAuthentication = new CurrentAuthentication();
         $user                  = new AuthenticatedUser(id: 123, email: 'user@example.com', username: 'user');
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: $user,
             mode: AuthenticationMode::SESSION
         ));

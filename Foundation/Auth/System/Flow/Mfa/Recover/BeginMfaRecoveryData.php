@@ -12,8 +12,8 @@ use SensitiveParameter;
 final readonly class BeginMfaRecoveryData
 {
     public function __construct(
-        #[SensitiveParameter] public string $email,
-        public string|null                  $ipAddress = null,
-        public string|null                  $userAgent = null
+        #[SensitiveParameter] public string      $email,
+        #[SensitiveParameter] public string|null $ipAddress = null,
+        public string|null                       $userAgent = null
     ) {}
 }

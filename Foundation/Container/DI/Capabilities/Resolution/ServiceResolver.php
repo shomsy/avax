@@ -979,7 +979,7 @@ final class ServiceResolver
      */
     private function invokeFactory(Closure $factory, array $overrides = []) : mixed
     {
-        $reflection = new ReflectionFunction($factory);
+        $reflection = new ReflectionFunction(function: $factory);
         $arguments  = [];
 
         if ($reflection->getNumberOfParameters() >= 1) {
@@ -1002,7 +1002,7 @@ final class ServiceResolver
                 continue;
             }
 
-            $reflection = new ReflectionFunction($extender);
+            $reflection = new ReflectionFunction(function: $extender);
             $arguments  = [];
 
             if ($reflection->getNumberOfParameters() >= 1) {
@@ -4257,7 +4257,7 @@ final class ServiceResolver
         }
 
         if ($callable instanceof Closure) {
-            $reflection = new ReflectionFunction($callable);
+            $reflection = new ReflectionFunction(function: $callable);
 
             return 'call:closure:' . ($reflection->getFileName() ?: 'internal')
                 . ':' . $reflection->getStartLine()

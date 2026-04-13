@@ -19,22 +19,22 @@ final class GeneratedFixtureEntry
 
 return static function () {
     $cacheDir  = sys_get_temp_dir() . '/container-generated-fixture-' . uniqid();
-    $container = makeTestContainer(CreateContainerConfig::create(
+    $container = makeTestContainer(config: CreateContainerConfig::create(
         cacheDir     : $cacheDir,
         cacheVersion : 'generated-fixture',
         executionMode: CreateContainerConfig::EXECUTION_MODE_GENERATED,
         pruneMode    : CreateContainerConfig::PRUNE_MODE_STRICT
     ));
 
-    $container->singleton(GeneratedFixtureDependency::class, GeneratedFixtureDependency::class)
-        ->asCapability('capability.generated')
+    $container->singleton(abstract: GeneratedFixtureDependency::class, concrete: GeneratedFixtureDependency::class)
+        ->asCapability(ownerSlice: 'capability.generated')
         ->asShared()
         ->export();
-    $container->bind(GeneratedFixtureEntry::class, GeneratedFixtureEntry::class)
-        ->asFlow('flow.generated')
+    $container->bind(abstract: GeneratedFixtureEntry::class, concrete: GeneratedFixtureEntry::class)
+        ->asFlow(ownerSlice: 'flow.generated')
         ->asPrivate()
         ->entry()
-        ->import('capability.generated');
+        ->import(slices: 'capability.generated');
 
     return $container;
 };

@@ -23,4 +23,4 @@ if ($privateKey === false) {
 
 $signer = new SignReleaseArtifact();
 
-echo $signer->execute($artifactPath, $privateKey) . PHP_EOL;
+echo $signer->execute(artifactPath: $artifactPath, privateKeyPem: $privateKey) . PHP_EOL;

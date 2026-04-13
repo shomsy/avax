@@ -19,7 +19,7 @@ final readonly class WebhookAuditExporter implements AuditExporterInterface
     public function export(array $events) : void
     {
         foreach ($events as $event) {
-            $this->sender->send($this->normalizeAuditEvent->execute($event));
+            $this->sender->send(payload: $this->normalizeAuditEvent->execute(event: $event));
         }
     }
 }

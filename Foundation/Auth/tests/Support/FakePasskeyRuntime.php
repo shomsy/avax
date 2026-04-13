@@ -18,7 +18,7 @@ final class FakePasskeyRuntime implements PasskeyRuntimeInterface
         string $userName,
         string $displayName,
         string $challenge,
-        array $excludeCredentialIds
+        #[\SensitiveParameter] array $excludeCredentialIds
     ) : array
     {
         return [
@@ -45,7 +45,7 @@ final class FakePasskeyRuntime implements PasskeyRuntimeInterface
     public function beginAuthentication(
         string $rpId,
         string $challenge,
-        array $allowCredentialIds
+        #[\SensitiveParameter] array $allowCredentialIds
     ) : array
     {
         return [
@@ -59,7 +59,7 @@ final class FakePasskeyRuntime implements PasskeyRuntimeInterface
         string $rpId,
         string $challenge,
         array $response,
-        array $knownCredentials
+        #[\SensitiveParameter] array $knownCredentials
     ) : VerifiedPasskeyAuthentication
     {
         $credentialId = (string) ($response['credential_id'] ?? '');

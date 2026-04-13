@@ -10,8 +10,8 @@ use DateTimeImmutable;
 final readonly class EmailChangeRecord
 {
     public function __construct(
-        public UserId $userId,
-        public string $newEmail,
-        public DateTimeImmutable $expiresAt
+        public UserId                        $userId,
+        #[\SensitiveParameter] public string $newEmail,
+        public DateTimeImmutable             $expiresAt
     ) {}
 }

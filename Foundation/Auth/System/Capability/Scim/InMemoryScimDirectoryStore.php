@@ -36,12 +36,12 @@ final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
         #[SensitiveParameter] string $plainTextToken
     ) : bool
     {
-        $directory = $this->find($directoryId);
+        $directory = $this->find(directoryId: $directoryId);
 
         if ($directory === null) {
             return false;
         }
 
-        return $this->passwordHasher->verify($plainTextToken, $directory->tokenHash);
+        return $this->passwordHasher->verify(password: $plainTextToken, hash: $directory->tokenHash);
     }
 }

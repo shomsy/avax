@@ -27,7 +27,7 @@ class RequirePermissionTest extends TestCase
     {
         $permission            = new UserPermission(value: 'delete_user');
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(
                       id         : 1,
                       email      : 'delete@example.com',
@@ -50,7 +50,7 @@ class RequirePermissionTest extends TestCase
     {
         $permission            = new UserPermission(value: 'delete_user');
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(id: 1, email: 'user@example.com', username: 'user'),
             mode: AuthenticationMode::SESSION
         ));
@@ -58,10 +58,10 @@ class RequirePermissionTest extends TestCase
         $requirement = new RequirePermission(currentAuthentication: $currentAuthentication);
         try {
             $requirement->execute(permission: $permission);
-            self::fail('PermissionDenied was not raised.');
+            self::fail(message: 'PermissionDenied was not raised.');
         } catch (PermissionDenied $exception) {
-            $this->assertSame('Access denied.', $exception->getMessage());
-            $this->assertSame('delete_user', $exception->requirement()->value);
+            $this->assertSame(expected: 'Access denied.', actual: $exception->getMessage());
+            $this->assertSame(expected: 'delete_user', actual: $exception->requirement()->value);
         }
     }
 

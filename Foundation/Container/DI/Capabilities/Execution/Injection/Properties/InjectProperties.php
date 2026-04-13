@@ -71,11 +71,11 @@ final class InjectProperties
         }
 
         return $this->writers[$key] = Closure::bind(
-            static function (object $target, mixed $value) use ($property) : void {
+            closure : static function (object $target, mixed $value) use ($property) : void {
                 $target->{$property} = $value;
             },
-            null,
-            $class
+            newThis : null,
+            newScope: $class
         );
     }
 }

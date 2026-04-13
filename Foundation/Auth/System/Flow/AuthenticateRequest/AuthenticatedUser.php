@@ -18,13 +18,13 @@ final readonly class AuthenticatedUser
      * @param list<string> $permissions
      */
     public function __construct(
-        public int    $id,
-        public string $email,
-        public string $username,
-        public array  $roles = [],
-        public array  $permissions = [],
-        public bool   $emailVerified = false,
-        public bool   $mfaEnabled = false
+        public int                           $id,
+        #[\SensitiveParameter] public string $email,
+        public string                        $username,
+        public array                         $roles = [],
+        public array                         $permissions = [],
+        public bool                          $emailVerified = false,
+        public bool                          $mfaEnabled = false
     ) {}
 
     public static function fromUser(
@@ -62,7 +62,7 @@ final readonly class AuthenticatedUser
     public function canAccessRole(UserRole $requiredRole) : bool
     {
         foreach ($this->roles as $storedRole) {
-            if (UserRole::from($storedRole)->canAccess($requiredRole)) {
+            if (UserRole::from(value: $storedRole)->canAccess(required: $requiredRole)) {
                 return true;
             }
         }

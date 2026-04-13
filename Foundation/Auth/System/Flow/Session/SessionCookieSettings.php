@@ -22,11 +22,11 @@ final readonly class SessionCookieSettings
         public string $domain = ''
     ) {
         if (! in_array($this->sameSite, ['Lax', 'Strict', 'None'], true)) {
-            throw new InvalidArgumentException('Cookie sameSite must be Lax, Strict, or None.');
+            throw new InvalidArgumentException(message: 'Cookie sameSite must be Lax, Strict, or None.');
         }
 
         if ($this->sameSite === 'None' && ! $this->secure) {
-            throw new InvalidArgumentException('Cookie sameSite None requires a secure cookie.');
+            throw new InvalidArgumentException(message: 'Cookie sameSite None requires a secure cookie.');
         }
     }
 }

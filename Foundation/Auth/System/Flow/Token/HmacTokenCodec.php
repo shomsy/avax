@@ -20,11 +20,11 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
     )
     {
         if ($this->secret === '') {
-            throw new InvalidArgumentException('JWT secret cannot be empty.');
+            throw new InvalidArgumentException(message: 'JWT secret cannot be empty.');
         }
 
         if (! isset(self::algorithms()[$this->algorithm])) {
-            throw new InvalidArgumentException("Unsupported JWT algorithm: {$this->algorithm}");
+            throw new InvalidArgumentException(message: "Unsupported JWT algorithm: {$this->algorithm}");
         }
     }
 
@@ -54,8 +54,8 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
             $header['kid'] = trim($this->keyId);
         }
 
-        $headerSegment = $this->base64UrlEncode($this->encodeJson($header));
-        $claimSegment  = $this->base64UrlEncode($this->encodeJson($claims));
+        $headerSegment = $this->base64UrlEncode(value: $this->encodeJson(payload: $header));
+        $claimSegment  = $this->base64UrlEncode(value: $this->encodeJson(payload: $claims));
         $signature     = hash_hmac(
             algo  : self::algorithms()[$this->algorithm],
             data  : "{$headerSegment}.{$claimSegment}",
@@ -63,7 +63,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
             binary: true
         );
 
-        return "{$headerSegment}.{$claimSegment}.{$this->base64UrlEncode($signature)}";
+        return "{$headerSegment}.{$claimSegment}.{$this->base64UrlEncode(value:$signature)}";
     }
 
     private function base64UrlEncode(string $value) : string
@@ -79,7 +79,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
         try {
             return json_encode($payload, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
-            throw new InvalidArgumentException('Token payload could not be encoded.', previous: $exception);
+            throw new InvalidArgumentException(message: 'Token payload could not be encoded.', previous: $exception);
         }
     }
 
@@ -93,7 +93,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
 
         [$headerSegment, $claimSegment, $signatureSegment] = $segments;
 
-        $header = $this->decodeJson($this->base64UrlDecode($headerSegment));
+        $header = $this->decodeJson(json: $this->base64UrlDecode(value: $headerSegment));
 
         if (! is_array($header) || ($header['alg'] ?? null) !== $this->algorithm) {
             return null;
@@ -110,13 +110,13 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
             binary: true
         );
 
-        $actualSignature = $this->base64UrlDecode($signatureSegment);
+        $actualSignature = $this->base64UrlDecode(value: $signatureSegment);
 
         if ($actualSignature === null || ! hash_equals($expectedSignature, $actualSignature)) {
             return null;
         }
 
-        $claims = $this->decodeJson($this->base64UrlDecode($claimSegment));
+        $claims = $this->decodeJson(json: $this->base64UrlDecode(value: $claimSegment));
 
         return is_array($claims) ? $claims : null;
     }

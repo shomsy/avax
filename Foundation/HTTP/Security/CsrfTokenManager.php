@@ -51,8 +51,8 @@ final readonly class CsrfTokenManager
      */
     public function getToken() : string
     {
-        $tokens = $this->pruneExcessTokens($this->pruneExpiredTokens($this->getTokens()));
-        $activeToken = $this->readMostRecentToken($tokens);
+        $tokens = $this->pruneExcessTokens(tokens: $this->pruneExpiredTokens(tokens: $this->getTokens()));
+        $activeToken = $this->readMostRecentToken(tokens: $tokens);
 
         if ($activeToken !== null) {
             $this->storeTokens(tokens: $tokens);
@@ -153,7 +153,7 @@ final readonly class CsrfTokenManager
      */
     public function validateToken(#[SensitiveParameter] string|null $token) : bool
     {
-        $tokens = $this->pruneExpiredTokens($this->getTokens());
+        $tokens = $this->pruneExpiredTokens(tokens: $this->getTokens());
 
         if ($token === null || ! isset($tokens[$token])) {
             $this->logger->warning(

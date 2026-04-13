@@ -38,10 +38,10 @@ final class CallAction
 }
 
 $container = makeTestContainer();
-$container->bind(CallGreeterContract::class, CallGreeter::class);
+$container->bind(abstract: CallGreeterContract::class, concrete: CallGreeter::class);
 
-assertSame('hello', $container->call(CallAction::class), 'Invokable class strings should resolve through the container.');
-assertSame('hello', $container->call(CallAction::class . '@greet'), 'Class@method calls should receive injected arguments.');
-assertSame('static', $container->call([CallAction::class, 'staticHello']), 'Static callables should still work.');
+assertSame(expected: 'hello', actual: $container->call(callable: CallAction::class), message: 'Invokable class strings should resolve through the container.');
+assertSame(expected: 'hello', actual: $container->call(callable: CallAction::class . '@greet'), message: 'Class@method calls should receive injected arguments.');
+assertSame(expected: 'static', actual: $container->call(callable: [CallAction::class, 'staticHello']), message: 'Static callables should still work.');
 
 echo basename(__FILE__) . " ok\n";

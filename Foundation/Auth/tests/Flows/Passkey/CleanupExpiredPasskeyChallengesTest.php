@@ -16,32 +16,32 @@ final class CleanupExpiredPasskeyChallengesTest extends TestCase
     public function testCleanupRemovesExpiredAndUsedPasskeyChallenges() : void
     {
         $store = new InMemoryPasskeyChallengeStore();
-        $store->issue(new PasskeyChallengeRecord(
+        $store->issue(record: new PasskeyChallengeRecord(
             challengeId: 'expired',
             challenge  : 'expired-challenge',
             purpose    : PasskeyChallengePurpose::AUTHENTICATION,
-            expiresAt  : new \DateTimeImmutable('-1 minute')
+            expiresAt  : new \DateTimeImmutable(datetime: '-1 minute')
         ));
-        $store->issue(new PasskeyChallengeRecord(
+        $store->issue(record: new PasskeyChallengeRecord(
             challengeId: 'used',
             challenge  : 'used-challenge',
             purpose    : PasskeyChallengePurpose::REGISTRATION,
-            expiresAt  : new \DateTimeImmutable('+10 minutes'),
+            expiresAt  : new \DateTimeImmutable(datetime: '+10 minutes'),
             userId     : 1,
             usedAt     : new \DateTimeImmutable()
         ));
-        $store->issue(new PasskeyChallengeRecord(
+        $store->issue(record: new PasskeyChallengeRecord(
             challengeId: 'active',
             challenge  : 'active-challenge',
             purpose    : PasskeyChallengePurpose::AUTHENTICATION,
-            expiresAt  : new \DateTimeImmutable('+10 minutes')
+            expiresAt  : new \DateTimeImmutable(datetime: '+10 minutes')
         ));
 
-        $removed = (new CleanupExpiredPasskeyChallenges($store, new Clock()))->execute();
+        $removed = (new CleanupExpiredPasskeyChallenges(challengeStore: $store, clock: new Clock()))->execute();
 
-        $this->assertSame(2, $removed);
-        $this->assertNull($store->find('expired'));
-        $this->assertNull($store->find('used'));
-        $this->assertNotNull($store->find('active'));
+        $this->assertSame(expected: 2, actual: $removed);
+        $this->assertNull(actual: $store->find(challengeId: 'expired'));
+        $this->assertNull(actual: $store->find(challengeId: 'used'));
+        $this->assertNotNull(actual: $store->find(challengeId: 'active'));
     }
 }

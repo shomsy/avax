@@ -22,7 +22,7 @@ final readonly class ExportAuditEvents
             return 0;
         }
 
-        $this->exporter->export($events);
+        $this->exporter->export(events: $events);
 
         return count($events);
     }

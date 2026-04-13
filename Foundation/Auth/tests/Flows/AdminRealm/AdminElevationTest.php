@@ -25,7 +25,7 @@ final class AdminElevationTest extends TestCase
     {
         $clock = new Clock();
         $current = new CurrentAuthentication();
-        $current->store(AuthenticationContext::authenticated(
+        $current->store(context: AuthenticationContext::authenticated(
             user         : new AuthenticatedUser(
                 id        : 1,
                 email     : 'admin@example.com',
@@ -42,17 +42,17 @@ final class AdminElevationTest extends TestCase
         $store = new InMemoryAdminElevationStore();
         $begin = new BeginAdminElevation(
             currentAuthentication: $current,
-            requireFreshMfa      : new RequireFreshMfa($current, $clock),
+            requireFreshMfa      : new RequireFreshMfa(currentAuthentication: $current, clock: $clock),
             elevationStore       : $store,
             auditLog             : new InMemoryAuditLog(),
             clock                : $clock,
             phishingResistantRequired: true
         );
-        $guard = new RequireAdminElevation($current, $store, $clock);
-        $end   = new EndAdminElevation($current, $store, new InMemoryAuditLog(), $clock);
+        $guard = new RequireAdminElevation(currentAuthentication: $current, elevationStore: $store, clock: $clock);
+        $end   = new EndAdminElevation(currentAuthentication: $current, elevationStore: $store, auditLog: new InMemoryAuditLog(), clock: $clock);
 
         $elevation = $begin->execute();
-        $this->assertSame('session-1', $elevation->bindingId);
+        $this->assertSame(expected: 'session-1', actual: $elevation->bindingId);
 
         $guard->execute();
         $end->execute();
@@ -65,7 +65,7 @@ final class AdminElevationTest extends TestCase
     {
         $clock = new Clock();
         $current = new CurrentAuthentication();
-        $current->store(AuthenticationContext::authenticated(
+        $current->store(context: AuthenticationContext::authenticated(
             user         : new AuthenticatedUser(
                 id        : 1,
                 email     : 'admin@example.com',
@@ -80,7 +80,7 @@ final class AdminElevationTest extends TestCase
 
         $begin = new BeginAdminElevation(
             currentAuthentication: $current,
-            requireFreshMfa      : new RequireFreshMfa($current, $clock),
+            requireFreshMfa      : new RequireFreshMfa(currentAuthentication: $current, clock: $clock),
             elevationStore       : new InMemoryAdminElevationStore(),
             auditLog             : new InMemoryAuditLog(),
             clock                : $clock,

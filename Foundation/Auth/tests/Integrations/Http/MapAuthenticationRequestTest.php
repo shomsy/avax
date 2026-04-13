@@ -12,7 +12,7 @@ final class MapAuthenticationRequestTest extends TestCase
 {
     public function testMapAuthenticationRequestReadsBearerTokenAndClientMetadata() : void
     {
-        $request = (new MapAuthenticationRequest())->execute(new HttpAuthenticationInput(
+        $request = (new MapAuthenticationRequest())->execute(input: new HttpAuthenticationInput(
                                                                  headers          : ['authorization' => 'Bearer token-123'],
                                                                  cookies          : ['PHPSESSID' => 'session-1'],
                                                                  server           : [
@@ -22,36 +22,36 @@ final class MapAuthenticationRequestTest extends TestCase
                                                                  sessionCookieName: 'PHPSESSID'
                                                              ));
 
-        $this->assertSame('token-123', $request->bearerToken);
-        $this->assertTrue($request->allowSession);
-        $this->assertSame('127.0.0.1', $request->ipAddress);
-        $this->assertSame('phpunit', $request->userAgent);
+        $this->assertSame(expected: 'token-123', actual: $request->bearerToken);
+        $this->assertTrue(condition: $request->allowSession);
+        $this->assertSame(expected: '127.0.0.1', actual: $request->ipAddress);
+        $this->assertSame(expected: 'phpunit', actual: $request->userAgent);
     }
 
     public function testMapAuthenticationRequestDisablesSessionWhenCookieIsMissing() : void
     {
-        $request = (new MapAuthenticationRequest())->execute(new HttpAuthenticationInput(
+        $request = (new MapAuthenticationRequest())->execute(input: new HttpAuthenticationInput(
                                                                  headers          : ['Authorization' => 'Basic abc'],
                                                                  cookies          : [],
                                                                  server           : ['HTTP_AUTHORIZATION' => 'Bearer server-token'],
                                                                  sessionCookieName: 'PHPSESSID'
                                                              ));
 
-        $this->assertSame('server-token', $request->bearerToken);
-        $this->assertFalse($request->allowSession);
+        $this->assertSame(expected: 'server-token', actual: $request->bearerToken);
+        $this->assertFalse(condition: $request->allowSession);
     }
 
     public function testMapAuthenticationRequestKeepsSessionDisabledWhenTransportRejectsIt() : void
     {
-        $request = (new MapAuthenticationRequest())->execute(new HttpAuthenticationInput(
+        $request = (new MapAuthenticationRequest())->execute(input: new HttpAuthenticationInput(
                                                                  headers          : ['User-Agent' => 'header-agent'],
                                                                  cookies          : ['PHPSESSID' => 'session-1'],
                                                                  allowSession     : false,
                                                                  sessionCookieName: 'PHPSESSID'
                                                              ));
 
-        $this->assertNull($request->bearerToken);
-        $this->assertFalse($request->allowSession);
-        $this->assertSame('header-agent', $request->userAgent);
+        $this->assertNull(actual: $request->bearerToken);
+        $this->assertFalse(condition: $request->allowSession);
+        $this->assertSame(expected: 'header-agent', actual: $request->userAgent);
     }
 }

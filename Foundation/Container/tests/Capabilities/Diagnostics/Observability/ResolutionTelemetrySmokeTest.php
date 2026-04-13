@@ -17,22 +17,22 @@ final class ObservableAction
     }
 }
 
-$container = makeTestContainer(CreateContainerConfig::create(
+$container = makeTestContainer(config: CreateContainerConfig::create(
     debug          : true,
     diagnosticsMode: CreateContainerConfig::DIAGNOSTICS_MODE_DETAILED
 ));
 
-$container->get(ObservableService::class);
-$container->call(ObservableAction::class);
-$container->injectInto(new class {});
+$container->get(id: ObservableService::class);
+$container->call(callable: ObservableAction::class);
+$container->injectInto(target: new class {});
 
 $metrics  = $container->exportMetrics();
-$timeline = $container->get(ResolutionTimeline::class)->all();
+$timeline = $container->get(id: ResolutionTimeline::class)->all();
 
-assertTrue(str_contains($metrics, 'container_resolve_total'), 'Resolution metrics must be exported.');
-assertTrue(str_contains($metrics, 'container_calls_total'), 'Call metrics must be exported.');
-assertTrue(str_contains($metrics, 'container_injections_total'), 'Injection metrics must be exported.');
-assertTrue($timeline !== [], 'Resolution timeline should record runtime events.');
-assertTrue(isset($timeline[0]['time']) && is_float($timeline[0]['time']), 'Timeline entries should carry timestamps.');
+assertTrue(condition: str_contains($metrics, 'container_resolve_total'), message: 'Resolution metrics must be exported.');
+assertTrue(condition: str_contains($metrics, 'container_calls_total'), message: 'Call metrics must be exported.');
+assertTrue(condition: str_contains($metrics, 'container_injections_total'), message: 'Injection metrics must be exported.');
+assertTrue(condition: $timeline !== [], message: 'Resolution timeline should record runtime events.');
+assertTrue(condition: isset($timeline[0]['time']) && is_float($timeline[0]['time']), message: 'Timeline entries should carry timestamps.');
 
 echo basename(__FILE__) . " ok\n";

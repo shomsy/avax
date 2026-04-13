@@ -15,12 +15,12 @@ final class LazyCounter
 }
 
 $container = makeTestContainer();
-$container->singleton(LazyCounter::class, LazyCounter::class);
+$container->singleton(abstract: LazyCounter::class, concrete: LazyCounter::class);
 
-$lazy = $container->lazy(LazyCounter::class);
+$lazy = $container->lazy(abstract: LazyCounter::class);
 
-assertSame(LazyCounter::class, $lazy->serviceId(), 'Lazy proxy should keep the requested service id.');
-assertSame(1, $lazy->increment(), 'Lazy proxy should resolve on first method call.');
-assertSame(2, $lazy->increment(), 'Lazy proxy should reuse the same resolved service instance.');
+assertSame(expected: LazyCounter::class, actual: $lazy->serviceId(), message: 'Lazy proxy should keep the requested service id.');
+assertSame(expected: 1, actual: $lazy->increment(), message: 'Lazy proxy should resolve on first method call.');
+assertSame(expected: 2, actual: $lazy->increment(), message: 'Lazy proxy should reuse the same resolved service instance.');
 
 echo basename(__FILE__) . " ok\n";

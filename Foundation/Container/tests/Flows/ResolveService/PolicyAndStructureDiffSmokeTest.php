@@ -49,48 +49,48 @@ final class LocatorDriftService
 
 $cacheDir  = sys_get_temp_dir() . '/container-policy-diff-' . uniqid('', true);
 $config    = CreateContainerConfig::create(cacheDir: $cacheDir);
-$container = makeTestContainer($config);
+$container = makeTestContainer(config: $config);
 
-$container->bind(PolicyDependencyA::class, PolicyDependencyA::class);
-$container->bind(PolicyDependencyB::class, PolicyDependencyB::class);
-$container->bind(PolicyDependencyC::class, PolicyDependencyC::class);
-$container->bind(PolicyDependencyD::class, PolicyDependencyD::class);
-$container->bind(PolicyDependencyE::class, PolicyDependencyE::class);
-$container->bind(PolicyDependencyF::class, PolicyDependencyF::class);
-$container->singleton(OverInjectedPolicyService::class, OverInjectedPolicyService::class)
-    ->asCapability('checkout.policy')
+$container->bind(abstract: PolicyDependencyA::class, concrete: PolicyDependencyA::class);
+$container->bind(abstract: PolicyDependencyB::class, concrete: PolicyDependencyB::class);
+$container->bind(abstract: PolicyDependencyC::class, concrete: PolicyDependencyC::class);
+$container->bind(abstract: PolicyDependencyD::class, concrete: PolicyDependencyD::class);
+$container->bind(abstract: PolicyDependencyE::class, concrete: PolicyDependencyE::class);
+$container->bind(abstract: PolicyDependencyF::class, concrete: PolicyDependencyF::class);
+$container->singleton(abstract: OverInjectedPolicyService::class, concrete: OverInjectedPolicyService::class)
+    ->asCapability(ownerSlice: 'checkout.policy')
     ->asShared()
     ->export();
-$container->bind(OtherFlowLocal::class, OtherFlowLocal::class)
-    ->asFlow('read-user')
+$container->bind(abstract: OtherFlowLocal::class, concrete: OtherFlowLocal::class)
+    ->asFlow(ownerSlice: 'read-user')
     ->asPrivate();
-$container->bind(FlowToFlowEntry::class, FlowToFlowEntry::class)
-    ->asFlow('login')
+$container->bind(abstract: FlowToFlowEntry::class, concrete: FlowToFlowEntry::class)
+    ->asFlow(ownerSlice: 'login')
     ->asPrivate()
     ->entry();
-$container->singleton(GenericHelperService::class, GenericHelperService::class)
-    ->asCapability('misc.naming')
+$container->singleton(abstract: GenericHelperService::class, concrete: GenericHelperService::class)
+    ->asCapability(ownerSlice: 'misc.naming')
     ->asShared()
     ->export()
-    ->concept('helper');
-$container->singleton(StructureDiffService::class, StructureDiffService::class)
-    ->asCapability('billing')
+    ->concept(concept: 'helper');
+$container->singleton(abstract: StructureDiffService::class, concrete: StructureDiffService::class)
+    ->asCapability(ownerSlice: 'billing')
     ->asShared()
     ->export();
-$container->bind(LocatorDriftService::class, LocatorDriftService::class)
-    ->asCapability('billing')
+$container->bind(abstract: LocatorDriftService::class, concrete: LocatorDriftService::class)
+    ->asCapability(ownerSlice: 'billing')
     ->asShared()
     ->export();
 
-$container->compileContainer([StructureDiffService::class]);
-$container->singleton(StructureDiffService::class, StructureDiffService::class)
-    ->asFoundation('foundation.diff')
+$container->compileContainer(serviceIds: [StructureDiffService::class]);
+$container->singleton(abstract: StructureDiffService::class, concrete: StructureDiffService::class)
+    ->asFoundation(ownerSlice: 'foundation.diff')
     ->asPublic()
-    ->concept('structure.diff');
+    ->concept(concept: 'structure.diff');
 
 $graph        = $container->debugGraph();
-$serviceGraph = $container->debugGraph(StructureDiffService::class);
-$issues       = implode("\n", $container->validate([
+$serviceGraph = $container->debugGraph(id: StructureDiffService::class);
+$issues       = implode("\n", $container->validate(serviceIds: [
                                                        OverInjectedPolicyService::class,
                                                        FlowToFlowEntry::class,
                                                        GenericHelperService::class,
@@ -103,17 +103,17 @@ $flowCodes         = array_column($graph['policyFindings'][FlowToFlowEntry::clas
 $genericCodes      = array_column($graph['policyFindings'][GenericHelperService::class] ?? [], 'code');
 $locatorCodes      = array_column($graph['policyFindings'][LocatorDriftService::class] ?? [], 'code');
 
-assertTrue(in_array('POL-001', $overInjectedCodes, true), 'Policy diagnostics should flag over-injected constructors.');
-assertTrue(in_array('POL-004', $flowCodes, true), 'Policy diagnostics should flag direct flow-to-flow dependencies.');
-assertTrue(in_array('POL-005', $genericCodes, true), 'Policy diagnostics should flag generic concept naming.');
-assertTrue(in_array('POL-008', $locatorCodes, true), 'Policy diagnostics should flag service locator drift.');
+assertTrue(condition: in_array('POL-001', $overInjectedCodes, true), message: 'Policy diagnostics should flag over-injected constructors.');
+assertTrue(condition: in_array('POL-004', $flowCodes, true), message: 'Policy diagnostics should flag direct flow-to-flow dependencies.');
+assertTrue(condition: in_array('POL-005', $genericCodes, true), message: 'Policy diagnostics should flag generic concept naming.');
+assertTrue(condition: in_array('POL-008', $locatorCodes, true), message: 'Policy diagnostics should flag service locator drift.');
 assertTrue(
-    ($serviceGraph['structureDiff']['ownership']['changed'] ?? false) === true,
-    'Structure diff diagnostics should detect ownership changes after compilation.'
+    condition: ($serviceGraph['structureDiff']['ownership']['changed'] ?? false) === true,
+    message  : 'Structure diff diagnostics should detect ownership changes after compilation.'
 );
 assertTrue(
-    str_contains($issues, 'POL-004'),
-    'Validation should surface policy errors for direct flow-to-flow dependencies.'
+    condition: str_contains($issues, 'POL-004'),
+    message  : 'Validation should surface policy errors for direct flow-to-flow dependencies.'
 );
 
 @rmdir($cacheDir);

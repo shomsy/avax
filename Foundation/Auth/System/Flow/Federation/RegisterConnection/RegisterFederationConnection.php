@@ -28,13 +28,13 @@ final readonly class RegisterFederationConnection
     public function execute(RegisterFederationConnectionData $data) : FederationConnection
     {
         $domain = strtolower(trim($data->domain));
-        $existing = $this->connectionStore->findByDomain($domain);
+        $existing = $this->connectionStore->findByDomain(domain: $domain);
 
         if ($existing !== null) {
             throw FederationFailed::domainConflict();
         }
 
-        if (! $this->groupRoleMappingValidator->isValid($data->groupRoleMap)) {
+        if (! $this->groupRoleMappingValidator->isValid(groupRoleMap: $data->groupRoleMap)) {
             throw FederationFailed::invalidGroupRoleMapping();
         }
 
@@ -56,8 +56,8 @@ final readonly class RegisterFederationConnection
             breakGlassAllowed: $data->breakGlassAllowed
         );
 
-        $this->connectionStore->save($connection);
-        $this->auditLog->record(new AuditEvent(
+        $this->connectionStore->save(connection: $connection);
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.federation.connection.registered',
             occurredAt: $this->clock->now(),
             context   : [

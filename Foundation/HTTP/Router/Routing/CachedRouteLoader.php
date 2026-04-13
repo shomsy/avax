@@ -40,7 +40,7 @@ final readonly class CachedRouteLoader implements RouteSourceLoaderInterface
         }
 
         // Validate cache integrity before loading
-        if (! $this->manifest->validateSignatureFile($this->cachePath)) {
+        if (! $this->manifest->validateSignatureFile(cachePath: $this->cachePath)) {
             throw new RuntimeException(message: 'Cache signature validation failed - possible tampering detected');
         }
 

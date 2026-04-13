@@ -34,7 +34,7 @@ final class BaseProvider implements ServiceProviderInterface
     public function register() : void
     {
         ProviderState::$events[] = 'base-register';
-        $this->app->instance(ProviderState::class, new ProviderState('base-register'));
+        $this->app->instance(abstract: ProviderState::class, instance: new ProviderState(message: 'base-register'));
     }
 
     /**
@@ -43,8 +43,8 @@ final class BaseProvider implements ServiceProviderInterface
      */
     public function boot() : void
     {
-        ProviderState::$events[]                       = 'base-boot';
-        $this->app->get(ProviderState::class)->message = 'base-booted';
+        ProviderState::$events[]                           = 'base-boot';
+        $this->app->get(id: ProviderState::class)->message = 'base-booted';
     }
 }
 
@@ -65,11 +65,11 @@ final class DemoProvider implements ServiceProviderInterface
     {
         ProviderState::$events[] = 'demo-register';
         assertSame(
-            'base-register',
-            $this->app->get(ProviderState::class)->message,
-            'Dependent providers should register after their dependencies.'
+            expected: 'base-register',
+            actual  : $this->app->get(id: ProviderState::class)->message,
+            message : 'Dependent providers should register after their dependencies.'
         );
-        $this->app->get(ProviderState::class)->message = 'demo-registered';
+        $this->app->get(id: ProviderState::class)->message = 'demo-registered';
     }
 
     /**
@@ -80,11 +80,11 @@ final class DemoProvider implements ServiceProviderInterface
     {
         ProviderState::$events[] = 'demo-boot';
         assertSame(
-            'base-booted',
-            $this->app->get(ProviderState::class)->message,
-            'Dependent providers should boot after their dependencies.'
+            expected: 'base-booted',
+            actual  : $this->app->get(id: ProviderState::class)->message,
+            message : 'Dependent providers should boot after their dependencies.'
         );
-        $this->app->get(ProviderState::class)->message = 'demo-booted';
+        $this->app->get(id: ProviderState::class)->message = 'demo-booted';
     }
 }
 
@@ -123,7 +123,7 @@ final class DeferredDemoProvider implements DeferredProviderInterface
     public function register() : void
     {
         ProviderState::$events[] = 'deferred-register';
-        $this->app->singleton(DeferredProvidedContract::class, DeferredProvidedService::class);
+        $this->app->singleton(abstract: DeferredProvidedContract::class, concrete: DeferredProvidedService::class);
     }
 
     public function boot() : void
@@ -143,7 +143,7 @@ final class CycleProviderA implements ServiceProviderInterface
 
     public function register() : void
     {
-        $this->app->instance('cycle-a', new stdClass());
+        $this->app->instance(abstract: 'cycle-a', instance: new stdClass());
     }
 
     public function boot() : void {}
@@ -160,7 +160,7 @@ final class CycleProviderB implements ServiceProviderInterface
 
     public function register() : void
     {
-        $this->app->instance('cycle-b', new stdClass());
+        $this->app->instance(abstract: 'cycle-b', instance: new stdClass());
     }
 
     public function boot() : void {}
@@ -169,83 +169,83 @@ final class CycleProviderB implements ServiceProviderInterface
 ProviderState::$events = [];
 $container             = makeTestContainer();
 
-(new BootProviders($container))->boot([DemoProvider::class]);
+(new BootProviders(container: $container))->boot(providers: [DemoProvider::class]);
 
-$state = $container->get(ProviderState::class);
+$state = $container->get(id: ProviderState::class);
 assertSame(
-    ['base-register', 'demo-register', 'base-boot', 'demo-boot'],
-    ProviderState::$events,
-    'Providers must compose deterministically and boot in dependency order.'
+    expected: ['base-register', 'demo-register', 'base-boot', 'demo-boot'],
+    actual  : ProviderState::$events,
+    message : 'Providers must compose deterministically and boot in dependency order.'
 );
-assertSame('demo-booted', $state->message, 'Boot phase should run against the dependency-composed service graph.');
+assertSame(expected: 'demo-booted', actual: $state->message, message: 'Boot phase should run against the dependency-composed service graph.');
 assertTrue(
-    str_contains($container->exportMetrics(), 'container_provider_boot_total 2'),
-    'Provider boot metrics should record each booted provider.'
+    condition: str_contains($container->exportMetrics(), 'container_provider_boot_total 2'),
+    message  : 'Provider boot metrics should record each booted provider.'
 );
 assertTrue(
-    str_contains($container->exportMetrics(), 'container_provider_register_total 2'),
-    'Provider register metrics should record each registered provider.'
+    condition: str_contains($container->exportMetrics(), 'container_provider_register_total 2'),
+    message  : 'Provider register metrics should record each registered provider.'
 );
 
 ProviderState::$events = [];
 $deferredContainer     = makeTestContainer();
 
-(new BootProviders($deferredContainer))->boot([DeferredDemoProvider::class]);
+(new BootProviders(container: $deferredContainer))->boot(providers: [DeferredDemoProvider::class]);
 
-$deferredDescription = $deferredContainer->describeService(DeferredProvidedContract::class);
-assertSame([], ProviderState::$events, 'Deferred providers must not register or boot during eager provider boot flow.');
-assertTrue($deferredDescription['deferred'], 'Deferred provider services should report deferred state before first resolve.');
+$deferredDescription = $deferredContainer->describeService(id: DeferredProvidedContract::class);
+assertSame(expected: [], actual: ProviderState::$events, message: 'Deferred providers must not register or boot during eager provider boot flow.');
+assertTrue(condition: $deferredDescription['deferred'], message: 'Deferred provider services should report deferred state before first resolve.');
 assertSame(
-    DeferredDemoProvider::class,
-    $deferredDescription['deferredProvider'],
-    'Service diagnostics should expose the deferred provider owner.'
+    expected: DeferredDemoProvider::class,
+    actual  : $deferredDescription['deferredProvider'],
+    message : 'Service diagnostics should expose the deferred provider owner.'
 );
 
-$deferredService = $deferredContainer->get(DeferredProvidedContract::class);
+$deferredService = $deferredContainer->get(id: DeferredProvidedContract::class);
 
-assertSame('deferred-provider', $deferredService->id(), 'Deferred providers should register and boot on first service resolve.');
+assertSame(expected: 'deferred-provider', actual: $deferredService->id(), message: 'Deferred providers should register and boot on first service resolve.');
 assertSame(
-    ['deferred-register', 'deferred-boot'],
-    ProviderState::$events,
-    'Deferred providers should register and boot exactly once on first resolve.'
+    expected: ['deferred-register', 'deferred-boot'],
+    actual  : ProviderState::$events,
+    message : 'Deferred providers should register and boot exactly once on first resolve.'
 );
 assertTrue(
-    str_contains($deferredContainer->exportMetrics(), 'container_provider_deferred_boot_total 1'),
-    'Deferred provider metrics should record lazy provider boots.'
+    condition: str_contains($deferredContainer->exportMetrics(), 'container_provider_deferred_boot_total 1'),
+    message  : 'Deferred provider metrics should record lazy provider boots.'
 );
 
 ProviderState::$events     = [];
 $compiledDeferredContainer = makeTestContainer();
-$compiledDeferredContainer->singleton(DeferredProviderConsumer::class, DeferredProviderConsumer::class);
+$compiledDeferredContainer->singleton(abstract: DeferredProviderConsumer::class, concrete: DeferredProviderConsumer::class);
 
-(new BootProviders($compiledDeferredContainer))->boot([DeferredDemoProvider::class]);
-$compiledDeferredContainer->compileContainer([DeferredProviderConsumer::class]);
+(new BootProviders(container: $compiledDeferredContainer))->boot(providers: [DeferredDemoProvider::class]);
+$compiledDeferredContainer->compileContainer(serviceIds: [DeferredProviderConsumer::class]);
 
-$compiledDeferredReport = $compiledDeferredContainer->compileReport([
+$compiledDeferredReport = $compiledDeferredContainer->compileReport(serviceIds: [
                                                                         DeferredProviderConsumer::class,
                                                                         DeferredProvidedContract::class,
                                                                     ]);
 
 assertSame(
-    ['deferred-register', 'deferred-boot'],
-    ProviderState::$events,
-    'Explicit compile paths must boot deferred providers when compiled services depend on them.'
+    expected: ['deferred-register', 'deferred-boot'],
+    actual  : ProviderState::$events,
+    message : 'Explicit compile paths must boot deferred providers when compiled services depend on them.'
 );
 assertTrue(
-    $compiledDeferredReport !== null && in_array(DeferredProvidedContract::class, $compiledDeferredReport->entries, true),
-    'Deferred provider services required by compiled dependencies must be compiled into the artifact.'
+    condition: $compiledDeferredReport !== null && in_array(DeferredProvidedContract::class, $compiledDeferredReport->entries, true),
+    message  : 'Deferred provider services required by compiled dependencies must be compiled into the artifact.'
 );
 assertTrue(
-    $compiledDeferredContainer->isCompiled(DeferredProvidedContract::class),
-    'Deferred provider services required by compiled dependencies should report compiled state.'
+    condition: $compiledDeferredContainer->isCompiled(id: DeferredProvidedContract::class),
+    message  : 'Deferred provider services required by compiled dependencies should report compiled state.'
 );
 
 assertThrows(
-    LogicException::class,
-    static function () use ($container) : void {
-        (new BootProviders($container))->boot([CycleProviderA::class]);
+    expectedClass: LogicException::class,
+    callback     : static function () use ($container) : void {
+        (new BootProviders(container: $container))->boot(providers: [CycleProviderA::class]);
     },
-    'Provider dependency cycles should fail fast.'
+    message      : 'Provider dependency cycles should fail fast.'
 );
 
 echo basename(__FILE__) . " ok\n";

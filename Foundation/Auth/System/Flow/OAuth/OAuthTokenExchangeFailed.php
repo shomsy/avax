@@ -10,26 +10,26 @@ final class OAuthTokenExchangeFailed extends RuntimeException
 {
     public static function invalidClient() : self
     {
-        return new self('Invalid OAuth client credentials.');
+        return new self(message: 'Invalid OAuth client credentials.');
     }
 
     public static function invalidGrant() : self
     {
-        return new self('Invalid OAuth grant.');
+        return new self(message: 'Invalid OAuth grant.');
     }
 
     public static function invalidRedirectUri() : self
     {
-        return new self('Invalid redirect URI.');
+        return new self(message: 'Invalid redirect URI.');
     }
 
     public static function invalidVerifier() : self
     {
-        return new self('Invalid PKCE verifier.');
+        return new self(message: 'Invalid PKCE verifier.');
     }
 
     public static function invalidSenderConstraint() : self
     {
-        return new self('Invalid sender constraint proof.');
+        return new self(message: 'Invalid sender constraint proof.');
     }
 }

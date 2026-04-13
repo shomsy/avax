@@ -24,39 +24,39 @@ final class ReadActiveSessionsTest extends TestCase
 {
     public function testReadActiveSessionsReturnsCurrentUsersTrackedSessions() : void
     {
-        $clock    = new FrozenClock(new DateTimeImmutable('2026-04-12T12:00:00+00:00'));
+        $clock    = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
         $registry = new InMemorySessionRegistry();
-        $registry->track(new SessionRecord(
+        $registry->track(record: new SessionRecord(
             sessionId        : 'session-1',
-            userId           : new UserId(1),
-            createdAt        : $clock->now()->sub(new DateInterval('PT30M')),
+            userId           : new UserId(value: 1),
+            createdAt        : $clock->now()->sub(interval: new DateInterval(duration: 'PT30M')),
             lastSeenAt       : $clock->now(),
-            idleExpiresAt    : $clock->now()->add(new DateInterval('PT15M')),
-            absoluteExpiresAt: $clock->now()->add(new DateInterval('PT12H')),
+            idleExpiresAt    : $clock->now()->add(interval: new DateInterval(duration: 'PT15M')),
+            absoluteExpiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT12H')),
             ipCreated        : '127.0.0.1',
             userAgentCreated : 'Browser 1'
         ));
-        $registry->track(new SessionRecord(
+        $registry->track(record: new SessionRecord(
             sessionId        : 'session-2',
-            userId           : new UserId(1),
-            createdAt        : $clock->now()->sub(new DateInterval('PT2H')),
-            lastSeenAt       : $clock->now()->sub(new DateInterval('PT10M')),
-            idleExpiresAt    : $clock->now()->add(new DateInterval('PT5M')),
-            absoluteExpiresAt: $clock->now()->add(new DateInterval('PT10H')),
+            userId           : new UserId(value: 1),
+            createdAt        : $clock->now()->sub(interval: new DateInterval(duration: 'PT2H')),
+            lastSeenAt       : $clock->now()->sub(interval: new DateInterval(duration: 'PT10M')),
+            idleExpiresAt    : $clock->now()->add(interval: new DateInterval(duration: 'PT5M')),
+            absoluteExpiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT10H')),
             ipCreated        : '127.0.0.2',
             userAgentCreated : 'Browser 2'
         ));
-        $registry->track(new SessionRecord(
+        $registry->track(record: new SessionRecord(
             sessionId        : 'session-3',
-            userId           : new UserId(2),
-            createdAt        : $clock->now()->sub(new DateInterval('PT1H')),
+            userId           : new UserId(value: 2),
+            createdAt        : $clock->now()->sub(interval: new DateInterval(duration: 'PT1H')),
             lastSeenAt       : $clock->now(),
-            idleExpiresAt    : $clock->now()->add(new DateInterval('PT15M')),
-            absoluteExpiresAt: $clock->now()->add(new DateInterval('PT12H'))
+            idleExpiresAt    : $clock->now()->add(interval: new DateInterval(duration: 'PT15M')),
+            absoluteExpiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT12H'))
         ));
 
         $currentAuthentication = new CurrentAuthentication();
-        $currentAuthentication->store(AuthenticationContext::authenticated(
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user     : new AuthenticatedUser(id: 1, email: 'user@example.com', username: 'user'),
             mode     : AuthenticationMode::SESSION,
             sessionId: 'session-1'
@@ -70,10 +70,10 @@ final class ReadActiveSessionsTest extends TestCase
 
         $sessions = $flow->execute();
 
-        $this->assertCount(2, $sessions);
-        $this->assertSame('session-1', $sessions[0]->sessionId);
-        $this->assertTrue($sessions[0]->current);
-        $this->assertSame('session-2', $sessions[1]->sessionId);
-        $this->assertFalse($sessions[1]->current);
+        $this->assertCount(expectedCount: 2, haystack: $sessions);
+        $this->assertSame(expected: 'session-1', actual: $sessions[0]->sessionId);
+        $this->assertTrue(condition: $sessions[0]->current);
+        $this->assertSame(expected: 'session-2', actual: $sessions[1]->sessionId);
+        $this->assertFalse(condition: $sessions[1]->current);
     }
 }

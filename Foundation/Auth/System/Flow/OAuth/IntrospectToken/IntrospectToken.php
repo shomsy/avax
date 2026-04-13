@@ -14,10 +14,10 @@ use Avax\Auth\System\Foundation\Clock;
 final readonly class IntrospectToken
 {
     public function __construct(
-        private OAuthClientRegistryInterface $clientRegistry,
-        private JwtIdentityInterface $jwtIdentity,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
+        private OAuthClientRegistryInterface                $clientRegistry,
+        #[\SensitiveParameter] private JwtIdentityInterface $jwtIdentity,
+        private AuditLogInterface                           $auditLog,
+        private Clock                                       $clock
     ) {}
 
     /**
@@ -25,13 +25,13 @@ final readonly class IntrospectToken
      */
     public function execute(IntrospectTokenData $data) : TokenIntrospection
     {
-        $client = $this->clientRegistry->find($data->clientId);
+        $client = $this->clientRegistry->find(clientId: $data->clientId);
 
-        if ($client === null || ! $this->clientRegistry->verifySecret($data->clientId, $data->clientSecret)) {
+        if ($client === null || ! $this->clientRegistry->verifySecret(clientId: $data->clientId, plainTextSecret: $data->clientSecret)) {
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
-        $resolved = $this->jwtIdentity->resolve($data->token);
+        $resolved = $this->jwtIdentity->resolve(token: $data->token);
 
         if ($resolved !== null && $resolved->clientId === $data->clientId) {
             $result = new TokenIntrospection(
@@ -68,7 +68,7 @@ final readonly class IntrospectToken
             }
         }
 
-        $this->auditLog->record(new AuditEvent(
+        $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.oauth.token.introspected',
             occurredAt: $this->clock->now(),
             context   : [

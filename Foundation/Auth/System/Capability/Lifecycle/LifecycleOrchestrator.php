@@ -4,99 +4,104 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\Lifecycle;
 
+use Avax\Auth\System\Capability\User\UserId;
+use Avax\Auth\System\Capability\UserSource\ProvisionableUserSourceInterface;
+use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
+use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Foundation\Clock;
 
-/**
- * Orchestrates identity lifecycle transitions across multiple sources.
- *
- * Manages joiner/mover/leaver patterns and conflict resolution.
- */
 final readonly class LifecycleOrchestrator
 {
     public function __construct(
+        private ProvisionableUserSourceInterface $userSource,
+        private LifecycleStoreInterface $store,
+        private AuditLogInterface $auditLog,
         private Clock $clock
     ) {}
 
-    /**
-     * Determines the effective lifecycle state given multiple source inputs.
-     */
-    public function resolveState(
-        LifecycleState $localState,
-        LifecycleState $federatedState,
-        LifecycleState $scimState
-    ) : LifecycleState {
-        if ($scimState === LifecycleState::DEPROVISIONED) {
-            return LifecycleState::DEPROVISIONED;
-        }
-
-        if ($federatedState === LifecycleState::DEPROVISIONED) {
-            return LifecycleState::DEPROVISIONED;
-        }
-
-        if ($scimState === LifecycleState::SUSPENDED) {
-            return LifecycleState::SUSPENDED;
-        }
-
-        if ($federatedState === LifecycleState::SUSPENDED) {
-            return LifecycleState::SUSPENDED;
-        }
-
-        if ($localState === LifecycleState::DISABLED) {
-            return LifecycleState::DISABLED;
-        }
-
-        if ($scimState === LifecycleState::ACTIVE) {
-            return LifecycleState::ACTIVE;
-        }
-
-        if ($federatedState === LifecycleState::ACTIVE) {
-            return LifecycleState::ACTIVE;
-        }
-
-        return $localState;
-    }
-
-    /**
-     * Determines source priority for conflict resolution.
-     */
-    public function resolveSource(
-        LifecycleState $localState,
-        LifecycleState $federatedState,
-        LifecycleState $scimState,
-        SourcePriority $priority
-    ) : ResolvedLifecycleSource {
-        return match ($priority) {
-            SourcePriority::LOCAL => new ResolvedLifecycleSource(
-                Source::LOCAL,
-                $localState,
-                $this->clock->now()
-            ),
-            SourcePriority::FEDERATION => new ResolvedLifecycleSource(
-                Source::FEDERATION,
-                $federatedState,
-                $this->clock->now()
-            ),
-            SourcePriority::SCIM => new ResolvedLifecycleSource(
-                Source::SCIM,
-                $scimState,
-                $this->clock->now()
-            ),
-        };
-    }
-
-    /**
-     * Determines allowed transitions from current state.
-     *
-     * @return list<LifecycleEvent>
-     */
-    public function allowedTransitions(LifecycleState $state) : array
+    public function activate(UserId $userId, LifecycleSource $source, string|null $reason = null) : LifecycleRecord
     {
-        return match ($state) {
-            LifecycleState::PENDING => [LifecycleEvent::JOIN, LifecycleEvent::LEAVE],
-            LifecycleState::ACTIVE => [LifecycleEvent::MOVE, LifecycleEvent::SUSPEND, LifecycleEvent::DISABLE, LifecycleEvent::DEPROVISION],
-            LifecycleState::SUSPENDED => [LifecycleEvent::REINSTATE, LifecycleEvent::ENABLE, LifecycleEvent::DEPROVISION],
-            LifecycleState::DISABLED => [LifecycleEvent::ENABLE, LifecycleEvent::DEPROVISION],
-            LifecycleState::DISABLED, LifecycleState::DEPROVISIONED => [],
+        return $this->transition(userId: $userId, target: LifecycleState::ACTIVE, source: $source, reason: $reason);
+    }
+
+    public function suspend(UserId $userId, LifecycleSource $source, string|null $reason = null) : LifecycleRecord
+    {
+        return $this->transition(userId: $userId, target: LifecycleState::SUSPENDED, source: $source, reason: $reason);
+    }
+
+    public function deprovision(UserId $userId, LifecycleSource $source, string|null $reason = null) : LifecycleRecord
+    {
+        return $this->transition(userId: $userId, target: LifecycleState::DEPROVISIONED, source: $source, reason: $reason);
+    }
+
+    public function read(UserId $userId) : LifecycleRecord|null
+    {
+        return $this->store->find(userId: $userId);
+    }
+
+    public function allowsAuthentication(UserId $userId) : bool
+    {
+        $record = $this->store->find(userId: $userId);
+
+        return $record?->allowsAuthentication() ?? true;
+    }
+
+    private function transition(UserId $userId, LifecycleState $target, LifecycleSource $source, string|null $reason) : LifecycleRecord
+    {
+        $user = $this->userSource->findById(id: $userId);
+
+        if ($user === null) {
+            throw LifecycleFailed::userNotFound(userId: $userId->value);
+        }
+
+        $current = $this->store->find(userId: $userId)?->state ?? ($user->isActive() ? LifecycleState::ACTIVE : LifecycleState::SUSPENDED);
+
+        if (! $this->isAllowedTransition(from: $current, to: $target)) {
+            throw LifecycleFailed::transitionNotAllowed(from: $current, to: $target);
+        }
+
+        match ($target) {
+            LifecycleState::ACTIVE => $this->userSource->activate(id: $userId),
+            LifecycleState::SUSPENDED => $this->userSource->deactivate(id: $userId),
+            LifecycleState::DEPROVISIONED => $this->deprovisionUser(userId: $userId),
+        };
+
+        $record = new LifecycleRecord(
+            userId    : $userId->value,
+            state     : $target,
+            source    : $source,
+            changedAt : $this->clock->now(),
+            reason    : $reason
+        );
+
+        $this->store->save(record: $record);
+        $this->auditLog->record(event: new AuditEvent(
+            name      : 'auth.lifecycle.transitioned',
+            occurredAt: $record->changedAt,
+            context   : [
+                'user_id' => $record->userId,
+                'state' => $record->state->value,
+                'source' => $record->source->value,
+                'reason' => $record->reason,
+            ]
+        ));
+
+        return $record;
+    }
+
+    private function deprovisionUser(UserId $userId) : void
+    {
+        $this->userSource->replaceRoles(id: $userId, roles: []);
+        $this->userSource->replacePermissions(id: $userId, permissions: []);
+        $this->userSource->deactivate(id: $userId);
+    }
+
+    private function isAllowedTransition(LifecycleState $from, LifecycleState $to) : bool
+    {
+        return match ($from) {
+            LifecycleState::ACTIVE => in_array($to, [LifecycleState::ACTIVE, LifecycleState::SUSPENDED, LifecycleState::DEPROVISIONED], true),
+            LifecycleState::SUSPENDED => in_array($to, [LifecycleState::ACTIVE, LifecycleState::SUSPENDED, LifecycleState::DEPROVISIONED], true),
+            LifecycleState::DEPROVISIONED => $to === LifecycleState::DEPROVISIONED,
         };
     }
 }

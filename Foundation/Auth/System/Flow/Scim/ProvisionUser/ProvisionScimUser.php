@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Scim\ProvisionUser;
 
+use Avax\Auth\System\Capability\Lifecycle\LifecycleOrchestrator;
+use Avax\Auth\System\Capability\Lifecycle\LifecycleSource;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capability\Scim\ScimAccountState;
 use Avax\Auth\System\Capability\Scim\ScimDirectory;
@@ -33,7 +35,8 @@ final readonly class ProvisionScimUser
         #[SensitiveParameter] private PasswordHasher $passwordHasher,
         private IdGeneratorInterface $idGenerator,
         private AuditLogInterface $auditLog,
-        private Clock $clock
+        private Clock $clock,
+        private LifecycleOrchestrator|null $lifecycle = null
     ) {}
 
     /**
@@ -86,10 +89,18 @@ final readonly class ProvisionScimUser
         );
         $this->userSource->replacePermissions(id: $user->getId(), permissions: []);
 
-        match ($data->state) {
-            ScimAccountState::ACTIVE => $this->userSource->activate(id: $user->getId()),
-            ScimAccountState::SUSPENDED, ScimAccountState::DISABLED => $this->userSource->deactivate(id: $user->getId()),
-        };
+        if ($this->lifecycle !== null) {
+            match ($data->state) {
+                ScimAccountState::ACTIVE => $this->lifecycle->activate(userId: $user->getId(), source: LifecycleSource::SCIM, reason: 'scim_active'),
+                ScimAccountState::SUSPENDED => $this->lifecycle->suspend(userId: $user->getId(), source: LifecycleSource::SCIM, reason: 'scim_suspended'),
+                ScimAccountState::DISABLED => $this->lifecycle->deprovision(userId: $user->getId(), source: LifecycleSource::SCIM, reason: 'scim_disabled'),
+            };
+        } else {
+            match ($data->state) {
+                ScimAccountState::ACTIVE => $this->userSource->activate(id: $user->getId()),
+                ScimAccountState::SUSPENDED, ScimAccountState::DISABLED => $this->userSource->deactivate(id: $user->getId()),
+            };
+        }
 
         $this->identityStore->save(identity: new ScimProvisionedIdentity(
             directoryId     : $directory->directoryId,

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Scim\DeleteUser;
 
+use Avax\Auth\System\Capability\Lifecycle\LifecycleOrchestrator;
+use Avax\Auth\System\Capability\Lifecycle\LifecycleSource;
 use Avax\Auth\System\Capability\Scim\ScimDirectory;
 use Avax\Auth\System\Capability\Scim\ScimDirectoryStoreInterface;
 use Avax\Auth\System\Capability\Scim\ScimProvisionedIdentityStoreInterface;
@@ -21,7 +23,8 @@ final readonly class DeleteScimUser
         private ScimDirectoryStoreInterface $directoryStore,
         private ScimProvisionedIdentityStoreInterface $identityStore,
         private AuditLogInterface $auditLog,
-        private Clock $clock
+        private Clock $clock,
+        private LifecycleOrchestrator|null $lifecycle = null
     ) {}
 
     /**
@@ -36,9 +39,12 @@ final readonly class DeleteScimUser
             throw ScimFailed::unknownProvisionedIdentity();
         }
 
-        $this->userSource->deactivate(id: $identity->userId);
-        $this->userSource->replaceRoles(id: $identity->userId, roles: []);
-        $this->userSource->replacePermissions(id: $identity->userId, permissions: []);
+        $this->lifecycle?->deprovision(userId: $identity->userId, source: LifecycleSource::SCIM, reason: 'scim_deleted');
+        if ($this->lifecycle === null) {
+            $this->userSource->deactivate(id: $identity->userId);
+            $this->userSource->replaceRoles(id: $identity->userId, roles: []);
+            $this->userSource->replacePermissions(id: $identity->userId, permissions: []);
+        }
         $this->identityStore->remove(directoryId: $directory->directoryId, externalId: $data->externalId);
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.scim.user.deleted',

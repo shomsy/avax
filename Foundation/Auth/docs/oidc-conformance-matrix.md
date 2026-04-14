@@ -16,6 +16,6 @@ what still remains outside this package.
 | dynamic client registration | not supported | external package or app | n/a |
 | front-channel logout | not supported | external package or app | n/a |
 | back-channel logout | not supported | external package or app | n/a |
-| pairwise subject identifiers | not supported | external package or app | n/a |
+| pairwise subject identifiers | supported | kernel | `tests/Capabilities/Oidc/SubjectIdentifierTest.php`, `tests/Flows/Oidc/OidcFlowTest.php` |
 | JAR / PAR / JARM | not supported | external package or app | n/a |
 | external certification | not supported | delivery program | n/a |

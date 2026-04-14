@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Oidc\ReadUserInfo;
 
+use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
 use RuntimeException;
 use SensitiveParameter;
@@ -11,7 +12,8 @@ use SensitiveParameter;
 final readonly class ReadOidcUserInfo
 {
     public function __construct(
-        #[\SensitiveParameter] private JwtIdentityInterface $jwtIdentity
+        #[\SensitiveParameter] private JwtIdentityInterface $jwtIdentity,
+        private OidcProviderInterface|null $oidcProvider = null
     ) {}
 
     public function execute(#[SensitiveParameter] string $accessToken) : OidcUserInfo
@@ -23,7 +25,7 @@ final readonly class ReadOidcUserInfo
         }
 
         $claims = [
-            'sub' => (string) $resolved->user->getId()->value,
+            'sub' => $this->subjectIdentifier(user: $resolved->user, clientId: $resolved->clientId),
             'preferred_username' => $resolved->user->getUsername(),
         ];
 
@@ -40,5 +42,14 @@ final readonly class ReadOidcUserInfo
         }
 
         return new OidcUserInfo(claims: $claims);
+    }
+
+    private function subjectIdentifier(\Avax\Auth\System\Capability\User\User $user, string|null $clientId) : string
+    {
+        if ($this->oidcProvider !== null && $clientId !== null && trim($clientId) !== '') {
+            return $this->oidcProvider->subjectIdentifier(user: $user, clientId: $clientId);
+        }
+
+        return (string) $user->getId()->value;
     }
 }

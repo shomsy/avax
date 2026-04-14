@@ -29,10 +29,12 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         string $name,
         OAuthClientType $type,
         array $redirectUris,
+        string|null $tenantSlug = null,
         array $allowedScopes = [],
         array $allowedAudiences = [],
         array $allowedGrantTypes = [],
         array $audienceScopeBoundaries = [],
+        OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
         OAuthSenderConstraintType|null $requiredSenderConstraint = null,
         bool $workloadIdentity = false,
         bool $phishingResistantRequired = false
@@ -60,6 +62,12 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             throw new InvalidArgumentException(message: 'Workload identity clients require at least one allowed audience.');
         }
 
+        $normalizedTokenEndpointAuthMethod = (new OAuthTokenEndpointAuthMethodPolicy())->resolve(
+            type: $type,
+            requested: $tokenEndpointAuthMethod,
+            workloadIdentity: $workloadIdentity
+        );
+
         foreach (array_keys($normalizedAudienceScopeBoundaries) as $audience) {
             if (! in_array($audience, $normalizedAudiences, true)) {
                 throw new InvalidArgumentException(message: 'Audience scope boundaries must target a declared allowed audience.');
@@ -81,12 +89,15 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             type         : $type,
             redirectUris : $normalizedRedirectUris,
             allowedScopes: $normalizedScopes,
+            tenantSlug   : $this->normalizeTenantSlug(tenantSlug: $tenantSlug),
             allowedAudiences: $normalizedAudiences,
             allowedGrantTypes: $normalizedGrantTypes,
             audienceScopeBoundaries: $normalizedAudienceScopeBoundaries,
+            tokenEndpointAuthMethod: $normalizedTokenEndpointAuthMethod,
             requiredSenderConstraint: $requiredSenderConstraint,
             workloadIdentity: $workloadIdentity,
             phishingResistantRequired: $phishingResistantRequired,
+            active       : true,
             secretHash   : $secretHash
         );
 
@@ -96,6 +107,79 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             client         : $client,
             plainTextSecret: $plainSecret
         );
+    }
+
+    public function replace(OAuthClient $client) : void
+    {
+        $this->clients[$client->clientId] = $client;
+    }
+
+    public function deactivate(string $clientId) : OAuthClient|null
+    {
+        $client = $this->find(clientId: $clientId);
+
+        if ($client === null) {
+            return null;
+        }
+
+        $inactive = new OAuthClient(
+            clientId                  : $client->clientId,
+            name                      : $client->name,
+            type                      : $client->type,
+            redirectUris              : $client->redirectUris,
+            allowedScopes             : $client->allowedScopes,
+            tenantSlug                : $client->tenantSlug,
+            allowedAudiences          : $client->allowedAudiences,
+            allowedGrantTypes         : $client->allowedGrantTypes,
+            audienceScopeBoundaries   : $client->audienceScopeBoundaries,
+            tokenEndpointAuthMethod   : $client->tokenEndpointAuthMethod,
+            requiredSenderConstraint  : $client->requiredSenderConstraint,
+            workloadIdentity          : $client->workloadIdentity,
+            phishingResistantRequired : $client->phishingResistantRequired,
+            active                    : false,
+            secretHash                : $client->secretHash
+        );
+        $this->clients[$clientId] = $inactive;
+
+        return $inactive;
+    }
+
+    /**
+     * @throws RandomException
+     */
+    public function rotateSecret(string $clientId) : RegisteredOAuthClient|null
+    {
+        $client = $this->find(clientId: $clientId);
+
+        if ($client === null) {
+            return null;
+        }
+
+        if ($client->isPublic()) {
+            return new RegisteredOAuthClient(client: $client, plainTextSecret: null);
+        }
+
+        $plainSecret = bin2hex(random_bytes(24));
+        $rotated = new OAuthClient(
+            clientId                  : $client->clientId,
+            name                      : $client->name,
+            type                      : $client->type,
+            redirectUris              : $client->redirectUris,
+            allowedScopes             : $client->allowedScopes,
+            tenantSlug                : $client->tenantSlug,
+            allowedAudiences          : $client->allowedAudiences,
+            allowedGrantTypes         : $client->allowedGrantTypes,
+            audienceScopeBoundaries   : $client->audienceScopeBoundaries,
+            tokenEndpointAuthMethod   : $client->tokenEndpointAuthMethod,
+            requiredSenderConstraint  : $client->requiredSenderConstraint,
+            workloadIdentity          : $client->workloadIdentity,
+            phishingResistantRequired : $client->phishingResistantRequired,
+            active                    : $client->active,
+            secretHash                : $this->passwordHasher->hash(password: $plainSecret)
+        );
+        $this->clients[$clientId] = $rotated;
+
+        return new RegisteredOAuthClient(client: $rotated, plainTextSecret: $plainSecret);
     }
 
     public function find(string $clientId) : OAuthClient|null
@@ -116,6 +200,10 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         $client = $this->find(clientId: $clientId);
 
         if ($client === null) {
+            return false;
+        }
+
+        if (! $client->isActive()) {
             return false;
         }
 
@@ -204,6 +292,13 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         ksort($normalized);
 
         return $normalized;
+    }
+
+    private function normalizeTenantSlug(string|null $tenantSlug) : string|null
+    {
+        $normalized = trim((string) $tenantSlug);
+
+        return $normalized !== '' ? strtolower($normalized) : null;
     }
 
     /**

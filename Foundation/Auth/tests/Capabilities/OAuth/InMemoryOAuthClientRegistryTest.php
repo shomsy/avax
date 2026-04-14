@@ -7,6 +7,7 @@ namespace Avax\Auth\Tests\Capability\OAuth;
 use Avax\Auth\System\Capability\OAuth\InMemoryOAuthClientRegistry;
 use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\OAuthClientType;
+use Avax\Auth\System\Capability\OAuth\OAuthTokenEndpointAuthMethod;
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use InvalidArgumentException;
@@ -44,6 +45,21 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
         $this->assertSame(expected: OAuthClientType::PUBLIC, actual: $registered->client->type);
         $this->assertNull(actual: $registered->plainTextSecret);
         $this->assertTrue(condition: $registry->verifySecret(clientId: $registered->client->clientId, plainTextSecret: null));
+        $this->assertSame(expected: OAuthTokenEndpointAuthMethod::NONE, actual: $registered->client->tokenEndpointAuthMethod);
+    }
+
+    public function testConfidentialClientDefaultsToClientSecretBasicTokenEndpointAuthMethod() : void
+    {
+        $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
+
+        $registered = $registry->register(
+            name         : 'Backoffice',
+            type         : OAuthClientType::CONFIDENTIAL,
+            redirectUris : ['https://app.example.test/callback'],
+            allowedScopes: ['profile', 'email']
+        );
+
+        $this->assertSame(expected: OAuthTokenEndpointAuthMethod::CLIENT_SECRET_BASIC, actual: $registered->client->tokenEndpointAuthMethod);
     }
 
     public function testClientRegistrationPersistsGrantTypesAndSenderConstraint() : void
@@ -99,6 +115,22 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
             allowedGrantTypes       : [OAuthGrantType::CLIENT_CREDENTIALS],
             requiredSenderConstraint: OAuthSenderConstraintType::MTLS,
             workloadIdentity        : true
+        );
+    }
+
+    public function testPublicClientRejectsNonNoneTokenEndpointAuthMethod() : void
+    {
+        $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Public clients must use token endpoint auth method "none".');
+
+        $registry->register(
+            name                     : 'SPA',
+            type                     : OAuthClientType::PUBLIC,
+            redirectUris             : ['https://spa.example.test/callback'],
+            allowedScopes            : ['profile'],
+            tokenEndpointAuthMethod   : OAuthTokenEndpointAuthMethod::CLIENT_SECRET_BASIC
         );
     }
 }

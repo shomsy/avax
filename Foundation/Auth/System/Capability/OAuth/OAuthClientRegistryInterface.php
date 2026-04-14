@@ -23,14 +23,22 @@ interface OAuthClientRegistryInterface
         string $name,
         OAuthClientType $type,
         array $redirectUris,
+        string|null $tenantSlug = null,
         array $allowedScopes = [],
         array $allowedAudiences = [],
         array $allowedGrantTypes = [],
         array $audienceScopeBoundaries = [],
+        OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
         OAuthSenderConstraintType|null $requiredSenderConstraint = null,
         bool $workloadIdentity = false,
         bool $phishingResistantRequired = false
     ) : RegisteredOAuthClient;
+
+    public function replace(OAuthClient $client) : void;
+
+    public function deactivate(string $clientId) : OAuthClient|null;
+
+    public function rotateSecret(string $clientId) : RegisteredOAuthClient|null;
 
     public function find(string $clientId) : OAuthClient|null;
 

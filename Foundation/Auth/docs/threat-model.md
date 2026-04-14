@@ -21,7 +21,7 @@ This document captures the current auth-kernel threat model and the controls own
 | email change takeover | dedicated email-change flow, current-password proof, fresh MFA, one-time confirmation, audit | implemented |
 | refresh token reuse | family revocation, risk review signal, and audit | implemented |
 | insider misuse | audit trail, admin-elevation state, and authorization hardening checklist exist; approval workflows remain application-owned | partial |
-| tenant isolation bug | unique-domain federation policy, verified-domain discovery, health-gated SSO start, SCIM directory scoping, and tenant security change validation with rollback exist; full tenant membership model is still not package-owned | partial |
+| tenant isolation bug | unique-domain federation policy, verified-domain discovery, health-gated SSO start, SCIM directory scoping, tenant membership boundary, tenant-owned OAuth clients, and tenant security change validation with rollback exist; exhaustive crossing matrix is still incomplete | partial |
 
 ## Incident Classes
 

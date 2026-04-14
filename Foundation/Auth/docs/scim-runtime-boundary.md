@@ -8,20 +8,22 @@ workforce or B2B provisioning.
 - directory registration
 - directory token authentication and rotation
 - user provision or update
+- derived `/Groups` projection
+- `/Bulk` orchestration over package-owned user flows
 - group sync
 - directory-scoped read and delete
 - idempotent updates and drift detection
 - explicit `active`, `suspended`, and `disabled` semantics
 - audit trail for provisioning actions
 - tenant security references into SCIM directory ownership
-- framework-neutral HTTP metadata and `/Users` CRUD through
+- framework-neutral HTTP metadata, `/Users` CRUD, `/Groups`, and `/Bulk` through
   `integrations/http/Scim/ServeScimHttpSurface.php`
 
 ## Still Outside This Package
 
-- bulk operations and schema discovery surfaces
 - tenant-admin UI or self-service enablement portal
 - external directory ownership workflows outside the kernel
+- per-directory throttling, sync health scoring, and outage recovery orchestration
 
 ## Package Posture
 

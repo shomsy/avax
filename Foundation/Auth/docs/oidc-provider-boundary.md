@@ -14,16 +14,24 @@ a full standards-certified OIDC product.
 - OpenSSL-backed asymmetric signing through `OpenSslOidcProvider`
 - overlap JWKS publication and legacy token verification through
   `RotatingOidcProvider`
+- configurable public or pairwise subject identifiers through the OIDC
+  provider policy
 - framework-neutral HTTP publication through
   `integrations/http/Oidc/ServeOidcHttpSurface.php`
 
 ## Still Outside This Package
 
-- dynamic client registration
+- OIDC-standard dynamic client registration endpoint
 - front-channel or back-channel logout
-- pairwise subject identifiers
 - JAR, PAR, JARM, and other advanced request-object surfaces
 - external conformance certification
+
+## Adjacent Control-Plane Support
+
+- tenant-owned OAuth client registration, update, disable, and secret rotation
+  now exist through the tenant-admin control-plane adapter
+- the kernel still does not claim RFC-level OIDC registration metadata or
+  software-statement validation
 
 ## Operational Posture
 

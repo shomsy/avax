@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Provisioning\ReactivateUser;
 
+use Avax\Auth\System\Capability\Lifecycle\LifecycleOrchestrator;
+use Avax\Auth\System\Capability\Lifecycle\LifecycleSource;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\ProvisionableUserSourceInterface;
 use Avax\Auth\System\Flow\AdminRealm\RequireAdminElevation\RequireAdminElevation;
@@ -17,13 +19,18 @@ final readonly class ReactivateUser
         private ProvisionableUserSourceInterface $userSource,
         private RequireAdminElevation $requireAdminElevation,
         private AuditLogInterface $auditLog,
-        private Clock $clock
+        private Clock $clock,
+        private LifecycleOrchestrator|null $lifecycle = null
     ) {}
 
     public function execute(int $userId) : void
     {
         $this->requireAdminElevation->execute();
-        $this->userSource->activate(id: new UserId(value: $userId));
+        $id = new UserId(value: $userId);
+        $this->lifecycle?->activate(userId: $id, source: LifecycleSource::ADMIN, reason: 'admin_reactivated');
+        if ($this->lifecycle === null) {
+            $this->userSource->activate(id: $id);
+        }
         $this->auditLog->record(event: new AuditEvent(
             name      : 'auth.provisioning.user.reactivated',
             occurredAt: $this->clock->now(),

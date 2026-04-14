@@ -67,6 +67,34 @@ final class ServeScimHttpSurfaceTest extends TestCase
             routeParameters: ['directoryId' => $directoryId],
             query          : ['filter' => 'externalId eq "ext-1"']
         ));
+        $groups = $surface->execute(input: new HttpEndpointInput(
+            method         : 'GET',
+            path           : '/scim/v2/Groups',
+            headers        : $authHeader,
+            routeParameters: ['directoryId' => $directoryId]
+        ));
+        $bulk = $surface->execute(input: new HttpEndpointInput(
+            method         : 'POST',
+            path           : '/scim/v2/Bulk',
+            headers        : $authHeader,
+            routeParameters: ['directoryId' => $directoryId],
+            body           : [
+                'Operations' => [
+                    [
+                        'method' => 'POST',
+                        'path' => '/Users',
+                        'bulkId' => 'bulk-create',
+                        'data' => [
+                            'externalId' => 'ext-2',
+                            'userName' => 'bulk-worker',
+                            'emails' => [['value' => 'bulk@acme.test', 'primary' => true]],
+                            'groups' => [['value' => 'users']],
+                            'active' => true,
+                        ],
+                    ],
+                ],
+            ]
+        ));
         $deleted = $surface->execute(input: new HttpEndpointInput(
             method         : 'DELETE',
             path           : '/scim/v2/Users/ext-1',
@@ -90,6 +118,10 @@ final class ServeScimHttpSurfaceTest extends TestCase
         $this->assertSame(expected: 200, actual: $listed->statusCode);
         $this->assertSame(expected: 1, actual: $listed->body['totalResults']);
         $this->assertSame(expected: 'users', actual: $listed->body['Resources'][0]['groups'][0]['value']);
+        $this->assertSame(expected: 200, actual: $groups->statusCode);
+        $this->assertSame(expected: 'users', actual: $groups->body['Resources'][0]['displayName']);
+        $this->assertSame(expected: 200, actual: $bulk->statusCode);
+        $this->assertSame(expected: '201', actual: $bulk->body['Operations'][0]['status']);
         $this->assertSame(expected: 204, actual: $deleted->statusCode);
         $this->assertSame(expected: 404, actual: $missing->statusCode);
     }
@@ -102,6 +134,40 @@ final class ServeScimHttpSurfaceTest extends TestCase
             method         : 'GET',
             path           : '/scim/v2/Users',
             routeParameters: ['directoryId' => 'scim_missing']
+        ));
+
+        $this->assertSame(expected: 400, actual: $response->statusCode);
+        $this->assertSame(expected: 'invalidValue', actual: $response->body['scimType']);
+    }
+
+    public function testScimHttpSurfaceRejectsOversizedBulkRequests() : void
+    {
+        $auth = $this->buildAuth();
+        $directory = $auth->registerScimDirectory(data: new RegisterScimDirectoryData(
+            tenantSlug: 'bulk-overflow',
+            name      : 'Overflow Directory'
+        ));
+        $surface = new ServeScimHttpSurface(auth: $auth);
+        $operations = [];
+
+        for ($index = 0; $index < 101; $index++) {
+            $operations[] = [
+                'method' => 'POST',
+                'path' => '/Users',
+                'data' => [
+                    'externalId' => 'bulk-' . $index,
+                    'userName' => 'bulk-' . $index,
+                    'emails' => [['value' => 'bulk-' . $index . '@example.test']],
+                ],
+            ];
+        }
+
+        $response = $surface->execute(input: new HttpEndpointInput(
+            method         : 'POST',
+            path           : '/scim/v2/Bulk',
+            headers        : ['Authorization' => 'Bearer ' . $directory->plainTextToken],
+            routeParameters: ['directoryId' => $directory->directory->directoryId],
+            body           : ['Operations' => $operations]
         ));
 
         $this->assertSame(expected: 400, actual: $response->statusCode);

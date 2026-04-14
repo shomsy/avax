@@ -55,6 +55,11 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
         return new OidcJsonWebKeySet(keys: array_values($keys));
     }
 
+    public function subjectIdentifier(User $user, string $clientId) : string
+    {
+        return $this->activeProvider->subjectIdentifier(user: $user, clientId: $clientId);
+    }
+
     public function resolveIdToken(#[SensitiveParameter] string $idToken) : array|null
     {
         foreach ($this->providers() as $provider) {

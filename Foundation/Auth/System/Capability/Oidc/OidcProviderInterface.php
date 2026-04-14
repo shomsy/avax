@@ -26,6 +26,8 @@ interface OidcProviderInterface
 
     public function readJsonWebKeySet() : OidcJsonWebKeySet;
 
+    public function subjectIdentifier(User $user, string $clientId) : string;
+
     /**
      * @return array<string, mixed>|null
      */

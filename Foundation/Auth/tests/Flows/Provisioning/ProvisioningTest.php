@@ -6,6 +6,10 @@ namespace Avax\Auth\Tests\Flow\Provisioning;
 
 use Avax\Auth\System\Capability\AdminRealm\AdminElevationRecord;
 use Avax\Auth\System\Capability\AdminRealm\InMemoryAdminElevationStore;
+use Avax\Auth\System\Capability\Lifecycle\InMemoryLifecycleStore;
+use Avax\Auth\System\Capability\Lifecycle\LifecycleOrchestrator;
+use Avax\Auth\System\Capability\Lifecycle\LifecycleSource;
+use Avax\Auth\System\Capability\Lifecycle\LifecycleState;
 use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
 use Avax\Auth\System\Capability\Session\SessionRecord;
 use Avax\Auth\System\Capability\User\User;
@@ -75,6 +79,13 @@ final class ProvisioningTest extends TestCase
             expiresAt : $clock->now()->modify(modifier: '+30 days'),
             clientId  : 'oauth-client'
         );
+        $lifecycleStore = new InMemoryLifecycleStore();
+        $lifecycle = new LifecycleOrchestrator(
+            userSource: $userSource,
+            store     : $lifecycleStore,
+            auditLog  : new InMemoryAuditLog(),
+            clock     : $clock
+        );
 
         $guard      = new RequireAdminElevation(currentAuthentication: $current, elevationStore: $elevations, clock: $clock);
         $suspend    = new SuspendUser(
@@ -84,9 +95,16 @@ final class ProvisioningTest extends TestCase
             clock              : $clock,
             sessionRegistry    : $sessionRegistry,
             refreshTokenStore  : $refreshTokens,
-            adminElevationStore: $elevations
+            adminElevationStore: $elevations,
+            lifecycle          : $lifecycle
         );
-        $reactivate = new ReactivateUser(userSource: $userSource, requireAdminElevation: $guard, auditLog: new InMemoryAuditLog(), clock: $clock);
+        $reactivate = new ReactivateUser(
+            userSource         : $userSource,
+            requireAdminElevation: $guard,
+            auditLog           : new InMemoryAuditLog(),
+            clock              : $clock,
+            lifecycle          : $lifecycle
+        );
         $deprovision = new DeprovisionUser(
             userSource         : $userSource,
             requireAdminElevation: $guard,
@@ -94,17 +112,21 @@ final class ProvisioningTest extends TestCase
             clock              : $clock,
             sessionRegistry    : $sessionRegistry,
             refreshTokenStore  : $refreshTokens,
-            adminElevationStore: $elevations
+            adminElevationStore: $elevations,
+            lifecycle          : $lifecycle
         );
 
         $suspend->execute(userId: 2);
         $this->assertFalse(condition: $userSource->findById(id: new UserId(value: 2))?->isActive() ?? true);
+        $this->assertSame(expected: LifecycleState::SUSPENDED, actual: $lifecycleStore->find(userId: new UserId(value: 2))?->state);
+        $this->assertSame(expected: LifecycleSource::ADMIN, actual: $lifecycleStore->find(userId: new UserId(value: 2))?->source);
         $this->assertTrue(condition: $sessionRegistry->find(sessionId: 'session-target-suspend')?->isRevoked() ?? false);
         $this->assertSame(expected: 'suspended', actual: $sessionRegistry->find(sessionId: 'session-target-suspend')?->revokeReason);
         $this->assertTrue(condition: $refreshTokens->find(plainToken: $issuedRefresh->token)?->revoked ?? false);
 
         $reactivate->execute(userId: 2);
         $this->assertTrue(condition: $userSource->findById(id: new UserId(value: 2))?->isActive() ?? false);
+        $this->assertSame(expected: LifecycleState::ACTIVE, actual: $lifecycleStore->find(userId: new UserId(value: 2))?->state);
 
         $sessionRegistry->track(record: new SessionRecord(
             sessionId        : 'session-target-deprovision',
@@ -125,6 +147,7 @@ final class ProvisioningTest extends TestCase
         $deprovisioned = $userSource->findById(id: new UserId(value: 2));
         $this->assertFalse(condition: $deprovisioned?->isActive() ?? true);
         $this->assertSame(expected: [], actual: $deprovisioned?->getRoles() ?? []);
+        $this->assertSame(expected: LifecycleState::DEPROVISIONED, actual: $lifecycleStore->find(userId: new UserId(value: 2))?->state);
         $this->assertTrue(condition: $sessionRegistry->find(sessionId: 'session-target-deprovision')?->isRevoked() ?? false);
         $this->assertSame(expected: 'deprovisioned', actual: $sessionRegistry->find(sessionId: 'session-target-deprovision')?->revokeReason);
         $this->assertTrue(condition: $refreshTokens->find(plainToken: $issuedRefresh->token)?->revoked ?? false);

@@ -10,6 +10,7 @@ namespace Avax\Auth\System\Capability\EndpointPosture;
 final readonly class EndpointPostureEngine
 {
     /**
+     * @param list<EndpointPostureSignalData> $signals
      * Evaluates posture signals and determines action.
      */
     public function evaluate(
@@ -27,6 +28,7 @@ final readonly class EndpointPostureEngine
     }
 
     /**
+     * @param list<EndpointPostureSignalData> $signals
      * Calculates aggregate risk score from signals.
      */
     private function calculateRiskScore(array $signals) : float
@@ -38,7 +40,7 @@ final readonly class EndpointPostureEngine
         $totalScore = 0.0;
         $weightSum = 0.0;
 
-        foreach ($signals as /** @var EndpointPostureSignalData $signal */ $signal) {
+        foreach ($signals as $signal) {
             $weight = match ($signal->type) {
                 EndpointPostureSignal::IP_REPUTATION => 0.3,
                 EndpointPostureSignal::IMPOSSIBLE_TRAVEL => 0.4,

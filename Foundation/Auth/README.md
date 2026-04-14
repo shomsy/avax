@@ -12,7 +12,7 @@ and federation, deterministic risk, admin elevation, and a thin optional integra
 - Session and JWT now share the same public result model, logout path, and refresh/revocation lifecycle.
 - OAuth v1 now owns client registration, authorization-code issuance, PKCE verification, refresh exchange,
   `client_credentials`, introspection, token revocation, sender-constrained token binding metadata, workload inventory,
-  and explicit client policy posture.
+  explicit client policy posture, and tenant-owned client update/disable/secret-rotation flows.
 - OIDC now owns provider metadata, JWKS publication, RS256 ID-token issuance, nonce enforcement, and userinfo reads
   behind a dedicated provider seam.
 - `Access` now supports composed access policies with role, permission, resource-owner, fresh-MFA, admin-elevation,
@@ -20,10 +20,10 @@ and federation, deterministic risk, admin elevation, and a thin optional integra
 - Passkeys now own registration/authentication plus listing, rename, and revoke flows behind a runtime contract.
 - Federation now owns tenant-aware connection registration, domain verification, metadata sync, health checks,
   discovery, start/complete login, JIT linking, break-glass policy evaluation, and group-to-role mapping.
-- SCIM now owns directory registration, token rotation, user provisioning, delete, group sync, idempotency, drift
-  detection, and explicit account-state semantics behind a package-owned runtime lane.
+- SCIM now owns directory registration, token rotation, user provisioning, delete, derived group projection, bulk user
+  operations, group sync, idempotency, drift detection, and explicit account-state semantics behind a package-owned runtime lane.
 - Tenant security now owns requested, approved, applied, and rolled-back security configuration changes with auditable
-  config diffs and rollout versioning.
+  config diffs and rollout versioning, while the tenant product lane owns tenant/member/invite/owner-transfer behavior.
 - Admin realm, provisioning, deterministic risk, and cleanup/export maintenance flows are package-owned slices.
 - Password reset, email verification, MFA enrollment/challenge/recovery, refresh rotation, audit events, and
   anti-enumeration flows are package-owned.
@@ -107,6 +107,9 @@ $backupCodes = $auth->confirmMfaEnrollment(
 - `register(RegistrationData): RegistrationResult`
 - `refresh(RefreshAuthenticationRequest): AuthenticationResult`
 - `registerOAuthClient(RegisterClientData): RegisteredOAuthClient`
+- `updateOAuthClient(UpdateClientData): OAuthClient`
+- `disableOAuthClient(string): OAuthClient`
+- `rotateOAuthClientSecret(string): RegisteredOAuthClient`
 - `readOAuthClients(): list<OAuthClient>`
 - `readWorkloadIdentities(): list<WorkloadIdentityProfile>`
 - `authorizeOAuthCode(AuthorizeCodeData): IssuedAuthorizationCode`
@@ -145,7 +148,17 @@ $backupCodes = $auth->confirmMfaEnrollment(
 - `provisionScimUser(ProvisionScimUserData): ScimProvisioningResult`
 - `deleteScimUser(DeleteScimUserData): void`
 - `readScimUsers(string): list<ScimUserProjection>`
+- `readScimGroups(string): list<ScimGroupProjection>`
 - `syncScimGroups(SyncScimGroupsData): ScimProvisioningResult`
+- `runScimBulk(ScimBulkRequest): ScimBulkResponse`
+- `createTenant(CreateTenantData): Tenant`
+- `readTenants(): list<Tenant>`
+- `inviteTenantMember(InviteTenantMemberData): IssuedTenantInvite`
+- `acceptTenantInvite(AcceptTenantInviteData): TenantMember`
+- `readTenantMembers(string): list<TenantMember>`
+- `suspendTenantMember(SuspendTenantMemberData): TenantMember`
+- `removeTenantMember(RemoveTenantMemberData): void`
+- `transferTenantOwnership(TransferTenantOwnershipData): Tenant`
 - `readTenantSecurityConfiguration(string): ?TenantSecurityConfiguration`
 - `beginTenantSecurityChange(BeginTenantSecurityChangeData): TenantSecurityChangeRequest`
 - `approveTenantSecurityChange(string, string): TenantSecurityChangeRequest`

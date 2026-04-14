@@ -29759,6 +29759,11 @@ final readonly class Identity implements IdentityInterface
             throw new InvalidArgumentException(message: 'Inactive users cannot be authenticated.');
         }
 
+        $refreshToken = $this->jwtIdentity?->issueRefreshToken(
+            user               : $user,
+            mfaVerifiedAt      : $mfaVerifiedAt,
+            phishingResistant  : $phishingResistant
+        );
         $sessionId    = $this->sessionIdentity?->issue(
             userId       : $user->getId()->value,
             mfaVerifiedAt: $mfaVerifiedAt,
@@ -29767,12 +29772,8 @@ final readonly class Identity implements IdentityInterface
         $accessToken  = $this->jwtIdentity?->issue(
             user               : $user,
             mfaVerifiedAt      : $mfaVerifiedAt,
-            phishingResistant  : $phishingResistant
-        );
-        $refreshToken = $this->jwtIdentity?->issueRefreshToken(
-            user               : $user,
-            mfaVerifiedAt      : $mfaVerifiedAt,
-            phishingResistant  : $phishingResistant
+            phishingResistant  : $phishingResistant,
+            refreshTokenFamilyId: $refreshToken?->familyId
         );
 
         return new IssuedAuthentication(
@@ -29924,7 +29925,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
         private int                                                    $tokenExpiry = 3600,
         private int                                                    $refreshTokenExpiry = 2_592_000,
-        private string                                                 $issuer = 'avax-auth-system'
+        private string                                                 $issuer = 'avax-auth-system',
+        private int                                                    $leeway = 60
     ) {}
 
     public function resolve(#[SensitiveParameter] string $token) : ResolvedToken|null
@@ -29949,21 +29951,21 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 || ! is_int($expiresAt)
                 || ! is_int($issuedAt)
                 || ! is_int($notBefore)
-                || ! is_int($subject)
+                || ! is_scalar($subject)
                 || ! is_string($tokenId)
             ) {
                 return null;
             }
 
-            $now = $this->clock->now();
+            $nowTimestamp = $this->clock->now()->getTimestamp();
 
-            if ($issuedAt > $now->getTimestamp() || $notBefore > $now->getTimestamp() || $expiresAt <= $now->getTimestamp()) {
+            if ($issuedAt > ($nowTimestamp + $this->leeway) || $notBefore > ($nowTimestamp + $this->leeway) || $expiresAt <= ($nowTimestamp - $this->leeway)) {
                 return null;
             }
 
             $expiryMoment = new DateTimeImmutable(datetime: "@{$expiresAt}");
 
-            if ($this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $now) === true) {
+            if ($this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $this->clock->now()) === true) {
                 return null;
             }
 
@@ -29974,6 +29976,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             $scopeClaim    = $claims['scope'] ?? null;
             $senderConstraintType = $claims['cnf_typ'] ?? null;
             $senderConstraintThumbprint = $claims['cnf_thumbprint'] ?? null;
+            $familyId      = $claims['fid'] ?? null;
             $scopes        = [];
             $senderConstraint = null;
 
@@ -30000,7 +30003,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 );
             }
 
-            $user = $this->userSource->findById(id: new UserId(value: $subject));
+            $user = $this->userSource->findById(id: new UserId(value: (int) $subject));
 
             if ($user === null || ! $user->isActive()) {
                 return null;
@@ -30014,7 +30017,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 phishingResistant: $phishingResistant,
                 clientId     : $clientId,
                 scopes       : $scopes,
-                senderConstraint: $senderConstraint
+                senderConstraint: $senderConstraint,
+                familyId     : is_string($familyId) ? $familyId : null
             );
         } catch (Throwable) {
             return null;
@@ -30129,13 +30133,13 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 return null;
             }
 
-            $now = $this->clock->now();
+            $nowTimestamp = $this->clock->now()->getTimestamp();
 
-            if ($issuedAt > $now->getTimestamp() || $notBefore > $now->getTimestamp() || $expiresAt <= $now->getTimestamp()) {
+            if ($issuedAt > ($nowTimestamp + $this->leeway) || $notBefore > ($nowTimestamp + $this->leeway) || $expiresAt <= ($nowTimestamp - $this->leeway)) {
                 return null;
             }
 
-            if ($this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $now) === true) {
+            if ($this->revocationStore?->isRevoked(tokenId: $tokenId, moment: $this->clock->now()) === true) {
                 return null;
             }
 
@@ -30210,7 +30214,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = [],
-        OAuthSenderConstraint|null $senderConstraint = null
+        OAuthSenderConstraint|null $senderConstraint = null,
+        string|null $refreshTokenFamilyId = null
     ) : IssuedToken
     {
         if (! $user->isActive()) {
@@ -30228,6 +30233,10 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             'exp' => $expiresAt->getTimestamp(),
             'jti' => $tokenId,
         ];
+
+        if ($refreshTokenFamilyId !== null) {
+            $payload['fid'] = $refreshTokenFamilyId;
+        }
 
         if ($mfaVerifiedAt !== null) {
             $payload['mfa_at'] = $mfaVerifiedAt->getTimestamp();
@@ -30294,7 +30303,8 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
         bool $phishingResistant = false,
         string|null $clientId = null,
         array $scopes = [],
-        OAuthSenderConstraint|null $senderConstraint = null
+        OAuthSenderConstraint|null $senderConstraint = null,
+        string|null $refreshTokenFamilyId = null
     ) : IssuedToken;
 
     public function resolve(string $token) : ResolvedToken|null;
@@ -33219,6 +33229,16 @@ final class PasswordHasher
     public function verify(#[SensitiveParameter] string $password, #[SensitiveParameter] string $hash) : bool
     {
         return password_verify(password: $password, hash: $hash);
+    }
+
+    /**
+     * Generates a dummy hash for timing attack mitigation.
+     */
+    public function dummyHash() : string
+    {
+        // Use a fixed cost dummy hash that looks real.
+        // This hash is for the password 'password' with cost 12.
+        return '$2y$12$nO.MMTy.SQpyLSIsZpXOnuSnt.SQpyLSIsZpXOnuSnt.SQpyLSi';
     }
 
     public function needsRehash(#[SensitiveParameter] string $hash) : bool
@@ -37143,6 +37163,7 @@ final readonly class AuthenticateRequest
                 sessionId           : $sessionId,
                 accessTokenId       : $resolvedToken->tokenId,
                 accessTokenExpiresAt: $resolvedToken->expiresAt,
+                refreshTokenFamilyId: $resolvedToken->familyId,
                 mfaVerifiedAt       : $this->latestMfaMoment(left: $sessionMfaVerifiedAt, right: $resolvedToken->mfaVerifiedAt),
                 phishingResistant   : $sessionPhishingResistant || $resolvedToken->phishingResistant
             );
@@ -37172,6 +37193,7 @@ final readonly class AuthenticateRequest
                 mode                : AuthenticationMode::TOKEN,
                 accessTokenId       : $resolvedToken->tokenId,
                 accessTokenExpiresAt: $resolvedToken->expiresAt,
+                refreshTokenFamilyId: $resolvedToken->familyId,
                 mfaVerifiedAt       : $resolvedToken->mfaVerifiedAt,
                 phishingResistant   : $resolvedToken->phishingResistant
             );
@@ -37338,6 +37360,7 @@ final readonly class AuthenticationContext
         #[SensitiveParameter] private string|null            $accessTokenId = null,
         #[SensitiveParameter] private DateTimeImmutable|null $accessTokenExpiresAt = null,
         #[SensitiveParameter] private string|null            $refreshTokenId = null,
+        #[SensitiveParameter] private string|null            $refreshTokenFamilyId = null,
         private DateTimeImmutable|null                       $mfaVerifiedAt = null,
         private bool                                         $phishingResistant = false
     )
@@ -37367,6 +37390,7 @@ final readonly class AuthenticationContext
         #[SensitiveParameter] string|null            $accessTokenId = null,
         #[SensitiveParameter] DateTimeImmutable|null $accessTokenExpiresAt = null,
         #[SensitiveParameter] string|null            $refreshTokenId = null,
+        #[SensitiveParameter] string|null            $refreshTokenFamilyId = null,
         DateTimeImmutable|null                       $mfaVerifiedAt = null,
         bool                                         $phishingResistant = false
     ) : self
@@ -37379,6 +37403,7 @@ final readonly class AuthenticationContext
             accessTokenId       : $accessTokenId,
             accessTokenExpiresAt: $accessTokenExpiresAt,
             refreshTokenId      : $refreshTokenId,
+            refreshTokenFamilyId: $refreshTokenFamilyId,
             mfaVerifiedAt       : $mfaVerifiedAt,
             phishingResistant   : $phishingResistant
         );
@@ -37422,6 +37447,11 @@ final readonly class AuthenticationContext
     public function refreshTokenId() : string|null
     {
         return $this->refreshTokenId;
+    }
+
+    public function refreshTokenFamilyId() : string|null
+    {
+        return $this->refreshTokenFamilyId;
     }
 
     public function mfaVerifiedAt() : DateTimeImmutable|null
@@ -39270,10 +39300,13 @@ final readonly class Login
         $this->rateLimit?->check(identifier: $credentials->identifier);
 
         $user = $this->userSource->findByCredentials(credentials: $credentials);
+        $hash = $user?->getPasswordHash() ?? $this->passwordHasher->dummyHash();
+
+        $passwordValid = $this->passwordHasher->verify(password: $credentials->password, hash: $hash);
 
         if (
             $user === null
-            || ! $this->passwordHasher->verify(password: $credentials->password, hash: $user->getPasswordHash())
+            || ! $passwordValid
             || ! $user->isActive()
         ) {
             $this->rateLimit?->recordFailed(identifier: $credentials->identifier);
@@ -39565,7 +39598,10 @@ final readonly class Logout
                 $this->sessionRegistry?->revoke(sessionId: $context->sessionId(), revokedAt: $now, reason: 'logout');
             }
 
-            $this->refreshTokenStore?->revokeUser(userId: new UserId(value: $user->id));
+            if ($context->refreshTokenFamilyId() !== null) {
+                $this->refreshTokenStore?->revokeFamily(familyId: $context->refreshTokenFamilyId());
+            }
+
             $this->auditLog->record(event: new AuditEvent(
                                         name      : 'auth.logout.succeeded',
                                         occurredAt: $now,
@@ -42400,16 +42436,22 @@ final readonly class AuthorizeCode
         $normalized = [];
 
         foreach ($scopes as $scope) {
-            $value = trim($scope);
+            $parts = preg_split(pattern: '/\s+/', subject: trim($scope), flags: PREG_SPLIT_NO_EMPTY);
 
-            if ($value === '' || in_array($value, $normalized, true)) {
+            if ($parts === false) {
                 continue;
             }
 
-            $normalized[] = $value;
+            foreach ($parts as $value) {
+                if (in_array(needle: $value, haystack: $normalized, strict: true)) {
+                    continue;
+                }
+
+                $normalized[] = $value;
+            }
         }
 
-        sort($normalized);
+        sort(array: $normalized);
 
         return $normalized;
     }
@@ -42595,14 +42637,6 @@ final readonly class ExchangeAuthorizationCode
 
         $this->codeStore->markUsed(codeId: $record->codeId, usedAt: $now);
 
-        $accessToken = $this->jwtIdentity->issue(
-            user         : $user,
-            mfaVerifiedAt: $record->mfaVerifiedAt,
-            phishingResistant: $record->phishingResistant,
-            clientId     : $client->clientId,
-            scopes       : $record->scopes,
-            senderConstraint: $data->senderConstraint
-        );
         $refreshToken = $this->refreshTokenStore->issue(
             userId       : $user->getId(),
             expiresAt    : $now->modify(modifier: '+30 days'),
@@ -42611,6 +42645,15 @@ final readonly class ExchangeAuthorizationCode
             clientId     : $client->clientId,
             scopes       : $record->scopes,
             senderConstraint: $data->senderConstraint
+        );
+        $accessToken = $this->jwtIdentity->issue(
+            user         : $user,
+            mfaVerifiedAt: $record->mfaVerifiedAt,
+            phishingResistant: $record->phishingResistant,
+            clientId     : $client->clientId,
+            scopes       : $record->scopes,
+            senderConstraint: $data->senderConstraint,
+            refreshTokenFamilyId: $refreshToken->familyId
         );
         $idToken = null;
 
@@ -42989,7 +43032,8 @@ final readonly class ExchangeRefreshToken
             phishingResistant: $record->phishingResistant,
             clientId     : $client->clientId,
             scopes       : $record->scopes,
-            senderConstraint: $record->senderConstraint
+            senderConstraint: $record->senderConstraint,
+            refreshTokenFamilyId: $record->familyId
         );
         $refreshToken = $this->refreshTokenStore->issue(
             userId       : $record->userId,
@@ -50014,7 +50058,8 @@ final readonly class RefreshAuthentication
             mfaVerifiedAt: $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
             clientId     : $record->clientId,
-            scopes       : $record->scopes
+            scopes       : $record->scopes,
+            refreshTokenFamilyId: $record->familyId
         );
         $refreshToken = $this->refreshTokenStore->issue(
             userId       : $record->userId,
@@ -50210,7 +50255,8 @@ final readonly class ResolvedToken
         public bool                         $phishingResistant = false,
         public string|null                  $clientId = null,
         public array                        $scopes = [],
-        public OAuthSenderConstraint|null   $senderConstraint = null
+        public OAuthSenderConstraint|null   $senderConstraint = null,
+        public string|null                  $familyId = null
     ) {}
 }
 
@@ -63128,7 +63174,7 @@ class IdentityTest extends TestCase
         $session->shouldReceive('issue')->once()->with(10, null, false)->andReturn('session-10');
 
         $jwt = Mockery::mock(JwtIdentityInterface::class);
-        $jwt->shouldReceive('issue')->once()->with($user, null, false)->andReturn(new IssuedToken(
+        $jwt->shouldReceive('issue')->once()->with($user, null, false, null, [], null, null)->andReturn(new IssuedToken(
                                                                                token    : 'token-10',
                                                                                tokenId  : 'token-id',
                                                                                expiresAt: new DateTimeImmutable(datetime: '+1 hour')
@@ -65357,12 +65403,13 @@ class LogoutTest extends TestCase
         $currentAuthentication = new CurrentAuthentication();
         $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user: new AuthenticatedUser(id: 7, email: 'logout@example.com', username: 'logout'),
-            mode: AuthenticationMode::TOKEN
+            mode: AuthenticationMode::TOKEN,
+            refreshTokenFamilyId: 'fid-123'
         ));
         $identity = Mockery::mock(IdentityInterface::class);
         $identity->shouldReceive('clear')->once();
         $refreshTokenStore = Mockery::mock(RefreshTokenStoreInterface::class);
-        $refreshTokenStore->shouldReceive('revokeUser')->once();
+        $refreshTokenStore->shouldReceive('revokeFamily')->with('fid-123')->once();
 
         $logout = new Logout(
             identity             : $identity,
@@ -68519,7 +68566,7 @@ class FoundationTest extends TestCase
         $generator = new IdGenerator();
         $id        = $generator->generate();
         $this->assertIsInt(actual: $id);
-        $this->assertGreaterThan(expected: 0, actual: $id);
+        $this->assertGreaterThan(minimum: 0, actual: $id);
     }
 }
 

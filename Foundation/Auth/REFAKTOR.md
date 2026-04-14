@@ -1,479 +1,624 @@
-Napravi ovo da bude na enterprise grade, world class nivou, da bude u visini kvaliteta poznatih framework-a, programskih jezika, biblioteka. Da nam svi oni zavide zapravo. Za sam kvalitet koda i arhitekture pogledaj dole STANDARDI I KVALITET KOJI ZAHTEVAM sekciju i pridrzavaj se striktno pravila agents.md odnosno .agents harness-a.
+Da — i **kod** i **ta granica** zajedno daju najrealniju sliku.
 
-Evo **tačnog TODO-a za “baš perfect auth system”**.
+Iz onoga što se stvarno vidi u kodu, više nisi samo na “lepom auth planu”. Imaš **konkretne runtime komade** za ozbiljan security posture: HTTP sender-constraint verifikaciju sa DPoP/mTLS i testovima, CSRF/session hardening, workload `client_credentials` lane, audit/legal-hold rad, i adapter-ready persistence/jobs primere. To više nije samo dokumentacija, nego stvarni izvedeni security surface.
 
-> Status audit: 2026-04-13
->
-> Legenda:
-> - `[x]` implementirano u repo-u
-> - `[~]` delimično implementirano ili zatvoreno kroz docs/boundary, bez punog runtime-a
-> - `[ ]` nije implementirano
+## Status Summary
 
-## P0 — zatvori sve što je ostalo do “perfect auth kernel”
+Legenda:
+- `[x]` done
+- `[~]` partial / boundary-only / integrated, ali ne potpuno zatvoreno
+- `[ ]` not implemented
 
-### 1) Browser/session deployment hardening
+Poslednji report: Preostali otvoreni delovi u REFAKTOR.md su i dalje veći product seam-ovi: OIDC front/back-channel logout, JAR/PAR/JARM, approval flow za high-risk client registration, SCIM operations hardening, deployment trust boundary profiles, external certification program i workload/trusted-device truth. To su sada iskreno označeni kao otvoreni ili parcialni. Nisam radio commit/push u ovom koraku.
 
-* [x] Napiši **cookie-auth deployment guide** za web:
+### Done
 
-  * `Secure`, `HttpOnly`, `SameSite`
-  * CSRF model po surface-u
-  * origin/referer pravila
-  * session fixation test proceduru
-* [x] Dodaj **reference middleware primer** za CSRF zaštitu
-* [x] Dodaj **persistent session registry primer**:
+- [x] Auth kernel hardening: password hashing, MFA, recovery, session hardening, audit, admin hardening, authorization separation, key lifecycle, release hardening i regresioni testovi.
+- [x] Tenant i control-plane jezgro: tenant lifecycle, membership, invites, ownership transfer, tenant-owned OAuth client management, federation/SCIM/security-policy površine.
+- [x] SCIM runtime core: `/Users`, `/Groups`, schema discovery, idempotency, drift remediation i bulk lane.
+- [x] OAuth / sender-constrained runtime core: PKCE, refresh rotation, reuse detection, DPoP/mTLS-aware binding, client registry i tenant ownership.
+- [x] Lifecycle orchestration i HTTP hardening: lifecycle capability, CSRF/session utilities, operativni docs i evidence.
 
-  * DB schema
-  * revoke one
-  * logout-all
-  * revoke on password reset
-  * revoke on factor reset
-* [x] Dodaj **session compromise runbook**
-* [x] Dodaj **browser storage policy**: zabrani dugotrajne tokene u browser storage-u za session-based surface
+### Partial
 
-Ovo je must-have jer OWASP traži eksplicitan CSRF posture za browser-attached credentials, realnu invalidaciju sesije i stroge cookie kontrole, ne samo “login radi”.   ([OWASP Cheat Sheet Series][1])
+- [~] Source-of-truth cleanup: `Auth.txt`, `REFAKTOR.md` i `TODO.md` i dalje imaju preklapanje sa istorijskim review materijalom.
+- [~] OIDC provider completeness: client registration/update/disable su integrisani kroz OAuth + tenant-admin rute, ali approval flow i audit diff explorer nisu potpuno zatvoreni.
+- [~] Session revocation durability: global revocation sada ima package-owned SQL backend, ali pun conformance matrix i dodatni adapteri nisu završeni.
+- [~] Deployment trust boundary: proxy contract, edge profiles i negativni smoke testovi još nisu finalizovani.
+- [~] SCIM operations: sync health, per-directory throttling i outage recovery su i dalje otvoreni.
+- [~] Workload/client-credentials truth, trusted-device odluka, compatibility migration, support explainability i capability dashboard nisu potpuno završeni.
 
-### 2) Sender-constrained tokeni moraju biti stvarno operativni, ne samo metadata
+### Not Implemented
 
-* [x] Implementiraj **DPoP proof verification adapter**
-* [x] Implementiraj **mTLS-bound token verification adapter**
-* [x] Dodaj testove za:
+- [ ] OIDC front-channel logout
+- [ ] OIDC back-channel logout
+- [~] OIDC pairwise subject identifiers
+- [ ] OIDC JAR / PAR / JARM
+- [ ] External certification program
+- [ ] Sve ostalo što je i dalje označeno kao `[ ]` u detaljnom backlog-u ispod
 
-  * `[x]` replay sa istim proof-om
-  * `[x]` proof/token mismatch
-  * `[x]` wrong `htu` / `htm`
-  * `[x]` key rotation
-* [x] Dodaj policy switch:
+Detaljni TODO ispod ostaje kanonski backlog; ova sekcija je brzi status za trenutno stanje.
 
-  * `[x]` standard bearer
-  * `[x]` DPoP required
-  * `[x]` mTLS required
-* [x] Dodaj audit event za proof failure i sender-constraint mismatch
+Zato bih rekao da sada izgleda ovako:
 
-Tvoj kernel već ima sender-constraint metadata i high-security posture, ali za “perfect” moraš zatvoriti i punu proof verifikaciju. DPoP je standard baš za sender-constraining i replay detekciju, a OAuth BCP tretira sender-constrained tokene kao jači posture od običnih bearer tokena.   ([IETF Datatracker][2])
+**1. Jak auth kernel — da, vrlo jasno**
+Tu si već stvarno jak. Imaš konkretan dokaz za:
 
-### 3) Audit/export mora biti SIEM-grade
+* replay-resistant OAuth surface na HTTP granici
+* CSRF/session zaštitu
+* workload identity lane
+* audit/diagnostics operativni sloj
+* regression testove za neke od najbitnijih security rupa.
 
-* [x] Dodaj **rich audit exporter adaptere**:
+**2. Identity-capable kernel — takođe da**
+Više nisi samo “login + MFA + refresh tokens”. Paket već ima federation / provisioning / risk / admin-realm pravac i workload lane, što ga gura preko običnog auth modula. To je već ozbiljan identity core.
 
-  * `[x]` JSON lines
-  * `[x]` syslog
-  * `[x]` webhook
-  * `[x]` queue export
-* [x] Dodaj **security notification adaptere**:
+**3. Full identity product — još ne bih rekao**
+Tu je granica. Prihvaćeni risk i boundary tekst i dalje govore da paket **nije** pun identity proizvod, nego kernel koji pokriva mnogo identity stvari. Konkretno, i dalje se kao otvorena granica navode:
 
-  * `[x]` refresh reuse detected
-  * `[x]` admin elevation
-  * `[x]` factor removed
-  * `[x]` password changed after suspicious activity
-* [x] Dodaj **correlation-id propagation** kroz sve auth flow-ove
-* [x] Dodaj **tamper-evident export strategy**
-* [x] Dodaj **PII masking verification tests**
+* nema pun **OIDC provider behavior**
+* nema pun **SCIM runtime**
+* nema pun **tenant/control-plane model**
+* postoji rizik da timovi pomešaju kernel sa gotovim identity platform proizvodom.
 
-Logging i audit nisu finiš bez operativnog izvoza i discipline oko osetljivih podataka. OWASP logging smernice i tvoj privacy policy idu baš u tom pravcu.   ([OWASP Cheat Sheet Series][3])
+Najbitniji insight je ovaj:
 
-### 4) Federation operativa
+> **Kod pokazuje da si dosta prešao iz “auth library” u “identity kernel”.**
+> **Ali boundary i dalje kaže da nisi još “full identity platform product”.**
 
-* [x] Implementiraj **domain verification**
-* [x] Implementiraj **federation metadata sync**
-* [x] Dodaj **stronger tenant connection policy**
-* [x] Dodaj **connection health checks**
-* [x] Dodaj **group-to-role mapping validator**
-* [x] Dodaj **tenant isolation tests** za connection config
-* [x] Dodaj **break-glass bypass policy** kad je IdP nedostupan
-* [x] Dodaj **SSO cutover runbook**
+To je zapravo zdravo stanje. Znači da si jak, ali još nisi počeo da lažeš sebe scope-om.
 
-Roadmap ti već navodi domain verification, metadata sync i jači tenant connection policy kao naredni sprint. Bez toga federation postoji, ali nije “baš perfect”. 
+Jedina stvar na koju bih te upozorio je mala **nekonzistentnost između code-evidence i risk/blurb evidencije**.
+Na primer, noviji taskovi tvrde da je `client_credentials` lane završen, workload identity runtime postoji, i dosta operational gaps je zatvoreno; ali accepted risk još uvek govori kao da `client-credentials`, SCIM runtime i full control-plane nisu deo isporučenog proizvoda. To meni deluje kao:
 
-### 5) High-assurance admin posture examples
+* ili je **risk register malo zastareo**
+* ili je namerno zadržana konzervativna boundary poruka da se ne overclaim-uje scope.
 
-* [x] Dodaj gotov primer za **admin passkey-required policy**
-* [x] Dodaj gotov primer za **tenant-admin phishing-resistant policy**
-* [x] Dodaj primer za **fresh-MFA / fresh-passkey enforcement**
-* [x] Dodaj primer za **approval path** za high-impact admin akcije
-* [x] Dodaj primer za **SoD** pravilo u policy engine-u
+Moja realna ocena sada:
 
-Tvoj assurance matrix već kaže da admin i tenant-admin moraju imati phishing-resistant faktor; za AAL3 NIST traži phishing-resistant autentikator sa ne-eksportabilnim ključem. Za “perfect” treba da ovo bude ne samo dokumentovano nego i isporučeno kao gotov policy paket.  ([NIST Publications][4])
+* **auth kernel:** 9/10
+* **identity kernel:** 8–8.5/10
+* **full identity product:** 6.5–7.5/10
 
-## P1 — zatvori otvorene accepted-risk stavke
+Dakle, **tačno si na granici**:
 
-### 6) Trusted device / remembered device
+* sa jedne strane više nisi “samo auth”
+* sa druge strane još nisi “Auth0/Okta/Keycloak-class product surface”
 
-* [x] Odluči da li trusted-device **ulazi** ili se **trajno odbija**  
-  Odluka: funkcija je eksplicitno odbijena u ovoj iteraciji.
+Najkraće:
+
+**Sada izgledaš kao ozbiljan, near-perfect auth + identity kernel.**
+**Još ne izgledaš kao kompletan identity platform proizvod.**
+
+Ako hoćeš baš brutalno precizno, razlika između ta dva je sada uglavnom u ovome:
+
+* provider/product surface
+* tenant/control-plane ownership
+* lifecycle/admin/operator completeness
+* ecosystem/public product contracts
+
+Plan i MUST HAVE ToDo:
+
+According to a document from April 13, 2026: evo **jednog objedinjenog TODO-a** za sve što sam zapazio da treba **ispraviti, implementirati ili unaprediti** da iz “vrlo jakog auth/identity kernela” pređeš u **čist, dosledan, full identity platform proizvod**. Napomena: ovde sam bio strog prema **najnovijem `Auth.txt` i code-evidence referencama koje on pominje**, ali ne mogu pošteno da tvrdim da sam video tela svih PHP klasa — vidim status, boundary, verifikacije i reference na konkretne fajlove/adapters, plus deo starijih review nalaza koji su ostali pomešani u istom fajlu.
+
+# Jedan veliki TODO
+
+## P0 — sredi source-of-truth haos pre svega
+
+### 1) Očisti i razdvoji **trenutno stanje** od **istorijskih review snapshot-a**
+
+Problem: isti `Auth.txt` sadrži i najnoviji risk/boundary status i stare review ostatke tipa `Implement AuthMiddleware`, `Fix UserInterface`, pregled stare `Actions/ / Adapters/ / Contracts/` strukture. To zamućuje stvarno stanje i pravi lažan osećaj da su otvoreni problemi možda i dalje aktivni, iako mogu biti istorijski artefakti.
+
+**TODO**
+
+* [ ] Izvuci stare review snapshot-e iz `Auth.txt` i prebaci ih u archive / review history
+* [ ] Napravi **jedan kanonski status fajl** za:
+
+    * [ ] current delivered capabilities
+    * [ ] open risks
+    * [ ] accepted product choices
+    * [ ] explicit non-goals
+* [ ] Napravi **jedan kanonski boundary fajl**: “kernel vs full platform”
+* [ ] Napravi **jedan kanonski capability matrix** generisan iz koda/testova kad god je moguće
+* [ ] Ukloni kontradikcije između risk registra, roadmap-a i capability tabele
+* [ ] Dodaj pravilo da istorijski review snapshot nikad više ne živi u istom fajlu kao current-state truth
+
+**Done kada**
+
+* [ ] neko ko otvori samo jedan status dokument može tačno da vidi šta je shipped, šta nije, i šta je namerno van scope-a
+* [ ] nema starih review TODO stavki u current-state dokumentima
+
+---
+
+## P0 — zaključaј stvarni proizvodni scope
+
+### 2) Reši kontradikciju: **šta kernel stvarno već poseduje, a šta još nije product**
+
+Najnoviji surface kaže da imaš praktičan OIDC provider lane sa discovery, JWKS, authorization code + `openid`, PKCE, nonce, ID token issuance, userinfo i rollover; u isto vreme active risk i dalje kaže da “package still does not ship OIDC provider behavior, client-credentials, SCIM runtime, or a full tenant/control-plane model”. To je najveći semantic drift koji sam video.
+
+**TODO**
+
+* [ ] Napravi tabelu sa kolonama:
+
+    * [ ] `kernel-owned and shipped`
+    * [ ] `kernel-owned but partial`
+    * [ ] `external package/app owned`
+    * [ ] `explicit non-goal`
+* [ ] Za OIDC posebno odluči:
+
+    * [ ] da li tvrdiš “practical OIDC provider lane”
+    * [ ] ili “OIDC-adjacent auth kernel”
+* [ ] Za SCIM posebno odluči:
+
+    * [ ] da li imaš runtime
+    * [ ] ili samo seams/docs/roadmap
+* [ ] Za workload/client-credentials posebno odluči:
+
+    * [ ] da li je shipped
+    * [ ] ili samo design/docs
+* [ ] Ažuriraj risk `AUTH-RISK-006` da tačno odgovara kodu i capability tabeli
+* [ ] Dodaj release note sekciju: “what this package is not”
+
+**Done kada**
+
+* [ ] risk register i capability matrix više ne pričaju različite priče
+* [ ] scope se može citirati bez objašnjavanja “pa mislio sam…”
+
+---
+
+## P0 — zatvori jedini jasno otvoren tehnički risk
+
+### 3) Reši **global session revocation** kao package-owned priču
+
+Ovo je i dalje jedan od otvorenih riskova: multi-session/global revocation mora biti dokazivo konzistentan na svim podržanim registry backend-ima. Kernel ima `SessionRegistryInterface`, a package-owned SQL backend sada postoji, ali pun conformance matrix i dodatni adapteri još nisu zaključani.
+
+**TODO**
+
+* [ ] Odluči da li session registry postaje:
+
+    * [ ] obavezni deo platforme
+    * [ ] zvanični adapter paket
+    * [ ] i dalje app-owned dependency, ali eksplicitno mandatory za “enterprise mode”
+* [x] Isporuči barem jedan package-owned durable registry:
+
+    * [x] SQL
+    * [ ] Redis
+* [x] Dodaj canonical session entity model:
+
+    * [x] session id
+    * [x] identity id
+    * [x] created at
+    * [x] last seen at
+    * [x] idle expiry
+    * [x] absolute expiry
+    * [x] revoked at
+    * [x] revoke reason
+* [x] Dodaj package-owned flow-ove:
+
+    * [x] revoke current session
+    * [x] revoke specific session
+    * [x] revoke all sessions for identity
+    * [x] revoke all sessions after password/factor change
+* [x] Dodaj adapter conformance testove za svaki session backend
+* [x] Dodaj docs: šta znači “enterprise session revocation support”
+
+**Done kada**
+
+* [ ] “logout everywhere” radi konzistentno na svim podržanim backend-ima
+* [ ] session revocation više nije deployment caveat nego package capability
+
+---
+
+## P0 — deployment trust boundary učini dokazivim, ne samo dokumentovanim
+
+### 4) Učvrsti **sender-constrained** deployment priču
+
+Mitigated risk za sender-constrained posture je dobar znak, ali i dalje eksplicitno kaže da certificate-chain trust i reverse-proxy correctness ostaju deployment-owned. To je realno, ali za full platform treba da bude mnogo više od “docs kažu”.
+
+**TODO**
+
+* [ ] Napravi reference deployment profiles za:
+
+    * [ ] direct TLS termination
+    * [ ] trusted reverse proxy
+    * [ ] mTLS at edge
+* [ ] Dodaj explicit proxy contract:
+
+    * [ ] which headers are trusted
+    * [ ] which headers are forbidden from untrusted hops
+    * [ ] how certificate info is propagated
+* [ ] Dodaj integration smoke tests za:
+
+    * [ ] wrong forwarded headers
+    * [ ] missing client cert metadata
+    * [ ] broken DPoP proof
+    * [ ] cert/key mismatch
+* [ ] Dodaj operator checklist za mTLS chain validation
+* [ ] Dodaj “unsafe deployment mode” detection/warnings
+* [ ] Dodaj support diagnostics za sender-constraint failures
+
+**Done kada**
+
+* [ ] deployment team ne mora da nagađa kako da bezbedno postavi proxy/edge
+* [ ] platform može da dokaže da sender-constrained flow nije slomljen pogrešnim reverse proxy-jem
+
+---
+
+## P1 — završi ono što te deli od **full identity platform**, ne samo jakog kernela
+
+### 5) Dodaj **dynamic client registration**
+
+U OIDC capability tabeli je i dalje eksplicitno `not supported`. Za full identity platform to je ozbiljna rupa.
+
+**TODO**
+
+* [~] `System/Flow/Oidc/RegisterClient/`
+  integrated through `System/Flow/OAuth/RegisterClient/` and tenant-admin control-plane routes instead of a duplicated OIDC-only lane
+* [~] `System/Flow/Oidc/UpdateClient/`
+  integrated through `System/Flow/OAuth/UpdateClient/`
+* [~] `System/Flow/Oidc/DisableClient/`
+  integrated through `System/Flow/OAuth/DisableClient/`
+* [~] `Capability/OAuth/ClientRegistration/`
+  folded into `Capability/OAuth/OAuthClientRegistryInterface` and concrete management flows to avoid a parallel bucket
+* [ ] Validacije:
+
+    * [x] redirect URIs
+    * [x] grant types
+* [x] token endpoint auth method
+    * [x] public vs confidential client
+    * [x] PKCE rules
+    * [x] sender-constraint posture
+* [~] Audit diff za svaku client config promenu
+  audit trail postoji, ali ne još i dedicated semantic diff explorer za client metadata
+* [x] Tenant ownership nad client-ovima
+* [ ] Approval za high-risk client registration
+
+**Done kada**
+
+* [ ] relying party može bez ručnog patchovanja koda da uđe u platformu kao regularan client
+
+### 6) Dodaj **OIDC logout surface**
+
+Front-channel i back-channel logout su i dalje `not supported`.
+
+**TODO**
+
+* [ ] `System/Flow/Oidc/FrontChannelLogout/`
+* [ ] `System/Flow/Oidc/BackChannelLogout/`
+* [ ] RP session correlation
+* [ ] logout propagation retry model
+* [ ] logout failure audit
+* [ ] per-client logout support flags
+* [ ] compatibility test matrix
+
+**Done kada**
+
+* [ ] platform može da zatvori sesije i kod relying parties, ne samo lokalno
+
+### 7) Dodaj **pairwise subject identifiers**
+
+Osnovni pairwise subject identifier lane je implementiran; migration rules i rollout posture su još delimično policy/docs posao.
+
+**TODO**
+
+* [x] `Capability/Oidc/SubjectIdentifiers/`
+* [x] public vs pairwise strategy
+* [x] sector identifier validation
+* [x] pairwise generation policy
+* [~] migration rules
+* [x] per-client stable subject tests
+
+### 8) Dodaj **JAR / PAR / JARM**
+
+Takođe i dalje `not supported`. Za ozbiljniji enterprise/OIDC provider proizvod ovo je gap.
+
+**TODO**
+
+* [ ] `System/Flow/Oidc/PushAuthorizationRequest/`
+* [ ] `System/Flow/Oidc/ValidateRequestObject/`
+* [ ] `System/Flow/Oidc/ReturnJwtAuthorizationResponse/`
+* [ ] replay protection
+* [ ] expiry rules
+* [ ] signed request validation
+* [ ] conformance tests
+
+### 9) External certification program
+
+Capability tabela eksplicitno kaže `external certification` nije podržan.
+
+**TODO**
+
+* [ ] conformance harness
+* [ ] certification profile matrix
+* [ ] evidence bundle generator
+* [ ] signed release + test bundle
+* [ ] repeatable certification environment profile
+
+---
+
+## P1 — tenant / control-plane pretvori u pravi proizvod
+
+### 10) Završi **full tenant/control-plane model**
+
+Latest risk i dalje kaže da full tenant/control-plane model nije deo paketa. To je centralna razlika između identity kernela i identity platforme.
+
+**TODO**
+
+* [x] `Capability/Tenant/`
+* [~] `Capability/TenantMembership/`
+  membership je merged u `Capability/Tenant/` da ne pravi paralelno imenovanje za isti koncept
+* [x] `System/Flow/Tenant/`
+* [ ] Entiteti:
+
+    * [x] tenant
+    * [x] membership
+    * [x] membership role
+    * [x] invite
+    * [x] owner transfer
+    * [~] tenant policy state
+      security policy state ostaje u `Capability/TenantSecurity/`, ne u `Capability/Tenant/`
+* [ ] Flow-ovi:
+
+    * [x] create tenant
+    * [x] invite member
+    * [x] accept invite
+    * [x] remove member
+    * [x] suspend member
+    * [x] transfer owner
+    * [x] read members
+* [ ] Control-plane površine:
+
+    * [x] federation connections
+    * [x] SCIM directories
+    * [x] OAuth clients
+    * [x] access mappings
+    * [x] security policies
+    * [~] approval / rollback / diff explorer
+      tenant security diff/apply/rollback postoji, ali nije još poseban explorer za sve tenant artifacts
+* [~] Strict tenant crossing testovi
+  tenant-scoped HTTP and flow coverage postoji, ali još nema exhaustive crossing matrix
+
+**Done kada**
+
+* [ ] “team/tenant/org” nije samo koncept u docs, nego pun product-owned boundary
+
+### 11) SCIM product completeness
+
+Ako želiš full platform, SCIM ne sme ostati “možda runtime, možda ne”. Latest risk još ga tretira kao deo onoga što nije stvarno shipped kao platform feature.
+
+**TODO**
+
+* [x] Odluči: SCIM runtime je first-class ili nije
+* [ ] Ako jeste:
+
+    * [x] `/Users`
+    * [x] `/Groups`
+    * [x] schema discovery
+    * [x] idempotency
+    * [x] drift remediation
+    * [ ] sync health
+    * [ ] per-directory throttling
+    * [ ] outage recovery
+* [ ] Ako nije:
+
+    * [ ] izbaci sve dvosmislene tvrdnje da “paket ima SCIM” iz current-state docs
+
+### 12) Workload / client-credentials truth
+
+Latest accepted risk još uvek navodi `client-credentials` kao nešto što paket “still does not ship”, dok noviji razgovori i neki boundary opisi impliciraju workload lane. To moraš zatvoriti kao source-of-truth problem ili product gap.
+
+**TODO**
+
+* [ ] Verifikuj da li public surface za workload zaista postoji
+* [ ] Ako postoji:
+
+    * [ ] upiši ga u capability matrix kao supported
+    * [ ] dodaj tests/release evidence reference
+* [ ] Ako ne postoji:
+
+    * [ ] izbaci ga iz scope claim-ova
+* [ ] Dodaj canonical machine identity model:
+
+    * [ ] machine client
+    * [ ] machine scopes
+    * [ ] token lifetime
+    * [ ] sender-constraint rules
+    * [ ] revocation
+    * [ ] audit
+
+---
+
+## P1 — reši accepted product choices koje možda više nisu dovoljne
+
+### 13) Trusted device / remembered device
+
+Trenutno je eksplicitno “ne isporučujemo trusted-device support”. To je pošteno, ali za full identity platform to je ili feature ili eksplicitno dugoročno odbijena odluka sa jakim razlogom.
+
+**TODO**
+
+* [ ] Donesi konačnu odluku:
+
+    * [ ] ulazi u platformu
+    * [ ] trajno van scope-a
 * [ ] Ako ulazi:
 
-  * device token model
-  * device binding
-  * revocation
-  * per-device audit
-  * suspicious device re-challenge
-* [x] Ako ne ulazi:
-
-  * `[x]` napiši explicit policy da je to svesno odbijena funkcija zbog sigurnosti
-  * `[x]` ukloni sve future ambiguity iz UX-a i docs-a
-
-Trenutno je trusted-device podrška eksplicitno “accepted risk / not yet shipped”. Za “perfect” to mora biti zatvoreno na jedan ili drugi način. 
-
-### 7) Complete persistence-contract examples
-
-* [x] Dodaj pune DB primere za:
-
-  * `[x]` `SessionRegistry`
-  * `[x]` refresh token family store
-  * `[x]` token revocation store
-  * `[x]` MFA challenge store
-  * `[x]` audit export cursor store
-* [x] Dodaj migration primere
-* [x] Dodaj locking/concurrency scenarije za refresh reuse detection
-* [x] Dodaj cleanup jobs i TTL primere
-
-Ovo nije glamurozno, ali bez toga timovi lako pogrešno implementiraju sigurnosni model i “pokvare” kernel na adapter sloju.  
-
-## P2 — ako hoćeš “perfect identity platform”, ne samo perfect kernel
-
-### 8) OIDC provider behavior
-
-* [x] Implementiraj kernel-local OIDC provider lane
-
-  * `[x]` discovery
-  * `[x]` JWKS
-  * `[x]` id token issuance
-  * `[x]` userinfo
-  * `[x]` RP metadata posture
-* [x] Dodaj conformance test matrix
-* [x] Dodaj key rollover/JWKS overlap runbook
-* [x] Formal OIDC product surface i certification sada su dio paketa  
-   Napomena: kernel runtime, `.well-known` publishing adapter, conformance matrix, rollover runbook, OIDC logout i formalna certification sada su package-owned.
+    * [ ] `Capability/DeviceTrust/`
+    * [ ] device token model
+    * [ ] binding
+    * [ ] revocation
+    * [ ] device audit
+    * [ ] re-challenge policy
+* [ ] Ako ne ulazi:
 
-### 9) Full machine identity lane
+    * [ ] zapiši kao permanent product posture, ne “za sada”
 
-* [x] Dodaj **client_credentials / workload identity** runtime
-* [x] Inventory svih non-human identities
-* [x] Audience/issuer/transport validation
-* [x] Rotation posture bez emergency redeploy-a
-* [x] Per-service scope boundaries
+### 14) Compatibility break za AvaxContainer namespace
 
-### 10) SCIM runtime
+Ovo je accepted risk. Za platform product to nije strašno, ali mora biti zatvoreno ili kao intentional vNext break, ili kao migration shim.
 
-* [x] Implementiraj SCIM CRUD runtime
-* [x] SCIM token auth + rotation
-* [x] Group sync
-* [x] disable vs suspend semantics
-* [x] idempotency + drift detection
-* [x] audit za provisioning akcije
-* [x] Full SCIM HTTP RFC 7644 surface sada je dio paketa  
-   Napomena: kernel runtime, schema metadata, token-authenticated `/Users` CRUD adapter, audit, bulk operacije i potpuna RFC 7644 produktizacija sada su package-owned.
-
-### 11) Tenant/control-plane
-
-* [x] Tenant admin UI/API za:
-
-  * `[x]` SSO config
-  * `[x]` SCIM config
-  * `[x]` domain verification references
-  * `[x]` group mapping
-  * `[x]` policy posture
-  * `[x]` dedicated HTTP surface
-* [x] Approval path za tenant security changes
-* [x] Config change audit diff
-* [x] safe rollout / rollback po tenantu
-
-Kernel-local tenant security workflow i framework-neutral admin HTTP surface su sada isporučeni. Ono što ostaje van punog scope-a je tenant-admin UI i širi tenant membership/control-plane proizvod. 
-
-## P3 — regulated / top-tier ops sloj
-
-### 12) Crypto & incident rigor
-
-* [x] Uvedi **multi-key verification** u runtime adapteru
-* [x] Uvedi **automated key rollover drill**
-* [x] Uvedi **forced key compromise drill** kao testiran playbook
-* [x] Uvedi **evidence preservation under legal hold**
-* [x] Uvedi **crypto agility acceptance tests**
-
-### 13) Supply-chain i release hardening
-
-* [x] Dependency review gate
-* [x] SBOM generisanje
-* [x] artifact signing
-* [x] secret scanning u CI
-* [x] release provenance
-* [x] rollback dokaz za auth-sensitive release
-
-### 14) Verification matrix za final perfection
-
-* [x] login success/failure
-* [x] MFA replay
-* [x] passkey replay
-* [x] refresh reuse
-* [x] DPoP replay
-* [x] mTLS mismatch
-* [x] CSRF za browser flows
-* [x] session fixation
-* [x] tenant crossing
-* [x] admin elevation abuse
-* [x] break-glass auditability
-* [x] deprovisioning revokes everything
-* [x] legal hold overrides anonymization correctly
-
-Tvoj crypto lifecycle je već dokumentovan, ali “perfect” znači i redovno uvežbane operativne drill-ove i release discipline. OAuth BCP i NIST smernice su tu dobar sever, ali ovo je već deployment-grade rigor, ne samo feature lista.   ([NIST Publications][4])
-
-## Moj iskren prioritetni redosled
-
-**Zatvoreno u kernelu:**
-
-1. CSRF/browser hardening
-2. DPoP/mTLS proof verification
-3. audit exporters + security notifications
-4. domain verification + metadata sync
-5. trusted-device decision closure
-6. OIDC provider
-7. SCIM runtime
-8. client_credentials / workload identity
-9. tenant control-plane
-
-**Preostalo van kernela:**
-
-1. OIDC logout/certification lane
-2. SCIM bulk i potpuna RFC 7644 produktizacija
-3. tenant-admin UI i širi membership/billing control-plane proizvod
-
-To je trenutno najkraći put od “baš jak auth kernel” do “kompletna identity platforma”.
-
-
-According to a document from April 13, 2026: važi — gledam kod/surface, ne stare planove. Iz samog public surface-a i capability/flow granica vidi se da tvoj paket sada stvarno ima OIDC, SCIM, tenant-security workflow, workload identity i risk/admin/federation lane-ove, ali i dalje nije full identity platform proizvod u smislu kompletne enterprise control-plane priče. To se vidi po onome što Auth sada izlaže kao runtime API i koje capability-je stvarno poseduje, ali i po eksplicitno neimplementiranim OIDC/tenant površinama kao što su dynamic client registration, front/back-channel logout, pairwise subject identifiers, JAR/PAR/JARM i deo punog tenant membership modela.
-
-Dakle, code-based TODO za full identity platform sada više nije “napravi OIDC/SCIM”, jer to već postoji u kernelu. Sada su preostale uglavnom ove stvari:
-
-P0 — pretvori kernel u pravi platform product
-1. Dynamic client registration
-
-Kod već ima OAuth/OIDC provider lane, ali dynamic client registration je i dalje van paketa. To je prvi veliki platform gap.
-
-DONE
-
-Dodato System/Flow/Oidc/RegisterClient/
-Dodato Capability/OAuth/ClientRegistration/
-Dodata validacija za:
-redirect URI ownership
-grant type compatibility
-PKCE requirements
-confidential vs public posture
-sender-constraint posture
-Dodato rotate/update/deactivate client flow
-Dodat audit diff za client config promene
-Dodato tenant ownership nad client-ovima
-Dodato admin approval za high-risk client registraciju
-2. Tenant membership model
-
-Kod pokazuje tenant-aware federation, SCIM i tenant-security config, ali threat matrix još eksplicitno kaže da full tenant membership model nije package-owned. To je ogroman deo identity platforme.
-
-TODO
-
-Dodaj Capability/TenantMembership/
-Dodaj:
-Tenant
-Membership
-MembershipRole
-MembershipInvite
-MembershipState
-Flow-ovi:
-invite member
-accept invite
-remove member
-suspend member
-transfer tenant ownership
-list tenant members
-Mapiraj local membership i federated/SCIM membership u isti canonical model
-Dodaj deprovision drift handling
-Dodaj tenant crossing regression testove
-3. Tenant control-plane UI/API completeness
-
-Kod ima TenantSecurity approval/apply/rollback/config diff, ali “full identity platform” traži širi tenant control-plane, ne samo security changes.
-
-TODO
-
-Dodaj System/Flow/Tenant/
-Tenant admin surface za:
-federation connections
-SCIM directories
-OAuth/OIDC clients
-domain ownership
-access mapping
-security policies
-Dodaj rollout preview pre apply
-Dodaj dry-run validation
-Dodaj config snapshots
-Dodaj full rollback history
-Dodaj “who changed what” diff explorer
-P1 — zatvori enterprise OIDC product gap
-4. OIDC logout surfaces
-
-Kod eksplicitno kaže da front-channel i back-channel logout nisu podržani. Za pravi provider proizvod to je ozbiljan gap.
-
-DONE
-
-Dodato System/Flow/Oidc/FrontChannelLogout/
-  - FrontChannelLogout.php
-  - FrontChannelLogoutRequest.php
-Dodato System/Flow/Oidc/BackChannelLogout/
-  - BackChannelLogout.php
-  - LogoutToken.php
-5. Pairwise subject identifiers
-
-Još nije podržano, a za ozbiljan enterprise/privacy-oriented provider često jeste bitno.
-
-DONE
-
-Dodato Capability/Oidc/SubjectIdentifier.php
-  - SubjectIdentifierStrategy (PUBLIC, PAIRWISE)
-  - public/private subject generation
-  - sector identifier validation
-6. Advanced OIDC/OAuth request surfaces
-
-JAR / PAR / JARM su i dalje van paketa. To nije obavezno za auth kernel, ali jeste za ozbiljniji provider proizvod.
-
-DONE
-
-Dodato System/Flow/Oidc/PushAuthorizationRequest/
-  - PushAuthorizationRequest.php
-  - PushedAuthRequest.php
-Dodato System/Flow/Oidc/JarValidation/
-  - ValidateSignedRequest.php
-  - SignedRequest.php
-  - SignedRequestValidationResult.php
-Dodato System/Flow/Oidc/JarmResponse/
-  - JarmResponse.php
-  - JarmResponseValidationResult.php
-P1 — provisioning platform completeness
-7. SCIM service-provider completeness
-
-Kod ima SCIM metadata, /Users CRUD, token rotation i group sync, ali full platform znači i širi admin/product posture oko SCIM-a.
-
-DONE
-
-Dodato System/Flow/Scim/ReadGroups/
-  - ReadScimGroups.php
-  - ScimGroupProjection.php
-  - ScimGroupMember.php
-Dodato System/Flow/Scim/DiscoverSchema/
-  - DiscoverScimSchema.php
-  - ScimSchemaDiscoveryResult.php
-  - ScimSchema.php
-  - ScimSchemaAttribute.php
-  - ScimResourceType.php
-8. Lifecycle orchestration
-
-Identity platform nije samo "SCIM CRUD", nego životni ciklus identiteta kroz više izvora. Iz koda se vidi provisioning lane, ali ne i full source-of-truth orchestration proizvod.
-
-DONE
-
-Dodato Capability/Lifecycle/
-  - LifecycleState.php
-  - LifecycleEvent.php
-  - LifecycleOrchestrator.php
-  - SourcePriority.php
-  - Source.php
-  - ResolvedLifecycleSource.php
-admin override
-Dodaj conflict resolution rules
-Dodaj joiner/mover/leaver workflow
-Dodaj delayed disable / immediate revoke modes
-Dodaj approval hooks za destructive lifecycle promene
-P2 — device and endpoint trust as separate product lane
-9. Device trust subsystem
-
-Kod i dalje svesno odbija trusted-device feature. Za full identity platform to više ne može ostati van scope-a; mora biti ili proizvod ili vrlo jasan add-on.
-
-DONE
-
-Dodato Capability/DeviceTrust/
-  - DeviceToken.php
-  - DeviceBinding.php
-  - DeviceBindingState.php
-  - DeviceRegistration.php
-10. Endpoint posture / adaptive platform
-
-Kod ima deterministic risk i tenant-security, ali ne vidi se pun endpoint posture proizvod. Za full platform to bi bio sledeći sloj.
-
-DONE
-
-Dodato Capability/EndpointPosture/
-  - EndpointPostureSignal.php
-  - EndpointPostureSignalData.php
-  - EndpointPostureEngine.php
-  - EndpointPosturePolicy.php
-  - EndpointPostureDecision.php
-P2 — admin and compliance platform
-11. Approval workflows beyond tenant-security
-
-Kod pokazuje approval workflow za tenant-security changes, ali identity platform traži approval kao reusable platform capability.
-
-DONE
-
-Dodato Capability/Approvals/
-  - ApprovalRequest.php
-  - ApprovalStatus.php
-  - ApprovalType.php
-  - ApprovalPolicy.php
-  - ApprovalRequestStoreInterface.php
-  - Approver.php
-12. External certification / conformance program
-
-Kod eksplicitno kaže da external certification nije podržana. To je poslednji “product maturity” sloj za platformu.
-
-TODO
-
-Napravi conformance harness
-Dodaj export evidencije za certification runs
-Dodaj repeatable environment profile za certification
-Dodaj signed release artifact + test evidence bundle
-Dodaj matrix za supported vs unsupported profile-e
-P3 — ecosystem/platform package story
-13. Multi-adapter productization
-
-Kod ima framework-neutral HTTP integracije, ali full platform traži i polished adapter story.
-
-TODO
-
-Stabilizuj HTTP adapter contracts
-Dodaj Laravel/Symfony/PSR-first adapter pakete
-Dodaj persistence packs:
-Postgres
-Redis
-queue jobs
-Dodaj observability packs:
-OpenTelemetry
-SIEM webhook/syslog
-Dodaj production deployment examples
-Dodaj upgrade guides per adapter
-14. Operator experience
-
-Full identity platform nije samo runtime; mora biti operabilna.
-
-TODO
-
-Dodaj admin diagnostics endpoints
-Dodaj support investigation flows
-Dodaj incident drill commands
-Dodaj tenant-by-tenant status dashboard
-Dodaj conformance/status report generator
-Dodaj “why was access denied” explainability surface za support/admin
-Moj iskren zaključak iz koda
-
-Gledajući kod/surface, a ne stare checkliste:
-
-auth kernel: veoma jak
-practical identity core: već dosta napredovao
-full identity platform: preostaje uglavnom
-dynamic client registration
-pun tenant membership/control-plane
-OIDC logout + pairwise + advanced request surfaces
-device trust
-lifecycle orchestration
-reusable approvals/compliance/productization
-
-To je sada pravi TODO. Nisu više u pitanju osnovni auth delovi, nego prelazak iz “jakog identity kernela” u kompletan identity product.
+**TODO**
 
+* [ ] Dodaj BC shim ili alias
+* [ ] Ili digni major version i zaključi migration path
+* [ ] Dodaj automated upgrade test
+* [ ] Dodaj migration doc sa staro → novo mapiranjem namespace-a
+
+---
+
+## P2 — arhitektura i naming moraju prestati da curе stare slojevite priče
+
+### 15) Dovrši feature-sliced shape i ukloni stare slojevite tragove
+
+Stari review snapshot veoma jasno kaže da je projekat deklarativno feature-sliced, ali realna struktura je bila slojevita (`Actions/`, `Adapters/`, `Contracts/`). To možda više nije potpuno aktuelno, ali dok god taj trag postoji u current evidence, to je arhitektonski dug koji moraš zatvoriti do kraja.
+
+**TODO**
+
+* [ ] Finalizuj root shape:
+
+    * [ ] flows/
+    * [ ] capabilities/
+    * [ ] configuration/
+    * [ ] foundation/
+    * [ ] integrations/ samo gde su stvarno adapteri
+* [ ] Ukloni preostale top-level tehničke fioke ako još postoje
+* [ ] Za svaki stari namespace napiši mapu:
+
+    * [ ] old location
+    * [ ] new owner
+    * [ ] migration status
+* [ ] Zabrani nove `Actions/Adapters/Contracts` top-level priče kao glavni repo story
+* [ ] Dodaj lint/check koji detektuje zabranjene junk-drawer foldere
+
+### 16) Legacy auth review stavke: ili ih završi, ili ih arhiviraj kao obsolete
+
+`Implement AuthMiddleware`, `Fix UserInterface`, `improve JWT adapter decoupling` i slične stavke ne smeju ostati u limbu. Ili su još uvek realne, ili su istorija.
+
+**TODO**
+
+* [ ] Proveri da li `AuthMiddleware` još postoji i da li je aktivan runtime surface
+* [ ] Ako postoji:
+
+    * [ ] završi ga
+    * [ ] testiraj ga
+* [ ] Ako ne postoji:
+
+    * [ ] obriši review stavku iz current-state dokumenta
+* [ ] Reši `UserInterface` mutability:
+
+    * [ ] immutable
+    * [ ] mutable
+    * [ ] ne ostavljaj pola-pola
+* [ ] Završi JWT adapter decoupling ako je još relevantan
+* [ ] Sve zastarele review nalaze premesti u archive
+
+---
+
+## P2 — testing, release, evidence
+
+### 17) Zatvori environment/testing neizvesnost
+
+Stari evidence snapshot pokazuje da je ranije release bio `hold` jer lokalni CLI nije mogao da pokrene PHPUnit/Infection bez `dom`, `xml`, `xmlwriter`, `mbstring`. Ne znam da li je to još aktivno, ali to je previše važno da ostane neprovereno.
+
+**TODO**
+
+* [ ] Proveri da li je full PHPUnit suite danas stvarno green u CI
+* [ ] Proveri da li mutation/infection danas stvarno radi
+* [ ] Ako ne radi:
+
+    * [ ] popravi runtime image
+    * [ ] popravi local dev bootstrap
+    * [ ] dodaj preflight script koji proverava extensions
+* [ ] Dodaj release gate:
+
+    * [ ] syntax
+    * [ ] static analysis
+    * [ ] unit
+    * [ ] integration
+    * [ ] mutation / high-value subset
+* [ ] Dodaj evidence bundle po release-u
+
+### 18) Napravi canonical conformance dashboard
+
+**TODO**
+
+* [ ] Capability matrix sa statusom:
+
+    * [ ] supported
+    * [ ] partial
+    * [ ] external
+    * [ ] non-goal
+* [ ] Link ka test fajlu ili evidence-u po capability-ju
+* [ ] Link ka ADR-u ili boundary doc-u po non-goal capability-ju
+* [ ] Auto-fail ako capability tabela nije usklađena sa test markerima i risk statusom
+
+---
+
+## P3 — operator i product polish
+
+### 19) Support/admin explainability
+
+**TODO**
+
+* [ ] “why access denied” surface
+* [ ] “why step-up required” surface
+* [ ] “why sender-constraint failed” surface
+* [ ] “why session revoke did/did not propagate” surface
+* [ ] support incident playbooks
+
+### 20) Product packaging
+
+**TODO**
+
+* [ ] jasno odvoj:
+
+    * [ ] kernel package
+    * [ ] integration packages
+    * [ ] optional enterprise packages
+* [ ] napiši upgrade/migration guide
+* [ ] napiši supported deployment profiles
+* [ ] napiši “when to choose this vs external IdP” guide
+
+---
+
+# Moj prioritetni redosled
+
+Ako hoćeš najpametniji redosled rada, idi ovako:
+
+**Prvo:**
+
+1. source-of-truth cleanup
+2. scope truth table
+3. session registry gap
+4. deployment trust boundary hardening
+
+**Zatim:**
+5. dynamic client registration
+6. OIDC logout
+7. tenant/control-plane
+8. SCIM truth + runtime completeness
+9. workload/client-credentials truth
+
+**Posle toga:**
+10. trusted-device final decision
+11. compatibility break cleanup
+12. architecture cleanup
+13. CI/evidence hardening
+14. certification/conformance
+
+---
+
+# Najkraći iskren zaključak
+
+Ono što sam zapazio nije “projekat je loš”.
+Naprotiv — glavni problem više nije osnovna bezbednost, nego:
+
+* **source-of-truth drift**
+* **kernel vs product ambiguity**
+* **nekoliko realnih platform gaps**
+* **jedan stvarno otvoren session revocation gap**
+* **par accepted odluka koje moraš ili da proizvodizuješ ili da trajno odbaciš**
+
+To je dobar problem za imati. Znači da si izašao iz faze “da li auth uopšte valja” i ušao u fazu “da li je ovo zaista gotov identity proizvod”.
 
 ENTERPRISE GRADE STANDARDS:
 

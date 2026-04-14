@@ -9,6 +9,9 @@ use Avax\Auth\Integrations\Http\TenantSecurity\ServeTenantSecurityHttpSurface;
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capability\User\User;
+use Avax\Auth\System\Capability\User\UserEmail;
+use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
@@ -22,6 +25,85 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
     public function testTenantSecurityHttpSurfacePublishesAdminApi() : void
     {
         $surface = new ServeTenantSecurityHttpSurface(auth: $this->buildAuth());
+
+        $tenant = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path  : '/tenants',
+            body  : [
+                'slug' => 'acme',
+                'name' => 'Acme',
+                'ownerUserId' => 1,
+            ]
+        ));
+        $invite = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path  : '/tenants/acme/invites',
+            body  : [
+                'email' => 'member@example.com',
+                'role' => 'admin',
+                'invitedBy' => 'owner@example.com',
+            ]
+        ));
+        $accepted = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path  : '/tenants/acme/invites/accept',
+            body  : [
+                'inviteToken' => $invite->body['plainTextToken'],
+                'userId' => 2,
+            ]
+        ));
+        $members = $surface->execute(input: new HttpEndpointInput(
+            method: 'GET',
+            path  : '/tenants/acme/members'
+        ));
+        $suspendedMember = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path  : '/tenants/acme/members/2/suspend'
+        ));
+        $transferredOwner = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path  : '/tenants/acme/transfer-owner',
+            body  : ['newOwnerUserId' => 2]
+        ));
+        $oauthClient = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path  : '/tenants/acme/oauth-clients',
+            body  : [
+                'name' => 'Acme App',
+                'type' => 'confidential',
+                'redirectUris' => ['https://app.acme.test/callback'],
+                'allowedScopes' => ['openid', 'profile'],
+                'allowedGrantTypes' => ['authorization_code', 'refresh_token'],
+            ]
+        ));
+        $oauthClientId = $oauthClient->body['client']['clientId'];
+        $updatedOAuthClient = $surface->execute(input: new HttpEndpointInput(
+            method: 'PUT',
+            path  : '/tenants/acme/oauth-clients/' . rawurlencode($oauthClientId),
+            body  : [
+                'name' => 'Acme App Updated',
+                'type' => 'confidential',
+                'redirectUris' => ['https://app.acme.test/callback', 'https://app.acme.test/return'],
+                'allowedScopes' => ['openid', 'profile', 'email'],
+                'allowedGrantTypes' => ['authorization_code', 'refresh_token'],
+            ]
+        ));
+        $rotatedOAuthSecret = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path  : '/tenants/acme/oauth-clients/' . rawurlencode($oauthClientId) . '/rotate-secret'
+        ));
+        $listedOAuthClients = $surface->execute(input: new HttpEndpointInput(
+            method: 'GET',
+            path  : '/tenants/acme/oauth-clients'
+        ));
+        $disabledOAuthClient = $surface->execute(input: new HttpEndpointInput(
+            method: 'DELETE',
+            path  : '/tenants/acme/oauth-clients/' . rawurlencode($oauthClientId)
+        ));
+        $removedFormerOwner = $surface->execute(input: new HttpEndpointInput(
+            method: 'DELETE',
+            path  : '/tenants/acme/members/1'
+        ));
 
         $connection = $surface->execute(input: new HttpEndpointInput(
             method: 'POST',
@@ -98,6 +180,20 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
             path  : '/tenants/acme/security/changes/' . rawurlencode($changeId) . '/rollback'
         ));
 
+        $this->assertSame(expected: 201, actual: $tenant->statusCode);
+        $this->assertSame(expected: 'acme', actual: $tenant->body['tenant']['slug']);
+        $this->assertSame(expected: 201, actual: $invite->statusCode);
+        $this->assertSame(expected: 200, actual: $accepted->statusCode);
+        $this->assertCount(expectedCount: 2, haystack: $members->body['members']);
+        $this->assertSame(expected: 'suspended', actual: $suspendedMember->body['member']['state']);
+        $this->assertSame(expected: 2, actual: $transferredOwner->body['tenant']['ownerUserId']);
+        $this->assertSame(expected: 201, actual: $oauthClient->statusCode);
+        $this->assertNotNull(actual: $oauthClient->body['plainTextSecret']);
+        $this->assertSame(expected: 'Acme App Updated', actual: $updatedOAuthClient->body['client']['name']);
+        $this->assertNotNull(actual: $rotatedOAuthSecret->body['plainTextSecret']);
+        $this->assertCount(expectedCount: 1, haystack: $listedOAuthClients->body['clients']);
+        $this->assertFalse(condition: $disabledOAuthClient->body['client']['active']);
+        $this->assertSame(expected: 204, actual: $removedFormerOwner->statusCode);
         $this->assertSame(expected: 201, actual: $connection->statusCode);
         $this->assertSame(expected: 200, actual: $verified->statusCode);
         $this->assertNotNull(actual: $verified->body['connection']['domainVerifiedAt']);
@@ -139,6 +235,18 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
     private function buildAuth() : Auth
     {
         $userSource = new InMemoryUserSource();
+        $userSource->create(user: User::create(
+            id          : new UserId(value: 1),
+            email       : new UserEmail(value: 'owner@example.com'),
+            username    : 'owner',
+            passwordHash: 'hash'
+        ));
+        $userSource->create(user: User::create(
+            id          : new UserId(value: 2),
+            email       : new UserEmail(value: 'member@example.com'),
+            username    : 'member',
+            passwordHash: 'hash'
+        ));
         $refreshTokens = new InMemoryRefreshTokenStore();
 
         return Auth::configuration()

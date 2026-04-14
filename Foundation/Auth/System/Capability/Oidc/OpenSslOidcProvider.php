@@ -25,6 +25,8 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         #[\SensitiveParameter] private string $tokenEndpoint,
         private string                        $userInfoEndpoint,
         private string                        $jsonWebKeySetUri,
+        private SubjectIdentifierStrategy     $subjectIdentifierStrategy = SubjectIdentifierStrategy::PUBLIC,
+        #[SensitiveParameter] private string|null $pairwiseSalt = null,
         private int                           $idTokenLifetime = 600,
         private string                        $algorithm = 'RS256'
     ) {
@@ -34,6 +36,10 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
 
         if ($algorithm !== 'RS256') {
             throw new InvalidArgumentException(message: 'Only RS256 is currently supported for OIDC ID tokens.');
+        }
+
+        if ($this->subjectIdentifierStrategy === SubjectIdentifierStrategy::PAIRWISE && trim((string) $this->pairwiseSalt) === '') {
+            throw new InvalidArgumentException(message: 'Pairwise OIDC subjects require a configured salt.');
         }
 
         $privateKey = openssl_pkey_get_private($privateKeyPem);
@@ -74,7 +80,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         $expiresAt = $issuedAt->modify(modifier: '+' . $this->idTokenLifetime . ' seconds');
         $claims = [
             'iss' => $this->issuer,
-            'sub' => (string) $user->getId()->value,
+            'sub' => $this->subjectIdentifier(user: $user, clientId: $clientId),
             'aud' => $clientId,
             'iat' => $issuedAt->getTimestamp(),
             'exp' => $expiresAt->getTimestamp(),
@@ -115,10 +121,22 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
             scopesSupported               : ['openid', 'profile', 'email'],
             responseTypesSupported        : ['code'],
             grantTypesSupported           : ['authorization_code', 'refresh_token'],
-            subjectTypesSupported         : ['public'],
+            subjectTypesSupported         : [$this->subjectIdentifierStrategy->value],
             idTokenSigningAlgValuesSupported: [$this->algorithm],
             codeChallengeMethodsSupported : ['S256']
         );
+    }
+
+    public function subjectIdentifier(User $user, string $clientId) : string
+    {
+        return match ($this->subjectIdentifierStrategy) {
+            SubjectIdentifierStrategy::PUBLIC => (string) $user->getId()->value,
+            SubjectIdentifierStrategy::PAIRWISE => (new SubjectIdentifier(strategy: SubjectIdentifierStrategy::PAIRWISE))->generate(
+                localSubject    : (string) $user->getId()->value,
+                sectorIdentifier: $clientId,
+                pairwiseSalt    : (string) $this->pairwiseSalt
+            ),
+        };
     }
 
     public function readJsonWebKeySet() : OidcJsonWebKeySet

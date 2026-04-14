@@ -18,6 +18,8 @@ use Avax\Auth\System\Capability\Passkey\PasskeyCredential;
 use Avax\Auth\System\Capability\Risk\RiskDecision;
 use Avax\Auth\System\Capability\Risk\RiskSignal;
 use Avax\Auth\System\Capability\Scim\RegisteredScimDirectory;
+use Avax\Auth\System\Capability\Tenant\Tenant;
+use Avax\Auth\System\Capability\Tenant\TenantMember;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequest;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityConfiguration;
 use Avax\Auth\System\Configuration\AuthBuilder;
@@ -91,8 +93,12 @@ use Avax\Auth\System\Flow\OAuth\ReadWorkloadIdentities\ReadWorkloadIdentities;
 use Avax\Auth\System\Flow\OAuth\ReadWorkloadIdentities\WorkloadIdentityProfile;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClient;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Flow\OAuth\RotateClientSecret\RotateClientSecret;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeToken;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
+use Avax\Auth\System\Flow\OAuth\DisableClient\DisableClient;
+use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClient;
+use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData;
 use Avax\Auth\System\Flow\Oidc\ReadJsonWebKeySet\ReadOidcJsonWebKeySet;
 use Avax\Auth\System\Flow\Oidc\ReadProviderMetadata\ReadOidcProviderMetadata;
 use Avax\Auth\System\Flow\Oidc\ReadUserInfo\OidcUserInfo;
@@ -125,12 +131,17 @@ use Avax\Auth\System\Flow\Register\RegistrationFailed;
 use Avax\Auth\System\Flow\Register\RegistrationResult;
 use Avax\Auth\System\Flow\Risk\AssessCurrentRisk\AssessCurrentRisk;
 use Avax\Auth\System\Flow\Risk\ReadRiskSignals\ReadRiskSignals;
+use Avax\Auth\System\Flow\Scim\Bulk\RunScimBulk;
+use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkRequest;
+use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkResponse;
 use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUser;
 use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUserData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUser;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ScimProvisioningResult;
 use Avax\Auth\System\Flow\Scim\ReadDirectories\ReadScimDirectories;
+use Avax\Auth\System\Flow\Scim\ReadGroups\ReadScimGroups;
+use Avax\Auth\System\Flow\Scim\ReadGroups\ScimGroupProjection;
 use Avax\Auth\System\Flow\Scim\ReadUsers\ReadScimUsers;
 use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectory;
@@ -143,6 +154,21 @@ use Avax\Auth\System\Flow\Session\ActiveSession;
 use Avax\Auth\System\Flow\Session\LogoutAllSessions\LogoutAllSessions;
 use Avax\Auth\System\Flow\Session\ReadActiveSessions\ReadActiveSessions;
 use Avax\Auth\System\Flow\Session\RevokeSession\RevokeSession;
+use Avax\Auth\System\Flow\Tenant\AcceptInvite\AcceptTenantInvite;
+use Avax\Auth\System\Flow\Tenant\AcceptInvite\AcceptTenantInviteData;
+use Avax\Auth\System\Flow\Tenant\CreateTenant\CreateTenant;
+use Avax\Auth\System\Flow\Tenant\CreateTenant\CreateTenantData;
+use Avax\Auth\System\Flow\Tenant\InviteMember\InviteTenantMember;
+use Avax\Auth\System\Flow\Tenant\InviteMember\InviteTenantMemberData;
+use Avax\Auth\System\Flow\Tenant\InviteMember\IssuedTenantInvite;
+use Avax\Auth\System\Flow\Tenant\ReadMembers\ReadTenantMembers;
+use Avax\Auth\System\Flow\Tenant\ReadTenants\ReadTenants;
+use Avax\Auth\System\Flow\Tenant\RemoveMember\RemoveTenantMember;
+use Avax\Auth\System\Flow\Tenant\RemoveMember\RemoveTenantMemberData;
+use Avax\Auth\System\Flow\Tenant\SuspendMember\SuspendTenantMember;
+use Avax\Auth\System\Flow\Tenant\SuspendMember\SuspendTenantMemberData;
+use Avax\Auth\System\Flow\Tenant\TransferOwnership\TransferTenantOwnership;
+use Avax\Auth\System\Flow\Tenant\TransferOwnership\TransferTenantOwnershipData;
 use Avax\Auth\System\Flow\TenantSecurity\ApplyChange\ApplyTenantSecurityChange;
 use Avax\Auth\System\Flow\TenantSecurity\ApproveChange\ApproveTenantSecurityChange;
 use Avax\Auth\System\Flow\TenantSecurity\BeginChange\BeginTenantSecurityChange;
@@ -186,6 +212,9 @@ final readonly class Auth implements AuthInterface
         private Register                                                 $register,
         #[SensitiveParameter] private RefreshAuthentication              $refreshAuthentication,
         private RegisterClient|null                                      $registerOAuthClient,
+        private UpdateClient|null                                        $updateOAuthClient,
+        private DisableClient|null                                       $disableOAuthClient,
+        private RotateClientSecret|null                                  $rotateOAuthClientSecret,
         private ReadClients|null                                         $readOAuthClients,
         private ReadWorkloadIdentities|null                              $readWorkloadIdentities,
         private ReadOidcProviderMetadata|null                            $readOidcProviderMetadata,
@@ -225,7 +254,17 @@ final readonly class Auth implements AuthInterface
         private ProvisionScimUser|null                                   $provisionScimUser,
         private DeleteScimUser|null                                      $deleteScimUser,
         private ReadScimUsers|null                                       $readScimUsers,
+        private ReadScimGroups|null                                      $readScimGroups,
         private SyncScimGroups|null                                      $syncScimGroups,
+        private RunScimBulk|null                                         $runScimBulk,
+        private CreateTenant|null                                        $createTenant,
+        private ReadTenants|null                                         $readTenants,
+        private InviteTenantMember|null                                  $inviteTenantMember,
+        private AcceptTenantInvite|null                                  $acceptTenantInvite,
+        private ReadTenantMembers|null                                   $readTenantMembers,
+        private RemoveTenantMember|null                                  $removeTenantMember,
+        private SuspendTenantMember|null                                 $suspendTenantMember,
+        private TransferTenantOwnership|null                             $transferTenantOwnership,
         #[SensitiveParameter] private ReadTenantSecurityConfiguration    $readTenantSecurityConfiguration,
         #[SensitiveParameter] private ReadTenantSecurityChangeRequest    $readTenantSecurityChangeRequest,
         #[SensitiveParameter] private ReadTenantSecurityChangeRequests   $readTenantSecurityChangeRequests,
@@ -360,6 +399,21 @@ final readonly class Auth implements AuthInterface
         return $this->registerOAuthClientOrFail()->execute(data: $data);
     }
 
+    public function updateOAuthClient(UpdateClientData $data) : OAuthClient
+    {
+        return $this->updateOAuthClientOrFail()->execute(data: $data);
+    }
+
+    public function disableOAuthClient(string $clientId) : OAuthClient
+    {
+        return $this->disableOAuthClientOrFail()->execute(clientId: $clientId);
+    }
+
+    public function rotateOAuthClientSecret(string $clientId) : RegisteredOAuthClient
+    {
+        return $this->rotateOAuthClientSecretOrFail()->execute(clientId: $clientId);
+    }
+
     public function readOAuthClients() : array
     {
         return $this->readOAuthClientsOrFail()->execute();
@@ -418,9 +472,59 @@ final readonly class Auth implements AuthInterface
         return $this->readScimUsersOrFail()->execute(directoryId: $directoryId);
     }
 
+    public function readScimGroups(string $directoryId) : array
+    {
+        return $this->readScimGroupsOrFail()->execute(directoryId: $directoryId);
+    }
+
     public function syncScimGroups(SyncScimGroupsData $data) : ScimProvisioningResult
     {
         return $this->syncScimGroupsOrFail()->execute(data: $data);
+    }
+
+    public function runScimBulk(ScimBulkRequest $data) : ScimBulkResponse
+    {
+        return $this->runScimBulkOrFail()->execute(request: $data);
+    }
+
+    public function createTenant(CreateTenantData $data) : Tenant
+    {
+        return $this->createTenantOrFail()->execute(data: $data);
+    }
+
+    public function readTenants() : array
+    {
+        return $this->readTenantsOrFail()->execute();
+    }
+
+    public function inviteTenantMember(InviteTenantMemberData $data) : IssuedTenantInvite
+    {
+        return $this->inviteTenantMemberOrFail()->execute(data: $data);
+    }
+
+    public function acceptTenantInvite(AcceptTenantInviteData $data) : TenantMember
+    {
+        return $this->acceptTenantInviteOrFail()->execute(data: $data);
+    }
+
+    public function readTenantMembers(string $tenantSlug) : array
+    {
+        return $this->readTenantMembersOrFail()->execute(tenantSlug: $tenantSlug);
+    }
+
+    public function removeTenantMember(RemoveTenantMemberData $data) : void
+    {
+        $this->removeTenantMemberOrFail()->execute(data: $data);
+    }
+
+    public function suspendTenantMember(SuspendTenantMemberData $data) : TenantMember
+    {
+        return $this->suspendTenantMemberOrFail()->execute(data: $data);
+    }
+
+    public function transferTenantOwnership(TransferTenantOwnershipData $data) : Tenant
+    {
+        return $this->transferTenantOwnershipOrFail()->execute(data: $data);
     }
 
     public function readTenantSecurityConfiguration(string $tenantSlug) : TenantSecurityConfiguration|null
@@ -696,6 +800,21 @@ final readonly class Auth implements AuthInterface
         return $this->registerOAuthClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
     }
 
+    private function updateOAuthClientOrFail() : UpdateClient
+    {
+        return $this->updateOAuthClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
+    }
+
+    private function disableOAuthClientOrFail() : DisableClient
+    {
+        return $this->disableOAuthClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
+    }
+
+    private function rotateOAuthClientSecretOrFail() : RotateClientSecret
+    {
+        return $this->rotateOAuthClientSecret ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
+    }
+
     private function readOAuthClientsOrFail() : ReadClients
     {
         return $this->readOAuthClients ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
@@ -726,6 +845,46 @@ final readonly class Auth implements AuthInterface
         return $this->registerScimDirectory ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
     }
 
+    private function createTenantOrFail() : CreateTenant
+    {
+        return $this->createTenant ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
+    }
+
+    private function readTenantsOrFail() : ReadTenants
+    {
+        return $this->readTenants ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
+    }
+
+    private function inviteTenantMemberOrFail() : InviteTenantMember
+    {
+        return $this->inviteTenantMember ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
+    }
+
+    private function acceptTenantInviteOrFail() : AcceptTenantInvite
+    {
+        return $this->acceptTenantInvite ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
+    }
+
+    private function readTenantMembersOrFail() : ReadTenantMembers
+    {
+        return $this->readTenantMembers ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
+    }
+
+    private function removeTenantMemberOrFail() : RemoveTenantMember
+    {
+        return $this->removeTenantMember ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
+    }
+
+    private function suspendTenantMemberOrFail() : SuspendTenantMember
+    {
+        return $this->suspendTenantMember ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
+    }
+
+    private function transferTenantOwnershipOrFail() : TransferTenantOwnership
+    {
+        return $this->transferTenantOwnership ?? throw new RuntimeException(message: 'Tenant product flows are not configured.');
+    }
+
     private function rotateScimTokenOrFail() : RotateScimToken
     {
         return $this->rotateScimToken ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
@@ -751,9 +910,19 @@ final readonly class Auth implements AuthInterface
         return $this->readScimUsers ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
     }
 
+    private function readScimGroupsOrFail() : ReadScimGroups
+    {
+        return $this->readScimGroups ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+    }
+
     private function syncScimGroupsOrFail() : SyncScimGroups
     {
         return $this->syncScimGroups ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+    }
+
+    private function runScimBulkOrFail() : RunScimBulk
+    {
+        return $this->runScimBulk ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
     }
 
     private function authorizeOAuthCodeOrFail() : AuthorizeCode

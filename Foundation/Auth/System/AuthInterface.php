@@ -18,6 +18,8 @@ use Avax\Auth\System\Capability\Risk\RiskSignal;
 use Avax\Auth\System\Capability\OAuth\RegisteredOAuthClient;
 use Avax\Auth\System\Capability\Scim\RegisteredScimDirectory;
 use Avax\Auth\System\Capability\Scim\ScimDirectory;
+use Avax\Auth\System\Capability\Tenant\Tenant;
+use Avax\Auth\System\Capability\Tenant\TenantMember;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequest;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityConfiguration;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
@@ -52,6 +54,7 @@ use Avax\Auth\System\Flow\OAuth\OAuthTokenGrant;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Flow\OAuth\ReadWorkloadIdentities\WorkloadIdentityProfile;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
+use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData;
 use Avax\Auth\System\Flow\Oidc\ReadUserInfo\OidcUserInfo;
 use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthenticationData;
 use Avax\Auth\System\Flow\Passkey\CompleteAuthentication\CompletePasskeyAuthenticationData;
@@ -65,13 +68,23 @@ use Avax\Auth\System\Flow\Recover\ResetPasswordData;
 use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Flow\Register\RegistrationResult;
 use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUserData;
+use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkRequest;
+use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkResponse;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ScimProvisioningResult;
+use Avax\Auth\System\Flow\Scim\ReadGroups\ScimGroupProjection;
 use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
 use Avax\Auth\System\Flow\Scim\RotateToken\RotatedScimToken;
 use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroupsData;
 use Avax\Auth\System\Flow\Session\ActiveSession;
+use Avax\Auth\System\Flow\Tenant\AcceptInvite\AcceptTenantInviteData;
+use Avax\Auth\System\Flow\Tenant\CreateTenant\CreateTenantData;
+use Avax\Auth\System\Flow\Tenant\InviteMember\InviteTenantMemberData;
+use Avax\Auth\System\Flow\Tenant\InviteMember\IssuedTenantInvite;
+use Avax\Auth\System\Flow\Tenant\RemoveMember\RemoveTenantMemberData;
+use Avax\Auth\System\Flow\Tenant\SuspendMember\SuspendTenantMemberData;
+use Avax\Auth\System\Flow\Tenant\TransferOwnership\TransferTenantOwnershipData;
 use Avax\Auth\System\Flow\TenantSecurity\BeginChange\BeginTenantSecurityChangeData;
 use Avax\Auth\System\Flow\Token\RefreshAuthenticationRequest;
 use Avax\Auth\System\Flow\Verify\BeginEmailVerificationData;
@@ -119,6 +132,12 @@ interface AuthInterface
     public function refresh(RefreshAuthenticationRequest $request) : AuthenticationResult;
 
     public function registerOAuthClient(RegisterClientData $data) : RegisteredOAuthClient;
+
+    public function updateOAuthClient(UpdateClientData $data) : OAuthClient;
+
+    public function disableOAuthClient(string $clientId) : OAuthClient;
+
+    public function rotateOAuthClientSecret(string $clientId) : RegisteredOAuthClient;
 
     /**
      * @return list<OAuthClient>
@@ -216,7 +235,36 @@ interface AuthInterface
      */
     public function readScimUsers(string $directoryId) : array;
 
+    /**
+     * @return list<ScimGroupProjection>
+     */
+    public function readScimGroups(string $directoryId) : array;
+
     public function syncScimGroups(SyncScimGroupsData $data) : ScimProvisioningResult;
+
+    public function runScimBulk(ScimBulkRequest $data) : ScimBulkResponse;
+
+    public function createTenant(CreateTenantData $data) : Tenant;
+
+    /**
+     * @return list<Tenant>
+     */
+    public function readTenants() : array;
+
+    public function inviteTenantMember(InviteTenantMemberData $data) : IssuedTenantInvite;
+
+    public function acceptTenantInvite(AcceptTenantInviteData $data) : TenantMember;
+
+    /**
+     * @return list<TenantMember>
+     */
+    public function readTenantMembers(string $tenantSlug) : array;
+
+    public function removeTenantMember(RemoveTenantMemberData $data) : void;
+
+    public function suspendTenantMember(SuspendTenantMemberData $data) : TenantMember;
+
+    public function transferTenantOwnership(TransferTenantOwnershipData $data) : Tenant;
 
     public function readTenantSecurityConfiguration(string $tenantSlug) : TenantSecurityConfiguration|null;
 

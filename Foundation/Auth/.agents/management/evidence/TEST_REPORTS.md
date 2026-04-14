@@ -13,6 +13,85 @@ Concrete records of executed verification.
 
 ## Reports
 
+- `executed_at`: 2026-04-15 01:23 CEST
+- `scope`: full package validation after source-truth evidence checks, system-shape enforcement, clean integration suite split, and canonical status/doc refresh
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: full PHPUnit suite passes after separating the `Integration` suite from the default suite and tightening source-truth/system-shape release checks; result `OK (242 tests, 794 assertions, 4 skipped)`
+
+- `executed_at`: 2026-04-15 01:23 CEST
+- `scope`: dedicated integration regression lane after introducing the new `Integration` testsuite
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test:integration`
+- `result`: pass
+- `notes`: integration suite passes cleanly without duplicate-suite warnings; result `OK (50 tests, 227 assertions)`
+
+- `executed_at`: 2026-04-15 01:22 CEST
+- `scope`: baseline and strict static analysis after source-truth and system-shape checker expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse --no-progress`, `php composer.phar analyse:strict --no-progress`
+- `result`: pass
+- `notes`: PHPStan and strict PHPStan pass after tightening Redis/session adapter types, deployment-trust helpers, and release/source-truth checkers
+
+- `executed_at`: 2026-04-15 01:21 CEST
+- `scope`: source-truth and architecture drift verification after capability-matrix evidence checks and canonical system-shape enforcement
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar source-truth`, `php composer.phar system-shape`
+- `result`: pass
+- `notes`: source-truth approves canonical docs and evidence paths; system-shape approves the `System/` screaming architecture and rejects junk-drawer regressions
+
+- `executed_at`: 2026-04-15 01:23 CEST
+- `scope`: release gate after system-shape enforcement, source-truth evidence validation, and integration-suite separation
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar release:gate`
+- `result`: pass
+- `notes`: release gate passes system-shape, PHPStan, strict PHPStan, full PHPUnit, migration check, source-truth, dependency review, secret scan, SBOM, provenance, rollback evidence, and evidence bundle generation
+
+- `executed_at`: 2026-04-14 23:35 CEST
+- `scope`: targeted release-tooling and product-boundary regression suite after source-truth cleanup, migration tooling,
+  certification profile, and merged-artifact archival
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test -- tests/Integrations/Release/ReleaseToolingTest.php tests/System/ProductBoundaryTest.php`
+- `result`: pass
+- `notes`: targeted suite passes for conformance harness, evidence bundle, source-truth checker, migration checker, and
+  product-boundary docs; result `OK (17 tests, 68 assertions)`
+
+- `executed_at`: 2026-04-14 23:44 CEST
+- `scope`: baseline static analysis after release/source-truth tooling rewrite and canonical doc cleanup
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse --no-progress`
+- `result`: pass
+- `notes`: baseline PHPStan passes after replacing undeclared tooling dependencies with package-owned release integrations
+
+- `executed_at`: 2026-04-14 23:47 CEST
+- `scope`: strict static analysis after Redis adapter casing fix and release/source-truth cleanup
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse:strict --no-progress`
+- `result`: pass
+- `notes`: strict PHPStan passes after hardening release tooling and fixing Redis ext method casing
+
+- `executed_at`: 2026-04-14 23:47 CEST
+- `scope`: full PHPUnit suite after release/source-truth cleanup, migration guide, and product-boundary updates
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: full PHPUnit suite passes with the new release/source-truth tooling and canonical docs alignment; result `OK (223 tests, 759 assertions)`
+
+- `executed_at`: 2026-04-14 23:48 CEST
+- `scope`: source-of-truth consistency after risk-register and canonical doc alignment
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar source-truth`
+- `result`: pass
+- `notes`: source-truth checker approves STATUS, product-boundary, capability-matrix, migration guide, and non-canonical merged artifact posture
+
+- `executed_at`: 2026-04-14 23:48 CEST
+- `scope`: migration-boundary verification after documenting the intentional major-boundary break
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar migration:check`
+- `result`: pass
+- `notes`: migration checker reports clean status for the documented `AuthServiceProvider` namespace move and upgrade-test presence
+
 - `executed_at`: 2026-04-13 13:18 CEST
 - `scope`: full PHPUnit suite after sender-constrained HTTP adapters, SIEM-grade audit exporters, federation
   operations, high-assurance policy examples, and multi-key token verification

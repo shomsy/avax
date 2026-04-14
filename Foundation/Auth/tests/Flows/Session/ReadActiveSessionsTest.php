@@ -6,6 +6,7 @@ namespace Avax\Auth\Tests\Flow\Session;
 
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
+use Avax\Auth\System\Capability\Session\SessionRegistryUnavailable;
 use Avax\Auth\System\Capability\Session\SessionRecord;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
@@ -80,5 +81,25 @@ final class ReadActiveSessionsTest extends TestCase
         $this->assertTrue(condition: $sessions[0]->current);
         $this->assertSame(expected: 'session-2', actual: $sessions[1]->sessionId);
         $this->assertFalse(condition: $sessions[1]->current);
+    }
+
+    public function testReadActiveSessionsFailsWhenSessionRegistryIsMissing() : void
+    {
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(context: AuthenticationContext::authenticated(
+            user: new AuthenticatedUser(id: 1, email: 'user@example.com', username: 'user'),
+            mode: AuthenticationMode::SESSION,
+            sessionId: 'session-1'
+        ));
+
+        $flow = new ReadActiveSessions(
+            currentAuthentication: $currentAuthentication,
+            clock: new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'))
+        );
+
+        $this->expectException(SessionRegistryUnavailable::class);
+        $this->expectExceptionMessage('Tracked session management requires a configured session registry.');
+
+        $flow->execute();
     }
 }

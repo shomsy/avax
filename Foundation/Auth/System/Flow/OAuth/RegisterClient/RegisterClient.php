@@ -33,6 +33,7 @@ final readonly class RegisterClient
             requiredSenderConstraint  : $data->requiredSenderConstraint,
             workloadIdentity          : $data->workloadIdentity,
             phishingResistantRequired : $data->phishingResistantRequired,
+            requestObjectSignatureRequired: $data->requestObjectSignatureRequired,
             frontChannelLogoutSupported: $data->frontChannelLogoutSupported,
             backChannelLogoutSupported : $data->backChannelLogoutSupported,
             approvalRequired          : $data->approvalRequired
@@ -49,6 +50,7 @@ final readonly class RegisterClient
                 'workload_identity' => $registered->client->workloadIdentity ? 1 : 0,
                 'allowed_audiences' => implode(' ', $registered->client->allowedAudiences),
                 'sender_constraint' => $registered->client->requiredSenderConstraint?->value,
+                'request_object_signature_required' => $registered->client->requestObjectSignatureRequired ? 1 : 0,
                 'approval_status' => $registered->client->approvalStatus->value,
                 'approval_required' => $registered->client->isPendingApproval() ? 1 : 0,
             ]

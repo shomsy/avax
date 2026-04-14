@@ -32,6 +32,7 @@ interface OAuthClientRegistryInterface
         OAuthSenderConstraintType|null $requiredSenderConstraint = null,
         bool $workloadIdentity = false,
         bool $phishingResistantRequired = false,
+        bool $requestObjectSignatureRequired = false,
         bool $frontChannelLogoutSupported = false,
         bool $backChannelLogoutSupported = false,
         bool|null $approvalRequired = null

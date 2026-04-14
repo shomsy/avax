@@ -117,6 +117,8 @@ final readonly class ServeOidcHttpSurface
                 scopes            : $this->readScopes(input: $input, keys: ['scope', 'scopes']),
                 state             : $this->readString(input: $input, keys: ['state']),
                 nonce             : $this->readString(input: $input, keys: ['nonce']),
+                requestObjectJwt  : $this->readString(input: $input, keys: ['request']),
+                clientSecret      : $this->readString(input: $input, keys: ['client_secret', 'clientSecret']),
                 codeChallenge     : $this->readString(input: $input, keys: ['code_challenge', 'codeChallenge']),
                 codeChallengeMethod: $this->readPkceMethod(input: $input),
                 ipAddress         : $this->readString(input: $input, keys: ['ip_address', 'ipAddress']) ?? $this->readServerValue(server: $input->server, name: 'REMOTE_ADDR'),

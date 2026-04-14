@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
+use Avax\Auth\System\Capability\Explainability\AuthIssueExplanation;
+use Avax\Auth\System\Capability\Explainability\AuthIssueExplainer;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Federation\FederationConnection;
 use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
@@ -222,6 +224,7 @@ final readonly class Auth implements AuthInterface
         #[SensitiveParameter] private RevokeSession                      $revokeSession,
         #[SensitiveParameter] private CurrentAuthentication              $currentAuthentication,
         #[SensitiveParameter] private AccessInterface                    $access,
+        private AuthIssueExplainer                                       $authIssueExplainer,
         #[SensitiveParameter] private ChangePassword                     $changePassword,
         #[SensitiveParameter] private BeginEmailChange|null              $beginEmailChange,
         #[SensitiveParameter] private ConfirmEmailChange|null            $confirmEmailChange,
@@ -379,6 +382,50 @@ final readonly class Auth implements AuthInterface
     public function access() : AccessInterface
     {
         return $this->access;
+    }
+
+    public function explainAccessDenied(
+        string $resource,
+        string|null $requiredPermission = null,
+        string|null $tenant = null,
+        string|null $resourceTenant = null
+    ) : AuthIssueExplanation {
+        return $this->authIssueExplainer->explainAccessDenied(
+            resource: $resource,
+            requiredPermission: $requiredPermission,
+            tenant: $tenant,
+            resourceTenant: $resourceTenant
+        );
+    }
+
+    public function explainStepUpRequired(
+        string $action,
+        bool $phishingResistantRequired = false,
+        int|null $freshAfterSeconds = null
+    ) : AuthIssueExplanation {
+        return $this->authIssueExplainer->explainStepUpRequired(
+            action: $action,
+            phishingResistantRequired: $phishingResistantRequired,
+            freshAfterSeconds: $freshAfterSeconds
+        );
+    }
+
+    public function explainSenderConstraintFailure(string $reason, string|null $requiredConstraint = null) : AuthIssueExplanation
+    {
+        return $this->authIssueExplainer->explainSenderConstraintFailure(
+            reason: $reason,
+            requiredConstraint: $requiredConstraint
+        );
+    }
+
+    public function explainSessionRevocation(string $status, string|null $sessionId = null) : AuthIssueExplanation
+    {
+        return $this->authIssueExplainer->explainSessionRevocation(status: $status, sessionId: $sessionId);
+    }
+
+    public function explainTrustedDeviceDecision(string|null $deviceId = null) : AuthIssueExplanation
+    {
+        return $this->authIssueExplainer->explainTrustedDeviceDecision(deviceId: $deviceId);
     }
 
     /**

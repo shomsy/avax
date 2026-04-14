@@ -81,16 +81,27 @@
     "analyse": "phpstan analyse --memory-limit=1G",
     "analyse:strict": "phpstan analyse --memory-limit=1G -c phpstan.strict.neon",
     "dependency-review": "php tooling/review-composer-dependencies.php",
+    "source-truth": "php tooling/check-source-truth.php",
+    "system-shape": "php tooling/check-system-shape.php",
+    "migration:check": "php tooling/check-migration-path.php",
     "sbom": "php tooling/generate-sbom.php",
+    "evidence:bundle": "php tooling/generate-evidence-bundle.php",
     "secret-scan": "php tooling/scan-committed-secrets.php",
     "release:provenance": "php tooling/create-release-provenance.php",
     "rollback:proof": "php tooling/create-rollback-evidence.php",
     "release:gate": [
+      "@system-shape",
+      "@analyse",
+      "@analyse:strict",
+      "@test",
+      "@migration:check",
+      "@source-truth",
       "@dependency-review",
       "@secret-scan",
       "@sbom",
       "@release:provenance",
-      "@rollback:proof"
+      "@rollback:proof",
+      "@evidence:bundle"
     ],
     "rector": "rector process --dry-run",
     "rector:apply": "rector process",
@@ -103,9 +114,23 @@
       "@test",
       "@rector"
     ],
-    "quality-gates": "php tooling/quality-gates.php",
-    "quality-gates:json": "php tooling/quality-gates.php --json",
-    "quality-gates:verbose": "php tooling/quality-gates.php --verbose"
+    "quality-gates": [
+      "Composer\\Config::disableProcessTimeout",
+      "php tooling/quality-gates.php"
+    ],
+    "quality-gates:json": [
+      "Composer\\Config::disableProcessTimeout",
+      "php tooling/quality-gates.php --json"
+    ],
+    "quality-gates:verbose": [
+      "Composer\\Config::disableProcessTimeout",
+      "php tooling/quality-gates.php --verbose"
+    ],
+    "conformance": [
+      "Composer\\Config::disableProcessTimeout",
+      "php tooling/run-conformance-harness.php"
+    ],
+    "test:integration": "phpunit --testsuite=Integration"
   },
   "minimum-stability": "stable",
   "prefer-stable": true

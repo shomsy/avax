@@ -2,7 +2,16 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd" bootstrap="vendor/autoload.php" colors="true" executionOrder="depends,defects" beStrictAboutOutputDuringTests="true" failOnRisky="true" failOnWarning="true" cacheDirectory=".phpunit.cache">
   <testsuites>
     <testsuite name="Unit">
-      <directory>tests</directory>
+      <directory>tests/Capabilities</directory>
+      <directory>tests/Configuration</directory>
+      <directory>tests/Flow</directory>
+      <directory>tests/Flows</directory>
+      <directory>tests/Foundation</directory>
+      <directory>tests/System</directory>
+    </testsuite>
+    <testsuite name="Integration">
+      <directory>tests/Integration</directory>
+      <directory>tests/Integrations</directory>
     </testsuite>
   </testsuites>
   <source>

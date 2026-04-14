@@ -31,8 +31,8 @@ and federation, deterministic risk, admin elevation, and a thin optional integra
   being implied follow-up work.
 - Release hardening now has repo-owned dependency review, rollback evidence, SBOM, provenance, secret-scan tooling, and
   CI workflows instead of doc-only intent.
-- Canonical current-state and capability status now live in `docs/current-state.md`
-  and `docs/capability-matrix.md`.
+- Canonical shipped-state now lives in `docs/STATUS.md`, with evidence in
+  `docs/capability-matrix.md` and scope positioning in `docs/product-boundary.md`.
 
 ## Quick Start
 
@@ -261,6 +261,9 @@ non-goals.
 
 ## Delivery Docs
 
+- [docs/STATUS.md](docs/STATUS.md)
+- [docs/product-boundary.md](docs/product-boundary.md)
+- [docs/capability-matrix.md](docs/capability-matrix.md)
 - [docs/adr/001-auth-scope-and-trust-boundaries.md](docs/adr/001-auth-scope-and-trust-boundaries.md)
 - [docs/assurance-policy.md](docs/assurance-policy.md)
 - [docs/authorization-hardening.md](docs/authorization-hardening.md)
@@ -275,6 +278,10 @@ non-goals.
 - [docs/scim-runtime-boundary.md](docs/scim-runtime-boundary.md)
 - [docs/tenant-control-plane.md](docs/tenant-control-plane.md)
 - [docs/release-hardening.md](docs/release-hardening.md)
+- [docs/certification-profile.md](docs/certification-profile.md)
+- [docs/upgrade-migration-guide.md](docs/upgrade-migration-guide.md)
+- [docs/supported-deployment-profiles.md](docs/supported-deployment-profiles.md)
+- [docs/choose-vs-external-idp.md](docs/choose-vs-external-idp.md)
 - [docs/sso-cutover-runbook.md](docs/sso-cutover-runbook.md)
 - [docs/verification-matrix.md](docs/verification-matrix.md)
 - [docs/workload-identity.md](docs/workload-identity.md)

@@ -85,3 +85,26 @@ Use snapshots in this shape:
 - `notes`: Mutation tooling now runs locally and no longer fails for missing drivers. Hold remains because the actual
   mutation signal is not production-ready yet: critical slices currently show low MSI, many escaped mutants, and
   timeout instability under high parallelism.
+
+- `snapshot_at`: 2026-04-14 23:50 CEST
+- `release_scope`: AUTH-029 release/source-truth tooling rewrite, canonical status cleanup, migration guide, deployment
+  packaging docs, and non-canonical merged-artifact archival
+- `decision`: hold
+- `rollback_path`: revert AUTH-029 changeset and restore the prior tooling/docs/status files
+- `smoke_reference`: `.agents/management/evidence/TEST_REPORTS.md`
+- `risk_reference`: `.agents/management/evidence/RISK_REGISTER.md`
+- `notes`: PHPUnit, baseline PHPStan, strict PHPStan, source-truth check, and migration check pass locally. Hold
+  remains because mutation quality is still an open accepted release concern and quality-gate manual lanes still require
+  human closure.
+
+- `snapshot_at`: 2026-04-15 01:28 CEST
+- `release_scope`: AUTH-030 source-truth evidence validation, system-shape enforcement, release-gate strengthening,
+  integration-suite separation, and canonical deployment/explainability status refresh
+- `decision`: hold
+- `rollback_path`: revert AUTH-030 changeset and restore the prior release/source-truth scripts, phpunit suite shape,
+  and canonical docs
+- `smoke_reference`: `.agents/management/evidence/TEST_REPORTS.md`
+- `risk_reference`: `.agents/management/evidence/RISK_REGISTER.md`
+- `notes`: Full PHPUnit, dedicated integration suite, PHPStan, strict PHPStan, source-truth, system-shape, and
+  release gate all pass locally. Hold remains because mutation-quality posture is still an active open risk and the
+  manual observability/self-healing quality gates still require human closure.

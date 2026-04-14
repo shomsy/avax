@@ -7,6 +7,7 @@ namespace Avax\Auth\System\Flow\Session\ReadActiveSessions;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Session\SessionRecord;
 use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
+use Avax\Auth\System\Capability\Session\SessionRegistryUnavailable;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Session\ActiveSession;
@@ -38,7 +39,7 @@ final readonly class ReadActiveSessions
         }
 
         if ($this->sessionRegistry === null) {
-            return [];
+            throw SessionRegistryUnavailable::forSessionManagementFlow();
         }
 
         $currentSessionId = $context->sessionId();

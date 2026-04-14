@@ -139,7 +139,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
             frontChannelLogoutSupported   : true,
             backChannelLogoutSupported    : true,
             backChannelLogoutSessionSupported: true,
-            requestObjectSigningAlgValuesSupported: [$this->algorithm],
+            requestObjectSigningAlgValuesSupported: ['HS256', 'HS384', 'HS512', $this->algorithm],
             authorizationResponseSigningAlgValuesSupported: [$this->algorithm]
         );
     }

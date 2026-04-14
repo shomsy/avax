@@ -15,6 +15,9 @@ final readonly class OidcRequestObject
         public string $requestUri,
         public array $claims,
         public DateTimeImmutable $createdAt,
-        public DateTimeImmutable $expiresAt
+        public DateTimeImmutable $expiresAt,
+        public bool $signatureVerified = false,
+        public string|null $signingAlgorithm = null,
+        public string|null $signingClientId = null
     ) {}
 }

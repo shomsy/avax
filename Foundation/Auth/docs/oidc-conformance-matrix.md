@@ -19,5 +19,5 @@ what still remains outside this package.
 | pairwise subject identifiers | supported | kernel | `tests/Capabilities/Oidc/SubjectIdentifierTest.php`, `tests/Flows/Oidc/OidcFlowTest.php` |
 | PAR request storage | supported | kernel | `tests/Flows/Oidc/OidcFlowTest.php`, `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php` |
 | JARM response signing | supported | kernel | `tests/Flows/Oidc/OidcFlowTest.php` |
-| JAR client-signed request objects | partial | external package or app | `tests/Flows/Oidc/ValidateRequestObjectTest.php` |
+| JAR client-signed request objects | partial | kernel + external client-key management | `tests/Flows/Oidc/ValidateRequestObjectTest.php`, `tests/Flows/Oidc/OidcFlowTest.php` |
 | external certification | not supported | delivery program | n/a |

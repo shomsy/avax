@@ -31,6 +31,7 @@ final readonly class RegisterClientData
         public OAuthSenderConstraintType|null $requiredSenderConstraint = null,
         public bool                           $workloadIdentity = false,
         public bool                           $phishingResistantRequired = false,
+        public bool                           $requestObjectSignatureRequired = false,
         public bool                           $frontChannelLogoutSupported = false,
         public bool                           $backChannelLogoutSupported = false,
         public bool                           $approvalRequired = false

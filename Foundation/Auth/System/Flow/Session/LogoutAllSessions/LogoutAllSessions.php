@@ -7,6 +7,7 @@ namespace Avax\Auth\System\Flow\Session\LogoutAllSessions;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
+use Avax\Auth\System\Capability\Session\SessionRegistryUnavailable;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
@@ -41,10 +42,14 @@ final readonly class LogoutAllSessions
             throw new Unauthenticated();
         }
 
+        if ($this->sessionRegistry === null) {
+            throw SessionRegistryUnavailable::forSessionManagementFlow();
+        }
+
         $userId = new UserId(value: $user->id);
         $now    = $this->clock->now();
 
-        $this->sessionRegistry?->revokeForUser(userId: $userId, revokedAt: $now, reason: 'logout_all');
+        $this->sessionRegistry->revokeForUser(userId: $userId, revokedAt: $now, reason: 'logout_all');
         $this->refreshTokenStore?->revokeUser(userId: $userId);
         $this->identity->clear(context: $context);
         $this->currentAuthentication->clear();

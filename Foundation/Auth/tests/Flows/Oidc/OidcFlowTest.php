@@ -132,6 +132,54 @@ final class OidcFlowTest extends TestCase
         $this->assertSame(expected: 'state-par', actual: $claims['state'] ?? null);
     }
 
+    public function testOidcParAcceptsClientSignedRequestObjects() : void
+    {
+        [$auth] = $this->buildAuthWithOidc();
+
+        $auth->register(data: new RegistrationData(
+            email: 'oidc-jar@example.com',
+            username: 'oidc-jar',
+            password: 'secret'
+        ));
+        $auth->login(credentials: new Credentials(
+            identifier: 'oidc-jar@example.com',
+            password: 'secret'
+        ));
+
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
+            name: 'OIDC JAR Client',
+            type: OAuthClientType::CONFIDENTIAL,
+            redirectUris: ['https://rp.example.test/callback'],
+            allowedScopes: ['openid', 'profile'],
+            requestObjectSignatureRequired: true
+        ));
+        $requestJwt = (new HmacTokenCodec(secret: $client->plainTextSecret ?? ''))->encode(claims: [
+            'client_id' => $client->client->clientId,
+            'redirect_uri' => 'https://rp.example.test/callback',
+            'scope' => 'openid profile',
+            'state' => 'state-jar',
+            'nonce' => 'nonce-jar',
+            'exp' => time() + 300,
+        ]);
+
+        $pushed = $auth->pushOidcAuthorizationRequest(data: new PushAuthorizationRequestData(
+            clientId: $client->client->clientId,
+            redirectUri: 'https://rp.example.test/callback',
+            requestObjectJwt: $requestJwt,
+            clientSecret: $client->plainTextSecret
+        ));
+        $code = $auth->authorizeOAuthCode(data: new AuthorizeCodeData(
+            clientId: $client->client->clientId,
+            redirectUri: 'https://rp.example.test/callback',
+            scopes: ['openid', 'profile'],
+            nonce: 'nonce-jar',
+            requestUri: $pushed->requestUri
+        ));
+
+        $this->assertNotEmpty(actual: $pushed->requestUri);
+        $this->assertNotEmpty(actual: $code->code);
+    }
+
     public function testOidcLogoutRevokesCurrentSession() : void
     {
         [$auth] = $this->buildAuthWithOidc();

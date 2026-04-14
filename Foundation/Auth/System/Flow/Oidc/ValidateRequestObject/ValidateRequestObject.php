@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Oidc\ValidateRequestObject;
 
 use Avax\Auth\System\Capability\Oidc\OidcRequestObjectStoreInterface;
+use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
 use Avax\Auth\System\Capability\OAuth\PkceMethod;
 use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
 
 final readonly class ValidateRequestObject
 {
     public function __construct(
-        private OidcRequestObjectStoreInterface|null $requestObjectStore = null
+        private OidcRequestObjectStoreInterface|null $requestObjectStore = null,
+        private OAuthClientRegistryInterface|null $clientRegistry = null
     ) {}
 
     public function execute(ValidateRequestObjectData $data) : ValidatedRequestObject
@@ -36,14 +38,24 @@ final readonly class ValidateRequestObject
             throw OAuthAuthorizationFailed::invalidRequestObject();
         }
 
+        $client = $this->clientRegistry?->find(clientId: $clientId);
+
+        if ($client?->requestObjectSignatureRequired === true && ! $requestObject->signatureVerified) {
+            throw OAuthAuthorizationFailed::invalidRequestObject();
+        }
+
+        if ($requestObject->signatureVerified && $requestObject->signingClientId !== null && $requestObject->signingClientId !== $clientId) {
+            throw OAuthAuthorizationFailed::invalidRequestObject();
+        }
+
         return new ValidatedRequestObject(
-            requestUri        : $requestUri,
-            clientId          : $clientId,
-            redirectUri       : $redirectUri,
-            scopes            : $this->normalizeScopes(scopes: $this->normalizeScopeValue(value: $claims['scope'] ?? null)),
-            state             : $this->readStringValue(value: $claims['state'] ?? null),
-            nonce             : $this->readStringValue(value: $claims['nonce'] ?? null),
-            codeChallenge     : $this->readStringValue(value: $claims['code_challenge'] ?? null),
+            requestUri: $requestUri,
+            clientId: $clientId,
+            redirectUri: $redirectUri,
+            scopes: $this->normalizeScopes(scopes: $this->normalizeScopeValue(value: $claims['scope'] ?? null)),
+            state: $this->readStringValue(value: $claims['state'] ?? null),
+            nonce: $this->readStringValue(value: $claims['nonce'] ?? null),
+            codeChallenge: $this->readStringValue(value: $claims['code_challenge'] ?? null),
             codeChallengeMethod: $this->normalizeCodeChallengeMethod(value: $claims['code_challenge_method'] ?? null)
         );
     }

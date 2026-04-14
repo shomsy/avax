@@ -44,30 +44,30 @@ Tracks active and accepted risks.
 
 - `id`: AUTH-RISK-006
 - `identified_at`: 2026-04-12 15:36 CEST
-- `updated_at`: 2026-04-13 13:20 CEST
+- `updated_at`: 2026-04-14 18:05 CEST
 - `severity`: medium
 - `likelihood`: medium
-- `impact`: The package now owns OAuth, passkey, federation, provisioning, risk, and admin-realm kernel slices, but it
-  still does not ship OIDC provider behavior, client-credentials, SCIM runtime, or a full tenant/control-plane model;
-  teams could mistake the kernel for a full identity platform.
-- `mitigation`: Boundary docs, ADR-001, the workload identity/OIDC/SCIM/control-plane docs, and the roadmap state the
-  exact delivered kernel scope and keep OIDC provider, SCIM runtime, deeper tenant ownership, and control-plane
-  workflows as explicit non-goals or next tracks.
+- `impact`: The package now ships a practical OIDC lane, workload `client_credentials`, SCIM runtime core, and tenant
+  control-plane core. The real remaining risk is scope inflation: teams could still mistake the shipped identity kernel
+  for a full hosted identity platform.
+- `mitigation`: `docs/STATUS.md`, `docs/product-boundary.md`, `docs/capability-matrix.md`, `docs/choose-vs-external-idp.md`,
+  and `docs/upgrade-migration-guide.md` define the shipped kernel scope, non-goals, and migration posture explicitly.
 - `owner`: boundary docs
 - `status`: accepted
 
 - `id`: AUTH-RISK-005
 - `identified_at`: 2026-04-09 19:21 CEST
-- `updated_at`: 2026-04-09 19:21 CEST
+- `updated_at`: 2026-04-14 18:05 CEST
 - `severity`: medium
 - `likelihood`: medium
 - `impact`: The Avax container adapter moved from `System/Configuration/AuthServiceProvider` to
   `Integrations/AvaxContainer/AuthServiceProvider`, which is a compatibility break for consumers importing the old
   namespace directly.
-- `mitigation`: The new boundary is documented in `docs/boundary.md` and `docs/architecture.md`; the break is
-  intentional to keep the kernel clean and is called out in release notes and the final API freeze proposal.
+- `mitigation`: The boundary change is now documented in `docs/upgrade-migration-guide.md`, enforced through
+  `tooling/check-migration-path.php`, and covered by product-boundary tests. The package keeps the kernel clean instead
+  of reintroducing the adapter through a BC shim.
 - `owner`: integration surface
-- `status`: accepted
+- `status`: mitigated
 
 - `id`: AUTH-RISK-003
 - `identified_at`: 2026-04-09 18:10 CEST
@@ -84,16 +84,16 @@ Tracks active and accepted risks.
 
 - `id`: AUTH-RISK-004
 - `identified_at`: 2026-04-09 18:10 CEST
-- `updated_at`: 2026-04-12 15:04 CEST
+- `updated_at`: 2026-04-14 18:05 CEST
 - `severity`: medium
 - `likelihood`: low
-- `impact`: Global session revocation for all PHP session backends is still limited because the package only owns the
-  current session store, not a session registry.
-- `mitigation`: The kernel now ships `Capability/Session/SessionRegistryInterface`, active-session flows, and
-  revocation-aware `SessionIdentity`. Full multi-session revocation is covered when applications provide a durable
-  registry implementation; deployments without that registry still only control the current session store.
+- `impact`: Multi-session revocation is now package-owned in enterprise mode through durable registries, but external
+  deployments that bypass enterprise mode can still choose weaker session topologies.
+- `mitigation`: The package ships SQL and Redis registries, enterprise-mode build-time fail-fast, revocation flows, and
+  conformance tests for the durable registry contract. Remaining weaker deployments are a documented product choice, not
+  a missing kernel seam.
 - `owner`: session strategy
-- `status`: open
+- `status`: mitigated
 
 - `id`: AUTH-RISK-001
 - `identified_at`: 2026-04-09 15:31 CEST

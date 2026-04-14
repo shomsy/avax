@@ -4,22 +4,25 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use Symfony\Component\Process\Process;
-
 $root = dirname(__DIR__);
-$quiet = in_array('--quiet', $argv) || in_array('-q', $argv);
-$verbose = in_array('--verbose', $argv) || in_array('-v', $argv);
-$json = in_array('--json', $argv) || in_array('-j', $argv);
+$quiet = in_array('--quiet', $argv, true) || in_array('-q', $argv, true);
+$verbose = in_array('--verbose', $argv, true) || in_array('-v', $argv, true);
+$json = in_array('--json', $argv, true) || in_array('-j', $argv, true);
+$buildDirectory = $root . '/build';
 
+if (! is_dir($buildDirectory)) {
+    mkdir($buildDirectory, 0777, true);
+}
+
+$php = PHP_BINARY;
 $binDir = $root . '/vendor/bin';
 $definitions = [
     1 => [
         'name' => 'Trust',
         'question' => 'Does the change fail closed when mandatory config, dependency, policy input, or evidence is missing?',
         'commands' => [
-            ['cmd' => 'php', 'args' => [$binDir . '/phpstan', 'analyse', '--memory-limit=1G', '--error-format=raw'], 'fails_on_error' => true],
-            ['cmd' => 'php', 'args' => [$binDir . '/phpstan', 'analyse', '--memory-limit=1G', '-c', 'phpstan.strict.neon', '--error-format=raw'], 'fails_on_error' => false, 'optional' => true],
-            ['cmd' => 'php', 'args' => [$binDir . '/phpunit', '--testdox', '--no-coverage'], 'fails_on_error' => true],
+            [$php, $binDir . '/phpstan', 'analyse', '--memory-limit=1G', '--error-format=raw'],
+            [$php, $binDir . '/phpunit', '--testdox', '--no-coverage'],
         ],
         'category' => 'static-analysis',
     ],
@@ -27,7 +30,7 @@ $definitions = [
         'name' => 'Operator Clarity',
         'question' => 'Can another human or agent understand the failure, recovery path, and artifact location without tribal knowledge?',
         'commands' => [
-            ['cmd' => 'php', 'args' => [$binDir . '/phpstan', 'analyse', '--memory-limit=1G', '--error-format=table'], 'fails_on_error' => false],
+            [$php, $binDir . '/phpstan', 'analyse', '--memory-limit=1G', '--error-format=table'],
         ],
         'category' => 'clarity',
     ],
@@ -35,7 +38,7 @@ $definitions = [
         'name' => 'Rollback Posture',
         'question' => 'Is there an explicit path to reverse or contain the change when it mutates state, runtime policy, or public behavior?',
         'commands' => [
-            ['cmd' => 'php', 'args' => ['tooling/create-rollback-evidence.php'], 'fails_on_error' => true],
+            [$php, 'tooling/create-rollback-evidence.php'],
         ],
         'category' => 'rollback',
     ],
@@ -43,8 +46,8 @@ $definitions = [
         'name' => 'Contract Stability',
         'question' => 'Are public interfaces stable, or is the migration path documented and validated?',
         'commands' => [
-            ['cmd' => 'php', 'args' => [$binDir . '/phpstan', 'analyse', '--memory-limit=1G'], 'fails_on_error' => true],
-            ['cmd' => 'php', 'args' => [$binDir . '/rector', 'process', '--dry-run'], 'fails_on_error' => false],
+            [$php, 'tooling/check-migration-path.php', '--json'],
+            [$php, $binDir . '/phpstan', 'analyse', '--memory-limit=1G'],
         ],
         'category' => 'bc',
     ],
@@ -52,7 +55,7 @@ $definitions = [
         'name' => 'State Ownership',
         'question' => 'Is durable truth stored in an owned boundary instead of accidental local memory, cache drift, or UI residue?',
         'commands' => [
-            ['cmd' => 'php', 'args' => [$binDir . '/phpunit', '--testsuite=integration', '--testdox'], 'fails_on_error' => false],
+            [$php, $binDir . '/phpunit', '--testsuite=integration', '--testdox'],
         ],
         'category' => 'testing',
     ],
@@ -60,7 +63,7 @@ $definitions = [
         'name' => 'Async Containment',
         'question' => 'If async or background work exists, are acknowledgement, retry, timeout, and quarantine rules explicit and observable?',
         'commands' => [
-            ['cmd' => 'php', 'args' => [$binDir . '/phpunit', '--testsuite=integration', '--testdox'], 'fails_on_error' => false],
+            [$php, $binDir . '/phpunit', '--testsuite=integration', '--testdox'],
         ],
         'category' => 'testing',
     ],
@@ -68,8 +71,7 @@ $definitions = [
         'name' => 'Deterministic Automation',
         'question' => 'Can CI, deployment, or operational tooling consume the result without manual interpretation or fuzzy parsing?',
         'commands' => [
-            ['cmd' => 'php', 'args' => [$binDir . '/phpstan', 'analyse', '--memory-limit=1G', '--error-format=raw'], 'fails_on_error' => true],
-            ['cmd' => 'php', 'args' => [$binDir . '/phpunit', '--testdox', '--no-coverage'], 'fails_on_error' => true],
+            [$php, 'tooling/run-conformance-harness.php'],
         ],
         'category' => 'ci',
     ],
@@ -84,7 +86,7 @@ $definitions = [
         'name' => 'Runtime Hardening',
         'question' => 'Does the change preserve least privilege, secret hygiene, and runtime boundary policy?',
         'commands' => [
-            ['cmd' => 'php', 'args' => ['tooling/scan-committed-secrets.php'], 'fails_on_error' => true],
+            [$php, 'tooling/scan-committed-secrets.php'],
         ],
         'category' => 'security',
     ],
@@ -92,22 +94,26 @@ $definitions = [
         'name' => 'Performance Posture',
         'question' => 'Are new latency, scale, or throughput claims measured and recorded instead of asserted?',
         'commands' => [
-            ['cmd' => 'php', 'args' => [$binDir . '/infection', '--configuration=infection.json.dist', '--skip-initial-tests'], 'fails_on_error' => false, 'optional' => true],
+            [$php, 'tooling/run-with-coverage-driver', 'vendor/bin/infection', '--configuration=infection.json.dist', '--skip-initial-tests'],
         ],
         'category' => 'performance',
+        'optional' => true,
     ],
     11 => [
         'name' => 'Source Truth',
         'question' => 'Do README, help text, and governance docs still describe the shipped system accurately?',
-        'commands' => [],
+        'commands' => [
+            [$php, 'tooling/check-source-truth.php', '--json'],
+            [$php, 'tooling/check-system-shape.php', '--json'],
+        ],
         'category' => 'docs',
-        'manual' => true,
     ],
     12 => [
         'name' => 'Evidence Integrity',
         'question' => 'Is validation proof present, machine-readable, and tied to this change and its claimed scope?',
         'commands' => [
-            ['cmd' => 'php', 'args' => ['tooling/generate-sbom.php'], 'fails_on_error' => false],
+            [$php, 'tooling/generate-sbom.php'],
+            [$php, 'tooling/generate-evidence-bundle.php'],
         ],
         'category' => 'release',
     ],
@@ -121,8 +127,8 @@ $definitions = [
 ];
 
 $results = [
-    'timestamp' => date('c'),
-    'version' => '1.0.0',
+    'timestamp' => gmdate(DATE_ATOM),
+    'version' => '2.0.0',
     'summary' => [
         'total' => count($definitions),
         'passed' => 0,
@@ -148,119 +154,126 @@ foreach ($definitions as $gateId => $gate) {
         $gateResult['status'] = 'manual';
         $gateResult['note'] = 'Requires manual review';
         $results['summary']['manual']++;
-    } else {
-        $gatePassed = true;
-        foreach ($gate['commands'] as $cmdSpec) {
-            $cmd = $cmdSpec['cmd'];
-            $args = $cmdSpec['args'] ?? [];
-            $fullCmd = array_merge([$cmd], $args);
-            
-            try {
-                $process = new Process($fullCmd);
-                $process->setWorkingDirectory($root);
-                $process->setTimeout(300);
-                $process->run();
-                
-                $exitCode = $process->getExitCode();
-                $output = $process->getOutput();
-                $errorOutput = $process->getErrorOutput();
-                
-                $optional = $cmdSpec['optional'] ?? false;
-                $passed = $optional 
-                    ? true 
-                    : ($cmdSpec['fails_on_error'] 
-                        ? ($exitCode === 0) 
-                        : ($exitCode === 0 || $exitCode === null));
-                
-                if (!$passed && !($cmdSpec['optional'] ?? false)) {
-                    $gatePassed = false;
-                }
-                
-                $cmdResult = [
-                    'command' => implode(' ', $fullCmd),
-                    'exit_code' => $exitCode,
-                    'passed' => $passed,
-                    'output_length' => strlen($output),
-                ];
-                
-                if ($verbose && !$quiet) {
-                    $cmdResult['output'] = $output;
-                    if ($errorOutput) {
-                        $cmdResult['error_output'] = $errorOutput;
-                    }
-                }
-                
-                $gateResult['commands'][] = $cmdResult;
-                
-            } catch (\Throwable $e) {
-                $gatePassed = false;
-                $gateResult['commands'][] = [
-                    'command' => implode(' ', $fullCmd),
-                    'error' => $e->getMessage(),
-                    'passed' => false,
-                ];
-            }
-        }
-        
-        $gateResult['status'] = $gatePassed ? 'passed' : 'failed';
-        $gateResult['overall'] = $gatePassed;
-        
-        if ($gatePassed) {
-            $results['summary']['passed']++;
-        } else {
-            $results['summary']['failed']++;
-            $hasFailure = true;
-        }
+        $results['gates'][] = $gateResult;
+        continue;
     }
-    
+
+    $gatePassed = true;
+
+    foreach ($gate['commands'] as $command) {
+        $execution = runCommand(command: $command, workingDirectory: $root);
+        $optional = $gate['optional'] ?? false;
+        $passed = $execution['exit_code'] === 0 || $optional;
+
+        if (! $passed) {
+            $gatePassed = false;
+        }
+
+        $commandResult = [
+            'command' => implode(' ', $command),
+            'exit_code' => $execution['exit_code'],
+            'passed' => $passed,
+        ];
+
+        if ($verbose && ! $quiet) {
+            $commandResult['stdout'] = $execution['stdout'];
+            $commandResult['stderr'] = $execution['stderr'];
+        }
+
+        $gateResult['commands'][] = $commandResult;
+    }
+
+    $gateResult['status'] = $gatePassed ? 'passed' : 'failed';
+
+    if ($gatePassed) {
+        $results['summary']['passed']++;
+    } else {
+        $results['summary']['failed']++;
+        $hasFailure = true;
+    }
+
     $results['gates'][] = $gateResult;
 }
 
-$results['summary']['pass_rate'] = $results['summary']['total'] > 0
-    ? round($results['summary']['passed'] / $results['summary']['total'] * 100, 1) . '%'
-    : '0%';
-
+$results['summary']['pass_rate'] = round(($results['summary']['passed'] / count($definitions)) * 100, 1) . '%';
 $results['overall'] = $hasFailure ? 'FAILED' : 'PASSED';
+
+file_put_contents(
+    $buildDirectory . '/quality-gates-report.json',
+    json_encode($results, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+);
 
 if ($json) {
     echo json_encode($results, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
     exit($hasFailure ? 1 : 0);
 }
 
-if (!$quiet) {
-    echo "\n=== Quality Gates Report ===\n";
-    echo "Timestamp: {$results['timestamp']}\n";
-    echo "Overall: {$results['overall']}\n";
-    echo "\n";
+if (! $quiet) {
+    echo "=== Quality Gates Report ===\n";
+    echo 'Timestamp: ' . $results['timestamp'] . "\n";
+    echo 'Overall: ' . $results['overall'] . "\n\n";
     echo "Summary:\n";
-    echo "  Total:   {$results['summary']['total']}\n";
-    echo "  Passed: {$results['summary']['passed']}\n";
-    echo "  Failed: {$results['summary']['failed']}\n";
-    echo "  Manual: {$results['summary']['manual']}\n";
-    echo "  Rate:   {$results['summary']['pass_rate']}\n";
-    echo "\n";
-    
+    echo '  Total: ' . $results['summary']['total'] . "\n";
+    echo '  Passed: ' . $results['summary']['passed'] . "\n";
+    echo '  Failed: ' . $results['summary']['failed'] . "\n";
+    echo '  Manual: ' . $results['summary']['manual'] . "\n";
+    echo '  Rate: ' . $results['summary']['pass_rate'] . "\n\n";
+
     foreach ($results['gates'] as $gate) {
-        $icon = match($gate['status']) {
-            'passed' => '✓',
-            'failed' => '✗',
-            'manual' => '•',
-            default => '?',
+        $icon = match ($gate['status']) {
+            'passed' => '[PASS]',
+            'failed' => '[FAIL]',
+            'manual' => '[MANUAL]',
+            default => '[PENDING]',
         };
-        $status = strtoupper($gate['status']);
-        echo "{$icon} Gate {$gate['id']}: {$gate['name']} [{$status}]\n";
-        
-        if (!$quiet && $gate['status'] === 'failed') {
-            foreach ($gate['commands'] as $cmd) {
-                if (!($cmd['passed'] ?? true)) {
-                    echo "    Failed: {$cmd['command']}\n";
+
+        echo sprintf("%s Gate %d: %s\n", $icon, $gate['id'], $gate['name']);
+
+        if ($gate['status'] === 'failed') {
+            foreach ($gate['commands'] as $command) {
+                if (($command['passed'] ?? true) === false) {
+                    echo '  - failed: ' . $command['command'] . "\n";
                 }
             }
         }
     }
-    
-    echo "\n";
-    echo "Run with: php tooling/quality-gates.php --json for machine-readable output\n";
 }
 
 exit($hasFailure ? 1 : 0);
+
+/**
+ * @param list<string> $command
+ * @return array{exit_code:int, stdout:string, stderr:string}
+ */
+function runCommand(array $command, string $workingDirectory) : array
+{
+    $descriptor = [
+        0 => ['pipe', 'r'],
+        1 => ['pipe', 'w'],
+        2 => ['pipe', 'w'],
+    ];
+
+    $process = proc_open(command: $command, descriptor_spec: $descriptor, pipes: $pipes, cwd: $workingDirectory);
+
+    if (! is_resource($process)) {
+        return [
+            'exit_code' => 1,
+            'stdout' => '',
+            'stderr' => 'Could not start command.',
+        ];
+    }
+
+    fclose($pipes[0]);
+    $stdout = stream_get_contents($pipes[1]);
+    $stderr = stream_get_contents($pipes[2]);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+
+    $exitCode = proc_close($process);
+
+    return [
+        'exit_code' => is_int($exitCode) ? $exitCode : 1,
+        'stdout' => is_string($stdout) ? $stdout : '',
+        'stderr' => is_string($stderr) ? $stderr : '',
+    ];
+}

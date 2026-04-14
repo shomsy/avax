@@ -7,6 +7,7 @@ namespace Avax\Auth\System\Flow\Session\RevokeSession;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
+use Avax\Auth\System\Capability\Session\SessionRegistryUnavailable;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
@@ -40,7 +41,7 @@ final readonly class RevokeSession
         }
 
         if ($this->sessionRegistry === null) {
-            return;
+            throw SessionRegistryUnavailable::forSessionManagementFlow();
         }
 
         $record = $this->sessionRegistry->find(sessionId: $sessionId);

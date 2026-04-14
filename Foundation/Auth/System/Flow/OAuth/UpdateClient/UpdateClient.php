@@ -56,6 +56,7 @@ final readonly class UpdateClient
             requiredSenderConstraint  : $data->requiredSenderConstraint,
             workloadIdentity          : $data->workloadIdentity,
             phishingResistantRequired : $data->phishingResistantRequired,
+            requestObjectSignatureRequired: $data->requestObjectSignatureRequired,
             frontChannelLogoutSupported: $data->frontChannelLogoutSupported,
             backChannelLogoutSupported : $data->backChannelLogoutSupported,
             approvalStatus            : $approvalStatus,
@@ -73,6 +74,7 @@ final readonly class UpdateClient
                 'tenant_slug' => $updated->tenantSlug,
                 'type' => $updated->type->value,
                 'active' => $updated->active ? 1 : 0,
+                'request_object_signature_required' => $updated->requestObjectSignatureRequired ? 1 : 0,
                 'approval_status' => $updated->approvalStatus->value,
             ]
         ));

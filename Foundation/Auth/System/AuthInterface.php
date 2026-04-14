@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System;
 
 use Avax\Auth\System\Capability\Access\AccessInterface;
+use Avax\Auth\System\Capability\Explainability\AuthIssueExplanation;
 use Avax\Auth\System\Capability\Federation\FederationConnection;
 use Avax\Auth\System\Capability\Federation\FederationConnectionHealth;
 use Avax\Auth\System\Capability\Oidc\OidcJsonWebKeySet;
@@ -129,6 +130,25 @@ interface AuthInterface
     public function user() : AuthenticatedUser|null;
 
     public function access() : AccessInterface;
+
+    public function explainAccessDenied(
+        string $resource,
+        string|null $requiredPermission = null,
+        string|null $tenant = null,
+        string|null $resourceTenant = null
+    ) : AuthIssueExplanation;
+
+    public function explainStepUpRequired(
+        string $action,
+        bool $phishingResistantRequired = false,
+        int|null $freshAfterSeconds = null
+    ) : AuthIssueExplanation;
+
+    public function explainSenderConstraintFailure(string $reason, string|null $requiredConstraint = null) : AuthIssueExplanation;
+
+    public function explainSessionRevocation(string $status, string|null $sessionId = null) : AuthIssueExplanation;
+
+    public function explainTrustedDeviceDecision(string|null $deviceId = null) : AuthIssueExplanation;
 
     public function changePassword(ChangePasswordData $data) : void;
 

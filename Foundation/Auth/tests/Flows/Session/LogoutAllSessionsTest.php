@@ -7,6 +7,7 @@ namespace Avax\Auth\Tests\Flow\Session;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
+use Avax\Auth\System\Capability\Session\SessionRegistryUnavailable;
 use Avax\Auth\System\Capability\Session\SessionRecord;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticatedUser;
@@ -80,6 +81,31 @@ final class LogoutAllSessionsTest extends TestCase
         $this->assertNotNull(actual: $registry->find(sessionId: 'session-1')?->revokedAt);
         $this->assertNotNull(actual: $registry->find(sessionId: 'session-2')?->revokedAt);
         $this->assertSame(expected: 'logout_all', actual: $registry->find(sessionId: 'session-1')?->revokeReason);
+    }
+
+    public function testLogoutAllSessionsFailsWhenSessionRegistryIsMissing() : void
+    {
+        $context = AuthenticationContext::authenticated(
+            user: new AuthenticatedUser(id: 1, email: 'user@example.com', username: 'user'),
+            mode: AuthenticationMode::SESSION,
+            sessionId: 'session-1'
+        );
+        $currentAuthentication = new CurrentAuthentication();
+        $currentAuthentication->store(context: $context);
+
+        $identity = Mockery::mock(IdentityInterface::class);
+
+        $flow = new LogoutAllSessions(
+            identity: $identity,
+            currentAuthentication: $currentAuthentication,
+            auditLog: new InMemoryAuditLog(),
+            clock: new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'))
+        );
+
+        $this->expectException(SessionRegistryUnavailable::class);
+        $this->expectExceptionMessage('Tracked session management requires a configured session registry.');
+
+        $flow->execute();
     }
 
     protected function tearDown() : void

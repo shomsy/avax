@@ -14,6 +14,33 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-030
+- `created_at`: 2026-04-15 00:35 CEST
+- `updated_at`: 2026-04-15 01:28 CEST
+- `completed_at`: 2026-04-15 01:28 CEST
+- `status`: done
+- `estimate`: 4h
+- `actual`: 2h 20m
+- `outcome`: Close the remaining iteration-local source-truth, system-shape, release-gate, deployment-boundary, and explainability drift by adding package-owned verification checks, integration suite separation, and truthful canonical documentation
+- `acceptance`: `integrations/release/CheckSystemShape.php` and `tooling/check-system-shape.php` fail on junk-drawer architecture drift; `CheckSourceTruth` verifies capability evidence paths; `phpunit.xml.dist` exposes a clean `Integration` suite; `composer release:gate` runs system-shape, analysis, tests, source-truth, migration, and release evidence; STATUS/REFAKTOR/docs reflect executable deployment-trust and explainability runtime posture; PHPUnit, PHPStan, strict PHPStan, `test:integration`, `source-truth`, `system-shape`, and `release:gate` pass
+- `links`: integrations/release/CheckSystemShape.php, integrations/release/CheckSourceTruth.php, tooling/check-system-shape.php, composer.json, phpunit.xml.dist, docs/STATUS.md, docs/deployment-trust-boundary.md, docs/support-explainability.md, REFAKTOR.md
+
+- `id`: AUTH-029
+- `created_at`: 2026-04-14 21:30 CEST
+- `updated_at`: 2026-04-14 23:50 CEST
+- `completed_at`: 2026-04-14 23:50 CEST
+- `status`: done
+- `estimate`: 6h
+- `actual`: 2h 20m
+- `outcome`: Rewrite release and source-truth tooling into package-owned integrations, archive historical merged-state noise,
+  document the migration and deployment boundary canonically, and realign package status with executable evidence
+- `acceptance`: `integrations/release/` ships conformance, evidence-bundle, migration-check, and source-truth checks;
+  `tooling/*.php` are thin entrypoints without undeclared dependencies; `docs/STATUS.md`, `docs/product-boundary.md`,
+  `docs/capability-matrix.md`, `docs/upgrade-migration-guide.md`, and `Auth.txt` agree on shipped scope; PHPUnit and
+  PHPStan lanes pass
+- `links`: integrations/release/, tooling/, docs/STATUS.md, docs/product-boundary.md, docs/capability-matrix.md,
+  docs/upgrade-migration-guide.md, docs/supported-deployment-profiles.md, docs/choose-vs-external-idp.md, REFAKTOR.md
+
 - `id`: AUTH-028
 - `created_at`: 2026-04-14 09:40 CEST
 - `updated_at`: 2026-04-14 09:40 CEST

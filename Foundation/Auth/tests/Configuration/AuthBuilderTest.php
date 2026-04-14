@@ -7,6 +7,7 @@ namespace Avax\Auth\Tests\Configuration;
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Configuration\AuthBuilder;
 use Avax\Auth\System\Flow\Register\RegistrationData;
@@ -97,6 +98,43 @@ class AuthBuilderTest extends TestCase
         $user = $auth->register(data: $data);
 
         $this->assertSame(expected: 987654, actual: $user->user()->id);
+    }
+
+    public function testEnterpriseModeRequiresSessionRegistry() : void
+    {
+        $userSource = Mockery::mock(UserSourceInterface::class);
+        $identity   = Mockery::mock(IdentityInterface::class);
+        $identity->shouldReceive('sessionIdentity')->andReturn(null);
+        $identity->shouldReceive('jwtIdentity')->andReturn(null);
+
+        $builder = new AuthBuilder();
+        $builder->forUser(userSource: $userSource)
+            ->withIdentity(identity: $identity)
+            ->enterprise();
+
+        $this->expectException(exception: RuntimeException::class);
+        $this->expectExceptionMessage(message: 'Enterprise mode requires a durable session registry.');
+        $builder->ready();
+    }
+
+    public function testEnterpriseModeBuildsWithSessionRegistry() : void
+    {
+        $userSource = Mockery::mock(UserSourceInterface::class);
+        $identity   = Mockery::mock(IdentityInterface::class);
+        $identity->shouldReceive('sessionIdentity')->andReturn(null);
+        $identity->shouldReceive('jwtIdentity')->andReturn(null);
+
+        $sessionRegistry = new InMemorySessionRegistry();
+
+        $builder = new AuthBuilder();
+        $builder->forUser(userSource: $userSource)
+            ->withIdentity(identity: $identity)
+            ->withSessionRegistry(sessionRegistry: $sessionRegistry)
+            ->enterprise();
+
+        $auth = $builder->ready();
+
+        $this->assertInstanceOf(expected: Auth::class, actual: $auth);
     }
 
     protected function tearDown() : void

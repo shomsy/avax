@@ -16,7 +16,7 @@ Legenda:
 - [x] SCIM runtime core: `/Users`, `/Groups`, schema discovery, idempotency, drift remediation i bulk lane.
 - [x] OAuth / sender-constrained runtime core: PKCE, refresh rotation, reuse detection, DPoP/mTLS-aware binding, client registry i tenant ownership.
 - [x] Lifecycle orchestration i HTTP hardening: lifecycle capability, CSRF/session utilities, operativni docs i evidence.
-- [x] **Quality gates automation**: 13 quality gates automated via `composer quality-gates`, mapping dokumentacija u `.rules/governance/core/quality/QUALITY-GATES-MAPPING.md`
+- [x] **Quality gates automation**: 11/13 gates automated via `composer quality-gates`, uz package-owned source-truth i migration proveru
 - [x] **Glossary**: Auth i Security glossary sa 90+ termina u `.rules/glossary/AUTH.md`, `SECURITY.md`
 - [x] **Session revocation**: SQL + Redis backend
 - [x] **Deployment trust boundary**: Proxy contract, smoke testovi, i operator checklist u `docs/deployment-trust-boundary.md`
@@ -24,10 +24,12 @@ Legenda:
 
 ### Partial
 
-- [~] Source-of-truth cleanup: Canonical status sada u `docs/STATUS.md`, ali Auth.txt i dalje sadrži istorijski materijal
-- [~] OIDC provider completeness: client registration/update/disable su integrisani kroz OAuth + tenant-admin rute, logout/session-management i PAR/JARM su zatvoreni, request-object claim validation postoji, ali JAR client-signed verifikacija još boundary
-- [~] Deployment trust boundary: Proxy contract postoji, ali integracioni smoke testovi tek treba da se izvrše
-- [~] trusted-device odluka, compatibility migration, support explainability — support docs postoje, ali "why surfaces" nisu integrisane u runtime
+- [x] Source-of-truth cleanup: `docs/STATUS.md` je canonical state, `Auth.txt` je sveden na non-canonical merged artifact, a istorijski snapshot-i su prebačeni u `docs/archive/`
+- [~] OIDC provider completeness: client registration/update/disable su integrisani kroz OAuth + tenant-admin rute, logout/session-management i PAR/JARM su zatvoreni, request-object claim validation i confidential-client shared-secret verification postoje, ali asymmetric/public-client JAR key management ostaje boundary
+- [~] Deployment trust boundary: Proxy contract, trusted-header guard, unsafe-mode diagnostics, i executable smoke testovi postoje, ali edge certificate-chain truth ostaje deployment-owned
+- [x] Compatibility migration: major-boundary migration je dokumentovan, proverljiv i pokriven product-boundary testom
+- [x] Support explainability: canonical docs i package-owned runtime “why” surface postoje kroz `AuthIssueExplainer` i `Auth` facade explain metode
+- [~] External certification posture: conformance harness, certification profile i evidence bundle postoje, ali external certification ostaje van package scope
 
 ### Not Implemented
 
@@ -41,11 +43,13 @@ Legenda:
 
 ## New Capabilities Since Last Report
 
-- **Quality Gates Automation**: 10/13 gates automated (77%)
+- **Quality Gates Automation**: 11/13 gates automated
 - **Redis Session Registry**: Package-owned Redis adapter
 - **Deployment Trust Boundary Docs**: Proxy contract, smoke tests, diagnostics
-- **Support Explainability**: Why access denied, why step-up required, etc.
-- **Capability Matrix v2**: 30+ capabilities sa evidence links
+- **Support Explainability**: canonical safe-failure i support docs
+- **Capability Matrix v2**: canonical evidence matrix sa realnim putanjama
+- **Migration Boundary**: automated migration checker + upgrade guide
+- **Source Truth**: package-owned source-truth checker + archive split
 
 Detaljni TODO ispod ostaje kanonski backlog; ova sekcija je brzi status za trenutno stanje.
 
@@ -121,7 +125,7 @@ Problem: isti `Auth.txt` sadrži i najnoviji risk/boundary status i stare review
 
 **TODO**
 
-* [ ] Izvuci stare review snapshot-e iz `Auth.txt` i prebaci ih u archive / review history
+* [x] Izvuci stare review snapshot-e iz `Auth.txt` i prebaci ih u archive / review history
 * [x] Napravi **jedan kanonski status fajl** za:
 
     * [x] current delivered capabilities
@@ -130,13 +134,13 @@ Problem: isti `Auth.txt` sadrži i najnoviji risk/boundary status i stare review
     * [x] explicit non-goals
 * [x] Napravi **jedan kanonski boundary fajl**: “kernel vs full platform”
 * [x] Napravi **jedan kanonski capability matrix** generisan iz koda/testova kad god je moguće
-* [ ] Ukloni kontradikcije između risk registra, roadmap-a i capability tabele
-* [ ] Dodaj pravilo da istorijski review snapshot nikad više ne živi u istom fajlu kao current-state truth
+* [x] Ukloni kontradikcije između risk registra, roadmap-a i capability tabele
+* [x] Dodaj pravilo da istorijski review snapshot nikad više ne živi u istom fajlu kao current-state truth
 
 **Done kada**
 
-* [ ] neko ko otvori samo jedan status dokument može tačno da vidi šta je shipped, šta nije, i šta je namerno van scope-a
-* [ ] nema starih review TODO stavki u current-state dokumentima
+* [x] neko ko otvori samo jedan status dokument može tačno da vidi šta je shipped, šta nije, i šta je namerno van scope-a
+* [x] nema starih review TODO stavki u current-state dokumentima
 
 ---
 
@@ -148,31 +152,31 @@ Najnoviji surface kaže da imaš praktičan OIDC provider lane sa discovery, JWK
 
 **TODO**
 
-* [ ] Napravi tabelu sa kolonama:
+* [x] Napravi tabelu sa kolonama:
 
-    * [ ] `kernel-owned and shipped`
-    * [ ] `kernel-owned but partial`
-    * [ ] `external package/app owned`
-    * [ ] `explicit non-goal`
-* [ ] Za OIDC posebno odluči:
+    * [x] `kernel-owned and shipped`
+    * [x] `kernel-owned but partial`
+    * [x] `external package/app owned`
+    * [x] `explicit non-goal`
+* [x] Za OIDC posebno odluči:
 
-    * [ ] da li tvrdiš “practical OIDC provider lane”
+    * [x] da li tvrdiš “practical OIDC provider lane”
     * [ ] ili “OIDC-adjacent auth kernel”
-* [ ] Za SCIM posebno odluči:
+* [x] Za SCIM posebno odluči:
 
-    * [ ] da li imaš runtime
+    * [x] da li imaš runtime
     * [ ] ili samo seams/docs/roadmap
-* [ ] Za workload/client-credentials posebno odluči:
+* [x] Za workload/client-credentials posebno odluči:
 
-    * [ ] da li je shipped
+    * [x] da li je shipped
     * [ ] ili samo design/docs
-* [ ] Ažuriraj risk `AUTH-RISK-006` da tačno odgovara kodu i capability tabeli
-* [ ] Dodaj release note sekciju: “what this package is not”
+* [x] Ažuriraj risk `AUTH-RISK-006` da tačno odgovara kodu i capability tabeli
+* [x] Dodaj release note sekciju: “what this package is not”
 
 **Done kada**
 
-* [ ] risk register i capability matrix više ne pričaju različite priče
-* [ ] scope se može citirati bez objašnjavanja “pa mislio sam…”
+* [x] risk register i capability matrix više ne pričaju različite priče
+* [x] scope se može citirati bez objašnjavanja “pa mislio sam…”
 
 ---
 
@@ -184,11 +188,11 @@ Ovo je i dalje jedan od otvorenih riskova: multi-session/global revocation mora 
 
 **TODO**
 
-* [ ] Odluči da li session registry postaje:
+* [x] Odluči da li session registry postaje:
 
     * [ ] obavezni deo platforme
     * [ ] zvanični adapter paket
-    * [ ] i dalje app-owned dependency, ali eksplicitno mandatory za “enterprise mode”
+    * [x] i dalje app-owned dependency, ali eksplicitno mandatory za “enterprise mode”
 * [x] Isporuči barem jedan package-owned durable registry:
 
     * [x] SQL
@@ -343,11 +347,11 @@ Capability tabela eksplicitno kaže `external certification` nije podržan.
 
 **TODO**
 
-* [ ] conformance harness
-* [ ] certification profile matrix
-* [ ] evidence bundle generator
-* [ ] signed release + test bundle
-* [ ] repeatable certification environment profile
+* [x] conformance harness
+* [x] certification profile matrix
+* [x] evidence bundle generator
+* [~] signed release + test bundle
+* [x] repeatable certification environment profile
 
 ---
 
@@ -457,9 +461,9 @@ Ovo je accepted risk. Za platform product to nije strašno, ali mora biti zatvor
 **TODO**
 
 * [ ] Dodaj BC shim ili alias
-* [ ] Ili digni major version i zaključi migration path
-* [ ] Dodaj automated upgrade test
-* [ ] Dodaj migration doc sa staro → novo mapiranjem namespace-a
+* [x] Ili digni major version i zaključi migration path
+* [x] Dodaj automated upgrade test
+* [x] Dodaj migration doc sa staro → novo mapiranjem namespace-a
 
 ---
 
@@ -471,21 +475,21 @@ Stari review snapshot veoma jasno kaže da je projekat deklarativno feature-slic
 
 **TODO**
 
-* [ ] Finalizuj root shape:
+* [x] Finalizuj root shape:
 
-    * [ ] flows/
-    * [ ] capabilities/
-    * [ ] configuration/
-    * [ ] foundation/
-    * [ ] integrations/ samo gde su stvarno adapteri
-* [ ] Ukloni preostale top-level tehničke fioke ako još postoje
-* [ ] Za svaki stari namespace napiši mapu:
+    * [x] flows/
+    * [x] capabilities/
+    * [x] configuration/
+    * [x] foundation/
+    * [x] integrations/ samo gde su stvarno adapteri
+* [x] Ukloni preostale top-level tehničke fioke ako još postoje
+* [~] Za svaki stari namespace napiši mapu:
 
-    * [ ] old location
-    * [ ] new owner
-    * [ ] migration status
-* [ ] Zabrani nove `Actions/Adapters/Contracts` top-level priče kao glavni repo story
-* [ ] Dodaj lint/check koji detektuje zabranjene junk-drawer foldere
+    * [x] old location
+    * [x] new owner
+    * [x] migration status
+* [x] Zabrani nove `Actions/Adapters/Contracts` top-level priče kao glavni repo story
+* [x] Dodaj lint/check koji detektuje zabranjene junk-drawer foldere
 
 ### 16) Legacy auth review stavke: ili ih završi, ili ih arhiviraj kao obsolete
 
@@ -519,14 +523,14 @@ Stari evidence snapshot pokazuje da je ranije release bio `hold` jer lokalni CLI
     * [ ] popravi runtime image
     * [ ] popravi local dev bootstrap
     * [ ] dodaj preflight script koji proverava extensions
-* [ ] Dodaj release gate:
+* [~] Dodaj release gate:
 
-    * [ ] syntax
-    * [ ] static analysis
-    * [ ] unit
-    * [ ] integration
+    * [x] syntax
+    * [x] static analysis
+    * [x] unit
+    * [x] integration
     * [ ] mutation / high-value subset
-* [ ] Dodaj evidence bundle po release-u
+* [x] Dodaj evidence bundle po release-u
 
 ### 18) Napravi canonical conformance dashboard
 
@@ -540,7 +544,7 @@ Stari evidence snapshot pokazuje da je ranije release bio `hold` jer lokalni CLI
     * [x] non-goal
 * [x] Link ka test fajlu ili evidence-u po capability-ju
 * [x] Link ka ADR-u ili boundary doc-u po non-goal capability-ju
-* [ ] Auto-fail ako capability tabela nije usklađena sa test markerima i risk statusom
+* [~] Auto-fail ako capability tabela nije usklađena sa test markerima i risk statusom
 
 ---
 
@@ -565,9 +569,9 @@ Stari evidence snapshot pokazuje da je ranije release bio `hold` jer lokalni CLI
     * [ ] kernel package
     * [ ] integration packages
     * [ ] optional enterprise packages
-* [ ] napiši upgrade/migration guide
-* [ ] napiši supported deployment profiles
-* [ ] napiši “when to choose this vs external IdP” guide
+* [x] napiši upgrade/migration guide
+* [x] napiši supported deployment profiles
+* [x] napiši “when to choose this vs external IdP” guide
 
 ---
 

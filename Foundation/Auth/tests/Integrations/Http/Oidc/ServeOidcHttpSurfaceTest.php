@@ -122,6 +122,50 @@ final class ServeOidcHttpSurfaceTest extends TestCase
         $this->assertSame(expected: 'invalid_token', actual: $response->body['error']);
     }
 
+    public function testOidcHttpSurfaceAcceptsSignedJarParRequest() : void
+    {
+        [$auth] = $this->buildAuthWithOidc();
+        $surface = new ServeOidcHttpSurface(auth: $auth);
+
+        $auth->register(data: new RegistrationData(
+            email: 'oidc-http-jar@example.com',
+            username: 'oidc-http-jar',
+            password: 'secret'
+        ));
+        $auth->login(credentials: new Credentials(
+            identifier: 'oidc-http-jar@example.com',
+            password: 'secret'
+        ));
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
+            name: 'OIDC HTTP JAR Client',
+            type: OAuthClientType::CONFIDENTIAL,
+            redirectUris: ['https://rp.example.test/callback'],
+            allowedScopes: ['openid'],
+            requestObjectSignatureRequired: true
+        ));
+        $requestJwt = (new HmacTokenCodec(secret: $client->plainTextSecret ?? ''))->encode(claims: [
+            'client_id' => $client->client->clientId,
+            'redirect_uri' => 'https://rp.example.test/callback',
+            'scope' => 'openid',
+            'nonce' => 'nonce-http-jar',
+            'exp' => time() + 300,
+        ]);
+
+        $response = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path: '/oauth/par',
+            body: [
+                'client_id' => $client->client->clientId,
+                'redirect_uri' => 'https://rp.example.test/callback',
+                'request' => $requestJwt,
+                'client_secret' => $client->plainTextSecret,
+            ]
+        ));
+
+        $this->assertSame(expected: 201, actual: $response->statusCode);
+        $this->assertArrayHasKey(key: 'request_uri', array: $response->body);
+    }
+
     /**
      * @return array{Auth, OpenSslOidcProvider}
      */

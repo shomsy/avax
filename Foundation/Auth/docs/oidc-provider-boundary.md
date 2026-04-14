@@ -18,7 +18,8 @@ a full standards-certified OIDC product.
   provider policy
 - optional `sid` claim in ID tokens for logout correlation
 - local front-channel logout, back-channel logout token handling, PAR request
-  storage, JAR request-object claim validation, and JARM response signing
+  storage, request-object claim validation, shared-secret client-signed PAR
+  request verification for confidential clients, and JARM response signing
   through the kernel-owned OIDC flows
 - framework-neutral HTTP publication through
   `integrations/http/Oidc/ServeOidcHttpSurface.php`
@@ -26,7 +27,7 @@ a full standards-certified OIDC product.
 ## Still Outside This Package
 
 - OIDC-standard dynamic client registration endpoint
-- JAR client-signed request-object signature verification
+- asymmetric/public-client JAR request-object key distribution and signature verification
 - external conformance certification
 
 ## Adjacent Control-Plane Support

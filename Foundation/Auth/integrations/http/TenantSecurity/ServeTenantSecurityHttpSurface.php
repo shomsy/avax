@@ -152,6 +152,7 @@ final readonly class ServeTenantSecurityHttpSurface
                     requiredSenderConstraint  : $this->senderConstraintType(body: $input->body, field: 'requiredSenderConstraint'),
                     workloadIdentity          : $this->boolValue(body: $input->body, field: 'workloadIdentity'),
                     phishingResistantRequired : $this->boolValue(body: $input->body, field: 'phishingResistantRequired'),
+                    requestObjectSignatureRequired: $this->boolValue(body: $input->body, field: 'requestObjectSignatureRequired'),
                     frontChannelLogoutSupported: $this->boolValue(body: $input->body, field: 'frontChannelLogoutSupported'),
                     backChannelLogoutSupported : $this->boolValue(body: $input->body, field: 'backChannelLogoutSupported'),
                     approvalRequired          : $this->boolValue(body: $input->body, field: 'approvalRequired')
@@ -187,6 +188,7 @@ final readonly class ServeTenantSecurityHttpSurface
                     requiredSenderConstraint  : $this->senderConstraintType(body: $input->body, field: 'requiredSenderConstraint'),
                     workloadIdentity          : $this->boolValue(body: $input->body, field: 'workloadIdentity'),
                     phishingResistantRequired : $this->boolValue(body: $input->body, field: 'phishingResistantRequired'),
+                    requestObjectSignatureRequired: $this->boolValue(body: $input->body, field: 'requestObjectSignatureRequired'),
                     frontChannelLogoutSupported: $this->boolValue(body: $input->body, field: 'frontChannelLogoutSupported'),
                     backChannelLogoutSupported : $this->boolValue(body: $input->body, field: 'backChannelLogoutSupported'),
                     approvalRequired          : $this->boolValue(body: $input->body, field: 'approvalRequired')
@@ -449,6 +451,7 @@ final readonly class ServeTenantSecurityHttpSurface
             'requiredSenderConstraint' => $client->requiredSenderConstraint?->value,
             'workloadIdentity' => $client->workloadIdentity,
             'phishingResistantRequired' => $client->phishingResistantRequired,
+            'requestObjectSignatureRequired' => $client->requestObjectSignatureRequired,
             'frontChannelLogoutSupported' => $client->frontChannelLogoutSupported,
             'backChannelLogoutSupported' => $client->backChannelLogoutSupported,
             'approvalStatus' => $client->approvalStatus->value,

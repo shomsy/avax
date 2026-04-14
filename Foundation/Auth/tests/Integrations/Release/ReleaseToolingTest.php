@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Integrations\Release;
 
 use Avax\Auth\Integrations\Release\CreateReleaseProvenance;
+use Avax\Auth\Integrations\Release\CheckMigrationPath;
+use Avax\Auth\Integrations\Release\CheckSystemShape;
+use Avax\Auth\Integrations\Release\CheckSourceTruth;
+use Avax\Auth\Integrations\Release\GenerateEvidenceBundle;
 use Avax\Auth\Integrations\Release\GenerateRollbackEvidence;
 use Avax\Auth\Integrations\Release\GenerateReleaseSbom;
 use Avax\Auth\Integrations\Release\ReviewComposerDependencies;
 use Avax\Auth\Integrations\Release\RunKeyCompromiseDrill;
+use Avax\Auth\Integrations\Release\RunConformanceHarness;
 use Avax\Auth\Integrations\Release\RunKeyRolloverDrill;
 use Avax\Auth\Integrations\Release\ScanCommittedSecrets;
 use Avax\Auth\Integrations\Release\SignReleaseArtifact;
@@ -182,6 +187,140 @@ final class ReleaseToolingTest extends TestCase
         $this->assertSame(expected: '2026-05', actual: $rolloverResult['issued_kid']);
         $this->assertTrue(condition: $rolloverResult['rollover_verified']);
         $this->assertTrue(condition: $compromiseResult['revoked_old_kid']);
+    }
+
+    public function testConformanceHarnessReportsPassedAndFailedChecks() : void
+    {
+        $root = dirname(__DIR__, 3);
+        $report = (new RunConformanceHarness())->execute(
+            repositoryRoot: $root,
+            checks: [
+                [
+                    'name' => 'pass',
+                    'description' => 'Passing command',
+                    'command' => [PHP_BINARY, '-r', 'exit(0);'],
+                ],
+                [
+                    'name' => 'fail',
+                    'description' => 'Failing command',
+                    'command' => [PHP_BINARY, '-r', 'exit(1);'],
+                ],
+            ]
+        );
+
+        $this->assertSame(expected: 'FAILED', actual: $report['overall']);
+        $this->assertSame(expected: 1, actual: $report['summary']['passed']);
+        $this->assertSame(expected: 1, actual: $report['summary']['failed']);
+    }
+
+    public function testEvidenceBundleTracksArtifactPresence() : void
+    {
+        $root = sys_get_temp_dir() . '/auth-evidence-' . bin2hex(random_bytes(4));
+        mkdir($root);
+        mkdir($root . '/build', 0777, true);
+        file_put_contents($root . '/composer.json', json_encode(['name' => 'avax/auth'], JSON_THROW_ON_ERROR));
+        file_put_contents($root . '/build/conformance-report.json', '{"ok":true}');
+
+        $bundle = (new GenerateEvidenceBundle())->execute(
+            repositoryRoot: $root,
+            artifactPaths: [
+                'conformance' => 'build/conformance-report.json',
+                'sbom' => 'build/sbom.json',
+            ]
+        );
+
+        $this->assertSame(expected: 'avax/auth', actual: $bundle['package']);
+        $this->assertTrue(condition: $bundle['artifacts']['conformance']['exists']);
+        $this->assertFalse(condition: $bundle['artifacts']['sbom']['exists']);
+        $this->assertSame(expected: ['sbom'], actual: $bundle['missing_artifacts']);
+    }
+
+    public function testMigrationPathCheckDetectsLegacyReferencesAndMissingGuide() : void
+    {
+        $root = sys_get_temp_dir() . '/auth-migration-' . bin2hex(random_bytes(4));
+        mkdir($root);
+        mkdir($root . '/System/Configuration', 0777, true);
+        mkdir($root . '/tests/System', 0777, true);
+        file_put_contents($root . '/composer.json', json_encode(['name' => 'avax/auth'], JSON_THROW_ON_ERROR));
+        file_put_contents($root . '/System/Configuration/Legacy.php', "<?php\nuse Avax\\Auth\\System\\Configuration\\AuthServiceProvider;\n");
+
+        $result = (new CheckMigrationPath())->execute(repositoryRoot: $root);
+
+        $this->assertFalse(condition: $result['clean']);
+        $this->assertFalse(condition: $result['migration_documented']);
+        $this->assertFalse(condition: $result['automated_upgrade_test']);
+        $this->assertSame(expected: ['System/Configuration/Legacy.php'], actual: $result['legacy_namespace_references']);
+    }
+
+    public function testSourceTruthCheckRejectsContradictoryState() : void
+    {
+        $root = sys_get_temp_dir() . '/auth-source-truth-' . bin2hex(random_bytes(4));
+        mkdir($root);
+        mkdir($root . '/docs', 0777, true);
+        mkdir($root . '/.agents/management/evidence', 0777, true);
+        file_put_contents($root . '/docs/STATUS.md', "# Status\n");
+        file_put_contents($root . '/docs/product-boundary.md', "# Boundary\n");
+        file_put_contents($root . '/docs/capability-matrix.md', "| device trust assessment | ⚠️ partial | boundary |\n");
+        file_put_contents($root . '/docs/current-state.md', "This document is the canonical current-state summary for the Auth package.\n");
+        file_put_contents($root . '/Auth.txt', "legacy mixed status\n");
+        file_put_contents(
+            $root . '/.agents/management/evidence/RISK_REGISTER.md',
+            "still does not ship OIDC provider behavior, client-credentials, SCIM runtime\n"
+        );
+
+        $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
+
+        $this->assertFalse(condition: $result['approved']);
+        $this->assertNotEmpty(actual: $result['issues']);
+    }
+
+    public function testSourceTruthCheckRejectsMissingCapabilityEvidencePaths() : void
+    {
+        $root = sys_get_temp_dir() . '/auth-source-truth-evidence-' . bin2hex(random_bytes(4));
+        mkdir($root);
+        mkdir($root . '/docs', 0777, true);
+        mkdir($root . '/.agents/management/evidence', 0777, true);
+        file_put_contents($root . '/docs/STATUS.md', "This document is authoritative.\n");
+        file_put_contents($root . '/docs/product-boundary.md', "# Boundary\n");
+        file_put_contents($root . '/docs/current-state.md', "# Current State\n");
+        file_put_contents($root . '/docs/upgrade-migration-guide.md', "# Migration\n");
+        file_put_contents(
+            $root . '/docs/capability-matrix.md',
+            "| Capability | Status | Ownership | Evidence |\n"
+            . "|---|---|---|---|\n"
+            . "| demo capability | ✅ supported | kernel | `tests/Flows/MissingTest.php`, `System/Flow/Missing/` |\n"
+        );
+        file_put_contents($root . '/Auth.txt', "non-canonical merged artifact\n");
+        file_put_contents($root . '/.agents/management/evidence/RISK_REGISTER.md', "# Risks\n");
+
+        $result = (new CheckSourceTruth())->execute(repositoryRoot: $root);
+
+        $this->assertFalse(condition: $result['approved']);
+        $this->assertStringContainsString(
+            needle: "Capability matrix evidence path missing for 'demo capability': tests/Flows/MissingTest.php",
+            haystack: implode("\n", $result['issues'])
+        );
+    }
+
+    public function testSystemShapeCheckRejectsUnexpectedAndForbiddenDirectories() : void
+    {
+        $root = sys_get_temp_dir() . '/auth-shape-' . bin2hex(random_bytes(4));
+        mkdir($root);
+        mkdir($root . '/System/Flow', 0777, true);
+        mkdir($root . '/System/Capability', 0777, true);
+        mkdir($root . '/System/Configuration', 0777, true);
+        mkdir($root . '/System/Foundation', 0777, true);
+        mkdir($root . '/System/Actions', 0777, true);
+        mkdir($root . '/System/Capability/Helpers', 0777, true);
+        file_put_contents($root . '/System/Auth.php', "<?php\n");
+        file_put_contents($root . '/System/AuthInterface.php', "<?php\n");
+
+        $result = (new CheckSystemShape())->execute(repositoryRoot: $root);
+
+        $this->assertFalse(condition: $result['approved']);
+        $this->assertSame(expected: ['System/Actions'], actual: $result['unexpected_top_level']);
+        $this->assertContains(needle: 'System/Actions', haystack: $result['forbidden_directories']);
+        $this->assertContains(needle: 'System/Capability/Helpers', haystack: $result['forbidden_directories']);
     }
 
     /**

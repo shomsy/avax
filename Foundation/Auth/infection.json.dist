@@ -5,7 +5,14 @@
       "System/Flow/Mfa",
       "System/Flow/ChangePassword",
       "System/Capability/Identity",
-      "System/Flow/Token"
+      "System/Flow/Token",
+      "System/Flow/Session",
+      "System/Flow/Logout",
+      "System/Flow/Recover",
+      "System/Capability/PasswordHashing",
+      "System/Capability/OAuth/SenderConstraint",
+      "System/Flow/OAuth/ExchangeRefreshToken",
+      "System/Flow/Mfa/Recover"
     ]
   },
   "logs": {
@@ -16,5 +23,6 @@
   },
   "mutators": {
     "@default": true
-  }
+  },
+  "timeout": 10
 }

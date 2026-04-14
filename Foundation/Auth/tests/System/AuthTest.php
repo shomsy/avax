@@ -195,4 +195,22 @@ final class AuthTest extends TestCase
         $this->assertCount(expectedCount: 1, haystack: $profiles);
         $this->assertSame(expected: ['search-api'], actual: $profiles[0]->allowedAudiences);
     }
+
+    public function testAuthFacadeExposesExplainabilitySurface() : void
+    {
+        $auth = Auth::configuration()
+            ->forUser(userSource: new InMemoryUserSource())
+            ->withIdentity(identity: new Identity(
+                sessionIdentity: new SessionIdentity(store: new ArraySessionStore())
+            ))
+            ->ready();
+
+        $explanation = $auth->explainSenderConstraintFailure(
+            reason: 'binding_mismatch',
+            requiredConstraint: 'mtls'
+        );
+
+        $this->assertSame(expected: 'sender_constraint_failed', actual: $explanation->code);
+        $this->assertSame(expected: 'mtls', actual: $explanation->context['required_constraint']);
+    }
 }

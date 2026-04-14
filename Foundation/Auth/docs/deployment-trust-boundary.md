@@ -87,7 +87,7 @@ This document defines the trust boundaries for deploying Auth with sender-constr
 
 ---
 
-## Smoke Tests
+## Executable Smoke Tests
 
 ### Test 1: Wrong Forwarded Headers
 
@@ -141,6 +141,97 @@ $dpopKey = extractKeyFromDPoP($request->headers->get('DPoP'));
 - Client cert validation disabled
 - Proxy not in trusted list
 - DPoP/mTLS disabled in production mode
+
+---
+
+## Deployment Trust Smoke Tests
+
+These tests verify the deployment trust boundary in executable package-owned
+checks.
+
+### Test Scenarios
+
+#### 1. Reverse Proxy Header Trust
+
+```php
+// Test: Wrong forwarded headers are rejected
+$headers = [
+    'X-Forwarded-For' => '10.0.0.1',  // Should be rejected from untrusted proxy
+];
+$verifier = new VerifyTrustedProxyHeaders(trustedProxies: ['proxy.trusted.com']);
+$result = $verifier->verify($headers);
+// Expected: Reject with TRUSTED_PROXY_INVALID
+```
+
+#### 2. mTLS Chain Propagation
+
+```php
+// Test: Client certificate propagation through proxy
+$headers = [
+    'X-Client-Cert' => $certFromUntrustedSource,
+];
+$verifier = new VerifyMtlsChain(trustedCaCertificates: $trustedCa);
+$result = $verifier->verify($headers);
+// Expected: Reject with MTLS_CHAIN_INVALID
+```
+
+#### 3. DPoP Proof Mismatch
+
+```php
+// Test: DPoP proof with wrong method/URI
+$proof = CreateDpoProof(
+    privateKey: $clientKey,
+    method: 'GET',           // Actual method is POST
+    uri: '/api/token',       // Actual URI differs
+);
+$verifier = new VerifyDpopProof();
+$result = $verifier->verify($proof, expectedMethod: 'POST', expectedUri: '/api/token');
+// Expected: Reject with DPOP_PROOF_INVALID
+```
+
+#### 4. Mixed Proxy + Sender-Constraint
+
+```php
+// Test: Proxy forwards headers AND client uses DPoP
+$headers = [
+    'X-Forwarded-For' => '10.0.0.1',
+    'X-Client-Cert' => $cert,
+    'DPoP' => $proof,
+];
+$verifier = new VerifySenderConstraint(
+    trustedProxies: ['proxy.trusted.com'],
+    requiredConstraint: OAuthSenderConstraintType::DPOP
+);
+$result = $verifier->verify($headers, envelope: $tokenEnvelope);
+// Expected: Accept - both proxy headers and DPoP are valid
+```
+
+### Executable Evidence
+
+- `integrations/http/VerifyTrustedProxyHeaders.php`
+- `integrations/http/DetectUnsafeDeploymentMode.php`
+- `integrations/http/VerifyOAuthSenderConstraint.php`
+- `tests/Integrations/Http/DeploymentTrustBoundaryTest.php`
+- `tests/Integrations/Http/VerifyOAuthSenderConstraintTest.php`
+
+Run:
+
+```bash
+php composer.phar test -- \
+  tests/Integrations/Http/DeploymentTrustBoundaryTest.php \
+  tests/Integrations/Http/VerifyOAuthSenderConstraintTest.php
+```
+
+### Manual Operator Checklist
+
+Before production deployment, verify:
+
+- [ ] TLS certificate is valid and not expired
+- [ ] Client certificates are valid and not expired
+- [ ] Certificate chain integrity verified
+- [ ] Trusted proxy list is configured
+- [ ] DPoP/mTLS policy matches deployment profile
+- [ ] Sender-constraint failures generate audit events
 
 ---
 

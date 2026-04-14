@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Configuration;
 
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capability\Access\Access;
+use Avax\Auth\System\Capability\Explainability\AuthIssueExplainer;
 use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
 use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
@@ -237,6 +238,19 @@ final class AuthBuilder
     private string                                    $passkeyRpId            = 'localhost';
     private string                                    $passkeyRpName          = 'Avax Auth';
     private bool                                      $adminPhishingResistantRequired = false;
+    private bool                                      $enterpriseMode           = false;
+
+    /**
+     * Enable enterprise mode.
+     * In enterprise mode, session registry becomes a required first-class runtime dependency.
+     * The builder will fail-fast at build time if no durable session registry is configured.
+     */
+    public function enterprise() : self
+    {
+        $this->enterpriseMode = true;
+
+        return $this;
+    }
 
     /**
      * Define the data source for users.
@@ -561,6 +575,13 @@ final class AuthBuilder
             throw new RuntimeException(message: 'Identity is required (withIdentity).');
         }
 
+        if ($this->enterpriseMode && $this->sessionRegistry === null) {
+            throw new RuntimeException(
+                message: 'Enterprise mode requires a durable session registry. ' .
+                        'Use withSessionRegistry() to provide a SQL or Redis session registry.'
+            );
+        }
+
         $identity                 = $this->identity;
         $passwordHasher           = $this->passwordHasher ?? new PasswordHasher();
         $auditLog                 = $this->auditLog ?? new NullAuditLog();
@@ -703,11 +724,12 @@ final class AuthBuilder
             ? new PushAuthorizationRequest(
                 requestObjectStore: $oidcRequestObjectStore,
                 auditLog          : $auditLog,
-                clock             : $clock
+                clock             : $clock,
+                clientRegistry    : $oauthClientRegistry
             )
             : null;
         $validateRequestObject = $oidcRequestObjectStore !== null
-            ? new ValidateRequestObject(requestObjectStore: $oidcRequestObjectStore)
+            ? new ValidateRequestObject(requestObjectStore: $oidcRequestObjectStore, clientRegistry: $oauthClientRegistry)
             : null;
         $oidcLogout = $this->oidcProvider !== null
             ? new OidcLogout(
@@ -947,6 +969,7 @@ final class AuthBuilder
                                     ),
             currentAuthentication : $currentAuthentication,
             access                : $access,
+            authIssueExplainer    : new AuthIssueExplainer(),
             changePassword        : new ChangePassword(
                                         userSource           : $this->userSource,
                                         passwordHasher       : $passwordHasher,

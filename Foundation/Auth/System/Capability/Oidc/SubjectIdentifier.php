@@ -5,15 +5,6 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\Oidc;
 
 /**
- * Subject identifier strategy for OIDC.
- */
-enum SubjectIdentifierStrategy: string
-{
-    case PUBLIC = 'public';
-    case PAIRWISE = 'pairwise';
-}
-
-/**
  * Manages OIDC subject identifiers (sub claim).
  *
  * Supports both public and pairwise subject identifier generation.
@@ -29,8 +20,8 @@ final readonly class SubjectIdentifier
      */
     public function generate(
         string $localSubject,
-        string $sectorIdentifier = null,
-        string $pairwiseSalt = null
+        string|null $sectorIdentifier = null,
+        string|null $pairwiseSalt = null
     ) : string {
         return match ($this->strategy) {
             SubjectIdentifierStrategy::PUBLIC => $this->publicIdentifier($localSubject),

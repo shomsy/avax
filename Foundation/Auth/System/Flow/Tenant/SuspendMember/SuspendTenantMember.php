@@ -4,92 +4,59 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Tenant\SuspendMember;
 
-use Avax\Auth\System\Capability\TenantMembership\Tenant;
-use Avax\Auth\System\Capability\TenantMembership\Membership;
-use Avax\Auth\System\Capability\TenantMembership\TenantMembershipStoreInterface;
-use Avax\Auth\System\Capability\User\UserStoreInterface;
+use Avax\Auth\System\Capability\Tenant\TenantMember;
+use Avax\Auth\System\Capability\Tenant\TenantMemberRole;
+use Avax\Auth\System\Capability\Tenant\TenantMemberState;
+use Avax\Auth\System\Capability\Tenant\TenantStoreInterface;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Tenant\TenantFailed;
 use Avax\Auth\System\Foundation\Clock;
 
-/**
- * Orchestrator for suspending a member in a tenant.
- *
- * Banal: The Tenant Suspend Member file.
- */
 final readonly class SuspendTenantMember
 {
     public function __construct(
-        private TenantMembershipStoreInterface $tenantMembershipStore,
-        private UserStoreInterface $userStore,
+        private TenantStoreInterface $tenantStore,
         private AuditLogInterface $auditLog,
         private Clock $clock
     ) {}
 
-    /**
-     * Suspends a member in a tenant.
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function execute(string $userId, string $tenantId) : Membership
+    public function execute(SuspendTenantMemberData $data) : TenantMember
     {
-        // Validate that the tenant exists and is active
-        $tenant = $this->tenantMembershipStore->findTenant($tenantId);
+        $tenant = $this->tenantStore->findTenantBySlug(slug: $data->tenantSlug);
+
         if ($tenant === null) {
-            throw new \InvalidArgumentException("Tenant not found: {$tenantId}");
-        }
-        
-        if (!$tenant->isActive()) {
-            throw new \InvalidArgumentException("Tenant is not active: {$tenantId}");
+            throw TenantFailed::tenantNotFound(tenantSlug: $data->tenantSlug);
         }
 
-        // Validate that the user exists
-        $user = $this->userStore->findById($userId);
-        if ($user === null) {
-            throw new \InvalidArgumentException("User not found: {$userId}");
+        $member = $this->tenantStore->findMember(tenantId: $tenant->tenantId, userId: $data->userId);
+
+        if ($member === null) {
+            throw TenantFailed::memberNotFound();
         }
 
-        // Find the membership
-        $membership = $this->tenantMembershipStore->findMembershipByUserAndTenant(
-            $userId,
-            $tenantId
+        if ($member->role === TenantMemberRole::OWNER) {
+            throw TenantFailed::ownerCannotBeRemoved();
+        }
+
+        $suspended = new TenantMember(
+            tenantId : $member->tenantId,
+            userId   : $member->userId,
+            role     : $member->role,
+            state    : TenantMemberState::SUSPENDED,
+            joinedAt : $member->joinedAt
         );
-        
-        if ($membership === null) {
-            throw new \InvalidArgumentException("Membership not found for user {$userId} in tenant {$tenantId}");
-        }
-
-        if (!$membership->isActive()) {
-            throw new \InvalidArgumentException("Membership is already inactive for user {$userId} in tenant {$tenantId}");
-        }
-
-        // Suspend the membership (change state but keep record)
-        $suspendedMembership = new Membership(
-            membershipId: $membership->getMembershipId(),
-            userId: $membership->getUserId(),
-            tenantId: $membership->getTenantId(),
-            roleId: $membership->getRoleId(),
-            joinedAt: $membership->getJoinedAt(),
-            leftAt: $membership->getLeftAt(),
-            isActive: false // This represents suspended state in our simplified model
-        );
-
-        // Save the suspended membership
-        $this->tenantMembershipStore->saveMembership($suspendedMembership);
-
-        // Audit the suspension
-        $this->auditLog->record(new AuditEvent(
-            name: 'auth.tenant.member.suspended',
+        $this->tenantStore->saveMember(member: $suspended);
+        $this->auditLog->record(event: new AuditEvent(
+            name      : 'auth.tenant.member.suspended',
             occurredAt: $this->clock->now(),
-            context: [
-                'tenant_id' => $tenantId,
-                'tenant_name' => $tenant->getName(),
-                'user_id' => $userId,
-                'membership_id' => $membership->getMembershipId(),
-                'role_id' => $membership->getRoleId(),
+            context   : [
+                'tenant_id' => $tenant->tenantId,
+                'tenant_slug' => $tenant->slug,
+                'user_id' => $member->userId,
             ]
         ));
 
-        return $suspendedMembership;
+        return $suspended;
     }
 }

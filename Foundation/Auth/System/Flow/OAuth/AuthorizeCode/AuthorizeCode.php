@@ -60,6 +60,11 @@ final readonly class AuthorizeCode
             throw OAuthAuthorizationFailed::invalidClient();
         }
 
+        if (! $client->isActive()) {
+            $this->recordFailure(data: $data, reason: 'client_inactive');
+            throw OAuthAuthorizationFailed::invalidClient();
+        }
+
         if (! $client->allowsGrantType(grantType: OAuthGrantType::AUTHORIZATION_CODE)) {
             $this->recordFailure(data: $data, reason: 'grant_type_not_allowed');
             throw OAuthAuthorizationFailed::invalidClient();

@@ -9,12 +9,29 @@ use Avax\Auth\Integrations\Http\JsonHttpResponse;
 use Avax\Auth\System\AuthInterface;
 use Avax\Auth\System\Capability\Federation\FederationConnection;
 use Avax\Auth\System\Capability\Federation\FederationProvider;
+use Avax\Auth\System\Capability\OAuth\OAuthClient;
+use Avax\Auth\System\Capability\OAuth\OAuthClientType;
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
+use Avax\Auth\System\Capability\OAuth\OAuthTokenEndpointAuthMethod;
+use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\Scim\ScimDirectory;
+use Avax\Auth\System\Capability\Tenant\Tenant;
+use Avax\Auth\System\Capability\Tenant\TenantInvite;
+use Avax\Auth\System\Capability\Tenant\TenantMember;
+use Avax\Auth\System\Capability\Tenant\TenantMemberRole;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequest;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityConfiguration;
 use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
 use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomainData;
+use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
+use Avax\Auth\System\Flow\Tenant\AcceptInvite\AcceptTenantInviteData;
+use Avax\Auth\System\Flow\Tenant\CreateTenant\CreateTenantData;
+use Avax\Auth\System\Flow\Tenant\InviteMember\InviteTenantMemberData;
+use Avax\Auth\System\Flow\Tenant\RemoveMember\RemoveTenantMemberData;
+use Avax\Auth\System\Flow\Tenant\SuspendMember\SuspendTenantMemberData;
+use Avax\Auth\System\Flow\Tenant\TransferOwnership\TransferTenantOwnershipData;
 use Avax\Auth\System\Flow\TenantSecurity\BeginChange\BeginTenantSecurityChangeData;
 use InvalidArgumentException;
 use SensitiveParameter;
@@ -36,6 +53,145 @@ final readonly class ServeTenantSecurityHttpSurface
         $tenantSlug = $this->tenantSlug(input: $input);
 
         try {
+            if ($method === 'GET' && $path === '/tenants') {
+                return $this->response(statusCode: 200, body: [
+                    'tenants' => array_map($this->tenantResource(...), $this->auth->readTenants()),
+                ]);
+            }
+
+            if ($method === 'POST' && $path === '/tenants') {
+                $tenant = $this->auth->createTenant(data: new CreateTenantData(
+                    slug       : $this->requiredString(body: $input->body, field: 'slug'),
+                    name       : $this->requiredString(body: $input->body, field: 'name'),
+                    ownerUserId: $this->requiredInt(body: $input->body, field: 'ownerUserId')
+                ));
+
+                return $this->response(statusCode: 201, body: ['tenant' => $this->tenantResource(tenant: $tenant)]);
+            }
+
+            if ($method === 'GET' && $path === '/tenants/' . $tenantSlug . '/members') {
+                return $this->response(statusCode: 200, body: [
+                    'tenant' => $tenantSlug,
+                    'members' => array_map($this->memberResource(...), $this->auth->readTenantMembers(tenantSlug: $tenantSlug)),
+                ]);
+            }
+
+            if ($method === 'POST' && $path === '/tenants/' . $tenantSlug . '/invites') {
+                $invite = $this->auth->inviteTenantMember(data: new InviteTenantMemberData(
+                    tenantSlug: $tenantSlug,
+                    email     : $this->requiredString(body: $input->body, field: 'email'),
+                    role      : TenantMemberRole::from(value: strtolower($this->requiredString(body: $input->body, field: 'role'))),
+                    invitedBy : $this->requiredString(body: $input->body, field: 'invitedBy')
+                ));
+
+                return $this->response(statusCode: 201, body: [
+                    'invite' => $this->inviteResource(invite: $invite->invite),
+                    'plainTextToken' => $invite->plainTextToken,
+                ]);
+            }
+
+            if ($method === 'POST' && $path === '/tenants/' . $tenantSlug . '/invites/accept') {
+                $member = $this->auth->acceptTenantInvite(data: new AcceptTenantInviteData(
+                    inviteToken: $this->requiredString(body: $input->body, field: 'inviteToken'),
+                    userId     : $this->requiredInt(body: $input->body, field: 'userId')
+                ));
+
+                return $this->response(statusCode: 200, body: ['member' => $this->memberResource(member: $member)]);
+            }
+
+            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/members/([0-9]+)/suspend$~', $path, $matches) === 1) {
+                $member = $this->auth->suspendTenantMember(data: new SuspendTenantMemberData(
+                    tenantSlug: $tenantSlug,
+                    userId    : (int) $matches[1]
+                ));
+
+                return $this->response(statusCode: 200, body: ['member' => $this->memberResource(member: $member)]);
+            }
+
+            if ($method === 'DELETE' && preg_match('~^/tenants/[^/]+/members/([0-9]+)$~', $path, $matches) === 1) {
+                $this->auth->removeTenantMember(data: new RemoveTenantMemberData(
+                    tenantSlug: $tenantSlug,
+                    userId    : (int) $matches[1]
+                ));
+
+                return $this->response(statusCode: 204, body: []);
+            }
+
+            if ($method === 'POST' && $path === '/tenants/' . $tenantSlug . '/transfer-owner') {
+                $tenant = $this->auth->transferTenantOwnership(data: new TransferTenantOwnershipData(
+                    tenantSlug     : $tenantSlug,
+                    newOwnerUserId : $this->requiredInt(body: $input->body, field: 'newOwnerUserId')
+                ));
+
+                return $this->response(statusCode: 200, body: ['tenant' => $this->tenantResource(tenant: $tenant)]);
+            }
+
+            if ($method === 'GET' && $path === '/tenants/' . $tenantSlug . '/oauth-clients') {
+                return $this->response(statusCode: 200, body: [
+                    'clients' => array_map(
+                        $this->oauthClientResource(...),
+                        $this->tenantOAuthClients(tenantSlug: $tenantSlug)
+                    ),
+                ]);
+            }
+
+            if ($method === 'POST' && $path === '/tenants/' . $tenantSlug . '/oauth-clients') {
+                $client = $this->auth->registerOAuthClient(data: new RegisterClientData(
+                    name                      : $this->requiredString(body: $input->body, field: 'name'),
+                    type                      : OAuthClientType::from(value: strtolower($this->requiredString(body: $input->body, field: 'type'))),
+                    redirectUris              : $this->stringList(values: $input->body['redirectUris'] ?? []),
+                    tenantSlug                : $tenantSlug,
+                    allowedScopes             : $this->stringList(values: $input->body['allowedScopes'] ?? []),
+                    allowedAudiences          : $this->stringList(values: $input->body['allowedAudiences'] ?? []),
+                    allowedGrantTypes         : $this->grantTypes(values: $input->body['allowedGrantTypes'] ?? []),
+                    audienceScopeBoundaries   : $this->audienceScopeBoundaries(body: $input->body),
+                    tokenEndpointAuthMethod   : $this->tokenEndpointAuthMethod(body: $input->body, field: 'tokenEndpointAuthMethod'),
+                    requiredSenderConstraint  : $this->senderConstraintType(body: $input->body, field: 'requiredSenderConstraint'),
+                    workloadIdentity          : $this->boolValue(body: $input->body, field: 'workloadIdentity'),
+                    phishingResistantRequired : $this->boolValue(body: $input->body, field: 'phishingResistantRequired')
+                ));
+
+                return $this->response(statusCode: 201, body: [
+                    'client' => $this->oauthClientResource(client: $client->client),
+                    'plainTextSecret' => $client->plainTextSecret,
+                ]);
+            }
+
+            if ($method === 'PUT' && preg_match('~^/tenants/[^/]+/oauth-clients/([^/]+)$~', $path, $matches) === 1) {
+                $client = $this->auth->updateOAuthClient(data: new UpdateClientData(
+                    clientId                  : urldecode($matches[1]),
+                    name                      : $this->requiredString(body: $input->body, field: 'name'),
+                    type                      : OAuthClientType::from(value: strtolower($this->requiredString(body: $input->body, field: 'type'))),
+                    redirectUris              : $this->stringList(values: $input->body['redirectUris'] ?? []),
+                    tenantSlug                : $tenantSlug,
+                    allowedScopes             : $this->stringList(values: $input->body['allowedScopes'] ?? []),
+                    allowedAudiences          : $this->stringList(values: $input->body['allowedAudiences'] ?? []),
+                    allowedGrantTypes         : $this->grantTypes(values: $input->body['allowedGrantTypes'] ?? []),
+                    audienceScopeBoundaries   : $this->audienceScopeBoundaries(body: $input->body),
+                    tokenEndpointAuthMethod   : $this->tokenEndpointAuthMethod(body: $input->body, field: 'tokenEndpointAuthMethod'),
+                    requiredSenderConstraint  : $this->senderConstraintType(body: $input->body, field: 'requiredSenderConstraint'),
+                    workloadIdentity          : $this->boolValue(body: $input->body, field: 'workloadIdentity'),
+                    phishingResistantRequired : $this->boolValue(body: $input->body, field: 'phishingResistantRequired')
+                ));
+
+                return $this->response(statusCode: 200, body: ['client' => $this->oauthClientResource(client: $client)]);
+            }
+
+            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/oauth-clients/([^/]+)/rotate-secret$~', $path, $matches) === 1) {
+                $client = $this->auth->rotateOAuthClientSecret(clientId: urldecode($matches[1]));
+
+                return $this->response(statusCode: 200, body: [
+                    'client' => $this->oauthClientResource(client: $client->client),
+                    'plainTextSecret' => $client->plainTextSecret,
+                ]);
+            }
+
+            if ($method === 'DELETE' && preg_match('~^/tenants/[^/]+/oauth-clients/([^/]+)$~', $path, $matches) === 1) {
+                $client = $this->auth->disableOAuthClient(clientId: urldecode($matches[1]));
+
+                return $this->response(statusCode: 200, body: ['client' => $this->oauthClientResource(client: $client)]);
+            }
+
             if ($method === 'GET' && $path === '/tenants/' . $tenantSlug . '/security') {
                 return $this->summary(tenantSlug: $tenantSlug);
             }
@@ -194,6 +350,73 @@ final readonly class ServeTenantSecurityHttpSurface
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    private function tenantResource(Tenant $tenant) : array
+    {
+        return [
+            'tenantId' => $tenant->tenantId,
+            'slug' => $tenant->slug,
+            'name' => $tenant->name,
+            'ownerUserId' => $tenant->ownerUserId,
+            'createdAt' => $tenant->createdAt->format(format: DATE_ATOM),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function memberResource(TenantMember $member) : array
+    {
+        return [
+            'tenantId' => $member->tenantId,
+            'userId' => $member->userId,
+            'role' => $member->role->value,
+            'state' => $member->state->value,
+            'joinedAt' => $member->joinedAt->format(format: DATE_ATOM),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function inviteResource(TenantInvite $invite) : array
+    {
+        return [
+            'inviteId' => $invite->inviteId,
+            'tenantId' => $invite->tenantId,
+            'email' => $invite->email,
+            'role' => $invite->role->value,
+            'invitedBy' => $invite->invitedBy,
+            'createdAt' => $invite->createdAt->format(format: DATE_ATOM),
+            'acceptedAt' => $invite->acceptedAt?->format(format: DATE_ATOM),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function oauthClientResource(OAuthClient $client) : array
+    {
+        return [
+            'clientId' => $client->clientId,
+            'tenantSlug' => $client->tenantSlug,
+            'name' => $client->name,
+            'type' => $client->type->value,
+            'redirectUris' => $client->redirectUris,
+            'allowedScopes' => $client->allowedScopes,
+            'allowedAudiences' => $client->allowedAudiences,
+            'allowedGrantTypes' => array_map(static fn (OAuthGrantType $grantType) : string => $grantType->value, $client->allowedGrantTypes),
+            'audienceScopeBoundaries' => $client->audienceScopeBoundaries,
+            'tokenEndpointAuthMethod' => $client->tokenEndpointAuthMethod->value,
+            'requiredSenderConstraint' => $client->requiredSenderConstraint?->value,
+            'workloadIdentity' => $client->workloadIdentity,
+            'phishingResistantRequired' => $client->phishingResistantRequired,
+            'active' => $client->active,
+        ];
+    }
+
+    /**
      * @return list<FederationConnection>
      */
     private function tenantConnections(string $tenantSlug) : array
@@ -201,6 +424,17 @@ final readonly class ServeTenantSecurityHttpSurface
         return array_values(array_filter(
             $this->auth->readFederationConnections(),
             static fn (FederationConnection $connection) : bool => $connection->tenantSlug === $tenantSlug
+        ));
+    }
+
+    /**
+     * @return list<OAuthClient>
+     */
+    private function tenantOAuthClients(string $tenantSlug) : array
+    {
+        return array_values(array_filter(
+            $this->auth->readOAuthClients(),
+            static fn (OAuthClient $client) : bool => $client->tenantSlug === $tenantSlug
         ));
     }
 
@@ -327,6 +561,31 @@ final readonly class ServeTenantSecurityHttpSurface
     }
 
     /**
+     * @param array<string, mixed> $body
+     * @return array<string, list<string>>
+     */
+    private function audienceScopeBoundaries(array $body) : array
+    {
+        $boundaries = $body['audienceScopeBoundaries'] ?? [];
+
+        if (! is_array($boundaries)) {
+            return [];
+        }
+
+        $resolved = [];
+
+        foreach ($boundaries as $audience => $scopes) {
+            if (! is_string($audience) || trim($audience) === '' || ! is_array($scopes)) {
+                continue;
+            }
+
+            $resolved[trim($audience)] = $this->stringList(values: $scopes);
+        }
+
+        return $resolved;
+    }
+
+    /**
      * @param array<int|string, mixed> $values
      * @return list<string>
      */
@@ -366,6 +625,20 @@ final readonly class ServeTenantSecurityHttpSurface
     /**
      * @param array<string, mixed> $body
      */
+    private function requiredInt(array $body, string $field) : int
+    {
+        $value = $this->intValue(body: $body, field: $field);
+
+        if ($value === null) {
+            throw new InvalidArgumentException(message: "{$field} must be an integer.");
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param array<string, mixed> $body
+     */
     private function nullableString(array $body, string $field) : string|null
     {
         $value = $body[$field] ?? null;
@@ -389,6 +662,49 @@ final readonly class ServeTenantSecurityHttpSurface
         }
 
         return false;
+    }
+
+    /**
+     * @param array<int|string, mixed> $values
+     * @return list<OAuthGrantType>
+     */
+    private function grantTypes(array $values) : array
+    {
+        $resolved = [];
+
+        foreach ($this->stringList(values: $values) as $value) {
+            $grantType = OAuthGrantType::tryFrom(value: $value);
+
+            if ($grantType !== null && ! in_array($grantType, $resolved, true)) {
+                $resolved[] = $grantType;
+            }
+        }
+
+        return $resolved;
+    }
+
+    /**
+     * @param array<string, mixed> $body
+     */
+    private function senderConstraintType(array $body, string $field) : OAuthSenderConstraintType|null
+    {
+        $value = $this->nullableString(body: $body, field: $field);
+
+        return $value !== null && $value !== ''
+            ? OAuthSenderConstraintType::from(value: strtolower($value))
+            : null;
+    }
+
+    /**
+     * @param array<string, mixed> $body
+     */
+    private function tokenEndpointAuthMethod(array $body, string $field) : OAuthTokenEndpointAuthMethod|null
+    {
+        $value = $this->nullableString(body: $body, field: $field);
+
+        return $value !== null && $value !== ''
+            ? OAuthTokenEndpointAuthMethod::from(value: strtolower($value))
+            : null;
     }
 
     /**
@@ -417,11 +733,11 @@ final readonly class ServeTenantSecurityHttpSurface
             return trim((string) $routeTenantSlug);
         }
 
-        if (preg_match('~^/tenants/([^/]+)/security(?:/.*)?$~', $this->normalizePath(path: $input->path), $matches) === 1) {
+        if (preg_match('~^/tenants/([^/]+)(?:/.*)?$~', $this->normalizePath(path: $input->path), $matches) === 1) {
             return urldecode($matches[1]);
         }
 
-        throw new InvalidArgumentException(message: 'tenantSlug is required.');
+        return '';
     }
 
     /**

@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Scim\ReadGroups;
 
-use Avax\Auth\System\Capability\Scim\ScimDirectoryStoreInterface;
+use Avax\Auth\System\Flow\Scim\ReadUsers\ReadScimUsers;
+use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
 
-/**
- * Reads SCIM groups from a directory.
- */
 final readonly class ReadScimGroups
 {
     public function __construct(
-        private ScimDirectoryStoreInterface $directoryStore
+        private ReadScimUsers $readScimUsers
     ) {}
 
     /**
@@ -20,18 +18,36 @@ final readonly class ReadScimGroups
      */
     public function execute(string $directoryId) : array
     {
-        $directory = $this->directoryStore->find(directoryId: $directoryId);
+        $groups = [];
 
-        if ($directory === null) {
-            return [];
+        foreach ($this->readScimUsers->execute(directoryId: $directoryId) as $user) {
+            foreach ($user->groups as $group) {
+                $groups[$group]['members'][] = new ScimGroupMember(
+                    externalId : $user->externalId,
+                    userId     : $user->userId,
+                    username   : $user->username,
+                    email      : $user->email
+                );
+            }
         }
 
-        return [
-            new ScimGroupProjection(
-                id          : $directory->directoryId,
-                displayName : $directory->name,
-                members     : []
-            ),
-        ];
+        ksort($groups);
+        $projections = [];
+
+        foreach ($groups as $groupId => $group) {
+            $members = $group['members'];
+            usort(
+                $members,
+                static fn (ScimGroupMember $left, ScimGroupMember $right) : int => strcmp($left->externalId, $right->externalId)
+            );
+            $projections[] = new ScimGroupProjection(
+                directoryId : $directoryId,
+                groupId     : $groupId,
+                displayName : $groupId,
+                members     : $members
+            );
+        }
+
+        return $projections;
     }
 }

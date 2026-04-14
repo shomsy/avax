@@ -9,8 +9,12 @@ use Avax\Auth\Integrations\Http\HttpEndpointInput;
 use Avax\Auth\Integrations\Http\JsonHttpResponse;
 use Avax\Auth\System\AuthInterface;
 use Avax\Auth\System\Capability\Scim\ScimAccountState;
+use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkOperation;
+use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkRequest;
+use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkOperationResult;
 use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUserData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
+use Avax\Auth\System\Flow\Scim\ReadGroups\ScimGroupProjection;
 use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
 use Avax\Auth\System\Flow\Scim\ScimFailed;
 use InvalidArgumentException;
@@ -25,6 +29,7 @@ final readonly class ServeScimHttpSurface
     private const LIST_RESPONSE_SCHEMA = 'urn:ietf:params:scim:api:messages:2.0:ListResponse';
     private const ERROR_SCHEMA = 'urn:ietf:params:scim:api:messages:2.0:Error';
     private const USER_SCHEMA = 'urn:ietf:params:scim:schemas:core:2.0:User';
+    private const GROUP_SCHEMA = 'urn:ietf:params:scim:schemas:core:2.0:Group';
     private const USER_EXTENSION_SCHEMA = 'urn:avax:params:scim:schemas:auth:1.0:User';
 
     public function __construct(
@@ -58,6 +63,14 @@ final readonly class ServeScimHttpSurface
                 return $this->createUser(input: $input);
             }
 
+            if ($path === '/Groups' && $method === 'GET') {
+                return $this->listGroups(input: $input);
+            }
+
+            if ($path === '/Bulk' && $method === 'POST') {
+                return $this->bulk(input: $input);
+            }
+
             if (preg_match('~^/Users/([^/]+)$~', $path, $matches) === 1) {
                 $externalId = urldecode($matches[1]);
 
@@ -66,6 +79,15 @@ final readonly class ServeScimHttpSurface
                     'PUT' => $this->replaceUser(input: $input, externalId: $externalId),
                     'PATCH' => $this->patchUser(input: $input, externalId: $externalId),
                     'DELETE' => $this->deleteUser(input: $input, externalId: $externalId),
+                    default => $this->error(statusCode: 405, scimType: 'invalidMethod', detail: 'SCIM method is not supported for this route.'),
+                };
+            }
+
+            if (preg_match('~^/Groups/([^/]+)$~', $path, $matches) === 1) {
+                $groupId = urldecode($matches[1]);
+
+                return match ($method) {
+                    'GET' => $this->readGroup(input: $input, groupId: $groupId),
                     default => $this->error(statusCode: 405, scimType: 'invalidMethod', detail: 'SCIM method is not supported for this route.'),
                 };
             }
@@ -83,7 +105,7 @@ final readonly class ServeScimHttpSurface
         return $this->response(statusCode: 200, body: [
             'schemas' => ['urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig'],
             'patch' => ['supported' => true],
-            'bulk' => ['supported' => false, 'maxOperations' => 0, 'maxPayloadSize' => 0],
+            'bulk' => ['supported' => true, 'maxOperations' => 100, 'maxPayloadSize' => 1048576],
             'filter' => ['supported' => true, 'maxResults' => 100],
             'changePassword' => ['supported' => false],
             'sort' => ['supported' => false],
@@ -110,6 +132,12 @@ final readonly class ServeScimHttpSurface
                 'schema' => self::USER_EXTENSION_SCHEMA,
                 'required' => false,
             ]],
+        ], [
+            'schemas' => ['urn:ietf:params:scim:schemas:core:2.0:ResourceType'],
+            'id' => 'Group',
+            'name' => 'Group',
+            'endpoint' => '/Groups',
+            'schema' => self::GROUP_SCHEMA,
         ]]);
     }
 
@@ -137,6 +165,16 @@ final readonly class ServeScimHttpSurface
                 'attributes' => [
                     ['name' => 'state', 'type' => 'string', 'required' => false, 'multiValued' => false],
                     ['name' => 'roles', 'type' => 'string', 'required' => false, 'multiValued' => true],
+                ],
+            ],
+            [
+                'schemas' => ['urn:ietf:params:scim:schemas:core:2.0:Schema'],
+                'id' => self::GROUP_SCHEMA,
+                'name' => 'Group',
+                'description' => 'Derived SCIM group projection owned by the Auth SCIM runtime.',
+                'attributes' => [
+                    ['name' => 'displayName', 'type' => 'string', 'required' => true, 'multiValued' => false],
+                    ['name' => 'members', 'type' => 'complex', 'required' => false, 'multiValued' => true],
                 ],
             ],
         ]);
@@ -171,6 +209,31 @@ final readonly class ServeScimHttpSurface
         }
 
         return $this->response(statusCode: 200, body: $this->userResource(user: $user));
+    }
+
+    private function listGroups(HttpEndpointInput $input) : JsonHttpResponse
+    {
+        $directoryId = $this->directoryId(input: $input);
+        $this->directoryToken(input: $input);
+        $groups = $this->auth->readScimGroups(directoryId: $directoryId);
+
+        return $this->listResponse(resources: array_map(
+            fn (ScimGroupProjection $group) : array => $this->groupResource(group: $group),
+            $groups
+        ));
+    }
+
+    private function readGroup(HttpEndpointInput $input, string $groupId) : JsonHttpResponse
+    {
+        $this->directoryToken(input: $input);
+
+        foreach ($this->auth->readScimGroups(directoryId: $this->directoryId(input: $input)) as $group) {
+            if ($group->groupId === $groupId) {
+                return $this->response(statusCode: 200, body: $this->groupResource(group: $group));
+            }
+        }
+
+        return $this->error(statusCode: 404, scimType: 'notFound', detail: 'SCIM group was not found.');
     }
 
     private function createUser(HttpEndpointInput $input) : JsonHttpResponse
@@ -236,6 +299,30 @@ final readonly class ServeScimHttpSurface
         );
     }
 
+    private function bulk(HttpEndpointInput $input) : JsonHttpResponse
+    {
+        $request = new ScimBulkRequest(
+            directoryId    : $this->directoryId(input: $input),
+            directoryToken : $this->directoryToken(input: $input),
+            operations     : $this->bulkOperations(body: $input->body)
+        );
+        $response = $this->auth->runScimBulk(data: $request);
+
+        return $this->response(statusCode: 200, body: [
+            'schemas' => ['urn:ietf:params:scim:api:messages:2.0:BulkResponse'],
+            'Operations' => array_map(
+                fn (ScimBulkOperationResult $result) : array => [
+                    'method' => $result->method,
+                    'path' => $result->path,
+                    'status' => (string) $result->status,
+                    'bulkId' => $result->bulkId,
+                    'response' => $result->response,
+                ],
+                $response->operations
+            ),
+        ]);
+    }
+
     /**
      * @param list<ScimUserProjection> $users
      * @return list<ScimUserProjection>
@@ -271,6 +358,43 @@ final readonly class ServeScimHttpSurface
         }
 
         return null;
+    }
+
+    /**
+     * @param array<string, mixed> $body
+     * @return list<ScimBulkOperation>
+     */
+    private function bulkOperations(array $body) : array
+    {
+        $operations = $body['Operations'] ?? [];
+
+        if (! is_array($operations)) {
+            throw new InvalidArgumentException(message: 'SCIM bulk Operations must be an array.');
+        }
+
+        $resolved = [];
+
+        foreach ($operations as $operation) {
+            if (! is_array($operation)) {
+                continue;
+            }
+
+            $method = strtoupper(trim((string) ($operation['method'] ?? '')));
+            $path = trim((string) ($operation['path'] ?? ''));
+
+            if ($method === '' || $path === '') {
+                continue;
+            }
+
+            $resolved[] = new ScimBulkOperation(
+                method : $method,
+                path   : $path,
+                body   : is_array($operation['data'] ?? null) ? $operation['data'] : [],
+                bulkId : is_scalar($operation['bulkId'] ?? null) ? trim((string) $operation['bulkId']) : null
+            );
+        }
+
+        return $resolved;
     }
 
     private function provisionData(HttpEndpointInput $input, string|null $forcedExternalId = null) : ProvisionScimUserData
@@ -343,6 +467,26 @@ final readonly class ServeScimHttpSurface
         }
 
         return $patched;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function groupResource(ScimGroupProjection $group) : array
+    {
+        return [
+            'schemas' => [self::GROUP_SCHEMA],
+            'id' => $group->groupId,
+            'displayName' => $group->displayName,
+            'members' => array_map(
+                static fn ($member) : array => [
+                    'value' => $member->externalId,
+                    'display' => $member->email,
+                    '$ref' => '/Users/' . rawurlencode($member->externalId),
+                ],
+                $group->members
+            ),
+        ];
     }
 
     /**

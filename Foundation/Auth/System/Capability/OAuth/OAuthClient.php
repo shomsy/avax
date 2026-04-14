@@ -25,12 +25,15 @@ final readonly class OAuthClient
         public OAuthClientType                 $type,
         public array                           $redirectUris,
         public array                           $allowedScopes,
+        public string|null                     $tenantSlug = null,
         public array                           $allowedAudiences = [],
         public array                           $allowedGrantTypes = [],
         public array                           $audienceScopeBoundaries = [],
+        public OAuthTokenEndpointAuthMethod    $tokenEndpointAuthMethod = OAuthTokenEndpointAuthMethod::CLIENT_SECRET_BASIC,
         public OAuthSenderConstraintType|null  $requiredSenderConstraint = null,
         public bool                            $workloadIdentity = false,
         public bool                            $phishingResistantRequired = false,
+        public bool                            $active = true,
         #[SensitiveParameter] public string|null $secretHash = null
     ) {}
 
@@ -113,5 +116,10 @@ final readonly class OAuthClient
     public function requiresSenderConstraint() : bool
     {
         return $this->requiredSenderConstraint !== null;
+    }
+
+    public function isActive() : bool
+    {
+        return $this->active;
     }
 }

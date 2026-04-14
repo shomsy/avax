@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Flow\OAuth\RegisterClient;
 
 use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\OAuthClientType;
+use Avax\Auth\System\Capability\OAuth\OAuthTokenEndpointAuthMethod;
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 
 final readonly class RegisterClientData
@@ -21,10 +22,12 @@ final readonly class RegisterClientData
         public string                         $name,
         public OAuthClientType                $type,
         public array                          $redirectUris,
+        public string|null                    $tenantSlug = null,
         public array                          $allowedScopes = [],
         public array                          $allowedAudiences = [],
         public array                          $allowedGrantTypes = [],
         public array                          $audienceScopeBoundaries = [],
+        public OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
         public OAuthSenderConstraintType|null $requiredSenderConstraint = null,
         public bool                           $workloadIdentity = false,
         public bool                           $phishingResistantRequired = false

@@ -9,6 +9,8 @@ use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
 use Avax\Auth\System\Capability\Scim\ScimAccountState;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
+use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkOperation;
+use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkRequest;
 use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUserData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
@@ -61,6 +63,7 @@ final class ScimFlowTest extends TestCase
             state          : ScimAccountState::SUSPENDED
         ));
         $users = $auth->readScimUsers(directoryId: $directory->directory->directoryId);
+        $groups = $auth->readScimGroups(directoryId: $directory->directory->directoryId);
 
         $this->assertTrue(condition: $provisioned->created);
         $this->assertFalse(condition: $provisioned->idempotent);
@@ -69,6 +72,9 @@ final class ScimFlowTest extends TestCase
         $this->assertSame(expected: ['user'], actual: $synced->roles);
         $this->assertCount(expectedCount: 1, haystack: $users);
         $this->assertSame(expected: ScimAccountState::SUSPENDED, actual: $users[0]->state);
+        $this->assertCount(expectedCount: 1, haystack: $groups);
+        $this->assertSame(expected: 'users', actual: $groups[0]->groupId);
+        $this->assertCount(expectedCount: 1, haystack: $groups[0]->members);
 
         $rotated = $auth->rotateScimToken(directoryId: $directory->directory->directoryId);
 
@@ -92,6 +98,56 @@ final class ScimFlowTest extends TestCase
             externalId     : 'ext-1'
         ));
 
+        $this->assertSame(expected: [], actual: $auth->readScimUsers(directoryId: $directory->directory->directoryId));
+    }
+
+    public function testScimBulkCanCreateReplaceAndDeleteUsers() : void
+    {
+        $auth = $this->buildAuth();
+        $directory = $auth->registerScimDirectory(data: new RegisterScimDirectoryData(
+            tenantSlug: 'bulk',
+            name      : 'Bulk Directory'
+        ));
+
+        $response = $auth->runScimBulk(data: new ScimBulkRequest(
+            directoryId    : $directory->directory->directoryId,
+            directoryToken : $directory->plainTextToken,
+            operations     : [
+                new ScimBulkOperation(
+                    method: 'POST',
+                    path  : '/Users',
+                    body  : [
+                        'externalId' => 'bulk-1',
+                        'userName' => 'bulk-user',
+                        'emails' => [['value' => 'bulk@example.com', 'primary' => true]],
+                        'groups' => [['value' => 'users']],
+                        'active' => true,
+                    ],
+                    bulkId: 'create-1'
+                ),
+                new ScimBulkOperation(
+                    method: 'PUT',
+                    path  : '/Users/bulk-1',
+                    body  : [
+                        'userName' => 'bulk-user',
+                        'emails' => [['value' => 'bulk@example.com', 'primary' => true]],
+                        'groups' => [['value' => 'admins']],
+                        'active' => false,
+                    ],
+                    bulkId: 'replace-1'
+                ),
+                new ScimBulkOperation(
+                    method: 'DELETE',
+                    path  : '/Users/bulk-1',
+                    bulkId: 'delete-1'
+                ),
+            ]
+        ));
+
+        $this->assertCount(expectedCount: 3, haystack: $response->operations);
+        $this->assertSame(expected: 201, actual: $response->operations[0]->status);
+        $this->assertSame(expected: 200, actual: $response->operations[1]->status);
+        $this->assertSame(expected: 204, actual: $response->operations[2]->status);
         $this->assertSame(expected: [], actual: $auth->readScimUsers(directoryId: $directory->directory->directoryId));
     }
 

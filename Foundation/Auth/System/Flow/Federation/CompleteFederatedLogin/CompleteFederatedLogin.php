@@ -9,6 +9,7 @@ use Avax\Auth\System\Capability\Federation\FederatedIdentityLinkStoreInterface;
 use Avax\Auth\System\Capability\Federation\FederationConnectionStoreInterface;
 use Avax\Auth\System\Capability\Federation\FederationRuntimeInterface;
 use Avax\Auth\System\Capability\Identity\IdentityInterface;
+use Avax\Auth\System\Capability\Lifecycle\LifecycleOrchestrator;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capability\Risk\DeterministicRiskEngine;
 use Avax\Auth\System\Capability\User\User;
@@ -43,7 +44,8 @@ final readonly class CompleteFederatedLogin
         private IdGeneratorInterface                        $idGenerator,
         private AuditLogInterface                           $auditLog,
         private Clock                                       $clock,
-        private DeterministicRiskEngine|null                $riskEngine = null
+        private DeterministicRiskEngine|null                $riskEngine = null,
+        private LifecycleOrchestrator|null                  $lifecycle = null
     ) {}
 
     /**
@@ -75,7 +77,7 @@ final readonly class CompleteFederatedLogin
             $user = $this->provisionUser(email: $federated->email, displayName: $federated->displayName);
         }
 
-        if (! $user->isActive()) {
+        if (! $user->isActive() || ($this->lifecycle !== null && ! $this->lifecycle->allowsAuthentication(userId: $user->getId()))) {
             throw FederationFailed::notFound();
         }
 

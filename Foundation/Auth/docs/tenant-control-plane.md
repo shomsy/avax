@@ -5,6 +5,8 @@ not ad hoc admin toggles.
 
 ## Kernel-Owned Today
 
+- tenant creation, membership, invite acceptance, suspension, removal, and owner transfer
+- tenant-owned OAuth client registration, update, disable, and secret rotation
 - tenant security configuration state
 - request, approval, apply, and rollback workflow
 - reference validation against federation connections and SCIM directories
@@ -15,7 +17,11 @@ not ad hoc admin toggles.
 
 The package exposes this through `Auth::readTenantSecurityConfiguration()`,
 `beginTenantSecurityChange()`, `approveTenantSecurityChange()`,
-`applyTenantSecurityChange()`, and `rollbackTenantSecurityChange()`.
+`applyTenantSecurityChange()`, `rollbackTenantSecurityChange()`, plus
+`createTenant()`, `inviteTenantMember()`, `acceptTenantInvite()`,
+`readTenantMembers()`, `suspendTenantMember()`, `removeTenantMember()`,
+`transferTenantOwnership()`, `registerOAuthClient()`, `updateOAuthClient()`,
+`disableOAuthClient()`, and `rotateOAuthClientSecret()`.
 
 ## Minimum Control-Plane Fields
 
@@ -37,5 +43,5 @@ The package exposes this through `Auth::readTenantSecurityConfiguration()`,
 
 - tenant-admin UI
 - operator notifications and richer approval UX
-- tenant membership and billing control planes
+- billing control planes
 - organizational SoD policy outside the kernel

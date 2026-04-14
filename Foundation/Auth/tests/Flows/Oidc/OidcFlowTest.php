@@ -9,6 +9,7 @@ use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
 use Avax\Auth\System\Capability\Oidc\OpenSslOidcProvider;
 use Avax\Auth\System\Capability\Oidc\RotatingOidcProvider;
+use Avax\Auth\System\Capability\Oidc\SubjectIdentifierStrategy;
 use Avax\Auth\System\Capability\OAuth\OAuthClientType;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserEmail;
@@ -152,6 +153,66 @@ final class OidcFlowTest extends TestCase
         ));
     }
 
+    public function testPairwiseOidcProviderIssuesStablePairwiseSubjects() : void
+    {
+        [$auth, $provider] = $this->buildAuthWithOidc(
+            subjectIdentifierStrategy: SubjectIdentifierStrategy::PAIRWISE,
+            pairwiseSalt: 'pairwise-salt-1'
+        );
+
+        $auth->register(data: new RegistrationData(
+            email   : 'pairwise@example.com',
+            username: 'pairwise-user',
+            password: 'secret'
+        ));
+        $auth->login(credentials: new Credentials(
+            identifier: 'pairwise@example.com',
+            password  : 'secret'
+        ));
+
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
+            name         : 'Pairwise Web',
+            type         : OAuthClientType::CONFIDENTIAL,
+            redirectUris : ['https://rp.example.test/callback'],
+            allowedScopes: ['openid', 'profile']
+        ));
+
+        $firstCode = $auth->authorizeOAuthCode(data: new AuthorizeCodeData(
+            clientId   : $client->client->clientId,
+            redirectUri: 'https://rp.example.test/callback',
+            scopes     : ['openid', 'profile'],
+            nonce      : 'nonce-pairwise-1'
+        ));
+        $firstGrant = $auth->exchangeOAuthCode(data: new ExchangeAuthorizationCodeData(
+            clientId    : $client->client->clientId,
+            clientSecret: $client->plainTextSecret,
+            code        : $firstCode->code,
+            redirectUri : 'https://rp.example.test/callback'
+        ));
+
+        $secondCode = $auth->authorizeOAuthCode(data: new AuthorizeCodeData(
+            clientId   : $client->client->clientId,
+            redirectUri: 'https://rp.example.test/callback',
+            scopes     : ['openid', 'profile'],
+            nonce      : 'nonce-pairwise-2'
+        ));
+        $secondGrant = $auth->exchangeOAuthCode(data: new ExchangeAuthorizationCodeData(
+            clientId    : $client->client->clientId,
+            clientSecret: $client->plainTextSecret,
+            code        : $secondCode->code,
+            redirectUri : 'https://rp.example.test/callback'
+        ));
+
+        $firstClaims = $provider->resolveIdToken(idToken: $firstGrant->idToken ?? '');
+        $secondClaims = $provider->resolveIdToken(idToken: $secondGrant->idToken ?? '');
+        $userInfo = $auth->readOidcUserInfo(accessToken: $firstGrant->accessToken);
+
+        $this->assertSame(expected: ['pairwise'], actual: $auth->readOidcProviderMetadata()->subjectTypesSupported);
+        $this->assertNotSame(expected: '1', actual: $firstClaims['sub'] ?? null);
+        $this->assertSame(expected: $firstClaims['sub'] ?? null, actual: $secondClaims['sub'] ?? null);
+        $this->assertSame(expected: $firstClaims['sub'] ?? null, actual: $userInfo->claims['sub'] ?? null);
+    }
+
     public function testRotatingOidcProviderPublishesOverlapKeysAndVerifiesLegacyTokens() : void
     {
         $legacyProvider = $this->createOidcProvider(keyId: 'oidc-key-legacy');
@@ -185,7 +246,10 @@ final class OidcFlowTest extends TestCase
     /**
      * @return array{Auth, OpenSslOidcProvider}
      */
-    private function buildAuthWithOidc() : array
+    private function buildAuthWithOidc(
+        SubjectIdentifierStrategy $subjectIdentifierStrategy = SubjectIdentifierStrategy::PUBLIC,
+        string|null $pairwiseSalt = null
+    ) : array
     {
         $userSource = new InMemoryUserSource();
         $refreshTokens = new InMemoryRefreshTokenStore();
@@ -196,7 +260,10 @@ final class OidcFlowTest extends TestCase
             revocationStore  : new InMemoryTokenRevocationStore(),
             refreshTokenStore: $refreshTokens
         );
-        $provider = $this->createOidcProvider();
+        $provider = $this->createOidcProvider(
+            subjectIdentifierStrategy: $subjectIdentifierStrategy,
+            pairwiseSalt            : $pairwiseSalt
+        );
         $auth = Auth::configuration()
             ->forUser(userSource: $userSource)
             ->withIdentity(identity: new Identity(jwtIdentity: $jwtIdentity))
@@ -207,7 +274,11 @@ final class OidcFlowTest extends TestCase
         return [$auth, $provider];
     }
 
-    private function createOidcProvider(string $keyId = 'oidc-key-1') : OpenSslOidcProvider
+    private function createOidcProvider(
+        string $keyId = 'oidc-key-1',
+        SubjectIdentifierStrategy $subjectIdentifierStrategy = SubjectIdentifierStrategy::PUBLIC,
+        string|null $pairwiseSalt = null
+    ) : OpenSslOidcProvider
     {
         $key = openssl_pkey_new([
             'private_key_bits' => 2048,
@@ -223,7 +294,9 @@ final class OidcFlowTest extends TestCase
             authorizationEndpoint: 'https://auth.example.test/oauth/authorize',
             tokenEndpoint        : 'https://auth.example.test/oauth/token',
             userInfoEndpoint     : 'https://auth.example.test/oidc/userinfo',
-            jsonWebKeySetUri     : 'https://auth.example.test/.well-known/jwks.json'
+            jsonWebKeySetUri     : 'https://auth.example.test/.well-known/jwks.json',
+            subjectIdentifierStrategy: $subjectIdentifierStrategy,
+            pairwiseSalt: $pairwiseSalt
         );
     }
 }

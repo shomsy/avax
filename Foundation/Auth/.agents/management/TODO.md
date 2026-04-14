@@ -14,6 +14,23 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-028
+- `created_at`: 2026-04-14 09:40 CEST
+- `updated_at`: 2026-04-14 09:40 CEST
+- `completed_at`: 2026-04-14 09:40 CEST
+- `status`: done
+- `estimate`: 8h
+- `actual`: 3h 50m
+- `outcome`: Replace failed generated integration slices with package-owned lifecycle, tenant product, tenant-owned OAuth
+  client management, and SCIM groups/bulk features wired through the canonical kernel and adapter surfaces
+- `acceptance`: `Capability/Lifecycle/` exists and is used by provisioning, federation, and SCIM flows; `Capability/Tenant/`
+  and `Flow/Tenant/` ship create/invite/accept/read/suspend/remove/transfer behavior; tenant-admin HTTP routes expose
+  tenant membership and tenant-owned OAuth client management; SCIM publishes `/Groups` and `/Bulk` over real kernel
+  flows; PHPUnit and PHPStan lanes pass
+- `links`: System/Capability/Lifecycle/, System/Capability/Tenant/, System/Flow/Tenant/, System/Flow/OAuth/,
+  System/Flow/Scim/ReadGroups/, System/Flow/Scim/Bulk/, integrations/http/TenantSecurity/,
+  integrations/http/Scim/, REFAKTOR.md, docs/tenant-control-plane.md, docs/scim-runtime-boundary.md
+
 - `id`: AUTH-027
 - `created_at`: 2026-04-13 20:25 CEST
 - `updated_at`: 2026-04-13 20:25 CEST

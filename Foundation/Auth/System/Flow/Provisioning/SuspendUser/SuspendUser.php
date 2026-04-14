@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\Provisioning\SuspendUser;
 
 use Avax\Auth\System\Capability\AdminRealm\AdminElevationStoreInterface;
+use Avax\Auth\System\Capability\Lifecycle\LifecycleOrchestrator;
+use Avax\Auth\System\Capability\Lifecycle\LifecycleSource;
 use Avax\Auth\System\Capability\Session\SessionRegistryInterface;
 use Avax\Auth\System\Capability\User\UserId;
 use Avax\Auth\System\Capability\UserSource\ProvisionableUserSourceInterface;
@@ -24,14 +26,18 @@ final readonly class SuspendUser
         private Clock                                                 $clock,
         #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
         #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        private AdminElevationStoreInterface|null                     $adminElevationStore = null
+        private AdminElevationStoreInterface|null                     $adminElevationStore = null,
+        private LifecycleOrchestrator|null                            $lifecycle = null
     ) {}
 
     public function execute(int $userId) : void
     {
         $this->requireAdminElevation->execute();
         $id = new UserId(value: $userId);
-        $this->userSource->deactivate(id: $id);
+        $this->lifecycle?->suspend(userId: $id, source: LifecycleSource::ADMIN, reason: 'admin_suspended');
+        if ($this->lifecycle === null) {
+            $this->userSource->deactivate(id: $id);
+        }
         $this->sessionRegistry?->revokeForUser(userId: $id, revokedAt: $this->clock->now(), reason: 'suspended');
         $this->refreshTokenStore?->revokeUser(userId: $id);
         $this->adminElevationStore?->revokeUser(userId: $userId);

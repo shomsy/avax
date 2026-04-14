@@ -24,10 +24,12 @@ final readonly class RegisterClient
             name                      : $data->name,
             type                      : $data->type,
             redirectUris              : $data->redirectUris,
+            tenantSlug                : $data->tenantSlug,
             allowedScopes             : $data->allowedScopes,
             allowedAudiences          : $data->allowedAudiences,
             allowedGrantTypes         : $data->allowedGrantTypes,
             audienceScopeBoundaries   : $data->audienceScopeBoundaries,
+            tokenEndpointAuthMethod   : $data->tokenEndpointAuthMethod,
             requiredSenderConstraint  : $data->requiredSenderConstraint,
             workloadIdentity          : $data->workloadIdentity,
             phishingResistantRequired : $data->phishingResistantRequired
@@ -38,6 +40,7 @@ final readonly class RegisterClient
             occurredAt: $this->clock->now(),
             context   : [
                 'client_id' => $registered->client->clientId,
+                'tenant_slug' => $registered->client->tenantSlug,
                 'name' => $registered->client->name,
                 'type' => $registered->client->type->value,
                 'workload_identity' => $registered->client->workloadIdentity ? 1 : 0,

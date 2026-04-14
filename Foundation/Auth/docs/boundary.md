@@ -7,8 +7,8 @@ This package is now split into two explicit lanes:
 
 The package does not try to be a full identity product suite. It owns
 application auth flows plus the kernel-local identity-platform primitives that
-those flows depend on. It still does not own full external control-plane
-products, admin UIs, or formal protocol certification products.
+those flows depend on. It still does not own admin UIs, formal protocol
+certification products, or broader business control planes such as billing.
 
 Current delivery posture is documented in
 `docs/adr/001-auth-scope-and-trust-boundaries.md`.
@@ -32,6 +32,8 @@ Current delivery posture is documented in
 - package-owned runtime strategies for session and token auth
 - package-owned workload identity, OIDC provider, SCIM directory, and tenant
   security change-workflow seams
+- package-owned tenant membership and tenant-owned OAuth client control-plane
+  behavior
 - auth diagnostics contracts and audit events
 - package-owned maintenance flows for cleanup and audit export when stores/logs
   expose the relevant seams
@@ -72,11 +74,12 @@ Integration rule:
 This package does not own today:
 
 - full standards-certified OIDC provider product surface
-- OIDC dynamic client registration, front-channel or back-channel logout, and
-  pairwise subject handling
+- OIDC-standard dynamic client registration endpoint, front-channel or
+  back-channel logout, and JAR/PAR/JARM request-object surfaces
 - SAML federation brokering runtime
-- SCIM bulk APIs and full RFC 7644 product surface
-- tenant admin UI and broader tenant membership control plane
+- full RFC 7644 product surface including health, throttling, and outage
+  recovery overlays
+- tenant admin UI and broader non-security tenant business control plane
 - KMS/HSM, mail, SIEM, and queue infrastructure
 - cross-organization approval tooling and enterprise IAM governance systems
 

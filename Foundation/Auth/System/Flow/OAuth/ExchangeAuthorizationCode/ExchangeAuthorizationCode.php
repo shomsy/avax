@@ -11,6 +11,7 @@ use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\PkceMethod;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
+use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\OAuth\OAuthTokenExchangeFailed;
@@ -29,6 +30,7 @@ final readonly class ExchangeAuthorizationCode
         #[SensitiveParameter] private RefreshTokenStoreInterface      $refreshTokenStore,
         private AuditLogInterface                                     $auditLog,
         private Clock                                                 $clock,
+        #[SensitiveParameter] private CurrentAuthentication|null      $currentAuthentication = null,
         private OidcProviderInterface|null                            $oidcProvider = null
     ) {}
 
@@ -138,6 +140,7 @@ final readonly class ExchangeAuthorizationCode
                 scopes            : $record->scopes,
                 nonce             : $record->nonce,
                 authenticatedAt   : $record->mfaVerifiedAt,
+                sessionId         : $this->currentAuthentication?->read()->sessionId(),
                 phishingResistant : $record->phishingResistant
             )->token;
         }

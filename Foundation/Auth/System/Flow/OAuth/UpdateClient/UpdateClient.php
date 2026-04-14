@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\OAuth\UpdateClient;
 
 use Avax\Auth\System\Capability\OAuth\OAuthClient;
+use Avax\Auth\System\Capability\OAuth\OAuthClientApprovalStatus;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthTokenEndpointAuthMethodPolicy;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
@@ -34,6 +35,12 @@ final readonly class UpdateClient
             current: $existing->tokenEndpointAuthMethod,
             workloadIdentity: $data->workloadIdentity
         );
+        $approvalRequired = $data->approvalRequired;
+        $approvalStatus = $approvalRequired
+            ? OAuthClientApprovalStatus::PENDING_APPROVAL
+            : $existing->approvalStatus;
+        $approvedAt = $approvalRequired ? null : $existing->approvedAt;
+        $approvedBy = $approvalRequired ? null : $existing->approvedBy;
 
         $updated = new OAuthClient(
             clientId                  : $existing->clientId,
@@ -49,6 +56,11 @@ final readonly class UpdateClient
             requiredSenderConstraint  : $data->requiredSenderConstraint,
             workloadIdentity          : $data->workloadIdentity,
             phishingResistantRequired : $data->phishingResistantRequired,
+            frontChannelLogoutSupported: $data->frontChannelLogoutSupported,
+            backChannelLogoutSupported : $data->backChannelLogoutSupported,
+            approvalStatus            : $approvalStatus,
+            approvedAt                : $approvedAt,
+            approvedBy                : $approvedBy,
             active                    : $existing->active,
             secretHash                : $existing->secretHash
         );
@@ -61,6 +73,7 @@ final readonly class UpdateClient
                 'tenant_slug' => $updated->tenantSlug,
                 'type' => $updated->type->value,
                 'active' => $updated->active ? 1 : 0,
+                'approval_status' => $updated->approvalStatus->value,
             ]
         ));
 

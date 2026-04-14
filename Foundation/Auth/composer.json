@@ -102,7 +102,10 @@
       "@analyse",
       "@test",
       "@rector"
-    ]
+    ],
+    "quality-gates": "php tooling/quality-gates.php",
+    "quality-gates:json": "php tooling/quality-gates.php --json",
+    "quality-gates:verbose": "php tooling/quality-gates.php --verbose"
   },
   "minimum-stability": "stable",
   "prefer-stable": true

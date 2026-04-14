@@ -31,12 +31,17 @@ interface OAuthClientRegistryInterface
         OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
         OAuthSenderConstraintType|null $requiredSenderConstraint = null,
         bool $workloadIdentity = false,
-        bool $phishingResistantRequired = false
+        bool $phishingResistantRequired = false,
+        bool $frontChannelLogoutSupported = false,
+        bool $backChannelLogoutSupported = false,
+        bool|null $approvalRequired = null
     ) : RegisteredOAuthClient;
 
     public function replace(OAuthClient $client) : void;
 
     public function deactivate(string $clientId) : OAuthClient|null;
+
+    public function approve(string $clientId, string $approvedBy) : OAuthClient|null;
 
     public function rotateSecret(string $clientId) : RegisteredOAuthClient|null;
 

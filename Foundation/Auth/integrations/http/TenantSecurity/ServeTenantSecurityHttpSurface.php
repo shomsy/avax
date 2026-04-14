@@ -15,6 +15,8 @@ use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\OAuthTokenEndpointAuthMethod;
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\Scim\ScimDirectory;
+use Avax\Auth\System\Flow\Scim\MarkOutage\MarkScimDirectoryOutageData;
+use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutageData;
 use Avax\Auth\System\Capability\Tenant\Tenant;
 use Avax\Auth\System\Capability\Tenant\TenantInvite;
 use Avax\Auth\System\Capability\Tenant\TenantMember;
@@ -23,6 +25,7 @@ use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequest;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityConfiguration;
 use Avax\Auth\System\Flow\Federation\RegisterConnection\RegisterFederationConnectionData;
 use Avax\Auth\System\Flow\Federation\VerifyDomain\VerifyFederationDomainData;
+use Avax\Auth\System\Flow\OAuth\ApproveClientRegistration\ApproveClientRegistrationData;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
@@ -148,13 +151,25 @@ final readonly class ServeTenantSecurityHttpSurface
                     tokenEndpointAuthMethod   : $this->tokenEndpointAuthMethod(body: $input->body, field: 'tokenEndpointAuthMethod'),
                     requiredSenderConstraint  : $this->senderConstraintType(body: $input->body, field: 'requiredSenderConstraint'),
                     workloadIdentity          : $this->boolValue(body: $input->body, field: 'workloadIdentity'),
-                    phishingResistantRequired : $this->boolValue(body: $input->body, field: 'phishingResistantRequired')
+                    phishingResistantRequired : $this->boolValue(body: $input->body, field: 'phishingResistantRequired'),
+                    frontChannelLogoutSupported: $this->boolValue(body: $input->body, field: 'frontChannelLogoutSupported'),
+                    backChannelLogoutSupported : $this->boolValue(body: $input->body, field: 'backChannelLogoutSupported'),
+                    approvalRequired          : $this->boolValue(body: $input->body, field: 'approvalRequired')
                 ));
 
                 return $this->response(statusCode: 201, body: [
                     'client' => $this->oauthClientResource(client: $client->client),
                     'plainTextSecret' => $client->plainTextSecret,
                 ]);
+            }
+
+            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/oauth-clients/([^/]+)/approve$~', $path, $matches) === 1) {
+                $client = $this->auth->approveOAuthClientRegistration(data: new ApproveClientRegistrationData(
+                    clientId  : urldecode($matches[1]),
+                    approvedBy: $this->requiredString(body: $input->body, field: 'approvedBy')
+                ));
+
+                return $this->response(statusCode: 200, body: ['client' => $this->oauthClientResource(client: $client)]);
             }
 
             if ($method === 'PUT' && preg_match('~^/tenants/[^/]+/oauth-clients/([^/]+)$~', $path, $matches) === 1) {
@@ -171,7 +186,10 @@ final readonly class ServeTenantSecurityHttpSurface
                     tokenEndpointAuthMethod   : $this->tokenEndpointAuthMethod(body: $input->body, field: 'tokenEndpointAuthMethod'),
                     requiredSenderConstraint  : $this->senderConstraintType(body: $input->body, field: 'requiredSenderConstraint'),
                     workloadIdentity          : $this->boolValue(body: $input->body, field: 'workloadIdentity'),
-                    phishingResistantRequired : $this->boolValue(body: $input->body, field: 'phishingResistantRequired')
+                    phishingResistantRequired : $this->boolValue(body: $input->body, field: 'phishingResistantRequired'),
+                    frontChannelLogoutSupported: $this->boolValue(body: $input->body, field: 'frontChannelLogoutSupported'),
+                    backChannelLogoutSupported : $this->boolValue(body: $input->body, field: 'backChannelLogoutSupported'),
+                    approvalRequired          : $this->boolValue(body: $input->body, field: 'approvalRequired')
                 ));
 
                 return $this->response(statusCode: 200, body: ['client' => $this->oauthClientResource(client: $client)]);
@@ -318,6 +336,25 @@ final readonly class ServeTenantSecurityHttpSurface
                     'plainTextToken' => $rotated->plainTextToken,
                 ]);
             }
+
+            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/security/scim-directories/([^/]+)/outage$~', $path, $matches) === 1) {
+                $directory = $this->tenantScimDirectory(tenantSlug: $tenantSlug, directoryId: urldecode($matches[1]));
+                $updated = $this->auth->markScimDirectoryOutage(data: new MarkScimDirectoryOutageData(
+                    directoryId: $directory->directoryId,
+                    reason     : $this->nullableString(body: $input->body, field: 'reason')
+                ));
+
+                return $this->response(statusCode: 200, body: ['directory' => $this->directoryResource(directory: $updated)]);
+            }
+
+            if ($method === 'POST' && preg_match('~^/tenants/[^/]+/security/scim-directories/([^/]+)/recover$~', $path, $matches) === 1) {
+                $directory = $this->tenantScimDirectory(tenantSlug: $tenantSlug, directoryId: urldecode($matches[1]));
+                $updated = $this->auth->recoverScimDirectoryOutage(data: new RecoverScimDirectoryOutageData(
+                    directoryId: $directory->directoryId
+                ));
+
+                return $this->response(statusCode: 200, body: ['directory' => $this->directoryResource(directory: $updated)]);
+            }
         } catch (Throwable $failure) {
             $status = str_contains(strtolower($failure->getMessage()), 'not found') || str_contains(strtolower($failure->getMessage()), 'unknown')
                 ? 404
@@ -412,6 +449,11 @@ final readonly class ServeTenantSecurityHttpSurface
             'requiredSenderConstraint' => $client->requiredSenderConstraint?->value,
             'workloadIdentity' => $client->workloadIdentity,
             'phishingResistantRequired' => $client->phishingResistantRequired,
+            'frontChannelLogoutSupported' => $client->frontChannelLogoutSupported,
+            'backChannelLogoutSupported' => $client->backChannelLogoutSupported,
+            'approvalStatus' => $client->approvalStatus->value,
+            'approvedAt' => $client->approvedAt?->format(format: DATE_ATOM),
+            'approvedBy' => $client->approvedBy,
             'active' => $client->active,
         ];
     }
@@ -436,6 +478,17 @@ final readonly class ServeTenantSecurityHttpSurface
             $this->auth->readOAuthClients(),
             static fn (OAuthClient $client) : bool => $client->tenantSlug === $tenantSlug
         ));
+    }
+
+    private function tenantScimDirectory(string $tenantSlug, string $directoryId) : ScimDirectory
+    {
+        foreach ($this->auth->readScimDirectories(tenantSlug: $tenantSlug) as $directory) {
+            if ($directory->directoryId === $directoryId) {
+                return $directory;
+            }
+        }
+
+        throw new InvalidArgumentException(message: 'SCIM directory was not found for the tenant.');
     }
 
     /**
@@ -532,6 +585,11 @@ final readonly class ServeTenantSecurityHttpSurface
             'groupRoleMap' => $directory->groupRoleMap,
             'createdAt' => $directory->createdAt->format(format: DATE_ATOM),
             'rotatedAt' => $directory->rotatedAt?->format(format: DATE_ATOM),
+            'health' => $directory->health->value,
+            'healthCheckedAt' => $directory->healthCheckedAt?->format(format: DATE_ATOM),
+            'outageReason' => $directory->outageReason,
+            'outageStartedAt' => $directory->outageStartedAt?->format(format: DATE_ATOM),
+            'outageRecoveredAt' => $directory->outageRecoveredAt?->format(format: DATE_ATOM),
         ];
     }
 

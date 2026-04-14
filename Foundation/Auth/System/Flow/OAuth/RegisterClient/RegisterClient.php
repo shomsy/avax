@@ -32,7 +32,10 @@ final readonly class RegisterClient
             tokenEndpointAuthMethod   : $data->tokenEndpointAuthMethod,
             requiredSenderConstraint  : $data->requiredSenderConstraint,
             workloadIdentity          : $data->workloadIdentity,
-            phishingResistantRequired : $data->phishingResistantRequired
+            phishingResistantRequired : $data->phishingResistantRequired,
+            frontChannelLogoutSupported: $data->frontChannelLogoutSupported,
+            backChannelLogoutSupported : $data->backChannelLogoutSupported,
+            approvalRequired          : $data->approvalRequired
         );
 
         $this->auditLog->record(event: new AuditEvent(
@@ -46,6 +49,8 @@ final readonly class RegisterClient
                 'workload_identity' => $registered->client->workloadIdentity ? 1 : 0,
                 'allowed_audiences' => implode(' ', $registered->client->allowedAudiences),
                 'sender_constraint' => $registered->client->requiredSenderConstraint?->value,
+                'approval_status' => $registered->client->approvalStatus->value,
+                'approval_required' => $registered->client->isPendingApproval() ? 1 : 0,
             ]
         ));
 

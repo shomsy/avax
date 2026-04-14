@@ -14,7 +14,8 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 - active session listing, single-session revoke, and logout-all
 - OAuth client registry, authorization-code issuance, PKCE enforcement, refresh exchange, revoke, and introspection
 - workload `client_credentials` runtime, inventory, and audience/scope ceilings
-- OIDC provider metadata, JWKS, RS256 ID-token issuance, nonce enforcement, and userinfo
+- OIDC provider metadata, JWKS, RS256 ID-token issuance, nonce enforcement, userinfo,
+  local logout, PAR request storage, and JARM response signing
 - explicit actor assurance policy catalog and composed access-policy tiers
 - phishing-resistant-required OAuth client posture and sender-constrained token binding metadata
 - DPoP proof verification, mTLS binding verification, and transport-level sender-constraint enforcement adapters
@@ -39,7 +40,8 @@ This package follows the balanced path from `docs/adr/001-auth-scope-and-trust-b
 ### Next
 
 - complete executable tests for every remaining example and adapter seam
-- add optional OIDC logout/session-management packaging without breaking kernel-owned flows
+- add optional OIDC logout/session-management fan-out and JAR request-object signature verification
+  without breaking kernel-owned flows
 - extend the SCIM adapter toward bulk and fuller RFC 7644 product behavior over the delivered SCIM kernel runtime
 - add tenant-admin UI adapters over `Flow/TenantSecurity/`
 - evaluate optional `league/oauth2-server` interop adapter without breaking package-owned OAuth kernel contracts

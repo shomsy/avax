@@ -6,6 +6,7 @@ namespace Avax\Auth\System\Capability\OAuth;
 
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
+use DateTimeImmutable;
 use InvalidArgumentException;
 use Random\RandomException;
 use SensitiveParameter;
@@ -37,7 +38,10 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
         OAuthSenderConstraintType|null $requiredSenderConstraint = null,
         bool $workloadIdentity = false,
-        bool $phishingResistantRequired = false
+        bool $phishingResistantRequired = false,
+        bool $frontChannelLogoutSupported = false,
+        bool $backChannelLogoutSupported = false,
+        bool|null $approvalRequired = null
     ) : RegisteredOAuthClient
     {
         $normalizedRedirectUris = $this->normalizeRedirectUris(redirectUris: $redirectUris);
@@ -67,6 +71,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             requested: $tokenEndpointAuthMethod,
             workloadIdentity: $workloadIdentity
         );
+        $requiresApproval = $approvalRequired ?? false;
 
         foreach (array_keys($normalizedAudienceScopeBoundaries) as $audience) {
             if (! in_array($audience, $normalizedAudiences, true)) {
@@ -97,7 +102,14 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             requiredSenderConstraint: $requiredSenderConstraint,
             workloadIdentity: $workloadIdentity,
             phishingResistantRequired: $phishingResistantRequired,
-            active       : true,
+            frontChannelLogoutSupported: $frontChannelLogoutSupported,
+            backChannelLogoutSupported: $backChannelLogoutSupported,
+            approvalStatus: $requiresApproval
+                ? OAuthClientApprovalStatus::PENDING_APPROVAL
+                : OAuthClientApprovalStatus::APPROVED,
+            approvedAt   : $requiresApproval ? null : new DateTimeImmutable(),
+            approvedBy   : $requiresApproval ? null : 'system',
+            active       : ! $requiresApproval,
             secretHash   : $secretHash
         );
 
@@ -136,12 +148,52 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             requiredSenderConstraint  : $client->requiredSenderConstraint,
             workloadIdentity          : $client->workloadIdentity,
             phishingResistantRequired : $client->phishingResistantRequired,
+            frontChannelLogoutSupported: $client->frontChannelLogoutSupported,
+            backChannelLogoutSupported : $client->backChannelLogoutSupported,
+            approvalStatus           : $client->approvalStatus,
+            approvedAt               : $client->approvedAt,
+            approvedBy               : $client->approvedBy,
             active                    : false,
             secretHash                : $client->secretHash
         );
         $this->clients[$clientId] = $inactive;
 
         return $inactive;
+    }
+
+    public function approve(string $clientId, string $approvedBy) : OAuthClient|null
+    {
+        $client = $this->find(clientId: $clientId);
+
+        if ($client === null) {
+            return null;
+        }
+
+        $approved = new OAuthClient(
+            clientId                  : $client->clientId,
+            name                      : $client->name,
+            type                      : $client->type,
+            redirectUris              : $client->redirectUris,
+            allowedScopes             : $client->allowedScopes,
+            tenantSlug                : $client->tenantSlug,
+            allowedAudiences          : $client->allowedAudiences,
+            allowedGrantTypes         : $client->allowedGrantTypes,
+            audienceScopeBoundaries   : $client->audienceScopeBoundaries,
+            tokenEndpointAuthMethod   : $client->tokenEndpointAuthMethod,
+            requiredSenderConstraint  : $client->requiredSenderConstraint,
+            workloadIdentity          : $client->workloadIdentity,
+            phishingResistantRequired : $client->phishingResistantRequired,
+            frontChannelLogoutSupported: $client->frontChannelLogoutSupported,
+            backChannelLogoutSupported : $client->backChannelLogoutSupported,
+            approvalStatus            : OAuthClientApprovalStatus::APPROVED,
+            approvedAt                : new DateTimeImmutable(),
+            approvedBy                : trim($approvedBy),
+            active                    : true,
+            secretHash                : $client->secretHash
+        );
+        $this->clients[$clientId] = $approved;
+
+        return $approved;
     }
 
     /**
@@ -174,6 +226,11 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             requiredSenderConstraint  : $client->requiredSenderConstraint,
             workloadIdentity          : $client->workloadIdentity,
             phishingResistantRequired : $client->phishingResistantRequired,
+            frontChannelLogoutSupported: $client->frontChannelLogoutSupported,
+            backChannelLogoutSupported : $client->backChannelLogoutSupported,
+            approvalStatus            : $client->approvalStatus,
+            approvedAt                : $client->approvedAt,
+            approvedBy                : $client->approvedBy,
             active                    : $client->active,
             secretHash                : $this->passwordHasher->hash(password: $plainSecret)
         );

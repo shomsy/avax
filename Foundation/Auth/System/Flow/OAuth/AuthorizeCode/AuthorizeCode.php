@@ -15,6 +15,8 @@ use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
+use Avax\Auth\System\Flow\Oidc\ValidateRequestObject\ValidateRequestObject;
+use Avax\Auth\System\Flow\Oidc\ValidateRequestObject\ValidateRequestObjectData;
 use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
 use Avax\Auth\System\Foundation\Clock;
 use SensitiveParameter;
@@ -28,7 +30,8 @@ final readonly class AuthorizeCode
         #[SensitiveParameter] private AuthorizationCodeStoreInterface $codeStore,
         private AuditLogInterface                                     $auditLog,
         private Clock                                                 $clock,
-        private OidcProviderInterface|null                            $oidcProvider = null
+        private OidcProviderInterface|null                            $oidcProvider = null,
+        private ValidateRequestObject|null                            $requestObjectValidator = null
     ) {}
 
     /**
@@ -40,6 +43,34 @@ final readonly class AuthorizeCode
         $context = $this->currentAuthentication->read();
         $actor   = $context->user();
         $now     = $this->clock->now();
+        if ($data->requestUri !== null && trim($data->requestUri) !== '') {
+            if ($this->requestObjectValidator === null) {
+                $this->recordFailure(data: $data, reason: 'request_object_not_supported');
+                throw OAuthAuthorizationFailed::invalidRequestObject();
+            }
+
+            try {
+                $requestOverrides = $this->requestObjectValidator->execute(
+                    data: new ValidateRequestObjectData(requestUri: $data->requestUri)
+                );
+            } catch (OAuthAuthorizationFailed) {
+                $this->recordFailure(data: $data, reason: 'request_object_invalid');
+                throw OAuthAuthorizationFailed::invalidRequestObject();
+            }
+
+            $data = new AuthorizeCodeData(
+                clientId             : $requestOverrides->clientId,
+                redirectUri          : $requestOverrides->redirectUri,
+                scopes               : $requestOverrides->scopes,
+                state                : $requestOverrides->state,
+                nonce                : $requestOverrides->nonce,
+                requestUri           : $requestOverrides->requestUri,
+                codeChallenge        : $requestOverrides->codeChallenge,
+                codeChallengeMethod  : $requestOverrides->codeChallengeMethod,
+                ipAddress            : $data->ipAddress,
+                userAgent            : $data->userAgent
+            );
+        }
 
         if ($actor === null) {
             $this->recordFailure(data: $data, reason: 'unauthenticated');

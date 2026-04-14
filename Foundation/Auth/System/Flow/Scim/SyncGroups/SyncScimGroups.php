@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Scim\SyncGroups;
 
+use Avax\Auth\System\Capability\Scim\ScimDirectoryHealth;
 use Avax\Auth\System\Capability\Scim\ScimDirectoryStoreInterface;
 use Avax\Auth\System\Capability\Scim\ScimProvisionedIdentityStoreInterface;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
@@ -30,6 +31,10 @@ final readonly class SyncScimGroups
 
         if ($directory === null) {
             throw ScimFailed::unknownDirectory();
+        }
+
+        if ($directory->health === ScimDirectoryHealth::UNAVAILABLE) {
+            throw ScimFailed::serviceUnavailable();
         }
 
         $identity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);

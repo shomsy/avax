@@ -26,7 +26,9 @@ use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\Lifecycle\InMemoryLifecycleStore;
 use Avax\Auth\System\Capability\Lifecycle\LifecycleOrchestrator;
 use Avax\Auth\System\Capability\Lifecycle\LifecycleStoreInterface;
+use Avax\Auth\System\Capability\Oidc\InMemoryOidcRequestObjectStore;
 use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
+use Avax\Auth\System\Capability\Oidc\OidcRequestObjectStoreInterface;
 use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
 use Avax\Auth\System\Capability\OAuth\InMemoryAuthorizationCodeStore;
 use Avax\Auth\System\Capability\OAuth\InMemoryOAuthClientRegistry;
@@ -106,6 +108,7 @@ use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCode;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCode;
 use Avax\Auth\System\Flow\OAuth\ExchangeClientCredentials\ExchangeClientCredentials;
 use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshToken;
+use Avax\Auth\System\Flow\OAuth\ApproveClientRegistration\ApproveClientRegistration;
 use Avax\Auth\System\Flow\OAuth\IntrospectToken\IntrospectToken;
 use Avax\Auth\System\Flow\OAuth\ReadClients\ReadClients;
 use Avax\Auth\System\Flow\OAuth\ReadWorkloadIdentities\ReadWorkloadIdentities;
@@ -115,6 +118,12 @@ use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeToken;
 use Avax\Auth\System\Flow\OAuth\DisableClient\DisableClient;
 use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClient;
 use Avax\Auth\System\Flow\Oidc\ReadJsonWebKeySet\ReadOidcJsonWebKeySet;
+use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequest;
+use Avax\Auth\System\Flow\Oidc\ValidateRequestObject\ValidateRequestObject;
+use Avax\Auth\System\Flow\Oidc\JarmResponse\BuildJarmResponse;
+use Avax\Auth\System\Flow\Oidc\Logout\Logout as OidcLogout;
+use Avax\Auth\System\Flow\Oidc\FrontChannelLogout\FrontChannelLogout;
+use Avax\Auth\System\Flow\Oidc\BackChannelLogout\BackChannelLogout;
 use Avax\Auth\System\Flow\Oidc\ReadProviderMetadata\ReadOidcProviderMetadata;
 use Avax\Auth\System\Flow\Oidc\ReadUserInfo\ReadOidcUserInfo;
 use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthentication;
@@ -143,6 +152,8 @@ use Avax\Auth\System\Flow\Scim\ReadGroups\ReadScimGroups;
 use Avax\Auth\System\Flow\Scim\ReadUsers\ReadScimUsers;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectory;
 use Avax\Auth\System\Flow\Scim\RotateToken\RotateScimToken;
+use Avax\Auth\System\Flow\Scim\MarkOutage\MarkScimDirectoryOutage;
+use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutage;
 use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroups;
 use Avax\Auth\System\Flow\Session\LogoutAllSessions\LogoutAllSessions;
 use Avax\Auth\System\Flow\Session\ReadActiveSessions\ReadActiveSessions;
@@ -201,6 +212,7 @@ final class AuthBuilder
     private LimitMfaAttempts|null                     $mfaAttemptLimit        = null;
     private AttemptThrottle|null                      $passwordResetThrottle  = null;
     private AttemptThrottle|null                      $mfaRecoveryThrottle    = null;
+    private AttemptThrottle|null                      $scimThrottle           = null;
     private Clock|null                                $clock                  = null;
     private SessionRegistryInterface|null             $sessionRegistry        = null;
     private OAuthClientRegistryInterface|null         $oauthClientRegistry    = null;
@@ -215,6 +227,7 @@ final class AuthBuilder
     private FederationConnectionStoreInterface|null   $federationConnectionStore = null;
     private FederatedIdentityLinkStoreInterface|null  $federatedIdentityLinkStore = null;
     private OidcProviderInterface|null                $oidcProvider           = null;
+    private OidcRequestObjectStoreInterface|null      $oidcRequestObjectStore = null;
     private ScimDirectoryStoreInterface|null          $scimDirectoryStore     = null;
     private ScimProvisionedIdentityStoreInterface|null $scimProvisionedIdentityStore = null;
     private TenantStoreInterface|null                 $tenantStore            = null;
@@ -359,6 +372,13 @@ final class AuthBuilder
         return $this;
     }
 
+    public function withScimThrottle(AttemptThrottle $scimThrottle) : self
+    {
+        $this->scimThrottle = $scimThrottle;
+
+        return $this;
+    }
+
     public function withClock(Clock $clock) : self
     {
         $this->clock = $clock;
@@ -468,6 +488,13 @@ final class AuthBuilder
     public function withOidcProvider(OidcProviderInterface $oidcProvider) : self
     {
         $this->oidcProvider = $oidcProvider;
+
+        return $this;
+    }
+
+    public function withOidcRequestObjectStore(OidcRequestObjectStoreInterface $oidcRequestObjectStore) : self
+    {
+        $this->oidcRequestObjectStore = $oidcRequestObjectStore;
 
         return $this;
     }
@@ -582,6 +609,12 @@ final class AuthBuilder
             maxAttempts : 3,
             decaySeconds: 1800
         );
+        $scimThrottle             = $this->scimThrottle ?? new AttemptThrottle(
+            store       : new InMemoryAttemptThrottleStore(),
+            clock       : $clock,
+            maxAttempts : 60,
+            decaySeconds: 60
+        );
         $projectAuthenticatedUser = new ProjectAuthenticatedUser(
             emailVerificationState: $emailVerificationState,
             mfaStore              : $mfaStore
@@ -627,6 +660,11 @@ final class AuthBuilder
             auditLog      : $auditLog,
             clock         : $clock
         );
+        $approveOAuthClientRegistration = new ApproveClientRegistration(
+            clientRegistry: $oauthClientRegistry,
+            auditLog      : $auditLog,
+            clock         : $clock
+        );
         $updateOAuthClient        = new UpdateClient(
             clientRegistry: $oauthClientRegistry,
             auditLog      : $auditLog,
@@ -658,6 +696,49 @@ final class AuthBuilder
         $readOidcUserInfo         = $jwtIdentity !== null && $this->oidcProvider !== null
             ? new ReadOidcUserInfo(jwtIdentity: $jwtIdentity, oidcProvider: $this->oidcProvider)
             : null;
+        $oidcRequestObjectStore   = $this->oidcProvider !== null
+            ? ($this->oidcRequestObjectStore ?? new InMemoryOidcRequestObjectStore())
+            : null;
+        $pushOidcAuthorizationRequest = $oidcRequestObjectStore !== null
+            ? new PushAuthorizationRequest(
+                requestObjectStore: $oidcRequestObjectStore,
+                auditLog          : $auditLog,
+                clock             : $clock
+            )
+            : null;
+        $validateRequestObject = $oidcRequestObjectStore !== null
+            ? new ValidateRequestObject(requestObjectStore: $oidcRequestObjectStore)
+            : null;
+        $oidcLogout = $this->oidcProvider !== null
+            ? new OidcLogout(
+                frontChannelLogout: new FrontChannelLogout(
+                    currentAuthentication: $currentAuthentication,
+                    identity            : $identity,
+                    auditLog            : $auditLog,
+                    clock               : $clock,
+                    sessionRegistry     : $this->sessionRegistry,
+                    refreshTokenStore   : $this->refreshTokenStore,
+                    oidcProvider        : $this->oidcProvider,
+                    clientRegistry      : $oauthClientRegistry
+                ),
+                backChannelLogout : new BackChannelLogout(
+                    currentAuthentication: $currentAuthentication,
+                    identity            : $identity,
+                    auditLog            : $auditLog,
+                    clock               : $clock,
+                    sessionRegistry     : $this->sessionRegistry,
+                    refreshTokenStore   : $this->refreshTokenStore,
+                    oidcProvider        : $this->oidcProvider,
+                    clientRegistry      : $oauthClientRegistry
+                )
+            )
+            : null;
+        $buildOidcJarmResponse = $this->oidcProvider !== null
+            ? new BuildJarmResponse(
+                oidcProvider: $this->oidcProvider,
+                clock       : $clock
+            )
+            : null;
         $authorizeOAuthCode       = new AuthorizeCode(
             currentAuthentication: $currentAuthentication,
             userSource           : $this->userSource,
@@ -665,7 +746,8 @@ final class AuthBuilder
             codeStore            : $authorizationCodeStore,
             auditLog             : $auditLog,
             clock                : $clock,
-            oidcProvider         : $this->oidcProvider
+            oidcProvider         : $this->oidcProvider,
+            requestObjectValidator: $validateRequestObject
         );
         $oauthReady               = $identity->jwtIdentity() !== null && $this->refreshTokenStore !== null;
         $requireAdminElevation    = new RequireAdminElevation(
@@ -792,7 +874,8 @@ final class AuthBuilder
                 idGenerator     : $this->idGenerator ?? new IdGenerator(),
                 auditLog        : $auditLog,
                 clock           : $clock,
-                lifecycle       : $lifecycle
+                lifecycle       : $lifecycle,
+                attemptThrottle : $scimThrottle
             )
             : null;
         $readScimUsers            = $scimReady
@@ -920,6 +1003,7 @@ final class AuthBuilder
                                         riskEngine              : $riskEngine
                                     ),
             registerOAuthClient   : $oauthReady ? $registerOAuthClient : null,
+            approveOAuthClientRegistration: $oauthReady ? $approveOAuthClientRegistration : null,
             updateOAuthClient     : $oauthReady ? $updateOAuthClient : null,
             disableOAuthClient    : $oauthReady ? $disableOAuthClient : null,
             rotateOAuthClientSecret: $oauthReady ? $rotateOAuthClientSecret : null,
@@ -928,6 +1012,9 @@ final class AuthBuilder
             readOidcProviderMetadata: $oauthReady ? $readOidcProviderMetadata : null,
             readOidcJsonWebKeySet : $oauthReady ? $readOidcJsonWebKeySet : null,
             readOidcUserInfo      : $oauthReady ? $readOidcUserInfo : null,
+            pushOidcAuthorizationRequest: $oauthReady ? $pushOidcAuthorizationRequest : null,
+            oidcLogout            : $oauthReady ? $oidcLogout : null,
+            buildOidcJarmResponse : $oauthReady ? $buildOidcJarmResponse : null,
             authorizeOAuthCode    : $oauthReady ? $authorizeOAuthCode : null,
             exchangeOAuthCode     : $oauthReady
                 ? new ExchangeAuthorizationCode(
@@ -938,6 +1025,7 @@ final class AuthBuilder
                     refreshTokenStore: $this->refreshTokenStore ?? throw new RuntimeException(message: 'Refresh token store is required.'),
                     auditLog         : $auditLog,
                     clock            : $clock,
+                    currentAuthentication: $currentAuthentication,
                     oidcProvider     : $this->oidcProvider
                 )
                 : null,
@@ -1185,6 +1273,21 @@ final class AuthBuilder
                     directoryStore : $scimDirectoryStore,
                     passwordHasher : $passwordHasher,
                     auditLog       : $auditLog,
+                    clock          : $clock,
+                    attemptThrottle: $scimThrottle
+                )
+                : null,
+            markScimDirectoryOutage: $scimReady
+                ? new MarkScimDirectoryOutage(
+                    directoryStore : $scimDirectoryStore,
+                    auditLog       : $auditLog,
+                    clock          : $clock
+                )
+                : null,
+            recoverScimDirectoryOutage: $scimReady
+                ? new RecoverScimDirectoryOutage(
+                    directoryStore : $scimDirectoryStore,
+                    auditLog       : $auditLog,
                     clock          : $clock
                 )
                 : null,
@@ -1196,7 +1299,8 @@ final class AuthBuilder
                     identityStore  : $scimProvisionedIdentityStore,
                     auditLog       : $auditLog,
                     clock          : $clock,
-                    lifecycle      : $lifecycle
+                    lifecycle      : $lifecycle,
+                    attemptThrottle: $scimThrottle
                 )
                 : null,
             readScimUsers         : $readScimUsers,

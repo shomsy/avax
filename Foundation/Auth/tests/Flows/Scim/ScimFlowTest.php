@@ -12,14 +12,18 @@ use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkOperation;
 use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkRequest;
 use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUserData;
+use Avax\Auth\System\Flow\Scim\MarkOutage\MarkScimDirectoryOutageData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
 use Avax\Auth\System\Flow\Scim\ScimFailed;
+use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutageData;
 use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroupsData;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
+use Avax\Auth\System\Capability\Throttle\InMemoryAttemptThrottleStore;
 use PHPUnit\Framework\TestCase;
 
 final class ScimFlowTest extends TestCase
@@ -151,12 +155,81 @@ final class ScimFlowTest extends TestCase
         $this->assertSame(expected: [], actual: $auth->readScimUsers(directoryId: $directory->directory->directoryId));
     }
 
-    private function buildAuth() : Auth
+    public function testScimDirectoryOutageBlocksMutationsUntilRecovered() : void
+    {
+        $auth = $this->buildAuth();
+        $directory = $auth->registerScimDirectory(data: new RegisterScimDirectoryData(
+            tenantSlug: 'outage',
+            name      : 'Outage Directory'
+        ));
+
+        $marked = $auth->markScimDirectoryOutage(data: new MarkScimDirectoryOutageData(
+            directoryId: $directory->directory->directoryId,
+            reason     : 'maintenance'
+        ));
+
+        $this->assertSame(expected: 'unavailable', actual: $marked->health->value);
+        $this->assertSame(expected: 'maintenance', actual: $marked->outageReason);
+
+        $this->expectException(ScimFailed::class);
+        $this->expectExceptionMessage('SCIM directory is temporarily unavailable.');
+
+        $auth->provisionScimUser(data: new ProvisionScimUserData(
+            directoryId    : $directory->directory->directoryId,
+            directoryToken : $directory->plainTextToken,
+            externalId     : 'outage-1',
+            email          : 'outage@example.test',
+            username       : 'outage',
+            groups         : [],
+            state          : ScimAccountState::ACTIVE
+        ));
+    }
+
+    public function testScimDirectoryThrottleBlocksRepeatedMutations() : void
+    {
+        $auth = $this->buildAuth(
+            scimThrottle: new AttemptThrottle(
+                store       : new InMemoryAttemptThrottleStore(),
+                clock       : new Clock(),
+                maxAttempts : 1,
+                decaySeconds: 3600
+            )
+        );
+        $directory = $auth->registerScimDirectory(data: new RegisterScimDirectoryData(
+            tenantSlug: 'throttle',
+            name      : 'Throttle Directory'
+        ));
+
+        $auth->provisionScimUser(data: new ProvisionScimUserData(
+            directoryId    : $directory->directory->directoryId,
+            directoryToken : $directory->plainTextToken,
+            externalId     : 'throttle-1',
+            email          : 'throttle@example.test',
+            username       : 'throttle',
+            groups         : [],
+            state          : ScimAccountState::ACTIVE
+        ));
+
+        $this->expectException(ScimFailed::class);
+        $this->expectExceptionMessage('SCIM directory operation throttled for provision.');
+
+        $auth->provisionScimUser(data: new ProvisionScimUserData(
+            directoryId    : $directory->directory->directoryId,
+            directoryToken : $directory->plainTextToken,
+            externalId     : 'throttle-2',
+            email          : 'throttle-2@example.test',
+            username       : 'throttle-2',
+            groups         : [],
+            state          : ScimAccountState::ACTIVE
+        ));
+    }
+
+    private function buildAuth(AttemptThrottle|null $scimThrottle = null) : Auth
     {
         $userSource = new InMemoryUserSource();
         $refreshTokens = new InMemoryRefreshTokenStore();
 
-        return Auth::configuration()
+        $builder = Auth::configuration()
             ->forUser(userSource: $userSource)
             ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
                 userSource       : $userSource,
@@ -166,6 +239,12 @@ final class ScimFlowTest extends TestCase
                 refreshTokenStore: $refreshTokens
             )))
             ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
-            ->ready();
+            ;
+
+        if ($scimThrottle !== null) {
+            $builder = $builder->withScimThrottle(scimThrottle: $scimThrottle);
+        }
+
+        return $builder->ready();
     }
 }

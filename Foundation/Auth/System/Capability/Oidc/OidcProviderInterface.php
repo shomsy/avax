@@ -19,8 +19,14 @@ interface OidcProviderInterface
         array $scopes,
         string|null $nonce = null,
         DateTimeImmutable|null $authenticatedAt = null,
+        string|null $sessionId = null,
         bool $phishingResistant = false
     ) : OidcIdToken;
+
+    /**
+     * @param array<string, mixed> $claims
+     */
+    public function issueJwt(array $claims) : string;
 
     public function readProviderMetadata() : OidcProviderMetadata;
 
@@ -32,4 +38,9 @@ interface OidcProviderInterface
      * @return array<string, mixed>|null
      */
     public function resolveIdToken(#[SensitiveParameter] string $idToken) : array|null;
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function resolveJwt(#[SensitiveParameter] string $jwt) : array|null;
 }

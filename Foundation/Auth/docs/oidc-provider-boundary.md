@@ -16,14 +16,17 @@ a full standards-certified OIDC product.
   `RotatingOidcProvider`
 - configurable public or pairwise subject identifiers through the OIDC
   provider policy
+- optional `sid` claim in ID tokens for logout correlation
+- local front-channel logout, back-channel logout token handling, PAR request
+  storage, JAR request-object claim validation, and JARM response signing
+  through the kernel-owned OIDC flows
 - framework-neutral HTTP publication through
   `integrations/http/Oidc/ServeOidcHttpSurface.php`
 
 ## Still Outside This Package
 
 - OIDC-standard dynamic client registration endpoint
-- front-channel or back-channel logout
-- JAR, PAR, JARM, and other advanced request-object surfaces
+- JAR client-signed request-object signature verification
 - external conformance certification
 
 ## Adjacent Control-Plane Support

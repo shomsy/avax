@@ -45,6 +45,7 @@ use Avax\Auth\System\Flow\Mfa\Recover\BeginMfaRecoveryData;
 use Avax\Auth\System\Flow\Mfa\Recover\ConfirmMfaRecoveryData;
 use Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData;
 use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
+use Avax\Auth\System\Flow\OAuth\ApproveClientRegistration\ApproveClientRegistrationData;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
 use Avax\Auth\System\Flow\OAuth\ExchangeClientCredentials\ExchangeClientCredentialsData;
 use Avax\Auth\System\Flow\OAuth\ExchangeRefreshToken\ExchangeRefreshTokenData;
@@ -56,6 +57,12 @@ use Avax\Auth\System\Flow\OAuth\ReadWorkloadIdentities\WorkloadIdentityProfile;
 use Avax\Auth\System\Flow\OAuth\RevokeToken\RevokeTokenData;
 use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData;
 use Avax\Auth\System\Flow\Oidc\ReadUserInfo\OidcUserInfo;
+use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
+use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushedAuthorizationRequest;
+use Avax\Auth\System\Flow\Oidc\Logout\LogoutData as OidcLogoutData;
+use Avax\Auth\System\Flow\Oidc\Logout\LogoutResult as OidcLogoutResult;
+use Avax\Auth\System\Flow\Oidc\JarmResponse\BuildJarmResponseData;
+use Avax\Auth\System\Flow\Oidc\JarmResponse\JarmResponse;
 use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthenticationData;
 use Avax\Auth\System\Flow\Passkey\CompleteAuthentication\CompletePasskeyAuthenticationData;
 use Avax\Auth\System\Flow\Passkey\CompleteRegistration\CompletePasskeyRegistrationData;
@@ -70,11 +77,13 @@ use Avax\Auth\System\Flow\Register\RegistrationResult;
 use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUserData;
 use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkRequest;
 use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkResponse;
+use Avax\Auth\System\Flow\Scim\MarkOutage\MarkScimDirectoryOutageData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ScimProvisioningResult;
 use Avax\Auth\System\Flow\Scim\ReadGroups\ScimGroupProjection;
 use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
+use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutageData;
 use Avax\Auth\System\Flow\Scim\RotateToken\RotatedScimToken;
 use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroupsData;
 use Avax\Auth\System\Flow\Session\ActiveSession;
@@ -133,6 +142,8 @@ interface AuthInterface
 
     public function registerOAuthClient(RegisterClientData $data) : RegisteredOAuthClient;
 
+    public function approveOAuthClientRegistration(ApproveClientRegistrationData $data) : OAuthClient;
+
     public function updateOAuthClient(UpdateClientData $data) : OAuthClient;
 
     public function disableOAuthClient(string $clientId) : OAuthClient;
@@ -154,6 +165,12 @@ interface AuthInterface
     public function readOidcJsonWebKeySet() : OidcJsonWebKeySet;
 
     public function readOidcUserInfo(string $accessToken) : OidcUserInfo;
+
+    public function pushOidcAuthorizationRequest(PushAuthorizationRequestData $data) : PushedAuthorizationRequest;
+
+    public function oidcLogout(OidcLogoutData $data) : OidcLogoutResult;
+
+    public function buildOidcJarmResponse(BuildJarmResponseData $data) : JarmResponse;
 
     public function authorizeOAuthCode(AuthorizeCodeData $data) : IssuedAuthorizationCode;
 
@@ -225,6 +242,10 @@ interface AuthInterface
     public function readScimDirectories(string|null $tenantSlug = null) : array;
 
     public function rotateScimToken(string $directoryId) : RotatedScimToken;
+
+    public function markScimDirectoryOutage(MarkScimDirectoryOutageData $data) : ScimDirectory;
+
+    public function recoverScimDirectoryOutage(RecoverScimDirectoryOutageData $data) : ScimDirectory;
 
     public function provisionScimUser(ProvisionScimUserData $data) : ScimProvisioningResult;
 

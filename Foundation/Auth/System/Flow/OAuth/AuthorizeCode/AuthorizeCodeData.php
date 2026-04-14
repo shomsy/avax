@@ -18,6 +18,7 @@ final readonly class AuthorizeCodeData
         public array                                 $scopes = [],
         public string|null                           $state = null,
         public string|null                           $nonce = null,
+        public string|null                           $requestUri = null,
         #[SensitiveParameter] public string|null     $codeChallenge = null,
         #[SensitiveParameter] public PkceMethod|null $codeChallengeMethod = null,
         #[SensitiveParameter] public string|null     $ipAddress = null,

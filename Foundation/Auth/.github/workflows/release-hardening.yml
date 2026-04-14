@@ -52,6 +52,9 @@ jobs:
       - name: Generate rollback evidence
         run: php composer.phar rollback:proof > build/release/rollback-proof.json
 
+      - name: Quality gates
+        run: php composer.phar quality-gates:json > build/release/quality-gates.json
+
       - name: Upload release evidence
         uses: actions/upload-artifact@v4
         with:

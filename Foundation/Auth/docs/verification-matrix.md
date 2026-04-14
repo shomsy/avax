@@ -18,6 +18,7 @@ scenarios.
 - OIDC discovery metadata and JWKS exposure
 - OIDC nonce-bound ID-token issuance
 - OIDC userinfo reads from active access tokens
+- OIDC request-object claim validation
 - DPoP replay
 - DPoP method and URI mismatch
 - mTLS mismatch

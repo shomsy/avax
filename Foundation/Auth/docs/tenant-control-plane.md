@@ -6,7 +6,8 @@ not ad hoc admin toggles.
 ## Kernel-Owned Today
 
 - tenant creation, membership, invite acceptance, suspension, removal, and owner transfer
-- tenant-owned OAuth client registration, update, disable, and secret rotation
+- tenant-owned OAuth client registration, update, disable, secret rotation, and
+  explicit approval for high-risk registrations
 - tenant security configuration state
 - request, approval, apply, and rollback workflow
 - reference validation against federation connections and SCIM directories

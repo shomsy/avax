@@ -31,6 +31,8 @@ and federation, deterministic risk, admin elevation, and a thin optional integra
   being implied follow-up work.
 - Release hardening now has repo-owned dependency review, rollback evidence, SBOM, provenance, secret-scan tooling, and
   CI workflows instead of doc-only intent.
+- Canonical current-state and capability status now live in `docs/current-state.md`
+  and `docs/capability-matrix.md`.
 
 ## Quick Start
 

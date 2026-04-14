@@ -74,12 +74,16 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
             allowedAudiences         : ['partner-api'],
             allowedGrantTypes        : [OAuthGrantType::AUTHORIZATION_CODE, OAuthGrantType::REFRESH_TOKEN],
             requiredSenderConstraint : OAuthSenderConstraintType::DPOP,
-            phishingResistantRequired: true
+            phishingResistantRequired: true,
+            frontChannelLogoutSupported: true,
+            backChannelLogoutSupported: false
         );
 
         $this->assertTrue(condition: $registered->client->allowsGrantType(grantType: OAuthGrantType::AUTHORIZATION_CODE));
         $this->assertSame(expected: OAuthSenderConstraintType::DPOP, actual: $registered->client->requiredSenderConstraint);
         $this->assertTrue(condition: $registered->client->phishingResistantRequired);
+        $this->assertTrue(condition: $registered->client->frontChannelLogoutSupported);
+        $this->assertFalse(condition: $registered->client->backChannelLogoutSupported);
         $this->assertTrue(condition: $registered->client->allowsAudience(audience: 'partner-api'));
     }
 

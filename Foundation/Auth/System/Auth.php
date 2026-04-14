@@ -18,6 +18,7 @@ use Avax\Auth\System\Capability\Passkey\PasskeyCredential;
 use Avax\Auth\System\Capability\Risk\RiskDecision;
 use Avax\Auth\System\Capability\Risk\RiskSignal;
 use Avax\Auth\System\Capability\Scim\RegisteredScimDirectory;
+use Avax\Auth\System\Capability\Scim\ScimDirectory;
 use Avax\Auth\System\Capability\Tenant\Tenant;
 use Avax\Auth\System\Capability\Tenant\TenantMember;
 use Avax\Auth\System\Capability\TenantSecurity\TenantSecurityChangeRequest;
@@ -78,6 +79,8 @@ use Avax\Auth\System\Flow\Mfa\Recover\StartMfaRecovery;
 use Avax\Auth\System\Flow\Mfa\VerifyMfaChallengeData;
 use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCode;
 use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
+use Avax\Auth\System\Flow\OAuth\ApproveClientRegistration\ApproveClientRegistration;
+use Avax\Auth\System\Flow\OAuth\ApproveClientRegistration\ApproveClientRegistrationData;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCode;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
 use Avax\Auth\System\Flow\OAuth\ExchangeClientCredentials\ExchangeClientCredentials;
@@ -100,6 +103,15 @@ use Avax\Auth\System\Flow\OAuth\DisableClient\DisableClient;
 use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClient;
 use Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData;
 use Avax\Auth\System\Flow\Oidc\ReadJsonWebKeySet\ReadOidcJsonWebKeySet;
+use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequest;
+use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
+use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushedAuthorizationRequest;
+use Avax\Auth\System\Flow\Oidc\Logout\Logout as OidcLogout;
+use Avax\Auth\System\Flow\Oidc\Logout\LogoutData as OidcLogoutData;
+use Avax\Auth\System\Flow\Oidc\Logout\LogoutResult as OidcLogoutResult;
+use Avax\Auth\System\Flow\Oidc\JarmResponse\BuildJarmResponse;
+use Avax\Auth\System\Flow\Oidc\JarmResponse\BuildJarmResponseData;
+use Avax\Auth\System\Flow\Oidc\JarmResponse\JarmResponse;
 use Avax\Auth\System\Flow\Oidc\ReadProviderMetadata\ReadOidcProviderMetadata;
 use Avax\Auth\System\Flow\Oidc\ReadUserInfo\OidcUserInfo;
 use Avax\Auth\System\Flow\Oidc\ReadUserInfo\ReadOidcUserInfo;
@@ -136,6 +148,8 @@ use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkRequest;
 use Avax\Auth\System\Flow\Scim\Bulk\ScimBulkResponse;
 use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUser;
 use Avax\Auth\System\Flow\Scim\DeleteUser\DeleteScimUserData;
+use Avax\Auth\System\Flow\Scim\MarkOutage\MarkScimDirectoryOutage;
+use Avax\Auth\System\Flow\Scim\MarkOutage\MarkScimDirectoryOutageData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUser;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ProvisionScimUserData;
 use Avax\Auth\System\Flow\Scim\ProvisionUser\ScimProvisioningResult;
@@ -146,6 +160,8 @@ use Avax\Auth\System\Flow\Scim\ReadUsers\ReadScimUsers;
 use Avax\Auth\System\Flow\Scim\ReadUsers\ScimUserProjection;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectory;
 use Avax\Auth\System\Flow\Scim\RegisterDirectory\RegisterScimDirectoryData;
+use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutage;
+use Avax\Auth\System\Flow\Scim\RecoverOutage\RecoverScimDirectoryOutageData;
 use Avax\Auth\System\Flow\Scim\RotateToken\RotateScimToken;
 use Avax\Auth\System\Flow\Scim\RotateToken\RotatedScimToken;
 use Avax\Auth\System\Flow\Scim\SyncGroups\SyncScimGroups;
@@ -212,6 +228,7 @@ final readonly class Auth implements AuthInterface
         private Register                                                 $register,
         #[SensitiveParameter] private RefreshAuthentication              $refreshAuthentication,
         private RegisterClient|null                                      $registerOAuthClient,
+        private ApproveClientRegistration|null                           $approveOAuthClientRegistration,
         private UpdateClient|null                                        $updateOAuthClient,
         private DisableClient|null                                       $disableOAuthClient,
         private RotateClientSecret|null                                  $rotateOAuthClientSecret,
@@ -220,6 +237,9 @@ final readonly class Auth implements AuthInterface
         private ReadOidcProviderMetadata|null                            $readOidcProviderMetadata,
         private ReadOidcJsonWebKeySet|null                               $readOidcJsonWebKeySet,
         private ReadOidcUserInfo|null                                    $readOidcUserInfo,
+        private PushAuthorizationRequest|null                            $pushOidcAuthorizationRequest,
+        private OidcLogout|null                                          $oidcLogout,
+        private BuildJarmResponse|null                                   $buildOidcJarmResponse,
         #[SensitiveParameter] private AuthorizeCode|null                 $authorizeOAuthCode,
         #[SensitiveParameter] private ExchangeAuthorizationCode|null     $exchangeOAuthCode,
         #[SensitiveParameter] private ExchangeClientCredentials|null     $exchangeOAuthClientCredentials,
@@ -251,6 +271,8 @@ final readonly class Auth implements AuthInterface
         private RegisterScimDirectory|null                               $registerScimDirectory,
         private ReadScimDirectories|null                                 $readScimDirectories,
         #[SensitiveParameter] private RotateScimToken|null               $rotateScimToken,
+        private MarkScimDirectoryOutage|null                             $markScimDirectoryOutage,
+        private RecoverScimDirectoryOutage|null                          $recoverScimDirectoryOutage,
         private ProvisionScimUser|null                                   $provisionScimUser,
         private DeleteScimUser|null                                      $deleteScimUser,
         private ReadScimUsers|null                                       $readScimUsers,
@@ -399,6 +421,11 @@ final readonly class Auth implements AuthInterface
         return $this->registerOAuthClientOrFail()->execute(data: $data);
     }
 
+    public function approveOAuthClientRegistration(ApproveClientRegistrationData $data) : OAuthClient
+    {
+        return $this->approveOAuthClientRegistrationOrFail()->execute(data: $data);
+    }
+
     public function updateOAuthClient(UpdateClientData $data) : OAuthClient
     {
         return $this->updateOAuthClientOrFail()->execute(data: $data);
@@ -442,6 +469,21 @@ final readonly class Auth implements AuthInterface
         return $this->readOidcUserInfoOrFail()->execute(accessToken: $accessToken);
     }
 
+    public function pushOidcAuthorizationRequest(PushAuthorizationRequestData $data) : PushedAuthorizationRequest
+    {
+        return $this->pushOidcAuthorizationRequestOrFail()->execute(data: $data);
+    }
+
+    public function oidcLogout(OidcLogoutData $data) : OidcLogoutResult
+    {
+        return $this->oidcLogoutOrFail()->execute(data: $data);
+    }
+
+    public function buildOidcJarmResponse(BuildJarmResponseData $data) : JarmResponse
+    {
+        return $this->buildOidcJarmResponseOrFail()->execute(data: $data);
+    }
+
     public function registerScimDirectory(RegisterScimDirectoryData $data) : RegisteredScimDirectory
     {
         return $this->registerScimDirectoryOrFail()->execute(data: $data);
@@ -455,6 +497,16 @@ final readonly class Auth implements AuthInterface
     public function rotateScimToken(string $directoryId) : RotatedScimToken
     {
         return $this->rotateScimTokenOrFail()->execute(directoryId: $directoryId);
+    }
+
+    public function markScimDirectoryOutage(MarkScimDirectoryOutageData $data) : ScimDirectory
+    {
+        return $this->markScimDirectoryOutageOrFail()->execute(data: $data);
+    }
+
+    public function recoverScimDirectoryOutage(RecoverScimDirectoryOutageData $data) : ScimDirectory
+    {
+        return $this->recoverScimDirectoryOutageOrFail()->execute(data: $data);
     }
 
     public function provisionScimUser(ProvisionScimUserData $data) : ScimProvisioningResult
@@ -800,6 +852,11 @@ final readonly class Auth implements AuthInterface
         return $this->registerOAuthClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
     }
 
+    private function approveOAuthClientRegistrationOrFail() : ApproveClientRegistration
+    {
+        return $this->approveOAuthClientRegistration ?? throw new RuntimeException(message: 'OAuth client approval is not configured.');
+    }
+
     private function updateOAuthClientOrFail() : UpdateClient
     {
         return $this->updateOAuthClient ?? throw new RuntimeException(message: 'OAuth client registry is not configured.');
@@ -838,6 +895,21 @@ final readonly class Auth implements AuthInterface
     private function readOidcUserInfoOrFail() : ReadOidcUserInfo
     {
         return $this->readOidcUserInfo ?? throw new RuntimeException(message: 'OIDC provider is not configured.');
+    }
+
+    private function pushOidcAuthorizationRequestOrFail() : PushAuthorizationRequest
+    {
+        return $this->pushOidcAuthorizationRequest ?? throw new RuntimeException(message: 'OIDC PAR support is not configured.');
+    }
+
+    private function oidcLogoutOrFail() : OidcLogout
+    {
+        return $this->oidcLogout ?? throw new RuntimeException(message: 'OIDC logout support is not configured.');
+    }
+
+    private function buildOidcJarmResponseOrFail() : BuildJarmResponse
+    {
+        return $this->buildOidcJarmResponse ?? throw new RuntimeException(message: 'OIDC JARM support is not configured.');
     }
 
     private function registerScimDirectoryOrFail() : RegisterScimDirectory
@@ -888,6 +960,16 @@ final readonly class Auth implements AuthInterface
     private function rotateScimTokenOrFail() : RotateScimToken
     {
         return $this->rotateScimToken ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+    }
+
+    private function markScimDirectoryOutageOrFail() : MarkScimDirectoryOutage
+    {
+        return $this->markScimDirectoryOutage ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
+    }
+
+    private function recoverScimDirectoryOutageOrFail() : RecoverScimDirectoryOutage
+    {
+        return $this->recoverScimDirectoryOutage ?? throw new RuntimeException(message: 'SCIM runtime is not configured.');
     }
 
     private function readScimDirectoriesOrFail() : ReadScimDirectories

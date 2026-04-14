@@ -24,6 +24,7 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
         array $scopes,
         string|null $nonce = null,
         DateTimeImmutable|null $authenticatedAt = null,
+        string|null $sessionId = null,
         bool $phishingResistant = false
     ) : OidcIdToken
     {
@@ -33,8 +34,14 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
             scopes             : $scopes,
             nonce              : $nonce,
             authenticatedAt    : $authenticatedAt,
+            sessionId          : $sessionId,
             phishingResistant  : $phishingResistant
         );
+    }
+
+    public function issueJwt(array $claims) : string
+    {
+        return $this->activeProvider->issueJwt(claims: $claims);
     }
 
     public function readProviderMetadata() : OidcProviderMetadata
@@ -64,6 +71,19 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
     {
         foreach ($this->providers() as $provider) {
             $claims = $provider->resolveIdToken(idToken: $idToken);
+
+            if ($claims !== null) {
+                return $claims;
+            }
+        }
+
+        return null;
+    }
+
+    public function resolveJwt(#[SensitiveParameter] string $jwt) : array|null
+    {
+        foreach ($this->providers() as $provider) {
+            $claims = $provider->resolveJwt(jwt: $jwt);
 
             if ($claims !== null) {
                 return $claims;

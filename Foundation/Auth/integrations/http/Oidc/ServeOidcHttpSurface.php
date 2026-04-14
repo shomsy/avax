@@ -8,6 +8,9 @@ use Avax\Auth\Integrations\Headers\ReadBearerToken;
 use Avax\Auth\Integrations\Http\HttpEndpointInput;
 use Avax\Auth\Integrations\Http\JsonHttpResponse;
 use Avax\Auth\System\AuthInterface;
+use Avax\Auth\System\Capability\OAuth\PkceMethod;
+use Avax\Auth\System\Flow\Oidc\Logout\LogoutData as OidcLogoutData;
+use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
 use SensitiveParameter;
 use Throwable;
 
@@ -44,6 +47,13 @@ final readonly class ServeOidcHttpSurface
                     'subject_types_supported' => $metadata->subjectTypesSupported,
                     'id_token_signing_alg_values_supported' => $metadata->idTokenSigningAlgValuesSupported,
                     'code_challenge_methods_supported' => $metadata->codeChallengeMethodsSupported,
+                    'end_session_endpoint' => $metadata->endSessionEndpoint,
+                    'pushed_authorization_request_endpoint' => $metadata->pushedAuthorizationRequestEndpoint,
+                    'frontchannel_logout_supported' => $metadata->frontChannelLogoutSupported,
+                    'backchannel_logout_supported' => $metadata->backChannelLogoutSupported,
+                    'backchannel_logout_session_supported' => $metadata->backChannelLogoutSessionSupported,
+                    'request_object_signing_alg_values_supported' => $metadata->requestObjectSigningAlgValuesSupported,
+                    'authorization_response_signing_alg_values_supported' => $metadata->authorizationResponseSigningAlgValuesSupported,
                 ],
                 headers   : [
                     'Content-Type' => 'application/json',
@@ -100,6 +110,74 @@ final readonly class ServeOidcHttpSurface
             );
         }
 
+        if ($method === 'POST' && $path === '/oauth/par') {
+            $request = $this->auth->pushOidcAuthorizationRequest(data: new PushAuthorizationRequestData(
+                clientId          : $this->readString(input: $input, keys: ['client_id', 'clientId']) ?? '',
+                redirectUri       : $this->readString(input: $input, keys: ['redirect_uri', 'redirectUri']) ?? '',
+                scopes            : $this->readScopes(input: $input, keys: ['scope', 'scopes']),
+                state             : $this->readString(input: $input, keys: ['state']),
+                nonce             : $this->readString(input: $input, keys: ['nonce']),
+                codeChallenge     : $this->readString(input: $input, keys: ['code_challenge', 'codeChallenge']),
+                codeChallengeMethod: $this->readPkceMethod(input: $input),
+                ipAddress         : $this->readString(input: $input, keys: ['ip_address', 'ipAddress']) ?? $this->readServerValue(server: $input->server, name: 'REMOTE_ADDR'),
+                userAgent         : $this->readString(input: $input, keys: ['user_agent', 'userAgent']) ?? $this->readServerValue(server: $input->server, name: 'HTTP_USER_AGENT')
+            ));
+
+            return new JsonHttpResponse(
+                statusCode: 201,
+                body      : [
+                    'request_uri' => $request->requestUri,
+                    'expires_in' => max(0, $request->expiresAt->getTimestamp() - time()),
+                ],
+                headers   : [
+                    'Content-Type' => 'application/json',
+                    'Cache-Control' => 'no-store',
+                ]
+            );
+        }
+
+        if (in_array($method, ['GET', 'POST'], true) && $path === '/oidc/logout') {
+            $result = $this->auth->oidcLogout(data: new OidcLogoutData(
+                sessionId             : $this->readString(input: $input, keys: ['session_id', 'sid']),
+                idTokenHint           : $this->readString(input: $input, keys: ['id_token_hint', 'idTokenHint']),
+                logoutToken           : $this->readString(input: $input, keys: ['logout_token', 'logoutToken']),
+                postLogoutRedirectUri : $this->readString(input: $input, keys: ['post_logout_redirect_uri', 'postLogoutRedirectUri']),
+                state                 : $this->readString(input: $input, keys: ['state'])
+            ));
+
+            return new JsonHttpResponse(
+                statusCode: 200,
+                body      : [
+                    'revoked' => $result->revoked,
+                    'session_id' => $result->sessionId,
+                    'post_logout_redirect_uri' => $result->postLogoutRedirectUri,
+                    'state' => $result->state,
+                ],
+                headers   : [
+                    'Content-Type' => 'application/json',
+                    'Cache-Control' => 'no-store',
+                ]
+            );
+        }
+
+        if ($method === 'POST' && $path === '/oidc/backchannel-logout') {
+            $result = $this->auth->oidcLogout(data: new OidcLogoutData(
+                logoutToken: $this->readString(input: $input, keys: ['logout_token', 'logoutToken']) ?? ''
+            ));
+
+            return new JsonHttpResponse(
+                statusCode: $result->revoked ? 200 : 400,
+                body      : [
+                    'revoked' => $result->revoked,
+                    'session_id' => $result->sessionId,
+                ],
+                headers   : [
+                    'Content-Type' => 'application/json',
+                    'Cache-Control' => 'no-store',
+                ]
+            );
+        }
+
         return $this->error(statusCode: 404, errorCode: 'not_found', message: 'OIDC route was not found.');
     }
 
@@ -124,5 +202,101 @@ final readonly class ServeOidcHttpSurface
         }
 
         return '/' . trim($trimmed, '/');
+    }
+
+    /**
+     * @param array<string, mixed> $server
+     */
+    private function readServerValue(array $server, string $name) : string|null
+    {
+        $value = $server[$name] ?? null;
+
+        if (is_string($value)) {
+            return $value;
+        }
+
+        if (is_int($value) || is_float($value) || is_bool($value)) {
+            return (string) $value;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param list<string> $keys
+     */
+    private function readString(HttpEndpointInput $input, array $keys) : string|null
+    {
+        foreach ($keys as $key) {
+            $value = $this->readArrayValue(values: $input->query, key: $key) ?? $this->readArrayValue(values: $input->body, key: $key) ?? $this->readArrayValue(values: $input->routeParameters, key: $key);
+
+            if ($value === null || trim($value) === '') {
+                continue;
+            }
+
+            return trim($value);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<string, mixed> $values
+     */
+    private function readArrayValue(array $values, string $key) : string|null
+    {
+        foreach ($values as $candidateKey => $value) {
+            if (strcasecmp($candidateKey, $key) !== 0) {
+                continue;
+            }
+
+            if (is_array($value)) {
+                $value = reset($value);
+            }
+
+            if (is_string($value)) {
+                return $value;
+            }
+
+            if (is_int($value) || is_float($value) || is_bool($value)) {
+                return (string) $value;
+            }
+
+            return null;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param list<string> $keys
+     * @return list<string>
+     */
+    private function readScopes(HttpEndpointInput $input, array $keys) : array
+    {
+        foreach ($keys as $key) {
+            $value = $this->readString(input: $input, keys: [$key]);
+
+            if ($value === null) {
+                continue;
+            }
+
+            $parts = preg_split(pattern: '/\s+/', subject: trim($value), flags: PREG_SPLIT_NO_EMPTY);
+
+            return $parts === false ? [] : array_values(array_unique($parts));
+        }
+
+        return [];
+    }
+
+    private function readPkceMethod(HttpEndpointInput $input) : PkceMethod|null
+    {
+        $value = $this->readString(input: $input, keys: ['code_challenge_method', 'codeChallengeMethod']);
+
+        if ($value === null) {
+            return null;
+        }
+
+        return PkceMethod::tryFrom($value);
     }
 }

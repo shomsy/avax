@@ -19,6 +19,52 @@ final readonly class ScimDirectory
         #[SensitiveParameter] public string $tokenHash,
         public array                        $groupRoleMap,
         public DateTimeImmutable            $createdAt,
-        public DateTimeImmutable|null       $rotatedAt = null
+        public DateTimeImmutable|null       $rotatedAt = null,
+        public ScimDirectoryHealth          $health = ScimDirectoryHealth::HEALTHY,
+        public DateTimeImmutable|null       $healthCheckedAt = null,
+        public string|null                  $outageReason = null,
+        public DateTimeImmutable|null       $outageStartedAt = null,
+        public DateTimeImmutable|null       $outageRecoveredAt = null
     ) {}
+
+    public function isHealthy() : bool
+    {
+        return $this->health !== ScimDirectoryHealth::UNAVAILABLE;
+    }
+
+    public function markOutage(DateTimeImmutable $startedAt, string|null $reason = null) : self
+    {
+        return new self(
+            directoryId        : $this->directoryId,
+            tenantSlug         : $this->tenantSlug,
+            name               : $this->name,
+            tokenHash          : $this->tokenHash,
+            groupRoleMap       : $this->groupRoleMap,
+            createdAt          : $this->createdAt,
+            rotatedAt          : $this->rotatedAt,
+            health             : ScimDirectoryHealth::UNAVAILABLE,
+            healthCheckedAt    : $startedAt,
+            outageReason       : trim((string) $reason) !== '' ? trim((string) $reason) : 'scim_outage',
+            outageStartedAt    : $startedAt,
+            outageRecoveredAt  : null
+        );
+    }
+
+    public function recover(DateTimeImmutable $recoveredAt) : self
+    {
+        return new self(
+            directoryId        : $this->directoryId,
+            tenantSlug         : $this->tenantSlug,
+            name               : $this->name,
+            tokenHash          : $this->tokenHash,
+            groupRoleMap       : $this->groupRoleMap,
+            createdAt          : $this->createdAt,
+            rotatedAt          : $this->rotatedAt,
+            health             : ScimDirectoryHealth::HEALTHY,
+            healthCheckedAt    : $recoveredAt,
+            outageReason       : null,
+            outageStartedAt    : $this->outageStartedAt,
+            outageRecoveredAt  : $recoveredAt
+        );
+    }
 }

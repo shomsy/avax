@@ -73,6 +73,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         array $scopes,
         string|null $nonce = null,
         DateTimeImmutable|null $authenticatedAt = null,
+        string|null $sessionId = null,
         bool $phishingResistant = false
     ) : OidcIdToken
     {
@@ -100,14 +101,23 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
             $claims['nonce'] = trim($nonce);
         }
 
+        if ($sessionId !== null && trim($sessionId) !== '') {
+            $claims['sid'] = trim($sessionId);
+        }
+
         if ($phishingResistant) {
             $claims['acr'] = 'phr';
         }
 
         return new OidcIdToken(
-            token     : $this->encode(claims: $claims),
+            token     : $this->issueJwt(claims: $claims),
             expiresAt : $expiresAt
         );
+    }
+
+    public function issueJwt(array $claims) : string
+    {
+        return $this->encode(claims: $claims);
     }
 
     public function readProviderMetadata() : OidcProviderMetadata
@@ -117,13 +127,20 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
             authorizationEndpoint         : $this->authorizationEndpoint,
             tokenEndpoint                 : $this->tokenEndpoint,
             userInfoEndpoint              : $this->userInfoEndpoint,
+            endSessionEndpoint            : $this->issuer . '/oidc/logout',
+            pushedAuthorizationRequestEndpoint: $this->issuer . '/oauth/par',
             jsonWebKeySetUri              : $this->jsonWebKeySetUri,
             scopesSupported               : ['openid', 'profile', 'email'],
             responseTypesSupported        : ['code'],
             grantTypesSupported           : ['authorization_code', 'refresh_token'],
             subjectTypesSupported         : [$this->subjectIdentifierStrategy->value],
             idTokenSigningAlgValuesSupported: [$this->algorithm],
-            codeChallengeMethodsSupported : ['S256']
+            codeChallengeMethodsSupported : ['S256'],
+            frontChannelLogoutSupported   : true,
+            backChannelLogoutSupported    : true,
+            backChannelLogoutSessionSupported: true,
+            requestObjectSigningAlgValuesSupported: [$this->algorithm],
+            authorizationResponseSigningAlgValuesSupported: [$this->algorithm]
         );
     }
 
@@ -161,7 +178,22 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
 
     public function resolveIdToken(#[SensitiveParameter] string $idToken) : array|null
     {
-        $segments = explode('.', $idToken);
+        $claims = $this->resolveJwt(jwt: $idToken);
+
+        if ($claims === null) {
+            return null;
+        }
+
+        if (! is_string($claims['aud'] ?? null) || trim($claims['aud']) === '') {
+            return null;
+        }
+
+        return $claims;
+    }
+
+    public function resolveJwt(#[SensitiveParameter] string $jwt) : array|null
+    {
+        $segments = explode('.', $jwt);
 
         if (count($segments) !== 3) {
             return null;

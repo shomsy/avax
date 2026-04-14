@@ -42,3 +42,6 @@ jobs:
 
       - name: Secret scan
         run: php composer.phar secret-scan
+
+      - name: Quality gates
+        run: php composer.phar quality-gates

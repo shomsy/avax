@@ -47,4 +47,9 @@ final class OAuthAuthorizationFailed extends RuntimeException
     {
         return new self(message: 'OIDC nonce is required for this authorization request.');
     }
+
+    public static function invalidRequestObject() : self
+    {
+        return new self(message: 'OIDC request object is invalid.');
+    }
 }

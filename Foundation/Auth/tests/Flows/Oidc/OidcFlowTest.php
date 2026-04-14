@@ -7,6 +7,8 @@ namespace Avax\Auth\Tests\Flow\Oidc;
 use Avax\Auth\System\Auth;
 use Avax\Auth\System\Capability\Identity\Identity;
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentity;
+use Avax\Auth\System\Capability\Identity\Session\SessionIdentity;
+use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
 use Avax\Auth\System\Capability\Oidc\OpenSslOidcProvider;
 use Avax\Auth\System\Capability\Oidc\RotatingOidcProvider;
 use Avax\Auth\System\Capability\Oidc\SubjectIdentifierStrategy;
@@ -20,6 +22,9 @@ use Avax\Auth\System\Flow\OAuth\AuthorizeCode\AuthorizeCodeData;
 use Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode\ExchangeAuthorizationCodeData;
 use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
+use Avax\Auth\System\Flow\Oidc\JarmResponse\BuildJarmResponseData;
+use Avax\Auth\System\Flow\Oidc\Logout\LogoutData as OidcLogoutData;
+use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
 use Avax\Auth\System\Flow\Register\RegistrationData;
 use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
@@ -76,6 +81,116 @@ final class OidcFlowTest extends TestCase
         $this->assertSame(expected: $client->client->clientId, actual: $claims['aud'] ?? null);
         $this->assertSame(expected: 'oidc@example.com', actual: $userInfo->claims['email'] ?? null);
         $this->assertSame(expected: 'oidc-user', actual: $userInfo->claims['preferred_username'] ?? null);
+    }
+
+    public function testOidcParAuthorizationRequestAndJarmResponseFlow() : void
+    {
+        [$auth, $provider] = $this->buildAuthWithOidc();
+
+        $auth->register(data: new RegistrationData(
+            email   : 'oidc-par@example.com',
+            username: 'oidc-par',
+            password: 'secret'
+        ));
+        $auth->login(credentials: new Credentials(
+            identifier: 'oidc-par@example.com',
+            password  : 'secret'
+        ));
+
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
+            name         : 'OIDC PAR Client',
+            type         : OAuthClientType::CONFIDENTIAL,
+            redirectUris : ['https://rp.example.test/callback'],
+            allowedScopes: ['openid', 'profile', 'email']
+        ));
+
+        $pushed = $auth->pushOidcAuthorizationRequest(data: new PushAuthorizationRequestData(
+            clientId    : $client->client->clientId,
+            redirectUri : 'https://rp.example.test/callback',
+            scopes      : ['openid', 'profile', 'email'],
+            state       : 'state-par',
+            nonce       : 'nonce-par'
+        ));
+
+        $code = $auth->authorizeOAuthCode(data: new AuthorizeCodeData(
+            clientId   : $client->client->clientId,
+            redirectUri: 'https://rp.example.test/callback',
+            scopes     : ['openid', 'profile', 'email'],
+            nonce      : 'nonce-par',
+            requestUri : $pushed->requestUri
+        ));
+        $jarm = $auth->buildOidcJarmResponse(data: new BuildJarmResponseData(
+            clientId: $client->client->clientId,
+            code    : $code->code,
+            state   : 'state-par'
+        ));
+        $claims = $provider->resolveJwt(jwt: $jarm->responseJwt);
+
+        $this->assertNotEmpty(actual: $pushed->requestUri);
+        $this->assertSame(expected: $client->client->clientId, actual: $claims['aud'] ?? null);
+        $this->assertSame(expected: $code->code, actual: $claims['code'] ?? null);
+        $this->assertSame(expected: 'state-par', actual: $claims['state'] ?? null);
+    }
+
+    public function testOidcLogoutRevokesCurrentSession() : void
+    {
+        [$auth] = $this->buildAuthWithOidc();
+
+        $auth->register(data: new RegistrationData(
+            email   : 'oidc-logout@example.com',
+            username: 'oidc-logout',
+            password: 'secret'
+        ));
+        $auth->login(credentials: new Credentials(
+            identifier: 'oidc-logout@example.com',
+            password  : 'secret'
+        ));
+
+        $sessionId = $auth->current()->sessionId();
+        self::assertNotNull($sessionId);
+
+        $result = $auth->oidcLogout(data: new OidcLogoutData(
+            sessionId             : $sessionId,
+            postLogoutRedirectUri : 'https://rp.example.test/post-logout',
+            state                 : 'logout-state'
+        ));
+
+        $this->assertTrue(condition: $result->revoked);
+        $this->assertSame(expected: $sessionId, actual: $result->sessionId);
+        $this->assertFalse(condition: $auth->current()->isAuthenticated());
+    }
+
+    public function testOidcAuthorizationRejectsUnknownRequestUri() : void
+    {
+        [$auth] = $this->buildAuthWithOidc();
+
+        $auth->register(data: new RegistrationData(
+            email   : 'oidc-par-invalid@example.com',
+            username: 'oidc-par-invalid',
+            password: 'secret'
+        ));
+        $auth->login(credentials: new Credentials(
+            identifier: 'oidc-par-invalid@example.com',
+            password  : 'secret'
+        ));
+
+        $client = $auth->registerOAuthClient(data: new RegisterClientData(
+            name         : 'OIDC PAR Invalid Client',
+            type         : OAuthClientType::CONFIDENTIAL,
+            redirectUris : ['https://rp.example.test/callback'],
+            allowedScopes: ['openid']
+        ));
+
+        $this->expectException(OAuthAuthorizationFailed::class);
+        $this->expectExceptionMessage('OIDC request object is invalid.');
+
+        $auth->authorizeOAuthCode(data: new AuthorizeCodeData(
+            clientId   : $client->client->clientId,
+            redirectUri: 'https://rp.example.test/callback',
+            scopes     : ['openid'],
+            nonce      : 'nonce-invalid',
+            requestUri : 'urn:ietf:params:oauth:request_uri:missing'
+        ));
     }
 
     public function testOidcAuthorizationRequiresNonce() : void
@@ -253,6 +368,7 @@ final class OidcFlowTest extends TestCase
     {
         $userSource = new InMemoryUserSource();
         $refreshTokens = new InMemoryRefreshTokenStore();
+        $sessionRegistry = new InMemorySessionRegistry();
         $jwtIdentity = new JwtIdentity(
             userSource       : $userSource,
             codec            : new HmacTokenCodec(secret: 'oidc-auth-secret'),
@@ -266,7 +382,10 @@ final class OidcFlowTest extends TestCase
         );
         $auth = Auth::configuration()
             ->forUser(userSource: $userSource)
-            ->withIdentity(identity: new Identity(jwtIdentity: $jwtIdentity))
+            ->withIdentity(identity: new Identity(
+                sessionIdentity: new SessionIdentity(sessionRegistry: $sessionRegistry),
+                jwtIdentity    : $jwtIdentity
+            ))
             ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->withOidcProvider(oidcProvider: $provider)
             ->ready();

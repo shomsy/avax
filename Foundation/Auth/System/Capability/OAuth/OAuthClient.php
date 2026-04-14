@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\OAuth;
 
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
+use DateTimeImmutable;
 use SensitiveParameter;
 
 /**
@@ -33,6 +34,11 @@ final readonly class OAuthClient
         public OAuthSenderConstraintType|null  $requiredSenderConstraint = null,
         public bool                            $workloadIdentity = false,
         public bool                            $phishingResistantRequired = false,
+        public bool                            $frontChannelLogoutSupported = false,
+        public bool                            $backChannelLogoutSupported = false,
+        public OAuthClientApprovalStatus       $approvalStatus = OAuthClientApprovalStatus::APPROVED,
+        public DateTimeImmutable|null          $approvedAt = null,
+        public string|null                     $approvedBy = null,
         public bool                            $active = true,
         #[SensitiveParameter] public string|null $secretHash = null
     ) {}
@@ -121,5 +127,15 @@ final readonly class OAuthClient
     public function isActive() : bool
     {
         return $this->active;
+    }
+
+    public function isApproved() : bool
+    {
+        return $this->approvalStatus === OAuthClientApprovalStatus::APPROVED;
+    }
+
+    public function isPendingApproval() : bool
+    {
+        return $this->approvalStatus === OAuthClientApprovalStatus::PENDING_APPROVAL;
     }
 }

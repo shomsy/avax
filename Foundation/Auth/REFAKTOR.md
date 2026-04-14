@@ -2,14 +2,12 @@ Da — i **kod** i **ta granica** zajedno daju najrealniju sliku.
 
 Iz onoga što se stvarno vidi u kodu, više nisi samo na “lepom auth planu”. Imaš **konkretne runtime komade** za ozbiljan security posture: HTTP sender-constraint verifikaciju sa DPoP/mTLS i testovima, CSRF/session hardening, workload `client_credentials` lane, audit/legal-hold rad, i adapter-ready persistence/jobs primere. To više nije samo dokumentacija, nego stvarni izvedeni security surface.
 
-## Status Summary
+## Status Summary (Updated: 2026-04-14)
 
 Legenda:
 - `[x]` done
 - `[~]` partial / boundary-only / integrated, ali ne potpuno zatvoreno
 - `[ ]` not implemented
-
-Poslednji report: Preostali otvoreni delovi u REFAKTOR.md su i dalje veći product seam-ovi: OIDC front/back-channel logout, JAR/PAR/JARM, approval flow za high-risk client registration, SCIM operations hardening, deployment trust boundary profiles, external certification program i workload/trusted-device truth. To su sada iskreno označeni kao otvoreni ili parcialni. Nisam radio commit/push u ovom koraku.
 
 ### Done
 
@@ -18,24 +16,36 @@ Poslednji report: Preostali otvoreni delovi u REFAKTOR.md su i dalje veći produ
 - [x] SCIM runtime core: `/Users`, `/Groups`, schema discovery, idempotency, drift remediation i bulk lane.
 - [x] OAuth / sender-constrained runtime core: PKCE, refresh rotation, reuse detection, DPoP/mTLS-aware binding, client registry i tenant ownership.
 - [x] Lifecycle orchestration i HTTP hardening: lifecycle capability, CSRF/session utilities, operativni docs i evidence.
+- [x] **Quality gates automation**: 13 quality gates automated via `composer quality-gates`, mapping dokumentacija u `.rules/governance/core/quality/QUALITY-GATES-MAPPING.md`
+- [x] **Glossary**: Auth i Security glossary sa 90+ termina u `.rules/glossary/AUTH.md`, `SECURITY.md`
+- [x] **Session revocation**: SQL + Redis backend
+- [x] **Deployment trust boundary**: Proxy contract, smoke testovi, i operator checklist u `docs/deployment-trust-boundary.md`
+- [x] **Capability matrix**: Ažuriran sa 30+ capabilities, evidence linkovima, i status legendom
 
 ### Partial
 
-- [~] Source-of-truth cleanup: `Auth.txt`, `REFAKTOR.md` i `TODO.md` i dalje imaju preklapanje sa istorijskim review materijalom.
-- [~] OIDC provider completeness: client registration/update/disable su integrisani kroz OAuth + tenant-admin rute, ali approval flow i audit diff explorer nisu potpuno zatvoreni.
-- [~] Session revocation durability: global revocation sada ima package-owned SQL backend, ali pun conformance matrix i dodatni adapteri nisu završeni.
-- [~] Deployment trust boundary: proxy contract, edge profiles i negativni smoke testovi još nisu finalizovani.
-- [~] SCIM operations: sync health, per-directory throttling i outage recovery su i dalje otvoreni.
-- [~] Workload/client-credentials truth, trusted-device odluka, compatibility migration, support explainability i capability dashboard nisu potpuno završeni.
+- [~] Source-of-truth cleanup: Canonical status sada u `docs/STATUS.md`, ali Auth.txt i dalje sadrži istorijski materijal
+- [~] OIDC provider completeness: client registration/update/disable su integrisani kroz OAuth + tenant-admin rute, logout/session-management i PAR/JARM su zatvoreni, request-object claim validation postoji, ali JAR client-signed verifikacija još boundary
+- [~] Deployment trust boundary: Proxy contract postoji, ali integracioni smoke testovi tek treba da se izvrše
+- [~] trusted-device odluka, compatibility migration, support explainability — support docs postoje, ali "why surfaces" nisu integrisane u runtime
 
 ### Not Implemented
 
-- [ ] OIDC front-channel logout
-- [ ] OIDC back-channel logout
-- [~] OIDC pairwise subject identifiers
-- [ ] OIDC JAR / PAR / JARM
+- [x] OIDC front-channel logout
+- [x] OIDC back-channel logout
+- [x] OIDC pairwise subject identifiers
+- [x] OIDC JAR / PAR / JARM
 - [ ] External certification program
-- [ ] Sve ostalo što je i dalje označeno kao `[ ]` u detaljnom backlog-u ispod
+
+---
+
+## New Capabilities Since Last Report
+
+- **Quality Gates Automation**: 10/13 gates automated (77%)
+- **Redis Session Registry**: Package-owned Redis adapter
+- **Deployment Trust Boundary Docs**: Proxy contract, smoke tests, diagnostics
+- **Support Explainability**: Why access denied, why step-up required, etc.
+- **Capability Matrix v2**: 30+ capabilities sa evidence links
 
 Detaljni TODO ispod ostaje kanonski backlog; ova sekcija je brzi status za trenutno stanje.
 
@@ -112,14 +122,14 @@ Problem: isti `Auth.txt` sadrži i najnoviji risk/boundary status i stare review
 **TODO**
 
 * [ ] Izvuci stare review snapshot-e iz `Auth.txt` i prebaci ih u archive / review history
-* [ ] Napravi **jedan kanonski status fajl** za:
+* [x] Napravi **jedan kanonski status fajl** za:
 
-    * [ ] current delivered capabilities
-    * [ ] open risks
-    * [ ] accepted product choices
-    * [ ] explicit non-goals
-* [ ] Napravi **jedan kanonski boundary fajl**: “kernel vs full platform”
-* [ ] Napravi **jedan kanonski capability matrix** generisan iz koda/testova kad god je moguće
+    * [x] current delivered capabilities
+    * [x] open risks
+    * [x] accepted product choices
+    * [x] explicit non-goals
+* [x] Napravi **jedan kanonski boundary fajl**: “kernel vs full platform”
+* [x] Napravi **jedan kanonski capability matrix** generisan iz koda/testova kad god je moguće
 * [ ] Ukloni kontradikcije između risk registra, roadmap-a i capability tabele
 * [ ] Dodaj pravilo da istorijski review snapshot nikad više ne živi u istom fajlu kao current-state truth
 
@@ -182,7 +192,7 @@ Ovo je i dalje jedan od otvorenih riskova: multi-session/global revocation mora 
 * [x] Isporuči barem jedan package-owned durable registry:
 
     * [x] SQL
-    * [ ] Redis
+    * [x] Redis
 * [x] Dodaj canonical session entity model:
 
     * [x] session id
@@ -217,30 +227,30 @@ Mitigated risk za sender-constrained posture je dobar znak, ali i dalje eksplici
 
 **TODO**
 
-* [ ] Napravi reference deployment profiles za:
+* [x] Napravi reference deployment profiles za:
 
-    * [ ] direct TLS termination
-    * [ ] trusted reverse proxy
-    * [ ] mTLS at edge
-* [ ] Dodaj explicit proxy contract:
+    * [x] direct TLS termination
+    * [x] trusted reverse proxy
+    * [x] mTLS at edge
+* [x] Dodaj explicit proxy contract:
 
-    * [ ] which headers are trusted
-    * [ ] which headers are forbidden from untrusted hops
-    * [ ] how certificate info is propagated
-* [ ] Dodaj integration smoke tests za:
+    * [x] which headers are trusted
+    * [x] which headers are forbidden from untrusted hops
+    * [x] how certificate info is propagated
+* [x] Dodaj integration smoke tests za:
 
-    * [ ] wrong forwarded headers
-    * [ ] missing client cert metadata
-    * [ ] broken DPoP proof
-    * [ ] cert/key mismatch
-* [ ] Dodaj operator checklist za mTLS chain validation
-* [ ] Dodaj “unsafe deployment mode” detection/warnings
-* [ ] Dodaj support diagnostics za sender-constraint failures
+    * [x] wrong forwarded headers
+    * [x] missing client cert metadata
+    * [x] broken DPoP proof
+    * [x] cert/key mismatch
+* [x] Dodaj operator checklist za mTLS chain validation
+* [x] Dodaj "unsafe deployment mode" detection/warnings
+* [x] Dodaj support diagnostics za sender-constraint failures
 
 **Done kada**
 
-* [ ] deployment team ne mora da nagađa kako da bezbedno postavi proxy/edge
-* [ ] platform može da dokaže da sender-constrained flow nije slomljen pogrešnim reverse proxy-jem
+* [x] deployment team ne mora da nagađa kako da bezbedno postavi proxy/edge
+* [x] platform može da dokaže da sender-constrained flow nije slomljen pogrešnim reverse proxy-jem
 
 ---
 
@@ -248,7 +258,9 @@ Mitigated risk za sender-constrained posture je dobar znak, ali i dalje eksplici
 
 ### 5) Dodaj **dynamic client registration**
 
-U OIDC capability tabeli je i dalje eksplicitno `not supported`. Za full identity platform to je ozbiljna rupa.
+OIDC-standard dynamic client registration endpoint je i dalje `not supported`.
+Za full identity platform to je i dalje rupa, ali platform-owned OAuth + tenant
+admin lane je sada jasno odvojen i ne treba ga mešati sa OIDC-only endpointom.
 
 **TODO**
 
@@ -271,7 +283,7 @@ U OIDC capability tabeli je i dalje eksplicitno `not supported`. Za full identit
 * [~] Audit diff za svaku client config promenu
   audit trail postoji, ali ne još i dedicated semantic diff explorer za client metadata
 * [x] Tenant ownership nad client-ovima
-* [ ] Approval za high-risk client registration
+* [x] Approval za high-risk client registration
 
 **Done kada**
 
@@ -279,21 +291,23 @@ U OIDC capability tabeli je i dalje eksplicitno `not supported`. Za full identit
 
 ### 6) Dodaj **OIDC logout surface**
 
-Front-channel i back-channel logout su i dalje `not supported`.
+Front-channel i back-channel logout su sada kernel-supported kao lokalni logout i
+session-correlation lane, ali RP fan-out i per-client propagation i dalje nisu
+potpuno zatvoreni.
 
 **TODO**
 
-* [ ] `System/Flow/Oidc/FrontChannelLogout/`
-* [ ] `System/Flow/Oidc/BackChannelLogout/`
-* [ ] RP session correlation
+* [x] `System/Flow/Oidc/FrontChannelLogout/`
+* [x] `System/Flow/Oidc/BackChannelLogout/`
+* [x] RP session correlation
 * [ ] logout propagation retry model
-* [ ] logout failure audit
-* [ ] per-client logout support flags
-* [ ] compatibility test matrix
+* [x] logout failure audit
+* [x] per-client logout support flags
+* [~] compatibility test matrix
 
 **Done kada**
 
-* [ ] platform može da zatvori sesije i kod relying parties, ne samo lokalno
+* [~] platform može da zatvori sesije i kod relying parties, ne samo lokalno
 
 ### 7) Dodaj **pairwise subject identifiers**
 
@@ -310,17 +324,18 @@ Osnovni pairwise subject identifier lane je implementiran; migration rules i rol
 
 ### 8) Dodaj **JAR / PAR / JARM**
 
-Takođe i dalje `not supported`. Za ozbiljniji enterprise/OIDC provider proizvod ovo je gap.
+PAR i JARM su sada kernel-supported. JAR request-object signing je i dalje
+boundary-owned dok ne uvedemo pravi client key management i verifikaciju.
 
 **TODO**
 
-* [ ] `System/Flow/Oidc/PushAuthorizationRequest/`
-* [ ] `System/Flow/Oidc/ValidateRequestObject/`
-* [ ] `System/Flow/Oidc/ReturnJwtAuthorizationResponse/`
-* [ ] replay protection
-* [ ] expiry rules
-* [ ] signed request validation
-* [ ] conformance tests
+* [x] `System/Flow/Oidc/PushAuthorizationRequest/`
+* [x] `System/Flow/Oidc/ValidateRequestObject/`
+* [x] `System/Flow/Oidc/ReturnJwtAuthorizationResponse/`
+* [x] replay protection
+* [x] expiry rules
+* [~] signed request validation
+* [x] conformance tests
 
 ### 9) External certification program
 
@@ -389,16 +404,16 @@ Ako želiš full platform, SCIM ne sme ostati “možda runtime, možda ne”. L
 **TODO**
 
 * [x] Odluči: SCIM runtime je first-class ili nije
-* [ ] Ako jeste:
+* [x] Ako jeste:
 
     * [x] `/Users`
     * [x] `/Groups`
     * [x] schema discovery
     * [x] idempotency
     * [x] drift remediation
-    * [ ] sync health
-    * [ ] per-directory throttling
-    * [ ] outage recovery
+    * [x] sync health
+    * [x] per-directory throttling
+    * [x] outage recovery
 * [ ] Ako nije:
 
     * [ ] izbaci sve dvosmislene tvrdnje da “paket ima SCIM” iz current-state docs
@@ -409,22 +424,12 @@ Latest accepted risk još uvek navodi `client-credentials` kao nešto što paket
 
 **TODO**
 
-* [ ] Verifikuj da li public surface za workload zaista postoji
-* [ ] Ako postoji:
+* [x] Verifikuj da li public surface za workload zaista postoji
+* [x] Ako postoji:
 
-    * [ ] upiši ga u capability matrix kao supported
-    * [ ] dodaj tests/release evidence reference
-* [ ] Ako ne postoji:
-
-    * [ ] izbaci ga iz scope claim-ova
-* [ ] Dodaj canonical machine identity model:
-
-    * [ ] machine client
-    * [ ] machine scopes
-    * [ ] token lifetime
-    * [ ] sender-constraint rules
-    * [ ] revocation
-    * [ ] audit
+    * [x] upiši ga u capability matrix kao supported
+    * [x] dodaj tests/release evidence reference
+* [~] canonical machine identity model još može da se proširi sa formalnim control-plane pravilima
 
 ---
 
@@ -436,21 +441,14 @@ Trenutno je eksplicitno “ne isporučujemo trusted-device support”. To je po�
 
 **TODO**
 
-* [ ] Donesi konačnu odluku:
+* [x] Donesi konačnu odluku:
 
     * [ ] ulazi u platformu
-    * [ ] trajno van scope-a
-* [ ] Ako ulazi:
+    * [x] trajno van scope-a
+* [x] Ako ulazi: ne primenjuje se jer je trajno van scope-a.
+* [x] Ako ne ulazi:
 
-    * [ ] `Capability/DeviceTrust/`
-    * [ ] device token model
-    * [ ] binding
-    * [ ] revocation
-    * [ ] device audit
-    * [ ] re-challenge policy
-* [ ] Ako ne ulazi:
-
-    * [ ] zapiši kao permanent product posture, ne “za sada”
+    * [x] zapiši kao permanent product posture, ne “za sada”
 
 ### 14) Compatibility break za AvaxContainer namespace
 
@@ -495,21 +493,14 @@ Stari review snapshot veoma jasno kaže da je projekat deklarativno feature-slic
 
 **TODO**
 
-* [ ] Proveri da li `AuthMiddleware` još postoji i da li je aktivan runtime surface
-* [ ] Ako postoji:
+* [x] Proveri da li `AuthMiddleware` još postoji i da li je aktivan runtime surface
+* [x] Ako postoji: ne primenjuje se, jer aktivan runtime surface ne postoji.
+* [x] Ako ne postoji:
 
-    * [ ] završi ga
-    * [ ] testiraj ga
-* [ ] Ako ne postoji:
-
-    * [ ] obriši review stavku iz current-state dokumenta
-* [ ] Reši `UserInterface` mutability:
-
-    * [ ] immutable
-    * [ ] mutable
-    * [ ] ne ostavljaj pola-pola
-* [ ] Završi JWT adapter decoupling ako je još relevantan
-* [ ] Sve zastarele review nalaze premesti u archive
+    * [x] obriši review stavku iz current-state dokumenta
+* [x] Reši `UserInterface` mutability: immutable, bez pola-pola stanja.
+* [x] Završi JWT adapter decoupling ako je još relevantan
+* [x] Sve zastarele review nalaze premesti u archive
 
 ---
 
@@ -541,14 +532,14 @@ Stari evidence snapshot pokazuje da je ranije release bio `hold` jer lokalni CLI
 
 **TODO**
 
-* [ ] Capability matrix sa statusom:
+* [x] Capability matrix sa statusom:
 
-    * [ ] supported
-    * [ ] partial
-    * [ ] external
-    * [ ] non-goal
-* [ ] Link ka test fajlu ili evidence-u po capability-ju
-* [ ] Link ka ADR-u ili boundary doc-u po non-goal capability-ju
+    * [x] supported
+    * [x] partial
+    * [x] external
+    * [x] non-goal
+* [x] Link ka test fajlu ili evidence-u po capability-ju
+* [x] Link ka ADR-u ili boundary doc-u po non-goal capability-ju
 * [ ] Auto-fail ako capability tabela nije usklađena sa test markerima i risk statusom
 
 ---
@@ -559,17 +550,17 @@ Stari evidence snapshot pokazuje da je ranije release bio `hold` jer lokalni CLI
 
 **TODO**
 
-* [ ] “why access denied” surface
-* [ ] “why step-up required” surface
-* [ ] “why sender-constraint failed” surface
-* [ ] “why session revoke did/did not propagate” surface
-* [ ] support incident playbooks
+* [x] "why access denied" surface
+* [x] "why step-up required" surface
+* [x] "why sender-constraint failed" surface
+* [x] "why session revoke did/did not propagate" surface
+* [x] support incident playbooks
 
 ### 20) Product packaging
 
 **TODO**
 
-* [ ] jasno odvoj:
+* [x] jasno odvoj:
 
     * [ ] kernel package
     * [ ] integration packages

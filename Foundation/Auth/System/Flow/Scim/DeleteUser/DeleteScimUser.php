@@ -7,9 +7,12 @@ namespace Avax\Auth\System\Flow\Scim\DeleteUser;
 use Avax\Auth\System\Capability\Lifecycle\LifecycleOrchestrator;
 use Avax\Auth\System\Capability\Lifecycle\LifecycleSource;
 use Avax\Auth\System\Capability\Scim\ScimDirectory;
+use Avax\Auth\System\Capability\Scim\ScimDirectoryHealth;
 use Avax\Auth\System\Capability\Scim\ScimDirectoryStoreInterface;
 use Avax\Auth\System\Capability\Scim\ScimProvisionedIdentityStoreInterface;
 use Avax\Auth\System\Capability\UserSource\ProvisionableUserSourceInterface;
+use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
+use Avax\Auth\System\Capability\Throttle\AttemptThrottleExceeded;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Scim\ScimFailed;
@@ -24,7 +27,8 @@ final readonly class DeleteScimUser
         private ScimProvisionedIdentityStoreInterface $identityStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        private LifecycleOrchestrator|null $lifecycle = null
+        private LifecycleOrchestrator|null $lifecycle = null,
+        private AttemptThrottle|null $attemptThrottle = null
     ) {}
 
     /**
@@ -33,6 +37,8 @@ final readonly class DeleteScimUser
     public function execute(DeleteScimUserData $data) : void
     {
         $directory = $this->authenticateDirectory(directoryId: $data->directoryId, directoryToken: $data->directoryToken);
+        $this->enforceDirectoryAvailability(directory: $directory);
+        $this->enforceThrottle(directoryId: $directory->directoryId, operation: 'delete');
         $identity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);
 
         if ($identity === null) {
@@ -77,5 +83,29 @@ final readonly class DeleteScimUser
         }
 
         return $directory;
+    }
+
+    private function enforceDirectoryAvailability(ScimDirectory $directory) : void
+    {
+        if ($directory->health === ScimDirectoryHealth::UNAVAILABLE) {
+            throw ScimFailed::serviceUnavailable();
+        }
+    }
+
+    private function enforceThrottle(string $directoryId, string $operation) : void
+    {
+        if ($this->attemptThrottle === null) {
+            return;
+        }
+
+        $key = 'scim:' . $directoryId . ':' . $operation;
+
+        try {
+            $this->attemptThrottle->check(key: $key);
+        } catch (AttemptThrottleExceeded $exceeded) {
+            throw ScimFailed::throttled(retryAfterSeconds: $exceeded->retryAfter(), scope: $operation);
+        }
+
+        $this->attemptThrottle->recordAttempt(key: $key);
     }
 }

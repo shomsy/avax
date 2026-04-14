@@ -30,6 +30,9 @@ final readonly class RegisterClientData
         public OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
         public OAuthSenderConstraintType|null $requiredSenderConstraint = null,
         public bool                           $workloadIdentity = false,
-        public bool                           $phishingResistantRequired = false
+        public bool                           $phishingResistantRequired = false,
+        public bool                           $frontChannelLogoutSupported = false,
+        public bool                           $backChannelLogoutSupported = false,
+        public bool                           $approvalRequired = false
     ) {}
 }

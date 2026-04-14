@@ -14,8 +14,10 @@ what still remains outside this package.
 | userinfo from active access token | supported | kernel | `tests/Flows/Oidc/OidcFlowTest.php` |
 | overlap JWKS during key rollover | supported | kernel | `tests/Flows/Oidc/OidcFlowTest.php` |
 | dynamic client registration | not supported | external package or app | n/a |
-| front-channel logout | not supported | external package or app | n/a |
-| back-channel logout | not supported | external package or app | n/a |
+| front-channel logout | partial | kernel | `tests/Flows/Oidc/OidcFlowTest.php`, `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php` |
+| back-channel logout | partial | kernel | `tests/Flows/Oidc/OidcFlowTest.php`, `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php` |
 | pairwise subject identifiers | supported | kernel | `tests/Capabilities/Oidc/SubjectIdentifierTest.php`, `tests/Flows/Oidc/OidcFlowTest.php` |
-| JAR / PAR / JARM | not supported | external package or app | n/a |
+| PAR request storage | supported | kernel | `tests/Flows/Oidc/OidcFlowTest.php`, `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php` |
+| JARM response signing | supported | kernel | `tests/Flows/Oidc/OidcFlowTest.php` |
+| JAR client-signed request objects | partial | external package or app | `tests/Flows/Oidc/ValidateRequestObjectTest.php` |
 | external certification | not supported | delivery program | n/a |

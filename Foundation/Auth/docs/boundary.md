@@ -74,8 +74,8 @@ Integration rule:
 This package does not own today:
 
 - full standards-certified OIDC provider product surface
-- OIDC-standard dynamic client registration endpoint, front-channel or
-  back-channel logout, and JAR/PAR/JARM request-object surfaces
+- OIDC-standard dynamic client registration endpoint and JAR client-signed
+  request-object signature verification
 - SAML federation brokering runtime
 - full RFC 7644 product surface including health, throttling, and outage
   recovery overlays
@@ -186,6 +186,12 @@ Stable application API to keep public:
 - `OidcProviderMetadata`
 - `OidcJsonWebKeySet`
 - `OidcUserInfo`
+- `PushAuthorizationRequestData`
+- `PushedAuthorizationRequest`
+- `OidcLogoutData`
+- `OidcLogoutResult`
+- `BuildJarmResponseData`
+- `JarmResponse`
 - `RegisterScimDirectoryData`
 - `ProvisionScimUserData`
 - `DeleteScimUserData`
@@ -236,6 +242,7 @@ Stable extension contracts to keep public:
 - `OidcProviderInterface`
 - `OpenSslOidcProvider`
 - `RotatingOidcProvider`
+- `OidcRequestObjectStoreInterface`
 - `AccessPolicy`
 - `IdentityPolicy`
 - `IdentityPolicyCatalog`

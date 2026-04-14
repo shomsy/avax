@@ -123,7 +123,8 @@ integrations/
 - `Capability/Access/Policy/IdentityPolicyCatalog` owns the package default assurance matrix for user, privileged user,
   admin, support, tenant admin, machine identity, and break-glass posture.
 - `Capability/Oidc/` owns asymmetric provider behavior that is small enough to stay package-local; framework-neutral
-  HTTP publishing lives in `integrations/http/Oidc/`, while logout and certification remain outside the kernel.
+  HTTP publishing lives in `integrations/http/Oidc/`, while certification remains outside the kernel and logout plus
+  request-object claim validation are handled as kernel-owned OIDC flows.
 - Passkeys and federation stay adapter-first: the kernel owns orchestration and storage contracts, while standards-heavy
   protocol work stays behind runtime interfaces.
 - `Capability/OAuth/SenderConstraint/` owns DPoP and mTLS binding metadata for sender-constrained token posture.

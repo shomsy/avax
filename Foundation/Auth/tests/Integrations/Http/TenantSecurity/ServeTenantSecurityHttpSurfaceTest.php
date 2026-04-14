@@ -74,6 +74,8 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
                 'redirectUris' => ['https://app.acme.test/callback'],
                 'allowedScopes' => ['openid', 'profile'],
                 'allowedGrantTypes' => ['authorization_code', 'refresh_token'],
+                'frontChannelLogoutSupported' => true,
+                'backChannelLogoutSupported' => true,
             ]
         ));
         $oauthClientId = $oauthClient->body['client']['clientId'];
@@ -86,6 +88,8 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
                 'redirectUris' => ['https://app.acme.test/callback', 'https://app.acme.test/return'],
                 'allowedScopes' => ['openid', 'profile', 'email'],
                 'allowedGrantTypes' => ['authorization_code', 'refresh_token'],
+                'frontChannelLogoutSupported' => true,
+                'backChannelLogoutSupported' => false,
             ]
         ));
         $rotatedOAuthSecret = $surface->execute(input: new HttpEndpointInput(
@@ -99,6 +103,27 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
         $disabledOAuthClient = $surface->execute(input: new HttpEndpointInput(
             method: 'DELETE',
             path  : '/tenants/acme/oauth-clients/' . rawurlencode($oauthClientId)
+        ));
+        $pendingOAuthClient = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path  : '/tenants/acme/oauth-clients',
+            body  : [
+                'name' => 'Acme Workload',
+                'type' => 'confidential',
+                'redirectUris' => ['urn:avax:oauth:acme-workload'],
+                'allowedScopes' => ['orders.read'],
+                'allowedGrantTypes' => ['client_credentials'],
+                'allowedAudiences' => ['orders-api'],
+                'workloadIdentity' => true,
+                'requiredSenderConstraint' => 'mtls',
+                'approvalRequired' => true,
+            ]
+        ));
+        $pendingOAuthClientId = $pendingOAuthClient->body['client']['clientId'];
+        $approvedOAuthClient = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path  : '/tenants/acme/oauth-clients/' . rawurlencode($pendingOAuthClientId) . '/approve',
+            body  : ['approvedBy' => 'approver']
         ));
         $removedFormerOwner = $surface->execute(input: new HttpEndpointInput(
             method: 'DELETE',
@@ -143,6 +168,15 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
             ]
         ));
         $directoryId = $directory->body['directory']['directoryId'];
+        $outage = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path  : '/tenants/acme/security/scim-directories/' . rawurlencode($directoryId) . '/outage',
+            body  : ['reason' => 'Maintenance']
+        ));
+        $recovered = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path  : '/tenants/acme/security/scim-directories/' . rawurlencode($directoryId) . '/recover'
+        ));
 
         $change = $surface->execute(input: new HttpEndpointInput(
             method: 'POST',
@@ -189,10 +223,18 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
         $this->assertSame(expected: 2, actual: $transferredOwner->body['tenant']['ownerUserId']);
         $this->assertSame(expected: 201, actual: $oauthClient->statusCode);
         $this->assertNotNull(actual: $oauthClient->body['plainTextSecret']);
+        $this->assertTrue(condition: $oauthClient->body['client']['frontChannelLogoutSupported']);
+        $this->assertTrue(condition: $oauthClient->body['client']['backChannelLogoutSupported']);
         $this->assertSame(expected: 'Acme App Updated', actual: $updatedOAuthClient->body['client']['name']);
+        $this->assertTrue(condition: $updatedOAuthClient->body['client']['frontChannelLogoutSupported']);
+        $this->assertFalse(condition: $updatedOAuthClient->body['client']['backChannelLogoutSupported']);
         $this->assertNotNull(actual: $rotatedOAuthSecret->body['plainTextSecret']);
         $this->assertCount(expectedCount: 1, haystack: $listedOAuthClients->body['clients']);
         $this->assertFalse(condition: $disabledOAuthClient->body['client']['active']);
+        $this->assertSame(expected: 'pending_approval', actual: $pendingOAuthClient->body['client']['approvalStatus']);
+        $this->assertFalse(condition: $pendingOAuthClient->body['client']['active']);
+        $this->assertSame(expected: 'approved', actual: $approvedOAuthClient->body['client']['approvalStatus']);
+        $this->assertTrue(condition: $approvedOAuthClient->body['client']['active']);
         $this->assertSame(expected: 204, actual: $removedFormerOwner->statusCode);
         $this->assertSame(expected: 201, actual: $connection->statusCode);
         $this->assertSame(expected: 200, actual: $verified->statusCode);
@@ -201,6 +243,8 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
         $this->assertSame(expected: 'healthy', actual: $health->body['health']);
         $this->assertSame(expected: 201, actual: $directory->statusCode);
         $this->assertArrayHasKey(key: 'plainTextToken', array: $directory->body);
+        $this->assertSame(expected: 'unavailable', actual: $outage->body['directory']['health']);
+        $this->assertSame(expected: 'healthy', actual: $recovered->body['directory']['health']);
         $this->assertSame(expected: 201, actual: $change->statusCode);
         $this->assertCount(expectedCount: 1, haystack: $changes->body['changes']);
         $this->assertSame(expected: 'approved', actual: $approved->body['change']['status']);

@@ -23,6 +23,10 @@ final readonly class TrustedProxyPolicy
 
     public function isTrusted(string $ip) : bool
     {
+        if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
+            return false;
+        }
+
         if ($this->trustedProxies === ['*']) {
             return true;
         }
@@ -42,14 +46,19 @@ final readonly class TrustedProxyPolicy
             return true;
         }
 
-        // Simple CIDR check
         if (str_contains($trusted, '/')) {
             [$range, $netmask] = explode('/', $trusted, 2);
-            $rangeInt = ip2long($range);
-            $ipInt    = ip2long($ip);
-            $mask     = ~((1 << (32 - (int) $netmask)) - 1);
+            
+            $rangeLong = ip2long($range);
+            $ipLong    = ip2long($ip);
+            
+            if ($rangeLong === false || $ipLong === false) {
+                return false;
+            }
 
-            return ($ipInt & $mask) === ($rangeInt & $mask);
+            $mask = ~((1 << (32 - (int) $netmask)) - 1);
+
+            return ($ipLong & $mask) === ($rangeLong & $mask);
         }
 
         return false;

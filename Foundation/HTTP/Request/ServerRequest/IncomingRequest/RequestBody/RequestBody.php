@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody;
 
-use psr\http\message\StreamInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Capability Owner: Manages the raw request body stream.
@@ -21,10 +21,15 @@ final readonly class RequestBody
 
     public function content() : string
     {
-        if ($this->stream->isSeekable()) {
-            $this->stream->rewind();
+        if (!$this->stream->isSeekable()) {
+            return $this->stream->getContents();
         }
 
-        return $this->stream->getContents();
+        $originalPosition = $this->stream->tell();
+        $this->stream->rewind();
+        $content = $this->stream->getContents();
+        $this->stream->seek($originalPosition);
+
+        return $content;
     }
 }

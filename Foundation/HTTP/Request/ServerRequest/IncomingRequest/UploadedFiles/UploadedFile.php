@@ -45,10 +45,8 @@ final class UploadedFile implements UploadedFileInterface
         return $this->stream;
     }
 
-    public function moveTo(string $targetPath) : void
-    {
-        if ($this->moved) {
-            throw new RuntimeException(message: 'File already moved');
+        if ($this->error !== UPLOAD_ERR_OK) {
+            throw new RuntimeException(message: 'Cannot move file with upload error: ' . $this->error);
         }
 
         if ($targetPath === '') {
@@ -59,19 +57,19 @@ final class UploadedFile implements UploadedFileInterface
         // For our implementation, we'll cast a note that this is the seam.
         if (PHP_SAPI === 'cli') {
             // In CLI context we just write the stream
-            file_put_contents($targetPath, $this->stream->getContents());
+            if ($this->stream->isSeekable()) {
+                $this->stream->rewind();
+            }
+            file_put_contents($targetPath, (string) $this->stream);
         } else {
             // Actual SAPI integration
-            if (! move_uploaded_file($this->stream->getMetadata(key: 'uri'), $targetPath)) {
+            $uri = $this->stream->getMetadata(key: 'uri');
+            if ($uri === null || ! move_uploaded_file($uri, $targetPath)) {
                 throw new RuntimeException(message: 'Failed to move uploaded file');
             }
         }
 
         $this->moved = true;
-
-        // Technically, a readonly class cannot have mutable properties like $moved.
-        // PSR-7 UploadedFileInterface usually implies state. 
-        // We'll treat this as a simplified model for the rewrite.
     }
 
     public function getSize() : int|null

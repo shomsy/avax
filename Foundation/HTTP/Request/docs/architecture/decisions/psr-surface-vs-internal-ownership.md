@@ -12,7 +12,8 @@ slucaj sa `InputManagementTrait`, itd.). Tako request objuekti završavaju i kao
 Zadržavamo punu PSR-7 kompatibilnost za sve eksterne posmatrače sistema. Ipak, interni "ownership" nad stanjem Request-a
 neće biti na plećima samog modela.
 
-Novi `Request` postaje isključivo **tanka ljuska i facade (state owner)** za PSR-7 operacije.
+Novi `ServerRequest` postaje isključivo **tanka ljuska i facade (state owner)** za PSR-7 operacije.
+Njegov legacy bridge (compatibility layer) je `Request`.
 
 - Za skladištenje i preračunavanje header-a brinuće isključivo `RequestHeaders`.
 - Za tumačenje body-ja sa parserima brinuće `ParseBodyByContentType` prosleđeno ka `ParsedBody`.

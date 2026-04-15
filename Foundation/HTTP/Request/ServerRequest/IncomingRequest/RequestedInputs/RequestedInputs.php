@@ -58,17 +58,20 @@ final readonly class RequestedInputs
     public function bool(string $key, bool $default = false) : bool
     {
         $value = $this->get(key: $key);
-        if ($value === null) {
+        if ($value === null || $value === '') {
             return $default;
         }
 
-        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        $result = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+        return $result ?? $default;
     }
 
     public function get(string $key, mixed $default = null) : mixed
     {
         $body = $this->extractBodyArray();
 
+        // Priority: Body > Query
         return $body[$key] ?? $this->queryParams[$key] ?? $default;
     }
 
@@ -79,6 +82,43 @@ final readonly class RequestedInputs
             return $default;
         }
 
-        return (int) $value;
+        $result = filter_var($value, FILTER_VALIDATE_INT);
+
+        return ($result === false) ? $default : $result;
+    }
+
+    public function float(string $key, float $default = 0.0) : float
+    {
+        $value = $this->get(key: $key);
+        if ($value === null || $value === '') {
+            return $default;
+        }
+
+        $result = filter_var($value, FILTER_VALIDATE_FLOAT);
+
+        return ($result === false) ? $default : $result;
+    }
+
+    public function text(string $key, string $default = '') : string
+    {
+        $value = $this->get(key: $key);
+        if ($value === null) {
+            return $default;
+        }
+
+        return (string) $value;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function list(string $key, array $default = []) : array
+    {
+        $value = $this->get(key: $key);
+        if ($value === null) {
+            return $default;
+        }
+
+        return is_array($value) ? $value : [$value];
     }
 }

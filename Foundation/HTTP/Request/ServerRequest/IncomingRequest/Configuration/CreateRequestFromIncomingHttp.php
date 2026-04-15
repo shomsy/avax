@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\HTTP\Request\IncomingHttp\IncomingRequest\Configuration;
 
+use Avax\HTTP\Request\IncomingHttp\IncomingRequest\ProtocolVersion\NormalizeProtocolVersion;
 use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\ParsedBody;
 use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\Parsers\ParseBodyByContentType;
 use Avax\HTTP\Request\IncomingHttp\IncomingRequest\RequestBody\RequestBody;
@@ -16,14 +17,34 @@ use Avax\HTTP\Response\Classes\Stream;
 use Avax\HTTP\URI\UriBuilder;
 
 /**
- * Configuration Owner: Orchestrates the creation of a ServerRequest object from the current HTTP environment.
+ * Configuration Owner: Orchestrates the creation of a ServerRequest object.
  */
 final readonly class CreateRequestFromIncomingHttp
 {
-    public function execute() : ServerRequest
+    /**
+     * Entry point using superglobals.
+     */
+    public static function capture() : ServerRequest
     {
-        $server = $_SERVER;
+        return (new self())->execute(
+            server: $_SERVER,
+            query : $_GET,
+            cookie: $_COOKIE,
+            files : $_FILES
+        );
+    }
 
+    /**
+     * Core creation logic decoupled from superglobals.
+     */
+    public function execute(
+        array $server,
+        array $query = [],
+        array $cookie = [],
+        array $files = [],
+        mixed $body = null
+    ) : ServerRequest
+    {
         // 1. Resolve URI
         $uri = $this->createUri(server: $server);
 
@@ -32,29 +53,46 @@ final readonly class CreateRequestFromIncomingHttp
         $requestHeaders = new RequestHeaders(headers: $headers);
 
         // 3. Resolve body
-        $bodyStream = new Stream(stream: fopen('php://input', 'r'));
-        $body       = new RequestBody(stream: $bodyStream);
+        $bodyOwner = $this->resolveBody(body: $body);
 
         // 4. Parse body if needed
         $contentType    = $requestHeaders->getLine(name: 'Content-Type');
-        $parsedBodyData = (new ParseBodyByContentType())->execute(contentType: $contentType, content: $body->content());
+        $parsedBodyData = (new ParseBodyByContentType())->execute(contentType: $contentType, content: $bodyOwner->content());
         $parsedBody     = new ParsedBody(data: $parsedBodyData);
 
         // 5. Build ServerRequest
         return new ServerRequest(
-            body           : $body,
+            body           : $bodyOwner,
             method         : $server['REQUEST_METHOD'] ?? 'GET',
             uri            : $uri,
             headers        : $requestHeaders,
             serverParams   : $server,
-            cookies        : new RequestCookies(cookies: $_COOKIE),
-            // attach session if available
-            // session: new RequestSession(data: $_SESSION ?? []),
-            queryParams    : $_GET,
-            uploadedFiles  : new UploadedFiles(files: (new NormalizeUploadedFiles())->execute(files: $_FILES)),
+            cookies        : new RequestCookies(cookies: $cookie),
+            queryParams    : $query,
+            uploadedFiles  : new UploadedFiles(files: (new NormalizeUploadedFiles())->execute(files: $files)),
             parsedBody     : $parsedBody,
-            protocolVersion: $server['SERVER_PROTOCOL'] ?? '1.1'
+            protocolVersion: (new NormalizeProtocolVersion())->execute(protocol: $server['SERVER_PROTOCOL'] ?? '1.1')
         );
+    }
+
+    private function resolveBody(mixed $body) : RequestBody
+    {
+        if ($body instanceof RequestBody) {
+            return $body;
+        }
+
+        if ($body instanceof \Psr\Http\Message\StreamInterface) {
+            return new RequestBody(stream: $body);
+        }
+
+        $streamHandle = fopen('php://input', 'r');
+        
+        // Safety check for fopen
+        if ($streamHandle === false) {
+             $streamHandle = fopen('php://temp', 'r+');
+        }
+
+        return new RequestBody(stream: new Stream(stream: $streamHandle));
     }
 
     private function createUri(array $server) : UriBuilder

@@ -10,18 +10,16 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
-// TODO: rename ServerRequest class to ServerRequest
+
 
 /**
  * Legacy Bridge: This class maintains the old namespace but delegates
  * everything to the new ServerRequest architecture.
  *
- * @deprecated Use Avax\HTTP\ServerRequest\ServerRequest\IncomingRequest\PublicEntryPointRequest instead.
+ * @deprecated Use Avax\HTTP\Request\IncomingHttp\IncomingRequest\PublicEntryPointRequest instead.
  */
 class Request implements ServerRequestInterface
 {
-
-
     private function __construct(private readonly ServerRequest $serverRequest)
     {
     }

@@ -13,6 +13,41 @@ Concrete records of executed verification.
 
 ## Reports
 
+- `executed_at`: 2026-04-15 02:03 CEST
+- `scope`: full package validation after closing asymmetric/public-client JAR verification, OIDC dynamic registration HTTP lifecycle, and source-truth updates
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar`, vendor dependencies, and repo-local coverage-driver tooling installed
+- `checks`: `php composer.phar test`
+- `result`: pass
+- `notes`: full PHPUnit suite passes after the new OIDC registration/update/delete HTTP surface, RSA request-object verification, and canonical doc refresh; result `OK (254 tests, 854 assertions, 4 skipped)`
+
+- `executed_at`: 2026-04-15 02:03 CEST
+- `scope`: dedicated integration regression lane after the new OIDC and tenant-admin HTTP registration wiring
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar test:integration`
+- `result`: pass
+- `notes`: integration suite remains green after OIDC dynamic registration lifecycle and verifier-key propagation; result `OK (57 tests, 269 assertions)`
+
+- `executed_at`: 2026-04-15 02:03 CEST
+- `scope`: baseline and strict static analysis after OIDC metadata, registration surface, and request-object verification expansion
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar analyse --no-progress`, `php composer.phar analyse:strict --no-progress`
+- `result`: pass
+- `notes`: PHPStan and strict PHPStan pass after the new OIDC registration endpoint, verifier-key propagation, and metadata/status updates
+
+- `executed_at`: 2026-04-15 02:03 CEST
+- `scope`: source-truth and architecture drift verification after OIDC completeness status closure
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed
+- `checks`: `php composer.phar source-truth`, `php composer.phar system-shape`
+- `result`: pass
+- `notes`: canonical docs, evidence paths, and screaming architecture checks remain approved after the OIDC/runtime closure
+
+- `executed_at`: 2026-04-15 02:03 CEST
+- `scope`: covered mutation diagnostic after OIDC completeness closure
+- `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar`, repo-local coverage-driver tooling, and Infection 0.28
+- `checks`: `php composer.phar mutation -- --only-covered --threads=4`
+- `result`: partial
+- `notes`: mutation tooling executes end-to-end and generates `build/infection-summary.log`; latest signal is `MSI 59%`, `Covered Code MSI 59%`, `394` escaped mutants, `63` timeouts, and `231` slow mutants, so tooling is no longer blocked but release-quality mutation posture remains open
+
 - `executed_at`: 2026-04-15 01:23 CEST
 - `scope`: full package validation after source-truth evidence checks, system-shape enforcement, clean integration suite split, and canonical status/doc refresh
 - `environment`: local CLI PHP 8.4.11 with repo-local `composer.phar` and vendor dependencies installed

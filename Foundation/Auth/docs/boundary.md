@@ -74,11 +74,11 @@ Integration rule:
 This package does not own today:
 
 - full standards-certified OIDC provider product surface
-- OIDC-standard dynamic client registration endpoint and JAR client-signed
-  request-object signature verification
+- remote `jwks_uri` fetch/rotation and software-statement validation for OIDC
+  dynamic client registration
 - SAML federation brokering runtime
-- full RFC 7644 product surface including health, throttling, and outage
-  recovery overlays
+- external directory ownership workflows and broader SCIM product UI/process
+  overlays beyond the shipped kernel and thin HTTP runtime
 - tenant admin UI and broader non-security tenant business control plane
 - KMS/HSM, mail, SIEM, and queue infrastructure
 - cross-organization approval tooling and enterprise IAM governance systems

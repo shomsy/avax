@@ -126,6 +126,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
             issuer                        : $this->issuer,
             authorizationEndpoint         : $this->authorizationEndpoint,
             tokenEndpoint                 : $this->tokenEndpoint,
+            registrationEndpoint          : $this->issuer . '/oidc/register',
             userInfoEndpoint              : $this->userInfoEndpoint,
             endSessionEndpoint            : $this->issuer . '/oidc/logout',
             pushedAuthorizationRequestEndpoint: $this->issuer . '/oauth/par',

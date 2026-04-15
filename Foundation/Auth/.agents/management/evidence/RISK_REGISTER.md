@@ -97,14 +97,15 @@ Tracks active and accepted risks.
 
 - `id`: AUTH-RISK-001
 - `identified_at`: 2026-04-09 15:31 CEST
-- `updated_at`: 2026-04-09 21:44 CEST
+- `updated_at`: 2026-04-15 10:52 CEST
 - `severity`: high
 - `likelihood`: high
 - `impact`: Mutation tooling now executes, but the current critical auth slices are not yet mutation-hard enough for a
-  production-ready claim; covered-only diagnostics report `MSI 61%`, `236` escaped mutants, and `70` timeouts.
+  production-ready claim; the latest covered mutation run reports `MSI 59%`, `394` escaped mutants, and `63` timeouts
+  across the configured high-value source set.
 - `mitigation`: Add targeted tests for `Identity`, `JwtIdentity`, `ChangePassword`, `RefreshAuthentication`,
-  `HmacTokenCodec`, and token-store invariants; stabilize mutation parallelism and eliminate timeout-prone cases before
-  release.
+  `HmacTokenCodec`, OIDC request-object validation, and token-store invariants; stabilize mutation parallelism and
+  eliminate timeout-prone cases before treating mutation quality as release-hard evidence.
 - `owner`: local environment
 - `status`: open
 

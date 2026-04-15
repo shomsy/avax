@@ -122,6 +122,20 @@ final class ServeOidcHttpSurfaceTest extends TestCase
         $this->assertSame(expected: 'invalid_token', actual: $response->body['error']);
     }
 
+    public function testOidcDiscoveryPublishesRegistrationEndpoint() : void
+    {
+        [$auth] = $this->buildAuthWithOidc();
+        $surface = new ServeOidcHttpSurface(auth: $auth);
+
+        $response = $surface->execute(input: new HttpEndpointInput(
+            method: 'GET',
+            path  : '/.well-known/openid-configuration'
+        ));
+
+        $this->assertSame(expected: 200, actual: $response->statusCode);
+        $this->assertSame(expected: 'https://auth.example.test/oidc/register', actual: $response->body['registration_endpoint']);
+    }
+
     public function testOidcHttpSurfaceAcceptsSignedJarParRequest() : void
     {
         [$auth] = $this->buildAuthWithOidc();
@@ -166,6 +180,172 @@ final class ServeOidcHttpSurfaceTest extends TestCase
         $this->assertArrayHasKey(key: 'request_uri', array: $response->body);
     }
 
+    public function testOidcHttpSurfaceRegistersPublicClient() : void
+    {
+        [$auth] = $this->buildAuthWithOidc();
+        $surface = new ServeOidcHttpSurface(auth: $auth);
+
+        $response = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path: '/oidc/register',
+            body: [
+                'client_name' => 'OIDC Dynamic SPA',
+                'application_type' => 'web',
+                'token_endpoint_auth_method' => 'none',
+                'redirect_uris' => ['https://spa.example.test/callback'],
+                'grant_types' => ['authorization_code'],
+                'scope' => 'openid profile',
+            ]
+        ));
+
+        $this->assertSame(expected: 201, actual: $response->statusCode);
+        $this->assertSame(expected: 'OIDC Dynamic SPA', actual: $response->body['client_name']);
+        $this->assertSame(expected: 'none', actual: $response->body['token_endpoint_auth_method']);
+        $this->assertSame(expected: ['https://spa.example.test/callback'], actual: $response->body['redirect_uris']);
+    }
+
+    public function testOidcHttpSurfaceUpdatesRegisteredClient() : void
+    {
+        [$auth] = $this->buildAuthWithOidc();
+        $surface = new ServeOidcHttpSurface(auth: $auth);
+
+        $created = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path: '/oidc/register',
+            body: [
+                'client_name' => 'OIDC Dynamic SPA',
+                'application_type' => 'web',
+                'token_endpoint_auth_method' => 'none',
+                'redirect_uris' => ['https://spa.example.test/callback'],
+                'grant_types' => ['authorization_code'],
+                'scope' => 'openid profile',
+            ]
+        ));
+
+        $updated = $surface->execute(input: new HttpEndpointInput(
+            method: 'PUT',
+            path: '/oidc/register/' . rawurlencode($created->body['client_id']),
+            body: [
+                'client_name' => 'OIDC Dynamic SPA 2',
+                'token_endpoint_auth_method' => 'none',
+                'redirect_uris' => ['https://spa.example.test/callback', 'https://spa.example.test/return'],
+                'grant_types' => ['authorization_code'],
+                'scope' => 'openid profile email',
+            ]
+        ));
+
+        $this->assertSame(expected: 200, actual: $updated->statusCode);
+        $this->assertSame(expected: 'OIDC Dynamic SPA 2', actual: $updated->body['client_name']);
+        $this->assertSame(expected: ['https://spa.example.test/callback', 'https://spa.example.test/return'], actual: $updated->body['redirect_uris']);
+        $this->assertSame(expected: 'openid profile email', actual: $updated->body['scope']);
+    }
+
+    public function testOidcHttpSurfaceUpdatePreservesExistingTokenAuthMethodWhenOmitted() : void
+    {
+        [$auth] = $this->buildAuthWithOidc();
+        $surface = new ServeOidcHttpSurface(auth: $auth);
+
+        $created = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path: '/oidc/register',
+            body: [
+                'client_name' => 'OIDC Dynamic SPA',
+                'token_endpoint_auth_method' => 'none',
+                'redirect_uris' => ['https://spa.example.test/callback'],
+                'grant_types' => ['authorization_code'],
+                'scope' => 'openid',
+            ]
+        ));
+
+        $updated = $surface->execute(input: new HttpEndpointInput(
+            method: 'PUT',
+            path: '/oidc/register/' . rawurlencode($created->body['client_id']),
+            body: [
+                'client_name' => 'OIDC Dynamic SPA',
+                'redirect_uris' => ['https://spa.example.test/callback'],
+                'grant_types' => ['authorization_code'],
+                'scope' => 'openid profile',
+            ]
+        ));
+
+        $this->assertSame(expected: 200, actual: $updated->statusCode);
+        $this->assertSame(expected: 'none', actual: $updated->body['token_endpoint_auth_method']);
+    }
+
+    public function testOidcHttpSurfaceDisablesRegisteredClient() : void
+    {
+        [$auth] = $this->buildAuthWithOidc();
+        $surface = new ServeOidcHttpSurface(auth: $auth);
+
+        $created = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path: '/oidc/register',
+            body: [
+                'client_name' => 'OIDC Dynamic SPA',
+                'application_type' => 'web',
+                'token_endpoint_auth_method' => 'none',
+                'redirect_uris' => ['https://spa.example.test/callback'],
+                'grant_types' => ['authorization_code'],
+                'scope' => 'openid',
+            ]
+        ));
+
+        $deleted = $surface->execute(input: new HttpEndpointInput(
+            method: 'DELETE',
+            path: '/oidc/register/' . rawurlencode($created->body['client_id'])
+        ));
+
+        $this->assertSame(expected: 200, actual: $deleted->statusCode);
+        $this->assertSame(expected: $created->body['client_id'], actual: $deleted->body['client_id']);
+        $this->assertFalse(condition: $deleted->body['active']);
+    }
+
+    public function testOidcHttpSurfaceRegistersRequestObjectVerificationKeyForSignedPar() : void
+    {
+        [$auth] = $this->buildAuthWithOidc();
+        $surface = new ServeOidcHttpSurface(auth: $auth);
+        [$privateKeyPem, $publicKeyPem] = $this->rsaKeyPair();
+
+        $created = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path: '/oidc/register',
+            body: [
+                'client_name' => 'OIDC JAR SPA',
+                'token_endpoint_auth_method' => 'none',
+                'redirect_uris' => ['https://spa.example.test/callback'],
+                'grant_types' => ['authorization_code'],
+                'scope' => 'openid profile',
+                'request_object_signature_required' => true,
+                'request_object_verification_key_pem' => $publicKeyPem,
+            ]
+        ));
+
+        $par = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path: '/oauth/par',
+            body: [
+                'client_id' => $created->body['client_id'],
+                'redirect_uri' => 'https://spa.example.test/callback',
+                'request' => $this->signRs256Jwt(
+                    claims: [
+                        'iss' => $created->body['client_id'],
+                        'aud' => 'https://auth.example.test',
+                        'client_id' => $created->body['client_id'],
+                        'redirect_uri' => 'https://spa.example.test/callback',
+                        'scope' => 'openid profile',
+                        'nonce' => 'nonce-http-rsa',
+                        'exp' => time() + 300,
+                    ],
+                    privateKeyPem: $privateKeyPem
+                ),
+            ]
+        ));
+
+        $this->assertSame(expected: 201, actual: $created->statusCode);
+        $this->assertSame(expected: 201, actual: $par->statusCode);
+        $this->assertArrayHasKey(key: 'request_uri', array: $par->body);
+    }
+
     /**
      * @return array{Auth, OpenSslOidcProvider}
      */
@@ -196,12 +376,7 @@ final class ServeOidcHttpSurfaceTest extends TestCase
 
     private function createOidcProvider() : OpenSslOidcProvider
     {
-        $key = openssl_pkey_new([
-            'private_key_bits' => 2048,
-            'private_key_type' => OPENSSL_KEYTYPE_RSA,
-        ]);
-        self::assertNotFalse(condition: $key);
-        openssl_pkey_export($key, $privateKeyPem);
+        [$privateKeyPem] = $this->rsaKeyPair();
 
         return new OpenSslOidcProvider(
             issuer               : 'https://auth.example.test',
@@ -212,5 +387,43 @@ final class ServeOidcHttpSurfaceTest extends TestCase
             userInfoEndpoint     : 'https://auth.example.test/oidc/userinfo',
             jsonWebKeySetUri     : 'https://auth.example.test/.well-known/jwks.json'
         );
+    }
+
+    /**
+     * @return array{0: string, 1: string}
+     */
+    private function rsaKeyPair() : array
+    {
+        $key = openssl_pkey_new([
+            'private_key_bits' => 2048,
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
+        ]);
+        self::assertNotFalse(condition: $key);
+        openssl_pkey_export($key, $privateKeyPem);
+        $details = openssl_pkey_get_details($key);
+        self::assertIsArray(actual: $details);
+
+        return [$privateKeyPem, $details['key']];
+    }
+
+    /**
+     * @param array<string, mixed> $claims
+     */
+    private function signRs256Jwt(array $claims, string $privateKeyPem) : string
+    {
+        $header = $this->base64UrlEncode(value: json_encode(['typ' => 'JWT', 'alg' => 'RS256'], JSON_THROW_ON_ERROR));
+        $payload = $this->base64UrlEncode(value: json_encode($claims, JSON_THROW_ON_ERROR));
+        $input = $header . '.' . $payload;
+        $signature = '';
+
+        $signed = openssl_sign($input, $signature, $privateKeyPem, OPENSSL_ALGO_SHA256);
+        self::assertTrue(condition: $signed);
+
+        return $input . '.' . $this->base64UrlEncode(value: $signature);
+    }
+
+    private function base64UrlEncode(string $value) : string
+    {
+        return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
     }
 }

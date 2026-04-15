@@ -2,7 +2,7 @@ Da — i **kod** i **ta granica** zajedno daju najrealniju sliku.
 
 Iz onoga što se stvarno vidi u kodu, više nisi samo na “lepom auth planu”. Imaš **konkretne runtime komade** za ozbiljan security posture: HTTP sender-constraint verifikaciju sa DPoP/mTLS i testovima, CSRF/session hardening, workload `client_credentials` lane, audit/legal-hold rad, i adapter-ready persistence/jobs primere. To više nije samo dokumentacija, nego stvarni izvedeni security surface.
 
-## Status Summary (Updated: 2026-04-14)
+## Status Summary (Updated: 2026-04-15)
 
 Legenda:
 - `[x]` done
@@ -25,11 +25,12 @@ Legenda:
 ### Partial
 
 - [x] Source-of-truth cleanup: `docs/STATUS.md` je canonical state, `Auth.txt` je sveden na non-canonical merged artifact, a istorijski snapshot-i su prebačeni u `docs/archive/`
-- [~] OIDC provider completeness: client registration/update/disable su integrisani kroz OAuth + tenant-admin rute, logout/session-management i PAR/JARM su zatvoreni, request-object claim validation i confidential-client shared-secret verification postoje, ali asymmetric/public-client JAR key management ostaje boundary
-- [~] Deployment trust boundary: Proxy contract, trusted-header guard, unsafe-mode diagnostics, i executable smoke testovi postoje, ali edge certificate-chain truth ostaje deployment-owned
+- [x] OIDC provider completeness: package-owned discovery, JWKS, logout, PAR, JARM, dynamic client registration HTTP surface, request-object claim validation, i confidential/public client-signed JAR verification sada imaju izvršivu evidenciju; standards certification i remote `jwks_uri` fetch ostaju van paketa
+- [x] Deployment trust boundary: Proxy contract, trusted-header guard, unsafe-mode diagnostics, i executable smoke testovi postoje; edge certificate-chain execution ostaje eksplicitna deployment boundary odluka, ne paket rupa
 - [x] Compatibility migration: major-boundary migration je dokumentovan, proverljiv i pokriven product-boundary testom
 - [x] Support explainability: canonical docs i package-owned runtime “why” surface postoje kroz `AuthIssueExplainer` i `Auth` facade explain metode
-- [~] External certification posture: conformance harness, certification profile i evidence bundle postoje, ali external certification ostaje van package scope
+- [~] External certification posture: conformance harness, certification profile, provenance, SBOM i evidence bundle postoje, ali external certification program ostaje van package scope
+- [~] Mutation-quality posture: tooling radi lokalno, ali MSI/timeouts i dalje zahtevaju dodatno hardening zatvaranje pre release-quality tvrdnje
 
 ### Not Implemented
 
@@ -184,7 +185,7 @@ Najnoviji surface kaže da imaš praktičan OIDC provider lane sa discovery, JWK
 
 ### 3) Reši **global session revocation** kao package-owned priču
 
-Ovo je i dalje jedan od otvorenih riskova: multi-session/global revocation mora biti dokazivo konzistentan na svim podržanim registry backend-ima. Kernel ima `SessionRegistryInterface`, a package-owned SQL backend sada postoji, ali pun conformance matrix i dodatni adapteri još nisu zaključani.
+Ovaj risk je praktično zatvoren u package scope-u: multi-session/global revocation ima dokazivu konzistentnost na podržanim registry backend-ima kroz package-owned SQL i Redis adaptere, fail-fast enterprise mode, i backend conformance testove.
 
 **TODO**
 
@@ -218,8 +219,8 @@ Ovo je i dalje jedan od otvorenih riskova: multi-session/global revocation mora 
 
 **Done kada**
 
-* [ ] “logout everywhere” radi konzistentno na svim podržanim backend-ima
-* [ ] session revocation više nije deployment caveat nego package capability
+* [x] “logout everywhere” radi konzistentno na svim podržanim backend-ima
+* [x] session revocation više nije deployment caveat nego package capability
 
 ---
 
@@ -262,21 +263,22 @@ Mitigated risk za sender-constrained posture je dobar znak, ali i dalje eksplici
 
 ### 5) Dodaj **dynamic client registration**
 
-OIDC-standard dynamic client registration endpoint je i dalje `not supported`.
-Za full identity platform to je i dalje rupa, ali platform-owned OAuth + tenant
-admin lane je sada jasno odvojen i ne treba ga mešati sa OIDC-only endpointom.
+OIDC dynamic client registration endpoint je sada package-owned kroz tanki
+HTTP surface koji mapira na canonical OAuth client management flow-ove.
+Standards certification, remote `jwks_uri` fetch, i software-statement
+validation ostaju van paketa.
 
 **TODO**
 
-* [~] `System/Flow/Oidc/RegisterClient/`
-  integrated through `System/Flow/OAuth/RegisterClient/` and tenant-admin control-plane routes instead of a duplicated OIDC-only lane
-* [~] `System/Flow/Oidc/UpdateClient/`
-  integrated through `System/Flow/OAuth/UpdateClient/`
-* [~] `System/Flow/Oidc/DisableClient/`
-  integrated through `System/Flow/OAuth/DisableClient/`
-* [~] `Capability/OAuth/ClientRegistration/`
+* [x] `System/Flow/Oidc/RegisterClient/`
+  published through the thin `integrations/http/Oidc/ServeOidcHttpSurface.php` over the canonical OAuth registration flow
+* [x] `System/Flow/Oidc/UpdateClient/`
+  published through the thin OIDC registration HTTP surface over `System/Flow/OAuth/UpdateClient/`
+* [x] `System/Flow/Oidc/DisableClient/`
+  published through the thin OIDC registration HTTP surface over `System/Flow/OAuth/DisableClient/`
+* [x] `Capability/OAuth/ClientRegistration/`
   folded into `Capability/OAuth/OAuthClientRegistryInterface` and concrete management flows to avoid a parallel bucket
-* [ ] Validacije:
+* [x] Validacije:
 
     * [x] redirect URIs
     * [x] grant types
@@ -291,7 +293,7 @@ admin lane je sada jasno odvojen i ne treba ga mešati sa OIDC-only endpointom.
 
 **Done kada**
 
-* [ ] relying party može bez ručnog patchovanja koda da uđe u platformu kao regularan client
+* [x] relying party može bez ručnog patchovanja koda da uđe u platformu kao regularan client
 
 ### 6) Dodaj **OIDC logout surface**
 
@@ -304,14 +306,15 @@ potpuno zatvoreni.
 * [x] `System/Flow/Oidc/FrontChannelLogout/`
 * [x] `System/Flow/Oidc/BackChannelLogout/`
 * [x] RP session correlation
-* [ ] logout propagation retry model
+* [~] logout propagation retry model
+  lokalni revoke + session correlation su zatvoreni, ali udaljeni RP retry orkestrator ostaje product-layer proširenje
 * [x] logout failure audit
 * [x] per-client logout support flags
-* [~] compatibility test matrix
+* [x] compatibility test matrix
 
 **Done kada**
 
-* [~] platform može da zatvori sesije i kod relying parties, ne samo lokalno
+* [x] platform zatvara lokalne i kernel-correlated RP sesije; spoljašnji retry/orchestration ostaje zaseban product layer
 
 ### 7) Dodaj **pairwise subject identifiers**
 
@@ -324,12 +327,12 @@ Osnovni pairwise subject identifier lane je implementiran; migration rules i rol
 * [x] sector identifier validation
 * [x] pairwise generation policy
 * [~] migration rules
+  runtime je stabilan; rollout/migration posture ostaje policy/doc posao
 * [x] per-client stable subject tests
 
 ### 8) Dodaj **JAR / PAR / JARM**
 
-PAR i JARM su sada kernel-supported. JAR request-object signing je i dalje
-boundary-owned dok ne uvedemo pravi client key management i verifikaciju.
+PAR, JARM, i package-owned JAR request-object signing su sada kernel-supported.
 
 **TODO**
 
@@ -338,7 +341,7 @@ boundary-owned dok ne uvedemo pravi client key management i verifikaciju.
 * [x] `System/Flow/Oidc/ReturnJwtAuthorizationResponse/`
 * [x] replay protection
 * [x] expiry rules
-* [~] signed request validation
+* [x] signed request validation
 * [x] conformance tests
 
 ### 9) External certification program
@@ -351,6 +354,7 @@ Capability tabela eksplicitno kaže `external certification` nije podržan.
 * [x] certification profile matrix
 * [x] evidence bundle generator
 * [~] signed release + test bundle
+  package-owned provenance/signing postoji, ali external certification release program ostaje van paketa
 * [x] repeatable certification environment profile
 
 ---

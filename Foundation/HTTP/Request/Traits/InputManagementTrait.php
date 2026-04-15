@@ -137,7 +137,7 @@ trait InputManagementTrait
             return true;
         }
 
-        return (bool) $this->request->has(key: $key);
+        return $this->request->has(key: $key);
     }
 
     /**

@@ -35,7 +35,8 @@ interface OAuthClientRegistryInterface
         bool $requestObjectSignatureRequired = false,
         bool $frontChannelLogoutSupported = false,
         bool $backChannelLogoutSupported = false,
-        bool|null $approvalRequired = null
+        bool|null $approvalRequired = null,
+        #[SensitiveParameter] string|null $requestObjectVerificationKeyPem = null
     ) : RegisteredOAuthClient;
 
     public function replace(OAuthClient $client) : void;

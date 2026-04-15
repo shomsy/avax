@@ -8,9 +8,14 @@ use Avax\Auth\Integrations\Headers\ReadBearerToken;
 use Avax\Auth\Integrations\Http\HttpEndpointInput;
 use Avax\Auth\Integrations\Http\JsonHttpResponse;
 use Avax\Auth\System\AuthInterface;
+use Avax\Auth\System\Capability\OAuth\OAuthClient;
+use Avax\Auth\System\Capability\OAuth\OAuthClientType;
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
+use Avax\Auth\System\Capability\OAuth\OAuthTokenEndpointAuthMethod;
 use Avax\Auth\System\Capability\OAuth\PkceMethod;
 use Avax\Auth\System\Flow\Oidc\Logout\LogoutData as OidcLogoutData;
 use Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest\PushAuthorizationRequestData;
+use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
 use SensitiveParameter;
 use Throwable;
 
@@ -39,6 +44,7 @@ final readonly class ServeOidcHttpSurface
                     'issuer' => $metadata->issuer,
                     'authorization_endpoint' => $metadata->authorizationEndpoint,
                     'token_endpoint' => $metadata->tokenEndpoint,
+                    'registration_endpoint' => $metadata->registrationEndpoint,
                     'userinfo_endpoint' => $metadata->userInfoEndpoint,
                     'jwks_uri' => $metadata->jsonWebKeySetUri,
                     'scopes_supported' => $metadata->scopesSupported,
@@ -131,6 +137,77 @@ final readonly class ServeOidcHttpSurface
                     'request_uri' => $request->requestUri,
                     'expires_in' => max(0, $request->expiresAt->getTimestamp() - time()),
                 ],
+                headers   : [
+                    'Content-Type' => 'application/json',
+                    'Cache-Control' => 'no-store',
+                ]
+            );
+        }
+
+        if ($method === 'POST' && $path === '/oidc/register') {
+            $registered = $this->auth->registerOAuthClient(data: new RegisterClientData(
+                name: $this->readString(input: $input, keys: ['client_name', 'clientName']) ?? '',
+                type: $this->oidcClientType(input: $input),
+                redirectUris: $this->readStringList(input: $input, keys: ['redirect_uris', 'redirectUris']),
+                allowedScopes: $this->readScopes(input: $input, keys: ['scope', 'scopes']),
+                allowedGrantTypes: $this->readGrantTypes(input: $input, keys: ['grant_types', 'grantTypes']),
+                tokenEndpointAuthMethod: $this->readTokenEndpointAuthMethod(input: $input),
+                requestObjectSignatureRequired: $this->readBool(input: $input, keys: ['request_object_signature_required', 'requestObjectSignatureRequired']),
+                requestObjectVerificationKeyPem: $this->readMultilineString(input: $input, keys: ['request_object_verification_key_pem', 'requestObjectVerificationKeyPem'])
+            ));
+
+            return new JsonHttpResponse(
+                statusCode: 201,
+                body      : $this->oidcClientResource(client: $registered->client),
+                headers   : [
+                    'Content-Type' => 'application/json',
+                    'Cache-Control' => 'no-store',
+                ]
+            );
+        }
+
+        if ($method === 'PUT' && preg_match('~^/oidc/register/([^/]+)$~', $path, $matches) === 1) {
+            $clientId = urldecode($matches[1]);
+            $existing = $this->findOAuthClient(clientId: $clientId);
+
+            if ($existing === null) {
+                return $this->error(statusCode: 404, errorCode: 'not_found', message: 'OIDC client was not found.');
+            }
+
+            $requestedTokenEndpointAuthMethod = $this->readTokenEndpointAuthMethod(input: $input);
+            $tokenEndpointAuthMethod = $requestedTokenEndpointAuthMethod ?? $existing->tokenEndpointAuthMethod;
+            $type = $requestedTokenEndpointAuthMethod === null
+                ? $existing->type
+                : ($tokenEndpointAuthMethod === OAuthTokenEndpointAuthMethod::NONE ? OAuthClientType::PUBLIC : OAuthClientType::CONFIDENTIAL);
+
+            $updated = $this->auth->updateOAuthClient(data: new \Avax\Auth\System\Flow\OAuth\UpdateClient\UpdateClientData(
+                clientId: $clientId,
+                name: $this->readString(input: $input, keys: ['client_name', 'clientName']) ?? $existing->name,
+                type: $type,
+                redirectUris: $this->readStringList(input: $input, keys: ['redirect_uris', 'redirectUris']),
+                allowedScopes: $this->readScopes(input: $input, keys: ['scope', 'scopes']),
+                allowedGrantTypes: $this->readGrantTypes(input: $input, keys: ['grant_types', 'grantTypes']),
+                tokenEndpointAuthMethod: $tokenEndpointAuthMethod,
+                requestObjectSignatureRequired: $this->readBool(input: $input, keys: ['request_object_signature_required', 'requestObjectSignatureRequired']),
+                requestObjectVerificationKeyPem: $this->readMultilineString(input: $input, keys: ['request_object_verification_key_pem', 'requestObjectVerificationKeyPem'])
+            ));
+
+            return new JsonHttpResponse(
+                statusCode: 200,
+                body      : $this->oidcClientResource(client: $updated),
+                headers   : [
+                    'Content-Type' => 'application/json',
+                    'Cache-Control' => 'no-store',
+                ]
+            );
+        }
+
+        if ($method === 'DELETE' && preg_match('~^/oidc/register/([^/]+)$~', $path, $matches) === 1) {
+            $client = $this->auth->disableOAuthClient(clientId: urldecode($matches[1]));
+
+            return new JsonHttpResponse(
+                statusCode: 200,
+                body      : $this->oidcClientResource(client: $client) + ['active' => $client->active],
                 headers   : [
                     'Content-Type' => 'application/json',
                     'Cache-Control' => 'no-store',
@@ -243,6 +320,22 @@ final readonly class ServeOidcHttpSurface
     }
 
     /**
+     * @param list<string> $keys
+     */
+    private function readMultilineString(HttpEndpointInput $input, array $keys) : string|null
+    {
+        foreach ($keys as $key) {
+            $value = $input->body[$key] ?? $input->query[$key] ?? $input->routeParameters[$key] ?? null;
+
+            if (is_string($value)) {
+                return $value;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param array<string, mixed> $values
      */
     private function readArrayValue(array $values, string $key) : string|null
@@ -268,6 +361,61 @@ final readonly class ServeOidcHttpSurface
         }
 
         return null;
+    }
+
+    /**
+     * @param list<string> $keys
+     * @return list<string>
+     */
+    private function readStringList(HttpEndpointInput $input, array $keys) : array
+    {
+        foreach ($keys as $key) {
+            $value = $input->body[$key] ?? $input->query[$key] ?? null;
+
+            if (! is_array($value)) {
+                continue;
+            }
+
+            $resolved = [];
+
+            foreach ($value as $candidate) {
+                if (! is_scalar($candidate)) {
+                    continue;
+                }
+
+                $normalized = trim((string) $candidate);
+
+                if ($normalized === '' || in_array($normalized, $resolved, true)) {
+                    continue;
+                }
+
+                $resolved[] = $normalized;
+            }
+
+            return $resolved;
+        }
+
+        return [];
+    }
+
+    /**
+     * @param list<string> $keys
+     */
+    private function readBool(HttpEndpointInput $input, array $keys) : bool
+    {
+        foreach ($keys as $key) {
+            $value = $input->body[$key] ?? $input->query[$key] ?? null;
+
+            if (is_bool($value)) {
+                return $value;
+            }
+
+            if (is_string($value)) {
+                return in_array(strtolower(trim($value)), ['1', 'true', 'yes', 'on'], true);
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -300,5 +448,68 @@ final readonly class ServeOidcHttpSurface
         }
 
         return PkceMethod::tryFrom($value);
+    }
+
+    private function oidcClientType(HttpEndpointInput $input) : OAuthClientType
+    {
+        return $this->readTokenEndpointAuthMethod(input: $input) === OAuthTokenEndpointAuthMethod::NONE
+            ? OAuthClientType::PUBLIC
+            : OAuthClientType::CONFIDENTIAL;
+    }
+
+    /**
+     * @param list<string> $keys
+     * @return list<OAuthGrantType>
+     */
+    private function readGrantTypes(HttpEndpointInput $input, array $keys) : array
+    {
+        $resolved = [];
+
+        foreach ($this->readStringList(input: $input, keys: $keys) as $value) {
+            $grantType = OAuthGrantType::tryFrom($value);
+
+            if ($grantType === null || in_array($grantType, $resolved, true)) {
+                continue;
+            }
+
+            $resolved[] = $grantType;
+        }
+
+        return $resolved;
+    }
+
+    private function readTokenEndpointAuthMethod(HttpEndpointInput $input) : OAuthTokenEndpointAuthMethod|null
+    {
+        $value = $this->readString(input: $input, keys: ['token_endpoint_auth_method', 'tokenEndpointAuthMethod']);
+
+        return $value !== null ? OAuthTokenEndpointAuthMethod::tryFrom($value) : null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function oidcClientResource(OAuthClient $client) : array
+    {
+        return [
+            'client_id' => $client->clientId,
+            'client_name' => $client->name,
+            'redirect_uris' => $client->redirectUris,
+            'grant_types' => array_map(static fn (OAuthGrantType $grantType) : string => $grantType->value, $client->allowedGrantTypes),
+            'scope' => implode(' ', $client->allowedScopes),
+            'token_endpoint_auth_method' => $client->tokenEndpointAuthMethod->value,
+            'request_object_signature_required' => $client->requestObjectSignatureRequired,
+            'request_object_verification_key_pem' => $client->requestObjectVerificationKeyPem,
+        ];
+    }
+
+    private function findOAuthClient(string $clientId) : OAuthClient|null
+    {
+        foreach ($this->auth->readOAuthClients() as $client) {
+            if ($client->clientId === $clientId) {
+                return $client;
+            }
+        }
+
+        return null;
     }
 }

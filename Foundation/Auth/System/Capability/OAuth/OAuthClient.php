@@ -41,7 +41,8 @@ final readonly class OAuthClient
         public DateTimeImmutable|null          $approvedAt = null,
         public string|null                     $approvedBy = null,
         public bool                            $active = true,
-        #[SensitiveParameter] public string|null $secretHash = null
+        #[SensitiveParameter] public string|null $secretHash = null,
+        #[SensitiveParameter] public string|null $requestObjectVerificationKeyPem = null
     ) {}
 
     public function isPublic() : bool

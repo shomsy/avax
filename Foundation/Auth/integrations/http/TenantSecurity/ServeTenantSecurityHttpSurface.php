@@ -155,7 +155,8 @@ final readonly class ServeTenantSecurityHttpSurface
                     requestObjectSignatureRequired: $this->boolValue(body: $input->body, field: 'requestObjectSignatureRequired'),
                     frontChannelLogoutSupported: $this->boolValue(body: $input->body, field: 'frontChannelLogoutSupported'),
                     backChannelLogoutSupported : $this->boolValue(body: $input->body, field: 'backChannelLogoutSupported'),
-                    approvalRequired          : $this->boolValue(body: $input->body, field: 'approvalRequired')
+                    approvalRequired          : $this->boolValue(body: $input->body, field: 'approvalRequired'),
+                    requestObjectVerificationKeyPem: $this->nullableMultilineString(body: $input->body, field: 'requestObjectVerificationKeyPem')
                 ));
 
                 return $this->response(statusCode: 201, body: [
@@ -191,7 +192,8 @@ final readonly class ServeTenantSecurityHttpSurface
                     requestObjectSignatureRequired: $this->boolValue(body: $input->body, field: 'requestObjectSignatureRequired'),
                     frontChannelLogoutSupported: $this->boolValue(body: $input->body, field: 'frontChannelLogoutSupported'),
                     backChannelLogoutSupported : $this->boolValue(body: $input->body, field: 'backChannelLogoutSupported'),
-                    approvalRequired          : $this->boolValue(body: $input->body, field: 'approvalRequired')
+                    approvalRequired          : $this->boolValue(body: $input->body, field: 'approvalRequired'),
+                    requestObjectVerificationKeyPem: $this->nullableMultilineString(body: $input->body, field: 'requestObjectVerificationKeyPem')
                 ));
 
                 return $this->response(statusCode: 200, body: ['client' => $this->oauthClientResource(client: $client)]);
@@ -452,6 +454,7 @@ final readonly class ServeTenantSecurityHttpSurface
             'workloadIdentity' => $client->workloadIdentity,
             'phishingResistantRequired' => $client->phishingResistantRequired,
             'requestObjectSignatureRequired' => $client->requestObjectSignatureRequired,
+            'requestObjectVerificationKeyPem' => $client->requestObjectVerificationKeyPem,
             'frontChannelLogoutSupported' => $client->frontChannelLogoutSupported,
             'backChannelLogoutSupported' => $client->backChannelLogoutSupported,
             'approvalStatus' => $client->approvalStatus->value,
@@ -705,6 +708,16 @@ final readonly class ServeTenantSecurityHttpSurface
         $value = $body[$field] ?? null;
 
         return is_scalar($value) ? trim((string) $value) : null;
+    }
+
+    /**
+     * @param array<string, mixed> $body
+     */
+    private function nullableMultilineString(array $body, string $field) : string|null
+    {
+        $value = $body[$field] ?? null;
+
+        return is_scalar($value) ? (string) $value : null;
     }
 
     /**

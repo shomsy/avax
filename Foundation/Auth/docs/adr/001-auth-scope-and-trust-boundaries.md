@@ -39,8 +39,8 @@ The package already owns:
 The package does not yet own:
 
 - full standards-certified OIDC provider product surface
-- OIDC dynamic client registration or logout/session-management products
-- SCIM RFC 7644 HTTP transport surface
+- remote `jwks_uri` fetch/rotation, software-statement validation, or standards certification for OIDC registration
+- external directory control-plane UI/process beyond the shipped SCIM kernel and HTTP runtime
 - full tenant membership control plane or tenant-admin UI product
 - KMS/HSM, mail, SIEM, and queue infrastructure
 - cross-organization approval tooling

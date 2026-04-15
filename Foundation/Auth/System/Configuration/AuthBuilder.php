@@ -725,7 +725,8 @@ final class AuthBuilder
                 requestObjectStore: $oidcRequestObjectStore,
                 auditLog          : $auditLog,
                 clock             : $clock,
-                clientRegistry    : $oauthClientRegistry
+                clientRegistry    : $oauthClientRegistry,
+                oidcProvider      : $this->oidcProvider
             )
             : null;
         $validateRequestObject = $oidcRequestObjectStore !== null

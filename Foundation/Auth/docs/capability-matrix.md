@@ -17,10 +17,11 @@ exists in the current repository shape.
 | sender-constrained OAuth (DPoP/mTLS) | ✅ supported | kernel | `System/Capability/OAuth/SenderConstraint/`, `integrations/http/VerifyOAuthSenderConstraint.php`, `tests/Integrations/Http/VerifyOAuthSenderConstraintTest.php` |
 | OAuth client management | ✅ supported | kernel | `System/Flow/OAuth/RegisterClient/`, `System/Flow/OAuth/UpdateClient/`, `System/Flow/OAuth/DisableClient/`, `System/Flow/OAuth/ApproveClientRegistration/`, `tests/Flows/OAuth/ApproveClientRegistrationTest.php` |
 | OIDC discovery, JWKS, ID token, userinfo | ✅ supported | kernel | `System/Capability/Oidc/`, `System/Flow/Oidc/ReadProviderMetadata/`, `System/Flow/Oidc/ReadJsonWebKeySet/`, `System/Flow/Oidc/ReadUserInfo/`, `tests/Flows/Oidc/OidcFlowTest.php` |
+| OIDC dynamic client registration | ✅ supported | integration | `integrations/http/Oidc/ServeOidcHttpSurface.php`, `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php` |
 | OIDC logout | ✅ supported | kernel | `System/Flow/Oidc/FrontChannelLogout/`, `System/Flow/Oidc/BackChannelLogout/`, `tests/Flows/Oidc/OidcFlowTest.php` |
 | PAR and JARM | ✅ supported | kernel | `System/Flow/Oidc/PushAuthorizationRequest/`, `System/Flow/Oidc/JarmResponse/`, `tests/Flows/Oidc/OidcFlowTest.php` |
 | request-object claim validation | ✅ supported | kernel | `System/Flow/Oidc/ValidateRequestObject/`, `tests/Flows/Oidc/ValidateRequestObjectTest.php` |
-| client-signed JAR validation | ⚠️ partial | boundary | `docs/oidc-provider-boundary.md`, `docs/oidc-conformance-matrix.md` |
+| client-signed JAR validation | ✅ supported | kernel | `System/Flow/Oidc/PushAuthorizationRequest/`, `tests/Flows/Oidc/PushAuthorizationRequestTest.php`, `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php` |
 | pairwise subject identifiers | ✅ supported | kernel | `System/Capability/Oidc/SubjectIdentifierStrategy.php`, `tests/Flows/Oidc/OidcFlowTest.php` |
 | tenant lifecycle and membership | ✅ supported | kernel | `System/Capability/Tenant/`, `System/Flow/Tenant/`, `tests/Flows/Tenant/` |
 | tenant security control-plane | ✅ supported | kernel | `System/Capability/TenantSecurity/`, `System/Flow/TenantSecurity/`, `tests/Flows/TenantSecurity/TenantSecurityFlowTest.php` |

@@ -35,6 +35,7 @@ final readonly class UpdateClientData
         public bool $requestObjectSignatureRequired = false,
         public bool $frontChannelLogoutSupported = false,
         public bool $backChannelLogoutSupported = false,
-        public bool $approvalRequired = false
+        public bool $approvalRequired = false,
+        #[\SensitiveParameter] public string|null $requestObjectVerificationKeyPem = null
     ) {}
 }

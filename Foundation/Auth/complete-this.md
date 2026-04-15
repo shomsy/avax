@@ -1,113 +1,48 @@
-According to a document from April 14, 2026, tvoj **10/10 TODO** je sada dosta kraći nego ranije. Najnoviji status kaže da su **auth kernel hardening, tenant/control-plane jezgro, SCIM runtime core, OAuth sender-constrained core, lifecycle hardening, quality gates, glossary, session revocation SQL+Redis i deployment trust docs/checklist** već urađeni, dok su **source-of-truth cleanup, OIDC provider completeness, deployment trust smoke execution, trusted-device / support explainability** još samo delimično zatvoreni, a **external certification program** i dalje nije implementiran. U kodu se i dalje vidi i jedan bitan detalj: `ReadActiveSessions` prima `SessionRegistryInterface|null` i vraća praznu listu kada registry nije wired, što znači da session story još nije “fail-closed by default” u svakom deploymentu.
+# Complete This — Closure Status
 
-## P0 — obavezno za 10/10
+Updated: 2026-04-15
 
-* [ ] **Zaključaj session registry kao first-class runtime requirement**
+Legenda:
+- `[x]` done in package scope
+- `[~]` package-owned but still quality-hardening or operator-hardening work remains
+- `[ ]` outside package scope / not implemented
 
-    * U enterprise modu nemoj dozvoliti nullable `SessionRegistryInterface`.
-    * Dodaj boot-time fail-fast ako nema durable registry-ja.
-    * Standardizuj i dokaži SQL i Redis adaptere kao kanonske backend-e.
-    * Pokrij testovima: `logout all`, revoke one session, revoke after password change, revoke after MFA recovery, revoke after admin lock.
-    * Ukloni mogućnost da “active sessions” vrati prazno samo zato što registry nije wired.
+## P0
 
-* [ ] **Završi source-of-truth cleanup**
+- [x] Session registry is a first-class enterprise runtime requirement.
+  Evidence: `System/Capability/Session/`, `tests/Flows/Session/`, `tests/Capabilities/Session/`
+- [x] Source-of-truth cleanup is closed.
+  Evidence: `docs/STATUS.md`, `docs/capability-matrix.md`, `docs/product-boundary.md`, `tooling/check-source-truth.php`
 
-    * `Auth.txt` još sadrži istorijski materijal; prebaci finalnu istinu u jedan kanonski `docs/STATUS.md`.
-    * Capability matrix generiši iz koda i testova gde god možeš.
-    * Jedan dokument neka bude jedina istina za: shipped, partial, non-goal, deprecated.
-    * Ukloni razliku između “status summary”, “risk register” i “history dump”.
+## P1
 
-## P1 — zatvori preostale rupe u provider/product sloju
+- [x] OIDC provider completeness is closed for package scope.
+  Includes: discovery, JWKS, logout, PAR, JARM, dynamic client registration surface, package-owned client-signed request-object validation for confidential and public clients with registered key material
+  Evidence: `integrations/http/Oidc/ServeOidcHttpSurface.php`, `tests/Flows/Oidc/PushAuthorizationRequestTest.php`, `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php`
+- [x] Deployment trust smoke execution exists and is executable.
+  Evidence: `tests/Integrations/Http/DeploymentTrustBoundaryTest.php`, `tests/Integrations/Http/VerifyOAuthSenderConstraintTest.php`
+- [x] Explainability surfaces are in runtime, not only docs.
+  Evidence: `System/Capability/Explainability/AuthIssueExplainer.php`, `System/Auth.php`, `tests/System/AuthTest.php`
+- [x] Trusted-device decision is permanently closed as a non-goal.
+  Evidence: `docs/trusted-device-policy.md`, `docs/STATUS.md`, `docs/product-boundary.md`
+- [x] Compatibility migration is closed for package scope.
+  Evidence: `docs/upgrade-migration-guide.md`, `tooling/check-migration-path.php`, `tests/System/ProductBoundaryTest.php`
+- [x] Product boundary is explicit and canonical.
+  Evidence: `docs/product-boundary.md`, `docs/STATUS.md`
 
-* [ ] **Dovrši OIDC provider completeness**
+## P2
 
-    * Najnoviji status kaže da su `RegisterClient`, logout, pairwise, PAR/JARM uglavnom zatvoreni, ali da je **client-signed JAR verification** još boundary, ne potpuno zatvorena product capability.
-    * Dodaj punu verifikaciju signed request object-a, claim validation, replay/expiry testove i interoperability test matrix.
-    * Dodaj conformance testove za:
+- [~] Mutation quality is executable but not release-hard enough yet.
+  Current truth: tooling runs locally; remaining open work is MSI/timeout reduction, not missing infrastructure
+  Evidence: `composer mutation`, `tooling/run-with-coverage-driver`, `.agents/management/evidence/RISK_REGISTER.md`
+- [x] Local certification posture exists.
+  Includes: conformance harness, certification profile, SBOM, provenance, rollback evidence, evidence bundle
+  Evidence: `docs/certification-profile.md`, `tooling/run-conformance-harness.php`, `tooling/generate-evidence-bundle.php`
+- [ ] External certification program.
+  This stays outside the package and is tracked as a product/delivery concern, not a kernel gap
 
-        * dynamic client registration lifecycle
-        * front-channel logout
-        * back-channel logout
-        * pairwise subjects
-        * PAR/JARM/JAR kombinacije.
+## Final Package Truth
 
-* [ ] **Izvrši deployment trust smoke testove, ne samo napiši docs**
-
-    * Proxy contract i operator checklist postoje, ali latest status i dalje kaže da smoke testovi tek treba da se izvrše.
-    * Dodaj CI / integration profile za:
-
-        * reverse proxy header trust
-        * mTLS chain propagation
-        * DPoP proof mismatch
-        * mixed proxy + sender-constraint scenarije.
-
-## P1 — UX / operator quality da stvarno bude 10/10
-
-* [ ] **Integrši “why” surfaces u runtime**
-
-    * `why access denied`
-    * `why step-up required`
-    * `why session revoke failed / nije propagiran`
-    * `why sender-constraint failed`
-    * `why trusted device nije priznat`
-    * Ovo sada postoji više kao support/docs pravac nego kao pravi runtime/operator surface.
-
-* [ ] **Zatvori trusted-device odluku**
-
-    * Trenutno je to i dalje eksplicitna product choice, ne gotova capability.
-    * Za 10/10 implementiraj:
-
-        * device token model
-        * device binding
-        * per-device revocation
-        * audit trail
-        * re-challenge policy
-    * Ako to ne želiš, onda ne claim-uj 10/10 “identity platform”, nego 10/10 “high-security auth kernel”.
-
-## P2 — release rigor i dokazivost
-
-* [ ] **Zatvori quality claim sa mutation/test dokazom**
-
-    * Stariji risk register i dalje pokazuje da je mutation tooling radio, ali da kritične auth slice-ove još nisu bile dovoljno mutation-hard (`MSI 61%`, escaped mutants, timeout-i).
-    * Ako je to i dalje aktuelno, digneš coverage i stabilizuješ mutation suite dok release claim ne bude samodokaziv.
-
-* [ ] **External certification program**
-
-    * Latest status ga i dalje vodi kao neimplementiran.
-    * Dodaj conformance harness, repeatable certification environment i evidence bundle po release-u.
-
-## P2 — polish, ne više core rupa
-
-* [ ] **Compatibility migration zatvori do kraja**
-
-    * Avax container namespace break je i dalje accepted compatibility risk.
-    * Dodaj BC shim ili jasan major-version migration path sa automated upgrade proverom.
-
-* [ ] **Jedan jasan “product boundary”**
-
-    * Jasno odvoji:
-
-        * auth kernel
-        * identity kernel
-        * full identity platform
-    * To sprečava overclaim i olakšava release/story/pre-sales pozicioniranje. Latest status već ide u tom smeru, ali 10/10 traži da to bude kristalno jasno i automatski proverljivo.
-
-## Moj iskren redosled
-
-Prvo uradi:
-
-1. session registry fail-closed
-2. source-of-truth cleanup
-3. client-signed JAR completeness
-4. deployment smoke execution
-5. trusted-device runtime ili trajno odbacivanje
-
-Zatim:
-6. explainability surfaces
-7. mutation rigor
-8. certification harness
-9. compatibility migration cleanup.
-
-Najkraće:
-**Do 10/10 te sada više ne deli “još auth feature-a”, nego završavanje fail-closed session priče, provider completeness, deployment proof, operator explainability i release-grade dokazivost.**
-
+- [x] No remaining package-owned gap from this file is blocked on missing auth runtime seams.
+- [~] Remaining open work is release-quality hardening (`mutation`) plus external product/program ownership.
+- [ ] Anything that requires external certification, hosted control planes, or full product UI remains outside this package.

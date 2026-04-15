@@ -36,7 +36,8 @@ final readonly class RegisterClient
             requestObjectSignatureRequired: $data->requestObjectSignatureRequired,
             frontChannelLogoutSupported: $data->frontChannelLogoutSupported,
             backChannelLogoutSupported : $data->backChannelLogoutSupported,
-            approvalRequired          : $data->approvalRequired
+            approvalRequired          : $data->approvalRequired,
+            requestObjectVerificationKeyPem: $data->requestObjectVerificationKeyPem
         );
 
         $this->auditLog->record(event: new AuditEvent(

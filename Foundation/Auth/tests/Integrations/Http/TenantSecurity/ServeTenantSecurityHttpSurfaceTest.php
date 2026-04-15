@@ -276,6 +276,65 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
         $this->assertSame(expected: 'tenant_security_failed', actual: $response->body['error']);
     }
 
+    public function testTenantSecurityHttpSurfacePropagatesRequestObjectVerificationKey() : void
+    {
+        $key = openssl_pkey_new([
+            'private_key_bits' => 2048,
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
+        ]);
+        self::assertNotFalse(condition: $key);
+        $details = openssl_pkey_get_details($key);
+        self::assertIsArray(actual: $details);
+
+        $rotatedKey = openssl_pkey_new([
+            'private_key_bits' => 2048,
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
+        ]);
+        self::assertNotFalse(condition: $rotatedKey);
+        $rotatedDetails = openssl_pkey_get_details($rotatedKey);
+        self::assertIsArray(actual: $rotatedDetails);
+
+        $surface = new ServeTenantSecurityHttpSurface(auth: $this->buildAuth());
+        $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path  : '/tenants',
+            body  : [
+                'slug' => 'acme',
+                'name' => 'Acme',
+                'ownerUserId' => 1,
+            ]
+        ));
+
+        $created = $surface->execute(input: new HttpEndpointInput(
+            method: 'POST',
+            path  : '/tenants/acme/oauth-clients',
+            body  : [
+                'name' => 'Acme SPA',
+                'type' => 'public',
+                'redirectUris' => ['https://spa.acme.test/callback'],
+                'allowedScopes' => ['openid'],
+                'requestObjectSignatureRequired' => true,
+                'requestObjectVerificationKeyPem' => $details['key'],
+            ]
+        ));
+
+        $updated = $surface->execute(input: new HttpEndpointInput(
+            method: 'PUT',
+            path  : '/tenants/acme/oauth-clients/' . rawurlencode($created->body['client']['clientId']),
+            body  : [
+                'name' => 'Acme SPA',
+                'type' => 'public',
+                'redirectUris' => ['https://spa.acme.test/callback'],
+                'allowedScopes' => ['openid'],
+                'requestObjectSignatureRequired' => true,
+                'requestObjectVerificationKeyPem' => $rotatedDetails['key'],
+            ]
+        ));
+
+        $this->assertSame(expected: $details['key'], actual: $created->body['client']['requestObjectVerificationKeyPem']);
+        $this->assertSame(expected: $rotatedDetails['key'], actual: $updated->body['client']['requestObjectVerificationKeyPem']);
+    }
+
     private function buildAuth() : Auth
     {
         $userSource = new InMemoryUserSource();

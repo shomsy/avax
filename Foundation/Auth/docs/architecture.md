@@ -123,13 +123,13 @@ integrations/
 - `Capability/Access/Policy/IdentityPolicyCatalog` owns the package default assurance matrix for user, privileged user,
   admin, support, tenant admin, machine identity, and break-glass posture.
 - `Capability/Oidc/` owns asymmetric provider behavior that is small enough to stay package-local; framework-neutral
-  HTTP publishing lives in `integrations/http/Oidc/`, while certification remains outside the kernel and logout plus
-  request-object claim validation are handled as kernel-owned OIDC flows.
+  HTTP publishing lives in `integrations/http/Oidc/`, while certification remains outside the kernel and logout,
+  dynamic client registration, plus request-object claim validation are handled as kernel-owned OIDC flows.
 - Passkeys and federation stay adapter-first: the kernel owns orchestration and storage contracts, while standards-heavy
   protocol work stays behind runtime interfaces.
 - `Capability/OAuth/SenderConstraint/` owns DPoP and mTLS binding metadata for sender-constrained token posture.
 - `Capability/Scim/` owns directory and provisioned-identity truth, while the HTTP adapter lives in
-  `integrations/http/Scim/` and full RFC 7644 productization still remains separate.
+  `integrations/http/Scim/`; external directory UIs and broader workforce-control-plane productization still remain separate.
 - `Capability/TenantSecurity/` owns tenant-scoped security configuration and approval lifecycle, while the thin admin
   API adapter lives in `integrations/http/TenantSecurity/` and the richer admin UI plus tenancy-management product
   surfaces remain application-owned.

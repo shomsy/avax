@@ -13,11 +13,12 @@ what still remains outside this package.
 | RS256 ID-token issuance | supported | kernel | `tests/Flows/Oidc/OidcFlowTest.php` |
 | userinfo from active access token | supported | kernel | `tests/Flows/Oidc/OidcFlowTest.php` |
 | overlap JWKS during key rollover | supported | kernel | `tests/Flows/Oidc/OidcFlowTest.php` |
-| dynamic client registration | not supported | external package or app | n/a |
-| front-channel logout | partial | kernel | `tests/Flows/Oidc/OidcFlowTest.php`, `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php` |
-| back-channel logout | partial | kernel | `tests/Flows/Oidc/OidcFlowTest.php`, `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php` |
+| dynamic client registration | supported | integration | `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php` |
+| front-channel logout | supported | kernel | `tests/Flows/Oidc/OidcFlowTest.php`, `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php` |
+| back-channel logout | supported | kernel | `tests/Flows/Oidc/OidcFlowTest.php`, `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php` |
 | pairwise subject identifiers | supported | kernel | `tests/Capabilities/Oidc/SubjectIdentifierTest.php`, `tests/Flows/Oidc/OidcFlowTest.php` |
 | PAR request storage | supported | kernel | `tests/Flows/Oidc/OidcFlowTest.php`, `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php` |
 | JARM response signing | supported | kernel | `tests/Flows/Oidc/OidcFlowTest.php` |
-| JAR client-signed request objects | partial | kernel + external client-key management | `tests/Flows/Oidc/ValidateRequestObjectTest.php`, `tests/Flows/Oidc/OidcFlowTest.php` |
+| JAR client-signed request objects | supported | kernel + integration | `tests/Flows/Oidc/PushAuthorizationRequestTest.php`, `tests/Flows/Oidc/ValidateRequestObjectTest.php`, `tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php` |
+| remote `jwks_uri` fetch for client registration | not supported | external package or app | n/a |
 | external certification | not supported | delivery program | n/a |

@@ -63,7 +63,8 @@ final readonly class UpdateClient
             approvedAt                : $approvedAt,
             approvedBy                : $approvedBy,
             active                    : $existing->active,
-            secretHash                : $existing->secretHash
+            secretHash                : $existing->secretHash,
+            requestObjectVerificationKeyPem: $data->requestObjectVerificationKeyPem
         );
         $this->clientRegistry->replace(client: $updated);
         $this->auditLog->record(event: new AuditEvent(

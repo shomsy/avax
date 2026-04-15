@@ -139,4 +139,28 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
             tokenEndpointAuthMethod   : OAuthTokenEndpointAuthMethod::CLIENT_SECRET_BASIC
         );
     }
+
+    public function testClientRegistrationPersistsRequestObjectVerificationKey() : void
+    {
+        $key = openssl_pkey_new([
+            'private_key_bits' => 2048,
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
+        ]);
+        self::assertNotFalse(condition: $key);
+        $details = openssl_pkey_get_details($key);
+        self::assertIsArray(actual: $details);
+
+        $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
+
+        $registered = $registry->register(
+            name: 'SPA with JAR',
+            type: OAuthClientType::PUBLIC,
+            redirectUris: ['https://spa.example.test/callback'],
+            allowedScopes: ['openid'],
+            requestObjectSignatureRequired: true,
+            requestObjectVerificationKeyPem: $details['key']
+        );
+
+        $this->assertSame(expected: $details['key'], actual: $registered->client->requestObjectVerificationKeyPem);
+    }
 }

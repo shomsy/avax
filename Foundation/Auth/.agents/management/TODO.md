@@ -14,6 +14,17 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: AUTH-031
+- `created_at`: 2026-04-15 10:05 CEST
+- `updated_at`: 2026-04-15 10:05 CEST
+- `completed_at`: 2026-04-15 10:05 CEST
+- `status`: done
+- `estimate`: 5h
+- `actual`: 2h 10m
+- `outcome`: Close the remaining package-owned OIDC completeness gap with asymmetric/public-client request-object verification, thin dynamic client registration HTTP lifecycle, and truthful canonical status updates
+- `acceptance`: public and confidential clients can register verifier key material through package-owned flows and HTTP surfaces; RSA-signed request objects pass only with matching key + claims; OIDC registration supports create/update/disable and discovery publication; canonical docs stop claiming dynamic registration and public-client JAR verification are external; targeted PHPUnit slices pass
+- `links`: System/Flow/Oidc/PushAuthorizationRequest/, System/Capability/OAuth/OAuthClient.php, integrations/http/Oidc/ServeOidcHttpSurface.php, integrations/http/TenantSecurity/ServeTenantSecurityHttpSurface.php, tests/Flows/Oidc/PushAuthorizationRequestTest.php, tests/Flows/OAuth/RegisterClientTest.php, tests/Flows/OAuth/UpdateClientTest.php, tests/Integrations/Http/Oidc/ServeOidcHttpSurfaceTest.php, tests/Integrations/Http/TenantSecurity/ServeTenantSecurityHttpSurfaceTest.php, docs/STATUS.md, docs/oidc-conformance-matrix.md, REFAKTOR.md
+
 - `id`: AUTH-030
 - `created_at`: 2026-04-15 00:35 CEST
 - `updated_at`: 2026-04-15 01:28 CEST

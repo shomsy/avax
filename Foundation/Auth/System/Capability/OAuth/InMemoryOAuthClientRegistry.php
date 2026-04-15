@@ -42,7 +42,8 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         bool $requestObjectSignatureRequired = false,
         bool $frontChannelLogoutSupported = false,
         bool $backChannelLogoutSupported = false,
-        bool|null $approvalRequired = null
+        bool|null $approvalRequired = null,
+        #[SensitiveParameter] string|null $requestObjectVerificationKeyPem = null
     ) : RegisteredOAuthClient
     {
         $normalizedRedirectUris = $this->normalizeRedirectUris(redirectUris: $redirectUris);
@@ -112,7 +113,8 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
             approvedAt   : $requiresApproval ? null : new DateTimeImmutable(),
             approvedBy   : $requiresApproval ? null : 'system',
             active       : ! $requiresApproval,
-            secretHash   : $secretHash
+            secretHash   : $secretHash,
+            requestObjectVerificationKeyPem: $requestObjectVerificationKeyPem
         );
 
         $this->clients[$clientId] = $client;

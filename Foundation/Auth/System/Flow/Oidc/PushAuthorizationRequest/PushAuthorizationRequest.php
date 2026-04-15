@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Oidc\PushAuthorizationRequest;
 
+use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
 use Avax\Auth\System\Capability\Oidc\OidcRequestObjectStoreInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
 use Avax\Auth\System\Capability\OAuth\PkceMethod;
@@ -22,7 +23,8 @@ final readonly class PushAuthorizationRequest
         private OidcRequestObjectStoreInterface $requestObjectStore,
         private AuditLogInterface $auditLog,
         private Clock $clock,
-        private OAuthClientRegistryInterface|null $clientRegistry = null
+        private OAuthClientRegistryInterface|null $clientRegistry = null,
+        private OidcProviderInterface|null $oidcProvider = null
     ) {}
 
     public function execute(PushAuthorizationRequestData $data) : PushedAuthorizationRequest
@@ -99,12 +101,9 @@ final readonly class PushAuthorizationRequest
         $algorithm = $this->readStringValue(value: $header['alg'] ?? null);
         $clientId = $this->readStringValue(value: $claims['client_id'] ?? null);
         $clientSecret = $data->clientSecret !== null ? trim($data->clientSecret) : '';
+        $client = $clientId !== null ? $this->clientRegistry->find(clientId: $clientId) : null;
 
-        if ($algorithm === null || $clientId === null || $clientSecret === '') {
-            throw OAuthAuthorizationFailed::invalidRequestObject();
-        }
-
-        if (! in_array($algorithm, ['HS256', 'HS384', 'HS512'], true)) {
+        if ($algorithm === null || $clientId === null || $client === null) {
             throw OAuthAuthorizationFailed::invalidRequestObject();
         }
 
@@ -112,11 +111,19 @@ final readonly class PushAuthorizationRequest
             throw OAuthAuthorizationFailed::invalidRequestObject();
         }
 
-        if (! $this->clientRegistry->verifySecret(clientId: $clientId, plainTextSecret: $clientSecret)) {
-            throw OAuthAuthorizationFailed::invalidRequestObject();
-        }
-
-        $verifiedClaims = (new HmacTokenCodec(secret: $clientSecret, algorithm: $algorithm))->decode(token: $jwt);
+        $verifiedClaims = match ($algorithm) {
+            'HS256', 'HS384', 'HS512' => $this->verifyHmacRequestObject(
+                jwt: $jwt,
+                clientId: $clientId,
+                clientSecret: $clientSecret,
+                algorithm: $algorithm
+            ),
+            'RS256' => $this->verifyRsaRequestObject(
+                jwt: $jwt,
+                publicKeyPem: $client->requestObjectVerificationKeyPem
+            ),
+            default => null,
+        };
 
         if (! is_array($verifiedClaims)) {
             throw OAuthAuthorizationFailed::invalidRequestObject();
@@ -133,11 +140,106 @@ final readonly class PushAuthorizationRequest
             throw OAuthAuthorizationFailed::invalidRequestObject();
         }
 
+        if (! $this->claimsMatchSignedRequestObjectPolicy(claims: $verifiedClaims, clientId: $clientId)) {
+            throw OAuthAuthorizationFailed::invalidRequestObject();
+        }
+
         return [
             'claims' => $verifiedClaims,
             'signature_verified' => true,
             'signing_algorithm' => $algorithm,
         ];
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function verifyHmacRequestObject(
+        string $jwt,
+        string $clientId,
+        string $clientSecret,
+        string $algorithm
+    ) : array|null
+    {
+        if ($clientSecret === '') {
+            return null;
+        }
+
+        if (! $this->clientRegistry?->verifySecret(clientId: $clientId, plainTextSecret: $clientSecret)) {
+            return null;
+        }
+
+        $claims = (new HmacTokenCodec(secret: $clientSecret, algorithm: $algorithm))->decode(token: $jwt);
+
+        return is_array($claims) ? $claims : null;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function verifyRsaRequestObject(string $jwt, string|null $publicKeyPem) : array|null
+    {
+        if ($publicKeyPem === null || trim($publicKeyPem) === '') {
+            return null;
+        }
+
+        $segments = explode('.', $jwt);
+
+        if (count($segments) !== 3) {
+            return null;
+        }
+
+        $signingInput = $segments[0] . '.' . $segments[1];
+        $signature = $this->base64UrlDecode(value: $segments[2]);
+
+        if ($signature === null) {
+            return null;
+        }
+
+        $verified = openssl_verify($signingInput, $signature, $publicKeyPem, OPENSSL_ALGO_SHA256);
+
+        if ($verified !== 1) {
+            return null;
+        }
+
+        $claims = $this->decodeJson(base64Url: $segments[1]);
+
+        return is_array($claims) ? $claims : null;
+    }
+
+    /**
+     * @param array<string, mixed> $claims
+     */
+    private function claimsMatchSignedRequestObjectPolicy(array $claims, string $clientId) : bool
+    {
+        $issuer = $this->readStringValue(value: $claims['iss'] ?? null);
+
+        if ($issuer !== null && $issuer !== $clientId) {
+            return false;
+        }
+
+        if ($this->oidcProvider === null || ! array_key_exists('aud', $claims)) {
+            return true;
+        }
+
+        $expectedAudience = $this->oidcProvider->readProviderMetadata()->issuer;
+        $audience = $claims['aud'];
+
+        if (is_string($audience)) {
+            return trim($audience) === $expectedAudience;
+        }
+
+        if (! is_array($audience)) {
+            return false;
+        }
+
+        foreach ($audience as $candidate) {
+            if (is_string($candidate) && trim($candidate) === $expectedAudience) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

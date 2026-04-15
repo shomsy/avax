@@ -18,24 +18,19 @@ a full standards-certified OIDC product.
   provider policy
 - optional `sid` claim in ID tokens for logout correlation
 - local front-channel logout, back-channel logout token handling, PAR request
-  storage, request-object claim validation, shared-secret client-signed PAR
-  request verification for confidential clients, and JARM response signing
-  through the kernel-owned OIDC flows
+  storage, request-object claim validation, dynamic client registration,
+  package-owned client-signed PAR request verification for confidential and
+  public clients, and JARM response signing through the kernel-owned OIDC
+  flows
 - framework-neutral HTTP publication through
   `integrations/http/Oidc/ServeOidcHttpSurface.php`
 
 ## Still Outside This Package
 
-- OIDC-standard dynamic client registration endpoint
-- asymmetric/public-client JAR request-object key distribution and signature verification
+- standards certification and interoperability program ownership
+- remote `jwks_uri` fetch/rotation and software-statement validation for dynamic client registration
 - external conformance certification
-
-## Adjacent Control-Plane Support
-
-- tenant-owned OAuth client registration, update, disable, and secret rotation
-  now exist through the tenant-admin control-plane adapter
-- the kernel still does not claim RFC-level OIDC registration metadata or
-  software-statement validation
+- richer admin/onboarding UI beyond the thin package-owned HTTP registration surface
 
 ## Operational Posture
 
@@ -44,5 +39,8 @@ a full standards-certified OIDC product.
   plus one or more retiring verification providers
 - keep retiring keys published until the maximum ID-token lifetime and RP cache
   TTL have both elapsed
+- register client verifier keys through the tenant-admin control-plane or the
+  thin OIDC registration surface when request-object signatures must be
+  enforced
 - verify delivery against [oidc-conformance-matrix.md](oidc-conformance-matrix.md)
   and [oidc-key-rollover-runbook.md](oidc-key-rollover-runbook.md)

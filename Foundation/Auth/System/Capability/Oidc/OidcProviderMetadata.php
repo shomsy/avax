@@ -22,6 +22,7 @@ final readonly class OidcProviderMetadata
         public string                       $issuer,
         public string                       $authorizationEndpoint,
         #[SensitiveParameter] public string $tokenEndpoint,
+        public string                       $registrationEndpoint,
         public string                       $userInfoEndpoint,
         public string                       $endSessionEndpoint,
         public string                       $pushedAuthorizationRequestEndpoint,

@@ -20,10 +20,12 @@ use Psr\Log\LoggerInterface;
  */
 readonly class RequestLoggerMiddleware implements MiddlewareInterface
 {
+    private LoggerInterface $logger;
+
     /**
      * @param LoggerInterface $logger Instance of the logger used to log request details.
      */
-    public function __construct(private LoggerInterface $logger) {}
+    public function __construct(LoggerInterface $logger) { $this->logger = $logger; }
 
     /**
      * PSR-15 process method: log incoming request details.

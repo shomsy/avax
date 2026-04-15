@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\Access\RequireAccessPolicy;
 
 use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
-use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\PhishingResistantAuthenticationRequired;
-use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
 use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission;
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\PhishingResistantAuthenticationRequired;
+use Avax\Auth\System\Capability\Access\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Auth\System\Capability\Access\RequireResourceOwner\RequireResourceOwner;
 use Avax\Auth\System\Capability\Access\RequireResourceOwner\ResourceOwnerDenied;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole;
@@ -26,15 +26,32 @@ use SensitiveParameter;
  */
 final readonly class RequireAccessPolicy
 {
+    private RequireAdminElevation                  $requireAdminElevation;
+    private RequireFreshMfa                        $requireFreshMfa;
+    private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication;
+    private RequireResourceOwner                   $requireResourceOwner;
+    private RequirePermission                      $requirePermission;
+    private RequireRole                            $requireRole;
+    private RequireAuthentication                  $requireAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private RequireAuthentication                  $requireAuthentication,
-        private RequireRole                                                  $requireRole,
-        private RequirePermission                                            $requirePermission,
-        private RequireResourceOwner                                         $requireResourceOwner,
-        #[SensitiveParameter] private RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
-        private RequireFreshMfa                                              $requireFreshMfa,
-        private RequireAdminElevation                                        $requireAdminElevation
-    ) {}
+        #[SensitiveParameter] RequireAuthentication                  $requireAuthentication,
+        RequireRole                                                  $requireRole,
+        RequirePermission                                            $requirePermission,
+        RequireResourceOwner                                         $requireResourceOwner,
+        #[SensitiveParameter] RequirePhishingResistantAuthentication $requirePhishingResistantAuthentication,
+        RequireFreshMfa                                              $requireFreshMfa,
+        RequireAdminElevation                                        $requireAdminElevation
+    )
+    {
+        $this->requireAuthentication                  = $requireAuthentication;
+        $this->requireRole                            = $requireRole;
+        $this->requirePermission                      = $requirePermission;
+        $this->requireResourceOwner                   = $requireResourceOwner;
+        $this->requirePhishingResistantAuthentication = $requirePhishingResistantAuthentication;
+        $this->requireFreshMfa                        = $requireFreshMfa;
+        $this->requireAdminElevation                  = $requireAdminElevation;
+    }
 
     /**
      * @throws AdminElevationFailed

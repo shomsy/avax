@@ -17,25 +17,44 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class FrontChannelLogout
 {
+    private OAuthClientRegistryInterface|null $clientRegistry;
+    private OidcProviderInterface|null        $oidcProvider;
+    private RefreshTokenStoreInterface|null   $refreshTokenStore;
+    private SessionRegistryInterface|null     $sessionRegistry;
+    private Clock                             $clock;
+    private AuditLogInterface                 $auditLog;
+    private IdentityInterface                 $identity;
+    private CurrentAuthentication             $currentAuthentication;
+
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private IdentityInterface $identity,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        private SessionRegistryInterface|null $sessionRegistry = null,
-        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        private OidcProviderInterface|null $oidcProvider = null,
-        private OAuthClientRegistryInterface|null $clientRegistry = null
-    ) {}
+        #[\SensitiveParameter] CurrentAuthentication           $currentAuthentication,
+        IdentityInterface                                      $identity,
+        AuditLogInterface                                      $auditLog,
+        Clock                                                  $clock,
+        #[\SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry = null,
+        #[\SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        OidcProviderInterface|null                             $oidcProvider = null,
+        OAuthClientRegistryInterface|null                      $clientRegistry = null
+    )
+    {
+        $this->currentAuthentication = $currentAuthentication;
+        $this->identity              = $identity;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+        $this->sessionRegistry       = $sessionRegistry;
+        $this->refreshTokenStore     = $refreshTokenStore;
+        $this->oidcProvider          = $oidcProvider;
+        $this->clientRegistry        = $clientRegistry;
+    }
 
     public function execute(FrontChannelLogoutData $data) : LogoutResult
     {
-        $context = $this->currentAuthentication->read();
-        $now = $this->clock->now();
+        $context   = $this->currentAuthentication->read();
+        $now       = $this->clock->now();
         $sessionId = $data->sessionId ?? $context->sessionId();
 
         if ($sessionId === null && $data->idTokenHint !== null && $this->oidcProvider !== null) {
-            $claims = $this->oidcProvider->resolveIdToken(idToken: $data->idTokenHint);
+            $claims    = $this->oidcProvider->resolveIdToken(idToken: $data->idTokenHint);
             $sessionId = is_string($claims['sid'] ?? null) ? trim($claims['sid']) : null;
         }
 
@@ -53,17 +72,17 @@ final readonly class FrontChannelLogout
 
         if ($user !== null) {
             $this->auditLog->record(event: new AuditEvent(
-                name      : 'auth.oidc.front_channel_logout.succeeded',
-                occurredAt: $now,
-                context   : [
-                    'user_id' => $user->id,
-                    'session_id' => $sessionId,
-                    'state' => $data->state,
-                    'client_id' => $client?->clientId,
-                    'front_channel_logout_supported' => $client?->frontChannelLogoutSupported,
-                    'back_channel_logout_supported' => $client?->backChannelLogoutSupported,
-                ]
-            ));
+                                               name      : 'auth.oidc.front_channel_logout.succeeded',
+                                               occurredAt: $now,
+                                               context   : [
+                                                               'user_id'                        => $user->id,
+                                                               'session_id'                     => $sessionId,
+                                                               'state'                          => $data->state,
+                                                               'client_id'                      => $client?->clientId,
+                                                               'front_channel_logout_supported' => $client?->frontChannelLogoutSupported,
+                                                               'back_channel_logout_supported'  => $client?->backChannelLogoutSupported,
+                                                           ]
+                                           ));
         }
 
         if ($user !== null) {
@@ -73,14 +92,14 @@ final readonly class FrontChannelLogout
         $this->currentAuthentication->clear();
 
         return new LogoutResult(
-            revoked                : $sessionId !== null,
-            sessionId              : $sessionId,
-            postLogoutRedirectUri  : $data->postLogoutRedirectUri,
-            state                  : $data->state
+            revoked              : $sessionId !== null,
+            sessionId            : $sessionId,
+            postLogoutRedirectUri: $data->postLogoutRedirectUri,
+            state                : $data->state
         );
     }
 
-    private function resolveClientFromIdTokenHint(string|null $idTokenHint) : \Avax\Auth\System\Capability\OAuth\OAuthClient|null
+    private function resolveClientFromIdTokenHint(#[\SensitiveParameter] string|null $idTokenHint) : \Avax\Auth\System\Capability\OAuth\OAuthClient|null
     {
         if ($idTokenHint === null || trim($idTokenHint) === '' || $this->oidcProvider === null || $this->clientRegistry === null) {
             return null;

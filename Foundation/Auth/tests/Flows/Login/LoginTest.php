@@ -24,15 +24,14 @@ use Avax\Auth\System\Flow\Login\RateLimit\RateLimitException;
 use Avax\Auth\System\Flow\Mfa\Challenge\InMemoryMfaChallengeStore;
 use Avax\Auth\System\Flow\Mfa\Challenge\StartMfaChallenge;
 use Avax\Auth\System\Flow\Mfa\InMemoryMfaStore;
-use Avax\Auth\System\Flow\Mfa\MfaChallenge;
 use Avax\Auth\System\Flow\Mfa\MfaChallengePurpose;
 use Avax\Auth\System\Flow\Mfa\MfaMethod;
 use Avax\Auth\System\Flow\Mfa\MfaMethodRecord;
 use Avax\Auth\System\Flow\Token\IssuedRefreshToken;
 use Avax\Auth\System\Flow\Token\IssuedToken;
 use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
-use Avax\Auth\Tests\Support\FrozenClock;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Auth\Tests\Support\FrozenClock;
 use DateTimeImmutable;
 use Exception;
 use Mockery;
@@ -51,8 +50,8 @@ class LoginTest extends TestCase
      */
     public function testLoginSuccess() : void
     {
-        $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
-        $userId      = new UserId(value: 1);
+        $credentials    = new Credentials(identifier: 'user@example.com', password: 'password');
+        $userId         = new UserId(value: 1);
         $passwordHasher = $this->passwordHasher();
         $user           = $this->userWithPassword(
             passwordHasher: $passwordHasher,
@@ -105,6 +104,40 @@ class LoginTest extends TestCase
         $this->assertSame(expected: 1, actual: $result->user()?->id);
     }
 
+    private function passwordHasher() : PasswordHasher
+    {
+        return new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
+    }
+
+    private function userWithPassword(
+        #[SensitiveParameter] PasswordHasher $passwordHasher,
+        UserId                               $userId,
+        #[SensitiveParameter] string         $password,
+        bool                                 $isActive = true
+    ) : User
+    {
+        return User::create(
+            id          : $userId,
+            email       : new UserEmail(value: 'user@example.com'),
+            username    : 'user',
+            passwordHash: $passwordHasher->hash(password: $password),
+            roles       : [],
+            permissions : [],
+            isActive    : $isActive
+        );
+    }
+
+    private function startMfaChallenge(InMemoryMfaStore $mfaStore) : StartMfaChallenge
+    {
+        return new StartMfaChallenge(
+            currentAuthentication: new CurrentAuthentication(),
+            mfaStore             : $mfaStore,
+            challengeStore       : new InMemoryMfaChallengeStore(),
+            auditLog             : new InMemoryAuditLog(),
+            clock                : new Clock()
+        );
+    }
+
     public function testLoginFailedWithInvalidCredentials() : void
     {
         $credentials = new Credentials(identifier: 'user@example.com', password: 'wrong_password');
@@ -114,7 +147,7 @@ class LoginTest extends TestCase
             ->once()
             ->andReturn(null);
 
-        $identity       = Mockery::mock(IdentityInterface::class);
+        $identity = Mockery::mock(IdentityInterface::class);
         $identity->shouldNotReceive('issue');
         $identity->shouldReceive('sessionIdentity')->andReturn(null);
 
@@ -150,7 +183,7 @@ class LoginTest extends TestCase
 
     public function testLoginFailedWithInactiveUser() : void
     {
-        $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
+        $credentials    = new Credentials(identifier: 'user@example.com', password: 'password');
         $passwordHasher = $this->passwordHasher();
         $user           = $this->userWithPassword(
             passwordHasher: $passwordHasher,
@@ -205,8 +238,8 @@ class LoginTest extends TestCase
     {
         $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
 
-        $userSource     = Mockery::mock(UserSourceInterface::class);
-        $identity       = Mockery::mock(IdentityInterface::class);
+        $userSource = Mockery::mock(UserSourceInterface::class);
+        $identity   = Mockery::mock(IdentityInterface::class);
         $identity->shouldNotReceive('issue');
         $identity->shouldReceive('sessionIdentity')->andReturn(null);
 
@@ -246,8 +279,8 @@ class LoginTest extends TestCase
      */
     public function testLoginReturnsMfaChallengeWhenMfaIsEnabled() : void
     {
-        $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
-        $userId      = new UserId(value: 1);
+        $credentials    = new Credentials(identifier: 'user@example.com', password: 'password');
+        $userId         = new UserId(value: 1);
         $passwordHasher = $this->passwordHasher();
         $user           = $this->userWithPassword(
             passwordHasher: $passwordHasher,
@@ -264,11 +297,11 @@ class LoginTest extends TestCase
 
         $mfaStore = new InMemoryMfaStore();
         $mfaStore->saveMethod(record: new MfaMethodRecord(
-            userId   : $userId,
-            method   : MfaMethod::TOTP,
-            secret   : 'SECRET',
-            enabledAt: new DateTimeImmutable(datetime: '-1 minute')
-        ));
+                                          userId   : $userId,
+                                          method   : MfaMethod::TOTP,
+                                          secret   : 'SECRET',
+                                          enabledAt: new DateTimeImmutable(datetime: '-1 minute')
+                                      ));
         $startMfaChallenge = $this->startMfaChallenge(mfaStore: $mfaStore);
 
         $login = new Login(
@@ -298,10 +331,10 @@ class LoginTest extends TestCase
      */
     public function testLoginRehashesStoredPasswordWhenHasherPolicyChanged() : void
     {
-        $credentials = new Credentials(identifier: 'user@example.com', password: 'password');
-        $userId      = new UserId(value: 1);
-        $legacyHasher = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
-        $user         = $this->userWithPassword(
+        $credentials   = new Credentials(identifier: 'user@example.com', password: 'password');
+        $userId        = new UserId(value: 1);
+        $legacyHasher  = new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
+        $user          = $this->userWithPassword(
             passwordHasher: $legacyHasher,
             userId        : $userId,
             password      : 'password'
@@ -317,13 +350,13 @@ class LoginTest extends TestCase
 
         $identity = Mockery::mock(IdentityInterface::class);
         $identity->shouldReceive('issue')->once()->with($user)->andReturn(new IssuedAuthentication(
-            mode: AuthenticationMode::TOKEN,
-            accessToken: new IssuedToken(
-                token    : 'token-123',
-                tokenId  : 'access-123',
-                expiresAt: new DateTimeImmutable(datetime: '+1 hour')
-            )
-        ));
+                                                                              mode       : AuthenticationMode::TOKEN,
+                                                                              accessToken: new IssuedToken(
+                                                                                               token    : 'token-123',
+                                                                                               tokenId  : 'access-123',
+                                                                                               expiresAt: new DateTimeImmutable(datetime: '+1 hour')
+                                                                                           )
+                                                                          ));
         $identity->shouldReceive('sessionIdentity')->andReturn(null);
 
         $login = new Login(
@@ -331,9 +364,9 @@ class LoginTest extends TestCase
             passwordHasher          : $currentHasher,
             identity                : $identity,
             projectAuthenticatedUser: new ProjectAuthenticatedUser(
-                emailVerificationState: new InMemoryEmailVerificationStateStore(),
-                mfaStore              : new InMemoryMfaStore()
-            ),
+                                          emailVerificationState: new InMemoryEmailVerificationStateStore(),
+                                          mfaStore              : new InMemoryMfaStore()
+                                      ),
             currentAuthentication   : new CurrentAuthentication(),
             auditLog                : new InMemoryAuditLog(),
             mfaStore                : new InMemoryMfaStore(),
@@ -348,38 +381,5 @@ class LoginTest extends TestCase
     protected function tearDown() : void
     {
         Mockery::close();
-    }
-
-    private function passwordHasher() : PasswordHasher
-    {
-        return new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
-    }
-
-    private function userWithPassword(
-        #[SensitiveParameter] PasswordHasher $passwordHasher,
-        UserId                               $userId,
-        #[SensitiveParameter] string         $password,
-        bool                                 $isActive = true
-    ) : User {
-        return User::create(
-            id          : $userId,
-            email       : new UserEmail(value: 'user@example.com'),
-            username    : 'user',
-            passwordHash: $passwordHasher->hash(password: $password),
-            roles       : [],
-            permissions : [],
-            isActive    : $isActive
-        );
-    }
-
-    private function startMfaChallenge(InMemoryMfaStore $mfaStore) : StartMfaChallenge
-    {
-        return new StartMfaChallenge(
-            currentAuthentication: new CurrentAuthentication(),
-            mfaStore             : $mfaStore,
-            challengeStore       : new InMemoryMfaChallengeStore(),
-            auditLog             : new InMemoryAuditLog(),
-            clock                : new Clock()
-        );
     }
 }

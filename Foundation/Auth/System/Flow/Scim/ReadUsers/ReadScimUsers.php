@@ -9,10 +9,17 @@ use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 
 final readonly class ReadScimUsers
 {
+    private UserSourceInterface                   $userSource;
+    private ScimProvisionedIdentityStoreInterface $identityStore;
+
     public function __construct(
-        private ScimProvisionedIdentityStoreInterface $identityStore,
-        private UserSourceInterface $userSource
-    ) {}
+        ScimProvisionedIdentityStoreInterface $identityStore,
+        UserSourceInterface                   $userSource
+    )
+    {
+        $this->identityStore = $identityStore;
+        $this->userSource    = $userSource;
+    }
 
     /**
      * @return list<ScimUserProjection>
@@ -29,13 +36,13 @@ final readonly class ReadScimUsers
             }
 
             $projections[] = new ScimUserProjection(
-                externalId : $identity->externalId,
-                userId     : $user->getId()->value,
-                email      : $user->getEmail()->value,
-                username   : $user->getUsername(),
-                roles      : array_map(static fn ($role) => $role->value, $user->getRoles()),
-                groups     : $identity->groups,
-                state      : $identity->state
+                externalId: $identity->externalId,
+                userId    : $user->getId()->value,
+                email     : $user->getEmail()->value,
+                username  : $user->getUsername(),
+                roles     : array_map(static fn ($role) => $role->value, $user->getRoles()),
+                groups    : $identity->groups,
+                state     : $identity->state
             );
         }
 

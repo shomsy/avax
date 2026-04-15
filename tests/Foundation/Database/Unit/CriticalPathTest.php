@@ -38,7 +38,9 @@ final class CriticalPathTest extends TestCase
     {
         $grammar        = new MySQLGrammar;
         $connection     = new class($this->pdo) implements DatabaseConnection {
-            public function __construct(private PDO $pdo) {}
+            private PDO $pdo;
+
+            public function __construct(PDO $pdo) { $this->pdo = $pdo; }
 
             public function getConnection() : PDO { return $this->pdo; }
 
@@ -82,7 +84,9 @@ final class CriticalPathTest extends TestCase
     {
         $grammar        = new MySQLGrammar;
         $connection     = new class($this->pdo) implements DatabaseConnection {
-            public function __construct(private PDO $pdo) {}
+            private PDO $pdo;
+
+            public function __construct(PDO $pdo) { $this->pdo = $pdo; }
 
             public function getConnection() : PDO { return $this->pdo; }
 
@@ -126,7 +130,9 @@ final class CriticalPathTest extends TestCase
     {
         $grammar      = new MySQLGrammar;
         $connection   = new class($this->pdo) implements DatabaseConnection {
-            public function __construct(private PDO $pdo) {}
+            private PDO $pdo;
+
+            public function __construct(PDO $pdo) { $this->pdo = $pdo; }
 
             public function getConnection() : PDO { return $this->pdo; }
 

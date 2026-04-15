@@ -10,10 +10,17 @@ use Throwable;
 
 final readonly class MakeRepositoryCommand
 {
+    private LoggerInterface     $logger;
+    private RepositoryGenerator $repositoryGenerator;
+
     public function __construct(
-        private RepositoryGenerator $repositoryGenerator,
-        private LoggerInterface     $logger
-    ) {}
+        RepositoryGenerator $repositoryGenerator,
+        LoggerInterface     $logger
+    )
+    {
+        $this->repositoryGenerator = $repositoryGenerator;
+        $this->logger              = $logger;
+    }
 
     public function execute(array $arguments) : void
     {

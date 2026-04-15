@@ -26,15 +26,22 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class EnumAreValuesAllowed
 {
+    private bool   $strict;
+    private string $enumClass;
+
     /**
      * Fully qualified class name of the Enum to validate against.
      *
      * @var string The expected Enum class, which must implement `BackedEnum` to support `tryFrom`.
      */
     public function __construct(
-        private string $enumClass,
-        private bool   $strict = false // disallow null if strict = true
-    ) {}
+        string $enumClass,
+        bool   $strict = false // disallow null if strict = true
+    )
+    {
+        $this->enumClass = $enumClass;
+        $this->strict    = $strict;
+    }
 
     /**
      * Validates whether the given value is an array of valid Enum instances or Enum-backed values.

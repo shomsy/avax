@@ -13,11 +13,20 @@ use RuntimeException;
 
 final readonly class ApproveClientRegistration
 {
+    private Clock                        $clock;
+    private AuditLogInterface            $auditLog;
+    private OAuthClientRegistryInterface $clientRegistry;
+
     public function __construct(
-        private OAuthClientRegistryInterface $clientRegistry,
-        private AuditLogInterface            $auditLog,
-        private Clock                        $clock
-    ) {}
+        OAuthClientRegistryInterface $clientRegistry,
+        AuditLogInterface            $auditLog,
+        Clock                        $clock
+    )
+    {
+        $this->clientRegistry = $clientRegistry;
+        $this->auditLog       = $auditLog;
+        $this->clock          = $clock;
+    }
 
     public function execute(ApproveClientRegistrationData $data) : OAuthClient
     {
@@ -31,15 +40,15 @@ final readonly class ApproveClientRegistration
         }
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.oauth.client.approved',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'client_id' => $client->clientId,
-                'tenant_slug' => $client->tenantSlug,
-                'approved_by' => $client->approvedBy,
-                'approval_status' => $client->approvalStatus->value,
-            ]
-        ));
+                                           name      : 'auth.oauth.client.approved',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'client_id'       => $client->clientId,
+                                                           'tenant_slug'     => $client->tenantSlug,
+                                                           'approved_by'     => $client->approvedBy,
+                                                           'approval_status' => $client->approvalStatus->value,
+                                                       ]
+                                       ));
 
         return $client;
     }

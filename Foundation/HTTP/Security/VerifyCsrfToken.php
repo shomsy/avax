@@ -22,11 +22,17 @@ use SensitiveParameter;
 class VerifyCsrfToken
 {
     private const array SAFE_METHODS = ['HEAD', 'GET', 'OPTIONS'];
+    protected readonly ResponseFactory  $responseFactory;
+    protected readonly CsrfTokenManager $csrfTokenManager;
 
     public function __construct(
-        #[SensitiveParameter] protected readonly CsrfTokenManager $csrfTokenManager,
-        protected readonly ResponseFactory                        $responseFactory
-    ) {}
+        #[SensitiveParameter] CsrfTokenManager $csrfTokenManager,
+        ResponseFactory                        $responseFactory
+    )
+    {
+        $this->csrfTokenManager = $csrfTokenManager;
+        $this->responseFactory  = $responseFactory;
+    }
 
     /**
      * Handles CSRF validation for incoming requests.

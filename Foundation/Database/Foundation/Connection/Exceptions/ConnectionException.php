@@ -31,17 +31,20 @@ use Throwable;
  */
 class ConnectionException extends DatabaseException
 {
+    private readonly string $name;
+
     /**
      * @param string         $name     The nickname of the database connection that failed.
      * @param string         $message  The human-readable description of what went wrong.
      * @param Throwable|null $previous The raw system error that triggered this report.
      */
     public function __construct(
-        private readonly string $name,
-        string                  $message,
-        Throwable|null          $previous = null
+        string         $name,
+        string         $message,
+        Throwable|null $previous = null
     )
     {
+        $this->name = $name;
         parent::__construct(message: "Connection [{$name}] failed: {$message}", code: 0, previous: $previous);
     }
 

@@ -21,11 +21,17 @@ final class StageChain
 {
     /** Stage ordering contract: stages precede middleware, then dispatch core. */
     private const array ORDER_CONTRACT = ['stages', 'middleware', 'dispatch'];
+    private readonly LoggerInterface    $logger;
+    private readonly ContainerInterface $container;
 
     public function __construct(
-        private readonly ContainerInterface $container,
-        private readonly LoggerInterface    $logger
-    ) {}
+        ContainerInterface $container,
+        LoggerInterface    $logger
+    )
+    {
+        $this->container = $container;
+        $this->logger    = $logger;
+    }
 
     /**
      * Compose the pipeline stack.

@@ -33,6 +33,12 @@ use Throwable;
  */
 final readonly class RouterKernel
 {
+    private RouterTrace|null     $trace;
+    private RouteExecutor        $routeExecutor;
+    private HeadRequestFallback  $headRequestFallback;
+    private RoutePipelineFactory $pipelineFactory;
+    private HttpRequestRouter    $httpRequestRouter;
+
     /**
      * Constructor initializes the core dependencies for the routing kernel.
      *
@@ -42,12 +48,19 @@ final readonly class RouterKernel
      * @param RouterTrace|null     $trace               Optional trace instance for debugging and profiling.
      */
     public function __construct(
-        private HttpRequestRouter    $httpRequestRouter,
-        private RoutePipelineFactory $pipelineFactory,
-        private HeadRequestFallback  $headRequestFallback,
-        private RouteExecutor        $routeExecutor,
-        private RouterTrace|null     $trace = null
-    ) {}
+        HttpRequestRouter    $httpRequestRouter,
+        RoutePipelineFactory $pipelineFactory,
+        HeadRequestFallback  $headRequestFallback,
+        RouteExecutor        $routeExecutor,
+        RouterTrace|null     $trace = null
+    )
+    {
+        $this->httpRequestRouter   = $httpRequestRouter;
+        $this->pipelineFactory     = $pipelineFactory;
+        $this->headRequestFallback = $headRequestFallback;
+        $this->routeExecutor       = $routeExecutor;
+        $this->trace               = $trace;
+    }
 
     /**
      * Handles an incoming HTTP request by resolving the corresponding route,
@@ -72,7 +85,7 @@ final readonly class RouterKernel
         $method    = $request->getMethod();
         $path      = $request->getUri()->getPath();
 
-        // Trace: Request resolution started
+        // Trace: ServerRequest resolution started
         $this->trace?->log(event: 'kernel.resolve.start', context: [
             'method' => $method,
             'path'   => $path,
@@ -111,7 +124,7 @@ final readonly class RouterKernel
             // Process the pipeline and dispatch the final response.
             $response = $pipeline->dispatch(request: $request);
 
-            // Trace: Request handled successfully
+            // Trace: ServerRequest handled successfully
             $this->trace?->log(event: 'kernel.request.complete', context: [
                 'route'    => $route->name ?? $route->path,
                 'status'   => $response->getStatusCode(),
@@ -121,7 +134,7 @@ final readonly class RouterKernel
             return $response;
 
         } catch (Throwable $exception) {
-            // Trace: Request failed with fallback or error
+            // Trace: ServerRequest failed with fallback or error
             $this->trace?->log(event: 'kernel.request.failed', context: [
                 'method'    => $method,
                 'path'      => $path,

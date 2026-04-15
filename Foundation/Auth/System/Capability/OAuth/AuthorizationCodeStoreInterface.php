@@ -16,17 +16,17 @@ interface AuthorizationCodeStoreInterface
      * @param list<string> $scopes
      */
     public function issue(
-        UserId $userId,
-        string $clientId,
-        string $redirectUri,
-        array $scopes,
-        DateTimeImmutable $expiresAt,
-        string|null $state = null,
-        string|null $nonce = null,
-        string|null $codeChallenge = null,
-        PkceMethod|null $codeChallengeMethod = null,
+        UserId                 $userId,
+        string                 $clientId,
+        string                 $redirectUri,
+        array                  $scopes,
+        DateTimeImmutable      $expiresAt,
+        string|null            $state = null,
+        string|null            $nonce = null,
+        string|null            $codeChallenge = null,
+        PkceMethod|null        $codeChallengeMethod = null,
         DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool $phishingResistant = false
+        bool                   $phishingResistant = false
     ) : IssuedAuthorizationCode;
 
     public function find(string $plainCode) : AuthorizationCodeRecord|null;

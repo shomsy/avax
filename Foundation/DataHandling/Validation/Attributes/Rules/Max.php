@@ -25,6 +25,8 @@ class Max
     private const string ERROR_COUNTABLE = 'The number of items in "%s" must not exceed %d.';
 
     private const string ERROR_INVALID = 'Invalid value type for "%s". Expected a numeric, string, or countable value, but got "%s".';
+    private readonly string|null $message;
+    private readonly int         $max;
 
     /**
      * Constructor for the Max attribute.
@@ -34,8 +36,10 @@ class Max
      *
      * @throws InvalidArgumentException If the max value provided is negative.
      */
-    public function __construct(private readonly int $max, private readonly string|null $message = null)
+    public function __construct(int $max, string|null $message = null)
     {
+        $this->max     = $max;
+        $this->message = $message;
         // Ensure the maximum value is a non-negative integer.
         if ($max < 0) {
             throw new InvalidArgumentException(message: 'The maximum value must be a non-negative integer.');

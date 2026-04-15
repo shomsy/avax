@@ -13,12 +13,20 @@ use SensitiveParameter;
  */
 final readonly class HmacTokenCodec implements TokenCodecInterface
 {
+    private string|null $keyId;
+    private string      $algorithm;
+    private string      $secret;
+
     public function __construct(
-        #[SensitiveParameter] private string $secret,
-        private string                       $algorithm = 'HS256',
-        private string|null                  $keyId = null
+        #[SensitiveParameter] string $secret,
+        string|null                  $algorithm = null,
+        string|null                  $keyId = null
     )
     {
+        $algorithm       ??= 'HS256';
+        $this->secret    = $secret;
+        $this->algorithm = $algorithm;
+        $this->keyId     = $keyId;
         if ($this->secret === '') {
             throw new InvalidArgumentException(message: 'JWT secret cannot be empty.');
         }

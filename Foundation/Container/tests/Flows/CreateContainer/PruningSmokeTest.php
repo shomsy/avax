@@ -10,7 +10,9 @@ final class PrunedDependency {}
 
 final class PrunedFlowEntry
 {
-    public function __construct(public PrunedDependency $dependency) {}
+    public PrunedDependency $dependency;
+
+    public function __construct(PrunedDependency $dependency) { $this->dependency = $dependency; }
 }
 
 final class DeadPrunableService {}

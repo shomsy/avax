@@ -9,27 +9,50 @@ final readonly class GenerateRollbackEvidence
     /**
      * @param list<string> $artifacts
      * @param list<string> $validationCommands
+     *
      * @return array<string, mixed>
      */
     public function execute(
-        string $repositoryRoot,
+        string      $repositoryRoot,
         string|null $rollbackTarget = null,
-        array $artifacts = [],
-        array $validationCommands = []
-    ) : array {
+        array|null  $artifacts = null,
+        array       $validationCommands = []
+    ) : array
+    {
+        $artifacts      ??= [];
         $resolvedTarget = $this->resolveRollbackTarget(repositoryRoot: $repositoryRoot, rollbackTarget: $rollbackTarget);
 
         return [
-            'package' => $this->detectPackageName(repositoryRoot: $repositoryRoot),
-            'repository_root' => realpath($repositoryRoot) !== false ? realpath($repositoryRoot) : $repositoryRoot,
-            'current_commit' => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse HEAD'),
-            'rollback_target' => $resolvedTarget,
-            'rollback_ready' => $resolvedTarget !== null,
-            'rollback_command' => $resolvedTarget !== null ? 'git checkout ' . $resolvedTarget : null,
-            'generated_at' => gmdate(DATE_ATOM),
+            'package'             => $this->detectPackageName(repositoryRoot: $repositoryRoot),
+            'repository_root'     => realpath($repositoryRoot) !== false ? realpath($repositoryRoot) : $repositoryRoot,
+            'current_commit'      => $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse HEAD'),
+            'rollback_target'     => $resolvedTarget,
+            'rollback_ready'      => $resolvedTarget !== null,
+            'rollback_command'    => $resolvedTarget !== null ? 'git checkout ' . $resolvedTarget : null,
+            'generated_at'        => gmdate(DATE_ATOM),
             'validation_commands' => array_values($validationCommands),
-            'artifacts' => $this->artifactEvidence(artifacts: $artifacts),
+            'artifacts'           => $this->artifactEvidence(artifacts: $artifacts),
         ];
+    }
+
+    private function resolveRollbackTarget(string $repositoryRoot, string|null $rollbackTarget) : string|null
+    {
+        $candidate = $rollbackTarget ?? 'HEAD^';
+        $resolved  = $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse --verify ' . escapeshellarg($candidate));
+
+        return $resolved !== '' ? $resolved : null;
+    }
+
+    private function runGit(string $repositoryRoot, string $arguments) : string
+    {
+        $command = sprintf(
+            'git -C %s %s 2>/dev/null',
+            escapeshellarg($repositoryRoot),
+            $arguments
+        );
+        $output  = shell_exec($command);
+
+        return trim((string) $output);
     }
 
     private function detectPackageName(string $repositoryRoot) : string
@@ -41,22 +64,15 @@ final readonly class GenerateRollbackEvidence
         }
 
         $contents = file_get_contents($composerJsonPath);
-        $decoded = is_string($contents) ? json_decode($contents, true) : null;
-        $name = is_array($decoded) ? ($decoded['name'] ?? null) : null;
+        $decoded  = is_string($contents) ? json_decode($contents, true) : null;
+        $name     = is_array($decoded) ? ($decoded['name'] ?? null) : null;
 
         return is_string($name) ? $name : 'unknown';
     }
 
-    private function resolveRollbackTarget(string $repositoryRoot, string|null $rollbackTarget) : string|null
-    {
-        $candidate = $rollbackTarget ?? 'HEAD^';
-        $resolved = $this->runGit(repositoryRoot: $repositoryRoot, arguments: 'rev-parse --verify ' . escapeshellarg($candidate));
-
-        return $resolved !== '' ? $resolved : null;
-    }
-
     /**
      * @param list<string> $artifacts
+     *
      * @return list<array{path:string, sha256:string, bytes:int}>
      */
     private function artifactEvidence(array $artifacts) : array
@@ -69,31 +85,19 @@ final readonly class GenerateRollbackEvidence
             }
 
             $sha256 = hash_file('sha256', $artifact);
-            $bytes = filesize($artifact);
+            $bytes  = filesize($artifact);
 
             if ($sha256 === false || $bytes === false) {
                 continue;
             }
 
             $evidence[] = [
-                'path' => $artifact,
+                'path'   => $artifact,
                 'sha256' => $sha256,
-                'bytes' => $bytes,
+                'bytes'  => $bytes,
             ];
         }
 
         return $evidence;
-    }
-
-    private function runGit(string $repositoryRoot, string $arguments) : string
-    {
-        $command = sprintf(
-            'git -C %s %s 2>/dev/null',
-            escapeshellarg($repositoryRoot),
-            $arguments
-        );
-        $output = shell_exec($command);
-
-        return trim((string) $output);
     }
 }

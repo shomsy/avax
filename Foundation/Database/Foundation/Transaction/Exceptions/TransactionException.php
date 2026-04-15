@@ -26,6 +26,8 @@ use Throwable;
  */
 final class TransactionException extends DatabaseException
 {
+    private readonly int $nestingLevel;
+
     /**
      * @param string         $message      The detailed technical description of the transaction coordination failure.
      * @param int            $nestingLevel The technical transaction depth (0-based or 1-based) when the failure was
@@ -33,11 +35,12 @@ final class TransactionException extends DatabaseException
      * @param Throwable|null $previous     The underlying technical driver or unit-of-work exception.
      */
     public function __construct(
-        string               $message,
-        private readonly int $nestingLevel,
-        Throwable|null       $previous = null
+        string         $message,
+        int            $nestingLevel,
+        Throwable|null $previous = null
     )
     {
+        $this->nestingLevel = $nestingLevel;
         parent::__construct(
             message : "Transaction failed (Level {$nestingLevel}): {$message}",
             code    : 0,

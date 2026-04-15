@@ -10,7 +10,9 @@ final class ExecutionModeDependency {}
 
 final class ExecutionModeService
 {
-    public function __construct(public ExecutionModeDependency $dependency) {}
+    public ExecutionModeDependency $dependency;
+
+    public function __construct(ExecutionModeDependency $dependency) { $this->dependency = $dependency; }
 }
 
 $generatedCacheDir = sys_get_temp_dir() . '/container-generated-mode-' . uniqid('', true);

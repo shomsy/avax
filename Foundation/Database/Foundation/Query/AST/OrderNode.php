@@ -11,6 +11,11 @@ namespace Avax\Database\Query\AST;
  */
 final readonly class OrderNode
 {
+    public string      $type;
+    public string|null $sql;
+    public string      $direction;
+    public string|null $column;
+
     /**
      * @param string|null $column    The technical identifier of the field to be used for sorting.
      * @param string      $direction The sorting orientation, strictly 'ASC' (ascending) or 'DESC' (descending).
@@ -18,9 +23,16 @@ final readonly class OrderNode
      * @param string      $type      The classification of the sorting node (e.g., 'Basic', 'Raw').
      */
     public function __construct(
-        public string|null $column = null,
-        public string      $direction = 'ASC',
-        public string|null $sql = null,
-        public string      $type = 'Basic'
-    ) {}
+        string|null $column = null,
+        string|null $direction = null,
+        string|null $sql = null,
+        string      $type = 'Basic'
+    )
+    {
+        $direction       ??= 'ASC';
+        $this->column    = $column;
+        $this->direction = $direction;
+        $this->sql       = $sql;
+        $this->type      = $type;
+    }
 }

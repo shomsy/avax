@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Auth\Tests\Capability\OAuth;
 
 use Avax\Auth\System\Capability\OAuth\InMemoryOAuthClientRegistry;
-use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\OAuthClientType;
+use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\OAuthTokenEndpointAuthMethod;
 use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType;
 use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
@@ -67,17 +67,17 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
         $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
 
         $registered = $registry->register(
-            name                     : 'Partner API',
-            type                     : OAuthClientType::CONFIDENTIAL,
-            redirectUris             : ['https://api.example.test/callback'],
-            allowedScopes            : ['profile'],
-            allowedAudiences         : ['partner-api'],
-            allowedGrantTypes        : [OAuthGrantType::AUTHORIZATION_CODE, OAuthGrantType::REFRESH_TOKEN],
-            requiredSenderConstraint : OAuthSenderConstraintType::DPOP,
-            phishingResistantRequired: true,
+            name                          : 'Partner API',
+            type                          : OAuthClientType::CONFIDENTIAL,
+            redirectUris                  : ['https://api.example.test/callback'],
+            allowedScopes                 : ['profile'],
+            allowedAudiences              : ['partner-api'],
+            allowedGrantTypes             : [OAuthGrantType::AUTHORIZATION_CODE, OAuthGrantType::REFRESH_TOKEN],
+            requiredSenderConstraint      : OAuthSenderConstraintType::DPOP,
+            phishingResistantRequired     : true,
             requestObjectSignatureRequired: true,
-            frontChannelLogoutSupported: true,
-            backChannelLogoutSupported: false
+            frontChannelLogoutSupported   : true,
+            backChannelLogoutSupported    : false
         );
 
         $this->assertTrue(condition: $registered->client->allowsGrantType(grantType: OAuthGrantType::AUTHORIZATION_CODE));
@@ -132,20 +132,20 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
         $this->expectExceptionMessage('Public clients must use token endpoint auth method "none".');
 
         $registry->register(
-            name                     : 'SPA',
-            type                     : OAuthClientType::PUBLIC,
-            redirectUris             : ['https://spa.example.test/callback'],
-            allowedScopes            : ['profile'],
-            tokenEndpointAuthMethod   : OAuthTokenEndpointAuthMethod::CLIENT_SECRET_BASIC
+            name                   : 'SPA',
+            type                   : OAuthClientType::PUBLIC,
+            redirectUris           : ['https://spa.example.test/callback'],
+            allowedScopes          : ['profile'],
+            tokenEndpointAuthMethod: OAuthTokenEndpointAuthMethod::CLIENT_SECRET_BASIC
         );
     }
 
     public function testClientRegistrationPersistsRequestObjectVerificationKey() : void
     {
         $key = openssl_pkey_new([
-            'private_key_bits' => 2048,
-            'private_key_type' => OPENSSL_KEYTYPE_RSA,
-        ]);
+                                    'private_key_bits' => 2048,
+                                    'private_key_type' => OPENSSL_KEYTYPE_RSA,
+                                ]);
         self::assertNotFalse(condition: $key);
         $details = openssl_pkey_get_details($key);
         self::assertIsArray(actual: $details);
@@ -153,11 +153,11 @@ final class InMemoryOAuthClientRegistryTest extends TestCase
         $registry = new InMemoryOAuthClientRegistry(passwordHasher: new PasswordHasher());
 
         $registered = $registry->register(
-            name: 'SPA with JAR',
-            type: OAuthClientType::PUBLIC,
-            redirectUris: ['https://spa.example.test/callback'],
-            allowedScopes: ['openid'],
-            requestObjectSignatureRequired: true,
+            name                           : 'SPA with JAR',
+            type                           : OAuthClientType::PUBLIC,
+            redirectUris                   : ['https://spa.example.test/callback'],
+            allowedScopes                  : ['openid'],
+            requestObjectSignatureRequired : true,
             requestObjectVerificationKeyPem: $details['key']
         );
 

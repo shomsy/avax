@@ -26,193 +26,193 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
     {
         $surface = new ServeTenantSecurityHttpSurface(auth: $this->buildAuth());
 
-        $tenant = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants',
-            body  : [
-                'slug' => 'acme',
-                'name' => 'Acme',
-                'ownerUserId' => 1,
-            ]
-        ));
-        $invite = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/invites',
-            body  : [
-                'email' => 'member@example.com',
-                'role' => 'admin',
-                'invitedBy' => 'owner@example.com',
-            ]
-        ));
-        $accepted = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/invites/accept',
-            body  : [
-                'inviteToken' => $invite->body['plainTextToken'],
-                'userId' => 2,
-            ]
-        ));
-        $members = $surface->execute(input: new HttpEndpointInput(
-            method: 'GET',
-            path  : '/tenants/acme/members'
-        ));
-        $suspendedMember = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/members/2/suspend'
-        ));
-        $transferredOwner = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/transfer-owner',
-            body  : ['newOwnerUserId' => 2]
-        ));
-        $oauthClient = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/oauth-clients',
-            body  : [
-                'name' => 'Acme App',
-                'type' => 'confidential',
-                'redirectUris' => ['https://app.acme.test/callback'],
-                'allowedScopes' => ['openid', 'profile'],
-                'allowedGrantTypes' => ['authorization_code', 'refresh_token'],
-                'frontChannelLogoutSupported' => true,
-                'backChannelLogoutSupported' => true,
-            ]
-        ));
-        $oauthClientId = $oauthClient->body['client']['clientId'];
-        $updatedOAuthClient = $surface->execute(input: new HttpEndpointInput(
-            method: 'PUT',
-            path  : '/tenants/acme/oauth-clients/' . rawurlencode($oauthClientId),
-            body  : [
-                'name' => 'Acme App Updated',
-                'type' => 'confidential',
-                'redirectUris' => ['https://app.acme.test/callback', 'https://app.acme.test/return'],
-                'allowedScopes' => ['openid', 'profile', 'email'],
-                'allowedGrantTypes' => ['authorization_code', 'refresh_token'],
-                'frontChannelLogoutSupported' => true,
-                'backChannelLogoutSupported' => false,
-            ]
-        ));
-        $rotatedOAuthSecret = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/oauth-clients/' . rawurlencode($oauthClientId) . '/rotate-secret'
-        ));
-        $listedOAuthClients = $surface->execute(input: new HttpEndpointInput(
-            method: 'GET',
-            path  : '/tenants/acme/oauth-clients'
-        ));
-        $disabledOAuthClient = $surface->execute(input: new HttpEndpointInput(
-            method: 'DELETE',
-            path  : '/tenants/acme/oauth-clients/' . rawurlencode($oauthClientId)
-        ));
-        $pendingOAuthClient = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/oauth-clients',
-            body  : [
-                'name' => 'Acme Workload',
-                'type' => 'confidential',
-                'redirectUris' => ['urn:avax:oauth:acme-workload'],
-                'allowedScopes' => ['orders.read'],
-                'allowedGrantTypes' => ['client_credentials'],
-                'allowedAudiences' => ['orders-api'],
-                'workloadIdentity' => true,
-                'requiredSenderConstraint' => 'mtls',
-                'approvalRequired' => true,
-            ]
-        ));
+        $tenant               = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'POST',
+                                                             path  : '/tenants',
+                                                             body  : [
+                                                                         'slug'        => 'acme',
+                                                                         'name'        => 'Acme',
+                                                                         'ownerUserId' => 1,
+                                                                     ]
+                                                         ));
+        $invite               = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'POST',
+                                                             path  : '/tenants/acme/invites',
+                                                             body  : [
+                                                                         'email'     => 'member@example.com',
+                                                                         'role'      => 'admin',
+                                                                         'invitedBy' => 'owner@example.com',
+                                                                     ]
+                                                         ));
+        $accepted             = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'POST',
+                                                             path  : '/tenants/acme/invites/accept',
+                                                             body  : [
+                                                                         'inviteToken' => $invite->body['plainTextToken'],
+                                                                         'userId'      => 2,
+                                                                     ]
+                                                         ));
+        $members              = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'GET',
+                                                             path  : '/tenants/acme/members'
+                                                         ));
+        $suspendedMember      = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'POST',
+                                                             path  : '/tenants/acme/members/2/suspend'
+                                                         ));
+        $transferredOwner     = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'POST',
+                                                             path  : '/tenants/acme/transfer-owner',
+                                                             body  : ['newOwnerUserId' => 2]
+                                                         ));
+        $oauthClient          = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'POST',
+                                                             path  : '/tenants/acme/oauth-clients',
+                                                             body  : [
+                                                                         'name'                        => 'Acme App',
+                                                                         'type'                        => 'confidential',
+                                                                         'redirectUris'                => ['https://app.acme.test/callback'],
+                                                                         'allowedScopes'               => ['openid', 'profile'],
+                                                                         'allowedGrantTypes'           => ['authorization_code', 'refresh_token'],
+                                                                         'frontChannelLogoutSupported' => true,
+                                                                         'backChannelLogoutSupported'  => true,
+                                                                     ]
+                                                         ));
+        $oauthClientId        = $oauthClient->body['client']['clientId'];
+        $updatedOAuthClient   = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'PUT',
+                                                             path  : '/tenants/acme/oauth-clients/' . rawurlencode($oauthClientId),
+                                                             body  : [
+                                                                         'name'                        => 'Acme App Updated',
+                                                                         'type'                        => 'confidential',
+                                                                         'redirectUris'                => ['https://app.acme.test/callback', 'https://app.acme.test/return'],
+                                                                         'allowedScopes'               => ['openid', 'profile', 'email'],
+                                                                         'allowedGrantTypes'           => ['authorization_code', 'refresh_token'],
+                                                                         'frontChannelLogoutSupported' => true,
+                                                                         'backChannelLogoutSupported'  => false,
+                                                                     ]
+                                                         ));
+        $rotatedOAuthSecret   = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'POST',
+                                                             path  : '/tenants/acme/oauth-clients/' . rawurlencode($oauthClientId) . '/rotate-secret'
+                                                         ));
+        $listedOAuthClients   = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'GET',
+                                                             path  : '/tenants/acme/oauth-clients'
+                                                         ));
+        $disabledOAuthClient  = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'DELETE',
+                                                             path  : '/tenants/acme/oauth-clients/' . rawurlencode($oauthClientId)
+                                                         ));
+        $pendingOAuthClient   = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'POST',
+                                                             path  : '/tenants/acme/oauth-clients',
+                                                             body  : [
+                                                                         'name'                     => 'Acme Workload',
+                                                                         'type'                     => 'confidential',
+                                                                         'redirectUris'             => ['urn:avax:oauth:acme-workload'],
+                                                                         'allowedScopes'            => ['orders.read'],
+                                                                         'allowedGrantTypes'        => ['client_credentials'],
+                                                                         'allowedAudiences'         => ['orders-api'],
+                                                                         'workloadIdentity'         => true,
+                                                                         'requiredSenderConstraint' => 'mtls',
+                                                                         'approvalRequired'         => true,
+                                                                     ]
+                                                         ));
         $pendingOAuthClientId = $pendingOAuthClient->body['client']['clientId'];
-        $approvedOAuthClient = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/oauth-clients/' . rawurlencode($pendingOAuthClientId) . '/approve',
-            body  : ['approvedBy' => 'approver']
-        ));
-        $removedFormerOwner = $surface->execute(input: new HttpEndpointInput(
-            method: 'DELETE',
-            path  : '/tenants/acme/members/1'
-        ));
+        $approvedOAuthClient  = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'POST',
+                                                             path  : '/tenants/acme/oauth-clients/' . rawurlencode($pendingOAuthClientId) . '/approve',
+                                                             body  : ['approvedBy' => 'approver']
+                                                         ));
+        $removedFormerOwner   = $surface->execute(input: new HttpEndpointInput(
+                                                             method: 'DELETE',
+                                                             path  : '/tenants/acme/members/1'
+                                                         ));
 
-        $connection = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/security/federation-connections',
-            body  : [
-                'name' => 'Acme OIDC',
-                'provider' => 'oidc',
-                'domain' => 'acme.test',
-                'groupRoleMap' => ['admins' => ['admin']],
-                'ssoOnly' => true,
-                'breakGlassAllowed' => true,
-                'metadataUrl' => 'https://idp.acme.test/metadata',
-            ]
-        ));
-        $connectionId = $connection->body['connection']['connectionId'];
+        $connection        = $surface->execute(input: new HttpEndpointInput(
+                                                          method: 'POST',
+                                                          path  : '/tenants/acme/security/federation-connections',
+                                                          body  : [
+                                                                      'name'              => 'Acme OIDC',
+                                                                      'provider'          => 'oidc',
+                                                                      'domain'            => 'acme.test',
+                                                                      'groupRoleMap'      => ['admins' => ['admin']],
+                                                                      'ssoOnly'           => true,
+                                                                      'breakGlassAllowed' => true,
+                                                                      'metadataUrl'       => 'https://idp.acme.test/metadata',
+                                                                  ]
+                                                      ));
+        $connectionId      = $connection->body['connection']['connectionId'];
         $verificationToken = $connection->body['connection']['domainVerificationToken'];
 
-        $verified = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/security/federation-connections/' . rawurlencode($connectionId) . '/verify-domain',
-            body  : ['verificationToken' => $verificationToken]
-        ));
+        $verified       = $surface->execute(input: new HttpEndpointInput(
+                                                       method: 'POST',
+                                                       path  : '/tenants/acme/security/federation-connections/' . rawurlencode($connectionId) . '/verify-domain',
+                                                       body  : ['verificationToken' => $verificationToken]
+                                                   ));
         $metadataSynced = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/security/federation-connections/' . rawurlencode($connectionId) . '/sync-metadata'
-        ));
-        $health = $surface->execute(input: new HttpEndpointInput(
-            method: 'GET',
-            path  : '/tenants/acme/security/federation-connections/' . rawurlencode($connectionId) . '/health'
-        ));
-        $directory = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/security/scim-directories',
-            body  : [
-                'name' => 'Acme Workforce',
-                'groupRoleMap' => ['admins' => ['admin']],
-            ]
-        ));
-        $directoryId = $directory->body['directory']['directoryId'];
-        $outage = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/security/scim-directories/' . rawurlencode($directoryId) . '/outage',
-            body  : ['reason' => 'Maintenance']
-        ));
-        $recovered = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/security/scim-directories/' . rawurlencode($directoryId) . '/recover'
-        ));
+                                                       method: 'POST',
+                                                       path  : '/tenants/acme/security/federation-connections/' . rawurlencode($connectionId) . '/sync-metadata'
+                                                   ));
+        $health         = $surface->execute(input: new HttpEndpointInput(
+                                                       method: 'GET',
+                                                       path  : '/tenants/acme/security/federation-connections/' . rawurlencode($connectionId) . '/health'
+                                                   ));
+        $directory      = $surface->execute(input: new HttpEndpointInput(
+                                                       method: 'POST',
+                                                       path  : '/tenants/acme/security/scim-directories',
+                                                       body  : [
+                                                                   'name'         => 'Acme Workforce',
+                                                                   'groupRoleMap' => ['admins' => ['admin']],
+                                                               ]
+                                                   ));
+        $directoryId    = $directory->body['directory']['directoryId'];
+        $outage         = $surface->execute(input: new HttpEndpointInput(
+                                                       method: 'POST',
+                                                       path  : '/tenants/acme/security/scim-directories/' . rawurlencode($directoryId) . '/outage',
+                                                       body  : ['reason' => 'Maintenance']
+                                                   ));
+        $recovered      = $surface->execute(input: new HttpEndpointInput(
+                                                       method: 'POST',
+                                                       path  : '/tenants/acme/security/scim-directories/' . rawurlencode($directoryId) . '/recover'
+                                                   ));
 
-        $change = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/security/changes',
-            body  : [
-                'requestedBy' => 'security-admin',
-                'reason' => 'Tenant rollout',
-                'federationConnectionId' => $connectionId,
-                'scimDirectoryId' => $directoryId,
-                'verifiedDomains' => ['acme.test'],
-                'groupRoleMap' => ['admins' => ['admin']],
-                'policyProfile' => 'tenant_admin',
-            ]
-        ));
-        $changeId = $change->body['change']['changeId'];
-        $changes = $surface->execute(input: new HttpEndpointInput(
-            method: 'GET',
-            path  : '/tenants/acme/security/changes'
-        ));
-        $approved = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/security/changes/' . rawurlencode($changeId) . '/approve',
-            body  : ['approvedBy' => 'approver']
-        ));
-        $applied = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/security/changes/' . rawurlencode($changeId) . '/apply'
-        ));
-        $summary = $surface->execute(input: new HttpEndpointInput(
-            method: 'GET',
-            path  : '/tenants/acme/security'
-        ));
+        $change     = $surface->execute(input: new HttpEndpointInput(
+                                                   method: 'POST',
+                                                   path  : '/tenants/acme/security/changes',
+                                                   body  : [
+                                                               'requestedBy'            => 'security-admin',
+                                                               'reason'                 => 'Tenant rollout',
+                                                               'federationConnectionId' => $connectionId,
+                                                               'scimDirectoryId'        => $directoryId,
+                                                               'verifiedDomains'        => ['acme.test'],
+                                                               'groupRoleMap'           => ['admins' => ['admin']],
+                                                               'policyProfile'          => 'tenant_admin',
+                                                           ]
+                                               ));
+        $changeId   = $change->body['change']['changeId'];
+        $changes    = $surface->execute(input: new HttpEndpointInput(
+                                                   method: 'GET',
+                                                   path  : '/tenants/acme/security/changes'
+                                               ));
+        $approved   = $surface->execute(input: new HttpEndpointInput(
+                                                   method: 'POST',
+                                                   path  : '/tenants/acme/security/changes/' . rawurlencode($changeId) . '/approve',
+                                                   body  : ['approvedBy' => 'approver']
+                                               ));
+        $applied    = $surface->execute(input: new HttpEndpointInput(
+                                                   method: 'POST',
+                                                   path  : '/tenants/acme/security/changes/' . rawurlencode($changeId) . '/apply'
+                                               ));
+        $summary    = $surface->execute(input: new HttpEndpointInput(
+                                                   method: 'GET',
+                                                   path  : '/tenants/acme/security'
+                                               ));
         $rolledBack = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/security/changes/' . rawurlencode($changeId) . '/rollback'
-        ));
+                                                   method: 'POST',
+                                                   path  : '/tenants/acme/security/changes/' . rawurlencode($changeId) . '/rollback'
+                                               ));
 
         $this->assertSame(expected: 201, actual: $tenant->statusCode);
         $this->assertSame(expected: 'acme', actual: $tenant->body['tenant']['slug']);
@@ -254,87 +254,6 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
         $this->assertNull(actual: $rolledBack->body['configuration']['federationConnectionId']);
     }
 
-    public function testTenantSecurityHttpSurfaceRejectsApplyWithoutApproval() : void
-    {
-        $surface = new ServeTenantSecurityHttpSurface(auth: $this->buildAuth());
-        $change = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/security/changes',
-            body  : [
-                'requestedBy' => 'security-admin',
-                'reason' => 'Unapproved apply',
-                'policyProfile' => 'tenant_admin',
-            ]
-        ));
-
-        $response = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/security/changes/' . rawurlencode($change->body['change']['changeId']) . '/apply'
-        ));
-
-        $this->assertSame(expected: 422, actual: $response->statusCode);
-        $this->assertSame(expected: 'tenant_security_failed', actual: $response->body['error']);
-    }
-
-    public function testTenantSecurityHttpSurfacePropagatesRequestObjectVerificationKey() : void
-    {
-        $key = openssl_pkey_new([
-            'private_key_bits' => 2048,
-            'private_key_type' => OPENSSL_KEYTYPE_RSA,
-        ]);
-        self::assertNotFalse(condition: $key);
-        $details = openssl_pkey_get_details($key);
-        self::assertIsArray(actual: $details);
-
-        $rotatedKey = openssl_pkey_new([
-            'private_key_bits' => 2048,
-            'private_key_type' => OPENSSL_KEYTYPE_RSA,
-        ]);
-        self::assertNotFalse(condition: $rotatedKey);
-        $rotatedDetails = openssl_pkey_get_details($rotatedKey);
-        self::assertIsArray(actual: $rotatedDetails);
-
-        $surface = new ServeTenantSecurityHttpSurface(auth: $this->buildAuth());
-        $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants',
-            body  : [
-                'slug' => 'acme',
-                'name' => 'Acme',
-                'ownerUserId' => 1,
-            ]
-        ));
-
-        $created = $surface->execute(input: new HttpEndpointInput(
-            method: 'POST',
-            path  : '/tenants/acme/oauth-clients',
-            body  : [
-                'name' => 'Acme SPA',
-                'type' => 'public',
-                'redirectUris' => ['https://spa.acme.test/callback'],
-                'allowedScopes' => ['openid'],
-                'requestObjectSignatureRequired' => true,
-                'requestObjectVerificationKeyPem' => $details['key'],
-            ]
-        ));
-
-        $updated = $surface->execute(input: new HttpEndpointInput(
-            method: 'PUT',
-            path  : '/tenants/acme/oauth-clients/' . rawurlencode($created->body['client']['clientId']),
-            body  : [
-                'name' => 'Acme SPA',
-                'type' => 'public',
-                'redirectUris' => ['https://spa.acme.test/callback'],
-                'allowedScopes' => ['openid'],
-                'requestObjectSignatureRequired' => true,
-                'requestObjectVerificationKeyPem' => $rotatedDetails['key'],
-            ]
-        ));
-
-        $this->assertSame(expected: $details['key'], actual: $created->body['client']['requestObjectVerificationKeyPem']);
-        $this->assertSame(expected: $rotatedDetails['key'], actual: $updated->body['client']['requestObjectVerificationKeyPem']);
-    }
-
     private function buildAuth() : Auth
     {
         $userSource = new InMemoryUserSource();
@@ -355,14 +274,95 @@ final class ServeTenantSecurityHttpSurfaceTest extends TestCase
         return Auth::configuration()
             ->forUser(userSource: $userSource)
             ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
-                userSource       : $userSource,
-                codec            : new HmacTokenCodec(secret: 'tenant-http-secret'),
-                clock            : new Clock(),
-                revocationStore  : new InMemoryTokenRevocationStore(),
-                refreshTokenStore: $refreshTokens
-            )))
+                                                                   userSource       : $userSource,
+                                                                   codec            : new HmacTokenCodec(secret: 'tenant-http-secret'),
+                                                                   clock            : new Clock(),
+                                                                   revocationStore  : new InMemoryTokenRevocationStore(),
+                                                                   refreshTokenStore: $refreshTokens
+                                                               )))
             ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->withFederationRuntime(federationRuntime: new FakeFederationRuntime())
             ->ready();
+    }
+
+    public function testTenantSecurityHttpSurfaceRejectsApplyWithoutApproval() : void
+    {
+        $surface = new ServeTenantSecurityHttpSurface(auth: $this->buildAuth());
+        $change  = $surface->execute(input: new HttpEndpointInput(
+                                                method: 'POST',
+                                                path  : '/tenants/acme/security/changes',
+                                                body  : [
+                                                            'requestedBy'   => 'security-admin',
+                                                            'reason'        => 'Unapproved apply',
+                                                            'policyProfile' => 'tenant_admin',
+                                                        ]
+                                            ));
+
+        $response = $surface->execute(input: new HttpEndpointInput(
+                                                 method: 'POST',
+                                                 path  : '/tenants/acme/security/changes/' . rawurlencode($change->body['change']['changeId']) . '/apply'
+                                             ));
+
+        $this->assertSame(expected: 422, actual: $response->statusCode);
+        $this->assertSame(expected: 'tenant_security_failed', actual: $response->body['error']);
+    }
+
+    public function testTenantSecurityHttpSurfacePropagatesRequestObjectVerificationKey() : void
+    {
+        $key = openssl_pkey_new([
+                                    'private_key_bits' => 2048,
+                                    'private_key_type' => OPENSSL_KEYTYPE_RSA,
+                                ]);
+        self::assertNotFalse(condition: $key);
+        $details = openssl_pkey_get_details($key);
+        self::assertIsArray(actual: $details);
+
+        $rotatedKey = openssl_pkey_new([
+                                           'private_key_bits' => 2048,
+                                           'private_key_type' => OPENSSL_KEYTYPE_RSA,
+                                       ]);
+        self::assertNotFalse(condition: $rotatedKey);
+        $rotatedDetails = openssl_pkey_get_details($rotatedKey);
+        self::assertIsArray(actual: $rotatedDetails);
+
+        $surface = new ServeTenantSecurityHttpSurface(auth: $this->buildAuth());
+        $surface->execute(input: new HttpEndpointInput(
+                                     method: 'POST',
+                                     path  : '/tenants',
+                                     body  : [
+                                                 'slug'        => 'acme',
+                                                 'name'        => 'Acme',
+                                                 'ownerUserId' => 1,
+                                             ]
+                                 ));
+
+        $created = $surface->execute(input: new HttpEndpointInput(
+                                                method: 'POST',
+                                                path  : '/tenants/acme/oauth-clients',
+                                                body  : [
+                                                            'name'                            => 'Acme SPA',
+                                                            'type'                            => 'public',
+                                                            'redirectUris'                    => ['https://spa.acme.test/callback'],
+                                                            'allowedScopes'                   => ['openid'],
+                                                            'requestObjectSignatureRequired'  => true,
+                                                            'requestObjectVerificationKeyPem' => $details['key'],
+                                                        ]
+                                            ));
+
+        $updated = $surface->execute(input: new HttpEndpointInput(
+                                                method: 'PUT',
+                                                path  : '/tenants/acme/oauth-clients/' . rawurlencode($created->body['client']['clientId']),
+                                                body  : [
+                                                            'name'                            => 'Acme SPA',
+                                                            'type'                            => 'public',
+                                                            'redirectUris'                    => ['https://spa.acme.test/callback'],
+                                                            'allowedScopes'                   => ['openid'],
+                                                            'requestObjectSignatureRequired'  => true,
+                                                            'requestObjectVerificationKeyPem' => $rotatedDetails['key'],
+                                                        ]
+                                            ));
+
+        $this->assertSame(expected: $details['key'], actual: $created->body['client']['requestObjectVerificationKeyPem']);
+        $this->assertSame(expected: $rotatedDetails['key'], actual: $updated->body['client']['requestObjectVerificationKeyPem']);
     }
 }

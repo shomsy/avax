@@ -12,13 +12,13 @@ This package treats privacy posture as part of auth design, not as an afterthoug
 
 ## Recommended Retention Windows
 
-| Record | Recommended Retention |
-| --- | --- |
-| audit events | 365 days |
-| security events | 400 days |
-| revoked sessions and token-family compromise markers | 90 days after expiry |
-| password reset and MFA recovery records | purge immediately after use or TTL expiry |
-| temporary auth challenges | purge immediately after use or TTL expiry |
+| Record                                               | Recommended Retention                     |
+|------------------------------------------------------|-------------------------------------------|
+| audit events                                         | 365 days                                  |
+| security events                                      | 400 days                                  |
+| revoked sessions and token-family compromise markers | 90 days after expiry                      |
+| password reset and MFA recovery records              | purge immediately after use or TTL expiry |
+| temporary auth challenges                            | purge immediately after use or TTL expiry |
 
 ## Deletion And Anonymization
 

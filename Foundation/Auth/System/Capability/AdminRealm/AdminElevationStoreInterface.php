@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Capability\AdminRealm;
 
-use DateTimeImmutable;
-
 interface AdminElevationStoreInterface
 {
     public function start(AdminElevationRecord $record) : void;

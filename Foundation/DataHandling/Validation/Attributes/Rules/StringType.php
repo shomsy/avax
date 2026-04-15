@@ -20,11 +20,12 @@ class StringType
      * Validation error message template.
      */
     private const string ERROR_MESSAGE = 'The "%s" field must be a string.';
+    private readonly string|null $message;
 
     /**
      * Constructor for the StringType attribute.
      */
-    public function __construct(private readonly string|null $message = null) {}
+    public function __construct(string|null $message = null) { $this->message = $message; }
 
     /**
      * Validates that the provided value is a string.

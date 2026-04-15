@@ -14,16 +14,17 @@ final readonly class EndpointPostureEngine
      * Evaluates posture signals and determines action.
      */
     public function evaluate(
-        array $signals,
+        array                 $signals,
         EndpointPosturePolicy $policy
-    ) : EndpointPostureDecision {
-        $riskScore = $this->calculateRiskScore($signals);
+    ) : EndpointPostureDecision
+    {
+        $riskScore = $this->calculateRiskScore(signals: $signals);
 
         return match (true) {
-            $riskScore >= $policy->denyThreshold => EndpointPostureDecision::DENY,
-            $riskScore >= $policy->stepUpThreshold => EndpointPostureDecision::STEP_UP,
+            $riskScore >= $policy->denyThreshold       => EndpointPostureDecision::DENY,
+            $riskScore >= $policy->stepUpThreshold     => EndpointPostureDecision::STEP_UP,
             $riskScore >= $policy->quarantineThreshold => EndpointPostureDecision::QUARANTINE,
-            default => EndpointPostureDecision::ALLOW,
+            default                                    => EndpointPostureDecision::ALLOW,
         };
     }
 
@@ -38,22 +39,22 @@ final readonly class EndpointPostureEngine
         }
 
         $totalScore = 0.0;
-        $weightSum = 0.0;
+        $weightSum  = 0.0;
 
         foreach ($signals as $signal) {
             $weight = match ($signal->type) {
-                EndpointPostureSignal::IP_REPUTATION => 0.3,
-                EndpointPostureSignal::IMPOSSIBLE_TRAVEL => 0.4,
-                EndpointPostureSignal::VPN_DETECTION => 0.25,
-                EndpointPostureSignal::PROXY_DETECTION => 0.25,
-                EndpointPostureSignal::GEO_VELOCITY => 0.2,
-                EndpointPostureSignal::ASN_REPUTATION => 0.15,
-                EndpointPostureSignal::DEVICE_FINGERPRINT => 0.1,
+                EndpointPostureSignal::IP_REPUTATION       => 0.3,
+                EndpointPostureSignal::IMPOSSIBLE_TRAVEL   => 0.4,
+                EndpointPostureSignal::VPN_DETECTION       => 0.25,
+                EndpointPostureSignal::PROXY_DETECTION     => 0.25,
+                EndpointPostureSignal::GEO_VELOCITY        => 0.2,
+                EndpointPostureSignal::ASN_REPUTATION      => 0.15,
+                EndpointPostureSignal::DEVICE_FINGERPRINT  => 0.1,
                 EndpointPostureSignal::BROWSER_FINGERPRINT => 0.1,
             };
 
             $totalScore += $signal->score * $weight;
-            $weightSum += $weight;
+            $weightSum  += $weight;
         }
 
         return $weightSum > 0 ? $totalScore / $weightSum : 0.0;
@@ -65,11 +66,22 @@ final readonly class EndpointPostureEngine
  */
 final readonly class EndpointPosturePolicy
 {
+    public float $quarantineThreshold;
+    public float $stepUpThreshold;
+    public float $denyThreshold;
+
     public function __construct(
-        public float $denyThreshold = 0.8,
-        public float $stepUpThreshold = 0.5,
-        public float $quarantineThreshold = 0.3
-    ) {}
+        float|null $denyThreshold = null,
+        float|null $stepUpThreshold = null,
+        float      $quarantineThreshold = 0.3
+    )
+    {
+        $denyThreshold             ??= 0.8;
+        $stepUpThreshold           ??= 0.5;
+        $this->denyThreshold       = $denyThreshold;
+        $this->stepUpThreshold     = $stepUpThreshold;
+        $this->quarantineThreshold = $quarantineThreshold;
+    }
 }
 
 /**
@@ -77,8 +89,8 @@ final readonly class EndpointPosturePolicy
  */
 enum EndpointPostureDecision: string
 {
-    case ALLOW = 'allow';
-    case STEP_UP = 'step_up';
-    case DENY = 'deny';
+    case ALLOW      = 'allow';
+    case STEP_UP    = 'step_up';
+    case DENY       = 'deny';
     case QUARANTINE = 'quarantine';
 }

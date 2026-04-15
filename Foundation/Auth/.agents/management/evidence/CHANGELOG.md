@@ -20,7 +20,8 @@ Update rules:
 - `2026-04-12 23:10 CEST` | `AUTH-022` | shipped explicit assurance policy tiers, phishing-resistant-required OAuth
   client posture, sender-constrained token binding metadata for DPoP and mTLS, JWT `kid` support, new regression
   tests, and first-class docs for assurance, privacy retention, authorization hardening, and crypto lifecycle
-- `2026-04-12 22:39 CEST` | `AUTH-021` | normalized the phishing-resistant access naming, moved the guard into an explicit capability namespace, made
+- `2026-04-12 22:39 CEST` | `AUTH-021` | normalized the phishing-resistant access naming, moved the guard into an
+  explicit capability namespace, made
   `ChangeEmail` a first-class flow keyed by `UserId`, and added regression tests for email-change and admin-elevation
   policy paths
 - `2026-04-12 21:32 CEST` | `AUTH-020` | shipped package-owned authorization-policy boundaries, passkey rename,

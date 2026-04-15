@@ -22,31 +22,31 @@ final class CleanupExpiredSessionsTest extends TestCase
         $registry = new InMemorySessionRegistry();
         $now      = new DateTimeImmutable();
         $registry->track(record: new SessionRecord(
-            sessionId        : 'expired',
-            userId           : new UserId(value: 1),
-            createdAt        : $now->modify(modifier: '-2 hours'),
-            lastSeenAt       : $now->modify(modifier: '-2 hours'),
-            idleExpiresAt    : $now->modify(modifier: '-1 hour'),
-            absoluteExpiresAt: $now->modify(modifier: '-30 minutes')
-        ));
+                                     sessionId        : 'expired',
+                                     userId           : new UserId(value: 1),
+                                     createdAt        : $now->modify(modifier: '-2 hours'),
+                                     lastSeenAt       : $now->modify(modifier: '-2 hours'),
+                                     idleExpiresAt    : $now->modify(modifier: '-1 hour'),
+                                     absoluteExpiresAt: $now->modify(modifier: '-30 minutes')
+                                 ));
         $registry->track(record: new SessionRecord(
-            sessionId        : 'active',
-            userId           : new UserId(value: 1),
-            createdAt        : $now,
-            lastSeenAt       : $now,
-            idleExpiresAt    : $now->modify(modifier: '+1 hour'),
-            absoluteExpiresAt: $now->modify(modifier: '+2 hours')
-        ));
+                                     sessionId        : 'active',
+                                     userId           : new UserId(value: 1),
+                                     createdAt        : $now,
+                                     lastSeenAt       : $now,
+                                     idleExpiresAt    : $now->modify(modifier: '+1 hour'),
+                                     absoluteExpiresAt: $now->modify(modifier: '+2 hours')
+                                 ));
         $registry->track(record: new SessionRecord(
-            sessionId        : 'revoked',
-            userId           : new UserId(value: 1),
-            createdAt        : $now,
-            lastSeenAt       : $now,
-            idleExpiresAt    : $now->modify(modifier: '+1 hour'),
-            absoluteExpiresAt: $now->modify(modifier: '+2 hours'),
-            revokedAt        : $now,
-            revokeReason     : 'manual'
-        ));
+                                     sessionId        : 'revoked',
+                                     userId           : new UserId(value: 1),
+                                     createdAt        : $now,
+                                     lastSeenAt       : $now,
+                                     idleExpiresAt    : $now->modify(modifier: '+1 hour'),
+                                     absoluteExpiresAt: $now->modify(modifier: '+2 hours'),
+                                     revokedAt        : $now,
+                                     revokeReason     : 'manual'
+                                 ));
 
         $removed = (new CleanupExpiredSessions(sessionRegistry: $registry, clock: new Clock()))->execute();
 

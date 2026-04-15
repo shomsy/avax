@@ -36,12 +36,14 @@ use Avax\HTTP\Session\Shared\Contracts\Security\Encrypter;
  */
 final readonly class CoreManager
 {
+    private SessionEngine $engine;
+
     /**
      * CoreManager Constructor.
      *
      * @param SessionEngine $engine The core session engine.
      */
-    public function __construct(private SessionEngine $engine) {}
+    public function __construct(SessionEngine $engine) { $this->engine = $engine; }
 
     // ----------------------------------------------------------------
     // Core Data Operations

@@ -30,19 +30,24 @@ final class SpecialRegisterLogger implements RegisterLoggerContract
 
 final class NeedsDefaultLogger
 {
-    public function __construct(public RegisterLoggerContract $logger) {}
+    public RegisterLoggerContract $logger;
+
+    public function __construct(RegisterLoggerContract $logger) { $this->logger = $logger; }
 }
 
 final class NeedsSpecialLogger
 {
-    public function __construct(public RegisterLoggerContract $logger) {}
+    public RegisterLoggerContract $logger;
+
+    public function __construct(RegisterLoggerContract $logger) { $this->logger = $logger; }
 }
 
 final class ExtensibleMessage
 {
     public string $value = 'base';
+    public string $name  = 'unset';
 
-    public function __construct(public string $name = 'unset') {}
+    public function __construct(string $name = 'unset') { $this->name = $name; }
 }
 
 final class MessageDecorator implements DecoratorInterface

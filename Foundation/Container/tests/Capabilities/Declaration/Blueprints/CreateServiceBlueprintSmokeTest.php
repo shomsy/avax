@@ -15,9 +15,10 @@ use Avax\Container\DI\Capabilities\Runtime\Scopes\Lifetimes\Attributes\Singleton
 final class BlueprintTarget
 {
     #[Inject]
-    public stdClass $property;
+    public stdClass          $property;
+    public DateTimeImmutable $createdAt;
 
-    public function __construct(public DateTimeImmutable $createdAt) {}
+    public function __construct(DateTimeImmutable $createdAt) { $this->createdAt = $createdAt; }
 
     #[Inject]
     protected function wire(DateTimeImmutable $clock) : void {}

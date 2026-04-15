@@ -12,9 +12,14 @@ use Throwable;
  */
 final readonly class TableDropCommand
 {
+    private QueryBuilder $builder;
+
     public function __construct(
-        private QueryBuilder $builder
-    ) {}
+        QueryBuilder $builder
+    )
+    {
+        $this->builder = $builder;
+    }
 
     /**
      * Handle the command execution.

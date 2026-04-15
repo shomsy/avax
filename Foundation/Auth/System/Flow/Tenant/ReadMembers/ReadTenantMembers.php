@@ -10,9 +10,14 @@ use Avax\Auth\System\Flow\Tenant\TenantFailed;
 
 final readonly class ReadTenantMembers
 {
+    private TenantStoreInterface $tenantStore;
+
     public function __construct(
-        private TenantStoreInterface $tenantStore
-    ) {}
+        TenantStoreInterface $tenantStore
+    )
+    {
+        $this->tenantStore = $tenantStore;
+    }
 
     /**
      * @return list<TenantMember>

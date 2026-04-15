@@ -9,27 +9,65 @@ use SensitiveParameter;
 
 final readonly class FederationConnection
 {
+    public bool                       $breakGlassAllowed;
+    public DateTimeImmutable|null     $healthCheckedAt;
+    public FederationConnectionHealth $health;
+    public DateTimeImmutable|null     $domainVerifiedAt;
+    public string|null                $domainVerificationToken;
+    public DateTimeImmutable|null     $metadataSyncedAt;
+    public string|null                $metadataHash;
+    public string|null                $metadataIssuer;
+    public string|null                $metadataUrl;
+    public array                      $groupRoleMap;
+    public bool                       $ssoOnly;
+    public string                     $domain;
+    public FederationProvider         $provider;
+    public string                     $name;
+    public string                     $tenantSlug;
+    public string                     $connectionId;
+
     /**
      * @param array<string, list<string>> $groupRoleMap
      */
     public function __construct(
-        public string                            $connectionId,
-        public string                            $tenantSlug,
-        public string                            $name,
-        public FederationProvider                $provider,
-        public string                            $domain,
-        public bool                              $ssoOnly = false,
-        public array                             $groupRoleMap = [],
-        public string|null                       $metadataUrl = null,
-        public string|null                       $metadataIssuer = null,
-        #[SensitiveParameter] public string|null $metadataHash = null,
-        public DateTimeImmutable|null            $metadataSyncedAt = null,
-        #[SensitiveParameter] public string|null $domainVerificationToken = null,
-        public DateTimeImmutable|null            $domainVerifiedAt = null,
-        public FederationConnectionHealth        $health = FederationConnectionHealth::UNKNOWN,
-        public DateTimeImmutable|null            $healthCheckedAt = null,
-        public bool                              $breakGlassAllowed = false
-    ) {}
+        string                            $connectionId,
+        string                            $tenantSlug,
+        string                            $name,
+        FederationProvider                $provider,
+        string                            $domain,
+        bool|null                         $ssoOnly = null,
+        array|null                        $groupRoleMap = null,
+        string|null                       $metadataUrl = null,
+        string|null                       $metadataIssuer = null,
+        #[SensitiveParameter] string|null $metadataHash = null,
+        DateTimeImmutable|null            $metadataSyncedAt = null,
+        #[SensitiveParameter] string|null $domainVerificationToken = null,
+        DateTimeImmutable|null            $domainVerifiedAt = null,
+        FederationConnectionHealth|null   $health = null,
+        DateTimeImmutable|null            $healthCheckedAt = null,
+        bool                              $breakGlassAllowed = false
+    )
+    {
+        $ssoOnly                       ??= false;
+        $groupRoleMap                  ??= [];
+        $health                        ??= FederationConnectionHealth::UNKNOWN;
+        $this->connectionId            = $connectionId;
+        $this->tenantSlug              = $tenantSlug;
+        $this->name                    = $name;
+        $this->provider                = $provider;
+        $this->domain                  = $domain;
+        $this->ssoOnly                 = $ssoOnly;
+        $this->groupRoleMap            = $groupRoleMap;
+        $this->metadataUrl             = $metadataUrl;
+        $this->metadataIssuer          = $metadataIssuer;
+        $this->metadataHash            = $metadataHash;
+        $this->metadataSyncedAt        = $metadataSyncedAt;
+        $this->domainVerificationToken = $domainVerificationToken;
+        $this->domainVerifiedAt        = $domainVerifiedAt;
+        $this->health                  = $health;
+        $this->healthCheckedAt         = $healthCheckedAt;
+        $this->breakGlassAllowed       = $breakGlassAllowed;
+    }
 
     public function isDomainVerified() : bool
     {
@@ -86,7 +124,7 @@ final readonly class FederationConnection
 
     public function withHealth(
         FederationConnectionHealth $health,
-        DateTimeImmutable $checkedAt
+        DateTimeImmutable          $checkedAt
     ) : self
     {
         return new self(

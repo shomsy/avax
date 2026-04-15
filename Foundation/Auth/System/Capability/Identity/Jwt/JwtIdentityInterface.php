@@ -23,13 +23,13 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
      * @param list<string> $scopes
      */
     public function issue(
-        User $user,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool $phishingResistant = false,
-        string|null $clientId = null,
-        array $scopes = [],
+        User                       $user,
+        DateTimeImmutable|null     $mfaVerifiedAt = null,
+        bool                       $phishingResistant = false,
+        string|null                $clientId = null,
+        array                      $scopes = [],
         OAuthSenderConstraint|null $senderConstraint = null,
-        string|null $refreshTokenFamilyId = null
+        string|null                $refreshTokenFamilyId = null
     ) : IssuedToken;
 
     public function resolve(string $token) : ResolvedToken|null;
@@ -38,15 +38,15 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
      * @param list<string> $scopes
      */
     public function issueWorkloadToken(
-        string $subject,
-        string $clientId,
-        array $scopes = [],
+        string                     $subject,
+        string                     $clientId,
+        array                      $scopes = [],
         OAuthSenderConstraint|null $senderConstraint = null,
-        string|null $audience = null
+        string|null                $audience = null
     ) : IssuedToken;
 
     public function resolveWorkloadToken(
-        string $token,
+        string      $token,
         string|null $expectedAudience = null,
         string|null $expectedIssuer = null
     ) : ResolvedWorkloadToken|null;
@@ -55,11 +55,11 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
      * @param list<string> $scopes
      */
     public function issueRefreshToken(
-        User $user,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool $phishingResistant = false,
-        string|null $clientId = null,
-        array $scopes = [],
+        User                       $user,
+        DateTimeImmutable|null     $mfaVerifiedAt = null,
+        bool                       $phishingResistant = false,
+        string|null                $clientId = null,
+        array                      $scopes = [],
         OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedRefreshToken|null;
 

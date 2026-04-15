@@ -14,9 +14,14 @@ use Throwable;
  */
 final readonly class DatabaseExporter
 {
+    private QueryBuilder $builder;
+
     public function __construct(
-        private QueryBuilder $builder
-    ) {}
+        QueryBuilder $builder
+    )
+    {
+        $this->builder = $builder;
+    }
 
     /**
      * Export the database schema and data to a SQL file.

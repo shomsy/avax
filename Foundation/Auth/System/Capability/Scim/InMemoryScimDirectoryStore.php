@@ -10,20 +10,19 @@ use SensitiveParameter;
 final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
 {
     /** @var array<string, ScimDirectory> */
-    private array $directories = [];
+    private array          $directories = [];
+    private PasswordHasher $passwordHasher;
 
     public function __construct(
-        #[SensitiveParameter] private PasswordHasher $passwordHasher
-    ) {}
+        #[SensitiveParameter] PasswordHasher $passwordHasher
+    )
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
 
     public function save(ScimDirectory $directory) : void
     {
         $this->directories[$directory->directoryId] = $directory;
-    }
-
-    public function find(string $directoryId) : ScimDirectory|null
-    {
-        return $this->directories[$directoryId] ?? null;
     }
 
     public function all() : array
@@ -32,7 +31,7 @@ final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
     }
 
     public function verifyToken(
-        string $directoryId,
+        string                       $directoryId,
         #[SensitiveParameter] string $plainTextToken
     ) : bool
     {
@@ -43,5 +42,10 @@ final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
         }
 
         return $this->passwordHasher->verify(password: $plainTextToken, hash: $directory->tokenHash);
+    }
+
+    public function find(string $directoryId) : ScimDirectory|null
+    {
+        return $this->directories[$directoryId] ?? null;
     }
 }

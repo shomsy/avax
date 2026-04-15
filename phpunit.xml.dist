@@ -16,7 +16,9 @@
         <testsuite name="Router">
             <directory>tests/Foundation/HTTP/Router</directory>
         </testsuite>
-
+        <testsuite name="Request">
+            <directory>tests/Unit/Foundation/HTTP/Request</directory>
+        </testsuite>
     </testsuites>
     <logging/>
     <source/>

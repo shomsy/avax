@@ -8,24 +8,37 @@ use Avax\Auth\System\Capability\PasswordHashing\PasswordHasher;
 use Avax\Auth\System\Capability\Scim\ScimDirectory;
 use Avax\Auth\System\Capability\Scim\ScimDirectoryHealth;
 use Avax\Auth\System\Capability\Scim\ScimDirectoryStoreInterface;
+use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
+use Avax\Auth\System\Capability\Throttle\AttemptThrottleExceeded;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\AuditLogInterface;
 use Avax\Auth\System\Flow\Scim\ScimFailed;
 use Avax\Auth\System\Foundation\Clock;
-use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
-use Avax\Auth\System\Capability\Throttle\AttemptThrottleExceeded;
 use Random\RandomException;
 use SensitiveParameter;
 
 final readonly class RotateScimToken
 {
+    private AttemptThrottle|null        $attemptThrottle;
+    private Clock                       $clock;
+    private AuditLogInterface           $auditLog;
+    private PasswordHasher              $passwordHasher;
+    private ScimDirectoryStoreInterface $directoryStore;
+
     public function __construct(
-        private ScimDirectoryStoreInterface $directoryStore,
-        #[SensitiveParameter] private PasswordHasher $passwordHasher,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        private AttemptThrottle|null $attemptThrottle = null
-    ) {}
+        ScimDirectoryStoreInterface          $directoryStore,
+        #[SensitiveParameter] PasswordHasher $passwordHasher,
+        AuditLogInterface                    $auditLog,
+        Clock                                $clock,
+        AttemptThrottle|null                 $attemptThrottle = null
+    )
+    {
+        $this->directoryStore  = $directoryStore;
+        $this->passwordHasher  = $passwordHasher;
+        $this->auditLog        = $auditLog;
+        $this->clock           = $clock;
+        $this->attemptThrottle = $attemptThrottle;
+    }
 
     /**
      * @throws ScimFailed
@@ -46,7 +59,7 @@ final readonly class RotateScimToken
         $this->enforceThrottle(directoryId: $directory->directoryId, operation: 'rotate');
 
         $plainTextToken = bin2hex(random_bytes(24));
-        $rotated = new ScimDirectory(
+        $rotated        = new ScimDirectory(
             directoryId : $directory->directoryId,
             tenantSlug  : $directory->tenantSlug,
             name        : $directory->name,
@@ -58,13 +71,13 @@ final readonly class RotateScimToken
 
         $this->directoryStore->save(directory: $rotated);
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.scim.directory.token_rotated',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'directory_id' => $directory->directoryId,
-                'tenant' => $directory->tenantSlug,
-            ]
-        ));
+                                           name      : 'auth.scim.directory.token_rotated',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'directory_id' => $directory->directoryId,
+                                                           'tenant'       => $directory->tenantSlug,
+                                                       ]
+                                       ));
 
         return new RotatedScimToken(directory: $rotated, plainTextToken: $plainTextToken);
     }

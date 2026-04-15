@@ -11,6 +11,11 @@ namespace Avax\Database\Query;
  */
 final readonly class Condition
 {
+    public string $boolean;
+    public mixed  $value;
+    public string $operator;
+    public string $column;
+
     /**
      * @param string $column   The technical identifier of the database column to be filtered.
      * @param string $operator The logical comparison operator (e.g., '=', '<', '>', 'LIKE').
@@ -18,9 +23,15 @@ final readonly class Condition
      * @param string $boolean  The logical joiner used to link this condition ('AND' or 'OR').
      */
     public function __construct(
-        public string $column,
-        public string $operator,
-        public mixed  $value,
-        public string $boolean = 'AND'
-    ) {}
+        string $column,
+        string $operator,
+        mixed  $value,
+        string $boolean = 'AND'
+    )
+    {
+        $this->column   = $column;
+        $this->operator = $operator;
+        $this->value    = $value;
+        $this->boolean  = $boolean;
+    }
 }

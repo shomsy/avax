@@ -18,13 +18,16 @@ class LazyCollection extends Collection
 {
     use LazyEvaluationTrait;
 
+    protected Closure $generator;
+
     /**
      * LazyCollection constructor.
      *
      * @param Closure $generator A generator function to build the collection lazily.
      */
-    public function __construct(protected Closure $generator)
+    public function __construct(Closure $generator)
     {
+        $this->generator = $generator;
         parent::__construct();
     }
 

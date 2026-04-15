@@ -11,10 +11,12 @@ use Stringable;
  */
 final readonly class Expression implements Stringable
 {
+    public string $value;
+
     /**
      * @param string $value The raw technical SQL fragment to be injected literally.
      */
-    public function __construct(public string $value) {}
+    public function __construct(string $value) { $this->value = $value; }
 
     /**
      * Retrieve the internal raw SQL instruction as a primitive string.

@@ -22,7 +22,9 @@ use Closure;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class Custom
 {
-    public function __construct(private Closure $callback) {}
+    private Closure $callback;
+
+    public function __construct(Closure $callback) { $this->callback = $callback; }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

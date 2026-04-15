@@ -12,6 +12,7 @@ final readonly class ScanCommittedSecrets
 {
     /**
      * @param list<string> $ignoredDirectories
+     *
      * @return list<array{path:string, pattern:string, line:int}>
      */
     public function execute(string $rootPath, array $ignoredDirectories = ['vendor', '.git', 'build']) : array
@@ -44,9 +45,9 @@ final readonly class ScanCommittedSecrets
                 }
 
                 $findings[] = [
-                    'path' => $path,
+                    'path'    => $path,
                     'pattern' => $matchedPattern,
-                    'line' => $lineNumber,
+                    'line'    => $lineNumber,
                 ];
             }
         }
@@ -74,9 +75,9 @@ final readonly class ScanCommittedSecrets
     {
         $patterns = [
             'aws_access_key_id' => '/AKIA[0-9A-Z]{16}/',
-            'github_pat' => '/github_pat_[A-Za-z0-9_]{20,}/',
-            'private_key' => '/-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----/',
-            'slack_token' => '/xox[baprs]-[A-Za-z0-9-]{10,}/',
+            'github_pat'        => '/github_pat_[A-Za-z0-9_]{20,}/',
+            'private_key'       => '/-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----/',
+            'slack_token'       => '/xox[baprs]-[A-Za-z0-9-]{10,}/',
         ];
 
         foreach ($patterns as $name => $pattern) {

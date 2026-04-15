@@ -67,11 +67,13 @@ final class ServiceRegistration
     public array $arguments = [];
 
     public RegistrationMetadata $metadata;
+    public readonly string      $abstract;
 
     public function __construct(
-        public readonly string $abstract
+        string $abstract
     )
     {
+        $this->abstract = $abstract;
         $this->metadata = RegistrationMetadata::for(unitId: $abstract);
     }
 

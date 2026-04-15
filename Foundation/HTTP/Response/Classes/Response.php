@@ -40,7 +40,7 @@ class Response implements ResponseInterface
             200 => 'OK',
             201 => 'Created',
             204 => 'No Content',
-            400 => 'Bad Request',
+            400 => 'Bad ServerRequest',
             401 => 'Unauthorized',
             403 => 'Forbidden',
             404 => 'Not Found',
@@ -80,7 +80,8 @@ class Response implements ResponseInterface
      * Always ensure headers are set before output is sent to the client to avoid
      * any runtime errors or unexpected behavior.
      */
-    private array $headers;
+    private array           $headers;
+    private StreamInterface $stream;
 
     /**
      * Initializes the response with the given stream, protocol version, status code, headers, and reason phrase.
@@ -91,13 +92,14 @@ class Response implements ResponseInterface
          * Stream class responsible for handling and manipulating data streams.
          * This class provides methods to read and write streams, as well as manage stream state and contents.
          */
-        private StreamInterface          $stream,
+        StreamInterface                  $stream,
         string|null                      $protocolVersion = null,
         int|null                         $statusCode = null,
         #[SensitiveParameter] array|null $headers = null,
         string                           $reasonPhrase = '',
     )
     {
+        $this->stream = $stream;
         // Default values are provided when specific values are not given.
         $this->statusCode      = $statusCode ?? self::DEFAULT_STATUS_CODE;
         $this->protocolVersion = $protocolVersion ?? self::DEFAULT_PROTOCOL_VERSION;

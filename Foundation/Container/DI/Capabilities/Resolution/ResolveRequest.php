@@ -9,17 +9,35 @@ namespace Avax\Container\DI\Capabilities\Resolution;
  */
 final readonly class ResolveRequest
 {
+    public string|null         $consumer;
+    public bool                $manualInjection;
+    public ResolveRequest|null $parent;
+    public array               $context;
+    public array               $overrides;
+    public string              $serviceId;
+
     /**
      * @param array<string, mixed> $overrides
      */
     public function __construct(
-        public string      $serviceId,
-        public array       $overrides = [],
-        public array       $context = [],
-        public self|null   $parent = null,
-        public bool        $manualInjection = false,
-        public string|null $consumer = null
-    ) {}
+        string      $serviceId,
+        array|null  $overrides = null,
+        array|null  $context = null,
+        self|null   $parent = null,
+        bool|null   $manualInjection = null,
+        string|null $consumer = null
+    )
+    {
+        $overrides             ??= [];
+        $context               ??= [];
+        $manualInjection       ??= false;
+        $this->serviceId       = $serviceId;
+        $this->overrides       = $overrides;
+        $this->context         = $context;
+        $this->parent          = $parent;
+        $this->manualInjection = $manualInjection;
+        $this->consumer        = $consumer;
+    }
 
     /**
      * @param array<string, mixed> $overrides

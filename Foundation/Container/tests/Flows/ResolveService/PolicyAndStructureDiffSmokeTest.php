@@ -35,7 +35,9 @@ final class OtherFlowLocal {}
 
 final class FlowToFlowEntry
 {
-    public function __construct(public OtherFlowLocal $local) {}
+    public OtherFlowLocal $local;
+
+    public function __construct(OtherFlowLocal $local) { $this->local = $local; }
 }
 
 final class GenericHelperService {}
@@ -44,7 +46,9 @@ final class StructureDiffService {}
 
 final class LocatorDriftService
 {
-    public function __construct(public ContainerInterface $container) {}
+    public ContainerInterface $container;
+
+    public function __construct(ContainerInterface $container) { $this->container = $container; }
 }
 
 $cacheDir  = sys_get_temp_dir() . '/container-policy-diff-' . uniqid('', true);
@@ -91,12 +95,12 @@ $container->singleton(abstract: StructureDiffService::class, concrete: Structure
 $graph        = $container->debugGraph();
 $serviceGraph = $container->debugGraph(id: StructureDiffService::class);
 $issues       = implode("\n", $container->validate(serviceIds: [
-                                                       OverInjectedPolicyService::class,
-                                                       FlowToFlowEntry::class,
-                                                       GenericHelperService::class,
-                                                       StructureDiffService::class,
-                                                       LocatorDriftService::class,
-                                                   ]));
+                                                                   OverInjectedPolicyService::class,
+                                                                   FlowToFlowEntry::class,
+                                                                   GenericHelperService::class,
+                                                                   StructureDiffService::class,
+                                                                   LocatorDriftService::class,
+                                                               ]));
 
 $overInjectedCodes = array_column($graph['policyFindings'][OverInjectedPolicyService::class] ?? [], 'code');
 $flowCodes         = array_column($graph['policyFindings'][FlowToFlowEntry::class] ?? [], 'code');

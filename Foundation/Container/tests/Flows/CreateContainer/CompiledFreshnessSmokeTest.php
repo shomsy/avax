@@ -29,7 +29,9 @@ final class FreshnessDependencyV2 implements FreshnessDependencyContract
 
 final class FreshnessConsumer
 {
-    public function __construct(public FreshnessDependencyContract $dependency) {}
+    public FreshnessDependencyContract $dependency;
+
+    public function __construct(FreshnessDependencyContract $dependency) { $this->dependency = $dependency; }
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-freshness-' . uniqid();

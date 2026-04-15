@@ -39,9 +39,9 @@ final class ProvisioningTest extends TestCase
      */
     public function testSuspendReactivateAndDeprovisionLifecycle() : void
     {
-        $clock         = new Clock();
-        $userSource    = new InMemoryUserSource();
-        $targetUser    = User::create(
+        $clock      = new Clock();
+        $userSource = new InMemoryUserSource();
+        $targetUser = User::create(
             id          : new UserId(value: 2),
             email       : new UserEmail(value: 'user@example.com'),
             username    : 'user',
@@ -52,68 +52,68 @@ final class ProvisioningTest extends TestCase
 
         $current = new CurrentAuthentication();
         $current->store(context: AuthenticationContext::authenticated(
-            user      : new AuthenticatedUser(
-                id       : 1,
-                email    : 'admin@example.com',
-                username : 'admin',
-                roles    : [UserRole::ADMIN->value]
-            ),
-            mode      : AuthenticationMode::SESSION,
-            sessionId : 'session-admin'
+            user     : new AuthenticatedUser(
+                           id      : 1,
+                           email   : 'admin@example.com',
+                           username: 'admin',
+                           roles   : [UserRole::ADMIN->value]
+                       ),
+            mode     : AuthenticationMode::SESSION,
+            sessionId: 'session-admin'
         ));
         $elevations = new InMemoryAdminElevationStore();
         $elevations->start(record: new AdminElevationRecord(userId: 1, bindingId: 'session-admin', expiresAt: $clock->now()->modify(modifier: '+15 minutes')));
         $elevations->start(record: new AdminElevationRecord(userId: 2, bindingId: 'session-target-suspend', expiresAt: $clock->now()->modify(modifier: '+15 minutes')));
         $sessionRegistry = new InMemorySessionRegistry();
         $sessionRegistry->track(record: new SessionRecord(
-            sessionId        : 'session-target-suspend',
-            userId           : new UserId(value: 2),
-            createdAt        : $clock->now(),
-            lastSeenAt       : $clock->now(),
-            idleExpiresAt    : $clock->now()->modify(modifier: '+15 minutes'),
-            absoluteExpiresAt: $clock->now()->modify(modifier: '+8 hours')
-        ));
-        $refreshTokens = new InMemoryRefreshTokenStore();
-        $issuedRefresh = $refreshTokens->issue(
-            userId    : new UserId(value: 2),
-            expiresAt : $clock->now()->modify(modifier: '+30 days'),
-            clientId  : 'oauth-client'
+                                            sessionId        : 'session-target-suspend',
+                                            userId           : new UserId(value: 2),
+                                            createdAt        : $clock->now(),
+                                            lastSeenAt       : $clock->now(),
+                                            idleExpiresAt    : $clock->now()->modify(modifier: '+15 minutes'),
+                                            absoluteExpiresAt: $clock->now()->modify(modifier: '+8 hours')
+                                        ));
+        $refreshTokens  = new InMemoryRefreshTokenStore();
+        $issuedRefresh  = $refreshTokens->issue(
+            userId   : new UserId(value: 2),
+            expiresAt: $clock->now()->modify(modifier: '+30 days'),
+            clientId : 'oauth-client'
         );
         $lifecycleStore = new InMemoryLifecycleStore();
-        $lifecycle = new LifecycleOrchestrator(
+        $lifecycle      = new LifecycleOrchestrator(
             userSource: $userSource,
             store     : $lifecycleStore,
             auditLog  : new InMemoryAuditLog(),
             clock     : $clock
         );
 
-        $guard      = new RequireAdminElevation(currentAuthentication: $current, elevationStore: $elevations, clock: $clock);
-        $suspend    = new SuspendUser(
-            userSource         : $userSource,
+        $guard       = new RequireAdminElevation(currentAuthentication: $current, elevationStore: $elevations, clock: $clock);
+        $suspend     = new SuspendUser(
+            userSource           : $userSource,
             requireAdminElevation: $guard,
-            auditLog           : new InMemoryAuditLog(),
-            clock              : $clock,
-            sessionRegistry    : $sessionRegistry,
-            refreshTokenStore  : $refreshTokens,
-            adminElevationStore: $elevations,
-            lifecycle          : $lifecycle
+            auditLog             : new InMemoryAuditLog(),
+            clock                : $clock,
+            sessionRegistry      : $sessionRegistry,
+            refreshTokenStore    : $refreshTokens,
+            adminElevationStore  : $elevations,
+            lifecycle            : $lifecycle
         );
-        $reactivate = new ReactivateUser(
-            userSource         : $userSource,
+        $reactivate  = new ReactivateUser(
+            userSource           : $userSource,
             requireAdminElevation: $guard,
-            auditLog           : new InMemoryAuditLog(),
-            clock              : $clock,
-            lifecycle          : $lifecycle
+            auditLog             : new InMemoryAuditLog(),
+            clock                : $clock,
+            lifecycle            : $lifecycle
         );
         $deprovision = new DeprovisionUser(
-            userSource         : $userSource,
+            userSource           : $userSource,
             requireAdminElevation: $guard,
-            auditLog           : new InMemoryAuditLog(),
-            clock              : $clock,
-            sessionRegistry    : $sessionRegistry,
-            refreshTokenStore  : $refreshTokens,
-            adminElevationStore: $elevations,
-            lifecycle          : $lifecycle
+            auditLog             : new InMemoryAuditLog(),
+            clock                : $clock,
+            sessionRegistry      : $sessionRegistry,
+            refreshTokenStore    : $refreshTokens,
+            adminElevationStore  : $elevations,
+            lifecycle            : $lifecycle
         );
 
         $suspend->execute(userId: 2);
@@ -129,17 +129,17 @@ final class ProvisioningTest extends TestCase
         $this->assertSame(expected: LifecycleState::ACTIVE, actual: $lifecycleStore->find(userId: new UserId(value: 2))?->state);
 
         $sessionRegistry->track(record: new SessionRecord(
-            sessionId        : 'session-target-deprovision',
-            userId           : new UserId(value: 2),
-            createdAt        : $clock->now(),
-            lastSeenAt       : $clock->now(),
-            idleExpiresAt    : $clock->now()->modify(modifier: '+15 minutes'),
-            absoluteExpiresAt: $clock->now()->modify(modifier: '+8 hours')
-        ));
+                                            sessionId        : 'session-target-deprovision',
+                                            userId           : new UserId(value: 2),
+                                            createdAt        : $clock->now(),
+                                            lastSeenAt       : $clock->now(),
+                                            idleExpiresAt    : $clock->now()->modify(modifier: '+15 minutes'),
+                                            absoluteExpiresAt: $clock->now()->modify(modifier: '+8 hours')
+                                        ));
         $issuedRefresh = $refreshTokens->issue(
-            userId    : new UserId(value: 2),
-            expiresAt : $clock->now()->modify(modifier: '+30 days'),
-            clientId  : 'oauth-client-2'
+            userId   : new UserId(value: 2),
+            expiresAt: $clock->now()->modify(modifier: '+30 days'),
+            clientId : 'oauth-client-2'
         );
         $elevations->start(record: new AdminElevationRecord(userId: 2, bindingId: 'session-target-deprovision', expiresAt: $clock->now()->modify(modifier: '+15 minutes')));
 

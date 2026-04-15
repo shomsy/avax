@@ -20,13 +20,26 @@ use SensitiveParameter;
  */
 final readonly class RevokeSession
 {
+    private SessionRegistryInterface|null $sessionRegistry;
+    private Clock                         $clock;
+    private AuditLogInterface             $auditLog;
+    private CurrentAuthentication         $currentAuthentication;
+    private IdentityInterface             $identity;
+
     public function __construct(
-        private IdentityInterface                                   $identity,
-        #[SensitiveParameter] private CurrentAuthentication         $currentAuthentication,
-        private AuditLogInterface                                   $auditLog,
-        private Clock                                               $clock,
-        #[SensitiveParameter] private SessionRegistryInterface|null $sessionRegistry = null
-    ) {}
+        IdentityInterface                                   $identity,
+        #[SensitiveParameter] CurrentAuthentication         $currentAuthentication,
+        AuditLogInterface                                   $auditLog,
+        Clock                                               $clock,
+        #[SensitiveParameter] SessionRegistryInterface|null $sessionRegistry = null
+    )
+    {
+        $this->identity              = $identity;
+        $this->currentAuthentication = $currentAuthentication;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+        $this->sessionRegistry       = $sessionRegistry;
+    }
 
     /**
      * @throws Unauthenticated
@@ -59,13 +72,13 @@ final readonly class RevokeSession
         }
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.session.revoked',
-            occurredAt: $now,
-            context   : [
-                'user_id'    => $user->id,
-                'session_id' => $sessionId,
-                'reason'     => 'user_revoke',
-            ]
-        ));
+                                           name      : 'auth.session.revoked',
+                                           occurredAt: $now,
+                                           context   : [
+                                                           'user_id'    => $user->id,
+                                                           'session_id' => $sessionId,
+                                                           'reason'     => 'user_revoke',
+                                                       ]
+                                       ));
     }
 }

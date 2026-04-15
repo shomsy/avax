@@ -59,7 +59,7 @@ class HttpKernelIntegrationTest extends TestCase
      */
     public function middleware_pipeline_executes_in_order() : void
     {
-        // Given: Request with logging expectation
+        // Given: ServerRequest with logging expectation
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getMethod')->willReturn(value: 'GET');
         $request->method('getUri')->willReturn(value: $this->createMock(UriInterface::class));
@@ -103,7 +103,7 @@ class HttpKernelIntegrationTest extends TestCase
      */
     public function json_response_middleware_formats_output() : void
     {
-        // Given: Request that should get JSON response
+        // Given: ServerRequest that should get JSON response
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getServerParams')->willReturn(value: ['REMOTE_ADDR' => '127.0.0.1']);
 
@@ -140,7 +140,7 @@ class HttpKernelIntegrationTest extends TestCase
             responseFactory : $this->responseFactory
         );
 
-        // Request from blocked IP
+        // ServerRequest from blocked IP
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getServerParams')->willReturn(value: ['REMOTE_ADDR' => '192.168.1.100']);
 
@@ -196,7 +196,7 @@ class HttpKernelIntegrationTest extends TestCase
         // When: Kernel processes GET request
         $response = $kernel->handle(request: $request);
 
-        // Then: Request proceeds without CSRF validation
+        // Then: ServerRequest proceeds without CSRF validation
         $this->assertNotEquals(expected: 403, actual: $response->getStatusCode());
     }
 
@@ -252,7 +252,7 @@ class HttpKernelIntegrationTest extends TestCase
         // When: Kernel processes POST request with valid token
         $response = $kernel->handle(request: $request);
 
-        // Then: Request proceeds (doesn't return 403)
+        // Then: ServerRequest proceeds (doesn't return 403)
         $this->assertNotEquals(expected: 403, actual: $response->getStatusCode());
     }
 
@@ -280,7 +280,7 @@ class HttpKernelIntegrationTest extends TestCase
         // When: Kernel processes POST request with token in attribute
         $response = $kernel->handle(request: $request);
 
-        // Then: Request proceeds
+        // Then: ServerRequest proceeds
         $this->assertNotEquals(expected: 403, actual: $response->getStatusCode());
     }
 
@@ -308,7 +308,7 @@ class HttpKernelIntegrationTest extends TestCase
         // When: Kernel processes POST request with token in body
         $response = $kernel->handle(request: $request);
 
-        // Then: Request proceeds
+        // Then: ServerRequest proceeds
         $this->assertNotEquals(expected: 403, actual: $response->getStatusCode());
     }
 

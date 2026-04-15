@@ -27,18 +27,41 @@ use SensitiveParameter;
  */
 final readonly class Login
 {
+    private DeterministicRiskEngine|null $riskEngine;
+    private LoginRateLimit|null          $rateLimit;
+    private StartMfaChallenge            $startMfaChallenge;
+    private MfaStoreInterface            $mfaStore;
+    private AuditLogInterface            $auditLog;
+    private CurrentAuthentication        $currentAuthentication;
+    private ProjectAuthenticatedUser     $projectAuthenticatedUser;
+    private IdentityInterface            $identity;
+    private PasswordHasher               $passwordHasher;
+    private UserSourceInterface          $userSource;
+
     public function __construct(
-        private UserSourceInterface                          $userSource,
-        #[SensitiveParameter] private PasswordHasher         $passwordHasher,
-        #[SensitiveParameter] private IdentityInterface      $identity,
-        private ProjectAuthenticatedUser                     $projectAuthenticatedUser,
-        #[\SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private AuditLogInterface                            $auditLog,
-        private MfaStoreInterface                            $mfaStore,
-        private StartMfaChallenge                            $startMfaChallenge,
-        private LoginRateLimit|null                          $rateLimit = null,
-        private DeterministicRiskEngine|null                 $riskEngine = null
-    ) {}
+        UserSourceInterface                          $userSource,
+        #[SensitiveParameter] PasswordHasher         $passwordHasher,
+        #[SensitiveParameter] IdentityInterface      $identity,
+        ProjectAuthenticatedUser                     $projectAuthenticatedUser,
+        #[\SensitiveParameter] CurrentAuthentication $currentAuthentication,
+        AuditLogInterface                            $auditLog,
+        MfaStoreInterface                            $mfaStore,
+        StartMfaChallenge                            $startMfaChallenge,
+        LoginRateLimit|null                          $rateLimit = null,
+        DeterministicRiskEngine|null                 $riskEngine = null
+    )
+    {
+        $this->userSource               = $userSource;
+        $this->passwordHasher           = $passwordHasher;
+        $this->identity                 = $identity;
+        $this->projectAuthenticatedUser = $projectAuthenticatedUser;
+        $this->currentAuthentication    = $currentAuthentication;
+        $this->auditLog                 = $auditLog;
+        $this->mfaStore                 = $mfaStore;
+        $this->startMfaChallenge        = $startMfaChallenge;
+        $this->rateLimit                = $rateLimit;
+        $this->riskEngine               = $riskEngine;
+    }
 
     /**
      * @throws AuthenticationFailed
@@ -60,14 +83,14 @@ final readonly class Login
         ) {
             $this->rateLimit?->recordFailed(identifier: $credentials->identifier);
             $this->auditLog->record(event: new AuditEvent(
-                                        name      : 'auth.login.failed',
-                                        occurredAt: new DateTimeImmutable(),
-                                        context   : [
-                                                        'identifier' => strtolower($credentials->identifier),
-                                                        'ip_address' => $credentials->ipAddress,
-                                                        'user_agent' => $credentials->userAgent,
-                                                    ]
-                                    ));
+                                               name      : 'auth.login.failed',
+                                               occurredAt: new DateTimeImmutable(),
+                                               context   : [
+                                                               'identifier' => strtolower($credentials->identifier),
+                                                               'ip_address' => $credentials->ipAddress,
+                                                               'user_agent' => $credentials->userAgent,
+                                                           ]
+                                           ));
 
             throw AuthenticationFailed::invalidCredentials();
         }
@@ -92,7 +115,7 @@ final readonly class Login
             );
         }
 
-        $issued  = $this->identity->issue(user: $user);
+        $issued = $this->identity->issue(user: $user);
         $this->identity->sessionIdentity()?->captureCurrentSession(
             ipAddress: $credentials->ipAddress,
             userAgent: $credentials->userAgent
@@ -110,23 +133,23 @@ final readonly class Login
 
         $this->currentAuthentication->store(context: $context);
         $riskDecision = $this->riskEngine?->assessSuccessfulAuthentication(
-            user      : $user,
-            ipAddress : $credentials->ipAddress,
-            userAgent : $credentials->userAgent
+            user     : $user,
+            ipAddress: $credentials->ipAddress,
+            userAgent: $credentials->userAgent
         );
 
         $this->rateLimit?->reset(identifier: $credentials->identifier);
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.login.succeeded',
-                                    occurredAt: new DateTimeImmutable(),
-                                    context   : [
-                                                    'user_id'    => $user->getId()->value,
-                                                    'mode'       => $issued->mode->value,
-                                                    'risk_action'=> $riskDecision?->action->value,
-                                                    'ip_address' => $credentials->ipAddress,
-                                                    'user_agent' => $credentials->userAgent,
-                                                ]
-                                ));
+                                           name      : 'auth.login.succeeded',
+                                           occurredAt: new DateTimeImmutable(),
+                                           context   : [
+                                                           'user_id'     => $user->getId()->value,
+                                                           'mode'        => $issued->mode->value,
+                                                           'risk_action' => $riskDecision?->action->value,
+                                                           'ip_address'  => $credentials->ipAddress,
+                                                           'user_agent'  => $credentials->userAgent,
+                                                       ]
+                                       ));
 
         return AuthenticationResult::success(
             context     : $context,

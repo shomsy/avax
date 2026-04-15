@@ -48,10 +48,17 @@ namespace Avax\Container\Tests\Capability\Providers\Runtime\Http {
 
     final readonly class FakeContainer
     {
+        private mixed $session;
+        private bool  $hasSession;
+
         public function __construct(
-            private bool                        $hasSession,
-            #[SensitiveParameter] private mixed $session
-        ) {}
+            bool                        $hasSession,
+            #[SensitiveParameter] mixed $session
+        )
+        {
+            $this->hasSession = $hasSession;
+            $this->session    = $session;
+        }
 
         public function has(string $id) : bool
         {

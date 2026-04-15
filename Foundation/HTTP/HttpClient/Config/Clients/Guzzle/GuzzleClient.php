@@ -28,6 +28,10 @@ final class GuzzleClient extends AbstractHttpClient
     use HandlesHttpResponseTrait;
     use SendsHttpRequestsTrait;
 
+    private readonly ResponseFactory $responseFactory;
+    private readonly LoggerInterface $dataLogger;
+    private readonly HttpClient      $httpClient;
+
     /**
      * Constructor for the class.
      *
@@ -36,11 +40,14 @@ final class GuzzleClient extends AbstractHttpClient
      * @param ResponseFactory $responseFactory Factory to create response objects.
      */
     public function __construct(
-        private readonly HttpClient      $httpClient,
-        private readonly LoggerInterface $dataLogger,
-        private readonly ResponseFactory $responseFactory,
+        HttpClient      $httpClient,
+        LoggerInterface $dataLogger,
+        ResponseFactory $responseFactory,
     )
     {
+        $this->httpClient      = $httpClient;
+        $this->dataLogger      = $dataLogger;
+        $this->responseFactory = $responseFactory;
         parent::__construct(logger: $dataLogger);
     }
 
@@ -82,7 +89,7 @@ final class GuzzleClient extends AbstractHttpClient
     private function logRequestError(string $method, string $endpoint, array $options, Throwable $throwable) : void
     {
         $this->dataLogger->error(
-            message: 'HTTP Request failed',
+            message: 'HTTP ServerRequest failed',
             context: [
                          'method'    => $method,
                          'endpoint'  => $endpoint,

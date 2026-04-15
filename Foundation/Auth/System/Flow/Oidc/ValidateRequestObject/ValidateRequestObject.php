@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace Avax\Auth\System\Flow\Oidc\ValidateRequestObject;
 
-use Avax\Auth\System\Capability\Oidc\OidcRequestObjectStoreInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
 use Avax\Auth\System\Capability\OAuth\PkceMethod;
+use Avax\Auth\System\Capability\Oidc\OidcRequestObjectStoreInterface;
 use Avax\Auth\System\Flow\OAuth\OAuthAuthorizationFailed;
 
 final readonly class ValidateRequestObject
 {
+    private OAuthClientRegistryInterface|null    $clientRegistry;
+    private OidcRequestObjectStoreInterface|null $requestObjectStore;
+
     public function __construct(
-        private OidcRequestObjectStoreInterface|null $requestObjectStore = null,
-        private OAuthClientRegistryInterface|null $clientRegistry = null
-    ) {}
+        OidcRequestObjectStoreInterface|null $requestObjectStore = null,
+        OAuthClientRegistryInterface|null    $clientRegistry = null
+    )
+    {
+        $this->requestObjectStore = $requestObjectStore;
+        $this->clientRegistry     = $clientRegistry;
+    }
 
     public function execute(ValidateRequestObjectData $data) : ValidatedRequestObject
     {
@@ -30,8 +37,8 @@ final readonly class ValidateRequestObject
             throw OAuthAuthorizationFailed::invalidRequestObject();
         }
 
-        $claims = $requestObject->claims;
-        $clientId = $this->readStringValue(value: $claims['client_id'] ?? null);
+        $claims      = $requestObject->claims;
+        $clientId    = $this->readStringValue(value: $claims['client_id'] ?? null);
         $redirectUri = $this->readStringValue(value: $claims['redirect_uri'] ?? null);
 
         if ($clientId === null || $redirectUri === null) {
@@ -49,19 +56,31 @@ final readonly class ValidateRequestObject
         }
 
         return new ValidatedRequestObject(
-            requestUri: $requestUri,
-            clientId: $clientId,
-            redirectUri: $redirectUri,
-            scopes: $this->normalizeScopes(scopes: $this->normalizeScopeValue(value: $claims['scope'] ?? null)),
-            state: $this->readStringValue(value: $claims['state'] ?? null),
-            nonce: $this->readStringValue(value: $claims['nonce'] ?? null),
-            codeChallenge: $this->readStringValue(value: $claims['code_challenge'] ?? null),
+            requestUri         : $requestUri,
+            clientId           : $clientId,
+            redirectUri        : $redirectUri,
+            scopes             : $this->normalizeScopes(scopes: $this->normalizeScopeValue(value: $claims['scope'] ?? null)),
+            state              : $this->readStringValue(value: $claims['state'] ?? null),
+            nonce              : $this->readStringValue(value: $claims['nonce'] ?? null),
+            codeChallenge      : $this->readStringValue(value: $claims['code_challenge'] ?? null),
             codeChallengeMethod: $this->normalizeCodeChallengeMethod(value: $claims['code_challenge_method'] ?? null)
         );
     }
 
+    private function readStringValue(mixed $value) : string|null
+    {
+        if (! is_string($value)) {
+            return null;
+        }
+
+        $normalized = trim($value);
+
+        return $normalized !== '' ? $normalized : null;
+    }
+
     /**
      * @param list<string> $scopes
+     *
      * @return list<string>
      */
     private function normalizeScopes(array $scopes) : array
@@ -90,8 +109,9 @@ final readonly class ValidateRequestObject
     }
 
     /**
-     * @return list<string>
      * @param array<int, string>|string|null $value
+     *
+     * @return list<string>
      */
     private function normalizeScopeValue(string|array|null $value) : array
     {
@@ -114,17 +134,6 @@ final readonly class ValidateRequestObject
             return null;
         }
 
-        return PkceMethod::tryFrom(trim($value));
-    }
-
-    private function readStringValue(mixed $value) : string|null
-    {
-        if (! is_string($value)) {
-            return null;
-        }
-
-        $normalized = trim($value);
-
-        return $normalized !== '' ? $normalized : null;
+        return PkceMethod::tryFrom(value: trim($value));
     }
 }

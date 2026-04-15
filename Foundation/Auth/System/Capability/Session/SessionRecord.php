@@ -13,18 +13,46 @@ use SensitiveParameter;
  */
 final readonly class SessionRecord
 {
+    public string|null            $revokeReason;
+    public DateTimeImmutable|null $revokedAt;
+    public string|null            $userAgentCreated;
+    public string|null            $ipCreated;
+    public DateTimeImmutable      $absoluteExpiresAt;
+    public DateTimeImmutable      $idleExpiresAt;
+    public DateTimeImmutable      $lastSeenAt;
+    public DateTimeImmutable      $createdAt;
+    public UserId                 $userId;
+    public string                 $sessionId;
+
     public function __construct(
-        #[SensitiveParameter] public string $sessionId,
-        public UserId                       $userId,
-        public DateTimeImmutable            $createdAt,
-        public DateTimeImmutable            $lastSeenAt,
-        public DateTimeImmutable            $idleExpiresAt,
-        public DateTimeImmutable            $absoluteExpiresAt,
-        public string|null                  $ipCreated = null,
-        public string|null                  $userAgentCreated = null,
-        public DateTimeImmutable|null       $revokedAt = null,
-        public string|null                  $revokeReason = null
-    ) {}
+        #[SensitiveParameter] string $sessionId,
+        UserId                       $userId,
+        DateTimeImmutable            $createdAt,
+        DateTimeImmutable            $lastSeenAt,
+        DateTimeImmutable            $idleExpiresAt,
+        DateTimeImmutable            $absoluteExpiresAt,
+        string|null                  $ipCreated = null,
+        string|null                  $userAgentCreated = null,
+        DateTimeImmutable|null       $revokedAt = null,
+        string|null                  $revokeReason = null
+    )
+    {
+        $this->sessionId         = $sessionId;
+        $this->userId            = $userId;
+        $this->createdAt         = $createdAt;
+        $this->lastSeenAt        = $lastSeenAt;
+        $this->idleExpiresAt     = $idleExpiresAt;
+        $this->absoluteExpiresAt = $absoluteExpiresAt;
+        $this->ipCreated         = $ipCreated;
+        $this->userAgentCreated  = $userAgentCreated;
+        $this->revokedAt         = $revokedAt;
+        $this->revokeReason      = $revokeReason;
+    }
+
+    public function isActiveAt(DateTimeImmutable $moment) : bool
+    {
+        return ! $this->isRevoked() && ! $this->isExpiredAt(moment: $moment);
+    }
 
     public function isRevoked() : bool
     {
@@ -34,11 +62,6 @@ final readonly class SessionRecord
     public function isExpiredAt(DateTimeImmutable $moment) : bool
     {
         return $this->idleExpiresAt <= $moment || $this->absoluteExpiresAt <= $moment;
-    }
-
-    public function isActiveAt(DateTimeImmutable $moment) : bool
-    {
-        return ! $this->isRevoked() && ! $this->isExpiredAt(moment: $moment);
     }
 
     /**

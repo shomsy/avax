@@ -14,12 +14,16 @@ final class ResolveGreeter
 
 final class NeedsResolveGreeter
 {
-    public function __construct(public ResolveGreeter $greeter) {}
+    public ResolveGreeter $greeter;
+
+    public function __construct(ResolveGreeter $greeter) { $this->greeter = $greeter; }
 }
 
 final class ResolveWithParameters
 {
-    public function __construct(public string $name) {}
+    public string $name;
+
+    public function __construct(string $name) { $this->name = $name; }
 }
 
 $container = makeTestContainer();

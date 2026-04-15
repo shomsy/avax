@@ -13,6 +13,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 readonly class JsonResponseMiddleware implements MiddlewareInterface
 {
+    private ResponseFactory $responseFactory;
+
     /**
      * Constructor method for initializing the ResponseFactory dependency.
      *
@@ -20,7 +22,7 @@ readonly class JsonResponseMiddleware implements MiddlewareInterface
      *
      * @return void
      */
-    public function __construct(private ResponseFactory $responseFactory) {}
+    public function __construct(ResponseFactory $responseFactory) { $this->responseFactory = $responseFactory; }
 
     /**
      * PSR-15 process method: intercept and modify responses to ensure JSON format.

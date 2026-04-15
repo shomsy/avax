@@ -11,7 +11,7 @@ final class HmacTokenCodecTest extends TestCase
 {
     public function testCodecRejectsTokenSignedWithDifferentKeyVersion() : void
     {
-        $encoder = new HmacTokenCodec(
+        $encoder         = new HmacTokenCodec(
             secret: 'secret',
             keyId : '2026-04-primary'
         );
@@ -21,12 +21,12 @@ final class HmacTokenCodecTest extends TestCase
         );
 
         $token = $encoder->encode(claims: [
-            'sub' => 1,
-            'iat' => 1,
-            'nbf' => 1,
-            'exp' => 2,
-            'jti' => 'token-1',
-        ]);
+                                              'sub' => 1,
+                                              'iat' => 1,
+                                              'nbf' => 1,
+                                              'exp' => 2,
+                                              'jti' => 'token-1',
+                                          ]);
 
         $this->assertNull(actual: $otherKeyVersion->decode(token: $token));
         $this->assertNotNull(actual: $encoder->decode(token: $token));

@@ -8,17 +8,38 @@ use DateTimeImmutable;
 
 final readonly class TenantInvite
 {
+    public int|null               $acceptedByUserId;
+    public DateTimeImmutable|null $acceptedAt;
+    public DateTimeImmutable      $createdAt;
+    public string                 $invitedBy;
+    public string                 $tokenHash;
+    public TenantMemberRole       $role;
+    public string                 $email;
+    public string                 $tenantId;
+    public string                 $inviteId;
+
     public function __construct(
-        public string $inviteId,
-        public string $tenantId,
-        public string $email,
-        public TenantMemberRole $role,
-        public string $tokenHash,
-        public string $invitedBy,
-        public DateTimeImmutable $createdAt,
-        public DateTimeImmutable|null $acceptedAt = null,
-        public int|null $acceptedByUserId = null
-    ) {}
+        string                        $inviteId,
+        string                        $tenantId,
+        #[\SensitiveParameter] string $email,
+        TenantMemberRole              $role,
+        #[\SensitiveParameter] string $tokenHash,
+        string                        $invitedBy,
+        DateTimeImmutable             $createdAt,
+        DateTimeImmutable|null        $acceptedAt = null,
+        int|null                      $acceptedByUserId = null
+    )
+    {
+        $this->inviteId         = $inviteId;
+        $this->tenantId         = $tenantId;
+        $this->email            = $email;
+        $this->role             = $role;
+        $this->tokenHash        = $tokenHash;
+        $this->invitedBy        = $invitedBy;
+        $this->createdAt        = $createdAt;
+        $this->acceptedAt       = $acceptedAt;
+        $this->acceptedByUserId = $acceptedByUserId;
+    }
 
     public function isAccepted() : bool
     {

@@ -9,9 +9,14 @@ use Avax\Auth\System\Capability\Tenant\TenantStoreInterface;
 
 final readonly class ReadTenants
 {
+    private TenantStoreInterface $tenantStore;
+
     public function __construct(
-        private TenantStoreInterface $tenantStore
-    ) {}
+        TenantStoreInterface $tenantStore
+    )
+    {
+        $this->tenantStore = $tenantStore;
+    }
 
     /**
      * @return list<Tenant>

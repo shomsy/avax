@@ -17,6 +17,8 @@ use Avax\Migrations\Execution\Runner\MigrationRunner;
  */
 final readonly class Module implements LifecycleInterface
 {
+    private Container $container;
+
     /**
      * Constructor promoting the foundation container via PHP 8.3 features.
      *
@@ -25,8 +27,11 @@ final readonly class Module implements LifecycleInterface
      * @param Container $container The active DI vessel
      */
     public function __construct(
-        private Container $container
-    ) {}
+        Container $container
+    )
+    {
+        $this->container = $container;
+    }
 
     public static function declare() : array
     {

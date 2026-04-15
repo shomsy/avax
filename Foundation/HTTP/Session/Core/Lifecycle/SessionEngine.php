@@ -41,6 +41,18 @@ use Throwable;
  */
 final readonly class SessionEngine
 {
+    private HttpContextInterface|null  $httpContext;
+    private SessionRegistry|null       $registry;
+    private PolicyInterface|null       $policies;
+    private SessionSignature|null      $signature;
+    private Events|null                $events;
+    private Audit|null                 $audit;
+    private SessionIdProviderInterface $idProvider;
+    private Recovery                   $recovery;
+    private Encrypter                  $encrypter;
+    private Config                     $config;
+    private StoreInterface             $store;
+
     /**
      * SessionEngine Constructor.
      *
@@ -59,18 +71,31 @@ final readonly class SessionEngine
      * @param SessionRegistry|null       $registry   Optional multi-login registry handler.
      */
     public function __construct(
-        private StoreInterface             $store,
-        private Config                     $config,
-        private Encrypter                  $encrypter,
-        private Recovery                   $recovery,
-        private SessionIdProviderInterface $idProvider,
-        private Audit|null                 $audit = null,
-        private Events|null                $events = null,
-        private SessionSignature|null      $signature = null,
-        private PolicyInterface|null       $policies = null,
-        private SessionRegistry|null       $registry = null,
-        private HttpContextInterface|null  $httpContext = null
-    ) {}
+        StoreInterface             $store,
+        Config                     $config,
+        Encrypter                  $encrypter,
+        Recovery                   $recovery,
+        SessionIdProviderInterface $idProvider,
+        Audit|null                 $audit = null,
+        Events|null                $events = null,
+        SessionSignature|null      $signature = null,
+        PolicyInterface|null       $policies = null,
+        SessionRegistry|null       $registry = null,
+        HttpContextInterface|null  $httpContext = null
+    )
+    {
+        $this->store       = $store;
+        $this->config      = $config;
+        $this->encrypter   = $encrypter;
+        $this->recovery    = $recovery;
+        $this->idProvider  = $idProvider;
+        $this->audit       = $audit;
+        $this->events      = $events;
+        $this->signature   = $signature;
+        $this->policies    = $policies;
+        $this->registry    = $registry;
+        $this->httpContext = $httpContext;
+    }
 
     // ---------------------------------------------------------------------
     // 🔹 Core Accessors

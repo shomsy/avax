@@ -18,11 +18,6 @@ final class ArraySessionStore implements SessionStoreInterface
 
     private string|null $sessionId = null;
 
-    public function start() : void
-    {
-        $this->sessionId ??= 'session-' . ++$this->sequence;
-    }
-
     public function regenerate() : string
     {
         $this->sessionId = 'session-' . ++$this->sequence;
@@ -44,6 +39,11 @@ final class ArraySessionStore implements SessionStoreInterface
     {
         $this->start();
         $this->values[$key] = $value;
+    }
+
+    public function start() : void
+    {
+        $this->sessionId ??= 'session-' . ++$this->sequence;
     }
 
     public function forget(string $key) : void

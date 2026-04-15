@@ -11,11 +11,22 @@ use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
  */
 final readonly class NormalizeAuditEvent
 {
+    private AuditLegalHoldPolicyInterface|null $legalHoldPolicy;
+    private bool                               $maskSensitiveContext;
+    private MaskAuditContext                   $maskAuditContext;
+
     public function __construct(
-        private MaskAuditContext $maskAuditContext = new MaskAuditContext(),
-        private bool $maskSensitiveContext = true,
-        private AuditLegalHoldPolicyInterface|null $legalHoldPolicy = null
-    ) {}
+        MaskAuditContext|null              $maskAuditContext = null,
+        bool|null                          $maskSensitiveContext = null,
+        AuditLegalHoldPolicyInterface|null $legalHoldPolicy = null
+    )
+    {
+        $maskAuditContext           ??= new MaskAuditContext();
+        $maskSensitiveContext       ??= true;
+        $this->maskAuditContext     = $maskAuditContext;
+        $this->maskSensitiveContext = $maskSensitiveContext;
+        $this->legalHoldPolicy      = $legalHoldPolicy;
+    }
 
     /**
      * @return array<string, mixed>
@@ -24,15 +35,15 @@ final readonly class NormalizeAuditEvent
     {
         $maskSensitiveContext = $this->maskSensitiveContext
             && ! ($this->legalHoldPolicy?->preserveSensitiveContext(event: $event) ?? false);
-        $context = $maskSensitiveContext
+        $context              = $maskSensitiveContext
             ? $this->maskAuditContext->execute(context: $event->context)
             : $event->context;
 
         return [
-            'name' => $event->name,
-            'occurred_at' => $event->occurredAt->format(format: DATE_ATOM),
+            'name'           => $event->name,
+            'occurred_at'    => $event->occurredAt->format(format: DATE_ATOM),
             'correlation_id' => $event->correlationId,
-            'context' => $context,
+            'context'        => $context,
         ];
     }
 }

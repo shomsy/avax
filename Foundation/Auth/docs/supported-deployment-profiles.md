@@ -14,6 +14,7 @@ This package supports the following deployment profiles.
 - durable session registry required for enterprise mode
 
 Use when:
+
 - browser is the primary client
 - you want cookie-backed auth instead of bearer tokens in storage
 
@@ -25,6 +26,7 @@ Use when:
 - DPoP or mTLS verification at the HTTP boundary
 
 Use when:
+
 - SPA, mobile, CLI, or partner API clients consume the system
 
 ## Tenant Identity Profile
@@ -35,6 +37,7 @@ Use when:
 - tenant security change approval and rollback
 
 Use when:
+
 - the package acts as an identity kernel for multi-tenant products
 
 ## Enterprise Mode
@@ -42,6 +45,7 @@ Use when:
 Enterprise mode is a stricter build posture, not a separate product.
 
 Required:
+
 - durable session registry
 - release evidence
 - source-truth checks

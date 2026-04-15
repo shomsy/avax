@@ -25,7 +25,9 @@ final class SliceInternalAudit {}
 
 final class SliceBillingEntry
 {
-    public function __construct(public SlicePaymentGateway $gateway) {}
+    public SlicePaymentGateway $gateway;
+
+    public function __construct(SlicePaymentGateway $gateway) { $this->gateway = $gateway; }
 }
 
 final class SliceBillingHelper {}

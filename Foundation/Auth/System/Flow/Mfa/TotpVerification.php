@@ -9,11 +9,20 @@ namespace Avax\Auth\System\Flow\Mfa;
  */
 final readonly class TotpVerification
 {
+    public int|null $timeStep;
+    public string   $reason;
+    public bool     $accepted;
+
     private function __construct(
-        public bool     $accepted,
-        public string   $reason,
-        public int|null $timeStep = null
-    ) {}
+        bool     $accepted,
+        string   $reason,
+        int|null $timeStep = null
+    )
+    {
+        $this->accepted = $accepted;
+        $this->reason   = $reason;
+        $this->timeStep = $timeStep;
+    }
 
     public static function accepted(int $timeStep) : self
     {

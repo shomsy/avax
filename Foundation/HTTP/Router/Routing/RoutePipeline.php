@@ -42,7 +42,11 @@ final class RoutePipeline
      *
      * @var array<class-string<RouteStage>>
      */
-    private array $stages = [];
+    private array                         $stages = [];
+    private readonly StageChain           $stageChain;
+    private readonly ContainerInterface   $container;
+    private readonly ControllerDispatcher $dispatcher;
+    private readonly RouteDefinition      $route;
 
     /**
      * Constructor
@@ -53,11 +57,17 @@ final class RoutePipeline
      * @param ControllerDispatcher $dispatcher Handles the final dispatching of the controller action.
      */
     public function __construct(
-        private readonly RouteDefinition      $route,
-        private readonly ControllerDispatcher $dispatcher,
-        private readonly ContainerInterface   $container,
-        private readonly StageChain           $stageChain
-    ) {}
+        RouteDefinition      $route,
+        ControllerDispatcher $dispatcher,
+        ContainerInterface   $container,
+        StageChain           $stageChain
+    )
+    {
+        $this->route      = $route;
+        $this->dispatcher = $dispatcher;
+        $this->container  = $container;
+        $this->stageChain = $stageChain;
+    }
 
     /**
      * Factory method for constructing the pipeline instance

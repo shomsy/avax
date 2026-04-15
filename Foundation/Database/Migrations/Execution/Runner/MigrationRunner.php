@@ -16,10 +16,17 @@ use Throwable;
  */
 final readonly class MigrationRunner
 {
+    private QueryBuilder        $builder;
+    private MigrationRepository $repository;
+
     public function __construct(
-        private MigrationRepository $repository,
-        private QueryBuilder        $builder
-    ) {}
+        MigrationRepository $repository,
+        QueryBuilder        $builder
+    )
+    {
+        $this->repository = $repository;
+        $this->builder    = $builder;
+    }
 
     public function up(array $migrations, string $path, bool $dryRun = false) : void
     {

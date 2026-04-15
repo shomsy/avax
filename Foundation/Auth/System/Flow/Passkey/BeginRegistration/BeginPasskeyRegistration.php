@@ -22,17 +22,38 @@ use SensitiveParameter;
 
 final readonly class BeginPasskeyRegistration
 {
+    private string                          $rpName;
+    private string                          $rpId;
+    private Clock                           $clock;
+    private AuditLogInterface               $auditLog;
+    private PasskeyChallengeStoreInterface  $challengeStore;
+    private PasskeyCredentialStoreInterface $credentialStore;
+    private PasskeyRuntimeInterface         $runtime;
+    private RequireFreshMfa                 $requireFreshMfa;
+    private CurrentAuthentication           $currentAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication           $currentAuthentication,
-        private RequireFreshMfa                                       $requireFreshMfa,
-        private PasskeyRuntimeInterface                               $runtime,
-        #[SensitiveParameter] private PasskeyCredentialStoreInterface $credentialStore,
-        private PasskeyChallengeStoreInterface                        $challengeStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        private string                                                $rpId,
-        private string                                                $rpName
-    ) {}
+        #[SensitiveParameter] CurrentAuthentication           $currentAuthentication,
+        RequireFreshMfa                                       $requireFreshMfa,
+        PasskeyRuntimeInterface                               $runtime,
+        #[SensitiveParameter] PasskeyCredentialStoreInterface $credentialStore,
+        PasskeyChallengeStoreInterface                        $challengeStore,
+        AuditLogInterface                                     $auditLog,
+        Clock                                                 $clock,
+        string                                                $rpId,
+        string                                                $rpName
+    )
+    {
+        $this->currentAuthentication = $currentAuthentication;
+        $this->requireFreshMfa       = $requireFreshMfa;
+        $this->runtime               = $runtime;
+        $this->credentialStore       = $credentialStore;
+        $this->challengeStore        = $challengeStore;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+        $this->rpId                  = $rpId;
+        $this->rpName                = $rpName;
+    }
 
     /**
      * @throws PasskeyOperationFailed
@@ -59,28 +80,28 @@ final readonly class BeginPasskeyRegistration
         );
 
         $this->challengeStore->issue(record: new PasskeyChallengeRecord(
-            challengeId: $challengeId,
-            challenge  : $challenge,
-            purpose    : PasskeyChallengePurpose::REGISTRATION,
-            expiresAt  : $this->clock->now()->modify(modifier: '+5 minutes'),
-            userId     : $user->id
-        ));
+                                                 challengeId: $challengeId,
+                                                 challenge  : $challenge,
+                                                 purpose    : PasskeyChallengePurpose::REGISTRATION,
+                                                 expiresAt  : $this->clock->now()->modify(modifier: '+5 minutes'),
+                                                 userId     : $user->id
+                                             ));
 
         $options = $this->runtime->beginRegistration(
-            rpId               : $this->rpId,
-            rpName             : $this->rpName,
-            userId             : $user->id,
-            userName           : $user->username,
-            displayName        : $user->email,
-            challenge          : $challenge,
+            rpId                : $this->rpId,
+            rpName              : $this->rpName,
+            userId              : $user->id,
+            userName            : $user->username,
+            displayName         : $user->email,
+            challenge           : $challenge,
             excludeCredentialIds: $excludeIds
         );
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.passkey.registration.started',
-            occurredAt: $this->clock->now(),
-            context   : ['user_id' => $user->id, 'challenge_id' => $challengeId]
-        ));
+                                           name      : 'auth.passkey.registration.started',
+                                           occurredAt: $this->clock->now(),
+                                           context   : ['user_id' => $user->id, 'challenge_id' => $challengeId]
+                                       ));
 
         return new PasskeyRegistration(challengeId: $challengeId, options: $options);
     }

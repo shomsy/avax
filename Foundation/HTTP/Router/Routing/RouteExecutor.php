@@ -18,9 +18,14 @@ use ReflectionException;
  */
 final readonly class RouteExecutor
 {
+    private ControllerDispatcher $controllerDispatcher;
+
     public function __construct(
-        private ControllerDispatcher $controllerDispatcher
-    ) {}
+        ControllerDispatcher $controllerDispatcher
+    )
+    {
+        $this->controllerDispatcher = $controllerDispatcher;
+    }
 
     /**
      * Executes the route action and returns the response.

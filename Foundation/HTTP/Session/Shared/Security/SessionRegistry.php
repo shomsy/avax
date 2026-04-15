@@ -54,10 +54,14 @@ use SensitiveParameter;
 final class SessionRegistry
 {
     private const string REGISTRY_PREFIX = '_registry_';
+    private readonly StoreInterface $store;
 
     public function __construct(
-        private readonly StoreInterface $store
-    ) {}
+        StoreInterface $store
+    )
+    {
+        $this->store = $store;
+    }
 
     // ============================================================
     // 1️⃣ REGISTRATION — adding new sessions

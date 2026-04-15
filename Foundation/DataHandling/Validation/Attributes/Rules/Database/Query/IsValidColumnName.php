@@ -18,9 +18,14 @@ use Avax\DataHandling\Validation\Attributes\AbstractRule;
 #[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_METHOD)]
 class IsValidColumnName extends AbstractRule
 {
+    private readonly string $message;
+
     public function __construct(
-        private readonly string $message = 'The :attribute must be a valid column name (alphanumeric, underscore, optional dot, wildcard).'
-    ) {}
+        string $message = 'The :attribute must be a valid column name (alphanumeric, underscore, optional dot, wildcard).'
+    )
+    {
+        $this->message = $message;
+    }
 
     public function validate(mixed $value, array $data, string $property) : void
     {

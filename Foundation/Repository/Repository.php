@@ -17,6 +17,8 @@ use Throwable;
  */
 abstract class Repository
 {
+    protected QueryBuilder $queryBuilder;
+
     /**
      * Settings constructor.
      *
@@ -24,7 +26,7 @@ abstract class Repository
      *
      * @param QueryBuilder $queryBuilder The query builder instance for database operations.
      */
-    public function __construct(protected QueryBuilder $queryBuilder) {}
+    public function __construct(QueryBuilder $queryBuilder) { $this->queryBuilder = $queryBuilder; }
 
     /**
      * @param int $id

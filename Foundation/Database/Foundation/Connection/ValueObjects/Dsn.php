@@ -11,12 +11,14 @@ namespace Avax\Database\Connection\ValueObjects;
  */
 final readonly class Dsn
 {
+    private string $dsn;
+
     /**
      * Private constructor — use `Dsn::for()` to create one.
      *
      * @param string $dsn The final, "Computer-Ready" address string.
      */
-    private function __construct(private string $dsn) {}
+    private function __construct(string $dsn) { $this->dsn = $dsn; }
 
     /**
      * Build a technical address from simple settings.

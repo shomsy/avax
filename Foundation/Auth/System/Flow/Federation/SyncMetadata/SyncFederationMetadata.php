@@ -14,12 +14,23 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class SyncFederationMetadata
 {
+    private Clock                              $clock;
+    private AuditLogInterface                  $auditLog;
+    private FederationMetadataRuntimeInterface $runtime;
+    private FederationConnectionStoreInterface $connectionStore;
+
     public function __construct(
-        private FederationConnectionStoreInterface $connectionStore,
-        private FederationMetadataRuntimeInterface $runtime,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        FederationConnectionStoreInterface $connectionStore,
+        FederationMetadataRuntimeInterface $runtime,
+        AuditLogInterface                  $auditLog,
+        Clock                              $clock
+    )
+    {
+        $this->connectionStore = $connectionStore;
+        $this->runtime         = $runtime;
+        $this->auditLog        = $auditLog;
+        $this->clock           = $clock;
+    }
 
     /**
      * @throws FederationFailed
@@ -38,25 +49,25 @@ final readonly class SyncFederationMetadata
         }
 
         $metadata = $this->runtime->readMetadata(connection: $connection);
-        $synced = $connection->withMetadata(
+        $synced   = $connection->withMetadata(
             metadataIssuer: $metadata->issuer,
             metadataHash  : hash('sha256', json_encode([
-                'issuer' => $metadata->issuer,
-                'single_sign_on_url' => $metadata->singleSignOnUrl,
-                'claims' => $metadata->claims,
-            ], JSON_THROW_ON_ERROR)),
+                                                           'issuer' => $metadata->issuer,
+                                                                                                                                                                          'single_sign_on_url' => $metadata->singleSignOnUrl,
+                                                           'claims' => $metadata->claims,
+                                                       ], JSON_THROW_ON_ERROR)),
             syncedAt      : $this->clock->now()
         );
         $this->connectionStore->save(connection: $synced);
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.federation.metadata.synced',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'connection_id' => $synced->connectionId,
-                'tenant' => $synced->tenantSlug,
-                'metadata_issuer' => $synced->metadataIssuer,
-            ]
-        ));
+                                           name      : 'auth.federation.metadata.synced',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'connection_id'   => $synced->connectionId,
+                                                           'tenant'          => $synced->tenantSlug,
+                                                           'metadata_issuer' => $synced->metadataIssuer,
+                                                       ]
+                                       ));
 
         return $synced;
     }

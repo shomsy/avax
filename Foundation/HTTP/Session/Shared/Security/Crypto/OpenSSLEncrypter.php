@@ -15,10 +15,14 @@ use Avax\HTTP\Session\Shared\Exceptions\EncryptionException;
 final class OpenSSLEncrypter implements Encrypter
 {
     private const string CIPHER = 'AES-256-CBC';
+    private readonly string $key;
 
     public function __construct(
-        private readonly string $key
-    ) {}
+        string $key
+    )
+    {
+        $this->key = $key;
+    }
 
     public function encrypt(mixed $value) : string
     {

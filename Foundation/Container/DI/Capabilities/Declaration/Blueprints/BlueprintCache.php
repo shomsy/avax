@@ -13,14 +13,27 @@ use Avax\Container\DI\Capabilities\Diagnostics\Observability\ResolutionMetrics;
 final class BlueprintCache
 {
     /** @var array<string, ServiceBlueprint> */
-    private array $items = [];
+    private array                           $items = [];
+    private readonly ResolutionMetrics|null $metrics;
+    private readonly bool                   $debug;
+    private readonly string                 $cacheVersion;
+    private readonly string                 $cacheDir;
 
     public function __construct(
-        private readonly string                 $cacheDir = '',
-        private readonly string                 $cacheVersion = 'container-v1',
-        private readonly bool                   $debug = false,
-        private readonly ResolutionMetrics|null $metrics = null
-    ) {}
+        string|null            $cacheDir = null,
+        string|null            $cacheVersion = null,
+        bool|null              $debug = null,
+        ResolutionMetrics|null $metrics = null
+    )
+    {
+        $cacheDir           ??= '';
+        $cacheVersion       ??= 'container-v1';
+        $debug              ??= false;
+        $this->cacheDir     = $cacheDir;
+        $this->cacheVersion = $cacheVersion;
+        $this->debug        = $debug;
+        $this->metrics      = $metrics;
+    }
 
     /**
      * Returns whether source freshness should be rechecked on reads.

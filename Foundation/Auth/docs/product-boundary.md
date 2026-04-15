@@ -29,12 +29,14 @@ and full identity platform.
 ## Auth Kernel
 
 **What it is:**
+
 - Pure authentication and authorization primitives
 - No tenant awareness
 - No user provisioning
 - No federation
 
 **Shipped capabilities:**
+
 - Password-based authentication (bcrypt/argon2)
 - MFA (TOTP, backup codes, recovery)
 - Session management and hardening
@@ -45,6 +47,7 @@ and full identity platform.
 - Audit logging
 
 **NOT part of auth kernel:**
+
 - Tenant management
 - User provisioning/scim
 - Federation connections
@@ -56,12 +59,14 @@ and full identity platform.
 ## Identity Kernel
 
 **What it is:**
+
 - Auth kernel + tenant/customer isolation
 - User lifecycle management
 - Federation
 - Administrative controls
 
 **Additional capabilities over auth kernel:**
+
 - Tenant creation, membership, roles
 - Tenant-scoped user management
 - Federation (SAML/OIDC)
@@ -71,6 +76,7 @@ and full identity platform.
 - Lifecycle orchestration
 
 **NOT part of identity kernel:**
+
 - Full tenant-admin UI
 - Cross-org approval
 - SAML brokering
@@ -81,6 +87,7 @@ and full identity platform.
 ## Full Identity Platform
 
 **What it is NOT:**
+
 - This package is NOT a full identity platform
 - It does NOT ship complete UI
 - It does NOT include SIEM/KMS/HSM integrations
@@ -88,6 +95,7 @@ and full identity platform.
 - It does NOT have certified SCIM product
 
 **What would be needed for full platform:**
+
 - Complete admin UI
 - SIEM integrations
 - KMS/HSM support
@@ -100,36 +108,38 @@ and full identity platform.
 
 ## Quick Reference
 
-| Capability | Auth Kernel | Identity Kernel | Full Platform |
-|------------|-----------|--------------|-------------|
-| Password auth | ✅ | ✅ | ✅ |
-| MFA | ✅ | ✅ | ✅ |
-| OAuth 2.0 | ✅ | ✅ | ✅ |
-| JWT | ✅ | ✅ | ✅ |
-| Sessions | ✅ | ✅ | ✅ |
-| Sender constraints | ✅ | ✅ | ✅ |
-| Tenants | ❌ | ✅ | ✅ |
-| Membership | ❌ | ✅ | ✅ |
-| SCIM | ❌ | ✅ | ✅ |
-| Federation | ❌ | ✅ | ✅ |
-| Admin elevation | ❌ | ✅ | ✅ |
-| Lifecycle | ❌ | ✅ | ✅ |
-| Admin UI | ❌ | ❌ | ✅ |
-| SIEM | ❌ | ❌ | ✅ |
-| Email | ❌ | ❌ | ✅ |
-| SAML brokering | ❌ | ❌ | ✅ |
-| Certification | ❌ | ❌ | ✅ |
+| Capability         | Auth Kernel | Identity Kernel | Full Platform |
+|--------------------|-------------|-----------------|---------------|
+| Password auth      | ✅           | ✅               | ✅             |
+| MFA                | ✅           | ✅               | ✅             |
+| OAuth 2.0          | ✅           | ✅               | ✅             |
+| JWT                | ✅           | ✅               | ✅             |
+| Sessions           | ✅           | ✅               | ✅             |
+| Sender constraints | ✅           | ✅               | ✅             |
+| Tenants            | ❌           | ✅               | ✅             |
+| Membership         | ❌           | ✅               | ✅             |
+| SCIM               | ❌           | ✅               | ✅             |
+| Federation         | ❌           | ✅               | ✅             |
+| Admin elevation    | ❌           | ✅               | ✅             |
+| Lifecycle          | ❌           | ✅               | ✅             |
+| Admin UI           | ❌           | ❌               | ✅             |
+| SIEM               | ❌           | ❌               | ✅             |
+| Email              | ❌           | ❌               | ✅             |
+| SAML brokering     | ❌           | ❌               | ✅             |
+| Certification      | ❌           | ❌               | ✅             |
 
 ---
 
 ## Claiming the Right Scope
 
 **Correct:**
+
 - "Avax Auth is an authentication and authorization kernel"
 - "This package provides identity primitives, not a full platform"
 - "Use it to build your own identity solution"
 
 **Incorrect:**
+
 - "Avax Auth is an identity platform like Auth0"
 - "It includes everything you need for user management"
 - "Just install and you have full SSO"

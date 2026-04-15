@@ -17,9 +17,14 @@ use SensitiveParameter;
  */
 final readonly class VerifyMtlsSenderConstraint
 {
+    private AuditLogInterface $auditLog;
+
     public function __construct(
-        private AuditLogInterface $auditLog = new NullAuditLog()
-    ) {}
+        AuditLogInterface $auditLog = new NullAuditLog()
+    )
+    {
+        $this->auditLog = $auditLog;
+    }
 
     /**
      * @throws MtlsBindingFailed
@@ -49,6 +54,16 @@ final readonly class VerifyMtlsSenderConstraint
     }
 
     /**
+     * @param array<string, mixed> $server
+     */
+    private function readServerValue(array $server, string $name) : string|null
+    {
+        $value = $server[$name] ?? null;
+
+        return is_scalar($value) ? (string) $value : null;
+    }
+
+    /**
      * @param array<string, mixed> $headers
      */
     private function readHeader(#[SensitiveParameter] array $headers, string $name) : string|null
@@ -68,26 +83,16 @@ final readonly class VerifyMtlsSenderConstraint
         return null;
     }
 
-    /**
-     * @param array<string, mixed> $server
-     */
-    private function readServerValue(array $server, string $name) : string|null
-    {
-        $value = $server[$name] ?? null;
-
-        return is_scalar($value) ? (string) $value : null;
-    }
-
     private function recordFailure(string $reason, HttpOAuthProofInput $input) : void
     {
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.oauth.sender_constraint.mtls.failed',
-            occurredAt: new DateTimeImmutable(),
-            context   : [
-                'reason' => $reason,
-                'method' => strtoupper($input->method),
-                'uri' => $input->uri,
-            ]
-        ));
+                                           name      : 'auth.oauth.sender_constraint.mtls.failed',
+                                           occurredAt: new DateTimeImmutable(),
+                                           context   : [
+                                                           'reason' => $reason,
+                                                           'method' => strtoupper($input->method),
+                                                           'uri'    => $input->uri,
+                                                       ]
+                                       ));
     }
 }

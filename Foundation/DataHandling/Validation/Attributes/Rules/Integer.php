@@ -28,6 +28,7 @@ class Integer
      * It uses a placeholder to include the property name dynamically.
      */
     private const string ERROR_MESSAGE = 'The "%s" field must be an integer.';
+    private readonly string|null $message;
 
     /**
      * Custom error message for validation failures.
@@ -35,7 +36,7 @@ class Integer
      * @var string|null A custom message provided at instantiation to override the default.
      *                  If null, the default error message will be used.
      */
-    public function __construct(private readonly string|null $message = null) {}
+    public function __construct(string|null $message = null) { $this->message = $message; }
 
     /**
      * Validates that the given value is an integer.

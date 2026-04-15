@@ -28,14 +28,20 @@ use Throwable;
  */
 final readonly class HttpClient implements ClientInterface
 {
-    private ClientInterface $guzzleClient;
+    private ClientInterface     $guzzleClient;
+    private string|UriInterface $baseUri;
+    private LoggerInterface     $logger;
+    private RetryMiddleware     $retryMiddleware;
 
     public function __construct(
-        private RetryMiddleware     $retryMiddleware,
-        private LoggerInterface     $logger,
-        private string|UriInterface $baseUri,
+        RetryMiddleware     $retryMiddleware,
+        LoggerInterface     $logger,
+        string|UriInterface $baseUri,
     )
     {
+        $this->retryMiddleware = $retryMiddleware;
+        $this->logger          = $logger;
+        $this->baseUri         = $baseUri;
         // Initialize Guzzle client with base URI and middleware
         $this->guzzleClient = new Client(
             config: [
@@ -73,7 +79,7 @@ final readonly class HttpClient implements ClientInterface
             );
         } catch (Throwable $throwable) {
             $this->logger->error(
-                message: 'Request failed',
+                message: 'ServerRequest failed',
                 context: [
                              'uri'   => (string) $request->getUri(),
                              'error' => $throwable->getMessage(),
@@ -121,7 +127,7 @@ final readonly class HttpClient implements ClientInterface
 
             if (str_contains(haystack: $e->getMessage(), needle: 'timed out')) {
                 $this->logger->warning(
-                    message: '⏳ HTTP Request stopped because of timeout!',
+                    message: '⏳ HTTP ServerRequest stopped because of timeout!',
                     context: [
                                  'method' => $method,
                                  'url'    => (string) $uri,
@@ -129,7 +135,7 @@ final readonly class HttpClient implements ClientInterface
                              ],
                 );
                 throw new Exception(
-                    message : '⏳ Request timeout (server did not respond in time)',
+                    message : '⏳ ServerRequest timeout (server did not respond in time)',
                     code    : 408,
                     previous: $e
                 );
@@ -155,7 +161,7 @@ final readonly class HttpClient implements ClientInterface
      * Implements Guzzle's request method.
      *
      * @param string              $method  HTTP method.
-     * @param string|UriInterface $uri     Request URI.
+     * @param string|UriInterface $uri     ServerRequest URI.
      * @param array               $options Additional request options.
      *
      * @throws GuzzleException

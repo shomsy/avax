@@ -46,12 +46,17 @@ use ReflectionException;
  */
 final readonly class Module implements LifecycleInterface
 {
+    private Container $container;
+
     /**
      * @param Container $container The "Toolbox" where the feature will store its recipes.
      */
     public function __construct(
-        private Container $container
-    ) {}
+        Container $container
+    )
+    {
+        $this->container = $container;
+    }
 
     /**
      * Provide the "ID Card" (Metadata) for this feature.

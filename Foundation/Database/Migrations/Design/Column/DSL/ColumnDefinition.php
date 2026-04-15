@@ -11,6 +11,10 @@ namespace Avax\Migrations\Design\Column\DSL;
  */
 class ColumnDefinition
 {
+    public array           $attributes = [];
+    public readonly string $type;
+    public readonly string $name;
+
     /**
      * Constructor initializing the base technical identifiers via PHP 8.3 features.
      *
@@ -21,10 +25,15 @@ class ColumnDefinition
      * @param array  $attributes Collection of column modifiers (nullable, default, etc)
      */
     public function __construct(
-        public readonly string $name,
-        public readonly string $type,
-        public array           $attributes = []
-    ) {}
+        string $name,
+        string $type,
+        array  $attributes = []
+    )
+    {
+        $this->name       = $name;
+        $this->type       = $type;
+        $this->attributes = $attributes;
+    }
 
     /**
      * Mark the column as allowing NULL values.

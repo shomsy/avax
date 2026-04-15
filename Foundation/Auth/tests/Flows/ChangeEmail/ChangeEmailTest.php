@@ -46,26 +46,26 @@ final class ChangeEmailTest extends TestCase
      */
     public function testBeginEmailChangeSuccess() : void
     {
-        $clock = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
-        $passwordHasher = $this->passwordHasher();
+        $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
+        $passwordHasher        = $this->passwordHasher();
         $currentAuthentication = new CurrentAuthentication();
         $currentAuthentication->store(context: AuthenticationContext::authenticated(
-            user             : new AuthenticatedUser(
-                id            : 1,
-                email         : 'stale@example.com',
-                username      : 'user',
-                mfaEnabled    : true
-            ),
-            mode             : AuthenticationMode::SESSION,
-            sessionId        : 'session-1',
-            mfaVerifiedAt    : $clock->now()->sub(interval: new DateInterval(duration: 'PT2M'))
+            user         : new AuthenticatedUser(
+                               id        : 1,
+                               email     : 'stale@example.com',
+                               username  : 'user',
+                               mfaEnabled: true
+                           ),
+            mode         : AuthenticationMode::SESSION,
+            sessionId    : 'session-1',
+            mfaVerifiedAt: $clock->now()->sub(interval: new DateInterval(duration: 'PT2M'))
         ));
 
         $userSource = new InMemoryUserSource();
         $userSource->create(user: $this->userWithPassword(passwordHasher: $passwordHasher, userId: 1, password: 'old-password', email: 'user@example.com'));
 
         $auditLog = new InMemoryAuditLog();
-        $flow = new BeginEmailChange(
+        $flow     = new BeginEmailChange(
             currentAuthentication: $currentAuthentication,
             userSource           : $userSource,
             passwordHasher       : $passwordHasher,
@@ -76,13 +76,28 @@ final class ChangeEmailTest extends TestCase
         );
 
         $challenge = $flow->execute(data: new BeginEmailChangeData(
-            newEmail        : 'new@example.com',
-            currentPassword : 'old-password'
-        ));
+                                              newEmail       : 'new@example.com',
+                                              currentPassword: 'old-password'
+                                          ));
 
         $this->assertTrue(condition: $challenge->dispatched);
         $this->assertNotNull(actual: $challenge->token);
         $this->assertSame(expected: 'auth.email_change.requested', actual: $auditLog->events()[0]->name);
+    }
+
+    private function passwordHasher() : PasswordHasher
+    {
+        return new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
+    }
+
+    private function userWithPassword(#[SensitiveParameter] PasswordHasher $passwordHasher, int $userId, #[SensitiveParameter] string $password, #[SensitiveParameter] string $email) : User
+    {
+        return User::create(
+            id          : new UserId(value: $userId),
+            email       : new UserEmail(value: $email),
+            username    : 'user' . $userId,
+            passwordHash: $passwordHasher->hash(password: $password)
+        );
     }
 
     /**
@@ -92,19 +107,19 @@ final class ChangeEmailTest extends TestCase
      */
     public function testBeginEmailChangeFailureInvalidPasswordTakesPrecedenceOverTakenEmail() : void
     {
-        $clock = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
-        $passwordHasher = $this->passwordHasher();
+        $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
+        $passwordHasher        = $this->passwordHasher();
         $currentAuthentication = new CurrentAuthentication();
         $currentAuthentication->store(context: AuthenticationContext::authenticated(
-            user             : new AuthenticatedUser(
-                id            : 1,
-                email         : 'stale@example.com',
-                username      : 'user',
-                mfaEnabled    : true
-            ),
-            mode             : AuthenticationMode::SESSION,
-            sessionId        : 'session-1',
-            mfaVerifiedAt    : $clock->now()->sub(interval: new DateInterval(duration: 'PT2M'))
+            user         : new AuthenticatedUser(
+                               id        : 1,
+                               email     : 'stale@example.com',
+                               username  : 'user',
+                               mfaEnabled: true
+                           ),
+            mode         : AuthenticationMode::SESSION,
+            sessionId    : 'session-1',
+            mfaVerifiedAt: $clock->now()->sub(interval: new DateInterval(duration: 'PT2M'))
         ));
 
         $userSource = new InMemoryUserSource();
@@ -112,7 +127,7 @@ final class ChangeEmailTest extends TestCase
         $userSource->create(user: $this->userWithPassword(passwordHasher: $passwordHasher, userId: 2, password: 'someone-password', email: 'taken@example.com'));
 
         $auditLog = new InMemoryAuditLog();
-        $flow = new BeginEmailChange(
+        $flow     = new BeginEmailChange(
             currentAuthentication: $currentAuthentication,
             userSource           : $userSource,
             passwordHasher       : $passwordHasher,
@@ -127,9 +142,9 @@ final class ChangeEmailTest extends TestCase
         $this->expectExceptionCode(403);
 
         $flow->execute(data: new BeginEmailChangeData(
-            newEmail        : 'taken@example.com',
-            currentPassword : 'wrong-password'
-        ));
+                                 newEmail       : 'taken@example.com',
+                                 currentPassword: 'wrong-password'
+                             ));
     }
 
     /**
@@ -139,19 +154,19 @@ final class ChangeEmailTest extends TestCase
      */
     public function testBeginEmailChangeFailureEmailTaken() : void
     {
-        $clock = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
-        $passwordHasher = $this->passwordHasher();
+        $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
+        $passwordHasher        = $this->passwordHasher();
         $currentAuthentication = new CurrentAuthentication();
         $currentAuthentication->store(context: AuthenticationContext::authenticated(
-            user             : new AuthenticatedUser(
-                id            : 1,
-                email         : 'stale@example.com',
-                username      : 'user',
-                mfaEnabled    : true
-            ),
-            mode             : AuthenticationMode::SESSION,
-            sessionId        : 'session-1',
-            mfaVerifiedAt    : $clock->now()->sub(interval: new DateInterval(duration: 'PT2M'))
+            user         : new AuthenticatedUser(
+                               id        : 1,
+                               email     : 'stale@example.com',
+                               username  : 'user',
+                               mfaEnabled: true
+                           ),
+            mode         : AuthenticationMode::SESSION,
+            sessionId    : 'session-1',
+            mfaVerifiedAt: $clock->now()->sub(interval: new DateInterval(duration: 'PT2M'))
         ));
 
         $userSource = new InMemoryUserSource();
@@ -159,7 +174,7 @@ final class ChangeEmailTest extends TestCase
         $userSource->create(user: $this->userWithPassword(passwordHasher: $passwordHasher, userId: 2, password: 'someone-password', email: 'taken@example.com'));
 
         $auditLog = new InMemoryAuditLog();
-        $flow = new BeginEmailChange(
+        $flow     = new BeginEmailChange(
             currentAuthentication: $currentAuthentication,
             userSource           : $userSource,
             passwordHasher       : $passwordHasher,
@@ -174,9 +189,9 @@ final class ChangeEmailTest extends TestCase
         $this->expectExceptionCode(409);
 
         $flow->execute(data: new BeginEmailChangeData(
-            newEmail        : 'taken@example.com',
-            currentPassword : 'old-password'
-        ));
+                                 newEmail       : 'taken@example.com',
+                                 currentPassword: 'old-password'
+                             ));
     }
 
     /**
@@ -184,19 +199,19 @@ final class ChangeEmailTest extends TestCase
      */
     public function testConfirmEmailChangeSuccess() : void
     {
-        $clock = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
-        $passwordHasher = $this->passwordHasher();
+        $clock                 = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
+        $passwordHasher        = $this->passwordHasher();
         $currentAuthentication = new CurrentAuthentication();
-        $context = AuthenticationContext::authenticated(
-            user          : new AuthenticatedUser(
-                id            : 1,
-                email         : 'user@example.com',
-                username      : 'user',
-                mfaEnabled    : true
-            ),
-            mode          : AuthenticationMode::SESSION,
-            sessionId     : 'session-1',
-            mfaVerifiedAt  : $clock->now()->sub(interval: new DateInterval(duration: 'PT2M'))
+        $context               = AuthenticationContext::authenticated(
+            user         : new AuthenticatedUser(
+                               id        : 1,
+                               email     : 'user@example.com',
+                               username  : 'user',
+                               mfaEnabled: true
+                           ),
+            mode         : AuthenticationMode::SESSION,
+            sessionId    : 'session-1',
+            mfaVerifiedAt: $clock->now()->sub(interval: new DateInterval(duration: 'PT2M'))
         );
         $currentAuthentication->store(context: $context);
 
@@ -204,40 +219,40 @@ final class ChangeEmailTest extends TestCase
         $userSource->create(user: $this->userWithPassword(passwordHasher: $passwordHasher, userId: 1, password: 'old-password', email: 'user@example.com'));
 
         $emailChangeStore = new InMemoryEmailChangeStore();
-        $challenge = $emailChangeStore->issue(
-            userId    : new UserId(value: 1),
-            newEmail  : 'new@example.com',
-            expiresAt : $clock->now()->add(interval: new DateInterval(duration: 'PT30M'))
+        $challenge        = $emailChangeStore->issue(
+            userId   : new UserId(value: 1),
+            newEmail : 'new@example.com',
+            expiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT30M'))
         );
 
         $sessionRegistry = new InMemorySessionRegistry();
         $sessionRegistry->track(record: new SessionRecord(
-            sessionId        : 'session-1',
-            userId           : new UserId(value: 1),
-            createdAt        : $clock->now()->sub(interval: new DateInterval(duration: 'PT5M')),
-            lastSeenAt       : $clock->now(),
-            idleExpiresAt    : $clock->now()->add(interval: new DateInterval(duration: 'PT10M')),
-            absoluteExpiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT1H'))
-        ));
+                                            sessionId        : 'session-1',
+                                            userId           : new UserId(value: 1),
+                                            createdAt        : $clock->now()->sub(interval: new DateInterval(duration: 'PT5M')),
+                                            lastSeenAt       : $clock->now(),
+                                            idleExpiresAt    : $clock->now()->add(interval: new DateInterval(duration: 'PT10M')),
+                                            absoluteExpiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT1H'))
+                                        ));
 
         $challengeStore = new InMemoryMfaChallengeStore();
         $challengeStore->issue(record: new MfaChallengeRecord(
-            challengeId: 'challenge-1',
-            userId     : new UserId(value: 1),
-            purpose    : MfaChallengePurpose::LOGIN,
-            createdAt  : $clock->now(),
-            expiresAt  : $clock->now()->add(interval: new DateInterval(duration: 'PT5M'))
-        ));
+                                           challengeId: 'challenge-1',
+                                           userId     : new UserId(value: 1),
+                                           purpose    : MfaChallengePurpose::LOGIN,
+                                           createdAt  : $clock->now(),
+                                           expiresAt  : $clock->now()->add(interval: new DateInterval(duration: 'PT5M'))
+                                       ));
 
         $refreshTokenStore = new InMemoryRefreshTokenStore();
-        $refreshToken = $refreshTokenStore->issue(
-            userId    : new UserId(value: 1),
-            expiresAt : $clock->now()->add(interval: new DateInterval(duration: 'PT1H'))
+        $refreshToken      = $refreshTokenStore->issue(
+            userId   : new UserId(value: 1),
+            expiresAt: $clock->now()->add(interval: new DateInterval(duration: 'PT1H'))
         );
 
         $emailVerificationState = new InMemoryEmailVerificationStateStore();
-        $auditLog = new InMemoryAuditLog();
-        $identity = Mockery::mock(IdentityInterface::class);
+        $auditLog               = new InMemoryAuditLog();
+        $identity               = Mockery::mock(IdentityInterface::class);
         $identity->shouldReceive('clear')->once()->with($context);
 
         $flow = new ConfirmEmailChange(
@@ -267,7 +282,7 @@ final class ChangeEmailTest extends TestCase
     public function testConfirmEmailChangeFailureInvalidToken() : void
     {
         $clock = new FrozenClock(now: new DateTimeImmutable(datetime: '2026-04-12T12:00:00+00:00'));
-        $flow = new ConfirmEmailChange(
+        $flow  = new ConfirmEmailChange(
             userSource            : new InMemoryUserSource(),
             emailChangeStore      : new InMemoryEmailChangeStore(),
             emailVerificationState: new InMemoryEmailVerificationStateStore(),
@@ -287,20 +302,5 @@ final class ChangeEmailTest extends TestCase
     protected function tearDown() : void
     {
         Mockery::close();
-    }
-
-    private function passwordHasher() : PasswordHasher
-    {
-        return new PasswordHasher(algo: PASSWORD_BCRYPT, options: ['cost' => 4]);
-    }
-
-    private function userWithPassword(#[SensitiveParameter] PasswordHasher $passwordHasher, int $userId, #[SensitiveParameter] string $password, #[SensitiveParameter] string $email) : User
-    {
-        return User::create(
-            id          : new UserId(value: $userId),
-            email       : new UserEmail(value: $email),
-            username    : 'user' . $userId,
-            passwordHash: $passwordHasher->hash(password: $password)
-        );
     }
 }

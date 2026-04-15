@@ -18,6 +18,8 @@ use InvalidArgumentException;
 readonly class RegexException
 {
     private const string DEFAULT_ERROR_MESSAGE = '%s format is invalid.';
+    private string|null $message;
+    private string      $pattern;
 
     /**
      * Constructor for the RegexException attribute.
@@ -28,10 +30,12 @@ readonly class RegexException
      * @throws InvalidArgumentException If the provided regex pattern is invalid.
      */
     public function __construct(
-        private string      $pattern,
-        private string|null $message = null
+        string      $pattern,
+        string|null $message = null
     )
     {
+        $this->pattern = $pattern;
+        $this->message = $message;
         $this->validatePattern(pattern: $pattern);
     }
 

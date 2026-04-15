@@ -16,15 +16,19 @@ use Avax\Database\Events\Strategy\SyncDispatchStrategy;
 final class EventBus implements EventBusInterface
 {
     /** @var array<string, array<int, callable>> A list of everyone signed up for each type of news. */
-    private array $listeners = [];
+    private array                              $listeners = [];
+    private readonly DispatchStrategyInterface $strategy;
 
     /**
      * @param DispatchStrategyInterface $strategy    The logic for HOW to deliver the news (e.g., "Do it now" or "Queue
      *                                               it").
      */
     public function __construct(
-        private readonly DispatchStrategyInterface $strategy = new SyncDispatchStrategy
-    ) {}
+        DispatchStrategyInterface $strategy = new SyncDispatchStrategy
+    )
+    {
+        $this->strategy = $strategy;
+    }
 
     /**
      * Broadcast an event to all registered listeners.

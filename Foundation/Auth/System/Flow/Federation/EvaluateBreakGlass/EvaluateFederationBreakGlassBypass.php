@@ -13,11 +13,20 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class EvaluateFederationBreakGlassBypass
 {
+    private Clock                              $clock;
+    private AuditLogInterface                  $auditLog;
+    private FederationConnectionStoreInterface $connectionStore;
+
     public function __construct(
-        private FederationConnectionStoreInterface $connectionStore,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        FederationConnectionStoreInterface $connectionStore,
+        AuditLogInterface                  $auditLog,
+        Clock                              $clock
+    )
+    {
+        $this->connectionStore = $connectionStore;
+        $this->auditLog        = $auditLog;
+        $this->clock           = $clock;
+    }
 
     /**
      * @throws FederationFailed
@@ -34,17 +43,17 @@ final readonly class EvaluateFederationBreakGlassBypass
             && in_array($connection->health, [FederationConnectionHealth::DEGRADED, FederationConnectionHealth::UNAVAILABLE], true);
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : $allowed
-                ? 'auth.federation.break_glass.allowed'
-                : 'auth.federation.break_glass.denied',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'connection_id' => $connection->connectionId,
-                'tenant' => $connection->tenantSlug,
-                'health' => $connection->health->value,
-                'break_glass_allowed' => $connection->breakGlassAllowed ? 1 : 0,
-            ]
-        ));
+                                           name      : $allowed
+                                                           ? 'auth.federation.break_glass.allowed'
+                                                           : 'auth.federation.break_glass.denied',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'connection_id'       => $connection->connectionId,
+                                                           'tenant'              => $connection->tenantSlug,
+                                                           'health'              => $connection->health->value,
+                                                           'break_glass_allowed' => $connection->breakGlassAllowed ? 1 : 0,
+                                                       ]
+                                       ));
 
         return $allowed;
     }

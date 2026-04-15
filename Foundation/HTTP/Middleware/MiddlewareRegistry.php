@@ -33,7 +33,7 @@ final class MiddlewareRegistry
             'csrf'        => CsrfVerificationMiddleware::class,
             'ip-restrict' => IpRestrictionMiddleware::class,
 
-            // Request processing
+            // ServerRequest processing
             'cors'        => CorsMiddleware::class,
             'log'         => RequestLoggerMiddleware::class,
             'session'     => SessionLifecycleMiddleware::class,

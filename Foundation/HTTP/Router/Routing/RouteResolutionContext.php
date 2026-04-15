@@ -18,14 +18,30 @@ use Avax\HTTP\Router\Routing\Exceptions\ReservedRouteNameException;
  */
 final readonly class RouteResolutionContext
 {
+    public string|null     $failureReason;
+    public array           $resolutionPath;
+    public float           $matchTimeMs;
+    public string|null     $matchedDomain;
+    public array           $parameters;
+    public RouteDefinition $route;
+
     public function __construct(
-        public RouteDefinition $route,
-        public array           $parameters,
-        public string|null     $matchedDomain,
-        public float           $matchTimeMs,
-        public array           $resolutionPath = [],
-        public string|null     $failureReason = null,
-    ) {}
+        RouteDefinition $route,
+        array           $parameters,
+        string|null     $matchedDomain,
+        float           $matchTimeMs,
+        array|null      $resolutionPath = null,
+        string|null     $failureReason = null,
+    )
+    {
+        $resolutionPath       ??= [];
+        $this->route          = $route;
+        $this->parameters     = $parameters;
+        $this->matchedDomain  = $matchedDomain;
+        $this->matchTimeMs    = $matchTimeMs;
+        $this->resolutionPath = $resolutionPath;
+        $this->failureReason  = $failureReason;
+    }
 
     /**
      * Creates a successful resolution context.

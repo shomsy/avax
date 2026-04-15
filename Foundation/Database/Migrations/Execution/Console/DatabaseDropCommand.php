@@ -12,9 +12,14 @@ use Throwable;
  */
 final readonly class DatabaseDropCommand
 {
+    private QueryBuilder $builder;
+
     public function __construct(
-        private QueryBuilder $builder
-    ) {}
+        QueryBuilder $builder
+    )
+    {
+        $this->builder = $builder;
+    }
 
     public function handle(string $name) : int
     {

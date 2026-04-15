@@ -205,8 +205,8 @@ trait HasSoftDeletes
         $clone->state = $clone->state->addWhere(where: new WhereNode(
                                                            column  : $column,
                                                            operator: $operator,
-                                                           type    : 'Null',
-                                                           boolean : $boolean
+                                                           boolean : $boolean,
+                                                           type    : 'Null'
                                                        ));
 
         return $clone;

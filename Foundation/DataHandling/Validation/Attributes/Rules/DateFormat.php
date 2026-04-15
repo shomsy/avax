@@ -28,7 +28,9 @@ use DateTime;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class DateFormat
 {
-    public function __construct(private string $format) {}
+    private string $format;
+
+    public function __construct(string $format) { $this->format = $format; }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

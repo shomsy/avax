@@ -17,8 +17,8 @@ final class InMemoryRiskSignalStore implements RiskSignalStoreInterface
     public function forUser(int $userId) : array
     {
         return array_values(array_filter(
-            $this->signals,
-            static fn (RiskSignal $signal) : bool => $signal->userId === $userId
-        ));
+                                $this->signals,
+                                static fn (RiskSignal $signal) : bool => $signal->userId === $userId
+                            ));
     }
 }

@@ -13,9 +13,14 @@ use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
  */
 final readonly class CallFunction
 {
+    private ServiceResolver $resolver;
+
     public function __construct(
-        private ServiceResolver $resolver
-    ) {}
+        ServiceResolver $resolver
+    )
+    {
+        $this->resolver = $resolver;
+    }
 
     /**
      * @param array<string, mixed> $parameters

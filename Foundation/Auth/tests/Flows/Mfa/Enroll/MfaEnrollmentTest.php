@@ -68,21 +68,21 @@ final class MfaEnrollmentTest extends TestCase
         $this->assertFalse(condition: $mfaStore->isEnabled(userId: new UserId(value: 1)));
 
         $backupCodes = $confirm->execute(data: new ConfirmMfaEnrollmentData(
-                                             code: $totp->codeAt(secret: $enrollment->secret(), moment: $clock->now())
-                                         ));
+                                                   code: $totp->codeAt(secret: $enrollment->secret(), moment: $clock->now())
+                                               ));
 
         $this->assertCount(expectedCount: 10, haystack: $backupCodes->codes);
         $this->assertTrue(condition: $mfaStore->isEnabled(userId: new UserId(value: 1)));
         $this->assertTrue(condition: $currentAuthentication->read()->user()?->mfaEnabled);
         $this->assertNotNull(actual: $currentAuthentication->read()->mfaVerifiedAt());
-        $this->assertSame(   expected: [
-                              'auth.mfa.enrollment.started',
-                              'auth.mfa.enrollment.completed',
-                              'auth.mfa.enabled',
-                          ], actual  : array_map(
-                              static fn ($event) : string => $event->name,
-                              $auditLog->events()
-                          ));
+        $this->assertSame(expected: [
+                                        'auth.mfa.enrollment.started',
+                                        'auth.mfa.enrollment.completed',
+                                        'auth.mfa.enabled',
+                                    ], actual: array_map(
+                                        static fn ($event) : string => $event->name,
+                                        $auditLog->events()
+                                    ));
     }
 
     private function authenticatedContext() : CurrentAuthentication
@@ -207,7 +207,7 @@ final class MfaEnrollmentTest extends TestCase
         $this->expectExceptionMessage('MFA enrollment has expired.');
 
         $confirm->execute(data: new ConfirmMfaEnrollmentData(
-                              code: $totp->codeAt(secret: $enrollment->secret(), moment: $clock->now())
-                          ));
+                                    code: $totp->codeAt(secret: $enrollment->secret(), moment: $clock->now())
+                                ));
     }
 }

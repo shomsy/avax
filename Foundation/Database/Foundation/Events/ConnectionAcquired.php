@@ -11,6 +11,9 @@ namespace Avax\Database\Events;
  */
 final readonly class ConnectionAcquired extends Event
 {
+    public bool   $isRecycled;
+    public string $connectionName;
+
     /**
      * @param string $connectionName   The technical identifier assigned to the target database.
      * @param bool   $isRecycled       Flag indicating if the connection was retrieved from the pool (true) or freshly
@@ -19,11 +22,13 @@ final readonly class ConnectionAcquired extends Event
      *                                 execution scope.
      */
     public function __construct(
-        public string $connectionName,
-        public bool   $isRecycled,
-        string        $correlationId
+        string $connectionName,
+        bool   $isRecycled,
+        string $correlationId
     )
     {
+        $this->connectionName = $connectionName;
+        $this->isRecycled     = $isRecycled;
         parent::__construct(correlationId: $correlationId);
     }
 }

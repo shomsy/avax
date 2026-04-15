@@ -8,19 +8,40 @@ use Avax\Container\DI\Capabilities\Resolution\ResolvePlan;
 
 final readonly class ServiceBlueprint
 {
+    public string           $fingerprint;
+    public bool             $shared;
+    public array            $injectableMethods;
+    public array            $injectableProperties;
+    public ResolvePlan|null $constructor;
+    public bool             $instantiable;
+    public string           $class;
+
     /**
      * @param list<array{name: string, serviceId: string|null, readonly: bool}> $injectableProperties
      * @param list<array{name: string, plan: ResolvePlan}>                      $injectableMethods
      */
     public function __construct(
-        public string           $class,
-        public bool             $instantiable = false,
-        public ResolvePlan|null $constructor = null,
-        public array            $injectableProperties = [],
-        public array            $injectableMethods = [],
-        public bool             $shared = false,
-        public string           $fingerprint = ''
-    ) {}
+        string           $class,
+        bool|null        $instantiable = null,
+        ResolvePlan|null $constructor = null,
+        array|null       $injectableProperties = null,
+        array|null       $injectableMethods = null,
+        bool|null        $shared = null,
+        string           $fingerprint = ''
+    )
+    {
+        $instantiable               ??= false;
+        $injectableProperties       ??= [];
+        $injectableMethods          ??= [];
+        $shared                     ??= false;
+        $this->class                = $class;
+        $this->instantiable         = $instantiable;
+        $this->constructor          = $constructor;
+        $this->injectableProperties = $injectableProperties;
+        $this->injectableMethods    = $injectableMethods;
+        $this->shared               = $shared;
+        $this->fingerprint          = $fingerprint;
+    }
 
     public static function __set_state(array $state) : self
     {

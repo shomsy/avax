@@ -22,7 +22,8 @@ final class Blueprint
     private array $commands = [];
 
     // Whether the table is being created or altered
-    private bool $creating = true;
+    private bool            $creating = true;
+    private readonly string $table;
 
     /**
      * Constructor promoting the target table name via PHP 8.3 features.
@@ -32,8 +33,11 @@ final class Blueprint
      * @param string $table Technical table name
      */
     public function __construct(
-        private readonly string $table
-    ) {}
+        string $table
+    )
+    {
+        $this->table = $table;
+    }
 
     /**
      * Mark the blueprint for table alteration instead of creation.

@@ -9,8 +9,8 @@ namespace Avax\Auth\System\Capability\Access\Policy;
  */
 enum AssuranceTier: string
 {
-    case STANDARD = 'standard';
-    case HIGH = 'high';
+    case STANDARD           = 'standard';
+    case HIGH               = 'high';
     case PHISHING_RESISTANT = 'phishing_resistant';
-    case EMERGENCY = 'emergency';
+    case EMERGENCY          = 'emergency';
 }

@@ -26,24 +26,24 @@ final class ApproveClientRegistrationTest extends TestCase
         $auth = $this->buildAuth();
 
         $registered = $auth->registerOAuthClient(data: new RegisterClientData(
-            name                     : 'Workload API',
-            type                     : OAuthClientType::CONFIDENTIAL,
-            redirectUris             : ['urn:avax:oauth:workload-api'],
-            allowedScopes            : ['workload.read'],
-            allowedAudiences         : ['workload-api'],
-            allowedGrantTypes        : [OAuthGrantType::CLIENT_CREDENTIALS],
-            requiredSenderConstraint : OAuthSenderConstraintType::MTLS,
-            workloadIdentity         : true,
-            approvalRequired         : true
-        ));
+                                                           name                    : 'Workload API',
+                                                           type                    : OAuthClientType::CONFIDENTIAL,
+                                                           redirectUris            : ['urn:avax:oauth:workload-api'],
+                                                           allowedScopes           : ['workload.read'],
+                                                           allowedAudiences        : ['workload-api'],
+                                                           allowedGrantTypes       : [OAuthGrantType::CLIENT_CREDENTIALS],
+                                                           requiredSenderConstraint: OAuthSenderConstraintType::MTLS,
+                                                           workloadIdentity        : true,
+                                                           approvalRequired        : true
+                                                       ));
 
         $this->assertTrue(condition: $registered->client->isPendingApproval());
         $this->assertFalse(condition: $registered->client->active);
 
         $approved = $auth->approveOAuthClientRegistration(data: new ApproveClientRegistrationData(
-            clientId  : $registered->client->clientId,
-            approvedBy: 'approver'
-        ));
+                                                                    clientId  : $registered->client->clientId,
+                                                                    approvedBy: 'approver'
+                                                                ));
 
         $this->assertTrue(condition: $approved->isApproved());
         $this->assertTrue(condition: $approved->active);

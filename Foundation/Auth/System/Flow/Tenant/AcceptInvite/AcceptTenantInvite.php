@@ -16,12 +16,23 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class AcceptTenantInvite
 {
+    private Clock                $clock;
+    private AuditLogInterface    $auditLog;
+    private UserSourceInterface  $userSource;
+    private TenantStoreInterface $tenantStore;
+
     public function __construct(
-        private TenantStoreInterface $tenantStore,
-        private UserSourceInterface $userSource,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        TenantStoreInterface $tenantStore,
+        UserSourceInterface  $userSource,
+        AuditLogInterface    $auditLog,
+        Clock                $clock
+    )
+    {
+        $this->tenantStore = $tenantStore;
+        $this->userSource  = $userSource;
+        $this->auditLog    = $auditLog;
+        $this->clock       = $clock;
+    }
 
     public function execute(AcceptTenantInviteData $data) : TenantMember
     {
@@ -46,27 +57,27 @@ final readonly class AcceptTenantInvite
         }
 
         $member = new TenantMember(
-            tenantId : $invite->tenantId,
-            userId   : $data->userId,
-            role     : $invite->role,
-            state    : TenantMemberState::ACTIVE,
-            joinedAt : $this->clock->now()
+            tenantId: $invite->tenantId,
+            userId  : $data->userId,
+            role    : $invite->role,
+            state   : TenantMemberState::ACTIVE,
+            joinedAt: $this->clock->now()
         );
         $this->tenantStore->saveMember(member: $member);
         $this->tenantStore->markInviteAccepted(
-            inviteId         : $invite->inviteId,
-            acceptedByUserId : $data->userId,
-            acceptedAt       : $member->joinedAt
+            inviteId        : $invite->inviteId,
+            acceptedByUserId: $data->userId,
+            acceptedAt      : $member->joinedAt
         );
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.tenant.member.invite_accepted',
-            occurredAt: $member->joinedAt,
-            context   : [
-                'tenant_id' => $member->tenantId,
-                'user_id' => $member->userId,
-                'role' => $member->role->value,
-            ]
-        ));
+                                           name      : 'auth.tenant.member.invite_accepted',
+                                           occurredAt: $member->joinedAt,
+                                           context   : [
+                                                           'tenant_id' => $member->tenantId,
+                                                           'user_id'   => $member->userId,
+                                                           'role'      => $member->role->value,
+                                                       ]
+                                       ));
 
         return $member;
     }

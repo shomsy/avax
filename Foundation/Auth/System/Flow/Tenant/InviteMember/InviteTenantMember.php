@@ -14,11 +14,20 @@ use Random\RandomException;
 
 final readonly class InviteTenantMember
 {
+    private Clock                $clock;
+    private AuditLogInterface    $auditLog;
+    private TenantStoreInterface $tenantStore;
+
     public function __construct(
-        private TenantStoreInterface $tenantStore,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        TenantStoreInterface $tenantStore,
+        AuditLogInterface    $auditLog,
+        Clock                $clock
+    )
+    {
+        $this->tenantStore = $tenantStore;
+        $this->auditLog    = $auditLog;
+        $this->clock       = $clock;
+    }
 
     /**
      * @throws RandomException
@@ -32,28 +41,28 @@ final readonly class InviteTenantMember
         }
 
         $plainTextToken = bin2hex(random_bytes(32));
-        $invite = new TenantInvite(
-            inviteId   : 'invite_' . bin2hex(random_bytes(12)),
-            tenantId   : $tenant->tenantId,
-            email      : strtolower(trim($data->email)),
-            role       : $data->role,
-            tokenHash  : hash('sha256', $plainTextToken),
-            invitedBy  : trim($data->invitedBy),
-            createdAt  : $this->clock->now()
+        $invite         = new TenantInvite(
+            inviteId : 'invite_' . bin2hex(random_bytes(12)),
+            tenantId : $tenant->tenantId,
+            email    : strtolower(trim($data->email)),
+            role     : $data->role,
+            tokenHash: hash('sha256', $plainTextToken),
+            invitedBy: trim($data->invitedBy),
+            createdAt: $this->clock->now()
         );
         $this->tenantStore->saveInvite(invite: $invite);
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.tenant.member.invited',
-            occurredAt: $invite->createdAt,
-            context   : [
-                'tenant_id' => $tenant->tenantId,
-                'tenant_slug' => $tenant->slug,
-                'invite_id' => $invite->inviteId,
-                'email' => $invite->email,
-                'role' => $invite->role->value,
-                'invited_by' => $invite->invitedBy,
-            ]
-        ));
+                                           name      : 'auth.tenant.member.invited',
+                                           occurredAt: $invite->createdAt,
+                                           context   : [
+                                                           'tenant_id'   => $tenant->tenantId,
+                                                           'tenant_slug' => $tenant->slug,
+                                                           'invite_id'   => $invite->inviteId,
+                                                           'email'       => $invite->email,
+                                                           'role'        => $invite->role->value,
+                                                           'invited_by'  => $invite->invitedBy,
+                                                       ]
+                                       ));
 
         return new IssuedTenantInvite(invite: $invite, plainTextToken: $plainTextToken);
     }

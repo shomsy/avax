@@ -22,12 +22,16 @@ final class DiagnosticsService implements DiagnosticsContract
 
 final class ContextualNameConsumer
 {
-    public function __construct(public string $name) {}
+    public string $name;
+
+    public function __construct(string $name) { $this->name = $name; }
 }
 
 final class DiagnosticsScopedService
 {
-    public function __construct(public string $id = 'scoped') {}
+    public string $id = 'scoped';
+
+    public function __construct(string $id = 'scoped') { $this->id = $id; }
 }
 
 final class ContextualInjectionTarget

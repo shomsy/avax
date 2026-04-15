@@ -17,14 +17,29 @@ use SensitiveParameter;
  */
 final readonly class RunAuthMaintenanceJobs
 {
+    private ExportAuditEvents                $exportAuditEvents;
+    private CleanupExpiredPasskeyChallenges  $cleanupExpiredPasskeyChallenges;
+    private CleanupExpiredAuthorizationCodes $cleanupExpiredAuthorizationCodes;
+    private CleanupExpiredMfaChallenges      $cleanupExpiredMfaChallenges;
+    private CleanupExpiredPasswordResets     $cleanupExpiredPasswordResets;
+    private CleanupExpiredSessions           $cleanupExpiredSessions;
+
     public function __construct(
-        #[SensitiveParameter] private CleanupExpiredSessions           $cleanupExpiredSessions,
-        #[SensitiveParameter] private CleanupExpiredPasswordResets     $cleanupExpiredPasswordResets,
-        private CleanupExpiredMfaChallenges                            $cleanupExpiredMfaChallenges,
-        #[SensitiveParameter] private CleanupExpiredAuthorizationCodes $cleanupExpiredAuthorizationCodes,
-        private CleanupExpiredPasskeyChallenges                        $cleanupExpiredPasskeyChallenges,
-        private ExportAuditEvents                                      $exportAuditEvents
-    ) {}
+        #[SensitiveParameter] CleanupExpiredSessions           $cleanupExpiredSessions,
+        #[SensitiveParameter] CleanupExpiredPasswordResets     $cleanupExpiredPasswordResets,
+        CleanupExpiredMfaChallenges                            $cleanupExpiredMfaChallenges,
+        #[SensitiveParameter] CleanupExpiredAuthorizationCodes $cleanupExpiredAuthorizationCodes,
+        CleanupExpiredPasskeyChallenges                        $cleanupExpiredPasskeyChallenges,
+        ExportAuditEvents                                      $exportAuditEvents
+    )
+    {
+        $this->cleanupExpiredSessions           = $cleanupExpiredSessions;
+        $this->cleanupExpiredPasswordResets     = $cleanupExpiredPasswordResets;
+        $this->cleanupExpiredMfaChallenges      = $cleanupExpiredMfaChallenges;
+        $this->cleanupExpiredAuthorizationCodes = $cleanupExpiredAuthorizationCodes;
+        $this->cleanupExpiredPasskeyChallenges  = $cleanupExpiredPasskeyChallenges;
+        $this->exportAuditEvents                = $exportAuditEvents;
+    }
 
     /**
      * @return array<string, int>
@@ -32,11 +47,11 @@ final readonly class RunAuthMaintenanceJobs
     public function execute() : array
     {
         return [
-            'sessions' => $this->cleanupExpiredSessions->execute(),
-            'password_resets' => $this->cleanupExpiredPasswordResets->execute(),
-            'mfa_challenges' => $this->cleanupExpiredMfaChallenges->execute(),
-            'authorization_codes' => $this->cleanupExpiredAuthorizationCodes->execute(),
-            'passkey_challenges' => $this->cleanupExpiredPasskeyChallenges->execute(),
+            'sessions'              => $this->cleanupExpiredSessions->execute(),
+            'password_resets'       => $this->cleanupExpiredPasswordResets->execute(),
+            'mfa_challenges'        => $this->cleanupExpiredMfaChallenges->execute(),
+            'authorization_codes'   => $this->cleanupExpiredAuthorizationCodes->execute(),
+            'passkey_challenges'    => $this->cleanupExpiredPasskeyChallenges->execute(),
             'audit_events_exported' => $this->exportAuditEvents->execute(),
         ];
     }

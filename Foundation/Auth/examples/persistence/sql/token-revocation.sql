@@ -1,5 +1,6 @@
-CREATE TABLE auth_token_revocations (
-    token_id TEXT PRIMARY KEY,
+CREATE TABLE auth_token_revocations
+(
+    token_id   TEXT PRIMARY KEY,
     expires_at TIMESTAMPTZ NOT NULL,
     revoked_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

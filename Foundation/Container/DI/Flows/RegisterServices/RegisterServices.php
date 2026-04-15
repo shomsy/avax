@@ -16,9 +16,14 @@ use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
  */
 final readonly class RegisterServices implements ServiceRegistryInterface
 {
+    private ServiceResolver $resolver;
+
     public function __construct(
-        private ServiceResolver $resolver
-    ) {}
+        ServiceResolver $resolver
+    )
+    {
+        $this->resolver = $resolver;
+    }
 
     public function alias(string $alias, string $abstract) : void
     {

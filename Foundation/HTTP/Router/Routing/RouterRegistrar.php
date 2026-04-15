@@ -12,10 +12,17 @@ use Avax\HTTP\Router\Support\RouteRegistry;
  */
 final readonly class RouterRegistrar
 {
+    private HttpRequestRouter $httpRequestRouter;
+    private RouteRegistry     $registry;
+
     public function __construct(
-        private RouteRegistry     $registry,
-        private HttpRequestRouter $httpRequestRouter
-    ) {}
+        RouteRegistry     $registry,
+        HttpRequestRouter $httpRequestRouter
+    )
+    {
+        $this->registry          = $registry;
+        $this->httpRequestRouter = $httpRequestRouter;
+    }
 
     public function register(string $method, string $path, callable|array|string $action) : RouteRegistrarProxy
     {

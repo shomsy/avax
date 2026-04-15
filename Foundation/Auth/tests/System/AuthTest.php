@@ -15,9 +15,9 @@ use Avax\Auth\System\Capability\OAuth\SenderConstraint\OAuthSenderConstraintType
 use Avax\Auth\System\Capability\Session\InMemorySessionRegistry;
 use Avax\Auth\System\Capability\UserSource\InMemoryUserSource;
 use Avax\Auth\System\Configuration\AuthBuilder;
+use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
-use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationRequest;
 use Avax\Auth\System\Flow\Login\Credentials;
 use Avax\Auth\System\Flow\OAuth\RegisterClient\RegisterClientData;
 use Avax\Auth\System\Flow\Register\RegistrationData;
@@ -40,31 +40,31 @@ final class AuthTest extends TestCase
 
     public function testAuthFacadeRunsCorePublicFlowSurface() : void
     {
-        $userSource = new InMemoryUserSource();
+        $userSource    = new InMemoryUserSource();
         $refreshTokens = new InMemoryRefreshTokenStore();
-        $auth = Auth::configuration()
+        $auth          = Auth::configuration()
             ->forUser(userSource: $userSource)
             ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
-                userSource       : $userSource,
-                codec            : new HmacTokenCodec(secret: 'auth-test-secret'),
-                clock            : new Clock(),
-                revocationStore  : new InMemoryTokenRevocationStore(),
-                refreshTokenStore: $refreshTokens
-            )))
+                                                                   userSource       : $userSource,
+                                                                   codec            : new HmacTokenCodec(secret: 'auth-test-secret'),
+                                                                   clock            : new Clock(),
+                                                                   revocationStore  : new InMemoryTokenRevocationStore(),
+                                                                   refreshTokenStore: $refreshTokens
+                                                               )))
             ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->ready();
 
         $registration = $auth->register(data: new RegistrationData(
-            email   : 'facade@example.com',
-            username: 'facade',
-            password: 'secret'
-        ));
+                                                  email   : 'facade@example.com',
+                                                  username: 'facade',
+                                                  password: 'secret'
+                                              ));
         $this->assertSame(expected: 'facade@example.com', actual: $registration->user()->email);
 
         $login = $auth->login(credentials: new Credentials(
-            identifier: 'facade@example.com',
-            password  : 'secret'
-        ));
+                                               identifier: 'facade@example.com',
+                                               password  : 'secret'
+                                           ));
 
         $this->assertTrue(condition: $login->isAuthenticated());
         $this->assertNotNull(actual: $login->accessToken());
@@ -86,32 +86,32 @@ final class AuthTest extends TestCase
 
     public function testAuthFacadeCanReadAndRevokeTrackedSessions() : void
     {
-        $userSource       = new InMemoryUserSource();
-        $sessionRegistry  = new InMemorySessionRegistry();
-        $sessionStore     = new ArraySessionStore();
-        $auth             = Auth::configuration()
+        $userSource      = new InMemoryUserSource();
+        $sessionRegistry = new InMemorySessionRegistry();
+        $sessionStore    = new ArraySessionStore();
+        $auth            = Auth::configuration()
             ->forUser(userSource: $userSource)
             ->withIdentity(identity: new Identity(
-                sessionIdentity: new SessionIdentity(
-                    store          : $sessionStore,
-                    sessionRegistry: $sessionRegistry
-                )
-            ))
+                                         sessionIdentity: new SessionIdentity(
+                                                              store          : $sessionStore,
+                                                              sessionRegistry: $sessionRegistry
+                                                          )
+                                     ))
             ->withSessionRegistry(sessionRegistry: $sessionRegistry)
             ->ready();
 
         $auth->register(data: new RegistrationData(
-            email   : 'session@example.com',
-            username: 'session-user',
-            password: 'secret'
-        ));
+                                  email   : 'session@example.com',
+                                  username: 'session-user',
+                                  password: 'secret'
+                              ));
 
         $login = $auth->login(credentials: new Credentials(
-            identifier: 'session@example.com',
-            password  : 'secret',
-            ipAddress : '127.0.0.1',
-            userAgent : 'PHPUnit'
-        ));
+                                               identifier: 'session@example.com',
+                                               password  : 'secret',
+                                               ipAddress : '127.0.0.1',
+                                               userAgent : 'PHPUnit'
+                                           ));
 
         $this->assertTrue(condition: $login->isAuthenticated());
         $sessions = $auth->readActiveSessions();
@@ -126,32 +126,32 @@ final class AuthTest extends TestCase
 
     public function testAuthBuilderPropagatesAuditCorrelationIdAcrossFlows() : void
     {
-        $userSource = new InMemoryUserSource();
+        $userSource    = new InMemoryUserSource();
         $refreshTokens = new InMemoryRefreshTokenStore();
-        $auditLog = new InMemoryAuditLog();
-        $auth = Auth::configuration()
+        $auditLog      = new InMemoryAuditLog();
+        $auth          = Auth::configuration()
             ->forUser(userSource: $userSource)
             ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
-                userSource       : $userSource,
-                codec            : new HmacTokenCodec(secret: 'auth-correlation-secret'),
-                clock            : new Clock(),
-                revocationStore  : new InMemoryTokenRevocationStore(),
-                refreshTokenStore: $refreshTokens
-            )))
+                                                                   userSource       : $userSource,
+                                                                   codec            : new HmacTokenCodec(secret: 'auth-correlation-secret'),
+                                                                   clock            : new Clock(),
+                                                                   revocationStore  : new InMemoryTokenRevocationStore(),
+                                                                   refreshTokenStore: $refreshTokens
+                                                               )))
             ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->withAuditLog(auditLog: $auditLog)
             ->withAuditCorrelationId(correlationId: 'corr-auth-1')
             ->ready();
 
         $auth->register(data: new RegistrationData(
-            email   : 'trace@example.com',
-            username: 'trace-user',
-            password: 'secret'
-        ));
+                                  email   : 'trace@example.com',
+                                  username: 'trace-user',
+                                  password: 'secret'
+                              ));
         $auth->login(credentials: new Credentials(
-            identifier: 'trace@example.com',
-            password  : 'secret'
-        ));
+                                      identifier: 'trace@example.com',
+                                      password  : 'secret'
+                                  ));
         $auth->logout();
 
         $events = $auditLog->events();
@@ -165,30 +165,30 @@ final class AuthTest extends TestCase
 
     public function testAuthFacadeReadsWorkloadIdentityInventory() : void
     {
-        $userSource = new InMemoryUserSource();
+        $userSource    = new InMemoryUserSource();
         $refreshTokens = new InMemoryRefreshTokenStore();
-        $auth = Auth::configuration()
+        $auth          = Auth::configuration()
             ->forUser(userSource: $userSource)
             ->withIdentity(identity: new Identity(jwtIdentity: new JwtIdentity(
-                userSource       : $userSource,
-                codec            : new HmacTokenCodec(secret: 'auth-workload-secret'),
-                clock            : new Clock(),
-                revocationStore  : new InMemoryTokenRevocationStore(),
-                refreshTokenStore: $refreshTokens
-            )))
+                                                                   userSource       : $userSource,
+                                                                   codec            : new HmacTokenCodec(secret: 'auth-workload-secret'),
+                                                                   clock            : new Clock(),
+                                                                   revocationStore  : new InMemoryTokenRevocationStore(),
+                                                                   refreshTokenStore: $refreshTokens
+                                                               )))
             ->withRefreshTokenStore(refreshTokenStore: $refreshTokens)
             ->ready();
 
         $auth->registerOAuthClient(data: new RegisterClientData(
-            name                    : 'Search Worker',
-            type                    : OAuthClientType::CONFIDENTIAL,
-            redirectUris            : ['urn:avax:oauth:search-worker'],
-            allowedScopes           : ['search.read'],
-            allowedAudiences        : ['search-api'],
-            allowedGrantTypes       : [OAuthGrantType::CLIENT_CREDENTIALS],
-            requiredSenderConstraint: OAuthSenderConstraintType::MTLS,
-            workloadIdentity        : true
-        ));
+                                             name                    : 'Search Worker',
+                                             type                    : OAuthClientType::CONFIDENTIAL,
+                                             redirectUris            : ['urn:avax:oauth:search-worker'],
+                                             allowedScopes           : ['search.read'],
+                                             allowedAudiences        : ['search-api'],
+                                             allowedGrantTypes       : [OAuthGrantType::CLIENT_CREDENTIALS],
+                                             requiredSenderConstraint: OAuthSenderConstraintType::MTLS,
+                                             workloadIdentity        : true
+                                         ));
 
         $profiles = $auth->readWorkloadIdentities();
 
@@ -201,12 +201,12 @@ final class AuthTest extends TestCase
         $auth = Auth::configuration()
             ->forUser(userSource: new InMemoryUserSource())
             ->withIdentity(identity: new Identity(
-                sessionIdentity: new SessionIdentity(store: new ArraySessionStore())
-            ))
+                                         sessionIdentity: new SessionIdentity(store: new ArraySessionStore())
+                                     ))
             ->ready();
 
         $explanation = $auth->explainSenderConstraintFailure(
-            reason: 'binding_mismatch',
+            reason            : 'binding_mismatch',
             requiredConstraint: 'mtls'
         );
 

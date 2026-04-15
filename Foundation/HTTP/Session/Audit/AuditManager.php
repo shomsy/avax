@@ -28,12 +28,14 @@ namespace Avax\HTTP\Session\Audit;
  */
 final readonly class AuditManager
 {
+    private Audit $audit;
+
     /**
      * AuditManager Constructor.
      *
      * @param Audit $audit The audit feature instance.
      */
-    public function __construct(private Audit $audit) {}
+    public function __construct(Audit $audit) { $this->audit = $audit; }
 
     // ----------------------------------------------------------------
     // 🔹 Lifecycle Management

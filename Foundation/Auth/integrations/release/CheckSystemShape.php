@@ -21,20 +21,20 @@ final readonly class CheckSystemShape
     public function execute(string $repositoryRoot) : array
     {
         $systemRoot = rtrim($repositoryRoot, DIRECTORY_SEPARATOR) . '/System';
-        $issues = [];
+        $issues     = [];
 
         if (! is_dir($systemRoot)) {
             return [
-                'approved' => false,
-                'issues' => ['Missing canonical system root: System/'],
-                'unexpected_top_level' => [],
+                'approved'              => false,
+                'issues'                => ['Missing canonical system root: System/'],
+                'unexpected_top_level'  => [],
                 'forbidden_directories' => [],
             ];
         }
 
         $allowedTopLevelDirectories = ['Capability', 'Flow', 'Configuration', 'Foundation'];
-        $allowedTopLevelFiles = ['Auth.php', 'AuthInterface.php'];
-        $unexpectedTopLevel = [];
+        $allowedTopLevelFiles       = ['Auth.php', 'AuthInterface.php'];
+        $unexpectedTopLevel         = [];
 
         $entries = scandir($systemRoot);
 
@@ -55,7 +55,7 @@ final readonly class CheckSystemShape
             }
         }
 
-        $forbiddenNames = [
+        $forbiddenNames       = [
             'Actions',
             'Adapters',
             'Contracts',
@@ -76,8 +76,8 @@ final readonly class CheckSystemShape
         $forbiddenDirectories = [];
 
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($systemRoot, RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::SELF_FIRST
+            iterator: new RecursiveDirectoryIterator(directory: $systemRoot, flags: RecursiveDirectoryIterator::SKIP_DOTS),
+            mode    : RecursiveIteratorIterator::SELF_FIRST
         );
 
         /** @var SplFileInfo $node */
@@ -92,7 +92,7 @@ final readonly class CheckSystemShape
                 continue;
             }
 
-            $relativePath = str_replace($repositoryRoot . '/', '', $node->getPathname());
+            $relativePath           = str_replace($repositoryRoot . '/', '', $node->getPathname());
             $forbiddenDirectories[] = $relativePath;
         }
 
@@ -108,9 +108,9 @@ final readonly class CheckSystemShape
         }
 
         return [
-            'approved' => $issues === [],
-            'issues' => $issues,
-            'unexpected_top_level' => $unexpectedTopLevel,
+            'approved'              => $issues === [],
+            'issues'                => $issues,
+            'unexpected_top_level'  => $unexpectedTopLevel,
             'forbidden_directories' => $forbiddenDirectories,
         ];
     }

@@ -23,7 +23,9 @@ final class CreateGreeter implements CreateGreeterContract
 
 final class NeedsCreateGreeter
 {
-    public function __construct(public CreateGreeterContract $greeter) {}
+    public CreateGreeterContract $greeter;
+
+    public function __construct(CreateGreeterContract $greeter) { $this->greeter = $greeter; }
 }
 
 $container = makeTestContainer();

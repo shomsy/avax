@@ -57,6 +57,8 @@ final readonly class Audit
     // -------------------------------------------------------------------------
     // 🚀 CONSTRUCTOR
     // -------------------------------------------------------------------------
+    private SessionContextInterface|null $sessionContext;
+    private HttpContextInterface|null    $httpContext;
 
     /**
      * Construct a new Audit feature instance.
@@ -69,14 +71,16 @@ final readonly class Audit
      *  I’ll make sure your audit events are never lost.”
      */
     public function __construct(
-        LoggerInterface|null                                       $logger = null,
-        string|null                                                $logPath = null,
-        private HttpContextInterface|null                          $httpContext = null,
-        #[SensitiveParameter] private SessionContextInterface|null $sessionContext = null
+        LoggerInterface|null                               $logger = null,
+        string|null                                        $logPath = null,
+        HttpContextInterface|null                          $httpContext = null,
+        #[SensitiveParameter] SessionContextInterface|null $sessionContext = null
     )
     {
-        $this->logger  = $logger ?? (new LoggerFactory)->createLoggerFor(channel: 'session-audit');
-        $this->logPath = $logPath;
+        $this->httpContext    = $httpContext;
+        $this->sessionContext = $sessionContext;
+        $this->logger         = $logger ?? (new LoggerFactory)->createLoggerFor(channel: 'session-audit');
+        $this->logPath        = $logPath;
     }
 
     /**

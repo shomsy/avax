@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Flow\Mfa\Recover;
 
+use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\Throttle\AttemptThrottle;
 use Avax\Auth\System\Capability\Throttle\InMemoryAttemptThrottleStore;
-use Avax\Auth\System\Capability\Identity\IdentityInterface;
 use Avax\Auth\System\Capability\User\User;
 use Avax\Auth\System\Capability\User\UserEmail;
 use Avax\Auth\System\Capability\User\UserId;
@@ -50,11 +50,11 @@ final class MfaRecoveryTest extends TestCase
 
         $mfaStore = new InMemoryMfaStore();
         $mfaStore->saveMethod(record: new MfaMethodRecord(
-                                  userId   : new UserId(value: 1),
-                                  method   : MfaMethod::TOTP,
-                                  secret   : 'SECRETSECRETSECRETSECRETSECRETSE',
-                                  enabledAt: $clock->now()
-                              ));
+                                          userId   : new UserId(value: 1),
+                                          method   : MfaMethod::TOTP,
+                                          secret   : 'SECRETSECRETSECRETSECRETSECRETSE',
+                                          enabledAt: $clock->now()
+                                      ));
         $currentAuthentication = new CurrentAuthentication();
         $currentAuthentication->store(context: AuthenticationContext::authenticated(
             user         : new AuthenticatedUser(
@@ -138,11 +138,11 @@ final class MfaRecoveryTest extends TestCase
         ));
         $mfaStore = new InMemoryMfaStore();
         $mfaStore->saveMethod(record: new MfaMethodRecord(
-            userId   : new UserId(value: 1),
-            method   : MfaMethod::TOTP,
-            secret   : 'SECRETSECRETSECRETSECRETSECRETSE',
-            enabledAt: $clock->now()
-        ));
+                                          userId   : new UserId(value: 1),
+                                          method   : MfaMethod::TOTP,
+                                          secret   : 'SECRETSECRETSECRETSECRETSECRETSE',
+                                          enabledAt: $clock->now()
+                                      ));
         $auditLog = new InMemoryAuditLog();
         $start    = new StartMfaRecovery(
             userSource     : $userSource,
@@ -150,23 +150,23 @@ final class MfaRecoveryTest extends TestCase
             auditLog       : $auditLog,
             clock          : $clock,
             attemptThrottle: new AttemptThrottle(
-                store       : new InMemoryAttemptThrottleStore(),
-                clock       : $clock,
-                maxAttempts : 1,
-                decaySeconds: 900
-            )
+                                 store       : new InMemoryAttemptThrottleStore(),
+                                 clock       : $clock,
+                                 maxAttempts : 1,
+                                 decaySeconds: 900
+                             )
         );
 
-        $first = $start->execute(data: new BeginMfaRecoveryData(
-            email    : 'user@example.com',
-            ipAddress: '127.0.0.1',
-            userAgent: 'PHPUnit'
-        ));
+        $first  = $start->execute(data: new BeginMfaRecoveryData(
+                                            email    : 'user@example.com',
+                                            ipAddress: '127.0.0.1',
+                                            userAgent: 'PHPUnit'
+                                        ));
         $second = $start->execute(data: new BeginMfaRecoveryData(
-            email    : 'user@example.com',
-            ipAddress: '127.0.0.1',
-            userAgent: 'PHPUnit'
-        ));
+                                            email    : 'user@example.com',
+                                            ipAddress: '127.0.0.1',
+                                            userAgent: 'PHPUnit'
+                                        ));
 
         $this->assertNotNull(actual: $first->token);
         $this->assertNull(actual: $second->token);

@@ -22,14 +22,30 @@ use SensitiveParameter;
  */
 final readonly class StartMfaRecovery
 {
+    private AttemptThrottle|null $attemptThrottle;
+    private int                  $expiresAfterSeconds;
+    private Clock                $clock;
+    private AuditLogInterface    $auditLog;
+    private MfaStoreInterface    $mfaStore;
+    private UserSourceInterface  $userSource;
+
     public function __construct(
-        private UserSourceInterface $userSource,
-        private MfaStoreInterface   $mfaStore,
-        private AuditLogInterface   $auditLog,
-        private Clock               $clock,
-        private int                 $expiresAfterSeconds = 900,
-        private AttemptThrottle|null $attemptThrottle = null
-    ) {}
+        UserSourceInterface  $userSource,
+        MfaStoreInterface    $mfaStore,
+        AuditLogInterface    $auditLog,
+        Clock                $clock,
+        int|null             $expiresAfterSeconds = null,
+        AttemptThrottle|null $attemptThrottle = null
+    )
+    {
+        $expiresAfterSeconds       ??= 900;
+        $this->userSource          = $userSource;
+        $this->mfaStore            = $mfaStore;
+        $this->auditLog            = $auditLog;
+        $this->clock               = $clock;
+        $this->expiresAfterSeconds = $expiresAfterSeconds;
+        $this->attemptThrottle     = $attemptThrottle;
+    }
 
     public function execute(BeginMfaRecoveryData $data) : MfaRecoveryChallenge
     {
@@ -39,15 +55,15 @@ final readonly class StartMfaRecovery
             $this->attemptThrottle?->check(key: $throttleKey);
         } catch (AttemptThrottleExceeded $exception) {
             $this->auditLog->record(event: new AuditEvent(
-                name      : 'auth.mfa.recovery.throttled',
-                occurredAt: $this->clock->now(),
-                context   : [
-                    'email'       => strtolower($data->email),
-                    'ip_address'  => $data->ipAddress,
-                    'user_agent'  => $data->userAgent,
-                    'retry_after' => $exception->retryAfter(),
-                ]
-            ));
+                                               name      : 'auth.mfa.recovery.throttled',
+                                               occurredAt: $this->clock->now(),
+                                               context   : [
+                                                               'email'       => strtolower($data->email),
+                                                               'ip_address'  => $data->ipAddress,
+                                                               'user_agent'  => $data->userAgent,
+                                                               'retry_after' => $exception->retryAfter(),
+                                                           ]
+                                           ));
 
             return MfaRecoveryChallenge::hidden();
         }
@@ -57,20 +73,31 @@ final readonly class StartMfaRecovery
 
         if ($user === null || ! $user->isActive() || ! $this->mfaStore->isEnabled(userId: $user->getId())) {
             $this->auditLog->record(event: new AuditEvent(
-                name      : 'auth.mfa.recovery.started',
-                occurredAt: $this->clock->now(),
-                context   : [
-                    'email'      => strtolower($data->email),
-                    'dispatched' => false,
-                    'ip_address' => $data->ipAddress,
-                    'user_agent' => $data->userAgent,
-                ]
-            ));
+                                               name      : 'auth.mfa.recovery.started',
+                                               occurredAt: $this->clock->now(),
+                                               context   : [
+                                                               'email'      => strtolower($data->email),
+                                                               'dispatched' => false,
+                                                               'ip_address' => $data->ipAddress,
+                                                               'user_agent' => $data->userAgent,
+                                                           ]
+                                           ));
 
             return MfaRecoveryChallenge::hidden();
         }
 
         return $this->issue(userId: $user->getId()->value, data: $data);
+    }
+
+    private function throttleKey(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string|null $ipAddress) : string
+    {
+        $normalizedEmail = strtolower(trim($email));
+
+        if ($ipAddress === null || $ipAddress === '') {
+            return 'mfa_recovery:' . $normalizedEmail;
+        }
+
+        return 'mfa_recovery:' . $normalizedEmail . '|' . trim($ipAddress);
     }
 
     /**
@@ -83,20 +110,20 @@ final readonly class StartMfaRecovery
         $expiresAt  = $this->clock->now()->modify(modifier: "+{$this->expiresAfterSeconds} seconds");
         $tokenHash  = $this->hash(token: $plainToken);
         $this->mfaStore->saveRecovery(record: new MfaRecoveryRecord(
-                                          tokenHash: $tokenHash,
-                                          userId   : new UserId(value: $userId),
-                                          expiresAt: $expiresAt
-                                      ));
+                                                  tokenHash: $tokenHash,
+                                                  userId   : new UserId(value: $userId),
+                                                  expiresAt: $expiresAt
+                                              ));
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.mfa.recovery.started',
-                                    occurredAt: $this->clock->now(),
-                                    context   : [
-                                                    'user_id'    => $userId,
-                                                    'dispatched' => true,
-                                                    'ip_address' => $data->ipAddress,
-                                                    'user_agent' => $data->userAgent,
-                                                ]
-                                ));
+                                           name      : 'auth.mfa.recovery.started',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'user_id'    => $userId,
+                                                           'dispatched' => true,
+                                                           'ip_address' => $data->ipAddress,
+                                                           'user_agent' => $data->userAgent,
+                                                       ]
+                                       ));
 
         return new MfaRecoveryChallenge(
             dispatched: true,
@@ -108,16 +135,5 @@ final readonly class StartMfaRecovery
     private function hash(#[SensitiveParameter] string $token) : string
     {
         return hash('sha256', $token);
-    }
-
-    private function throttleKey(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string|null $ipAddress) : string
-    {
-        $normalizedEmail = strtolower(trim($email));
-
-        if ($ipAddress === null || $ipAddress === '') {
-            return 'mfa_recovery:' . $normalizedEmail;
-        }
-
-        return 'mfa_recovery:' . $normalizedEmail . '|' . trim($ipAddress);
     }
 }

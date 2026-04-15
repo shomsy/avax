@@ -12,22 +12,41 @@ use Stringable;
  */
 final readonly class User implements UserInterface, Stringable
 {
+    public bool      $isActive;
+    public array     $permissions;
+    public array     $roles;
+    public string    $passwordHash;
+    public string    $username;
+    public UserEmail $email;
+    public UserId    $id;
+
     /**
      * @param array<UserRole>       $roles
      * @param array<UserPermission> $permissions
      */
     public function __construct(
-        public UserId                          $id,
-        #[SensitiveParameter] public UserEmail $email,
-        public string                          $username,
-        #[SensitiveParameter] public string    $passwordHash,
-        public array                           $roles = [],
-        public array                           $permissions = [],
-        public bool                            $isActive = true
-    ) {}
+        UserId                          $id,
+        #[SensitiveParameter] UserEmail $email,
+        string                          $username,
+        #[SensitiveParameter] string    $passwordHash,
+        array|null                      $roles = null,
+        array|null                      $permissions = null,
+        bool                            $isActive = true
+    )
+    {
+        $roles              ??= [];
+        $permissions        ??= [];
+        $this->id           = $id;
+        $this->email        = $email;
+        $this->username     = $username;
+        $this->passwordHash = $passwordHash;
+        $this->roles        = $roles;
+        $this->permissions  = $permissions;
+        $this->isActive     = $isActive;
+    }
 
     /**
-     * @param list<UserRole>|null $roles
+     * @param list<UserRole>|null       $roles
      * @param list<UserPermission>|null $permissions
      */
     public static function create(

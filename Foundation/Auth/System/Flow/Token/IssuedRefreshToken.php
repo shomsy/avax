@@ -14,19 +14,44 @@ use SensitiveParameter;
  */
 final readonly class IssuedRefreshToken
 {
+    public OAuthSenderConstraint|null $senderConstraint;
+    public array                      $scopes;
+    public string|null                $clientId;
+    public bool                       $phishingResistant;
+    public DateTimeImmutable|null     $mfaVerifiedAt;
+    public DateTimeImmutable          $expiresAt;
+    public UserId                     $userId;
+    public string                     $familyId;
+    public string                     $tokenId;
+    public string                     $token;
+
     /**
      * @param list<string> $scopes
      */
     public function __construct(
-        #[SensitiveParameter] public string $token,
-        #[SensitiveParameter] public string $tokenId,
-        public string                       $familyId,
-        public UserId                       $userId,
-        public DateTimeImmutable            $expiresAt,
-        public DateTimeImmutable|null       $mfaVerifiedAt = null,
-        public bool                         $phishingResistant = false,
-        public string|null                  $clientId = null,
-        public array                        $scopes = [],
-        public OAuthSenderConstraint|null   $senderConstraint = null
-    ) {}
+        #[SensitiveParameter] string $token,
+        #[SensitiveParameter] string $tokenId,
+        string                       $familyId,
+        UserId                       $userId,
+        DateTimeImmutable            $expiresAt,
+        DateTimeImmutable|null       $mfaVerifiedAt = null,
+        bool|null                    $phishingResistant = null,
+        string|null                  $clientId = null,
+        array|null                   $scopes = null,
+        OAuthSenderConstraint|null   $senderConstraint = null
+    )
+    {
+        $phishingResistant       ??= false;
+        $scopes                  ??= [];
+        $this->token             = $token;
+        $this->tokenId           = $tokenId;
+        $this->familyId          = $familyId;
+        $this->userId            = $userId;
+        $this->expiresAt         = $expiresAt;
+        $this->mfaVerifiedAt     = $mfaVerifiedAt;
+        $this->phishingResistant = $phishingResistant;
+        $this->clientId          = $clientId;
+        $this->scopes            = $scopes;
+        $this->senderConstraint  = $senderConstraint;
+    }
 }

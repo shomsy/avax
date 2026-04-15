@@ -19,14 +19,17 @@ interface DeferredProvidedContract
 final class ProviderState
 {
     /** @var list<string> */
-    public static array $events = [];
+    public static array $events  = [];
+    public string       $message = 'registered';
 
-    public function __construct(public string $message = 'registered') {}
+    public function __construct(string $message = 'registered') { $this->message = $message; }
 }
 
 final class BaseProvider implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app) {}
+    private ContainerInterface $app;
+
+    public function __construct(ContainerInterface $app) { $this->app = $app; }
 
     public function dependsOn() : array
     {
@@ -52,7 +55,9 @@ final class BaseProvider implements ServiceProviderInterface
 
 final class DemoProvider implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app) {}
+    private ContainerInterface $app;
+
+    public function __construct(ContainerInterface $app) { $this->app = $app; }
 
     public function dependsOn() : array
     {
@@ -100,12 +105,16 @@ final class DeferredProvidedService implements DeferredProvidedContract
 
 final class DeferredProviderConsumer
 {
-    public function __construct(public DeferredProvidedContract $dependency) {}
+    public DeferredProvidedContract $dependency;
+
+    public function __construct(DeferredProvidedContract $dependency) { $this->dependency = $dependency; }
 }
 
 final class DeferredDemoProvider implements DeferredProviderInterface
 {
-    public function __construct(private ContainerInterface $app) {}
+    private ContainerInterface $app;
+
+    public function __construct(ContainerInterface $app) { $this->app = $app; }
 
     public function dependsOn() : array
     {
@@ -136,7 +145,9 @@ final class DeferredDemoProvider implements DeferredProviderInterface
 
 final class CycleProviderA implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app) {}
+    private ContainerInterface $app;
+
+    public function __construct(ContainerInterface $app) { $this->app = $app; }
 
     public function dependsOn() : array
     {
@@ -153,7 +164,9 @@ final class CycleProviderA implements ServiceProviderInterface
 
 final class CycleProviderB implements ServiceProviderInterface
 {
-    public function __construct(private ContainerInterface $app) {}
+    private ContainerInterface $app;
+
+    public function __construct(ContainerInterface $app) { $this->app = $app; }
 
     public function dependsOn() : array
     {
@@ -224,9 +237,9 @@ $compiledDeferredContainer->singleton(abstract: DeferredProviderConsumer::class,
 $compiledDeferredContainer->compileContainer(serviceIds: [DeferredProviderConsumer::class]);
 
 $compiledDeferredReport = $compiledDeferredContainer->compileReport(serviceIds: [
-                                                                        DeferredProviderConsumer::class,
-                                                                        DeferredProvidedContract::class,
-                                                                    ]);
+                                                                                    DeferredProviderConsumer::class,
+                                                                                    DeferredProvidedContract::class,
+                                                                                ]);
 
 assertSame(
     expected: ['deferred-register', 'deferred-boot'],

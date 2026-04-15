@@ -28,6 +28,8 @@ use BackedEnum;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class EnumIsValueAllowed
 {
+    private string $enumClass;
+
     /**
      * Constructor for the EnumIsValueAllowed Attribute.
      *
@@ -37,7 +39,7 @@ readonly class EnumIsValueAllowed
      *                                               This must be a valid class implementing PHP's `BackedEnum`
      *                                               interface.
      */
-    public function __construct(private string $enumClass) {}
+    public function __construct(string $enumClass) { $this->enumClass = $enumClass; }
 
     /**
      * Validates the value against the specified Enum class.

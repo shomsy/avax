@@ -6,11 +6,18 @@ namespace Avax\Auth\System\Flow\Passkey;
 
 final readonly class PasskeyRegistration
 {
+    public array  $options;
+    public string $challengeId;
+
     /**
      * @param array<string, mixed> $options
      */
     public function __construct(
-        public string $challengeId,
-        public array $options
-    ) {}
+        string $challengeId,
+        array  $options
+    )
+    {
+        $this->challengeId = $challengeId;
+        $this->options     = $options;
+    }
 }

@@ -19,12 +19,23 @@ use Random\RandomException;
 
 final readonly class CreateTenant
 {
+    private Clock                $clock;
+    private AuditLogInterface    $auditLog;
+    private UserSourceInterface  $userSource;
+    private TenantStoreInterface $tenantStore;
+
     public function __construct(
-        private TenantStoreInterface $tenantStore,
-        private UserSourceInterface $userSource,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        TenantStoreInterface $tenantStore,
+        UserSourceInterface  $userSource,
+        AuditLogInterface    $auditLog,
+        Clock                $clock
+    )
+    {
+        $this->tenantStore = $tenantStore;
+        $this->userSource  = $userSource;
+        $this->auditLog    = $auditLog;
+        $this->clock       = $clock;
+    }
 
     /**
      * @throws RandomException
@@ -48,29 +59,29 @@ final readonly class CreateTenant
         }
 
         $tenant = new Tenant(
-            tenantId    : 'tenant_' . bin2hex(random_bytes(12)),
-            slug        : $slug,
-            name        : trim($data->name),
-            ownerUserId : $data->ownerUserId,
-            createdAt   : $this->clock->now()
+            tenantId   : 'tenant_' . bin2hex(random_bytes(12)),
+            slug       : $slug,
+            name       : trim($data->name),
+            ownerUserId: $data->ownerUserId,
+            createdAt  : $this->clock->now()
         );
         $this->tenantStore->saveTenant(tenant: $tenant);
         $this->tenantStore->saveMember(member: new TenantMember(
-            tenantId : $tenant->tenantId,
-            userId   : $data->ownerUserId,
-            role     : TenantMemberRole::OWNER,
-            state    : TenantMemberState::ACTIVE,
-            joinedAt : $tenant->createdAt
-        ));
+                                                   tenantId: $tenant->tenantId,
+                                                   userId  : $data->ownerUserId,
+                                                   role    : TenantMemberRole::OWNER,
+                                                   state   : TenantMemberState::ACTIVE,
+                                                   joinedAt: $tenant->createdAt
+                                               ));
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.tenant.created',
-            occurredAt: $tenant->createdAt,
-            context   : [
-                'tenant_id' => $tenant->tenantId,
-                'tenant_slug' => $tenant->slug,
-                'owner_user_id' => $tenant->ownerUserId,
-            ]
-        ));
+                                           name      : 'auth.tenant.created',
+                                           occurredAt: $tenant->createdAt,
+                                           context   : [
+                                                           'tenant_id'     => $tenant->tenantId,
+                                                           'tenant_slug'   => $tenant->slug,
+                                                           'owner_user_id' => $tenant->ownerUserId,
+                                                       ]
+                                       ));
 
         return $tenant;
     }

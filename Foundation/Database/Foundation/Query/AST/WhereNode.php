@@ -11,6 +11,12 @@ namespace Avax\Database\Query\AST;
  */
 final readonly class WhereNode
 {
+    public string $type;
+    public string $boolean;
+    public mixed  $value;
+    public string $operator;
+    public string $column;
+
     /**
      * @param string $column   The technical name of the field or a raw SQL fragment to be filtered.
      * @param string $operator The SQL comparison operator (e.g., '=', '<>', 'LIKE', 'IS NULL').
@@ -19,10 +25,18 @@ final readonly class WhereNode
      * @param string $type     The type classification of the constraint (e.g., 'Basic', 'Null', 'Raw').
      */
     public function __construct(
-        public string $column,
-        public string $operator,
-        public mixed  $value = null,
-        public string $boolean = 'AND',
-        public string $type = 'Basic'
-    ) {}
+        string      $column,
+        string      $operator,
+        mixed       $value = null,
+        string|null $boolean = null,
+        string      $type = 'Basic'
+    )
+    {
+        $boolean        ??= 'AND';
+        $this->column   = $column;
+        $this->operator = $operator;
+        $this->value    = $value;
+        $this->boolean  = $boolean;
+        $this->type     = $type;
+    }
 }

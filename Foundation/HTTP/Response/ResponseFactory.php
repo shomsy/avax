@@ -16,10 +16,17 @@ use SensitiveParameter;
  */
 readonly class ResponseFactory implements ResponseFactoryInterface
 {
+    private ResponseInterface      $response;
+    private StreamFactoryInterface $streamFactory;
+
     public function __construct(
-        private StreamFactoryInterface $streamFactory,
-        private ResponseInterface      $response
-    ) {}
+        StreamFactoryInterface $streamFactory,
+        ResponseInterface      $response
+    )
+    {
+        $this->streamFactory = $streamFactory;
+        $this->response      = $response;
+    }
 
     /**
      * Generates and returns an HTTP Response object based on the provided data and status code.

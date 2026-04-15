@@ -8,8 +8,15 @@ use SensitiveParameter;
 
 final readonly class AcceptTenantInviteData
 {
+    public int    $userId;
+    public string $inviteToken;
+
     public function __construct(
-        #[SensitiveParameter] public string $inviteToken,
-        public int $userId
-    ) {}
+        #[SensitiveParameter] string $inviteToken,
+        int                          $userId
+    )
+    {
+        $this->inviteToken = $inviteToken;
+        $this->userId      = $userId;
+    }
 }

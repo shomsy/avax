@@ -39,12 +39,18 @@ final class Recovery
     /**
      * @var string|null Current transaction backup name
      */
-    private string|null $currentTransaction = null;
+    private string|null             $currentTransaction = null;
+    private readonly Audit|null     $audit;
+    private readonly StoreInterface $store;
 
     public function __construct(
-        private readonly StoreInterface $store,
-        private readonly Audit|null     $audit = null
-    ) {}
+        StoreInterface $store,
+        Audit|null     $audit = null
+    )
+    {
+        $this->store = $store;
+        $this->audit = $audit;
+    }
 
     // -----------------------------------------------------------------
     // 🧱 Compatibility Layer (for SessionEngine)

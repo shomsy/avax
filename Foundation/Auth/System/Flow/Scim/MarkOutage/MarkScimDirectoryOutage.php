@@ -13,11 +13,20 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class MarkScimDirectoryOutage
 {
+    private Clock                       $clock;
+    private AuditLogInterface           $auditLog;
+    private ScimDirectoryStoreInterface $directoryStore;
+
     public function __construct(
-        private ScimDirectoryStoreInterface $directoryStore,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        ScimDirectoryStoreInterface $directoryStore,
+        AuditLogInterface           $auditLog,
+        Clock                       $clock
+    )
+    {
+        $this->directoryStore = $directoryStore;
+        $this->auditLog       = $auditLog;
+        $this->clock          = $clock;
+    }
 
     public function execute(MarkScimDirectoryOutageData $data) : ScimDirectory
     {
@@ -30,14 +39,14 @@ final readonly class MarkScimDirectoryOutage
         $marked = $directory->markOutage(startedAt: $this->clock->now(), reason: $data->reason);
         $this->directoryStore->save(directory: $marked);
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.scim.directory.outage_marked',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'directory_id' => $marked->directoryId,
-                'tenant' => $marked->tenantSlug,
-                'reason' => $marked->outageReason,
-            ]
-        ));
+                                           name      : 'auth.scim.directory.outage_marked',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'directory_id' => $marked->directoryId,
+                                                           'tenant'       => $marked->tenantSlug,
+                                                           'reason'       => $marked->outageReason,
+                                                       ]
+                                       ));
 
         return $marked;
     }

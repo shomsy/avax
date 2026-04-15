@@ -36,11 +36,11 @@ class AuthServiceProviderTest extends TestCase
                 $this->app->instance(
                     id            : IdGeneratorInterface::class,
                     implementation: new class implements IdGeneratorInterface {
-                        public function generate() : int
-                        {
-                            return 424242;
-                        }
-                    }
+                                        public function generate() : int
+                                        {
+                                            return 424242;
+                                        }
+                                    }
                 );
             }
         };
@@ -76,11 +76,11 @@ class AuthServiceProviderTest extends TestCase
                 $this->app->instance(
                     id            : IdGeneratorInterface::class,
                     implementation: new class implements IdGeneratorInterface {
-                        public function generate() : int
-                        {
-                            return 424242;
-                        }
-                    }
+                                        public function generate() : int
+                                        {
+                                            return 424242;
+                                        }
+                                    }
                 );
             }
         };

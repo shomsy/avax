@@ -12,12 +12,26 @@ namespace Avax\HTTP\Router\Routing;
  */
 final readonly class RouterConfig
 {
+    public int             $maxRoutes;
+    public bool            $strictMode;
+    public bool            $enableTracing;
+    public DuplicatePolicy $duplicatePolicy;
+
     public function __construct(
-        public DuplicatePolicy $duplicatePolicy = DuplicatePolicy::THROW,
-        public bool            $enableTracing = false,
-        public bool            $strictMode = true,
-        public int             $maxRoutes = 10000
-    ) {}
+        DuplicatePolicy|null $duplicatePolicy = null,
+        bool|null            $enableTracing = null,
+        bool|null            $strictMode = null,
+        int                  $maxRoutes = 10000
+    )
+    {
+        $duplicatePolicy       ??= DuplicatePolicy::THROW;
+        $enableTracing         ??= false;
+        $strictMode            ??= true;
+        $this->duplicatePolicy = $duplicatePolicy;
+        $this->enableTracing   = $enableTracing;
+        $this->strictMode      = $strictMode;
+        $this->maxRoutes       = $maxRoutes;
+    }
 
     /**
      * Create a development-friendly configuration.

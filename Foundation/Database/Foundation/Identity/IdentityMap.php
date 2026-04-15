@@ -20,12 +20,18 @@ final class IdentityMap
     private array $map = [];
 
     /** @var array<int, array{operation: string, sql: string, bindings: array}> The list of pending chores. */
-    private array $deferred = [];
+    private array                                $deferred = [];
+    private readonly DatabaseConnection          $connection;
+    private readonly TransactionManagerInterface $transactionManager;
 
     public function __construct(
-        private readonly TransactionManagerInterface $transactionManager,
-        private readonly DatabaseConnection          $connection
-    ) {}
+        TransactionManagerInterface $transactionManager,
+        DatabaseConnection          $connection
+    )
+    {
+        $this->transactionManager = $transactionManager;
+        $this->connection         = $connection;
+    }
 
     /**
      * @see https://github.com/shomsy/components/blob/main/Foundation/Database/docs/Concepts/IdentityMap.md#deferred-execution

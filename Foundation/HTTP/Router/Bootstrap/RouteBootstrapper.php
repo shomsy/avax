@@ -40,6 +40,12 @@ use Throwable;
  */
 final readonly class RouteBootstrapper
 {
+    private LoggerInterface      $logger;
+    private RouteRegistry        $routeRegistry;
+    private RouterBootstrapState $bootstrapState;
+    private HttpRequestRouter    $httpRequestRouter;
+    private RouteCacheLoader     $routeCacheLoader;
+
     /**
      * @var RouteCacheLoader Handles route caching operations.
      * @var HttpRequestRouter Responsible for registering and managing application routes.
@@ -48,12 +54,19 @@ final readonly class RouteBootstrapper
      * @var LoggerInterface Logs important messages and errors.
      */
     public function __construct(
-        private RouteCacheLoader     $routeCacheLoader,
-        private HttpRequestRouter    $httpRequestRouter,
-        private RouterBootstrapState $bootstrapState,
-        private RouteRegistry        $routeRegistry,
-        private LoggerInterface      $logger,
-    ) {}
+        RouteCacheLoader     $routeCacheLoader,
+        HttpRequestRouter    $httpRequestRouter,
+        RouterBootstrapState $bootstrapState,
+        RouteRegistry        $routeRegistry,
+        LoggerInterface      $logger,
+    )
+    {
+        $this->routeCacheLoader  = $routeCacheLoader;
+        $this->httpRequestRouter = $httpRequestRouter;
+        $this->bootstrapState    = $bootstrapState;
+        $this->routeRegistry     = $routeRegistry;
+        $this->logger            = $logger;
+    }
 
     /**
      * Bootstraps application routes.
@@ -364,7 +377,9 @@ final readonly class RouteBootstrapper
         try {
             // Create a router interface wrapper to access all routes
             $routerInterface = new class($this->httpRequestRouter) implements RouterRuntimeInterface {
-                public function __construct(private HttpRequestRouter $router) {}
+                private HttpRequestRouter $router;
+
+                public function __construct(HttpRequestRouter $router) { $this->router = $router; }
 
                 public function resolve(Request $request) : ResponseInterface
                 {

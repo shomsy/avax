@@ -23,14 +23,28 @@ readonly class RateLimiterMiddleware implements MiddlewareInterface
     private const int    DEFAULT_MAX_REQUESTS = 60;
 
     private const int    DEFAULT_TIME_WINDOW = 60;
+    private int                $timeWindow;
+    private int                $maxRequests;
+    private string             $identifierType;
+    private ResponseFactory    $responseFactory;
+    private RateLimiterService $rateLimiterService;
 
     public function __construct(
-        private RateLimiterService $rateLimiterService,
-        private ResponseFactory    $responseFactory,
-        private string             $identifierType = self::DEFAULT_IDENTIFIER_TYPE,
-        private int                $maxRequests = self::DEFAULT_MAX_REQUESTS,
-        private int                $timeWindow = self::DEFAULT_TIME_WINDOW
-    ) {}
+        RateLimiterService $rateLimiterService,
+        ResponseFactory    $responseFactory,
+        string|null        $identifierType = null,
+        int|null           $maxRequests = null,
+        int                $timeWindow = self::DEFAULT_TIME_WINDOW
+    )
+    {
+        $identifierType           ??= self::DEFAULT_IDENTIFIER_TYPE;
+        $maxRequests              ??= self::DEFAULT_MAX_REQUESTS;
+        $this->rateLimiterService = $rateLimiterService;
+        $this->responseFactory    = $responseFactory;
+        $this->identifierType     = $identifierType;
+        $this->maxRequests        = $maxRequests;
+        $this->timeWindow         = $timeWindow;
+    }
 
     /**
      * PSR-15 process method: apply rate limiting before proceeding.

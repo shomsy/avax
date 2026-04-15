@@ -9,9 +9,14 @@ use Avax\Auth\System\Capability\Oidc\OidcProviderMetadata;
 
 final readonly class ReadOidcProviderMetadata
 {
+    private OidcProviderInterface $oidcProvider;
+
     public function __construct(
-        private OidcProviderInterface $oidcProvider
-    ) {}
+        OidcProviderInterface $oidcProvider
+    )
+    {
+        $this->oidcProvider = $oidcProvider;
+    }
 
     public function execute() : OidcProviderMetadata
     {

@@ -15,12 +15,23 @@ use Avax\Auth\System\Flow\Scim\ScimFailed;
 
 final readonly class SyncScimGroups
 {
+    private ProvisionScimUser                     $provisionScimUser;
+    private UserSourceInterface                   $userSource;
+    private ScimProvisionedIdentityStoreInterface $identityStore;
+    private ScimDirectoryStoreInterface           $directoryStore;
+
     public function __construct(
-        private ScimDirectoryStoreInterface $directoryStore,
-        private ScimProvisionedIdentityStoreInterface $identityStore,
-        private UserSourceInterface $userSource,
-        private ProvisionScimUser $provisionScimUser
-    ) {}
+        ScimDirectoryStoreInterface           $directoryStore,
+        ScimProvisionedIdentityStoreInterface $identityStore,
+        UserSourceInterface                   $userSource,
+        ProvisionScimUser                     $provisionScimUser
+    )
+    {
+        $this->directoryStore    = $directoryStore;
+        $this->identityStore     = $identityStore;
+        $this->userSource        = $userSource;
+        $this->provisionScimUser = $provisionScimUser;
+    }
 
     /**
      * @throws ScimFailed
@@ -50,13 +61,13 @@ final readonly class SyncScimGroups
         }
 
         return $this->provisionScimUser->execute(data: new ProvisionScimUserData(
-            directoryId    : $data->directoryId,
-            directoryToken : $data->directoryToken,
-            externalId     : $data->externalId,
-            email          : $user->getEmail()->value,
-            username       : $user->getUsername(),
-            groups         : $data->groups,
-            state          : $data->state
-        ));
+                                                           directoryId   : $data->directoryId,
+                                                           directoryToken: $data->directoryToken,
+                                                           externalId    : $data->externalId,
+                                                           email         : $user->getEmail()->value,
+                                                           username      : $user->getUsername(),
+                                                           groups        : $data->groups,
+                                                           state         : $data->state
+                                                       ));
     }
 }

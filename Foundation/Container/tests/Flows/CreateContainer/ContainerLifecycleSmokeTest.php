@@ -21,7 +21,9 @@ final class LifecycleService implements LifecycleContract
 
 final class LifecycleScopedService
 {
-    public function __construct(public string $name = 'scoped') {}
+    public string $name = 'scoped';
+
+    public function __construct(string $name = 'scoped') { $this->name = $name; }
 }
 
 $cacheDir = sys_get_temp_dir() . '/container-lifecycle-' . uniqid();

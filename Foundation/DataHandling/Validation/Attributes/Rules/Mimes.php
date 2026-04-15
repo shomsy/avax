@@ -26,7 +26,9 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class Mimes
 {
-    public function __construct(private array $mimes) {}
+    private array $mimes;
+
+    public function __construct(array $mimes) { $this->mimes = $mimes; }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

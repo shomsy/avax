@@ -26,6 +26,8 @@ use RuntimeException;
  */
 final readonly class ControllerDispatcher
 {
+    private ContainerInterface $container;
+
     /**
      * Constructs the class with a dependency injection container.
      *
@@ -33,7 +35,7 @@ final readonly class ControllerDispatcher
      *
      * @return void
      */
-    public function __construct(private ContainerInterface $container) {}
+    public function __construct(ContainerInterface $container) { $this->container = $container; }
 
     /**
      * Dispatches a controller action or callable based on the route action definition.
@@ -159,7 +161,7 @@ final readonly class ControllerDispatcher
                 // Get the name of the type (e.g., class or scalar type).
                 $typeName = $paramType->getName();
 
-                // If the type corresponds to a class that is a `Request` (or extends it).
+                // If the type corresponds to a class that is a `ServerRequest` (or extends it).
                 if (is_a(object_or_class: $typeName, class: Request::class, allow_string: true)) {
                     // Inject the `$request` instance as the value for this parameter.
                     $arguments[] = $request;

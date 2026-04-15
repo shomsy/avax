@@ -18,12 +18,23 @@ use Avax\HTTP\Router\Support\RouteRegistry;
  */
 final readonly class RouteRegistrar
 {
+    private RouteRegistry     $routeRegistry;
+    private RouteGroupStack   $groupStack;
+    private HttpRequestRouter $httpRouter;
+    private RouterInterface   $dslRouter;
+
     public function __construct(
-        private RouterInterface   $dslRouter,
-        private HttpRequestRouter $httpRouter,
-        private RouteGroupStack   $groupStack,
-        private RouteRegistry     $routeRegistry
-    ) {}
+        RouterInterface   $dslRouter,
+        HttpRequestRouter $httpRouter,
+        RouteGroupStack   $groupStack,
+        RouteRegistry     $routeRegistry
+    )
+    {
+        $this->dslRouter     = $dslRouter;
+        $this->httpRouter    = $httpRouter;
+        $this->groupStack    = $groupStack;
+        $this->routeRegistry = $routeRegistry;
+    }
 
     /**
      * Load routes from file with registry integration.

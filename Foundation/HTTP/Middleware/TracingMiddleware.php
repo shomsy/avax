@@ -20,14 +20,18 @@ class TracingMiddleware implements MiddlewareInterface
             'uptime_seconds'   => 0,
         ];
 
-    private float $startTime;
+    private float           $startTime;
+    private string          $requestIdHeader = 'X-ServerRequest-ID';
+    private LoggerInterface $logger;
 
     public function __construct(
-        private LoggerInterface              $logger,
-        #[SensitiveParameter] private string $requestIdHeader = 'X-Request-ID'
+        LoggerInterface              $logger,
+        #[SensitiveParameter] string $requestIdHeader = 'X-ServerRequest-ID'
     )
     {
-        $this->startTime = microtime(true);
+        $this->logger          = $logger;
+        $this->requestIdHeader = $requestIdHeader;
+        $this->startTime       = microtime(true);
     }
 
     /**
@@ -42,7 +46,7 @@ class TracingMiddleware implements MiddlewareInterface
         // Add request ID to request
         $request = $request->withHeader(name: $this->requestIdHeader, value: $requestId);
 
-        $this->logger->info(message: 'Request started', context: [
+        $this->logger->info(message: 'ServerRequest started', context: [
             'request_id' => $requestId,
             'method'     => $request->getMethod(),
             'path'       => $request->getUri()->getPath(),
@@ -60,7 +64,7 @@ class TracingMiddleware implements MiddlewareInterface
             $this->metrics['total_latency_ms'] += $latency;
             $this->metrics['uptime_seconds']   = microtime(true) - $this->startTime;
 
-            $this->logger->info(message: 'Request completed', context: [
+            $this->logger->info(message: 'ServerRequest completed', context: [
                 'request_id'          => $requestId,
                 'method'              => $request->getMethod(),
                 'path'                => $request->getUri()->getPath(),
@@ -75,7 +79,7 @@ class TracingMiddleware implements MiddlewareInterface
         } catch (Throwable $e) {
             $latency = (microtime(true) - $startTime) * 1000;
 
-            $this->logger->error(message: 'Request failed', context: [
+            $this->logger->error(message: 'ServerRequest failed', context: [
                 'request_id' => $requestId,
                 'method'     => $request->getMethod(),
                 'path'       => $request->getUri()->getPath(),

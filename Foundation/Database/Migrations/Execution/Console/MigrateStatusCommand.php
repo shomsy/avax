@@ -13,10 +13,17 @@ use Throwable;
  */
 final readonly class MigrateStatusCommand
 {
+    private MigrationLoader     $loader;
+    private MigrationRepository $repository;
+
     public function __construct(
-        private MigrationRepository $repository,
-        private MigrationLoader     $loader
-    ) {}
+        MigrationRepository $repository,
+        MigrationLoader     $loader
+    )
+    {
+        $this->repository = $repository;
+        $this->loader     = $loader;
+    }
 
     /**
      * @throws Throwable

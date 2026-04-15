@@ -12,25 +12,38 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
     private array $objects = [];
 
     public function store(
-        string $requestUri,
-        array $claims,
+        string            $requestUri,
+        array             $claims,
         DateTimeImmutable $expiresAt,
-        bool $signatureVerified = false,
-        string|null $signingAlgorithm = null,
-        string|null $signingClientId = null
+        bool              $signatureVerified = false,
+        string|null       $signingAlgorithm = null,
+        string|null       $signingClientId = null
     ) : OidcRequestObject
     {
         $object = new OidcRequestObject(
-            requestUri: $requestUri,
-            claims    : $claims,
-            createdAt : new DateTimeImmutable(),
-            expiresAt : $expiresAt,
+            requestUri       : $requestUri,
+            claims           : $claims,
+            createdAt        : new DateTimeImmutable(),
+            expiresAt        : $expiresAt,
             signatureVerified: $signatureVerified,
             signingAlgorithm : $signingAlgorithm,
             signingClientId  : $signingClientId
         );
 
         $this->objects[$requestUri] = $object;
+
+        return $object;
+    }
+
+    public function consume(string $requestUri) : OidcRequestObject|null
+    {
+        $object = $this->find(requestUri: $requestUri);
+
+        if ($object === null) {
+            return null;
+        }
+
+        unset($this->objects[$requestUri]);
 
         return $object;
     }
@@ -48,19 +61,6 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
 
             return null;
         }
-
-        return $object;
-    }
-
-    public function consume(string $requestUri) : OidcRequestObject|null
-    {
-        $object = $this->find(requestUri: $requestUri);
-
-        if ($object === null) {
-            return null;
-        }
-
-        unset($this->objects[$requestUri]);
 
         return $object;
     }

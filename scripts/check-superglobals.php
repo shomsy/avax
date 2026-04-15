@@ -8,8 +8,8 @@ $root         = dirname(__DIR__);
 $patterns     = ['$_SERVER', '$_GET', '$_POST', '$_COOKIE', '$_FILES', '$_SESSION', '$_REQUEST'];
 $allowedFiles = [
     'Foundation/HTTP/Context/PhpGlobalsProvider.php',
-    'Foundation/HTTP/Request/Request.php',
-    'Foundation/HTTP/Request/AbsoluteServerRequest.php',
+    'Foundation/HTTP/ServerRequest/ServerRequest.php',
+    'Foundation/HTTP/ServerRequest/AbsoluteServerRequest.php',
     'Foundation/HTTP/Session/Session.php',
     'Foundation/Container/tests/Integration/RequestFromGlobalsTest.php',
 ];

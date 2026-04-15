@@ -119,7 +119,7 @@ class RouterHardeningTest extends TestCase
      */
     public function fallback_route_returns_error_handling_response() : void
     {
-        // Given: Request to non-existent route
+        // Given: ServerRequest to non-existent route
         $request = $this->createRequest(method: 'GET', path: '/non-existent-route-12345');
 
         // When: Router resolves the request
@@ -213,7 +213,7 @@ class RouterHardeningTest extends TestCase
      */
     public function debug_route_returns_error_handling_response() : void
     {
-        // Given: Request to debug route
+        // Given: ServerRequest to debug route
         $request = $this->createRequest(method: 'GET', path: '/debug');
 
         // When: Router resolves the request

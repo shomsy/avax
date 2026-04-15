@@ -9,17 +9,34 @@ use SensitiveParameter;
 
 final readonly class ScimUserProjection
 {
+    public ScimAccountState $state;
+    public array            $groups;
+    public array            $roles;
+    public string           $username;
+    public string           $email;
+    public int              $userId;
+    public string           $externalId;
+
     /**
      * @param list<string> $roles
      * @param list<string> $groups
      */
     public function __construct(
-        public string                       $externalId,
-        public int                          $userId,
-        #[SensitiveParameter] public string $email,
-        public string                       $username,
-        public array                        $roles,
-        public array                        $groups,
-        public ScimAccountState             $state
-    ) {}
+        string                       $externalId,
+        int                          $userId,
+        #[SensitiveParameter] string $email,
+        string                       $username,
+        array                        $roles,
+        array                        $groups,
+        ScimAccountState             $state
+    )
+    {
+        $this->externalId = $externalId;
+        $this->userId     = $userId;
+        $this->email      = $email;
+        $this->username   = $username;
+        $this->roles      = $roles;
+        $this->groups     = $groups;
+        $this->state      = $state;
+    }
 }

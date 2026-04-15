@@ -12,12 +12,15 @@ use Exception;
  */
 class RoleDenied extends Exception
 {
+    private readonly UserRole $requirement;
+
     public function __construct(
-        private readonly UserRole $requirement,
-        string                    $message = 'Access denied.',
-        int                       $code = 403
+        UserRole $requirement,
+        string   $message = 'Access denied.',
+        int      $code = 403
     )
     {
+        $this->requirement = $requirement;
         parent::__construct(message: $message, code: $code);
     }
 

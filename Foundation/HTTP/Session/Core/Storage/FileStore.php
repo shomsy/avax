@@ -31,10 +31,17 @@ use Throwable;
  */
 final readonly class FileStore implements StoreInterface
 {
+    private string               $directory;
+    private FileStorageInterface $storage;
+
     public function __construct(
-        private FileStorageInterface $storage,
-        private string               $directory = 'sessions'
-    ) {}
+        FileStorageInterface $storage,
+        string               $directory = 'sessions'
+    )
+    {
+        $this->storage   = $storage;
+        $this->directory = $directory;
+    }
 
     /**
      * Save a session value with metadata.

@@ -16,10 +16,17 @@ use Throwable;
  */
 final readonly class BuildService
 {
+    private ResolveDependencies    $dependencies;
+    private CreateServiceBlueprint $blueprints;
+
     public function __construct(
-        private CreateServiceBlueprint $blueprints,
-        private ResolveDependencies    $dependencies
-    ) {}
+        CreateServiceBlueprint $blueprints,
+        ResolveDependencies    $dependencies
+    )
+    {
+        $this->blueprints   = $blueprints;
+        $this->dependencies = $dependencies;
+    }
 
     /**
      * @param array<string, mixed> $overrides

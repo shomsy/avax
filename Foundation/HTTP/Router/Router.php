@@ -48,15 +48,32 @@ use ReflectionException;
  */
 final readonly class Router implements RouterRuntimeInterface
 {
+    private RouteRegistry|null   $routeRegistry;
+    private RouteGroupStack|null $groupStack;
+    private RouterInterface|null $dslRouter;
+    private ErrorResponseFactory $errorFactory;
+    private FallbackManager      $fallbackManager;
+    private RouterKernel         $kernel;
+    private HttpRequestRouter    $httpRequestRouter;
+
     public function __construct(
-        private HttpRequestRouter    $httpRequestRouter,
-        private RouterKernel         $kernel,
-        private FallbackManager      $fallbackManager,
-        private ErrorResponseFactory $errorFactory,
-        private RouterInterface|null $dslRouter = null,
-        private RouteGroupStack|null $groupStack = null,
-        private RouteRegistry|null   $routeRegistry = null
-    ) {}
+        HttpRequestRouter    $httpRequestRouter,
+        RouterKernel         $kernel,
+        FallbackManager      $fallbackManager,
+        ErrorResponseFactory $errorFactory,
+        RouterInterface|null $dslRouter = null,
+        RouteGroupStack|null $groupStack = null,
+        RouteRegistry|null   $routeRegistry = null
+    )
+    {
+        $this->httpRequestRouter = $httpRequestRouter;
+        $this->kernel            = $kernel;
+        $this->fallbackManager   = $fallbackManager;
+        $this->errorFactory      = $errorFactory;
+        $this->dslRouter         = $dslRouter;
+        $this->groupStack        = $groupStack;
+        $this->routeRegistry     = $routeRegistry;
+    }
 
     /**
      * @throws NotFoundExceptionInterface

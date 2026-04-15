@@ -9,16 +9,33 @@ use DateTimeImmutable;
 
 final readonly class ScimProvisionedIdentity
 {
+    public DateTimeImmutable $synchronizedAt;
+    public ScimAccountState  $state;
+    public array             $groups;
+    public string            $fingerprint;
+    public UserId            $userId;
+    public string            $externalId;
+    public string            $directoryId;
+
     /**
      * @param list<string> $groups
      */
     public function __construct(
-        public string $directoryId,
-        public string $externalId,
-        public UserId $userId,
-        public string $fingerprint,
-        public array $groups,
-        public ScimAccountState $state,
-        public DateTimeImmutable $synchronizedAt
-    ) {}
+        string            $directoryId,
+        string            $externalId,
+        UserId            $userId,
+        string            $fingerprint,
+        array             $groups,
+        ScimAccountState  $state,
+        DateTimeImmutable $synchronizedAt
+    )
+    {
+        $this->directoryId    = $directoryId;
+        $this->externalId     = $externalId;
+        $this->userId         = $userId;
+        $this->fingerprint    = $fingerprint;
+        $this->groups         = $groups;
+        $this->state          = $state;
+        $this->synchronizedAt = $synchronizedAt;
+    }
 }

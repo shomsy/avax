@@ -11,10 +11,13 @@ use RuntimeException;
  */
 final class MfaAttemptLimitReached extends RuntimeException
 {
+    private readonly int $retryAfter;
+
     public function __construct(
-        private readonly int $retryAfter
+        int $retryAfter
     )
     {
+        $this->retryAfter = $retryAfter;
         parent::__construct(message: 'MFA verification is temporarily locked.', code: 429);
     }
 

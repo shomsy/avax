@@ -33,12 +33,23 @@ use function Amp\all;
  */
 final readonly class AsyncRouteCacheLoader
 {
+    private LoggerInterface          $logger;
+    private AsyncFilesystemInterface $filesystem;
+    private RouterRuntimeInterface   $router;
+    private RouterRegistrar          $registrar;
+
     public function __construct(
-        private RouterRegistrar          $registrar,
-        private RouterRuntimeInterface   $router,
-        private AsyncFilesystemInterface $filesystem,
-        private LoggerInterface          $logger = new NullLogger,
-    ) {}
+        RouterRegistrar          $registrar,
+        RouterRuntimeInterface   $router,
+        AsyncFilesystemInterface $filesystem,
+        LoggerInterface          $logger = new NullLogger,
+    )
+    {
+        $this->registrar  = $registrar;
+        $this->router     = $router;
+        $this->filesystem = $filesystem;
+        $this->logger     = $logger;
+    }
 
     /**
      * Asynchronously loads route definitions from serialized cache.

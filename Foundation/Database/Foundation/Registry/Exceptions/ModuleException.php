@@ -31,6 +31,9 @@ use Throwable;
  */
 final class ModuleException extends DatabaseException
 {
+    private readonly string $phase;
+    private readonly string $moduleClass;
+
     /**
      * @param string         $moduleClass The name of the feature class that failed.
      * @param string         $phase       The step it was on (e.g., 'booting', 'registering').
@@ -38,12 +41,14 @@ final class ModuleException extends DatabaseException
      * @param Throwable|null $previous    The raw system error that caused the crash.
      */
     public function __construct(
-        private readonly string $moduleClass,
-        private readonly string $phase,
-        string                  $message,
-        Throwable|null          $previous = null
+        string         $moduleClass,
+        string         $phase,
+        string         $message,
+        Throwable|null $previous = null
     )
     {
+        $this->moduleClass = $moduleClass;
+        $this->phase       = $phase;
         parent::__construct(
             message : "Module [{$moduleClass}] failed during [{$phase}]: {$message}",
             code    : 0,

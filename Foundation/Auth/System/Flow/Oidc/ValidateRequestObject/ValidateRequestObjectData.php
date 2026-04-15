@@ -8,7 +8,12 @@ use SensitiveParameter;
 
 final readonly class ValidateRequestObjectData
 {
+    public string $requestUri;
+
     public function __construct(
-        #[SensitiveParameter] public string $requestUri
-    ) {}
+        #[SensitiveParameter] string $requestUri
+    )
+    {
+        $this->requestUri = $requestUri;
+    }
 }

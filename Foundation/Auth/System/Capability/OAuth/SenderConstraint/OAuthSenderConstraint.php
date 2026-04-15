@@ -9,10 +9,17 @@ namespace Avax\Auth\System\Capability\OAuth\SenderConstraint;
  */
 final readonly class OAuthSenderConstraint
 {
+    public string                    $thumbprint;
+    public OAuthSenderConstraintType $type;
+
     public function __construct(
-        public OAuthSenderConstraintType $type,
-        public string $thumbprint
-    ) {}
+        OAuthSenderConstraintType $type,
+        string                    $thumbprint
+    )
+    {
+        $this->type       = $type;
+        $this->thumbprint = $thumbprint;
+    }
 
     public function equals(self $other) : bool
     {

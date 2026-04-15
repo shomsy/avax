@@ -14,14 +14,19 @@ use RuntimeException;
  */
 final readonly class MaxLifetimePolicy implements PolicyInterface
 {
+    private int $maxLifetimeSeconds;
+
     /**
      * MaxLifetimePolicy Constructor.
      *
      * @param int $maxLifetimeSeconds Maximum session lifetime in seconds (default: 1 hour).
      */
     public function __construct(
-        private int $maxLifetimeSeconds = 3600
-    ) {}
+        int $maxLifetimeSeconds = 3600
+    )
+    {
+        $this->maxLifetimeSeconds = $maxLifetimeSeconds;
+    }
 
     /**
      * Enforce max lifetime policy.

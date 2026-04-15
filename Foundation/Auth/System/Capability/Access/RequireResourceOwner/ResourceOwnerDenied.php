@@ -8,11 +8,14 @@ use RuntimeException;
 
 final class ResourceOwnerDenied extends RuntimeException
 {
+    private readonly int $ownerUserId;
+
     public function __construct(
-        private readonly int $ownerUserId,
+        int    $ownerUserId,
         string $message = 'Current user does not own this resource.'
     )
     {
+        $this->ownerUserId = $ownerUserId;
         parent::__construct(message: $message, code: 403);
     }
 

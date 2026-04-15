@@ -40,23 +40,23 @@ final class BeginPasswordResetTest extends TestCase
             auditLog          : $auditLog,
             clock             : $clock,
             attemptThrottle   : new AttemptThrottle(
-                store       : new InMemoryAttemptThrottleStore(),
-                clock       : $clock,
-                maxAttempts : 1,
-                decaySeconds: 900
-            )
+                                    store       : new InMemoryAttemptThrottleStore(),
+                                    clock       : $clock,
+                                    maxAttempts : 1,
+                                    decaySeconds: 900
+                                )
         );
 
-        $first = $flow->execute(data: new BeginPasswordResetData(
-            email    : 'user@example.com',
-            ipAddress: '127.0.0.1',
-            userAgent: 'PHPUnit'
-        ));
+        $first  = $flow->execute(data: new BeginPasswordResetData(
+                                           email    : 'user@example.com',
+                                           ipAddress: '127.0.0.1',
+                                           userAgent: 'PHPUnit'
+                                       ));
         $second = $flow->execute(data: new BeginPasswordResetData(
-            email    : 'user@example.com',
-            ipAddress: '127.0.0.1',
-            userAgent: 'PHPUnit'
-        ));
+                                           email    : 'user@example.com',
+                                           ipAddress: '127.0.0.1',
+                                           userAgent: 'PHPUnit'
+                                       ));
 
         $this->assertNotNull(actual: $first->token);
         $this->assertNull(actual: $second->token);

@@ -13,11 +13,20 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class VerifyFederationDomain
 {
+    private Clock                              $clock;
+    private AuditLogInterface                  $auditLog;
+    private FederationConnectionStoreInterface $connectionStore;
+
     public function __construct(
-        private FederationConnectionStoreInterface $connectionStore,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        FederationConnectionStoreInterface $connectionStore,
+        AuditLogInterface                  $auditLog,
+        Clock                              $clock
+    )
+    {
+        $this->connectionStore = $connectionStore;
+        $this->auditLog        = $auditLog;
+        $this->clock           = $clock;
+    }
 
     /**
      * @throws FederationFailed
@@ -40,14 +49,14 @@ final readonly class VerifyFederationDomain
         $verified = $connection->withVerifiedDomain(verifiedAt: $this->clock->now());
         $this->connectionStore->save(connection: $verified);
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.federation.domain.verified',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'connection_id' => $verified->connectionId,
-                'tenant' => $verified->tenantSlug,
-                'domain' => $verified->domain,
-            ]
-        ));
+                                           name      : 'auth.federation.domain.verified',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'connection_id' => $verified->connectionId,
+                                                           'tenant'        => $verified->tenantSlug,
+                                                           'domain'        => $verified->domain,
+                                                       ]
+                                       ));
 
         return $verified;
     }

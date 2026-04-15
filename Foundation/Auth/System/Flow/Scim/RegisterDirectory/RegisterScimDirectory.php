@@ -18,13 +18,26 @@ use SensitiveParameter;
 
 final readonly class RegisterScimDirectory
 {
+    private Clock                       $clock;
+    private AuditLogInterface           $auditLog;
+    private GroupRoleMappingValidator   $groupRoleMappingValidator;
+    private PasswordHasher              $passwordHasher;
+    private ScimDirectoryStoreInterface $directoryStore;
+
     public function __construct(
-        private ScimDirectoryStoreInterface $directoryStore,
-        #[SensitiveParameter] private PasswordHasher $passwordHasher,
-        private GroupRoleMappingValidator $groupRoleMappingValidator,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        ScimDirectoryStoreInterface          $directoryStore,
+        #[SensitiveParameter] PasswordHasher $passwordHasher,
+        GroupRoleMappingValidator            $groupRoleMappingValidator,
+        AuditLogInterface                    $auditLog,
+        Clock                                $clock
+    )
+    {
+        $this->directoryStore            = $directoryStore;
+        $this->passwordHasher            = $passwordHasher;
+        $this->groupRoleMappingValidator = $groupRoleMappingValidator;
+        $this->auditLog                  = $auditLog;
+        $this->clock                     = $clock;
+    }
 
     /**
      * @throws ScimFailed
@@ -38,7 +51,7 @@ final readonly class RegisterScimDirectory
         }
 
         $plainTextToken = bin2hex(random_bytes(24));
-        $directory = new ScimDirectory(
+        $directory      = new ScimDirectory(
             directoryId : 'scim_' . bin2hex(random_bytes(12)),
             tenantSlug  : trim($data->tenantSlug),
             name        : trim($data->name),
@@ -49,14 +62,14 @@ final readonly class RegisterScimDirectory
 
         $this->directoryStore->save(directory: $directory);
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.scim.directory.registered',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'directory_id' => $directory->directoryId,
-                'tenant' => $directory->tenantSlug,
-                'name' => $directory->name,
-            ]
-        ));
+                                           name      : 'auth.scim.directory.registered',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'directory_id' => $directory->directoryId,
+                                                           'tenant'       => $directory->tenantSlug,
+                                                           'name'         => $directory->name,
+                                                       ]
+                                       ));
 
         return new RegisteredScimDirectory(directory: $directory, plainTextToken: $plainTextToken);
     }

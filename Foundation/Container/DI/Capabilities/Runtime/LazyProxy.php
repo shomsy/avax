@@ -13,13 +13,17 @@ use WeakMap;
 final class LazyProxy
 {
     /** @var WeakMap<object, object> */
-    private static WeakMap $instances;
+    private static WeakMap   $instances;
+    private readonly Closure $factory;
+    private readonly string  $serviceId;
 
     public function __construct(
-        private readonly string  $serviceId,
-        private readonly Closure $factory
+        string  $serviceId,
+        Closure $factory
     )
     {
+        $this->serviceId = $serviceId;
+        $this->factory   = $factory;
         self::$instances ??= new WeakMap();
     }
 

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Capability\Access;
 
 use Avax\Auth\System\Capability\Access\Policy\AccessPolicy;
+use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy as RequireAccessPolicyBoundary;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\RequireAuthentication as RequireAuthenticationBoundary;
 use Avax\Auth\System\Capability\Access\RequireAuthentication\Unauthenticated;
-use Avax\Auth\System\Capability\Access\RequireAccessPolicy\RequireAccessPolicy as RequireAccessPolicyBoundary;
 use Avax\Auth\System\Capability\Access\RequirePermission\PermissionDenied;
 use Avax\Auth\System\Capability\Access\RequirePermission\RequirePermission as RequirePermissionBoundary;
 use Avax\Auth\System\Capability\Access\RequireRole\RequireRole as RequireRoleBoundary;
@@ -23,12 +23,23 @@ use SensitiveParameter;
  */
 final readonly class Access implements AccessInterface
 {
+    private RequireAccessPolicyBoundary   $requireAccessPolicy;
+    private RequirePermissionBoundary     $requirePermission;
+    private RequireRoleBoundary           $requireRole;
+    private RequireAuthenticationBoundary $requireAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private RequireAuthenticationBoundary $requireAuthentication,
-        private RequireRoleBoundary                                 $requireRole,
-        private RequirePermissionBoundary                           $requirePermission,
-        #[SensitiveParameter] private RequireAccessPolicyBoundary   $requireAccessPolicy
-    ) {}
+        #[SensitiveParameter] RequireAuthenticationBoundary $requireAuthentication,
+        RequireRoleBoundary                                 $requireRole,
+        RequirePermissionBoundary                           $requirePermission,
+        #[SensitiveParameter] RequireAccessPolicyBoundary   $requireAccessPolicy
+    )
+    {
+        $this->requireAuthentication = $requireAuthentication;
+        $this->requireRole           = $requireRole;
+        $this->requirePermission     = $requirePermission;
+        $this->requireAccessPolicy   = $requireAccessPolicy;
+    }
 
     /**
      * @throws Unauthenticated

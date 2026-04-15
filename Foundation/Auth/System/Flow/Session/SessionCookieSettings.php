@@ -11,16 +11,32 @@ use InvalidArgumentException;
  */
 final readonly class SessionCookieSettings
 {
+    public string $domain;
+    public string $path;
+    public string $sameSite;
+    public bool   $httpOnly;
+    public bool   $secure;
+
     /**
      * @param 'Lax'|'Strict'|'None' $sameSite
      */
     public function __construct(
-        public bool   $secure = true,
-        public bool   $httpOnly = true,
-        public string $sameSite = 'Lax',
-        public string $path = '/',
-        public string $domain = ''
-    ) {
+        bool|null   $secure = null,
+        bool|null   $httpOnly = null,
+        string|null $sameSite = null,
+        string|null $path = null,
+        string      $domain = ''
+    )
+    {
+        $secure         ??= true;
+        $httpOnly       ??= true;
+        $sameSite       ??= 'Lax';
+        $path           ??= '/';
+        $this->secure   = $secure;
+        $this->httpOnly = $httpOnly;
+        $this->sameSite = $sameSite;
+        $this->path     = $path;
+        $this->domain   = $domain;
         if (! in_array($this->sameSite, ['Lax', 'Strict', 'None'], true)) {
             throw new InvalidArgumentException(message: 'Cookie sameSite must be Lax, Strict, or None.');
         }

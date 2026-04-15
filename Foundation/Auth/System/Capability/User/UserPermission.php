@@ -9,9 +9,14 @@ namespace Avax\Auth\System\Capability\User;
  */
 final readonly class UserPermission
 {
+    public string $value;
+
     public function __construct(
-        public string $value
-    ) {}
+        string $value
+    )
+    {
+        $this->value = $value;
+    }
 
     public function equals(UserPermission $other) : bool
     {

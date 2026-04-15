@@ -154,9 +154,9 @@ class JwtIdentityTest extends TestCase
         );
 
         $issued   = $jwt->issue(
-            user     : $user,
-            clientId : 'oauth_client',
-            scopes   : ['email', 'profile']
+            user    : $user,
+            clientId: 'oauth_client',
+            scopes  : ['email', 'profile']
         );
         $resolved = $jwt->resolve(token: $issued->token);
 
@@ -183,14 +183,14 @@ class JwtIdentityTest extends TestCase
             clock     : new Clock()
         );
 
-        $issued = $jwt->issue(
+        $issued   = $jwt->issue(
             user            : $user,
             clientId        : 'oauth_client',
             scopes          : ['profile'],
             senderConstraint: new OAuthSenderConstraint(
-                type      : OAuthSenderConstraintType::DPOP,
-                thumbprint: 'thumb-123'
-            )
+                                  type      : OAuthSenderConstraintType::DPOP,
+                                  thumbprint: 'thumb-123'
+                              )
         );
         $resolved = $jwt->resolve(token: $issued->token);
 
@@ -203,20 +203,20 @@ class JwtIdentityTest extends TestCase
     public function testJwtIdentityIssuesAndResolvesWorkloadTokens() : void
     {
         $jwt = new JwtIdentity(
-            userSource      : new InMemoryUserSource(),
-            codec           : new HmacTokenCodec(secret: 'super-secret-key'),
-            clock           : new Clock(),
-            revocationStore : new InMemoryTokenRevocationStore()
+            userSource     : new InMemoryUserSource(),
+            codec          : new HmacTokenCodec(secret: 'super-secret-key'),
+            clock          : new Clock(),
+            revocationStore: new InMemoryTokenRevocationStore()
         );
 
-        $issued = $jwt->issueWorkloadToken(
+        $issued   = $jwt->issueWorkloadToken(
             subject         : 'client:machine-worker',
             clientId        : 'oauth_machine',
             scopes          : ['metrics.read', 'orders.sync'],
             senderConstraint: new OAuthSenderConstraint(
-                type      : OAuthSenderConstraintType::MTLS,
-                thumbprint: 'cert-thumb-1'
-            ),
+                                  type      : OAuthSenderConstraintType::MTLS,
+                                  thumbprint: 'cert-thumb-1'
+                              ),
             audience        : 'orders-api'
         );
         $resolved = $jwt->resolveWorkloadToken(

@@ -8,14 +8,28 @@ use SensitiveParameter;
 
 final readonly class FederatedIdentity
 {
+    public bool   $emailVerified;
+    public array  $groups;
+    public string $displayName;
+    public string $email;
+    public string $subject;
+
     /**
      * @param list<string> $groups
      */
     public function __construct(
-        public string                       $subject,
-        #[SensitiveParameter] public string $email,
-        public string                       $displayName,
-        public array                        $groups = [],
-        public bool                         $emailVerified = true
-    ) {}
+        string                       $subject,
+        #[SensitiveParameter] string $email,
+        string                       $displayName,
+        array|null                   $groups = null,
+        bool                         $emailVerified = true
+    )
+    {
+        $groups              ??= [];
+        $this->subject       = $subject;
+        $this->email         = $email;
+        $this->displayName   = $displayName;
+        $this->groups        = $groups;
+        $this->emailVerified = $emailVerified;
+    }
 }

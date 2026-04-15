@@ -19,12 +19,24 @@ use SensitiveParameter;
  */
 final readonly class VerifyDpopProof
 {
+    private int                           $maxAgeSeconds;
+    private AuditLogInterface             $auditLog;
+    private DpopProofReplayStoreInterface $replayStore;
+    private TokenCodecInterface           $codec;
+
     public function __construct(
-        private TokenCodecInterface $codec,
-        private DpopProofReplayStoreInterface $replayStore,
-        private AuditLogInterface $auditLog = new NullAuditLog(),
-        private int $maxAgeSeconds = 300
-    ) {}
+        TokenCodecInterface           $codec,
+        DpopProofReplayStoreInterface $replayStore,
+        AuditLogInterface|null        $auditLog = null,
+        int                           $maxAgeSeconds = 300
+    )
+    {
+        $auditLog            ??= new NullAuditLog();
+        $this->codec         = $codec;
+        $this->replayStore   = $replayStore;
+        $this->auditLog      = $auditLog;
+        $this->maxAgeSeconds = $maxAgeSeconds;
+    }
 
     /**
      * @throws DpopProofFailed
@@ -47,12 +59,12 @@ final readonly class VerifyDpopProof
             throw DpopProofFailed::invalid(reason: 'decode_failed');
         }
 
-        $jti = $claims['jti'] ?? null;
-        $iat = $claims['iat'] ?? null;
-        $htu = $claims['htu'] ?? null;
-        $htm = $claims['htm'] ?? null;
+        $jti        = $claims['jti'] ?? null;
+        $iat        = $claims['iat'] ?? null;
+        $htu        = $claims['htu'] ?? null;
+        $htm        = $claims['htm'] ?? null;
         $thumbprint = $claims['jkt'] ?? null;
-        $ath = $claims['ath'] ?? null;
+        $ath        = $claims['ath'] ?? null;
 
         if (
             ! is_string($jti)
@@ -65,9 +77,9 @@ final readonly class VerifyDpopProof
             throw DpopProofFailed::invalid(reason: 'missing_required_claims');
         }
 
-        $now = new DateTimeImmutable();
+        $now      = new DateTimeImmutable();
         $issuedAt = new DateTimeImmutable(datetime: "@{$iat}");
-        $age = abs($now->getTimestamp() - $issuedAt->getTimestamp());
+        $age      = abs($now->getTimestamp() - $issuedAt->getTimestamp());
 
         if ($age > $this->maxAgeSeconds) {
             $this->recordFailure(input: $input, reason: 'proof_expired');
@@ -136,21 +148,21 @@ final readonly class VerifyDpopProof
         return is_scalar($value) ? (string) $value : null;
     }
 
-    private function sameUri(string $expected, string $actual) : bool
-    {
-        return rtrim($expected, '/') === rtrim($actual, '/');
-    }
-
     private function recordFailure(HttpOAuthProofInput $input, string $reason) : void
     {
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.oauth.sender_constraint.dpop.failed',
-            occurredAt: new DateTimeImmutable(),
-            context   : [
-                'reason' => $reason,
-                'method' => strtoupper($input->method),
-                'uri' => $input->uri,
-            ]
-        ));
+                                           name      : 'auth.oauth.sender_constraint.dpop.failed',
+                                           occurredAt: new DateTimeImmutable(),
+                                           context   : [
+                                                           'reason' => $reason,
+                                                           'method' => strtoupper($input->method),
+                                                           'uri'    => $input->uri,
+                                                       ]
+                                       ));
+    }
+
+    private function sameUri(string $expected, string $actual) : bool
+    {
+        return rtrim($expected, '/') === rtrim($actual, '/');
     }
 }

@@ -17,9 +17,14 @@ use Avax\HTTP\Router\Validation\Exceptions\InvalidConstraintException;
  */
 final readonly class HeadRequestFallback
 {
+    private HttpRequestRouter $router;
+
     public function __construct(
-        private HttpRequestRouter $router
-    ) {}
+        HttpRequestRouter $router
+    )
+    {
+        $this->router = $router;
+    }
 
     /**
      * Resolves the request, falling back from HEAD to GET if needed.

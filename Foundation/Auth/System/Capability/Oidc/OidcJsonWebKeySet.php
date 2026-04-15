@@ -6,10 +6,15 @@ namespace Avax\Auth\System\Capability\Oidc;
 
 final readonly class OidcJsonWebKeySet
 {
+    public array $keys;
+
     /**
      * @param list<OidcJsonWebKey> $keys
      */
     public function __construct(
-        public array $keys
-    ) {}
+        array $keys
+    )
+    {
+        $this->keys = $keys;
+    }
 }

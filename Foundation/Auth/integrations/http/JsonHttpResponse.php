@@ -11,13 +11,23 @@ use SensitiveParameter;
  */
 final readonly class JsonHttpResponse
 {
+    public array $headers;
+    public array $body;
+    public int   $statusCode;
+
     /**
      * @param array<string, mixed>|list<mixed> $body
-     * @param array<string, string> $headers
+     * @param array<string, string>            $headers
      */
     public function __construct(
-        public int                         $statusCode,
-        public array $body = [],
-        #[SensitiveParameter] public array $headers = ['Content-Type' => 'application/json']
-    ) {}
+        int                         $statusCode,
+        array|null                  $body = null,
+        #[SensitiveParameter] array $headers = ['Content-Type' => 'application/json']
+    )
+    {
+        $body             ??= [];
+        $this->statusCode = $statusCode;
+        $this->body       = $body;
+        $this->headers    = $headers;
+    }
 }

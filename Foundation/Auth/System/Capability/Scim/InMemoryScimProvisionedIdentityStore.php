@@ -14,6 +14,11 @@ final class InMemoryScimProvisionedIdentityStore implements ScimProvisionedIdent
         $this->identities[$this->key(directoryId: $identity->directoryId, externalId: $identity->externalId)] = $identity;
     }
 
+    private function key(string $directoryId, string $externalId) : string
+    {
+        return $directoryId . ':' . strtolower(trim($externalId));
+    }
+
     public function find(string $directoryId, string $externalId) : ScimProvisionedIdentity|null
     {
         return $this->identities[$this->key(directoryId: $directoryId, externalId: $externalId)] ?? null;
@@ -22,18 +27,13 @@ final class InMemoryScimProvisionedIdentityStore implements ScimProvisionedIdent
     public function allForDirectory(string $directoryId) : array
     {
         return array_values(array_filter(
-            $this->identities,
-            static fn (ScimProvisionedIdentity $identity) : bool => $identity->directoryId === $directoryId
-        ));
+                                $this->identities,
+                                static fn (ScimProvisionedIdentity $identity) : bool => $identity->directoryId === $directoryId
+                            ));
     }
 
     public function remove(string $directoryId, string $externalId) : void
     {
         unset($this->identities[$this->key(directoryId: $directoryId, externalId: $externalId)]);
-    }
-
-    private function key(string $directoryId, string $externalId) : string
-    {
-        return $directoryId . ':' . strtolower(trim($externalId));
     }
 }

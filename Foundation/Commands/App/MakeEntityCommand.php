@@ -10,10 +10,17 @@ use Throwable;
 
 final readonly class MakeEntityCommand
 {
+    private LoggerInterface $logger;
+    private EntityGenerator $entityGenerator;
+
     public function __construct(
-        private EntityGenerator $entityGenerator,
-        private LoggerInterface $logger
-    ) {}
+        EntityGenerator $entityGenerator,
+        LoggerInterface $logger
+    )
+    {
+        $this->entityGenerator = $entityGenerator;
+        $this->logger          = $logger;
+    }
 
     public function execute(array $arguments) : void
     {

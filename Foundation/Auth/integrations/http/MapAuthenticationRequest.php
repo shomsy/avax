@@ -14,10 +14,18 @@ use SensitiveParameter;
  */
 final readonly class MapAuthenticationRequest
 {
+    private ResolveSessionAllowance $resolveSessionAllowance;
+    private ReadBearerToken         $readBearerToken;
+
     public function __construct(
-        #[SensitiveParameter] private ReadBearerToken         $readBearerToken = new ReadBearerToken(),
-        #[SensitiveParameter] private ResolveSessionAllowance $resolveSessionAllowance = new ResolveSessionAllowance()
-    ) {}
+        #[SensitiveParameter] ReadBearerToken|null    $readBearerToken = null,
+        #[SensitiveParameter] ResolveSessionAllowance $resolveSessionAllowance = new ResolveSessionAllowance()
+    )
+    {
+        $readBearerToken               ??= new ReadBearerToken();
+        $this->readBearerToken         = $readBearerToken;
+        $this->resolveSessionAllowance = $resolveSessionAllowance;
+    }
 
     public function execute(HttpAuthenticationInput $input) : AuthenticationRequest
     {

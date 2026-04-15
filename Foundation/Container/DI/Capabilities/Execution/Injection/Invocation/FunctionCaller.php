@@ -22,11 +22,15 @@ final class FunctionCaller
     private ServiceResolver|null $resolver = null;
 
     /** @var array<string, ResolvePlan> */
-    private array $plans = [];
+    private array                         $plans = [];
+    private readonly ResolveCallArguments $arguments;
 
     public function __construct(
-        private readonly ResolveCallArguments $arguments
-    ) {}
+        ResolveCallArguments $arguments
+    )
+    {
+        $this->arguments = $arguments;
+    }
 
     /**
      * Attaches the runtime resolver used for argument resolution.

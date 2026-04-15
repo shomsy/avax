@@ -28,17 +28,41 @@ use Throwable;
  */
 final readonly class JwtIdentity implements JwtIdentityInterface
 {
+    private int                                $leeway;
+    private string                             $issuer;
+    private int                                $refreshTokenExpiry;
+    private int                                $tokenExpiry;
+    private RefreshTokenStoreInterface|null    $refreshTokenStore;
+    private TokenRevocationStoreInterface|null $revocationStore;
+    private Clock                              $clock;
+    private TokenCodecInterface                $codec;
+    private UserSourceInterface                $userSource;
+
     public function __construct(
-        private UserSourceInterface                                    $userSource,
-        private TokenCodecInterface                                    $codec,
-        private Clock                     $clock,
-        private TokenRevocationStoreInterface|null                     $revocationStore = null,
-        #[\SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        private int                                                    $tokenExpiry = 3600,
-        private int                                                    $refreshTokenExpiry = 2_592_000,
-        private string                                                 $issuer = 'avax-auth-system',
-        private int                                                    $leeway = 60
-    ) {}
+        UserSourceInterface                                    $userSource,
+        TokenCodecInterface                                    $codec,
+        Clock                                                  $clock,
+        TokenRevocationStoreInterface|null                     $revocationStore = null,
+        #[\SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        int|null                                               $tokenExpiry = null,
+        int|null                                               $refreshTokenExpiry = null,
+        string|null                                            $issuer = null,
+        int                                                    $leeway = 60
+    )
+    {
+        $tokenExpiry              ??= 3600;
+        $refreshTokenExpiry       ??= 2_592_000;
+        $issuer                   ??= 'avax-auth-system';
+        $this->userSource         = $userSource;
+        $this->codec              = $codec;
+        $this->clock              = $clock;
+        $this->revocationStore    = $revocationStore;
+        $this->refreshTokenStore  = $refreshTokenStore;
+        $this->tokenExpiry        = $tokenExpiry;
+        $this->refreshTokenExpiry = $refreshTokenExpiry;
+        $this->issuer             = $issuer;
+        $this->leeway             = $leeway;
+    }
 
     public function resolve(#[SensitiveParameter] string $token) : ResolvedToken|null
     {
@@ -80,16 +104,16 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 return null;
             }
 
-            $mfaVerifiedAt = null;
-            $mfaTimestamp  = $claims['mfa_at'] ?? null;
-            $phishingResistant = ($claims['phr'] ?? 0) === 1;
-            $clientId      = $claims['client_id'] ?? null;
-            $scopeClaim    = $claims['scope'] ?? null;
-            $senderConstraintType = $claims['cnf_typ'] ?? null;
+            $mfaVerifiedAt              = null;
+            $mfaTimestamp               = $claims['mfa_at'] ?? null;
+            $phishingResistant          = ($claims['phr'] ?? 0) === 1;
+            $clientId                   = $claims['client_id'] ?? null;
+            $scopeClaim                 = $claims['scope'] ?? null;
+            $senderConstraintType       = $claims['cnf_typ'] ?? null;
             $senderConstraintThumbprint = $claims['cnf_thumbprint'] ?? null;
-            $familyId      = $claims['fid'] ?? null;
-            $scopes        = [];
-            $senderConstraint = null;
+            $familyId                   = $claims['fid'] ?? null;
+            $scopes                     = [];
+            $senderConstraint           = null;
 
             if (is_int($mfaTimestamp)) {
                 $mfaVerifiedAt = new DateTimeImmutable(datetime: "@{$mfaTimestamp}");
@@ -121,15 +145,15 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             }
 
             return new ResolvedToken(
-                user         : $user,
-                tokenId      : $tokenId,
-                expiresAt    : $expiryMoment,
-                mfaVerifiedAt: $mfaVerifiedAt,
+                user             : $user,
+                tokenId          : $tokenId,
+                expiresAt        : $expiryMoment,
+                mfaVerifiedAt    : $mfaVerifiedAt,
                 phishingResistant: $phishingResistant,
-                clientId     : $clientId,
-                scopes       : $scopes,
-                senderConstraint: $senderConstraint,
-                familyId     : is_string($familyId) ? $familyId : null
+                clientId         : $clientId,
+                scopes           : $scopes,
+                senderConstraint : $senderConstraint,
+                familyId         : is_string($familyId) ? $familyId : null
             );
         } catch (Throwable) {
             return null;
@@ -143,11 +167,11 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      * @throws \DateMalformedStringException
      */
     public function issueWorkloadToken(
-        string $subject,
-        string $clientId,
-        array $scopes = [],
+        string                     $subject,
+        string                     $clientId,
+        array                      $scopes = [],
         OAuthSenderConstraint|null $senderConstraint = null,
-        string|null $audience = null
+        string|null                $audience = null
     ) : IssuedToken
     {
         $normalizedSubject = trim($subject);
@@ -160,13 +184,13 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         $expiresAt = $issuedAt->modify(modifier: "+{$this->tokenExpiry} seconds");
         $tokenId   = bin2hex(random_bytes(16));
         $payload   = [
-            'iss' => $this->issuer,
-            'sub' => $normalizedSubject,
-            'iat' => $issuedAt->getTimestamp(),
-            'nbf' => $issuedAt->getTimestamp(),
-            'exp' => $expiresAt->getTimestamp(),
-            'jti' => $tokenId,
-            'wli' => 1,
+            'iss'       => $this->issuer,
+            'sub'       => $normalizedSubject,
+            'iat'       => $issuedAt->getTimestamp(),
+            'nbf'       => $issuedAt->getTimestamp(),
+            'exp'       => $expiresAt->getTimestamp(),
+            'jti'       => $tokenId,
+            'wli'       => 1,
             'client_id' => $clientId,
         ];
 
@@ -179,7 +203,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         }
 
         if ($senderConstraint !== null) {
-            $payload['cnf_typ'] = $senderConstraint->type->value;
+            $payload['cnf_typ']        = $senderConstraint->type->value;
             $payload['cnf_thumbprint'] = $senderConstraint->thumbprint;
         }
 
@@ -192,8 +216,8 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
     public function resolveWorkloadToken(
         #[SensitiveParameter] string $token,
-        string|null $expectedAudience = null,
-        string|null $expectedIssuer = null
+        string|null                  $expectedAudience = null,
+        string|null                  $expectedIssuer = null
     ) : ResolvedWorkloadToken|null
     {
         try {
@@ -203,20 +227,20 @@ final readonly class JwtIdentity implements JwtIdentityInterface
                 return null;
             }
 
-            $expiresAt = $claims['exp'] ?? null;
-            $issuedAt  = $claims['iat'] ?? null;
-            $notBefore = $claims['nbf'] ?? null;
-            $subject   = $claims['sub'] ?? null;
-            $tokenId   = $claims['jti'] ?? null;
-            $clientId  = $claims['client_id'] ?? null;
-            $issuer    = $claims['iss'] ?? null;
-            $audience  = $claims['aud'] ?? null;
-            $workloadIdentity = ($claims['wli'] ?? 0) === 1;
-            $scopeClaim = $claims['scope'] ?? null;
-            $senderConstraintType = $claims['cnf_typ'] ?? null;
+            $expiresAt                  = $claims['exp'] ?? null;
+            $issuedAt                   = $claims['iat'] ?? null;
+            $notBefore                  = $claims['nbf'] ?? null;
+            $subject                    = $claims['sub'] ?? null;
+            $tokenId                    = $claims['jti'] ?? null;
+            $clientId                   = $claims['client_id'] ?? null;
+            $issuer                     = $claims['iss'] ?? null;
+            $audience                   = $claims['aud'] ?? null;
+            $workloadIdentity           = ($claims['wli'] ?? 0) === 1;
+            $scopeClaim                 = $claims['scope'] ?? null;
+            $senderConstraintType       = $claims['cnf_typ'] ?? null;
             $senderConstraintThumbprint = $claims['cnf_thumbprint'] ?? null;
-            $scopes = [];
-            $senderConstraint = null;
+            $scopes                     = [];
+            $senderConstraint           = null;
 
             if (
                 ! $workloadIdentity
@@ -270,14 +294,14 @@ final readonly class JwtIdentity implements JwtIdentityInterface
             }
 
             return new ResolvedWorkloadToken(
-                subject          : $subject,
-                clientId         : $clientId,
-                tokenId          : $tokenId,
-                expiresAt        : new DateTimeImmutable(datetime: "@{$expiresAt}"),
-                scopes           : $scopes,
-                audience         : $audience,
-                issuer           : $issuer,
-                senderConstraint : $senderConstraint
+                subject         : $subject,
+                clientId        : $clientId,
+                tokenId         : $tokenId,
+                expiresAt       : new DateTimeImmutable(datetime: "@{$expiresAt}"),
+                scopes          : $scopes,
+                audience        : $audience,
+                issuer          : $issuer,
+                senderConstraint: $senderConstraint
             );
         } catch (Throwable) {
             return null;
@@ -290,11 +314,11 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      * @throws \DateMalformedStringException
      */
     public function issueRefreshToken(
-        User $user,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool $phishingResistant = false,
-        string|null $clientId = null,
-        array $scopes = [],
+        User                       $user,
+        DateTimeImmutable|null     $mfaVerifiedAt = null,
+        bool                       $phishingResistant = false,
+        string|null                $clientId = null,
+        array                      $scopes = [],
         OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedRefreshToken|null
     {
@@ -303,13 +327,13 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         }
 
         return $this->refreshTokenStore->issue(
-            userId       : $user->getId(),
-            expiresAt    : $this->clock->now()->modify(modifier: "+{$this->refreshTokenExpiry} seconds"),
-            mfaVerifiedAt: $mfaVerifiedAt,
+            userId           : $user->getId(),
+            expiresAt        : $this->clock->now()->modify(modifier: "+{$this->refreshTokenExpiry} seconds"),
+            mfaVerifiedAt    : $mfaVerifiedAt,
             phishingResistant: $phishingResistant,
-            clientId     : $clientId,
-            scopes       : $scopes,
-            senderConstraint: $senderConstraint
+            clientId         : $clientId,
+            scopes           : $scopes,
+            senderConstraint : $senderConstraint
         );
     }
 
@@ -320,13 +344,13 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      * @throws \DateMalformedStringException
      */
     public function issue(
-        User $user,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool $phishingResistant = false,
-        string|null $clientId = null,
-        array $scopes = [],
-        OAuthSenderConstraint|null $senderConstraint = null,
-        string|null $refreshTokenFamilyId = null
+        User                               $user,
+        DateTimeImmutable|null             $mfaVerifiedAt = null,
+        bool                               $phishingResistant = false,
+        string|null                        $clientId = null,
+        array                              $scopes = [],
+        OAuthSenderConstraint|null         $senderConstraint = null,
+        #[\SensitiveParameter] string|null $refreshTokenFamilyId = null
     ) : IssuedToken
     {
         if (! $user->isActive()) {
@@ -366,7 +390,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         }
 
         if ($senderConstraint !== null) {
-            $payload['cnf_typ'] = $senderConstraint->type->value;
+            $payload['cnf_typ']        = $senderConstraint->type->value;
             $payload['cnf_thumbprint'] = $senderConstraint->thumbprint;
         }
 

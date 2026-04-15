@@ -20,13 +20,14 @@ readonly class AlphaNumOrEmail
      * Default error message template for validating either an alphanumeric username or a valid email.
      */
     private const string DEFAULT_ERROR_MESSAGE = 'The "%s" must be either an alphanumeric username or a valid email.';
+    private string|null $message;
 
     /**
      * Constructor for the AlphaNumOrEmail attribute.
      *
      * @param string|null $message Optional custom error message.
      */
-    public function __construct(private string|null $message = null) {}
+    public function __construct(string|null $message = null) { $this->message = $message; }
 
     /**
      * Validates that the provided value is either alphanumeric or a valid email.

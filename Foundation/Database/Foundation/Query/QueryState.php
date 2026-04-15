@@ -17,6 +17,20 @@ use Avax\Database\Query\ValueObjects\BindingBag;
  */
 final readonly class QueryState
 {
+    public bool        $distinct;
+    public array       $updateColumns;
+    public array       $values;
+    public int|null    $offset;
+    public int|null    $limit;
+    public array       $orders;
+    public array       $havings;
+    public array       $groups;
+    public array       $wheres;
+    public array       $joins;
+    public string|null $from;
+    public array       $columns;
+    private BindingBag $bindings;
+
     /**
      * @param string[]                         $columns       The list of technical column identifiers or expressions
      *                                                        for projection.
@@ -46,20 +60,44 @@ final readonly class QueryState
      *                                                        tokens.
      */
     public function __construct(
-        public array       $columns = ['*'],
-        public string|null $from = null,
-        public array       $joins = [],
-        public array       $wheres = [],
-        public array       $groups = [],
-        public array       $havings = [],
-        public array       $orders = [],
-        public int|null    $limit = null,
-        public int|null    $offset = null,
-        public array       $values = [],
-        public array       $updateColumns = [],
-        public bool        $distinct = false,
-        private BindingBag $bindings = new BindingBag
-    ) {}
+        array|null  $columns = null,
+        string|null $from = null,
+        array|null  $joins = null,
+        array|null  $wheres = null,
+        array|null  $groups = null,
+        array|null  $havings = null,
+        array|null  $orders = null,
+        int|null    $limit = null,
+        int|null    $offset = null,
+        array|null  $values = null,
+        array|null  $updateColumns = null,
+        bool|null   $distinct = null,
+        BindingBag  $bindings = new BindingBag
+    )
+    {
+        $columns             ??= ['*'];
+        $joins               ??= [];
+        $wheres              ??= [];
+        $groups              ??= [];
+        $havings             ??= [];
+        $orders              ??= [];
+        $values              ??= [];
+        $updateColumns       ??= [];
+        $distinct            ??= false;
+        $this->columns       = $columns;
+        $this->from          = $from;
+        $this->joins         = $joins;
+        $this->wheres        = $wheres;
+        $this->groups        = $groups;
+        $this->havings       = $havings;
+        $this->orders        = $orders;
+        $this->limit         = $limit;
+        $this->offset        = $offset;
+        $this->values        = $values;
+        $this->updateColumns = $updateColumns;
+        $this->distinct      = $distinct;
+        $this->bindings      = $bindings;
+    }
 
     /**
      * Create a new state with the assigned target table (FROM).

@@ -70,7 +70,10 @@ final class AsyncEventDispatcher
     /**
      * @var int Batch size for processing
      */
-    private int $batchSize = 100;
+    private int                  $batchSize = 100;
+    private readonly object|null $redis;
+    private readonly string|null $queuePath;
+    private string|null          $mode      = null;
 
     /**
      * AsyncEventDispatcher Constructor.
@@ -80,12 +83,15 @@ final class AsyncEventDispatcher
      * @param object|null $redis     Redis instance (for async_redis mode).
      */
     public function __construct(
-        private string|null          $mode = null,
-        private readonly string|null $queuePath = null,
-        private readonly object|null $redis = null
+        string|null $mode = null,
+        string|null $queuePath = null,
+        object|null $redis = null
     )
     {
-        $this->mode ??= self::MODE_SYNC;
+        $this->mode      = $mode;
+        $this->queuePath = $queuePath;
+        $this->redis     = $redis;
+        $this->mode      ??= self::MODE_SYNC;
         if ($mode === self::MODE_ASYNC_FILE && $queuePath === null) {
             throw new InvalidArgumentException(message: 'Queue path required for async_file mode');
         }

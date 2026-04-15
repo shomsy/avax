@@ -16,9 +16,14 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class SqlIdentifier
 {
+    private string $message;
+
     public function __construct(
-        private string $message = 'The :attribute must be a valid SQL identifier (alphanumeric, underscore, optional dot).'
-    ) {}
+        string $message = 'The :attribute must be a valid SQL identifier (alphanumeric, underscore, optional dot).'
+    )
+    {
+        $this->message = $message;
+    }
 
     /**
      * @throws ValidationException

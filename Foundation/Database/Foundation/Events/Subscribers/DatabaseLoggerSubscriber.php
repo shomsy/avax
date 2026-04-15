@@ -19,15 +19,22 @@ use Psr\Log\LoggerInterface;
  */
 final readonly class DatabaseLoggerSubscriber implements EventSubscriberInterface
 {
+    private Config|null     $config;
+    private LoggerInterface $logger;
+
     /**
      * @param LoggerInterface $logger The PSR-3 logging implementation for outputting telemetry.
      * @param Config|null     $config Optional configuration registry for dynamic control over logging levels and
      *                                redaction.
      */
     public function __construct(
-        private LoggerInterface $logger,
-        private Config|null     $config = null
-    ) {}
+        LoggerInterface $logger,
+        Config|null     $config = null
+    )
+    {
+        $this->logger = $logger;
+        $this->config = $config;
+    }
 
     /**
      * Map database signal types to their corresponding handler logic.

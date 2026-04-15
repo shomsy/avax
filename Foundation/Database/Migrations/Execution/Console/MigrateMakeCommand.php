@@ -12,9 +12,14 @@ use Throwable;
  */
 final readonly class MigrateMakeCommand
 {
+    private MigrationGenerator $generator;
+
     public function __construct(
-        private MigrationGenerator $generator
-    ) {}
+        MigrationGenerator $generator
+    )
+    {
+        $this->generator = $generator;
+    }
 
     public function handle(string $name, string $path, array $options = []) : int
     {

@@ -12,11 +12,20 @@ namespace Avax\HTTP\Router\Routing;
  */
 final readonly class RouteKey
 {
+    public string $path;
+    public string $domain;
+    public string $method;
+
     public function __construct(
-        public string $method,
-        public string $domain,
-        public string $path
-    ) {}
+        string $method,
+        string $domain,
+        string $path
+    )
+    {
+        $this->method = $method;
+        $this->domain = $domain;
+        $this->path   = $path;
+    }
 
     /**
      * Create RouteKey from a RouteDefinition.

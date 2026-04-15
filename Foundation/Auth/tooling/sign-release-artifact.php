@@ -6,7 +6,7 @@ use Avax\Auth\Integrations\Release\SignReleaseArtifact;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-$artifactPath = $argv[1] ?? null;
+$artifactPath   = $argv[1] ?? null;
 $privateKeyPath = $argv[2] ?? null;
 
 if (! is_string($artifactPath) || $artifactPath === '' || ! is_string($privateKeyPath) || $privateKeyPath === '') {

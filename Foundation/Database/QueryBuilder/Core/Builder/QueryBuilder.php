@@ -38,7 +38,9 @@ class QueryBuilder
     protected QueryState $state;
 
     /** @var bool If true, we don't save changes immediately. We wait and do them all at once later. */
-    protected bool $isDeferred = false;
+    protected bool                      $isDeferred = false;
+    protected QueryOrchestrator         $orchestrator;
+    protected readonly GrammarInterface $grammar;
 
     /**
      * Set up the builder with its two "helpers".
@@ -51,11 +53,13 @@ class QueryBuilder
      * @throws ReflectionException
      */
     public function __construct(
-        protected readonly GrammarInterface $grammar,
-        protected QueryOrchestrator         $orchestrator
+        GrammarInterface  $grammar,
+        QueryOrchestrator $orchestrator
     )
     {
-        $this->state = new QueryState;
+        $this->grammar      = $grammar;
+        $this->orchestrator = $orchestrator;
+        $this->state        = new QueryState;
 
         // If this class has a 'tableName' property defined (like in a Model), we use it as the default target.
         if (property_exists(object_or_class: $this, property: 'tableName')) {

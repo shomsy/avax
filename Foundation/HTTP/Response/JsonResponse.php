@@ -14,13 +14,25 @@ use SensitiveParameter;
 readonly class JsonResponse
 {
     private const array DEFAULT_HEADERS = ['Content-Type' => 'application/json'];
+    public array  $headers;
+    public array  $data;
+    public string $message;
+    public int    $status;
 
     public function __construct(
-        public int                         $status,
-        public string                      $message = '',
-        public array                       $data = [],
-        #[SensitiveParameter] public array $headers = self::DEFAULT_HEADERS,
-    ) {}
+        int                         $status,
+        string|null                 $message = null,
+        array|null                  $data = null,
+        #[SensitiveParameter] array $headers = self::DEFAULT_HEADERS,
+    )
+    {
+        $message       ??= '';
+        $data          ??= [];
+        $this->status  = $status;
+        $this->message = $message;
+        $this->data    = $data;
+        $this->headers = $headers;
+    }
 
     /**
      * Creates a success response.

@@ -17,26 +17,45 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class BackChannelLogout
 {
+    private OAuthClientRegistryInterface|null $clientRegistry;
+    private OidcProviderInterface|null        $oidcProvider;
+    private RefreshTokenStoreInterface|null   $refreshTokenStore;
+    private SessionRegistryInterface|null     $sessionRegistry;
+    private Clock                             $clock;
+    private AuditLogInterface                 $auditLog;
+    private IdentityInterface                 $identity;
+    private CurrentAuthentication             $currentAuthentication;
+
     public function __construct(
-        private CurrentAuthentication $currentAuthentication,
-        private IdentityInterface $identity,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        private SessionRegistryInterface|null $sessionRegistry = null,
-        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
-        private OidcProviderInterface|null $oidcProvider = null,
-        private OAuthClientRegistryInterface|null $clientRegistry = null
-    ) {}
+        #[\SensitiveParameter] CurrentAuthentication           $currentAuthentication,
+        IdentityInterface                                      $identity,
+        AuditLogInterface                                      $auditLog,
+        Clock                                                  $clock,
+        #[\SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry = null,
+        #[\SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null,
+        OidcProviderInterface|null                             $oidcProvider = null,
+        OAuthClientRegistryInterface|null                      $clientRegistry = null
+    )
+    {
+        $this->currentAuthentication = $currentAuthentication;
+        $this->identity              = $identity;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+        $this->sessionRegistry       = $sessionRegistry;
+        $this->refreshTokenStore     = $refreshTokenStore;
+        $this->oidcProvider          = $oidcProvider;
+        $this->clientRegistry        = $clientRegistry;
+    }
 
     public function execute(BackChannelLogoutData $data) : LogoutResult
     {
-        $context = $this->currentAuthentication->read();
-        $now = $this->clock->now();
-        $claims = $this->oidcProvider?->resolveJwt(jwt: $data->logoutToken);
-        $sessionId = is_string($claims['sid'] ?? null) ? trim($claims['sid']) : null;
-        $events = $claims['events'] ?? null;
+        $context          = $this->currentAuthentication->read();
+        $now              = $this->clock->now();
+        $claims           = $this->oidcProvider?->resolveJwt(jwt: $data->logoutToken);
+        $sessionId        = is_string($claims['sid'] ?? null) ? trim($claims['sid']) : null;
+        $events           = $claims['events'] ?? null;
         $backChannelEvent = 'http://schemas.openid.net/event/backchannel-logout';
-        $client = $this->resolveClientFromClaims(claims: $claims);
+        $client           = $this->resolveClientFromClaims(claims: $claims);
 
         if (! is_array($events) || ! array_key_exists($backChannelEvent, $events)) {
             return new LogoutResult(revoked: false);
@@ -54,17 +73,17 @@ final readonly class BackChannelLogout
 
         if ($user !== null) {
             $this->auditLog->record(event: new AuditEvent(
-                name      : 'auth.oidc.back_channel_logout.succeeded',
-                occurredAt: $now,
-                context   : [
-                    'user_id' => $user->id,
-                    'session_id' => $sessionId,
-                    'aud' => $claims['aud'] ?? null,
-                    'client_id' => $client?->clientId,
-                    'front_channel_logout_supported' => $client?->frontChannelLogoutSupported,
-                    'back_channel_logout_supported' => $client?->backChannelLogoutSupported,
-                ]
-            ));
+                                               name      : 'auth.oidc.back_channel_logout.succeeded',
+                                               occurredAt: $now,
+                                               context   : [
+                                                               'user_id'                        => $user->id,
+                                                               'session_id'                     => $sessionId,
+                                                               'aud'                            => $claims['aud'] ?? null,
+                                                               'client_id'                      => $client?->clientId,
+                                                               'front_channel_logout_supported' => $client?->frontChannelLogoutSupported,
+                                                               'back_channel_logout_supported'  => $client?->backChannelLogoutSupported,
+                                                           ]
+                                           ));
         }
 
         if ($user !== null) {
@@ -74,8 +93,8 @@ final readonly class BackChannelLogout
         $this->currentAuthentication->clear();
 
         return new LogoutResult(
-            revoked   : $sessionId !== null,
-            sessionId : $sessionId
+            revoked  : $sessionId !== null,
+            sessionId: $sessionId
         );
     }
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\AuthenticateRequest;
 
 /**
- * Request-local storage for the active auth context.
+ * ServerRequest-local storage for the active auth context.
  */
 final class CurrentAuthentication
 {

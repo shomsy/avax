@@ -18,12 +18,23 @@ use SensitiveParameter;
  */
 final readonly class CancelMfaEnrollment
 {
+    private Clock                 $clock;
+    private AuditLogInterface     $auditLog;
+    private MfaStoreInterface     $mfaStore;
+    private CurrentAuthentication $currentAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private MfaStoreInterface                           $mfaStore,
-        private AuditLogInterface                           $auditLog,
-        private Clock                                       $clock
-    ) {}
+        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
+        MfaStoreInterface                           $mfaStore,
+        AuditLogInterface                           $auditLog,
+        Clock                                       $clock
+    )
+    {
+        $this->currentAuthentication = $currentAuthentication;
+        $this->mfaStore              = $mfaStore;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+    }
 
     /**
      * @throws Unauthenticated
@@ -38,11 +49,11 @@ final readonly class CancelMfaEnrollment
 
         $this->mfaStore->cancelEnrollment(userId: new UserId(value: $user->id));
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.mfa.enrollment.cancelled',
-                                    occurredAt: $this->clock->now(),
-                                    context   : [
-                                                    'user_id' => $user->id,
-                                                ]
-                                ));
+                                           name      : 'auth.mfa.enrollment.cancelled',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'user_id' => $user->id,
+                                                       ]
+                                       ));
     }
 }

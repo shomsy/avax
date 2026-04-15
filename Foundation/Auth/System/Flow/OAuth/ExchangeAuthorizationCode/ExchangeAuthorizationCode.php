@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Avax\Auth\System\Flow\OAuth\ExchangeAuthorizationCode;
 
 use Avax\Auth\System\Capability\Identity\Jwt\JwtIdentityInterface;
-use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
 use Avax\Auth\System\Capability\OAuth\AuthorizationCodeStoreInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
 use Avax\Auth\System\Capability\OAuth\OAuthGrantType;
 use Avax\Auth\System\Capability\OAuth\PkceMethod;
+use Avax\Auth\System\Capability\Oidc\OidcProviderInterface;
 use Avax\Auth\System\Capability\UserSource\UserSourceInterface;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\Diagnostics\AuditEvent;
@@ -22,17 +22,38 @@ use SensitiveParameter;
 
 final readonly class ExchangeAuthorizationCode
 {
+    private OidcProviderInterface|null      $oidcProvider;
+    private CurrentAuthentication|null      $currentAuthentication;
+    private Clock                           $clock;
+    private AuditLogInterface               $auditLog;
+    private RefreshTokenStoreInterface      $refreshTokenStore;
+    private JwtIdentityInterface            $jwtIdentity;
+    private UserSourceInterface             $userSource;
+    private AuthorizationCodeStoreInterface $codeStore;
+    private OAuthClientRegistryInterface    $clientRegistry;
+
     public function __construct(
-        private OAuthClientRegistryInterface                          $clientRegistry,
-        #[SensitiveParameter] private AuthorizationCodeStoreInterface $codeStore,
-        private UserSourceInterface                                   $userSource,
-        #[SensitiveParameter] private JwtIdentityInterface            $jwtIdentity,
-        #[SensitiveParameter] private RefreshTokenStoreInterface      $refreshTokenStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        #[SensitiveParameter] private CurrentAuthentication|null      $currentAuthentication = null,
-        private OidcProviderInterface|null                            $oidcProvider = null
-    ) {}
+        OAuthClientRegistryInterface                          $clientRegistry,
+        #[SensitiveParameter] AuthorizationCodeStoreInterface $codeStore,
+        UserSourceInterface                                   $userSource,
+        #[SensitiveParameter] JwtIdentityInterface            $jwtIdentity,
+        #[SensitiveParameter] RefreshTokenStoreInterface      $refreshTokenStore,
+        AuditLogInterface                                     $auditLog,
+        Clock                                                 $clock,
+        #[SensitiveParameter] CurrentAuthentication|null      $currentAuthentication = null,
+        OidcProviderInterface|null                            $oidcProvider = null
+    )
+    {
+        $this->clientRegistry        = $clientRegistry;
+        $this->codeStore             = $codeStore;
+        $this->userSource            = $userSource;
+        $this->jwtIdentity           = $jwtIdentity;
+        $this->refreshTokenStore     = $refreshTokenStore;
+        $this->auditLog              = $auditLog;
+        $this->clock                 = $clock;
+        $this->currentAuthentication = $currentAuthentication;
+        $this->oidcProvider          = $oidcProvider;
+    }
 
     /**
      * @throws OAuthTokenExchangeFailed
@@ -109,24 +130,24 @@ final readonly class ExchangeAuthorizationCode
         $this->codeStore->markUsed(codeId: $record->codeId, usedAt: $now);
 
         $refreshToken = $this->refreshTokenStore->issue(
-            userId       : $user->getId(),
-            expiresAt    : $now->modify(modifier: '+30 days'),
-            mfaVerifiedAt: $record->mfaVerifiedAt,
+            userId           : $user->getId(),
+            expiresAt        : $now->modify(modifier: '+30 days'),
+            mfaVerifiedAt    : $record->mfaVerifiedAt,
             phishingResistant: $record->phishingResistant,
-            clientId     : $client->clientId,
-            scopes       : $record->scopes,
-            senderConstraint: $data->senderConstraint
+            clientId         : $client->clientId,
+            scopes           : $record->scopes,
+            senderConstraint : $data->senderConstraint
         );
-        $accessToken = $this->jwtIdentity->issue(
-            user         : $user,
-            mfaVerifiedAt: $record->mfaVerifiedAt,
-            phishingResistant: $record->phishingResistant,
-            clientId     : $client->clientId,
-            scopes       : $record->scopes,
-            senderConstraint: $data->senderConstraint,
+        $accessToken  = $this->jwtIdentity->issue(
+            user                : $user,
+            mfaVerifiedAt       : $record->mfaVerifiedAt,
+            phishingResistant   : $record->phishingResistant,
+            clientId            : $client->clientId,
+            scopes              : $record->scopes,
+            senderConstraint    : $data->senderConstraint,
             refreshTokenFamilyId: $refreshToken->familyId
         );
-        $idToken = null;
+        $idToken      = null;
 
         if (in_array('openid', $record->scopes, true)) {
             if ($this->oidcProvider === null) {
@@ -135,46 +156,46 @@ final readonly class ExchangeAuthorizationCode
             }
 
             $idToken = $this->oidcProvider->issueIdToken(
-                user              : $user,
-                clientId          : $client->clientId,
-                scopes            : $record->scopes,
-                nonce             : $record->nonce,
-                authenticatedAt   : $record->mfaVerifiedAt,
-                sessionId         : $this->currentAuthentication?->read()->sessionId(),
-                phishingResistant : $record->phishingResistant
+                user             : $user,
+                clientId         : $client->clientId,
+                scopes           : $record->scopes,
+                nonce            : $record->nonce,
+                authenticatedAt  : $record->mfaVerifiedAt,
+                sessionId        : $this->currentAuthentication?->read()->sessionId(),
+                phishingResistant: $record->phishingResistant
             )->token;
         }
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.oauth.authorization_code.exchanged',
-            occurredAt: $now,
-            context   : [
-                'client_id' => $client->clientId,
-                'user_id' => $user->getId()->value,
-                'code_id' => $record->codeId,
-                'scope' => implode(' ', $record->scopes),
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
-            ]
-        ));
+                                           name      : 'auth.oauth.authorization_code.exchanged',
+                                           occurredAt: $now,
+                                           context   : [
+                                                           'client_id'  => $client->clientId,
+                                                           'user_id'    => $user->getId()->value,
+                                                           'code_id'    => $record->codeId,
+                                                           'scope'      => implode(' ', $record->scopes),
+                                                           'ip_address' => $data->ipAddress,
+                                                           'user_agent' => $data->userAgent,
+                                                       ]
+                                       ));
 
         return new OAuthTokenGrant(
-            accessToken          : $accessToken->token,
-            accessTokenExpiresAt : $accessToken->expiresAt,
-            refreshToken         : $refreshToken->token,
-            idToken              : $idToken,
-            clientId             : $client->clientId,
-            userId               : $user->getId()->value,
-            scopes               : $record->scopes,
-            tokenType            : $data->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
-            senderConstraint     : $data->senderConstraint
+            accessToken         : $accessToken->token,
+            accessTokenExpiresAt: $accessToken->expiresAt,
+            refreshToken        : $refreshToken->token,
+            idToken             : $idToken,
+            clientId            : $client->clientId,
+            userId              : $user->getId()->value,
+            scopes              : $record->scopes,
+            tokenType           : $data->senderConstraint?->type->value === 'dpop' ? 'DPoP' : 'Bearer',
+            senderConstraint    : $data->senderConstraint
         );
     }
 
     private function recordFailure(
         ExchangeAuthorizationCodeData $data,
-        string $reason,
-        bool $suspicious = false
+        string                        $reason,
+        bool                          $suspicious = false
     ) : void
     {
         $name = $suspicious
@@ -182,15 +203,15 @@ final readonly class ExchangeAuthorizationCode
             : 'auth.oauth.authorization_code.exchange.failed';
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : $name,
-            occurredAt: $this->clock->now(),
-            context   : [
-                'client_id' => $data->clientId,
-                'redirect_uri' => $data->redirectUri,
-                'reason' => $reason,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
-            ]
-        ));
+                                           name      : $name,
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'client_id'    => $data->clientId,
+                                                           'redirect_uri' => $data->redirectUri,
+                                                           'reason'       => $reason,
+                                                           'ip_address'   => $data->ipAddress,
+                                                           'user_agent'   => $data->userAgent,
+                                                       ]
+                                       ));
     }
 }

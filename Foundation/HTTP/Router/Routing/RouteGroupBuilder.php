@@ -22,17 +22,31 @@ use RuntimeException;
  */
 final readonly class RouteGroupBuilder
 {
+    private array       $routes;
+    private string|null $authorization;
+    private string|null $domain;
+    private array       $middleware;
+    private string|null $prefix;
+
     /**
      * @param array<string>  $middleware
      * @param RouteBuilder[] $routes
      */
     private function __construct(
-        private string|null $prefix = null,
-        private array       $middleware = [],
-        private string|null $domain = null,
-        private string|null $authorization = null,
-        private array       $routes = []
-    ) {}
+        string|null $prefix = null,
+        array|null  $middleware = null,
+        string|null $domain = null,
+        string|null $authorization = null,
+        array       $routes = []
+    )
+    {
+        $middleware          ??= [];
+        $this->prefix        = $prefix;
+        $this->middleware    = $middleware;
+        $this->domain        = $domain;
+        $this->authorization = $authorization;
+        $this->routes        = $routes;
+    }
 
     /**
      * Factory method to create a new, empty RouteGroup instance.

@@ -19,16 +19,35 @@ use SensitiveParameter;
  */
 final readonly class ResetPassword
 {
+    private RefreshTokenStoreInterface|null $refreshTokenStore;
+    private MfaChallengeStoreInterface|null $mfaChallengeStore;
+    private SessionRegistryInterface|null   $sessionRegistry;
+    private Clock                           $clock;
+    private AuditLogInterface               $auditLog;
+    private PasswordResetStoreInterface     $passwordResetStore;
+    private PasswordHasher                  $passwordHasher;
+    private UserSourceInterface             $userSource;
+
     public function __construct(
-        private UserSourceInterface                                   $userSource,
-        #[SensitiveParameter] private PasswordHasher                  $passwordHasher,
-        #[SensitiveParameter] private PasswordResetStoreInterface     $passwordResetStore,
-        private AuditLogInterface                                     $auditLog,
-        private Clock                                                 $clock,
-        #[SensitiveParameter] private SessionRegistryInterface|null   $sessionRegistry = null,
-        private MfaChallengeStoreInterface|null                       $mfaChallengeStore = null,
-        #[SensitiveParameter] private RefreshTokenStoreInterface|null $refreshTokenStore = null
-    ) {}
+        UserSourceInterface                                   $userSource,
+        #[SensitiveParameter] PasswordHasher                  $passwordHasher,
+        #[SensitiveParameter] PasswordResetStoreInterface     $passwordResetStore,
+        AuditLogInterface                                     $auditLog,
+        Clock                                                 $clock,
+        #[SensitiveParameter] SessionRegistryInterface|null   $sessionRegistry = null,
+        MfaChallengeStoreInterface|null                       $mfaChallengeStore = null,
+        #[SensitiveParameter] RefreshTokenStoreInterface|null $refreshTokenStore = null
+    )
+    {
+        $this->userSource         = $userSource;
+        $this->passwordHasher     = $passwordHasher;
+        $this->passwordResetStore = $passwordResetStore;
+        $this->auditLog           = $auditLog;
+        $this->clock              = $clock;
+        $this->sessionRegistry    = $sessionRegistry;
+        $this->mfaChallengeStore  = $mfaChallengeStore;
+        $this->refreshTokenStore  = $refreshTokenStore;
+    }
 
     public function execute(ResetPasswordData $data) : bool
     {
@@ -36,14 +55,14 @@ final readonly class ResetPassword
 
         if ($userId === null) {
             $this->auditLog->record(event: new AuditEvent(
-                                        name      : 'auth.password_reset.failed',
-                                        occurredAt: $this->clock->now(),
-                                        context   : [
-                                                        'reason'     => 'invalid_token',
-                                                        'ip_address' => $data->ipAddress,
-                                                        'user_agent' => $data->userAgent,
-                                                    ]
-                                    ));
+                                               name      : 'auth.password_reset.failed',
+                                               occurredAt: $this->clock->now(),
+                                               context   : [
+                                                               'reason'     => 'invalid_token',
+                                                               'ip_address' => $data->ipAddress,
+                                                               'user_agent' => $data->userAgent,
+                                                           ]
+                                           ));
 
             return false;
         }
@@ -57,14 +76,14 @@ final readonly class ResetPassword
         $this->refreshTokenStore?->revokeUser(userId: $userId);
 
         $this->auditLog->record(event: new AuditEvent(
-                                    name      : 'auth.password_reset.completed',
-                                    occurredAt: $this->clock->now(),
-                                    context   : [
-                                                    'user_id'    => $userId->value,
-                                                    'ip_address' => $data->ipAddress,
-                                                    'user_agent' => $data->userAgent,
-                                                ]
-                                ));
+                                           name      : 'auth.password_reset.completed',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'user_id'    => $userId->value,
+                                                           'ip_address' => $data->ipAddress,
+                                                           'user_agent' => $data->userAgent,
+                                                       ]
+                                       ));
 
         return true;
     }

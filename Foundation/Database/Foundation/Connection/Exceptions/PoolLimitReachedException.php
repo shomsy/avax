@@ -32,15 +32,20 @@ use Avax\Database\Exceptions\DatabaseException;
  */
 final class PoolLimitReachedException extends DatabaseException
 {
+    private readonly int    $limit;
+    private readonly string $name;
+
     /**
      * @param string $name  The nickname of the pool that is full.
      * @param int    $limit The maximum number of people allowed in at once.
      */
     public function __construct(
-        private readonly string $name,
-        private readonly int    $limit
+        string $name,
+        int    $limit
     )
     {
+        $this->name  = $name;
+        $this->limit = $limit;
         parent::__construct(message: "Connection pool [{$name}] reached its limit of {$limit} connections.");
     }
 

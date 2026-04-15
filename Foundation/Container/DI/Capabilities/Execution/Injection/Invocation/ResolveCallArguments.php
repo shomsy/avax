@@ -12,9 +12,14 @@ use ReflectionParameter;
 
 final readonly class ResolveCallArguments
 {
+    private ResolveDependencies $dependencies;
+
     public function __construct(
-        private ResolveDependencies $dependencies
-    ) {}
+        ResolveDependencies $dependencies
+    )
+    {
+        $this->dependencies = $dependencies;
+    }
 
     /**
      * @param array<string, mixed> $overrides

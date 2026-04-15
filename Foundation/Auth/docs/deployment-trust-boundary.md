@@ -17,11 +17,13 @@ This document defines the trust boundaries for deploying Auth with sender-constr
 ```
 
 **Configuration:**
+
 - TLS terminates at the application server
 - `X-Forwarded-For` used for client IP
 - No client certificate required
 
 **Headers trusted:**
+
 - `X-Forwarded-For`
 - `X-Forwarded-Proto`
 - `X-Forwarded-Host`
@@ -35,16 +37,19 @@ This document defines the trust boundaries for deploying Auth with sender-constr
 ```
 
 **Configuration:**
+
 - Proxy validates client (optional mTLS)
 - Proxy adds forwarding headers
 - Application trusts proxy via `TrustedProxies` configuration
 
 **Headers trusted:**
+
 - `X-Forwarded-For` (validated by proxy)
 - `X-Client-Cert` (if proxy forwards)
 - `X-TLS-Client-Cert-Verify` (proxy validation result)
 
 **Headers FORBIDDEN from untrusted:**
+
 - `X-Client-Cert` from direct client connections
 - Any header starting with `X-Client-` from external sources
 
@@ -57,11 +62,13 @@ This document defines the trust boundaries for deploying Auth with sender-constr
 ```
 
 **Configuration:**
+
 - Client presents certificate at edge
 - Edge forwards certificate metadata
 - Application validates certificate chain
 
 **Certificate Propagation:**
+
 - `X-Client-Cert` contains PEM-encoded client cert
 - `X-Client-Cert-Fingerprint` contains SHA256 hash
 - `X-TLS-Client-Cert-Verify` contains verification result (SUCCESS/FAILED)
@@ -72,18 +79,18 @@ This document defines the trust boundaries for deploying Auth with sender-constr
 
 ### Required Headers
 
-| Header | Source | Trust Level |
-|--------|--------|-------------|
-| `X-Forwarded-For` | Proxy | Trusted if proxy in `TrustedProxies` |
-| `X-Forwarded-Proto` | Proxy | Trusted |
-| `X-Client-Cert` | Proxy only | Trusted from proxy only |
+| Header              | Source     | Trust Level                          |
+|---------------------|------------|--------------------------------------|
+| `X-Forwarded-For`   | Proxy      | Trusted if proxy in `TrustedProxies` |
+| `X-Forwarded-Proto` | Proxy      | Trusted                              |
+| `X-Client-Cert`     | Proxy only | Trusted from proxy only              |
 
 ### Forbidden Headers
 
-| Header | Source | Reason |
-|--------|--------|--------|
-| `X-Client-Cert` | Direct client | Must come from proxy |
-| `X-TLS-Client-*` | Direct client | Proxy-only metadata |
+| Header           | Source        | Reason               |
+|------------------|---------------|----------------------|
+| `X-Client-Cert`  | Direct client | Must come from proxy |
+| `X-TLS-Client-*` | Direct client | Proxy-only metadata  |
 
 ---
 
@@ -129,7 +136,7 @@ $dpopKey = extractKeyFromDPoP($request->headers->get('DPoP'));
 ### mTLS Chain Validation
 
 1. Verify CA certificate is not expired
-2. Verify client certificate is not expired  
+2. Verify client certificate is not expired
 3. Verify certificate chain integrity
 4. Check revocation lists (CRL/OCSP)
 5. Verify certificate matches client identity
@@ -137,6 +144,7 @@ $dpopKey = extractKeyFromDPoP($request->headers->get('DPoP'));
 ### Unsafe Deployment Mode Detection
 
 **Warning if:**
+
 - Running without TLS in production
 - Client cert validation disabled
 - Proxy not in trusted list
@@ -239,13 +247,13 @@ Before production deployment, verify:
 
 ### Sender-Constraint Failure Messages
 
-| Error | Meaning | Resolution |
-|-------|---------|-------------|
-| `DPOP_INVALID_TOKEN` | DPoP JWT malformed | Check token format |
-| `DPOP Proof Invalid` | Signature verification failed | Check key binding |
-| `MTLS_MISSING_CERT` | No client certificate | Configure mTLS |
-| `MTLS_CHAIN_INVALID` | Certificate chain invalid | Check CA certificates |
-| `BINDING_MISMATCH` | Cert/key doesn't match proof | Check client configuration |
+| Error                | Meaning                       | Resolution                 |
+|----------------------|-------------------------------|----------------------------|
+| `DPOP_INVALID_TOKEN` | DPoP JWT malformed            | Check token format         |
+| `DPOP Proof Invalid` | Signature verification failed | Check key binding          |
+| `MTLS_MISSING_CERT`  | No client certificate         | Configure mTLS             |
+| `MTLS_CHAIN_INVALID` | Certificate chain invalid     | Check CA certificates      |
+| `BINDING_MISMATCH`   | Cert/key doesn't match proof  | Check client configuration |
 
 ---
 

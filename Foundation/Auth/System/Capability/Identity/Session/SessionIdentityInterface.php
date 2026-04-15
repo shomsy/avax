@@ -12,9 +12,9 @@ use DateTimeImmutable;
 interface SessionIdentityInterface
 {
     public function issue(
-        int $userId,
+        int                    $userId,
         DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool $phishingResistant = false
+        bool                   $phishingResistant = false
     ) : string|null;
 
     public function captureCurrentSession(string|null $ipAddress = null, string|null $userAgent = null) : void;

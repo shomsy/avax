@@ -14,12 +14,23 @@ use Avax\Auth\System\Foundation\Clock;
 
 final readonly class CheckFederationConnectionHealth
 {
+    private Clock                              $clock;
+    private AuditLogInterface                  $auditLog;
+    private FederationHealthCheckInterface     $runtime;
+    private FederationConnectionStoreInterface $connectionStore;
+
     public function __construct(
-        private FederationConnectionStoreInterface $connectionStore,
-        private FederationHealthCheckInterface $runtime,
-        private AuditLogInterface $auditLog,
-        private Clock $clock
-    ) {}
+        FederationConnectionStoreInterface $connectionStore,
+        FederationHealthCheckInterface     $runtime,
+        AuditLogInterface                  $auditLog,
+        Clock                              $clock
+    )
+    {
+        $this->connectionStore = $connectionStore;
+        $this->runtime         = $runtime;
+        $this->auditLog        = $auditLog;
+        $this->clock           = $clock;
+    }
 
     /**
      * @throws FederationFailed
@@ -32,18 +43,18 @@ final readonly class CheckFederationConnectionHealth
             throw FederationFailed::notFound();
         }
 
-        $health = $this->runtime->checkHealth(connection: $connection);
+        $health  = $this->runtime->checkHealth(connection: $connection);
         $updated = $connection->withHealth(health: $health, checkedAt: $this->clock->now());
         $this->connectionStore->save(connection: $updated);
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.federation.health.checked',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'connection_id' => $updated->connectionId,
-                'tenant' => $updated->tenantSlug,
-                'health' => $health->value,
-            ]
-        ));
+                                           name      : 'auth.federation.health.checked',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'connection_id' => $updated->connectionId,
+                                                           'tenant'        => $updated->tenantSlug,
+                                                           'health'        => $health->value,
+                                                       ]
+                                       ));
 
         return $health;
     }

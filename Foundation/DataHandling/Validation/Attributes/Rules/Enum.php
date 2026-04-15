@@ -26,12 +26,14 @@ use UnitEnum;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class Enum
 {
+    private string $enumClass;
+
     /**
      * Initializes the Enum Validator Attribute.
      *
      * @param class-string<T> $enumClass The fully qualified class name of the target enum.
      */
-    public function __construct(private string $enumClass) {}
+    public function __construct(string $enumClass) { $this->enumClass = $enumClass; }
 
     /**
      * Validates whether the provided value is a valid enum instance or a scalar value

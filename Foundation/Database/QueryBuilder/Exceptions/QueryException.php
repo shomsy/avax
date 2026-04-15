@@ -18,7 +18,9 @@ class QueryException extends DatabaseException
     /**
      * @var array Redacted bindings safe for diagnostics
      */
-    private readonly array $redactedBindings;
+    private readonly array  $redactedBindings;
+    private readonly array  $rawBindings;
+    private readonly string $sql;
 
     /**
      * Constructor promoting diagnostic properties via PHP 8.3 features.
@@ -30,12 +32,14 @@ class QueryException extends DatabaseException
      * @param Throwable|null $previous The underlying driver exception
      */
     public function __construct(
-        string                                       $message,
-        private readonly string                      $sql,
-        #[SensitiveParameter] private readonly array $rawBindings = [],
-        Throwable|null                               $previous = null
+        string                      $message,
+        string                      $sql,
+        #[SensitiveParameter] array $rawBindings = [],
+        Throwable|null              $previous = null
     )
     {
+        $this->sql              = $sql;
+        $this->rawBindings      = $rawBindings;
         $this->redactedBindings = $this->redactBindings(bindings: $this->rawBindings);
         parent::__construct(message: $message, code: 0, previous: $previous);
     }

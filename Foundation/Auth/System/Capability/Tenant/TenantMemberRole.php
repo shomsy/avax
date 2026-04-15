@@ -6,8 +6,8 @@ namespace Avax\Auth\System\Capability\Tenant;
 
 enum TenantMemberRole: string
 {
-    case OWNER = 'owner';
-    case ADMIN = 'admin';
-    case MEMBER = 'member';
+    case OWNER   = 'owner';
+    case ADMIN   = 'admin';
+    case MEMBER  = 'member';
     case SUPPORT = 'support';
 }

@@ -15,10 +15,12 @@ use Avax\DataHandling\ObjectHandling\DTO\AbstractDTO;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class DTOArrayOf
 {
+    public string $class;
+
     /**
      * @param class-string<AbstractDTO> $class Fully-qualified DTO class name
      */
-    public function __construct(public string $class) {}
+    public function __construct(string $class) { $this->class = $class; }
 
     /**
      * Transforms the input array into DTO instances

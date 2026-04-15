@@ -12,16 +12,19 @@ use Throwable;
  */
 class ValidationException extends RuntimeException
 {
+    private readonly array $metadata;
+
     /**
      * Constructor for the ValidationException.
      */
     public function __construct(
-        string                 $message,
-        int                    $code = 422,
-        Throwable|null         $previous = null,
-        private readonly array $metadata = []
+        string         $message,
+        int            $code = 422,
+        Throwable|null $previous = null,
+        array          $metadata = []
     )
     {
+        $this->metadata = $metadata;
         parent::__construct(message: $message, code: $code, previous: $previous);
     }
 

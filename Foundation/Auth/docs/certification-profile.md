@@ -36,6 +36,7 @@ php composer.phar conformance
 ```
 
 This runs:
+
 1. Static analysis
 2. Strict static analysis
 3. PHPUnit
@@ -53,6 +54,7 @@ php tooling/generate-evidence-bundle.php
 ```
 
 This produces or summarizes:
+
 - `build/conformance-report.json`
 - `build/quality-gates-report.json`
 - `build/sbom.json`
@@ -79,15 +81,15 @@ Before each release, verify:
 
 ## Certified Artifacts
 
-| Artifact | Description | Required |
-|----------|-------------|-----------|
-| conformance-report.json | Conformance harness results | Yes |
-| quality-gates-report.json | Quality-gate results | Recommended |
-| infection-summary.log | Mutation testing summary | Recommended |
-| sbom.json | Software Bill of Materials | Yes |
-| rollback-evidence.json | Rollback procedures | Yes |
-| release-provenance.json | Repository and validation provenance | Yes |
-| evidence-bundle.json | All artifacts combined | Yes |
+| Artifact                  | Description                          | Required    |
+|---------------------------|--------------------------------------|-------------|
+| conformance-report.json   | Conformance harness results          | Yes         |
+| quality-gates-report.json | Quality-gate results                 | Recommended |
+| infection-summary.log     | Mutation testing summary             | Recommended |
+| sbom.json                 | Software Bill of Materials           | Yes         |
+| rollback-evidence.json    | Rollback procedures                  | Yes         |
+| release-provenance.json   | Repository and validation provenance | Yes         |
+| evidence-bundle.json      | All artifacts combined               | Yes         |
 
 ---
 

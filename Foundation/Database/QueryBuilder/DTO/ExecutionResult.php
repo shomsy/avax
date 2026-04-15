@@ -20,14 +20,21 @@ namespace Avax\Database\QueryBuilder\DTO;
  */
 final readonly class ExecutionResult
 {
+    private int  $affectedRows;
+    private bool $success;
+
     /**
      * @param bool $success      Whether the database accepted and performed the instruction.
      * @param int  $affectedRows The number of records touched (if applicable).
      */
     public function __construct(
-        private bool $success,
-        private int  $affectedRows = 0
-    ) {}
+        bool $success,
+        int  $affectedRows = 0
+    )
+    {
+        $this->success      = $success;
+        $this->affectedRows = $affectedRows;
+    }
 
     /**
      * Create a success report.

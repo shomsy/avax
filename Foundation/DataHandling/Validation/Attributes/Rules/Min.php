@@ -24,6 +24,8 @@ class Min
     private const string ERROR_COUNTABLE = 'The number of items in "%s" must be at least %d.';
 
     private const string ERROR_INVALID = 'Invalid value type for "%s". Expected a numeric, string, or countable value, but got "%s".';
+    private readonly string|null $message;
+    private readonly int         $min;
 
     /**
      * Constructor for the Min attribute.
@@ -31,8 +33,10 @@ class Min
      * @param int         $min     The minimum value or size.
      * @param string|null $message Optional custom error message.
      */
-    public function __construct(private readonly int $min, private readonly string|null $message = null)
+    public function __construct(int $min, string|null $message = null)
     {
+        $this->min     = $min;
+        $this->message = $message;
         if ($min < 0) {
             throw new InvalidArgumentException(message: 'The minimum value must be a non-negative integer.');
         }

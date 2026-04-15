@@ -19,6 +19,12 @@ use Psr\Log\NullLogger;
  */
 final readonly class RoutePipelineFactory
 {
+    private LoggerInterface      $logger;
+    private StageChain           $stageChain;
+    private MiddlewareResolver   $middlewareResolver;
+    private ControllerDispatcher $dispatcher;
+    private ContainerInterface   $container;
+
     /**
      * Constructor for the RoutePipelineFactory.
      *
@@ -31,12 +37,19 @@ final readonly class RoutePipelineFactory
      * @param MiddlewareResolver   $middlewareResolver Middleware resolver for resolving middleware definitions.
      */
     public function __construct(
-        private ContainerInterface   $container,
-        private ControllerDispatcher $dispatcher,
-        private MiddlewareResolver   $middlewareResolver,
-        private StageChain           $stageChain,
-        private LoggerInterface      $logger = new NullLogger,
-    ) {}
+        ContainerInterface   $container,
+        ControllerDispatcher $dispatcher,
+        MiddlewareResolver   $middlewareResolver,
+        StageChain           $stageChain,
+        LoggerInterface      $logger = new NullLogger,
+    )
+    {
+        $this->container          = $container;
+        $this->dispatcher         = $dispatcher;
+        $this->middlewareResolver = $middlewareResolver;
+        $this->stageChain         = $stageChain;
+        $this->logger             = $logger;
+    }
 
     /**
      * Factory method for creating a fully resolved route pipeline.

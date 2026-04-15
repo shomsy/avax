@@ -19,17 +19,21 @@ final class SessionAdapter implements SessionContract, SessionInterface
 {
     private Flash $flash;
 
-    private Events $events;
+    private Events                              $events;
+    private readonly SessionIdProviderInterface $idProvider;
+    private readonly SessionEngine              $engine;
 
     public function __construct(
-        private readonly SessionEngine              $engine,
-        private readonly SessionIdProviderInterface $idProvider,
-        Flash|null                                  $flash = null,
-        Events|null                                 $events = null
+        SessionEngine              $engine,
+        SessionIdProviderInterface $idProvider,
+        Flash|null                 $flash = null,
+        Events|null                $events = null
     )
     {
-        $this->flash  = $flash ?? new Flash;
-        $this->events = $events ?? $this->engine->events() ?? new Events;
+        $this->engine     = $engine;
+        $this->idProvider = $idProvider;
+        $this->flash      = $flash ?? new Flash;
+        $this->events     = $events ?? $this->engine->events() ?? new Events;
     }
 
     public function events() : Events

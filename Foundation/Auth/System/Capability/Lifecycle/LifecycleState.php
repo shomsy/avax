@@ -6,7 +6,7 @@ namespace Avax\Auth\System\Capability\Lifecycle;
 
 enum LifecycleState: string
 {
-    case ACTIVE = 'active';
-    case SUSPENDED = 'suspended';
+    case ACTIVE        = 'active';
+    case SUSPENDED     = 'suspended';
     case DEPROVISIONED = 'deprovisioned';
 }

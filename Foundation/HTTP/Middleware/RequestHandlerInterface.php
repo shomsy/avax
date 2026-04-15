@@ -8,7 +8,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * PSR-15 Request Handler Interface
+ * PSR-15 ServerRequest Handler Interface
  *
  * Handles an incoming server request and produces a response.
  * This interface replaces the callable-based middleware approach.

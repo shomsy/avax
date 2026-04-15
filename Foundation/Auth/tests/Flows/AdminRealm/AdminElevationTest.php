@@ -23,29 +23,29 @@ final class AdminElevationTest extends TestCase
 {
     public function testAdminElevationLifecycle() : void
     {
-        $clock = new Clock();
+        $clock   = new Clock();
         $current = new CurrentAuthentication();
         $current->store(context: AuthenticationContext::authenticated(
-            user         : new AuthenticatedUser(
-                id        : 1,
-                email     : 'admin@example.com',
-                username  : 'admin',
-                roles     : [UserRole::ADMIN->value],
-                mfaEnabled: true
-            ),
-            mode         : AuthenticationMode::SESSION,
-            sessionId    : 'session-1',
-            mfaVerifiedAt: $clock->now(),
+            user             : new AuthenticatedUser(
+                                   id        : 1,
+                                   email     : 'admin@example.com',
+                                   username  : 'admin',
+                                   roles     : [UserRole::ADMIN->value],
+                                   mfaEnabled: true
+                               ),
+            mode             : AuthenticationMode::SESSION,
+            sessionId        : 'session-1',
+            mfaVerifiedAt    : $clock->now(),
             phishingResistant: true
         ));
 
         $store = new InMemoryAdminElevationStore();
         $begin = new BeginAdminElevation(
-            currentAuthentication: $current,
-            requireFreshMfa      : new RequireFreshMfa(currentAuthentication: $current, clock: $clock),
-            elevationStore       : $store,
-            auditLog             : new InMemoryAuditLog(),
-            clock                : $clock,
+            currentAuthentication    : $current,
+            requireFreshMfa          : new RequireFreshMfa(currentAuthentication: $current, clock: $clock),
+            elevationStore           : $store,
+            auditLog                 : new InMemoryAuditLog(),
+            clock                    : $clock,
             phishingResistantRequired: true
         );
         $guard = new RequireAdminElevation(currentAuthentication: $current, elevationStore: $store, clock: $clock);
@@ -63,27 +63,27 @@ final class AdminElevationTest extends TestCase
 
     public function testAdminElevationRequiresPhishingResistantAuthenticationWhenConfigured() : void
     {
-        $clock = new Clock();
+        $clock   = new Clock();
         $current = new CurrentAuthentication();
         $current->store(context: AuthenticationContext::authenticated(
             user         : new AuthenticatedUser(
-                id        : 1,
-                email     : 'admin@example.com',
-                username  : 'admin',
-                roles     : [UserRole::ADMIN->value],
-                mfaEnabled: true
-            ),
+                               id        : 1,
+                               email     : 'admin@example.com',
+                               username  : 'admin',
+                               roles     : [UserRole::ADMIN->value],
+                               mfaEnabled: true
+                           ),
             mode         : AuthenticationMode::SESSION,
             sessionId    : 'session-2',
             mfaVerifiedAt: $clock->now()
         ));
 
         $begin = new BeginAdminElevation(
-            currentAuthentication: $current,
-            requireFreshMfa      : new RequireFreshMfa(currentAuthentication: $current, clock: $clock),
-            elevationStore       : new InMemoryAdminElevationStore(),
-            auditLog             : new InMemoryAuditLog(),
-            clock                : $clock,
+            currentAuthentication    : $current,
+            requireFreshMfa          : new RequireFreshMfa(currentAuthentication: $current, clock: $clock),
+            elevationStore           : new InMemoryAdminElevationStore(),
+            auditLog                 : new InMemoryAuditLog(),
+            clock                    : $clock,
             phishingResistantRequired: true
         );
 

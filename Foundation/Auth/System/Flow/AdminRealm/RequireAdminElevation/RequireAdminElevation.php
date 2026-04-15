@@ -14,19 +14,28 @@ use SensitiveParameter;
 
 final readonly class RequireAdminElevation
 {
+    private Clock                        $clock;
+    private AdminElevationStoreInterface $elevationStore;
+    private CurrentAuthentication        $currentAuthentication;
+
     public function __construct(
-        #[SensitiveParameter] private CurrentAuthentication $currentAuthentication,
-        private AdminElevationStoreInterface                $elevationStore,
-        private Clock                                       $clock
-    ) {}
+        #[SensitiveParameter] CurrentAuthentication $currentAuthentication,
+        AdminElevationStoreInterface                $elevationStore,
+        Clock                                       $clock
+    )
+    {
+        $this->currentAuthentication = $currentAuthentication;
+        $this->elevationStore        = $elevationStore;
+        $this->clock                 = $clock;
+    }
 
     /**
      * @throws AdminElevationFailed
      */
     public function execute() : void
     {
-        $context = $this->currentAuthentication->read();
-        $user    = $context->user();
+        $context   = $this->currentAuthentication->read();
+        $user      = $context->user();
         $bindingId = $this->bindingId(context: $context);
 
         if ($user === null) {

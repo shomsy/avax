@@ -29,14 +29,16 @@ use Throwable;
 final class TransactionScope
 {
     /** @var bool Logical flag indicating if the technical transaction window has been finalized/committed. */
-    private bool $completed = false;
+    private bool                                 $completed = false;
+    private readonly TransactionManagerInterface $manager;
 
     /**
      * @param TransactionManagerInterface $manager    The active technical authority responsible for atomicity and
      *                                                persistence.
      */
-    public function __construct(private readonly TransactionManagerInterface $manager)
+    public function __construct(TransactionManagerInterface $manager)
     {
+        $this->manager = $manager;
         $this->manager->begin();
     }
 

@@ -9,23 +9,52 @@ use DateTimeImmutable;
 
 final readonly class TokenIntrospection
 {
+    public bool                       $workloadIdentity;
+    public string|null                $issuer;
+    public string|null                $audience;
+    public string|null                $subject;
+    public OAuthSenderConstraint|null $senderConstraint;
+    public bool                       $phishingResistant;
+    public DateTimeImmutable|null     $mfaVerifiedAt;
+    public DateTimeImmutable|null     $expiresAt;
+    public array                      $scopes;
+    public int|null                   $userId;
+    public string|null                $clientId;
+    public bool                       $active;
+
     /**
      * @param list<string> $scopes
      */
     public function __construct(
-        public bool                   $active,
-        public string|null            $clientId = null,
-        public int|null               $userId = null,
-        public array                  $scopes = [],
-        public DateTimeImmutable|null $expiresAt = null,
-        public DateTimeImmutable|null $mfaVerifiedAt = null,
-        public bool                   $phishingResistant = false,
-        public OAuthSenderConstraint|null $senderConstraint = null,
-        public string|null            $subject = null,
-        public string|null            $audience = null,
-        public string|null            $issuer = null,
-        public bool                   $workloadIdentity = false
-    ) {}
+        bool                       $active,
+        string|null                $clientId = null,
+        int|null                   $userId = null,
+        array|null                 $scopes = null,
+        DateTimeImmutable|null     $expiresAt = null,
+        DateTimeImmutable|null     $mfaVerifiedAt = null,
+        bool|null                  $phishingResistant = null,
+        OAuthSenderConstraint|null $senderConstraint = null,
+        string|null                $subject = null,
+        string|null                $audience = null,
+        string|null                $issuer = null,
+        bool                       $workloadIdentity = false
+    )
+    {
+        $scopes                  ??= [];
+        $phishingResistant       ??= false;
+        $this->active            = $active;
+        $this->clientId          = $clientId;
+        $this->userId            = $userId;
+        $this->scopes            = $scopes;
+        $this->expiresAt         = $expiresAt;
+        $this->mfaVerifiedAt     = $mfaVerifiedAt;
+        $this->phishingResistant = $phishingResistant;
+        $this->senderConstraint  = $senderConstraint;
+        $this->subject           = $subject;
+        $this->audience          = $audience;
+        $this->issuer            = $issuer;
+        $this->workloadIdentity  = $workloadIdentity;
+    }
 
     public static function inactive() : self
     {

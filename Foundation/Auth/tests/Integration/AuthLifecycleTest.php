@@ -87,17 +87,17 @@ class AuthLifecycleTest extends TestCase
         // 6. Enroll MFA and verify challenge
         $enrollment  = $this->auth->startMfaEnrollment();
         $backupCodes = $this->auth->confirmMfaEnrollment(data: new ConfirmMfaEnrollmentData(
-                                                             code: (new Totp())->codeAt(secret: $enrollment->secret(), moment: new DateTimeImmutable())
-                                                         ));
+                                                                   code: (new Totp())->codeAt(secret: $enrollment->secret(), moment: new DateTimeImmutable())
+                                                               ));
         $this->assertCount(expectedCount: 10, haystack: $backupCodes->codes);
         $mfaLogin = $this->auth->login(credentials: new Credentials(identifier: 'itest', password: 'new-secure-password'));
         $this->assertTrue(condition: $mfaLogin->requiresMfa());
         $this->assertNull(actual: $mfaLogin->accessToken());
         $this->assertNull(actual: $mfaLogin->refreshToken());
         $mfaCompleted = $this->auth->verifyMfaChallenge(data: new VerifyMfaChallengeData(
-                                                            challengeId: $mfaLogin->mfaChallengeId(),
-                                                            code       : $backupCodes->values()[0]
-                                                        ));
+                                                                  challengeId: $mfaLogin->mfaChallengeId(),
+                                                                  code       : $backupCodes->values()[0]
+                                                              ));
         $this->assertTrue(condition: $mfaCompleted->isAuthenticated());
         $this->assertNotNull(actual: $mfaCompleted->context()->mfaVerifiedAt());
 

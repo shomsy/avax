@@ -37,21 +37,21 @@ final readonly class VerifySenderConstrainedRequest
         $auditLog = new NullAuditLog();
 
         return (new VerifyOAuthSenderConstraint(
-            verifyDpopProof: new VerifyDpopProof(
-                codec      : new HmacTokenCodec(secret: 'replace-me'),
-                replayStore: new InMemoryDpopProofReplayStore(),
-                auditLog   : $auditLog
-            ),
+            verifyDpopProof           : new VerifyDpopProof(
+                                            codec      : new HmacTokenCodec(secret: 'replace-me'),
+                                            replayStore: new InMemoryDpopProofReplayStore(),
+                                            auditLog   : $auditLog
+                                        ),
             verifyMtlsSenderConstraint: new VerifyMtlsSenderConstraint(auditLog: $auditLog),
             auditLog                  : $auditLog
         ))->execute(
-            input: new HttpOAuthProofInput(
-                method     : $method,
-                uri        : $uri,
-                headers    : $headers,
-                server     : $server,
-                accessToken: $accessToken
-            ),
+            input                   : new HttpOAuthProofInput(
+                                          method     : $method,
+                                          uri        : $uri,
+                                          headers    : $headers,
+                                          server     : $server,
+                                          accessToken: $accessToken
+                                      ),
             expectedSenderConstraint: $expectedSenderConstraint,
             requiredSenderConstraint: $requiredSenderConstraint
         );

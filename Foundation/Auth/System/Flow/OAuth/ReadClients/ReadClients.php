@@ -9,9 +9,14 @@ use Avax\Auth\System\Capability\OAuth\OAuthClientRegistryInterface;
 
 final readonly class ReadClients
 {
+    private OAuthClientRegistryInterface $clientRegistry;
+
     public function __construct(
-        private OAuthClientRegistryInterface $clientRegistry
-    ) {}
+        OAuthClientRegistryInterface $clientRegistry
+    )
+    {
+        $this->clientRegistry = $clientRegistry;
+    }
 
     /**
      * @return list<OAuthClient>

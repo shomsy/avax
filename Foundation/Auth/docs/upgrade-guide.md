@@ -8,9 +8,9 @@ Guide for upgrading Auth package.
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-04-14 | Initial release |
+| Version | Date       | Changes         |
+|---------|------------|-----------------|
+| 1.0.0   | 2026-04-14 | Initial release |
 
 ---
 
@@ -33,11 +33,11 @@ composer require avax/auth:^1.0.0
 
 ### Namespace Mapping
 
-| Old | New |
-|-----|-----|
-| `AvaxContainer\Auth\Actions\` | `Avax\Auth\System\Flow\` |
-| `AvaxContainer\Auth\Adapters\` | `Avax\Auth\Integrations\` |
-| `AvaxContainer\Auth\Contracts\` | `Avax\Auth\System\Capability\` |
+| Old                              | New                            |
+|----------------------------------|--------------------------------|
+| `AvaxContainer\Auth\Actions\`    | `Avax\Auth\System\Flow\`       |
+| `AvaxContainer\Auth\Adapters\`   | `Avax\Auth\Integrations\`      |
+| `AvaxContainer\Auth\Contracts\`  | `Avax\Auth\System\Capability\` |
 | `AvaxContainer\Auth\Foundation\` | `Avax\Auth\System\Foundation\` |
 
 ---
@@ -70,10 +70,10 @@ $client = new RegisteredOAuthClient(...);
 
 ## Removed Features
 
-| Feature | Replacement |
-|---------|-------------|
+| Feature          | Replacement                                      |
+|------------------|--------------------------------------------------|
 | `AuthMiddleware` | Use integrations: `Avax\Auth\Integrations\Http\` |
-| `SessionManager` | Use `Capability/Session/` directly |
+| `SessionManager` | Use `Capability/Session/` directly               |
 
 ---
 

@@ -21,11 +21,13 @@ Scope: product positioning
 ## Practical Rule
 
 Use this package for:
+
 - auth kernel
 - identity kernel
 - product-owned security flows
 
 Do not sell it as:
+
 - Auth0 replacement
 - Okta replacement
 - full hosted identity platform

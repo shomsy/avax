@@ -27,7 +27,7 @@ final class InMemoryAuditLog implements DrainAuditLogInterface
 
     public function drain() : array
     {
-        $events = $this->events;
+        $events       = $this->events;
         $this->events = [];
 
         return $events;

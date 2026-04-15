@@ -13,9 +13,14 @@ use DateTimeImmutable;
  */
 final class FrozenClock extends Clock
 {
+    private DateTimeImmutable $now;
+
     public function __construct(
-        private DateTimeImmutable $now
-    ) {}
+        DateTimeImmutable $now
+    )
+    {
+        $this->now = $now;
+    }
 
     public function now() : DateTimeImmutable
     {

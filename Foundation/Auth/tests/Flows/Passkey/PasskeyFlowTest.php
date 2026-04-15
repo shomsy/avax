@@ -19,6 +19,8 @@ use Avax\Auth\System\Flow\AuthenticateRequest\AuthenticationMode;
 use Avax\Auth\System\Flow\AuthenticateRequest\CurrentAuthentication;
 use Avax\Auth\System\Flow\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Auth\System\Flow\Diagnostics\InMemoryAuditLog;
+use Avax\Auth\System\Flow\Mfa\InMemoryMfaStore;
+use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthentication;
 use Avax\Auth\System\Flow\Passkey\BeginAuthentication\BeginPasskeyAuthenticationData;
 use Avax\Auth\System\Flow\Passkey\BeginRegistration\BeginPasskeyRegistration;
@@ -35,10 +37,8 @@ use Avax\Auth\System\Flow\Token\HmacTokenCodec;
 use Avax\Auth\System\Flow\Token\InMemoryRefreshTokenStore;
 use Avax\Auth\System\Flow\Token\InMemoryTokenRevocationStore;
 use Avax\Auth\System\Flow\Verify\InMemoryEmailVerificationStateStore;
-use Avax\Auth\Tests\Support\FakePasskeyRuntime;
-use Avax\Auth\System\Flow\Mfa\InMemoryMfaStore;
-use Avax\Auth\System\Flow\Mfa\StepUp\RequireFreshMfa;
 use Avax\Auth\System\Foundation\Clock;
+use Avax\Auth\Tests\Support\FakePasskeyRuntime;
 use PHPUnit\Framework\TestCase;
 
 final class PasskeyFlowTest extends TestCase
@@ -58,17 +58,17 @@ final class PasskeyFlowTest extends TestCase
         );
         $userSource->create(user: $user);
         $current->store(context: AuthenticationContext::authenticated(
-            user      : new AuthenticatedUser(
-                id       : 5,
-                email    : 'passkey@example.com',
-                username : 'passkey-user'
-            ),
-            mode      : AuthenticationMode::SESSION,
-            sessionId : 'session-5'
+            user     : new AuthenticatedUser(
+                           id      : 5,
+                           email   : 'passkey@example.com',
+                           username: 'passkey-user'
+                       ),
+            mode     : AuthenticationMode::SESSION,
+            sessionId: 'session-5'
         ));
 
-        $runtime = new FakePasskeyRuntime();
-        $beginRegistration = new BeginPasskeyRegistration(
+        $runtime              = new FakePasskeyRuntime();
+        $beginRegistration    = new BeginPasskeyRegistration(
             currentAuthentication: $current,
             requireFreshMfa      : new RequireFreshMfa(currentAuthentication: $current, clock: $clock),
             runtime              : $runtime,
@@ -91,59 +91,59 @@ final class PasskeyFlowTest extends TestCase
 
         $registration = $beginRegistration->execute();
         $credential   = $completeRegistration->execute(data: new CompletePasskeyRegistrationData(
-            challengeId: $registration->challengeId,
-            response   : ['credential_id' => 'cred-1', 'label' => 'Laptop']
-        ));
+                                                                 challengeId: $registration->challengeId,
+                                                                 response   : ['credential_id' => 'cred-1', 'label' => 'Laptop']
+                                                             ));
         $renamed      = (new RenamePasskey(
             currentAuthentication: $current,
             credentialStore      : $credentialStore
         ))->execute(data: new RenamePasskeyData(
-            credentialId: 'cred-1',
-            label       : 'Primary Laptop'
-        ));
+                              credentialId: 'cred-1',
+                              label       : 'Primary Laptop'
+                          ));
 
         $this->assertSame(expected: 'cred-1', actual: $credential->credentialId);
         $this->assertSame(expected: 'Primary Laptop', actual: $renamed->label);
         $this->assertCount(expectedCount: 1, haystack: (new ListPasskeys(currentAuthentication: $current, credentialStore: $credentialStore))->execute());
 
         $current->clear();
-        $identity = new Identity(jwtIdentity: new JwtIdentity(
-            userSource       : $userSource,
-            codec            : new HmacTokenCodec(secret: 'passkey-secret'),
-            clock            : $clock,
-            revocationStore  : new InMemoryTokenRevocationStore(),
-            refreshTokenStore: new InMemoryRefreshTokenStore()
-        ));
-        $beginAuthentication = new BeginPasskeyAuthentication(
-            userSource      : $userSource,
-            runtime         : $runtime,
-            credentialStore : $credentialStore,
-            challengeStore  : $challengeStore,
-            auditLog        : new InMemoryAuditLog(),
-            clock           : $clock,
-            rpId            : 'example.test'
+        $identity               = new Identity(jwtIdentity: new JwtIdentity(
+                                                                userSource       : $userSource,
+                                                                codec            : new HmacTokenCodec(secret: 'passkey-secret'),
+                                                                clock            : $clock,
+                                                                revocationStore  : new InMemoryTokenRevocationStore(),
+                                                                refreshTokenStore: new InMemoryRefreshTokenStore()
+                                                            ));
+        $beginAuthentication    = new BeginPasskeyAuthentication(
+            userSource     : $userSource,
+            runtime        : $runtime,
+            credentialStore: $credentialStore,
+            challengeStore : $challengeStore,
+            auditLog       : new InMemoryAuditLog(),
+            clock          : $clock,
+            rpId           : 'example.test'
         );
         $completeAuthentication = new CompletePasskeyAuthentication(
-            runtime              : $runtime,
-            challengeStore       : $challengeStore,
-            credentialStore      : $credentialStore,
-            userSource           : $userSource,
-            identity             : $identity,
+            runtime                 : $runtime,
+            challengeStore          : $challengeStore,
+            credentialStore         : $credentialStore,
+            userSource              : $userSource,
+            identity                : $identity,
             projectAuthenticatedUser: new ProjectAuthenticatedUser(
-                emailVerificationState: new InMemoryEmailVerificationStateStore(),
-                mfaStore              : new InMemoryMfaStore()
-            ),
-            currentAuthentication: $current,
-            auditLog             : new InMemoryAuditLog(),
-            clock                : $clock,
-            rpId                 : 'example.test'
+                                          emailVerificationState: new InMemoryEmailVerificationStateStore(),
+                                          mfaStore              : new InMemoryMfaStore()
+                                      ),
+            currentAuthentication   : $current,
+            auditLog                : new InMemoryAuditLog(),
+            clock                   : $clock,
+            rpId                    : 'example.test'
         );
 
         $challenge = $beginAuthentication->execute(data: new BeginPasskeyAuthenticationData(identifier: 'passkey@example.com'));
         $result    = $completeAuthentication->execute(data: new CompletePasskeyAuthenticationData(
-            challengeId: $challenge->challengeId,
-            response   : ['credential_id' => 'cred-1']
-        ));
+                                                                challengeId: $challenge->challengeId,
+                                                                response   : ['credential_id' => 'cred-1']
+                                                            ));
 
         $this->assertTrue(condition: $result->isAuthenticated());
 
@@ -173,57 +173,57 @@ final class PasskeyFlowTest extends TestCase
         );
         $userSource->create(user: $user);
         $credentialStore->save(credential: new PasskeyCredential(
-            userId      : 6,
-            credentialId: 'cred-replay',
-            label       : 'Replay Device',
-            registeredAt: $clock->now()
-        ));
+                                               userId      : 6,
+                                               credentialId: 'cred-replay',
+                                               label       : 'Replay Device',
+                                               registeredAt: $clock->now()
+                                           ));
 
-        $runtime = new FakePasskeyRuntime();
+        $runtime   = new FakePasskeyRuntime();
         $challenge = (new BeginPasskeyAuthentication(
-            userSource      : $userSource,
-            runtime         : $runtime,
-            credentialStore : $credentialStore,
-            challengeStore  : $challengeStore,
-            auditLog        : new InMemoryAuditLog(),
-            clock           : $clock,
-            rpId            : 'example.test'
+            userSource     : $userSource,
+            runtime        : $runtime,
+            credentialStore: $credentialStore,
+            challengeStore : $challengeStore,
+            auditLog       : new InMemoryAuditLog(),
+            clock          : $clock,
+            rpId           : 'example.test'
         ))->execute(data: new BeginPasskeyAuthenticationData(identifier: 'passkey-replay@example.com'));
 
         $complete = new CompletePasskeyAuthentication(
-            runtime              : $runtime,
-            challengeStore       : $challengeStore,
-            credentialStore      : $credentialStore,
-            userSource           : $userSource,
-            identity             : new Identity(jwtIdentity: new JwtIdentity(
-                userSource       : $userSource,
-                codec            : new HmacTokenCodec(secret: 'passkey-replay-secret'),
-                clock            : $clock,
-                revocationStore  : new InMemoryTokenRevocationStore(),
-                refreshTokenStore: new InMemoryRefreshTokenStore()
-            )),
+            runtime                 : $runtime,
+            challengeStore          : $challengeStore,
+            credentialStore         : $credentialStore,
+            userSource              : $userSource,
+            identity                : new Identity(jwtIdentity: new JwtIdentity(
+                                                                    userSource       : $userSource,
+                                                                    codec            : new HmacTokenCodec(secret: 'passkey-replay-secret'),
+                                                                    clock            : $clock,
+                                                                    revocationStore  : new InMemoryTokenRevocationStore(),
+                                                                    refreshTokenStore: new InMemoryRefreshTokenStore()
+                                                                )),
             projectAuthenticatedUser: new ProjectAuthenticatedUser(
-                emailVerificationState: new InMemoryEmailVerificationStateStore(),
-                mfaStore              : new InMemoryMfaStore()
-            ),
-            currentAuthentication: $current,
-            auditLog             : new InMemoryAuditLog(),
-            clock                : $clock,
-            rpId                 : 'example.test'
+                                          emailVerificationState: new InMemoryEmailVerificationStateStore(),
+                                          mfaStore              : new InMemoryMfaStore()
+                                      ),
+            currentAuthentication   : $current,
+            auditLog                : new InMemoryAuditLog(),
+            clock                   : $clock,
+            rpId                    : 'example.test'
         );
 
         $result = $complete->execute(data: new CompletePasskeyAuthenticationData(
-            challengeId: $challenge->challengeId,
-            response   : ['credential_id' => 'cred-replay']
-        ));
+                                               challengeId: $challenge->challengeId,
+                                               response   : ['credential_id' => 'cred-replay']
+                                           ));
         $this->assertTrue(condition: $result->isAuthenticated());
 
         $this->expectException(PasskeyOperationFailed::class);
         $this->expectExceptionMessage('Passkey challenge has already been used.');
 
         $complete->execute(data: new CompletePasskeyAuthenticationData(
-            challengeId: $challenge->challengeId,
-            response   : ['credential_id' => 'cred-replay']
-        ));
+                                     challengeId: $challenge->challengeId,
+                                     response   : ['credential_id' => 'cred-replay']
+                                 ));
     }
 }

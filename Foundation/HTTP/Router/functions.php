@@ -530,7 +530,7 @@ if (! function_exists('route_any')) {
      * while maintaining consistent error handling and middleware application.
      *
      * @param string                $path    Route path pattern
-     * @param callable|array|string $handler Request handler
+     * @param callable|array|string $handler ServerRequest handler
      * @param array                 $methods Specific methods to register (default: common REST methods)
      *
      * @return array Registered route proxies

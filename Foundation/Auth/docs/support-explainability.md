@@ -77,13 +77,13 @@ Sender constraint validation failed: {reason}
 
 ### Reasons:
 
-| Reason | Meaning |
-|--------|---------|
-| `DPOP_INVALID_TOKEN` | DPoP JWT is malformed or expired |
-| `DPOP_SIGNATURE_INVALID` | Proof doesn't match binding key |
-| `MTLS_MISSING_CERT` | mTLS required but no client cert |
-| `MTLS_CHAIN_INVALID` | Certificate chain not trusted |
-| `BINDING_MISMATCH` | Token key doesn't match client cert |
+| Reason                   | Meaning                             |
+|--------------------------|-------------------------------------|
+| `DPOP_INVALID_TOKEN`     | DPoP JWT is malformed or expired    |
+| `DPOP_SIGNATURE_INVALID` | Proof doesn't match binding key     |
+| `MTLS_MISSING_CERT`      | mTLS required but no client cert    |
+| `MTLS_CHAIN_INVALID`     | Certificate chain not trusted       |
+| `BINDING_MISMATCH`       | Token key doesn't match client cert |
 
 ### Resolution
 
@@ -104,11 +104,11 @@ Session {sessionId} revoked locally; propagation status: {status}
 
 ### Statuses:
 
-| Status | Meaning |
-|--------|---------|
+| Status       | Meaning                                 |
+|--------------|-----------------------------------------|
 | `LOCAL_ONLY` | Revoked locally, RP propagation pending |
-| `PARTIAL` | Some RPs notified, others failed |
-| `PROPAGATED` | All RPs notified |
+| `PARTIAL`    | Some RPs notified, others failed        |
+| `PROPAGATED` | All RPs notified                        |
 
 ### Resolution
 

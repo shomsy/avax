@@ -9,9 +9,14 @@ use Avax\Auth\System\Capability\Scim\ScimDirectoryStoreInterface;
 
 final readonly class ReadScimDirectories
 {
+    private ScimDirectoryStoreInterface $directoryStore;
+
     public function __construct(
-        private ScimDirectoryStoreInterface $directoryStore
-    ) {}
+        ScimDirectoryStoreInterface $directoryStore
+    )
+    {
+        $this->directoryStore = $directoryStore;
+    }
 
     /**
      * @return list<ScimDirectory>
@@ -25,8 +30,8 @@ final readonly class ReadScimDirectories
         }
 
         return array_values(array_filter(
-            $directories,
-            static fn (ScimDirectory $directory) : bool => $directory->tenantSlug === trim($tenantSlug)
-        ));
+                                $directories,
+                                static fn (ScimDirectory $directory) : bool => $directory->tenantSlug === trim($tenantSlug)
+                            ));
     }
 }

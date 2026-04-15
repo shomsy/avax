@@ -12,9 +12,14 @@ use ReflectionException;
  */
 final readonly class ExplainService
 {
+    private ServiceResolver $resolver;
+
     public function __construct(
-        private ServiceResolver $resolver
-    ) {}
+        ServiceResolver $resolver
+    )
+    {
+        $this->resolver = $resolver;
+    }
 
     /**
      * @param string               $id

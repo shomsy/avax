@@ -11,10 +11,17 @@ use Avax\Auth\System\Flow\Oidc\FrontChannelLogout\FrontChannelLogoutData;
 
 final readonly class Logout
 {
+    private BackChannelLogout  $backChannelLogout;
+    private FrontChannelLogout $frontChannelLogout;
+
     public function __construct(
-        private FrontChannelLogout $frontChannelLogout,
-        private BackChannelLogout $backChannelLogout
-    ) {}
+        FrontChannelLogout $frontChannelLogout,
+        BackChannelLogout  $backChannelLogout
+    )
+    {
+        $this->frontChannelLogout = $frontChannelLogout;
+        $this->backChannelLogout  = $backChannelLogout;
+    }
 
     public function execute(LogoutData $data) : LogoutResult
     {
@@ -23,10 +30,10 @@ final readonly class Logout
         }
 
         return $this->frontChannelLogout->execute(data: new FrontChannelLogoutData(
-            sessionId              : $data->sessionId,
-            idTokenHint            : $data->idTokenHint,
-            postLogoutRedirectUri  : $data->postLogoutRedirectUri,
-            state                  : $data->state
-        ));
+                                                            sessionId            : $data->sessionId,
+                                                            idTokenHint          : $data->idTokenHint,
+                                                            postLogoutRedirectUri: $data->postLogoutRedirectUri,
+                                                            state                : $data->state
+                                                        ));
     }
 }

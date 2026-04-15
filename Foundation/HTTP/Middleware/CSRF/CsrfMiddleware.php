@@ -16,6 +16,9 @@ use SensitiveParameter;
  */
 readonly class CsrfMiddleware
 {
+    private ResponseFactory  $responseFactory;
+    private CsrfTokenManager $csrfTokenManager;
+
     /**
      * Constructor initializes the CsrfMiddleware with a CSRF token manager and a response factory.
      *
@@ -23,9 +26,13 @@ readonly class CsrfMiddleware
      * @param ResponseFactory  $responseFactory  The factory used to create HTTP responses.
      */
     public function __construct(
-        #[SensitiveParameter] private CsrfTokenManager $csrfTokenManager,
-        private ResponseFactory                        $responseFactory,
-    ) {}
+        #[SensitiveParameter] CsrfTokenManager $csrfTokenManager,
+        ResponseFactory                        $responseFactory,
+    )
+    {
+        $this->csrfTokenManager = $csrfTokenManager;
+        $this->responseFactory  = $responseFactory;
+    }
 
     /**
      * Handles the incoming request and ensures that CSRF token validation is performed for certain HTTP methods.

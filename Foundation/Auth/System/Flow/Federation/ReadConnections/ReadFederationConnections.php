@@ -9,9 +9,14 @@ use Avax\Auth\System\Capability\Federation\FederationConnectionStoreInterface;
 
 final readonly class ReadFederationConnections
 {
+    private FederationConnectionStoreInterface $connectionStore;
+
     public function __construct(
-        private FederationConnectionStoreInterface $connectionStore
-    ) {}
+        FederationConnectionStoreInterface $connectionStore
+    )
+    {
+        $this->connectionStore = $connectionStore;
+    }
 
     /**
      * @return list<FederationConnection>

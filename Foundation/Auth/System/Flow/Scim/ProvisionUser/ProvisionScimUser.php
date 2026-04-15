@@ -31,17 +31,38 @@ use SensitiveParameter;
 
 final readonly class ProvisionScimUser
 {
+    private AttemptThrottle|null                  $attemptThrottle;
+    private LifecycleOrchestrator|null            $lifecycle;
+    private Clock                                 $clock;
+    private AuditLogInterface                     $auditLog;
+    private IdGeneratorInterface                  $idGenerator;
+    private PasswordHasher                        $passwordHasher;
+    private ScimProvisionedIdentityStoreInterface $identityStore;
+    private ScimDirectoryStoreInterface           $directoryStore;
+    private ProvisionableUserSourceInterface      $userSource;
+
     public function __construct(
-        private ProvisionableUserSourceInterface $userSource,
-        private ScimDirectoryStoreInterface $directoryStore,
-        private ScimProvisionedIdentityStoreInterface $identityStore,
-        #[SensitiveParameter] private PasswordHasher $passwordHasher,
-        private IdGeneratorInterface $idGenerator,
-        private AuditLogInterface $auditLog,
-        private Clock $clock,
-        private LifecycleOrchestrator|null $lifecycle = null,
-        private AttemptThrottle|null $attemptThrottle = null
-    ) {}
+        ProvisionableUserSourceInterface      $userSource,
+        ScimDirectoryStoreInterface           $directoryStore,
+        ScimProvisionedIdentityStoreInterface $identityStore,
+        #[SensitiveParameter] PasswordHasher  $passwordHasher,
+        IdGeneratorInterface                  $idGenerator,
+        AuditLogInterface                     $auditLog,
+        Clock                                 $clock,
+        LifecycleOrchestrator|null            $lifecycle = null,
+        AttemptThrottle|null                  $attemptThrottle = null
+    )
+    {
+        $this->userSource      = $userSource;
+        $this->directoryStore  = $directoryStore;
+        $this->identityStore   = $identityStore;
+        $this->passwordHasher  = $passwordHasher;
+        $this->idGenerator     = $idGenerator;
+        $this->auditLog        = $auditLog;
+        $this->clock           = $clock;
+        $this->lifecycle       = $lifecycle;
+        $this->attemptThrottle = $attemptThrottle;
+    }
 
     /**
      * @throws ScimFailed
@@ -52,8 +73,8 @@ final readonly class ProvisionScimUser
         $directory = $this->authenticateDirectory(directoryId: $data->directoryId, directoryToken: $data->directoryToken);
         $this->enforceDirectoryAvailability(directory: $directory);
         $this->enforceThrottle(directoryId: $directory->directoryId, operation: 'provision');
-        $roles = $this->resolveRoles(directory: $directory, groups: $data->groups);
-        $fingerprint = $this->fingerprint(data: $data, roles: $roles);
+        $roles            = $this->resolveRoles(directory: $directory, groups: $data->groups);
+        $fingerprint      = $this->fingerprint(data: $data, roles: $roles);
         $existingIdentity = $this->identityStore->find(directoryId: $directory->directoryId, externalId: $data->externalId);
 
         if ($existingIdentity !== null && $existingIdentity->fingerprint === $fingerprint) {
@@ -73,12 +94,12 @@ final readonly class ProvisionScimUser
             ? $this->userSource->findById(id: $existingIdentity->userId)
             : $this->userSource->findByEmail(email: $data->email);
 
-        $created = false;
+        $created       = false;
         $driftDetected = $existingIdentity !== null;
 
         if ($user === null) {
             $created = true;
-            $user = $this->userSource->create(user: User::create(
+            $user    = $this->userSource->create(user: User::create(
                 id          : new UserId(value: $this->idGenerator->generate()),
                 email       : new UserEmail(value: $data->email),
                 username    : $data->username,
@@ -97,39 +118,39 @@ final readonly class ProvisionScimUser
 
         if ($this->lifecycle !== null) {
             match ($data->state) {
-                ScimAccountState::ACTIVE => $this->lifecycle->activate(userId: $user->getId(), source: LifecycleSource::SCIM, reason: 'scim_active'),
+                ScimAccountState::ACTIVE    => $this->lifecycle->activate(userId: $user->getId(), source: LifecycleSource::SCIM, reason: 'scim_active'),
                 ScimAccountState::SUSPENDED => $this->lifecycle->suspend(userId: $user->getId(), source: LifecycleSource::SCIM, reason: 'scim_suspended'),
-                ScimAccountState::DISABLED => $this->lifecycle->deprovision(userId: $user->getId(), source: LifecycleSource::SCIM, reason: 'scim_disabled'),
+                ScimAccountState::DISABLED  => $this->lifecycle->deprovision(userId: $user->getId(), source: LifecycleSource::SCIM, reason: 'scim_disabled'),
             };
         } else {
             match ($data->state) {
-                ScimAccountState::ACTIVE => $this->userSource->activate(id: $user->getId()),
+                ScimAccountState::ACTIVE                                => $this->userSource->activate(id: $user->getId()),
                 ScimAccountState::SUSPENDED, ScimAccountState::DISABLED => $this->userSource->deactivate(id: $user->getId()),
             };
         }
 
         $this->identityStore->save(identity: new ScimProvisionedIdentity(
-            directoryId     : $directory->directoryId,
-            externalId      : $data->externalId,
-            userId          : $user->getId(),
-            fingerprint     : $fingerprint,
-            groups          : array_values($data->groups),
-            state           : $data->state,
-            synchronizedAt  : $this->clock->now()
-        ));
+                                                 directoryId   : $directory->directoryId,
+                                                 externalId    : $data->externalId,
+                                                 userId        : $user->getId(),
+                                                 fingerprint   : $fingerprint,
+                                                 groups        : array_values($data->groups),
+                                                 state         : $data->state,
+                                                 synchronizedAt: $this->clock->now()
+                                             ));
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.scim.user.provisioned',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'directory_id' => $directory->directoryId,
-                'tenant' => $directory->tenantSlug,
-                'external_id' => $data->externalId,
-                'user_id' => $user->getId()->value,
-                'state' => $data->state->value,
-                'created' => $created ? 1 : 0,
-                'drift_detected' => $driftDetected ? 1 : 0,
-            ]
-        ));
+                                           name      : 'auth.scim.user.provisioned',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'directory_id'   => $directory->directoryId,
+                                                           'tenant'         => $directory->tenantSlug,
+                                                           'external_id'    => $data->externalId,
+                                                           'user_id'        => $user->getId()->value,
+                                                           'state'          => $data->state->value,
+                                                           'created'        => $created ? 1 : 0,
+                                                           'drift_detected' => $driftDetected ? 1 : 0,
+                                                       ]
+                                       ));
 
         return new ScimProvisioningResult(
             userId       : $user->getId()->value,
@@ -144,51 +165,10 @@ final readonly class ProvisionScimUser
     }
 
     /**
-     * @param list<UserRole> $roles
-     */
-    private function fingerprint(ProvisionScimUserData $data, array $roles) : string
-    {
-        try {
-            return hash('sha256', json_encode([
-                'email' => strtolower(trim($data->email)),
-                'username' => trim($data->username),
-                'groups' => array_values($data->groups),
-                'roles' => array_map(static fn (UserRole $role) : string => $role->value, $roles),
-                'state' => $data->state->value,
-            ], JSON_THROW_ON_ERROR));
-        } catch (JsonException) {
-            return hash('sha256', strtolower(trim($data->email)) . '|' . trim($data->username) . '|' . $data->state->value);
-        }
-    }
-
-    /**
-     * @param list<string> $groups
-     * @return list<UserRole>
-     */
-    private function resolveRoles(ScimDirectory $directory, array $groups) : array
-    {
-        $roles = [];
-
-        foreach ($groups as $group) {
-            foreach ($directory->groupRoleMap[$group] ?? [] as $roleValue) {
-                $role = UserRole::tryFrom(value: $roleValue);
-
-                if ($role === null || in_array($role, $roles, true)) {
-                    continue;
-                }
-
-                $roles[] = $role;
-            }
-        }
-
-        return $roles;
-    }
-
-    /**
      * @throws ScimFailed
      */
     private function authenticateDirectory(
-        string $directoryId,
+        string                       $directoryId,
         #[SensitiveParameter] string $directoryToken
     ) : ScimDirectory
     {
@@ -227,5 +207,47 @@ final readonly class ProvisionScimUser
         }
 
         $this->attemptThrottle->recordAttempt(key: $key);
+    }
+
+    /**
+     * @param list<string> $groups
+     *
+     * @return list<UserRole>
+     */
+    private function resolveRoles(ScimDirectory $directory, array $groups) : array
+    {
+        $roles = [];
+
+        foreach ($groups as $group) {
+            foreach ($directory->groupRoleMap[$group] ?? [] as $roleValue) {
+                $role = UserRole::tryFrom(value: $roleValue);
+
+                if ($role === null || in_array($role, $roles, true)) {
+                    continue;
+                }
+
+                $roles[] = $role;
+            }
+        }
+
+        return $roles;
+    }
+
+    /**
+     * @param list<UserRole> $roles
+     */
+    private function fingerprint(ProvisionScimUserData $data, array $roles) : string
+    {
+        try {
+            return hash('sha256', json_encode([
+                                                  'email' => strtolower(trim($data->email)),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         'username' => trim($data->username),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      'groups' => array_values($data->groups),
+                                                  'roles' => array_map(static fn (UserRole $role) : string => $role->value, $roles),
+                                                  'state' => $data->state->value,
+                                              ], JSON_THROW_ON_ERROR));
+        } catch (JsonException) {
+            return hash('sha256', strtolower(trim($data->email)) . '|' . trim($data->username) . '|' . $data->state->value);
+        }
     }
 }

@@ -45,10 +45,17 @@ final class InvisibleDecorator implements DecoratorInterface
 
 final class RuntimeInputConsumer
 {
+    public string            $name;
+    public DecoratedContract $service;
+
     public function __construct(
-        public DecoratedContract              $service,
-        #[RuntimeInput(name: 'name')] public string $name
-    ) {}
+        DecoratedContract                    $service,
+        #[RuntimeInput(name: 'name')] string $name
+    )
+    {
+        $this->service = $service;
+        $this->name    = $name;
+    }
 }
 
 final class FirstGroupedStep
@@ -158,10 +165,10 @@ $container->singleton(abstract: ConflictingGroupedStep::class, concrete: Conflic
     ->group(group: 'checkout.steps', order: 10);
 
 $groupIssues = implode("\n", $container->validate(serviceIds: [
-                                                      FirstGroupedStep::class,
-                                                      SecondGroupedStep::class,
-                                                      ConflictingGroupedStep::class,
-                                                  ]));
+                                                                  FirstGroupedStep::class,
+                                                                  SecondGroupedStep::class,
+                                                                  ConflictingGroupedStep::class,
+                                                              ]));
 
 assertTrue(
     condition: str_contains($groupIssues, 'Group [checkout.steps] uses duplicate order [10]'),

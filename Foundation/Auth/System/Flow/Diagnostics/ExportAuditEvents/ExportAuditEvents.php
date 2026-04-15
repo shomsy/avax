@@ -9,10 +9,17 @@ use Avax\Auth\System\Flow\Diagnostics\DrainAuditLogInterface;
 
 final readonly class ExportAuditEvents
 {
+    private AuditExporterInterface $exporter;
+    private DrainAuditLogInterface $auditLog;
+
     public function __construct(
-        private DrainAuditLogInterface $auditLog,
-        private AuditExporterInterface $exporter
-    ) {}
+        DrainAuditLogInterface $auditLog,
+        AuditExporterInterface $exporter
+    )
+    {
+        $this->auditLog = $auditLog;
+        $this->exporter = $exporter;
+    }
 
     public function execute() : int
     {

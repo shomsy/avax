@@ -14,9 +14,14 @@ use Avax\Container\DI\Flows\CreateContainer\CreateContainer;
  */
 final readonly class TestComposition
 {
+    private Container $container;
+
     private function __construct(
-        private Container $container
-    ) {}
+        Container $container
+    )
+    {
+        $this->container = $container;
+    }
 
     public static function create(CreateContainerConfig|null $config = null) : self
     {

@@ -21,7 +21,8 @@ and federation, deterministic risk, admin elevation, and a thin optional integra
 - Federation now owns tenant-aware connection registration, domain verification, metadata sync, health checks,
   discovery, start/complete login, JIT linking, break-glass policy evaluation, and group-to-role mapping.
 - SCIM now owns directory registration, token rotation, user provisioning, delete, derived group projection, bulk user
-  operations, group sync, idempotency, drift detection, and explicit account-state semantics behind a package-owned runtime lane.
+  operations, group sync, idempotency, drift detection, and explicit account-state semantics behind a package-owned
+  runtime lane.
 - Tenant security now owns requested, approved, applied, and rolled-back security configuration changes with auditable
   config diffs and rollout versioning, while the tenant product lane owns tenant/member/invite/owner-transfer behavior.
 - Admin realm, provisioning, deterministic risk, and cleanup/export maintenance flows are package-owned slices.

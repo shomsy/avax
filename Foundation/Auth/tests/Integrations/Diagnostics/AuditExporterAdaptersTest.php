@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Auth\Tests\Integrations\Diagnostics;
 
-use Avax\Auth\Integrations\Diagnostics\JsonLinesAuditExporter;
 use Avax\Auth\Integrations\Diagnostics\ContextFlagAuditLegalHoldPolicy;
+use Avax\Auth\Integrations\Diagnostics\JsonLinesAuditExporter;
 use Avax\Auth\Integrations\Diagnostics\NormalizeAuditEvent;
 use Avax\Auth\Integrations\Diagnostics\PublishAuditMessageInterface;
 use Avax\Auth\Integrations\Diagnostics\QueueAuditExporter;
@@ -33,24 +33,24 @@ final class AuditExporterAdaptersTest extends TestCase
 
         $exporter = new JsonLinesAuditExporter(path: $path);
         $exporter->export(events: [
-            new AuditEvent(
-                name         : 'auth.login.succeeded',
-                occurredAt   : new DateTimeImmutable(datetime: '2026-04-13T10:00:00+00:00'),
-                context      : ['email' => 'user@example.com', 'ip_address' => '127.0.0.1', 'risk_action' => 'allow'],
-                correlationId: 'corr-1'
-            ),
-            new AuditEvent(
-                name       : 'auth.logout.succeeded',
-                occurredAt : new DateTimeImmutable(datetime: '2026-04-13T10:01:00+00:00'),
-                context    : ['user_id' => 1]
-            ),
-        ]);
+                                      new AuditEvent(
+                                          name         : 'auth.login.succeeded',
+                                          occurredAt   : new DateTimeImmutable(datetime: '2026-04-13T10:00:00+00:00'),
+                                          context      : ['email' => 'user@example.com', 'ip_address' => '127.0.0.1', 'risk_action' => 'allow'],
+                                          correlationId: 'corr-1'
+                                      ),
+                                      new AuditEvent(
+                                          name      : 'auth.logout.succeeded',
+                                          occurredAt: new DateTimeImmutable(datetime: '2026-04-13T10:01:00+00:00'),
+                                          context   : ['user_id' => 1]
+                                      ),
+                                  ]);
 
         $lines = file($path, FILE_IGNORE_NEW_LINES);
         $this->assertIsArray(actual: $lines);
         $this->assertCount(expectedCount: 2, haystack: $lines);
 
-        $first = json_decode($lines[0], true, 512, JSON_THROW_ON_ERROR);
+        $first  = json_decode($lines[0], true, 512, JSON_THROW_ON_ERROR);
         $second = json_decode($lines[1], true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertSame(expected: '[redacted]', actual: $first['context']['email']);
@@ -67,11 +67,11 @@ final class AuditExporterAdaptersTest extends TestCase
      */
     public function testSyslogWebhookAndQueueExportersSendNormalizedPayloads() : void
     {
-        $capture = new stdClass();
-        $capture->syslog = [];
+        $capture          = new stdClass();
+        $capture->syslog  = [];
         $capture->webhook = [];
-        $capture->queue = [];
-        $event = new AuditEvent(
+        $capture->queue   = [];
+        $event            = new AuditEvent(
             name         : 'auth.oauth.refresh.reuse_detected',
             occurredAt   : new DateTimeImmutable(datetime: '2026-04-13T11:00:00+00:00'),
             context      : ['refresh_token' => 'secret-token', 'user_id' => 1],
@@ -79,39 +79,42 @@ final class AuditExporterAdaptersTest extends TestCase
         );
 
         (new SyslogAuditExporter(
-            sender: new class($capture) implements SendSyslogMessageInterface
-            {
-                public function __construct(private stdClass $capture) {}
+            sender: new class($capture) implements SendSyslogMessageInterface {
+                      private stdClass $capture;
 
-                public function send(string $severity, string $message) : void
-                {
-                    $this->capture->syslog[] = [$severity, json_decode($message, true, 512, JSON_THROW_ON_ERROR)];
-                }
-            }
+                      public function __construct(stdClass $capture) { $this->capture = $capture; }
+
+                      public function send(string $severity, string $message) : void
+                      {
+                          $this->capture->syslog[] = [$severity, json_decode($message, true, 512, JSON_THROW_ON_ERROR)];
+                      }
+                  }
         ))->export(events: [$event]);
 
         (new WebhookAuditExporter(
-            sender: new class($capture) implements SendAuditWebhookInterface
-            {
-                public function __construct(private stdClass $capture) {}
+            sender: new class($capture) implements SendAuditWebhookInterface {
+                      private stdClass $capture;
 
-                public function send(array $payload) : void
-                {
-                    $this->capture->webhook[] = $payload;
-                }
-            }
+                      public function __construct(stdClass $capture) { $this->capture = $capture; }
+
+                      public function send(array $payload) : void
+                      {
+                          $this->capture->webhook[] = $payload;
+                      }
+                  }
         ))->export(events: [$event]);
 
         (new QueueAuditExporter(
-            publisher: new class($capture) implements PublishAuditMessageInterface
-            {
-                public function __construct(private stdClass $capture) {}
+            publisher: new class($capture) implements PublishAuditMessageInterface {
+                         private stdClass $capture;
 
-                public function publish(string $topic, array $message) : void
-                {
-                    $this->capture->queue[] = [$topic, $message];
-                }
-            }
+                         public function __construct(stdClass $capture) { $this->capture = $capture; }
+
+                         public function publish(string $topic, array $message) : void
+                         {
+                             $this->capture->queue[] = [$topic, $message];
+                         }
+                     }
         ))->export(events: [$event]);
 
         $this->assertSame(expected: 'info', actual: $capture->syslog[0][0]);
@@ -130,22 +133,22 @@ final class AuditExporterAdaptersTest extends TestCase
         $this->assertIsString(actual: $path);
 
         $exporter = new JsonLinesAuditExporter(
-            path              : $path,
+            path               : $path,
             normalizeAuditEvent: new NormalizeAuditEvent(
-                legalHoldPolicy: new ContextFlagAuditLegalHoldPolicy()
-            )
+                                     legalHoldPolicy: new ContextFlagAuditLegalHoldPolicy()
+                                 )
         );
         $exporter->export(events: [
-            new AuditEvent(
-                name       : 'auth.admin.incident.review_opened',
-                occurredAt : new DateTimeImmutable(datetime: '2026-04-13T12:00:00+00:00'),
-                context    : [
-                    'email' => 'admin@example.com',
-                    'ip_address' => '127.0.0.1',
-                    'legal_hold' => 1,
-                ]
-            ),
-        ]);
+                                      new AuditEvent(
+                                          name      : 'auth.admin.incident.review_opened',
+                                          occurredAt: new DateTimeImmutable(datetime: '2026-04-13T12:00:00+00:00'),
+                                          context   : [
+                                                          'email'      => 'admin@example.com',
+                                                          'ip_address' => '127.0.0.1',
+                                                          'legal_hold' => 1,
+                                                      ]
+                                      ),
+                                  ]);
 
         $lines = file($path, FILE_IGNORE_NEW_LINES);
         $this->assertIsArray(actual: $lines);
@@ -159,27 +162,28 @@ final class AuditExporterAdaptersTest extends TestCase
 
     public function testSecurityNotificationExporterRoutesHighSignalEvents() : void
     {
-        $capture = new stdClass();
+        $capture                = new stdClass();
         $capture->notifications = [];
 
         $exporter = new SecurityNotificationExporter(
-            sender: new class($capture) implements SendSecurityNotificationInterface
-            {
-                public function __construct(private stdClass $capture) {}
+            sender             : new class($capture) implements SendSecurityNotificationInterface {
+                                   private stdClass $capture;
 
-                public function send(SecurityNotification $notification) : void
-                {
-                    $this->capture->notifications[] = $notification;
-                }
-            },
+                                   public function __construct(stdClass $capture) { $this->capture = $capture; }
+
+                                   public function send(SecurityNotification $notification) : void
+                                   {
+                                       $this->capture->notifications[] = $notification;
+                                   }
+                               },
             normalizeAuditEvent: new NormalizeAuditEvent()
         );
 
         $exporter->export(events: [
-                              new AuditEvent(name: 'auth.admin.elevation.started', occurredAt: new DateTimeImmutable(), context: ['user_id' => 1], correlationId: 'corr-3'),
-                              new AuditEvent(name: 'auth.password.changed', occurredAt: new DateTimeImmutable(), context: ['suspicious_activity' => 1], correlationId: 'corr-3'),
-                              new AuditEvent(name: 'auth.login.succeeded', occurredAt: new DateTimeImmutable(), context: ['user_id' => 1], correlationId: 'corr-3'),
-        ]);
+                                      new AuditEvent(name: 'auth.admin.elevation.started', occurredAt: new DateTimeImmutable(), context: ['user_id' => 1], correlationId: 'corr-3'),
+                                      new AuditEvent(name: 'auth.password.changed', occurredAt: new DateTimeImmutable(), context: ['suspicious_activity' => 1], correlationId: 'corr-3'),
+                                      new AuditEvent(name: 'auth.login.succeeded', occurredAt: new DateTimeImmutable(), context: ['user_id' => 1], correlationId: 'corr-3'),
+                                  ]);
 
         $this->assertCount(expectedCount: 2, haystack: $capture->notifications);
         $this->assertSame(expected: 'admin_elevation_started', actual: $capture->notifications[0]->name);

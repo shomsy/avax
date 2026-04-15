@@ -22,7 +22,9 @@ use Avax\Exceptions\ValidationException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
 readonly class StartsWith
 {
-    public function __construct(private array $prefixes) {}
+    private array $prefixes;
+
+    public function __construct(array $prefixes) { $this->prefixes = $prefixes; }
 
     /**
      * @throws \Avax\Exceptions\ValidationException

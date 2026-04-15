@@ -16,12 +16,23 @@ use SensitiveParameter;
 
 final readonly class ExchangeClientCredentials
 {
+    private Clock                        $clock;
+    private AuditLogInterface            $auditLog;
+    private JwtIdentityInterface         $jwtIdentity;
+    private OAuthClientRegistryInterface $clientRegistry;
+
     public function __construct(
-        private OAuthClientRegistryInterface               $clientRegistry,
-        #[SensitiveParameter] private JwtIdentityInterface $jwtIdentity,
-        private AuditLogInterface                          $auditLog,
-        private Clock                                      $clock
-    ) {}
+        OAuthClientRegistryInterface               $clientRegistry,
+        #[SensitiveParameter] JwtIdentityInterface $jwtIdentity,
+        AuditLogInterface                          $auditLog,
+        Clock                                      $clock
+    )
+    {
+        $this->clientRegistry = $clientRegistry;
+        $this->jwtIdentity    = $jwtIdentity;
+        $this->auditLog       = $auditLog;
+        $this->clock          = $clock;
+    }
 
     /**
      * @throws OAuthTokenExchangeFailed
@@ -40,7 +51,7 @@ final readonly class ExchangeClientCredentials
             throw OAuthTokenExchangeFailed::invalidClient();
         }
 
-        $scopes = $this->normalizeScopes(scopes: $data->scopes);
+        $scopes   = $this->normalizeScopes(scopes: $data->scopes);
         $audience = $this->normalizeAudience(audience: $data->audience);
 
         if (! $client->allowsScopes(scopes: $scopes)) {
@@ -68,8 +79,8 @@ final readonly class ExchangeClientCredentials
             }
         }
 
-        $subject  = 'client:' . $client->clientId;
-        $issued   = $this->jwtIdentity->issueWorkloadToken(
+        $subject = 'client:' . $client->clientId;
+        $issued  = $this->jwtIdentity->issueWorkloadToken(
             subject         : $subject,
             clientId        : $client->clientId,
             scopes          : $scopes,
@@ -78,16 +89,16 @@ final readonly class ExchangeClientCredentials
         );
 
         $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.oauth.client_credentials.exchanged',
-            occurredAt: $this->clock->now(),
-            context   : [
-                'client_id' => $client->clientId,
-                'scope' => implode(' ', $scopes),
-                'audience' => $audience,
-                'ip_address' => $data->ipAddress,
-                'user_agent' => $data->userAgent,
-            ]
-        ));
+                                           name      : 'auth.oauth.client_credentials.exchanged',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'client_id'  => $client->clientId,
+                                                           'scope'      => implode(' ', $scopes),
+                                                           'audience'   => $audience,
+                                                           'ip_address' => $data->ipAddress,
+                                                           'user_agent' => $data->userAgent,
+                                                       ]
+                                       ));
 
         return new OAuthTokenGrant(
             accessToken         : $issued->token,
@@ -105,8 +116,31 @@ final readonly class ExchangeClientCredentials
         );
     }
 
+    private function recordFailure(ExchangeClientCredentialsData $data, string $reason) : void
+    {
+        $this->auditLog->record(event: new AuditEvent(
+                                           name      : 'auth.oauth.client_credentials.failed',
+                                           occurredAt: $this->clock->now(),
+                                           context   : [
+                                                           'client_id'  => $data->clientId,
+                                                           'reason'     => $reason,
+                                                           'audience'   => $this->normalizeAudience(audience: $data->audience),
+                                                           'ip_address' => $data->ipAddress,
+                                                           'user_agent' => $data->userAgent,
+                                                       ]
+                                       ));
+    }
+
+    private function normalizeAudience(string|null $audience) : string|null
+    {
+        $normalized = trim((string) $audience);
+
+        return $normalized !== '' ? $normalized : null;
+    }
+
     /**
      * @param list<string> $scopes
+     *
      * @return list<string>
      */
     private function normalizeScopes(array $scopes) : array
@@ -126,27 +160,5 @@ final readonly class ExchangeClientCredentials
         sort($normalized);
 
         return $normalized;
-    }
-
-    private function normalizeAudience(string|null $audience) : string|null
-    {
-        $normalized = trim((string) $audience);
-
-        return $normalized !== '' ? $normalized : null;
-    }
-
-    private function recordFailure(ExchangeClientCredentialsData $data, string $reason) : void
-    {
-        $this->auditLog->record(event: new AuditEvent(
-            name      : 'auth.oauth.client_credentials.failed',
-            occurredAt: $this->clock->now(),
-            context   : [
-                            'client_id' => $data->clientId,
-                            'reason' => $reason,
-                            'audience' => $this->normalizeAudience(audience: $data->audience),
-                            'ip_address' => $data->ipAddress,
-                            'user_agent' => $data->userAgent,
-            ]
-        ));
     }
 }

@@ -12,14 +12,21 @@ use LogicException;
  */
 final readonly class ProviderBootPlan
 {
+    public array $dependencies;
+    public array $order;
+
     /**
      * @param list<class-string<ServiceProviderInterface>>                                                $order
      * @param array<class-string<ServiceProviderInterface>, list<class-string<ServiceProviderInterface>>> $dependencies
      */
     private function __construct(
-        public array $order,
-        public array $dependencies
-    ) {}
+        array $order,
+        array $dependencies
+    )
+    {
+        $this->order        = $order;
+        $this->dependencies = $dependencies;
+    }
 
     /**
      * @param array<class-string<ServiceProviderInterface>, ServiceProviderInterface> $instances

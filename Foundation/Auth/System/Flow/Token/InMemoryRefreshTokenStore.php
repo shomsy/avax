@@ -29,13 +29,13 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
      * @throws RandomException
      */
     public function issue(
-        UserId                 $userId,
-        DateTimeImmutable      $expiresAt,
-        string|null            $familyId = null,
-        DateTimeImmutable|null $mfaVerifiedAt = null,
-        bool                   $phishingResistant = false,
-        string|null            $clientId = null,
-        array                  $scopes = [],
+        UserId                     $userId,
+        DateTimeImmutable          $expiresAt,
+        string|null                $familyId = null,
+        DateTimeImmutable|null     $mfaVerifiedAt = null,
+        bool                       $phishingResistant = false,
+        string|null                $clientId = null,
+        array                      $scopes = [],
         OAuthSenderConstraint|null $senderConstraint = null
     ) : IssuedRefreshToken
     {
@@ -44,31 +44,31 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
         $familyId   ??= bin2hex(random_bytes(16));
 
         $record = new RefreshTokenRecord(
-            tokenId      : $tokenId,
-            familyId     : $familyId,
-            userId       : $userId,
-            expiresAt    : $expiresAt,
-            mfaVerifiedAt: $mfaVerifiedAt,
+            tokenId          : $tokenId,
+            familyId         : $familyId,
+            userId           : $userId,
+            expiresAt        : $expiresAt,
+            mfaVerifiedAt    : $mfaVerifiedAt,
             phishingResistant: $phishingResistant,
-            clientId     : $clientId,
-            scopes       : array_values($scopes),
-            senderConstraint: $senderConstraint
+            clientId         : $clientId,
+            scopes           : array_values($scopes),
+            senderConstraint : $senderConstraint
         );
 
         $this->records[$tokenId]                                   = $record;
         $this->hashToTokenId[$this->hash(plainToken: $plainToken)] = $tokenId;
 
         return new IssuedRefreshToken(
-            token        : $plainToken,
-            tokenId      : $tokenId,
-            familyId     : $familyId,
-            userId       : $userId,
-            expiresAt    : $expiresAt,
-            mfaVerifiedAt: $mfaVerifiedAt,
+            token            : $plainToken,
+            tokenId          : $tokenId,
+            familyId         : $familyId,
+            userId           : $userId,
+            expiresAt        : $expiresAt,
+            mfaVerifiedAt    : $mfaVerifiedAt,
             phishingResistant: $phishingResistant,
-            clientId     : $clientId,
-            scopes       : array_values($scopes),
-            senderConstraint: $senderConstraint
+            clientId         : $clientId,
+            scopes           : array_values($scopes),
+            senderConstraint : $senderConstraint
         );
     }
 

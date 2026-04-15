@@ -18,14 +18,25 @@ use Avax\Container\DI\Capabilities\Resolution\ServiceResolver;
  */
 final class CompiledRuntime
 {
-    private int $compiledRevision = -1;
+    private int                             $compiledRevision = -1;
+    private readonly string                 $executionMode;
+    private readonly ResolutionMetrics|null $metrics;
+    private readonly HotPathInliner         $inliner;
+    private readonly CompileContainer|null  $compiler;
 
     public function __construct(
-        private readonly CompileContainer|null  $compiler = null,
-        private readonly HotPathInliner         $inliner = new HotPathInliner,
-        private readonly ResolutionMetrics|null $metrics = null,
-        private readonly string                 $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED
-    ) {}
+        CompileContainer|null  $compiler = null,
+        HotPathInliner|null    $inliner = null,
+        ResolutionMetrics|null $metrics = null,
+        string                 $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED
+    )
+    {
+        $inliner             ??= new HotPathInliner;
+        $this->compiler      = $compiler;
+        $this->inliner       = $inliner;
+        $this->metrics       = $metrics;
+        $this->executionMode = $executionMode;
+    }
 
     public function compiledRevision() : int
     {

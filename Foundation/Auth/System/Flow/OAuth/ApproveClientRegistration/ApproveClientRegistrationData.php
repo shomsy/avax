@@ -6,8 +6,15 @@ namespace Avax\Auth\System\Flow\OAuth\ApproveClientRegistration;
 
 final readonly class ApproveClientRegistrationData
 {
+    public string $approvedBy;
+    public string $clientId;
+
     public function __construct(
-        public string $clientId,
-        public string $approvedBy
-    ) {}
+        string $clientId,
+        string $approvedBy
+    )
+    {
+        $this->clientId   = $clientId;
+        $this->approvedBy = $approvedBy;
+    }
 }

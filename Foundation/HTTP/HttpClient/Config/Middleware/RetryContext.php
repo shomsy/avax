@@ -21,6 +21,11 @@ use Throwable;
  */
 final readonly class RetryContext
 {
+    public Throwable|null         $throwable;
+    public ResponseInterface|null $response;
+    public RequestInterface       $request;
+    public int                    $retries;
+
     /**
      * @param int                    $retries   The number of retry attempts made so far.
      * @param RequestInterface       $request   The request object being retried.
@@ -28,11 +33,17 @@ final readonly class RetryContext
      * @param Throwable|null         $throwable The exception encountered, if any, during the last retry attempt.
      */
     public function __construct(
-        public int                    $retries,
-        public RequestInterface       $request,
-        public ResponseInterface|null $response = null,
-        public Throwable|null         $throwable = null,
-    ) {}
+        int                    $retries,
+        RequestInterface       $request,
+        ResponseInterface|null $response = null,
+        Throwable|null         $throwable = null,
+    )
+    {
+        $this->retries   = $retries;
+        $this->request   = $request;
+        $this->response  = $response;
+        $this->throwable = $throwable;
+    }
 
     /**
      * Determines if a retry is necessary based on the response status code.

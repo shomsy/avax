@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * HTTP Kernel - Orchestrator for HTTP Request Processing
+ * HTTP Kernel - Orchestrator for HTTP ServerRequest Processing
  *
  * BC GUARANTEED: This interface defines the stable, public API for HTTP request processing.
  * All methods are guaranteed to be backward compatible in future versions.

@@ -15,9 +15,14 @@ use Psr\Log\LoggerInterface;
  */
 final class RouteExportValidator
 {
+    private LoggerInterface $logger;
+
     public function __construct(
-        private LoggerInterface $logger
-    ) {}
+        LoggerInterface $logger
+    )
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Filters an array of routes, keeping only exportable ones.

@@ -32,7 +32,7 @@ final class Container
         }
 
         if (array_key_exists($id, $this->bindings)) {
-            $binding = $this->bindings[$id];
+            $binding  = $this->bindings[$id];
             $resolved = $this->resolve(implementation: $binding['implementation']);
 
             if ($binding['shared']) {
@@ -49,25 +49,12 @@ final class Container
         throw new RuntimeException(message: "Container binding [$id] is missing.");
     }
 
-    public function singleton(string $id, mixed $implementation = null) : void
-    {
-        $this->bindings[$id] = [
-            'implementation' => $implementation ?? $id,
-            'shared'         => true,
-        ];
-    }
-
-    public function instance(string $id, mixed $implementation) : void
-    {
-        $this->instances[$id] = $implementation;
-    }
-
     private function resolve(mixed $implementation) : mixed
     {
         return match (true) {
             $implementation instanceof Closure => $implementation(),
-            is_string($implementation) => $this->build(class: $implementation),
-            default => $implementation,
+            is_string($implementation)         => $this->build(class: $implementation),
+            default                            => $implementation,
         };
     }
 
@@ -107,5 +94,18 @@ final class Container
         }
 
         return $reflection->newInstanceArgs(args: $arguments);
+    }
+
+    public function singleton(string $id, mixed $implementation = null) : void
+    {
+        $this->bindings[$id] = [
+            'implementation' => $implementation ?? $id,
+            'shared'         => true,
+        ];
+    }
+
+    public function instance(string $id, mixed $implementation) : void
+    {
+        $this->instances[$id] = $implementation;
     }
 }
